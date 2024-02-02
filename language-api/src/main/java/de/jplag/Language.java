@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
+import de.jplag.options.LanguageOptions;
+
 /**
  * Common interface for all languages. Each language-front end must provide a concrete language implementation.
  */
@@ -38,6 +40,14 @@ public interface Language {
     List<Token> parse(Set<File> files) throws ParsingException;
 
     /**
+     * Indicates whether the tokens returned by parse have semantic information added to them, i.e. whether the token
+     * attribute semantics is null or not.
+     */
+    default boolean tokensHaveSemantics() {
+        return false;
+    }
+
+    /**
      * Determines whether a fixed-width font should be used to display that language.
      */
     default boolean isPreformatted() {
@@ -57,5 +67,30 @@ public interface Language {
      */
     default String viewFileSuffix() {
         return "";
+    }
+
+    /**
+     * Returns a new option object for the language.
+     * @return The options
+     */
+    default LanguageOptions getOptions() {
+        return LanguageOptions.EMPTY_OPTIONS;
+    }
+
+    /**
+     * Specifies if the submission order is relevant for this language.
+     * @return defaults to false.
+     */
+    default boolean expectsSubmissionOrder() {
+        return false;
+    }
+
+    /**
+     * Re-orders the provided submission according the requirements of the language.
+     * @param submissions is the list of submissions.
+     * @return the re-ordered list.
+     */
+    default List<File> customizeSubmissionOrder(List<File> submissions) {
+        return submissions;
     }
 }

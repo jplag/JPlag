@@ -12,12 +12,8 @@ public enum JavaTokenType implements TokenType {
     J_VARDEF("VARDEF"), // check
     J_SYNC_BEGIN("SYNC{"), // check
     J_SYNC_END("}SYNC"), // check
-    J_DO_BEGIN("DO{"), // check
-    J_DO_END("}DO"), // check
-    J_WHILE_BEGIN("WHILE{"), // check
-    J_WHILE_END("}WHILE"), // check
-    J_FOR_BEGIN("FOR{"), // check
-    J_FOR_END("}FOR"), // check
+    J_LOOP_BEGIN("LOOP{"), // check
+    J_LOOP_END("}LOOP"), // check
     J_SWITCH_BEGIN("SWITCH{"), // check
     J_SWITCH_END("}SWITCH"), // check
     J_CASE("CASE"), // check
@@ -28,7 +24,6 @@ public enum JavaTokenType implements TokenType {
     J_FINALLY_BEGIN("FINALLY{"), // check
     J_FINALLY_END("}FINALLY"), // check
     J_IF_BEGIN("IF{"), // check
-    J_ELSE("ELSE"), // check
     J_IF_END("}IF"), // check
     J_COND("COND"), // check
     J_BREAK("BREAK"), // check
@@ -81,6 +76,7 @@ public enum JavaTokenType implements TokenType {
 
     private final String description;
 
+    @Override
     public String getDescription() {
         return this.description;
     }

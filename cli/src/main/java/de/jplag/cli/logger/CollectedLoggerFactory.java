@@ -23,6 +23,7 @@ public final class CollectedLoggerFactory implements ILoggerFactory {
     /**
      * Return an appropriate {@link CollectedLogger} instance by name.
      */
+    @Override
     public Logger getLogger(String name) {
         CollectedLogger simpleLogger = loggerMap.get(name);
         if (simpleLogger != null) {

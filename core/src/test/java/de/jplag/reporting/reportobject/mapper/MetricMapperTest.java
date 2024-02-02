@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -18,43 +19,42 @@ import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.reportobject.model.TopComparison;
 
 public class MetricMapperTest {
-    private static final List<Integer> EXPECTED_DISTRIBUTION = List.of(29, 23, 19, 17, 13, 11, 7, 5, 3, 2);
+    private static final List<Integer> EXPECTED_AVG_DISTRIBUTION = List.of(1, 0, 0, 2, 3, 15, 5, 2, 16, 5, 2, 18, 3, 21, 2, 1, 5, 0, 14, 32, 25, 4, 2,
+            12, 3, 2, 5, 5, 0, 5, 1, 5, 2, 5, 4, 5, 3, 5, 18, 21, 30, 4, 3, 10, 2, 3, 17, 28, 4, 10, 2, 4, 3, 0, 2, 20, 4, 0, 19, 5, 25, 9, 4, 18, 1,
+            1, 1, 0, 31, 15, 35, 38, 40, 43, 45, 49, 50, 50, 50, 53, 60, 71, 73, 74, 80, 83, 87, 93, 95, 99, 102, 105, 106, 110, 113, 113, 117, 117,
+            122, 124);
+    private static final List<Integer> EXPECTED_MAX_DISTRIBUTION = List.of(130, 129, 124, 116, 114, 110, 110, 108, 103, 101, 99, 97, 96, 92, 82, 81,
+            70, 67, 64, 63, 59, 56, 52, 50, 50, 50, 49, 47, 43, 5, 6, 11, 4, 2, 3, 20, 37, 5, 0, 2, 33, 30, 19, 4, 5, 24, 40, 6, 3, 9, 2, 3, 18, 3, 5,
+            1, 4, 1, 0, 0, 5, 5, 14, 5, 42, 4, 18, 0, 0, 10, 4, 3, 17, 33, 4, 4, 3, 4, 39, 0, 20, 2, 4, 9, 0, 5, 0, 8, 23, 4, 2, 39, 3, 4, 1, 0, 3,
+            33, 2, 1);
     private final MetricMapper metricMapper = new MetricMapper(Submission::getName);
 
     @Test
-    public void test_getAverageMetric() {
+    public void test_getDistributions() {
         // given
-        JPlagResult jPlagResult = createJPlagResult(MockMetric.AVG, distribution(EXPECTED_DISTRIBUTION),
-                comparison(submission("1"), submission("2"), .7), comparison(submission("3"), submission("4"), .3));
+        JPlagResult jPlagResult = createJPlagResult(distribution(EXPECTED_AVG_DISTRIBUTION), distribution(EXPECTED_MAX_DISTRIBUTION),
+                comparison(submission("1"), submission("2"), .7, .8), comparison(submission("3"), submission("4"), .3, .9));
+
         // when
-        var result = metricMapper.getAverageMetric(jPlagResult);
+        Map<String, List<Integer>> result = MetricMapper.getDistributions(jPlagResult);
 
         // then
-        Assertions.assertEquals("AVG", result.name());
-        Assertions.assertIterableEquals(EXPECTED_DISTRIBUTION, result.distribution());
-        Assertions.assertEquals(List.of(new TopComparison("1", "2", .7), new TopComparison("3", "4", .3)), result.topComparisons());
-        Assertions.assertEquals(
-                "Average of both program coverages. This is the default similarity which"
-                        + " works in most cases: Matches with a high average similarity indicate that the programs work " + "in a very similar way.",
-                result.description());
+        Assertions.assertEquals(Map.of("AVG", EXPECTED_AVG_DISTRIBUTION, "MAX", EXPECTED_MAX_DISTRIBUTION), result);
     }
 
     @Test
-    public void test_getMaxMetric() {
+    public void test_getTopComparisons() {
         // given
-        JPlagResult jPlagResult = createJPlagResult(MockMetric.MAX, distribution(EXPECTED_DISTRIBUTION),
-                comparison(submission("00"), submission("01"), .7), comparison(submission("10"), submission("11"), .3));
+        JPlagResult jPlagResult = createJPlagResult(distribution(EXPECTED_AVG_DISTRIBUTION), distribution(EXPECTED_MAX_DISTRIBUTION),
+                comparison(submission("1"), submission("2"), .7, .8), comparison(submission("3"), submission("4"), .3, .9));
+
         // when
-        var result = metricMapper.getMaxMetric(jPlagResult);
+        List<TopComparison> result = metricMapper.getTopComparisons(jPlagResult);
 
         // then
-        Assertions.assertEquals("MAX", result.name());
-        Assertions.assertIterableEquals(EXPECTED_DISTRIBUTION, result.distribution());
-        Assertions.assertEquals(List.of(new TopComparison("00", "01", .7), new TopComparison("10", "11", .3)), result.topComparisons());
         Assertions.assertEquals(
-                "Maximum of both program coverages. This ranking is especially useful if the programs are very "
-                        + "different in size. This can happen when dead code was inserted to disguise the origin of the plagiarized program.",
-                result.description());
+                List.of(new TopComparison("1", "2", Map.of("AVG", .7, "MAX", .8)), new TopComparison("3", "4", Map.of("AVG", .3, "MAX", .9))),
+                result);
     }
 
     private int[] distribution(List<Integer> expectedDistribution) {
@@ -67,19 +67,14 @@ public class MetricMapperTest {
         return new CreateSubmission(name);
     }
 
-    private Comparison comparison(CreateSubmission submission1, CreateSubmission submission2, double similarity) {
-        return new Comparison(submission1, submission2, similarity);
+    private Comparison comparison(CreateSubmission submission1, CreateSubmission submission2, double similarity, double maxSimilarity) {
+        return new Comparison(submission1, submission2, similarity, maxSimilarity);
     }
 
-    private JPlagResult createJPlagResult(MockMetric metricToMock, int[] distribution, Comparison... createComparisonsDto) {
+    private JPlagResult createJPlagResult(int[] avgDistribution, int[] maxDistribution, Comparison... createComparisonsDto) {
         JPlagResult jPlagResult = mock(JPlagResult.class);
-
-        if (metricToMock.equals(MockMetric.AVG)) {
-            doReturn(distribution).when(jPlagResult).getSimilarityDistribution();
-        } else if (metricToMock.equals(MockMetric.MAX)) {
-            doReturn(distribution).when(jPlagResult).getMaxSimilarityDistribution();
-
-        }
+        doReturn(avgDistribution).when(jPlagResult).getSimilarityDistribution();
+        doReturn(maxDistribution).when(jPlagResult).getMaxSimilarityDistribution();
 
         JPlagOptions options = mock(JPlagOptions.class);
         doReturn(createComparisonsDto.length).when(options).maximumNumberOfComparisons();
@@ -95,11 +90,8 @@ public class MetricMapperTest {
             JPlagComparison mockedComparison = mock(JPlagComparison.class);
             doReturn(submission1).when(mockedComparison).firstSubmission();
             doReturn(submission2).when(mockedComparison).secondSubmission();
-            if (metricToMock.equals(MockMetric.AVG)) {
-                doReturn(comparisonDto.similarity).when(mockedComparison).similarity();
-            } else if (metricToMock.equals(MockMetric.MAX)) {
-                doReturn(comparisonDto.similarity).when(mockedComparison).maximalSimilarity();
-            }
+            doReturn(comparisonDto.similarity).when(mockedComparison).similarity();
+            doReturn(comparisonDto.maxSimilarity).when(mockedComparison).maximalSimilarity();
             comparisonList.add(mockedComparison);
         }
 
@@ -107,12 +99,7 @@ public class MetricMapperTest {
         return jPlagResult;
     }
 
-    private enum MockMetric {
-        MAX,
-        AVG
-    }
-
-    private record Comparison(CreateSubmission submission1, CreateSubmission submission2, double similarity) {
+    private record Comparison(CreateSubmission submission1, CreateSubmission submission2, double similarity, double maxSimilarity) {
     }
 
     private record CreateSubmission(String name) {

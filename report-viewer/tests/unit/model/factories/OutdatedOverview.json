@@ -1,0 +1,73 @@
+{
+  "jplag_version": { "major": 3, "minor": 0, "patch": 0 },
+  "submission_folder_path": ["files"],
+  "base_code_folder_path": "",
+  "language": "Javac based AST plugin",
+  "file_extensions": [".java", ".JAVA"],
+  "submission_id_to_display_name": { "A": "A", "B": "B", "C": "C", "D": "D" },
+  "submission_ids_to_comparison_file_name": {
+    "A": { "B": "B-A.json", "C": "A-C.json", "D": "D-A.json" },
+    "B": { "A": "B-A.json", "C": "B-C.json", "D": "B-D.json" },
+    "C": { "A": "A-C.json", "B": "B-C.json", "D": "D-C.json" },
+    "D": { "A": "D-A.json", "B": "B-D.json", "C": "D-C.json" }
+  },
+  "failed_submission_names": [],
+  "excluded_files": [],
+  "match_sensitivity": 9,
+  "date_of_execution": "12/07/23",
+  "execution_time": 12,
+  "distributions": {
+    "MAX": [
+      1, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0
+    ],
+    "AVG": [
+      1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0
+    ]
+  },
+  "top_comparisons": [
+    {
+      "first_submission": "A",
+      "second_submission": "C",
+      "similarities": { "AVG": 0.9960435212660732, "MAX": 0.9960435212660732 }
+    },
+    {
+      "first_submission": "D",
+      "second_submission": "A",
+      "similarities": { "AVG": 0.751044776119403, "MAX": 0.947289156626506 }
+    },
+    {
+      "first_submission": "D",
+      "second_submission": "C",
+      "similarities": { "AVG": 0.751044776119403, "MAX": 0.947289156626506 }
+    },
+    {
+      "first_submission": "B",
+      "second_submission": "D",
+      "similarities": { "AVG": 0.28322981366459626, "MAX": 0.8085106382978723 }
+    },
+    {
+      "first_submission": "B",
+      "second_submission": "A",
+      "similarities": { "AVG": 0.2378472222222222, "MAX": 0.9716312056737588 }
+    },
+    {
+      "first_submission": "B",
+      "second_submission": "C",
+      "similarities": { "AVG": 0.2378472222222222, "MAX": 0.9716312056737588 }
+    }
+  ],
+  "clusters": [
+    {
+      "average_similarity": 94.746956,
+      "strength": 0.0,
+      "members": ["C", "A", "B", "D"]
+    }
+  ],
+  "total_comparisons": 6
+}

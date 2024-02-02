@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="ASCII"?>
+<bookStore:BookStore xmlns:bookStore="http:///com.ibm.dynamic.example.bookstore.ecore" owner="David Brown" location="Street#12, Top Town, NY">
+  <books name="Parry Hotter and the Hallow Deathly" isbn="175112"/>
+  <books name="Harry Potter and the Deathly Hallows" isbn="157221"/>
+</bookStore:BookStore>

@@ -4,25 +4,25 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.jplag.normalization.TokenStringNormalizer;
+import de.jplag.options.JPlagOptions;
 
 /**
  * Represents a single submission. A submission can contain multiple files.
  */
 public class Submission implements Comparable<Submission> {
     private static final Logger logger = LoggerFactory.getLogger(Submission.class);
-
-    /**
-     * Directory name for storing submission files with parse errors if so requested.
-     */
-    private static final String ERROR_FOLDER = "errors";
 
     /**
      * Identification of the submission (often a directory or file name).
@@ -222,7 +222,7 @@ public class Submission implements Comparable<Submission> {
     }
 
     private static File createErrorDirectory(String... subdirectoryNames) {
-        File subdirectory = Path.of(ERROR_FOLDER, subdirectoryNames).toFile();
+        File subdirectory = Path.of(JPlagOptions.ERROR_FOLDER, subdirectoryNames).toFile();
         if (!subdirectory.exists()) {
             subdirectory.mkdirs();
         }
@@ -247,8 +247,13 @@ public class Submission implements Comparable<Submission> {
 
         try {
             tokenList = language.parse(new HashSet<>(files));
+            if (logger.isDebugEnabled()) {
+                for (Token token : tokenList) {
+                    logger.debug(String.join(" | ", token.getType().toString(), Integer.toString(token.getLine()), token.getSemantics().toString()));
+                }
+            }
         } catch (ParsingException e) {
-            logger.warn("Failed to parse submission {} with error {}", this, e);
+            logger.warn("Failed to parse submission {} with error {}", this, e.getMessage(), e);
             tokenList = null;
             hasErrors = true;
             if (debugParser) {
@@ -264,5 +269,44 @@ public class Submission implements Comparable<Submission> {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Perform token string normalization, which makes the token string invariant to dead code insertion and independent
+     * statement reordering.
+     */
+    void normalize() {
+        List<Integer> originalOrder = getOrder(tokenList);
+        tokenList = TokenStringNormalizer.normalize(tokenList);
+        List<Integer> normalizedOrder = getOrder(tokenList);
+
+        logger.debug("original line order: {}", originalOrder);
+        logger.debug("line order after normalization: {}", normalizedOrder);
+        Set<Integer> normalizedSet = new HashSet<>(normalizedOrder);
+        List<Integer> removed = originalOrder.stream().filter(l -> !normalizedSet.contains(l)).toList();
+        logger.debug("removed {} line(s): {}", removed.size(), removed);
+    }
+
+    private List<Integer> getOrder(List<Token> tokenList) {
+        List<Integer> order = new ArrayList<>(tokenList.size());  // a little too big
+        int currentLineNumber = tokenList.get(0).getLine();
+        order.add(currentLineNumber);
+        for (Token token : tokenList) {
+            if (token.getLine() != currentLineNumber) {
+                currentLineNumber = token.getLine();
+                order.add(currentLineNumber);
+            }
+        }
+        return order;
+    }
+
+    /**
+     * @return Submission containing shallow copies of its fields.
+     */
+    public Submission copy() {
+        Submission copy = new Submission(name, submissionRootFile, isNew, files, language);
+        copy.setTokenList(new ArrayList<>(tokenList));
+        copy.setBaseCodeComparison(baseCodeComparison);
+        return copy;
     }
 }

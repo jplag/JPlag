@@ -14,6 +14,7 @@
         <module>csharp</module>
         <module>emf-metamodel</module>
         <module>emf-metamodel-dynamic</module>
+        <module>emf-model</module>
         <module>golang</module>
         <module>java</module>
         <module>kotlin</module>
@@ -22,8 +23,12 @@
         <module>rust</module>
         <module>scala</module>
         <module>scheme</module>
+        <module>scxml</module>
         <module>swift</module>
         <module>text</module>
+        <module>typescript</module>
+        <module>javascript</module>
+        <module>llvmir</module>
     </modules>
     <dependencies>
         <dependency>

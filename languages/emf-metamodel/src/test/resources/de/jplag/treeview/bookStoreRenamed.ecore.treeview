@@ -1,0 +1,13 @@
+BookStorePackage : EPackage
+  Store : EClass
+    nameOfOwner : EAttribute
+      EGenericType
+    city : EAttribute
+      EGenericType
+    soldItems : EReference
+      EGenericType
+  Item : EClass
+    title : EAttribute
+      EGenericType
+    identifier : EAttribute
+      EGenericType

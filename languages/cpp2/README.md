@@ -27,6 +27,11 @@ More syntactic elements of C/C++ may turn out to be helpful to include in the fu
 
 To use the C++ frontend, add the `-l cpp2` flag in the CLI, or use a `JPlagOption` object with `new de.jplag.cpp2.CPPLanguage()` as `Language` in the Java API as described in the usage information in the [readme of the main project](https://github.com/jplag/JPlag#usage) and [in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).
 
+### Changes to the Grammar
+
+There is one change in our grammar compared to the original one. In the rule for "theOperator" 'DivAssign' was added as a case.
+This is an error in the original version.
+
 <br>
 
 #### Footnotes

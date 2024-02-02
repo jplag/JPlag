@@ -5,39 +5,29 @@ on:
  push:
     branches:
       - develop
+    paths:
+      - ".github/workflows/report-viewer-dev.yml"
+      - "report-viewer/**"
       
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: "16"
-
-      - name: Set version of Report Viewer
-        shell: bash
-        run: |
-          VERSION=$(grep "<revision>" pom.xml | grep -oPm1 "(?<=<revision>)[^-|<]+")
-          MAJOR=$(echo $VERSION | cut -d '.' -f 1)
-          MINOR=$(echo $VERSION | cut -d '.' -f 2)
-          PATCH=$(echo $VERSION | cut -d '.' -f 3)
-          sed -i "/major/s/.*/    \"major\": $MAJOR,/" report-viewer/src/version.json
-          sed -i "/minor/s/.*/    \"minor\": $MINOR,/" report-viewer/src/version.json
-          sed -i "/patch/s/.*/    \"patch\": $PATCH/" report-viewer/src/version.json
-          echo "Version of Report Viewer:"
-          cat report-viewer/src/version.json
+          node-version: "18"
 
       - name: Install and Build 🔧
         working-directory: report-viewer
         run: |
           npm install
-          npm run build
+          npm run build-dev
 
       - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@v4.4.0
+        uses: JamesIves/github-pages-deploy-action@v4.5.0
         with:
           branch: gh-pages
           folder: report-viewer/dist

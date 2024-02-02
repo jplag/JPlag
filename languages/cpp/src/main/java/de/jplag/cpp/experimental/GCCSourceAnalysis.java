@@ -24,6 +24,7 @@ public class GCCSourceAnalysis implements SourceAnalysis {
         this.logger = LoggerFactory.getLogger(this.getClass());
     }
 
+    @Override
     public boolean isTokenIgnored(de.jplag.cpp.Token token, File file) {
         String fileName = file.getName();
         if (linesToDelete.containsKey(fileName)) {
@@ -33,6 +34,7 @@ public class GCCSourceAnalysis implements SourceAnalysis {
         return false;
     }
 
+    @Override
     public void findUnusedVariableLines(Set<File> files) throws InterruptedException {
         linesToDelete = new HashMap<>();
 

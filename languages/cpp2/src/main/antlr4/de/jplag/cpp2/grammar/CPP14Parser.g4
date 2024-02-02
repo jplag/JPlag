@@ -790,6 +790,7 @@ theOperator:
 	| GreaterEqual
 	| PlusAssign
 	| MinusAssign
+	| DivAssign // Different from the original grammar from the antlr repos.
 	| StarAssign
 	| ModAssign
 	| XorAssign

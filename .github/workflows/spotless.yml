@@ -1,9 +1,19 @@
 name: Spotless Style Check
 
 on:
-  push: 
+  push:
+    paths:
+      - ".github/workflows/spotless.yml"
+      - "**/pom.xml"
+      - "**.java"
+      - "**.g4"
   pull_request:
     types: [opened, synchronize, reopened]
+    paths:
+      - ".github/workflows/spotless.yml"
+      - "**/pom.xml"
+      - "**.java"
+      - "**.g4"
   
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -26,12 +36,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Set up JDK
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
-        java-version: 17
+        java-version: 21
         distribution: 'temurin'
       
     - name: Check with Spotless

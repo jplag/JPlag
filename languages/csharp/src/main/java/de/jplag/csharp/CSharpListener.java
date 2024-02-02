@@ -19,7 +19,6 @@ import static de.jplag.csharp.CSharpTokenType.CONSTRUCTOR;
 import static de.jplag.csharp.CSharpTokenType.CONTINUE;
 import static de.jplag.csharp.CSharpTokenType.DELEGATE;
 import static de.jplag.csharp.CSharpTokenType.DESTRUCTOR;
-import static de.jplag.csharp.CSharpTokenType.DO;
 import static de.jplag.csharp.CSharpTokenType.ENUM;
 import static de.jplag.csharp.CSharpTokenType.ENUMERAL;
 import static de.jplag.csharp.CSharpTokenType.ENUM_BEGIN;
@@ -28,8 +27,6 @@ import static de.jplag.csharp.CSharpTokenType.EVENT;
 import static de.jplag.csharp.CSharpTokenType.FIELD;
 import static de.jplag.csharp.CSharpTokenType.FINALLY;
 import static de.jplag.csharp.CSharpTokenType.FIXED;
-import static de.jplag.csharp.CSharpTokenType.FOR;
-import static de.jplag.csharp.CSharpTokenType.FOREACH;
 import static de.jplag.csharp.CSharpTokenType.GOTO;
 import static de.jplag.csharp.CSharpTokenType.IF;
 import static de.jplag.csharp.CSharpTokenType.IF_BEGIN;
@@ -41,9 +38,12 @@ import static de.jplag.csharp.CSharpTokenType.INTERFACE_END;
 import static de.jplag.csharp.CSharpTokenType.INVOCATION;
 import static de.jplag.csharp.CSharpTokenType.LOCAL_VARIABLE;
 import static de.jplag.csharp.CSharpTokenType.LOCK;
+import static de.jplag.csharp.CSharpTokenType.LOOP_BEGIN;
+import static de.jplag.csharp.CSharpTokenType.LOOP_END;
 import static de.jplag.csharp.CSharpTokenType.METHOD;
 import static de.jplag.csharp.CSharpTokenType.METHOD_BEGIN;
 import static de.jplag.csharp.CSharpTokenType.METHOD_END;
+import static de.jplag.csharp.CSharpTokenType.NAMESPACE;
 import static de.jplag.csharp.CSharpTokenType.NAMESPACE_BEGIN;
 import static de.jplag.csharp.CSharpTokenType.NAMESPACE_END;
 import static de.jplag.csharp.CSharpTokenType.OBJECT_CREATION;
@@ -59,25 +59,39 @@ import static de.jplag.csharp.CSharpTokenType.THROW;
 import static de.jplag.csharp.CSharpTokenType.TRY;
 import static de.jplag.csharp.CSharpTokenType.UNCHECKED;
 import static de.jplag.csharp.CSharpTokenType.UNSAFE;
-import static de.jplag.csharp.CSharpTokenType.USING;
 import static de.jplag.csharp.CSharpTokenType.USING_DIRECTIVE;
-import static de.jplag.csharp.CSharpTokenType.WHILE;
+import static de.jplag.csharp.grammar.CSharpParser.ELSE;
+import static de.jplag.csharp.grammar.CSharpParser.OP_ADD_ASSIGNMENT;
+import static de.jplag.csharp.grammar.CSharpParser.OP_AND_ASSIGNMENT;
+import static de.jplag.csharp.grammar.CSharpParser.OP_COALESCING_ASSIGNMENT;
+import static de.jplag.csharp.grammar.CSharpParser.OP_DEC;
+import static de.jplag.csharp.grammar.CSharpParser.OP_DIV_ASSIGNMENT;
+import static de.jplag.csharp.grammar.CSharpParser.OP_INC;
+import static de.jplag.csharp.grammar.CSharpParser.OP_MOD_ASSIGNMENT;
+import static de.jplag.csharp.grammar.CSharpParser.OP_MULT_ASSIGNMENT;
+import static de.jplag.csharp.grammar.CSharpParser.OP_OR_ASSIGNMENT;
+import static de.jplag.csharp.grammar.CSharpParser.OP_SUB_ASSIGNMENT;
+import static de.jplag.csharp.grammar.CSharpParser.OP_XOR_ASSIGNMENT;
 
-import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.ParserRuleContext;
 
+import de.jplag.antlr.AbstractAntlrListener;
 import de.jplag.csharp.grammar.CSharpParser.Accessor_bodyContext;
 import de.jplag.csharp.grammar.CSharpParser.Accessor_declarationsContext;
 import de.jplag.csharp.grammar.CSharpParser.Array_initializerContext;
 import de.jplag.csharp.grammar.CSharpParser.Assignment_operatorContext;
 import de.jplag.csharp.grammar.CSharpParser.AttributeContext;
+import de.jplag.csharp.grammar.CSharpParser.BodyContext;
 import de.jplag.csharp.grammar.CSharpParser.BreakStatementContext;
-import de.jplag.csharp.grammar.CSharpParser.Catch_clausesContext;
+import de.jplag.csharp.grammar.CSharpParser.CheckedExpressionContext;
 import de.jplag.csharp.grammar.CSharpParser.CheckedStatementContext;
 import de.jplag.csharp.grammar.CSharpParser.Class_bodyContext;
 import de.jplag.csharp.grammar.CSharpParser.Class_definitionContext;
+import de.jplag.csharp.grammar.CSharpParser.Common_member_declarationContext;
 import de.jplag.csharp.grammar.CSharpParser.Constant_declarationContext;
 import de.jplag.csharp.grammar.CSharpParser.Constructor_declarationContext;
 import de.jplag.csharp.grammar.CSharpParser.ContinueStatementContext;
+import de.jplag.csharp.grammar.CSharpParser.Conversion_operator_declaratorContext;
 import de.jplag.csharp.grammar.CSharpParser.Delegate_definitionContext;
 import de.jplag.csharp.grammar.CSharpParser.Destructor_definitionContext;
 import de.jplag.csharp.grammar.CSharpParser.DoStatementContext;
@@ -94,425 +108,160 @@ import de.jplag.csharp.grammar.CSharpParser.GotoStatementContext;
 import de.jplag.csharp.grammar.CSharpParser.IfStatementContext;
 import de.jplag.csharp.grammar.CSharpParser.If_bodyContext;
 import de.jplag.csharp.grammar.CSharpParser.Indexer_declarationContext;
-import de.jplag.csharp.grammar.CSharpParser.Interface_bodyContext;
 import de.jplag.csharp.grammar.CSharpParser.Interface_definitionContext;
+import de.jplag.csharp.grammar.CSharpParser.Local_constant_declarationContext;
 import de.jplag.csharp.grammar.CSharpParser.Local_variable_declarationContext;
 import de.jplag.csharp.grammar.CSharpParser.LockStatementContext;
 import de.jplag.csharp.grammar.CSharpParser.Method_bodyContext;
 import de.jplag.csharp.grammar.CSharpParser.Method_declarationContext;
 import de.jplag.csharp.grammar.CSharpParser.Method_invocationContext;
 import de.jplag.csharp.grammar.CSharpParser.Namespace_bodyContext;
+import de.jplag.csharp.grammar.CSharpParser.Namespace_declarationContext;
+import de.jplag.csharp.grammar.CSharpParser.Namespace_or_type_nameContext;
 import de.jplag.csharp.grammar.CSharpParser.Object_creation_expressionContext;
 import de.jplag.csharp.grammar.CSharpParser.Operator_declarationContext;
 import de.jplag.csharp.grammar.CSharpParser.Property_declarationContext;
 import de.jplag.csharp.grammar.CSharpParser.ReturnStatementContext;
+import de.jplag.csharp.grammar.CSharpParser.Shift_expressionContext;
+import de.jplag.csharp.grammar.CSharpParser.Specific_catch_clauseContext;
 import de.jplag.csharp.grammar.CSharpParser.Struct_bodyContext;
 import de.jplag.csharp.grammar.CSharpParser.Struct_definitionContext;
 import de.jplag.csharp.grammar.CSharpParser.SwitchStatementContext;
 import de.jplag.csharp.grammar.CSharpParser.Switch_sectionContext;
 import de.jplag.csharp.grammar.CSharpParser.ThrowStatementContext;
 import de.jplag.csharp.grammar.CSharpParser.TryStatementContext;
+import de.jplag.csharp.grammar.CSharpParser.Type_argument_listContext;
 import de.jplag.csharp.grammar.CSharpParser.UncheckedExpressionContext;
+import de.jplag.csharp.grammar.CSharpParser.UncheckedStatementContext;
 import de.jplag.csharp.grammar.CSharpParser.UnsafeStatementContext;
-import de.jplag.csharp.grammar.CSharpParser.UsingStatementContext;
-import de.jplag.csharp.grammar.CSharpParser.Using_directivesContext;
+import de.jplag.csharp.grammar.CSharpParser.UsingAliasDirectiveContext;
+import de.jplag.csharp.grammar.CSharpParser.UsingNamespaceDirectiveContext;
+import de.jplag.csharp.grammar.CSharpParser.UsingStaticDirectiveContext;
 import de.jplag.csharp.grammar.CSharpParser.WhileStatementContext;
-import de.jplag.csharp.grammar.CSharpParserBaseListener;
 
 /**
- * Listener class for visiting the C# ANTLR parse tree. Transforms selected ANTLR token into JPlag tokens.
- * @author Timur Saglam
+ * Extracts tokens for the {@link CSharpLanguage}
  */
-public class CSharpListener extends CSharpParserBaseListener {
+public class CSharpListener extends AbstractAntlrListener {
+    public CSharpListener() {
+        visit(UsingNamespaceDirectiveContext.class).map(USING_DIRECTIVE);
+        visit(UsingAliasDirectiveContext.class, this::isAliasUsageAlsoImport).map(USING_DIRECTIVE);
+        visit(UsingStaticDirectiveContext.class).map(USING_DIRECTIVE);
 
-    private final CSharpParserAdapter parserAdapter;
+        visit(Method_invocationContext.class).map(INVOCATION);
+        visit(Object_creation_expressionContext.class).map(OBJECT_CREATION);
+        visit(Array_initializerContext.class).map(ARRAY_CREATION);
+        visit(Assignment_operatorContext.class).map(ASSIGNMENT);
+        visit(IfStatementContext.class).map(IF);
+        visit(ELSE).map(IF);
+        visit(If_bodyContext.class).map(IF_BEGIN, IF_END);
+        visit(Switch_sectionContext.class).map(SWITCH_BEGIN, SWITCH_END);
+        visit(SwitchStatementContext.class).map(CASE);
 
-    /**
-     * Creates the listener.
-     * @param parserAdapter is the JPlag parser adapter which receives the transformed tokens.
-     */
-    public CSharpListener(CSharpParserAdapter parserAdapter) {
-        this.parserAdapter = parserAdapter;
+        visit(DoStatementContext.class).map(LOOP_BEGIN, LOOP_END);
+        visit(WhileStatementContext.class).map(LOOP_BEGIN, LOOP_END);
+        visit(ForStatementContext.class).map(LOOP_BEGIN, LOOP_END);
+        visit(ForeachStatementContext.class).map(LOOP_BEGIN, LOOP_END);
+
+        visit(BreakStatementContext.class).map(BREAK);
+        visit(ContinueStatementContext.class).map(CONTINUE);
+        visit(GotoStatementContext.class).map(GOTO);
+
+        visit(ReturnStatementContext.class).map(RETURN);
+        visit(ThrowStatementContext.class).map(THROW);
+
+        visit(CheckedStatementContext.class).map(CHECKED);
+        visit(CheckedExpressionContext.class).map(CHECKED);
+        visit(UncheckedStatementContext.class).map(UNCHECKED);
+        visit(UncheckedExpressionContext.class).map(UNCHECKED);
+
+        visit(LockStatementContext.class).map(LOCK);
+
+        visit(TryStatementContext.class).map(TRY);
+        visit(Specific_catch_clauseContext.class).map(CATCH);
+        visit(Finally_clauseContext.class).map(FINALLY);
+
+        visit(Namespace_declarationContext.class).map(NAMESPACE);
+        visit(Namespace_bodyContext.class).map(NAMESPACE_BEGIN, NAMESPACE_END);
+        visit(Class_definitionContext.class).map(CLASS);
+        visit(Class_bodyContext.class, this::isClassBody).map(CLASS_BEGIN, CLASS_END);
+        visit(Method_declarationContext.class).map(METHOD);
+        visit(Method_bodyContext.class).map(METHOD_BEGIN, METHOD_END);
+        visit(Property_declarationContext.class).map(PROPERTY);
+        visit(Event_declarationContext.class).map(EVENT);
+        visit(Indexer_declarationContext.class).map(INDEXER);
+        visit(Operator_declarationContext.class).map(OPERATOR);
+        visit(BodyContext.class, this::isOperatorBody).map(METHOD_BEGIN, METHOD_END);
+        visit(Conversion_operator_declaratorContext.class).map(OPERATOR);
+        visit(BodyContext.class, this::isConversionOperatorBody).map(METHOD_BEGIN, METHOD_END);
+        visit(Constructor_declarationContext.class).map(CONSTRUCTOR);
+        visit(BodyContext.class, this::isConstructorBody).map(METHOD_BEGIN, METHOD_END);
+        visit(Destructor_definitionContext.class).map(DESTRUCTOR);
+        visit(Struct_definitionContext.class).map(STRUCT);
+        visit(Struct_bodyContext.class).map(STRUCT_BEGIN, STRUCT_END);
+        visit(Interface_definitionContext.class).map(INTERFACE);
+        visit(Class_bodyContext.class, this::isInterfaceBody).map(INTERFACE_BEGIN, INTERFACE_END);
+        visit(Enum_definitionContext.class).map(ENUM);
+        visit(Enum_bodyContext.class).map(ENUM_BEGIN, ENUM_END);
+        visit(Enum_member_declarationContext.class).map(ENUMERAL);
+        visit(AttributeContext.class).map(ATTRIBUTE);
+        visit(Delegate_definitionContext.class).map(DELEGATE);
+        visit(UnsafeStatementContext.class).map(UNSAFE);
+        visit(FixedStatementContext.class).map(FIXED);
+        visit(Accessor_declarationsContext.class).map(ACCESSORS_BEGIN, ACCESSORS_END);
+        visit(Accessor_bodyContext.class).map(ACCESSOR_BEGIN, ACCESSOR_END);
+        visit(Constant_declarationContext.class).map(CONSTANT);
+        visit(Field_declarationContext.class).map(FIELD);
+        visit(Local_variable_declarationContext.class).map(LOCAL_VARIABLE);
+        visit(Local_constant_declarationContext.class).map(LOCAL_VARIABLE);
+
+        registerUnaryOperatorVisitors();
     }
 
-    /**
-     * Transforms an ANTLR Token into a JPlag token and transfers it to the token adapter.
-     * @param targetType is the type of the JPlag token to be created.
-     * @param token is the ANTLR token.
-     */
-    private void transformToken(CSharpTokenType targetType, Token token) {
-        parserAdapter.addToken(targetType, token.getLine(), token.getCharPositionInLine() + 1, token.getText().length());
+    private void registerUnaryOperatorVisitors() {
+        visit(OP_DEC).map(ASSIGNMENT);
+        visit(OP_INC).map(ASSIGNMENT);
+
+        visit(Shift_expressionContext.class, expr -> expr.additive_expression().size() == 2).map(ASSIGNMENT);
+
+        visit(OP_ADD_ASSIGNMENT).map(ASSIGNMENT);
+        visit(OP_SUB_ASSIGNMENT).map(ASSIGNMENT);
+        visit(OP_AND_ASSIGNMENT).map(ASSIGNMENT);
+        visit(OP_DIV_ASSIGNMENT).map(ASSIGNMENT);
+        visit(OP_MOD_ASSIGNMENT).map(ASSIGNMENT);
+        visit(OP_OR_ASSIGNMENT).map(ASSIGNMENT);
+        visit(OP_XOR_ASSIGNMENT).map(ASSIGNMENT);
+        visit(OP_MULT_ASSIGNMENT).map(ASSIGNMENT);
+        visit(OP_COALESCING_ASSIGNMENT).map(ASSIGNMENT);
     }
 
-    @Override
-    public void enterMethod_invocation(Method_invocationContext context) {
-        transformToken(INVOCATION, context.getStart());
-        super.enterMethod_invocation(context);
+    private boolean isClassBody(ParserRuleContext context) {
+        return hasAncestor(context, Class_definitionContext.class, Interface_definitionContext.class);
     }
 
-    @Override
-    public void enterObject_creation_expression(Object_creation_expressionContext context) {
-        transformToken(OBJECT_CREATION, context.getStart());
-        super.enterObject_creation_expression(context);
+    private boolean isInterfaceBody(ParserRuleContext context) {
+        return hasAncestor(context, Interface_definitionContext.class, Class_definitionContext.class);
     }
 
-    @Override
-    public void enterArray_initializer(Array_initializerContext context) {
-        transformToken(ARRAY_CREATION, context.getStart());
-        super.enterArray_initializer(context);
+    private boolean isConstructorBody(BodyContext context) {
+        return context.parent instanceof Constructor_declarationContext;
     }
 
-    @Override
-    public void enterAssignment_operator(Assignment_operatorContext context) {
-        transformToken(ASSIGNMENT, context.getStart());
-        super.enterAssignment_operator(context);
+    private boolean isOperatorBody(BodyContext context) {
+        return context.parent instanceof Operator_declarationContext;
     }
 
-    @Override
-    public void enterIfStatement(IfStatementContext context) {
-        transformToken(IF, context.getStart());
-        super.enterIfStatement(context);
+    private boolean isConversionOperatorBody(BodyContext context) {
+        if (!(context.parent instanceof Common_member_declarationContext parent)) {
+            return false;
+        }
+
+        return parent.conversion_operator_declarator() != null;
     }
 
-    @Override
-    public void enterIf_body(If_bodyContext context) {
-        transformToken(IF_BEGIN, context.getStart());
-        super.enterIf_body(context);
-    }
+    private boolean isAliasUsageAlsoImport(UsingAliasDirectiveContext context) {
+        Namespace_or_type_nameContext namespace = getDescendant(context, Namespace_or_type_nameContext.class);
 
-    @Override
-    public void exitIf_body(If_bodyContext context) {
-        transformToken(IF_END, context.getStop());
-        super.exitIf_body(context);
-    }
-
-    @Override
-    public void enterSwitch_section(Switch_sectionContext context) {
-        transformToken(SWITCH_BEGIN, context.getStart());
-        super.enterSwitch_section(context);
-    }
-
-    @Override
-    public void exitSwitch_section(Switch_sectionContext context) {
-        transformToken(SWITCH_END, context.getStop());
-        super.exitSwitch_section(context);
-    }
-
-    @Override
-    public void enterSwitchStatement(SwitchStatementContext context) {
-        transformToken(CASE, context.getStart());
-        super.enterSwitchStatement(context);
-    }
-
-    @Override
-    public void enterDoStatement(DoStatementContext context) {
-        transformToken(DO, context.getStart());
-        super.enterDoStatement(context);
-    }
-
-    @Override
-    public void enterWhileStatement(WhileStatementContext context) {
-        transformToken(WHILE, context.getStart());
-        super.enterWhileStatement(context);
-    }
-
-    @Override
-    public void enterForStatement(ForStatementContext context) {
-        transformToken(FOR, context.getStart());
-        super.enterForStatement(context);
-    }
-
-    @Override
-    public void enterForeachStatement(ForeachStatementContext context) {
-        transformToken(FOREACH, context.getStart());
-        super.enterForeachStatement(context);
-    }
-
-    @Override
-    public void enterBreakStatement(BreakStatementContext context) {
-        transformToken(BREAK, context.getStart());
-        super.enterBreakStatement(context);
-    }
-
-    @Override
-    public void enterContinueStatement(ContinueStatementContext context) {
-        transformToken(CONTINUE, context.getStart());
-        super.enterContinueStatement(context);
-    }
-
-    @Override
-    public void enterGotoStatement(GotoStatementContext context) {
-        transformToken(GOTO, context.getStart());
-        super.enterGotoStatement(context);
-    }
-
-    @Override
-    public void enterReturnStatement(ReturnStatementContext context) {
-        transformToken(RETURN, context.getStart());
-        super.enterReturnStatement(context);
-    }
-
-    @Override
-    public void enterThrowStatement(ThrowStatementContext context) {
-        transformToken(THROW, context.getStart());
-        super.enterThrowStatement(context);
-    }
-
-    @Override
-    public void enterCheckedStatement(CheckedStatementContext context) {
-        transformToken(CHECKED, context.getStart());
-        super.enterCheckedStatement(context);
-    }
-
-    @Override
-    public void enterUncheckedExpression(UncheckedExpressionContext context) {
-        transformToken(UNCHECKED, context.getStart());
-        super.enterUncheckedExpression(context);
-    }
-
-    @Override
-    public void enterLockStatement(LockStatementContext context) {
-        transformToken(LOCK, context.getStart());
-        super.enterLockStatement(context);
-    }
-
-    @Override
-    public void enterUsingStatement(UsingStatementContext context) {
-        transformToken(USING, context.getStart());
-        super.enterUsingStatement(context);
-    }
-
-    @Override
-    public void enterTryStatement(TryStatementContext context) {
-        transformToken(TRY, context.getStart());
-        super.enterTryStatement(context);
-    }
-
-    @Override
-    public void enterCatch_clauses(Catch_clausesContext context) {
-        transformToken(CATCH, context.getStart());
-        super.enterCatch_clauses(context);
-    }
-
-    @Override
-    public void enterFinally_clause(Finally_clauseContext context) {
-        transformToken(FINALLY, context.getStart());
-        super.enterFinally_clause(context);
-    }
-
-    @Override
-    public void enterNamespace_body(Namespace_bodyContext context) {
-        transformToken(NAMESPACE_BEGIN, context.getStart());
-        super.enterNamespace_body(context);
-    }
-
-    @Override
-    public void exitNamespace_body(Namespace_bodyContext context) {
-        transformToken(NAMESPACE_END, context.getStop());
-        super.exitNamespace_body(context);
-    }
-
-    @Override
-    public void enterUsing_directives(Using_directivesContext context) {
-        transformToken(USING_DIRECTIVE, context.getStart());
-        super.enterUsing_directives(context);
-    }
-
-    @Override
-    public void enterClass_definition(Class_definitionContext context) {
-        transformToken(CLASS, context.getStart());
-        super.enterClass_definition(context);
-    }
-
-    @Override
-    public void enterClass_body(Class_bodyContext context) {
-        transformToken(CLASS_BEGIN, context.getStart());
-        super.enterClass_body(context);
-    }
-
-    @Override
-    public void exitClass_body(Class_bodyContext context) {
-        transformToken(CLASS_END, context.getStop());
-        super.exitClass_body(context);
-    }
-
-    @Override
-    public void enterMethod_declaration(Method_declarationContext context) {
-        transformToken(METHOD, context.getStart());
-        super.enterMethod_declaration(context);
-    }
-
-    @Override
-    public void enterMethod_body(Method_bodyContext context) {
-        transformToken(METHOD_BEGIN, context.getStart());
-        super.enterMethod_body(context);
-    }
-
-    @Override
-    public void exitMethod_body(Method_bodyContext context) {
-        transformToken(METHOD_END, context.getStop());
-        super.exitMethod_body(context);
-    }
-
-    @Override
-    public void enterProperty_declaration(Property_declarationContext context) {
-        transformToken(PROPERTY, context.getStart());
-        super.enterProperty_declaration(context);
-    }
-
-    @Override
-    public void enterEvent_declaration(Event_declarationContext context) {
-        transformToken(EVENT, context.getStart());
-        super.enterEvent_declaration(context);
-    }
-
-    @Override
-    public void enterIndexer_declaration(Indexer_declarationContext context) {
-        transformToken(INDEXER, context.getStart());
-        super.enterIndexer_declaration(context);
-    }
-
-    @Override
-    public void enterOperator_declaration(Operator_declarationContext context) {
-        transformToken(OPERATOR, context.getStart());
-        super.enterOperator_declaration(context);
-    }
-
-    @Override
-    public void enterConstructor_declaration(Constructor_declarationContext context) {
-        transformToken(CONSTRUCTOR, context.getStart());
-        super.enterConstructor_declaration(context);
-    }
-
-    @Override
-    public void enterDestructor_definition(Destructor_definitionContext context) {
-        transformToken(DESTRUCTOR, context.getStart());
-        super.enterDestructor_definition(context);
-    }
-
-    @Override
-    public void enterStruct_definition(Struct_definitionContext context) {
-        transformToken(STRUCT, context.getStart());
-        super.enterStruct_definition(context);
-    }
-
-    @Override
-    public void enterStruct_body(Struct_bodyContext context) {
-        transformToken(STRUCT_BEGIN, context.getStart());
-        super.enterStruct_body(context);
-    }
-
-    @Override
-    public void exitStruct_body(Struct_bodyContext context) {
-        transformToken(STRUCT_END, context.getStop());
-        super.exitStruct_body(context);
-    }
-
-    @Override
-    public void enterInterface_definition(Interface_definitionContext context) {
-        transformToken(INTERFACE, context.getStart());
-        super.enterInterface_definition(context);
-    }
-
-    @Override
-    public void enterInterface_body(Interface_bodyContext context) {
-        transformToken(INTERFACE_BEGIN, context.getStart());
-        super.enterInterface_body(context);
-    }
-
-    @Override
-    public void exitInterface_body(Interface_bodyContext context) {
-        transformToken(INTERFACE_END, context.getStart());
-        super.exitInterface_body(context);
-    }
-
-    @Override
-    public void enterEnum_definition(Enum_definitionContext context) {
-        transformToken(ENUM, context.getStart());
-        super.enterEnum_definition(context);
-    }
-
-    @Override
-    public void enterEnum_body(Enum_bodyContext context) {
-        transformToken(ENUM_BEGIN, context.getStart());
-        super.enterEnum_body(context);
-    }
-
-    @Override
-    public void exitEnum_body(Enum_bodyContext context) {
-        transformToken(ENUM_END, context.getStop());
-        super.exitEnum_body(context);
-    }
-
-    @Override
-    public void enterEnum_member_declaration(Enum_member_declarationContext context) {
-        transformToken(ENUMERAL, context.getStart());
-        super.enterEnum_member_declaration(context);
-    }
-
-    @Override
-    public void enterAttribute(AttributeContext context) {
-        transformToken(ATTRIBUTE, context.getStart());
-        super.enterAttribute(context);
-    }
-
-    @Override
-    public void enterDelegate_definition(Delegate_definitionContext context) {
-        transformToken(DELEGATE, context.getStart());
-        super.enterDelegate_definition(context);
-    }
-
-    @Override
-    public void enterUnsafeStatement(UnsafeStatementContext context) {
-        transformToken(UNSAFE, context.getStart());
-        super.enterUnsafeStatement(context);
-    }
-
-    @Override
-    public void enterFixedStatement(FixedStatementContext context) {
-        transformToken(FIXED, context.getStart());
-        super.enterFixedStatement(context);
-    }
-
-    @Override
-    public void enterAccessor_declarations(Accessor_declarationsContext context) {
-        transformToken(ACCESSORS_BEGIN, context.getStart());
-        super.enterAccessor_declarations(context);
-    }
-
-    @Override
-    public void exitAccessor_declarations(Accessor_declarationsContext context) {
-        transformToken(ACCESSORS_END, context.getStart());
-        super.enterAccessor_declarations(context);
-    }
-
-    @Override
-    public void enterAccessor_body(Accessor_bodyContext context) {
-        transformToken(ACCESSOR_BEGIN, context.getStart());
-        super.enterAccessor_body(context);
-    }
-
-    @Override
-    public void exitAccessor_body(Accessor_bodyContext context) {
-        transformToken(ACCESSOR_END, context.getStart());
-        super.exitAccessor_body(context);
-    }
-
-    @Override
-    public void enterConstant_declaration(Constant_declarationContext context) {
-        transformToken(CONSTANT, context.getStart());
-        super.enterConstant_declaration(context);
-    }
-
-    @Override
-    public void enterField_declaration(Field_declarationContext context) {
-        transformToken(FIELD, context.getStart());
-        super.enterField_declaration(context);
-    }
-
-    @Override
-    public void enterLocal_variable_declaration(Local_variable_declarationContext context) {
-        transformToken(LOCAL_VARIABLE, context.getStart());
-        super.enterLocal_variable_declaration(context);
+        return namespace != null && (!namespace.DOT().isEmpty() && getDescendant(namespace, Type_argument_listContext.class) == null);
     }
 }

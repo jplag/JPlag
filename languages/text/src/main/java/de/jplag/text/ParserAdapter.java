@@ -2,7 +2,6 @@ package de.jplag.text;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -11,6 +10,7 @@ import java.util.Set;
 import de.jplag.AbstractParser;
 import de.jplag.ParsingException;
 import de.jplag.Token;
+import de.jplag.util.FileUtils;
 
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.CoreDocument;
@@ -100,7 +100,7 @@ public class ParserAdapter extends AbstractParser {
 
     private String readFile(File file) throws ParsingException {
         try {
-            return Files.readString(file.toPath());
+            return FileUtils.readFileContent(file);
         } catch (IOException e) {
             throw new ParsingException(file, e.getMessage(), e);
         }

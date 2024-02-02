@@ -1,0 +1,35 @@
+main_region: Region {
+  Start: Initial state {
+    Transition (-> Blinking) (event='user.press_button') {
+      Assignment
+    }
+  }
+  Blinking: Region {
+    OnEntry {
+      Assignment
+    }
+    Transition (-> Start) (event='user.press_button') {
+    }
+    Light: State {
+      OnEntry {
+        If {
+          Assignment
+        }
+      }
+      Transition (-> Dark)  {
+      }
+    }
+    Dark: State {
+      OnEntry {
+        Send (event='A', delay='1s') {
+      }
+      OnExit {
+        Cancel
+      }
+      Transition (-> Light) (event='C') {
+      }
+      Transition (-> Start) (cond='t == 5') {
+      }
+    }
+  }
+}

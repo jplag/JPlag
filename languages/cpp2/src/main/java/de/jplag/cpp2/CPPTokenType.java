@@ -25,7 +25,8 @@ public enum CPPTokenType implements TokenType {
     SWITCH_BEGIN("SWITCH{"),
     SWITCH_END("}SWITCH"),
     CASE("CASE"),
-    TRY("TRY"),
+    TRY_BEGIN("TRY{"),
+    TRY_END("}TRY"),
     CATCH_BEGIN("CATCH{"),
     CATCH_END("}CATCH"),
     IF_BEGIN("IF{"),
@@ -45,7 +46,6 @@ public enum CPPTokenType implements TokenType {
     STATIC_ASSERT("STATIC_ASSERT"),
     VARDEF("VARDEF"),
     QUESTIONMARK("COND"),
-    ATTRIBUTE("ATTRIBUTE"),
     DEFAULT("DEFAULT"),
     APPLY("APPLY");
 

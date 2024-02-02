@@ -9,17 +9,18 @@ import java.util.List;
  * @param secondSubmission is the second of the two submissions.
  * @param matches is the unmodifiable list of all matches between the two submissions.
  */
-public record JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches) {
+public record JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches, List<Match> ignoredMatches) {
     /**
      * Initializes a new comparison.
      * @param firstSubmission is the first of the two submissions.
      * @param secondSubmission is the second of the two submissions.
      * @param matches is the list of all matches between the two submissions.
      */
-    public JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches) {
+    public JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches, List<Match> ignoredMatches) {
         this.firstSubmission = firstSubmission;
         this.secondSubmission = secondSubmission;
         this.matches = Collections.unmodifiableList(matches);
+        this.ignoredMatches = Collections.unmodifiableList(ignoredMatches);
     }
 
     /**

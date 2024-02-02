@@ -2,350 +2,330 @@
   Table which display all of the comparisons with their participating ids and similarity percentage for the selected metric.
 -->
 <template>
-  <table>
-    <tr class="head-row">
-      <th>No.</th>
-      <th>Submission 1</th>
-      <th></th>
-      <th>Submission 2</th>
-      <th>Match %</th>
-    </tr>
-  </table>
+  <div class="flex flex-col">
+    <ComparisonTableFilter
+      v-model:search-string="searchString"
+      :enable-cluster-sorting="clusters != undefined"
+      :header="header"
+    />
 
-  <DynamicScroller
-      v-if="topComparisons.length>0"
-      class="scroller"
-      :items="topComparisons"
-      :min-item-size="48"
-  >
-    <template v-slot="{ item, index, active }">
-      <DynamicScrollerItem
-          :item="item"
-          :active="active"
-          :size-dependencies="[
-          item.firstSubmissionId,
-          item.secondSubmissionId,
-        ]"
-          :data-index="index"
-      >
-        <table class="inside-table">
-          <tr :class="{'selectableEven': item.id % 2 === 0, 'selectableOdd': item.id % 2 !== 0}">
-            <td
-                @click="
-          navigateToComparisonView(
-            item.firstSubmissionId,
-            item.secondSubmissionId
-          )
-        "
-                class="td1"
+    <div class="flex flex-col overflow-hidden">
+      <div class="font-bold">
+        <!-- Header -->
+        <div class="tableRow">
+          <div class="tableCellNumber"></div>
+          <div class="tableCellName items-center">Submissions in Comparison</div>
+          <div class="tableCellSimilarity !flex-col">
+            <div>Similarity</div>
+            <div class="flex w-full flex-row">
+              <ToolTipComponent class="flex-1" :direction="displayClusters ? 'top' : 'left'">
+                <template #default>
+                  <p class="w-full text-center">
+                    {{ metricToolTips[MetricType.AVERAGE].shortName }}
+                  </p>
+                </template>
+                <template #tooltip>
+                  <p class="whitespace-pre text-sm">
+                    {{ metricToolTips[MetricType.AVERAGE].tooltip }}
+                  </p>
+                </template>
+              </ToolTipComponent>
+
+              <ToolTipComponent class="flex-1" :direction="displayClusters ? 'top' : 'left'">
+                <template #default>
+                  <p class="w-full text-center">
+                    {{ metricToolTips[MetricType.MAXIMUM].shortName }}
+                  </p>
+                </template>
+                <template #tooltip>
+                  <p class="whitespace-pre text-sm">
+                    {{ metricToolTips[MetricType.MAXIMUM].tooltip }}
+                  </p>
+                </template>
+              </ToolTipComponent>
+            </div>
+          </div>
+          <div class="tableCellCluster items-center" v-if="displayClusters">Cluster</div>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="flex flex-grow flex-col overflow-hidden">
+        <DynamicScroller
+          v-if="topComparisons.length > 0"
+          :items="displayedComparisons"
+          :min-item-size="48"
+          ref="dynamicScroller"
+          ><template #default="{ item, index, active }">
+            <DynamicScrollerItem
+              :item="item"
+              :active="active"
+              :size-dependencies="[
+                item.firstSubmissionId,
+                item.secondSubmissionId,
+                store().isAnonymous(item.firstSubmissionId),
+                store().isAnonymous(item.secondSubmissionId)
+              ]"
+              :data-index="index"
             >
-              {{ item.id }}.
-            </td>
-            <td
-                @click="
-          navigateToComparisonView(
-            item.firstSubmissionId,
-            item.secondSubmissionId
-          )
-        "
+              <!-- Row -->
+              <div
+                class="tableRow"
                 :class="{
-          'anonymous-style': isAnonymous(item.firstSubmissionId),
-        }"
-                class="td2"
-            >
-              {{
-                isAnonymous(item.firstSubmissionId)
-                    ? "Hidden"
-                    : displayName(item.firstSubmissionId)
-              }}
-            </td>
-            <td
-                @click="
-          navigateToComparisonView(
-            item.firstSubmissionId,
-            item.secondSubmissionId
-          )
-        "
-                class="td3"
-            >
-              <img alt=">>" src="@/assets/double_arrow_black_18dp.svg" />
-            </td>
-            <td
-                @click="
-          navigateToComparisonView(
-            item.firstSubmissionId,
-            item.secondSubmissionId
-          )
-        "
-                :class="{
-          'anonymous-style': isAnonymous(item.secondSubmissionId),
-        }"
-                class="td4"
-            >
-              {{
-                isAnonymous(item.secondSubmissionId)
-                    ? "Hidden"
-                    : displayName(item.secondSubmissionId)
-              }}
-            </td>
-            <td
-                @click="
-          navigateToComparisonView(
-            item.firstSubmissionId,
-            item.secondSubmissionId
-          )
-        "
-                class="td5"
-            >
-              {{ formattedMatchPercentage(item.similarity) }}
-            </td>
-            <td class="td6">
-              <img
-                  v-if="
-            isInCluster(
-              item.firstSubmissionId,
-              item.secondSubmissionId
-            )
-          "
-                  alt=">>"
-                  src="@/assets/keyboard_double_arrow_down_black_18dp.svg"
-                  @click="toggleDialog(item.id-1)"
-              />
-            </td>
-            <GDialog
-                v-if="
-          isInCluster(
-            item.firstSubmissionId,
-            item.secondSubmissionId
-          )
-        "
-                v-model="dialog[item.id-1]"
-            >
-              <ClustersList
-                  :clusters="
-            getClustersFor(
-              item.firstSubmissionId,
-              item.secondSubmissionId
-            )
-          "
-                  :comparison="item"
-              />
-            </GDialog>
-          </tr>
-        </table>
-      </DynamicScrollerItem>
-    </template>
-  </DynamicScroller>
+                  'bg-container-secondary-light dark:bg-container-secondary-dark': item.id % 2 == 1,
+                  '!bg-accent !bg-opacity-30 ': isHighlightedRow(item)
+                }"
+              >
+                <div
+                  @click="
+                    router.push({
+                      name: 'ComparisonView',
+                      params: { firstId: item.firstSubmissionId, secondId: item.secondSubmissionId }
+                    })
+                  "
+                  class="flex flex-grow cursor-pointer flex-row"
+                >
+                  <!-- Index in sorted list -->
+                  <div class="tableCellNumber">
+                    <div class="w-full text-center">{{ item.sortingPlace + 1 }}</div>
+                  </div>
+
+                  <!-- Names -->
+                  <div class="tableCellName">
+                    <NameElement :id="item.firstSubmissionId" class="h-full w-1/2 px-2" />
+                    <NameElement :id="item.secondSubmissionId" class="h-full w-1/2 px-2" />
+                  </div>
+
+                  <!-- Similarities -->
+                  <div class="tableCellSimilarity">
+                    <div class="w-1/2">
+                      {{ (item.similarities[MetricType.AVERAGE] * 100).toFixed(2) }}%
+                    </div>
+                    <div class="w-1/2">
+                      {{ (item.similarities[MetricType.MAXIMUM] * 100).toFixed(2) }}%
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Clusters -->
+                <div class="tableCellCluster flex !flex-col items-center" v-if="displayClusters">
+                  <RouterLink
+                    v-if="item.clusterIndex >= 0"
+                    :to="{
+                      name: 'ClusterView',
+                      params: { clusterIndex: item.clusterIndex }
+                    }"
+                    class="flex w-full justify-center text-center"
+                  >
+                    <ToolTipComponent class="w-fit" direction="left">
+                      <template #default>
+                        {{ clusters?.[item.clusterIndex].members?.length }}
+                        <FontAwesomeIcon
+                          :icon="['fas', 'user-group']"
+                          :style="{ color: clusterIconColors[item.clusterIndex] }"
+                        />
+                        {{
+                          (
+                            (clusters?.[item.clusterIndex].averageSimilarity as number) * 100
+                          ).toFixed(2)
+                        }}%
+                      </template>
+                      <template #tooltip>
+                        <p class="whitespace-nowrap text-sm">
+                          {{ clusters?.[item.clusterIndex].members?.length }} submissions in cluster
+                          with average similarity of
+                          {{
+                            (
+                              (clusters?.[item.clusterIndex].averageSimilarity as number) * 100
+                            ).toFixed(2)
+                          }}%
+                        </p>
+                      </template>
+                    </ToolTipComponent>
+                  </RouterLink>
+                </div>
+              </div>
+            </DynamicScrollerItem>
+          </template>
+
+          <template #after>
+            <slot name="footer"></slot>
+          </template>
+        </DynamicScroller>
+      </div>
+    </div>
+  </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, Ref, ref } from "vue";
-import router from "@/router";
-import { GDialog } from "gitart-vue-dialog";
-import ClustersList from "@/components/ClustersList.vue";
-import { useStore } from "vuex";
-import { Cluster } from "@/model/Cluster";
-import { ComparisonListElement } from "@/model/ComparisonListElement";
-import { ClusterListElement } from "@/model/ClusterListElement";
+<script setup lang="ts">
+import type { Cluster } from '@/model/Cluster'
+import type { ComparisonListElement } from '@/model/ComparisonListElement'
+import { type PropType, watch, computed, ref, type Ref } from 'vue'
+import { store } from '@/stores/store'
+import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faUserGroup } from '@fortawesome/free-solid-svg-icons'
+import { generateColors } from '@/utils/ColorUtils'
+import ToolTipComponent from './ToolTipComponent.vue'
+import { MetricType, metricToolTips } from '@/model/MetricType'
+import NameElement from './NameElement.vue'
+import { router } from '@/router'
+import ComparisonTableFilter from './ComparisonTableFilter.vue'
 
-export default defineComponent({
-  name: "ComparisonsTable",
-  components: { ClustersList, GDialog },
-  props: {
-    topComparisons: {
-      type: Array<ComparisonListElement>,
-      required: true,
-    },
-    clusters: {
-      type: Array<Cluster>,
-      required: true,
-    },
+library.add(faUserGroup)
+
+const props = defineProps({
+  topComparisons: {
+    type: Array<ComparisonListElement>,
+    required: true
   },
-  setup(props) {
-    const store = useStore();
-    let formattedMatchPercentage = (num: number) => (num * 100).toFixed(2);
-    const dialog: Ref<Array<boolean>> = ref([]);
-    props.topComparisons.forEach(() => dialog.value.push(false));
-    const displayName = (submissionId: string) =>
-      store.getters.submissionDisplayName(submissionId);
-
-    const toggleDialog = (index: number) => {
-      dialog.value[index] = true;
-    };
-
-    const navigateToComparisonView = (firstId : string, secondId: string) => {
-      if (!store.state.single) {
-        router.push({
-          name: "ComparisonView",
-          params: { firstId, secondId },
-        });
-      }
-    };
-
-    const isInCluster = (id1: string, id2: string) => {
-      return props.clusters.some(
-        (c: Cluster) => c.members.includes(id1) && c.members.includes(id2)
-      );
-    };
-
-    const isAnonymous = (id: string) => {
-      return store.state.anonymous.has(id);
-    };
-
-    const getParticipatingMatchesForId = (
-      id: string,
-      others: Array<string>
-    ) => {
-      let matches: Array<{ matchedWith: string; percentage: number }> = [];
-      props.topComparisons.forEach((comparison) => {
-        if (
-          comparison.firstSubmissionId.includes(id) &&
-          others.includes(comparison.secondSubmissionId)
-        ) {
-          matches.push({
-            matchedWith: comparison.secondSubmissionId,
-            percentage: comparison.similarity,
-          });
-        } else if (
-          comparison.secondSubmissionId.includes(id) &&
-          others.includes(comparison.firstSubmissionId)
-        ) {
-          matches.push({
-            matchedWith: comparison.firstSubmissionId,
-            percentage: comparison.similarity,
-          });
-        }
-      });
-      return matches;
-    };
-
-    const clustersWithParticipatingMatches: Array<ClusterListElement> =
-      props.clusters.map((cluster) => {
-        let membersArray = new Map<
-          string,
-          Array<{ matchedWith: string; percentage: number }>
-        >();
-        cluster.members.forEach((member: string) => {
-          let others = cluster.members.filter((m) => !m.includes(member));
-          membersArray.set(
-            member,
-            getParticipatingMatchesForId(member, others)
-          );
-        });
-
-        return {
-          averageSimilarity: cluster.averageSimilarity,
-          strength: cluster.strength,
-          members: membersArray,
-        };
-      });
-
-    const getClustersFor = (
-      id1: string,
-      id2: string
-    ): Array<ClusterListElement> => {
-      return clustersWithParticipatingMatches.filter(
-        (c) => c.members.has(id1) && c.members.has(id2)
-      );
-    };
-
-    return {
-      clustersWithParticipatingMatches,
-      dialog,
-
-      displayName,
-      isAnonymous,
-      getClustersFor,
-      toggleDialog,
-      formattedMatchPercentage,
-      navigateToComparisonView,
-      isInCluster,
-    };
+  clusters: {
+    type: Array<Cluster>,
+    required: false
   },
-});
+  header: {
+    type: String,
+    default: 'Top Comparisons:'
+  },
+  highlightedRowIds: {
+    type: Object as PropType<{ firstId: string; secondId: string }>,
+    required: false
+  }
+})
+
+const displayedComparisons = computed(() => {
+  const comparisons = getFilteredComparisons(getSortedComparisons(props.topComparisons))
+  let index = 1
+  comparisons.forEach((c) => {
+    c.id = index++
+  })
+  return comparisons
+})
+
+const searchString = ref('')
+
+/**
+ * This function gets called when the search bar for the comparison table has been updated.
+ * It updates the displayed comparisons to only show the ones that  have part of any search result in their id. The search is not case sensitive. The parts can be separated by commas or spaces.
+ * It also updates the anonymous set to unhide a submission if its name was typed in the search bar at any point in time.
+ *
+ * @param newVal The new value of the search bar
+ */
+function getFilteredComparisons(comparisons: ComparisonListElement[]) {
+  const searches = searchString.value
+    .trimEnd()
+    .toLowerCase()
+    .split(/ +/g)
+    .map((s) => s.trim().replace(/,/g, ''))
+  if (searches.length == 0) {
+    return comparisons
+  }
+
+  return comparisons.filter((c) => {
+    const id1 = c.firstSubmissionId.toLowerCase()
+    const id2 = c.secondSubmissionId.toLowerCase()
+    return searches.some((s) => id1.includes(s) || id2.includes(s))
+  })
+}
+
+function getSortedComparisons(comparisons: ComparisonListElement[]) {
+  comparisons.sort(
+    (a, b) =>
+      b.similarities[store().uiState.comparisonTableSortingMetric] -
+      a.similarities[store().uiState.comparisonTableSortingMetric]
+  )
+
+  if (store().uiState.comparisonTableClusterSorting) {
+    comparisons.sort((a, b) => b.clusterIndex - a.clusterIndex)
+
+    comparisons.sort(
+      (a, b) =>
+        getClusterFor(b.clusterIndex).averageSimilarity -
+        getClusterFor(a.clusterIndex).averageSimilarity
+    )
+  }
+
+  let index = 0
+  comparisons.forEach((c) => {
+    c.sortingPlace = index++
+  })
+  return props.topComparisons
+}
+
+function getClusterFor(clusterIndex: number) {
+  if (clusterIndex < 0 || !props.clusters) {
+    return { averageSimilarity: 0 }
+  }
+  return props.clusters[clusterIndex]
+}
+
+const displayClusters = props.clusters != undefined
+
+let clusterIconColors = [] as Array<string>
+if (props.clusters != undefined) {
+  clusterIconColors = generateColors(props.clusters.length, 0.8, 0.5, 1)
+}
+
+function isHighlightedRow(item: ComparisonListElement) {
+  return (
+    props.highlightedRowIds != undefined &&
+    ((item.firstSubmissionId == props.highlightedRowIds.firstId &&
+      item.secondSubmissionId == props.highlightedRowIds.secondId) ||
+      (item.firstSubmissionId == props.highlightedRowIds.secondId &&
+        item.secondSubmissionId == props.highlightedRowIds.firstId))
+  )
+}
+
+const dynamicScroller: Ref<any | null> = ref(null)
+
+watch(
+  computed(() => props.highlightedRowIds),
+  (newValue, oldValue) => {
+    if (
+      newValue != undefined &&
+      (newValue?.firstId != oldValue?.firstId || newValue?.secondId != oldValue?.secondId)
+    ) {
+      dynamicScroller.value?.scrollToItem(props.topComparisons.findIndex(isHighlightedRow))
+    }
+  }
+)
 </script>
 
-<style scoped>
-.scroller{
-  height: 650px;
+<style scoped lang="postcss">
+.tableRow {
+  @apply flex flex-row text-center;
 }
 
-table {
-  table-layout: fixed;
-  border-collapse: collapse;
-  font-size: larger;
-  text-align: center;
+.tableCellNumber {
+  @apply tableCell w-12 flex-shrink-0;
 }
 
-.inside-table {
-  width: 100%;
+.tableCellSimilarity {
+  @apply tableCell w-40 flex-shrink-0;
 }
 
-th {
-  margin: 0;
-  padding-top: 2%;
-  padding-bottom: 2%;
-  color: var(--on-primary-color);
+.tableCellCluster {
+  @apply tableCell w-32 flex-shrink-0;
 }
 
-td {
-  overflow-wrap: break-word;
-  padding-top: 3%;
-  padding-bottom: 3%;
+.tableCellName {
+  @apply tableCell flex-grow;
 }
 
-.td1 {
-  width: 3%;
+.tableCell {
+  @apply mx-3 flex flex-row items-center justify-center text-center;
 }
 
-.td2 {
-  width: 18%;
-  padding-left: 5%;
- }
-
-.td3 {
-   width: 3%;
- }
-
-.td4 {
-   width: 18%;
-   padding-right: 5%;
- }
-
-.td5 {
-   width: 8%;
- }
-
-.td6 {
-  width: 2%;
-}
-
-.anonymous-style {
-  color: #777777;
-  filter: blur(1px);
-}
-
-.head-row {
-  background: var(--primary-color-light);
-}
-
-.selectableEven{
-  background: var(--primary-color-light);
-  cursor: pointer;
-}
-
-.selectableOdd{
-  background: var(--secondary-color);
-  cursor: pointer;
-}
-
-.selectableEven:hover {
-  background: var(--primary-color-dark) !important;
-  cursor: pointer;
-}
-
-.selectableOdd:hover {
-  background: var(--primary-color-dark) !important;
-  cursor: pointer;
+/* Tooltip arrow. Defined down here bacause of the content attribute */
+.tooltipArrow::after {
+  content: ' ';
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  margin-top: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent transparent rgba(0, 0, 0, 0.9);
 }
 </style>

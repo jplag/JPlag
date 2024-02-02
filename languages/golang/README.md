@@ -21,7 +21,7 @@ More syntactic elements of Go may turn out to be helpful to include in the futur
 
 ### Usage
 
-To use the Go frontend, add the `-l golang` flag in the CLI, or use a `JPlagOption` object with `new de.jplag.golang.Language()` as `language` in the Java API as described in the usage information in the [readme of the main project](https://github.com/jplag/JPlag#usage) and [in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).
+To use the Go frontend, add the `-l golang` flag in the CLI, or use a `JPlagOption` object with `new de.jplag.golang.GoLanguage()` as `language` in the Java API as described in the usage information in the [readme of the main project](https://github.com/jplag/JPlag#usage) and [in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).
 
 <br>
 

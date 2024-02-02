@@ -10,15 +10,14 @@ class BaseCodeOptionTest extends CommandLineInterfaceTest {
     private static final String NAME = "BaseCodeName";
 
     @Test
-    void testDefaultValue() {
-        buildOptionsFromCLI(CURRENT_DIRECTORY);
+    void testDefaultValue() throws CliException {
+        buildOptionsFromCLI(defaultArguments());
         assertNull(options.baseCodeSubmissionDirectory());
     }
 
     @Test
-    void testCustomName() {
-        String argument = buildArgument(CommandLineArgument.BASE_CODE, NAME);
-        buildOptionsFromCLI(argument, CURRENT_DIRECTORY);
+    void testCustomName() throws CliException {
+        buildOptionsFromCLI(defaultArguments().baseCode(NAME));
         assertEquals(NAME, options.baseCodeSubmissionDirectory().getName());
     }
 }

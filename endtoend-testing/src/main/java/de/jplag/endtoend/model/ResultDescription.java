@@ -2,7 +2,6 @@ package de.jplag.endtoend.model;
 
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -10,6 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * data and its results for each possible option specified. this is important both for serializing the data into json
  * format and for deserialization.
  */
-public record ResultDescription(@JsonIgnore String languageIdentifier, @JsonProperty("options") Options options,
-        @JsonProperty("tests") Map<String, ExpectedResult> identifierToResultMap) {
+public record ResultDescription(@JsonProperty String identifier, @JsonProperty("tests") Map<String, ExpectedResult> identifierToResultMap,
+        @JsonProperty GoldStandard goldStandard) {
 }

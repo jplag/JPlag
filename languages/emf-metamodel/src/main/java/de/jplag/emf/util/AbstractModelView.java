@@ -8,21 +8,31 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jplag.emf.MetamodelToken;
+
 /**
  * Textual representation of a model for the depiction of matches in submissions.
- * @author Timur Saglam
  */
-public class AbstractModelView {
+public abstract class AbstractModelView {
 
     protected final File file;
     protected final Logger logger;
     protected final StringBuilder viewBuilder;
 
-    public AbstractModelView(File file) {
+    protected AbstractModelView(File file) {
         this.file = file;
         logger = LoggerFactory.getLogger(this.getClass());
         viewBuilder = new StringBuilder();
     }
+
+    /**
+     * Creates a token with tracing information based on an existing one without. The token information may also be used to
+     * build up the model view. This means a model view may be only complete after passing every token to the view to
+     * enrich.
+     * @param token is the existing token without tracing information.
+     * @return the enriched token, with the tracing information corresponding to this view.
+     */
+    public abstract MetamodelToken convertToMetadataEnrichedToken(MetamodelToken token);
 
     /**
      * Writes the tree view into a file.

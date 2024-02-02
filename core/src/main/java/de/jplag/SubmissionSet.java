@@ -90,6 +90,10 @@ public class SubmissionSet {
         return invalidSubmissions;
     }
 
+    public void normalizeSubmissions() {
+        submissions.forEach(Submission::normalize);
+    }
+
     private List<Submission> filterValidSubmissions() {
         return allSubmissions.stream().filter(submission -> !submission.hasErrors()).collect(Collectors.toCollection(ArrayList::new));
     }
@@ -118,7 +122,8 @@ public class SubmissionSet {
         if (!baseCode.parse(options.debugParser())) {
             throw new BasecodeException("Could not successfully parse basecode submission!");
         } else if (baseCode.getNumberOfTokens() < options.minimumTokenMatch()) {
-            throw new BasecodeException("Basecode submission contains fewer tokens than minimum match length allows!");
+            throw new BasecodeException(String.format("Basecode submission contains %d token(s), which is less than the minimum match length (%d)!",
+                    baseCode.getNumberOfTokens(), options.minimumTokenMatch()));
         }
         logger.trace("Basecode submission parsed!");
         long duration = System.currentTimeMillis() - startTime;
@@ -139,6 +144,7 @@ public class SubmissionSet {
 
         int tooShort = 0;
         for (Submission submission : submissions) {
+            logger.info("Parsing submission {}", submission.getName());
             boolean ok;
 
             logger.trace("------ Parsing submission: " + submission.getName());
@@ -149,7 +155,8 @@ public class SubmissionSet {
             }
 
             if (submission.getTokenList() != null && submission.getNumberOfTokens() < options.minimumTokenMatch()) {
-                logger.error("Submission {} contains fewer tokens than minimum match length allows!", currentSubmissionName);
+                logger.error("Submission {} contains {} token(s), which is less than the minimum match length ({})!", currentSubmissionName,
+                        submission.getNumberOfTokens(), options.minimumTokenMatch());
                 submission.setTokenList(null);
                 tooShort++;
                 ok = false;

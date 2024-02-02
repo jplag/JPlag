@@ -2,7 +2,6 @@ package de.jplag.emf.dynamic.parser;
 
 import org.eclipse.emf.ecore.EObject;
 
-import de.jplag.emf.dynamic.DynamicMetamodelTokenType;
 import de.jplag.emf.util.AbstractMetamodelVisitor;
 
 /**
@@ -11,19 +10,19 @@ import de.jplag.emf.util.AbstractMetamodelVisitor;
  */
 public class DynamicMetamodelTokenGenerator extends AbstractMetamodelVisitor {
     private final DynamicEcoreParser parser;
+    private final DynamicElementTokenizer tokenizer;
 
     /**
      * Creates the visitor.
      * @param parser is the parser which receives the generated tokens.
      */
-    public DynamicMetamodelTokenGenerator(DynamicEcoreParser parser) {
-        super(false);
+    public DynamicMetamodelTokenGenerator(DynamicEcoreParser parser, DynamicElementTokenizer tokenizer) {
         this.parser = parser;
+        this.tokenizer = tokenizer;
     }
 
     @Override
     protected void visitEObject(EObject eObject) {
-        var tokenType = new DynamicMetamodelTokenType(eObject);
-        parser.addToken(tokenType, eObject);
+        parser.addToken(tokenizer.element2Token(eObject), eObject);
     }
 }
