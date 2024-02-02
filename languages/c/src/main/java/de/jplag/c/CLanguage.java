@@ -27,7 +27,7 @@ public class CLanguage implements Language {
 
     @Override
     public String getName() {
-        return "C(C++) Scanner [basic markup]";
+        return "C Scanner";
     }
 
     @Override
