@@ -39,6 +39,7 @@ export class OverviewFactory extends BaseFactory {
     const dateOfExecution = json.date_of_execution as string
     const duration = json.execution_time as number as number
     const totalComparisons = json.total_comparisons as number
+    const clusters = this.extractClusters(json)
 
     this.saveIdToDisplayNameMap(json)
     this.saveComparisonFilesLookup(json)
@@ -51,9 +52,9 @@ export class OverviewFactory extends BaseFactory {
       matchSensitivity,
       dateOfExecution,
       duration,
-      this.extractTopComparisons(json),
+      this.extractTopComparisons(json, clusters),
       this.extractDistributions(json),
-      this.extractClusters(json),
+      clusters,
       totalComparisons
     )
   }
@@ -90,35 +91,54 @@ export class OverviewFactory extends BaseFactory {
   }
 
   private static extractTopComparisons(
-    json: Record<string, unknown>
+    json: Record<string, unknown>,
+    clusters: Cluster[]
   ): Array<ComparisonListElement> {
     if (json.top_comparisons) {
       return this.extractTopComparisonsFromMap(
-        json.top_comparisons as Array<Record<string, unknown>>
+        json.top_comparisons as Array<Record<string, unknown>>,
+        clusters
       )
     } else if (json.metrics) {
-      return this.extractTopComparisonsFromMetrics(json.metrics as Array<Record<string, unknown>>)
+      return this.extractTopComparisonsFromMetrics(
+        json.metrics as Array<Record<string, unknown>>,
+        clusters
+      )
     }
     throw new Error('No top comparisons found')
   }
 
-  private static extractTopComparisonsFromMap(jsonComparisons: Array<Record<string, unknown>>) {
+  private static extractTopComparisonsFromMap(
+    jsonComparisons: Array<Record<string, unknown>>,
+    clusters: Cluster[]
+  ) {
     const comparisons = [] as Array<ComparisonListElement>
     let counter = 0
     for (const topComparison of jsonComparisons) {
-      comparisons.push({
+      const comparison = {
         sortingPlace: counter++,
         id: counter,
         firstSubmissionId: topComparison.first_submission as string,
         secondSubmissionId: topComparison.second_submission as string,
         similarities: topComparison.similarities as Record<MetricType, number>
+      }
+      comparisons.push({
+        ...comparison,
+        clusterIndex: this.getClusterIndex(
+          clusters,
+          comparison.firstSubmissionId,
+          comparison.secondSubmissionId
+        )
       })
     }
     return comparisons
   }
 
   /** @deprecated since 5.0.0. Use the new format with {@link extractTopComparisonsFromMap} */
-  private static extractTopComparisonsFromMetrics(metrics: Array<Record<string, unknown>>) {
+  private static extractTopComparisonsFromMetrics(
+    metrics: Array<Record<string, unknown>>,
+    clusters: Cluster[]
+  ) {
     const averageSimilarities: Map<string, number> = new Map<string, number>()
     const comparisons = [] as Array<ComparisonListElement>
 
@@ -132,23 +152,51 @@ export class OverviewFactory extends BaseFactory {
 
     // Extract the max similarities and combine them with the average similarities
     let counter = 0
-    for (const comparison of metrics[1].topComparisons as Array<Record<string, unknown>>) {
+    for (const topComparison of metrics[1].topComparisons as Array<Record<string, unknown>>) {
       const avg = averageSimilarities.get(
-        (comparison.first_submission as string) + '-' + (comparison.second_submission as string)
+        (topComparison.first_submission as string) +
+          '-' +
+          (topComparison.second_submission as string)
       )
-      comparisons.push({
+      const comparison = {
         sortingPlace: counter++,
         id: counter,
-        firstSubmissionId: comparison.first_submission as string,
-        secondSubmissionId: comparison.second_submission as string,
+        firstSubmissionId: topComparison.first_submission as string,
+        secondSubmissionId: topComparison.second_submission as string,
         similarities: {
           [MetricType.AVERAGE]: avg as number,
-          [MetricType.MAXIMUM]: comparison.similarity as number
+          [MetricType.MAXIMUM]: topComparison.similarity as number
         }
+      }
+      comparisons.push({
+        ...comparison,
+        clusterIndex: this.getClusterIndex(
+          clusters,
+          comparison.firstSubmissionId,
+          comparison.secondSubmissionId
+        )
       })
     }
 
     return comparisons
+  }
+
+  private static getClusterIndex(
+    clusters: Cluster[],
+    firstSubmissionId: string,
+    secondSubmissionId: string
+  ) {
+    let clusterIndex = -1
+    clusters?.forEach((c: Cluster, index: number) => {
+      if (
+        c.members.includes(firstSubmissionId) &&
+        c.members.includes(secondSubmissionId) &&
+        c.members.length > 2
+      ) {
+        clusterIndex = index
+      }
+    })
+    return clusterIndex
   }
 
   private static extractClusters(json: Record<string, unknown>): Array<Cluster> {
