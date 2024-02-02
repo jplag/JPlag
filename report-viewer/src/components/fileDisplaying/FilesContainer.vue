@@ -42,10 +42,10 @@ import ScrollableComponent from '../ScrollableComponent.vue'
 import { VueDraggableNext } from 'vue-draggable-next'
 import { ref, type PropType, type Ref } from 'vue'
 import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
-import type { HighlightLanguage } from '@/model/Language'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCompressAlt } from '@fortawesome/free-solid-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'
+import type { ParserLanguage } from '@/model/Language'
 
 library.add(faCompressAlt)
 
@@ -75,7 +75,7 @@ const props = defineProps({
    * Language of the files.
    */
   highlightLanguage: {
-    type: String as PropType<HighlightLanguage>,
+    type: String as PropType<ParserLanguage>,
     required: true
   }
 })
