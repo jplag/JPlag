@@ -1,4 +1,4 @@
-package de.jplag.typescript;
+package de.jplag.javascript;
 
 import static de.jplag.typescript.TypeScriptTokenType.ENUM_BEGIN;
 import static de.jplag.typescript.TypeScriptTokenType.ENUM_END;
@@ -15,11 +15,12 @@ import de.jplag.TokenType;
 import de.jplag.testutils.LanguageModuleTest;
 import de.jplag.testutils.datacollector.TestDataCollector;
 import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
+import de.jplag.typescript.TypeScriptTokenType;
 
 public class JavaScriptLanguageTest extends LanguageModuleTest {
 
     public JavaScriptLanguageTest() {
-        super(new TypeScriptLanguage(), TypeScriptTokenType.class);
+        super(new JavaScriptLanguage(), TypeScriptTokenType.class);
     }
 
     @Override

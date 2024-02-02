@@ -3,7 +3,7 @@
   "language": "java",
   "format": "PROGPEDIA",
   "storageFormat": "ZIP",
-  "goldStandardFile": "plagiate.csv",
+  "goldStandardFile": "plagiarism.csv",
   "options": {
     "baseCodeDirectory": "base"
   }

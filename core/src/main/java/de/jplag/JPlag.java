@@ -1,14 +1,18 @@
 package de.jplag;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.clustering.ClusteringFactory;
 import de.jplag.exceptions.ExitException;
+import de.jplag.exceptions.RootDirectoryException;
 import de.jplag.exceptions.SubmissionException;
 import de.jplag.merging.MatchMerging;
 import de.jplag.options.JPlagOptions;
@@ -61,6 +65,7 @@ public class JPlag {
      * @throws ExitException if JPlag exits preemptively.
      */
     public static JPlagResult run(JPlagOptions options) throws ExitException {
+        checkForConfigurationConsistency(options);
         GreedyStringTiling coreAlgorithm = new GreedyStringTiling(options);
         ComparisonStrategy comparisonStrategy = new ParallelComparisonStrategy(options, coreAlgorithm);
         // Parse and validate submissions.
@@ -95,5 +100,28 @@ public class JPlag {
                 logger.warn("Erroneous submissions were copied to {}", new File(JPlagOptions.ERROR_FOLDER).getAbsolutePath());
             }
         }
+    }
+
+    private static void checkForConfigurationConsistency(JPlagOptions options) throws RootDirectoryException {
+        List<String> duplicateNames = getDuplicateSubmissionFolderNames(options);
+        if (duplicateNames.size() > 0) {
+            throw new RootDirectoryException(String.format("Duplicate root directory names found: %s", String.join(", ", duplicateNames)));
+        }
+    }
+
+    private static List<String> getDuplicateSubmissionFolderNames(JPlagOptions options) {
+        List<String> duplicateNames = new ArrayList<>();
+        Set<String> alreadyFoundNames = new HashSet<>();
+        for (File file : options.submissionDirectories()) {
+            if (!alreadyFoundNames.add(file.getName())) {
+                duplicateNames.add(file.getName());
+            }
+        }
+        for (File file : options.oldSubmissionDirectories()) {
+            if (!alreadyFoundNames.add(file.getName())) {
+                duplicateNames.add(file.getName());
+            }
+        }
+        return duplicateNames;
     }
 }
