@@ -7,6 +7,9 @@ import de.jplag.logging.ProgressBarType;
 import me.tongfei.progressbar.ProgressBarBuilder;
 import me.tongfei.progressbar.ProgressBarStyle;
 
+/**
+ * A ProgressBar provider, that used the tongfei progress bar library underneath, to show progress bars on the cli.
+ */
 public class TongfeiProgressBarProvider implements ProgressBarProvider {
     @Override
     public ProgressBar initProgressBar(ProgressBarType type, int totalSteps) {

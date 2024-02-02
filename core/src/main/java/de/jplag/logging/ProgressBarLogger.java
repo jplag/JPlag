@@ -3,13 +3,27 @@ package de.jplag.logging;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Provides static access to the creation of progress bars.
+ */
 public class ProgressBarLogger {
     private static ProgressBarProvider progressBarProvider = new DummyProvider();
 
+    /**
+     * Creates a new {@link ProgressBar}
+     * @param type The type of the progress bar
+     * @param totalSteps The total number of steps
+     * @return The newly created progress bar
+     */
     public static ProgressBar createProgressBar(ProgressBarType type, int totalSteps) {
         return progressBarProvider.initProgressBar(type, totalSteps);
     }
 
+    /**
+     * Sets the {@link ProgressBarProvider}. Should be used by the ui before calling JPlag, if progress bars should be
+     * shown.
+     * @param progressBarProvider The provider
+     */
     public static void setProgressBarProvider(ProgressBarProvider progressBarProvider) {
         ProgressBarLogger.progressBarProvider = progressBarProvider;
     }

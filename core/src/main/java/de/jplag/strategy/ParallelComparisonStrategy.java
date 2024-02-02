@@ -8,8 +8,6 @@ import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.SubmissionSet;
 import de.jplag.logging.ProgressBar;
-import de.jplag.logging.ProgressBarLogger;
-import de.jplag.logging.ProgressBarType;
 import de.jplag.options.JPlagOptions;
 
 /**
@@ -22,7 +20,7 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
     }
 
     @Override
-    public JPlagResult compareSubmissions(SubmissionSet submissionSet) {
+    public JPlagResult compareSubmissions(SubmissionSet submissionSet, ProgressBar progressBar) {
         // Initialize:
         long timeBeforeStartInMillis = System.currentTimeMillis();
         boolean withBaseCode = submissionSet.hasBaseCode();
@@ -31,13 +29,11 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
         }
 
         List<SubmissionTuple> tuples = buildComparisonTuples(submissionSet.getSubmissions());
-        ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.COMPARING, tuples.size());
         List<JPlagComparison> comparisons = tuples.stream().parallel().map(tuple -> {
             Optional<JPlagComparison> result = compareSubmissions(tuple.left(), tuple.right());
             progressBar.step();
             return result;
         }).flatMap(Optional::stream).toList();
-        progressBar.dispose();
 
         long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
         return new JPlagResult(comparisons, submissionSet, durationInMillis, options);
