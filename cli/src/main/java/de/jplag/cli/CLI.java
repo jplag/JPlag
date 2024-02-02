@@ -118,7 +118,7 @@ public final class CLI {
         return LanguageLoader.getAllAvailableLanguages().values().stream().map(language -> {
             CommandSpec command = CommandSpec.create().name(language.getIdentifier());
 
-            for (LanguageOption<?> option : language.getOptions().getOptionsAsList()) {
+            for (LanguageOption<?> option : language.mixinOptions().getOptionsAsList()) {
                 command.addOption(OptionSpec.builder(option.getNameAsUnixParameter()).type(option.getType().getJavaType())
                         .description(option.getDescription()).build());
             }
@@ -198,7 +198,7 @@ public final class CLI {
             ParseResult subcommandResult = result.subcommand();
             Language language = LanguageLoader.getLanguage(subcommandResult.commandSpec().name())
                     .orElseThrow(() -> new CliException(IMPOSSIBLE_EXCEPTION));
-            LanguageOptions languageOptions = language.getOptions();
+            LanguageOptions languageOptions = language.mixinOptions();
             languageOptions.getOptionsAsList().forEach(option -> {
                 if (subcommandResult.hasMatchedOption(option.getNameAsUnixParameter())) {
                     option.setValue(subcommandResult.matchedOptionValue(option.getNameAsUnixParameter(), null));

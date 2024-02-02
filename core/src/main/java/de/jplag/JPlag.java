@@ -71,7 +71,8 @@ public class JPlag {
         // Parse and validate submissions.
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
-        if (options.normalize() && options.language().supportsNormalization()) {
+        if (options.language().isCoreNormalizationEnabled()) {
+            System.out.println("Core normalization active");
             submissionSet.normalizeSubmissions();
         }
         int submissionCount = submissionSet.numberOfSubmissions();

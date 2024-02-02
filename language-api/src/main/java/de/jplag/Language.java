@@ -33,6 +33,7 @@ public interface Language {
 
     /**
      * Parses a set of files.
+     *
      * @param files are the files to parse.
      * @return the list of parsed JPlag tokens.
      * @throws ParsingException if an error during parsing the files occurred.
@@ -71,14 +72,20 @@ public interface Language {
 
     /**
      * Returns a new option object for the language.
+     *
      * @return The options
      */
     default LanguageOptions getOptions() {
         return LanguageOptions.EMPTY_OPTIONS;
     }
 
+    default LanguageOptions mixinOptions() {
+        return LanguageOptions.EMPTY_OPTIONS;
+    }
+
     /**
      * Specifies if the submission order is relevant for this language.
+     *
      * @return defaults to false.
      */
     default boolean expectsSubmissionOrder() {
@@ -87,6 +94,7 @@ public interface Language {
 
     /**
      * Re-orders the provided submission according the requirements of the language.
+     *
      * @param submissions is the list of submissions.
      * @return the re-ordered list.
      */
@@ -98,6 +106,10 @@ public interface Language {
      * @return True, if tokens for this language can be normalized
      */
     default boolean supportsNormalization() {
+        return false;
+    }
+
+    default boolean isCoreNormalizationEnabled() {
         return false;
     }
 }
