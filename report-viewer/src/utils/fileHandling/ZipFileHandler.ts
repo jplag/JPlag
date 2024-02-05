@@ -30,7 +30,6 @@ export class ZipFileHandler extends FileHandler {
               submissionId: slash(submissionFileName),
               fileName: slash(fullPathFileName),
               data: data,
-              tokenCount: NaN,
               matchedTokenCount: NaN
             })
           })

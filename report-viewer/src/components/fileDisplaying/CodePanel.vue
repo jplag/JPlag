@@ -5,11 +5,7 @@
   <Interactable class="mx-2 !shadow print:!mx-0 print:!border-0 print:!p-0">
     <div @click="collapsed = !collapsed" class="flex px-2 font-bold print:whitespace-pre-wrap">
       <span class="flex-1">{{ getFileDisplayName(file) }}</span>
-      <ToolTipComponent
-        v-if="!isNaN(file.matchedTokenCount) && !isNaN(file.tokenCount)"
-        direction="left"
-        class="font-normal"
-      >
+      <ToolTipComponent v-if="file.tokenCount != undefined" direction="left" class="font-normal">
         <template #default
           >{{ ((file.matchedTokenCount / (file.tokenCount - 1)) * 100).toFixed(2) }}%</template
         >

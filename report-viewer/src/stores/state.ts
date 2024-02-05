@@ -67,7 +67,7 @@ export interface SubmissionFile extends File {
   /**
    * Number of total tokens in the file.
    */
-  tokenCount: number
+  tokenCount?: number
   /**
    * Number of tokens in the file that are matched.
    */
