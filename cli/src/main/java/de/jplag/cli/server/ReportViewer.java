@@ -19,6 +19,10 @@ import com.sun.net.httpserver.HttpServer;
  * Manages the internal report viewer. Serves the static files for the report viewer and the results.zip.
  */
 public class ReportViewer implements HttpHandler {
+    private static final String REPORT_VIEWER_RESOURCE_PREFIX = "report-viewer";
+    private static final String INDEX_PATH = "index.html";
+    private static final String RESULT_PATH = "results.zip";
+
     private static final Logger logger = LoggerFactory.getLogger(ReportViewer.class);
     private static final int SUCCESS_RESPONSE = 200;
     private static final int NOT_FOUND_RESPONSE = 404;
@@ -36,13 +40,13 @@ public class ReportViewer implements HttpHandler {
     public ReportViewer(File zipFile, int port) throws IOException {
         this.routingTree = new RoutingTree();
 
-        this.routingTree.insertRouting("", new RoutingResources("report-viewer").or(new RoutingAlias("index.html")));
-        this.routingTree.insertRouting("results.zip", new RoutingStaticFile(zipFile, ContentType.ZIP));
+        this.routingTree.insertRouting("", new RoutingResources(REPORT_VIEWER_RESOURCE_PREFIX).or(new RoutingAlias(INDEX_PATH)));
+        this.routingTree.insertRouting(RESULT_PATH, new RoutingStaticFile(zipFile, ContentType.ZIP));
         this.port = port;
     }
 
     /**
-     * Starts the server
+     * Starts the server and serves the internal report viewer. If available, the result.zip is also exposed.
      * @return The port the server runs at
      * @throws IOException If the server cannot be started
      */

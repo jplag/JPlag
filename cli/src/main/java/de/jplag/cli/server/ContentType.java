@@ -1,20 +1,23 @@
 package de.jplag.cli.server;
 
 /**
- * The type of data
+ * Data types used by JPlag in the context of http. Contains the according mime type.
  */
 public enum ContentType {
-    HTML("text/html; charset=utf-8"),
-    JS("application/javascript; charset=utf-8"),
-    CSS("text/css; charset=utf-8"),
-    PNG("image/png"),
-    PLAIN("text/plain; charset=utf-8"),
-    ZIP("application/zip");
+    HTML("text/html; charset=utf-8", ".html"),
+    JS("application/javascript; charset=utf-8", ".js"),
+    CSS("text/css; charset=utf-8", ".css"),
+    PNG("image/png", ".png"),
+    PLAIN("text/plain; charset=utf-8", null),
+    ZIP("application/zip", ".zip");
 
     private final String value;
 
-    ContentType(String value) {
+    private final String nameSuffix;
+
+    ContentType(String value, String nameSuffix) {
         this.value = value;
+        this.nameSuffix = nameSuffix;
     }
 
     public String getValue() {
@@ -27,13 +30,12 @@ public enum ContentType {
      * @return The guessed type
      */
     public static ContentType fromPath(String path) {
-        return switch (path.substring(path.lastIndexOf('.'))) {
-            case ".html" -> ContentType.HTML;
-            case ".js" -> ContentType.JS;
-            case ".css" -> ContentType.CSS;
-            case ".png" -> ContentType.PNG;
-            case ".zip" -> ContentType.ZIP;
-            default -> ContentType.PLAIN;
-        };
+        String suffix = path.substring(path.lastIndexOf('.'));
+        for (ContentType value : ContentType.values()) {
+            if (suffix.equals(value.nameSuffix)) {
+                return value;
+            }
+        }
+        return ContentType.PLAIN;
     }
 }

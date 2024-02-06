@@ -1,11 +1,11 @@
 package de.jplag.cli;
 
 /**
- * The mode Jplag runs in. This influences which steps JPlag will execute
+ * The mode JPlag runs in. This influences which steps JPlag will execute
  */
 public enum JPlagMode {
     /**
-     * Only run jplag and create a results.zip
+     * Only run JPlag and create a results.zip
      */
     RUN,
     /**

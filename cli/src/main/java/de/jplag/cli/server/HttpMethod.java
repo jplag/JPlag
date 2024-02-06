@@ -1,7 +1,7 @@
 package de.jplag.cli.server;
 
 /**
- * Available http methods
+ * Wraps the http methods used by JPlag.
  */
 public enum HttpMethod {
     GET("GET"),

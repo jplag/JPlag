@@ -17,7 +17,7 @@ import de.jplag.cli.server.ReportViewer;
 @Timeout(value = 5, unit = TimeUnit.MINUTES)
 class ReportViewerTest {
     @Test
-    @Disabled
+    @Disabled("Starts the internal server for manual testing. Does not terminal automatically.")
     void testStartViewer() throws Exception {
         assumeTrue(Desktop.isDesktopSupported());
         ReportViewer viewer = new ReportViewer(null, 0);
