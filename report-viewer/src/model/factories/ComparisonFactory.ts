@@ -43,7 +43,9 @@ export class ComparisonFactory extends BaseFactory {
       this.extractSimilarities(json),
       filesOfFirstSubmission,
       filesOfSecondSubmission,
-      this.colorMatches(unColoredMatches)
+      this.colorMatches(unColoredMatches),
+      json.first_similarity as number | undefined,
+      json.second_similarity as number | undefined
     )
   }
 

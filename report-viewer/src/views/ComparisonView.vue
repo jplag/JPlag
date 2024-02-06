@@ -23,9 +23,19 @@
             </template>
           </ToolTipComponent>
         </h2>
-        <div class="flex flex-row">
+        <div class="flex flex-row space-x-10">
           <TextInformation label="Average Similarity"
             >{{ (comparison.similarities[MetricType.AVERAGE] * 100).toFixed(2) }}%</TextInformation
+          >
+          <TextInformation
+            v-if="comparison.firstSimilarity"
+            :label="`Similarity ${store().getDisplayName(comparison.firstSubmissionId)}`"
+            >{{ (comparison.firstSimilarity * 100).toFixed(2) }}%</TextInformation
+          >
+          <TextInformation
+            v-if="comparison.secondSimilarity"
+            :label="`Similarity ${store().getDisplayName(comparison.secondSubmissionId)}`"
+            >{{ (comparison.secondSimilarity * 100).toFixed(2) }}%</TextInformation
           >
         </div>
         <MatchList
