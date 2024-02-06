@@ -13,8 +13,8 @@
         >
         <template #tooltip
           ><p class="whitespace-nowrap text-sm">
-            The file has {{ file.tokenCount }} tokens. {{ file.matchedTokenCount }} are part of a
-            match.
+            The file has {{ file.tokenCount - 1 }} tokens. {{ file.matchedTokenCount }} are part of
+            a match.
           </p></template
         >
       </ToolTipComponent>
