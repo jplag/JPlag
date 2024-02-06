@@ -165,10 +165,7 @@
 
     <profiles>
         <profile>
-            <id>build-report-viewer</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
+            <id>with-report-viewer</id>
             <build>
                 <resources>
                     <resource>

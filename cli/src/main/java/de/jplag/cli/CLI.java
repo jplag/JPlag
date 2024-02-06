@@ -134,7 +134,7 @@ public final class CLI {
         logger.info("ReportViewer started on port http://localhost:{}", port);
         Desktop.getDesktop().browse(URI.create("http://localhost:" + port + "/"));
 
-        System.out.println("Press Enter kex to exit...");
+        System.out.println("Press Enter key to exit...");
         System.in.read();
         reportViewer.stop();
     }

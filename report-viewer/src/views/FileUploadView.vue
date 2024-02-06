@@ -66,21 +66,22 @@ store().clearStore()
 const exampleFiles = ref(import.meta.env.MODE == 'demo')
 const localFiles = ref(false)
 // Checks whether local files exist
-fetch('/files/overview.json')
-  .then((response) => {
-    if (response.status == 200) {
-      localFiles.value = true
-    }
+BaseFactory.getLocalFile('files/overview.json')
+  .then(() => {
+    localFiles.value = true
   })
   .catch(() => {})
 
 BaseFactory.useLocalZipMode().then((value) => {
+  console.log('Using local zip mode:', value)
   if (value) {
+    store().state.uploadedFileName = BaseFactory.zipFileName
     navigateToOverview()
   }
 })
 
 document.title = 'JPlag Report Viewer'
+
 const loadingFiles = ref(false)
 type fileMethod = 'query' | 'local' | 'upload' | 'unknown'
 const errors: Ref<{ error: Error; source: fileMethod }[]> = ref([])
@@ -200,7 +201,7 @@ async function loadQueryFile(url: URL) {
  * Handles click on Continue with local files.
  */
 function continueWithLocal() {
-  store().state.uploadedFileName = exampleFiles.value ? 'progpedia.zip' : 'results.zip'
+  store().state.uploadedFileName = BaseFactory.zipFileName
   store().setLoadingType('local')
   navigateToOverview()
 }

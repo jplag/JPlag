@@ -54,7 +54,7 @@ public class CliOptions implements Runnable {
     public String resultFolder = "results";
 
     @Option(names = {"--mode"}, description = "The mode to run jplag in")
-    public JPlagMode mode = JPlagMode.RUN_AND_VIEW;
+    public JPlagMode mode = JPlagMode.RUN;
 
     @ArgGroup(heading = "Advanced%n", exclusive = false)
     public Advanced advanced = new Advanced();
