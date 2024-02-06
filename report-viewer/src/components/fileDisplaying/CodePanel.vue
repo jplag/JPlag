@@ -7,7 +7,9 @@
       <span class="flex-1">{{ getFileDisplayName(file) }}</span>
       <ToolTipComponent v-if="file.tokenCount != undefined" direction="left" class="font-normal">
         <template #default
-          >{{ ((file.matchedTokenCount / (file.tokenCount - 1)) * 100).toFixed(2) }}%</template
+          ><span class="text-gray-600 dark:text-gray-300"
+            >{{ Math.round((file.matchedTokenCount / (file.tokenCount - 1)) * 100) }}%</span
+          ></template
         >
         <template #tooltip
           ><p class="whitespace-nowrap text-sm">
