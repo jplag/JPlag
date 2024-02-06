@@ -52,8 +52,6 @@ public class EmfModelLanguage extends DynamicEmfLanguage {
 
     @Override
     public List<File> customizeSubmissionOrder(List<File> sub) {
-        Comparator<File> fileEndingComparator = (first, second) -> Boolean.compare(second.getName().endsWith(FILE_ENDING),
-                first.getName().endsWith(FILE_ENDING));
-        return sub.stream().sorted(fileEndingComparator).toList();
+        return sub.stream().sorted(Comparator.comparing(file -> file.getName().endsWith(FILE_ENDING) ? 0 : 1)).toList();
     }
 }
