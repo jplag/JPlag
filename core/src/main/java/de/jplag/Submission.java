@@ -237,7 +237,7 @@ public class Submission implements Comparable<Submission> {
      * Parse files of the submission.
      * @return Whether parsing was successful.
      */
-    /* package-private */ boolean parse(boolean debugParser) {
+    /* package-private */ boolean parse(boolean debugParser, boolean normalize) {
         if (files == null || files.isEmpty()) {
             logger.error("ERROR: nothing to parse for submission \"{}\"", name);
             tokenList = null;
@@ -246,7 +246,7 @@ public class Submission implements Comparable<Submission> {
         }
 
         try {
-            tokenList = language.parse(new HashSet<>(files));
+            tokenList = language.parse(new HashSet<>(files), normalize);
             if (logger.isDebugEnabled()) {
                 for (Token token : tokenList) {
                     logger.debug(String.join(" | ", token.getType().toString(), Integer.toString(token.getLine()), token.getSemantics().toString()));
