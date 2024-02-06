@@ -10,9 +10,6 @@ import org.slf4j.LoggerFactory;
 import de.jplag.clustering.ClusteringFactory;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.SubmissionException;
-import de.jplag.logging.ProgressBar;
-import de.jplag.logging.ProgressBarLogger;
-import de.jplag.logging.ProgressBarType;
 import de.jplag.merging.MatchMerging;
 import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.reportobject.model.Version;
@@ -74,9 +71,7 @@ public class JPlag {
             throw new SubmissionException("Not enough valid submissions! (found " + submissionCount + " valid submissions)");
 
         // Compare valid submissions.
-        ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.COMPARING, (submissionCount * (submissionCount - 1)) / 2);
-        JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet, progressBar);
-        progressBar.dispose();
+        JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
 
         // Use Match Merging against obfuscation
         if (options.mergingOptions().enabled()) {

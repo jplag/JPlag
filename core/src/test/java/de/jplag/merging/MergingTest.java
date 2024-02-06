@@ -22,9 +22,6 @@ import de.jplag.SubmissionSetBuilder;
 import de.jplag.TestBase;
 import de.jplag.Token;
 import de.jplag.exceptions.ExitException;
-import de.jplag.logging.ProgressBar;
-import de.jplag.logging.ProgressBarLogger;
-import de.jplag.logging.ProgressBarType;
 import de.jplag.options.JPlagOptions;
 import de.jplag.strategy.ComparisonStrategy;
 import de.jplag.strategy.ParallelComparisonStrategy;
@@ -57,9 +54,7 @@ class MergingTest extends TestBase {
 
     @BeforeEach
     void prepareTestState() {
-        ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.COMPARING, 0);
-        JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet, progressBar);
-        progressBar.dispose();
+        JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
         comparisonsBefore = result.getAllComparisons();
 
         if (options.mergingOptions().enabled()) {

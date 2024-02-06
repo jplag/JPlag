@@ -2,7 +2,6 @@ package de.jplag.strategy;
 
 import de.jplag.JPlagResult;
 import de.jplag.SubmissionSet;
-import de.jplag.logging.ProgressBar;
 
 /**
  * Strategy for comparing a set of submissions.
@@ -14,5 +13,5 @@ public interface ComparisonStrategy {
      * @param submissionSet Collection of submissions with optional basecode to compare.
      * @return the comparison results.
      */
-    JPlagResult compareSubmissions(SubmissionSet submissionSet, ProgressBar progressBar);
+    JPlagResult compareSubmissions(SubmissionSet submissionSet);
 }

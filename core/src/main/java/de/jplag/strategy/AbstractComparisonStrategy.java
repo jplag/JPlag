@@ -3,14 +3,19 @@ package de.jplag.strategy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.GreedyStringTiling;
 import de.jplag.JPlagComparison;
+import de.jplag.JPlagResult;
 import de.jplag.Submission;
 import de.jplag.SubmissionSet;
+import de.jplag.logging.ProgressBar;
+import de.jplag.logging.ProgressBarLogger;
+import de.jplag.logging.ProgressBarType;
 import de.jplag.options.JPlagOptions;
 
 public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
@@ -57,7 +62,7 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
     /**
      * @return a list of all submission tuples to be processed.
      */
-    protected static List<SubmissionTuple> buildComparisonTuples(List<Submission> submissions) {
+    protected List<SubmissionTuple> buildComparisonTuples(List<Submission> submissions) {
         List<SubmissionTuple> tuples = new ArrayList<>();
         List<Submission> validSubmissions = submissions.stream().filter(s -> s.getTokenList() != null).toList();
 
@@ -72,4 +77,44 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
         }
         return tuples;
     }
+
+    @Override
+    public JPlagResult compareSubmissions(SubmissionSet submissionSet) {
+        long timeBeforeStartInMillis = System.currentTimeMillis();
+
+        handleBaseCode(submissionSet);
+
+        List<SubmissionTuple> tuples = buildComparisonTuples(submissionSet.getSubmissions());
+        ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.COMPARING, tuples.size());
+        List<JPlagComparison> comparisons = prepareStream(tuples).flatMap(tuple -> {
+            Optional<JPlagComparison> result = compareTuple(tuple);
+            progressBar.step();
+            return result.stream();
+        }).toList();
+        progressBar.dispose();
+
+        long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
+
+        return new JPlagResult(comparisons, submissionSet, durationInMillis, options);
+    }
+
+    /**
+     * Handle the parsing of the base code.
+     * @param submissionSet The submission set to parse
+     */
+    protected abstract void handleBaseCode(SubmissionSet submissionSet);
+
+    /**
+     * Prepare a stream for parsing the tuples. Here you can modify the tuples or the stream as necessary.
+     * @param tuples The tuples to stream
+     * @return The Stream of tuples
+     */
+    protected abstract Stream<SubmissionTuple> prepareStream(List<SubmissionTuple> tuples);
+
+    /**
+     * Compares a single tuple. Returns nothing, if the similarity is not high enough.
+     * @param tuple The Tuple to compare
+     * @return The comparison
+     */
+    protected abstract Optional<JPlagComparison> compareTuple(SubmissionTuple tuple);
 }

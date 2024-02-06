@@ -2,12 +2,11 @@ package de.jplag.strategy;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import de.jplag.GreedyStringTiling;
 import de.jplag.JPlagComparison;
-import de.jplag.JPlagResult;
 import de.jplag.SubmissionSet;
-import de.jplag.logging.ProgressBar;
 import de.jplag.options.JPlagOptions;
 
 /**
@@ -20,22 +19,20 @@ public class ParallelComparisonStrategy extends AbstractComparisonStrategy {
     }
 
     @Override
-    public JPlagResult compareSubmissions(SubmissionSet submissionSet, ProgressBar progressBar) {
-        // Initialize:
-        long timeBeforeStartInMillis = System.currentTimeMillis();
+    protected void handleBaseCode(SubmissionSet submissionSet) {
         boolean withBaseCode = submissionSet.hasBaseCode();
         if (withBaseCode) {
             compareSubmissionsToBaseCode(submissionSet);
         }
+    }
 
-        List<SubmissionTuple> tuples = buildComparisonTuples(submissionSet.getSubmissions());
-        List<JPlagComparison> comparisons = tuples.stream().parallel().map(tuple -> {
-            Optional<JPlagComparison> result = compareSubmissions(tuple.left(), tuple.right());
-            progressBar.step();
-            return result;
-        }).flatMap(Optional::stream).toList();
+    @Override
+    protected Stream<SubmissionTuple> prepareStream(List<SubmissionTuple> tuples) {
+        return tuples.stream().parallel();
+    }
 
-        long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
-        return new JPlagResult(comparisons, submissionSet, durationInMillis, options);
+    @Override
+    protected Optional<JPlagComparison> compareTuple(SubmissionTuple tuple) {
+        return compareSubmissions(tuple.left(), tuple.right());
     }
 }
