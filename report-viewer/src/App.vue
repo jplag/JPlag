@@ -14,14 +14,8 @@
           :icon="store().uiState.useDarkMode ? ['fas', 'sun'] : ['fas', 'moon']"
         />
       </Button>
-      <div class="absolute bottom-1 left-5 text-xs text-black dark:text-white print:hidden">
-        Bug reports and feature requests can be submitted on
-        <a
-          href="https://github.com/jplag/JPlag/issues"
-          class="text-link-dark underline dark:text-link"
-          ><FontAwesomeIcon :icon="faGithub" /> GitHub</a
-        >
-      </div>
+
+      <RepositoryReference class="absolute bottom-1 left-5" />
     </div>
   </div>
 </template>
@@ -33,7 +27,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons'
 import { store } from './stores/store'
-import { faGithub } from '@fortawesome/free-brands-svg-icons'
+import RepositoryReference from './components/RepositoryReference.vue'
 
 library.add(faMoon)
 library.add(faSun)
