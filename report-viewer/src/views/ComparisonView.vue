@@ -74,7 +74,7 @@ import MatchList from '@/components/fileDisplaying/MatchList.vue'
 import FilesContainer from '@/components/fileDisplaying/FilesContainer.vue'
 import { store } from '@/stores/store'
 import Container from '@/components/ContainerComponent.vue'
-import { HighlightLanguage } from '@/model/Language'
+import { ParserLanguage } from '@/model/Language'
 import hljsLightMode from 'highlight.js/styles/vs.css?raw'
 import hljsDarkMode from 'highlight.js/styles/vs2015.css?raw'
 import { MetricType } from '@/model/MetricType'
@@ -98,7 +98,7 @@ const props = defineProps({
     required: true
   },
   language: {
-    type: Object as PropType<HighlightLanguage>,
+    type: Object as PropType<ParserLanguage>,
     required: true
   }
 })
