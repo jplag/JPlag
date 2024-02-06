@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import de.jplag.standardOptions.NormalizableLanguage;
-import de.jplag.standardOptions.StandardOptionsLanguage;
 import org.kohsuke.MetaInfServices;
 
 import de.jplag.ParsingException;
@@ -15,7 +13,7 @@ import de.jplag.Token;
  * Language for Java 9 and newer.
  */
 @MetaInfServices(de.jplag.Language.class)
-public class JavaLanguage extends StandardOptionsLanguage implements NormalizableLanguage {
+public class JavaLanguage implements de.jplag.Language {
     private static final String IDENTIFIER = "java";
     public static final int JAVA_VERSION = 21;
 
@@ -63,10 +61,5 @@ public class JavaLanguage extends StandardOptionsLanguage implements Normalizabl
     @Override
     public String toString() {
         return this.getIdentifier();
-    }
-
-    @Override
-    public boolean isCoreNormalizationEnabled() {
-        return this.getNormalizationOptions().normalize.getValue();
     }
 }
