@@ -12,6 +12,8 @@
   >
     <LoadingCircle class="mx-auto" />
   </div>
+
+  <RepositoryReference />
 </template>
 
 <script setup lang="ts">
@@ -23,6 +25,7 @@ import type { Comparison } from '@/model/Comparison'
 import { ComparisonFactory } from '@/model/factories/ComparisonFactory'
 import LoadingCircle from '@/components/LoadingCircle.vue'
 import { redirectOnError } from '@/router'
+import RepositoryReference from '@/components/RepositoryReference.vue'
 
 const props = defineProps({
   firstId: {

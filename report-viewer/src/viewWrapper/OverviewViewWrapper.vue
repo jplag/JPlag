@@ -6,6 +6,8 @@
   >
     <LoadingCircle class="mx-auto" />
   </div>
+
+  <RepositoryReference />
 </template>
 
 <script setup lang="ts">
@@ -15,6 +17,7 @@ import OverviewView from '@/views/OverviewView.vue'
 import type { Overview } from '@/model/Overview'
 import LoadingCircle from '@/components/LoadingCircle.vue'
 import { redirectOnError } from '@/router'
+import RepositoryReference from '@/components/RepositoryReference.vue'
 
 const overview: Ref<Overview | null> = ref(null)
 

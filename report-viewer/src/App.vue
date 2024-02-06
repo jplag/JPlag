@@ -14,8 +14,6 @@
           :icon="store().uiState.useDarkMode ? ['fas', 'sun'] : ['fas', 'moon']"
         />
       </Button>
-
-      <RepositoryReference class="absolute bottom-1 left-5" />
     </div>
   </div>
 </template>
@@ -27,7 +25,6 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons'
 import { store } from './stores/store'
-import RepositoryReference from './components/RepositoryReference.vue'
 
 library.add(faMoon)
 library.add(faSun)
