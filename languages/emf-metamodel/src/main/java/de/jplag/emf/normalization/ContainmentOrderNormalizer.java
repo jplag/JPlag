@@ -91,7 +91,7 @@ public class ContainmentOrderNormalizer implements Comparator<EObject> {
         List<EObject> elements = modelElementsToSort.stream().filter(it -> type.equals(tokenizer.element2Token(it))).toList();
 
         // Generate token type distributions for the subtrees of the elements to sort:
-        Map<EObject, List<Double>> subtreeVectors = new HashMap<>();
+        Map<EObject, TokenOccurenceVector> subtreeVectors = new HashMap<>();
         elements.forEach(it -> subtreeVectors.put(it, tokenVectorGenerator.generateOccurenceVector(it.eAllContents())));
 
         // Calculate distance matrix:
@@ -118,10 +118,11 @@ public class ContainmentOrderNormalizer implements Comparator<EObject> {
         return count;
     }
 
-    private static double euclideanDistance(List<Double> first, List<Double> second) {
-        if (first.size() != second.size()) {
-            throw new IllegalArgumentException("Lists must have the same size");
-        }
+    /**
+     * Calculates the euclidean distance for two token occurrence vectors. As they are zero-padded, they are virtually of
+     * the same length.
+     */
+    private static double euclideanDistance(TokenOccurenceVector first, TokenOccurenceVector second) {
         double sum = 0;
         for (int i = 0; i < first.size(); i++) {
             double diff = first.get(i) - second.get(i);
@@ -129,4 +130,5 @@ public class ContainmentOrderNormalizer implements Comparator<EObject> {
         }
         return Math.sqrt(sum);
     }
+
 }
