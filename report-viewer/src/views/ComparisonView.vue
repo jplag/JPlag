@@ -3,21 +3,25 @@
 -->
 <template>
   <div class="absolute bottom-0 left-0 right-0 top-0 flex flex-col">
-    <div class="relative left-0 right-0 top-0 flex space-x-5 p-5 pb-0">
-      <Container class="flex-grow overflow-hidden">
+    <div class="relative left-0 right-0 top-0 flex space-x-5 p-5 pb-0 print:p-0">
+      <Container class="flex-grow overflow-hidden print:min-h-fit print:overflow-visible">
         <h2>
           Comparison:
-          {{
-            isAnonymous(comparison.firstSubmissionId)
-              ? 'Submission 1'
-              : store().submissionDisplayName(comparison.firstSubmissionId)
-          }}
+          {{ store().getDisplayName(comparison.firstSubmissionId) }}
           -
-          {{
-            isAnonymous(comparison.secondSubmissionId)
-              ? 'Submission 2'
-              : store().submissionDisplayName(comparison.secondSubmissionId)
-          }}
+          {{ store().getDisplayName(comparison.secondSubmissionId) }}
+          <ToolTipComponent direction="left" class="float-right print:hidden">
+            <template #tooltip>
+              <p class="whitespace-pre text-sm">
+                Printing works best in landscape mode on Chromium based browsers
+              </p>
+            </template>
+            <template #default>
+              <Button class="h-10 w-10" @click="print()">
+                <FontAwesomeIcon class="text-2xl" :icon="['fas', 'print']" />
+              </Button>
+            </template>
+          </ToolTipComponent>
         </h2>
         <div class="flex flex-row">
           <TextInformation label="Average Similarity"
@@ -33,32 +37,26 @@
       </Container>
     </div>
     <div ref="styleholder"></div>
-    <div class="relative bottom-0 left-0 right-0 flex flex-grow justify-between space-x-5 p-5 pt-5">
+    <div
+      class="relative bottom-0 left-0 right-0 flex flex-grow justify-between space-x-5 p-5 pt-5 print:space-x-1 print:p-0 print:!pt-2"
+    >
       <FilesContainer
         ref="panel1"
         :files="filesOfFirst"
         :matches="comparison.matchesInFirstSubmission"
-        :file-owner-display-name="
-          isAnonymous(comparison.firstSubmissionId)
-            ? 'Submission 1'
-            : (store().submissionDisplayName(comparison.firstSubmissionId) as string)
-        "
+        :file-owner-display-name="store().getDisplayName(comparison.firstSubmissionId)"
         :highlight-language="language"
         @line-selected="showMatchInSecond"
-        class="max-h-0 min-h-full flex-1 overflow-hidden"
+        class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
       />
       <FilesContainer
         ref="panel2"
         :files="filesOfSecond"
         :matches="comparison.matchesInSecondSubmissions"
-        :file-owner-display-name="
-          isAnonymous(comparison.secondSubmissionId)
-            ? 'Submission 2'
-            : (store().submissionDisplayName(comparison.secondSubmissionId) as string)
-        "
+        :file-owner-display-name="store().getDisplayName(comparison.secondSubmissionId)"
         :highlight-language="language"
         @line-selected="showMatchInFirst"
-        class="max-h-0 min-h-full flex-1 overflow-hidden"
+        class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
       />
     </div>
   </div>
@@ -66,19 +64,25 @@
 
 <script setup lang="ts">
 import type { Match } from '@/model/Match'
-
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import Button from '@/components/ButtonComponent.vue'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faPrint } from '@fortawesome/free-solid-svg-icons'
 import { onMounted, ref, watch, type Ref, computed, type PropType, onErrorCaptured } from 'vue'
 import TextInformation from '@/components/TextInformation.vue'
 import MatchList from '@/components/fileDisplaying/MatchList.vue'
 import FilesContainer from '@/components/fileDisplaying/FilesContainer.vue'
 import { store } from '@/stores/store'
 import Container from '@/components/ContainerComponent.vue'
-import { HighlightLanguage } from '@/model/Language'
+import { ParserLanguage } from '@/model/Language'
 import hljsLightMode from 'highlight.js/styles/vs.css?raw'
 import hljsDarkMode from 'highlight.js/styles/vs2015.css?raw'
 import { MetricType } from '@/model/MetricType'
 import { Comparison } from '@/model/Comparison'
 import { redirectOnError } from '@/router'
+import ToolTipComponent from '@/components/ToolTipComponent.vue'
+
+library.add(faPrint)
 
 const props = defineProps({
   comparison: {
@@ -86,7 +90,7 @@ const props = defineProps({
     required: true
   },
   language: {
-    type: Object as PropType<HighlightLanguage>,
+    type: Object as PropType<ParserLanguage>,
     required: true
   }
 })
@@ -127,8 +131,8 @@ function showMatch(match: Match) {
   showMatchInSecond(match)
 }
 
-function isAnonymous(id: string) {
-  return store().state.anonymous.has(id)
+function print() {
+  window.print()
 }
 
 // This code is responsible for changing the theme of the highlighted code depending on light/dark mode
@@ -165,3 +169,11 @@ onErrorCaptured((error) => {
   return false
 })
 </script>
+
+<style>
+@media print {
+  @page {
+    size: landscape;
+  }
+}
+</style>

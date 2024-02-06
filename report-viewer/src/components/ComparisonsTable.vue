@@ -197,7 +197,7 @@ const props = defineProps({
 })
 
 const displayedComparisons = computed(() => {
-  const comparisons = getFilteredComparisons(getSortedComparisons(props.topComparisons))
+  const comparisons = getFilteredComparisons(getSortedComparisons(Array.from(props.topComparisons)))
   let index = 1
   comparisons.forEach((c) => {
     c.id = index++
@@ -252,7 +252,7 @@ function getSortedComparisons(comparisons: ComparisonListElement[]) {
   comparisons.forEach((c) => {
     c.sortingPlace = index++
   })
-  return props.topComparisons
+  return comparisons
 }
 
 function getClusterFor(clusterIndex: number) {

@@ -6,9 +6,11 @@ import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_SYNOPSIS;
 
 import java.awt.*;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -62,6 +64,7 @@ public final class CLI {
 
     private static final String IMPOSSIBLE_EXCEPTION = "This should not have happened."
             + " Please create an issue on github (https://github.com/jplag/JPlag/issues) with the entire output.";
+    private static final String UNKOWN_LANGAUGE_EXCEPTION = "Language %s does not exists. Available languages are: %s";
 
     private static final String DESCRIPTION_PATTERN = "%nJPlag - %s%n%s%n%n";
 
@@ -115,11 +118,14 @@ public final class CLI {
         this.commandLine.setAllowSubcommandsAsOptionParameters(true);
     }
 
-    public File runJPlag(ParseResult parseResult) throws ExitException {
+    public File runJPlag(ParseResult parseResult) throws ExitException, FileNotFoundException {
         JPlagOptions options = buildOptionsFromArguments(parseResult);
         JPlagResult result = JPlag.run(options);
-        ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
-        return reportObjectFactory.createAndSaveReport(result, getResultFolder());
+        File target = new File(getResultFolder() + ".zip");
+        ReportObjectFactory reportObjectFactory = new ReportObjectFactory(target);
+        reportObjectFactory.createAndSaveReport(result);
+        OutputFileGenerator.generateCsvOutput(result, new File(getResultFolder()), this.options);
+        return target;
     }
 
     public void runViewer(File zipFile) throws IOException {
@@ -161,6 +167,12 @@ public final class CLI {
                 commandLine.getExecutionStrategy().execute(result);
             }
             return result;
+        } catch (CommandLine.ParameterException e) {
+            if (e.getArgSpec().isOption() && Arrays.asList(((OptionSpec) e.getArgSpec()).names()).contains("-l")) {
+                throw new CliException(String.format(UNKOWN_LANGAUGE_EXCEPTION, e.getValue(),
+                        String.join(", ", LanguageLoader.getAllAvailableLanguageIdentifiers())));
+            }
+            throw new CliException("Error during parsing", e);
         } catch (CommandLine.PicocliException e) {
             throw new CliException("Error during parsing", e);
         }

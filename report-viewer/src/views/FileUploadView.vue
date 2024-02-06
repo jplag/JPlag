@@ -23,7 +23,7 @@
         />
       </div>
       <h1 class="text-7xl">JPlag Report Viewer</h1>
-      <div v-if="!hasQueryFile && !loadingFiles">
+      <div v-if="!hasQueryFile && !loadingFiles && !exampleFiles">
         <div
           class="mx-auto mt-10 flex w-96 cursor-pointer flex-col justify-center rounded-md border-1 border-accent-dark bg-accent bg-opacity-25 px-5 py-5"
           @click="uploadFileThroughWindow()"
@@ -36,7 +36,10 @@
           Continue with local files
         </Button>
       </div>
-      <LoadingCircle v-else class="space-y-5 pt-5" />
+      <LoadingCircle v-else-if="loadingFiles" class="space-y-5 pt-5" />
+      <div v-else-if="exampleFiles" class="pt-5">
+        <Button class="mx-auto w-fit text-xl" @click="continueWithLocal()"> View Example </Button>
+      </div>
       <div v-if="errors.length > 0" class="text-error">
         <p>{{ getErrorText() }}</p>
         <p>For more details check the console.</p>
@@ -59,6 +62,8 @@ import { ZipFileHandler } from '@/utils/fileHandling/ZipFileHandler'
 import { BaseFactory } from '@/model/factories/BaseFactory'
 
 store().clearStore()
+
+const exampleFiles = ref(import.meta.env.MODE == 'demo')
 const localFiles = ref(false)
 // Checks whether local files exist
 fetch('/files/overview.json')
@@ -75,6 +80,7 @@ BaseFactory.useLocalZipMode().then((value) => {
   }
 })
 
+document.title = 'JPlag Report Viewer'
 const loadingFiles = ref(false)
 type fileMethod = 'query' | 'local' | 'upload' | 'unknown'
 const errors: Ref<{ error: Error; source: fileMethod }[]> = ref([])
@@ -101,28 +107,19 @@ function navigateToOverview() {
   })
 }
 
-function navigateToComparisonView(firstId: string, secondId: string) {
-  router.push({
-    name: 'ComparisonView',
-    params: {
-      firstId,
-      secondId
-    }
-  })
-}
-
 /**
  * Handles a json file on drop. It read the file and passes the file string to next window.
  * @param file The json file to handle
  */
 async function handleJsonFile(file: Blob) {
-  store().setLoadingType('single')
-  const fileContentType = await new JsonFileHandler().handleFile(file)
-  if (fileContentType.fileType === 'overview') {
-    navigateToOverview()
-  } else if (fileContentType.fileType === 'comparison') {
-    navigateToComparisonView(fileContentType.id1, fileContentType.id2)
+  try {
+    await new JsonFileHandler().handleFile(file)
+  } catch (e) {
+    registerError(e as Error, 'upload')
+    return
   }
+  store().setLoadingType('single')
+  navigateToOverview()
 }
 
 /**
@@ -154,6 +151,7 @@ async function uploadFileOnDrag(e: DragEvent) {
   let dropped = e.dataTransfer?.files
   try {
     if (dropped?.length === 1) {
+      store().state.uploadedFileName = dropped[0].name
       await handleFile(dropped[0])
     } else {
       throw new Error('Not exactly one file')
@@ -177,6 +175,7 @@ async function uploadFileThroughWindow() {
     if (!file) {
       return
     }
+    store().state.uploadedFileName = file.name
     handleFile(file)
   }
   input.click()
@@ -201,12 +200,14 @@ async function loadQueryFile(url: URL) {
  * Handles click on Continue with local files.
  */
 function continueWithLocal() {
+  store().state.uploadedFileName = exampleFiles.value ? 'progpedia.zip' : 'results.zip'
   store().setLoadingType('local')
   navigateToOverview()
 }
 
 function registerError(error: Error, source: fileMethod) {
   loadingFiles.value = false
+  store().state.uploadedFileName = ''
   errors.value.push({ error, source })
   console.error(error)
 }

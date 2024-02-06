@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <div>
-      <canvas ref="graphCanvas"></canvas>
+  <div class="print:max-h-full print:max-w-full">
+    <div class="print:max-h-full print:max-w-full">
+      <canvas ref="graphCanvas" class="print:max-h-full print:max-w-full"></canvas>
       <div
         v-if="!allComparisonsPresent"
         class="mt-8 text-xs font-bold text-gray-500 dark:text-gray-400"
@@ -27,6 +27,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { EdgeLine, GraphController, GraphChart } from 'chartjs-chart-graph'
 import { store } from '@/stores/store'
 import { graphColors } from '@/utils/ColorUtils'
+import { router } from '@/router'
 
 const props = defineProps({
   cluster: {
@@ -49,11 +50,7 @@ Chart.register(GraphController)
 Chart.register(GraphChart)
 
 const keys = computed(() => Array.from(props.cluster.members.keys()))
-const labels = computed(() =>
-  Array.from(keys.value).map((m) =>
-    store().state.anonymous.has(m) ? 'Hidden' : store().submissionDisplayName(m) ?? m
-  )
-)
+const labels = computed(() => Array.from(keys.value).map((m) => store().getDisplayName(m)))
 const edges = computed(() => {
   const edges: { source: number; target: number }[] = []
   props.cluster.members.forEach((member1, key1) => {
@@ -247,6 +244,8 @@ const xPadding = computed(() => {
   return Math.max(Math.min(200, maxWidth), 40)
 })
 
+const hoveredEdge: Ref<{ firstId: string; secondId: string } | null> = ref(null)
+
 const graphOptions = computed(() => {
   return {
     layout: {
@@ -259,24 +258,37 @@ const graphOptions = computed(() => {
     },
     onHover: (event: any, elements: any) => {
       if (!event) {
-        emit('lineHovered', null)
-        return
-      }
-      if (elements.length > 0) {
+        hoveredEdge.value = null
+      } else if (elements.length > 0) {
         // Hovering over a node
-        emit('lineHovered', null)
+        hoveredEdge.value = null
       } else if (chart.value != null) {
         const closestEdge = getClosestEdge({
           x: (chart.value as Chart).scales.x.getValueForPixel(event.x) ?? 0,
           y: (chart.value as Chart).scales.y.getValueForPixel(event.y) ?? 0
         })
         if (closestEdge.d > minHoverDistance) {
-          emit('lineHovered', null)
-          return
+          hoveredEdge.value = null
+        } else {
+          hoveredEdge.value = {
+            firstId: closestEdge.sourceId,
+            secondId: closestEdge.targetId
+          }
         }
-        emit('lineHovered', {
-          firstId: closestEdge.sourceId,
-          secondId: closestEdge.targetId
+      }
+      if (graphCanvas.value != null) {
+        graphCanvas.value.style.cursor = hoveredEdge.value != null ? 'pointer' : 'default'
+      }
+      emit('lineHovered', hoveredEdge.value)
+    },
+    onClick: () => {
+      if (hoveredEdge.value != null) {
+        router.push({
+          name: 'ComparisonView',
+          params: {
+            firstId: hoveredEdge.value.firstId,
+            secondId: hoveredEdge.value.secondId
+          }
         })
       }
     },

@@ -14,6 +14,9 @@ export default defineConfig((userConfig: UserConfig) => {
     case 'prod':
       base = '/JPlag/'
       break
+    case 'demo':
+      base = '/Demo/'
+      break
   }
   return {
     plugins: [vue()],

@@ -2,13 +2,13 @@
   Panel which displays a submission files with its line of code.
 -->
 <template>
-  <Interactable class="mx-2 !shadow">
-    <div @click="collapsed = !collapsed" class="text-center font-bold">
+  <Interactable class="mx-2 !shadow print:!mx-0 print:!border-0 print:!p-0">
+    <div @click="collapsed = !collapsed" class="text-center font-bold print:whitespace-pre-wrap">
       {{ getFileDisplayName(file) }}
     </div>
 
-    <div class="mx-1 overflow-x-auto">
-      <div v-if="!collapsed" class="w-fit min-w-full !text-xs">
+    <div class="mx-1 overflow-x-auto print:!mx-0">
+      <div class="print:display-initial w-fit min-w-full !text-xs" :class="{ hidden: collapsed }">
         <table
           v-if="file.data.trim() !== ''"
           class="w-full"
@@ -26,7 +26,7 @@
             <td class="float-right pr-3">{{ index + 1 }}</td>
             <!-- Code line -->
             <td
-              class="w-full"
+              class="print-excact w-full"
               :style="{
                 background:
                   line.match !== null
@@ -34,7 +34,11 @@
                     : 'hsla(0, 0%, 0%, 0)'
               }"
             >
-              <pre v-html="line.line" class="code-font !bg-transparent" ref="lineRefs"></pre>
+              <pre
+                v-html="line.line"
+                class="code-font print-excact whitespace-pre-wrap !bg-transparent"
+                ref="lineRefs"
+              ></pre>
             </td>
           </tr>
         </table>
@@ -54,7 +58,7 @@ import Interactable from '../InteractableComponent.vue'
 import type { Match } from '@/model/Match'
 import type { SubmissionFile } from '@/stores/state'
 import { highlight } from '@/utils/CodeHighlighter'
-import type { HighlightLanguage } from '@/model/Language'
+import type { ParserLanguage } from '@/model/Language'
 import { getMatchColor } from '@/utils/ColorUtils'
 
 const props = defineProps({
@@ -76,7 +80,7 @@ const props = defineProps({
    * Language of the file.
    */
   highlightLanguage: {
-    type: String as PropType<HighlightLanguage>,
+    type: String as PropType<ParserLanguage>,
     required: true
   }
 })

@@ -110,6 +110,11 @@
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
+            <artifactId>javascript</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.jplag</groupId>
             <artifactId>llvmir</artifactId>
             <version>${revision}</version>
         </dependency>
