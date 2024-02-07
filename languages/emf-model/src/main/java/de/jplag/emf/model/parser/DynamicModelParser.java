@@ -14,7 +14,7 @@ import de.jplag.emf.dynamic.parser.DynamicEcoreParser;
 import de.jplag.emf.model.EmfModelLanguage;
 import de.jplag.emf.util.AbstractModelView;
 import de.jplag.emf.util.EMFUtil;
-import de.jplag.emf.util.MetamodelTreeView;
+import de.jplag.emf.util.GenericEmfTreeView;
 
 /**
  * Parser for EMF metamodels based on dynamically created tokens.
@@ -57,7 +57,7 @@ public class DynamicModelParser extends DynamicEcoreParser {
 
     @Override
     protected AbstractModelView createView(File file, Resource modelResource) {
-        return new MetamodelTreeView(file, modelResource);
+        return new GenericEmfTreeView(file, modelResource);
     }
 
     private void parseMetamodelFile(File file) throws ParsingException {

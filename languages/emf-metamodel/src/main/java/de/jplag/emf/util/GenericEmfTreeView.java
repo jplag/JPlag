@@ -18,7 +18,7 @@ import de.jplag.emf.MetamodelToken;
 /**
  * Very basic tree view representation of an EMF metamodel or model.
  */
-public class MetamodelTreeView extends AbstractModelView {
+public class GenericEmfTreeView extends AbstractModelView {
     private final List<String> lines;
     private final Map<EObject, TokenTrace> objectToLine;
 
@@ -26,7 +26,7 @@ public class MetamodelTreeView extends AbstractModelView {
      * Creates a tree view for a metamodel.
      * @param file is the path to the metamodel.
      */
-    public MetamodelTreeView(File file, Resource modelResource) {
+    public GenericEmfTreeView(File file, Resource modelResource) {
         super(file);
         lines = new ArrayList<>();
         objectToLine = new HashMap<>();

@@ -31,7 +31,7 @@ class MetamodelTreeViewTest extends AbstractEmfTest {
         Resource modelResource = loadAndVerifyModel(modelFile);
 
         // Generate emfatic view:
-        MetamodelTreeView view = new MetamodelTreeView(modelFile, modelResource);
+        GenericEmfTreeView view = new GenericEmfTreeView(modelFile, modelResource);
         view.writeToFile(VIEW_FILE_SUFFIX);
 
         // Compare expected vs. actual view file:
