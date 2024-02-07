@@ -39,7 +39,6 @@ public class TokenVectorGenerator {
         for (TokenType type : tokenizer.allTokenTypes()) {
             occurenceVector.add(tokenTypeHistogram.getOrDefault(type, 0));
         }
-        System.err.println(occurenceVector + " for " + tokenizer.allTokenTypes());
         return new TokenOccurenceVector(normalize(occurenceVector));
     }
 
