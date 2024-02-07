@@ -88,8 +88,3 @@ function getFileName(fullPath: string) {
   return fullPath.split(/[/\\]/g).pop() || ''
 }
 </script>
-
-<style scoped>
-@media screen {
-}
-</style>
