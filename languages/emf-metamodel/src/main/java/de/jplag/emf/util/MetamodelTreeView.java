@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 
 import de.jplag.TokenTrace;
@@ -50,6 +51,7 @@ public class MetamodelTreeView extends AbstractModelView {
     }
 
     private final class TreeViewBuilder extends AbstractMetamodelVisitor {
+        private static final String IDENTIFIER_FEATURE = "name";
         private static final String INDENTATION = "  ";
         private static final String NAME_SEPARATOR = " : ";
 
@@ -59,6 +61,12 @@ public class MetamodelTreeView extends AbstractModelView {
             String line = prefix;
             if (eObject instanceof ENamedElement element) {
                 line += element.getName() + NAME_SEPARATOR;
+            } else {
+                for (EStructuralFeature feature : eObject.eClass().getEAllStructuralFeatures()) {
+                    if (feature.getName().toLowerCase().matches(IDENTIFIER_FEATURE) && eObject.eGet(feature) != null) {
+                        line += eObject.eGet(feature).toString() + NAME_SEPARATOR;
+                    }
+                }
             }
             line += eObject.eClass().getName();
 
