@@ -7,8 +7,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -308,5 +310,22 @@ public class Submission implements Comparable<Submission> {
         copy.setTokenList(new ArrayList<>(tokenList));
         copy.setBaseCodeComparison(baseCodeComparison);
         return copy;
+    }
+
+    /**
+     * @return A mapping of each file in the submission to the number of tokens in the file
+     */
+    public Map<File, Integer> getTokenCountPerFile() {
+        if (this.tokenList == null) {
+            return Collections.emptyMap();
+        }
+        Map<File, Integer> tokenCounts = new HashMap<>();
+        for (File file : this.files) {
+            tokenCounts.put(file, 0);
+        }
+        for (Token token : this.tokenList) {
+            tokenCounts.put(token.getFile(), tokenCounts.get(token.getFile()) + 1);
+        }
+        return tokenCounts;
     }
 }
