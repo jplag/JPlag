@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
@@ -63,7 +62,7 @@ class MergingTest extends TestBase {
             result = new MatchMerging(options).mergeMatchesOf(result);
         }
         comparisonsAfter = new ArrayList<>(result.getAllComparisons());
-        
+
         comparisonsBefore.sort(Comparator.comparing(Object::toString));
         comparisonsAfter.sort(Comparator.comparing(Object::toString));
     }
@@ -198,35 +197,35 @@ class MergingTest extends TestBase {
         }
         assertTrue(correctMerges);
     }
-    
+
     @Test
     @DisplayName("Sanity check for match merging")
     void testSanity() {
-        
+
         List<Match> matchesBefore = new ArrayList<>();
         List<Match> matchesAfter = new ArrayList<>();
 
-        for(JPlagComparison comparison : comparisonsBefore) {
-            if(comparison.toString().equals("sanityA.java <-> sanityB.java")) {
-                matchesBefore=comparison.ignoredMatches();
+        for (JPlagComparison comparison : comparisonsBefore) {
+            if (comparison.toString().equals("sanityA.java <-> sanityB.java")) {
+                matchesBefore = comparison.ignoredMatches();
             }
         }
-        for(JPlagComparison comparison : comparisonsAfter) {
-            if(comparison.toString().equals("sanityA.java <-> sanityB.java")) {
-                matchesAfter=comparison.matches();
+        for (JPlagComparison comparison : comparisonsAfter) {
+            if (comparison.toString().equals("sanityA.java <-> sanityB.java")) {
+                matchesAfter = comparison.matches();
             }
         }
-        
+
         List<Match> expectedBefore = new ArrayList<>();
-        expectedBefore.add(new Match(5,3,6));
-        expectedBefore.add(new Match(11,12,6));
-        expectedBefore.add(new Match(0,0,3));
-        expectedBefore.add(new Match(3,18,2));
-        expectedBefore.add(new Match(17,20,2));
+        expectedBefore.add(new Match(5, 3, 6));
+        expectedBefore.add(new Match(11, 12, 6));
+        expectedBefore.add(new Match(0, 0, 3));
+        expectedBefore.add(new Match(3, 18, 2));
+        expectedBefore.add(new Match(17, 20, 2));
 
         List<Match> expectedAfter = new ArrayList<>();
-        expectedAfter.add(new Match(5,3,12));
-        
+        expectedAfter.add(new Match(5, 3, 12));
+
         assertTrue(matchesBefore.equals(expectedBefore) && matchesAfter.equals(expectedAfter));
     }
 }

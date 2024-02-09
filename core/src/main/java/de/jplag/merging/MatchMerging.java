@@ -1,5 +1,9 @@
 package de.jplag.merging;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Match;
@@ -7,10 +11,6 @@ import de.jplag.SharedTokenType;
 import de.jplag.Submission;
 import de.jplag.Token;
 import de.jplag.options.JPlagOptions;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * This class implements a match merging algorithm which serves as a defense mechanism against obfuscation attacks.
@@ -26,7 +26,6 @@ public class MatchMerging {
 
     /**
      * Instantiates the match merging algorithm for a comparison result and a set of specific options.
-     *
      * @param options encapsulates the adjustable options
      */
     public MatchMerging(JPlagOptions options) {
@@ -36,7 +35,6 @@ public class MatchMerging {
     /**
      * Runs the internal match merging pipeline. It computes neighboring matches, merges them based on
      * {@link MergingOptions} and removes remaining too short matches afterwards.
-     *
      * @param result is the initially computed result object
      * @return JPlagResult containing the merged matches
      */
@@ -63,7 +61,6 @@ public class MatchMerging {
     /**
      * Computes neighbors by sorting based on order of matches in the left and right submissions and then checking which are
      * next to each other in both.
-     *
      * @param globalMatches
      * @return neighbors containing a list of pairs of neighboring matches
      */
@@ -88,7 +85,6 @@ public class MatchMerging {
      * This function iterates through the neighboring matches and checks which fit the merging criteria. Those who do are
      * merged and the original matches are removed. This is done, until there are either no neighbors left, or none fit the
      * criteria
-     *
      * @return globalMatches containing merged matches.
      */
     private List<Match> mergeNeighbors(List<Match> globalMatches, Submission leftSubmission, Submission rightSubmission) {
@@ -122,18 +118,17 @@ public class MatchMerging {
 
     /**
      * This function checks if a merge would go over file boundaries.
-     *
-     * @param leftSubmission     is the left submission
-     * @param rightSubmission    is the right submission
-     * @param upperNeighbor      is the upper neighboring match
-     * @param tokensBetweenLeft  amount of token that separate the neighboring matches in the left submission and need to be
-     *                           removed
+     * @param leftSubmission is the left submission
+     * @param rightSubmission is the right submission
+     * @param upperNeighbor is the upper neighboring match
+     * @param tokensBetweenLeft amount of token that separate the neighboring matches in the left submission and need to be
+     * removed
      * @param tokensBetweenRight amount token that separate the neighboring matches in the send submission and need to be
-     *                           removed
+     * removed
      * @return true if the merge goes over file boundaries.
      */
     private boolean mergeOverlapsFiles(Submission leftSubmission, Submission rightSubmission, Match upperNeighbor, int tokensBetweenLeft,
-                                       int tokensBetweenRight) {
+            int tokensBetweenRight) {
         if (leftSubmission.getFiles().size() == 1 && rightSubmission.getFiles().size() == 1) {
             return false;
         }
@@ -151,7 +146,6 @@ public class MatchMerging {
 
     /**
      * This function checks whether a list of token contains FILE_END
-     *
      * @param token is the list of token
      * @return true if FILE_END is in token
      */
@@ -162,19 +156,18 @@ public class MatchMerging {
     /**
      * This function removes token from both submissions after a merge has been performed. Additionally it moves the
      * starting positions from matches, that occur after the merged neighboring matches, by the amount of removed token.
-     *
      * @param globalMatches
-     * @param leftSubmission     is the left submission
-     * @param rightSubmission    is the right submission
-     * @param upperNeighbor      is the upper neighboring match
-     * @param tokensBetweenLeft  amount of token that separate the neighboring matches in the left submission and need to be
-     *                           removed
+     * @param leftSubmission is the left submission
+     * @param rightSubmission is the right submission
+     * @param upperNeighbor is the upper neighboring match
+     * @param tokensBetweenLeft amount of token that separate the neighboring matches in the left submission and need to be
+     * removed
      * @param tokensBetweenRight amount token that separate the neighboring matches in the send submission and need to be
-     *                           removed
+     * removed
      * @return shiftedMatches with the mentioned changes.
      */
     private List<Match> removeToken(List<Match> globalMatches, Submission leftSubmission, Submission rightSubmission, Match upperNeighbor,
-                                    int tokensBetweenLeft, int tokensBetweenRight) {
+            int tokensBetweenLeft, int tokensBetweenRight) {
         int startLeft = upperNeighbor.startOfFirst();
         int startRight = upperNeighbor.startOfSecond();
         int lengthUpper = upperNeighbor.length();
