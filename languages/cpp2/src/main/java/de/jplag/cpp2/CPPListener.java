@@ -33,28 +33,10 @@ class CPPListener extends AbstractAntlrListener {
 
         visit(FunctionDefinitionContext.class).map(FUNCTION_BEGIN, FUNCTION_END).addLocalScope().withSemantics(CodeSemantics::createControl);
 
-        visit(IterationStatementContext.class, rule -> rule.Do() != null).map(DO_BEGIN, DO_END).addLocalScope().withLoopSemantics();
-        visit(IterationStatementContext.class, rule -> rule.For() != null).map(FOR_BEGIN, FOR_END).addLocalScope().withLoopSemantics();
-        visit(IterationStatementContext.class, rule -> rule.While() != null && rule.Do() == null).map(WHILE_BEGIN, WHILE_END).addLocalScope()
-                .withLoopSemantics();
-
-        visit(SelectionStatementContext.class, rule -> rule.Switch() != null).map(SWITCH_BEGIN, SWITCH_END).addLocalScope()
-                .withSemantics(CodeSemantics::createControl);
-        visit(SelectionStatementContext.class, rule -> rule.If() != null).map(IF_BEGIN, IF_END).addLocalScope()
-                .withSemantics(CodeSemantics::createControl);
-        // possible problem: variable from if visible in else, but in reality is not -- doesn't really matter
-        visit(CPP14Parser.Else).map(ELSE).withSemantics(CodeSemantics::createControl);
-
-        visit(LabeledStatementContext.class, rule -> rule.Case() != null).map(CASE).withSemantics(CodeSemantics::createControl);
-        visit(LabeledStatementContext.class, rule -> rule.Default() != null).map(DEFAULT).withSemantics(CodeSemantics::createControl);
+        statementRules();
 
         visit(TryBlockContext.class).map(TRY_BEGIN, TRY_END).addLocalScope().withSemantics(CodeSemantics::createControl);
         visit(HandlerContext.class).map(CATCH_BEGIN, CATCH_END).addLocalScope().withSemantics(CodeSemantics::createControl);
-
-        visit(JumpStatementContext.class, rule -> rule.Break() != null).map(BREAK).withSemantics(CodeSemantics::createControl);
-        visit(JumpStatementContext.class, rule -> rule.Continue() != null).map(CONTINUE).withSemantics(CodeSemantics::createControl);
-        visit(JumpStatementContext.class, rule -> rule.Goto() != null).map(GOTO).withSemantics(CodeSemantics::createControl);
-        visit(JumpStatementContext.class, rule -> rule.Return() != null).map(RETURN).withSemantics(CodeSemantics::createControl);
 
         visit(ThrowExpressionContext.class).map(THROW).withSemantics(CodeSemantics::createControl);
 
@@ -73,6 +55,35 @@ class CPPListener extends AbstractAntlrListener {
                 .onEnter((rule, varReg) -> varReg.setNextVariableAccessType(VariableAccessType.WRITE));
         visit(BracedInitListContext.class).map(BRACED_INIT_BEGIN, BRACED_INIT_END).withSemantics(CodeSemantics::new);
 
+        typeSpecifierRule();
+        declarationRules();
+        expressionRules();
+        idRules();
+    }
+
+    private void statementRules() {
+        visit(IterationStatementContext.class, rule -> rule.Do() != null).map(DO_BEGIN, DO_END).addLocalScope().withLoopSemantics();
+        visit(IterationStatementContext.class, rule -> rule.For() != null).map(FOR_BEGIN, FOR_END).addLocalScope().withLoopSemantics();
+        visit(IterationStatementContext.class, rule -> rule.While() != null && rule.Do() == null).map(WHILE_BEGIN, WHILE_END).addLocalScope()
+                .withLoopSemantics();
+
+        visit(SelectionStatementContext.class, rule -> rule.Switch() != null).map(SWITCH_BEGIN, SWITCH_END).addLocalScope()
+                .withSemantics(CodeSemantics::createControl);
+        visit(SelectionStatementContext.class, rule -> rule.If() != null).map(IF_BEGIN, IF_END).addLocalScope()
+                .withSemantics(CodeSemantics::createControl);
+        // possible problem: variable from if visible in else, but in reality is not -- doesn't really matter
+        visit(CPP14Parser.Else).map(ELSE).withSemantics(CodeSemantics::createControl);
+
+        visit(LabeledStatementContext.class, rule -> rule.Case() != null).map(CASE).withSemantics(CodeSemantics::createControl);
+        visit(LabeledStatementContext.class, rule -> rule.Default() != null).map(DEFAULT).withSemantics(CodeSemantics::createControl);
+
+        visit(JumpStatementContext.class, rule -> rule.Break() != null).map(BREAK).withSemantics(CodeSemantics::createControl);
+        visit(JumpStatementContext.class, rule -> rule.Continue() != null).map(CONTINUE).withSemantics(CodeSemantics::createControl);
+        visit(JumpStatementContext.class, rule -> rule.Goto() != null).map(GOTO).withSemantics(CodeSemantics::createControl);
+        visit(JumpStatementContext.class, rule -> rule.Return() != null).map(RETURN).withSemantics(CodeSemantics::createControl);
+    }
+
+    private void typeSpecifierRule() {
         visit(SimpleTypeSpecifierContext.class, rule -> {
             if (hasAncestor(rule, MemberdeclarationContext.class, FunctionDefinitionContext.class)) {
                 return true;
@@ -99,7 +110,9 @@ class CPPListener extends AbstractAntlrListener {
                 variableRegistry.registerVariable(name, scope, true);
             }
         });
+    }
 
+    private void declarationRules() {
         mapApply(visit(SimpleDeclarationContext.class, rule -> {
             if (!hasAncestor(rule, FunctionBodyContext.class)) {
                 return false;
@@ -125,12 +138,17 @@ class CPPListener extends AbstractAntlrListener {
                 varReg.setNextVariableAccessType(VariableAccessType.WRITE);
             }
         });
+    }
+
+    private void expressionRules() {
         visit(ConditionalExpressionContext.class, rule -> rule.Question() != null).map(QUESTIONMARK).withSemantics(CodeSemantics::new);
 
         mapApply(visit(PostfixExpressionContext.class, rule -> rule.LeftParen() != null));
         visit(PostfixExpressionContext.class, rule -> rule.PlusPlus() != null || rule.MinusMinus() != null).map(ASSIGN)
                 .withSemantics(CodeSemantics::new).onEnter((rule, varReg) -> varReg.setNextVariableAccessType(VariableAccessType.READ_WRITE));
+    }
 
+    private void idRules() {
         visit(UnqualifiedIdContext.class).onEnter((ctx, varReg) -> {
             ParserRuleContext parentCtx = ctx.getParent().getParent();
             if (!parentCtx.getParent().getParent().getText().contains("(")) {
@@ -140,6 +158,8 @@ class CPPListener extends AbstractAntlrListener {
             }
         });
     }
+
+
 
     private void mapApply(ContextVisitor<?> visitor) {
         visitor.onExit((ctx, varReg) -> varReg.setMutableWrite(false)).onEnter((ctx, varReg) -> {
