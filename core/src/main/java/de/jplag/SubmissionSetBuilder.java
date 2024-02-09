@@ -232,14 +232,14 @@ public class SubmissionSetBuilder {
     }
 
     private void processSubmissionFile(SubmissionFileData file, boolean multipleRoots, Map<File, Submission> foundSubmissions) throws ExitException {
-        String errorMessage = isExcludedEntry(file.submissionFile);
+        String errorMessage = isExcludedEntry(file.submissionFile());
         if (errorMessage != null) {
             logger.error(errorMessage);
         }
 
-        String rootDirectoryPrefix = multipleRoots ? (file.root.getName() + File.separator) : "";
-        String submissionName = rootDirectoryPrefix + file.submissionFile.getName();
-        Submission submission = processSubmission(submissionName, file.submissionFile, file.isNew);
+        String rootDirectoryPrefix = multipleRoots ? (file.root().getName() + File.separator) : "";
+        String submissionName = rootDirectoryPrefix + file.submissionFile().getName();
+        Submission submission = processSubmission(submissionName, file.submissionFile(), file.isNew());
         foundSubmissions.put(submission.getRoot(), submission);
     }
 
@@ -307,6 +307,4 @@ public class SubmissionSetBuilder {
         }
     }
 
-    private record SubmissionFileData(File submissionFile, File root, boolean isNew) {
-    }
 }
