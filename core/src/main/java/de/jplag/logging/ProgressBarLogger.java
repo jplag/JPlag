@@ -50,8 +50,8 @@ public class ProgressBarLogger {
         }
 
         @Override
-        public void step(int amount) {
-            for (int i = 0; i < amount; i++) {
+        public void step(int number) {
+            for (int i = 0; i < number; i++) {
                 step();
             }
         }

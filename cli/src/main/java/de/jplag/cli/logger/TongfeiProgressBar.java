@@ -13,8 +13,8 @@ public class TongfeiProgressBar implements ProgressBar {
     }
 
     @Override
-    public void step(int amount) {
-        this.progressBar.stepBy(amount);
+    public void step(int number) {
+        this.progressBar.stepBy(number);
     }
 
     @Override
