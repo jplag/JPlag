@@ -77,7 +77,7 @@ public class ReportViewer implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
         RoutingPath path = new RoutingPath(exchange.getRequestURI().getPath());
         Pair<RoutingPath, Routing> resolved = this.routingTree.resolveRouting(path);
-        HttpMethod method = HttpMethod.fromName(exchange.getRequestMethod());
+        HttpRequestMethod method = HttpRequestMethod.fromName(exchange.getRequestMethod());
 
         if (resolved == null || !ArrayUtils.contains(resolved.getRight().allowedMethods(), method)) {
             exchange.sendResponseHeaders(NOT_FOUND_RESPONSE, 0);

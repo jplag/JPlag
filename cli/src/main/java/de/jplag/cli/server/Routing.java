@@ -9,8 +9,8 @@ public interface Routing {
     /**
      * @return The methods, that this routing can be used for.
      */
-    default HttpMethod[] allowedMethods() {
-        return new HttpMethod[] {HttpMethod.GET};
+    default HttpRequestMethod[] allowedMethods() {
+        return new HttpRequestMethod[] {HttpRequestMethod.GET};
     }
 
     /**
