@@ -159,8 +159,6 @@ class CPPListener extends AbstractAntlrListener {
         });
     }
 
-
-
     private void mapApply(ContextVisitor<?> visitor) {
         visitor.onExit((ctx, varReg) -> varReg.setMutableWrite(false)).onEnter((ctx, varReg) -> {
             varReg.addAllNonLocalVariablesAsReads();
