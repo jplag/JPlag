@@ -34,7 +34,6 @@ import de.jplag.strategy.ParallelComparisonStrategy;
  */
 class MergingTest extends TestBase {
     private final JPlagOptions options;
-    private JPlagResult result;
     private List<Match> matches;
     private List<JPlagComparison> comparisonsBefore;
     private List<JPlagComparison> comparisonsAfter;
@@ -55,7 +54,7 @@ class MergingTest extends TestBase {
 
     @BeforeEach
     void prepareTestState() {
-        result = comparisonStrategy.compareSubmissions(submissionSet);
+        JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
         comparisonsBefore = new ArrayList<>(result.getAllComparisons());
 
         if (options.mergingOptions().enabled()) {
@@ -226,6 +225,7 @@ class MergingTest extends TestBase {
         List<Match> expectedAfter = new ArrayList<>();
         expectedAfter.add(new Match(5, 3, 12));
 
-        assertTrue(matchesBefore.equals(expectedBefore) && matchesAfter.equals(expectedAfter));
+        assertEquals(expectedBefore, matchesBefore);
+        assertEquals(expectedAfter, matchesAfter);
     }
 }
