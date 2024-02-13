@@ -24,18 +24,47 @@
           </ToolTipComponent>
         </h2>
         <div class="flex flex-row space-x-10">
-          <TextInformation label="Average Similarity"
+          <TextInformation label="Average Similarity" class="font-bold"
             >{{ (comparison.similarities[MetricType.AVERAGE] * 100).toFixed(2) }}%</TextInformation
           >
           <TextInformation
             v-if="comparison.firstSimilarity"
             :label="`Similarity ${store().getDisplayName(comparison.firstSubmissionId)}`"
-            >{{ (comparison.firstSimilarity * 100).toFixed(2) }}%</TextInformation
+            tooltip-side="right"
           >
+            <template #default>{{ (comparison.firstSimilarity * 100).toFixed(2) }}%</template>
+            <template #tooltip
+              ><div class="whitespace-pre text-sm">
+                <p>
+                  Percentage of code from
+                  {{ store().getDisplayName(comparison.firstSubmissionId) }} that was found in the
+                  code of {{ store().getDisplayName(comparison.secondSubmissionId) }}.
+                </p>
+                <p>
+                  The numbers might not be symmetric, due to the submissions having different
+                  lengths.
+                </p>
+              </div></template
+            >
+          </TextInformation>
           <TextInformation
             v-if="comparison.secondSimilarity"
             :label="`Similarity ${store().getDisplayName(comparison.secondSubmissionId)}`"
-            >{{ (comparison.secondSimilarity * 100).toFixed(2) }}%</TextInformation
+            tooltip-side="right"
+            ><template #default>{{ (comparison.secondSimilarity * 100).toFixed(2) }}%</template>
+            <template #tooltip
+              ><div class="whitespace-pre text-sm">
+                <p>
+                  Percentage of code from
+                  {{ store().getDisplayName(comparison.secondSubmissionId) }} that was found in the
+                  code of {{ store().getDisplayName(comparison.firstSubmissionId) }}.
+                </p>
+                <p>
+                  The numbers might not be symmetric, due to the submissions having different
+                  lengths.
+                </p>
+              </div></template
+            ></TextInformation
           >
         </div>
         <MatchList
