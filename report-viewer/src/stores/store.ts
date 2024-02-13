@@ -23,7 +23,7 @@ const store = defineStore('store', {
       uploadedFileName: ''
     },
     uiState: {
-      useDarkMode: false,
+      useDarkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
       comparisonTableSortingMetric: MetricType.AVERAGE,
       comparisonTableClusterSorting: false,
       distributionChartConfig: {
