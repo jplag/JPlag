@@ -3,6 +3,7 @@ package de.jplag.cli.server;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.BindException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
@@ -26,6 +27,7 @@ public class ReportViewer implements HttpHandler {
     private static final Logger logger = LoggerFactory.getLogger(ReportViewer.class);
     private static final int SUCCESS_RESPONSE = 200;
     private static final int NOT_FOUND_RESPONSE = 404;
+    private static final int MAX_PORT_LOOKUPS = 4;
 
     private final RoutingTree routingTree;
     private final int port;
@@ -34,7 +36,7 @@ public class ReportViewer implements HttpHandler {
 
     /**
      * @param zipFile The zip file to use for the report viewer
-     * @param port The port to use for the server. You can use 0 to use any free port.
+     * @param port    The port to use for the server. You can use 0 to use any free port.
      * @throws IOException If the zip file cannot be read
      */
     public ReportViewer(File zipFile, int port) throws IOException {
@@ -47,6 +49,8 @@ public class ReportViewer implements HttpHandler {
 
     /**
      * Starts the server and serves the internal report viewer. If available, the result.zip is also exposed.
+     * If the given port is already in use, the next free port will be used.
+     *
      * @return The port the server runs at
      * @throws IOException If the server cannot be started
      */
@@ -54,7 +58,21 @@ public class ReportViewer implements HttpHandler {
         if (server != null) {
             throw new IllegalStateException("Server already started");
         }
-        server = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), this.port), 0);
+
+        int port = this.port;
+        int remainingLookups = MAX_PORT_LOOKUPS;
+        BindException lastException = new BindException("Could not bind server.");
+        while (server == null && remainingLookups-- > 0) {
+            try {
+                server = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), port), 0);
+            } catch (BindException e) {
+                lastException = e;
+                port++;
+            }
+        }
+        if (server == null) {
+            throw lastException;
+        }
         server.createContext("/", this);
         server.setExecutor(null);
         server.start();
@@ -71,6 +89,7 @@ public class ReportViewer implements HttpHandler {
 
     /**
      * Do not call manually. Called by the running web server.
+     *
      * @param exchange The http reqest
      * @throws IOException If the IO handling goes wrong
      */
