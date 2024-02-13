@@ -59,7 +59,7 @@ public class EcoreParser extends AbstractParser {
         if (model == null) {
             throw new ParsingException(file, "failed to load model");
         }
-        // normalizeOrder(model);
+        normalizeOrder(model);
         treeView = createView(file, model);
         visitor = createMetamodelVisitor();
         for (EObject root : model.getContents()) {
