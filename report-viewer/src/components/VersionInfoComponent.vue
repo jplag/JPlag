@@ -42,7 +42,6 @@ import { minimalReportVersion, reportViewerVersion } from '@/model/Version'
 
 const newestVersion = ref(new Version(-1, -1, -1))
 const isDemo = import.meta.env.MODE == 'demo'
-console.log('isDemo', isDemo)
 
 fetch('https://api.github.com/repos/jplag/JPlag/releases/latest')
   .then((response) => response.json())
