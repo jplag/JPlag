@@ -16,7 +16,7 @@ public class ModelingElementIdentifierManager {
     private final Map<EClass, Set<EObject>> elementToIdentifer;
 
     /**
-     * Creates the identifier manager. Identifers are only unique if managed by the same instance.
+     * Creates the identifier manager. Identifiers are only unique if managed by the same instance.
      */
     public ModelingElementIdentifierManager() {
         elementToIdentifer = new HashMap<>();
@@ -25,7 +25,7 @@ public class ModelingElementIdentifierManager {
     /**
      * Returns the type-unique identifier for any EMF modeling element.
      * @param element is the modeling element for which the identifier is requested.
-     * @return the identifier, that is uniquen for all elements of the same EClass.
+     * @return the identifier, that is unique for all elements of the same EClass.
      */
     public int getIdentifier(EObject element) {
         Set<EObject> elements = elementToIdentifer.computeIfAbsent(element.eClass(), key -> new LinkedHashSet<>());
