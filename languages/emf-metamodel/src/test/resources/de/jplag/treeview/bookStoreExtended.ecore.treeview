@@ -1,35 +1,35 @@
-BookStorePackage : EPackage
-  store : EPackage
-    BookStore : EClass
-      owner : EReference
-        EGenericType
-      name : EAttribute
-        EGenericType
-      location : EAttribute
-        EGenericType
-      books : EReference
-        EGenericType
-    Book : EClass
-      name : EAttribute
-        EGenericType
-      isbn : EAttribute
-        EGenericType
-      author : EReference
-        EGenericType
-      genre : EAttribute
-        EGenericType
-    Genre : EEnum
-      NOVEL : EEnumLiteral
-      COOKBOOK : EEnumLiteral
-      BIOGRAPHY : EEnumLiteral
-      TEXTBOOK : EEnumLiteral
-  person : EPackage
-    Author : EClass
-      isStageName : EAttribute
-        EGenericType
-      EGenericType
-    Person : EClass
-      firstName : EAttribute
-        EGenericType
-      lastName : EAttribute
-        EGenericType
+EPackage: name="BookStorePackage", nsURI="http:///com.ibm.dyna...", nsPrefix="bookStore", eFactoryInstance=EFactory, eSubpackages=[store, person]
+  EPackage: name="store", nsURI="http:///com.ibm.dyna...", nsPrefix="store", eFactoryInstance=EFactory, eClassifiers=[BookStore, Book, Genre], eSuperPackage=BookStorePackage
+    EClass: name="BookStore", ePackage=store, abstract="false", interface="false", eAllAttributes=[name, location], eAllReferences=[owner, books], eReferences=[owner, books], eAttributes=[name, location], eAllContainments=[books], eAllStructuralFeatures=[owner, name, location, books], eStructuralFeatures=[owner, name, location, books]
+      EReference: name="owner", ordered="true", unique="true", lowerBound="0", upperBound="1", many="false", required="false", eType=Person, eGenericType=EGenericType, changeable="true", volatile="false", transient="false", unsettable="false", derived="false", eContainingClass=BookStore, containment="false", container="false", resolveProxies="true", eReferenceType=Person
+        EGenericType: eRawType=Person, eClassifier=Person
+      EAttribute: name="name", ordered="true", unique="true", lowerBound="0", upperBound="1", many="false", required="false", eType=EString, eGenericType=EGenericType, changeable="true", volatile="false", transient="false", unsettable="false", derived="false", eContainingClass=BookStore, iD="false", eAttributeType=EString
+        EGenericType: eRawType=EString, eClassifier=EString
+      EAttribute: name="location", ordered="true", unique="true", lowerBound="0", upperBound="1", many="false", required="false", eType=EString, eGenericType=EGenericType, changeable="true", volatile="false", transient="false", unsettable="false", derived="false", eContainingClass=BookStore, iD="false", eAttributeType=EString
+        EGenericType: eRawType=EString, eClassifier=EString
+      EReference: name="books", ordered="true", unique="true", lowerBound="0", upperBound="-1", many="true", required="false", eType=Book, eGenericType=EGenericType, changeable="true", volatile="false", transient="false", unsettable="false", derived="false", eContainingClass=BookStore, containment="true", container="false", resolveProxies="true", eReferenceType=Book
+        EGenericType: eRawType=Book, eClassifier=Book
+    EClass: name="Book", ePackage=store, abstract="false", interface="false", eAllAttributes=[name, isbn, genre], eAllReferences=[author], eReferences=[author], eAttributes=[name, isbn, genre], eAllStructuralFeatures=[name, isbn, author, genre], eIDAttribute=isbn, eStructuralFeatures=[name, isbn, author, genre]
+      EAttribute: name="name", ordered="true", unique="true", lowerBound="0", upperBound="1", many="false", required="false", eType=EString, eGenericType=EGenericType, changeable="true", volatile="false", transient="false", unsettable="false", derived="false", eContainingClass=Book, iD="false", eAttributeType=EString
+        EGenericType: eRawType=EString, eClassifier=EString
+      EAttribute: name="isbn", ordered="true", unique="true", lowerBound="0", upperBound="1", many="false", required="false", eType=EInt, eGenericType=EGenericType, changeable="true", volatile="false", transient="false", defaultValue="0", unsettable="false", derived="false", eContainingClass=Book, iD="true", eAttributeType=EInt
+        EGenericType: eRawType=EInt, eClassifier=EInt
+      EReference: name="author", ordered="true", unique="true", lowerBound="0", upperBound="1", many="false", required="false", eType=Author, eGenericType=EGenericType, changeable="true", volatile="false", transient="false", unsettable="false", derived="false", eContainingClass=Book, containment="false", container="false", resolveProxies="true", eReferenceType=Author
+        EGenericType: eRawType=Author, eClassifier=Author
+      EAttribute: name="genre", ordered="true", unique="true", lowerBound="0", upperBound="1", many="false", required="false", eType=Genre, eGenericType=EGenericType, changeable="true", volatile="false", transient="false", defaultValue=NOVEL, unsettable="false", derived="false", eContainingClass=Book, iD="false", eAttributeType=Genre
+        EGenericType: eRawType=Genre, eClassifier=Genre
+    EEnum: name="Genre", defaultValue=NOVEL, ePackage=store, serializable="true", eLiterals=[NOVEL, COOKBOOK, BIOGRAPHY, TEXTBOOK]
+      EEnumLiteral: name="NOVEL", value="0", instance=NOVEL, literal="NOVEL", eEnum=Genre
+      EEnumLiteral: name="COOKBOOK", value="1", instance=COOKBOOK, literal="COOKBOOK", eEnum=Genre
+      EEnumLiteral: name="BIOGRAPHY", value="3", instance=BIOGRAPHY, literal="BIOGRAPHY", eEnum=Genre
+      EEnumLiteral: name="TEXTBOOK", value="4", instance=TEXTBOOK, literal="TEXTBOOK", eEnum=Genre
+  EPackage: name="person", nsURI="http:///com.ibm.dyna...", nsPrefix="person", eFactoryInstance=EFactory, eClassifiers=[Author, Person], eSuperPackage=BookStorePackage
+    EClass: name="Author", ePackage=person, abstract="false", interface="false", eSuperTypes=[Person], eAllAttributes=[firstName, lastName, isStageName], eAttributes=[isStageName], eAllStructuralFeatures=[firstName, lastName, isStageName], eAllSuperTypes=[Person], eStructuralFeatures=[isStageName], eGenericSuperTypes=[EGenericType], eAllGenericSuperTypes=[EGenericType]
+      EAttribute: name="isStageName", ordered="true", unique="true", lowerBound="0", upperBound="1", many="false", required="false", eType=EBoolean, eGenericType=EGenericType, changeable="true", volatile="false", transient="false", defaultValue="false", unsettable="false", derived="false", eContainingClass=Author, iD="false", eAttributeType=EBoolean
+        EGenericType: eRawType=EBoolean, eClassifier=EBoolean
+      EGenericType: eRawType=Person, eClassifier=Person
+    EClass: name="Person", ePackage=person, abstract="false", interface="false", eAllAttributes=[firstName, lastName], eAttributes=[firstName, lastName], eAllStructuralFeatures=[firstName, lastName], eStructuralFeatures=[firstName, lastName]
+      EAttribute: name="firstName", ordered="true", unique="true", lowerBound="0", upperBound="1", many="false", required="false", eType=EString, eGenericType=EGenericType, changeable="true", volatile="false", transient="false", unsettable="false", derived="false", eContainingClass=Person, iD="false", eAttributeType=EString
+        EGenericType: eRawType=EString, eClassifier=EString
+      EAttribute: name="lastName", ordered="true", unique="true", lowerBound="0", upperBound="1", many="false", required="false", eType=EString, eGenericType=EGenericType, changeable="true", volatile="false", transient="false", unsettable="false", derived="false", eContainingClass=Person, iD="false", eAttributeType=EString
+        EGenericType: eRawType=EString, eClassifier=EString

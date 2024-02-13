@@ -1,13 +1,13 @@
-BookStorePackage : EPackage
-  BookStore : EClass
-    owner : EAttribute
-      EGenericType
-    location : EAttribute
-      EGenericType
-    books : EReference
-      EGenericType
-  Book : EClass
-    name : EAttribute
-      EGenericType
-    isbn : EAttribute
-      EGenericType
+EPackage: name="BookStorePackage", nsURI="http:///com.ibm.dyna...", nsPrefix="bookStore", eFactoryInstance=EFactory, eClassifiers=[BookStore, Book]
+  EClass: name="BookStore", ePackage=BookStorePackage, abstract="false", interface="false", eAllAttributes=[owner, location], eAllReferences=[books], eReferences=[books], eAttributes=[owner, location], eAllContainments=[books], eAllStructuralFeatures=[owner, location, books], eStructuralFeatures=[owner, location, books]
+    EAttribute: name="owner", ordered="true", unique="true", lowerBound="0", upperBound="1", many="false", required="false", eType=EString, eGenericType=EGenericType, changeable="true", volatile="false", transient="false", unsettable="false", derived="false", eContainingClass=BookStore, iD="false", eAttributeType=EString
+      EGenericType: eRawType=EString, eClassifier=EString
+    EAttribute: name="location", ordered="true", unique="true", lowerBound="0", upperBound="1", many="false", required="false", eType=EString, eGenericType=EGenericType, changeable="true", volatile="false", transient="false", unsettable="false", derived="false", eContainingClass=BookStore, iD="false", eAttributeType=EString
+      EGenericType: eRawType=EString, eClassifier=EString
+    EReference: name="books", ordered="true", unique="true", lowerBound="0", upperBound="-1", many="true", required="false", eType=Book, eGenericType=EGenericType, changeable="true", volatile="false", transient="false", unsettable="false", derived="false", eContainingClass=BookStore, containment="true", container="false", resolveProxies="true", eReferenceType=Book
+      EGenericType: eRawType=Book, eClassifier=Book
+  EClass: name="Book", ePackage=BookStorePackage, abstract="false", interface="false", eAllAttributes=[name, isbn], eAttributes=[name, isbn], eAllStructuralFeatures=[name, isbn], eIDAttribute=isbn, eStructuralFeatures=[name, isbn]
+    EAttribute: name="name", ordered="true", unique="true", lowerBound="0", upperBound="1", many="false", required="false", eType=EString, eGenericType=EGenericType, changeable="true", volatile="false", transient="false", unsettable="false", derived="false", eContainingClass=Book, iD="false", eAttributeType=EString
+      EGenericType: eRawType=EString, eClassifier=EString
+    EAttribute: name="isbn", ordered="true", unique="true", lowerBound="0", upperBound="1", many="false", required="false", eType=EInt, eGenericType=EGenericType, changeable="true", volatile="false", transient="false", defaultValue="0", unsettable="false", derived="false", eContainingClass=Book, iD="true", eAttributeType=EInt
+      EGenericType: eRawType=EInt, eClassifier=EInt

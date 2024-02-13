@@ -23,7 +23,7 @@ class MetamodelTreeViewTest extends AbstractEmfTest {
     }
 
     @ParameterizedTest
-    @DisplayName("Test content of emfatic view files of example metamodels")
+    @DisplayName("Test content of generic EMF view files of example metamodels")
     @MethodSource("provideModelNames")
     void testEmfaticViewFiles(String modelName) {
         // Load model:
