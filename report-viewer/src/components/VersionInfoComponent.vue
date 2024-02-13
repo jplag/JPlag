@@ -1,5 +1,5 @@
 <template>
-  <div class="text-sm font-bold">
+  <div class="text-left text-sm font-bold">
     <div v-if="!isDemo">
       <div v-if="reportViewerVersion.isInvalid()">Could not load version information</div>
       <div v-else-if="reportViewerVersion.isDevVersion()">
