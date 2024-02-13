@@ -13,7 +13,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import de.jplag.emf.AbstractEmfTest;
 import de.jplag.testutils.FileUtil;
 
-class MetamodelTreeViewTest extends AbstractEmfTest {
+class GenericEmfTreeViewTest extends AbstractEmfTest {
 
     private static final String VIEW_FILE_SUFFIX = ".treeview";
     private static final String EXPECTED_VIEW_FOLDER = "treeview";
