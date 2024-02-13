@@ -1,11 +1,8 @@
 # JPlag C++ language module
 
-**Note**: This language module is meant to replace the existing C++ language module in the future.
-While the old language module is based on lexer tokens, this language module uses a parse tree for token extraction.
-The base package name of this language module and its identifier are `cpp2` currently, but this might change if the old
-language module gets replaced.
+**Note**: This replaces the old cpp module, which is now only meant for c, as it works better for c than this one.
 
-The JPlag C++ frontend allows the use of JPlag with submissions in C/C++. <br>
+The JPlag C++ frontend allows the use of JPlag with submissions in C++. <br>
 It is based on the [C++ ANTLR4 grammar](https://github.com/antlr/grammars-v4/tree/master/cpp), licensed under MIT.
 
 ### C++ specification compatibility
@@ -21,11 +18,11 @@ While the Java language module is based on an AST, this language module uses a p
 There are differences, including:
 - `import` is extracted in Java, while `using` is not extracted due to the fact that it can be placed freely in the code.
 
-More syntactic elements of C/C++ may turn out to be helpful to include in the future, especially those that are newly introduced.
+More syntactic elements of C++ may turn out to be helpful to include in the future, especially those that are newly introduced.
 
 ### Usage
 
-To use the C++ frontend, add the `-l cpp2` flag in the CLI, or use a `JPlagOption` object with `new de.jplag.cpp2.CPPLanguage()` as `Language` in the Java API as described in the usage information in the [readme of the main project](https://github.com/jplag/JPlag#usage) and [in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).
+To use the C++ frontend, add the `-l cpp` flag in the CLI, or use a `JPlagOption` object with `new de.jplag.cpp.CPPLanguage()` as `Language` in the Java API as described in the usage information in the [readme of the main project](https://github.com/jplag/JPlag#usage) and [in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).
 
 ### Changes to the Grammar
 

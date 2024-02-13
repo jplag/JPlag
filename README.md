@@ -153,6 +153,7 @@ Commands:
   emf-model
   go
   java
+  javascript
   kotlin
   llvmir
   python3
