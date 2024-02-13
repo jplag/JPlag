@@ -7,11 +7,11 @@
       {{ getFileDisplayName(file) }}
     </div>
 
-    <div class="mx-1 overflow-x-auto print:!mx-0">
+    <div class="mx-1 overflow-x-auto print:!mx-0 print:overflow-x-hidden">
       <div class="print:display-initial w-fit min-w-full !text-xs" :class="{ hidden: collapsed }">
         <table
           v-if="file.data.trim() !== ''"
-          class="w-full"
+          class="w-full print:table-auto"
           :aria-describedby="`Content of file ${file.fileName}`"
         >
           <!-- One row in table per code line -->
@@ -36,7 +36,7 @@
             >
               <pre
                 v-html="line.line"
-                class="code-font print-excact !bg-transparent print:whitespace-pre-wrap"
+                class="code-font print-excact break-child !bg-transparent print:whitespace-pre-wrap"
                 ref="lineRefs"
               ></pre>
             </td>
@@ -144,5 +144,12 @@ function getFileDisplayName(file: SubmissionFile): string {
 <style scoped>
 .code-font {
   font-family: 'JetBrains Mono NL', monospace !important;
+}
+
+@media print {
+  .break-child *,
+  .break-child {
+    word-break: break-word;
+  }
 }
 </style>
