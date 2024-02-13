@@ -63,6 +63,8 @@ public class Submission implements Comparable<Submission> {
 
     private final Language language;
 
+    private Map<File, Integer> fileTokenCount;
+
     /**
      * Creates a submission.
      * @param name Identification of the submission (directory or filename).
@@ -319,13 +321,16 @@ public class Submission implements Comparable<Submission> {
         if (this.tokenList == null) {
             return Collections.emptyMap();
         }
-        Map<File, Integer> tokenCounts = new HashMap<>();
-        for (File file : this.files) {
-            tokenCounts.put(file, 0);
+
+        if (fileTokenCount == null) {
+            fileTokenCount = new HashMap<>();
+            for (File file : this.files) {
+                fileTokenCount.put(file, 0);
+            }
+            for (Token token : this.tokenList) {
+                fileTokenCount.put(token.getFile(), fileTokenCount.get(token.getFile()) + 1);
+            }
         }
-        for (Token token : this.tokenList) {
-            tokenCounts.put(token.getFile(), tokenCounts.get(token.getFile()) + 1);
-        }
-        return tokenCounts;
+        return fileTokenCount;
     }
 }
