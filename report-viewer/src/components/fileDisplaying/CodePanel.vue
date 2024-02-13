@@ -36,7 +36,7 @@
             >
               <pre
                 v-html="line.line"
-                class="code-font print-excact whitespace-pre-wrap !bg-transparent"
+                class="code-font print-excact !bg-transparent print:whitespace-pre-wrap"
                 ref="lineRefs"
               ></pre>
             </td>
