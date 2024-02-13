@@ -36,7 +36,7 @@ public class ReportViewer implements HttpHandler {
 
     /**
      * @param zipFile The zip file to use for the report viewer
-     * @param port    The port to use for the server. You can use 0 to use any free port.
+     * @param port The port to use for the server. You can use 0 to use any free port.
      * @throws IOException If the zip file cannot be read
      */
     public ReportViewer(File zipFile, int port) throws IOException {
@@ -48,9 +48,8 @@ public class ReportViewer implements HttpHandler {
     }
 
     /**
-     * Starts the server and serves the internal report viewer. If available, the result.zip is also exposed.
-     * If the given port is already in use, the next free port will be used.
-     *
+     * Starts the server and serves the internal report viewer. If available, the result.zip is also exposed. If the given
+     * port is already in use, the next free port will be used.
      * @return The port the server runs at
      * @throws IOException If the server cannot be started
      */
@@ -89,7 +88,6 @@ public class ReportViewer implements HttpHandler {
 
     /**
      * Do not call manually. Called by the running web server.
-     *
      * @param exchange The http reqest
      * @throws IOException If the IO handling goes wrong
      */
