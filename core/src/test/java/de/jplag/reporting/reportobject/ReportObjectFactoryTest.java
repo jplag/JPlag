@@ -4,7 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
-import java.nio.file.Path;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -15,11 +16,8 @@ import de.jplag.exceptions.ExitException;
 import de.jplag.reporting.reportobject.model.Version;
 
 class ReportObjectFactoryTest extends TestBase {
-    private static final String FILE_SUFFIX = ".zip";
     private static final String BASECODE = "basecode";
     private static final String BASECODE_BASE = "basecode-base";
-    private static final String OUTPUT = "output";
-    private static final String SUBMISSIONS = "submissions";
 
     @Test
     void testVersionLoading() {
@@ -28,15 +26,28 @@ class ReportObjectFactoryTest extends TestBase {
     }
 
     @Test
-    void testCreateAndSaveReportWithBasecode() throws ExitException {
+    void testCreateAndSaveReportWithBasecode() throws ExitException, IOException {
         JPlagResult result = runJPlag(BASECODE, it -> it.withBaseCodeSubmissionDirectory(new File(BASE_PATH, BASECODE_BASE)));
-        Path path = Path.of(BASE_PATH, OUTPUT, SUBMISSIONS);
-        ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
-        reportObjectFactory.createAndSaveReport(result, path.toString());
+        File testZip = File.createTempFile("result", ".zip");
+
+        ReportObjectFactory reportObjectFactory = new ReportObjectFactory(testZip);
+        reportObjectFactory.createAndSaveReport(result);
+
         assertNotNull(result);
-        File expectedFile = new File(path.toString() + FILE_SUFFIX);
-        assertTrue(expectedFile.exists());
-        expectedFile.delete();
+        assertTrue(isArchive(testZip));
+    }
+
+    /**
+     * Checks if the given file is a valid archive
+     * @param file The file to check
+     * @return True, if file is an archive
+     */
+    private static boolean isArchive(File file) throws IOException {
+        int fileSignature = 0;
+        try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r")) {
+            fileSignature = randomAccessFile.readInt();
+        }
+        return fileSignature == 0x504B0304 || fileSignature == 0x504B0506 || fileSignature == 0x504B0708;
     }
 
 }

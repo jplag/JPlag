@@ -5,6 +5,7 @@ import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_OPTION_LIST
 import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_SYNOPSIS;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -78,12 +79,12 @@ public final class CLI {
             if (!parseResult.isUsageHelpRequested() && !(parseResult.subcommand() != null && parseResult.subcommand().isUsageHelpRequested())) {
                 JPlagOptions options = cli.buildOptionsFromArguments(parseResult);
                 JPlagResult result = JPlag.run(options);
-                ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
-                reportObjectFactory.createAndSaveReport(result, cli.getResultFolder());
+                ReportObjectFactory reportObjectFactory = new ReportObjectFactory(new File(cli.getResultFolder() + ".zip"));
+                reportObjectFactory.createAndSaveReport(result);
 
                 OutputFileGenerator.generateCsvOutput(result, new File(cli.getResultFolder()), cli.options);
             }
-        } catch (ExitException exception) {
+        } catch (ExitException | FileNotFoundException exception) {
             logger.error(exception.getMessage()); // do not pass exception here to keep log clean
             finalizeLogger();
             System.exit(1);

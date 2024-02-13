@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
- * Represents a data set for the endToEnd test suite.
+ * Represents a data set for the end-to-end test suite.
  * @param name The name of the data set
  * @param language The language
  * @param format The format
