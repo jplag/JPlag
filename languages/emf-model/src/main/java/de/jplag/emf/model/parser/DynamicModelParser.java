@@ -65,15 +65,14 @@ public class DynamicModelParser extends DynamicEcoreParser {
         Resource modelResource = EMFUtil.loadModelResource(file);
         if (modelResource == null) {
             throw new ParsingException(file, METAMODEL_LOADING_ERROR);
-        } else {
-            for (EObject object : modelResource.getContents()) {
-                if (object instanceof EPackage ePackage) {
-                    metapackages.add(ePackage);
-                } else {
-                    logger.error(METAPACKAGE_ERROR, object);
-                }
-            }
-            EMFUtil.registerEPackageURIs(metapackages);
         }
+        for (EObject object : modelResource.getContents()) {
+            if (object instanceof EPackage ePackage) {
+                metapackages.add(ePackage);
+            } else {
+                logger.error(METAPACKAGE_ERROR, object);
+            }
+        }
+        EMFUtil.registerEPackageURIs(metapackages);
     }
 }

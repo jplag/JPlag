@@ -58,16 +58,15 @@ public class EcoreParser extends AbstractParser {
         Resource model = EMFUtil.loadModelResource(file);
         if (model == null) {
             throw new ParsingException(file, "failed to load model");
-        } else {
-            normalizeOrder(model);
-            treeView = createView(file, model);
-            visitor = createMetamodelVisitor();
-            for (EObject root : model.getContents()) {
-                visitor.visit(root);
-            }
-            tokens.add(Token.fileEnd(currentFile));
-            treeView.writeToFile(getCorrespondingViewFileSuffix());
         }
+        // normalizeOrder(model);
+        treeView = createView(file, model);
+        visitor = createMetamodelVisitor();
+        for (EObject root : model.getContents()) {
+            visitor.visit(root);
+        }
+        tokens.add(Token.fileEnd(currentFile));
+        treeView.writeToFile(getCorrespondingViewFileSuffix());
     }
 
     /**

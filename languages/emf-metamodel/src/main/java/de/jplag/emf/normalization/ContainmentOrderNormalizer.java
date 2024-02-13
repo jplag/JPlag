@@ -45,7 +45,8 @@ public class ContainmentOrderNormalizer implements Comparator<EObject> {
         // 0. comparison if token types are absent for one or more elements.
         if (firstType == null && secondType == null) {
             return 0;
-        } else if (firstType == null) {
+        }
+        if (firstType == null) {
             return -1;
         } else if (secondType == null) {
             return 1;

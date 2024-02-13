@@ -7,7 +7,7 @@ import java.util.List;
  * size. The vector content cannot be changed after its creation.
  */
 public class TokenOccurenceVector {
-    private List<Double> originalVector;
+    private final List<Double> originalVector;
 
     /**
      * Creates a zero-padded token occurrence vector.
@@ -25,9 +25,8 @@ public class TokenOccurenceVector {
     public double get(int index) {
         if (index < 0 || index >= originalVector.size()) {
             return 0.0;
-        } else {
-            return originalVector.get(index);
         }
+        return originalVector.get(index);
     }
 
     /**
