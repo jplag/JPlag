@@ -3,8 +3,21 @@
 -->
 <template>
   <Interactable class="mx-2 !shadow print:!mx-0 print:!border-0 print:!p-0">
-    <div @click="collapsed = !collapsed" class="text-center font-bold print:whitespace-pre-wrap">
-      {{ getFileDisplayName(file) }}
+    <div @click="collapsed = !collapsed" class="flex px-2 font-bold print:whitespace-pre-wrap">
+      <span class="flex-1">{{ getFileDisplayName(file) }}</span>
+      <ToolTipComponent v-if="file.tokenCount != undefined" direction="left" class="font-normal">
+        <template #default
+          ><span class="text-gray-600 dark:text-gray-300"
+            >{{ Math.round((file.matchedTokenCount / (file.tokenCount - 1)) * 100) }}%</span
+          ></template
+        >
+        <template #tooltip
+          ><p class="whitespace-nowrap text-sm">
+            The file has {{ file.tokenCount - 1 }} tokens. {{ file.matchedTokenCount }} are part of
+            a match.
+          </p></template
+        >
+      </ToolTipComponent>
     </div>
 
     <div class="mx-1 overflow-x-auto print:!mx-0">
@@ -60,6 +73,7 @@ import type { SubmissionFile } from '@/stores/state'
 import { highlight } from '@/utils/CodeHighlighter'
 import type { ParserLanguage } from '@/model/Language'
 import { getMatchColor } from '@/utils/ColorUtils'
+import ToolTipComponent from '../ToolTipComponent.vue'
 
 const props = defineProps({
   /**

@@ -40,11 +40,16 @@ const store = defineStore('store', {
     filesOfSubmission:
       (state) =>
       (submissionId: string): SubmissionFile[] => {
-        return Array.from(state.state.submissions[submissionId], ([name, value]) => ({
-          submissionId,
-          fileName: name,
-          data: value
-        }))
+        return Array.from(state.state.submissions[submissionId].values())
+      },
+    /**
+     * @param submissionID the name of the submission
+     * @returns files a single file in the submission of the given name
+     */
+    getSubmissionFile:
+      (state) =>
+      (submissionId: string, fileName: string): SubmissionFile => {
+        return state.state.submissions[submissionId].get(fileName) as SubmissionFile
       },
     /**
      * @param name the name of the submission
@@ -185,7 +190,7 @@ const store = defineStore('store', {
       }
       this.state.submissions[submissionFile.submissionId].set(
         submissionFile.fileName,
-        submissionFile.data
+        submissionFile
       )
     },
     /**

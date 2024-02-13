@@ -8,7 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,6 +28,7 @@ import de.jplag.reporting.jsonfactory.ComparisonReportWriter;
 import de.jplag.reporting.reportobject.mapper.ClusteringResultMapper;
 import de.jplag.reporting.reportobject.mapper.MetricMapper;
 import de.jplag.reporting.reportobject.model.OverviewReport;
+import de.jplag.reporting.reportobject.model.SubmissionFile;
 import de.jplag.reporting.reportobject.model.SubmissionFileIndex;
 import de.jplag.reporting.reportobject.model.Version;
 import de.jplag.reporting.reportobject.writer.JPlagResultWriter;
@@ -172,13 +172,16 @@ public class ReportObjectFactory {
         Set<Submission> submissions = getSubmissions(comparisons);
         SubmissionFileIndex fileIndex = new SubmissionFileIndex(new HashMap<>());
 
-        for (Submission submission : submissions) {
-            List<String> filePaths = new LinkedList<>();
-            for (File file : submission.getFiles()) {
-                filePaths.add(FilePathUtil.getRelativeSubmissionPath(file, submission, submissionToIdFunction));
+        List<Map<String, Map<String, SubmissionFile>>> submissionTokenCountList = submissions.stream().parallel().map(submission -> {
+            Map<String, SubmissionFile> tokenCounts = new HashMap<>();
+            for (Map.Entry<File, Integer> entry : submission.getTokenCountPerFile().entrySet()) {
+                String key = FilePathUtil.getRelativeSubmissionPath(entry.getKey(), submission, submissionToIdFunction);
+                tokenCounts.put(key, new SubmissionFile(entry.getValue()));
             }
-            fileIndex.fileIndexes().put(submissionNameToIdMap.get(submission.getName()), filePaths);
-        }
+            return Map.of(submissionNameToIdMap.get(submission.getName()), tokenCounts);
+        }).toList();
+
+        submissionTokenCountList.forEach(submission -> fileIndex.fileIndexes().putAll(submission));
         this.resultWriter.addJsonEntry(fileIndex, SUBMISSION_FILE_INDEX_FILE_NAME);
     }
 
