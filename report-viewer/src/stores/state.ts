@@ -1,4 +1,6 @@
+import type { SubmissionFile } from '@/model/File'
 import type { MetricType } from '@/model/MetricType'
+import type { DistributionChartConfig } from '@/model/ui/DistributionChartConfig'
 
 /**
  * Local store. Stores the state of the application.
@@ -42,36 +44,11 @@ export interface State {
   uploadedFileName: string
 }
 
-/**
- * Internal representation of a single file.
- */
-export interface File {
-  /**
-   * The name of the file.
-   */
-  fileName: string
-  /**
-   * The files content.
-   */
-  data: string
-}
-
-/**
- * Internal representation of a single file from a submission.
- */
-export interface SubmissionFile extends File {
-  /**
-   * The id of the submission.
-   */
-  submissionId: string
-  /**
-   * Number of total tokens in the file.
-   */
-  tokenCount?: number
-  /**
-   * Number of tokens in the file that are matched.
-   */
-  matchedTokenCount: number
+export interface UIState {
+  useDarkMode: boolean
+  comparisonTableSortingMetric: MetricType
+  comparisonTableClusterSorting: boolean
+  distributionChartConfig: DistributionChartConfig
 }
 
 /**
@@ -81,19 +58,4 @@ export interface LoadConfiguration {
   local: boolean
   zip: boolean
   single: boolean
-}
-
-export interface UIState {
-  useDarkMode: boolean
-  comparisonTableSortingMetric: MetricType
-  comparisonTableClusterSorting: boolean
-  distributionChartConfig: DistributionChartConfig
-}
-
-/**
- * Configuration for the distribution chart.
- */
-export interface DistributionChartConfig {
-  metric: MetricType
-  xScale: 'linear' | 'logarithmic'
 }
