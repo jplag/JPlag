@@ -23,6 +23,7 @@ import de.jplag.emf.MetamodelToken;
 public class GenericEmfTreeView extends AbstractModelView {
     private final List<String> lines;
     private final Map<EObject, TokenTrace> objectToLine;
+    private final ModelingElementIdentifierManager identifierManager;
 
     /**
      * Creates a tree view for a metamodel.
@@ -32,6 +33,7 @@ public class GenericEmfTreeView extends AbstractModelView {
         super(file);
         lines = new ArrayList<>();
         objectToLine = new HashMap<>();
+        identifierManager = new ModelingElementIdentifierManager();
         TreeViewBuilder visitor = new TreeViewBuilder();
         modelResource.getContents().forEach(visitor::visit);
     }
@@ -53,6 +55,7 @@ public class GenericEmfTreeView extends AbstractModelView {
     }
 
     private final class TreeViewBuilder extends AbstractMetamodelVisitor {
+        private static final String IDENTIFIER_PREFIX = " #";
         private static final String VALUE_ASSIGNMENT = "=";
         private static final String COLLECTION_PREFIX = "[";
         private static final String COLLECTION_SUFFIX = "]";
@@ -60,7 +63,7 @@ public class GenericEmfTreeView extends AbstractModelView {
         private static final int ABBREVIATION_LIMIT = 20;
         private static final String ABBREVIATION_SUFFIX = "...";
         private static final String TEXT_AFFIX = "\"";
-        private static final String IDENTIFIER_FEATURE = "name";
+        private static final String IDENTIFIER_REGEX = "name|identifier";
         private static final String INDENTATION = "  ";
 
         @Override
@@ -69,6 +72,8 @@ public class GenericEmfTreeView extends AbstractModelView {
             StringBuilder line = new StringBuilder(prefix);
 
             line.append(eObject.eClass().getName());  // Build element type
+            line.append(IDENTIFIER_PREFIX);  // Build element type
+            line.append(identifierManager.getIdentifier(eObject));
             visitStructuralFeatures(eObject, line);  // Build element features
 
             lines.add(line.toString());
@@ -100,19 +105,18 @@ public class GenericEmfTreeView extends AbstractModelView {
             if (value != null) {
                 if (value instanceof EObject featureValue) {
                     List<String> valueIdentifiers = deriveNameOrIdentifers(featureValue);
+
                     if (!valueIdentifiers.isEmpty()) {
-                        name = valueIdentifiers.get(0);
+                        name = TEXT_AFFIX + valueIdentifiers.get(0) + TEXT_AFFIX;
                     } else {
-                        name = featureValue.eClass().getName();
+                        name = featureValue.eClass().getName() + IDENTIFIER_PREFIX + identifierManager.getIdentifier(featureValue);
                     }
                 } else if (value instanceof Collection<?> multipleValues) {
                     name = valueListToString(multipleValues);
                 } else {
-
                     name = value.toString();
                     name = (name.length() > ABBREVIATION_LIMIT) ? name.substring(0, ABBREVIATION_LIMIT) + ABBREVIATION_SUFFIX : name;
                     name = TEXT_AFFIX + name + TEXT_AFFIX;
-
                 }
             }
             return name;
@@ -137,7 +141,7 @@ public class GenericEmfTreeView extends AbstractModelView {
                 names.add(element.getName());
             } else {
                 for (EStructuralFeature feature : eObject.eClass().getEAllStructuralFeatures()) {
-                    if (feature.getName().toLowerCase().matches(IDENTIFIER_FEATURE) && eObject.eGet(feature) != null) {
+                    if (feature.getName().toLowerCase().matches(IDENTIFIER_REGEX) && eObject.eGet(feature) != null) {
                         names.add(eObject.eGet(feature).toString());
                     }
                 }
