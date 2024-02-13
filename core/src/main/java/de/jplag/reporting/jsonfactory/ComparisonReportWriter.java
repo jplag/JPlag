@@ -105,13 +105,9 @@ public class ComparisonReportWriter {
         Token startOfSecond = tokensSecond.stream().min(lineComparator).orElseThrow();
         Token endOfSecond = tokensSecond.stream().max(lineComparator).orElseThrow();
 
-        List<Token> firstTotalTokens = tokensFirst.stream().filter(x -> Objects.equals(x.getFile(), startOfFirst.getFile())).toList();
-        List<Token> secondTotalTokens = tokensSecond.stream().filter(x -> Objects.equals(x.getFile(), startOfSecond.getFile())).toList();
-
         return new Match(FilePathUtil.getRelativeSubmissionPath(startOfFirst.getFile(), comparison.firstSubmission(), submissionToIdFunction),
                 FilePathUtil.getRelativeSubmissionPath(startOfSecond.getFile(), comparison.secondSubmission(), submissionToIdFunction),
-                startOfFirst.getLine(), endOfFirst.getLine(), startOfSecond.getLine(), endOfSecond.getLine(), match.length(), firstTotalTokens.size(),
-                secondTotalTokens.size());
+                startOfFirst.getLine(), endOfFirst.getLine(), startOfSecond.getLine(), endOfSecond.getLine(), match.length());
     }
 
 }
