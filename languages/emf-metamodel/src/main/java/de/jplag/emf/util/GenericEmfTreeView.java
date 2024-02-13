@@ -57,25 +57,19 @@ public class GenericEmfTreeView extends AbstractModelView {
         private static final String COLLECTION_PREFIX = "[";
         private static final String COLLECTION_SUFFIX = "]";
         private static final String COLLECTION_DELIMITER = ", ";
-        private static final int ABBREVIATION_LIMIT = 15;
+        private static final int ABBREVIATION_LIMIT = 20;
         private static final String ABBREVIATION_SUFFIX = "...";
         private static final String TEXT_AFFIX = "\"";
         private static final String IDENTIFIER_FEATURE = "name";
         private static final String INDENTATION = "  ";
-        private static final String NAME_SEPARATOR = " : ";
 
         @Override
         protected void visitEObject(EObject eObject) {
             String prefix = INDENTATION.repeat(getCurrentTreeDepth());
             StringBuilder line = new StringBuilder(prefix);
 
-            // build element identifier(s):
-            List<String> identifiers = deriveNameOrIdentifers(eObject);
-            StringJoiner joiner = new StringJoiner(NAME_SEPARATOR);
-            identifiers.forEach(joiner::add);
-            line.append(joiner.toString());
-            line.append(eObject.eClass().getName()); // Build element type:
-            visitStructuralFeatures(eObject, line);  // Build element features:
+            line.append(eObject.eClass().getName());  // Build element type
+            visitStructuralFeatures(eObject, line);  // Build element features
 
             lines.add(line.toString());
             viewBuilder.append(line + System.lineSeparator());
