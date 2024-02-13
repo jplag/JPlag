@@ -48,7 +48,8 @@ public class ContainmentOrderNormalizer implements Comparator<EObject> {
         }
         if (firstType == null) {
             return -1;
-        } else if (secondType == null) {
+        }
+        if (secondType == null) {
             return 1;
         }
 

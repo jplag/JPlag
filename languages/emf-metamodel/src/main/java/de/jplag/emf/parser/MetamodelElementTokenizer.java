@@ -49,9 +49,8 @@ public class MetamodelElementTokenizer extends EcoreSwitch<MetamodelTokenType> i
         }
         if (eClass.isAbstract()) {
             return MetamodelTokenType.ABSTRACT_CLASS;
-        } else {
-            return MetamodelTokenType.CLASS;
         }
+        return MetamodelTokenType.CLASS;
     }
 
     @Override
@@ -94,15 +93,13 @@ public class MetamodelElementTokenizer extends EcoreSwitch<MetamodelTokenType> i
         if (eReference.isContainment()) {
             if (eReference.getUpperBound() == 1) {
                 return MetamodelTokenType.CONTAINMENT;
-            } else {
-                return MetamodelTokenType.CONTAINMENT_MULT;
             }
+            return MetamodelTokenType.CONTAINMENT_MULT;
         }
         if (eReference.getUpperBound() == 1) {
             return MetamodelTokenType.REFERENCE;
-        } else {
-            return MetamodelTokenType.REFERENCE_MULT;
         }
+        return MetamodelTokenType.REFERENCE_MULT;
     }
 
     @Override

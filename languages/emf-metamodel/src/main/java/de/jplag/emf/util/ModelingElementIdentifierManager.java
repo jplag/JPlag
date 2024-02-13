@@ -13,13 +13,13 @@ import org.eclipse.emf.ecore.EObject;
  */
 public class ModelingElementIdentifierManager {
 
-    private Map<EClass, Set<EObject>> elementToIdentifer;
+    private final Map<EClass, Set<EObject>> elementToIdentifer;
 
     /**
      * Creates the identifier manager. Identifers are only unique if managed by the same instance.
      */
     public ModelingElementIdentifierManager() {
-        elementToIdentifer = new HashMap<EClass, Set<EObject>>();
+        elementToIdentifer = new HashMap<>();
     }
 
     /**
