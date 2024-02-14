@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import type { SubmissionFile } from '@/stores/state'
+import type { SubmissionFile } from '@/model/File'
 import CodePanel from './CodePanel.vue'
 import Container from '../ContainerComponent.vue'
 import Button from '../ButtonComponent.vue'

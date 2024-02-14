@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
-import type { State, SubmissionFile, File, LoadConfiguration, UIState } from './state'
+import type { LoadConfiguration, State, UIState } from './state'
 import { MetricType } from '@/model/MetricType'
+import type { SubmissionFile, File } from '@/model/File'
 
 /**
  * The store is a global state management system. It is used to store the state of the application.
@@ -88,7 +89,7 @@ const store = defineStore('store', {
     },
     /**
      * @param id the id to check for
-     * @returns whether this submission should be anonymised
+     * @returns whether this submission should be anonymized
      */
     isAnonymous: (state) => (submissionId: string) => {
       return state.state.anonymous.has(submissionId)

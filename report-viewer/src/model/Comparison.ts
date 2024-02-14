@@ -1,5 +1,5 @@
 import type { Match } from './Match'
-import type { SubmissionFile } from '@/stores/state'
+import type { SubmissionFile } from '@/model/File'
 import { MatchInSingleFile } from './MatchInSingleFile'
 import type { MetricType } from './MetricType'
 
