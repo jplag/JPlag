@@ -60,11 +60,12 @@ public class ReportViewer implements HttpHandler {
 
         int port = this.port;
         int remainingLookups = MAX_PORT_LOOKUPS;
-        BindException lastException = new BindException("Could not bind server.");
+        BindException lastException = new BindException("Could not create server. Probably due to no free port found.");
         while (server == null && remainingLookups-- > 0) {
             try {
                 server = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), port), 0);
             } catch (BindException e) {
+                logger.info("Port {} is not available. Trying to find a different one.", this.port);
                 lastException = e;
                 port++;
             }

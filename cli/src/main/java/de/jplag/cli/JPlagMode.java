@@ -11,7 +11,7 @@ public enum JPlagMode {
     /**
      * Only start the report viewer
      */
-    VIEWER,
+    VIEW,
     /**
      * Run JPlag and open the result in report viewer
      */
