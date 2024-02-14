@@ -1,4 +1,6 @@
+import type { SubmissionFile } from '@/model/File'
 import type { MetricType } from '@/model/MetricType'
+import type { DistributionChartConfig } from '@/model/ui/DistributionChartConfig'
 
 /**
  * Local store. Stores the state of the application.
@@ -16,7 +18,7 @@ export interface State {
    * Stored files if zip mode is used. Stores the files as key - file name, value - file string
    */
   files: Record<string, string>
-  submissions: Record<string, Map<string, string>>
+  submissions: Record<string, Map<string, SubmissionFile>>
   /**
    * Indicates whether local mode is used.
    */
@@ -42,30 +44,6 @@ export interface State {
   uploadedFileName: string
 }
 
-/**
- * Internal representation of a single file.
- */
-export interface File {
-  /**
-   * The name of the file.
-   */
-  fileName: string
-  /**
-   * The files content.
-   */
-  data: string
-}
-
-/**
- * Internal representation of a single file from a submission.
- */
-export interface SubmissionFile extends File {
-  /**
-   * The id of the submission.
-   */
-  submissionId: string
-}
-
 export interface UIState {
   useDarkMode: boolean
   comparisonTableSortingMetric: MetricType
@@ -74,9 +52,10 @@ export interface UIState {
 }
 
 /**
- * Configuration for the distribution chart.
+ * Load configuration is used to indicate which mode is used.
  */
-export interface DistributionChartConfig {
-  metric: MetricType
-  xScale: 'linear' | 'logarithmic'
+export interface LoadConfiguration {
+  local: boolean
+  zip: boolean
+  single: boolean
 }

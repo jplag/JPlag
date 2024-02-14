@@ -1,5 +1,5 @@
 import { store } from '@/stores/store'
-import { ZipFileHandler } from '@/utils/fileHandling/ZipFileHandler'
+import { ZipFileHandler } from '@/model/fileHandling/ZipFileHandler'
 
 /**
  * This class provides some basic functionality for the factories.

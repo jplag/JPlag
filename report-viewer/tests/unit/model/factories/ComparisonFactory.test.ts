@@ -26,6 +26,13 @@ const store = {
         value: ''
       }
     ]
+  },
+  getSubmissionFile: (id: string, name: string) => {
+    return {
+      fileName: name,
+      submissionId: id,
+      matchedTokenCount: 0
+    }
   }
 }
 
