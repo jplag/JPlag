@@ -13,6 +13,8 @@ export class Comparison {
   private _filesOfFirstSubmission: SubmissionFile[]
   private _filesOfSecondSubmission: SubmissionFile[]
   private _allMatches: Array<Match>
+  private readonly _firstSimilarity?: number
+  private readonly _secondSimilarity?: number
 
   constructor(
     firstSubmissionId: string,
@@ -20,7 +22,9 @@ export class Comparison {
     similarities: Record<MetricType, number>,
     filesOfFirstSubmission: SubmissionFile[],
     filesOfSecondSubmission: SubmissionFile[],
-    allMatches: Array<Match>
+    allMatches: Array<Match>,
+    firstSimilarity?: number,
+    secondSimilarity?: number
   ) {
     this._firstSubmissionId = firstSubmissionId
     this._secondSubmissionId = secondSubmissionId
@@ -28,6 +32,8 @@ export class Comparison {
     this._filesOfFirstSubmission = filesOfFirstSubmission
     this._filesOfSecondSubmission = filesOfSecondSubmission
     this._allMatches = allMatches
+    this._firstSimilarity = firstSimilarity
+    this._secondSimilarity = secondSimilarity
   }
 
   /**
@@ -84,6 +90,14 @@ export class Comparison {
    */
   get similarities() {
     return this._similarities
+  }
+
+  get firstSimilarity(): number | undefined {
+    return this._firstSimilarity
+  }
+
+  get secondSimilarity(): number | undefined {
+    return this._secondSimilarity
   }
 
   private groupMatchesByFileName(index: 1 | 2): Map<string, Array<MatchInSingleFile>> {
