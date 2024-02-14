@@ -45,7 +45,7 @@
         <p>For more details check the console.</p>
       </div>
     </div>
-    <VersionInfoComponent class="absolute bottom-3 left-3" />
+    <VersionInfoComponent class="absolute bottom-5 left-5" />
   </div>
 </template>
 

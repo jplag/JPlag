@@ -12,7 +12,7 @@
     </div>
 
     <div
-      class="relative bottom-0 left-0 right-0 flex flex-grow justify-between space-x-5 p-5 pt-5 print:grow-0 print:flex-col print:space-x-0 print:space-y-5 print:p-0"
+      class="relative bottom-0 left-0 right-0 flex flex-grow justify-between space-x-5 px-5 pb-7 pt-5 print:grow-0 print:flex-col print:space-x-0 print:space-y-5 print:p-0"
     >
       <Container
         class="flex max-h-0 min-h-full flex-1 flex-col overflow-hidden print:max-h-none print:min-h-0 print:flex-none"
