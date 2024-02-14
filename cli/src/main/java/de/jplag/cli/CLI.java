@@ -83,7 +83,7 @@ public final class CLI {
             if (!parseResult.isUsageHelpRequested() && !(parseResult.subcommand() != null && parseResult.subcommand().isUsageHelpRequested())) {
                 switch (cli.options.mode) {
                     case RUN -> cli.runJPlag(parseResult);
-                    case VIEWER -> cli.runViewer(null);
+                    case VIEW -> cli.runViewer(null);
                     case RUN_AND_VIEW -> cli.runViewer(cli.runJPlag(parseResult));
                 }
             }
