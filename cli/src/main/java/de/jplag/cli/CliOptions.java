@@ -122,7 +122,8 @@ public class CliOptions implements Runnable {
         @Option(names = {"--neighbor-length"}, defaultValue = "2", description = "Defines how short a match can be, to be considered (default: 2)%n")
         public int minimumNeighborLength;
 
-        @Option(names = {"--gap-size"}, defaultValue = "6", description = "Defines how many token there can be between two neighboring matches (default: 6)%n")
+        @Option(names = {
+                "--gap-size"}, defaultValue = "6", description = "Defines how many token there can be between two neighboring matches (default: 6)%n")
         public int maximumGapSize;
 
     }
