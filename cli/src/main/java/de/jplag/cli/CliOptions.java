@@ -116,13 +116,13 @@ public class CliOptions implements Runnable {
     }
 
     public static class Merging {
-        @Option(names = {"--match-merging"}, description = "Enables match merging (default: false)%n")
+        @Option(names = {"--match-merging"}, defaultValue = "false", description = "Enables match merging (default: false)%n")
         public boolean enabled;
 
-        @Option(names = {"--neighbor-length"}, description = "Defines how short a match can be, to be considered (default: 2)%n")
+        @Option(names = {"--neighbor-length"}, defaultValue = "2", description = "Defines how short a match can be, to be considered (default: 2)%n")
         public int minimumNeighborLength;
 
-        @Option(names = {"--gap-size"}, description = "Defines how many token there can be between two neighboring matches (default: 6)%n")
+        @Option(names = {"--gap-size"}, defaultValue = "6", description = "Defines how many token there can be between two neighboring matches (default: 6)%n")
         public int maximumGapSize;
 
     }
