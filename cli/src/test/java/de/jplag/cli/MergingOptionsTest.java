@@ -11,15 +11,15 @@ import de.jplag.merging.MergingOptions;
 /**
  * Test cases for the options of the match merging mechanism.
  */
-public class MergingOptionsTest extends CommandLineInterfaceTest {
+class MergingOptionsTest extends CommandLineInterfaceTest {
 
     @Test
     @DisplayName("Test if default values are used when creating merging options from CLI")
     void testMergingDefault() throws CliException {
         buildOptionsFromCLI(defaultArguments());
         assertNotNull(options.mergingOptions());
-        assertEquals(options.mergingOptions().enabled(), MergingOptions.DEFAULT_ENABLED);
-        assertEquals(options.mergingOptions().minimumNeighborLength(), MergingOptions.DEFAULT_NEIGHBOR_LENGTH);
-        assertEquals(options.mergingOptions().maximumGapSize(), MergingOptions.DEFAULT_GAP_SIZE);
+        assertEquals(MergingOptions.DEFAULT_ENABLED, options.mergingOptions().enabled());
+        assertEquals(MergingOptions.DEFAULT_NEIGHBOR_LENGTH, options.mergingOptions().minimumNeighborLength());
+        assertEquals(MergingOptions.DEFAULT_GAP_SIZE, options.mergingOptions().maximumGapSize());
     }
 }
