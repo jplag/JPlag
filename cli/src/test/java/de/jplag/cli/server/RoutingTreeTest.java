@@ -3,6 +3,8 @@ package de.jplag.cli.server;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -37,6 +39,30 @@ class RoutingTreeTest {
 
         assertEquals(firstRoutingPath, ((TestRouting) firstRouting.getRight()).path);
         assertEquals(secondRoutingPath, ((TestRouting) secondRouting.getRight()).path);
+    }
+
+    @Test
+    public void testUnknownPath() {
+        assertNull(this.routingTree.resolveRouting(new RoutingPath("/unknown.html")));
+    }
+
+    @Test
+    public void testPartialPathRoute() {
+        RoutingTree routingTree = new RoutingTree();
+        routingTree.insertRouting("/path/", new TestRouting(""));
+        assertNotNull(routingTree.resolveRouting(new RoutingPath("/path/index.html")));
+    }
+
+    @Test
+    public void testPartialPathRouteWithSubpath() {
+        RoutingTree routingTree = new RoutingTree();
+        routingTree.insertRouting("/path/", new TestRouting("/path/"));
+        routingTree.insertRouting("/path/subPath/a.html", new TestRouting(""));
+
+        Pair<RoutingPath, Routing> result = routingTree.resolveRouting(new RoutingPath("/path/subPath/b.html"));
+        assertNotNull(result);
+        assertInstanceOf(TestRouting.class, result.getRight());
+        assertEquals("/path/", ((TestRouting) result.getRight()).path);
     }
 
     private static class TestRouting implements Routing {
