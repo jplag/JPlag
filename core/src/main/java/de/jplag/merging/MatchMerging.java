@@ -1,7 +1,7 @@
 package de.jplag.merging;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import de.jplag.JPlagComparison;
@@ -22,7 +22,7 @@ import de.jplag.options.JPlagOptions;
  * {@link JPlagOptions} as {@link MergingOptions} and default to (2,6).
  */
 public class MatchMerging {
-    private JPlagOptions options;
+    private final JPlagOptions options;
 
     /**
      * Instantiates the match merging algorithm for a comparison result and a set of specific options.
@@ -49,7 +49,8 @@ public class MatchMerging {
             Submission rightSubmission = comparison.secondSubmission().copy();
             List<Match> globalMatches = new ArrayList<>(comparison.matches());
             globalMatches.addAll(comparison.ignoredMatches());
-            globalMatches = removeTooShortMatches(mergeNeighbors(globalMatches, leftSubmission, rightSubmission));
+            globalMatches = mergeNeighbors(globalMatches, leftSubmission, rightSubmission);
+            globalMatches = globalMatches.stream().filter(it -> it.length() >= options.minimumTokenMatch()).toList();
             comparisonsMerged.add(new JPlagComparison(leftSubmission, rightSubmission, globalMatches, new ArrayList<>()));
         }
 
@@ -66,14 +67,17 @@ public class MatchMerging {
     private List<Neighbor> computeNeighbors(List<Match> globalMatches) {
         List<Neighbor> neighbors = new ArrayList<>();
         List<Match> sortedByLeft = new ArrayList<>(globalMatches);
-        Collections.sort(sortedByLeft, (match1, match2) -> match1.startOfFirst() - match2.startOfFirst());
         List<Match> sortedByRight = new ArrayList<>(globalMatches);
-        Collections.sort(sortedByRight, (match1, match2) -> match1.startOfSecond() - match2.startOfSecond());
+
+        sortedByLeft.sort(Comparator.comparingInt(Match::startOfFirst));
+        sortedByRight.sort(Comparator.comparingInt(Match::startOfSecond));
+
         for (int i = 0; i < sortedByLeft.size() - 1; i++) {
             if (sortedByRight.indexOf(sortedByLeft.get(i)) == (sortedByRight.indexOf(sortedByLeft.get(i + 1)) - 1)) {
                 neighbors.add(new Neighbor(sortedByLeft.get(i), sortedByLeft.get(i + 1)));
             }
         }
+
         return neighbors;
     }
 
@@ -184,20 +188,5 @@ public class MatchMerging {
         }
 
         return shiftedMatches;
-    }
-
-    /**
-     * This method marks the end of the merging pipeline and removes the remaining too short matches from
-     * @param globalMatches
-     */
-    private List<Match> removeTooShortMatches(List<Match> globalMatches) {
-        List<Match> toRemove = new ArrayList<>();
-        for (Match match : globalMatches) {
-            if (match.length() < options.minimumTokenMatch()) {
-                toRemove.add(match);
-            }
-        }
-        globalMatches.removeAll(toRemove);
-        return globalMatches;
     }
 }

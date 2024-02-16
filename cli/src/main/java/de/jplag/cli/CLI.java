@@ -5,13 +5,17 @@ import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_OPTION_LIST
 import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_SYNOPSIS;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import de.jplag.cli.logger.TongfeiProgressBarProvider;
+import de.jplag.logging.ProgressBarLogger;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,11 +24,9 @@ import de.jplag.JPlag;
 import de.jplag.JPlagResult;
 import de.jplag.Language;
 import de.jplag.cli.logger.CollectedLoggerFactory;
-import de.jplag.cli.logger.TongfeiProgressBarProvider;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.Preprocessing;
 import de.jplag.exceptions.ExitException;
-import de.jplag.logging.ProgressBarLogger;
 import de.jplag.merging.MergingOptions;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
@@ -60,6 +62,7 @@ public final class CLI {
 
     private static final String IMPOSSIBLE_EXCEPTION = "This should not have happened."
             + " Please create an issue on github (https://github.com/jplag/JPlag/issues) with the entire output.";
+    private static final String UNKOWN_LANGAUGE_EXCEPTION = "Language %s does not exists. Available languages are: %s";
 
     private static final String DESCRIPTION_PATTERN = "%nJPlag - %s%n%s%n%n";
 
@@ -78,11 +81,13 @@ public final class CLI {
             if (!parseResult.isUsageHelpRequested() && !(parseResult.subcommand() != null && parseResult.subcommand().isUsageHelpRequested())) {
                 JPlagOptions options = cli.buildOptionsFromArguments(parseResult);
                 ProgressBarLogger.setProgressBarProvider(new TongfeiProgressBarProvider());
-                JPlagResult result = new JPlag(options).run();
-                ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
-                reportObjectFactory.createAndSaveReport(result, cli.getResultFolder());
+                JPlagResult result = JPlag.run(options);
+                ReportObjectFactory reportObjectFactory = new ReportObjectFactory(new File(cli.getResultFolder() + ".zip"));
+                reportObjectFactory.createAndSaveReport(result);
+
+                OutputFileGenerator.generateCsvOutput(result, new File(cli.getResultFolder()), cli.options);
             }
-        } catch (ExitException exception) {
+        } catch (ExitException | FileNotFoundException exception) {
             logger.error(exception.getMessage()); // do not pass exception here to keep log clean
             finalizeLogger();
             System.exit(1);
@@ -141,6 +146,12 @@ public final class CLI {
                 commandLine.getExecutionStrategy().execute(result);
             }
             return result;
+        } catch (CommandLine.ParameterException e) {
+            if (e.getArgSpec().isOption() && Arrays.asList(((OptionSpec) e.getArgSpec()).names()).contains("-l")) {
+                throw new CliException(String.format(UNKOWN_LANGAUGE_EXCEPTION, e.getValue(),
+                        String.join(", ", LanguageLoader.getAllAvailableLanguageIdentifiers())));
+            }
+            throw new CliException("Error during parsing", e);
         } catch (CommandLine.PicocliException e) {
             throw new CliException("Error during parsing", e);
         }

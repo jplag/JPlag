@@ -55,12 +55,15 @@ class MergingTest extends TestBase {
     @BeforeEach
     void prepareTestState() {
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
-        comparisonsBefore = result.getAllComparisons();
+        comparisonsBefore = new ArrayList<>(result.getAllComparisons());
 
         if (options.mergingOptions().enabled()) {
             result = new MatchMerging(options).mergeMatchesOf(result);
         }
-        comparisonsAfter = result.getAllComparisons();
+        comparisonsAfter = new ArrayList<>(result.getAllComparisons());
+
+        comparisonsBefore.sort(Comparator.comparing(Object::toString));
+        comparisonsAfter.sort(Comparator.comparing(Object::toString));
     }
 
     @Test
@@ -192,5 +195,37 @@ class MergingTest extends TestBase {
             }
         }
         assertTrue(correctMerges);
+    }
+
+    @Test
+    @DisplayName("Sanity check for match merging")
+    void testSanity() {
+
+        List<Match> matchesBefore = new ArrayList<>();
+        List<Match> matchesAfter = new ArrayList<>();
+
+        for (JPlagComparison comparison : comparisonsBefore) {
+            if (comparison.toString().equals("sanityA.java <-> sanityB.java")) {
+                matchesBefore = comparison.ignoredMatches();
+            }
+        }
+        for (JPlagComparison comparison : comparisonsAfter) {
+            if (comparison.toString().equals("sanityA.java <-> sanityB.java")) {
+                matchesAfter = comparison.matches();
+            }
+        }
+
+        List<Match> expectedBefore = new ArrayList<>();
+        expectedBefore.add(new Match(5, 3, 6));
+        expectedBefore.add(new Match(11, 12, 6));
+        expectedBefore.add(new Match(0, 0, 3));
+        expectedBefore.add(new Match(3, 18, 2));
+        expectedBefore.add(new Match(17, 20, 2));
+
+        List<Match> expectedAfter = new ArrayList<>();
+        expectedAfter.add(new Match(5, 3, 12));
+
+        assertEquals(expectedBefore, matchesBefore);
+        assertEquals(expectedAfter, matchesAfter);
     }
 }

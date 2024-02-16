@@ -27,6 +27,7 @@
         <module>swift</module>
         <module>text</module>
         <module>typescript</module>
+        <module>javascript</module>
         <module>llvmir</module>
     </modules>
     <dependencies>
