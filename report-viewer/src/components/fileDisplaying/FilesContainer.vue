@@ -3,11 +3,14 @@
 -->
 <template>
   <Container class="flex flex-col print:!px-1">
-    <div class="mb-2 mr-2 flex space-x-2">
+    <div class="mb-2 mr-2 flex items-center space-x-5">
       <h3 class="flex-grow text-left text-lg font-bold">
         Files of
         {{ fileOwnerDisplayName }}:
       </h3>
+      <div v-if="tokenCount >= 0" class="text-gray-600 dark:text-gray-300">
+        {{ tokenCount }} total tokens
+      </div>
       <Button @click="collapseAll()" class="space-x-2 print:hidden"
         ><FontAwesomeIcon :icon="['fas', 'compress-alt']" />
         <p>Collapse All</p></Button
@@ -34,18 +37,18 @@
 </template>
 
 <script setup lang="ts">
-import type { SubmissionFile } from '@/stores/state'
+import type { SubmissionFile } from '@/model/File'
 import CodePanel from './CodePanel.vue'
 import Container from '../ContainerComponent.vue'
 import Button from '../ButtonComponent.vue'
 import ScrollableComponent from '../ScrollableComponent.vue'
 import { VueDraggableNext } from 'vue-draggable-next'
-import { ref, type PropType, type Ref } from 'vue'
+import { computed, ref, type PropType, type Ref } from 'vue'
 import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
-import type { HighlightLanguage } from '@/model/Language'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCompressAlt } from '@fortawesome/free-solid-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'
+import type { ParserLanguage } from '@/model/Language'
 
 library.add(faCompressAlt)
 
@@ -75,7 +78,7 @@ const props = defineProps({
    * Language of the files.
    */
   highlightLanguage: {
-    type: String as PropType<HighlightLanguage>,
+    type: String as PropType<ParserLanguage>,
     required: true
   }
 })
@@ -83,6 +86,10 @@ const props = defineProps({
 defineEmits(['lineSelected'])
 
 const codePanels: Ref<(typeof CodePanel)[]> = ref([])
+
+const tokenCount = computed(() => {
+  return props.files.reduce((acc, file) => (file.tokenCount ?? 0) + acc - 1, 0)
+})
 
 /**
  * Scrolls to the given file and line in the container.

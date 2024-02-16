@@ -6,6 +6,8 @@
   >
     <LoadingCircle class="mx-auto" />
   </div>
+
+  <RepositoryReference />
 </template>
 
 <script setup lang="ts">
@@ -17,6 +19,7 @@ import LoadingCircle from '@/components/LoadingCircle.vue'
 import { redirectOnError } from '@/router'
 import { OptionsFactory } from '@/model/factories/OptionsFactory'
 import type { CliOptions } from '@/model/CliOptions'
+import RepositoryReference from '@/components/RepositoryReference.vue'
 
 const overview: Ref<Overview | null> = ref(null)
 const cliOptions: Ref<CliOptions | undefined> = ref(undefined)

@@ -9,15 +9,17 @@
         <div
           class="flex flex-row items-center space-x-5 print:flex-col print:items-start print:space-x-0"
         >
-          <TextInformation label="Submission Directory">{{ submissionPathValue }}</TextInformation>
-          <TextInformation label="Result name">{{
+          <TextInformation label="Submission Directory" class="flex-auto">{{
+            submissionPathValue
+          }}</TextInformation>
+          <TextInformation label="Result name" class="flex-auto">{{
             store().state.uploadedFileName
           }}</TextInformation>
-          <TextInformation label="Total Submissions">{{
+          <TextInformation label="Total Submissions" class="flex-auto">{{
             store().getSubmissionIds.length
           }}</TextInformation>
 
-          <TextInformation label="Shown/Total Comparisons">
+          <TextInformation label="Shown/Total Comparisons" class="flex-auto">
             <template #default
               >{{ overview.shownComparisons }} / {{ overview.totalComparisons }}</template
             >
@@ -42,7 +44,7 @@
             </template>
           </TextInformation>
 
-          <TextInformation label="Min Token Match">
+          <TextInformation label="Min Token Match" class="flex-auto">
             <template #default>
               {{ overview.matchSensitivity }}
             </template>
@@ -57,7 +59,7 @@
             </template>
           </TextInformation>
 
-          <ToolTipComponent direction="left" class="print:hidden">
+          <ToolTipComponent direction="left" class="flex-grow-0 print:hidden">
             <template #default>
               <Button @click="router.push({ name: 'InfoView' })"> More </Button>
             </template>
@@ -70,7 +72,7 @@
     </div>
 
     <div
-      class="relative bottom-0 left-0 right-0 flex flex-grow space-x-5 p-5 pt-5 print:flex-col print:space-x-0 print:space-y-5"
+      class="relative bottom-0 left-0 right-0 flex flex-grow space-x-5 px-5 pb-7 pt-5 print:flex-col print:space-x-0 print:space-y-5"
     >
       <Container
         class="flex max-h-0 min-h-full flex-1 flex-col print:max-h-none print:min-h-fit print:flex-none"

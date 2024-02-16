@@ -23,9 +23,48 @@
             </template>
           </ToolTipComponent>
         </h2>
-        <div class="flex flex-row">
-          <TextInformation label="Average Similarity"
+        <div class="flex flex-row space-x-10">
+          <TextInformation label="Average Similarity" class="font-bold"
             >{{ (comparison.similarities[MetricType.AVERAGE] * 100).toFixed(2) }}%</TextInformation
+          >
+          <TextInformation
+            v-if="comparison.firstSimilarity"
+            :label="`Similarity ${store().getDisplayName(comparison.firstSubmissionId)}`"
+            tooltip-side="right"
+          >
+            <template #default>{{ (comparison.firstSimilarity * 100).toFixed(2) }}%</template>
+            <template #tooltip
+              ><div class="whitespace-pre text-sm">
+                <p>
+                  Percentage of code from
+                  {{ store().getDisplayName(comparison.firstSubmissionId) }} that was found in the
+                  code of {{ store().getDisplayName(comparison.secondSubmissionId) }}.
+                </p>
+                <p>
+                  The numbers might not be symmetric, due to the submissions having different
+                  lengths.
+                </p>
+              </div></template
+            >
+          </TextInformation>
+          <TextInformation
+            v-if="comparison.secondSimilarity"
+            :label="`Similarity ${store().getDisplayName(comparison.secondSubmissionId)}`"
+            tooltip-side="right"
+            ><template #default>{{ (comparison.secondSimilarity * 100).toFixed(2) }}%</template>
+            <template #tooltip
+              ><div class="whitespace-pre text-sm">
+                <p>
+                  Percentage of code from
+                  {{ store().getDisplayName(comparison.secondSubmissionId) }} that was found in the
+                  code of {{ store().getDisplayName(comparison.firstSubmissionId) }}.
+                </p>
+                <p>
+                  The numbers might not be symmetric, due to the submissions having different
+                  lengths.
+                </p>
+              </div></template
+            ></TextInformation
           >
         </div>
         <MatchList
@@ -38,7 +77,7 @@
     </div>
     <div ref="styleholder"></div>
     <div
-      class="relative bottom-0 left-0 right-0 flex flex-grow justify-between space-x-5 p-5 pt-5 print:space-x-1 print:p-0 print:!pt-2"
+      class="relative bottom-0 left-0 right-0 flex flex-grow justify-between space-x-5 px-5 pb-7 pt-5 print:space-x-1 print:p-0 print:!pt-2"
     >
       <FilesContainer
         ref="panel1"
@@ -74,7 +113,7 @@ import MatchList from '@/components/fileDisplaying/MatchList.vue'
 import FilesContainer from '@/components/fileDisplaying/FilesContainer.vue'
 import { store } from '@/stores/store'
 import Container from '@/components/ContainerComponent.vue'
-import { HighlightLanguage } from '@/model/Language'
+import { ParserLanguage } from '@/model/Language'
 import hljsLightMode from 'highlight.js/styles/vs.css?raw'
 import hljsDarkMode from 'highlight.js/styles/vs2015.css?raw'
 import { MetricType } from '@/model/MetricType'
@@ -98,7 +137,7 @@ const props = defineProps({
     required: true
   },
   language: {
-    type: Object as PropType<HighlightLanguage>,
+    type: Object as PropType<ParserLanguage>,
     required: true
   }
 })
