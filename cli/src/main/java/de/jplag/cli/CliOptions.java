@@ -7,6 +7,7 @@ import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
 import de.jplag.java.JavaLanguage;
+import de.jplag.merging.MergingOptions;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.SimilarityMetric;
 
@@ -62,6 +63,9 @@ public class CliOptions implements Runnable {
     @ArgGroup(validate = false, heading = "Merging of neighboring matches to increase the similarity of concealed plagiarism:%n")
     public Merging merging = new Merging();
 
+    @Option(names = {"--normalize"}, description = "Activate the normalization of tokens. Supported for languages: Java, C++.")
+    public boolean normalize = false;
+
     /**
      * Empty run method, so picocli prints help automatically
      */
@@ -116,14 +120,15 @@ public class CliOptions implements Runnable {
     }
 
     public static class Merging {
-        @Option(names = {"--match-merging"}, description = "Enables match merging (default: false)%n")
-        public boolean enabled;
+        @Option(names = {"--match-merging"}, description = "Enables match merging (default: ${DEFAULT-VALUE})%n")
+        public boolean enabled = MergingOptions.DEFAULT_ENABLED;
 
-        @Option(names = {"--neighbor-length"}, description = "Defines how short a match can be, to be considered (default: 2)%n")
-        public int minimumNeighborLength;
+        @Option(names = {"--neighbor-length"}, description = "Defines how short a match can be, to be considered (default: ${DEFAULT-VALUE})%n")
+        public int minimumNeighborLength = MergingOptions.DEFAULT_NEIGHBOR_LENGTH;
 
-        @Option(names = {"--gap-size"}, description = "Defines how many token there can be between two neighboring matches (default: 6)%n")
-        public int maximumGapSize;
+        @Option(names = {
+                "--gap-size"}, description = "Defines how many token there can be between two neighboring matches (default: ${DEFAULT-VALUE})%n")
+        public int maximumGapSize = MergingOptions.DEFAULT_GAP_SIZE;
 
     }
 

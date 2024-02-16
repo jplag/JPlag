@@ -1,6 +1,6 @@
 <template>
   <div
-    class="absolute bottom-0 left-0 right-0 top-0 flex flex-row space-x-5 p-5 print:flex-col print:space-x-0 print:space-y-2 print:p-0"
+    class="absolute bottom-0 left-0 right-0 top-0 flex flex-row space-x-5 p-5 pb-7 print:flex-col print:space-x-0 print:space-y-2 print:p-0"
   >
     <Container class="infoContainer print:!border-none">
       <h2>Run Options:</h2>

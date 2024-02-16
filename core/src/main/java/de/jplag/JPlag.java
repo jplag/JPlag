@@ -71,6 +71,9 @@ public class JPlag {
         // Parse and validate submissions.
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
+        if (options.normalize() && options.language().supportsNormalization() && options.language().requiresCoreNormalization()) {
+            submissionSet.normalizeSubmissions();
+        }
         int submissionCount = submissionSet.numberOfSubmissions();
         if (submissionCount < 2)
             throw new SubmissionException("Not enough valid submissions! (found " + submissionCount + " valid submissions)");
@@ -103,6 +106,10 @@ public class JPlag {
     }
 
     private static void checkForConfigurationConsistency(JPlagOptions options) throws RootDirectoryException {
+        if (options.normalize() && !options.language().supportsNormalization()) {
+            logger.error(String.format("The language %s cannot be used with normalization.", options.language().getName()));
+        }
+
         List<String> duplicateNames = getDuplicateSubmissionFolderNames(options);
         if (duplicateNames.size() > 0) {
             throw new RootDirectoryException(String.format("Duplicate root directory names found: %s", String.join(", ", duplicateNames)));

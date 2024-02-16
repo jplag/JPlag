@@ -34,9 +34,9 @@ public abstract class AbstractAntlrLanguage implements Language {
     }
 
     @Override
-    public List<Token> parse(Set<File> files) throws ParsingException {
+    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
         if (this.parser == null) {
-            this.parser = this.initializeParser();
+            this.parser = this.initializeParser(normalize);
         }
 
         return this.parser.parse(files);
@@ -46,7 +46,7 @@ public abstract class AbstractAntlrLanguage implements Language {
      * Lazily creates the parser. Has to be implemented, if no parser is passed in the constructor.
      * @return The newly initialized parser
      */
-    protected AbstractAntlrParserAdapter<?> initializeParser() {
+    protected AbstractAntlrParserAdapter<?> initializeParser(boolean normalize) {
         throw new UnsupportedOperationException(
                 String.format("The initializeParser method needs to be implemented for %s", this.getClass().getName()));
     }

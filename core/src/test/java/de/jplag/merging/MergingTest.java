@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 
@@ -33,15 +33,14 @@ import de.jplag.strategy.ParallelComparisonStrategy;
  * CC BY 4.0 license.
  */
 class MergingTest extends TestBase {
-    private JPlagOptions options;
-    private JPlagResult result;
+    private final JPlagOptions options;
     private List<Match> matches;
     private List<JPlagComparison> comparisonsBefore;
     private List<JPlagComparison> comparisonsAfter;
-    private ComparisonStrategy comparisonStrategy;
-    private SubmissionSet submissionSet;
-    private final int MINIMUM_NEIGHBOR_LENGTH = 1;
-    private final int MAXIMUM_GAP_SIZE = 10;
+    private final ComparisonStrategy comparisonStrategy;
+    private final SubmissionSet submissionSet;
+    private static final int MINIMUM_NEIGHBOR_LENGTH = 1;
+    private static final int MAXIMUM_GAP_SIZE = 10;
 
     MergingTest() throws ExitException {
         options = getDefaultOptions("merging").withMergingOptions(new MergingOptions(true, MINIMUM_NEIGHBOR_LENGTH, MAXIMUM_GAP_SIZE));
@@ -55,13 +54,16 @@ class MergingTest extends TestBase {
 
     @BeforeEach
     void prepareTestState() {
-        result = comparisonStrategy.compareSubmissions(submissionSet);
-        comparisonsBefore = result.getAllComparisons();
+        JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
+        comparisonsBefore = new ArrayList<>(result.getAllComparisons());
 
         if (options.mergingOptions().enabled()) {
             result = new MatchMerging(options).mergeMatchesOf(result);
         }
-        comparisonsAfter = result.getAllComparisons();
+        comparisonsAfter = new ArrayList<>(result.getAllComparisons());
+
+        comparisonsBefore.sort(Comparator.comparing(Object::toString));
+        comparisonsAfter.sort(Comparator.comparing(Object::toString));
     }
 
     @Test
@@ -83,10 +85,10 @@ class MergingTest extends TestBase {
     }
 
     private void checkMatchLength(Function<JPlagComparison, List<Match>> matchFunction, int threshold, List<JPlagComparison> comparisons) {
-        for (int i = 0; i < comparisons.size(); i++) {
-            matches = matchFunction.apply(comparisons.get(i));
-            for (int j = 0; j < matches.size(); j++) {
-                assertTrue(matches.get(j).length() >= threshold);
+        for (JPlagComparison comparison : comparisons) {
+            matches = matchFunction.apply(comparison);
+            for (Match match : matches) {
+                assertTrue(match.length() >= threshold);
             }
         }
     }
@@ -169,11 +171,11 @@ class MergingTest extends TestBase {
             matches = comparisonsAfter.get(i).matches();
             List<Match> sortedByFirst = new ArrayList<>(comparisonsBefore.get(i).matches());
             sortedByFirst.addAll(comparisonsBefore.get(i).ignoredMatches());
-            Collections.sort(sortedByFirst, (m1, m2) -> m1.startOfFirst() - m2.startOfFirst());
-            for (int j = 0; j < matches.size(); j++) {
+            sortedByFirst.sort(Comparator.comparingInt(Match::startOfFirst));
+            for (Match match : matches) {
                 int begin = -1;
                 for (int k = 0; k < sortedByFirst.size(); k++) {
-                    if (sortedByFirst.get(k).startOfFirst() == matches.get(j).startOfFirst()) {
+                    if (sortedByFirst.get(k).startOfFirst() == match.startOfFirst()) {
                         begin = k;
                         break;
                     }
@@ -182,10 +184,10 @@ class MergingTest extends TestBase {
                     correctMerges = false;
                 } else {
                     int foundToken = 0;
-                    while (foundToken < matches.get(j).length()) {
+                    while (foundToken < match.length()) {
                         foundToken += sortedByFirst.get(begin).length();
                         begin++;
-                        if (foundToken > matches.get(j).length()) {
+                        if (foundToken > match.length()) {
                             correctMerges = false;
                         }
                     }
@@ -193,5 +195,37 @@ class MergingTest extends TestBase {
             }
         }
         assertTrue(correctMerges);
+    }
+
+    @Test
+    @DisplayName("Sanity check for match merging")
+    void testSanity() {
+
+        List<Match> matchesBefore = new ArrayList<>();
+        List<Match> matchesAfter = new ArrayList<>();
+
+        for (JPlagComparison comparison : comparisonsBefore) {
+            if (comparison.toString().equals("sanityA.java <-> sanityB.java")) {
+                matchesBefore = comparison.ignoredMatches();
+            }
+        }
+        for (JPlagComparison comparison : comparisonsAfter) {
+            if (comparison.toString().equals("sanityA.java <-> sanityB.java")) {
+                matchesAfter = comparison.matches();
+            }
+        }
+
+        List<Match> expectedBefore = new ArrayList<>();
+        expectedBefore.add(new Match(5, 3, 6));
+        expectedBefore.add(new Match(11, 12, 6));
+        expectedBefore.add(new Match(0, 0, 3));
+        expectedBefore.add(new Match(3, 18, 2));
+        expectedBefore.add(new Match(17, 20, 2));
+
+        List<Match> expectedAfter = new ArrayList<>();
+        expectedAfter.add(new Match(5, 3, 12));
+
+        assertEquals(expectedBefore, matchesBefore);
+        assertEquals(expectedAfter, matchesAfter);
     }
 }

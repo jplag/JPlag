@@ -38,8 +38,9 @@ function getHighlightLanguage(lang: ParserLanguage) {
   switch (lang) {
     case ParserLanguage.PYTHON:
       return 'python'
+    case ParserLanguage.C:
+      return 'c'
     case ParserLanguage.CPP:
-    case ParserLanguage.CPP2:
       return 'cpp'
     case ParserLanguage.C_SHARP:
       return 'csharp'

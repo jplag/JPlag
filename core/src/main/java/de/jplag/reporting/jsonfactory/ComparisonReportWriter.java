@@ -58,7 +58,7 @@ public class ComparisonReportWriter {
             addToLookUp(firstSubmissionId, secondSubmissionId, fileName);
             var comparisonReport = new ComparisonReport(firstSubmissionId, secondSubmissionId,
                     Map.of(SimilarityMetric.AVG.name(), comparison.similarity(), SimilarityMetric.MAX.name(), comparison.maximalSimilarity()),
-                    convertMatchesToReportMatches(comparison));
+                    convertMatchesToReportMatches(comparison), comparison.similarityOfFirst(), comparison.similarityOfSecond());
             resultWriter.addJsonEntry(comparisonReport, fileName);
         }
     }

@@ -72,6 +72,7 @@ public class FileHelper {
     public static void unzip(File zip, File targetDirectory) throws IOException {
         try (ZipFile zipFile = new ZipFile(zip)) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            File canonicalTarget = targetDirectory.getCanonicalFile();
 
             long totalSizeArchive = 0;
             long totalEntriesArchive = 0;
@@ -80,9 +81,9 @@ public class FileHelper {
                 totalEntriesArchive++;
 
                 ZipEntry entry = entries.nextElement();
-                File unzippedFile = new File(targetDirectory, entry.getName()).getCanonicalFile();
+                File unzippedFile = new File(canonicalTarget, entry.getName()).getCanonicalFile();
 
-                if (unzippedFile.getAbsolutePath().startsWith(targetDirectory.getAbsolutePath())) {
+                if (unzippedFile.getAbsolutePath().startsWith(canonicalTarget.getAbsolutePath())) {
                     if (entry.isDirectory()) {
                         unzippedFile.mkdirs();
                     } else {
