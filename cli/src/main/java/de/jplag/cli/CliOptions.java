@@ -50,8 +50,8 @@ public class CliOptions implements Runnable {
     public int shownComparisons = JPlagOptions.DEFAULT_SHOWN_COMPARISONS;
 
     @Option(names = {"-r",
-            "--result-directory"}, description = "Name of the directory in which the comparison results will be stored (default: ${DEFAULT-VALUE})%n")
-    public String resultFolder = "results";
+            "--result-file"}, description = "Name of the file in which the comparison results will be stored (default: ${DEFAULT-VALUE}). Missing .zip endings will be automatically added.%n")
+    public String resultFile = "results";
 
     @ArgGroup(heading = "Advanced%n", exclusive = false)
     public Advanced advanced = new Advanced();
