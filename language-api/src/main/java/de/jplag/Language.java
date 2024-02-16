@@ -36,9 +36,11 @@ public interface Language {
      * @param files are the files to parse.
      * @return the list of parsed JPlag tokens.
      * @throws ParsingException if an error during parsing the files occurred.
+     * @deprecated Replaced by {@link #parse(Set, boolean)}
      */
+    @Deprecated(forRemoval = true)
     default List<Token> parse(Set<File> files) throws ParsingException {
-        throw new UnsupportedOperationException("No parse method was implemented for language: " + this.getClass().getSimpleName());
+        return parse(files, false);
     }
 
     /**
@@ -48,9 +50,7 @@ public interface Language {
      * @return the list of parsed JPlag tokens.
      * @throws ParsingException if an error during parsing the files occurred.
      */
-    default List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return parse(files);
-    }
+    List<Token> parse(Set<File> files, boolean normalize) throws ParsingException;
 
     /**
      * Indicates whether the tokens returned by parse have semantic information added to them, i.e. whether the token
