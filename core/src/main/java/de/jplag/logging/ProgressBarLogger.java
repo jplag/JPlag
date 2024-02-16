@@ -41,7 +41,7 @@ public class ProgressBarLogger {
 
         public DummyBar(ProgressBarType type, int totalSteps) {
             this.currentStep = 0;
-            logger.info(getProgressBarName(type) + "(" + totalSteps + ")");
+            logger.info(type.getDefaultText() + "(" + totalSteps + ")");
         }
 
         @Override
@@ -59,14 +59,6 @@ public class ProgressBarLogger {
         @Override
         public void dispose() {
             logger.info("Progress bar done.");
-        }
-
-        private String getProgressBarName(ProgressBarType progressBarType) {
-            return switch (progressBarType) {
-                case LOADING -> "Loading Submissions  ";
-                case PARSING -> "Parsing Submissions  ";
-                case COMPARING -> "Comparing Submissions";
-            };
         }
     }
 }
