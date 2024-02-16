@@ -55,7 +55,8 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
         @JsonProperty("subdirectory_name") String subdirectoryName, @JsonProperty("file_suffixes") List<String> fileSuffixes,
         @JsonProperty("exclusion_file_name") String exclusionFileName, @JsonProperty("similarity_metric") SimilarityMetric similarityMetric,
         @JsonProperty("similarity_threshold") double similarityThreshold, @JsonProperty("max_comparisons") int maximumNumberOfComparisons,
-        @JsonProperty("cluster") ClusteringOptions clusteringOptions, boolean debugParser, @JsonProperty("merging") MergingOptions mergingOptions) {
+        @JsonProperty("cluster") ClusteringOptions clusteringOptions, boolean debugParser, @JsonProperty("merging") MergingOptions mergingOptions,
+        @JsonProperty("normalize") boolean normalize) {
 
     public static final double DEFAULT_SIMILARITY_THRESHOLD = 0;
     public static final int DEFAULT_SHOWN_COMPARISONS = 500;
@@ -68,13 +69,13 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
 
     public JPlagOptions(Language language, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories) {
         this(language, null, submissionDirectories, oldSubmissionDirectories, null, null, null, null, DEFAULT_SIMILARITY_METRIC,
-                DEFAULT_SIMILARITY_THRESHOLD, DEFAULT_SHOWN_COMPARISONS, new ClusteringOptions(), false, new MergingOptions());
+                DEFAULT_SIMILARITY_THRESHOLD, DEFAULT_SHOWN_COMPARISONS, new ClusteringOptions(), false, new MergingOptions(), false);
     }
 
     public JPlagOptions(Language language, Integer minimumTokenMatch, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories,
             File baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
             SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
-            boolean debugParser, MergingOptions mergingOptions) {
+            boolean debugParser, MergingOptions mergingOptions, boolean normalize) {
         this.language = language;
         this.debugParser = debugParser;
         this.fileSuffixes = fileSuffixes == null || fileSuffixes.isEmpty() ? null : Collections.unmodifiableList(fileSuffixes);
@@ -89,90 +90,97 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
         this.subdirectoryName = subdirectoryName;
         this.clusteringOptions = clusteringOptions;
         this.mergingOptions = mergingOptions;
+        this.normalize = normalize;
     }
 
     public JPlagOptions withLanguageOption(Language language) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                clusteringOptions, debugParser, mergingOptions);
+                clusteringOptions, debugParser, mergingOptions, normalize);
     }
 
     public JPlagOptions withDebugParser(boolean debugParser) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                clusteringOptions, debugParser, mergingOptions);
+                clusteringOptions, debugParser, mergingOptions, normalize);
     }
 
     public JPlagOptions withFileSuffixes(List<String> fileSuffixes) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                clusteringOptions, debugParser, mergingOptions);
+                clusteringOptions, debugParser, mergingOptions, normalize);
     }
 
     public JPlagOptions withSimilarityThreshold(double similarityThreshold) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                clusteringOptions, debugParser, mergingOptions);
+                clusteringOptions, debugParser, mergingOptions, normalize);
     }
 
     public JPlagOptions withMaximumNumberOfComparisons(int maximumNumberOfComparisons) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                clusteringOptions, debugParser, mergingOptions);
+                clusteringOptions, debugParser, mergingOptions, normalize);
     }
 
     public JPlagOptions withSimilarityMetric(SimilarityMetric similarityMetric) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                clusteringOptions, debugParser, mergingOptions);
+                clusteringOptions, debugParser, mergingOptions, normalize);
     }
 
     public JPlagOptions withMinimumTokenMatch(Integer minimumTokenMatch) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                clusteringOptions, debugParser, mergingOptions);
+                clusteringOptions, debugParser, mergingOptions, normalize);
     }
 
     public JPlagOptions withExclusionFileName(String exclusionFileName) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                clusteringOptions, debugParser, mergingOptions);
+                clusteringOptions, debugParser, mergingOptions, normalize);
     }
 
     public JPlagOptions withSubmissionDirectories(Set<File> submissionDirectories) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                clusteringOptions, debugParser, mergingOptions);
+                clusteringOptions, debugParser, mergingOptions, normalize);
     }
 
     public JPlagOptions withOldSubmissionDirectories(Set<File> oldSubmissionDirectories) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                clusteringOptions, debugParser, mergingOptions);
+                clusteringOptions, debugParser, mergingOptions, normalize);
     }
 
     public JPlagOptions withBaseCodeSubmissionDirectory(File baseCodeSubmissionDirectory) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                clusteringOptions, debugParser, mergingOptions);
+                clusteringOptions, debugParser, mergingOptions, normalize);
     }
 
     public JPlagOptions withSubdirectoryName(String subdirectoryName) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                clusteringOptions, debugParser, mergingOptions);
+                clusteringOptions, debugParser, mergingOptions, normalize);
     }
 
     public JPlagOptions withClusteringOptions(ClusteringOptions clusteringOptions) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                clusteringOptions, debugParser, mergingOptions);
+                clusteringOptions, debugParser, mergingOptions, normalize);
     }
 
     public JPlagOptions withMergingOptions(MergingOptions mergingOptions) {
         return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
                 subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                clusteringOptions, debugParser, mergingOptions);
+                clusteringOptions, debugParser, mergingOptions, normalize);
+    }
+
+    public JPlagOptions withNormalize(boolean normalize) {
+        return new JPlagOptions(language, minimumTokenMatch, submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory,
+                subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
+                clusteringOptions, debugParser, mergingOptions, normalize);
     }
 
     public boolean hasBaseCode() {
@@ -264,7 +272,7 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
             boolean debugParser, MergingOptions mergingOptions) throws BasecodeException {
         this(language, minimumTokenMatch, Set.of(submissionDirectory), oldSubmissionDirectories,
                 convertLegacyBaseCodeToFile(baseCodeSubmissionName, submissionDirectory), subdirectoryName, fileSuffixes, exclusionFileName,
-                similarityMetric, similarityThreshold, maximumNumberOfComparisons, clusteringOptions, debugParser, mergingOptions);
+                similarityMetric, similarityThreshold, maximumNumberOfComparisons, clusteringOptions, debugParser, mergingOptions, false);
     }
 
     /**

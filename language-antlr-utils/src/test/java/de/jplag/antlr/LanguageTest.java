@@ -20,19 +20,19 @@ class LanguageTest {
     void testExceptionForNoDefinedParser() {
         LanguageWithoutParser lang = new LanguageWithoutParser();
         Set<File> emptySet = Set.of();
-        assertThrows(UnsupportedOperationException.class, () -> lang.parse(emptySet));
+        assertThrows(UnsupportedOperationException.class, () -> lang.parse(emptySet, false));
     }
 
     @Test
     void testLanguageWithStaticParser() throws ParsingException {
         TestLanguage lang = new TestLanguage();
-        Assertions.assertEquals(0, lang.parse(Set.of()).size());
+        Assertions.assertEquals(0, lang.parse(Set.of(), false).size());
     }
 
     @Test
     void testLanguageWithLazyParser() throws ParsingException {
         LanguageWithLazyParser lang = new LanguageWithLazyParser();
-        Assertions.assertEquals(0, lang.parse(Set.of()).size());
+        Assertions.assertEquals(0, lang.parse(Set.of(), false).size());
     }
 
     private static class LanguageWithoutParser extends AbstractAntlrLanguage {
@@ -59,7 +59,7 @@ class LanguageTest {
 
     private static class LanguageWithLazyParser extends LanguageWithoutParser {
         @Override
-        protected AbstractAntlrParserAdapter<?> initializeParser() {
+        protected AbstractAntlrParserAdapter<?> initializeParser(boolean normalize) {
             return new TestParserAdapter();
         }
     }
