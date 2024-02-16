@@ -254,7 +254,7 @@ public final class CLI {
 
     private String getResultFilePath() {
         String optionValue = this.options.resultFile;
-        if(optionValue.endsWith(DEFAULT_FILE_ENDING)) {
+        if (optionValue.endsWith(DEFAULT_FILE_ENDING)) {
             return optionValue;
         } else {
             return optionValue + DEFAULT_FILE_ENDING;
