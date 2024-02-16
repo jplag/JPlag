@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import de.jplag.SharedTokenType;
 import de.jplag.Token;
 import de.jplag.TokenPrinter;
+import de.jplag.ParsingException;
 
 class ScalaLanguageTest {
 
@@ -57,7 +58,7 @@ class ScalaLanguageTest {
     }
 
     @Test
-    void parseTestFiles() {
+    void parseTestFiles() throws ParsingException {
         for (String fileName : testFiles) {
             List<Token> tokens = language.parse(Set.of(new File(testFileLocation, fileName)));
             String output = TokenPrinter.printTokens(tokens, testFileLocation);
