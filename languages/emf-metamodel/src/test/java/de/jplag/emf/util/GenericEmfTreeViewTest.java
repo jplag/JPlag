@@ -13,7 +13,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import de.jplag.emf.AbstractEmfTest;
 import de.jplag.testutils.FileUtil;
 
-class MetamodelTreeViewTest extends AbstractEmfTest {
+class GenericEmfTreeViewTest extends AbstractEmfTest {
 
     private static final String VIEW_FILE_SUFFIX = ".treeview";
     private static final String EXPECTED_VIEW_FOLDER = "treeview";
@@ -23,7 +23,7 @@ class MetamodelTreeViewTest extends AbstractEmfTest {
     }
 
     @ParameterizedTest
-    @DisplayName("Test content of emfatic view files of example metamodels")
+    @DisplayName("Test content of generic EMF view files of example metamodels")
     @MethodSource("provideModelNames")
     void testEmfaticViewFiles(String modelName) {
         // Load model:
@@ -31,7 +31,7 @@ class MetamodelTreeViewTest extends AbstractEmfTest {
         Resource modelResource = loadAndVerifyModel(modelFile);
 
         // Generate emfatic view:
-        MetamodelTreeView view = new MetamodelTreeView(modelFile, modelResource);
+        GenericEmfTreeView view = new GenericEmfTreeView(modelFile, modelResource);
         view.writeToFile(VIEW_FILE_SUFFIX);
 
         // Compare expected vs. actual view file:

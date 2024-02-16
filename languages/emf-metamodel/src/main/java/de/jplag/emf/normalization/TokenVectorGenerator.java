@@ -10,7 +10,6 @@ import java.util.Map;
 import org.eclipse.emf.ecore.EObject;
 
 import de.jplag.TokenType;
-import de.jplag.emf.MetamodelTokenType;
 import de.jplag.emf.parser.ModelingElementTokenizer;
 
 /**
@@ -27,10 +26,10 @@ public class TokenVectorGenerator {
     /**
      * Generate a token occurrence vector for a subtree of a model.
      * @param modelElements is a visitor for the subtree.
-     * @return a list, where each entry represents the number of tokens in the subtree. The order is determined by
-     * {@link MetamodelTokenType}.
+     * @return a zero padded token occurrence vector, where each entry represents the number of tokens in the subtree. The
+     * order is determined by {@link ModelingElementTokenizer#allTokenTypes()}.
      */
-    public List<Double> generateOccurenceVector(Iterator<EObject> modelElements) {
+    public TokenOccurenceVector generateOccurenceVector(Iterator<EObject> modelElements) {
         Map<TokenType, Integer> tokenTypeHistogram = new HashMap<>();
 
         while (modelElements.hasNext()) {
@@ -40,7 +39,7 @@ public class TokenVectorGenerator {
         for (TokenType type : tokenizer.allTokenTypes()) {
             occurenceVector.add(tokenTypeHistogram.getOrDefault(type, 0));
         }
-        return normalize(occurenceVector);
+        return new TokenOccurenceVector(normalize(occurenceVector));
     }
 
     public static List<Double> normalize(List<Integer> vector) {

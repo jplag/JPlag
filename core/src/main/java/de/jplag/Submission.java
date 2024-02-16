@@ -239,6 +239,8 @@ public class Submission implements Comparable<Submission> {
 
     /**
      * Parse files of the submission.
+     * @param debugParser specifies if the submission should be copied upon parsing errors.
+     * @param normalize specifies if the tokens sequences should be normalized.
      * @return Whether parsing was successful.
      */
     /* package-private */ boolean parse(boolean debugParser, boolean normalize) {
@@ -276,7 +278,7 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * Perform token string normalization, which makes the token string invariant to dead code insertion and independent
+     * Perform token sequence normalization, which makes the token sequence invariant to dead code insertion and independent
      * statement reordering.
      */
     void normalize() {
