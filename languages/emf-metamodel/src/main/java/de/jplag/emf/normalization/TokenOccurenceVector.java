@@ -23,7 +23,7 @@ public class TokenOccurenceVector {
      * @return the occurrence frequency value or zero if the index is beyond the size of the vector.
      */
     public double get(int index) {
-        if (index < 0 || index >= originalVector.size()) {
+        if (index >= originalVector.size()) {
             return 0.0;
         }
         return originalVector.get(index);

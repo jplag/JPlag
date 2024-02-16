@@ -72,7 +72,7 @@ public class GenericEmfTreeView extends AbstractModelView {
             StringBuilder line = new StringBuilder(prefix);
 
             line.append(eObject.eClass().getName());  // Build element type
-            line.append(IDENTIFIER_PREFIX);  // Build element type
+            line.append(IDENTIFIER_PREFIX);
             line.append(identifierManager.getIdentifier(eObject));
             visitStructuralFeatures(eObject, line);  // Build element features
 
