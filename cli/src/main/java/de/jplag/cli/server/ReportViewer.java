@@ -65,7 +65,7 @@ public class ReportViewer implements HttpHandler {
             try {
                 server = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), port), 0);
             } catch (BindException e) {
-                logger.info("Port {} is not available. Trying to find a different one.", this.port);
+                logger.info("Port {} is not available. Trying to find a different one.", port);
                 lastException = e;
                 port++;
             }
