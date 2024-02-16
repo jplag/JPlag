@@ -41,6 +41,8 @@ function getHighlightLanguage(lang: ParserLanguage) {
     case ParserLanguage.C:
       return 'c'
     case ParserLanguage.CPP:
+    case ParserLanguage.CPP_OLD:
+    case ParserLanguage.CPP_2:
       return 'cpp'
     case ParserLanguage.C_SHARP:
       return 'csharp'
