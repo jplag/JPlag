@@ -108,7 +108,8 @@ public interface Language {
     }
 
     /**
-     * @return True, if tokens for this language can be normalized
+     * @return True, if this language supports token sequence normalization. This does not include other normalization
+     * mechanisms that might be part of the language modules.
      */
     default boolean supportsNormalization() {
         return false;
