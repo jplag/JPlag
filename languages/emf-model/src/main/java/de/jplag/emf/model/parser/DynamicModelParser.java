@@ -36,7 +36,7 @@ public class DynamicModelParser extends DynamicEcoreParser {
     }
 
     @Override
-    protected void parseModelFile(File file) throws ParsingException {
+    protected void parseModelFile(File file, boolean normalize) throws ParsingException {
         // implicit assumption: Metamodel gets parsed first!
         if (file.getName().endsWith(EmfLanguage.FILE_ENDING)) {
             parseMetamodelFile(file);
@@ -46,7 +46,7 @@ public class DynamicModelParser extends DynamicEcoreParser {
             if (metapackages.isEmpty()) {
                 logger.warn(METAPACKAGE_WARNING, file.getName());
             }
-            super.parseModelFile(file);
+            super.parseModelFile(file, normalize);
         }
     }
 

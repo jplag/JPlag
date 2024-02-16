@@ -56,7 +56,7 @@ public class EmfLanguage implements de.jplag.Language {
 
     @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return parser.parse(files);
+        return parser.parse(files, normalize);
     }
 
     @Override

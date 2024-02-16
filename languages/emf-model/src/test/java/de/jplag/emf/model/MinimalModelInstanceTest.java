@@ -47,7 +47,7 @@ class MinimalModelInstanceTest {
         List<File> baseFiles = new ArrayList<>(Arrays.asList(baseFile.listFiles()));
         var sortedFiles = new LinkedHashSet<>(language.customizeSubmissionOrder(baseFiles));
         try {
-            List<Token> tokens = language.parse(sortedFiles);
+            List<Token> tokens = language.parse(sortedFiles, true);
             assertNotEquals(0, tokens.size());
             logger.debug(TokenPrinter.printTokens(tokens, baseDirectory, Optional.of(EmfModelLanguage.VIEW_FILE_SUFFIX)));
             logger.info("Parsed tokens: " + tokens);

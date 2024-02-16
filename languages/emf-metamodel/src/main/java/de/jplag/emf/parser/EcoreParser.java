@@ -41,10 +41,10 @@ public class EcoreParser extends AbstractParser {
      * @param files is the set of files.
      * @return the list of parsed tokens.
      */
-    public List<Token> parse(Set<File> files) throws ParsingException {
+    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
         tokens = new ArrayList<>();
         for (File file : files) {
-            parseModelFile(file);
+            parseModelFile(file, normalize);
         }
         return tokens;
     }
@@ -53,13 +53,15 @@ public class EcoreParser extends AbstractParser {
      * Loads a metamodel from a file and parses it.
      * @param file is the metamodel file.
      */
-    protected void parseModelFile(File file) throws ParsingException {
+    protected void parseModelFile(File file, boolean normalize) throws ParsingException {
         currentFile = file;
         Resource model = EMFUtil.loadModelResource(file);
         if (model == null) {
             throw new ParsingException(file, "failed to load model");
         }
-        normalizeOrder(model);
+        if (normalize) {
+            normalizeOrder(model);
+        }
         treeView = createView(file, model);
         visitor = createMetamodelVisitor();
         for (EObject root : model.getContents()) {
