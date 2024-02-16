@@ -19,10 +19,10 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jplag.ParsingException;
 import de.jplag.SharedTokenType;
 import de.jplag.Token;
 import de.jplag.TokenPrinter;
-import de.jplag.ParsingException;
 
 class ScalaLanguageTest {
 
