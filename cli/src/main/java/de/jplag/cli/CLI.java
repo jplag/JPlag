@@ -144,7 +144,7 @@ public final class CLI {
             }
             return result;
         } catch (CommandLine.ParameterException e) {
-            if (e.getArgSpec().isOption() && Arrays.asList(((OptionSpec) e.getArgSpec()).names()).contains("-l")) {
+            if (e.getArgSpec() != null && e.getArgSpec().isOption() && Arrays.asList(((OptionSpec) e.getArgSpec()).names()).contains("-l")) {
                 throw new CliException(String.format(UNKOWN_LANGAUGE_EXCEPTION, e.getValue(),
                         String.join(", ", LanguageLoader.getAllAvailableLanguageIdentifiers())));
             }
