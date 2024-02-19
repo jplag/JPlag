@@ -64,6 +64,8 @@ public final class CLI {
 
     private static final String DESCRIPTION_PATTERN = "%nJPlag - %s%n%s%n%n";
 
+    private static final String DEFAULT_FILE_ENDING = ".zip";
+
     /**
      * Main class for using JPlag via the CLI.
      * @param args are the CLI arguments that will be passed to JPlag.
@@ -79,10 +81,10 @@ public final class CLI {
             if (!parseResult.isUsageHelpRequested() && !(parseResult.subcommand() != null && parseResult.subcommand().isUsageHelpRequested())) {
                 JPlagOptions options = cli.buildOptionsFromArguments(parseResult);
                 JPlagResult result = JPlag.run(options);
-                ReportObjectFactory reportObjectFactory = new ReportObjectFactory(new File(cli.getResultFolder() + ".zip"));
+                ReportObjectFactory reportObjectFactory = new ReportObjectFactory(new File(cli.getResultFilePath()));
                 reportObjectFactory.createAndSaveReport(result);
 
-                OutputFileGenerator.generateCsvOutput(result, new File(cli.getResultFolder()), cli.options);
+                OutputFileGenerator.generateCsvOutput(result, new File(cli.getResultFileBaseName()), cli.options);
             }
         } catch (ExitException | FileNotFoundException exception) { // do not pass exceptions here to keep log clean
             if (exception.getCause() != null) {
@@ -252,7 +254,17 @@ public final class CLI {
         return String.format(DESCRIPTION_PATTERN, randomDescription, CREDITS);
     }
 
-    public String getResultFolder() {
-        return this.options.resultFolder;
+    private String getResultFilePath() {
+        String optionValue = this.options.resultFile;
+        if (optionValue.endsWith(DEFAULT_FILE_ENDING)) {
+            return optionValue;
+        } else {
+            return optionValue + DEFAULT_FILE_ENDING;
+        }
+    }
+
+    private String getResultFileBaseName() {
+        String defaultOutputFile = getResultFilePath();
+        return defaultOutputFile.substring(0, defaultOutputFile.length() - DEFAULT_FILE_ENDING.length());
     }
 }
