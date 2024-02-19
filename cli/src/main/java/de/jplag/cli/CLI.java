@@ -84,8 +84,13 @@ public final class CLI {
 
                 OutputFileGenerator.generateCsvOutput(result, new File(cli.getResultFolder()), cli.options);
             }
-        } catch (ExitException | FileNotFoundException exception) {
-            logger.error(exception.getMessage()); // do not pass exception here to keep log clean
+        } catch (ExitException | FileNotFoundException exception) { // do not pass exceptions here to keep log clean
+            if (exception.getCause() != null) {
+                logger.error("{} - {}", exception.getMessage(), exception.getCause().getMessage());
+            } else {
+                logger.error(exception.getMessage());
+            }
+
             finalizeLogger();
             System.exit(1);
         }
@@ -103,9 +108,8 @@ public final class CLI {
         this.commandLine.getHelpSectionMap().put(SECTION_KEY_OPTION_LIST, help -> help.optionList().lines().map(it -> {
             if (it.startsWith("  -")) {
                 return "    " + it;
-            } else {
-                return it;
             }
+            return it;
         }).collect(Collectors.joining(System.lineSeparator())));
 
         buildSubcommands().forEach(commandLine::addSubcommand);
@@ -144,7 +148,7 @@ public final class CLI {
             }
             return result;
         } catch (CommandLine.ParameterException e) {
-            if (e.getArgSpec().isOption() && Arrays.asList(((OptionSpec) e.getArgSpec()).names()).contains("-l")) {
+            if (e.getArgSpec() != null && e.getArgSpec().isOption() && Arrays.asList(((OptionSpec) e.getArgSpec()).names()).contains("-l")) {
                 throw new CliException(String.format(UNKOWN_LANGAUGE_EXCEPTION, e.getValue(),
                         String.join(", ", LanguageLoader.getAllAvailableLanguageIdentifiers())));
             }
@@ -188,27 +192,25 @@ public final class CLI {
         File baseCodeDirectory = baseCodePath == null ? null : new File(baseCodePath);
         if (baseCodeDirectory == null || baseCodeDirectory.exists()) {
             return jPlagOptions.withBaseCodeSubmissionDirectory(baseCodeDirectory);
-        } else {
-            logger.warn("Using legacy partial base code API. Please migrate to new full path base code API.");
-            return jPlagOptions.withBaseCodeSubmissionName(baseCodePath);
         }
+        logger.warn("Using legacy partial base code API. Please migrate to new full path base code API.");
+        return jPlagOptions.withBaseCodeSubmissionName(baseCodePath);
     }
 
     private Language loadLanguage(ParseResult result) throws CliException {
-        if (result.subcommand() != null) {
-            ParseResult subcommandResult = result.subcommand();
-            Language language = LanguageLoader.getLanguage(subcommandResult.commandSpec().name())
-                    .orElseThrow(() -> new CliException(IMPOSSIBLE_EXCEPTION));
-            LanguageOptions languageOptions = language.getOptions();
-            languageOptions.getOptionsAsList().forEach(option -> {
-                if (subcommandResult.hasMatchedOption(option.getNameAsUnixParameter())) {
-                    option.setValue(subcommandResult.matchedOptionValue(option.getNameAsUnixParameter(), null));
-                }
-            });
-            return language;
-        } else {
+        if (result.subcommand() == null) {
             return this.options.language;
         }
+        ParseResult subcommandResult = result.subcommand();
+        Language language = LanguageLoader.getLanguage(subcommandResult.commandSpec().name())
+                .orElseThrow(() -> new CliException(IMPOSSIBLE_EXCEPTION));
+        LanguageOptions languageOptions = language.getOptions();
+        languageOptions.getOptionsAsList().forEach(option -> {
+            if (subcommandResult.hasMatchedOption(option.getNameAsUnixParameter())) {
+                option.setValue(subcommandResult.matchedOptionValue(option.getNameAsUnixParameter(), null));
+            }
+        });
+        return language;
     }
 
     private static ClusteringOptions getClusteringOptions(CliOptions options) {
