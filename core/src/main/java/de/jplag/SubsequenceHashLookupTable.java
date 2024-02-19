@@ -46,16 +46,6 @@ class SubsequenceHashLookupTable {
         computeSubsequenceHashes(marked);
     }
 
-    /** Returns the size of the subsequences used for hashing */
-    int getWindowSize() {
-        return windowSize;
-    }
-
-    /** Returns the list of values for which the hashes were computed */
-    int[] getValues() {
-        return values;
-    }
-
     /**
      * Returns the hash over the subsequence from startIndex to startIndex+windowSize.
      * @param startIndex the start index.
