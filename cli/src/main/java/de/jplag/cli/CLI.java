@@ -86,7 +86,7 @@ public final class CLI {
             }
         } catch (ExitException | FileNotFoundException exception) { // do not pass exceptions here to keep log clean
             if (exception.getCause() != null) {
-                logger.error(exception.getMessage() + " - " + exception.getCause().getMessage());
+                logger.error("{} - {}", exception.getMessage(), exception.getCause().getMessage());
             } else {
                 logger.error(exception.getMessage());
             }
