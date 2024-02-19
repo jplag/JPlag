@@ -32,8 +32,9 @@ public final class LanguageLoader {
      * @return the languages as unmodifiable map from identifier to language instance.
      */
     public static synchronized Map<String, Language> getAllAvailableLanguages() {
-        if (cachedLanguageInstances != null)
+        if (cachedLanguageInstances != null) {
             return cachedLanguageInstances;
+        }
 
         Map<String, Language> languages = new TreeMap<>();
 
@@ -61,8 +62,9 @@ public final class LanguageLoader {
      */
     public static Optional<Language> getLanguage(String identifier) {
         var language = getAllAvailableLanguages().get(identifier);
-        if (language == null)
+        if (language == null) {
             logger.warn("Attempt to load Language {} was not successful", identifier);
+        }
         return Optional.ofNullable(language);
     }
 
