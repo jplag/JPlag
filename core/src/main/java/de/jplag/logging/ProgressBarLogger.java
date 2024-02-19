@@ -9,6 +9,10 @@ import org.slf4j.LoggerFactory;
 public class ProgressBarLogger {
     private static ProgressBarProvider progressBarProvider = new DummyProvider();
 
+    private ProgressBarLogger() {
+        //Hides default constructor
+    }
+
     /**
      * Creates a new {@link ProgressBar}
      * @param type The type of the progress bar
@@ -36,17 +40,17 @@ public class ProgressBarLogger {
     }
 
     private static class DummyBar implements ProgressBar {
-        private static final Logger logger = LoggerFactory.getLogger(ProgressBarLogger.class);
+        private static final Logger logger = LoggerFactory.getLogger(DummyBar.class);
         private int currentStep;
 
         public DummyBar(ProgressBarType type, int totalSteps) {
             this.currentStep = 0;
-            logger.info(type.getDefaultText() + "(" + totalSteps + ")");
+            logger.info("{} ({})", type.getDefaultText(), totalSteps);
         }
 
         @Override
         public void step() {
-            logger.info("Now at step " + this.currentStep++);
+            logger.info("Now at step {}", this.currentStep++);
         }
 
         @Override
