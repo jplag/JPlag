@@ -285,9 +285,8 @@ public final class CLI {
         String optionValue = this.options.resultFile;
         if (optionValue.endsWith(DEFAULT_FILE_ENDING)) {
             return optionValue;
-        } else {
-            return optionValue + DEFAULT_FILE_ENDING;
         }
+        return optionValue + DEFAULT_FILE_ENDING;
     }
 
     private String getResultFileBaseName() {
