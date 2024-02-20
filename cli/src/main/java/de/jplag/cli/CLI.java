@@ -4,8 +4,11 @@ import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_DESCRIPTION
 import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_OPTION_LIST;
 import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_SYNOPSIS;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URI;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -23,6 +26,7 @@ import de.jplag.JPlagResult;
 import de.jplag.Language;
 import de.jplag.cli.logger.CollectedLoggerFactory;
 import de.jplag.cli.logger.TongfeiProgressBarProvider;
+import de.jplag.cli.server.ReportViewer;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.Preprocessing;
 import de.jplag.exceptions.ExitException;
@@ -81,15 +85,14 @@ public final class CLI {
             ParseResult parseResult = cli.parseOptions(args);
 
             if (!parseResult.isUsageHelpRequested() && !(parseResult.subcommand() != null && parseResult.subcommand().isUsageHelpRequested())) {
-                JPlagOptions options = cli.buildOptionsFromArguments(parseResult);
                 ProgressBarLogger.setProgressBarProvider(new TongfeiProgressBarProvider());
-                JPlagResult result = JPlag.run(options);
-                ReportObjectFactory reportObjectFactory = new ReportObjectFactory(new File(cli.getResultFilePath()));
-                reportObjectFactory.createAndSaveReport(result);
-
-                OutputFileGenerator.generateCsvOutput(result, new File(cli.getResultFileBaseName()), cli.options);
+                switch (cli.options.mode) {
+                    case RUN -> cli.runJPlag(parseResult);
+                    case VIEW -> cli.runViewer(null);
+                    case RUN_AND_VIEW -> cli.runViewer(cli.runJPlag(parseResult));
+                }
             }
-        } catch (ExitException | FileNotFoundException exception) { // do not pass exceptions here to keep log clean
+        } catch (ExitException | IOException exception) { // do not pass exceptions here to keep log clean
             if (exception.getCause() != null) {
                 logger.error("{} - {}", exception.getMessage(), exception.getCause().getMessage());
             } else {
@@ -122,6 +125,27 @@ public final class CLI {
         this.commandLine.getHelpSectionMap().put(SECTION_KEY_SYNOPSIS, help -> help.synopsis(help.synopsisHeadingLength()) + generateDescription());
         this.commandLine.getHelpSectionMap().put(SECTION_KEY_DESCRIPTION_HEADING, help -> OPTION_LIST_HEADING);
         this.commandLine.setAllowSubcommandsAsOptionParameters(true);
+    }
+
+    public File runJPlag(ParseResult parseResult) throws ExitException, FileNotFoundException {
+        JPlagOptions jplagOptions = buildOptionsFromArguments(parseResult);
+        JPlagResult result = JPlag.run(jplagOptions);
+        File target = new File(getResultFilePath());
+        ReportObjectFactory reportObjectFactory = new ReportObjectFactory(target);
+        reportObjectFactory.createAndSaveReport(result);
+        OutputFileGenerator.generateCsvOutput(result, new File(getResultFileBaseName()), this.options);
+        return target;
+    }
+
+    public void runViewer(File zipFile) throws IOException {
+        ReportViewer reportViewer = new ReportViewer(zipFile, this.options.advanced.port);
+        int port = reportViewer.start();
+        logger.info("ReportViewer started on port http://localhost:{}", port);
+        Desktop.getDesktop().browse(URI.create("http://localhost:" + port + "/"));
+
+        System.out.println("Press Enter key to exit...");
+        System.in.read();
+        reportViewer.stop();
     }
 
     private List<CommandSpec> buildSubcommands() {

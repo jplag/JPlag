@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { LoadConfiguration, State, UIState } from './state'
+import type { State, UIState } from './state'
 import { MetricType } from '@/model/MetricType'
 import type { SubmissionFile, File } from '@/model/File'
 
@@ -198,10 +198,10 @@ const store = defineStore('store', {
      * Sets the loading type
      * @param payload Type used to input JPlag results
      */
-    setLoadingType(payload: LoadConfiguration) {
-      this.state.localModeUsed = payload.local
-      this.state.zipModeUsed = payload.zip
-      this.state.singleModeUsed = payload.single
+    setLoadingType(loadingType: 'zip' | 'local' | 'single') {
+      this.state.localModeUsed = loadingType == 'local'
+      this.state.zipModeUsed = loadingType == 'zip'
+      this.state.singleModeUsed = loadingType == 'single'
     },
     /**
      * Sets the raw content of the single file mode

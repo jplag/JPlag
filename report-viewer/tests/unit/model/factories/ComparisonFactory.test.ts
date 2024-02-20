@@ -48,7 +48,9 @@ describe('Test JSON to Comparison', () => {
   it('Post 5.0', async () => {
     store.state.files['root1-root2.json'] = JSON.stringify(validNew)
 
-    const result = await ComparisonFactory.getComparison('root1', 'root2')
+    const result = await ComparisonFactory.getComparison(
+      store.getComparisonFileName('root1', 'root2')
+    )
 
     expect(result).toBeDefined()
     expect(result.firstSubmissionId).toBe('root1')
@@ -65,7 +67,9 @@ describe('Test JSON to Comparison', () => {
   it('Pre 5.0', async () => {
     store.state.files['root1-root2.json'] = JSON.stringify(validOld)
 
-    const result = await ComparisonFactory.getComparison('root1', 'root2')
+    const result = await ComparisonFactory.getComparison(
+      store.getComparisonFileName('root1', 'root2')
+    )
 
     expect(result).toBeDefined()
     expect(result.firstSubmissionId).toBe('root1')

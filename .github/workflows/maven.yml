@@ -1,7 +1,7 @@
 name: Build
 
 on:
-  push: 
+  push:
     paths:
       - ".github/workflows/maven.yml"
       - "**/pom.xml"
@@ -14,7 +14,7 @@ on:
       - "**/pom.xml"
       - "**.java"
       - "**.g4"
-  
+
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -43,17 +43,21 @@ jobs:
       with:
         java-version: 21
         distribution: 'temurin'
-            
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: "18"
+
     - name: Run Tests
       run: mvn verify -B -U
-      
+
     - name: Build Assembly
-      run: mvn clean package assembly:single
-      
+      run: mvn -Pwith-report-viewer clean package assembly:single
+
     - name: Upload Assembly
       uses: actions/upload-artifact@v4
       with:
         name: "JPlag"
         path: "jplag.cli/target/jplag-*-jar-with-dependencies.jar"
-      
+
 

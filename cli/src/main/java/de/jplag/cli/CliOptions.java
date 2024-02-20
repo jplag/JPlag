@@ -20,26 +20,26 @@ import picocli.CommandLine.Parameters;
 public class CliOptions implements Runnable {
     public static final Language defaultLanguage = new JavaLanguage();
 
-    @Parameters(paramLabel = "root-dirs", description = "Root-directory with submissions to check for plagiarism%n", split = ",")
+    @Parameters(paramLabel = "root-dirs", description = "Root-directory with submissions to check for plagiarism", split = ",")
     public File[] rootDirectory = new File[0];
 
     @Option(names = {"--new",
-            "-new"}, split = ",", description = "Root-directory with submissions to check for plagiarism (same as the root directory)%n")
+            "-new"}, split = ",", description = "Root-directory with submissions to check for plagiarism (same as the root directory)")
     public File[] newDirectories = new File[0];
 
-    @Option(names = {"--old", "-old"}, split = ",", description = "Root-directory with prior submissions to compare against%n")
+    @Option(names = {"--old", "-old"}, split = ",", description = "Root-directory with prior submissions to compare against")
     public File[] oldDirectories = new File[0];
 
     @Option(names = {"--language",
-            "-l"}, arity = "1", converter = LanguageConverter.class, completionCandidates = LanguageCandidates.class, description = "Select the language to parse the submissions (default: ${DEFAULT-VALUE}). The language names are the same as the subcommands.%n")
+            "-l"}, arity = "1", converter = LanguageConverter.class, completionCandidates = LanguageCandidates.class, description = "Select the language to parse the submissions (default: ${DEFAULT-VALUE}). The language names are the same as the subcommands.")
     public Language language = defaultLanguage;
 
     @Option(names = {"-bc", "--bc",
-            "--base-code"}, description = "Path of  the  directory  containing  the  base  code  (common  framework  used  in  all submissions)%n")
+            "--base-code"}, description = "Path of  the  directory  containing  the  base  code  (common  framework  used  in  all submissions)")
     public String baseCode;
 
     @Option(names = {"-t", "--min-tokens"}, description = "Tunes the comparison sensitivity by adjusting the  minimum token required to be counted "
-            + "as a matching section. A smaller <n>  increases  the sensitivity but might lead to more " + "false-positives%n")
+            + "as a matching section. A smaller <n>  increases  the sensitivity but might lead to more " + "false-positives")
     public Integer minTokenMatch = null;
 
     @Option(names = {"-h", "--help"}, usageHelp = true, description = "display this help and exit")
@@ -47,20 +47,24 @@ public class CliOptions implements Runnable {
 
     @Option(names = {"-n",
             "--shown-comparisons"}, description = "The maximum number of comparisons that will  be  shown  in the generated report, if set "
-                    + "to -1 all comparisons will be shown (default: ${DEFAULT-VALUE})%n")
+                    + "to -1 all comparisons will be shown (default: ${DEFAULT-VALUE})")
     public int shownComparisons = JPlagOptions.DEFAULT_SHOWN_COMPARISONS;
 
     @Option(names = {"-r",
-            "--result-file"}, description = "Name of the file in which the comparison results will be stored (default: ${DEFAULT-VALUE}). Missing .zip endings will be automatically added.%n")
+            "--result-file"}, description = "Name of the file in which the comparison results will be stored (default: ${DEFAULT-VALUE}). Missing .zip endings will be automatically added.")
     public String resultFile = "results";
 
-    @ArgGroup(heading = "Advanced%n", exclusive = false)
+    @Option(names = {
+            "--mode"}, description = "The mode of JPlag: either only run analysis, only open the viewer, or do both (default: ${DEFAULT_VALUE})")
+    public JPlagMode mode = JPlagMode.RUN;
+
+    @ArgGroup(heading = "%nAdvanced%n", exclusive = false)
     public Advanced advanced = new Advanced();
 
-    @ArgGroup(validate = false, heading = "Clustering%n")
+    @ArgGroup(validate = false, heading = "%nClustering%n")
     public Clustering clustering = new Clustering();
 
-    @ArgGroup(validate = false, heading = "Merging of neighboring matches to increase the similarity of concealed plagiarism:%n")
+    @ArgGroup(validate = false, heading = "%nMerging of neighboring matches to increase the similarity of concealed plagiarism:%n")
     public Merging merging = new Merging();
 
     @Option(names = {"--normalize"}, description = "Activate the normalization of tokens. Supported for languages: Java, C++.")
@@ -75,30 +79,33 @@ public class CliOptions implements Runnable {
     }
 
     public static class Advanced {
-        @Option(names = {"-d", "--debug"}, description = "Debug parser. Non-parsable files will be stored (default: ${DEFAULT-VALUE})%n")
+        @Option(names = {"-d", "--debug"}, description = "Debug parser. Non-parsable files will be stored (default: ${DEFAULT-VALUE})")
         public boolean debug;
 
-        @Option(names = {"-s", "--subdirectory"}, description = "Look in directories <root-dir>/*/<dir> for programs%n")
+        @Option(names = {"-s", "--subdirectory"}, description = "Look in directories <root-dir>/*/<dir> for programs")
         public String subdirectory;
 
-        @Option(names = {"-p", "--suffixes"}, split = ",", description = "comma-separated list of all filename suffixes that are included%n")
+        @Option(names = {"-p", "--suffixes"}, split = ",", description = "comma-separated list of all filename suffixes that are included")
         public String[] suffixes = new String[0];
 
         @Option(names = {"-x",
-                "--exclusion-file"}, description = "All files named in this file will be ignored in the comparison (line-separated list)%n")
+                "--exclusion-file"}, description = "All files named in this file will be ignored in the comparison (line-separated list)")
         public String exclusionFileName;
 
         @Option(names = {"-m",
                 "--similarity-threshold"}, description = "Comparison similarity threshold [0.0-1.0]:  All  comparisons  above this threshold will "
-                        + "be saved (default: ${DEFAULT-VALUE})%n")
+                        + "be saved (default: ${DEFAULT-VALUE})")
         public double similarityThreshold = JPlagOptions.DEFAULT_SIMILARITY_THRESHOLD;
+
+        @Option(names = {"-P", "--port"}, description = "The port used for the internal report viewer.")
+        public int port = 1996;
 
         @Option(names = "--csv-export", description = "If present, a csv export will be generated in addition to the zip file.")
         public boolean csvExport = false;
     }
 
     public static class Clustering {
-        @Option(names = {"--cluster-skip"}, description = "Skips the clustering (default: ${DEFAULT-VALUE})%n")
+        @Option(names = {"--cluster-skip"}, description = "Skips the clustering (default: ${DEFAULT-VALUE})")
         public boolean disable;
 
         @ArgGroup
@@ -109,25 +116,25 @@ public class CliOptions implements Runnable {
                     "--cluster-algorithm"}, description = "Which clustering algorithm to use. Agglomerative  merges similar submissions bottom up. "
                             + "Spectral clustering is  combined  with  Bayesian  Optimization  to  execute the k-Means "
                             + "clustering  algorithm  multiple   times,   hopefully   finding   a   \"good\"  clustering "
-                            + "automatically. (default: ${DEFAULT-VALUE})%n")
+                            + "automatically. (default: ${DEFAULT-VALUE})")
             public ClusteringAlgorithm algorithm = new ClusteringOptions().algorithm();
 
             @Option(names = {
                     "--cluster-metric"}, description = "The metric used for clustering. AVG  is  intersection  over  union, MAX can expose some "
-                            + "attempts of obfuscation. (default: ${DEFAULT-VALUE})%n")
+                            + "attempts of obfuscation. (default: ${DEFAULT-VALUE})")
             public SimilarityMetric metric = new ClusteringOptions().similarityMetric();
         }
     }
 
     public static class Merging {
-        @Option(names = {"--match-merging"}, description = "Enables match merging (default: ${DEFAULT-VALUE})%n")
+        @Option(names = {"--match-merging"}, description = "Enables match merging (default: ${DEFAULT-VALUE})")
         public boolean enabled = MergingOptions.DEFAULT_ENABLED;
 
-        @Option(names = {"--neighbor-length"}, description = "Defines how short a match can be, to be considered (default: ${DEFAULT-VALUE})%n")
+        @Option(names = {"--neighbor-length"}, description = "Defines how short a match can be, to be considered (default: ${DEFAULT-VALUE})")
         public int minimumNeighborLength = MergingOptions.DEFAULT_NEIGHBOR_LENGTH;
 
         @Option(names = {
-                "--gap-size"}, description = "Defines how many token there can be between two neighboring matches (default: ${DEFAULT-VALUE})%n")
+                "--gap-size"}, description = "Defines how many token there can be between two neighboring matches (default: ${DEFAULT-VALUE})")
         public int maximumGapSize = MergingOptions.DEFAULT_GAP_SIZE;
 
     }
