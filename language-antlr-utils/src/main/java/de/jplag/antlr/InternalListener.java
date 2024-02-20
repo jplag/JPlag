@@ -14,7 +14,7 @@ import de.jplag.semantics.VariableRegistry;
 class InternalListener implements ParseTreeListener {
     private final AbstractAntlrListener listener;
     private final TokenCollector collector;
-    protected final VariableRegistry variableRegistry;
+    private final VariableRegistry variableRegistry;
 
     InternalListener(AbstractAntlrListener listener, TokenCollector collector) {
         this.listener = listener;

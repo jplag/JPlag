@@ -24,7 +24,7 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
 
     private final GreedyStringTiling greedyStringTiling;
 
-    protected final JPlagOptions options;
+    private final JPlagOptions options;
 
     protected AbstractComparisonStrategy(JPlagOptions options, GreedyStringTiling greedyStringTiling) {
         this.greedyStringTiling = greedyStringTiling;
@@ -62,7 +62,7 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
     /**
      * @return a list of all submission tuples to be processed.
      */
-    protected List<SubmissionTuple> buildComparisonTuples(List<Submission> submissions) {
+    private List<SubmissionTuple> buildComparisonTuples(List<Submission> submissions) {
         List<SubmissionTuple> tuples = new ArrayList<>();
         List<Submission> validSubmissions = submissions.stream().filter(s -> s.getTokenList() != null).toList();
 
