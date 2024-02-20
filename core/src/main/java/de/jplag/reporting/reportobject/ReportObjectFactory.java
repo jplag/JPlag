@@ -112,7 +112,7 @@ public class ReportObjectFactory {
                 if (relativeFilePath.isEmpty()) {
                     relativeFilePath = file.getName();
                 }
-                String zipPath = submissionRootPath + relativeFilePath;
+                String zipPath = FilePathUtil.joinZipPathSegments(submissionRootPath, relativeFilePath);
 
                 File fileToCopy = getFileToCopy(language, file);
                 this.resultWriter.addFileContentEntry(zipPath, fileToCopy);
