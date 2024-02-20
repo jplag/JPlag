@@ -1,7 +1,7 @@
 package de.jplag.cli;
 
 /**
- * The mode JPlag runs in. This influences which steps JPlag will execute
+ * The mode JPlag runs in. This influences which steps JPlag will execute.
  */
 public enum JPlagMode {
     /**
