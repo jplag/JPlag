@@ -1,6 +1,33 @@
 package de.jplag.java;
 
-import static de.jplag.java.JavaTokenType.*;
+import static de.jplag.java.JavaTokenType.J_APPLY;
+import static de.jplag.java.JavaTokenType.J_ARRAY_INIT_BEGIN;
+import static de.jplag.java.JavaTokenType.J_ARRAY_INIT_END;
+import static de.jplag.java.JavaTokenType.J_ASSIGN;
+import static de.jplag.java.JavaTokenType.J_CATCH_BEGIN;
+import static de.jplag.java.JavaTokenType.J_CATCH_END;
+import static de.jplag.java.JavaTokenType.J_CLASS_BEGIN;
+import static de.jplag.java.JavaTokenType.J_CLASS_END;
+import static de.jplag.java.JavaTokenType.J_COND;
+import static de.jplag.java.JavaTokenType.J_FINALLY_BEGIN;
+import static de.jplag.java.JavaTokenType.J_FINALLY_END;
+import static de.jplag.java.JavaTokenType.J_IF_BEGIN;
+import static de.jplag.java.JavaTokenType.J_IF_END;
+import static de.jplag.java.JavaTokenType.J_IMPORT;
+import static de.jplag.java.JavaTokenType.J_LOOP_BEGIN;
+import static de.jplag.java.JavaTokenType.J_LOOP_END;
+import static de.jplag.java.JavaTokenType.J_METHOD_BEGIN;
+import static de.jplag.java.JavaTokenType.J_METHOD_END;
+import static de.jplag.java.JavaTokenType.J_NEWARRAY;
+import static de.jplag.java.JavaTokenType.J_NEWCLASS;
+import static de.jplag.java.JavaTokenType.J_PACKAGE;
+import static de.jplag.java.JavaTokenType.J_RECORD_BEGIN;
+import static de.jplag.java.JavaTokenType.J_RECORD_END;
+import static de.jplag.java.JavaTokenType.J_RETURN;
+import static de.jplag.java.JavaTokenType.J_THROW;
+import static de.jplag.java.JavaTokenType.J_TRY_BEGIN;
+import static de.jplag.java.JavaTokenType.J_TRY_END;
+import static de.jplag.java.JavaTokenType.J_VARDEF;
 
 import de.jplag.testutils.LanguageModuleTest;
 import de.jplag.testutils.datacollector.TestDataCollector;

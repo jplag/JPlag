@@ -5,7 +5,10 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-import de.jplag.antlr.*;
+import de.jplag.antlr.AbstractAntlrListener;
+import de.jplag.antlr.AbstractAntlrParserAdapter;
+import de.jplag.antlr.TestLexer;
+import de.jplag.antlr.TestParser;
 
 public class TestParserAdapter extends AbstractAntlrParserAdapter<TestParser> {
     private static final TestListener listener = new TestListener();

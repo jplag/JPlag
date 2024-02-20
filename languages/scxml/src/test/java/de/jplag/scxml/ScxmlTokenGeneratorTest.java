@@ -1,7 +1,18 @@
 package de.jplag.scxml;
 
 import static de.jplag.SharedTokenType.FILE_END;
-import static de.jplag.scxml.ScxmlTokenType.*;
+import static de.jplag.scxml.ScxmlTokenType.ACTION_END;
+import static de.jplag.scxml.ScxmlTokenType.ASSIGNMENT;
+import static de.jplag.scxml.ScxmlTokenType.CANCEL;
+import static de.jplag.scxml.ScxmlTokenType.IF;
+import static de.jplag.scxml.ScxmlTokenType.IF_END;
+import static de.jplag.scxml.ScxmlTokenType.ON_ENTRY;
+import static de.jplag.scxml.ScxmlTokenType.ON_EXIT;
+import static de.jplag.scxml.ScxmlTokenType.SEND;
+import static de.jplag.scxml.ScxmlTokenType.STATE;
+import static de.jplag.scxml.ScxmlTokenType.STATE_END;
+import static de.jplag.scxml.ScxmlTokenType.TRANSITION;
+import static de.jplag.scxml.ScxmlTokenType.TRANSITION_END;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

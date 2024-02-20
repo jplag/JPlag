@@ -1,6 +1,9 @@
 package de.jplag.llvmir;
 
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import de.jplag.AbstractParser;
 import de.jplag.antlr.AbstractAntlrListener;

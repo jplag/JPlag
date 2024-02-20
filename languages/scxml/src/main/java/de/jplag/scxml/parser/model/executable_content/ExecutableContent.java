@@ -1,6 +1,10 @@
 package de.jplag.scxml.parser.model.executable_content;
 
-import static de.jplag.scxml.parser.model.executable_content.SimpleExecutableContent.Type.*;
+import static de.jplag.scxml.parser.model.executable_content.SimpleExecutableContent.Type.ASSIGNMENT;
+import static de.jplag.scxml.parser.model.executable_content.SimpleExecutableContent.Type.FOREACH;
+import static de.jplag.scxml.parser.model.executable_content.SimpleExecutableContent.Type.LOG;
+import static de.jplag.scxml.parser.model.executable_content.SimpleExecutableContent.Type.RAISE;
+import static de.jplag.scxml.parser.model.executable_content.SimpleExecutableContent.Type.SCRIPT;
 
 import java.util.Set;
 

@@ -2,11 +2,11 @@ package de.jplag.cli;
 
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-import java.awt.*;
+import java.awt.Desktop;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
-import javax.swing.*;
+import javax.swing.JOptionPane;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
