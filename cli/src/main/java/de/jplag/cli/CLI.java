@@ -119,8 +119,8 @@ public final class CLI {
     }
 
     public File runJPlag(ParseResult parseResult) throws ExitException, FileNotFoundException {
-        JPlagOptions options = buildOptionsFromArguments(parseResult);
-        JPlagResult result = JPlag.run(options);
+        JPlagOptions jplagOptions = buildOptionsFromArguments(parseResult);
+        JPlagResult result = JPlag.run(jplagOptions);
         File target = new File(getResultFolder() + ".zip");
         ReportObjectFactory reportObjectFactory = new ReportObjectFactory(target);
         reportObjectFactory.createAndSaveReport(result);

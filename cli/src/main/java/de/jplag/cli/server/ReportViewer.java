@@ -58,16 +58,16 @@ public class ReportViewer implements HttpHandler {
             throw new IllegalStateException("Server already started");
         }
 
-        int port = this.port;
+        int currentPort = this.port;
         int remainingLookups = MAX_PORT_LOOKUPS;
         BindException lastException = new BindException("Could not create server. Probably due to no free port found.");
         while (server == null && remainingLookups-- > 0) {
             try {
-                server = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), port), 0);
+                server = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), currentPort), 0);
             } catch (BindException e) {
-                logger.info("Port {} is not available. Trying to find a different one.", port);
+                logger.info("Port {} is not available. Trying to find a different one.", currentPort);
                 lastException = e;
-                port++;
+                currentPort++;
             }
         }
         if (server == null) {
@@ -107,7 +107,7 @@ public class ReportViewer implements HttpHandler {
 
         ResponseData responseData = resolved.getRight().fetchData(resolved.getLeft(), exchange, this);
         if (responseData == null) {
-            logger.warn("No response data found for path: " + path.asPath());
+            logger.warn("No response data found for path: {}", path.asPath());
             exchange.sendResponseHeaders(NOT_FOUND_RESPONSE, 0);
             exchange.close();
             return;

@@ -26,7 +26,7 @@ class RoutingTreeTest {
     }
 
     @Test
-    public void testAccessRoutingTree() {
+    void testAccessRoutingTree() {
         Pair<RoutingPath, Routing> firstRouting = this.routingTree.resolveRouting(new RoutingPath(firstRoutingPath));
         Pair<RoutingPath, Routing> secondRouting = this.routingTree.resolveRouting(new RoutingPath(secondRoutingPath + "/suffix"));
 
@@ -42,19 +42,19 @@ class RoutingTreeTest {
     }
 
     @Test
-    public void testUnknownPath() {
+    void testUnknownPath() {
         assertNull(this.routingTree.resolveRouting(new RoutingPath("/unknown.html")));
     }
 
     @Test
-    public void testPartialPathRoute() {
+    void testPartialPathRoute() {
         RoutingTree routingTree = new RoutingTree();
         routingTree.insertRouting("/path/", new TestRouting(""));
         assertNotNull(routingTree.resolveRouting(new RoutingPath("/path/index.html")));
     }
 
     @Test
-    public void testPartialPathRouteWithSubpath() {
+    void testPartialPathRouteWithSubpath() {
         RoutingTree routingTree = new RoutingTree();
         routingTree.insertRouting("/path/", new TestRouting("/path/"));
         routingTree.insertRouting("/path/subPath/a.html", new TestRouting(""));
