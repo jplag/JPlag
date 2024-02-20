@@ -128,6 +128,12 @@
             <artifactId>picocli</artifactId>
             <version>4.7.5</version>
         </dependency>
+
+        <dependency>
+            <groupId>me.tongfei</groupId>
+            <artifactId>progressbar</artifactId>
+            <version>0.10.0</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

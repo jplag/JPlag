@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -21,6 +22,9 @@ import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.RootDirectoryException;
 import de.jplag.exceptions.SubmissionException;
+import de.jplag.logging.ProgressBar;
+import de.jplag.logging.ProgressBarLogger;
+import de.jplag.logging.ProgressBarType;
 import de.jplag.options.JPlagOptions;
 
 /**
@@ -35,9 +39,9 @@ public class SubmissionSetBuilder {
 
     /**
      * Creates a builder for submission sets.
-     * @deprecated in favor of {@link #SubmissionSetBuilder(JPlagOptions)}.
      * @param language is the language of the submissions.
      * @param options are the configured options.
+     * @deprecated in favor of {@link #SubmissionSetBuilder(JPlagOptions)}.
      */
     @Deprecated(since = "4.3.0")
     public SubmissionSetBuilder(Language language, JPlagOptions options) {
@@ -67,14 +71,21 @@ public class SubmissionSetBuilder {
         int numberOfRootDirectories = submissionDirectories.size() + oldSubmissionDirectories.size();
         boolean multipleRoots = (numberOfRootDirectories > 1);
 
-        // Collect valid looking entries from the root directories.
+        List<SubmissionFileData> submissionFiles = new ArrayList<>();
+        for (File submissionDirectory : submissionDirectories) {
+            submissionFiles.addAll(listSubmissionFiles(submissionDirectory, true));
+        }
+        for (File submissionDirectory : oldSubmissionDirectories) {
+            submissionFiles.addAll(listSubmissionFiles(submissionDirectory, false));
+        }
+
+        ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.LOADING, submissionFiles.size());
         Map<File, Submission> foundSubmissions = new HashMap<>();
-        for (File directory : submissionDirectories) {
-            processRootDirectoryEntries(directory, multipleRoots, foundSubmissions, true);
+        for (SubmissionFileData submissionFile : submissionFiles) {
+            processSubmissionFile(submissionFile, multipleRoots, foundSubmissions);
+            progressBar.step();
         }
-        for (File oldDirectory : oldSubmissionDirectories) {
-            processRootDirectoryEntries(oldDirectory, multipleRoots, foundSubmissions, false);
-        }
+        progressBar.dispose();
 
         Optional<Submission> baseCodeSubmission = loadBaseCode();
         baseCodeSubmission.ifPresent(baseSubmission -> foundSubmissions.remove(baseSubmission.getRoot()));
@@ -84,7 +95,7 @@ public class SubmissionSetBuilder {
 
         // Some languages expect a certain order, which is ensured here:
         if (options.language().expectsSubmissionOrder()) {
-            List<File> rootFiles = foundSubmissions.values().stream().map(it -> it.getRoot()).toList();
+            List<File> rootFiles = foundSubmissions.values().stream().map(Submission::getRoot).toList();
             rootFiles = options.language().customizeSubmissionOrder(rootFiles);
             submissions = new ArrayList<>(rootFiles.stream().map(foundSubmissions::get).toList());
         }
@@ -155,31 +166,25 @@ public class SubmissionSetBuilder {
 
         Submission baseCodeSubmission = processSubmission(baseCodeSubmissionDirectory.getName(), baseCodeSubmissionDirectory, false);
         logger.info("Basecode directory \"{}\" will be used.", baseCodeSubmission.getName());
-        return Optional.ofNullable(baseCodeSubmission);
+        return Optional.of(baseCodeSubmission);
     }
 
-    /**
-     * Read entries in the given root directory.
-     */
-    private String[] listSubmissionFiles(File rootDirectory) throws ExitException {
+    private List<SubmissionFileData> listSubmissionFiles(File rootDirectory, boolean isNew) throws RootDirectoryException {
         if (!rootDirectory.isDirectory()) {
             throw new AssertionError("Given root is not a directory.");
         }
 
-        String[] fileNames;
-
         try {
-            fileNames = rootDirectory.list();
+            File[] files = rootDirectory.listFiles();
+            if (files == null) {
+                throw new RootDirectoryException("Cannot list files of the root directory!");
+            }
+
+            return Arrays.stream(files).sorted(Comparator.comparing(File::getName)).map(it -> new SubmissionFileData(it, rootDirectory, isNew))
+                    .toList();
         } catch (SecurityException exception) {
             throw new RootDirectoryException("Cannot list files of the root directory! " + exception.getMessage(), exception);
         }
-
-        if (fileNames == null) {
-            throw new RootDirectoryException("Cannot list files of the root directory!");
-        }
-
-        Arrays.sort(fileNames);
-        return fileNames;
     }
 
     /**
@@ -200,6 +205,7 @@ public class SubmissionSetBuilder {
 
     /**
      * Process the given directory entry as a submission, the path MUST not be excluded.
+     * @param submissionName The name of the submission
      * @param submissionFile the file for the submission.
      * @param isNew states whether submissions found in the root directory must be checked for plagiarism.
      * @return The entry converted to a submission.
@@ -225,27 +231,16 @@ public class SubmissionSetBuilder {
         return new Submission(submissionName, submissionFile, isNew, parseFilesRecursively(submissionFile), options.language());
     }
 
-    /**
-     * Process entries in the root directory to check whether they qualify as submissions.
-     * @param rootDirectory is the root directory being examined.
-     * @param foundSubmissions Submissions found so far, is updated in-place.
-     * @param isNew states whether submissions found in the root directory must be checked for plagiarism.
-     */
-    private void processRootDirectoryEntries(File rootDirectory, boolean multipleRoots, Map<File, Submission> foundSubmissions, boolean isNew)
-            throws ExitException {
-        for (String fileName : listSubmissionFiles(rootDirectory)) {
-            File submissionFile = new File(rootDirectory, fileName);
-
-            String errorMessage = isExcludedEntry(submissionFile);
-            if (errorMessage == null) {
-                String rootDirectoryPrefix = multipleRoots ? (rootDirectory.getName() + File.separator) : "";
-                String submissionName = rootDirectoryPrefix + fileName;
-                Submission submission = processSubmission(submissionName, submissionFile, isNew);
-                foundSubmissions.put(submission.getRoot(), submission);
-            } else {
-                logger.error(errorMessage);
-            }
+    private void processSubmissionFile(SubmissionFileData file, boolean multipleRoots, Map<File, Submission> foundSubmissions) throws ExitException {
+        String errorMessage = isExcludedEntry(file.submissionFile());
+        if (errorMessage != null) {
+            logger.error(errorMessage);
         }
+
+        String rootDirectoryPrefix = multipleRoots ? (file.root().getName() + File.separator) : "";
+        String submissionName = rootDirectoryPrefix + file.submissionFile().getName();
+        Submission submission = processSubmission(submissionName, file.submissionFile(), file.isNew());
+        foundSubmissions.put(submission.getRoot(), submission);
     }
 
     /**
@@ -311,4 +306,5 @@ public class SubmissionSetBuilder {
             throw exceptionWrapper.apply(exception);
         }
     }
+
 }

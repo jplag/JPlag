@@ -22,9 +22,11 @@ import de.jplag.JPlag;
 import de.jplag.JPlagResult;
 import de.jplag.Language;
 import de.jplag.cli.logger.CollectedLoggerFactory;
+import de.jplag.cli.logger.TongfeiProgressBarProvider;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.Preprocessing;
 import de.jplag.exceptions.ExitException;
+import de.jplag.logging.ProgressBarLogger;
 import de.jplag.merging.MergingOptions;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
@@ -80,6 +82,7 @@ public final class CLI {
 
             if (!parseResult.isUsageHelpRequested() && !(parseResult.subcommand() != null && parseResult.subcommand().isUsageHelpRequested())) {
                 JPlagOptions options = cli.buildOptionsFromArguments(parseResult);
+                ProgressBarLogger.setProgressBarProvider(new TongfeiProgressBarProvider());
                 JPlagResult result = JPlag.run(options);
                 ReportObjectFactory reportObjectFactory = new ReportObjectFactory(new File(cli.getResultFilePath()));
                 reportObjectFactory.createAndSaveReport(result);
