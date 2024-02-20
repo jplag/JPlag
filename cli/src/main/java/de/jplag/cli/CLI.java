@@ -26,9 +26,11 @@ import de.jplag.JPlagResult;
 import de.jplag.Language;
 import de.jplag.cli.logger.CollectedLoggerFactory;
 import de.jplag.cli.server.ReportViewer;
+import de.jplag.cli.logger.TongfeiProgressBarProvider;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.Preprocessing;
 import de.jplag.exceptions.ExitException;
+import de.jplag.logging.ProgressBarLogger;
 import de.jplag.merging.MergingOptions;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.LanguageOption;
@@ -68,6 +70,8 @@ public final class CLI {
 
     private static final String DESCRIPTION_PATTERN = "%nJPlag - %s%n%s%n%n";
 
+    private static final String DEFAULT_FILE_ENDING = ".zip";
+
     /**
      * Main class for using JPlag via the CLI.
      * @param args are the CLI arguments that will be passed to JPlag.
@@ -81,14 +85,20 @@ public final class CLI {
             ParseResult parseResult = cli.parseOptions(args);
 
             if (!parseResult.isUsageHelpRequested() && !(parseResult.subcommand() != null && parseResult.subcommand().isUsageHelpRequested())) {
+                ProgressBarLogger.setProgressBarProvider(new TongfeiProgressBarProvider());
                 switch (cli.options.mode) {
                     case RUN -> cli.runJPlag(parseResult);
                     case VIEW -> cli.runViewer(null);
                     case RUN_AND_VIEW -> cli.runViewer(cli.runJPlag(parseResult));
                 }
             }
-        } catch (ExitException | IOException exception) {
-            logger.error(exception.getMessage()); // do not pass exception here to keep log clean
+        } catch (ExitException | IOException exception) { // do not pass exceptions here to keep log clean
+            if (exception.getCause() != null) {
+                logger.error("{} - {}", exception.getMessage(), exception.getCause().getMessage());
+            } else {
+                logger.error(exception.getMessage());
+            }
+
             finalizeLogger();
             System.exit(1);
         }
@@ -106,9 +116,8 @@ public final class CLI {
         this.commandLine.getHelpSectionMap().put(SECTION_KEY_OPTION_LIST, help -> help.optionList().lines().map(it -> {
             if (it.startsWith("  -")) {
                 return "    " + it;
-            } else {
-                return it;
             }
+            return it;
         }).collect(Collectors.joining(System.lineSeparator())));
 
         buildSubcommands().forEach(commandLine::addSubcommand);
@@ -121,10 +130,10 @@ public final class CLI {
     public File runJPlag(ParseResult parseResult) throws ExitException, FileNotFoundException {
         JPlagOptions jplagOptions = buildOptionsFromArguments(parseResult);
         JPlagResult result = JPlag.run(jplagOptions);
-        File target = new File(getResultFolder() + ".zip");
+        File target = new File(getResultFilePath());
         ReportObjectFactory reportObjectFactory = new ReportObjectFactory(target);
         reportObjectFactory.createAndSaveReport(result);
-        OutputFileGenerator.generateCsvOutput(result, new File(getResultFolder()), this.options);
+        OutputFileGenerator.generateCsvOutput(result, new File(getResultFileBaseName()), this.options);
         return target;
     }
 
@@ -168,7 +177,7 @@ public final class CLI {
             }
             return result;
         } catch (CommandLine.ParameterException e) {
-            if (e.getArgSpec().isOption() && Arrays.asList(((OptionSpec) e.getArgSpec()).names()).contains("-l")) {
+            if (e.getArgSpec() != null && e.getArgSpec().isOption() && Arrays.asList(((OptionSpec) e.getArgSpec()).names()).contains("-l")) {
                 throw new CliException(String.format(UNKOWN_LANGAUGE_EXCEPTION, e.getValue(),
                         String.join(", ", LanguageLoader.getAllAvailableLanguageIdentifiers())));
             }
@@ -206,33 +215,31 @@ public final class CLI {
         JPlagOptions jPlagOptions = new JPlagOptions(loadLanguage(parseResult), this.options.minTokenMatch, submissionDirectories,
                 oldSubmissionDirectories, null, this.options.advanced.subdirectory, suffixes, this.options.advanced.exclusionFileName,
                 JPlagOptions.DEFAULT_SIMILARITY_METRIC, this.options.advanced.similarityThreshold, this.options.shownComparisons, clusteringOptions,
-                this.options.advanced.debug, mergingOptions);
+                this.options.advanced.debug, mergingOptions, this.options.normalize);
 
         String baseCodePath = this.options.baseCode;
         File baseCodeDirectory = baseCodePath == null ? null : new File(baseCodePath);
         if (baseCodeDirectory == null || baseCodeDirectory.exists()) {
             return jPlagOptions.withBaseCodeSubmissionDirectory(baseCodeDirectory);
-        } else {
-            logger.warn("Using legacy partial base code API. Please migrate to new full path base code API.");
-            return jPlagOptions.withBaseCodeSubmissionName(baseCodePath);
         }
+        logger.warn("Using legacy partial base code API. Please migrate to new full path base code API.");
+        return jPlagOptions.withBaseCodeSubmissionName(baseCodePath);
     }
 
     private Language loadLanguage(ParseResult result) throws CliException {
-        if (result.subcommand() != null) {
-            ParseResult subcommandResult = result.subcommand();
-            Language language = LanguageLoader.getLanguage(subcommandResult.commandSpec().name())
-                    .orElseThrow(() -> new CliException(IMPOSSIBLE_EXCEPTION));
-            LanguageOptions languageOptions = language.getOptions();
-            languageOptions.getOptionsAsList().forEach(option -> {
-                if (subcommandResult.hasMatchedOption(option.getNameAsUnixParameter())) {
-                    option.setValue(subcommandResult.matchedOptionValue(option.getNameAsUnixParameter(), null));
-                }
-            });
-            return language;
-        } else {
+        if (result.subcommand() == null) {
             return this.options.language;
         }
+        ParseResult subcommandResult = result.subcommand();
+        Language language = LanguageLoader.getLanguage(subcommandResult.commandSpec().name())
+                .orElseThrow(() -> new CliException(IMPOSSIBLE_EXCEPTION));
+        LanguageOptions languageOptions = language.getOptions();
+        languageOptions.getOptionsAsList().forEach(option -> {
+            if (subcommandResult.hasMatchedOption(option.getNameAsUnixParameter())) {
+                option.setValue(subcommandResult.matchedOptionValue(option.getNameAsUnixParameter(), null));
+            }
+        });
+        return language;
     }
 
     private static ClusteringOptions getClusteringOptions(CliOptions options) {
@@ -274,7 +281,17 @@ public final class CLI {
         return String.format(DESCRIPTION_PATTERN, randomDescription, CREDITS);
     }
 
-    public String getResultFolder() {
-        return this.options.resultFolder;
+    private String getResultFilePath() {
+        String optionValue = this.options.resultFile;
+        if (optionValue.endsWith(DEFAULT_FILE_ENDING)) {
+            return optionValue;
+        } else {
+            return optionValue + DEFAULT_FILE_ENDING;
+        }
+    }
+
+    private String getResultFileBaseName() {
+        String defaultOutputFile = getResultFilePath();
+        return defaultOutputFile.substring(0, defaultOutputFile.length() - DEFAULT_FILE_ENDING.length());
     }
 }

@@ -45,12 +45,12 @@
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
-            <artifactId>cpp</artifactId>
+            <artifactId>c</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
-            <artifactId>cpp2</artifactId>
+            <artifactId>cpp</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
@@ -128,6 +128,12 @@
             <groupId>info.picocli</groupId>
             <artifactId>picocli</artifactId>
             <version>4.7.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>me.tongfei</groupId>
+            <artifactId>progressbar</artifactId>
+            <version>0.10.0</version>
         </dependency>
     </dependencies>
     <build>

@@ -63,7 +63,7 @@ public class ScxmlLanguage implements de.jplag.Language {
     }
 
     @Override
-    public List<Token> parse(Set<File> files) throws ParsingException {
+    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
         return parser.parse(files);
     }
 

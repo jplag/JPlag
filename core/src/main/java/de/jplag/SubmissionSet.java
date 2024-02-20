@@ -10,6 +10,9 @@ import org.slf4j.LoggerFactory;
 import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.SubmissionException;
+import de.jplag.logging.ProgressBar;
+import de.jplag.logging.ProgressBarLogger;
+import de.jplag.logging.ProgressBarType;
 import de.jplag.options.JPlagOptions;
 
 /**
@@ -37,6 +40,7 @@ public class SubmissionSet {
     /**
      * @param submissions Submissions to check for plagiarism.
      * @param baseCode Base code submission if it exists or {@code null}.
+     * @param options The JPlag options
      */
     public SubmissionSet(List<Submission> submissions, Submission baseCode, JPlagOptions options) throws ExitException {
         this.allSubmissions = submissions;
@@ -119,7 +123,7 @@ public class SubmissionSet {
     private void parseBaseCodeSubmission(Submission baseCode) throws BasecodeException {
         long startTime = System.currentTimeMillis();
         logger.trace("----- Parsing basecode submission: " + baseCode.getName());
-        if (!baseCode.parse(options.debugParser())) {
+        if (!baseCode.parse(options.debugParser(), options.normalize())) {
             throw new BasecodeException("Could not successfully parse basecode submission!");
         } else if (baseCode.getNumberOfTokens() < options.minimumTokenMatch()) {
             throw new BasecodeException(String.format("Basecode submission contains %d token(s), which is less than the minimum match length (%d)!",
@@ -133,6 +137,7 @@ public class SubmissionSet {
 
     /**
      * Parse all given submissions.
+     * @param submissions The list of submissions
      */
     private void parseSubmissions(List<Submission> submissions) {
         if (submissions.isEmpty()) {
@@ -143,14 +148,14 @@ public class SubmissionSet {
         long startTime = System.currentTimeMillis();
 
         int tooShort = 0;
+        ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.PARSING, submissions.size());
         for (Submission submission : submissions) {
-            logger.info("Parsing submission {}", submission.getName());
             boolean ok;
 
             logger.trace("------ Parsing submission: " + submission.getName());
             currentSubmissionName = submission.getName();
 
-            if (!(ok = submission.parse(options.debugParser()))) {
+            if (!(ok = submission.parse(options.debugParser(), options.normalize()))) {
                 errors++;
             }
 
@@ -168,7 +173,9 @@ public class SubmissionSet {
             } else {
                 logger.error("ERROR -> Submission {} removed", currentSubmissionName);
             }
+            progressBar.step();
         }
+        progressBar.dispose();
 
         int validSubmissions = submissions.size() - errors - tooShort;
         logger.trace(validSubmissions + " submissions parsed successfully!");

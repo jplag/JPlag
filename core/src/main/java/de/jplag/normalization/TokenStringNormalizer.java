@@ -13,7 +13,7 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 import de.jplag.Token;
 
 /**
- * Performs token string normalization.
+ * Performs token sequence normalization.
  */
 public class TokenStringNormalizer {
 
@@ -21,11 +21,11 @@ public class TokenStringNormalizer {
     }
 
     /**
-     * Performs token string normalization. Tokens representing dead code have been eliminated and tokens representing
+     * Performs token sequence normalization. Tokens representing dead code have been eliminated and tokens representing
      * subsequent independent statements have been put in a fixed order. Works by first constructing a Normalization Graph
-     * and then turning it back into a token string.
-     * @param tokens The original token string, remains unaltered.
-     * @return The normalized token string.
+     * and then turning it back into a token sequence.
+     * @param tokens The original token sequence, remains unaltered.
+     * @return The normalized token sequence.
      */
     public static List<Token> normalize(List<Token> tokens) {
         SimpleDirectedGraph<Statement, MultipleEdge> normalizationGraph = new NormalizationGraphConstructor(tokens).get();

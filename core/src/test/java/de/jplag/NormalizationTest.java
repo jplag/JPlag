@@ -12,8 +12,8 @@ import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 
 class NormalizationTest extends TestBase {
-    private Map<String, List<TokenType>> tokenStringMap;
-    private List<TokenType> originalTokenString;
+    private final Map<String, List<TokenType>> tokenStringMap;
+    private final List<TokenType> originalTokenString;
 
     NormalizationTest() throws ExitException {
         JPlagOptions options = getDefaultOptions("normalization");

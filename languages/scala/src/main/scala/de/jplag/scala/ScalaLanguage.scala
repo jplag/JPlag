@@ -20,5 +20,5 @@ class ScalaLanguage extends de.jplag.Language {
 
   override def minimumTokenMatch = 8
 
-  override def parse(files: util.Set[File]): java.util.List[Token] = this.parser.parse(files.asScala.toSet).asJava
+  override def parse(files: util.Set[File], normalize: Boolean): java.util.List[Token] = this.parser.parse(files.asScala.toSet).asJava
 }
