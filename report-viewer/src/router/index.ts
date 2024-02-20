@@ -62,7 +62,7 @@ function redirectOnError(
   router.push({
     name: 'ErrorView',
     params: {
-      message: prefix + error.message,
+      message: prefix + (error.message ?? error),
       to: redirectRoute,
       routerInfo: redirectRouteTitle
     }
