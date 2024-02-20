@@ -78,9 +78,11 @@ public class ParsingException extends Exception {
 
     private static String constructMessage(File file, String reason) {
         StringBuilder messageBuilder = new StringBuilder();
-        messageBuilder.append("failed to parse '%s'".formatted(file));
+        if (reason == null || !reason.contains(file.toString())) {
+            messageBuilder.append("failed to parse '%s'".formatted(file));
+        }
         if (reason != null && !reason.isBlank()) {
-            messageBuilder.append(" with reason: %s".formatted(reason));
+            messageBuilder.append(reason);
         }
         return messageBuilder.toString();
     }

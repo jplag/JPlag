@@ -10,7 +10,7 @@ public class ProgressBarLogger {
     private static ProgressBarProvider progressBarProvider = new DummyProvider();
 
     private ProgressBarLogger() {
-        //Hides default constructor
+        // Hides default constructor
     }
 
     /**
