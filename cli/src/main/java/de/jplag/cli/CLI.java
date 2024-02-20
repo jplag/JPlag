@@ -133,6 +133,8 @@ public final class CLI {
         File target = new File(getResultFilePath());
         ReportObjectFactory reportObjectFactory = new ReportObjectFactory(target);
         reportObjectFactory.createAndSaveReport(result);
+        logger.info("Successfully written the result: {}", target.getPath());
+        logger.info("View the result using --mode or at: https://jplag.github.io/JPlag/");
         OutputFileGenerator.generateCsvOutput(result, new File(getResultFileBaseName()), this.options);
         return target;
     }

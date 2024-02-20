@@ -271,7 +271,7 @@ export class OverviewFactory extends BaseFactory {
         "The result's version(" +
         jsonVersion.toString() +
         ') is older than the minimal support version of the report viewer(' +
-        reportViewerVersion.toString() +
+        minimalVersion.toString() +
         '). ' +
         'Can not read the report.'
       )
