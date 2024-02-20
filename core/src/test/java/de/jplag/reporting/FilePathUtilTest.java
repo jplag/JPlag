@@ -11,16 +11,16 @@ class FilePathUtilTest {
 
     @Test
     void testJoinPath() {
-        assertEquals(JOINED, FilePathUtil.joinPathSegments(LEFT, RIGHT));
+        assertEquals(JOINED, FilePathUtil.joinZipPathSegments(LEFT, RIGHT));
     }
 
     @Test
     void testJoinPathWithLeftSlashSuffix() {
-        assertEquals(JOINED, FilePathUtil.joinPathSegments(LEFT + "/", RIGHT));
+        assertEquals(JOINED, FilePathUtil.joinZipPathSegments(LEFT + "/", RIGHT));
     }
 
     @Test
     void testJoinPathWithRightSlashSuffix() {
-        assertEquals(JOINED, FilePathUtil.joinPathSegments(LEFT, "/" + RIGHT));
+        assertEquals(JOINED, FilePathUtil.joinZipPathSegments(LEFT, "/" + RIGHT));
     }
 }

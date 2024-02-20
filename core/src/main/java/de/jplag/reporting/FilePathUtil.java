@@ -7,6 +7,7 @@ import java.util.function.Function;
 import de.jplag.Submission;
 
 public final class FilePathUtil {
+    private static final String ZIP_PATH_SEPARATOR = "/"; // Paths in zip files are always separated by a slash
 
     private FilePathUtil() {
         // private constructor to prevent instantiation
@@ -32,17 +33,17 @@ public final class FilePathUtil {
      * @param right The right path segment
      * @return The joined paths
      */
-    public static String joinPathSegments(String left, String right) {
+    public static String joinZipPathSegments(String left, String right) {
         String rightStripped = right;
-        while (rightStripped.startsWith("/")) {
+        while (rightStripped.startsWith(ZIP_PATH_SEPARATOR)) {
             rightStripped = rightStripped.substring(1);
         }
 
         String leftStripped = left;
-        while (leftStripped.endsWith("/")) {
+        while (leftStripped.endsWith(ZIP_PATH_SEPARATOR)) {
             leftStripped = leftStripped.substring(0, leftStripped.length() - 1);
         }
 
-        return leftStripped + "/" + rightStripped;
+        return leftStripped + ZIP_PATH_SEPARATOR + rightStripped;
     }
 }
