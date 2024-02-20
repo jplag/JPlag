@@ -25,7 +25,6 @@ import com.sun.source.tree.ContinueTree;
 import com.sun.source.tree.DefaultCaseLabelTree;
 import com.sun.source.tree.DoWhileLoopTree;
 import com.sun.source.tree.EnhancedForLoopTree;
-import com.sun.source.tree.ErroneousTree;
 import com.sun.source.tree.ExportsTree;
 import com.sun.source.tree.ForLoopTree;
 import com.sun.source.tree.IdentifierTree;
@@ -536,12 +535,6 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_EXPORTS, start, 7, CodeSemantics.createControl());
         return super.visitExports(node, null);
-    }
-
-    @Override
-    public Void visitErroneous(ErroneousTree node, Void unused) {
-        // do nothing, errors are managed elsewhere
-        return super.visitErroneous(node, null);
     }
 
     @Override
