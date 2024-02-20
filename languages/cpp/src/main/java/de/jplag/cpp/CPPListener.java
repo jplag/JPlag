@@ -164,14 +164,16 @@ class CPPListener extends AbstractAntlrListener {
             }
             SimpleDeclarationContext parent = getAncestor(rule, SimpleDeclarationContext.class, TemplateArgumentContext.class,
                     FunctionDefinitionContext.class);
-            if (parent == null)
+            if (parent == null) {
                 return false;
+            }
             NoPointerDeclaratorContext noPointerDecl = getDescendant(parent, NoPointerDeclaratorContext.class);
             return !noPointerInFunctionCallContext(noPointerDecl) && !hasAncestor(rule, NewTypeIdContext.class);
         }).map(VARDEF).withSemantics(CodeSemantics::new).onEnter((context, variableRegistry) -> {
             SimpleDeclarationContext parent = getAncestor(context, SimpleDeclarationContext.class);
-            if (parent == null)  // at this point we know parent exists
+            if (parent == null) { // at this point we know parent exists
                 throw new IllegalStateException();
+            }
             // boolean typeMutable = context.theTypeName() != null; // block is duplicate to member variable register
             // possible issue: what if multiple variables are declared in the same line?
             variableRegistry.setNextVariableAccessType(VariableAccessType.WRITE);
