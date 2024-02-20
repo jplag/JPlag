@@ -259,7 +259,8 @@ public class Submission implements Comparable<Submission> {
                 }
             }
         } catch (ParsingException e) {
-            logger.warn("Failed to parse submission {} with error {}", this, e.getMessage(), e);
+            String shortenedMessage = e.getMessage().replace(submissionRootFile.toString(), name);
+            logger.warn("Failed to parse submission {}:{}{}", name, System.lineSeparator(), shortenedMessage);
             tokenList = null;
             hasErrors = true;
             if (debugParser) {

@@ -6,7 +6,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 import javax.tools.DiagnosticCollector;
@@ -51,13 +50,12 @@ public class JavacAdapter {
                 final LineMap map = ast.getLineMap();
                 var scanner = new TokenGeneratingTreeScanner(file, parser, map, positions, ast);
                 ast.accept(scanner, null);
-                parsingExceptions.addAll(scanner.getParsingExceptions());
                 parser.add(Token.semanticFileEnd(file));
             }
         } catch (IOException exception) {
             throw new ParsingException(null, exception.getMessage(), exception);
         }
-        parsingExceptions.addAll(processErrors(parser.logger, listener));
+        parsingExceptions.addAll(processErrors(listener));
         if (!parsingExceptions.isEmpty()) {
             throw ParsingException.wrappingExceptions(parsingExceptions);
         }
@@ -73,14 +71,13 @@ public class JavacAdapter {
         return abstractSyntaxTrees;
     }
 
-    private List<ParsingException> processErrors(Logger logger, DiagnosticCollector<Object> listener) {
+    private List<ParsingException> processErrors(DiagnosticCollector<Object> listener) {
         return listener.getDiagnostics().stream().filter(it -> it.getKind() == javax.tools.Diagnostic.Kind.ERROR).map(diagnosticItem -> {
             File file = null;
             if (diagnosticItem.getSource() instanceof JavaFileObject fileObject) {
                 file = new File(fileObject.toUri());
             }
-            logger.error("{}", diagnosticItem);
-            return new ParsingException(file, diagnosticItem.getMessage(Locale.getDefault()));
+            return new ParsingException(file, diagnosticItem.toString());
         }).toList();
     }
 

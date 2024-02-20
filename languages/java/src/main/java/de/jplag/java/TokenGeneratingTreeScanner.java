@@ -1,11 +1,8 @@
 package de.jplag.java;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
-import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.semantics.CodeSemantics;
@@ -28,7 +25,6 @@ import com.sun.source.tree.ContinueTree;
 import com.sun.source.tree.DefaultCaseLabelTree;
 import com.sun.source.tree.DoWhileLoopTree;
 import com.sun.source.tree.EnhancedForLoopTree;
-import com.sun.source.tree.ErroneousTree;
 import com.sun.source.tree.ExportsTree;
 import com.sun.source.tree.ForLoopTree;
 import com.sun.source.tree.IdentifierTree;
@@ -68,8 +64,6 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     private final SourcePositions positions;
     private final CompilationUnitTree ast;
 
-    private final List<ParsingException> parsingExceptions = new ArrayList<>();
-
     private final VariableRegistry variableRegistry;
 
     private static final Set<String> IMMUTABLES = Set.of(
@@ -86,10 +80,6 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         this.positions = positions;
         this.ast = ast;
         this.variableRegistry = new VariableRegistry();
-    }
-
-    public List<ParsingException> getParsingExceptions() {
-        return parsingExceptions;
     }
 
     public void addToken(TokenType type, File file, long line, long column, long length, CodeSemantics semantics) {
@@ -545,12 +535,6 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_EXPORTS, start, 7, CodeSemantics.createControl());
         return super.visitExports(node, null);
-    }
-
-    @Override
-    public Void visitErroneous(ErroneousTree node, Void unused) {
-        parsingExceptions.add(new ParsingException(file, "error while visiting %s".formatted(node)));
-        return super.visitErroneous(node, null);
     }
 
     @Override
