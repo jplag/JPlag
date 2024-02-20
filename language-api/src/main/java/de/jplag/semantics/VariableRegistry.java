@@ -17,10 +17,10 @@ public class VariableRegistry {
     private static final Logger logger = LoggerFactory.getLogger(VariableRegistry.class);
 
     private CodeSemantics semantics;
-    private Map<String, Variable> fileVariables;
-    private Deque<Map<String, Variable>> classVariables; // map class name to map of variable names to variables
-    private Map<String, Deque<Variable>> localVariables; // map local variable name to stack of variables
-    private Deque<Set<String>> localVariablesByScope; // stack of local variable names in scope
+    private final Map<String, Variable> fileVariables;
+    private final Deque<Map<String, Variable>> classVariables; // map class name to map of variable names to variables
+    private final Map<String, Deque<Variable>> localVariables; // map local variable name to stack of variables
+    private final Deque<Set<String>> localVariablesByScope; // stack of local variable names in scope
     private VariableAccessType nextVariableAccessType;
     private boolean ignoreNextVariableAccess;
     private boolean mutableWrite;
@@ -98,8 +98,9 @@ public class VariableRegistry {
         for (String variableName : localVariablesByScope.pop()) {
             Deque<Variable> variableStack = localVariables.get(variableName);
             variableStack.pop();
-            if (variableStack.isEmpty())
+            if (variableStack.isEmpty()) {
                 localVariables.remove(variableName);
+            }
         }
     }
 
@@ -146,10 +147,12 @@ public class VariableRegistry {
         }
         Variable variable = isClassVariable ? getClassVariable(variableName) : getVariable(variableName);
         if (variable != null) {
-            if (nextVariableAccessType.isRead)
+            if (nextVariableAccessType.isRead) {
                 semantics.addRead(variable);
-            if (nextVariableAccessType.isWrite || (mutableWrite && variable.isMutable()))
+            }
+            if (nextVariableAccessType.isWrite || (mutableWrite && variable.isMutable())) {
                 semantics.addWrite(variable);
+            }
         }  // track global variables here through else
         nextVariableAccessType = VariableAccessType.READ;
     }
@@ -169,8 +172,9 @@ public class VariableRegistry {
 
     private Variable getVariable(String variableName) {
         Deque<Variable> variableIdStack = localVariables.get(variableName);
-        if (variableIdStack != null)
+        if (variableIdStack != null) {
             return variableIdStack.getFirst();  // stack is never empty
+        }
         Variable variable = getClassVariable(variableName);
         return variable != null ? variable : fileVariables.get(variableName);
     }

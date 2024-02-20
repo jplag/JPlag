@@ -13,15 +13,15 @@ import de.jplag.semantics.CodeSemantics;
  * The language parsers decide what is a token and what is not.
  */
 public class Token {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     /** Indicates that the requested field has no value. */
     public static final int NO_VALUE = -1;
 
-    private int line;
-    private int column;
-    private int length;
-    private File file;
-    private TokenType type;
+    private final int line;
+    private final int column;
+    private final int length;
+    private final File file;
+    private final TokenType type;
     private CodeSemantics semantics; // value null if no semantics
 
     /**

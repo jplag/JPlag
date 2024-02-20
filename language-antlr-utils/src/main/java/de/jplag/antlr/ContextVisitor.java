@@ -136,6 +136,7 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
         exitHandlers.forEach(handler -> handler.accept(data));
     }
 
+    @Override
     Token extractEnterToken(T entity) {
         return entity.getStart();
     }

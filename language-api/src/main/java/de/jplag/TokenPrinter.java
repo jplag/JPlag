@@ -224,8 +224,9 @@ public final class TokenPrinter {
         public PrinterOutputBuilder append(String str) {
             // Avoid too many blank lines
             trailingLineSeparators = str.equals(LINE_SEPARATOR) ? trailingLineSeparators + 1 : 0;
-            if (trailingLineSeparators >= 3)
+            if (trailingLineSeparators >= 3) {
                 return this;
+            }
 
             builder.append(str);
             columnIndex += str.length();
