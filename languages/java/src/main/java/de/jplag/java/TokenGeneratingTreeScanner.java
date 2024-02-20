@@ -1,11 +1,8 @@
 package de.jplag.java;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
-import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.semantics.CodeSemantics;
@@ -68,8 +65,6 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     private final SourcePositions positions;
     private final CompilationUnitTree ast;
 
-    private final List<ParsingException> parsingExceptions = new ArrayList<>();
-
     private final VariableRegistry variableRegistry;
 
     private static final Set<String> IMMUTABLES = Set.of(
@@ -86,10 +81,6 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         this.positions = positions;
         this.ast = ast;
         this.variableRegistry = new VariableRegistry();
-    }
-
-    public List<ParsingException> getParsingExceptions() {
-        return parsingExceptions;
     }
 
     public void addToken(TokenType type, File file, long line, long column, long length, CodeSemantics semantics) {
@@ -549,7 +540,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
 
     @Override
     public Void visitErroneous(ErroneousTree node, Void unused) {
-        parsingExceptions.add(new ParsingException(file, "error while visiting %s".formatted(node)));
+        // do nothing, errors are managed elsewhere
         return super.visitErroneous(node, null);
     }
 
