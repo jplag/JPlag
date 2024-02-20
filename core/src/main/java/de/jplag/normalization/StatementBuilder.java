@@ -10,7 +10,7 @@ import de.jplag.Token;
  */
 class StatementBuilder {
 
-    private List<Token> tokens;
+    private final List<Token> tokens;
     private final int lineNumber;
 
     StatementBuilder(int lineNumber) {

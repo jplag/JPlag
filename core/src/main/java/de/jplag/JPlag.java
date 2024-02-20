@@ -75,8 +75,9 @@ public class JPlag {
             submissionSet.normalizeSubmissions();
         }
         int submissionCount = submissionSet.numberOfSubmissions();
-        if (submissionCount < 2)
+        if (submissionCount < 2) {
             throw new SubmissionException("Not enough valid submissions! (found " + submissionCount + " valid submissions)");
+        }
 
         // Compare valid submissions.
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
@@ -86,8 +87,9 @@ public class JPlag {
             result = new MatchMerging(options).mergeMatchesOf(result);
         }
 
-        if (logger.isInfoEnabled())
+        if (logger.isInfoEnabled()) {
             logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getDuration()));
+        }
         result.setClusteringResult(ClusteringFactory.getClusterings(result.getAllComparisons(), options.clusteringOptions()));
 
         logSkippedSubmissions(submissionSet, options);
