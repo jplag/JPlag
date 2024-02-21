@@ -19,7 +19,7 @@ JPlag finds pairwise similarities among a set of multiple programs. It can relia
 
 * 🏛️ [JPlag on Helmholtz RSD](https://helmholtz.software/software/jplag)
 
-* [Give us Feedback in a **short survey**](https://docs.google.com/forms/d/e/1FAIpQLSckqUlXhIlJ-H2jtu2VmGf_mJt4hcnHXaDlwhpUL3XG1I8UYw/viewform?usp=sf_link)
+* 🤩 [Give us Feedback in a **short survey**](https://docs.google.com/forms/d/e/1FAIpQLSckqUlXhIlJ-H2jtu2VmGf_mJt4hcnHXaDlwhpUL3XG1I8UYw/viewform?usp=sf_link)
 
 
 ## Supported Languages
