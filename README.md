@@ -13,7 +13,7 @@
 [![Java Version](https://img.shields.io/badge/java-SE%2021-yellowgreen)](#download-and-installation)
 
 
-JPlag finds pairwise similarities among a set of multiple programs. It can reliably detect software plagiarism and collusion in software development, even when obfuscated. All similarities are calculated locally, and no source code or plagiarism results are ever uploaded to the internet. JPlag supports a large number of programming and modeling languages. Moreover, it has rudimentary support for natural language.
+JPlag finds pairwise similarities among a set of multiple programs. It can reliably detect software plagiarism and collusion in software development, even when obfuscated. All similarities are calculated locally, and no source code or plagiarism results are ever uploaded to the internet. JPlag supports a large number of programming and modeling languages.
 
 * 📈 [JPlag Demo](https://jplag.github.io/Demo/)
 
