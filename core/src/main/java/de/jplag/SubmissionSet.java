@@ -125,7 +125,8 @@ public class SubmissionSet {
         logger.trace("----- Parsing basecode submission: " + baseCode.getName());
         if (!baseCode.parse(options.debugParser(), options.normalize())) {
             throw new BasecodeException("Could not successfully parse basecode submission!");
-        } else if (baseCode.getNumberOfTokens() < options.minimumTokenMatch()) {
+        }
+        if (baseCode.getNumberOfTokens() < options.minimumTokenMatch()) {
             throw new BasecodeException(String.format("Basecode submission contains %d token(s), which is less than the minimum match length (%d)!",
                     baseCode.getNumberOfTokens(), options.minimumTokenMatch()));
         }

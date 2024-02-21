@@ -61,12 +61,10 @@ public class RoutingTree {
         public void buildRouting(RoutingPath building, Routing routing) {
             if (building.isEmpty()) {
                 this.routing = routing;
+            } else if (this.children.containsKey(building.head())) {
+                this.children.get(building.head()).buildRouting(building.tail(), routing);
             } else {
-                if (this.children.containsKey(building.head())) {
-                    this.children.get(building.head()).buildRouting(building.tail(), routing);
-                } else {
-                    this.children.put(building.head(), new RoutingTreeNode(building.tail(), routing));
-                }
+                this.children.put(building.head(), new RoutingTreeNode(building.tail(), routing));
             }
         }
 
@@ -79,9 +77,8 @@ public class RoutingTree {
                 Pair<RoutingPath, Routing> childResolved = this.children.get(path.head()).resolve(path.tail());
                 if (childResolved == null && this.routing != null) {
                     return Pair.of(path, this.routing);
-                } else {
-                    return childResolved;
                 }
+                return childResolved;
             }
 
             return null;

@@ -194,16 +194,18 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
     @Override
     public List<String> fileSuffixes() {
         var language = language();
-        if ((fileSuffixes == null || fileSuffixes.isEmpty()) && language != null)
+        if ((fileSuffixes == null || fileSuffixes.isEmpty()) && language != null) {
             return Arrays.stream(language.suffixes()).toList();
+        }
         return fileSuffixes == null ? null : Collections.unmodifiableList(fileSuffixes);
     }
 
     @Override
     public Integer minimumTokenMatch() {
         var language = language();
-        if (minimumTokenMatch == null && language != null)
+        if (minimumTokenMatch == null && language != null) {
             return language.minimumTokenMatch();
+        }
         return minimumTokenMatch;
     }
 
@@ -224,7 +226,8 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
         if (similarityThreshold > 1) {
             logger.warn("Maximum threshold of 1 used instead of {}", similarityThreshold);
             return 1;
-        } else if (similarityThreshold < 0) {
+        }
+        if (similarityThreshold < 0) {
             logger.warn("Minimum threshold of 0 used instead of {}", similarityThreshold);
             return 0;
         } else {
@@ -313,19 +316,18 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
         File baseCodeAsAbsolutePath = new File(baseCodeSubmissionName);
         if (baseCodeAsAbsolutePath.exists()) {
             return baseCodeAsAbsolutePath;
-        } else {
-            String normalizedName = baseCodeSubmissionName;
-            while (normalizedName.startsWith(File.separator)) {
-                normalizedName = normalizedName.substring(1);
-            }
-            while (normalizedName.endsWith(File.separator)) {
-                normalizedName = normalizedName.substring(0, normalizedName.length() - 1);
-            }
-            if (normalizedName.isEmpty() || normalizedName.contains(File.separator) || normalizedName.contains(".")) {
-                throw new BasecodeException(
-                        "The basecode directory name \"" + normalizedName + "\" cannot contain dots! Please migrate to the path-based API.");
-            }
-            return new File(submissionDirectory, baseCodeSubmissionName);
         }
+        String normalizedName = baseCodeSubmissionName;
+        while (normalizedName.startsWith(File.separator)) {
+            normalizedName = normalizedName.substring(1);
+        }
+        while (normalizedName.endsWith(File.separator)) {
+            normalizedName = normalizedName.substring(0, normalizedName.length() - 1);
+        }
+        if (normalizedName.isEmpty() || normalizedName.contains(File.separator) || normalizedName.contains(".")) {
+            throw new BasecodeException(
+                    "The basecode directory name \"" + normalizedName + "\" cannot contain dots! Please migrate to the path-based API.");
+        }
+        return new File(submissionDirectory, baseCodeSubmissionName);
     }
 }

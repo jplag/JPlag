@@ -1,6 +1,10 @@
 package de.jplag.llvmir;
 
-import static de.jplag.llvmir.LLVMIRTokenType.*;
+import static de.jplag.llvmir.LLVMIRTokenType.CATCH_PAD;
+import static de.jplag.llvmir.LLVMIRTokenType.CATCH_RETURN;
+import static de.jplag.llvmir.LLVMIRTokenType.CATCH_SWITCH;
+import static de.jplag.llvmir.LLVMIRTokenType.CLEAN_UP_PAD;
+import static de.jplag.llvmir.LLVMIRTokenType.CLEAN_UP_RETURN;
 
 import java.util.Arrays;
 import java.util.List;

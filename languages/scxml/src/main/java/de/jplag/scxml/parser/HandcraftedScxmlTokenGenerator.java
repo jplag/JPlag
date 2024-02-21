@@ -1,6 +1,14 @@
 package de.jplag.scxml.parser;
 
-import static de.jplag.scxml.ScxmlTokenType.*;
+import static de.jplag.scxml.ScxmlTokenType.GUARDED_TRANSITION;
+import static de.jplag.scxml.ScxmlTokenType.INITIAL_REGION;
+import static de.jplag.scxml.ScxmlTokenType.INITIAL_STATE;
+import static de.jplag.scxml.ScxmlTokenType.REGION;
+import static de.jplag.scxml.ScxmlTokenType.STATE;
+import static de.jplag.scxml.ScxmlTokenType.STATE_END;
+import static de.jplag.scxml.ScxmlTokenType.TIMED_TRANSITION;
+import static de.jplag.scxml.ScxmlTokenType.TRANSITION;
+import static de.jplag.scxml.ScxmlTokenType.TRANSITION_END;
 
 import de.jplag.scxml.parser.model.State;
 import de.jplag.scxml.parser.model.Transition;

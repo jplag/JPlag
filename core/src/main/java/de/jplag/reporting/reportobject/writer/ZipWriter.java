@@ -69,6 +69,7 @@ public class ZipWriter implements JPlagResultWriter {
         }
     }
 
+    @Override
     public void close() {
         try {
             this.file.close();

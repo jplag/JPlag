@@ -28,11 +28,10 @@ public final class CollectedLoggerFactory implements ILoggerFactory {
         CollectedLogger simpleLogger = loggerMap.get(name);
         if (simpleLogger != null) {
             return simpleLogger;
-        } else {
-            CollectedLogger newInstance = new CollectedLogger(name);
-            Logger oldInstance = loggerMap.putIfAbsent(name, newInstance);
-            return oldInstance == null ? newInstance : oldInstance;
         }
+        CollectedLogger newInstance = new CollectedLogger(name);
+        Logger oldInstance = loggerMap.putIfAbsent(name, newInstance);
+        return oldInstance == null ? newInstance : oldInstance;
     }
 
     /**

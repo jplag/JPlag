@@ -4,7 +4,7 @@ import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_DESCRIPTION
 import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_OPTION_LIST;
 import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_SYNOPSIS;
 
-import java.awt.*;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -52,12 +52,12 @@ public final class CLI {
 
     private static final Random RANDOM = new SecureRandom();
 
-    private static final String CREDITS = "Created by IPD Tichy, Guido Malpohl, and others. JPlag logo designed by Sandro Koch. Currently maintained by Sebastian Hahner and Timur Saglam.";
+    private static final String CREDITS = "Created by IPD Tichy, Guido Malpohl, and others. Maintained by Timur Saglam and Sebastian Hahner. Logo by Sandro Koch.";
 
     private static final String[] DESCRIPTIONS = {"Detecting Software Plagiarism", "Software-Archaeological Playground", "Since 1996",
             "Scientifically Published", "Maintained by SDQ", "RIP Structure and Table", "What else?", "You have been warned!", "Since Java 1.0",
-            "More Abstract than Tree", "Students Nightmare", "No, changing variable names does not work", "The tech is out there!",
-            "Developed by plagiarism experts."};
+            "More Abstract than Tree", "Students Nightmare", "No, changing variable names does not work...", "The tech is out there!",
+            "Developed by plagiarism experts.", "State of the Art Obfuscation Resilience", "www.helmholtz.software/software/jplag"};
 
     private static final String OPTION_LIST_HEADING = "Parameter descriptions: ";
 
@@ -287,9 +287,8 @@ public final class CLI {
         String optionValue = this.options.resultFile;
         if (optionValue.endsWith(DEFAULT_FILE_ENDING)) {
             return optionValue;
-        } else {
-            return optionValue + DEFAULT_FILE_ENDING;
         }
+        return optionValue + DEFAULT_FILE_ENDING;
     }
 
     private String getResultFileBaseName() {

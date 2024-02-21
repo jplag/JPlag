@@ -1,6 +1,47 @@
 package de.jplag.cpp;
 
-import static de.jplag.cpp.CPPTokenType.*;
+import static de.jplag.cpp.CPPTokenType.APPLY;
+import static de.jplag.cpp.CPPTokenType.ASSIGN;
+import static de.jplag.cpp.CPPTokenType.BRACED_INIT_BEGIN;
+import static de.jplag.cpp.CPPTokenType.BRACED_INIT_END;
+import static de.jplag.cpp.CPPTokenType.BREAK;
+import static de.jplag.cpp.CPPTokenType.CASE;
+import static de.jplag.cpp.CPPTokenType.CATCH_BEGIN;
+import static de.jplag.cpp.CPPTokenType.CATCH_END;
+import static de.jplag.cpp.CPPTokenType.CLASS_BEGIN;
+import static de.jplag.cpp.CPPTokenType.CLASS_END;
+import static de.jplag.cpp.CPPTokenType.CONTINUE;
+import static de.jplag.cpp.CPPTokenType.DEFAULT;
+import static de.jplag.cpp.CPPTokenType.DO_BEGIN;
+import static de.jplag.cpp.CPPTokenType.DO_END;
+import static de.jplag.cpp.CPPTokenType.ELSE;
+import static de.jplag.cpp.CPPTokenType.ENUM_BEGIN;
+import static de.jplag.cpp.CPPTokenType.ENUM_END;
+import static de.jplag.cpp.CPPTokenType.FOR_BEGIN;
+import static de.jplag.cpp.CPPTokenType.FOR_END;
+import static de.jplag.cpp.CPPTokenType.FUNCTION_BEGIN;
+import static de.jplag.cpp.CPPTokenType.FUNCTION_END;
+import static de.jplag.cpp.CPPTokenType.GENERIC;
+import static de.jplag.cpp.CPPTokenType.GOTO;
+import static de.jplag.cpp.CPPTokenType.IF_BEGIN;
+import static de.jplag.cpp.CPPTokenType.IF_END;
+import static de.jplag.cpp.CPPTokenType.NEWARRAY;
+import static de.jplag.cpp.CPPTokenType.NEWCLASS;
+import static de.jplag.cpp.CPPTokenType.QUESTIONMARK;
+import static de.jplag.cpp.CPPTokenType.RETURN;
+import static de.jplag.cpp.CPPTokenType.STATIC_ASSERT;
+import static de.jplag.cpp.CPPTokenType.STRUCT_BEGIN;
+import static de.jplag.cpp.CPPTokenType.STRUCT_END;
+import static de.jplag.cpp.CPPTokenType.SWITCH_BEGIN;
+import static de.jplag.cpp.CPPTokenType.SWITCH_END;
+import static de.jplag.cpp.CPPTokenType.THROW;
+import static de.jplag.cpp.CPPTokenType.TRY_BEGIN;
+import static de.jplag.cpp.CPPTokenType.TRY_END;
+import static de.jplag.cpp.CPPTokenType.UNION_BEGIN;
+import static de.jplag.cpp.CPPTokenType.UNION_END;
+import static de.jplag.cpp.CPPTokenType.VARDEF;
+import static de.jplag.cpp.CPPTokenType.WHILE_BEGIN;
+import static de.jplag.cpp.CPPTokenType.WHILE_END;
 
 import java.util.function.Function;
 
@@ -11,7 +52,40 @@ import de.jplag.TokenType;
 import de.jplag.antlr.AbstractAntlrListener;
 import de.jplag.antlr.ContextVisitor;
 import de.jplag.cpp.grammar.CPP14Parser;
-import de.jplag.cpp.grammar.CPP14Parser.*;
+import de.jplag.cpp.grammar.CPP14Parser.AssignmentOperatorContext;
+import de.jplag.cpp.grammar.CPP14Parser.BraceOrEqualInitializerContext;
+import de.jplag.cpp.grammar.CPP14Parser.BracedInitListContext;
+import de.jplag.cpp.grammar.CPP14Parser.ClassKeyContext;
+import de.jplag.cpp.grammar.CPP14Parser.ClassSpecifierContext;
+import de.jplag.cpp.grammar.CPP14Parser.ConditionalExpressionContext;
+import de.jplag.cpp.grammar.CPP14Parser.DeclaratorContext;
+import de.jplag.cpp.grammar.CPP14Parser.EnumSpecifierContext;
+import de.jplag.cpp.grammar.CPP14Parser.EnumeratorDefinitionContext;
+import de.jplag.cpp.grammar.CPP14Parser.FunctionBodyContext;
+import de.jplag.cpp.grammar.CPP14Parser.FunctionDefinitionContext;
+import de.jplag.cpp.grammar.CPP14Parser.HandlerContext;
+import de.jplag.cpp.grammar.CPP14Parser.InitDeclaratorContext;
+import de.jplag.cpp.grammar.CPP14Parser.IterationStatementContext;
+import de.jplag.cpp.grammar.CPP14Parser.JumpStatementContext;
+import de.jplag.cpp.grammar.CPP14Parser.LabeledStatementContext;
+import de.jplag.cpp.grammar.CPP14Parser.MemberDeclaratorContext;
+import de.jplag.cpp.grammar.CPP14Parser.MemberSpecificationContext;
+import de.jplag.cpp.grammar.CPP14Parser.MemberdeclarationContext;
+import de.jplag.cpp.grammar.CPP14Parser.NewExpressionContext;
+import de.jplag.cpp.grammar.CPP14Parser.NewTypeIdContext;
+import de.jplag.cpp.grammar.CPP14Parser.NoPointerDeclaratorContext;
+import de.jplag.cpp.grammar.CPP14Parser.ParameterDeclarationContext;
+import de.jplag.cpp.grammar.CPP14Parser.PostfixExpressionContext;
+import de.jplag.cpp.grammar.CPP14Parser.SelectionStatementContext;
+import de.jplag.cpp.grammar.CPP14Parser.SimpleDeclarationContext;
+import de.jplag.cpp.grammar.CPP14Parser.SimpleTypeSpecifierContext;
+import de.jplag.cpp.grammar.CPP14Parser.StaticAssertDeclarationContext;
+import de.jplag.cpp.grammar.CPP14Parser.TemplateArgumentContext;
+import de.jplag.cpp.grammar.CPP14Parser.TemplateDeclarationContext;
+import de.jplag.cpp.grammar.CPP14Parser.ThrowExpressionContext;
+import de.jplag.cpp.grammar.CPP14Parser.TryBlockContext;
+import de.jplag.cpp.grammar.CPP14Parser.UnaryExpressionContext;
+import de.jplag.cpp.grammar.CPP14Parser.UnqualifiedIdContext;
 import de.jplag.semantics.CodeSemantics;
 import de.jplag.semantics.VariableAccessType;
 import de.jplag.semantics.VariableRegistry;
@@ -90,14 +164,16 @@ class CPPListener extends AbstractAntlrListener {
             }
             SimpleDeclarationContext parent = getAncestor(rule, SimpleDeclarationContext.class, TemplateArgumentContext.class,
                     FunctionDefinitionContext.class);
-            if (parent == null)
+            if (parent == null) {
                 return false;
+            }
             NoPointerDeclaratorContext noPointerDecl = getDescendant(parent, NoPointerDeclaratorContext.class);
             return !noPointerInFunctionCallContext(noPointerDecl) && !hasAncestor(rule, NewTypeIdContext.class);
         }).map(VARDEF).withSemantics(CodeSemantics::new).onEnter((context, variableRegistry) -> {
             SimpleDeclarationContext parent = getAncestor(context, SimpleDeclarationContext.class);
-            if (parent == null)  // at this point we know parent exists
+            if (parent == null) { // at this point we know parent exists
                 throw new IllegalStateException();
+            }
             // boolean typeMutable = context.theTypeName() != null; // block is duplicate to member variable register
             // possible issue: what if multiple variables are declared in the same line?
             variableRegistry.setNextVariableAccessType(VariableAccessType.WRITE);

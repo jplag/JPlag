@@ -162,7 +162,6 @@ public class SwiftSupport {
 
     public static boolean isOpNext(TokenStream tokens) {
         int start = tokens.index();
-        Token lt = tokens.get(start);
         int stop = getLastOpTokenIndex(tokens);
         return stop != -1;
         // System.out.printf("isOpNext: i=%d t='%s'", start, lt.getText());

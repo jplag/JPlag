@@ -92,6 +92,7 @@ public class ReportViewer implements HttpHandler {
      * @param exchange The http reqest
      * @throws IOException If the IO handling goes wrong
      */
+    @Override
     public void handle(HttpExchange exchange) throws IOException {
         RoutingPath path = new RoutingPath(exchange.getRequestURI().getPath());
         Pair<RoutingPath, Routing> resolved = this.routingTree.resolveRouting(path);

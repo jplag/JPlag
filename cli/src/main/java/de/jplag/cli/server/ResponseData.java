@@ -40,8 +40,7 @@ public record ResponseData(InputStream stream, ContentType contentType, int size
 
         if (inputStream != null) {
             return new ResponseData(inputStream, ContentType.fromPath(url));
-        } else {
-            return null;
         }
+        return null;
     }
 }

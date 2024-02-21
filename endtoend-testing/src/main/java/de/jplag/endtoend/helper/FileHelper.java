@@ -92,10 +92,7 @@ public class FileHelper {
                     }
                 }
 
-                if (totalSizeArchive > ZIP_THRESHOLD_SIZE) {
-                    throw new IllegalStateException(String.format(ZIP_BOMB_ERROR_MESSAGE, zip.getAbsolutePath()));
-                }
-                if (totalEntriesArchive > ZIP_THRESHOLD_ENTRIES) {
+                if ((totalSizeArchive > ZIP_THRESHOLD_SIZE) || (totalEntriesArchive > ZIP_THRESHOLD_ENTRIES)) {
                     throw new IllegalStateException(String.format(ZIP_BOMB_ERROR_MESSAGE, zip.getAbsolutePath()));
                 }
             }

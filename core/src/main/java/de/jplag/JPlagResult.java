@@ -1,5 +1,6 @@
 package de.jplag;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.ToDoubleFunction;
 
@@ -27,7 +28,7 @@ public class JPlagResult {
 
     public JPlagResult(List<JPlagComparison> comparisons, SubmissionSet submissions, long durationInMillis, JPlagOptions options) {
         // sort by similarity (descending)
-        this.comparisons = comparisons.stream().sorted((first, second) -> Double.compare(second.similarity(), first.similarity())).toList();
+        this.comparisons = comparisons.stream().sorted(Comparator.comparing(JPlagComparison::similarity).reversed()).toList();
         this.submissions = submissions;
         this.durationInMillis = durationInMillis;
         this.options = options;

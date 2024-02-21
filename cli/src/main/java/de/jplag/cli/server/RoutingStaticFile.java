@@ -36,8 +36,7 @@ public class RoutingStaticFile implements Routing {
     public ResponseData fetchData(RoutingPath subPath, HttpExchange request, ReportViewer viewer) {
         if (this.data != null) {
             return new ResponseData(new ByteArrayInputStream(this.data), contentType, this.data.length);
-        } else {
-            return null;
         }
+        return null;
     }
 }

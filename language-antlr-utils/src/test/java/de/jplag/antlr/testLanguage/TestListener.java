@@ -1,9 +1,18 @@
 package de.jplag.antlr.testLanguage;
 
-import static de.jplag.antlr.testLanguage.TestTokenType.*;
+import static de.jplag.antlr.testLanguage.TestTokenType.ADDITION;
+import static de.jplag.antlr.testLanguage.TestTokenType.NUMBER;
+import static de.jplag.antlr.testLanguage.TestTokenType.SUBTRACTION;
+import static de.jplag.antlr.testLanguage.TestTokenType.SUB_EXPRESSION_BEGIN;
+import static de.jplag.antlr.testLanguage.TestTokenType.SUB_EXPRESSION_END;
+import static de.jplag.antlr.testLanguage.TestTokenType.VARDEF;
 
-import de.jplag.antlr.*;
-import de.jplag.antlr.TestParser.*;
+import de.jplag.antlr.AbstractAntlrListener;
+import de.jplag.antlr.TestParser;
+import de.jplag.antlr.TestParser.CalcExpressionContext;
+import de.jplag.antlr.TestParser.OperatorContext;
+import de.jplag.antlr.TestParser.SubExpressionContext;
+import de.jplag.antlr.TestParser.VarDefContext;
 import de.jplag.semantics.CodeSemantics;
 import de.jplag.semantics.VariableScope;
 

@@ -17,14 +17,14 @@ import de.jplag.semantics.Variable;
  * Constructs the normalization graph.
  */
 class NormalizationGraphConstructor {
-    private SimpleDirectedGraph<Statement, MultipleEdge> graph;
+    private final SimpleDirectedGraph<Statement, MultipleEdge> graph;
     private int bidirectionalBlockDepth;
-    private Collection<Statement> fullPositionSignificanceIncoming;
+    private final Collection<Statement> fullPositionSignificanceIncoming;
     private Statement lastFullPositionSignificance;
     private Statement lastPartialPositionSignificance;
-    private Map<Variable, Collection<Statement>> variableReads;
-    private Map<Variable, Collection<Statement>> variableWrites;
-    private Set<Statement> inCurrentBidirectionalBlock;
+    private final Map<Variable, Collection<Statement>> variableReads;
+    private final Map<Variable, Collection<Statement>> variableWrites;
+    private final Set<Statement> inCurrentBidirectionalBlock;
     private Statement current;
 
     NormalizationGraphConstructor(List<Token> tokens) {
@@ -57,24 +57,28 @@ class NormalizationGraphConstructor {
         processPartialPositionSignificance();
         processReads();
         processWrites();
-        for (Variable variable : current.semantics().reads())
+        for (Variable variable : current.semantics().reads()) {
             addVariableToMap(variableReads, variable);
-        for (Variable variable : current.semantics().writes())
+        }
+        for (Variable variable : current.semantics().writes()) {
             addVariableToMap(variableWrites, variable);
+        }
     }
 
     private void processBidirectionalBlock() {
         bidirectionalBlockDepth += current.semantics().bidirectionalBlockDepthChange();
-        if (bidirectionalBlockDepth > 0)
+        if (bidirectionalBlockDepth > 0) {
             inCurrentBidirectionalBlock.add(current);
-        else
+        } else {
             inCurrentBidirectionalBlock.clear();
+        }
     }
 
     private void processFullPositionSignificance() {
         if (current.semantics().hasFullPositionSignificance()) {
-            for (Statement node : fullPositionSignificanceIncoming)
+            for (Statement node : fullPositionSignificanceIncoming) {
                 addIncomingEdgeToCurrent(node, EdgeType.POSITION_SIGNIFICANCE_FULL, null);
+            }
             fullPositionSignificanceIncoming.clear();
             lastFullPositionSignificance = current;
         } else if (lastFullPositionSignificance != null) {
@@ -94,15 +98,17 @@ class NormalizationGraphConstructor {
 
     private void processReads() {
         for (Variable variable : current.semantics().reads()) {
-            for (Statement node : variableWrites.getOrDefault(variable, Set.of()))
+            for (Statement node : variableWrites.getOrDefault(variable, Set.of())) {
                 addIncomingEdgeToCurrent(node, EdgeType.VARIABLE_FLOW, variable);
+            }
         }
     }
 
     private void processWrites() {
         for (Variable variable : current.semantics().writes()) {
-            for (Statement node : variableWrites.getOrDefault(variable, Set.of()))
+            for (Statement node : variableWrites.getOrDefault(variable, Set.of())) {
                 addIncomingEdgeToCurrent(node, EdgeType.VARIABLE_ORDER, variable);
+            }
             for (Statement node : variableReads.getOrDefault(variable, Set.of())) {
                 EdgeType edgeType = inCurrentBidirectionalBlock.contains(node) ? //
                         EdgeType.VARIABLE_REVERSE_FLOW : EdgeType.VARIABLE_ORDER;

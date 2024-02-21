@@ -41,24 +41,28 @@ class Statement implements Comparable<Statement> {
     @Override
     public int compareTo(Statement other) {
         int sizeComp = Integer.compare(this.tokens.size(), other.tokens.size());
-        if (sizeComp != 0)
+        if (sizeComp != 0) {
             return -sizeComp; // bigger size should come first
+        }
         Iterator<Token> myTokens = this.tokens.iterator();
         Iterator<Token> otherTokens = other.tokens.iterator();
         for (int i = 0; i < this.tokens.size(); i++) {
             int tokenComp = Integer.compare(tokenOrdinal(myTokens.next()), tokenOrdinal(otherTokens.next()));
-            if (tokenComp != 0)
+            if (tokenComp != 0) {
                 return tokenComp;
+            }
         }
         return 0;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null || getClass() != obj.getClass())
+        }
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
+        }
         return tokens.equals(((Statement) obj).tokens);
     }
 

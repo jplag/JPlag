@@ -1,7 +1,17 @@
 package de.jplag.c.experimental;
 
 import static de.jplag.SharedTokenType.FILE_END;
-import static de.jplag.c.CTokenType.*;
+import static de.jplag.c.CTokenType.C_BLOCK_BEGIN;
+import static de.jplag.c.CTokenType.C_BLOCK_END;
+import static de.jplag.c.CTokenType.C_BREAK;
+import static de.jplag.c.CTokenType.C_CASE;
+import static de.jplag.c.CTokenType.C_CONTINUE;
+import static de.jplag.c.CTokenType.C_FOR;
+import static de.jplag.c.CTokenType.C_GOTO;
+import static de.jplag.c.CTokenType.C_IF;
+import static de.jplag.c.CTokenType.C_RETURN;
+import static de.jplag.c.CTokenType.C_THROW;
+import static de.jplag.c.CTokenType.C_WHILE;
 
 import java.util.List;
 import java.util.ListIterator;

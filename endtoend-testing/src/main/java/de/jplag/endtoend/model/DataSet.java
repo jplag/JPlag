@@ -57,7 +57,8 @@ public record DataSet(@JsonProperty(required = true) String name,
                 location = String.format(DEFAULT_SOURCE_DIRECTORY, this.name);
             }
             return new File(TestDirectoryConstants.BASE_PATH_TO_RESOURCES.toFile(), location);
-        } else if (actualStorageFormat == StorageFormat.ZIP) {
+        }
+        if (actualStorageFormat == StorageFormat.ZIP) {
             String location = sourceLocation;
             if (location == null) {
                 location = String.format(DEFAULT_SOURCE_ZIP, this.name);
@@ -75,9 +76,8 @@ public record DataSet(@JsonProperty(required = true) String name,
     public File getResultFile() {
         if (resultFile == null) {
             return new File(TestDirectoryConstants.BASE_PATH_TO_RESULT_JSON.toFile(), String.format(DEFAULT_RESULT_FILE_NAME, this.name));
-        } else {
-            return new File(TestDirectoryConstants.BASE_PATH_TO_RESULT_JSON.toFile(), resultFile);
         }
+        return new File(TestDirectoryConstants.BASE_PATH_TO_RESULT_JSON.toFile(), resultFile);
     }
 
     /**

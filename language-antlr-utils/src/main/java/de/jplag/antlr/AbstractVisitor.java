@@ -2,7 +2,11 @@ package de.jplag.antlr;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.*;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import org.antlr.v4.runtime.Token;
 import org.slf4j.Logger;
