@@ -122,7 +122,7 @@ public class CliOptions implements Runnable {
         public boolean enabled = MergingOptions.DEFAULT_ENABLED;
 
         @Option(names = {
-                "--neighbor-length"}, description = "Minimal length of neighboring matches to be merged (between 1 and minTokenMatch, default: ${DEFAULT-VALUE}).")
+                "--neighbor-length"}, description = "Minimal length of neighboring matches to be merged (between 1 and minTokenMatch, default: ${DEFAULT-VALUE}).%n")
         public int minimumNeighborLength = MergingOptions.DEFAULT_NEIGHBOR_LENGTH;
 
         @Option(names = {
