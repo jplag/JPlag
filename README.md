@@ -45,6 +45,7 @@ All supported languages and their supported versions are listed below.
 | [Scheme](http://www.scheme-reports.org)                |                                                                                      ? | scheme            |                               legacy                                |  JavaCC   |
 | [EMF Metamodel](https://www.eclipse.org/modeling/emf/) |                                                                                 2.25.0 | emf               |                                beta                                 |    EMF    |
 | [EMF Model](https://www.eclipse.org/modeling/emf/)     |                                                                                 2.25.0 | emf-model         |                                alpha                                |    EMF    |
+| [SCXML](https://www.w3.org/TR/scxml/)                  |                                                                                    1.0 | scxml             |                                alpha                                |    XML    |
 | Text (naive)                                           |                                                                                      - | text              |                               legacy                                |  CoreNLP  |
 
 ## Download and Installation
@@ -129,7 +130,7 @@ Subsequence Match Merging
       --neighbor-length=<minimumNeighborLength>
                         Minimal length of neighboring matches to be merged (between 1 and minTokenMatch, default: 2).
 
-Subcommands (supported languages)
+Subcommands (supported languages):
   c
   cpp
   csharp
