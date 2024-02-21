@@ -86,7 +86,7 @@
         <emfatic.version>1.0.0</emfatic.version>
 
         <!-- The Revision of JPlag -->
-        <revision>5.0.0</revision>
+        <revision>5.1.0-SNAPSHOT</revision>
     </properties>
 
     <dependencyManagement>
