@@ -14,7 +14,7 @@ import de.jplag.emf.dynamic.parser.DynamicEcoreParser;
 import de.jplag.emf.model.EmfModelLanguage;
 import de.jplag.emf.util.AbstractModelView;
 import de.jplag.emf.util.EMFUtil;
-import de.jplag.emf.util.MetamodelTreeView;
+import de.jplag.emf.util.GenericEmfTreeView;
 
 /**
  * Parser for EMF metamodels based on dynamically created tokens.
@@ -36,7 +36,7 @@ public class DynamicModelParser extends DynamicEcoreParser {
     }
 
     @Override
-    protected void parseModelFile(File file) throws ParsingException {
+    protected void parseModelFile(File file, boolean normalize) throws ParsingException {
         // implicit assumption: Metamodel gets parsed first!
         if (file.getName().endsWith(EmfLanguage.FILE_ENDING)) {
             parseMetamodelFile(file);
@@ -46,7 +46,7 @@ public class DynamicModelParser extends DynamicEcoreParser {
             if (metapackages.isEmpty()) {
                 logger.warn(METAPACKAGE_WARNING, file.getName());
             }
-            super.parseModelFile(file);
+            super.parseModelFile(file, normalize);
         }
     }
 
@@ -57,7 +57,7 @@ public class DynamicModelParser extends DynamicEcoreParser {
 
     @Override
     protected AbstractModelView createView(File file, Resource modelResource) {
-        return new MetamodelTreeView(file, modelResource);
+        return new GenericEmfTreeView(file, modelResource);
     }
 
     private void parseMetamodelFile(File file) throws ParsingException {
@@ -65,15 +65,14 @@ public class DynamicModelParser extends DynamicEcoreParser {
         Resource modelResource = EMFUtil.loadModelResource(file);
         if (modelResource == null) {
             throw new ParsingException(file, METAMODEL_LOADING_ERROR);
-        } else {
-            for (EObject object : modelResource.getContents()) {
-                if (object instanceof EPackage ePackage) {
-                    metapackages.add(ePackage);
-                } else {
-                    logger.error(METAPACKAGE_ERROR, object);
-                }
-            }
-            EMFUtil.registerEPackageURIs(metapackages);
         }
+        for (EObject object : modelResource.getContents()) {
+            if (object instanceof EPackage ePackage) {
+                metapackages.add(ePackage);
+            } else {
+                logger.error(METAPACKAGE_ERROR, object);
+            }
+        }
+        EMFUtil.registerEPackageURIs(metapackages);
     }
 }

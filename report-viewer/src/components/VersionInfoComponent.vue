@@ -1,5 +1,5 @@
 <template>
-  <div class="text-sm font-bold">
+  <div class="text-left text-sm font-bold">
     <div v-if="!isDemo">
       <div v-if="reportViewerVersion.isInvalid()">Could not load version information</div>
       <div v-else-if="reportViewerVersion.isDevVersion()">
@@ -32,6 +32,7 @@
       <div v-else>Demo of JPlag v{{ reportViewerVersion.toString() }}</div>
       <div>Displays the result of JPlag on the Progpedia dataset.</div>
     </div>
+    <RepositoryReference :override-style="false" />
   </div>
 </template>
 
@@ -39,10 +40,10 @@
 import { Version } from '@/model/Version'
 import { ref } from 'vue'
 import { minimalReportVersion, reportViewerVersion } from '@/model/Version'
+import RepositoryReference from './RepositoryReference.vue'
 
 const newestVersion = ref(new Version(-1, -1, -1))
 const isDemo = import.meta.env.MODE == 'demo'
-console.log('isDemo', isDemo)
 
 fetch('https://api.github.com/repos/jplag/JPlag/releases/latest')
   .then((response) => response.json())

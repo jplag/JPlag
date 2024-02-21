@@ -71,9 +71,13 @@ public class JPlag {
         // Parse and validate submissions.
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
+        if (options.normalize() && options.language().supportsNormalization() && options.language().requiresCoreNormalization()) {
+            submissionSet.normalizeSubmissions();
+        }
         int submissionCount = submissionSet.numberOfSubmissions();
-        if (submissionCount < 2)
+        if (submissionCount < 2) {
             throw new SubmissionException("Not enough valid submissions! (found " + submissionCount + " valid submissions)");
+        }
 
         // Compare valid submissions.
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
@@ -83,8 +87,9 @@ public class JPlag {
             result = new MatchMerging(options).mergeMatchesOf(result);
         }
 
-        if (logger.isInfoEnabled())
+        if (logger.isInfoEnabled()) {
             logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getDuration()));
+        }
         result.setClusteringResult(ClusteringFactory.getClusterings(result.getAllComparisons(), options.clusteringOptions()));
 
         logSkippedSubmissions(submissionSet, options);
@@ -103,6 +108,10 @@ public class JPlag {
     }
 
     private static void checkForConfigurationConsistency(JPlagOptions options) throws RootDirectoryException {
+        if (options.normalize() && !options.language().supportsNormalization()) {
+            logger.error(String.format("The language %s cannot be used with normalization.", options.language().getName()));
+        }
+
         List<String> duplicateNames = getDuplicateSubmissionFolderNames(options);
         if (duplicateNames.size() > 0) {
             throw new RootDirectoryException(String.format("Duplicate root directory names found: %s", String.join(", ", duplicateNames)));

@@ -1,6 +1,10 @@
 package de.jplag.antlr;
 
-import static de.jplag.antlr.testLanguage.TestTokenType.*;
+import static de.jplag.antlr.testLanguage.TestTokenType.ADDITION;
+import static de.jplag.antlr.testLanguage.TestTokenType.NUMBER;
+import static de.jplag.antlr.testLanguage.TestTokenType.SUBTRACTION;
+import static de.jplag.antlr.testLanguage.TestTokenType.SUB_EXPRESSION_BEGIN;
+import static de.jplag.antlr.testLanguage.TestTokenType.SUB_EXPRESSION_END;
 
 import de.jplag.antlr.testLanguage.TestLanguage;
 import de.jplag.antlr.testLanguage.TestTokenType;

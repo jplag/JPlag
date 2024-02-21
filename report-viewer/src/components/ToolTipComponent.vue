@@ -14,11 +14,12 @@
 </template>
 
 <script setup lang="ts">
+import type { ToolTipDirection } from '@/model/ui/ToolTip'
 import { computed, type PropType, type StyleValue } from 'vue'
 
 const props = defineProps({
   direction: {
-    type: String as PropType<'top' | 'bottom' | 'left' | 'right'>,
+    type: String as PropType<ToolTipDirection>,
     required: false,
     default: 'top'
   }

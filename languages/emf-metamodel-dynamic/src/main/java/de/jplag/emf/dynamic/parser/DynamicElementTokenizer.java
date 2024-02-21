@@ -1,7 +1,7 @@
 package de.jplag.emf.dynamic.parser;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedHashSet;
+import java.util.SequencedSet;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -15,14 +15,7 @@ import de.jplag.emf.parser.ModelingElementTokenizer;
  */
 public class DynamicElementTokenizer implements ModelingElementTokenizer {
 
-    private final Set<TokenType> knownTokenTypes;
-
-    /**
-     * Creates the tokenizer, initially with an empty token set.
-     */
-    public DynamicElementTokenizer() {
-        knownTokenTypes = new HashSet<>();
-    }
+    private static final SequencedSet<TokenType> knownTokenTypes = new LinkedHashSet<>();
 
     @Override
     public TokenType element2Token(EObject modelElement) {
@@ -32,7 +25,7 @@ public class DynamicElementTokenizer implements ModelingElementTokenizer {
     }
 
     @Override
-    public Set<TokenType> allTokenTypes() {
-        return Set.copyOf(knownTokenTypes);
+    public SequencedSet<TokenType> allTokenTypes() {
+        return new LinkedHashSet<>(knownTokenTypes);
     }
 }

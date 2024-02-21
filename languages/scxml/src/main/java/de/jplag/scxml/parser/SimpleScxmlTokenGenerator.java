@@ -1,6 +1,24 @@
 package de.jplag.scxml.parser;
 
-import static de.jplag.scxml.ScxmlTokenType.*;
+import static de.jplag.scxml.ScxmlTokenType.ACTION_END;
+import static de.jplag.scxml.ScxmlTokenType.ASSIGNMENT;
+import static de.jplag.scxml.ScxmlTokenType.CANCEL;
+import static de.jplag.scxml.ScxmlTokenType.ELSE;
+import static de.jplag.scxml.ScxmlTokenType.ELSE_END;
+import static de.jplag.scxml.ScxmlTokenType.ELSE_IF;
+import static de.jplag.scxml.ScxmlTokenType.ELSE_IF_END;
+import static de.jplag.scxml.ScxmlTokenType.FOREACH;
+import static de.jplag.scxml.ScxmlTokenType.IF;
+import static de.jplag.scxml.ScxmlTokenType.IF_END;
+import static de.jplag.scxml.ScxmlTokenType.ON_ENTRY;
+import static de.jplag.scxml.ScxmlTokenType.ON_EXIT;
+import static de.jplag.scxml.ScxmlTokenType.RAISE;
+import static de.jplag.scxml.ScxmlTokenType.SCRIPT;
+import static de.jplag.scxml.ScxmlTokenType.SEND;
+import static de.jplag.scxml.ScxmlTokenType.STATE;
+import static de.jplag.scxml.ScxmlTokenType.STATE_END;
+import static de.jplag.scxml.ScxmlTokenType.TRANSITION;
+import static de.jplag.scxml.ScxmlTokenType.TRANSITION_END;
 import static java.util.Map.entry;
 
 import java.util.List;
@@ -11,7 +29,14 @@ import de.jplag.scxml.parser.model.State;
 import de.jplag.scxml.parser.model.Statechart;
 import de.jplag.scxml.parser.model.StatechartElement;
 import de.jplag.scxml.parser.model.Transition;
-import de.jplag.scxml.parser.model.executable_content.*;
+import de.jplag.scxml.parser.model.executable_content.Action;
+import de.jplag.scxml.parser.model.executable_content.Cancel;
+import de.jplag.scxml.parser.model.executable_content.Else;
+import de.jplag.scxml.parser.model.executable_content.ElseIf;
+import de.jplag.scxml.parser.model.executable_content.ExecutableContent;
+import de.jplag.scxml.parser.model.executable_content.If;
+import de.jplag.scxml.parser.model.executable_content.Send;
+import de.jplag.scxml.parser.model.executable_content.SimpleExecutableContent;
 import de.jplag.scxml.util.AbstractScxmlVisitor;
 
 /**

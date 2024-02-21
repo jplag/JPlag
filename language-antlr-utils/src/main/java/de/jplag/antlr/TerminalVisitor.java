@@ -13,6 +13,7 @@ public class TerminalVisitor extends AbstractVisitor<Token> {
         super(condition);
     }
 
+    @Override
     Token extractEnterToken(Token token) {
         return token;
     }

@@ -1,8 +1,12 @@
 package de.jplag.python3.grammar;
 
-import java.util.*;
+import java.util.Deque;
+import java.util.LinkedList;
 
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CommonToken;
+import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.Token;
 
 abstract class Python3LexerBase extends Lexer {
     private LinkedList<Token> tokens = new LinkedList<>();

@@ -38,20 +38,19 @@ public class MetamodelElementTokenizer extends EcoreSwitch<MetamodelTokenType> i
     public MetamodelTokenType caseEAttribute(EAttribute eAttribute) {
         if (eAttribute.isID()) {
             return MetamodelTokenType.ID_ATTRIBUTE;
-        } else {
-            return MetamodelTokenType.ATTRIBUTE;
         }
+        return MetamodelTokenType.ATTRIBUTE;
     }
 
     @Override
     public MetamodelTokenType caseEClass(EClass eClass) {
         if (eClass.isInterface()) {
             return MetamodelTokenType.INTERFACE;
-        } else if (eClass.isAbstract()) {
-            return MetamodelTokenType.ABSTRACT_CLASS;
-        } else {
-            return MetamodelTokenType.CLASS;
         }
+        if (eClass.isAbstract()) {
+            return MetamodelTokenType.ABSTRACT_CLASS;
+        }
+        return MetamodelTokenType.CLASS;
     }
 
     @Override
@@ -94,16 +93,13 @@ public class MetamodelElementTokenizer extends EcoreSwitch<MetamodelTokenType> i
         if (eReference.isContainment()) {
             if (eReference.getUpperBound() == 1) {
                 return MetamodelTokenType.CONTAINMENT;
-            } else {
-                return MetamodelTokenType.CONTAINMENT_MULT;
             }
-        } else {
-            if (eReference.getUpperBound() == 1) {
-                return MetamodelTokenType.REFERENCE;
-            } else {
-                return MetamodelTokenType.REFERENCE_MULT;
-            }
+            return MetamodelTokenType.CONTAINMENT_MULT;
         }
+        if (eReference.getUpperBound() == 1) {
+            return MetamodelTokenType.REFERENCE;
+        }
+        return MetamodelTokenType.REFERENCE_MULT;
     }
 
     @Override

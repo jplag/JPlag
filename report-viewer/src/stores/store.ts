@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
-import type { State, SubmissionFile, File, LoadConfiguration, UIState } from './state'
+import type { State, UIState } from './state'
 import { MetricType } from '@/model/MetricType'
+import type { SubmissionFile, File } from '@/model/File'
 
 /**
  * The store is a global state management system. It is used to store the state of the application.
@@ -23,7 +24,7 @@ const store = defineStore('store', {
       uploadedFileName: ''
     },
     uiState: {
-      useDarkMode: false,
+      useDarkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
       comparisonTableSortingMetric: MetricType.AVERAGE,
       comparisonTableClusterSorting: false,
       distributionChartConfig: {
@@ -40,11 +41,16 @@ const store = defineStore('store', {
     filesOfSubmission:
       (state) =>
       (submissionId: string): SubmissionFile[] => {
-        return Array.from(state.state.submissions[submissionId], ([name, value]) => ({
-          submissionId,
-          fileName: name,
-          data: value
-        }))
+        return Array.from(state.state.submissions[submissionId].values())
+      },
+    /**
+     * @param submissionID the name of the submission
+     * @returns files a single file in the submission of the given name
+     */
+    getSubmissionFile:
+      (state) =>
+      (submissionId: string, fileName: string): SubmissionFile => {
+        return state.state.submissions[submissionId].get(fileName) as SubmissionFile
       },
     /**
      * @param name the name of the submission
@@ -83,7 +89,7 @@ const store = defineStore('store', {
     },
     /**
      * @param id the id to check for
-     * @returns whether this submission should be anonymised
+     * @returns whether this submission should be anonymized
      */
     isAnonymous: (state) => (submissionId: string) => {
       return state.state.anonymous.has(submissionId)
@@ -185,17 +191,17 @@ const store = defineStore('store', {
       }
       this.state.submissions[submissionFile.submissionId].set(
         submissionFile.fileName,
-        submissionFile.data
+        submissionFile
       )
     },
     /**
      * Sets the loading type
      * @param payload Type used to input JPlag results
      */
-    setLoadingType(payload: LoadConfiguration) {
-      this.state.localModeUsed = payload.local
-      this.state.zipModeUsed = payload.zip
-      this.state.singleModeUsed = payload.single
+    setLoadingType(loadingType: 'zip' | 'local' | 'single') {
+      this.state.localModeUsed = loadingType == 'local'
+      this.state.zipModeUsed = loadingType == 'zip'
+      this.state.singleModeUsed = loadingType == 'single'
     },
     /**
      * Sets the raw content of the single file mode

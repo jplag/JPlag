@@ -10,12 +10,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public record MergingOptions(@JsonProperty("enabled") boolean enabled, @JsonProperty("min_neighbour_length") int minimumNeighborLength,
         @JsonProperty("max_gap_size") int maximumGapSize) {
 
+    public static final boolean DEFAULT_ENABLED = false;
+    public static final int DEFAULT_NEIGHBOR_LENGTH = 2;
+    public static final int DEFAULT_GAP_SIZE = 6;
+
     /**
      * The default values of MergingOptions are false for the enable-switch, which deactivate MatchMerging, while
      * minimumNeighborLength and maximumGapSize default to (2,6), which in testing yielded the best results.
      */
     public MergingOptions() {
-        this(false, 2, 6);
+        this(DEFAULT_ENABLED, DEFAULT_NEIGHBOR_LENGTH, DEFAULT_GAP_SIZE);
     }
 
     /**

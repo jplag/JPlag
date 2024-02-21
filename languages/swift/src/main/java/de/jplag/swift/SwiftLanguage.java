@@ -47,7 +47,7 @@ public class SwiftLanguage implements de.jplag.Language {
     }
 
     @Override
-    public List<Token> parse(Set<File> files) throws ParsingException {
+    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
         return parserAdapter.parse(files);
     }
 }

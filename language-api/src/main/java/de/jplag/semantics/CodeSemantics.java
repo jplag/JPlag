@@ -14,8 +14,8 @@ public class CodeSemantics {
     private boolean keep;
     private PositionSignificance positionSignificance;
     private final int bidirectionalBlockDepthChange;
-    private Set<Variable> reads;
-    private Set<Variable> writes;
+    private final Set<Variable> reads;
+    private final Set<Variable> writes;
 
     /**
      * Creates new semantics. reads and writes, which each contain the variables which were (potentially) read from/written
@@ -196,16 +196,21 @@ public class CodeSemantics {
     @Override
     public String toString() {
         List<String> properties = new LinkedList<>();
-        if (keep)
+        if (keep) {
             properties.add("keep");
-        if (positionSignificance != PositionSignificance.NONE)
+        }
+        if (positionSignificance != PositionSignificance.NONE) {
             properties.add(positionSignificance.name().toLowerCase() + " position significance");
-        if (bidirectionalBlockDepthChange != 0)
+        }
+        if (bidirectionalBlockDepthChange != 0) {
             properties.add("change bidirectional block depth by " + bidirectionalBlockDepthChange);
-        if (!reads.isEmpty())
+        }
+        if (!reads.isEmpty()) {
             properties.add("read " + String.join(" ", reads.stream().map(Variable::toString).toList()));
-        if (!writes.isEmpty())
+        }
+        if (!writes.isEmpty()) {
             properties.add("write " + String.join(" ", writes.stream().map(Variable::toString).toList()));
+        }
         return String.join(", ", properties);
     }
 }

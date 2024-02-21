@@ -6,6 +6,8 @@
   >
     <LoadingCircle class="mx-auto" />
   </div>
+
+  <RepositoryReference />
 </template>
 
 <script setup lang="ts">
@@ -15,6 +17,7 @@ import ClusterView from '@/views/ClusterView.vue'
 import LoadingCircle from '@/components/LoadingCircle.vue'
 import type { Overview } from '@/model/Overview'
 import { redirectOnError } from '@/router'
+import RepositoryReference from '@/components/RepositoryReference.vue'
 
 const props = defineProps({
   clusterIndex: {

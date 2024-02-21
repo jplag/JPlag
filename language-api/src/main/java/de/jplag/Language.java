@@ -32,12 +32,25 @@ public interface Language {
     int minimumTokenMatch();
 
     /**
-     * Parses a set of files.
+     * Parses a set of files. Override this method, if you don't require normalization.
      * @param files are the files to parse.
      * @return the list of parsed JPlag tokens.
      * @throws ParsingException if an error during parsing the files occurred.
+     * @deprecated Replaced by {@link #parse(Set, boolean)}
      */
-    List<Token> parse(Set<File> files) throws ParsingException;
+    @Deprecated(forRemoval = true)
+    default List<Token> parse(Set<File> files) throws ParsingException {
+        return parse(files, false);
+    }
+
+    /**
+     * Parses a set of files. Override this method, if you require normalization within the language module.
+     * @param files are the files to parse.
+     * @param normalize True, if the tokens should be normalized
+     * @return the list of parsed JPlag tokens.
+     * @throws ParsingException if an error during parsing the files occurred.
+     */
+    List<Token> parse(Set<File> files, boolean normalize) throws ParsingException;
 
     /**
      * Indicates whether the tokens returned by parse have semantic information added to them, i.e. whether the token
@@ -92,5 +105,21 @@ public interface Language {
      */
     default List<File> customizeSubmissionOrder(List<File> submissions) {
         return submissions;
+    }
+
+    /**
+     * @return True, if this language supports token sequence normalization. This does not include other normalization
+     * mechanisms that might be part of the language modules.
+     */
+    default boolean supportsNormalization() {
+        return false;
+    }
+
+    /**
+     * Override this method, if you need normalization within the language module, but not in the core module.
+     * @return True, If the core normalization should be used.
+     */
+    default boolean requiresCoreNormalization() {
+        return true;
     }
 }

@@ -4,8 +4,10 @@
 enum ParserLanguage {
   JAVA = 'Javac based AST plugin',
   PYTHON = 'Python3 Parser',
-  CPP = 'C/C++ Scanner [basic markup]',
-  CPP2 = 'C/C++ Parser',
+  C = 'C Scanner',
+  CPP_OLD = 'C/C++ Scanner [basic markup]',
+  CPP = 'C++ Parser',
+  CPP_2 = 'C/C++ Parser',
   C_SHARP = 'C# 6 Parser',
   EMF_METAMODEL_DYNAMIC = 'emf-dynamic',
   EMF_METAMODEL = 'EMF metamodel',

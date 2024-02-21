@@ -13,7 +13,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
       - name: Set maven settings.xml
-        uses: whelk-io/maven-settings-xml-action@v21
+        uses: whelk-io/maven-settings-xml-action@v22
         with:
           servers: '[{ "id": "ossrh", "username": "jplag", "password": "${{ secrets.OSSRH_TOKEN }}" }]'
       - name: Import GPG key
@@ -34,8 +34,12 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
       - name: Build JPlag
-        run: mvn -U -B clean package assembly:single
+        run: mvn -Pwith-report-viewer -U -B clean package assembly:single
 
       - name: Attach CLI to Release on GitHub
         uses: softprops/action-gh-release@v1

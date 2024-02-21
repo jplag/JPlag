@@ -33,6 +33,7 @@ const props = defineProps({
 
 function changeAnonymous(event: Event) {
   event.stopPropagation()
+  event.preventDefault()
   if (store().isAnonymous(props.id)) {
     store().removeAnonymous([props.id])
   } else {

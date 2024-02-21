@@ -10,13 +10,8 @@ import { MetricType } from '../MetricType'
  * Factory class for creating Comparison objects
  */
 export class ComparisonFactory extends BaseFactory {
-  public static async getComparison(id1: string, id2: string): Promise<Comparison> {
-    const filePath = store().getComparisonFileName(id1, id2)
-    if (!filePath) {
-      throw new Error('Comparison file not specified')
-    }
-
-    return await this.extractComparison(JSON.parse(await this.getFile(filePath)))
+  public static async getComparison(fileName: string): Promise<Comparison> {
+    return await this.extractComparison(JSON.parse(await this.getFile(fileName)))
   }
 
   /**
@@ -26,14 +21,26 @@ export class ComparisonFactory extends BaseFactory {
   private static async extractComparison(json: Record<string, unknown>): Promise<Comparison> {
     const firstSubmissionId = json.id1 as string
     const secondSubmissionId = json.id2 as string
-    if (store().state.localModeUsed && !store().state.zipModeUsed) {
-      await this.loadSubmissionFilesFromLocal(firstSubmissionId)
-      await this.loadSubmissionFilesFromLocal(secondSubmissionId)
-    }
+    await this.getFile(`submissionFileIndex.json`)
+      .then(async () => {
+        await this.loadSubmissionFiles(firstSubmissionId)
+        await this.loadSubmissionFiles(secondSubmissionId)
+      })
+      .catch(() => {})
     const filesOfFirstSubmission = store().filesOfSubmission(firstSubmissionId)
     const filesOfSecondSubmission = store().filesOfSubmission(secondSubmissionId)
 
     const matches = json.matches as Array<Record<string, unknown>>
+    matches.forEach((match) => {
+      store().getSubmissionFile(
+        firstSubmissionId,
+        slash(match.file1 as string)
+      ).matchedTokenCount += match.tokens as number
+      store().getSubmissionFile(
+        secondSubmissionId,
+        slash(match.file2 as string)
+      ).matchedTokenCount += match.tokens as number
+    })
 
     const unColoredMatches = matches.map((match) => this.getMatch(match))
 
@@ -43,7 +50,9 @@ export class ComparisonFactory extends BaseFactory {
       this.extractSimilarities(json),
       filesOfFirstSubmission,
       filesOfSecondSubmission,
-      this.colorMatches(unColoredMatches)
+      this.colorMatches(unColoredMatches),
+      json.first_similarity as number | undefined,
+      json.second_similarity as number | undefined
     )
   }
 
@@ -76,25 +85,37 @@ export class ComparisonFactory extends BaseFactory {
     return similarities
   }
 
-  private static async getSubmissionFileListFromLocal(submissionId: string): Promise<string[]> {
-    return JSON.parse(
-      await this.getLocalFile(`files/submissionFileIndex.json`).then((file) => file.text())
-    ).submission_file_indexes[submissionId].map((file: string) => slash(file))
+  private static async getSubmissionFileList(
+    submissionId: string
+  ): Promise<Record<string, { token_count: number }>> {
+    return JSON.parse(await this.getFile(`submissionFileIndex.json`)).submission_file_indexes[
+      submissionId
+    ]
   }
 
-  private static async loadSubmissionFilesFromLocal(submissionId: string) {
+  private static async loadSubmissionFiles(submissionId: string) {
     try {
-      const fileList = await this.getSubmissionFileListFromLocal(submissionId)
-      for (const filePath of fileList) {
+      const fileList = await this.getSubmissionFileList(submissionId)
+      const fileNames = Object.keys(fileList)
+      for (const filePath of fileNames) {
         store().saveSubmissionFile({
           fileName: slash(filePath),
           submissionId: submissionId,
-          data: await this.getLocalFile(`files/files/${filePath}`).then((file) => file.text())
+          data: await this.getSubmissionFileContent(submissionId, slash(filePath)),
+          tokenCount: fileList[filePath].token_count,
+          matchedTokenCount: 0
         })
       }
     } catch (e) {
       console.log(e)
     }
+  }
+
+  private static async getSubmissionFileContent(submissionId: string, fileName: string) {
+    if (store().state.localModeUsed && !store().state.zipModeUsed) {
+      return await this.getLocalFile('files/' + fileName).then((file) => file.text())
+    }
+    return store().getSubmissionFile(submissionId, fileName).data
   }
 
   private static getMatch(match: Record<string, unknown>): Match {

@@ -2,7 +2,11 @@ package de.jplag.antlr;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.*;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
@@ -132,6 +136,7 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
         exitHandlers.forEach(handler -> handler.accept(data));
     }
 
+    @Override
     Token extractEnterToken(T entity) {
         return entity.getStart();
     }

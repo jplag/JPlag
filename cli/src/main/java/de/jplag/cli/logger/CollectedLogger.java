@@ -77,8 +77,9 @@ public final class CollectedLogger extends MarkerIgnoringBase {
         builder.append('[').append(renderLevel(level)).append(']').append(' ');
 
         // Append the name of the log instance
-        if (shortLogName == null)
+        if (shortLogName == null) {
             shortLogName = computeShortName();
+        }
         builder.append(shortLogName).append(" - ");
         // Append the message
         builder.append(message);
@@ -90,8 +91,9 @@ public final class CollectedLogger extends MarkerIgnoringBase {
         this.isFinalizing = true;
         // Copy errors to prevent infinite recursion
         var errors = new ArrayList<>(this.allErrors);
-        if (errors.isEmpty())
+        if (errors.isEmpty()) {
             return;
+        }
 
         this.allErrors.removeAll(errors);
 
