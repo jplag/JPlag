@@ -41,7 +41,7 @@ public final class FilePathUtil {
         }
 
         String leftStripped = left;
-        while (leftStripped.endsWith(ZIP_PATH_SEPARATOR) || rightStripped.startsWith(WINDOWS_PATH_SEPARATOR)) {
+        while (leftStripped.endsWith(ZIP_PATH_SEPARATOR) || leftStripped.startsWith(WINDOWS_PATH_SEPARATOR)) {
             leftStripped = leftStripped.substring(0, leftStripped.length() - 1);
         }
 
