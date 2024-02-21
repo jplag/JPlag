@@ -15,7 +15,7 @@
 
 JPlag finds pairwise similarities among a set of multiple programs. It can reliably detect software plagiarism and collusion in software development, even when obfuscated. JPlag currently supports various programming and modeling languages. Moreover, it has rudimentary support for natural language.
 
-* [JPlag Demo](https://jplag.github.io/Demo/)
+* 📈 [JPlag Demo](https://jplag.github.io/Demo/)
 
 * [JPlag on Helmholtz RSD](https://helmholtz.software/software/jplag)
 
