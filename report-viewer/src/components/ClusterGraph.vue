@@ -286,8 +286,10 @@ const graphOptions = computed(() => {
         router.push({
           name: 'ComparisonView',
           params: {
-            firstId: hoveredEdge.value.firstId,
-            secondId: hoveredEdge.value.secondId
+            comparisonFileName: store().getComparisonFileName(
+              hoveredEdge.value.firstId,
+              hoveredEdge.value.secondId
+            )
           }
         })
       }
