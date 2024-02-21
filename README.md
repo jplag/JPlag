@@ -13,11 +13,18 @@
 [![Java Version](https://img.shields.io/badge/java-SE%2021-yellowgreen)](#download-and-installation)
 
 
-JPlag is a system that finds similarities among multiple sets of source code files. This way it can detect software plagiarism and collusion in software development. JPlag currently supports various programming languages, EMF metamodels, and natural language text.
+JPlag finds pairwise similarities among a set of multiple programs. It can reliably detect software plagiarism and collusion in software development, even when obfuscated. JPlag currently supports various programming and modeling languages. Moreover, it has rudimentary support for natural language.
+
+* [JPlag Demo](https://jplag.github.io/Demo/)
+
+* [JPlag on Helmholtz RSD](https://helmholtz.software/software/jplag)
+
+* [Give us Feedback in a **short survey**](https://docs.google.com/forms/d/e/1FAIpQLSckqUlXhIlJ-H2jtu2VmGf_mJt4hcnHXaDlwhpUL3XG1I8UYw/viewform?usp=sf_link)
+
 
 ## Supported Languages
 
-In the following, a list of all supported languages with their supported language version is provided. A language can be selected from the command line using subcommands (jplag [jplag options] <language name> [language options]). Alternatively you can use the legacy "-l" argument.
+All supported languages and their supported versions are listed below.
 
 | Language                                               |                                                                                Version | CLI Argument Name | [state](https://github.com/jplag/JPlag/wiki/2.-Supported-Languages) |  parser   |
 |--------------------------------------------------------|---------------------------------------------------------------------------------------:|-------------------|:-------------------------------------------------------------------:|:---------:|
@@ -53,6 +60,7 @@ JPlag is released on [Maven Central](https://search.maven.org/search?q=de.jplag)
 <dependency>
   <groupId>de.jplag</groupId>
   <artifactId>jplag</artifactId>
+  <version><!--desired version--></version>
 </dependency>
 ```
 
@@ -68,85 +76,60 @@ JPlag can either be used via the CLI or directly via its Java API. For more info
 
 ### CLI
 *Note that the [legacy CLI](https://github.com/jplag/jplag/blob/legacy/README.md) is varying slightly.*
-
-The language can either be set with the -l parameter or as a subcommand. If both a subcommand and the -l option are specified, the subcommand will take priority.
-When using the subcommand language specific arguments can be set.
-A list of language specific options can be obtained by requesting the help page of a subcommand (e.g. "jplag java -h").
+The language can either be set with the -l parameter or as a subcommand (`jplag [jplag options] <language name> [language options]`). A subcommand takes priority over the -l option.
+When using the subcommand, language-specific arguments can be set. A list of language-specific options can be obtained by requesting the help page of a subcommand (e.g. `jplag java -h`).
 
 ```
-Usage: jplag [OPTIONS] [root-dirs[,root-dirs...]...] [COMMAND]
-
+Parameter descriptions: 
       [root-dirs[,root-dirs...]...]
-                       Root-directory with submissions to check for plagiarism
-
+                        Root-directory with submissions to check for plagiarism.
       -bc, --bc, --base-code=<baseCode>
-                       Path of  the  directory  containing  the  base  code
-                         (common  framework  used  in  all submissions)
-
-      -h, --help           display this help and exit
-      -l, --language=<language>
-                       Select the language to parse the submissions (default:
-                         java). The language names are the same as the
-                         subcommands.
-
-      -n, --shown-comparisons=<shownComparisons>
-                       The maximum number of comparisons that will  be  shown
-                         in the generated report, if set to -1 all comparisons
-                         will be shown (default: 100)
-
+                        Path to the base code directory (common framework used in all submissions).
+  -l, --language=<language>
+                        Select the language of the submissions (default: java). See subcommands below.
+  -M, --mode=<{RUN, VIEW, RUN_AND_VIEW}>
+                        The mode of JPlag: either only run analysis, only open the viewer, or do both (default: null)
+  -n, --shown-comparisons=<shownComparisons>
+                        The maximum number of comparisons that will be shown in the generated report, if set to -1 all comparisons will be shown (default: 500)
       -new, --new=<newDirectories>[,<newDirectories>...]
-                       Root-directory with submissions to check for plagiarism
-                         (same as the root directory)
-
+                        Root-directories with submissions to check for plagiarism (same as root).
+      --normalize       Activate the normalization of tokens. Supported for languages: Java, C++.
       -old, --old=<oldDirectories>[,<oldDirectories>...]
-                       Root-directory with prior submissions to compare against
-
-      -r, --result-directory=<resultFolder>
-                       Name of the directory in which the comparison results
-                         will be stored (default: result)
-
-      -t, --min-tokens=<minTokenMatch>
-                       Tunes the comparison sensitivity by adjusting the
-                         minimum token required to be counted as a matching
-                         section. A smaller <n>  increases  the sensitivity but
-                         might lead to more false-positives
+                        Root-directories with prior submissions to compare against.
+  -r, --result-file=<resultFile>
+                        Name of the file in which the comparison results will be stored (default: results). Missing .zip endings will be automatically added.
+  -t, --min-tokens=<minTokenMatch>
+                        Tunes the comparison sensitivity by adjusting the minimum token required to be counted as a matching section. A smaller value increases the sensitivity but might lead to more
+                          false-positives.
 
 Advanced
-      -d, --debug          Debug parser. Non-parsable files will be stored
-                         (default: false)
-
-      -m, --similarity-threshold=<similarityThreshold>
-                       Comparison similarity threshold [0.0-1.0]:  All
-                         comparisons  above this threshold will be saved
-                         (default: 0.0)
-
-      -p, --suffixes=<suffixes>[,<suffixes>...]
-                       comma-separated list of all filename suffixes that are
-                         included
-
-      -s, --subdirectory=<subdirectory>
-                       Look in directories <root-dir>/*/<dir> for programs
-
-      -x, --exclusion-file=<exclusionFileName>
-                       All files named in this file will be ignored in the
-                         comparison (line-separated list)
+      --csv-export      Export pairwise similarity values as a CSV file.
+  -d, --debug           Store on-parsable files in error folder.
+  -m, --similarity-threshold=<similarityThreshold>
+                        Comparison similarity threshold [0.0-1.0]: All comparisons above this threshold will be saved (default: 0.0).
+  -p, --suffixes=<suffixes>[,<suffixes>...]
+                        comma-separated list of all filename suffixes that are included.
+  -P, --port=<port>     The port used for the internal report viewer (default: 1996).
+  -s, --subdirectory=<subdirectory>
+                        Look in directories <root-dir>/*/<dir> for programs.
+  -x, --exclusion-file=<exclusionFileName>
+                        All files named in this file will be ignored in the comparison (line-separated list).
 
 Clustering
-      --cluster-alg, --cluster-algorithm=<algorithm>
-                       Which clustering algorithm to use. Agglomerative  merges
-                         similar submissions bottom up. Spectral clustering is
-                         combined  with  Bayesian  Optimization  to  execute
-                         the k-Means clustering  algorithm  multiple   times,
-                         hopefully   finding   a   "good"  clustering
-                         automatically. (default: spectral)
+      --cluster-alg, --cluster-algorithm=<{AGGLOMERATIVE, SPECTRAL}>
+                        Specifies the clustering algorithm (default: spectral).
+      --cluster-metric=<{AVG, MIN, MAX, INTERSECTION}>
+                        The similarity metric used for clustering (default: average similarity).
+      --cluster-skip    Skips the cluster calculation.
 
-      --cluster-metric=<metric>
-                       The metric used for clustering. AVG  is  intersection
-                         over  union, MAX can expose some attempts of
-                         obfuscation. (default: MAX)
+Subsequence Match Merging
+      --gap-size=<maximumGapSize>
+                        Maximal gap between neighboring matches to be merged (between 1 and minTokenMatch, default: 6).
+      --match-merging   Enables merging of neighboring matches to counteract obfuscation attempts.
+      --neighbor-length=<minimumNeighborLength>
+                        Minimal length of neighboring matches to be merged (between 1 and minTokenMatch, default: 2).
 
-      --cluster-skip   Skips the clustering (default: false)
-Commands:
+Subcommands (supported languages)
   c
   cpp
   csharp
@@ -175,20 +158,21 @@ The new API makes it easy to integrate JPlag's plagiarism detection into externa
 <!-- To assure that the code example is always correct, it must be kept in sync
 with [`ReadmeCodeExampleTest#testReadmeCodeExample`](core/src/test/java/de/jplag/special/ReadmeCodeExampleTest.java). -->
 ```java
-JavaLanguage language = new JavaLanguage();
-language.getOptions(); //Use the object returned by this to set language options(same as language specific arguments above).
+Language language = new JavaLanguage();
 Set<File> submissionDirectories = Set.of(new File("/path/to/rootDir"));
 File baseCode = new File("/path/to/baseCode");
 JPlagOptions options = new JPlagOptions(language, submissionDirectories, Set.of()).withBaseCodeSubmissionDirectory(baseCode);
 
 try {
     JPlagResult result = JPlag.run(options);
-     
+
     // Optional
-    ReportObjectFactory reportObjectFactory = new ReportObjectFactory();
-    reportObjectFactory.createAndSaveReport(result, "/path/to/output");
+    ReportObjectFactory reportObjectFactory = new ReportObjectFactory(new File("/path/to/output"));
+    reportObjectFactory.createAndSaveReport(result);
 } catch (ExitException e) {
     // error handling here
+} catch (FileNotFoundException e) {
+    // handle IO exception here
 }
 ```
 
