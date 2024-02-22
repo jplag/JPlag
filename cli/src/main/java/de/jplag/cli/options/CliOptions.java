@@ -1,4 +1,4 @@
-package de.jplag.cli;
+package de.jplag.cli.options;
 
 import java.io.File;
 
@@ -16,6 +16,7 @@ import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
+@SuppressWarnings({"CanBeFinal", "unused"})
 @CommandLine.Command(name = "jplag", description = "", usageHelpAutoWidth = true, abbreviateSynopsis = true)
 public class CliOptions implements Runnable {
     public static final Language defaultLanguage = new JavaLanguage();
@@ -108,6 +109,7 @@ public class CliOptions implements Runnable {
         @ArgGroup
         public ClusteringEnabled enabled = new ClusteringEnabled();
 
+        @SuppressWarnings("CanBeFinal")
         public static class ClusteringEnabled {
             @Option(names = {"--cluster-alg", "--cluster-algorithm"}, description = "Specifies the clustering algorithm (default: ${DEFAULT-VALUE}).")
             public ClusteringAlgorithm algorithm = new ClusteringOptions().algorithm();

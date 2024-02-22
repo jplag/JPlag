@@ -2,6 +2,7 @@ package de.jplag.cli;
 
 import java.util.List;
 
+import de.jplag.cli.picocli.ParamLabelRenderer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

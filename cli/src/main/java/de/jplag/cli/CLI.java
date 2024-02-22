@@ -17,6 +17,9 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import de.jplag.cli.options.CliOptions;
+import de.jplag.cli.options.LanguageLoader;
+import de.jplag.cli.picocli.HelpFactory;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +69,7 @@ public final class CLI {
 
     private static final String IMPOSSIBLE_EXCEPTION = "This should not have happened."
             + " Please create an issue on github (https://github.com/jplag/JPlag/issues) with the entire output.";
-    private static final String UNKOWN_LANGAUGE_EXCEPTION = "Language %s does not exists. Available languages are: %s";
+    private static final String UNKNOWN_LANGUAGE_EXCEPTION = "Language %s does not exists. Available languages are: %s";
 
     private static final String DESCRIPTION_PATTERN = "%nJPlag - %s%n%s%n%n";
 
@@ -180,7 +183,7 @@ public final class CLI {
             return result;
         } catch (CommandLine.ParameterException e) {
             if (e.getArgSpec() != null && e.getArgSpec().isOption() && Arrays.asList(((OptionSpec) e.getArgSpec()).names()).contains("-l")) {
-                throw new CliException(String.format(UNKOWN_LANGAUGE_EXCEPTION, e.getValue(),
+                throw new CliException(String.format(UNKNOWN_LANGUAGE_EXCEPTION, e.getValue(),
                         String.join(", ", LanguageLoader.getAllAvailableLanguageIdentifiers())));
             }
             throw new CliException("Error during parsing", e);

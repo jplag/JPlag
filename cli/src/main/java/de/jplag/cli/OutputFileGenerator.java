@@ -3,6 +3,7 @@ package de.jplag.cli;
 import java.io.File;
 import java.io.IOException;
 
+import de.jplag.cli.options.CliOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +18,7 @@ public final class OutputFileGenerator {
     }
 
     /**
-     * Exports the given result as csvs, if the csvExport is activated in the options. Both a full and an anonymized version
+     * Exports the given result as CSVs, if the csvExport is activated in the options. Both a full and an anonymized version
      * will be written.
      * @param result The result to export
      * @param outputRoot The root folder for the output
