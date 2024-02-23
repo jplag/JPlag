@@ -2,7 +2,7 @@ name: Deploy to Maven Central & GitHub
 on:
   workflow_dispatch:
   release:
-    types: [created]
+    types: [created, published]
 jobs:
   publish-maven-central:
     runs-on: ubuntu-latest
