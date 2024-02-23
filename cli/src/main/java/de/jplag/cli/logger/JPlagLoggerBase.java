@@ -22,7 +22,7 @@ public abstract class JPlagLoggerBase extends AbstractLogger {
      * @param currentLogLevel The current log level
      * @param name The name of the logger
      */
-    public JPlagLoggerBase(Level currentLogLevel, String name) {
+    protected JPlagLoggerBase(Level currentLogLevel, String name) {
         this.currentLogLevel = currentLogLevel;
         this.name = name;
     }

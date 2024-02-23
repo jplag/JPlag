@@ -13,9 +13,9 @@ import de.jplag.csv.comparisons.CsvComparisonOutput;
 import de.jplag.reporting.reportobject.ReportObjectFactory;
 
 public interface OutputFileGenerator {
-    OutputFileGenerator DEFAULT_OUTPUT_FILE_GENERATOR = new OutputFileGenerator() {
-        private static final Logger logger = LoggerFactory.getLogger(OutputFileGenerator.class);
+    Logger logger = LoggerFactory.getLogger(OutputFileGenerator.class);
 
+    OutputFileGenerator DEFAULT_OUTPUT_FILE_GENERATOR = new OutputFileGenerator() {
         @Override
         public void generateCsvOutput(JPlagResult result, File outputRoot, CliOptions options) {
             if (options.advanced.csvExport) {
