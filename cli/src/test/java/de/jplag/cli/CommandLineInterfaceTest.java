@@ -3,8 +3,6 @@ package de.jplag.cli;
 import de.jplag.cli.picocli.CliInputHandler;
 import de.jplag.options.JPlagOptions;
 
-import picocli.CommandLine;
-
 /**
  * Test base for tests regarding the {@link CLI}. Solely tests if the arguments set via the command line interface are
  * propagated correctly into options. JPlag is not executed for the different command line arguments, thus these tests
@@ -32,7 +30,7 @@ public abstract class CommandLineInterfaceTest {
     }
 
     /**
-     * Builds {@link JPlagOptions} via the command line interface. Sets {@link CommandLineInterfaceTest#cli}
+     * Builds {@link JPlagOptions} via the command line interface.
      * @param builder The argument builder containing the values to pass to the cli
      */
     protected void buildOptionsFromCLI(ArgumentBuilder builder) throws CliException {

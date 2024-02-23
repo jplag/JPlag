@@ -16,7 +16,7 @@ public abstract class JPlagLoggerBase extends AbstractLogger {
 
     private static final Level LOG_LEVEL_FOR_EXTERNAL_LIBRARIES = LOG_LEVEL_ERROR;
 
-    private Level currentLogLevel;
+    private final Level currentLogLevel;
 
     /**
      * @param currentLogLevel The current log level
