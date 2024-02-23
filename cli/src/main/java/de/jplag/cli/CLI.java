@@ -1,198 +1,120 @@
 package de.jplag.cli;
 
-import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_DESCRIPTION_HEADING;
-import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_OPTION_LIST;
-import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_SYNOPSIS;
-
-import java.awt.Desktop;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URI;
-import java.security.SecureRandom;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import de.jplag.cli.options.CliOptions;
-import de.jplag.cli.options.LanguageLoader;
-import de.jplag.cli.picocli.HelpFactory;
+import de.jplag.JPlag;
+import de.jplag.JPlagResult;
+import de.jplag.cli.logger.CollectedLoggerFactory;
+import de.jplag.cli.logger.TongfeiProgressBarProvider;
+import de.jplag.cli.picocli.CliInputHandler;
+import de.jplag.exceptions.ExitException;
+import de.jplag.logging.ProgressBarLogger;
+import de.jplag.options.JPlagOptions;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.JPlag;
-import de.jplag.JPlagResult;
-import de.jplag.Language;
-import de.jplag.cli.logger.CollectedLoggerFactory;
-import de.jplag.cli.logger.TongfeiProgressBarProvider;
-import de.jplag.cli.server.ReportViewer;
-import de.jplag.clustering.ClusteringOptions;
-import de.jplag.clustering.Preprocessing;
-import de.jplag.exceptions.ExitException;
-import de.jplag.logging.ProgressBarLogger;
-import de.jplag.merging.MergingOptions;
-import de.jplag.options.JPlagOptions;
-import de.jplag.options.LanguageOption;
-import de.jplag.options.LanguageOptions;
-import de.jplag.reporting.reportobject.ReportObjectFactory;
-
-import picocli.CommandLine;
-import picocli.CommandLine.Model.CommandSpec;
-import picocli.CommandLine.Model.OptionSpec;
-import picocli.CommandLine.ParseResult;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * Command line interface class, allows using via command line.
+ *
  * @see CLI#main(String[])
  */
 public final class CLI {
-
     private static final Logger logger = LoggerFactory.getLogger(CLI.class);
-
-    private static final Random RANDOM = new SecureRandom();
-
-    private static final String CREDITS = "Created by IPD Tichy, Guido Malpohl, and others. Maintained by Timur Saglam and Sebastian Hahner. Logo by Sandro Koch.";
-
-    private static final String[] DESCRIPTIONS = {"Detecting Software Plagiarism", "Software-Archaeological Playground", "Since 1996",
-            "Scientifically Published", "Maintained by SDQ", "RIP Structure and Table", "What else?", "You have been warned!", "Since Java 1.0",
-            "More Abstract than Tree", "Students Nightmare", "No, changing variable names does not work...", "The tech is out there!",
-            "Developed by plagiarism experts.", "State of the Art Obfuscation Resilience", "www.helmholtz.software/software/jplag"};
-
-    private static final String OPTION_LIST_HEADING = "Parameter descriptions: ";
-
-    private final CommandLine commandLine;
-    private final CliOptions options;
-
-    private static final String IMPOSSIBLE_EXCEPTION = "This should not have happened."
-            + " Please create an issue on github (https://github.com/jplag/JPlag/issues) with the entire output.";
-    private static final String UNKNOWN_LANGUAGE_EXCEPTION = "Language %s does not exists. Available languages are: %s";
-
-    private static final String DESCRIPTION_PATTERN = "%nJPlag - %s%n%s%n%n";
 
     private static final String DEFAULT_FILE_ENDING = ".zip";
 
+    private final JPlagRunner runner;
+    private final CliInputHandler inputHandler;
+    private final OutputFileGenerator outputFileGenerator;
+
     /**
-     * Main class for using JPlag via the CLI.
-     * @param args are the CLI arguments that will be passed to JPlag.
+     * Creates a cli.
+     *
+     * @param runner The way to run JPlag
+     * @param args   The command line arguments
      */
-    public static void main(String[] args) {
-        try {
-            logger.debug("Your version of JPlag is {}", JPlag.JPLAG_VERSION);
+    public CLI(JPlagRunner runner, OutputFileGenerator outputFileGenerator, String[] args) {
+        this.runner = runner;
+        this.outputFileGenerator = outputFileGenerator;
+        this.inputHandler = new CliInputHandler(args);
+    }
 
-            CLI cli = new CLI();
+    /**
+     * Executes the cli
+     *
+     * @throws ExitException If anything on the side of JPlag goes wrong
+     * @throws IOException   If any files did not work
+     */
+    public void executeCli() throws ExitException, IOException {
+        logger.debug("Your version of JPlag is {}", JPlag.JPLAG_VERSION);
 
-            ParseResult parseResult = cli.parseOptions(args);
+        if (!this.inputHandler.parse()) {
+            ProgressBarLogger.setProgressBarProvider(new TongfeiProgressBarProvider());
 
-            if (!parseResult.isUsageHelpRequested() && !(parseResult.subcommand() != null && parseResult.subcommand().isUsageHelpRequested())) {
-                ProgressBarLogger.setProgressBarProvider(new TongfeiProgressBarProvider());
-                switch (cli.options.mode) {
-                    case RUN -> cli.runJPlag(parseResult);
-                    case VIEW -> cli.runViewer(null);
-                    case RUN_AND_VIEW -> cli.runViewer(cli.runJPlag(parseResult));
-                }
+            switch (this.inputHandler.getCliOptions().mode) {
+                case RUN -> runJPlag();
+                case VIEW -> runViewer(null);
+                case RUN_AND_VIEW -> runViewer(runJPlag());
             }
-        } catch (ExitException | IOException exception) { // do not pass exceptions here to keep log clean
+        }
+    }
+
+    /**
+     * Executes the cli and handles the exceptions that might occur.
+     *
+     * @return true, if an exception has been caught.
+     */
+    public boolean executeCliAndHandleErrors() {
+        boolean hadErrors = false;
+
+        try {
+            this.executeCli();
+        } catch (IOException | ExitException exception) {
             if (exception.getCause() != null) {
                 logger.error("{} - {}", exception.getMessage(), exception.getCause().getMessage());
             } else {
                 logger.error(exception.getMessage());
             }
-
+            hadErrors = true;
+        } finally {
             finalizeLogger();
-            System.exit(1);
         }
+
+        return hadErrors;
     }
 
     /**
-     * Creates a new instance
+     * Runs JPlag and returns the file the result has been written to
+     *
+     * @return The file containing the result
+     * @throws ExitException         If JPlag threw an exception
+     * @throws FileNotFoundException If the file could not be written
      */
-    public CLI() {
-        this.options = new CliOptions();
-        this.commandLine = new CommandLine(options);
+    public File runJPlag() throws ExitException, FileNotFoundException {
+        JPlagOptionsBuilder optionsBuilder = new JPlagOptionsBuilder(this.inputHandler);
+        JPlagOptions options = optionsBuilder.buildOptions();
+        JPlagResult result = this.runner.runJPlag(options);
 
-        this.commandLine.setHelpFactory(new HelpFactory());
-
-        this.commandLine.getHelpSectionMap().put(SECTION_KEY_OPTION_LIST, help -> help.optionList().lines().map(it -> {
-            if (it.startsWith("  -")) {
-                return "    " + it;
-            }
-            return it;
-        }).collect(Collectors.joining(System.lineSeparator())));
-
-        buildSubcommands().forEach(commandLine::addSubcommand);
-
-        this.commandLine.getHelpSectionMap().put(SECTION_KEY_SYNOPSIS, help -> help.synopsis(help.synopsisHeadingLength()) + generateDescription());
-        this.commandLine.getHelpSectionMap().put(SECTION_KEY_DESCRIPTION_HEADING, help -> OPTION_LIST_HEADING);
-        this.commandLine.setAllowSubcommandsAsOptionParameters(true);
-    }
-
-    public File runJPlag(ParseResult parseResult) throws ExitException, FileNotFoundException {
-        JPlagOptions jplagOptions = buildOptionsFromArguments(parseResult);
-        JPlagResult result = JPlag.run(jplagOptions);
         File target = new File(getResultFilePath());
-        ReportObjectFactory reportObjectFactory = new ReportObjectFactory(target);
-        reportObjectFactory.createAndSaveReport(result);
-        logger.info("Successfully written the result: {}", target.getPath());
-        logger.info("View the result using --mode or at: https://jplag.github.io/JPlag/");
-        OutputFileGenerator.generateCsvOutput(result, new File(getResultFileBaseName()), this.options);
+        this.outputFileGenerator.generateJPlagResultZip(result, target);
+        this.outputFileGenerator.generateCsvOutput(result, new File(getResultFileBaseName()), this.inputHandler.getCliOptions());
+
         return target;
     }
 
-    public void runViewer(File zipFile) throws IOException {
-        ReportViewer reportViewer = new ReportViewer(zipFile, this.options.advanced.port);
-        int port = reportViewer.start();
-        logger.info("ReportViewer started on port http://localhost:{}", port);
-        Desktop.getDesktop().browse(URI.create("http://localhost:" + port + "/"));
-
-        System.out.println("Press Enter key to exit...");
-        System.in.read();
-        reportViewer.stop();
-    }
-
-    private List<CommandSpec> buildSubcommands() {
-        return LanguageLoader.getAllAvailableLanguages().values().stream().map(language -> {
-            CommandSpec command = CommandSpec.create().name(language.getIdentifier());
-
-            for (LanguageOption<?> option : language.getOptions().getOptionsAsList()) {
-                command.addOption(OptionSpec.builder(option.getNameAsUnixParameter()).type(option.getType().getJavaType())
-                        .description(option.getDescription()).build());
-            }
-            command.mixinStandardHelpOptions(true);
-            command.addPositional(
-                    CommandLine.Model.PositionalParamSpec.builder().type(List.class).auxiliaryTypes(File.class).hidden(true).required(false).build());
-
-            return command;
-        }).toList();
-    }
-
     /**
-     * Parses the options from the given command line arguments. Also prints help pages when requested.
-     * @param args The command line arguments
-     * @return the parse result generated by picocli
+     * Runs the report viewer using the given file as the default result.zip
+     * @param zipFile The zip file to pass to the viewer. Can be null, if no result should be opened by default
+     * @throws IOException If something went wrong with the internal server
      */
-    public ParseResult parseOptions(String... args) throws CliException {
-        try {
-            ParseResult result = commandLine.parseArgs(args);
-            if (result.isUsageHelpRequested() || (result.subcommand() != null && result.subcommand().isUsageHelpRequested())) {
-                commandLine.getExecutionStrategy().execute(result);
-            }
-            return result;
-        } catch (CommandLine.ParameterException e) {
-            if (e.getArgSpec() != null && e.getArgSpec().isOption() && Arrays.asList(((OptionSpec) e.getArgSpec()).names()).contains("-l")) {
-                throw new CliException(String.format(UNKNOWN_LANGUAGE_EXCEPTION, e.getValue(),
-                        String.join(", ", LanguageLoader.getAllAvailableLanguageIdentifiers())));
-            }
-            throw new CliException("Error during parsing", e);
-        } catch (CommandLine.PicocliException e) {
-            throw new CliException("Error during parsing", e);
-        }
+    public void runViewer(File zipFile) throws IOException {
+        this.runner.runInternalServer(zipFile,    this.inputHandler.getCliOptions().advanced.port);
     }
 
-    private static void finalizeLogger() {
+    private void finalizeLogger() {
         ILoggerFactory factory = LoggerFactory.getILoggerFactory();
         if (!(factory instanceof CollectedLoggerFactory collectedLoggerFactory)) {
             return;
@@ -200,94 +122,8 @@ public final class CLI {
         collectedLoggerFactory.finalizeInstances();
     }
 
-    /**
-     * Builds an options instance from parsed options.
-     * @return the newly built options
-     */
-    public JPlagOptions buildOptionsFromArguments(ParseResult parseResult) throws CliException {
-        Set<File> submissionDirectories = new HashSet<>(List.of(this.options.rootDirectory));
-        Set<File> oldSubmissionDirectories = Set.of(this.options.oldDirectories);
-        List<String> suffixes = List.of(this.options.advanced.suffixes);
-        submissionDirectories.addAll(List.of(this.options.newDirectories));
-
-        if (parseResult.subcommand() != null && parseResult.subcommand().hasMatchedPositional(0)) {
-            submissionDirectories.addAll(parseResult.subcommand().matchedPositional(0).getValue());
-        }
-
-        ClusteringOptions clusteringOptions = getClusteringOptions(this.options);
-        MergingOptions mergingOptions = getMergingOptions(this.options);
-
-        JPlagOptions jPlagOptions = new JPlagOptions(loadLanguage(parseResult), this.options.minTokenMatch, submissionDirectories,
-                oldSubmissionDirectories, null, this.options.advanced.subdirectory, suffixes, this.options.advanced.exclusionFileName,
-                JPlagOptions.DEFAULT_SIMILARITY_METRIC, this.options.advanced.similarityThreshold, this.options.shownComparisons, clusteringOptions,
-                this.options.advanced.debug, mergingOptions, this.options.normalize);
-
-        String baseCodePath = this.options.baseCode;
-        File baseCodeDirectory = baseCodePath == null ? null : new File(baseCodePath);
-        if (baseCodeDirectory == null || baseCodeDirectory.exists()) {
-            return jPlagOptions.withBaseCodeSubmissionDirectory(baseCodeDirectory);
-        }
-        logger.warn("Using legacy partial base code API. Please migrate to new full path base code API.");
-        return jPlagOptions.withBaseCodeSubmissionName(baseCodePath);
-    }
-
-    private Language loadLanguage(ParseResult result) throws CliException {
-        if (result.subcommand() == null) {
-            return this.options.language;
-        }
-        ParseResult subcommandResult = result.subcommand();
-        Language language = LanguageLoader.getLanguage(subcommandResult.commandSpec().name())
-                .orElseThrow(() -> new CliException(IMPOSSIBLE_EXCEPTION));
-        LanguageOptions languageOptions = language.getOptions();
-        languageOptions.getOptionsAsList().forEach(option -> {
-            if (subcommandResult.hasMatchedOption(option.getNameAsUnixParameter())) {
-                option.setValue(subcommandResult.matchedOptionValue(option.getNameAsUnixParameter(), null));
-            }
-        });
-        return language;
-    }
-
-    private static ClusteringOptions getClusteringOptions(CliOptions options) {
-        ClusteringOptions clusteringOptions = new ClusteringOptions().withEnabled(!options.clustering.disable)
-                .withAlgorithm(options.clustering.enabled.algorithm).withSimilarityMetric(options.clustering.enabled.metric)
-                .withSpectralKernelBandwidth(options.clusterSpectralBandwidth).withSpectralGaussianProcessVariance(options.clusterSpectralNoise)
-                .withSpectralMinRuns(options.clusterSpectralMinRuns).withSpectralMaxRuns(options.clusterSpectralMaxRuns)
-                .withSpectralMaxKMeansIterationPerRun(options.clusterSpectralKMeansIterations)
-                .withAgglomerativeThreshold(options.clusterAgglomerativeThreshold)
-                .withAgglomerativeInterClusterSimilarity(options.clusterAgglomerativeInterClusterSimilarity);
-
-        if (options.clusterPreprocessingNone) {
-            clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.NONE);
-        }
-
-        if (options.clusterPreprocessingCdf) {
-            clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION);
-        }
-
-        if (options.clusterPreprocessingPercentile != 0) {
-            clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.PERCENTILE)
-                    .withPreprocessorPercentile(options.clusterPreprocessingPercentile);
-        }
-
-        if (options.clusterPreprocessingThreshold != 0) {
-            clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.THRESHOLD)
-                    .withPreprocessorThreshold(options.clusterPreprocessingThreshold);
-        }
-
-        return clusteringOptions;
-    }
-
-    private static MergingOptions getMergingOptions(CliOptions options) {
-        return new MergingOptions(options.merging.enabled, options.merging.minimumNeighborLength, options.merging.maximumGapSize);
-    }
-
-    private String generateDescription() {
-        var randomDescription = DESCRIPTIONS[RANDOM.nextInt(DESCRIPTIONS.length)];
-        return String.format(DESCRIPTION_PATTERN, randomDescription, CREDITS);
-    }
-
     private String getResultFilePath() {
-        String optionValue = this.options.resultFile;
+        String optionValue = this.inputHandler.getCliOptions().resultFile;
         if (optionValue.endsWith(DEFAULT_FILE_ENDING)) {
             return optionValue;
         }
@@ -297,5 +133,12 @@ public final class CLI {
     private String getResultFileBaseName() {
         String defaultOutputFile = getResultFilePath();
         return defaultOutputFile.substring(0, defaultOutputFile.length() - DEFAULT_FILE_ENDING.length());
+    }
+
+    public static void main(String[] args) {
+        CLI cli = new CLI(JPlagRunner.DEFAULT_JPLAG_RUNNER, OutputFileGenerator.DEFAULT_OUTPUT_FILE_GENERATOR, args);
+        if (cli.executeCliAndHandleErrors()) {
+            System.exit(1);
+        }
     }
 }

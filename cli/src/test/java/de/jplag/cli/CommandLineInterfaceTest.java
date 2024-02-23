@@ -1,5 +1,6 @@
 package de.jplag.cli;
 
+import de.jplag.cli.picocli.CliInputHandler;
 import de.jplag.options.JPlagOptions;
 
 import picocli.CommandLine;
@@ -14,7 +15,6 @@ public abstract class CommandLineInterfaceTest {
     protected static final String CURRENT_DIRECTORY = ".";
     protected static final double DELTA = 1E-5;
 
-    protected CLI cli;
     protected JPlagOptions options;
 
     /**
@@ -36,9 +36,9 @@ public abstract class CommandLineInterfaceTest {
      * @param builder The argument builder containing the values to pass to the cli
      */
     protected void buildOptionsFromCLI(ArgumentBuilder builder) throws CliException {
-        cli = new CLI();
-        CommandLine.ParseResult result = cli.parseOptions(builder.getArgumentsAsArray());
-        options = cli.buildOptionsFromArguments(result);
+        CliInputHandler inputHandler = new CliInputHandler(builder.getArgumentsAsArray());
+        inputHandler.parse();
+        this.options = new JPlagOptionsBuilder(inputHandler).buildOptions();
     }
 
 }
