@@ -4,13 +4,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import de.jplag.cli.options.CliOptions;
-import de.jplag.reporting.reportobject.ReportObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.JPlagResult;
+import de.jplag.cli.options.CliOptions;
 import de.jplag.csv.comparisons.CsvComparisonOutput;
+import de.jplag.reporting.reportobject.ReportObjectFactory;
 
 public interface OutputFileGenerator {
     OutputFileGenerator DEFAULT_OUTPUT_FILE_GENERATOR = new OutputFileGenerator() {
@@ -40,17 +40,15 @@ public interface OutputFileGenerator {
     /**
      * Exports the given result as CSVs, if the csvExport is activated in the options. Both a full and an anonymized version
      * will be written.
-     *
-     * @param result     The result to export
+     * @param result The result to export
      * @param outputRoot The root folder for the output
-     * @param options    The cli options
+     * @param options The cli options
      */
     void generateCsvOutput(JPlagResult result, File outputRoot, CliOptions options);
 
     /**
      * Generates the JPLag result zip
-     *
-     * @param result     The JPlag result
+     * @param result The JPlag result
      * @param outputFile The output file
      * @throws FileNotFoundException If the file cannot be written
      */

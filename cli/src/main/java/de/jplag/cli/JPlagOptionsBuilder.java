@@ -1,18 +1,19 @@
 package de.jplag.cli;
 
+import java.io.File;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.jplag.cli.options.CliOptions;
 import de.jplag.cli.picocli.CliInputHandler;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.Preprocessing;
 import de.jplag.merging.MergingOptions;
 import de.jplag.options.JPlagOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Handles the building of JPlag options from the cli options
@@ -43,14 +44,7 @@ public class JPlagOptionsBuilder {
         submissionDirectories.addAll(List.of(this.cliOptions.newDirectories));
         submissionDirectories.addAll(this.cliInputHandler.getSubcommandSubmissionDirectories());
 
-
-        ClusteringOptions clusteringOptions = getClusteringOptions();
-        MergingOptions mergingOptions = getMergingOptions();
-
-        JPlagOptions jPlagOptions = new JPlagOptions(this.cliInputHandler.getSelectedLanguage(), this.cliOptions.minTokenMatch, submissionDirectories,
-                oldSubmissionDirectories, null, this.cliOptions.advanced.subdirectory, suffixes, this.cliOptions.advanced.exclusionFileName,
-                JPlagOptions.DEFAULT_SIMILARITY_METRIC, this.cliOptions.advanced.similarityThreshold, this.cliOptions.shownComparisons, clusteringOptions,
-                this.cliOptions.advanced.debug, mergingOptions, this.cliOptions.normalize);
+        JPlagOptions jPlagOptions = initializeJPlagOptions(submissionDirectories, oldSubmissionDirectories, suffixes);
 
         String baseCodePath = this.cliOptions.baseCode;
         File baseCodeDirectory = baseCodePath == null ? null : new File(baseCodePath);
@@ -61,11 +55,23 @@ public class JPlagOptionsBuilder {
         return jPlagOptions.withBaseCodeSubmissionName(baseCodePath);
     }
 
+    private JPlagOptions initializeJPlagOptions(Set<File> submissionDirectories, Set<File> oldSubmissionDirectories, List<String> suffixes)
+            throws CliException {
+        ClusteringOptions clusteringOptions = getClusteringOptions();
+        MergingOptions mergingOptions = getMergingOptions();
+
+        return new JPlagOptions(this.cliInputHandler.getSelectedLanguage(), this.cliOptions.minTokenMatch, submissionDirectories,
+                oldSubmissionDirectories, null, this.cliOptions.advanced.subdirectory, suffixes, this.cliOptions.advanced.exclusionFileName,
+                JPlagOptions.DEFAULT_SIMILARITY_METRIC, this.cliOptions.advanced.similarityThreshold, this.cliOptions.shownComparisons,
+                clusteringOptions, this.cliOptions.advanced.debug, mergingOptions, this.cliOptions.normalize);
+    }
+
     private ClusteringOptions getClusteringOptions() {
         ClusteringOptions clusteringOptions = new ClusteringOptions().withEnabled(!this.cliOptions.clustering.disable)
                 .withAlgorithm(this.cliOptions.clustering.enabled.algorithm).withSimilarityMetric(this.cliOptions.clustering.enabled.metric)
-                .withSpectralKernelBandwidth(this.cliOptions.clusterSpectralBandwidth).withSpectralGaussianProcessVariance(this.cliOptions.clusterSpectralNoise)
-                .withSpectralMinRuns(this.cliOptions.clusterSpectralMinRuns).withSpectralMaxRuns(this.cliOptions.clusterSpectralMaxRuns)
+                .withSpectralKernelBandwidth(this.cliOptions.clusterSpectralBandwidth)
+                .withSpectralGaussianProcessVariance(this.cliOptions.clusterSpectralNoise).withSpectralMinRuns(this.cliOptions.clusterSpectralMinRuns)
+                .withSpectralMaxRuns(this.cliOptions.clusterSpectralMaxRuns)
                 .withSpectralMaxKMeansIterationPerRun(this.cliOptions.clusterSpectralKMeansIterations)
                 .withAgglomerativeThreshold(this.cliOptions.clusterAgglomerativeThreshold)
                 .withAgglomerativeInterClusterSimilarity(this.cliOptions.clusterAgglomerativeInterClusterSimilarity);
@@ -92,6 +98,7 @@ public class JPlagOptionsBuilder {
     }
 
     private MergingOptions getMergingOptions() {
-        return new MergingOptions(this.cliOptions.merging.enabled, this.cliOptions.merging.minimumNeighborLength, this.cliOptions.merging.maximumGapSize);
+        return new MergingOptions(this.cliOptions.merging.enabled, this.cliOptions.merging.minimumNeighborLength,
+                this.cliOptions.merging.maximumGapSize);
     }
 }

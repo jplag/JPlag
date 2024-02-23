@@ -1,14 +1,14 @@
 package de.jplag.cli.logger;
 
-import org.slf4j.Marker;
-import org.slf4j.event.Level;
-import org.slf4j.helpers.MessageFormatter;
-
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedDeque;
+
+import org.slf4j.Marker;
+import org.slf4j.event.Level;
+import org.slf4j.helpers.MessageFormatter;
 
 /**
  * A logger implementation, that prints all errors during finalization
@@ -20,7 +20,6 @@ public class CollectedLogger extends JPlagLoggerBase {
 
     /**
      * Indicator whether finalization is in progress.
-     *
      * @see #printAllErrorsForLogger()
      */
     private transient boolean isFinalizing = false;

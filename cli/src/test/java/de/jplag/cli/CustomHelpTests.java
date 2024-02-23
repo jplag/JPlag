@@ -1,11 +1,12 @@
 package de.jplag.cli;
 
-import de.jplag.cli.picocli.CustomHelp;
-import de.jplag.cli.picocli.HelpFactory;
-import de.jplag.cli.picocli.ParamLabelRenderer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import de.jplag.cli.picocli.CustomHelp;
+import de.jplag.cli.picocli.HelpFactory;
+import de.jplag.cli.picocli.ParamLabelRenderer;
 
 import picocli.CommandLine;
 
@@ -29,6 +30,7 @@ class CustomHelpTests {
      */
     @Test
     void testReturnsCustomRenderer() {
-        Assertions.assertInstanceOf(ParamLabelRenderer.class, this.help.parameterLabelRenderer(), "The custom help object returned the wrong ParamLabelRenderer type.");
+        Assertions.assertInstanceOf(ParamLabelRenderer.class, this.help.parameterLabelRenderer(),
+                "The custom help object returned the wrong ParamLabelRenderer type.");
     }
 }

@@ -1,13 +1,8 @@
 package de.jplag.cli.picocli;
 
-import de.jplag.Language;
-import de.jplag.cli.CliException;
-import de.jplag.cli.options.CliOptions;
-import de.jplag.cli.options.LanguageLoader;
-import de.jplag.options.LanguageOption;
-import de.jplag.options.LanguageOptions;
-import picocli.CommandLine;
-import picocli.CommandLine.ParseResult;
+import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_DESCRIPTION_HEADING;
+import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_OPTION_LIST;
+import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_SYNOPSIS;
 
 import java.io.File;
 import java.security.SecureRandom;
@@ -17,9 +12,15 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_DESCRIPTION_HEADING;
-import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_OPTION_LIST;
-import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_SYNOPSIS;
+import de.jplag.Language;
+import de.jplag.cli.CliException;
+import de.jplag.cli.options.CliOptions;
+import de.jplag.cli.options.LanguageLoader;
+import de.jplag.options.LanguageOption;
+import de.jplag.options.LanguageOptions;
+
+import picocli.CommandLine;
+import picocli.CommandLine.ParseResult;
 
 /**
  * Handles the parsing of the command line arguments
@@ -94,19 +95,20 @@ public class CliInputHandler {
 
     /**
      * Parses the cli parameters and prints the usage help if requested.
-     *
      * @return true, if the usage help has been requested. In this case the program should stop.
      * @throws CliException If something went wrong during parsing.
      */
     public boolean parse() throws CliException {
         try {
             this.parseResult = this.commandLine.parseArgs(args);
-            if (this.parseResult.isUsageHelpRequested() || (this.parseResult.subcommand() != null && this.parseResult.subcommand().isUsageHelpRequested())) {
+            if (this.parseResult.isUsageHelpRequested()
+                    || (this.parseResult.subcommand() != null && this.parseResult.subcommand().isUsageHelpRequested())) {
                 commandLine.getExecutionStrategy().execute(this.parseResult);
                 return true;
             }
         } catch (CommandLine.ParameterException e) {
-            if (e.getArgSpec() != null && e.getArgSpec().isOption() && Arrays.asList(((CommandLine.Model.OptionSpec) e.getArgSpec()).names()).contains("-l")) {
+            if (e.getArgSpec() != null && e.getArgSpec().isOption()
+                    && Arrays.asList(((CommandLine.Model.OptionSpec) e.getArgSpec()).names()).contains("-l")) {
                 throw new CliException(String.format(UNKNOWN_LANGUAGE_EXCEPTION, e.getValue(),
                         String.join(", ", LanguageLoader.getAllAvailableLanguageIdentifiers())));
             }
@@ -119,7 +121,6 @@ public class CliInputHandler {
 
     /**
      * If {@link #parse()} has not been called yet, this will be empty, otherwise it will be a valid object.
-     *
      * @return The parsed cli options.
      */
     public CliOptions getCliOptions() {
@@ -138,8 +139,7 @@ public class CliInputHandler {
 
         ParseResult subcommand = this.parseResult.subcommand();
 
-        Language language = LanguageLoader.getLanguage(subcommand.commandSpec().name())
-                .orElseThrow(() -> new CliException(IMPOSSIBLE_EXCEPTION));
+        Language language = LanguageLoader.getLanguage(subcommand.commandSpec().name()).orElseThrow(() -> new CliException(IMPOSSIBLE_EXCEPTION));
 
         LanguageOptions languageOptions = language.getOptions();
         languageOptions.getOptionsAsList().forEach(option -> {
@@ -165,4 +165,3 @@ public class CliInputHandler {
         return String.format(DESCRIPTION_PATTERN, randomDescription, CREDITS);
     }
 }
-

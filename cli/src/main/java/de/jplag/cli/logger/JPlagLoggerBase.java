@@ -87,6 +87,6 @@ public abstract class JPlagLoggerBase extends AbstractLogger {
 
     @Override
     protected String getFullyQualifiedCallerName() {
-        return null; //does not seem to be used by anything, but is required by SLF4J
+        return null; // does not seem to be used by anything, but is required by SLF4J
     }
 }

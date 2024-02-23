@@ -1,8 +1,8 @@
 package de.jplag.cli.logger;
 
-import org.slf4j.event.Level;
-
 import java.util.Date;
+
+import org.slf4j.event.Level;
 
 /**
  * Holds a log entry for later usage

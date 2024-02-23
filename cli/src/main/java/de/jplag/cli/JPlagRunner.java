@@ -1,17 +1,18 @@
 package de.jplag.cli;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.jplag.JPlag;
 import de.jplag.JPlagResult;
 import de.jplag.cli.server.ReportViewer;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.awt.Desktop;
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
 
 /**
  * Wraps the execution of the JPlag elements, so dummy implementations can be used for unit tests.

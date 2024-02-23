@@ -1,5 +1,13 @@
 package de.jplag.cli;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import org.slf4j.ILoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.jplag.JPlag;
 import de.jplag.JPlagResult;
 import de.jplag.cli.logger.CollectedLoggerFactory;
@@ -8,17 +16,9 @@ import de.jplag.cli.picocli.CliInputHandler;
 import de.jplag.exceptions.ExitException;
 import de.jplag.logging.ProgressBarLogger;
 import de.jplag.options.JPlagOptions;
-import org.slf4j.ILoggerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 /**
  * Command line interface class, allows using via command line.
- *
  * @see CLI#main(String[])
  */
 public final class CLI {
@@ -32,9 +32,8 @@ public final class CLI {
 
     /**
      * Creates a cli.
-     *
      * @param runner The way to run JPlag
-     * @param args   The command line arguments
+     * @param args The command line arguments
      */
     public CLI(JPlagRunner runner, OutputFileGenerator outputFileGenerator, String[] args) {
         this.runner = runner;
@@ -44,9 +43,8 @@ public final class CLI {
 
     /**
      * Executes the cli
-     *
      * @throws ExitException If anything on the side of JPlag goes wrong
-     * @throws IOException   If any files did not work
+     * @throws IOException If any files did not work
      */
     public void executeCli() throws ExitException, IOException {
         logger.debug("Your version of JPlag is {}", JPlag.JPLAG_VERSION);
@@ -64,7 +62,6 @@ public final class CLI {
 
     /**
      * Executes the cli and handles the exceptions that might occur.
-     *
      * @return true, if an exception has been caught.
      */
     public boolean executeCliAndHandleErrors() {
@@ -88,9 +85,8 @@ public final class CLI {
 
     /**
      * Runs JPlag and returns the file the result has been written to
-     *
      * @return The file containing the result
-     * @throws ExitException         If JPlag threw an exception
+     * @throws ExitException If JPlag threw an exception
      * @throws FileNotFoundException If the file could not be written
      */
     public File runJPlag() throws ExitException, FileNotFoundException {
@@ -111,7 +107,7 @@ public final class CLI {
      * @throws IOException If something went wrong with the internal server
      */
     public void runViewer(File zipFile) throws IOException {
-        this.runner.runInternalServer(zipFile,    this.inputHandler.getCliOptions().advanced.port);
+        this.runner.runInternalServer(zipFile, this.inputHandler.getCliOptions().advanced.port);
     }
 
     private void finalizeLogger() {
