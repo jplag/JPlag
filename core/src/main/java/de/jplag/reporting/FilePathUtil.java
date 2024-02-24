@@ -8,7 +8,6 @@ import de.jplag.Submission;
 
 public final class FilePathUtil {
     private static final String ZIP_PATH_SEPARATOR = "/"; // Paths in zip files are always separated by a slash
-    private static final String WINDOWS_PATH_SEPARATOR = "\\";
 
     private FilePathUtil() {
         // private constructor to prevent instantiation
@@ -28,23 +27,26 @@ public final class FilePathUtil {
         return Path.of(submissionToIdFunction.apply(submission), submission.getRoot().toPath().relativize(file.toPath()).toString()).toString();
     }
 
-    /**
-     * Joins logical paths using a slash. This method ensures, that no duplicate slashes are created in between.
-     * @param left The left path segment
-     * @param right The right path segment
-     * @return The joined paths
-     */
-    public static String joinZipPathSegments(String left, String right) {
-        String rightStripped = right;
-        while (rightStripped.startsWith(ZIP_PATH_SEPARATOR) || rightStripped.startsWith(WINDOWS_PATH_SEPARATOR)) {
-            rightStripped = rightStripped.substring(1);
+    public static Path forceRelativePath(Path path) {
+        if (path.isAbsolute()) {
+            return Path.of("/").relativize(path);
         }
+        return path;
+    }
 
-        String leftStripped = left;
-        while (leftStripped.endsWith(ZIP_PATH_SEPARATOR) || leftStripped.startsWith(WINDOWS_PATH_SEPARATOR)) {
-            leftStripped = leftStripped.substring(0, leftStripped.length() - 1);
+    public static Path createRelativePath(String path) {
+        return forceRelativePath(Path.of(path));
+    }
+
+    public static String pathAsZipPath(Path path) {
+        Path real = forceRelativePath(path);
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < real.getNameCount(); i++) {
+            if (i != 0) {
+                builder.append(ZIP_PATH_SEPARATOR);
+            }
+            builder.append(real.getName(i));
         }
-
-        return leftStripped + ZIP_PATH_SEPARATOR + rightStripped;
+        return builder.toString();
     }
 }
