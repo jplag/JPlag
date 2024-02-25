@@ -20,11 +20,11 @@ public final class FilePathUtil {
      * @param submissionToIdFunction Function to map names to ids
      * @return Relative path
      */
-    public static String getRelativeSubmissionPath(File file, Submission submission, Function<Submission, String> submissionToIdFunction) {
+    public static Path getRelativeSubmissionPath(File file, Submission submission, Function<Submission, String> submissionToIdFunction) {
         if (file.toPath().equals(submission.getRoot().toPath())) {
-            return Path.of(submissionToIdFunction.apply(submission), submissionToIdFunction.apply(submission)).toString();
+            return Path.of(submissionToIdFunction.apply(submission), submissionToIdFunction.apply(submission));
         }
-        return Path.of(submissionToIdFunction.apply(submission), submission.getRoot().toPath().relativize(file.toPath()).toString()).toString();
+        return Path.of(submissionToIdFunction.apply(submission), submission.getRoot().toPath().relativize(file.toPath()).toString());
     }
 
     /**
