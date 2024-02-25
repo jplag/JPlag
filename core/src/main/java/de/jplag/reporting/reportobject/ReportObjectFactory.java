@@ -110,7 +110,7 @@ public class ReportObjectFactory {
             Path submissionRootPath = SUBMISSIONS_ROOT_PATH.resolve(FilePathUtil.createRelativePath(submissionToIdFunction.apply(submission)));
             for (File file : submission.getFiles()) {
                 Path relativeFilePath = Path.of(submission.getRoot().getAbsolutePath()).relativize(Path.of(file.getAbsolutePath()));
-                if (relativeFilePath.getNameCount() == 0) {
+                if (relativeFilePath.getNameCount() == 0 || relativeFilePath.equals(Path.of(""))) {
                     relativeFilePath = Path.of(file.getName());
                 }
                 Path zipPath = submissionRootPath.resolve(relativeFilePath);
