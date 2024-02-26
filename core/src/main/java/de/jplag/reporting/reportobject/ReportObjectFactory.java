@@ -107,9 +107,13 @@ public class ReportObjectFactory {
         Set<Submission> submissions = getSubmissions(comparisons);
         Language language = result.getOptions().language();
         for (Submission submission : submissions) {
+            Path submissionRootPath = SUBMISSIONS_ROOT_PATH.resolve(FilePathUtil.createRelativePath(submissionToIdFunction.apply(submission)));
             for (File file : submission.getFiles()) {
-                Path filePath = FilePathUtil.getRelativeSubmissionPath(file, submission, submissionToIdFunction);
-                Path zipPath = SUBMISSIONS_ROOT_PATH.resolve(filePath);
+                Path relativeFilePath = Path.of(submission.getRoot().getAbsolutePath()).relativize(Path.of(file.getAbsolutePath()));
+                if (relativeFilePath.getNameCount() == 0 || relativeFilePath.equals(Path.of(""))) {
+                    relativeFilePath = Path.of(file.getName());
+                }
+                Path zipPath = submissionRootPath.resolve(relativeFilePath);
 
                 File fileToCopy = getFileToCopy(language, file);
                 this.resultWriter.addFileContentEntry(zipPath, fileToCopy);
@@ -172,7 +176,7 @@ public class ReportObjectFactory {
         List<Map<String, Map<String, SubmissionFile>>> submissionTokenCountList = submissions.stream().parallel().map(submission -> {
             Map<String, SubmissionFile> tokenCounts = new HashMap<>();
             for (Map.Entry<File, Integer> entry : submission.getTokenCountPerFile().entrySet()) {
-                String key = FilePathUtil.getRelativeSubmissionPath(entry.getKey(), submission, submissionToIdFunction).toString();
+                String key = FilePathUtil.getRelativeSubmissionPath(entry.getKey(), submission, submissionToIdFunction);
                 tokenCounts.put(key, new SubmissionFile(entry.getValue()));
             }
             return Map.of(submissionNameToIdMap.get(submission.getName()), tokenCounts);
