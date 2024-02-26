@@ -207,7 +207,7 @@ class CPPListener extends AbstractAntlrListener {
 
         visit(ParameterDeclarationContext.class).map(VARDEF).withSemantics(CodeSemantics::new).onEnter((ctx, varReg) -> {
             // don't register parameters in function declarations, e.g. bc6h_enc lines 117-120
-            if (hasAncestor(ctx, FunctionDefinitionContext.class, SimpleDeclarationContext.class)) {
+            if (hasAncestor(ctx, FunctionDefinitionContext.class, SimpleDeclarationContext.class) && ctx.declarator() != null) {
                 CPP14Parser.PointerDeclaratorContext pd = ctx.declarator().pointerDeclarator();
                 String name = pd.noPointerDeclarator().getText();
                 varReg.registerVariable(name, VariableScope.LOCAL, true);
