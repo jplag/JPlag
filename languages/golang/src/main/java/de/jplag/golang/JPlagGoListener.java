@@ -543,12 +543,12 @@ public class JPlagGoListener extends GoParserBaseListener {
                 enterContext(GoBlockContext.ELSE_BLOCK);
             }
             case "{" -> {
-                if(getCurrentContext() != null) {
+                if (getCurrentContext() != null) {
                     transformToken(getCurrentContext().getBegin(), token);
                 }
             }
             case "}" -> {
-                if(getCurrentContext() != null) {
+                if (getCurrentContext() != null) {
                     transformToken(getCurrentContext().getEnd(), token);
                 }
             }
