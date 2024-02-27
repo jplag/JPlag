@@ -27,6 +27,11 @@ public final class FilePathUtil {
         return Path.of(submissionToIdFunction.apply(submission), submission.getRoot().toPath().relativize(file.toPath()).toString()).toString();
     }
 
+    /**
+     * Forces a path to be relative. If the path is absolute, the returned path will be relative to the root.
+     * @param path The path to relativize
+     * @return The relative path
+     */
     public static Path forceRelativePath(Path path) {
         if (path.isAbsolute()) {
             return Path.of("/").relativize(path);
@@ -34,10 +39,21 @@ public final class FilePathUtil {
         return path;
     }
 
+    /**
+     * Returns the relative path found in the string.
+     * @see #forceRelativePath(Path)
+     * @param path The path string
+     * @return The relative path
+     */
     public static Path createRelativePath(String path) {
         return forceRelativePath(Path.of(path));
     }
 
+    /**
+     * Formats the path for usage with zip files. Returns the path segments separated by {@link #ZIP_PATH_SEPARATOR}
+     * @param path The path to format
+     * @return The zip file path
+     */
     public static String pathAsZipPath(Path path) {
         Path real = forceRelativePath(path);
         StringBuilder builder = new StringBuilder();
