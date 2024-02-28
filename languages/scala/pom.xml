@@ -10,7 +10,7 @@
     <artifactId>scala</artifactId>
 
     <properties>
-        <scala.version>2.13.12</scala.version>
+        <scala.version>2.13.13</scala.version>
         <scala.compat.version>2.13</scala.compat.version>
     </properties>
 
