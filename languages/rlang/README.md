@@ -13,4 +13,4 @@ The choice of tokens is based directly on the CodeGra-de version, whereas the ex
 Like in other modules, e.g. for Java and C#, the tokens account for the beginning and the end of control flow structures, for control flow keywords, and some kinds of expressions. As R is very different from other programming languages in JPlag, it remains to be seen whether the R module can hold up to the others.
 
 ### Usage
-To use the R module, add the `-l R` flag in the CLI, or use a `JPlagOption` object with `new de.jplag.rlang.Language()` as `language` in the Java API as described in the usage information in the [readme of the main project](https://github.com/jplag/JPlag#usage) and [in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).
+To use the R module, add the `-l R` flag in the CLI, or use a `JPlagOption` object with `new RLanguage()` as `language` in the Java API as described in the usage information in the [readme of the main project](https://github.com/jplag/JPlag#usage) and [in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).

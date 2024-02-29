@@ -2,363 +2,217 @@
   A view displaying the .json file of a comparison from a JPlag report.
 -->
 <template>
-  <div class="container">
-    <button
-      id="show-button"
-      :class="{ hidden: !hideLeftPanel }"
-      title="Show sidebar"
-      @click="togglePanel"
+  <div class="absolute bottom-0 left-0 right-0 top-0 flex flex-col">
+    <div class="relative left-0 right-0 top-0 flex space-x-5 p-5 pb-0 print:p-0">
+      <Container class="flex-grow overflow-hidden print:min-h-fit print:overflow-visible">
+        <h2>
+          Comparison:
+          {{ store().getDisplayName(comparison.firstSubmissionId) }}
+          -
+          {{ store().getDisplayName(comparison.secondSubmissionId) }}
+          <ToolTipComponent direction="left" class="float-right print:hidden">
+            <template #tooltip>
+              <p class="whitespace-pre text-sm">
+                Printing works best in landscape mode on Chromium based browsers
+              </p>
+            </template>
+            <template #default>
+              <Button class="h-10 w-10" @click="print()">
+                <FontAwesomeIcon class="text-2xl" :icon="['fas', 'print']" />
+              </Button>
+            </template>
+          </ToolTipComponent>
+        </h2>
+        <div class="flex flex-row space-x-10">
+          <TextInformation label="Average Similarity" class="font-bold"
+            >{{ (comparison.similarities[MetricType.AVERAGE] * 100).toFixed(2) }}%</TextInformation
+          >
+          <TextInformation
+            v-if="comparison.firstSimilarity"
+            :label="`Similarity ${store().getDisplayName(comparison.firstSubmissionId)}`"
+            tooltip-side="right"
+          >
+            <template #default>{{ (comparison.firstSimilarity * 100).toFixed(2) }}%</template>
+            <template #tooltip
+              ><div class="whitespace-pre text-sm">
+                <p>
+                  Percentage of code from
+                  {{ store().getDisplayName(comparison.firstSubmissionId) }} that was found in the
+                  code of {{ store().getDisplayName(comparison.secondSubmissionId) }}.
+                </p>
+                <p>
+                  The numbers might not be symmetric, due to the submissions having different
+                  lengths.
+                </p>
+              </div></template
+            >
+          </TextInformation>
+          <TextInformation
+            v-if="comparison.secondSimilarity"
+            :label="`Similarity ${store().getDisplayName(comparison.secondSubmissionId)}`"
+            tooltip-side="right"
+            ><template #default>{{ (comparison.secondSimilarity * 100).toFixed(2) }}%</template>
+            <template #tooltip
+              ><div class="whitespace-pre text-sm">
+                <p>
+                  Percentage of code from
+                  {{ store().getDisplayName(comparison.secondSubmissionId) }} that was found in the
+                  code of {{ store().getDisplayName(comparison.firstSubmissionId) }}.
+                </p>
+                <p>
+                  The numbers might not be symmetric, due to the submissions having different
+                  lengths.
+                </p>
+              </div></template
+            ></TextInformation
+          >
+        </div>
+        <MatchList
+          :id1="firstId"
+          :id2="secondId"
+          :matches="comparison.allMatches"
+          @match-selected="showMatch"
+        />
+      </Container>
+    </div>
+    <div ref="styleholder"></div>
+    <div
+      class="relative bottom-0 left-0 right-0 flex flex-grow justify-between space-x-5 px-5 pb-7 pt-5 print:space-x-1 print:p-0 print:!pt-2"
     >
-      <img alt="show" src="@/assets/double_arrow_black_24dp.svg" />
-    </button>
-    <div id="sidebar" :class="{ hidden: hideLeftPanel }">
-      <div class="title-section">
-        <h1>JPlag Comparison</h1>
-        <button id="hide-button" title="Hide sidebar" @click="togglePanel">
-          <img
-            alt="hide"
-            src="@/assets/keyboard_double_arrow_left_black_24dp.svg"
-          />
-        </button>
-      </div>
-      <div>
-        <button class="animated-back-button" title="Back button" @click="back">back</button>
-      </div>
-      <TextInformation
-        :anonymous="isAnonymous(firstId)"
-        :value="store.getters.submissionDisplayName(firstId)"
-        label="Submission 1"
+      <FilesContainer
+        ref="panel1"
+        :files="filesOfFirst"
+        :matches="comparison.matchesInFirstSubmission"
+        :file-owner-display-name="store().getDisplayName(comparison.firstSubmissionId)"
+        :highlight-language="language"
+        @line-selected="showMatchInSecond"
+        class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
       />
-      <TextInformation
-        :anonymous="store.state.anonymous.has(secondId)"
-        :value="store.getters.submissionDisplayName(secondId)"
-        label="Submission 2"
-      />
-      <TextInformation :value="(comparison.similarity * 100).toFixed(2)" label="Match %" />
-      <MatchTable
-        :id1="firstId"
-        :id2="secondId"
-        :matches="comparison.allMatches"
-        @match-selected="showMatch"
+      <FilesContainer
+        ref="panel2"
+        :files="filesOfSecond"
+        :matches="comparison.matchesInSecondSubmissions"
+        :file-owner-display-name="store().getDisplayName(comparison.secondSubmissionId)"
+        :highlight-language="language"
+        @line-selected="showMatchInFirst"
+        class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
       />
     </div>
-    <FilesContainer
-      :container-id="1"
-      :submission-id="firstId"
-      :files="filesOfFirst"
-      :matches="comparison.matchesInFirstSubmission"
-      :files-owner="store.getters.submissionDisplayName(firstId)"
-      :anonymous="store.state.anonymous.has(firstId)"
-      files-owner-default="submission 1"
-      @toggle-collapse="toggleCollapseFirst"
-      @line-selected="showMatchInSecond"
-    />
-    <FilesContainer
-      :container-id="2"
-      :submission-id="secondId"
-      :files="filesOfSecond"
-      :matches="comparison.matchesInSecondSubmissions"
-      :files-owner="store.getters.submissionDisplayName(secondId)"
-      :anonymous="store.state.anonymous.has(secondId)"
-      files-owner-default="submission 2"
-      @toggle-collapse="toggleCollapseSecond"
-      @line-selected="showMatchInFirst"
-    />
   </div>
 </template>
 
-<script lang="ts">
-import {defineComponent, ref} from "vue";
-import { generateLineCodeLink } from "@/utils/Utils";
-import TextInformation from "@/components/TextInformation.vue";
-import MatchTable from "@/components/MatchTable.vue";
-import { ComparisonFactory } from "@/model/factories/ComparisonFactory";
-import FilesContainer from "@/components/FilesContainer.vue";
-import { useStore } from "vuex";
-import { useRouter } from "vue-router";
-import { Match } from "@/model/Match";
-import {Comparison} from "@/model/Comparison";
+<script setup lang="ts">
+import type { Match } from '@/model/Match'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import Button from '@/components/ButtonComponent.vue'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faPrint } from '@fortawesome/free-solid-svg-icons'
+import { onMounted, ref, watch, type Ref, computed, type PropType, onErrorCaptured } from 'vue'
+import TextInformation from '@/components/TextInformation.vue'
+import MatchList from '@/components/fileDisplaying/MatchList.vue'
+import FilesContainer from '@/components/fileDisplaying/FilesContainer.vue'
+import { store } from '@/stores/store'
+import Container from '@/components/ContainerComponent.vue'
+import { ParserLanguage } from '@/model/Language'
+import hljsLightMode from 'highlight.js/styles/vs.css?raw'
+import hljsDarkMode from 'highlight.js/styles/vs2015.css?raw'
+import { MetricType } from '@/model/MetricType'
+import { Comparison } from '@/model/Comparison'
+import { redirectOnError } from '@/router'
+import ToolTipComponent from '@/components/ToolTipComponent.vue'
 
-export default defineComponent({
-  name: "ComparisonView",
-  components: { FilesContainer, MatchTable, TextInformation },
-  props: {
-    firstId: {
-      type: String,
-      required: true,
-    },
-    secondId: {
-      type: String,
-      required: true,
-    },
+library.add(faPrint)
+
+const props = defineProps({
+  comparison: {
+    type: Object as PropType<Comparison>,
+    required: true
   },
-  setup(props) {
-    const store = useStore();
-    const router = useRouter();
-    console.log("Generating comparison {%s} - {%s}...", props.firstId, props.secondId);
-    let comparison;
-    //getting the comparison file based on the used mode (zip, local, single)
-    if (store.state.local) {
-      try {
-        comparison = ComparisonFactory.getComparison(
-          // eslint-disable-next-line @typescript-eslint/no-var-requires
-          require(`../files/${store.getters.getComparisonFileName(
-            props.firstId,
-            props.secondId
-          )}.json`)
-        );
-      } catch (exception) {
-        router.back();
-      }
-    } else if (store.state.zip) {
-      let comparisonFile = store.getters.getComparisonFileForSubmissions(
-        props.firstId,
-        props.secondId
-      );
-      if (comparisonFile) {
-        comparison = ComparisonFactory.getComparison(
-          JSON.parse(comparisonFile)
-        );
-      } else {
-        console.log("Comparison file not found!");
-        router.push({
-          name: "ErrorView",
-          state: {
-            message: "Comparison file not found!",
-            to: "/overview",
-            routerInfo: "back to overview page"
-          }
-        });
-      }
-    } else if (store.state.single) {
-      try {
-        comparison = ComparisonFactory.getComparison(
-            JSON.parse(store.state.fileString)
-        );
-      }catch (e){
-        router.push({
-          name: "ErrorView",
-          state: {
-            message: "Source code of matches not found. To only see the overview, please drop the overview.json directly.",
-            to: "/",
-            routerInfo: "back to FileUpload page"
-          }
-        });
-        store.commit("clearStore");
-      }
-    }
-    if (!comparison) {
-      comparison=new Comparison("","",0);
-      console.log("Unable to build comparison file.");
-    }
-    const filesOfFirst = ref(comparison.filesOfFirstSubmission);
-    const filesOfSecond = ref(comparison.filesOfSecondSubmission);
+  language: {
+    type: Object as PropType<ParserLanguage>,
+    required: true
+  }
+})
 
-    /**
-     * Collapses a file in the first files container.
-     * @param title
-     */
-    const toggleCollapseFirst = (title: string) => {
-      const file = filesOfFirst.value.get(title);
-      if (file) {
-        file.collapsed = !file.collapsed;
-      }
-    };
-    /**
-     * Collapses a file in the second files container.
-     * @param title
-     */
-    const toggleCollapseSecond = (title: string) => {
-      const file = filesOfSecond.value.get(title);
-      if (file) {
-        file.collapsed = !file.collapsed;
-      }
-    };
-    /**
-     * Shows a match in the first files container
-     * @param e
-     * @param panel
-     * @param file
-     * @param line
-     */
-    const showMatchInFirst = (
-      e: unknown,
-      panel: number,
-      file: string,
-      line: number
-    ) => {
-      if (!filesOfFirst.value.get(file)?.collapsed) {
-        toggleCollapseFirst(file);
-      }
-      document
-        .getElementById(generateLineCodeLink(panel, file, line))
-        ?.scrollIntoView();
-    };
-    /**
-     * Shows a match in the second files container.
-     * @param e
-     * @param panel
-     * @param file
-     * @param line
-     */
-    const showMatchInSecond = (
-      e: unknown,
-      panel: number,
-      file: string,
-      line: number
-    ) => {
-      if (!filesOfSecond.value.get(file)?.collapsed) {
-        toggleCollapseSecond(file);
-      }
-      document
-        .getElementById(generateLineCodeLink(panel, file, line))
-        ?.scrollIntoView();
-    };
+const firstId = computed(() => props.comparison.firstSubmissionId)
+const secondId = computed(() => props.comparison.secondSubmissionId)
+const filesOfFirst = computed(() => props.comparison.filesOfFirstSubmission)
+const filesOfSecond = computed(() => props.comparison.filesOfSecondSubmission)
 
-    const showMatch = (e: unknown, match: Match) => {
-      showMatchInFirst(e, 1, match.firstFile, match.startInFirst);
-      showMatchInSecond(e, 2, match.secondFile, match.startInSecond);
-    };
+const panel1: Ref<typeof FilesContainer | null> = ref(null)
+const panel2: Ref<typeof FilesContainer | null> = ref(null)
 
-    const isAnonymous = (id: string) => store.state.anonymous.has(id);
-    //Left panel
-    const hideLeftPanel = ref(false);
-    const togglePanel = () => {
-      hideLeftPanel.value = !hideLeftPanel.value;
-    };
+/**
+ * Shows a match in the first files container when clicked on a line in the second files container.
+ * @param file (file name)
+ * @param line (line number)
+ */
+function showMatchInFirst(match: Match) {
+  panel1.value?.scrollTo(match.firstFile, match.startInFirst)
+}
 
-    const back = () => {
-      router.back();
-    };
+/**
+ * Shows a match in the second files container, when clicked on a line in the second files container.
+ * @param file (file name)
+ * @param line (line number)
+ */
+function showMatchInSecond(match: Match) {
+  panel2.value?.scrollTo(match.secondFile, match.startInSecond)
+}
 
-    return {
-      comparison,
-      filesOfFirst,
-      filesOfSecond,
-      hideLeftPanel,
-      store,
+/**
+ * Shows a match in the first and second files container.
+ * @param e The click event
+ * @param match The match to show
+ */
+function showMatch(match: Match) {
+  showMatchInFirst(match)
+  showMatchInSecond(match)
+}
 
-      toggleCollapseFirst,
-      toggleCollapseSecond,
-      showMatchInFirst,
-      showMatchInSecond,
-      showMatch,
-      togglePanel,
-      isAnonymous,
-      back,
-    };
-  },
-});
+function print() {
+  window.print()
+}
+
+// This code is responsible for changing the theme of the highlighted code depending on light/dark mode
+// Changing the used style itsself is the desired solution (https://github.com/highlightjs/highlight.js/issues/2115)
+const styleholder: Ref<Node | null> = ref(null)
+
+onMounted(() => {
+  if (styleholder.value == null) {
+    return
+  }
+  const styleHolderDiv = styleholder.value as Node
+  const styleElement = document.createElement('style')
+  styleElement.innerHTML = store().uiState.useDarkMode ? hljsDarkMode : hljsLightMode
+  styleHolderDiv.appendChild(styleElement)
+})
+
+const useDarkMode = computed(() => {
+  return store().uiState.useDarkMode
+})
+
+watch(useDarkMode, (newValue) => {
+  if (styleholder.value == null) {
+    return
+  }
+  const styleHolderDiv = styleholder.value as Node
+  styleHolderDiv.removeChild(styleHolderDiv.firstChild as Node)
+  const styleElement = document.createElement('style')
+  styleElement.innerHTML = newValue ? hljsDarkMode : hljsLightMode
+  styleHolderDiv.appendChild(styleElement)
+})
+
+onErrorCaptured((error) => {
+  redirectOnError(error, 'Error displaying comparison:\n', 'OverviewView', 'Back to overview')
+  return false
+})
 </script>
 
-<style scoped>
-h1 {
-  color: var(--on-primary-color);
-  text-align: center;
-}
-
-.container {
-  display: flex;
-  align-items: stretch;
-  flex-wrap: nowrap;
-  width: 100%;
-  height: 100%;
-  background: var(--background-color);
-}
-
-.title-section {
-  display: flex;
-  justify-content: space-between;
-}
-
-.title-section > h1 {
-  text-align: left !important;
-}
-
-.hidden {
-  display: none !important;
-}
-
-#sidebar {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  width: 60%;
-  background: var(--primary-color-light);
-  padding: 1%;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
-}
-
-#hide-button {
-  display: flex;
-  flex-direction: column;
-  background: transparent;
-  border-radius: 10px;
-  height: max-content;
-  border: none;
-}
-
-#hide-button:hover {
-  cursor: pointer;
-  background: var(--primary-color-dark);
-}
-
-#show-button {
-  position: absolute;
-  z-index: 1000;
-  left: 0;
-  background: var(--secondary-color);
-  border: none;
-  border-top-right-radius: 10px;
-  border-bottom-right-radius: 10px;
-  height: 100%;
-  width: 1%;
-}
-
-#show-button img {
-  display: none;
-}
-
-#show-button:hover {
-  cursor: pointer;
-  width: 3%;
-}
-
-#show-button:hover img {
-  display: block;
-}
-
-.animated-back-button{
-  float: right;
-  height: 100%;
-  position: relative;
-
-  font-size: 1.4rem;
-  background: var(--primary-color-dark);
-  background-size: 46px 26px;
-  border: 1px solid #555;
-  color: black;
-  transition: all ease 0.3s;
-}
-
-.animated-back-button::after{
-  position: absolute;
-  top: 50%;
-  right: 0.6em;
-  transform: translateY(-50%);
-  content: "«";
-  font-size: 1.2em;
-  transition: all ease 0.3s;
-  opacity: 0;
-}
-
-.animated-back-button:hover{
-  padding: 20px 60px 20px 20px;
-}
-
-.animated-back-button:hover::after{
-  right: 1.2em;
-  opacity: 1;
+<style>
+@media print {
+  @page {
+    size: landscape;
+  }
 }
 </style>

@@ -2,336 +2,165 @@
   A view displaying the overview file of a JPlag report.
 -->
 <template>
-  <div class="container">
-    <div class="column-container" style="width: 30%">
-      <h1>JPlag Report</h1>
-      <p class="section-title">Main Info:</p>
-      <div id="basicInfo">
-        <TextInformation
-          :has-additional-info="hasMoreSubmissionPaths"
-          :value="submissionPathValue"
-          additional-info-title=""
-          label="Directory path"
+  <div class="absolute bottom-0 left-0 right-0 top-0 flex flex-col">
+    <div class="relative left-0 right-0 top-0 flex space-x-5 p-5 pb-0">
+      <Container class="flex-grow">
+        <h2>JPlag Report</h2>
+        <div
+          class="flex flex-row items-center space-x-5 print:flex-col print:items-start print:space-x-0"
         >
-          <p
-            v-for="path in overview.submissionFolderPath"
-            :key="path"
-            :title="path"
-          >
-            {{ path }}
-          </p>
-        </TextInformation>
-        <TextInformation
-          :has-additional-info="true"
-          :value="overview.language"
-          additional-info-title="File extensions:"
-          label="Language"
-        >
-          <p v-for="info in overview.fileExtensions" :key="info">{{ info }}</p>
-        </TextInformation>
-        <TextInformation
-          :value="overview.matchSensitivity"
-          label="Match Sensitivity"
-        />
-        <TextInformation
-          :has-additional-info="true"
-          :value="store.getters.getSubmissionIds.size"
-          additional-info-title="Submission IDs:"
-          label="Submissions"
-        >
-          <IDsList :ids="store.getters.getSubmissionIds" @id-sent="handleId" />
-        </TextInformation>
-        <TextInformation
-          :value="overview.dateOfExecution"
-          label="Date of execution"
-        />
-        <TextInformation
-          :value="overview.durationOfExecution"
-          label="Duration (in ms)"
-        />
-      </div>
-      <div id="logo-section">
-        <img id="logo" alt="JPlag" src="@/assets/logo-nobg.png" />
-      </div>
+          <TextInformation label="Submission Directory" class="flex-auto">{{
+            submissionPathValue
+          }}</TextInformation>
+          <TextInformation label="Result name" class="flex-auto">{{
+            store().state.uploadedFileName
+          }}</TextInformation>
+          <TextInformation label="Total Submissions" class="flex-auto">{{
+            store().getSubmissionIds.length
+          }}</TextInformation>
+
+          <TextInformation label="Shown/Total Comparisons" class="flex-auto">
+            <template #default
+              >{{ overview.shownComparisons }} / {{ overview.totalComparisons }}</template
+            >
+            <template #tooltip>
+              <div class="whitespace-pre text-sm">
+                <TextInformation label="Shown Comparisons">{{
+                  overview.shownComparisons
+                }}</TextInformation>
+                <TextInformation label="Total Comparisons">{{
+                  overview.totalComparisons
+                }}</TextInformation>
+                <div v-if="overview.missingComparisons > 0">
+                  <TextInformation label="Missing Comparisons">{{
+                    overview.missingComparisons
+                  }}</TextInformation>
+                  <p>
+                    To include more comparisons in the report modify the number of shown comparisons
+                    in the CLI.
+                  </p>
+                </div>
+              </div>
+            </template>
+          </TextInformation>
+
+          <TextInformation label="Min Token Match" class="flex-auto">
+            <template #default>
+              {{ overview.matchSensitivity }}
+            </template>
+            <template #tooltip>
+              <div class="whitespace-pre text-sm">
+                <p>
+                  Tunes the comparison sensitivity by adjusting the minimum token required to be
+                  counted as a matching section.
+                </p>
+                <p>It can be adjusted in the CLI.</p>
+              </div>
+            </template>
+          </TextInformation>
+
+          <ToolTipComponent direction="left" class="flex-grow-0 print:hidden">
+            <template #default>
+              <Button @click="router.push({ name: 'InfoView' })"> More </Button>
+            </template>
+            <template #tooltip>
+              <p class="whitespace-pre text-sm">More information about the CLI run of JPlag</p>
+            </template>
+          </ToolTipComponent>
+        </div>
+      </Container>
     </div>
 
-    <div class="column-container" style="width: 35%">
-      <div id="metrics">
-        <p class="section-title">Metric:</p>
-        <div id="metrics-list">
-          <MetricButton
-            v-for="(metric, index) in overview.metrics"
-            :id="metric.metricName"
-            :key="metric.metricName"
-            :is-selected="selectedMetric[index]"
-            :metric="metric"
-            @click="selectMetric(index)"
-          />
+    <div
+      class="relative bottom-0 left-0 right-0 flex flex-grow space-x-5 px-5 pb-7 pt-5 print:flex-col print:space-x-0 print:space-y-5"
+    >
+      <Container
+        class="flex max-h-0 min-h-full flex-1 flex-col print:max-h-none print:min-h-fit print:flex-none"
+      >
+        <h2>Distribution of Comparisons:</h2>
+        <DistributionDiagram
+          :distribution="overview.distribution[store().uiState.distributionChartConfig.metric]"
+          :x-scale="store().uiState.distributionChartConfig.xScale"
+          class="h-2/3 w-full print:h-fit print:w-fit"
+        />
+        <div class="flex flex-grow flex-col space-y-1 print:grow-0">
+          <h3 class="text-lg underline">Options:</h3>
+          <ScrollableComponent class="h-fit flex-grow">
+            <MetricSelector
+              class="mt-2"
+              title="Metric:"
+              :defaultSelected="store().uiState.distributionChartConfig.metric"
+              @selection-changed="
+                (metric: MetricType) => (store().uiState.distributionChartConfig.metric = metric)
+              "
+            />
+            <OptionsSelector
+              class="mt-2"
+              title="Scale x-Axis:"
+              :labels="['Linear', 'Logarithmic']"
+              :defaultSelected="store().uiState.distributionChartConfig.xScale == 'linear' ? 0 : 1"
+              @selection-changed="
+                (i: number) =>
+                  (store().uiState.distributionChartConfig.xScale =
+                    i == 0 ? 'linear' : 'logarithmic')
+              "
+            />
+          </ScrollableComponent>
         </div>
-      </div>
-      <p class="section-title">Distribution:</p>
-      <DistributionDiagram
-        :distribution="distributions[selectedMetricIndex]"
-        class="full-width"
-      />
-    </div>
-    <div class="column-container" style="width: 35%">
-      <p class="section-title">Top Comparisons:</p>
-      <div id="comparisonsList">
+      </Container>
+
+      <Container class="flex max-h-0 min-h-full flex-1 flex-col print:hidden">
         <ComparisonsTable
           :clusters="overview.clusters"
-          :top-comparisons="topComps[selectedMetricIndex]"
-        />
-      </div>
-      <div v-if="missingComparisons!==0 && !isNaN(missingComparisons)">
-        <h3>Total comparisons: {{overview.totalComparisons}}, Shown comparisons: {{shownComparisons}}, Missing comparisons: {{missingComparisons}}. To see more, re-run JPlag with a higher maximum number argument.</h3>
-      </div>
+          :top-comparisons="overview.topComparisons"
+          class="min-h-0 flex-1 print:min-h-full print:flex-grow"
+        >
+          <template #footer v-if="overview.topComparisons.length < overview.totalComparisons">
+            <p class="w-full pt-1 text-center font-bold">
+              Not all comparisons are shown. To see more, re-run JPlag with a higher maximum number
+              argument.
+            </p>
+          </template>
+        </ComparisonsTable>
+      </Container>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, onErrorCaptured, Ref, ref } from "vue";
-import router from "@/router";
-import TextInformation from "../components/TextInformation.vue";
-import DistributionDiagram from "@/components/DistributionDiagram.vue";
-import MetricButton from "@/components/MetricButton.vue";
-import ComparisonsTable from "@/components/ComparisonsTable.vue";
-import { OverviewFactory } from "@/model/factories/OverviewFactory";
-import IDsList from "@/components/IDsList.vue";
-import { useStore } from "vuex";
-import { Overview } from "@/model/Overview";
-import { ComparisonListElement } from "@/model/ComparisonListElement";
+<script setup lang="ts">
+import { computed, type PropType, onErrorCaptured } from 'vue'
+import { redirectOnError, router } from '@/router'
+import DistributionDiagram from '@/components/DistributionDiagram.vue'
+import ComparisonsTable from '@/components/ComparisonsTable.vue'
+import { store } from '@/stores/store'
+import Container from '@/components/ContainerComponent.vue'
+import Button from '@/components/ButtonComponent.vue'
+import ScrollableComponent from '@/components/ScrollableComponent.vue'
+import { MetricType } from '@/model/MetricType'
+import TextInformation from '@/components/TextInformation.vue'
+import MetricSelector from '@/components/optionsSelectors/MetricSelector.vue'
+import ToolTipComponent from '@/components/ToolTipComponent.vue'
+import OptionsSelector from '@/components/optionsSelectors/OptionsSelectorComponent.vue'
+import { Overview } from '@/model/Overview'
 
-export default defineComponent({
-  name: "OverviewView",
-  components: {
-    IDsList,
-    ComparisonsTable,
-    DistributionDiagram,
-    MetricButton,
-    TextInformation,
-  },
-  setup() {
-    const store = useStore();
-    const overviewFile = computed(() => {
-      console.log("Start finding overview.json in state...")
-      const index = Object.keys(store.state.files).find((name) =>
-        name.endsWith("overview.json")
-      );
-      return index != undefined
-        ? store.state.files[index]
-        : console.log("Could not find overview.json");
-    });
+const props = defineProps({
+  overview: {
+    type: Object as PropType<Overview>,
+    required: true
+  }
+})
 
-    const getOverview = (): Overview => {
-      console.log("Generating overview...")
-      let temp!: Overview;
-      //Gets the overview file based on the used mode (zip, local, single).
-      if (store.state.local) {
-        try {
-          // eslint-disable-next-line @typescript-eslint/no-var-requires
-          temp = OverviewFactory.getOverview(require("../files/overview.json"));
-        } catch (e) {
-          router.back();
-        }
-      } else if (store.state.zip) {
-        if(overviewFile.value===undefined){
-          return new Overview([],"","",[],0,"",0,[],[],0, new Map<string, Map<string, string>>());
-        }
-        const overviewJson = JSON.parse(overviewFile.value);
-        temp = OverviewFactory.getOverview(overviewJson);
-      } else if (store.state.single) {
-        temp = OverviewFactory.getOverview(JSON.parse(store.state.fileString));
-      }
-      return temp;
-    };
+document.title = `${store().state.uploadedFileName} - JPlag Report Viewer`
 
-    let overview = getOverview();
+const hasMoreSubmissionPaths = computed(() => props.overview.submissionFolderPath.length > 1)
+const submissionPathValue = computed(() =>
+  hasMoreSubmissionPaths.value
+    ? 'Click More to see all paths'
+    : props.overview.submissionFolderPath[0]
+)
 
-
-    /**
-     * Handles the selection of an Id to anonymize.
-     * If all submission ids are provided as parameter it hides or displays them based on their previous state.
-     * If a single id is provided it hides all of the other ids except for the chosen one.
-     * @param ids
-     */
-    const handleId = (ids: Array<string>) => {
-      if (ids.length === store.getters.getSubmissionIds.length) {
-        if (store.state.anonymous.size > 0) {
-          store.commit("resetAnonymous");
-        } else {
-          store.commit("addAnonymous", ids);
-        }
-      } else {
-        if (store.state.anonymous.has(ids[0])) {
-          store.commit("removeAnonymous", ids);
-        } else {
-          if (store.state.anonymous.size === 0) {
-            store.commit(
-              "addAnonymous",
-              store.getters.getSubmissionIds.filter((s: string) => s !== ids[0])
-            );
-          } else {
-            store.commit("addAnonymous", ids);
-          }
-        }
-      }
-    };
-
-    //Metrics
-    /**
-     * Current metric to display distribution and comparisons for.
-     * @type {Ref<UnwrapRef<boolean[]>>}
-     */
-    let selectedMetric = ref(overview.metrics.map(() => false));
-    /**
-     * Index of current selected metric. Used to obtain information for the metric from the distribution and top
-     * comparisons array.
-     * @type {Ref<UnwrapRef<number>>}
-     */
-    let selectedMetricIndex = ref(0);
-    selectedMetric.value[selectedMetricIndex.value] = true;
-
-    const selectMetric = (metric: number) => {
-      selectedMetric.value = selectedMetric.value.map(() => false);
-      selectedMetric.value[metric] = true;
-      selectedMetricIndex.value = metric;
-    };
-
-    //Distribution
-    let distributions = ref(overview.metrics.map((m) => m.distribution));
-
-    //Top Comparisons
-    let topComps: Ref<Array<Array<ComparisonListElement>>> = ref(
-      overview.metrics.map((m) => m.comparisons)
-    );
-
-    const hasMoreSubmissionPaths = overview.submissionFolderPath.length > 1;
-    const submissionPathValue = hasMoreSubmissionPaths
-      ? "Click arrow to see all paths"
-      : overview.submissionFolderPath[0];
-
-    const shownComparisons = computed(()=>{
-      return overview.metrics[selectedMetricIndex.value]?.comparisons.length;
-    });
-    const missingComparisons = overview.totalComparisons - shownComparisons.value;
-
-    onErrorCaptured(()=>{
-      router.push({
-        name: "ErrorView",
-        state: {
-          message: "Overview.json can't be found!",
-          to: "/",
-          routerInfo: "back to FileUpload page"
-        }
-      });
-      store.commit("clearStore");
-      return false;
-    });
-
-    return {
-      overview,
-      selectedMetricIndex,
-      selectedMetric,
-      distributions,
-      topComps,
-      hasMoreSubmissionPaths,
-      submissionPathValue,
-      shownComparisons,
-      missingComparisons,
-      handleId,
-      selectMetric,
-      store,
-    };
-  },
-});
+onErrorCaptured((error) => {
+  redirectOnError(error, 'Error displaying overview:\n')
+  return false
+})
 </script>
-
-<style scoped>
-h1 {
-  text-align: left;
-  margin-top: 2%;
-  color: var(--on-background-color);
-}
-
-hr {
-  border: 0;
-  height: 2px;
-  background: linear-gradient(to right, #edf2fb, transparent, transparent);
-  width: 100%;
-  box-shadow: #d7e3fc 0 1px;
-}
-
-.container {
-  display: flex;
-  align-items: stretch;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  overflow: auto;
-  background: var(--background-color);
-}
-
-.column-container {
-  display: flex;
-  flex-direction: column;
-  padding: 1%;
-}
-
-.full-width {
-  width: 100%;
-}
-
-.section-title {
-  font-size: x-large;
-  font-weight: bold;
-  text-align: start;
-  margin: 0;
-  padding: 0;
-  color: var(--on-background-color);
-}
-
-#basicInfo {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  padding: 3%;
-  margin-top: 1%;
-  background: var(--primary-color-light);
-  border-radius: 10px;
-  box-shadow: var(--shadow-color) 2px 3px 3px;
-}
-
-#metrics {
-  display: flex;
-  justify-content: start;
-  margin-bottom: 1%;
-}
-
-#metrics-list {
-  display: flex;
-  margin-left: 2%;
-}
-
-#comparisonsList {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  padding: 2%;
-  background: var(--primary-color-light);
-  border-radius: 10px;
-  box-shadow: var(--shadow-color) 2px 3px 3px;
-}
-
-#logo-section {
-  justify-content: center;
-  align-items: center;
-  padding: 5%;
-  display: flex;
-}
-
-#logo {
-  flex-shrink: 2;
-}
-</style>

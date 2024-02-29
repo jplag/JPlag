@@ -1,7 +1,5 @@
 package de.jplag.reporting.jsonfactory;
 
-import java.io.File;
-import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -13,8 +11,11 @@ import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Submission;
 import de.jplag.Token;
+import de.jplag.options.SimilarityMetric;
+import de.jplag.reporting.FilePathUtil;
 import de.jplag.reporting.reportobject.model.ComparisonReport;
 import de.jplag.reporting.reportobject.model.Match;
+import de.jplag.reporting.reportobject.writer.JPlagResultWriter;
 
 /**
  * Writes {@link ComparisonReport}s of given {@link JPlagResult} to the disk under the specified path. Instantiated with
@@ -22,43 +23,43 @@ import de.jplag.reporting.reportobject.model.Match;
  */
 public class ComparisonReportWriter {
 
-    private final FileWriter fileWriter;
+    private final JPlagResultWriter resultWriter;
     private final Function<Submission, String> submissionToIdFunction;
     private final Map<String, Map<String, String>> submissionIdToComparisonFileName = new ConcurrentHashMap<>();
     private final Map<String, AtomicInteger> fileNameCollisions = new ConcurrentHashMap<>();
 
-    public ComparisonReportWriter(Function<Submission, String> submissionToIdFunction, FileWriter fileWriter) {
+    public ComparisonReportWriter(Function<Submission, String> submissionToIdFunction, JPlagResultWriter resultWriter) {
         this.submissionToIdFunction = submissionToIdFunction;
-        this.fileWriter = fileWriter;
+        this.resultWriter = resultWriter;
     }
 
     /**
      * Generates detailed ComparisonReport DTO for each comparison in a JPlagResult and writes them to the disk as json
      * files.
      * @param jPlagResult The JPlagResult to generate the comparison reports from. contains information about a comparison
-     * @param path The path to write the comparison files to
      * @return Nested map that associates each pair of submissions (by their ids) to their comparison file name. The
      * comparison file name for submission with id id1 and id2 can be fetched by executing get two times:
      * map.get(id1).get(id2). The nested map is symmetrical therefore, both map.get(id1).get(id2) and map.get(id2).get(id1)
      * yield the same result.
      */
-    public Map<String, Map<String, String>> writeComparisonReports(JPlagResult jPlagResult, String path) {
+    public Map<String, Map<String, String>> writeComparisonReports(JPlagResult jPlagResult) {
         int numberOfComparisons = jPlagResult.getOptions().maximumNumberOfComparisons();
         List<JPlagComparison> comparisons = jPlagResult.getComparisons(numberOfComparisons);
-        writeComparisons(path, comparisons);
+        writeComparisons(comparisons);
         return submissionIdToComparisonFileName;
     }
 
-    private void writeComparisons(String path, List<JPlagComparison> comparisons) {
-        comparisons.parallelStream().forEach(comparison -> {
+    private void writeComparisons(List<JPlagComparison> comparisons) {
+        for (JPlagComparison comparison : comparisons) {
             String firstSubmissionId = submissionToIdFunction.apply(comparison.firstSubmission());
             String secondSubmissionId = submissionToIdFunction.apply(comparison.secondSubmission());
             String fileName = generateComparisonName(firstSubmissionId, secondSubmissionId);
             addToLookUp(firstSubmissionId, secondSubmissionId, fileName);
-            var comparisonReport = new ComparisonReport(firstSubmissionId, secondSubmissionId, comparison.similarity(),
-                    convertMatchesToReportMatches(comparison));
-            fileWriter.saveAsJSON(comparisonReport, path, fileName);
-        });
+            var comparisonReport = new ComparisonReport(firstSubmissionId, secondSubmissionId,
+                    Map.of(SimilarityMetric.AVG.name(), comparison.similarity(), SimilarityMetric.MAX.name(), comparison.maximalSimilarity()),
+                    convertMatchesToReportMatches(comparison), comparison.similarityOfFirst(), comparison.similarityOfSecond());
+            resultWriter.addJsonEntry(comparisonReport, fileName);
+        }
     }
 
     private void addToLookUp(String firstSubmissionId, String secondSubmissionId, String fileName) {
@@ -96,23 +97,16 @@ public class ComparisonReportWriter {
         List<Token> tokensFirst = comparison.firstSubmission().getTokenList().subList(match.startOfFirst(), match.endOfFirst() + 1);
         List<Token> tokensSecond = comparison.secondSubmission().getTokenList().subList(match.startOfSecond(), match.endOfSecond() + 1);
 
-        Comparator<? super Token> lineComparator = (first, second) -> first.getLine() - second.getLine();
+        Comparator<? super Token> lineComparator = Comparator.comparingInt(Token::getLine);
 
         Token startOfFirst = tokensFirst.stream().min(lineComparator).orElseThrow();
         Token endOfFirst = tokensFirst.stream().max(lineComparator).orElseThrow();
         Token startOfSecond = tokensSecond.stream().min(lineComparator).orElseThrow();
         Token endOfSecond = tokensSecond.stream().max(lineComparator).orElseThrow();
 
-        return new Match(relativizedFilePath(startOfFirst.getFile(), comparison.firstSubmission()),
-                relativizedFilePath(startOfSecond.getFile(), comparison.secondSubmission()), startOfFirst.getLine(), endOfFirst.getLine(),
-                startOfSecond.getLine(), endOfSecond.getLine(), match.length());
-    }
-
-    private String relativizedFilePath(File file, Submission submission) {
-        if (file.toPath().equals(submission.getRoot().toPath())) {
-            return Path.of(submissionToIdFunction.apply(submission), submissionToIdFunction.apply(submission)).toString();
-        }
-        return Path.of(submissionToIdFunction.apply(submission), submission.getRoot().toPath().relativize(file.toPath()).toString()).toString();
+        return new Match(FilePathUtil.getRelativeSubmissionPath(startOfFirst.getFile(), comparison.firstSubmission(), submissionToIdFunction),
+                FilePathUtil.getRelativeSubmissionPath(startOfSecond.getFile(), comparison.secondSubmission(), submissionToIdFunction),
+                startOfFirst.getLine(), endOfFirst.getLine(), startOfSecond.getLine(), endOfSecond.getLine(), match.length());
     }
 
 }

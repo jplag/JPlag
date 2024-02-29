@@ -73,14 +73,13 @@ public final class CollectedLogger extends MarkerIgnoringBase {
         // Append date-time
         builder.append(dateFormat.format(timeOfError == null ? new Date() : timeOfError)).append(' ');
 
-        // Append current thread name
-        builder.append('[').append(Thread.currentThread().getName()).append("] ");
         // Append current Level
         builder.append('[').append(renderLevel(level)).append(']').append(' ');
 
         // Append the name of the log instance
-        if (shortLogName == null)
+        if (shortLogName == null) {
             shortLogName = computeShortName();
+        }
         builder.append(shortLogName).append(" - ");
         // Append the message
         builder.append(message);
@@ -92,8 +91,9 @@ public final class CollectedLogger extends MarkerIgnoringBase {
         this.isFinalizing = true;
         // Copy errors to prevent infinite recursion
         var errors = new ArrayList<>(this.allErrors);
-        if (errors.isEmpty())
+        if (errors.isEmpty()) {
             return;
+        }
 
         this.allErrors.removeAll(errors);
 
@@ -140,6 +140,7 @@ public final class CollectedLogger extends MarkerIgnoringBase {
         };
     }
 
+    @Override
     public boolean isTraceEnabled() {
         return isLevelEnabled(LOG_LEVEL_TRACE);
     }
@@ -149,114 +150,142 @@ public final class CollectedLogger extends MarkerIgnoringBase {
         log(LOG_LEVEL_TRACE, message, null);
     }
 
+    @Override
     public void trace(String format, Object param1) {
         formatAndLog(LOG_LEVEL_TRACE, format, param1, null);
     }
 
+    @Override
     public void trace(String format, Object param1, Object param2) {
         formatAndLog(LOG_LEVEL_TRACE, format, param1, param2);
     }
 
+    @Override
     public void trace(String format, Object... argArray) {
         formatAndLog(LOG_LEVEL_TRACE, format, argArray);
     }
 
+    @Override
     public void trace(String message, Throwable t) {
         log(LOG_LEVEL_TRACE, message, t);
     }
 
+    @Override
     public boolean isDebugEnabled() {
         return isLevelEnabled(LOG_LEVEL_DEBUG);
     }
 
+    @Override
     public void debug(String message) {
         log(LOG_LEVEL_DEBUG, message, null);
     }
 
+    @Override
     public void debug(String format, Object param1) {
         formatAndLog(LOG_LEVEL_DEBUG, format, param1, null);
     }
 
+    @Override
     public void debug(String format, Object param1, Object param2) {
         formatAndLog(LOG_LEVEL_DEBUG, format, param1, param2);
     }
 
+    @Override
     public void debug(String format, Object... argArray) {
         formatAndLog(LOG_LEVEL_DEBUG, format, argArray);
     }
 
+    @Override
     public void debug(String message, Throwable throwable) {
         log(LOG_LEVEL_DEBUG, message, throwable);
     }
 
+    @Override
     public boolean isInfoEnabled() {
         return isLevelEnabled(LOG_LEVEL_INFO);
     }
 
+    @Override
     public void info(String message) {
         log(LOG_LEVEL_INFO, message, null);
     }
 
+    @Override
     public void info(String format, Object arg) {
         formatAndLog(LOG_LEVEL_INFO, format, arg, null);
     }
 
+    @Override
     public void info(String format, Object arg1, Object arg2) {
         formatAndLog(LOG_LEVEL_INFO, format, arg1, arg2);
     }
 
+    @Override
     public void info(String format, Object... argArray) {
         formatAndLog(LOG_LEVEL_INFO, format, argArray);
     }
 
+    @Override
     public void info(String message, Throwable throwable) {
         log(LOG_LEVEL_INFO, message, throwable);
     }
 
+    @Override
     public boolean isWarnEnabled() {
         return isLevelEnabled(LOG_LEVEL_WARN);
     }
 
+    @Override
     public void warn(String message) {
         log(LOG_LEVEL_WARN, message, null);
     }
 
+    @Override
     public void warn(String format, Object arg) {
         formatAndLog(LOG_LEVEL_WARN, format, arg, null);
     }
 
+    @Override
     public void warn(String format, Object arg1, Object arg2) {
         formatAndLog(LOG_LEVEL_WARN, format, arg1, arg2);
     }
 
+    @Override
     public void warn(String format, Object... argArray) {
         formatAndLog(LOG_LEVEL_WARN, format, argArray);
     }
 
+    @Override
     public void warn(String message, Throwable throwable) {
         log(LOG_LEVEL_WARN, message, throwable);
     }
 
+    @Override
     public boolean isErrorEnabled() {
         return isLevelEnabled(LOG_LEVEL_ERROR);
     }
 
+    @Override
     public void error(String message) {
         log(LOG_LEVEL_ERROR, message, null);
     }
 
+    @Override
     public void error(String format, Object arg) {
         formatAndLog(LOG_LEVEL_ERROR, format, arg, null);
     }
 
+    @Override
     public void error(String format, Object arg1, Object arg2) {
         formatAndLog(LOG_LEVEL_ERROR, format, arg1, arg2);
     }
 
+    @Override
     public void error(String format, Object... argArray) {
         formatAndLog(LOG_LEVEL_ERROR, format, argArray);
     }
 
+    @Override
     public void error(String message, Throwable throwable) {
         log(LOG_LEVEL_ERROR, message, throwable);
     }

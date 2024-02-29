@@ -1,0 +1,47 @@
+{
+  "id1": "root1",
+  "id2": "root2",
+  "similarities": {
+    "AVG": 0.6900452488687783,
+    "MAX": 0.9936000000000001
+  },
+  "matches": [
+    {
+      "file1": "root2\\Structure.java",
+      "file2": "root1\\Structure.java",
+      "start1": 3,
+      "end1": 120,
+      "start2": 1,
+      "end2": 118,
+      "tokens": 139
+    },
+    {
+      "file1": "root2\\Submission.java",
+      "file2": "root1\\Submission.java",
+      "start1": 129,
+      "end1": 155,
+      "start2": 134,
+      "end2": 160,
+      "tokens": 34
+    },
+    {
+      "file1": "root2\\Submission.java",
+      "file2": "root1\\Submission.java",
+      "start1": 165,
+      "end1": 194,
+      "start2": 173,
+      "end2": 203,
+      "tokens": 33
+    },
+
+    {
+      "file1": "root2\\Submission.java",
+      "file2": "root1\\Submission.java",
+      "start1": 112,
+      "end1": 127,
+      "start2": 116,
+      "end2": 132,
+      "tokens": 23
+    }
+  ]
+}

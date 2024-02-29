@@ -50,8 +50,9 @@ public abstract class RustLexerBase extends Lexer {
 
     private boolean lookAheadMatches(String expected) {
         for (int charIndex = 0; charIndex < expected.length(); charIndex++) {
-            if (_input.LA(charIndex + 1) != expected.charAt(charIndex))
+            if (_input.LA(charIndex + 1) != expected.charAt(charIndex)) {
                 return false;
+            }
         }
         return true;
     }
@@ -61,9 +62,7 @@ public abstract class RustLexerBase extends Lexer {
     }
 
     public boolean floatLiteralPossible() {
-        if (this.currentToken == null || this.currentToken.getType() != RustLexer.DOT) {
-            return true;
-        } else if (this.previousToken == null) {
+        if (this.currentToken == null || this.currentToken.getType() != RustLexer.DOT || (this.previousToken == null)) {
             return true;
         }
 

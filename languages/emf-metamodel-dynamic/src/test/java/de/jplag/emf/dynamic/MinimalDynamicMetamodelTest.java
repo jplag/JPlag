@@ -13,6 +13,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.TokenPrinter;
 import de.jplag.TokenType;
+import de.jplag.emf.EmfLanguage;
 import de.jplag.testutils.FileUtil;
 import de.jplag.testutils.TokenUtils;
 
@@ -36,18 +38,19 @@ class MinimalDynamicMetamodelTest {
 
     @BeforeEach
     public void setUp() {
-        language = new Language();
+        language = new DynamicEmfLanguage();
         baseDirectory = BASE_PATH.toFile();
         FileUtil.assertDirectory(baseDirectory, TEST_SUBJECTS);
     }
 
     @Test
+    @DisplayName("Test tokens generated from example metamodels")
     void testBookstoreMetamodels() throws ParsingException {
         List<File> testFiles = Arrays.stream(TEST_SUBJECTS).map(path -> new File(BASE_PATH.toFile(), path)).toList();
-        List<Token> result = language.parse(new HashSet<>(testFiles));
+        List<Token> result = language.parse(new HashSet<>(testFiles), true);
         List<TokenType> tokenTypes = result.stream().map(Token::getType).toList();
-        logger.debug(TokenPrinter.printTokens(result, baseDirectory, Optional.of(Language.VIEW_FILE_SUFFIX)));
-        logger.info("parsed token types: " + tokenTypes.stream().map(TokenType::getDescription).toList().toString());
+        logger.debug(TokenPrinter.printTokens(result, baseDirectory, Optional.of(EmfLanguage.VIEW_FILE_SUFFIX)));
+        logger.info("parsed token types: " + tokenTypes.stream().map(TokenType::getDescription).toList());
         assertEquals(94, tokenTypes.size());
         assertEquals(7, new HashSet<>(tokenTypes.stream().filter(DynamicMetamodelTokenType.class::isInstance).toList()).size());
 
@@ -62,6 +65,6 @@ class MinimalDynamicMetamodelTest {
 
     @AfterEach
     public void tearDown() {
-        FileUtil.clearFiles(new File(BASE_PATH.toString()), Language.VIEW_FILE_SUFFIX);
+        FileUtil.clearFiles(new File(BASE_PATH.toString()), EmfLanguage.VIEW_FILE_SUFFIX);
     }
 }

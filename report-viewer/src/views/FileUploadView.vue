@@ -2,317 +2,235 @@
   Starting view of the application. Presents the options for loading a JPlag report.
 -->
 <template>
-  <div class="container" @dragover.prevent @drop.prevent="uploadFile">
-    <img alt="JPlag" src="@/assets/logo-nobg.png" />
-    <h1>JPlag Report Viewer</h1>
-    <div v-if="!hasQueryFile" class="container" style="height: auto">
-      <h2>Select an overview or comparison file or a zip to display.</h2>
-      <h3>(No files get uploaded anywhere)</h3>
-      <div class="drop-container">
-        <p>Drop a .json or .zip on this page</p>
+  <div
+    class="flex h-screen items-center text-center"
+    @dragover.prevent
+    @drop.prevent="uploadFileOnDrag"
+  >
+    <div class="w-screen">
+      <div>
+        <img
+          class="mx-auto mt-8 h-auto w-60"
+          src="@/assets/jplag-light-transparent.png"
+          alt="JPlag Logo"
+          v-if="store().uiState.useDarkMode"
+        />
+        <img
+          class="mx-auto mt-8 h-auto w-60"
+          src="@/assets/jplag-dark-transparent.png"
+          alt="JPlag Logo"
+          v-else
+        />
       </div>
-      <div v-if="hasLocalFile" class="local-files-container">
-        <p class="local-files-text">Detected local files!</p>
-        <button class="local-files-button" @click="continueWithLocal">
+      <h1 class="text-7xl">JPlag Report Viewer</h1>
+      <div v-if="!hasQueryFile && !loadingFiles && !exampleFiles">
+        <div
+          class="mx-auto mt-10 flex w-96 cursor-pointer flex-col justify-center rounded-md border-1 border-accent-dark bg-accent bg-opacity-25 px-5 py-5"
+          @click="uploadFileThroughWindow()"
+        >
+          <div>Drag and Drop zip/Json file on this page</div>
+          <div>Or click here to select a file</div>
+        </div>
+        <div>(No files will be uploaded)</div>
+        <Button class="mx-auto mt-8 w-fit" @click="continueWithLocal" v-if="localFiles">
           Continue with local files
-        </button>
+        </Button>
+      </div>
+      <LoadingCircle v-else-if="loadingFiles" class="space-y-5 pt-5" />
+      <div v-else-if="exampleFiles" class="pt-5">
+        <Button class="mx-auto w-fit text-xl" @click="continueWithLocal()"> View Example </Button>
+      </div>
+      <div v-if="errors.length > 0" class="text-error">
+        <p>{{ getErrorText() }}</p>
+        <p>For more details check the console.</p>
       </div>
     </div>
-    <p v-else>
-      Loading file…
-    </p>
+    <VersionInfoComponent class="absolute bottom-5 left-5" />
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-import { useRoute } from "vue-router";
-import jszip from "jszip";
-import router from "@/router";
-import store from "@/store/store";
-import path from "path";
-import slash from "slash";
+<script setup lang="ts">
+import { onErrorCaptured, ref, type Ref } from 'vue'
+import { useRoute } from 'vue-router'
+import { router } from '@/router'
+import { store } from '@/stores/store'
+import Button from '@/components/ButtonComponent.vue'
+import VersionInfoComponent from '@/components/VersionInfoComponent.vue'
+import LoadingCircle from '@/components/LoadingCircle.vue'
+import { ZipFileHandler } from '@/model/fileHandling/ZipFileHandler'
+import { JsonFileHandler } from '@/model/fileHandling/JsonFileHandler'
+import { BaseFactory } from '@/model/factories/BaseFactory'
 
-class LoadError extends Error {}
+store().clearStore()
 
-export default defineComponent({
-  name: "FileUploadView",
-  setup() {
-    store.commit("clearStore");
-    let hasLocalFile;
-    //Tries to detect local file. If no files detected, hides local mode from screen.
-    try {
-      require("../files/overview.json");
-      hasLocalFile = true;
-    } catch (e) {
-      console.log(e);
-      hasLocalFile = false;
+const exampleFiles = ref(import.meta.env.MODE == 'demo')
+const localFiles = ref(false)
+// Checks whether local files exist
+BaseFactory.getLocalFile('files/overview.json')
+  .then(() => {
+    localFiles.value = true
+  })
+  .catch(() => {})
+
+BaseFactory.useLocalZipMode().then((value) => {
+  console.log('Using local zip mode:', value)
+  if (value) {
+    store().state.uploadedFileName = BaseFactory.zipFileName
+    navigateToOverview()
+  }
+})
+
+document.title = 'JPlag Report Viewer'
+
+const loadingFiles = ref(false)
+type fileMethod = 'query' | 'local' | 'upload' | 'unknown'
+const errors: Ref<{ error: Error; source: fileMethod }[]> = ref([])
+
+// Loads file passed in query param, if any.
+const queryParams = useRoute().query
+let queryFileURL: URL | null = null
+if (typeof queryParams.file === 'string' && queryParams.file !== '') {
+  try {
+    queryFileURL = new URL(queryParams.file)
+  } catch (e) {
+    registerError(e as Error, 'query')
+    queryFileURL = null
+  }
+}
+if (queryFileURL !== null) {
+  loadQueryFile(queryFileURL)
+}
+const hasQueryFile = queryFileURL !== null
+
+function navigateToOverview() {
+  router.push({
+    name: 'OverviewView'
+  })
+}
+
+/**
+ * Handles a json file on drop. It read the file and passes the file string to next window.
+ * @param file The json file to handle
+ */
+async function handleJsonFile(file: Blob) {
+  try {
+    await new JsonFileHandler().handleFile(file)
+  } catch (e) {
+    registerError(e as Error, 'upload')
+    return
+  }
+  store().setLoadingType('single')
+  navigateToOverview()
+}
+
+/**
+ * Handles a file on drop. It determines the file type and passes it to the corresponding handler.
+ * @param file File to handle
+ */
+async function handleFile(file: Blob) {
+  loadingFiles.value = true
+  switch (file.type) {
+    case 'application/zip':
+    case 'application/zip-compressed':
+    case 'application/x-zip-compressed':
+    case 'application/x-zip':
+      store().setLoadingType('zip')
+      await new ZipFileHandler().handleFile(file)
+      return navigateToOverview()
+    case 'application/json':
+      return await handleJsonFile(file)
+    default:
+      throw new Error(`Unknown MIME type '${file.type}'`)
+  }
+}
+
+/**
+ * Handles file drop.
+ * @param e Drag event of file drop
+ */
+async function uploadFileOnDrag(e: DragEvent) {
+  let dropped = e.dataTransfer?.files
+  try {
+    if (dropped?.length === 1) {
+      store().state.uploadedFileName = dropped[0].name
+      await handleFile(dropped[0])
+    } else {
+      throw new Error('Not exactly one file')
     }
+  } catch (e) {
+    registerError(e as Error, 'upload')
+  }
+}
 
-    // Loads file passed in query param, if any.
-    const queryParams = useRoute().query;
-    let queryFileURL = null;
-    if (typeof queryParams.file === 'string' && queryParams.file !== '') {
-      try {
-        queryFileURL = new URL(queryParams.file);
-      } catch (e) {
-        if (e instanceof TypeError) {
-          console.warn(`Invalid URL '${queryParams.file}'`)
-          queryFileURL = null;
-        } else {
-          throw e;
-        }
-      }
+async function uploadFileThroughWindow() {
+  let input = document.createElement('input')
+  input.type = 'file'
+  input.accept = '.zip,.json'
+  input.multiple = false
+  input.onchange = () => {
+    const files = input.files
+    if (!files) {
+      return
     }
-
-    const navigateToOverview = () => {
-      router.push({
-        name: "OverviewView",
-      });
-    };
-    const navigateToComparisonView = (firstId: string, secondId: string) => {
-      router.push({
-        name: "ComparisonView",
-        params: {
-          firstId,
-          secondId,
-        },
-      });
-    };
-
-    const extractRootName = (filePath: path.ParsedPath) => {
-      const folders = filePath.dir.split("/");
-      return folders[0];
-    };
-    const extractSubmissionFileName = (filePath: path.ParsedPath) => {
-      const folders = filePath.dir.split("/");
-      const rootName = folders[0];
-      let submissionFolderIndex = -1;
-      if(rootName === "files") {
-        submissionFolderIndex = folders.findIndex(
-            (folder) => folder === "files"
-        );
-      }else {
-        submissionFolderIndex = folders.findIndex(
-            (folder) => folder === "submissions"
-        );
-      }
-      return folders[submissionFolderIndex + 1];
-    };
-    const extractFileNameWithFullPath = (filePath: path.ParsedPath, originalFileName: string) => {
-      let fullPath = "";
-      const rootName = extractRootName(filePath);
-      const filesOrSubmissionsIndex_filePath = filePath.dir.indexOf(rootName ==="files" ? "files" : "submissions");
-      const filesOrSubmissionsIndex_originalFileName = originalFileName.indexOf(rootName === "files" ? "files" : "submissions");
-      const unixSubfolderPathAfterSubmissions = filePath.dir.substring(filesOrSubmissionsIndex_filePath + (rootName === "files" ? "files".length : "submissions".length) + 1);
-      const originalPathWithoutSubmissions = originalFileName.substring(filesOrSubmissionsIndex_originalFileName + (rootName === "files" ? "files".length : "submissions".length));
-      if(originalPathWithoutSubmissions.charAt(0)==='\\'){
-           fullPath = (unixSubfolderPathAfterSubmissions + path.sep + filePath.base).replaceAll('/','\\');
-        }else {
-           fullPath = (unixSubfolderPathAfterSubmissions + path.sep + filePath.base);
-        }
-      return fullPath;
-    };
-    /**
-     * Handles zip file on drop. It extracts the zip and saves each file in the store.
-     * @param file
-     */
-    const handleZipFile = (file: Blob) => {
-      console.log("Start handling zip file and storing necessary data...")
-      return jszip.loadAsync(file).then(async (zip) => {
-        for (const originalFileName of Object.keys(zip.files)) {
-          const unixFileName = slash(originalFileName);
-          if (
-            /((.+\/)*)(files|submissions)\/(.+)\/(.+)/.test(unixFileName) &&
-            !/^__MACOSX\//.test(unixFileName)
-          ) {
-            const filePath = path.parse(unixFileName);
-
-            const submissionFileName = extractSubmissionFileName(filePath);
-            const fullPathFileName = extractFileNameWithFullPath(filePath,originalFileName);
-            await zip.files[originalFileName].async("string").then((data) => {
-              store.commit("saveSubmissionFile", {
-                name: submissionFileName,
-                file: { fileName: fullPathFileName, data: data },
-              });
-            });
-          } else {
-            await zip.files[originalFileName].async("string").then((data) => {
-              store.commit("saveFile", { fileName: unixFileName, data: data });
-            });
-          }
-        }
-        store.commit("setLoadingType", {
-          local: false,
-          zip: true,
-          single: false,
-          fileString: "",
-        });
-        navigateToOverview();
-      });
-    };
-    /**
-     * Handles a json file on drop. It read the file and passes the file string to next window.
-     * @param str
-     */
-    const handleJsonFile = (str: string) => {
-      let json = JSON.parse(str);
-      if (json["submission_folder_path"]) {
-        store.commit("setLoadingType", {
-          local: false,
-          zip: false,
-          single: true,
-          fileString: str,
-        });
-        navigateToOverview();
-      } else if (json["id1"] && json["id2"]) {
-        store.commit("setLoadingType", {
-          local: false,
-          zip: false,
-          single: true,
-          fileString: str,
-        });
-        navigateToComparisonView(json["id1"], json["id2"]);
-      } else {
-        throw new LoadError('Invalid JSON', json);
-      }
-    };
-    const handleFile = (file: Blob) => {
-      switch (file.type) {
-        case "application/zip":
-        case "application/zip-compressed":
-        case "application/x-zip-compressed":
-        case "application/x-zip":
-          return handleZipFile(file);
-        case "application/json":
-          return file.text().then(handleJsonFile);
-        default:
-          throw new LoadError(`Unknown MIME type '${file.type}'`);
-      }
+    const file = files.item(0)
+    if (!file) {
+      return
     }
-    /**
-     * Handles file drop.
-     * @param e
-     */
-    const uploadFile = async (e: DragEvent) => {
-      let dropped = e.dataTransfer?.files;
-      try {
-        if (dropped?.length === 1) {
-          await handleFile(dropped[0]);
-        } else {
-          throw new LoadError('Not exactly one file');
-        }
-      } catch (e) {
-        if (e instanceof LoadError) {
-          console.warn(e);
-          alert(e.message);
-        } else {
-          throw e;
-        }
-      }
-    };
-    const loadQueryFile = async (url: URL) => {
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new LoadError('Response not OK');
-        }
-        await handleFile(await response.blob());
-      } catch (e) {
-        console.warn(e);
-        alert(e);
-      }
-    }
-    /**
-     * Handles click on Continue with local files.
-     */
-    const continueWithLocal = () => {
-      store.commit("setLoadingType", {
-        local: true,
-        zip: false,
-        single: false,
-        fileString: "",
-      });
-      navigateToOverview();
-    };
+    store().state.uploadedFileName = file.name
+    handleFile(file)
+  }
+  input.click()
+}
 
-    if (queryFileURL !== null) {
-      loadQueryFile(queryFileURL);
+/**
+ * Handles click on Continue with query file.
+ */
+async function loadQueryFile(url: URL) {
+  try {
+    const response = await fetch(url)
+    if (!response.ok) {
+      throw new Error('Response not OK')
     }
+    await handleFile(await response.blob())
+  } catch (e) {
+    registerError(e as Error, 'query')
+  }
+}
 
-    return {
-      continueWithLocal,
-      uploadFile,
-      hasLocalFile,
-      hasQueryFile: queryFileURL !== null,
-    };
-  },
-});
+/**
+ * Handles click on Continue with local files.
+ */
+function continueWithLocal() {
+  store().state.uploadedFileName = exampleFiles.value ? 'progpedia.zip' : BaseFactory.zipFileName
+  store().setLoadingType('local')
+  navigateToOverview()
+}
+
+function registerError(error: Error, source: fileMethod) {
+  loadingFiles.value = false
+  store().state.uploadedFileName = ''
+  errors.value.push({ error, source })
+  console.error(error)
+}
+
+function getErrorText() {
+  function getSourceText(source: fileMethod) {
+    if (source == 'unknown') {
+      return 'Error:'
+    }
+    const longNames = {
+      query: 'querying files',
+      local: 'getting local files',
+      upload: 'loading files'
+    }
+    return 'Error during ' + longNames[source]
+  }
+
+  return errors.value.map((e) => `${getSourceText(e.source)}: ${e.error.message}`).join('\n')
+}
+
+onErrorCaptured((error) => {
+  registerError(error, 'unknown')
+  return false
+})
 </script>
-
-<style scoped>
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  background: var(--primary-color-light);
-}
-
-.drop-container {
-  background: lightgrey;
-  border: dashed dodgerblue;
-  align-items: center;
-  justify-content: space-around;
-  border-radius: 10px;
-  padding: 2%;
-}
-
-.drop-container > p {
-  color: dodgerblue;
-  text-align: center;
-}
-
-.local-files-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.local-files-text {
-  font-weight: bold;
-  color: var(--on-background-color);
-}
-
-.local-files-button {
-  font-size: large;
-  background: var(--primary-color);
-  color: var(--on-primary-color);
-  font-weight: bold;
-  padding: 5%;
-  border: none;
-  border-radius: 10px;
-  box-shadow: var(--shadow-color) 2px 3px 3px;
-}
-
-.local-files-button:hover {
-  cursor: pointer;
-  background: var(--primary-color-dark);
-}
-
-input {
-  display: none;
-}
-
-label {
-  font-weight: bold;
-  font-size: larger;
-  background: #ececec;
-  border-radius: 10px;
-  box-shadow: #777777 2px 3px 3px;
-  padding: 2%;
-  margin-top: 1%;
-}
-</style>

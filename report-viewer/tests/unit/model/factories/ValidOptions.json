@@ -1,0 +1,38 @@
+{
+  "language": "Javac based AST plugin",
+  "min_token_match": 9,
+  "submission_directories": [
+    ".\\files"
+  ],
+  "old_directories": ["old"],
+  "base_directory": ".",
+  "subdirectory_name": "src/",
+  "file_suffixes": [
+    ".java",
+    ".JAVA"
+  ],
+  "exclusion_file_name": "ex.txt",
+  "similarity_metric": "AVG",
+  "similarity_threshold": 0.0,
+  "max_comparisons": 500,
+  "cluster": {
+    "enabled": true,
+    "metric": "AVG",
+    "spectral_bandwidth": 20.0,
+    "spectral_gaussian_variance": 0.0025000000000000005,
+    "spectral_min_runs": 5,
+    "spectral_max_runs": 50,
+    "spectral_max_kmeans_iterations": 200,
+    "agglomerative_threshold": 0.2,
+    "preprocessor": "CUMULATIVE_DISTRIBUTION_FUNCTION",
+    "algorithm": "SPECTRAL",
+    "inter_similarity": "AVERAGE",
+    "preprocessor_threshold": 0.2,
+    "preprocessor_percentile": 0.5
+  },
+  "merging": {
+    "enabled": false,
+    "min_neighbour_length": 0,
+    "max_gap_size": 0
+  }
+}

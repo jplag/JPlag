@@ -1,0 +1,55 @@
+{
+  "jplag_version": { "major": 4, "minor": 2, "patch": 0 },
+  "submission_folder_path": ["test"],
+  "base_code_folder_path": "",
+  "language": "Javac based AST plugin",
+  "file_extensions": [".java", ".JAVA"],
+  "submission_id_to_display_name": { "A": "A", "B": "B", "C": "C", "D": "D" },
+  "submission_ids_to_comparison_file_name": {
+    "A": { "B": "B-A.json" },
+    "B": { "A": "B-A.json" }
+  },
+  "failed_submission_names": [],
+  "excluded_files": [],
+  "match_sensitivity": 9,
+  "date_of_execution": "12/07/23",
+  "execution_time": 34,
+  "metrics": [
+    {
+      "name": "AVG",
+      "distribution": [0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+      "topComparisons": [
+        {
+          "first_submission": "A",
+          "second_submission": "B",
+          "similarity": 0.6900452488687783
+        },
+        {
+          "first_submission": "C",
+          "second_submission": "D",
+          "similarity": 0.6954045248868778
+        }
+      ],
+      "description": "Average of both program coverages. This is the default similarity which works in most cases: Matches with a high average similarity indicate that the programs work in a very similar way."
+    },
+    {
+      "name": "MAX",
+      "distribution": [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      "topComparisons": [
+        {
+          "first_submission": "A",
+          "second_submission": "B",
+          "similarity": 0.9457364341085271
+        },
+        {
+          "first_submission": "C",
+          "second_submission": "D",
+          "similarity": 0.83500530023
+        }
+      ],
+      "description": "Maximum of both program coverages. This ranking is especially useful if the programs are very different in size. This can happen when dead code was inserted to disguise the origin of the plagiarized program."
+    }
+  ],
+  "clusters": [],
+  "total_comparisons": 6
+}

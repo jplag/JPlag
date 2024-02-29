@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.eclipse.emf.ecore.EObject;
 
 import de.jplag.Token;
+import de.jplag.TokenTrace;
 import de.jplag.TokenType;
 
 /**
@@ -22,8 +23,8 @@ public class MetamodelToken extends Token {
      * @param file is the source model file.
      * @param eObject is the corresponding eObject in the model from which this token was extracted.
      */
-    public MetamodelToken(MetamodelTokenType type, File file, EObject eObject) {
-        this(type, file, NO_VALUE, NO_VALUE, NO_VALUE, Optional.of(eObject));
+    public MetamodelToken(TokenType type, File file, EObject eObject) {
+        this(type, file, new TokenTrace(), Optional.of(eObject));
     }
 
     /**
@@ -32,20 +33,18 @@ public class MetamodelToken extends Token {
      * @param file is the source model file.
      */
     public MetamodelToken(TokenType type, File file) {
-        this(type, file, NO_VALUE, NO_VALUE, NO_VALUE, Optional.empty());
+        this(type, file, new TokenTrace(), Optional.empty());
     }
 
     /**
      * Creates a token with column and length information.
      * @param type is the token type.
      * @param file is the source code file.
-     * @param line is the line index in the source code where the token resides. Cannot be smaller than 1.
-     * @param column is the column index, meaning where the token starts in the line.
-     * @param length is the length of the token in the source code.
+     * @param trace is the tracing information of the token, meaning line, column, and length.
      * @param eObject is the corresponding eObject in the model from which this token was extracted
      */
-    public MetamodelToken(TokenType type, File file, int line, int column, int length, Optional<EObject> eObject) {
-        super(type, file, line, column, length);
+    public MetamodelToken(TokenType type, File file, TokenTrace trace, Optional<EObject> eObject) {
+        super(type, file, trace);
         this.eObject = eObject;
     }
 

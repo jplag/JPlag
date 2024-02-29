@@ -17,10 +17,6 @@ public enum CSharpTokenType implements TokenType {
     SWITCH_BEGIN("SWITCH{"),
     SWITCH_END("}SWITCH"),
     CASE("CASE"),
-    DO("DO"),
-    WHILE("WHILE"),
-    FOR("FOR"),
-    FOREACH("FOREACH"),
     BREAK("BREAK"),
     CONTINUE("CONTINUE"),
     GOTO("GOTO"),
@@ -29,10 +25,10 @@ public enum CSharpTokenType implements TokenType {
     CHECKED("CHECKED"),
     UNCHECKED("UNCHECKED"),
     LOCK("LOCK"),
-    USING("USING"),
     TRY("TRY"),
     CATCH("CATCH"),
     FINALLY("FINALLY"),
+    NAMESPACE("NAMESPACE"),
     NAMESPACE_BEGIN("NAMESPACE{"),
     NAMESPACE_END("}NAMESPACE"),
     USING_DIRECTIVE("USING"),
@@ -67,10 +63,14 @@ public enum CSharpTokenType implements TokenType {
     ACCESSORS_BEGIN("ACCESSORS{"),
     ACCESSORS_END("}ACCESSORS"),
     ACCESSOR_BEGIN("ACCESSOR{"),
-    ACCESSOR_END("}ACCESSOR");
+    ACCESSOR_END("}ACCESSOR"),
+
+    LOOP_BEGIN("LOOP{"),
+    LOOP_END("}LOOP");
 
     private final String description;
 
+    @Override
     public String getDescription() {
         return this.description;
     }

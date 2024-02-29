@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" initial="start" name="TestStatechart">
+
+    <datamodel>
+        <data id="counter" expr="0"/>
+    </datamodel>
+
+    <initial>
+        <transition target="start"/>
+    </initial>
+
+    <state id="start">
+        <onentry>
+            <raise event="begin"/>
+        </onentry>
+        <transition event="begin" target="main"/>
+    </state>
+
+    <parallel id="main">
+        <state id="stateA">
+            <initial>
+                <transition target="subStateA1"/>
+            </initial>
+
+            <parallel id="subStateA1">
+                <onentry>
+                    <if cond="counter % 2 == 0">
+                        <raise event="toggleA"/>
+                    </if>
+                    <send event="subStateA1_timeEvent_0" delay="1s"/>
+                    <script>
+                        console.log('Value:', value);
+                    </script>
+                </onentry>
+                <transition event="toggleA" target="subStateA2"/>
+                <transition event="subStateA1_timeEvent_0">
+                    <raise event="toggleA"/>
+                </transition>
+                <state id="subStateA11">
+                    <transition event="toggleB" target="subStateB2"/>
+                </state>
+                <onexit>
+                    <assign location="counter" expr="counter + 1"/>
+                    <cancel sendid="subStateA1_timeEvent_0"/>
+                </onexit>
+            </parallel>
+
+            <state id="subStateA2">
+                <onentry>
+                    <foreach item="value" array="[1, 2, 3]">
+                        <script>
+                            console.log('Value:', value);
+                        </script>
+                    </foreach>
+                </onentry>
+                <transition event="toggleA" target="subStateA1" cond="counter &lt; 10"/>
+                <transition event="toggleA" target="end" cond="counter &gt;= 10"/>
+            </state>
+        </state>
+
+        <state id="stateB">
+            <initial>
+                <transition target="subStateB1"/>
+            </initial>
+
+            <state id="subStateB2">
+                <onentry>
+                    <if cond="counter % 3 == 0">
+                        <send event="toggleB" target="#_parent" id="itemProcessedTimer" delay="1s"/>
+                    <elseif cond="counter % 3 == 1"/>
+                        <raise event="toggleA"/>
+                    <else/>
+                        <raise event="toggleB"/>
+                    </if>
+                    <cancel sendid="itemProcessedTimer"/>
+                </onentry>
+                <transition event="toggleB" target="subStateB1"/>
+            </state>
+        </state>
+    </parallel>
+
+    <final id="end"/>
+
+    <transition event="finish" target="end">
+        <send event="externalEvent" target="#_external" targetexpr="'someURL'" type="scxml" />
+    </transition>
+
+</scxml>

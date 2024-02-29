@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" datamodel="ecmascript" name="Statechart">
+    <state id="Start">
+        <onentry>
+            <send event="Start_t_1_timeEvent_0" delay="4s"/>
+        </onentry>
+        <onexit>
+            <cancel sendid="Start_t_1_timeEvent_0" />
+        </onexit>
+        <transition event="Start_t_1_timeEvent_0"  target="Next">
+            <script>print('Hello');</script>
+        </transition>
+    </state>
+</scxml>

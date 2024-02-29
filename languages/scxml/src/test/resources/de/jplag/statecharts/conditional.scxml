@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" datamodel="ecmascript" name="statechart">
+    <datamodel>
+        <data expr="0" id="t" />
+    </datamodel>
+    <state id="Start">
+        <onentry>
+            <if cond="counter % 3 == 0">
+                <send event="toggleB" target="#_parent" id="itemProcessedTimer" delay="1s"/>
+            <elseif cond="counter % 3 == 1"/>
+                <raise event="toggleA"/>
+            <else/>
+                <raise event="toggleB"/>
+            </if>
+            <if cond="cond">
+                <assign location="test" expr="expr"/>
+            </if>
+        </onentry>
+    </state>
+</scxml>

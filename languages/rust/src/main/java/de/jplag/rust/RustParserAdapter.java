@@ -1,7 +1,7 @@
 package de.jplag.rust;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +18,7 @@ import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.rust.grammar.RustLexer;
 import de.jplag.rust.grammar.RustParser;
+import de.jplag.util.FileUtils;
 
 public class RustParserAdapter extends AbstractParser {
 
@@ -39,11 +40,11 @@ public class RustParserAdapter extends AbstractParser {
     }
 
     private void parseFile(File file) throws ParsingException {
-        try (FileInputStream inputStream = new FileInputStream(file)) {
+        try (BufferedReader reader = FileUtils.openFileReader(file)) {
             currentFile = file;
 
             // create a lexer, a parser and a buffer between them.
-            RustLexer lexer = new RustLexer(CharStreams.fromStream(inputStream));
+            RustLexer lexer = new RustLexer(CharStreams.fromReader(reader));
             CommonTokenStream tokenStream = new CommonTokenStream(lexer);
 
             RustParser parser = new RustParser(tokenStream);

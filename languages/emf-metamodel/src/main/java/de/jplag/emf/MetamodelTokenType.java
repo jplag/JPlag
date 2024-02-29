@@ -16,15 +16,15 @@ public enum MetamodelTokenType implements TokenType {
     ENUM_END(ENUM),
     ENUM_LITERAL("EEnumLiteral"),
     OPERATION("EOperation"),
-    OPERATION_END(OPERATION),
     REFERENCE("EReference"),
+    REFERENCE_MULT("EReference (multi-valued)"),
     ATTRIBUTE("EAttribute"),
     PARAMETER("EParameter"),
     INTERFACE("EInterface"),
     INTERFACE_END(INTERFACE),
-    SUPER_TYPE("ESuperType"),
     ID_ATTRIBUTE("EAttribute (ID)"),
     CONTAINMENT("EReference (Containment)"),
+    CONTAINMENT_MULT("EReference (Containment, multi-valued)"),
     ABSTRACT_CLASS("EAbstractClass"),
     ABSTRACT_CLASS_END(ABSTRACT_CLASS),
     RETURN_TYPE("EClassifier (Return Type"),
@@ -37,6 +37,7 @@ public enum MetamodelTokenType implements TokenType {
     private final String description;
     private final boolean isEndToken;
 
+    @Override
     public String getDescription() {
         return description;
     }

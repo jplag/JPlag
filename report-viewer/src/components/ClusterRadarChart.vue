@@ -3,125 +3,145 @@
   participants in the cluster.
 -->
 <template>
-  <div class="wrapper">
-    <div v-if="!hasNoMember" class="wrapper">
-      <select v-model="selectedMember">
-        <option v-for="(member, index) in cluster.members.keys()" :key="index">
-          {{ member }}
-        </option>
-      </select>
-      <RadarChart
-        :chartData="chartData"
-        :options="options"
-        class="chart"
-      ></RadarChart>
+  <div class="flex max-h-full flex-col overflow-hidden">
+    <div
+      v-if="selectedOptions.length > 0"
+      class="flex max-h-full flex-grow flex-col overflow-hidden"
+    >
+      <DropDownSelector
+        :options="selectedOptions"
+        @selectionChanged="(value) => (idOfShownSubmission = value)"
+      />
+      <div class="flex min-h-0 flex-grow justify-center">
+        <Radar :data="chartData" :options="radarChartOptions" />
+      </div>
+      <div class="text-xs font-bold text-gray-500 dark:text-gray-400">
+        <p>
+          This Chart shows the average similarity of the selected submission to the other
+          submissions in the cluster. <br />
+          The submission is selectable in the dropdown above.
+        </p>
+        <p
+          v-if="
+            selectedOptions.length < memberCount ||
+            (cluster.members.get(idOfShownSubmission)?.length ?? 0) < memberCount - 1
+          "
+          class="mt-2"
+        >
+          Not all members may be selectable in the dropdown above. <br />
+          There may not be a data point for every submission in the cluster for the selected one.
+          <br />
+          This is because not all comparisons are included in the report. To include more
+          comparisons modify the number of shown comparisons in the CLI.
+        </p>
+      </div>
     </div>
-    <div v-if="hasNoMember" class="no-member">
-      <span>This cluster has no members.</span>
+    <div v-else class="text-xs font-bold text-gray-500 dark:text-gray-400">
+      <p>
+        This cluster does not have enough members with enough comparisons to provide a
+        visualization. <br />
+        To include more comparisons modify the number of shown comparisons in the CLI.
+      </p>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, PropType, Ref, ref, watch } from "vue";
-import { RadarChart } from "vue-chart-3";
-import { Chart, ChartData, registerables } from "chart.js";
-import ChartDataLabels from "chartjs-plugin-datalabels";
-import { ClusterListElement } from "@/model/ClusterListElement";
-import {
-  radarChartStyle,
-  radarChartOptions,
-} from "@/assets/radar-chart-configuration";
+<script setup lang="ts">
+import type { PropType, Ref } from 'vue'
+import type { ChartData } from 'chart.js'
+import type { ClusterListElement } from '@/model/ClusterListElement'
+import { computed, ref } from 'vue'
+import { Radar } from 'vue-chartjs'
+import { Chart, registerables } from 'chart.js'
+import ChartDataLabels from 'chartjs-plugin-datalabels'
+import DropDownSelector from './DropDownSelector.vue'
+import { graphColors } from '@/utils/ColorUtils'
+import { store } from '@/stores/store'
 
-Chart.register(...registerables);
-Chart.register(ChartDataLabels);
+Chart.register(...registerables)
+Chart.register(ChartDataLabels)
 
-export default defineComponent({
-  name: "ClusterRadarChart",
-  components: { RadarChart },
-  props: {
-    cluster: {
-      type: Object as PropType<ClusterListElement>,
-      required: true,
-    },
-  },
-  setup(props) {
-    let hasNoMember = false;
-    const getIdOfFirstSubmission = () => {
-      const firstMember = props.cluster.members.keys().next().value;
-      hasNoMember = !firstMember;
-      return firstMember;
-    };
+const props = defineProps({
+  cluster: {
+    type: Object as PropType<ClusterListElement>,
+    required: true
+  }
+})
 
-    const createLabelsFor = (member: string): Array<string> => {
-      let matchedWith = new Array<string>();
-      props.cluster.members
-        .get(member)
-        ?.forEach((m) => matchedWith.push(m.matchedWith));
-      return matchedWith;
-    };
-    const createDataSetFor = (member: string) => {
-      let data = new Array<number>();
-      props.cluster.members
-        .get(member)
-        ?.forEach((m) => data.push(roundToTwoDecimals(m.percentage * 100)));
-      return data;
-    };
-    const roundToTwoDecimals = (num: number): number =>
-      Math.round((num + Number.EPSILON) * 100) / 100;
+const selectedOptions = computed(() => {
+  let options: string[] = []
+  props.cluster.members.forEach((matchedWith, key) => {
+    if (matchedWith.length >= 3) {
+      options.push(key)
+    }
+  })
+  return options
+})
 
-    const selectedMember = ref(getIdOfFirstSubmission());
+const idOfShownSubmission = ref(selectedOptions.value.length > 0 ? selectedOptions.value[0] : '')
 
-    const chartData: Ref<ChartData<"radar", (number | null)[], unknown>> = ref({
-      labels: createLabelsFor(getIdOfFirstSubmission()),
-      datasets: [
-        {
-          ...radarChartStyle,
-          label: getIdOfFirstSubmission(),
-          data: createDataSetFor(getIdOfFirstSubmission()),
+const memberCount = computed(() => props.cluster.members.size)
+
+const labels = computed(() => {
+  let matchedWith = new Array<string>()
+  props.cluster.members
+    .get(idOfShownSubmission.value)
+    ?.forEach((m) => matchedWith.push(m.matchedWith))
+  return matchedWith.map((m) => store().getDisplayName(m))
+})
+
+const dataSet = computed(() => {
+  let data = new Array<number>()
+  props.cluster.members
+    .get(idOfShownSubmission.value)
+    ?.forEach((m) => data.push(+(m.similarity * 100).toFixed(2)))
+  return data
+})
+
+const radarChartStyle = {
+  fill: true,
+  backgroundColor: graphColors.contentFill,
+  borderColor: graphColors.contentBorder,
+  pointBackgroundColor: graphColors.pointFill,
+  pointBorderColor: graphColors.contentBorder,
+  borderWidth: 1
+}
+const radarChartOptions = computed(() => {
+  return {
+    scales: {
+      r: {
+        suggestedMin: 50,
+        suggestedMax: 100,
+        ticks: {
+          color: graphColors.ticksAndFont.value,
+          backdropColor: 'rgba(0,0,0,0)'
         },
-      ],
-    });
-
-    const options = ref(radarChartOptions);
-    watch(
-      () => selectedMember.value,
-      (val) => {
-        chartData.value = {
-          labels: createLabelsFor(val),
-          datasets: [
-            {
-              ...radarChartStyle,
-              label: val,
-              data: createDataSetFor(val),
-            },
-          ],
-        };
+        grid: {
+          color: graphColors.gridLines.value
+        },
+        angleLines: {
+          color: graphColors.gridLines.value
+        }
       }
-    );
+    },
+    plugins: {
+      datalabels: {
+        color: graphColors.ticksAndFont.value
+      }
+    }
+  }
+})
 
-    return {
-      selectedMember,
-      chartData,
-      options,
-      hasNoMember,
-    };
-  },
-});
+const chartData: Ref<ChartData<'radar', (number | null)[], unknown>> = computed(() => {
+  return {
+    labels: labels.value,
+    datasets: [
+      {
+        ...radarChartStyle,
+        label: store().getDisplayName(idOfShownSubmission.value),
+        data: dataSet.value
+      }
+    ]
+  }
+})
 </script>
-
-<style scoped>
-.wrapper {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-}
-.no-member {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-}
-.chart {
-  height: 50vw;
-}
-</style>

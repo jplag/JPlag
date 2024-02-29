@@ -1,140 +1,173 @@
-import { Comparison } from "../Comparison";
-import { Match } from "../Match";
-import { SubmissionFile } from "../SubmissionFile";
-import { MatchInSingleFile } from "../MatchInSingleFile";
-import store from "@/store/store";
+import { Comparison } from '../Comparison'
+import type { Match } from '../Match'
+import { store } from '@/stores/store'
+import { getMatchColorCount } from '@/utils/ColorUtils'
+import slash from 'slash'
+import { BaseFactory } from './BaseFactory'
+import { MetricType } from '../MetricType'
 
-export class ComparisonFactory {
-  static getComparison(json: Record<string, unknown>): Comparison {
-    const filesOfFirstSubmission = store.getters.filesOfSubmission(
-      json.id1
-    );
-    const filesOfSecondSubmission = store.getters.filesOfSubmission(
-      json.id2
-    );
-
-    const filesOfFirstConverted = this.convertToFilesByName(
-      filesOfFirstSubmission
-    );
-    const filesOfSecondConverted = this.convertToFilesByName(
-      filesOfSecondSubmission
-    );
-
-    const matches = json.matches as Array<Record<string, unknown>>;
-
-
-    const colors = this.generateColorsForMatches(matches.length);
-    const coloredMatches = matches.map((match, index) =>
-      this.mapMatch(match, colors[index])
-    );
-
-    const matchesInFirst = this.groupMatchesByFileName(coloredMatches, 1);
-    const matchesInSecond = this.groupMatchesByFileName(coloredMatches, 2);
-
-    const comparison = new Comparison(
-      json.id1 as string,
-      json.id2 as string,
-      json.similarity as number
-    );
-    comparison.filesOfFirstSubmission = filesOfFirstConverted;
-    comparison.filesOfSecondSubmission = filesOfSecondConverted;
-    comparison.colors = colors;
-    comparison.allMatches = coloredMatches;
-    comparison.matchesInFirstSubmission = matchesInFirst;
-    comparison.matchesInSecondSubmissions = matchesInSecond;
-
-    return comparison;
+/**
+ * Factory class for creating Comparison objects
+ */
+export class ComparisonFactory extends BaseFactory {
+  public static async getComparison(fileName: string): Promise<Comparison> {
+    return await this.extractComparison(JSON.parse(await this.getFile(fileName)))
   }
 
-  private static convertToFilesByName(
-    files: Array<{ name: string; value: string }>
-  ): Map<string, SubmissionFile> {
-    const map = new Map<string, SubmissionFile>();
-    files.forEach((val) => {
-      if (!map.get(val.name)) {
-        map.set(val.name as string, {
-          lines: [],
-          collapsed: false,
-        });
-      }
-      map.set(val.name as string, {
-        lines: val.value.split(/\r?\n/),
-        collapsed: false,
-      });
-    });
-    return map;
+  /**
+   * Creates a comparison object from a json object created by by JPlag
+   * @param json the json object
+   */
+  private static async extractComparison(json: Record<string, unknown>): Promise<Comparison> {
+    const firstSubmissionId = json.id1 as string
+    const secondSubmissionId = json.id2 as string
+    await this.getFile(`submissionFileIndex.json`)
+      .then(async () => {
+        await this.loadSubmissionFiles(firstSubmissionId)
+        await this.loadSubmissionFiles(secondSubmissionId)
+      })
+      .catch(() => {})
+    const filesOfFirstSubmission = store().filesOfSubmission(firstSubmissionId)
+    const filesOfSecondSubmission = store().filesOfSubmission(secondSubmissionId)
+
+    const matches = json.matches as Array<Record<string, unknown>>
+    matches.forEach((match) => {
+      store().getSubmissionFile(
+        firstSubmissionId,
+        slash(match.file1 as string)
+      ).matchedTokenCount += match.tokens as number
+      store().getSubmissionFile(
+        secondSubmissionId,
+        slash(match.file2 as string)
+      ).matchedTokenCount += match.tokens as number
+    })
+
+    const unColoredMatches = matches.map((match) => this.getMatch(match))
+
+    return new Comparison(
+      firstSubmissionId,
+      secondSubmissionId,
+      this.extractSimilarities(json),
+      filesOfFirstSubmission,
+      filesOfSecondSubmission,
+      this.colorMatches(unColoredMatches),
+      json.first_similarity as number | undefined,
+      json.second_similarity as number | undefined
+    )
   }
 
-  private static groupMatchesByFileName(
-    matches: Array<Match>,
-    index: number
-  ): Map<string, Array<MatchInSingleFile>> {
-    const acc = new Map<string, Array<MatchInSingleFile>>();
-    matches.forEach((val) => {
-      const name =
-        index === 1 ? (val.firstFile as string) : (val.secondFile as string);
-
-      if (!acc.get(name)) {
-        acc.set(name, []);
-      }
-
-      if (index === 1) {
-        const newVal: MatchInSingleFile = {
-          start: val.startInFirst as number,
-          end: val.endInFirst as number,
-          linked_panel: 2,
-          linked_file: val.secondFile as string,
-          linked_line: val.startInSecond as number,
-          color: val.color as string,
-        };
-        acc.get(name)?.push(newVal);
-      } else {
-        const newVal: MatchInSingleFile = {
-          start: val.startInSecond as number,
-          end: val.endInSecond as number,
-          linked_panel: 1,
-          linked_file: val.firstFile as string,
-          linked_line: val.startInFirst as number,
-          color: val.color as string,
-        };
-        acc.get(name)?.push(newVal);
-      }
-    });
-    return acc;
+  private static extractSimilarities(json: Record<string, unknown>): Record<MetricType, number> {
+    if (json.similarities) {
+      return this.extractSimilaritiesFromMap(json.similarities as Record<string, number>)
+    } else if (json.similarity) {
+      return this.extractSimilaritiesFromSingleValue(json.similarity as number)
+    }
+    throw new Error('No similarities found in comparison file')
   }
 
-
-  private static generateColorsForMatches(num: number): Array<string> {
-    const colors: Array<string> = [];
-    const numberOfColorsInFirstInterval = Math.round((80 - 20) / ((80 - 20) + (340 - 160)) * num); // number of colors from the first interval
-    const numberOfColorsInSecondInterval = num - numberOfColorsInFirstInterval; // number of colors from the second interval
-    ComparisonFactory.generateColorsForInterval(20, 80, numberOfColorsInFirstInterval, colors);
-    ComparisonFactory.generateColorsForInterval(160, 340, numberOfColorsInSecondInterval, colors);
-    return colors;
-  }
-
-  private static generateColorsForInterval(intervalStart: number, intervalEnd: number, numberOfColorsInInterval: number, colors: Array<string>){
-    const interval = intervalEnd - intervalStart;
-    const hueDelta = Math.trunc(interval / numberOfColorsInInterval);
-    for (let i = 0; i < numberOfColorsInInterval; i++) {
-      const hue = intervalStart + i * hueDelta;
-      colors.push(`hsla(${hue}, 80%, 50%, 0.3)`);
+  /** @deprecated since 5.0.0. Use the new format with {@link extractSimilaritiesFromMap} */
+  private static extractSimilaritiesFromSingleValue(
+    avgSimilarity: number
+  ): Record<MetricType, number> {
+    return {
+      [MetricType.AVERAGE]: avgSimilarity,
+      [MetricType.MAXIMUM]: Number.NaN
     }
   }
 
-  private static mapMatch(
-    match: Record<string, unknown>,
-    color: string
-  ): Match {
+  private static extractSimilaritiesFromMap(
+    similarityMap: Record<string, number>
+  ): Record<MetricType, number> {
+    const similarities = {} as Record<MetricType, number>
+    for (const [key, value] of Object.entries(similarityMap)) {
+      similarities[key as MetricType] = value
+    }
+    return similarities
+  }
+
+  private static async getSubmissionFileList(
+    submissionId: string
+  ): Promise<Record<string, { token_count: number }>> {
+    return JSON.parse(await this.getFile(`submissionFileIndex.json`)).submission_file_indexes[
+      submissionId
+    ]
+  }
+
+  private static async loadSubmissionFiles(submissionId: string) {
+    try {
+      const fileList = await this.getSubmissionFileList(submissionId)
+      const fileNames = Object.keys(fileList)
+      for (const filePath of fileNames) {
+        store().saveSubmissionFile({
+          fileName: slash(filePath),
+          submissionId: submissionId,
+          data: await this.getSubmissionFileContent(submissionId, slash(filePath)),
+          tokenCount: fileList[filePath].token_count,
+          matchedTokenCount: 0
+        })
+      }
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  private static async getSubmissionFileContent(submissionId: string, fileName: string) {
+    if (store().state.localModeUsed && !store().state.zipModeUsed) {
+      return await this.getLocalFile('files/' + fileName).then((file) => file.text())
+    }
+    return store().getSubmissionFile(submissionId, fileName).data
+  }
+
+  private static getMatch(match: Record<string, unknown>): Match {
     return {
-      firstFile: match.file1 as string,
-      secondFile: match.file2 as string,
+      firstFile: slash(match.file1 as string),
+      secondFile: slash(match.file2 as string),
       startInFirst: match.start1 as number,
       endInFirst: match.end1 as number,
       startInSecond: match.start2 as number,
       endInSecond: match.end2 as number,
-      tokens: match.tokens as number,
-      color: color,
-    };
+      tokens: match.tokens as number
+    }
+  }
+
+  private static colorMatches(matches: Match[]): Match[] {
+    const maxColorCount = getMatchColorCount()
+    let currentColorIndex = 0
+    const matchesFirst = Array.from(matches)
+      .sort((a, b) => a.startInFirst - b.startInFirst)
+      .sort((a, b) => (a.firstFile > b.firstFile ? 1 : -1))
+    const matchesSecond = Array.from(matches)
+      .sort((a, b) => a.startInSecond - b.startInSecond)
+      .sort((a, b) => (a.secondFile > b.secondFile ? 1 : -1))
+    const sortedSize = Array.from(matches).sort((a, b) => b.tokens - a.tokens)
+
+    function isColorAvailable(matchList: Match[], index: number) {
+      return (
+        (index === 0 || matchList[index - 1].colorIndex !== currentColorIndex) &&
+        (index === matchList.length - 1 || matchList[index + 1].colorIndex !== currentColorIndex)
+      )
+    }
+
+    for (let i = 0; i < matches.length; i++) {
+      const firstIndex = matchesFirst.findIndex((match) => match === matches[i])
+      const secondIndex = matchesSecond.findIndex((match) => match === matches[i])
+      const sortedIndex = sortedSize.findIndex((match) => match === matches[i])
+      const startCounter = currentColorIndex
+      while (
+        !isColorAvailable(matchesFirst, firstIndex) ||
+        !isColorAvailable(matchesSecond, secondIndex) ||
+        !isColorAvailable(sortedSize, sortedIndex)
+      ) {
+        currentColorIndex = (currentColorIndex + 1) % maxColorCount
+
+        if (currentColorIndex == startCounter) {
+          // This case should never happen, this is just a safety measure
+          throw currentColorIndex
+        }
+      }
+      matches[i].colorIndex = currentColorIndex
+      currentColorIndex = (currentColorIndex + 1) % maxColorCount
+    }
+    return sortedSize
   }
 }

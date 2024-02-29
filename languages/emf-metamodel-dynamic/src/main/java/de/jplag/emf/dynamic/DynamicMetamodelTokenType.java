@@ -10,6 +10,7 @@ public record DynamicMetamodelTokenType(EClass eClass) implements TokenType {
         this(eObject.eClass());
     }
 
+    @Override
     public String getDescription() {
         return eClass.getName();
     }

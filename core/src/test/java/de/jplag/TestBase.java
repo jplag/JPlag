@@ -8,7 +8,9 @@ import java.util.StringJoiner;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import de.jplag.clustering.ClusteringOptions;
 import de.jplag.exceptions.ExitException;
+import de.jplag.java.JavaLanguage;
 import de.jplag.options.JPlagOptions;
 
 /**
@@ -39,29 +41,29 @@ public abstract class TestBase {
     }
 
     protected JPlagResult runJPlagWithExclusionFile(String testSampleName, String exclusionFileName) throws ExitException {
-        String blackList = Path.of(BASE_PATH, testSampleName, exclusionFileName).toString();
-        return runJPlag(testSampleName, options -> options.withExclusionFileName(blackList));
+        return JPlag.run(getOptionsWithExclusionFile(testSampleName, exclusionFileName));
+
     }
 
     /**
      * Runs JPlag with default options for a given test sample and returns the result.
      */
     protected JPlagResult runJPlagWithDefaultOptions(String testSampleName) throws ExitException {
-        return runJPlag(testSampleName, options -> options);
+        return JPlag.run(getDefaultOptions(testSampleName));
     }
 
     /**
      * Runs JPlag with customized options and returns the result.
      */
     protected JPlagResult runJPlag(String testSampleName, Function<JPlagOptions, JPlagOptions> customization) throws ExitException {
-        return runJPlag(List.of(getBasePath(testSampleName)), List.of(), customization);
+        return JPlag.run(getOptions(testSampleName, customization));
     }
 
     /**
      * Runs JPlag with multiple root folders and customized options and returns the result.
      */
     protected JPlagResult runJPlag(List<String> newPaths, Function<JPlagOptions, JPlagOptions> customization) throws ExitException {
-        return runJPlag(newPaths, List.of(), customization);
+        return JPlag.run(getOptions(newPaths, customization));
     }
 
     /**
@@ -69,12 +71,44 @@ public abstract class TestBase {
      */
     protected JPlagResult runJPlag(List<String> newPaths, List<String> oldPaths, Function<JPlagOptions, JPlagOptions> customization)
             throws ExitException {
-        var newFiles = newPaths.stream().map(path -> new File(path)).collect(Collectors.toSet());
-        var oldFiles = oldPaths.stream().map(path -> new File(path)).collect(Collectors.toSet());
-        JPlagOptions options = new JPlagOptions(new de.jplag.java.Language(), newFiles, oldFiles);
-        options = customization.apply(options);
-        JPlag jplag = new JPlag(options);
-        return jplag.run();
+        return JPlag.run(getOptions(newPaths, oldPaths, customization));
+    }
+
+    protected JPlagOptions getOptionsWithExclusionFile(String testSampleName, String exclusionFileName) {
+        String blackList = Path.of(BASE_PATH, testSampleName, exclusionFileName).toString();
+        return getOptions(testSampleName, options -> options.withExclusionFileName(blackList));
+    }
+
+    /**
+     * Get default options.
+     */
+    protected JPlagOptions getDefaultOptions(String testSampleName) {
+        return getOptions(List.of(getBasePath(testSampleName)), List.of(), options -> options);
+    }
+
+    /**
+     * Get customized options.
+     */
+    protected JPlagOptions getOptions(String testSampleName, Function<JPlagOptions, JPlagOptions> customization) {
+        return getOptions(List.of(getBasePath(testSampleName)), List.of(), customization);
+    }
+
+    /**
+     * Get customized options for JPlag run with multiple root folders.
+     */
+    protected JPlagOptions getOptions(List<String> newPaths, Function<JPlagOptions, JPlagOptions> customization) {
+        return getOptions(newPaths, List.of(), customization);
+    }
+
+    /**
+     * Get customized options for JPlag run with multiple root folders (old and new).
+     */
+    protected JPlagOptions getOptions(List<String> newPaths, List<String> oldPaths, Function<JPlagOptions, JPlagOptions> customization) {
+        var newFiles = newPaths.stream().map(File::new).collect(Collectors.toSet());
+        var oldFiles = oldPaths.stream().map(File::new).collect(Collectors.toSet());
+        JPlagOptions options = new JPlagOptions(new JavaLanguage(), newFiles, oldFiles)
+                .withClusteringOptions(new ClusteringOptions().withEnabled(false));
+        return customization.apply(options);
     }
 
     /**

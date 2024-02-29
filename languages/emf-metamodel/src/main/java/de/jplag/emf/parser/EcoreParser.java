@@ -11,21 +11,22 @@ import org.eclipse.emf.ecore.resource.Resource;
 import de.jplag.AbstractParser;
 import de.jplag.ParsingException;
 import de.jplag.Token;
-import de.jplag.emf.Language;
+import de.jplag.TokenType;
+import de.jplag.emf.EmfLanguage;
 import de.jplag.emf.MetamodelToken;
-import de.jplag.emf.MetamodelTokenType;
+import de.jplag.emf.normalization.ModelSorter;
 import de.jplag.emf.util.AbstractMetamodelVisitor;
+import de.jplag.emf.util.AbstractModelView;
 import de.jplag.emf.util.EMFUtil;
 import de.jplag.emf.util.EmfaticModelView;
 
 /**
  * Parser for EMF metamodels.
- * @author Timur Saglam
  */
 public class EcoreParser extends AbstractParser {
     protected List<Token> tokens;
     protected File currentFile;
-    protected EmfaticModelView treeView;
+    protected AbstractModelView treeView;
     protected AbstractMetamodelVisitor visitor;
 
     /**
@@ -40,10 +41,10 @@ public class EcoreParser extends AbstractParser {
      * @param files is the set of files.
      * @return the list of parsed tokens.
      */
-    public List<Token> parse(Set<File> files) throws ParsingException {
+    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
         tokens = new ArrayList<>();
         for (File file : files) {
-            parseModelFile(file);
+            parseModelFile(file, normalize);
         }
         return tokens;
     }
@@ -52,20 +53,47 @@ public class EcoreParser extends AbstractParser {
      * Loads a metamodel from a file and parses it.
      * @param file is the metamodel file.
      */
-    protected void parseModelFile(File file) throws ParsingException {
+    protected void parseModelFile(File file, boolean normalize) throws ParsingException {
         currentFile = file;
         Resource model = EMFUtil.loadModelResource(file);
         if (model == null) {
             throw new ParsingException(file, "failed to load model");
-        } else {
-            treeView = new EmfaticModelView(file, model);
-            for (EObject root : model.getContents()) {
-                visitor = createMetamodelVisitor();
-                visitor.visit(root);
-            }
-            tokens.add(Token.fileEnd(currentFile));
-            treeView.writeToFile(Language.VIEW_FILE_SUFFIX);
         }
+        if (normalize) {
+            normalizeOrder(model);
+        }
+        treeView = createView(file, model);
+        visitor = createMetamodelVisitor();
+        for (EObject root : model.getContents()) {
+            visitor.visit(root);
+        }
+        tokens.add(Token.fileEnd(currentFile));
+        treeView.writeToFile(getCorrespondingViewFileSuffix());
+    }
+
+    /**
+     * @return the correct view file suffix for the model view. Can be overriden in subclasses for alternative views.
+     */
+    protected String getCorrespondingViewFileSuffix() {
+        return EmfLanguage.VIEW_FILE_SUFFIX;
+    }
+
+    /**
+     * Creates a model view. Can be overriden in subclasses for alternative views.
+     * @param file is the path for the view file to be created.
+     * @param modelResource is the resource containing the metamodel.
+     * @return the view implementation.
+     * @throws ParsingException if view could not be created due to an invalid model.
+     */
+    protected AbstractModelView createView(File file, Resource modelResource) throws ParsingException {
+        return new EmfaticModelView(file, modelResource);
+    }
+
+    /**
+     * Extension point for subclasses to employ different normalization.
+     */
+    protected void normalizeOrder(Resource modelResource) {
+        ModelSorter.sort(modelResource, new MetamodelElementTokenizer());
     }
 
     /**
@@ -81,7 +109,7 @@ public class EcoreParser extends AbstractParser {
      * @param type is the token type.
      * @param source is the corresponding {@link EObject} for which the token is added.
      */
-    void addToken(MetamodelTokenType type, EObject source) {
+    protected void addToken(TokenType type, EObject source) {
         MetamodelToken token = new MetamodelToken(type, currentFile, source);
         tokens.add(treeView.convertToMetadataEnrichedToken(token));
     }

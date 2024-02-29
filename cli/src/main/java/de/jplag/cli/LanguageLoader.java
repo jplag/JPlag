@@ -32,8 +32,9 @@ public final class LanguageLoader {
      * @return the languages as unmodifiable map from identifier to language instance.
      */
     public static synchronized Map<String, Language> getAllAvailableLanguages() {
-        if (cachedLanguageInstances != null)
+        if (cachedLanguageInstances != null) {
             return cachedLanguageInstances;
+        }
 
         Map<String, Language> languages = new TreeMap<>();
 
@@ -44,10 +45,10 @@ public final class LanguageLoader {
                 languages.remove(languageIdentifier);
                 continue;
             }
-            logger.debug("Loading Language Module '{}'", language.getName());
+            logger.trace("Loading Language Module '{}'", language.getName());
             languages.put(languageIdentifier, language);
         }
-        logger.info("Available languages: '{}'", languages.values().stream().map(Language::getName).toList());
+        logger.debug("Available languages: '{}'", languages.values().stream().map(Language::getName).toList());
 
         cachedLanguageInstances = Collections.unmodifiableMap(languages);
         return cachedLanguageInstances;
@@ -61,8 +62,9 @@ public final class LanguageLoader {
      */
     public static Optional<Language> getLanguage(String identifier) {
         var language = getAllAvailableLanguages().get(identifier);
-        if (language == null)
+        if (language == null) {
             logger.warn("Attempt to load Language {} was not successful", identifier);
+        }
         return Optional.ofNullable(language);
     }
 

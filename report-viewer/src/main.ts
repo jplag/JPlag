@@ -1,12 +1,25 @@
-import {createApp} from "vue";
-import App from "./App.vue";
-import router from "./router";
-import store from "./store/store"
-import VueVirtualScroller from "vue-virtual-scroller"
-import 'highlight.js/styles/vs.css'
-import 'gitart-vue-dialog/dist/style.css'
-import 'highlight.js/lib/common';
-import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 
+import App from './App.vue'
+import { router } from './router'
+import VueVirtualScroller from 'vue-virtual-scroller'
+import 'highlight.js/lib/common'
 
-createApp(App).use(router).use(store).use(VueVirtualScroller).mount("#app");
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+
+import './style.css'
+
+const app = createApp(App)
+
+app.use(createPinia())
+app.use(router)
+app.use(VueVirtualScroller)
+
+app.config.errorHandler = (err, vm, info) => {
+  console.error(err)
+  console.error(info)
+  alert('An unhandeled error occured. Please check the console for more details.')
+}
+
+app.mount('#app')

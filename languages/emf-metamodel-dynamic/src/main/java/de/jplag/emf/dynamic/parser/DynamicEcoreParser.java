@@ -1,10 +1,12 @@
 package de.jplag.emf.dynamic.parser;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 
+import de.jplag.TokenType;
 import de.jplag.emf.MetamodelToken;
 import de.jplag.emf.dynamic.DynamicMetamodelToken;
-import de.jplag.emf.dynamic.DynamicMetamodelTokenType;
+import de.jplag.emf.normalization.ModelSorter;
 import de.jplag.emf.parser.EcoreParser;
 import de.jplag.emf.util.AbstractMetamodelVisitor;
 
@@ -14,12 +16,24 @@ import de.jplag.emf.util.AbstractMetamodelVisitor;
  */
 public class DynamicEcoreParser extends EcoreParser {
 
-    @Override
-    protected AbstractMetamodelVisitor createMetamodelVisitor() {
-        return new DynamicMetamodelTokenGenerator(this);
+    private final DynamicElementTokenizer tokenizer;
+
+    public DynamicEcoreParser() {
+        tokenizer = new DynamicElementTokenizer();
     }
 
-    public void addToken(DynamicMetamodelTokenType type, EObject source) {
+    @Override
+    protected AbstractMetamodelVisitor createMetamodelVisitor() {
+        return new DynamicMetamodelTokenGenerator(this, tokenizer);
+    }
+
+    @Override
+    protected void normalizeOrder(Resource modelResource) {
+        ModelSorter.sort(modelResource, tokenizer);
+    }
+
+    @Override
+    public void addToken(TokenType type, EObject source) {
         MetamodelToken token = new DynamicMetamodelToken(type, currentFile, source);
         MetamodelToken metadataEnrichedToken = treeView.convertToMetadataEnrichedToken(token);
         tokens.add(metadataEnrichedToken);

@@ -72,20 +72,21 @@
         <!--suppress UnresolvedMavenProperty -->
         <sonar.coverage.jacoco.xmlReportPaths>${maven.multiModuleProjectDirectory}/coverage-report/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <spotless.version>2.35.0</spotless.version>
-        <slf4j.version>2.0.7</slf4j.version>
-        <junit.version>5.9.2</junit.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <spotless.version>2.43.0</spotless.version>
+        <slf4j.version>2.0.12</slf4j.version>
+        <junit.version>5.10.2</junit.version>
 
         <antlr2.version>2.7.7</antlr2.version>
-        <antlr4.version>4.12.0</antlr4.version>
-        <emf.version>2.33.0</emf.version>
-        <emf.ecore.version>2.28.0</emf.ecore.version>
-        <emf.ecore.xmi.version>2.18.0</emf.ecore.xmi.version>
+        <antlr4.version>4.13.1</antlr4.version>
+        <emf.version>2.35.0</emf.version>
+        <emf.ecore.version>2.29.0</emf.ecore.version>
+        <emf.ecore.xmi.version>2.36.0</emf.ecore.xmi.version>
+        <emfatic.version>1.0.0</emfatic.version>
 
         <!-- The Revision of JPlag -->
-        <revision>4.3.0</revision>
+        <revision>5.0.0</revision>
     </properties>
 
     <dependencyManagement>
@@ -116,7 +117,7 @@
             <dependency>
                 <groupId>edu.stanford.nlp</groupId>
                 <artifactId>stanford-corenlp</artifactId>
-                <version>4.5.3</version>
+                <version>4.5.6</version>
             </dependency>
 
             <!-- LOGGER -->
@@ -133,13 +134,13 @@
             <dependency>
                 <groupId>org.kohsuke.metainf-services</groupId>
                 <artifactId>metainf-services</artifactId>
-                <version>1.9</version>
+                <version>1.11</version>
             </dependency>
 
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.14.2</version>
+                <version>2.16.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -166,7 +167,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>5.2.0</version>
+            <version>5.10.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -222,7 +223,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.5.0</version>
+                    <version>3.6.0</version>
                     <configuration>
                         <descriptorRefs>
                             <descriptorRef>jar-with-dependencies</descriptorRef>
@@ -238,12 +239,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>3.2.5</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.8</version>
+                    <version>0.8.11</version>
                     <executions>
                         <execution>
                             <id>prepare-agent</id>
@@ -267,12 +268,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
-                    <version>3.0.1</version>
+                    <version>3.1.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.1.1</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -280,7 +281,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.4.0</version>
+                <version>1.6.0</version>
                 <configuration>
                     <updatePomFile>true</updatePomFile>
                     <flattenMode>resolveCiFriendliesOnly</flattenMode>
@@ -309,7 +310,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.5.0</version>
                 <executions>
                     <execution>
                         <id>add-source</id>
@@ -329,7 +330,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.5.0</version>
+                <version>3.6.3</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -342,7 +343,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.2.1</version>
+                <version>3.3.0</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -408,6 +409,7 @@
                 <module>endtoend-testing</module>
                 <module>languages</module>
                 <module>language-api</module>
+                <module>language-antlr-utils</module>
                 <module>language-testutils</module>
             </modules>
         </profile>
@@ -421,6 +423,7 @@
                 <module>languages</module>
                 <module>language-api</module>
                 <module>language-testutils</module>
+                <module>language-antlr-utils</module>
             </modules>
             <build>
                 <plugins>
