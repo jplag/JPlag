@@ -1,9 +1,11 @@
 package de.jplag.java_cpg.transformation.matching.pattern;
 
-import com.google.common.collect.Iterators;
 import de.fraunhofer.aisec.cpg.graph.Node;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
@@ -51,11 +53,6 @@ public class MultiGraphPattern extends GraphPatternImpl {
             if (matches.next().equals(match)) return true;
         }
         return false;
-    }
-
-    @Override
-    public List<Class<? extends Node>> getCandidateNodeClasses() {
-        return null;
     }
 
     @Override

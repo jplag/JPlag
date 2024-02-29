@@ -12,8 +12,8 @@ public class Try {
     public void load(String path) {
         Scanner scanner = null;
         try {
-            Scanner other; // This is just here to keep the tokens similar.
-            scanner = new Scanner(new File(path));
+            // This is just here to keep the tokens similar.
+            Scanner other = scanner = new Scanner(new File(path));
             while (scanner.hasNext()) {
                 System.out.println(scanner.nextLine());
             }

@@ -19,7 +19,6 @@ import de.fraunhofer.aisec.cpg.graph.statements.expressions.Block;
 import de.fraunhofer.aisec.cpg.processing.IStrategy;
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy;
 import de.jplag.java_cpg.transformation.operations.TransformationHelper;
-import kotlin.collections.EmptyIterator;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -46,7 +45,7 @@ public class NodeOrderStrategy implements IStrategy<Node> {
     }
 
     private static Iterator<Node> walkRecord(RecordDeclaration recordDecl) {
-        Iterator<Node> concat = Iterators.concat(
+        return Iterators.concat(
             recordDecl.getFields().iterator(),
             recordDecl.getConstructors().iterator(),
             // TODO: iterate over methods in CallGraph top-down DFS order
@@ -54,7 +53,6 @@ public class NodeOrderStrategy implements IStrategy<Node> {
             recordDecl.getTemplates().iterator(),
             recordDecl.getRecords().iterator()
         );
-        return concat;
     }
 
     @Override
@@ -87,7 +85,7 @@ public class NodeOrderStrategy implements IStrategy<Node> {
 
     private Iterator<Node> walkWhileStatement(WhileStatement whileStatement) {
         List<PropertyEdge<Node>> nextEOGEdges = whileStatement.getNextEOGEdges();
-        Map<Boolean, Node> collect = nextEOGEdges.stream().collect(Collectors.toMap(e -> (boolean) e.getProperty(Properties.BRANCH), e -> e.getEnd()));
+        Map<Boolean, Node> collect = nextEOGEdges.stream().collect(Collectors.toMap(e -> (boolean) e.getProperty(Properties.BRANCH), PropertyEdge::getEnd));
         // first walk into while block, then to the next statement
         return
             Stream.of(whileStatement.getCondition(), collect.get(true), collect.get(false))
@@ -111,7 +109,7 @@ public class NodeOrderStrategy implements IStrategy<Node> {
             ))
             .collect(Collectors.toCollection(ArrayList::new));
 
-        List<TranslationUnitDeclaration> otherFiles = new ArrayList(c.getTranslationUnits());
+        List<TranslationUnitDeclaration> otherFiles = new ArrayList<>(c.getTranslationUnits());
         otherFiles.removeAll(filesContainingMainClasses);
         return Iterators.concat(filesContainingMainClasses.iterator(), otherFiles.iterator());
 

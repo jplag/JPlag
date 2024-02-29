@@ -15,7 +15,7 @@ public class PatternRegistry {
     private final Map<NodePattern<?>, String> idByPattern;
     private NodePattern<?> representingNode;
 
-    private static Logger LOGGER = LoggerFactory.getLogger(PatternRegistry.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PatternRegistry.class);
     private int wildcardCounter;
 
 

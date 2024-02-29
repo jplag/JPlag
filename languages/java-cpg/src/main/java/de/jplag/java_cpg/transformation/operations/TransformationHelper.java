@@ -2,7 +2,6 @@ package de.jplag.java_cpg.transformation.operations;
 
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.graph.edge.PropertyEdge;
-import de.fraunhofer.aisec.cpg.graph.statements.ReturnStatement;
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.Block;
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.UnaryOperator;
 import de.fraunhofer.aisec.cpg.helpers.SubgraphWalker;
@@ -74,135 +73,17 @@ public final class TransformationHelper {
         return SubgraphWalker.INSTANCE.flattenAST(astRoot).contains(maybeChild);
     }
 
-    /**
-     * Unlinks the {@code otherPredecessor} and {@code predecessor} from their successors and links the predecessor to
-     * the otherPredecessor's former successors.
-     *
-     * @param otherPredecessor the original predecessor
-     * @param predecessor      the new predecessor
-     * @param useDummies
-     */
-    static void transferEogSuccessor(Node otherPredecessor, Node predecessor, boolean useDummies) {
-        /*
-            Current situation:
-                 [predecessor--exits]      --exitEdges->>      oldSuccessor
-            [otherPredecessor--otherExits] --otherExitEdges->> newSuccessor
-
-            Target situation:
-                 [predecessor--exits]      --exitEdges->> newSuccessor
-            [otherPredecessor--otherExits]                oldSuccessor
-         */
-
-        List<Node> exits = getEogBorders(predecessor).getExits();
-        // This is the case for all nodes involving ReturnStatements.
-        if (exits.isEmpty()) {
-            return;
-        }
-        List<PropertyEdge<Node>> exitEdges = getExitEdges(predecessor, exits, false);
-        List<Node> oldSuccessors = exitEdges.stream().map(PropertyEdge::getEnd).distinct().toList();
-        if (oldSuccessors.size() > 1) {
-            LOGGER.warn("AST subtree of %s has multiple EOG successors".formatted(predecessor.toString()));
-        }
-        Node oldSuccessor = oldSuccessors.get(0);
-
-        List<Node> otherExits = getEogBorders(otherPredecessor).getExits();
-        List<PropertyEdge<Node>> otherExitEdges = getExitEdges(otherPredecessor, otherExits, useDummies);
-        List<Node> newSuccessors = otherExitEdges.stream().map(PropertyEdge::getEnd).distinct().toList();
-        if (newSuccessors.size() > 1) {
-            LOGGER.warn("AST subtree of %s has multiple EOG successors".formatted(predecessor.toString()));
-        }
-        Node newSuccessor = newSuccessors.get(0);
-
-        if (oldSuccessor.equals(newSuccessor)) {
-            return;
-        }
-
-        // Disconnect otherExit ->> newSuccessor (edges are removed)
-        otherExitEdges.forEach(e -> {
-            e.getEnd().getPrevEOGEdges().remove(e);
-            DUMMY.saveOriginalTarget(e);
-            e.setEnd(DUMMY);
-            DUMMY.addPrevEOG(e);
-        });
-
-        exitEdges.forEach(e -> {
-            // Disconnect exit ->> oldSuccessor (preserve outgoing edges)
-            e.getEnd().getPrevEOGEdges().remove(e);
-
-            PropertyEdge<Node> dummyEdge = new PropertyEdge<>(e);
-            DUMMY.saveOriginalSource(dummyEdge);
-            dummyEdge.setStart(DUMMY);
-            DUMMY.addNextEOG(dummyEdge);
-            e.getEnd().addPrevEOG(dummyEdge);
-
-            // Connect exit ->> newSuccessor
-            e.setEnd(newSuccessor);
-            newSuccessor.addPrevEOG(e);
-        });
-    }
-
-    static void transferEogSuccessor2(Node otherPredecessor, Node predecessor) {
+    static void transferEogSuccessor(Node otherPredecessor, Node predecessor) {
         disconnectFromSuccessor(predecessor);
         Node otherEntry = disconnectFromSuccessor(otherPredecessor);
         Node exit = getExit(predecessor);
         connectNewSuccessor(exit, otherEntry, true);
     }
 
-    static void transferEogPredecessor2(Node oldSuccessor, Node newSuccessor) {
+    static void transferEogPredecessor(Node oldSuccessor, Node newSuccessor) {
         List<Node> exits = disconnectFromPredecessor(oldSuccessor);
         disconnectFromPredecessor(newSuccessor);
         exits.forEach(exit -> connectNewSuccessor(exit, newSuccessor,  true));
-    }
-
-    /**
-     * Unlinks the predecessor(s) of {@code oldSuccessor} and {@code newSuccessor} and attaches the {@code newSuccessor} to the former predecessors of {@code oldSuccessor}.
-     * If the oldSuccessor has been detached by other {@link ReplaceOperation}s and replaced, the edges are not detached again.
-     *
-     * @param oldSuccessor the original successor
-     * @param newSuccessor the replacement successor
-     */
-    public static void transferEogPredecessor(Node oldSuccessor, Node newSuccessor, boolean useDummies) {
-        /*
-            Current situation:
-                 predecessor -------entryEdges->> [oldEntry--oldSuccessor]
-            otherPredecessor --otherEntryEdges->> [newEntry--newSuccessor]
-
-            Target situation:
-                 predecessor --entryEdges->> [newEntry--newSuccessor]
-            otherPredecessor                 [oldEntry--oldSuccessor]
-         */
-        Node newEntry = getEntry(newSuccessor);
-        Node oldEntry = getEntry(oldSuccessor);
-        if (oldEntry.equals(newEntry)) {
-            return;
-        }
-
-        List<PropertyEdge<Node>> otherEntryEdges = getEntryEdges(newSuccessor, newEntry, useDummies);
-
-        // Disconnect otherPredecessor ->> newEntry (edges are removed)
-        otherEntryEdges.forEach(e -> {
-            DUMMY.saveOriginalTarget(e);
-            e.getEnd().getPrevEOGEdges().remove(e);
-            e.setEnd(DUMMY);
-            DUMMY.addPrevEOG(e);
-        });
-
-        List<PropertyEdge<Node>> entryEdges = getEntryEdges(oldSuccessor, oldEntry, useDummies);
-        entryEdges.forEach(e -> {
-                // Disconnect newPredecessor ->> oldEntry (preserve outgoing edges)
-                e.getEnd().getPrevEOGEdges().remove(e);
-
-                PropertyEdge<Node> dummyEdge = new PropertyEdge<>(e);
-                DUMMY.saveOriginalSource(e);
-                dummyEdge.setStart(DUMMY);
-                DUMMY.addNextEOG(dummyEdge);
-                oldEntry.addPrevEOG(dummyEdge);
-
-                // Connect newPredecessor ->> newEntry
-                e.setEnd(newEntry);
-                newEntry.addPrevEOG(e);
-            });
-
     }
 
     public static Node disconnectFromSuccessor(Node astRoot) {
@@ -375,7 +256,7 @@ public final class TransformationHelper {
         Node entry = getEntry(target);
         List<Node> exits = getEogBorders(target).getExits();
         disconnectFromPredecessor(target);
-        Node oldSucc = disconnectFromSuccessor(target);
+        disconnectFromSuccessor(target);
 
         Node succEntry = getEntry(newSuccessor);
         List<Node> newPreds = disconnectFromPredecessor(newSuccessor);

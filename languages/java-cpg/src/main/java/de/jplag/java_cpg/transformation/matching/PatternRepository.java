@@ -83,6 +83,7 @@ public final class PatternRepository {
                             property(PatternUtil.attributeEquals(INCOMPLETE_TYPE__TYPE_NAME, "void"))
                         )
                     ),
+                    property(notEmpty(METHOD_DECLARATION__PARAMETERS)),
                     related(nthElement(METHOD_DECLARATION__PARAMETERS, 0), ParameterDeclaration.class, "paramDecl"),
                     property(MethodDeclaration::hasBody),
                     related(METHOD_DECLARATION__BODY, Block.class,"methodBody",

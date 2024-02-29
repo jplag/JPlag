@@ -1,9 +1,7 @@
 package de.jplag.java_cpg.transformation.matching.edges;
 
 import de.fraunhofer.aisec.cpg.graph.Node;
-import de.fraunhofer.aisec.cpg.graph.declarations.FieldDeclaration;
 import de.fraunhofer.aisec.cpg.graph.edge.PropertyEdge;
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.Reference;
 import de.fraunhofer.aisec.cpg.helpers.TriConsumer;
 import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
 
@@ -30,7 +28,7 @@ public final class CpgMultiEdge<S extends Node, T extends Node> implements IEdge
     private final boolean edgeValued;
     private Class<S> fromClass;
     private Class<T> toClass;
-    private Map<NodePattern<?>, Any1ofNEdge> any1ofNEdges;
+    private final Map<NodePattern<?>, Any1ofNEdge> any1ofNEdges;
 
     /**
      * Creates a new CpgMultiEdge.
@@ -39,7 +37,7 @@ public final class CpgMultiEdge<S extends Node, T extends Node> implements IEdge
      * @param setter     a function to set the nth target node
      * @param edgeValued if true, then this relation is represented by a {@link List} of {@link PropertyEdge}s. Otherwise, it returns a list of {@link Node}s.
      * @param getEdges   if edgeValued, then this should be a function to get all the target edges, null otherwise.
-     * @param category
+     * @param category   category of the edge
      */
     public CpgMultiEdge(Function<S, List<T>> getter,
                         TriConsumer<S, Integer, T> setter,
@@ -88,7 +86,6 @@ public final class CpgMultiEdge<S extends Node, T extends Node> implements IEdge
     }
 
     public static <S extends Node, T extends Node> CpgMultiEdge<S, T> nodeValued(Function<S, List<T>> getter) {
-        TriConsumer<S, Integer, T> setOne = (S node, Integer n, T value) -> getter.apply(node).set(n, value);
         return nodeValued(getter, AST);
     }
 

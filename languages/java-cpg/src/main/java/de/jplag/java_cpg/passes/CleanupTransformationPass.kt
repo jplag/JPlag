@@ -58,7 +58,7 @@ class CleanupTransformationPass(ctx: TranslationContext) : TranslationResultPass
     private fun <T : Node?> instantiate(transformation: GraphTransformation<T>, detector: CpgIsomorphismDetector) {
         val sourcePattern: GraphPattern = transformation.sourcePattern
 
-        var count = 0;
+        var count = 0
         var invalidated: Boolean
         do {
             invalidated = false
@@ -70,7 +70,7 @@ class CleanupTransformationPass(ctx: TranslationContext) : TranslationResultPass
                     count++
                     transformation.apply(match, ctx)
                 } else {
-                    invalidated = true;
+                    invalidated = true
                 }
             }
         } while (invalidated)
@@ -79,19 +79,19 @@ class CleanupTransformationPass(ctx: TranslationContext) : TranslationResultPass
     }
 
     override fun cleanup() {
-        val DUMMY = DummyNeighbor.getInstance()
-        DUMMY.nextEOGEdges.removeIf { it.end == DUMMY }
-        DUMMY.prevEOGEdges.removeIf { it.start == DUMMY }
+        val dummy = DummyNeighbor.getInstance()
+        dummy.nextEOGEdges.removeIf { it.end == dummy }
+        dummy.prevEOGEdges.removeIf { it.start == dummy }
 
-        DUMMY.nextEOGEdges.map { it.end }.toList().forEach {
+        dummy.nextEOGEdges.map { it.end }.toList().forEach {
             val successors = it.nextEOG.distinct()
             val predecessors = it.prevEOG.distinct()
-            if (successors.size == 1 && successors[0] == DUMMY
-                && predecessors.size == 1 && predecessors[0] == DUMMY
+            if (successors.size == 1 && successors[0] == dummy
+                && predecessors.size == 1 && predecessors[0] == dummy
             ) {
                 LOGGER.debug("The node %s got isolated and will likely be removed.".format(it))
-                DUMMY.nextEOGEdges.removeIf { e -> e.end == it }
-                DUMMY.prevEOGEdges.removeIf { e -> e.start == it }
+                dummy.nextEOGEdges.removeIf { e -> e.end == it }
+                dummy.prevEOGEdges.removeIf { e -> e.start == it }
             }
         }
     }

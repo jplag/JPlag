@@ -9,11 +9,8 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 
 public interface GraphPattern {
-    String REPRESENTING_NODE = "representant";
 
     Collection<String> getAllIds();
-
-    List<Class<? extends Node>> getCandidateNodeClasses();
 
     void compareTo(GraphPattern targetPattern, BiConsumer<NodePattern<?>, NodePattern<?>> compareFunction);
 

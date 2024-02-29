@@ -5,11 +5,10 @@ import de.jplag.java_cpg.transformation.matching.edges.CpgEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgMultiEdge;
 import de.jplag.java_cpg.transformation.matching.edges.Edges;
 import de.jplag.java_cpg.transformation.matching.edges.IEdge;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static de.jplag.java_cpg.transformation.matching.edges.IEdge.EdgeCategory.AST;
@@ -17,24 +16,21 @@ import static de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.nthE
 
 /**
  * This class represents a pattern where the root node's parent is unknown, but involved in a transformation (e.g. the root node is moved/deleted).
+ *
  * @param <T> The node type of the child node of the wildcard parent
  */
 public class WildcardGraphPattern<T extends Node> extends SimpleGraphPattern<Node> {
-    private final Class<T> tClass;
     private final ParentNodePattern<T> wildcardParent;
-    private final List<IEdge<? extends Node, ? super T>> edgesToType;
 
     /**
      * Creates a new {@link WildcardGraphPattern}.
      *
-     * @param tClass            The node type of the child node
-     * @param child
+     * @param tClass   The node type of the child node
+     * @param child    The node pattern representing the child node
      * @param patterns A mapping of {@link String} IDs to {@link NodePattern}s.
      */
     WildcardGraphPattern(Class<T> tClass, NodePattern<T> child, PatternRegistry patterns) {
         super(new ParentNodePattern<>(tClass, child), patterns);
-        this.tClass = tClass;
-        this.edgesToType = Edges.getEdgesToType(tClass);
         this.wildcardParent = (ParentNodePattern<T>) getRoot();
         patterns.put(patterns.createWildcardId(), wildcardParent);
     }
@@ -56,41 +52,36 @@ public class WildcardGraphPattern<T extends Node> extends SimpleGraphPattern<Nod
         return recursiveMatch(rootCandidate).stream().anyMatch(match::equals);
     }
 
-    @Override
-    public List<Class<? extends Node>> getCandidateNodeClasses() {
-        return edgesToType.stream().map(IEdge::getFromClass).distinct().collect(Collectors.toList());
-    }
-
     /**
      * Pattern to describe the unknown AST context that a node may appear in.
      */
     public static class ParentNodePattern<T extends Node> extends NodePattern.NodePatternImpl<Node> {
         private final NodePattern<T> childPattern;
-        private final Edge<T> edge;
         private final List<IEdge<? extends Node, ? super T>> edgesToType;
 
         /**
          * Creates a new {@link ParentNodePattern} for the given child {@link NodePattern}.
+         *
          * @param tClass The {@link Node} type class of the child
-         * @param child the child node pattern
+         * @param child  the child node pattern
          */
         public ParentNodePattern(Class<T> tClass, NodePattern<T> child) {
             super(Node.class);
             this.childPattern = child;
 
+            Edge<T> edge;
             if (Objects.isNull(child)) {
-                edge = null;
                 edgesToType = null;
                 return;
             }
 
-            edge = new Edge(tClass);
+            edge = new Edge<>(tClass);
             this.addRelatedNodePattern(child, edge);
             edgesToType = Edges.getEdgesToType(tClass);
         }
 
         @Override
-        public void recursiveMatch(Node node, List<Match> matches, CpgEdge<?,?> incoming) {
+        public void recursiveMatch(Node node, List<Match> matches, CpgEdge<?, ?> incoming) {
 
 
             List<Match> resultMatches = new ArrayList<>();
@@ -130,7 +121,7 @@ public class WildcardGraphPattern<T extends Node> extends SimpleGraphPattern<Nod
             } else if (e instanceof CpgMultiEdge<S, ? super T> multiEdge) {
                 List<? extends Node> targets = multiEdge.getAllTargets(from);
                 var resultMatches = new ArrayList<Match>();
-                for (int i = targets.size() - 1; i >= 0 ; i--) {
+                for (int i = targets.size() - 1; i >= 0; i--) {
                     var matchesCopy = new ArrayList<>(matches.stream().map(Match::copy).toList());
                     Node target = targets.get(i);
                     CpgEdge<S, ? super T> edge = nthElement(multiEdge, i);
@@ -155,34 +146,12 @@ public class WildcardGraphPattern<T extends Node> extends SimpleGraphPattern<Nod
 
     /**
      * This models an edge unknown at creation time, of which the target is a T node.
-     *
      */
     public static class Edge<T extends Node> extends CpgEdge<Node, T> {
 
         private Edge(Class<T> tClass) {
             super(null, null, AST);
             this.setToClass(tClass);
-        }
-
-        private CpgEdge<?,? super T> matchedEdge;
-
-        @Override
-        public Function<Node, T> getter() {
-            return nodeGetter(matchedEdge.getter());
-        }
-
-        private <S extends Node> Function<Node, T> nodeGetter(Function<S, ? super T> getter) {
-            return (Node s) -> (T) getter.apply((S) s);
-        }
-
-        @Override
-        public BiConsumer<Node, T> setter() {
-            return nodeSetter(matchedEdge.setter());
-        }
-
-        @NotNull
-        private <S extends Node> BiConsumer<Node, T> nodeSetter(BiConsumer<S, ? super T> setter) {
-            return (p, t) -> setter.accept((S) p, t);
         }
 
         @Override

@@ -34,7 +34,7 @@ public final class ReplaceOperation<S extends Node, T extends Node> extends Grap
      * @param parentPattern   source node of the edge
      * @param edge            edge of which the target shall be replaced
      * @param newChildPattern replacement node
-     * @param disconnectEog
+     * @param disconnectEog   if true, the replaced element is inserted into the EOG graph at the target
      */
     public ReplaceOperation(NodePattern<? extends S> parentPattern,
                             CpgEdge<S, T> edge,
@@ -65,8 +65,8 @@ public final class ReplaceOperation<S extends Node, T extends Node> extends Grap
             return;
         }
 
-        TransformationHelper.transferEogPredecessor2(oldTarget, newTarget);
-        TransformationHelper.transferEogSuccessor2(oldTarget, newTarget);
+        TransformationHelper.transferEogPredecessor(oldTarget, newTarget);
+        TransformationHelper.transferEogSuccessor(oldTarget, newTarget);
     }
 
     @Override

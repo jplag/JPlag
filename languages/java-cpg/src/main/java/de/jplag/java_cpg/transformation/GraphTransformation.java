@@ -111,7 +111,7 @@ public interface GraphTransformation<T extends Node> {
          *
          * @param match      the match of the graph transformations source pattern to the concrete CPG
          * @param operations the list of transformations to apply
-         * @param ctx
+         * @param ctx        the translation context of the current translation
          */
         protected void apply(Match match, List<GraphOperation> operations, TranslationContext ctx) {
             for (GraphOperation op : operations) {

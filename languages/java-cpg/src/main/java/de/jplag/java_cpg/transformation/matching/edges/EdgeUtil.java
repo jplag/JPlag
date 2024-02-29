@@ -2,11 +2,7 @@ package de.jplag.java_cpg.transformation.matching.edges;
 
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.graph.declarations.RecordDeclaration;
-import de.fraunhofer.aisec.cpg.graph.edge.PropertyEdge;
 import de.fraunhofer.aisec.cpg.graph.scopes.Scope;
-
-import java.util.List;
-import java.util.function.Function;
 
 public final class EdgeUtil {
 

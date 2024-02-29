@@ -82,18 +82,18 @@ public final class InsertOperation<S extends Node, T extends Node> extends Graph
         if (0 == index && edges.size() > 1)  {
             // successor exists
             T previouslyFirst = edges.get(index + 1).getEnd();
-            TransformationHelper.transferEogPredecessor2(previouslyFirst, newTarget);
+            TransformationHelper.transferEogPredecessor(previouslyFirst, newTarget);
             TransformationHelper.insertBefore(newTarget, previouslyFirst);
         } else if (0 < index && index < edges.size() - 1) {
             T successor = edges.get(index + 1).getEnd();
-            TransformationHelper.transferEogPredecessor2(successor, newTarget);
+            TransformationHelper.transferEogPredecessor(successor, newTarget);
             T predecessor = edges.get(index - 1).getEnd();
-            TransformationHelper.transferEogSuccessor2(predecessor, newTarget);
+            TransformationHelper.transferEogSuccessor(predecessor, newTarget);
             TransformationHelper.insertBefore(newTarget, successor);
         } else if (index == edges.size() - 1 && edges.size() > 1) {
             // predecessor exists
             T previouslyLast = edges.get(index - 1).getEnd();
-            TransformationHelper.transferEogSuccessor2(previouslyLast, newTarget);
+            TransformationHelper.transferEogSuccessor(previouslyLast, newTarget);
             TransformationHelper.insertAfter(newTarget, previouslyLast);
 
         }

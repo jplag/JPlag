@@ -1,5 +1,6 @@
 package de.jplag.java_cpg;
 
+import de.fraunhofer.aisec.cpg.TranslationContext;
 import de.fraunhofer.aisec.cpg.TranslationResult;
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration;
@@ -39,7 +40,9 @@ public class CreateTransformTest extends AbstractJavaCpgLanguageTest {
     public <T extends Node> void createTransformTest(String fileName, GraphTransformation<T> transformation) throws ParsingException, InterruptedException, ConnectException {
 
         Set<File> files = Set.of(new File(baseDirectory, fileName));
-        TranslationResult graph = new CpgAdapter().translate(files);
+        CpgAdapter cpgAdapter = new CpgAdapter();
+        cpgAdapter.clearTransformations();
+        TranslationResult graph = cpgAdapter.translate(files);
 
         detector = new CpgIsomorphismDetector();
         detector.loadGraph(graph);
@@ -59,7 +62,8 @@ public class CreateTransformTest extends AbstractJavaCpgLanguageTest {
         assertTrue(maybeMatch.hasNext());
         Match match = maybeMatch.next();
 
-        transformation.apply(match, null);
+        TranslationContext ctx = match.get(sourcePattern.getRepresentingNode()).getCtx();
+        transformation.apply(match, ctx);
     }
 
 }

@@ -5,8 +5,6 @@ import de.fraunhofer.aisec.cpg.helpers.SubgraphWalker;
 import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern;
 import de.jplag.java_cpg.transformation.matching.pattern.Match;
 import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
-import org.jetbrains.annotations.NotNull;
-
 
 import java.util.*;
 import java.util.stream.Collectors;
