@@ -36,12 +36,28 @@ public class PlagiarismDetectionTest {
         baseDirectory = BASE_PATH.toFile();
     }
 
+    private static Stream<Arguments> getArguments() {
+        return Stream.of(
+            Arguments.of("singleUseVariable", new GraphTransformation[]{TransformationRepository.inlineSingleUseVariable}),
+            Arguments.of("constantClass", new GraphTransformation[]{TransformationRepository.moveConstantToOnlyUsingClass}),
+            Arguments.of("for2While", new GraphTransformation[]{TransformationRepository.forStatementToWhileStatement}),
+            Arguments.of("negatedIf", new GraphTransformation[]{TransformationRepository.ifWithNegatedConditionResolution}),
+            Arguments.of("unusedVariables", new GraphTransformation[]{
+                TransformationRepository.removeUnusedVariableDeclarationStatements,
+                TransformationRepository.removeUnusedVariableDeclarations,
+                TransformationRepository.removeEmptyDeclarationStatement
+            }),
+            Arguments.of("dfgLinearization", new GraphTransformation[] {})
+        );
+    }
+
     @ParameterizedTest
     @MethodSource("getArguments")
     public void testPlagiarismPair(String submissionsPath, GraphTransformation<?>[] transformation) {
         Set<File> submissionSet = Set.of(new File(baseDirectory, submissionsPath));
         language.addTransformations(transformation);
-        JPlagOptions options = new JPlagOptions(language, submissionSet, Set.of());
+        JPlagOptions options = new JPlagOptions(language, submissionSet, Set.of())
+            .withMinimumTokenMatch(5);
 
         JPlagResult result;
         try {
@@ -57,13 +73,5 @@ public class PlagiarismDetectionTest {
     @AfterEach
     public void resetTransformations() {
         language.resetTransformations();
-    }
-
-    private static Stream<Arguments> getArguments() {
-        return Stream.of(
-            Arguments.of("for2While", new GraphTransformation[] { TransformationRepository.forStatementToWhileStatement() }),
-            Arguments.of("negatedIf", new GraphTransformation[] { TransformationRepository.ifWithNegatedConditionResolution() }),
-            Arguments.of("unusedVariables", new GraphTransformation[] { TransformationRepository.removeUnusedVariableDeclarationStatements(), TransformationRepository.removeUnusedVariableDeclarations(), TransformationRepository.removeEmptyDeclarationStatement() })
-        );
     }
 }

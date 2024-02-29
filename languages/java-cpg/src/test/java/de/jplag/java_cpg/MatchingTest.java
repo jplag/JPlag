@@ -6,9 +6,9 @@ import de.fraunhofer.aisec.cpg.graph.declarations.MethodDeclaration;
 import de.fraunhofer.aisec.cpg.graph.statements.IfStatement;
 import de.jplag.ParsingException;
 import de.jplag.java_cpg.transformation.matching.CpgIsomorphismDetector;
-import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern;
-import de.jplag.java_cpg.transformation.matching.pattern.GraphPatternBuilder;
 import de.jplag.java_cpg.transformation.matching.PatternRepository;
+import de.jplag.java_cpg.transformation.matching.pattern.GraphPatternBuilder;
+import de.jplag.java_cpg.transformation.matching.pattern.Match;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -17,7 +17,8 @@ import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
 
 import java.io.File;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 public class MatchingTest extends AbstractJavaCpgLanguageTest {
@@ -34,7 +35,7 @@ public class MatchingTest extends AbstractJavaCpgLanguageTest {
 
     @ParameterizedTest
     @MethodSource("providePairs")
-    public <T extends Node, R extends Node> void testMatch(String filename, Class<T> rootType, GraphPatternBuilder<R> pattern) {
+    public <T extends Node> void testMatch(String filename, Class<T> rootType, GraphPatternBuilder pattern) {
         File file = new File(baseDirectory, filename);
         try {
             TranslationResult graph = new CpgAdapter().translate(Set.of(file));
@@ -43,7 +44,7 @@ public class MatchingTest extends AbstractJavaCpgLanguageTest {
             List<T> rootCandidates = detector.getNodesOfType(rootType);
 
             Assertions.assertTrue(rootCandidates.stream().anyMatch(candidate -> {
-                List<GraphPattern.Match<R>> matches = pattern.build().recursiveMatch(candidate);
+                List<Match> matches = pattern.build().recursiveMatch(candidate);
                 if (!matches.isEmpty()) {
                     LOGGER.info(() -> "Mapping contained %d nodes.".formatted(matches.get(0).getSize()));
                     return true;

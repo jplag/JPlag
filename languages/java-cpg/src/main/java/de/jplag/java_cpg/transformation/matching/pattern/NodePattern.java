@@ -6,8 +6,11 @@ import de.jplag.java_cpg.transformation.matching.edges.CpgMultiEdge;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.nthElement;
 
@@ -31,7 +34,7 @@ public interface NodePattern<T extends Node> {
      * @param related the related NodePattern
      * @param edge    an edge to the related node given a concrete match for this pattern
      */
-    <R extends Node> void addRelatedNodePattern(NodePattern<? extends R> related, CpgEdge<T, R> edge);
+    <R extends Node> void addRelatedNodePattern(NodePattern<? extends R> related, CpgEdge<? super T, R> edge);
 
     /**
      * Adds a related {@link NodePattern} to the pattern.
@@ -40,14 +43,16 @@ public interface NodePattern<T extends Node> {
      * @param related the related NodePattern
      * @param edge    an edge to candidates for the related node given a concrete match for this pattern
      */
-    <R extends Node> void addRelated1ToNNodePattern(NodePattern<? extends R> related, CpgMultiEdge<T, R> edge);
+    <R extends Node, C extends R> void addRelated1ToNNodePattern(NodePattern<C> related, CpgMultiEdge<? super T, R> edge);
+    <R extends Node> void addForAllRelated(NodePattern<? extends R> related, CpgMultiEdge<? super T, R> edge);
 
     /**
      * Adds a property to the pattern that has to hold for this pattern to match.
      *
      * @param property the property
      */
-    void addProperty(Predicate<T> property);
+    void addProperty(Predicate<? super T> property);
+    void addMatchProperty(MatchProperty<? super T> property);
 
     /**
      * Adds a sequence of {@link NodePattern}s related to this node pattern.
@@ -56,7 +61,7 @@ public interface NodePattern<T extends Node> {
      * @param nodePatterns the node pattern
      * @param edge         a multi edge to the list of nodes of which a subsequence shall match the nodePatterns
      */
-    <R extends Node> void addRelated1ToNSequence(NodeListPattern<R> nodePatterns, CpgMultiEdge<T, R> edge);
+    <R extends Node> void addRelated1ToNSequence(NodeListPattern<? extends R> nodePatterns, CpgMultiEdge<? super T, R> edge);
 
     /**
      * Checks whether the given concrete node matches this pattern.
@@ -65,23 +70,23 @@ public interface NodePattern<T extends Node> {
      * @param matches  matches of pattern nodes to sourceGraph nodes
      * @param incoming the incoming edge
      */
-    <Root extends Node> void recursiveMatch(Node node, List<GraphPattern.Match<Root>> matches, CpgEdge<?, ?> incoming);
+    void recursiveMatch(Node node, List<Match> matches, CpgEdge<?, ?> incoming);
 
     /**
      * Gets the {@link List} of 1:1-related {@link NodePattern}s of this {@link NodePattern}.
      *
      * @return the related node pattern
      */
-    List<RelatedNode<T, ?>> getRelatedNodes();
+    List<RelatedNode<? super T, ?>> getRelatedNodes();
 
     /**
      * Gets the {@link List} of 1:n-related {@link NodePattern}s of this {@link NodePattern}.
      *
      * @return the related node pattern
      */
-    List<Related1ToNNode<T, ?>> getRelated1ToNNodes();
+    List<Related1ToNNode<? super T, ?>> getRelated1ToNNodes();
 
-    List<Related1ToNSequence<T, ?>> getRelated1ToNSequences();
+    List<Related1ToNSequence<? super T, ?>> getRelated1ToNSequences();
 
     /**
      * Creates a copy of this {@link NodePattern} and all related nodes and properties.
@@ -91,13 +96,6 @@ public interface NodePattern<T extends Node> {
     NodePattern<T> deepCopy();
 
     /**
-     * Indicates whether a {@link GraphPattern.Match} of this {@link NodePattern} shall be removed.
-     *
-     * @return true if the node shall be removed
-     */
-    boolean isToBeRemoved();
-
-    /**
      * Gets a {@link Class} object for the indicated {@link Node} class.
      *
      * @return the class object
@@ -105,9 +103,15 @@ public interface NodePattern<T extends Node> {
     Class<T> getRootClass();
 
     /**
-     * Sets a flag indicating that a {@link GraphPattern.Match} of this {@link NodePattern} shall be removed.
+     * Sets a flag indicating that a {@link Match} of this {@link NodePattern} shall be removed.
      */
-    void markForRemoval();
+    void markForRemoval(boolean disconnectEog);
+
+    void markStopRecursion();
+
+    boolean shouldStopRecursion();
+
+    List<Class<? extends T>> getCandidateClasses();
 
 
     /**
@@ -118,49 +122,65 @@ public interface NodePattern<T extends Node> {
     class NodePatternImpl<T extends Node> implements NodePattern<T> {
 
         protected final Class<T> clazz;
-        private final List<Predicate<T>> properties;
-        private final List<RelatedNode<T, ?>> relatedNodes;
-        private final List<Related1ToNNode<T, ?>> related1ToNNodes;
-        private final List<Related1ToNSequence<T, ?>> related1ToNSequences;
+        private final List<Predicate<? super T>> properties;
+        private List<MatchProperty<? super T>> matchProperties;
+        private final List<RelatedNode<? super T, ?>> relatedNodes;
+        private final List<Related1ToNNode<? super T, ?>> related1ToNNodes;
+        private final List<Related1ToNSequence<? super T, ?>> related1ToNSequences;
+        private final List<ForAllRelatedNode<? super T, ?>> forAllRelatedNodes;
 
-        private boolean toBeRemoved = false;
+        private final EnumSet<NodeAnnotation> annotations;
 
         public NodePatternImpl(Class<T> clazz) {
             this.clazz = clazz;
             this.properties = new ArrayList<>();
+            this.matchProperties = new ArrayList<>();
             this.relatedNodes = new ArrayList<>();
             this.related1ToNNodes = new ArrayList<>();
             this.related1ToNSequences = new ArrayList<>();
+            this.forAllRelatedNodes = new ArrayList<>();
+            this.annotations = EnumSet.noneOf(NodeAnnotation.class);
         }
 
         @Override
-        public <R extends Node> void addRelatedNodePattern(NodePattern<? extends R> related, CpgEdge<T, R> edge) {
+        public <R extends Node> void addRelatedNodePattern(NodePattern<? extends R> related, CpgEdge<? super T, R> edge) {
             relatedNodes.add(new RelatedNode<>(related, edge));
         }
 
         @Override
-        public <R extends Node> void addRelated1ToNNodePattern(NodePattern<? extends R> related, CpgMultiEdge<T, R> edge) {
+        public <R extends Node, C extends R> void addRelated1ToNNodePattern(NodePattern<C> related, CpgMultiEdge<? super T, R> edge) {
             related1ToNNodes.add(new Related1ToNNode<>(related, edge));
         }
 
         @Override
-        public void addProperty(Predicate<T> property) {
+        public <R extends Node> void addForAllRelated(NodePattern<? extends R> related, CpgMultiEdge<? super T, R> edge) {
+            forAllRelatedNodes.add(new ForAllRelatedNode<>(related, edge));
+        }
+
+        @Override
+        public void addProperty(Predicate<? super T> property) {
             properties.add(property);
         }
 
         @Override
-        public <R extends Node> void addRelated1ToNSequence(NodeListPattern<R> nodeListPattern, CpgMultiEdge<T, R> edge) {
-            related1ToNSequences.add(new Related1ToNSequence<>(nodeListPattern, edge));
+        public void addMatchProperty(MatchProperty<? super T> property) {
+            matchProperties.add(property);
         }
 
         @Override
-        public <Root extends Node> void recursiveMatch(Node node, List<GraphPattern.Match<Root>> matches, CpgEdge<?, ?> incoming) {
+        public <R extends Node> void addRelated1ToNSequence(NodeListPattern<? extends R> nodeListPattern, CpgMultiEdge<? super T, R> edge) {
+            related1ToNSequences.add(new Related1ToNSequence<>(nodeListPattern, edge));
+        }
 
+        public void recursiveMatch(Node node, List<Match> matches, CpgEdge<?, ?> incoming) {
             // We encountered this pattern before. If we have not also arrived at the same node, it's a mismatch.
-            var finishedMatches = matches.stream().filter(match -> match.contains(this) && match.get(this).equals(node)).toList();
+            matches.removeIf(match -> match.contains(this) && !match.get(this).equals(node));
+            var splitList = matches.stream().collect(Collectors.groupingBy(match -> match.contains(this)));
+            var finishedMatches = splitList.getOrDefault(true, new ArrayList<>());
 
             // unencountered only
-            var openMatches = new ArrayList<>(matches.stream().filter(match -> !match.contains(this)).toList());
+            var openMatches = splitList.getOrDefault(false, new ArrayList<>());
+            if (openMatches.isEmpty()) return;
 
             // check node properties
 
@@ -172,37 +192,53 @@ public interface NodePattern<T extends Node> {
 
             //if !localPropertiesMismatch, then this cast is valid
             T tNode = (T) node;
-
-            if (!relatedNodes.isEmpty()) {
-                // all related nodes must match
-                relatedNodes.forEach(pair -> {
-                    Node candidateNode = pair.getNode(tNode);
-                    pair.getPattern().recursiveMatch(candidateNode, openMatches, pair.edge);
-                });
-
-            }
-
-            if (!related1ToNNodes.isEmpty()) {
-                // all related 1:n nodes must match once in every open match
-                related1ToNNodes.forEach(pair -> {
-                    List<? extends Node> candidates = pair.getCandidates(tNode);
-                    var resultMatches = new ArrayList<GraphPattern.Match<Root>>();
-                    // but, they might match all for a different candidate
-                    // decrementing -> removing ith node does not affect nodes i+1 etc.
-                    for (int i = candidates.size() - 1; i >= 0; i--) {
-                        Node candidate = candidates.get(i);
-                        var openMatchesCopy = new ArrayList<>(openMatches.stream().map(GraphPattern.Match::copy).toList());
-                        int finalI = i;
-                        openMatchesCopy.forEach(match -> match.resolveAny1ofNEdge(pair.edge().getAny1ofNEdge(), finalI));
-                        pair.getPattern().recursiveMatch(candidate, openMatchesCopy, nthElement(pair.edge, i));
-                        resultMatches.addAll(openMatchesCopy);
-                    }
-                    openMatches.clear();
-                    openMatches.addAll(resultMatches);
-                });
-            }
-
             openMatches.forEach(match -> match.register(this, tNode));
+
+
+            // all related nodes must match
+            relatedNodes.forEach(pair -> {
+                Node candidateNode = pair.getNode(tNode);
+                if (Objects.isNull(candidateNode)) {
+                    openMatches.clear();
+                    return;
+                }
+                pair.getPattern().recursiveMatch(candidateNode, openMatches, pair.edge);
+            });
+
+            // all related 1:n nodes must match once in every open match
+            related1ToNNodes.forEach(pair -> {
+                List<? extends Node> candidates = pair.getCandidates(tNode);
+                var resultMatches = new ArrayList<Match>();
+                // but, they might match all for a different candidate
+                // decrementing -> removing ith node does not affect nodes i+1 etc.
+                for (int i = candidates.size() - 1; i >= 0; i--) {
+                    Node candidate = candidates.get(i);
+                    var openMatchesCopy = new ArrayList<>(openMatches.stream().map(Match::copy).toList());
+                    int finalI = i;
+                    openMatchesCopy.forEach(match -> match.resolveAny1ofNEdge(pair.edge().getAny1ofNEdgeTo(pair.pattern), finalI));
+                    pair.getPattern().recursiveMatch(candidate, openMatchesCopy, nthElement(pair.edge, i));
+                    resultMatches.addAll(openMatchesCopy);
+                }
+                openMatches.clear();
+                openMatches.addAll(resultMatches);
+            });
+
+            forAllRelatedNodes.forEach(pair -> {
+                List<? extends Node> candidates = pair.getCandidates(tNode);
+                // use the same matches for all candidates -> first mismatch removes match
+                // decrementing -> removing ith node does not affect nodes i+1 etc.
+                for (int i = candidates.size() - 1; i >= 0; i--) {
+                    Node candidate = candidates.get(i);
+                    pair.getPattern().recursiveMatch(candidate, openMatches, nthElement(pair.edge, i));
+                    openMatches.forEach(match -> match.remove(pair.getPattern()));
+                }
+            });
+
+
+            openMatches.removeIf(match ->
+                !matchProperties.isEmpty() && matchProperties.stream().anyMatch(mp -> !mp.test(tNode, match))
+            );
+
             matches.clear();
             matches.addAll(finishedMatches);
             matches.addAll(openMatches);
@@ -227,17 +263,17 @@ public interface NodePattern<T extends Node> {
         }
 
         @Override
-        public List<RelatedNode<T, ?>> getRelatedNodes() {
+        public List<RelatedNode<? super T, ?>> getRelatedNodes() {
             return relatedNodes;
         }
 
         @Override
-        public List<Related1ToNNode<T, ?>> getRelated1ToNNodes() {
+        public List<Related1ToNNode<? super T, ?>> getRelated1ToNNodes() {
             return related1ToNNodes;
         }
 
         @Override
-        public List<Related1ToNSequence<T, ?>> getRelated1ToNSequences() {
+        public List<Related1ToNSequence<? super T, ?>> getRelated1ToNSequences() {
             return related1ToNSequences;
         }
 
@@ -253,13 +289,27 @@ public interface NodePattern<T extends Node> {
         }
 
         @Override
-        public void markForRemoval() {
-            this.toBeRemoved = true;
+        public void markForRemoval(boolean disconnectEog) {
+            this.annotations.add(NodeAnnotation.DISCONNECT_AST);
+            if (disconnectEog) {
+                this.annotations.add(NodeAnnotation.DISCONNECT_EOG);
+            }
+
         }
 
         @Override
-        public boolean isToBeRemoved() {
-            return toBeRemoved;
+        public void markStopRecursion() {
+            annotations.add(NodeAnnotation.STOP_RECURSION);
+        }
+
+        @Override
+        public boolean shouldStopRecursion() {
+            return annotations.contains(NodeAnnotation.STOP_RECURSION);
+        }
+
+        @Override
+        public List<Class<? extends T>> getCandidateClasses() {
+            return List.of(getRootClass());
         }
 
         @Override
@@ -271,6 +321,11 @@ public interface NodePattern<T extends Node> {
         public String toString() {
             return "NodePattern{%s}".formatted(clazz.getSimpleName());
         }
+
+        private enum NodeAnnotation {
+            DISCONNECT_AST, STOP_RECURSION, REPRESENTING_NODE, DISCONNECT_EOG
+        }
+
     }
 
     /**
@@ -317,6 +372,18 @@ public interface NodePattern<T extends Node> {
 
     }
 
+    record ForAllRelatedNode<T extends Node, R extends Node>(NodePattern<? extends R> pattern,
+                                                           CpgMultiEdge<T, R> edge) {
+        List<? extends Node> getCandidates(T from) {
+            return edge.getAllTargets(from);
+        }
+
+        NodePattern<? extends R> getPattern() {
+            return pattern;
+        }
+
+    }
+
     /**
      * Pair of a sequence of node pattern of related nodes and a multi edge from a reference node to all related nodes.
      *
@@ -325,7 +392,7 @@ public interface NodePattern<T extends Node> {
      * @param pattern the pattern describing the related nodes
      * @param edge     edge from a reference node to the related nodes
      */
-    record Related1ToNSequence<T extends Node, R extends Node>(NodeListPattern<R> pattern,
+    record Related1ToNSequence<T extends Node, R extends Node>(NodeListPattern<? extends R> pattern,
                                                                CpgMultiEdge<T, R> edge) {
         List<? extends Node> getCandidates(T from) {
             return edge.getAllTargets(from);

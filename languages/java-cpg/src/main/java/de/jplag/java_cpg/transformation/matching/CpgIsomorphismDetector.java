@@ -3,9 +3,13 @@ package de.jplag.java_cpg.transformation.matching;
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.helpers.SubgraphWalker;
 import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern;
-import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern.Match;
+import de.jplag.java_cpg.transformation.matching.pattern.Match;
+import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
+import org.jetbrains.annotations.NotNull;
+
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This class finds {@link Match}es of {@link GraphPattern}s in concrete graphs.
@@ -17,6 +21,7 @@ public class CpgIsomorphismDetector {
 
     /**
      * Sets the current graph to find pattern matches in.
+     *
      * @param root The root {@link Node} of the graph.
      */
     public void loadGraph(Node root) {
@@ -29,21 +34,18 @@ public class CpgIsomorphismDetector {
 
     /**
      * Gets an {@link Iterator} over all {@link Match}es of the given {@link GraphPattern} in the currently loaded Graph.
+     *
      * @param sourcePattern the {@link GraphPattern} to search matches for
      * @return an {@link Iterator} over all found {@link Match}es
-     * @param <T> the {@link Node} type of the root of the currently loaded graph
      */
-    public <T extends Node> Iterator<Match<T>> getMatches(GraphPattern<T> sourcePattern) {
-        List<Class<? extends Node>> candidateNodeClasses = sourcePattern.getCandidateNodeClasses();
-        List<? extends Node> rootCandidates = candidateNodeClasses.stream()
-            .map(this::getNodesOfType)
-            .flatMap(List::stream)
-            .toList();
-
-        Iterator<Match<T>> matches = rootCandidates.stream()
-            .map(sourcePattern::recursiveMatch)
-            .flatMap(List::stream)
-            .iterator();
+    public Iterator<Match> getMatches(GraphPattern sourcePattern) {
+        Map<NodePattern<?>, List<? extends Node>> rootCandidateMap = sourcePattern.getRoots().stream()
+            .collect(Collectors.toMap(
+                root -> root,
+                root -> root.getCandidateClasses().stream().map(this::getNodesOfType).flatMap(List::stream).distinct().toList()
+            ));
+        Iterator<Match> matches =
+            sourcePattern.multiMatch(rootCandidateMap);
 
         return matches;
     }
@@ -54,9 +56,10 @@ public class CpgIsomorphismDetector {
 
     /**
      * Gets a {@link List} of all registered {@link Node}s that are assignable to the given type.
+     *
      * @param superClass the type class to search
+     * @param <T>        the type
      * @return a list of assignable nodes
-     * @param <T> the type
      */
     public <T extends Node> List<T> getNodesOfType(Class<T> superClass) {
         classComparator.setMode(ClassComparator.Mode.FIRST_COMPATIBLE);
@@ -65,16 +68,25 @@ public class CpgIsomorphismDetector {
         Class<? extends Node> firstIncompatible = nodeMap.ceilingKey(superClass);
         classComparator.setMode(ClassComparator.Mode.FIRST_COMPATIBLE);
 
-        SortedMap<Class<? extends Node>, List<Node>> subMap;
-        subMap = nodeMap.tailMap(firstCompatible);
+        if (Objects.isNull(firstCompatible)) {
+            // no nodes of this type
+            return List.of();
+        }
+
+        SortedMap<Class<? extends Node>, List<Node>> subMap = nodeMap.tailMap(firstCompatible);
         if (firstIncompatible != null) {
             subMap = subMap.headMap(firstIncompatible);
         }
         List<T> nodes = subMap.values()
-                .stream().flatMap(List::stream).map(superClass::cast).toList();
+            .stream().flatMap(List::stream).map(superClass::cast).toList();
 
         return nodes;
     }
+
+    public boolean validateMatch(Match match, GraphPattern sourcePattern) {
+        return sourcePattern.validate(match);
+    }
+
     /**
      * This comparator imposes a total order on classes by using their class hierarchy edge and name, yielding a dfs-like order on a list of Class objects.
      */
@@ -86,41 +98,12 @@ public class CpgIsomorphismDetector {
             this.mode = mode;
         }
 
-        enum Mode {
-            /**
-             *  In this mode, a binary search of a class A in a list returns the position of the first class B in the list
-             *  so that B is a subclass or equal to A.
-             */
-            FIRST_COMPATIBLE(0, -1),
-
-            /**
-             *  In this mode, a binary search of a class A in a list returns the position AFTER the last class B in the list
-             *  so that B is a subclass or equal to A.
-             */
-            FIRST_INCOMPATIBLE(1, 1);
-
-            /**
-             *  The value to return for classes (A, B) if B is a true subclass to A.
-             */
-            private final int subClassValue;
-
-            /**
-             *  The value to return for classes (A, A).
-             */
-            private final int equalityValue;
-
-            Mode(int equalityValue, int subClassValue) {
-                this.equalityValue = equalityValue;
-                this.subClassValue = subClassValue;
-            }
-        }
-
         @Override
         public int compare(Class<?> o1, Class<?> o2) {
             // classes are compatible with each other? -> Order of hierarchy
-            if (o1.equals(o2)) return this.mode.equalityValue;
+            if (Objects.equals(o1, o2)) return this.mode.equalityValue;
             else if (o1.isAssignableFrom(o2)) return this.mode.subClassValue;
-            else if (o2.isAssignableFrom(o1)) return -this.mode.subClassValue;
+            else if (o2.isAssignableFrom(o1)) return this.mode.superClassValue;
 
             // classes are incompatible; find most special incompatible superclass
             Class<?> super1 = o1.getSuperclass();
@@ -158,6 +141,40 @@ public class CpgIsomorphismDetector {
             // found most special incompatible supertypes; use alphabetical order on name
             return Comparator.<Class<?>, String>comparing(Class::getName).compare(comp1, comp2);
 
+        }
+
+        enum Mode {
+            /**
+             * In this mode, a binary search of a class A in a list returns the position of the first class B in the list
+             * so that B is a subclass or equal to A.
+             */
+            FIRST_COMPATIBLE(0, -1, 1),
+
+            /**
+             * In this mode, a binary search of a class A in a list returns the position AFTER the last class B in the list
+             * so that B is a subclass or equal to A.
+             */
+            FIRST_INCOMPATIBLE(1, 1, 1);
+
+            /**
+             * The value to return for classes (A, B) if B is a true superclass to A.
+             */
+            public final int superClassValue;
+            /**
+             * The value to return for classes (A, A).
+             */
+            private final int equalityValue;
+            /**
+             * The value to return for classes (A, B) if B is a true subclass to A.
+             */
+            private final int subClassValue;
+
+
+            Mode(int equalityValue, int subClassValue, int superClassValue) {
+                this.equalityValue = equalityValue;
+                this.subClassValue = subClassValue;
+                this.superClassValue = superClassValue;
+            }
         }
     }
 

@@ -15,11 +15,19 @@ public class CpgNthEdge<S extends Node, T extends Node> extends CpgEdge<S, T>{
      * @param index The index of this edge
      */
     public CpgNthEdge(CpgMultiEdge<S, T> edge, int index) {
-        super(t -> edge.getAllTargets(t).get(index), (t, r) -> edge.setter().accept(t, index, r));
+        super(t -> edge.getAllTargets(t).get(index), (t, r) -> edge.setter().accept(t, index, r), edge.getCategory());
         this.multiEdge = edge;
         this.index = index;
         this.setFromClass(edge.getFromClass());
         this.setToClass(edge.getToClass());
+    }
+
+    @Override
+    public boolean isEquivalentTo(IEdge<?, ?> other) {
+        if (!(other instanceof CpgNthEdge<?,?> otherNthEdge)) {
+            return false;
+        }
+        return multiEdge.isEquivalentTo(otherNthEdge.multiEdge) && index == otherNthEdge.getIndex();
     }
 
     /**

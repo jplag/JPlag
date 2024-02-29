@@ -33,7 +33,7 @@ public abstract class CpgTokenConsumer implements TokenConsumer {
     }
 
     public void addToken(TokenType type, Node node, boolean isEndToken) {
-        logger.info(type.toString() + "/" + node.toString());
+        logger.debug(type.toString() + "/" + node.toString());
         PhysicalLocation location = node.getLocation();
 
         File file;

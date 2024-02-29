@@ -10,6 +10,7 @@ import de.jplag.java_cpg.transformation.GraphTransformation;
 import de.jplag.java_cpg.transformation.TransformationRepository;
 import de.jplag.java_cpg.transformation.matching.CpgIsomorphismDetector;
 import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern;
+import de.jplag.java_cpg.transformation.matching.pattern.Match;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -28,8 +29,8 @@ public class CreateTransformTest extends AbstractJavaCpgLanguageTest {
 
     public static Stream<Arguments> provideTuples() {
         return Stream.of(
-            Arguments.of("UnusedVariableDeclaration.java", TransformationRepository.removeUnusedVariableDeclarations(), VariableDeclaration.class),
-            Arguments.of("IfElseWithNegatedCondition.java", TransformationRepository.ifWithNegatedConditionResolution(), IfStatement.class)
+            Arguments.of("UnusedVariableDeclaration.java", TransformationRepository.removeUnusedVariableDeclarations, VariableDeclaration.class),
+            Arguments.of("IfElseWithNegatedCondition.java", TransformationRepository.ifWithNegatedConditionResolution, IfStatement.class)
         );
     }
 
@@ -52,13 +53,13 @@ public class CreateTransformTest extends AbstractJavaCpgLanguageTest {
     }
 
     private <T extends Node> void instantiate(GraphTransformation<T> transformation) {
-        GraphPattern<T> sourcePattern = transformation.getSourcePattern();
-        Iterator<GraphPattern.Match<T>> maybeMatch = detector.getMatches(sourcePattern);
+        GraphPattern sourcePattern = transformation.getSourcePattern();
+        Iterator<Match> maybeMatch = detector.getMatches(sourcePattern);
 
         assertTrue(maybeMatch.hasNext());
-        GraphPattern.Match<T> match = maybeMatch.next();
+        Match match = maybeMatch.next();
 
-        transformation.apply(match);
+        transformation.apply(match, null);
     }
 
 }

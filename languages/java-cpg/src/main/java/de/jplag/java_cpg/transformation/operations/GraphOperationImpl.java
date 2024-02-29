@@ -17,11 +17,11 @@ public abstract class GraphOperationImpl<S extends Node,T extends Node> implemen
     }
 
     public boolean isWildcarded() {
-        return this.parentPattern instanceof WildcardGraphPattern<?>.ParentNodePattern
-            && this.edge instanceof WildcardGraphPattern<?>.Edge;
+        return this.parentPattern instanceof WildcardGraphPattern.ParentNodePattern
+            && this.edge instanceof WildcardGraphPattern.Edge;
     }
 
     public boolean isMultiEdged() {
-        return this.edge instanceof CpgMultiEdge<S,T>.Any1ofNEdge;
+        return this.edge instanceof CpgMultiEdge<S,? super T>.Any1ofNEdge;
     }
 }

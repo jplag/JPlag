@@ -25,11 +25,11 @@ public final class PatternRepository {
 
     private PatternRepository() {/* should not be instantiated */}
 
-    public static GraphPatternBuilder<IfStatement> ifElseWithNegatedCondition() {
+    public static GraphPatternBuilder ifElseWithNegatedCondition() {
 
-        return new GraphPatternBuilder<>() {
+        return new GraphPatternBuilder() {
             @Override
-            public GraphPattern<IfStatement> build() {
+            public GraphPattern build() {
                 return create(IfStatement.class, "root",
                     related(IF_STATEMENT__CONDITION, UnaryOperator.class,
                         "condition",
@@ -42,10 +42,10 @@ public final class PatternRepository {
         };
     }
 
-    static GraphPatternBuilder<BinaryOperator> leftFacingComparison() {
-       return new GraphPatternBuilder<>() {
+    static GraphPatternBuilder leftFacingComparison() {
+       return new GraphPatternBuilder() {
             @Override
-            public GraphPattern<BinaryOperator> build() {
+            public GraphPattern build() {
                 return create(BinaryOperator.class, "comparison",
                     related(BINARY_OPERATOR__LHS, Expression.class, "leftHandSide"),
                     property(oneOf(BINARY_OPERATOR__OPERATOR_CODE, List.of(">=", ">"))),
@@ -58,26 +58,26 @@ public final class PatternRepository {
 
     static NodePattern<MethodDeclaration> methodWithNCalls(int n) {
         var methodDecl = NodePattern.forNodeType(MethodDeclaration.class);
-        methodDecl.addProperty(nElements(METHOD_DECLARATION__USAGES, n));
+        methodDecl.addProperty(nElements(VALUE_DECLARATION__USAGES, n));
 
         return methodDecl;
     }
 
-    public static GraphPatternBuilder<MethodDeclaration> setterMethod() {
-        return new GraphPatternBuilder<>() {
+    public static GraphPatternBuilder setterMethod() {
+        return new GraphPatternBuilder() {
 
             @Override
-            public GraphPattern<MethodDeclaration> build() {
+            public GraphPattern build() {
                 return create(MethodDeclaration.class, "methodDecl",
                     related(METHOD_DECLARATION__RECORD_DECLARATION, RecordDeclaration.class, "classDecl",
                         related1ToN(RECORD_DECLARATION__FIELDS, FieldDeclaration.class, "fieldDecl",
-                            related(FIELD_DECLARATION__TYPE, ObjectType.class, "fieldType")
+                            related(VALUE_DECLARATION__TYPE, ObjectType.class, "fieldType")
                         ),
-                        relatedExisting1ToN(RECORD_DECLARATION__METHODS, "methodDecl")
+                        relatedExisting1ToN(RECORD_DECLARATION__METHODS, MethodDeclaration.class, "methodDecl")
                     ),
-                    related(METHOD_DECLARATION__TYPE, FunctionType.class, "methodType",
+                    related(VALUE_DECLARATION__TYPE, FunctionType.class, "methodType",
                         property(nElements(FUNCTION_TYPE__PARAMETERS, 1)),
-                        relatedExisting(nthElement(FUNCTION_TYPE__PARAMETERS, 0), "fieldType"),
+                        relatedExisting(nthElement(FUNCTION_TYPE__PARAMETERS, 0), ObjectType.class, "fieldType"),
                         property(nElements(FUNCTION_TYPE__RETURN_TYPES, 1)),
                         related(nthElement(FUNCTION_TYPE__RETURN_TYPES, 0), IncompleteType.class, "voidType",
                             property(PatternUtil.attributeEquals(INCOMPLETE_TYPE__TYPE_NAME, "void"))
@@ -88,11 +88,10 @@ public final class PatternRepository {
                     related(METHOD_DECLARATION__BODY, Block.class,"methodBody",
                         property(nElements(BLOCK__STATEMENTS, 2)),
                         related(nthElement(BLOCK__STATEMENTS, 0), AssignExpression.class, "assignExpr",
-                            property(nElements(ASSIGN_EXPRESSION__LHS, 1)),
-                            related(nthElement(ASSIGN_EXPRESSION__LHS, 0), Reference.class, "fieldReference"),
-                            property(nElements(ASSIGN_EXPRESSION__RHS, 1)),
-                            related(nthElement(ASSIGN_EXPRESSION__RHS, 0), Reference.class, "paramReference",
-                                relatedExisting(REFERENCE__REFERS_TO, "paramDecl")
+                            related(ASSIGN_EXPRESSION__LHS, Reference.class, "fieldReference"),
+
+                            related(ASSIGN_EXPRESSION__RHS, Reference.class, "paramReference",
+                                relatedExisting(REFERENCE__REFERS_TO, ParameterDeclaration.class, "paramDecl")
                             )
                         ),
                         related(nthElement(BLOCK__STATEMENTS, 1), ReturnStatement.class, "returnStmt",

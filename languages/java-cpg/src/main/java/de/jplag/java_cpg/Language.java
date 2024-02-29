@@ -53,7 +53,17 @@ public class Language implements de.jplag.Language {
     private GraphTransformation<?>[] standardTransformations() {
         return new GraphTransformation[]{
             // TODO: Specify set of standard transformations
-            TransformationRepository.removeLibraryRecords()
+
+            TransformationRepository.wrapThenStatement,
+            TransformationRepository.wrapElseStatement,
+            TransformationRepository.removeLibraryRecords,
+            TransformationRepository.moveConstantToOnlyUsingClass,
+            TransformationRepository.inlineSingleUseConstant,
+            TransformationRepository.inlineSingleUseVariable,
+            TransformationRepository.removeEmptyDeclarationStatement,
+            TransformationRepository.removeImplicitStandardConstructor,
+            TransformationRepository.ifWithNegatedConditionResolution,
+            TransformationRepository.removeEmptyRecord
         };
     }
 

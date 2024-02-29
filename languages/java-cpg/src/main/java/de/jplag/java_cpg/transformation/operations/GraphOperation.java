@@ -1,13 +1,14 @@
 package de.jplag.java_cpg.transformation.operations;
 
+import de.fraunhofer.aisec.cpg.TranslationContext;
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.graph.edge.PropertyEdge;
 import de.jplag.java_cpg.transformation.GraphTransformation;
 import de.jplag.java_cpg.transformation.TransformationException;
 import de.jplag.java_cpg.transformation.matching.edges.IEdge;
-import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern;
-import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern.Match.WildcardMatch;
+import de.jplag.java_cpg.transformation.matching.pattern.Match;
 import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
+import de.jplag.java_cpg.transformation.matching.pattern.Match.WildcardMatch;
 import de.jplag.java_cpg.transformation.matching.pattern.WildcardGraphPattern.ParentNodePattern;
 
 import java.util.Objects;
@@ -17,10 +18,12 @@ import java.util.Objects;
  */
 public interface GraphOperation {
     /**
-     * Applies the {@link GraphOperation} on the graph represented by a {@link GraphPattern.Match} indicating which nodes are involved in the operation.
+     * Applies the {@link GraphOperation} on the graph represented by a {@link Match} indicating which nodes are involved in the operation.
+     *
      * @param match the pattern match
+     * @param ctx
      */
-    void apply(GraphPattern.Match<?> match) throws TransformationException;
+    void resolve(Match match, TranslationContext ctx) throws TransformationException;
 
     /**
      * Gets the {@link NodePattern} representing the {@link Node} where the operation is intended to be applied.
@@ -32,16 +35,14 @@ public interface GraphOperation {
      * If the target nodes of this {@link GraphOperation} is a {@link ParentNodePattern}, then this method creates a concrete {@link GraphOperation} with the given {@link Node} and {@link IEdge} from the {@link WildcardMatch}.
      * @param match The {@link WildcardMatch} containing the concrete {@link Node} and {@link PropertyEdge} for the wildcard
      * @return The instantiated {@link GraphOperation}
-     * @param <S> The parentPattern {@link Node} type
-     * @param <T> The child {@link Node} type
      */
-    <S extends Node, T extends Node> GraphOperation instantiateWildcard(WildcardMatch<S, T> match);
+    GraphOperation instantiateWildcard(Match match);
 
     default String desc(Node node) {
         return "%s(%s)".formatted(node.getClass().getSimpleName(), Objects.requireNonNullElse(node.getLocation(), "*new*"));
     }
 
-    GraphOperation instantiateAny1ofNEdge(GraphPattern.Match<?> match);
+    GraphOperation instantiateAny1ofNEdge(Match match);
 
     boolean isWildcarded();
 

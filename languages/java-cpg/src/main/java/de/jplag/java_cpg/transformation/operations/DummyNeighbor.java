@@ -81,4 +81,9 @@ public class DummyNeighbor extends Node {
             edges.clear();
         }
     }
+
+    public void clear() {
+        targetMap.clear();
+        sourceMap.clear();
+    }
 }

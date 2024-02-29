@@ -9,7 +9,7 @@ import de.fraunhofer.aisec.cpg.passes.order.ExecuteBefore
 import de.jplag.java_cpg.transformation.GraphTransformation
 import de.jplag.java_cpg.transformation.matching.CpgIsomorphismDetector
 import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern
-import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern.Match
+import de.jplag.java_cpg.transformation.matching.pattern.Match
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -40,14 +40,14 @@ class TransformationPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
         }
 
         @JvmStatic
-        val LOGGER: Logger = LoggerFactory.getLogger("TransformationPass")
+        val LOGGER: Logger = LoggerFactory.getLogger(TransformationPass::class.java)
     }
 
     override fun accept(t: TranslationResult) {
         val detector = CpgIsomorphismDetector()
         for (transformation: GraphTransformation<*> in transformations) {
             detector.loadGraph(t)
-            instantiate(transformation, detector)
+            instantiate(transformation, detector, ctx)
         }
     }
 
@@ -55,13 +55,21 @@ class TransformationPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
      * Applies the given transformation to all the matches that the detector can find.
      * @param <T> The concrete node type of the target node/GraphTransformation/Match
      */
-    private fun <T : Node?> instantiate(transformation: GraphTransformation<T>, detector: CpgIsomorphismDetector) {
-        val sourcePattern: GraphPattern<T> = transformation.sourcePattern
-        val matches: Iterator<Match<T>> = detector.getMatches(sourcePattern)
+    private fun <T : Node?> instantiate(
+        transformation: GraphTransformation<T>,
+        detector: CpgIsomorphismDetector,
+        ctx: TranslationContext
+    ) {
+        val sourcePattern: GraphPattern = transformation.sourcePattern
+        val matches: Iterator<Match> = detector.getMatches(sourcePattern)
 
-        for (match in matches) {
-            transformation.apply(match)
+        var count = 0;
+        while (matches.hasNext()) {
+            val match = matches.next()
+            count++;
+            transformation.apply(match, ctx)
         }
+        LOGGER.info("%s: Found %d matches".format(transformation.name, count))
 
     }
 

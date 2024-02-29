@@ -39,5 +39,13 @@ public interface IEdge<S extends Node, T extends Node> {
      * @param other the edge to check for equivalence
      * @return true if the other edge is equivalent
      */
-    boolean isEquivalentTo(IEdge<S, ?> other);
+    boolean isEquivalentTo(IEdge<?, ?> other);
+
+    boolean isAst();
+
+    boolean isAnalytic();
+
+    enum EdgeCategory {
+        AST, REFERENCE, ANALYTIC
+    }
 }

@@ -1,12 +1,14 @@
 package de.jplag.java_cpg;
 
 import de.fraunhofer.aisec.cpg.*;
+import de.fraunhofer.aisec.cpg.frontends.cxx.CPPLanguage;
 import de.fraunhofer.aisec.cpg.frontends.java.JavaLanguage;
 import de.fraunhofer.aisec.cpg.passes.*;
 import de.fraunhofer.aisec.cpg_vis_neo4j.Application;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.java_cpg.passes.CleanupTransformationPass;
+import de.jplag.java_cpg.passes.DFGSortPass;
 import de.jplag.java_cpg.passes.TokenizationPass;
 import de.jplag.java_cpg.passes.TransformationPass;
 import de.jplag.java_cpg.transformation.GraphTransformation;
@@ -48,24 +50,32 @@ public class CpgAdapter {
         TranslationResult translationResult;
         TokenizationPass.Companion.setCallback(CpgAdapter.this::setTokenList);
         try {
-            TranslationConfiguration translationConfiguration = new TranslationConfiguration.Builder()
+            TranslationConfiguration.Builder configBuilder = new TranslationConfiguration.Builder()
                 .inferenceConfiguration(inferenceConfiguration)
-                .registerPass(getKClass(TypeResolver.class))
-                .registerPass(getKClass(TypeHierarchyResolver.class))
-                .registerPass(getKClass(ImportResolver.class))
-                .registerPass(getKClass(SymbolResolver.class))
-                .registerPass(getKClass(DFGPass.class))
-                .registerPass(getKClass(DynamicInvokeResolver.class))
-                .registerPass(getKClass(ControlFlowSensitiveDFGPass.class))
-                .registerPass(getKClass(FilenameMapper.class))
-                .registerPass(getKClass(TransformationPass.class))
-                .registerPass(getKClass(EvaluationOrderGraphPass.class)) // creates EOG
-                .registerPass(getKClass(CleanupTransformationPass.class))
-                .registerPass(getKClass(TokenizationPass.class))
+                .sourceLocations(files.toArray(new File[]{}))
                 .registerLanguage(new JavaLanguage())
-                .sourceLocations(files.toArray(new File[]{})).build();
+                .registerLanguage(new CPPLanguage());
 
-            translationResult = TranslationManager.builder().config(translationConfiguration).build().analyze().get();
+
+            List<Class<? extends Pass<?>>> passClasses = List.of(
+                TypeResolver.class,
+                TypeHierarchyResolver.class,
+                ImportResolver.class,
+                SymbolResolver.class,
+                DynamicInvokeResolver.class,
+                FilenameMapper.class,
+                TransformationPass.class,
+                EvaluationOrderGraphPass.class,  // creates EOG
+                DFGSortPass.class,
+                CleanupTransformationPass.class,
+                TokenizationPass.class
+            );
+
+            for (Class<? extends Pass<?>> passClass : passClasses) {
+                configBuilder.registerPass(getKClass(passClass));
+            }
+
+            translationResult = TranslationManager.builder().config(configBuilder.build()).build().analyze().get();
 
         } catch (InterruptedException | ExecutionException | ConfigurationException e) {
             throw new ParsingException(List.copyOf(files).get(0), e);

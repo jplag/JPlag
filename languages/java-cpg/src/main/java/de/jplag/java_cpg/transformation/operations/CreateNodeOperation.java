@@ -1,9 +1,16 @@
 package de.jplag.java_cpg.transformation.operations;
 
+import de.fraunhofer.aisec.cpg.TranslationContext;
 import de.fraunhofer.aisec.cpg.graph.Node;
-import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern;
-import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
-import de.jplag.java_cpg.transformation.matching.pattern.PatternUtil;
+import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration;
+import de.fraunhofer.aisec.cpg.graph.declarations.NamespaceDeclaration;
+import de.fraunhofer.aisec.cpg.graph.declarations.RecordDeclaration;
+import de.fraunhofer.aisec.cpg.graph.declarations.TemplateDeclaration;
+import de.fraunhofer.aisec.cpg.graph.statements.*;
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.Block;
+import de.jplag.java_cpg.transformation.matching.pattern.*;
+
+import java.util.List;
 
 /**
  * Creates a new {@link Node} in the graph.
@@ -14,12 +21,34 @@ import de.jplag.java_cpg.transformation.matching.pattern.PatternUtil;
  * @param pattern     the {@link NodePattern} representing the new {@link Node}
  * @param <N>         the new {@link Node}'s type
  */
-public record CreateNodeOperation<N extends Node>(GraphPattern<?> sourceGraph, String roleName,
+public record CreateNodeOperation<N extends Node>(GraphPattern sourceGraph, String roleName,
                                                   NodePattern<N> pattern) implements GraphOperation {
 
+    private static final List<Class<? extends Node>> scopedNodeClasses = List.of(
+        Block.class,
+        WhileStatement.class,
+        DoStatement.class,
+        AssertStatement.class,
+        ForStatement.class,
+        ForEachStatement.class,
+        SwitchStatement.class,
+        FunctionDeclaration.class,
+        IfStatement.class,
+        CatchClause.class,
+        RecordDeclaration.class,
+        TemplateDeclaration.class,
+        TryStatement.class,
+        NamespaceDeclaration.class
+    );
+
     @Override
-    public void apply(GraphPattern.Match<?> match) {
-        match.register(pattern, PatternUtil.instantiate(pattern));
+    public void resolve(Match match, TranslationContext ctx) {
+        N newNode = PatternUtil.instantiate(pattern);
+        match.register(pattern, newNode);
+        //
+        if (scopedNodeClasses.contains(newNode.getClass())) {
+            ctx.getScopeManager().enterScope(newNode);
+        }
     }
 
     @Override
@@ -28,12 +57,12 @@ public record CreateNodeOperation<N extends Node>(GraphPattern<?> sourceGraph, S
     }
 
     @Override
-    public <S extends Node, T extends Node> GraphOperation instantiateWildcard(GraphPattern.Match.WildcardMatch<S, T> match) {
+    public GraphOperation instantiateWildcard(Match match) {
         throw new RuntimeException("Cannot instantiate CreateNodeOperation");
     }
 
     @Override
-    public GraphOperation instantiateAny1ofNEdge(GraphPattern.Match<?> match) {
+    public GraphOperation instantiateAny1ofNEdge(Match match) {
         throw new RuntimeException("Cannot instantiate CreateNodeOperation");
     }
 

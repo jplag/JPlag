@@ -8,7 +8,7 @@ import de.fraunhofer.aisec.cpg.passes.order.ExecuteBefore
 import de.jplag.java_cpg.transformation.GraphTransformation
 import de.jplag.java_cpg.transformation.matching.CpgIsomorphismDetector
 import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern
-import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern.Match
+import de.jplag.java_cpg.transformation.matching.pattern.Match
 import de.jplag.java_cpg.transformation.operations.DummyNeighbor
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -56,13 +56,26 @@ class CleanupTransformationPass(ctx: TranslationContext) : TranslationResultPass
      * @param <T> The concrete node type of the target node/GraphTransformation/Match
      */
     private fun <T : Node?> instantiate(transformation: GraphTransformation<T>, detector: CpgIsomorphismDetector) {
-        val sourcePattern: GraphPattern<T> = transformation.sourcePattern
-        val matches: Iterator<Match<T>> = detector.getMatches(sourcePattern)
+        val sourcePattern: GraphPattern = transformation.sourcePattern
 
-        for (match in matches) {
-            transformation.apply(match)
-        }
+        var count = 0;
+        var invalidated: Boolean
+        do {
+            invalidated = false
+            val matches: Iterator<Match> = detector.getMatches(sourcePattern)
 
+            while (matches.hasNext()) {
+                val match = matches.next()
+                if (detector.validateMatch(match, sourcePattern)) {
+                    count++
+                    transformation.apply(match, ctx)
+                } else {
+                    invalidated = true;
+                }
+            }
+        } while (invalidated)
+
+        LOGGER.info("%s: Found %d matches".format(transformation.name, count))
     }
 
     override fun cleanup() {
@@ -76,7 +89,7 @@ class CleanupTransformationPass(ctx: TranslationContext) : TranslationResultPass
             if (successors.size == 1 && successors[0] == DUMMY
                 && predecessors.size == 1 && predecessors[0] == DUMMY
             ) {
-                LOGGER.info("The node %s got isolated and will likely be removed.".format(it))
+                LOGGER.debug("The node %s got isolated and will likely be removed.".format(it))
                 DUMMY.nextEOGEdges.removeIf { e -> e.end == it }
                 DUMMY.prevEOGEdges.removeIf { e -> e.start == it }
             }

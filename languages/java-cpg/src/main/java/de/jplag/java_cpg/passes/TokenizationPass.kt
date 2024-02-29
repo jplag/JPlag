@@ -9,8 +9,9 @@ import de.jplag.Token
 import de.jplag.TokenType
 import de.jplag.java_cpg.token.CpgToken
 import de.jplag.java_cpg.token.CpgTokenConsumer
-import de.jplag.java_cpg.token.CpgTokenListener
+import de.jplag.java_cpg.token.CpgNodeListener
 import de.jplag.java_cpg.visitorStrategy.NodeOrderStrategy
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 import java.util.function.Consumer
@@ -18,7 +19,7 @@ import java.util.function.Consumer
 /**
  * This pass tokenizes a TranslationResult.
  */
-class TokenizationPass(ctx: TranslationContext?) : TranslationResultPass(ctx!!) {
+class TokenizationPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
     private val tokenList = ArrayList<Token>()
     private val consumer: CpgTokenConsumer
@@ -28,11 +29,11 @@ class TokenizationPass(ctx: TranslationContext?) : TranslationResultPass(ctx!!) 
     }
 
     override fun cleanup() {
-        LoggerFactory.getLogger(TokenizationPass::class.java).info("Found %d tokens".format(tokenList.size))
+        logger.info("Found %d tokens".format(tokenList.size))
     }
 
     override fun accept(translationResult: TranslationResult) {
-        val listener = CpgTokenListener(consumer)
+        val listener = CpgNodeListener(consumer)
         val walker: SubgraphWalker.IterativeGraphWalker = SubgraphWalker.IterativeGraphWalker()
         walker.strategy = { node: Node? -> NodeOrderStrategy().getIterator(node) }
         walker.registerOnNodeVisit { node: Node? -> listener.visit(node) }
@@ -50,5 +51,6 @@ class TokenizationPass(ctx: TranslationContext?) : TranslationResultPass(ctx!!) 
 
     companion object {
         var callback: Consumer<List<Token>>? = null
+        val logger: Logger = LoggerFactory.getLogger(TokenizationPass::class.java)
     }
 }
