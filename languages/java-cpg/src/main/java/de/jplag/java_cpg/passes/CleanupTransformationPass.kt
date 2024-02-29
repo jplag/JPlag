@@ -40,7 +40,7 @@ class CleanupTransformationPass(ctx: TranslationContext) : TranslationResultPass
         }
 
         @JvmStatic
-        val LOGGER: Logger = LoggerFactory.getLogger(CleanupTransformationPass::class.java)
+        val logger: Logger = LoggerFactory.getLogger(CleanupTransformationPass::class.java)
     }
 
     override fun accept(t: TranslationResult) {
@@ -75,7 +75,7 @@ class CleanupTransformationPass(ctx: TranslationContext) : TranslationResultPass
             }
         } while (invalidated)
 
-        LOGGER.info("%s: Found %d matches".format(transformation.name, count))
+        logger.info("%s: Found %d matches".format(transformation.name, count))
     }
 
     override fun cleanup() {
@@ -89,7 +89,7 @@ class CleanupTransformationPass(ctx: TranslationContext) : TranslationResultPass
             if (successors.size == 1 && successors[0] == dummy
                 && predecessors.size == 1 && predecessors[0] == dummy
             ) {
-                LOGGER.debug("The node %s got isolated and will likely be removed.".format(it))
+                logger.debug("The node %s got isolated and will likely be removed.".format(it))
                 dummy.nextEOGEdges.removeIf { e -> e.end == it }
                 dummy.prevEOGEdges.removeIf { e -> e.start == it }
             }

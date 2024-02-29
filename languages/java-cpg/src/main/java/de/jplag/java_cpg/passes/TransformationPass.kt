@@ -40,7 +40,7 @@ class TransformationPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
         }
 
         @JvmStatic
-        val LOGGER: Logger = LoggerFactory.getLogger(TransformationPass::class.java)
+        val logger: Logger = LoggerFactory.getLogger(TransformationPass::class.java)
     }
 
     override fun accept(t: TranslationResult) {
@@ -63,13 +63,13 @@ class TransformationPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
         val sourcePattern: GraphPattern = transformation.sourcePattern
         val matches: Iterator<Match> = detector.getMatches(sourcePattern)
 
-        var count = 0;
+        var count = 0
         while (matches.hasNext()) {
             val match = matches.next()
-            count++;
+            count++
             transformation.apply(match, ctx)
         }
-        LOGGER.info("%s: Found %d matches".format(transformation.name, count))
+        logger.info("%s: Found %d matches".format(transformation.name, count))
 
     }
 

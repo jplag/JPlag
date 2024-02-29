@@ -24,7 +24,7 @@ public abstract class AbstractJavaCpgLanguageTest {
     protected static final Path BASE_PATH = Path.of("src", "test", "resources", "java");
     private static final String LOG_MESSAGE = "Tokens of {}: {}";
     private final Logger logger = LoggerFactory.getLogger(AbstractJavaCpgLanguageTest.class);
-    private de.jplag.Language language;
+    private de.jplag.java_cpg.Language language;
     protected File baseDirectory;
 
     /**
@@ -43,8 +43,8 @@ public abstract class AbstractJavaCpgLanguageTest {
      * @return the token types.
      * @throws ParsingException if parsing fails.
      */
-    protected List<TokenType> parseJavaFile(String fileName) throws ParsingException {
-        List<Token> parsedTokens = language.parse(Set.of(new File(baseDirectory.getAbsolutePath(), fileName)));
+    protected List<TokenType> parseJavaFile(String fileName, boolean transform) throws ParsingException {
+        List<Token> parsedTokens = language.parse(Set.of(new File(baseDirectory.getAbsolutePath(), fileName)), transform);
         List<TokenType> tokenTypes = parsedTokens.stream().map(Token::getType).toList();
         logger.info(LOG_MESSAGE, fileName, tokenTypes);
         logger.info(TokenPrinter.printTokens(parsedTokens, BASE_PATH.toAbsolutePath().toFile()));

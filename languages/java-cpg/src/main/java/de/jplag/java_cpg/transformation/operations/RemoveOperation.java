@@ -34,10 +34,10 @@ public final class RemoveOperation<S extends Node, T extends Node> extends Graph
         }
     }
 
-    private static final Logger LOGGER;
+    private static final Logger logger;
 
     static {
-        LOGGER = LoggerFactory.getLogger(RemoveOperation.class);
+        logger = LoggerFactory.getLogger(RemoveOperation.class);
 
     }
 
@@ -49,7 +49,7 @@ public final class RemoveOperation<S extends Node, T extends Node> extends Graph
     }
 
     public static <S extends Node, T extends Node> void apply(T element, S parent, CpgEdge<S, T> edge, boolean disconnectEog) {
-        LOGGER.debug("Remove " + element.toString());
+        logger.debug("Remove " + element.toString());
 
         if (!(edge instanceof CpgNthEdge<S, T> nthEdge)) {
             edge.setter().accept(parent, null);

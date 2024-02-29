@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Objects;
 
 public final class SetOperation<S extends Node, T extends Node> extends GraphOperationImpl<S, T> {
-    private static final Logger LOGGER;
+    private static final Logger logger;
     private final NodePattern<? extends T> newChildPattern;
     private final boolean disconnectEog;
 
@@ -26,7 +26,7 @@ public final class SetOperation<S extends Node, T extends Node> extends GraphOpe
     }
 
     static {
-        LOGGER = LoggerFactory.getLogger(SetOperation.class);
+        logger = LoggerFactory.getLogger(SetOperation.class);
     }
 
     @Override
@@ -34,7 +34,7 @@ public final class SetOperation<S extends Node, T extends Node> extends GraphOpe
         S parent = match.get(parentPattern);
         // match should contain newChildPattern node because of Builder.createNewNodes()
         T newChild = match.get(newChildPattern);
-        LOGGER.debug("Set %s as AST child of %s".formatted(desc(newChild), desc(parent)));
+        logger.debug("Set %s as AST child of %s".formatted(desc(newChild), desc(parent)));
 
         assert Objects.isNull(edge.getter().apply(parent));
         edge.setter().accept(parent, newChild);
@@ -43,7 +43,7 @@ public final class SetOperation<S extends Node, T extends Node> extends GraphOpe
         newChild.setScope(parentScope);
 
         if (disconnectEog) {
-            LOGGER.warn("disconnectEog in SetOperation – not yet implemented");
+            logger.warn("disconnectEog in SetOperation – not yet implemented");
         }
     }
 

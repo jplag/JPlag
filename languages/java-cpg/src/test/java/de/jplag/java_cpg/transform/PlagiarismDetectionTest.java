@@ -57,17 +57,17 @@ public class PlagiarismDetectionTest {
         Set<File> submissionSet = Set.of(new File(baseDirectory, submissionsPath));
         language.addTransformations(transformation);
         JPlagOptions options = new JPlagOptions(language, submissionSet, Set.of())
-            .withMinimumTokenMatch(5);
+            .withMinimumTokenMatch(5).withNormalize(true);
 
         JPlagResult result;
         try {
-            result = new JPlag(options).run();
+            result = JPlag.run(options);
         } catch (ExitException e) {
             throw new RuntimeException(e);
         }
 
-        JPlagComparison jPlagComparison = result.getAllComparisons().get(0);
-        Assertions.assertEquals(jPlagComparison.similarity(), 1.0);
+        JPlagComparison jPlagComparison = result.getAllComparisons().getFirst();
+        Assertions.assertEquals(1.0, jPlagComparison.similarity());
     }
 
     @AfterEach

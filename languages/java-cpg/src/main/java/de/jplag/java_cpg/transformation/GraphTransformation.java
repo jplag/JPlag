@@ -66,7 +66,7 @@ public interface GraphTransformation<T extends Node> {
     }
 
     class GraphTransformationImpl<T extends Node> implements GraphTransformation<T> {
-        private final static Logger LOGGER = LoggerFactory.getLogger(GraphTransformationImpl.class);
+        private final static Logger logger = LoggerFactory.getLogger(GraphTransformationImpl.class);
         protected final GraphPattern sourcePattern;
         protected final GraphPattern targetPattern;
         private final List<CreateNodeOperation<?>> newNodes;
@@ -90,7 +90,7 @@ public interface GraphTransformation<T extends Node> {
             // create nodes of the target sourceGraph missing parentPattern the source sourceGraph
             newNodes.forEach(op -> op.resolve(match, ctx));
 
-            LOGGER.debug("Apply %s to node %s".formatted(name, match.get(sourcePattern.getRepresentingNode())));
+            logger.debug("Apply %s to node %s".formatted(name, match.get(sourcePattern.getRepresentingNode())));
             // apply other operations
             apply(match, concreteOperations, ctx);
         }

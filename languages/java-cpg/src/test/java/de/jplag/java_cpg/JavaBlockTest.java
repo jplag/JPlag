@@ -16,7 +16,7 @@ class JavaBlockTest extends AbstractJavaCpgLanguageTest {
     @MethodSource("provideSrcDirectories")
     @DisplayName("Test pairs of classes with explicit vs. implicit blocks.")
     void testJavaClassPair(String dir) throws ParsingException {
-        parseJavaFile(dir);
+        parseJavaFile(dir, false);
     }
 
     /**

@@ -14,6 +14,6 @@ class JavaTryTest extends AbstractJavaCpgLanguageTest {
     @Test
     @DisplayName("Test difference between try block and try-with-resource block.")
     void testJavaClassPair() throws ParsingException {
-        assertIterableEquals(parseJavaFile("try/Try.java"), parseJavaFile("try/TryWithResource.java"));
+        assertIterableEquals(parseJavaFile("try/Try.java", true), parseJavaFile("try/TryWithResource.java", true));
     }
 }

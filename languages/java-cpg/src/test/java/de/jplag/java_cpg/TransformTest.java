@@ -11,6 +11,6 @@ class TransformTest extends AbstractJavaCpgLanguageTest {
     @Test
     @DisplayName("Test the transformation of source code files to graphs.")
     void testJavaTransformation() throws ParsingException {
-        parseJavaFile("GetterSetter.java");
+        parseJavaFile("GetterSetter.java", true);
     }
 }

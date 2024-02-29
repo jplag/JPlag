@@ -24,10 +24,10 @@ import java.util.stream.IntStream;
  */
 public final class InsertOperation<S extends Node, T extends Node> extends GraphOperationImpl<S, T> {
 
-    private static final Logger LOGGER;
+    private static final Logger logger;
 
     static {
-        LOGGER = LoggerFactory.getLogger(RemoveOperation.class);
+        logger = LoggerFactory.getLogger(RemoveOperation.class);
     }
 
     private final CpgNthEdge<S, T> edge;
@@ -56,7 +56,7 @@ public final class InsertOperation<S extends Node, T extends Node> extends Graph
         // match should contain newChildPattern node because of Builder.createNewNodes()
         T newTarget = match.get(newChildPattern);
         int index = edge.getIndex();
-        LOGGER.debug("Insert %s into %s at position #%d".formatted(desc(newTarget), desc(parent), index));
+        logger.debug("Insert %s into %s at position #%d".formatted(desc(newTarget), desc(parent), index));
 
         apply(ctx, parent, newTarget, index);
 

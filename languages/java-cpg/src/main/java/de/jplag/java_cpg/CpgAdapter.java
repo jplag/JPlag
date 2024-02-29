@@ -17,6 +17,7 @@ import kotlin.reflect.KClass;
 
 import java.io.File;
 import java.net.ConnectException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -28,13 +29,19 @@ import java.util.concurrent.ExecutionException;
 public class CpgAdapter {
 
     private List<Token> tokenList;
+    private boolean reorderingEnabled = true;
 
     public CpgAdapter(GraphTransformation<?>... transformations) {
         addTransformations(transformations);
     }
 
-    /* package-private */ List<Token> adapt(Set<File> files) throws ParsingException {
+    /* package-private */ List<Token> adapt(Set<File> files, boolean normalize) throws ParsingException {
         assert !files.isEmpty();
+
+        if (!normalize) {
+            clearTransformations();
+            setReorderingEnabled(false);
+        }
         TranslationResult translationResult = translate(files);
 
         boolean doPushToNeo4j = false;
@@ -57,7 +64,7 @@ public class CpgAdapter {
                 .registerLanguage(new CPPLanguage());
 
 
-            List<Class<? extends Pass<?>>> passClasses = List.of(
+            List<Class<? extends Pass<?>>> passClasses = new ArrayList<>(List.of(
                 TypeResolver.class,
                 TypeHierarchyResolver.class,
                 ImportResolver.class,
@@ -69,7 +76,9 @@ public class CpgAdapter {
                 DFGSortPass.class,
                 CleanupTransformationPass.class,
                 TokenizationPass.class
-            );
+            ));
+
+            if (!reorderingEnabled) passClasses.remove(DFGSortPass.class);
 
             for (Class<? extends Pass<?>> passClass : passClasses) {
                 configBuilder.registerPass(getKClass(passClass));
@@ -78,7 +87,7 @@ public class CpgAdapter {
             translationResult = TranslationManager.builder().config(configBuilder.build()).build().analyze().get();
 
         } catch (InterruptedException | ExecutionException | ConfigurationException e) {
-            throw new ParsingException(List.copyOf(files).get(0), e);
+            throw new ParsingException(List.copyOf(files).getFirst(), e);
         }
         return translationResult;
     }
@@ -122,6 +131,10 @@ public class CpgAdapter {
     public void clearTransformations() {
         TransformationPass.clearTransformations();
         CleanupTransformationPass.clearTransformations();
+    }
+
+    public void setReorderingEnabled(boolean enabled) {
+        this.reorderingEnabled = enabled;
     }
 }
 

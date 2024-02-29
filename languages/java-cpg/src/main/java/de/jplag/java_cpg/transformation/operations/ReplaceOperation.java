@@ -21,10 +21,10 @@ import java.util.Objects;
  */
 public final class ReplaceOperation<S extends Node, T extends Node> extends GraphOperationImpl<S, T> {
 
-    private static final Logger LOGGER;
+    private static final Logger logger;
 
     static {
-        LOGGER = LoggerFactory.getLogger(ReplaceOperation.class);
+        logger = LoggerFactory.getLogger(ReplaceOperation.class);
     }
 
     private final NodePattern<? extends T> newChildPattern;
@@ -52,7 +52,7 @@ public final class ReplaceOperation<S extends Node, T extends Node> extends Grap
 
         // Replace AST edge
         T oldTarget = edge.getter().apply(parent);
-        LOGGER.debug("Replace %s by %s".formatted(desc(oldTarget), desc(newTarget)));
+        logger.debug("Replace %s by %s".formatted(desc(oldTarget), desc(newTarget)));
         if (Objects.isNull(newTarget.getLocation())) {
             newTarget.setLocation(oldTarget.getLocation());
         }

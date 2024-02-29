@@ -15,7 +15,7 @@ public class PatternRegistry {
     private final Map<NodePattern<?>, String> idByPattern;
     private NodePattern<?> representingNode;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PatternRegistry.class);
+    private static final Logger logger = LoggerFactory.getLogger(PatternRegistry.class);
     private int wildcardCounter;
 
 
@@ -44,7 +44,7 @@ public class PatternRegistry {
 
     public <T extends Node> void put(String id, NodePattern<T> pattern) {
         if (patternById.containsKey(id)) {
-            LOGGER.warn("A NodePattern with the id '%s' is already present in the PatternRegistry");
+            logger.warn("A NodePattern with the id '%s' is already present in the PatternRegistry");
         }
         this.patternById.put(id, pattern);
         this.idByPattern.put(pattern, id);

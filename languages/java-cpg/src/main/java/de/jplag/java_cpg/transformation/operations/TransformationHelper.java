@@ -14,7 +14,7 @@ import java.util.Objects;
 
 public final class TransformationHelper {
 
-    static final Logger LOGGER = LoggerFactory.getLogger(TransformationHelper.class);
+    static final Logger logger = LoggerFactory.getLogger(TransformationHelper.class);
     public static final DummyNeighbor DUMMY = DummyNeighbor.getInstance();
 
     private TransformationHelper() {
@@ -39,11 +39,11 @@ public final class TransformationHelper {
             result = SubgraphWalker.INSTANCE.getEOGPathEdges(astRoot);
             if (result.getEntries().isEmpty()) {
                 Node entry = astRoot;
-                while (!entry.getPrevEOG().isEmpty()) entry = entry.getPrevEOG().get(0);
+                while (!entry.getPrevEOG().isEmpty()) entry = entry.getPrevEOG().getFirst();
                 result.setEntries(List.of(entry));
             } if (result.getExits().isEmpty()) {
                 Node exit = astRoot;
-                while (!exit.getNextEOG().isEmpty()) exit = exit.getNextEOG().get(0);
+                while (!exit.getNextEOG().isEmpty()) exit = exit.getNextEOG().getFirst();
                 result.setExits(List.of(exit));
             }
 
@@ -56,9 +56,9 @@ public final class TransformationHelper {
 
     private static void checkBorder(Node astRoot, SubgraphWalker.Border result) {
         if (result.getEntries().isEmpty()) {
-            LOGGER.debug("AST subtree of %s has no EOG entry".formatted(astRoot));
+            logger.debug("AST subtree of %s has no EOG entry".formatted(astRoot));
         } else if (result.getEntries().size() > 1) {
-            LOGGER.debug("AST subtree of %s has multiple EOG entries".formatted(astRoot));
+            logger.debug("AST subtree of %s has multiple EOG entries".formatted(astRoot));
         }
     }
 
@@ -91,7 +91,7 @@ public final class TransformationHelper {
         List<PropertyEdge<Node>> exitEdges = getExitEdges(astRoot, List.of(exit), true);
         if (exitEdges.isEmpty()) return null;
 
-        Node entry = exitEdges.get(0).getEnd();
+        Node entry = exitEdges.getFirst().getEnd();
 
         exitEdges.stream()
             .filter(e -> !Objects.equals(e.getEnd(), DUMMY))
@@ -181,11 +181,11 @@ public final class TransformationHelper {
     }
 
     private static Node getEntry(Node astRoot) {
-        return getEogBorders(astRoot).getEntries().get(0);
+        return getEogBorders(astRoot).getEntries().getFirst();
     }
 
     private static Node getExit(Node astRoot) {
-        return getEogBorders(astRoot).getExits().get(0);
+        return getEogBorders(astRoot).getExits().getFirst();
     }
 
     static Node connectNewPredecessor(Node target, Node newPredecessor, boolean asAstRoot) {
