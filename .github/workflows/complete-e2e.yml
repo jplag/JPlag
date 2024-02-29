@@ -44,13 +44,10 @@ jobs:
         with:
           node-version: "18"
   
-      - name: Run Tests
-        run: mvn verify -B -U
-  
       - name: Build Assembly
         run: mvn -Pwith-report-viewer -DskipTests clean package assembly:single
       
-      - name: Raname Jar
+      - name: Rename Jar
         run: mv cli/target/jplag-*-jar-with-dependencies.jar cli/target/jplag.jar
   
       - name: Upload Assembly
@@ -58,19 +55,21 @@ jobs:
         with:
           name: "JPlag"
           path: "cli/target/jplag.jar"
+          retention-days: 30
 
   run_jplag:
     needs: build_jar
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         dataset: [
-          {zip: "progpedia.zip", name: "progpedia", folder: "ACCEPTED", base: "base", language: "java", cliArgs: ""},
+          {zip: "progpedia.zip", name: "progpedia", folder: "ACCEPTED", language: "java", cliArgs: "-bc base"}
           ]
 
     steps:
-      - name: Checkout 🛎️
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set up JDK
@@ -84,76 +83,66 @@ jobs:
         with:
           name: JPlag
 
-      - name: Copy and unzip dataset
+      - name: Copy and unzip dataset windows
+        if: ${{ matrix.os == 'windows-latest' }}
         run: |
-          if [${{matrix.os}} == "windows-latest"]; then
-            Expand-Archive -LiteralPath .github/workflows/files/${{ matrix.dataset.zip }} -DestinationPath ./
-          elif [${{matrix.os}} == "macos-latest"]; then
-            unzip .github/workflows/files/${{ matrix.dataset.zip }} -d ./
-          else
-            unzip ./ .github/workflows/files/${{ matrix.dataset.zip }}
-          fi
+          Expand-Archive -LiteralPath .github/workflows/files/${{ matrix.dataset.zip }} -DestinationPath ./
       
+      - name: Copy and unzip dataset macos and ubuntu
+        if: ${{ matrix.os == 'macos-latest' || matrix.os == 'ubuntu-latest'}}
+        run: |
+          unzip .github/workflows/files/${{ matrix.dataset.zip }}
+
       - name: Run JPlag
         run: |
-          if [${{matrix.dataset.base}} == "undefined"]; then
-            java -jar jplag.jar ${{ matrix.dataset.folder }} -l ${{ matrix.dataset.language }} -r ${{ matrix.dataset.name }}-report ${{ matrix.dataset.cliArgs }}
-          else
-            java -jar jplag.jar ${{ matrix.dataset.folder }} -l ${{ matrix.dataset.language }} -r ${{ matrix.dataset.name }}-report -bc ${{ matrix.os.base }} ${{ matrix.dataset.cliArgs }}
-          fi
+          java -jar jplag.jar ${{ matrix.dataset.folder }} -l ${{ matrix.dataset.language }} -r ${{ matrix.dataset.name }}-report ${{ matrix.dataset.cliArgs }}
       
-      - name: Upload Result
+      - name: Upload result
         uses: actions/upload-artifact@v4
         with:
           name: "${{ matrix.dataset.name }}-${{ matrix.os }}"
           path: "${{ matrix.dataset.name }}-report.zip"
+          retention-days: 30
 
   e2e_test:
     needs: run_jplag
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
-      - name: Checkout 🛎️
+      - name: Checkout
         uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
           node-version: "18"
 
-      - name: Install and Build 🔧
+      - name: Install and Build
         working-directory: report-viewer
         run: |
           npm install
           npm run build
         
-      - name: Install playwright 🔧
+      - name: Install playwright
         working-directory: report-viewer
         run: npx playwright install --with-deps
 
       - name: Download JPlag Reports
         uses: actions/download-artifact@v4
         with:
-          name: "progpedia-${{ matrix.os }}"
-          path: "report-viewer/tests/e2e/assets/progpedia.zip"
+          pattern: "*-${{ matrix.os }}"
+          path: "report-viewer/tests/e2e/assets"
+          merge-multiple: true
 
-      - name: Rename Files
-        working-directory: report-viewer/tests/e2e/assets
-        run: |
-          if [${{matrix.os}} == "windows-latest"]; then
-            ren progpedia-${{matrix.os}}.zip progpedia.zip
-          else
-            mv progpedia-${{matrix.os}}.zip progpedia.zip
-          fi
-
-      - name: Run tests 🧪
+      - name: Run tests
         working-directory: report-viewer
         run: |
           npm run test:e2e
 
-      - name: Upload test results 📤
+      - name: Upload test results
         uses: actions/upload-artifact@v4
         if: always()
         with:
