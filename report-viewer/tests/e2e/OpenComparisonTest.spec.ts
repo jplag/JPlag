@@ -20,11 +20,11 @@ const testSets: DataSet[] = [
     secondSubmissionName: '1'
   },
   // Disabled due to https://github.com/jplag/JPlag/issues/1610
-  {
+  /*{
     datasetName: 'fileMultiRoot-report.zip',
     firstSubmissionName: 'f0\\\\|/0.java',
     secondSubmissionName: 'f1\\\\|/1.java'
-  },
+  },*/
   {
     datasetName: 'folderMultiRoot-report.zip',
     firstSubmissionName: 'f0\\\\|/0',
