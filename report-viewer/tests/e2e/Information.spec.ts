@@ -3,7 +3,7 @@ import { uploadFile } from './TestUtils'
 
 test('Test information page', async ({ page }) => {
   await page.goto('/')
-  await uploadFile('progpedia.zip', page)
+  await uploadFile('progpedia-report.zip', page)
 
   // check displayed information on overview page
   const bodyOverview = await page.locator('body').textContent()

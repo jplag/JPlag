@@ -4,7 +4,7 @@ import { uploadFile } from './TestUtils'
 test('Test distribution diagram', async ({ page }) => {
   await page.goto('/')
 
-  await uploadFile('progpedia.zip', page)
+  await uploadFile('progpedia-report.zip', page)
 
   const options = getTestCombinations()
   selectOptions(page, options[0])
