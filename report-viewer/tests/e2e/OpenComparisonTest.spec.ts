@@ -20,11 +20,15 @@ const testSets: DataSet[] = [
     secondSubmissionName: '1'
   },
   // Disabled due to https://github.com/jplag/JPlag/issues/1610
-  /*{ datasetName: 'fileMultiRoot-report.zip', firstSubmissionName: 'f0\\0.java', secondSubmissionName: 'f1\\1.java' },*/
+  {
+    datasetName: 'fileMultiRoot-report.zip',
+    firstSubmissionName: 'f0\\\\|/0.java',
+    secondSubmissionName: 'f1\\\\|/1.java'
+  },
   {
     datasetName: 'folderMultiRoot-report.zip',
-    firstSubmissionName: 'f0\\0',
-    secondSubmissionName: 'f1\\1'
+    firstSubmissionName: 'f0\\\\|/0',
+    secondSubmissionName: 'f1\\\\|/1'
   }
 ]
 
@@ -35,15 +39,15 @@ for (const testSet of testSets) {
     await uploadFile(testSet.datasetName, page)
 
     const comparisonTable = await page.getByText('Cluster1').textContent()
-    expect(comparisonTable).toContain(
-      `1${testSet.firstSubmissionName}${testSet.secondSubmissionName}`
-    )
-    await page.getByText(`1${testSet.firstSubmissionName}${testSet.secondSubmissionName}`).click()
+
+    const lineRegEx = RegExp('1' + testSet.firstSubmissionName + testSet.secondSubmissionName)
+    expect(comparisonTable).toMatch(lineRegEx)
+    await page.getByText(lineRegEx).click()
     await page.waitForURL(/\/comparison\/.*/)
 
     const bodyComparison = await page.locator('body').textContent()
-    expect(bodyComparison).toContain(
-      `Comparison: ${testSet.firstSubmissionName} - ${testSet.secondSubmissionName}`
+    expect(bodyComparison).toMatch(
+      RegExp(`Comparison: ${testSet.firstSubmissionName} - ${testSet.secondSubmissionName}`)
     )
   })
 }
