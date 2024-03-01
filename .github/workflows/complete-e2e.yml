@@ -3,8 +3,6 @@ name: Complete e2e Test
 
 on:
   workflow_dispatch:
-  # temprary
-  push:
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
