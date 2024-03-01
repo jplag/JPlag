@@ -69,7 +69,7 @@ jobs:
           {zip: "fileSingleRoot.zip", name: "fileSingleRoot", folder: "fileSingleRoot", language: "java", cliArgs: ""},
           {zip: "folderSingleRoot.zip", name: "folderSingleRoot", folder: "folderSingleRoot", language: "java", cliArgs: ""},
           {zip: "fileMultiRoot.zip", name: "fileMultiRoot", folder: "f0", language: "java", cliArgs: "--new f1"},
-          {zip: "folderMultiRoot.zip", name: "fileMultiRoot", folder: "f0", language: "java", cliArgs: "--new f1"}
+          {zip: "folderMultiRoot.zip", name: "folderMultiRoot", folder: "f0", language: "java", cliArgs: "--new f1"}
           ]
 
     steps:
