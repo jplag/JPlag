@@ -107,7 +107,8 @@ public class ReportObjectFactory {
         Set<Submission> submissions = getSubmissions(comparisons);
         Language language = result.getOptions().language();
         for (Submission submission : submissions) {
-            Path submissionRootPath = SUBMISSIONS_ROOT_PATH.resolve(FilePathUtil.createRelativePath(submissionToIdFunction.apply(submission)));
+            Path submissionRootPath = SUBMISSIONS_ROOT_PATH
+                    .resolve(FilePathUtil.forceRelativePath(Path.of(submissionToIdFunction.apply(submission))));
             for (File file : submission.getFiles()) {
                 Path relativeFilePath = Path.of(submission.getRoot().getAbsolutePath()).relativize(Path.of(file.getAbsolutePath()));
                 if (relativeFilePath.getNameCount() == 0 || relativeFilePath.equals(Path.of(""))) {

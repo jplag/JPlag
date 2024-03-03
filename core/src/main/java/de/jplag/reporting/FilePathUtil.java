@@ -40,28 +40,18 @@ public final class FilePathUtil {
     }
 
     /**
-     * Returns the relative path found in the string.
-     * @see #forceRelativePath(Path)
-     * @param path The path string
-     * @return The relative path
-     */
-    public static Path createRelativePath(String path) {
-        return forceRelativePath(Path.of(path));
-    }
-
-    /**
      * Formats the path for usage with zip files. Returns the path segments separated by {@link #ZIP_PATH_SEPARATOR}
      * @param path The path to format
      * @return The zip file path
      */
     public static String pathAsZipPath(Path path) {
-        Path real = forceRelativePath(path);
+        Path relativePath = forceRelativePath(path);
         StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < real.getNameCount(); i++) {
+        for (int i = 0; i < relativePath.getNameCount(); i++) {
             if (i != 0) {
                 builder.append(ZIP_PATH_SEPARATOR);
             }
-            builder.append(real.getName(i));
+            builder.append(relativePath.getName(i));
         }
         return builder.toString();
     }
