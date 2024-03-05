@@ -93,7 +93,7 @@ public class ComparisonReportWriter {
         return comparison.matches().stream().map(match -> convertMatchToReportMatch(comparison, match)).toList();
     }
 
-    private Match convertMatchToReportMatch(JPlagComparison comparison, de.jplag.Match match) {
+    public Match convertMatchToReportMatch(JPlagComparison comparison, de.jplag.Match match) {
         List<Token> tokensFirst = comparison.firstSubmission().getTokenList().subList(match.startOfFirst(), match.endOfFirst() + 1);
         List<Token> tokensSecond = comparison.secondSubmission().getTokenList().subList(match.startOfSecond(), match.endOfSecond() + 1);
 
