@@ -85,6 +85,7 @@
         :matches="comparison.matchesInFirstSubmission"
         :file-owner-display-name="store().getDisplayName(comparison.firstSubmissionId)"
         :highlight-language="language"
+        :base-code-matches="firstBaseCodeMatches"
         @line-selected="showMatchInSecond"
         class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
       />
@@ -94,6 +95,7 @@
         :matches="comparison.matchesInSecondSubmissions"
         :file-owner-display-name="store().getDisplayName(comparison.secondSubmissionId)"
         :highlight-language="language"
+        :base-code-matches="secondBaseCodeMatches"
         @line-selected="showMatchInFirst"
         class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
       />
@@ -130,6 +132,14 @@ const props = defineProps({
   },
   language: {
     type: Object as PropType<ParserLanguage>,
+    required: true
+  },
+  firstBaseCodeMatches: {
+    type: Array as PropType<Match[]>,
+    required: true
+  },
+  secondBaseCodeMatches: {
+    type: Array as PropType<Match[]>,
     required: true
   }
 })

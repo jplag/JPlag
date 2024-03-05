@@ -59,6 +59,3 @@ public class BaseCodeReportWriter {
                 end.getLine(), match.length());
     }
 }
-
-record Temp(@JsonProperty("matches") List<BaseCodeMatch> matches) {
-}

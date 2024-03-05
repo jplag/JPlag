@@ -1,5 +1,11 @@
 <template>
-  <ComparisonView v-if="comparison && language" :comparison="comparison" :language="language" />
+  <ComparisonView
+    v-if="comparison && language"
+    :comparison="comparison"
+    :language="language"
+    :first-base-code-matches="firstBaseCodeMatches"
+    :second-base-code-matches="secondBaseCodeMatches"
+  />
   <div
     v-else
     class="absolute bottom-0 left-0 right-0 top-0 flex flex-col items-center justify-center"
@@ -20,6 +26,8 @@ import LoadingCircle from '@/components/LoadingCircle.vue'
 import { redirectOnError } from '@/router'
 import type { ParserLanguage } from '@/model/Language'
 import RepositoryReference from '@/components/RepositoryReference.vue'
+import type { BaseCodeMatch } from '@/model/BaseCodeReport'
+import { BaseCodeReportFactory } from '@/model/factories/BaseCodeReportFactory'
 
 const props = defineProps({
   comparisonFileName: {
@@ -30,12 +38,15 @@ const props = defineProps({
 
 const comparison: Ref<Comparison | null> = ref(null)
 const language: Ref<ParserLanguage | null> = ref(null)
+const firstBaseCodeMatches: Ref<BaseCodeMatch[]> = ref([])
+const secondBaseCodeMatches: Ref<BaseCodeMatch[]> = ref([])
 
 // This eslint rule is disabled to allow the use of await in the setup function. Disabling this rule is safe, because the props are gathered from the url, so changing them would reload the pafe anyway.
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
-ComparisonFactory.getComparison(props.comparisonFileName)
+const comparisonPromise = ComparisonFactory.getComparison(props.comparisonFileName)
   .then((comp) => {
     comparison.value = comp
+    return comp
   })
   .catch((error) => {
     redirectOnError(error, 'Could not load comparison:\n', 'OverviewView', 'Back to overview')
@@ -48,4 +59,23 @@ OverviewFactory.getOverview()
   .catch((error) => {
     redirectOnError(error, 'Could not load coparison:\n')
   })
+
+comparisonPromise
+  .then((comp) => {
+    if (!comp) return []
+    return BaseCodeReportFactory.getReport(comp.firstSubmissionId)
+  })
+  .then((report) => {
+    firstBaseCodeMatches.value = report
+  })
+  .catch(() => {})
+comparisonPromise
+  .then((comp) => {
+    if (!comp) return []
+    return BaseCodeReportFactory.getReport(comp.secondSubmissionId)
+  })
+  .then((report) => {
+    secondBaseCodeMatches.value = report
+  })
+  .catch(() => {})
 </script>

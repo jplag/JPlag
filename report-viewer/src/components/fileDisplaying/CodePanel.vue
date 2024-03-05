@@ -41,10 +41,7 @@
             <td
               class="print-excact w-full"
               :style="{
-                background:
-                  line.match !== null
-                    ? getMatchColor(0.3, line.match.colorIndex)
-                    : 'hsla(0, 0%, 0%, 0)'
+                background: matchColor(index + 1)
               }"
             >
               <pre
@@ -72,8 +69,9 @@ import type { Match } from '@/model/Match'
 import type { SubmissionFile } from '@/model/File'
 import { highlight } from '@/utils/CodeHighlighter'
 import type { ParserLanguage } from '@/model/Language'
-import { getMatchColor } from '@/utils/ColorUtils'
+import { getBaseCodeColor, getMatchColor } from '@/utils/ColorUtils'
 import ToolTipComponent from '../ToolTipComponent.vue'
+import type { BaseCodeMatch } from '@/model/BaseCodeReport'
 
 const props = defineProps({
   /**
@@ -96,6 +94,10 @@ const props = defineProps({
   highlightLanguage: {
     type: String as PropType<ParserLanguage>,
     required: true
+  },
+  baseCodeMatches: {
+    type: Array as PropType<BaseCodeMatch[]>,
+    required: true
   }
 })
 
@@ -117,6 +119,19 @@ function lineSelected(lineIndex: number) {
   if (codeLines.value[lineIndex].match !== null) {
     emit('lineSelected', codeLines.value[lineIndex].match)
   }
+}
+
+const matchOpacity = 0.3
+
+function matchColor(lineNumber: number) {
+  const line = codeLines.value[lineNumber - 1]
+  if (line.match !== null) {
+    return getMatchColor(matchOpacity, line.match.colorIndex)
+  }
+  if (props.baseCodeMatches.some((m) => m.start <= lineNumber && lineNumber <= m.end)) {
+    return getBaseCodeColor(matchOpacity)
+  }
+  return 'hsla(0, 0%, 0%, 0)'
 }
 
 /**

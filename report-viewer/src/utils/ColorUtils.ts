@@ -81,6 +81,10 @@ function getMatchColor(alpha: number, index?: number) {
   return `rgba(${matchColors[index].red}, ${matchColors[index].green}, ${matchColors[index].blue}, ${alpha})`
 }
 
+function getBaseCodeColor(opacity: number) {
+  return `hsla(0, 0%, ${store().uiState.useDarkMode ? '50%' : '25%'}, ${opacity})`
+}
+
 const graphRGB = {
   red: 190,
   green: 22,
@@ -104,4 +108,4 @@ const graphColors = {
   }
 }
 
-export { generateColors, graphColors, getMatchColorCount, getMatchColor }
+export { generateColors, graphColors, getMatchColorCount, getMatchColor, getBaseCodeColor }

@@ -30,6 +30,7 @@
           :highlight-language="highlightLanguage"
           @line-selected="(match) => $emit('lineSelected', match)"
           class="mt-1 first:mt-0"
+          :base-code-matches="baseCodeMatches"
         />
       </VueDraggableNext>
     </ScrollableComponent>
@@ -49,6 +50,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCompressAlt } from '@fortawesome/free-solid-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import type { ParserLanguage } from '@/model/Language'
+import type { BaseCodeMatch } from '@/model/BaseCodeReport'
 
 library.add(faCompressAlt)
 
@@ -79,6 +81,13 @@ const props = defineProps({
    */
   highlightLanguage: {
     type: String as PropType<ParserLanguage>,
+    required: true
+  },
+  /**
+   * Base code matches of the submission.
+   */
+  baseCodeMatches: {
+    type: Array as PropType<BaseCodeMatch[]>,
     required: true
   }
 })
