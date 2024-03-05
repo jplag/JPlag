@@ -24,6 +24,16 @@ const testSets: DataSet[] = [
     datasetName: 'fileMultiRoot-report.zip',
     firstSubmissionName: 'f0\\\\|/0.java',
     secondSubmissionName: 'f1\\\\|/1.java'
+  },
+  {
+    datasetName: 'mixedBaseFile-report.zip',
+    firstSubmissionName: 'f0\\\\|/0.java',
+    secondSubmissionName: 'f1\\\\|/1'
+  },
+  {
+    datasetName: 'mixedBaseFolder-report.zip',
+    firstSubmissionName: 'f0\\\\|/0.java',
+    secondSubmissionName: 'f1\\\\|/1'
   },*/
   {
     datasetName: 'folderMultiRoot-report.zip',
