@@ -73,7 +73,6 @@ BaseFactory.getLocalFile('files/overview.json')
   .catch(() => {})
 
 BaseFactory.useLocalZipMode().then((value) => {
-  console.log('Using local zip mode:', value)
   if (value) {
     store().state.uploadedFileName = BaseFactory.zipFileName
     navigateToOverview()
