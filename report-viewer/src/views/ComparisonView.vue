@@ -129,7 +129,7 @@ const props = defineProps({
     required: true
   },
   language: {
-    type: Object as PropType<ParserLanguage>,
+    type: String as PropType<ParserLanguage>,
     required: true
   }
 })
