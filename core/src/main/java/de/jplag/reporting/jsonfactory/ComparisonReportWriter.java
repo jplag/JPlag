@@ -1,5 +1,6 @@
 package de.jplag.reporting.jsonfactory;
 
+import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +59,7 @@ public class ComparisonReportWriter {
             var comparisonReport = new ComparisonReport(firstSubmissionId, secondSubmissionId,
                     Map.of(SimilarityMetric.AVG.name(), comparison.similarity(), SimilarityMetric.MAX.name(), comparison.maximalSimilarity()),
                     convertMatchesToReportMatches(comparison), comparison.similarityOfFirst(), comparison.similarityOfSecond());
-            resultWriter.addJsonEntry(comparisonReport, fileName);
+            resultWriter.addJsonEntry(comparisonReport, Path.of(fileName));
         }
     }
 
