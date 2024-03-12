@@ -1,4 +1,4 @@
-import { ParserLanguage } from '@/model/Language'
+import { type Language, ParserLanguage } from '@/model/Language'
 import hljs from 'highlight.js'
 import scheme from 'highlight.js/lib/languages/scheme'
 import llvm from 'highlight.js/lib/languages/llvm'
@@ -13,7 +13,7 @@ import typescript from 'highlight.js/lib/languages/typescript'
  * @param lang Language to highlight the code with
  * @returns
  */
-export function highlight(code: string, lang: ParserLanguage) {
+export function highlight(code: string, lang: Language) {
   const highlightedCode = hljs.highlight(code, { language: getHighlightLanguage(lang) }).value
   const openTags: string[] = []
   const formattedCode = highlightedCode
@@ -34,7 +34,7 @@ export function highlight(code: string, lang: ParserLanguage) {
   return formattedCode
 }
 
-function getHighlightLanguage(lang: ParserLanguage) {
+function getHighlightLanguage(lang: Language) {
   switch (lang) {
     case ParserLanguage.PYTHON:
       return 'python'
