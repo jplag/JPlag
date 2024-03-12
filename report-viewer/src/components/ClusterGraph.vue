@@ -1,13 +1,10 @@
 <template>
-  <div class="print:max-h-full print:max-w-full">
-    <div class="print:max-h-full print:max-w-full">
-      <canvas ref="graphCanvas" class="print:max-h-full print:max-w-full"></canvas>
-      <div
-        v-if="!allComparisonsPresent"
-        class="mt-8 text-xs font-bold text-gray-500 dark:text-gray-400"
-      >
+  <div class="relative bottom-0 overflow-hidden print:max-h-full print:max-w-full">
+    <div class="flex flex-col print:max-h-full print:max-w-full">
+      <canvas ref="graphCanvas" class="flex-grow print:max-h-full print:max-w-full"></canvas>
+      <div class="mt-8 text-xs font-bold text-gray-500 dark:text-gray-400 print:hidden">
         <p>Hover over an edge to highlight it in the table.</p>
-        <p class="mt-2">
+        <p class="mt-2" v-if="!allComparisonsPresent">
           Not all comparisons of this cluster are present. These comparisons are indicated by the
           dashed lines. <br />
           To include more comparisons, increase the number of increased comparisons in the CLI.
