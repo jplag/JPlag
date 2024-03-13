@@ -25,7 +25,7 @@
         <dependency>
             <groupId>org.scalameta</groupId>
             <artifactId>scalameta_${scala.compat.version}</artifactId>
-            <version>4.9.1</version>
+            <version>4.9.2</version>
         </dependency>
     </dependencies>
 
