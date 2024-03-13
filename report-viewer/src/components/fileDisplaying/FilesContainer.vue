@@ -48,7 +48,7 @@ import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCompressAlt } from '@fortawesome/free-solid-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import type { ParserLanguage } from '@/model/Language'
+import type { Language } from '@/model/Language'
 
 library.add(faCompressAlt)
 
@@ -78,7 +78,7 @@ const props = defineProps({
    * Language of the files.
    */
   highlightLanguage: {
-    type: String as PropType<ParserLanguage>,
+    type: String as PropType<Language>,
     required: true
   }
 })
