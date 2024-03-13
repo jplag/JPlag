@@ -42,7 +42,7 @@ jobs:
         run: mvn -Pwith-report-viewer -U -B clean package assembly:single
 
       - name: Attach CLI to Release on GitHub
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: cli/target/jplag-*-jar-with-dependencies.jar
