@@ -29,21 +29,13 @@ test('Test comparison table and comparsion view', async ({ page }) => {
   expect(comparisonTableOverviewHidden).toMatch(/3anon[0-9]+anon[0-9]+/)
   expect(comparisonTableOverviewHidden).toMatch(/4anon[0-9]+anon[0-9]+/)
 
-  // Temporarily disabled due to https://github.com/jplag/JPlag/issues/1629
-  /*await page.getByPlaceholder('Filter/Unhide Comparisons').fill('A')
+  await page.getByPlaceholder('Filter/Unhide Comparisons').fill('Lazy Bobcat')
   // check for elements being unhidden and filtered
-  const comparisonTableOverviewFilteredA = await page.getByText('Cluster1').textContent()
-  expect(comparisonTableOverviewFilteredA).toMatch(/1anon[0-9]+A/) //toContain('1HiddenA')
-  expect(comparisonTableOverviewFilteredA).toMatch(/3anon[0-9]+A/)
-  // we cant check for 4Hidden because the dynamic scroller just moves it of screen, so the text is still there but not visible
+  const comparisonTableOverviewFiltered = await page.getByText(/Cluster[0-9]/).textContent()
+  expect(comparisonTableOverviewFiltered).toMatch(/[0-9]+anon[0-9]+Lazy Bobcat/)
+  expect(comparisonTableOverviewFiltered).toMatch(/[0-9]+Lazy Bobcatanon[0-9]+/)
 
-  await page.getByPlaceholder('Filter/Unhide Comparisons').fill('A C')
-  // check for elements being unhidden and filtered
-  const comparisonTableOverviewFilteredAC = await page.getByText('Cluster1').textContent()
-  expect(comparisonTableOverviewFilteredAC).toContain('1CA')
-  expect(comparisonTableOverviewFilteredAC).toMatch(/3anon[0-9]+A/)
-  expect(comparisonTableOverviewFilteredAC).toMatch(/4anon[0-9]+C/)+/*/
-
+  await page.getByText('Hide All').click()
   await page.getByText('Show All').click()
   await page.getByPlaceholder('Filter/Unhide Comparisons').fill('Lazy')
   // go to comparison page

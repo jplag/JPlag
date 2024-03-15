@@ -20,7 +20,7 @@ import type { Comparison } from '@/model/Comparison'
 import { ComparisonFactory } from '@/model/factories/ComparisonFactory'
 import LoadingCircle from '@/components/LoadingCircle.vue'
 import { redirectOnError } from '@/router'
-import type { ParserLanguage } from '@/model/Language'
+import type { Language } from '@/model/Language'
 import RepositoryReference from '@/components/RepositoryReference.vue'
 
 const props = defineProps({
@@ -31,7 +31,7 @@ const props = defineProps({
 })
 
 const comparison: Ref<Comparison | null> = ref(null)
-const language: Ref<ParserLanguage | null> = ref(null)
+const language: Ref<Language | null> = ref(null)
 
 // This eslint rule is disabled to allow the use of await in the setup function. Disabling this rule is safe, because the props are gathered from the url, so changing them would reload the pafe anyway.
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss

@@ -1,5 +1,6 @@
 package de.jplag.reporting.jsonfactory;
 
+import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +59,7 @@ public class ComparisonReportWriter {
             var comparisonReport = new ComparisonReport(firstSubmissionId, secondSubmissionId,
                     Map.of(SimilarityMetric.AVG.name(), comparison.similarity(), SimilarityMetric.MAX.name(), comparison.maximalSimilarity()),
                     convertMatchesToReportMatches(comparison), comparison.similarityOfFirst(), comparison.similarityOfSecond());
-            resultWriter.addJsonEntry(comparisonReport, fileName);
+            resultWriter.addJsonEntry(comparisonReport, Path.of(fileName));
         }
     }
 
@@ -104,8 +105,9 @@ public class ComparisonReportWriter {
         Token startOfSecond = tokensSecond.stream().min(lineComparator).orElseThrow();
         Token endOfSecond = tokensSecond.stream().max(lineComparator).orElseThrow();
 
-        return new Match(FilePathUtil.getRelativeSubmissionPath(startOfFirst.getFile(), comparison.firstSubmission(), submissionToIdFunction),
-                FilePathUtil.getRelativeSubmissionPath(startOfSecond.getFile(), comparison.secondSubmission(), submissionToIdFunction),
+        return new Match(
+                FilePathUtil.getRelativeSubmissionPath(startOfFirst.getFile(), comparison.firstSubmission(), submissionToIdFunction).toString(),
+                FilePathUtil.getRelativeSubmissionPath(startOfSecond.getFile(), comparison.secondSubmission(), submissionToIdFunction).toString(),
                 startOfFirst.getLine(), endOfFirst.getLine(), startOfSecond.getLine(), endOfSecond.getLine(), match.length());
     }
 
