@@ -7,7 +7,7 @@
     }"
   >
     <div
-      v-for="(part, index) in parts"
+      v-for="(part, index) in textParts"
       :key="index"
       class="h-full last:flex-1"
       @click="matchSelected(part.match)"
@@ -54,71 +54,70 @@ function matchSelected(match?: MatchInSingleFile) {
   }
 }
 
-interface MatchPart {
-  start: number
-  end: number
-  match?: MatchInSingleFile
-}
-
-interface Part extends MatchPart {
+interface TextPart {
   line: string
+  match?: MatchInSingleFile
 }
 let lineIndex = ref(0)
 let colIndex = ref(0)
 
-function compParts() {
+function computeTextParts() {
   if (props.matches.length == 0) {
-    return [{ line: props.line, start: 0, end: props.line.length }]
+    return [{ line: props.line }]
   }
 
   const sortedMatches = Array.from(props.matches)
     .sort((a, b) => a.startColumn - b.startColumn)
     .sort((a, b) => a.start - b.start)
-  let matchParts: MatchPart[] = []
+  let lineParts: {
+    start: number
+    end: number
+    match?: MatchInSingleFile
+  }[] = []
 
   if (sortedMatches[0].start == props.lineNumber && sortedMatches[0].startColumn > 0) {
     const end = sortedMatches[0].startColumn - 1
-    matchParts.push({ start: 0, end: end })
+    lineParts.push({ start: 0, end: end })
   }
 
   const start = sortedMatches[0].start == props.lineNumber ? sortedMatches[0].startColumn : 0
   const end =
     sortedMatches[0].end == props.lineNumber ? sortedMatches[0].endColumn : props.line.length
-  matchParts.push({ start: start, end: end, match: sortedMatches[0] })
+  lineParts.push({ start: start, end: end, match: sortedMatches[0] })
 
   let matchIndex = 1
   while (matchIndex < sortedMatches.length) {
     const match = sortedMatches[matchIndex]
-    const prevMatchPart = matchParts[matchIndex - 1]
+    const prevMatchPart = lineParts[matchIndex - 1]
     if (prevMatchPart.end + 1 < match.startColumn) {
       const end = match.startColumn - 1
-      matchParts.push({ start: prevMatchPart.end + 1, end: end })
+      lineParts.push({ start: prevMatchPart.end + 1, end: end })
     }
     const end = match.end == props.lineNumber ? match.endColumn : props.line.length
-    matchParts.push({ start: match.startColumn, end: end, match })
+    lineParts.push({ start: match.startColumn, end: end, match })
     matchIndex++
   }
 
-  if (matchParts[matchParts.length - 1].end < props.line.length) {
-    matchParts.push({ start: matchParts[matchParts.length - 1].end + 1, end: props.line.length })
+  if (lineParts[lineParts.length - 1].end < props.line.length) {
+    lineParts.push({ start: lineParts[lineParts.length - 1].end + 1, end: props.line.length })
   }
 
-  let parts: Part[] = []
+  let textParts: TextPart[] = []
   lineIndex.value = 0
   colIndex.value = 0
 
-  for (let i = 0; i < matchParts.length; i++) {
-    const matchPart = matchParts[i]
-    const line = getNextLinePartTill(matchPart.end)
-    parts.push({ line, ...matchPart })
+  for (let i = 0; i < lineParts.length; i++) {
+    const matchPart = lineParts[i]
+    const line = getNextLinePartTillColumn(matchPart.end)
+    textParts.push({ line, match: matchPart.match })
   }
 
-  return parts
+  return textParts
 }
 
-const parts = compParts()
+const textParts = computeTextParts()
 
-function getNextLinePartTill(endCol: number) {
+function getNextLinePartTillColumn(endCol: number) {
   let part = ''
   while (colIndex.value <= endCol && lineIndex.value < props.line.length) {
     if (props.line[lineIndex.value] == '<') {
