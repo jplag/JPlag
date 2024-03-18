@@ -3,9 +3,10 @@ package de.jplag.java_cpg.transformation.matching.edges;
 import de.fraunhofer.aisec.cpg.graph.Node;
 
 /**
- *  A {@link CpgNthEdge} represents an individual {@link de.fraunhofer.aisec.cpg.graph.edge.PropertyEdge} out of a {@link CpgMultiEdge}.
+ * A {@link CpgNthEdge} represents an individual {@link de.fraunhofer.aisec.cpg.graph.edge.PropertyEdge} out of a
+ * {@link CpgMultiEdge}.
  */
-public class CpgNthEdge<S extends Node, T extends Node> extends CpgEdge<S, T>{
+public class CpgNthEdge<S extends Node, T extends Node> extends CpgEdge<S, T> {
     private final CpgMultiEdge<S, T> multiEdge;
     private final int index;
 
@@ -24,7 +25,7 @@ public class CpgNthEdge<S extends Node, T extends Node> extends CpgEdge<S, T>{
 
     @Override
     public boolean isEquivalentTo(IEdge<?, ?> other) {
-        if (!(other instanceof CpgNthEdge<?,?> otherNthEdge)) {
+        if (!(other instanceof CpgNthEdge<?, ?> otherNthEdge)) {
             return false;
         }
         return multiEdge.isEquivalentTo(otherNthEdge.multiEdge) && index == otherNthEdge.getIndex();
@@ -44,5 +45,24 @@ public class CpgNthEdge<S extends Node, T extends Node> extends CpgEdge<S, T>{
      */
     public int getIndex() {
         return index;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        CpgNthEdge<?, ?> that = (CpgNthEdge<?, ?>) o;
+
+        if (getIndex() != that.getIndex())
+            return false;
+        return getMultiEdge().equals(that.getMultiEdge());
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
     }
 }

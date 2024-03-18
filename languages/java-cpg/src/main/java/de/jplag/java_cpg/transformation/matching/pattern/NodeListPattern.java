@@ -1,12 +1,22 @@
 package de.jplag.java_cpg.transformation.matching.pattern;
 
-import de.fraunhofer.aisec.cpg.graph.Node;
-
 import java.util.ArrayList;
 
+import de.fraunhofer.aisec.cpg.graph.Node;
+
+/**
+ * A {@link NodeListPattern} is a pattern that involves a sequence of {@link Node}s.
+ * @param <T>
+ */
 public class NodeListPattern<T extends Node> {
 
+    /*
+     * Not used but aids in debugging
+     */
     private final Class<T> tClass;
+    /**
+     * The elements of the node list
+     */
     private final ArrayList<NodePattern<? extends T>> elements;
 
     public NodeListPattern(Class<T> tClass) {

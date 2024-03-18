@@ -1,5 +1,10 @@
 package de.jplag.java_cpg.transformation.matching;
 
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.*;
+import static de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.*;
+
+import java.util.List;
+
 import de.fraunhofer.aisec.cpg.graph.declarations.FieldDeclaration;
 import de.fraunhofer.aisec.cpg.graph.declarations.MethodDeclaration;
 import de.fraunhofer.aisec.cpg.graph.declarations.ParameterDeclaration;
@@ -16,14 +21,13 @@ import de.jplag.java_cpg.transformation.matching.pattern.GraphPatternBuilder;
 import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
 import de.jplag.java_cpg.transformation.matching.pattern.PatternUtil;
 
-import java.util.List;
-
-import static de.jplag.java_cpg.transformation.matching.edges.Edges.*;
-import static de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.*;
-
+/**
+ *  This class is used to collect sub-patterns that may appear repetitively, or used in tests.
+ */
 public final class PatternRepository {
 
-    private PatternRepository() {/* should not be instantiated */}
+    private PatternRepository() {
+        /* should not be instantiated */}
 
     public static GraphPatternBuilder ifElseWithNegatedCondition() {
 
@@ -31,36 +35,13 @@ public final class PatternRepository {
             @Override
             public GraphPattern build() {
                 return create(IfStatement.class, "root",
-                    related(IF_STATEMENT__CONDITION, UnaryOperator.class,
-                        "condition",
-                        property(PatternUtil.attributeEquals(UNARY_OPERATOR__OPERATOR_CODE, "!")),
-                        related(UNARY_OPERATOR__INPUT, Expression.class, "innerCondition")),
-                    related(IF_STATEMENT__THEN_STATEMENT, Statement.class, "thenStatement"),
-                    related(IF_STATEMENT__ELSE_STATEMENT, Statement.class, "elseStatement")
-                );
+                        related(IF_STATEMENT__CONDITION, UnaryOperator.class, "condition",
+                                property(PatternUtil.attributeEquals(UNARY_OPERATOR__OPERATOR_CODE, "!")),
+                                related(UNARY_OPERATOR__INPUT, Expression.class, "innerCondition")),
+                        related(IF_STATEMENT__THEN_STATEMENT, Statement.class, "thenStatement"),
+                        related(IF_STATEMENT__ELSE_STATEMENT, Statement.class, "elseStatement"));
             }
         };
-    }
-
-    static GraphPatternBuilder leftFacingComparison() {
-       return new GraphPatternBuilder() {
-            @Override
-            public GraphPattern build() {
-                return create(BinaryOperator.class, "comparison",
-                    related(BINARY_OPERATOR__LHS, Expression.class, "leftHandSide"),
-                    property(oneOf(BINARY_OPERATOR__OPERATOR_CODE, List.of(">=", ">"))),
-                    related(BINARY_OPERATOR__RHS, Expression.class, "rightHandSide")
-                );
-            }
-        };
-
-    }
-
-    static NodePattern<MethodDeclaration> methodWithNCalls(int n) {
-        var methodDecl = NodePattern.forNodeType(MethodDeclaration.class);
-        methodDecl.addProperty(nElements(VALUE_DECLARATION__USAGES, n));
-
-        return methodDecl;
     }
 
     public static GraphPatternBuilder setterMethod() {
@@ -69,53 +50,30 @@ public final class PatternRepository {
             @Override
             public GraphPattern build() {
                 return create(MethodDeclaration.class, "methodDecl",
-                    related(METHOD_DECLARATION__RECORD_DECLARATION, RecordDeclaration.class, "classDecl",
-                        related1ToN(RECORD_DECLARATION__FIELDS, FieldDeclaration.class, "fieldDecl",
-                            related(VALUE_DECLARATION__TYPE, ObjectType.class, "fieldType")
-                        ),
-                        relatedExisting1ToN(RECORD_DECLARATION__METHODS, MethodDeclaration.class, "methodDecl")
-                    ),
-                    related(VALUE_DECLARATION__TYPE, FunctionType.class, "methodType",
-                        property(nElements(FUNCTION_TYPE__PARAMETERS, 1)),
-                        relatedExisting(nthElement(FUNCTION_TYPE__PARAMETERS, 0), ObjectType.class, "fieldType"),
-                        property(nElements(FUNCTION_TYPE__RETURN_TYPES, 1)),
-                        related(nthElement(FUNCTION_TYPE__RETURN_TYPES, 0), IncompleteType.class, "voidType",
-                            property(PatternUtil.attributeEquals(INCOMPLETE_TYPE__TYPE_NAME, "void"))
-                        )
-                    ),
-                    property(notEmpty(METHOD_DECLARATION__PARAMETERS)),
-                    related(nthElement(METHOD_DECLARATION__PARAMETERS, 0), ParameterDeclaration.class, "paramDecl"),
-                    property(MethodDeclaration::hasBody),
-                    related(METHOD_DECLARATION__BODY, Block.class,"methodBody",
-                        property(nElements(BLOCK__STATEMENTS, 2)),
-                        related(nthElement(BLOCK__STATEMENTS, 0), AssignExpression.class, "assignExpr",
-                            related(ASSIGN_EXPRESSION__LHS, Reference.class, "fieldReference"),
+                        related(METHOD_DECLARATION__RECORD_DECLARATION, RecordDeclaration.class, "classDecl",
+                                related1ToN(RECORD_DECLARATION__FIELDS, FieldDeclaration.class, "fieldDecl",
+                                        related(VALUE_DECLARATION__TYPE, ObjectType.class, "fieldType")),
+                                relatedExisting1ToN(RECORD_DECLARATION__METHODS, MethodDeclaration.class, "methodDecl")),
+                        related(VALUE_DECLARATION__TYPE, FunctionType.class, "methodType", property(nElements(FUNCTION_TYPE__PARAMETERS, 1)),
+                                relatedExisting(nthElement(FUNCTION_TYPE__PARAMETERS, 0), ObjectType.class, "fieldType"),
+                                property(nElements(FUNCTION_TYPE__RETURN_TYPES, 1)),
+                                related(nthElement(FUNCTION_TYPE__RETURN_TYPES, 0), IncompleteType.class, "voidType",
+                                        property(PatternUtil.attributeEquals(TYPE__TYPE_NAME, "void")))),
+                        property(notEmpty(METHOD_DECLARATION__PARAMETERS)),
+                        related(nthElement(METHOD_DECLARATION__PARAMETERS, 0), ParameterDeclaration.class, "paramDecl"),
+                        property(MethodDeclaration::hasBody),
+                        related(METHOD_DECLARATION__BODY, Block.class, "methodBody", property(nElements(BLOCK__STATEMENTS, 2)),
+                                related(nthElement(BLOCK__STATEMENTS, 0), AssignExpression.class, "assignExpr",
+                                        related(ASSIGN_EXPRESSION__LHS, Reference.class, "fieldReference"),
 
-                            related(ASSIGN_EXPRESSION__RHS, Reference.class, "paramReference",
-                                relatedExisting(REFERENCE__REFERS_TO, ParameterDeclaration.class, "paramDecl")
-                            )
-                        ),
-                        related(nthElement(BLOCK__STATEMENTS, 1), ReturnStatement.class, "returnStmt",
-                            property(nElements(RETURN_STATEMENT__RETURN_VALUES, 0))
-                        )
-                    )
-                );
+                                        related(ASSIGN_EXPRESSION__RHS, Reference.class, "paramReference",
+                                                relatedExisting(REFERENCE__REFERS_TO, ParameterDeclaration.class, "paramDecl"))),
+                                related(nthElement(BLOCK__STATEMENTS, 1), ReturnStatement.class, "returnStmt",
+                                        property(nElements(RETURN_STATEMENT__RETURN_VALUES, 0)))));
             }
         };
 
     }
 
-    public static NodePattern<IfStatement> ifWithElse() {
-        var ifStatement = NodePattern.forNodeType(IfStatement.class);
-        var condition = NodePattern.forNodeType(Expression.class);
-        ifStatement.addRelatedNodePattern(condition, IF_STATEMENT__CONDITION);
-        var thenStatement = NodePattern.forNodeType(Block.class);
-        ifStatement.addRelatedNodePattern(thenStatement, IF_STATEMENT__THEN_STATEMENT);
-        ifStatement.addProperty(notNull(IF_STATEMENT__ELSE_STATEMENT));
-        var elseStatement = NodePattern.forNodeType(Block.class);
-        ifStatement.addRelatedNodePattern(elseStatement, IF_STATEMENT__ELSE_STATEMENT);
-
-        return ifStatement;
-    }
 
 }

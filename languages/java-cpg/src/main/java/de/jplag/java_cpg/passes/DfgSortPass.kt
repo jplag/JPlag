@@ -4,40 +4,54 @@ import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.graph.*
 import de.fraunhofer.aisec.cpg.graph.declarations.*
 import de.fraunhofer.aisec.cpg.graph.edge.Properties
-import de.fraunhofer.aisec.cpg.graph.scopes.BlockScope
-import de.fraunhofer.aisec.cpg.graph.scopes.LoopScope
-import de.fraunhofer.aisec.cpg.graph.scopes.TryScope
 import de.fraunhofer.aisec.cpg.graph.statements.*
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*
 import de.fraunhofer.aisec.cpg.graph.types.IncompleteType
 import de.fraunhofer.aisec.cpg.helpers.SubgraphWalker
+import de.fraunhofer.aisec.cpg.passes.EvaluationOrderGraphPass
 import de.fraunhofer.aisec.cpg.passes.TranslationUnitPass
+import de.fraunhofer.aisec.cpg.passes.order.DependsOn
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
+import de.jplag.java_cpg.token.CpgNodeListener
+import de.jplag.java_cpg.token.CpgTokenType
 import de.jplag.java_cpg.transformation.matching.edges.CpgNthEdge
 import de.jplag.java_cpg.transformation.matching.edges.Edges.BLOCK__STATEMENTS
+import de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.desc
 import de.jplag.java_cpg.transformation.operations.DummyNeighbor
 import de.jplag.java_cpg.transformation.operations.RemoveOperation
-import de.jplag.java_cpg.transformation.operations.TransformationHelper
+import de.jplag.java_cpg.transformation.operations.TransformationUtil
+import de.jplag.java_cpg.visitorStrategy.NodeOrderStrategy
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.util.*
-import kotlin.reflect.KFunction1
 
-class DFGSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
+/**
+ * This pass sorts independent statements, removes statement that can be (conservatively) determined as useless, and builds
+ * the DFG. The original DFG of the CPG library is reset.
+ */
+@DependsOn(EvaluationOrderGraphPass::class)
+class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
 
     private var state: State = State()
     private var stateSafe: MutableMap<Node, State?> = HashMap()
-    private val walker: SubgraphWalker.IterativeGraphWalker = SubgraphWalker.IterativeGraphWalker()
     private val assignments: MutableMap<Pair<Expression, ValueDeclaration>, Assignment> = HashMap()
+    private val logger: Logger = LoggerFactory.getLogger(DfgSortPass::class.java)
 
     override fun accept(tu: TranslationUnitDeclaration) {
-
-        walker.strategy = sortBw(Strategy::EOG_BACKWARD)
-        walker.registerOnNodeVisit2 { node: Node, parent: Node? -> handle(node) }
         val functions = tu.functions.filter { it.body != null && it.name.localName.isNotEmpty() }
         functions.forEach { calculateVariableDependencies(it) }
     }
 
     private fun calculateVariableDependencies(root: FunctionDeclaration) {
-        val returnStatements = SubgraphWalker.flattenAST(root.body)
+        logger.debug("Analyze %s".format(desc(root)))
+
+        val childNodes = SubgraphWalker.flattenAST(root.body)
+        childNodes.forEach {
+            it.prevDFGEdges.clear()
+            it.nextDFGEdges.clear()
+        }
+
+        val returnStatements = childNodes
             .filter { it is ReturnStatement || it is UnaryOperator && it.operatorCode == "throw" }
         state = State()
         stateSafe = HashMap()
@@ -63,11 +77,17 @@ class DFGSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
          */
         analyzeDfg(finalState, movableStatements, parentInfo)
 
+        /*
+         * Determines statements that must be kept, and in order relative to one another.
+         */
         val essentialNodesOut = mutableListOf<Statement>()
         extractEssentialNodes(root.body as Statement, essentialNodesOut)
         essentialNodesOut.sortBy { it.location?.region }
 
-        val relevantStatements: MutableList<Node> = extractRelevantStatements(essentialNodesOut, parentInfo)
+        /*
+         * Determines statements on which essential statements are DFG-dependent.
+         */
+        val relevantStatements = extractRelevantStatements(essentialNodesOut, parentInfo)
         relevantStatements.removeIf { it !in movableStatements }
 
         removeIrrelevantStatements(relevantStatements, movableStatements, parentInfo)
@@ -128,11 +148,12 @@ class DFGSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
                 properties = mutableMapOf(Pair(Properties.NAME, name))
                 predBlock.addNextDFG(stmtBlock, properties)
             } else {
+                // the name is used to filter these edges out later
+                properties = mutableMapOf(Pair(Properties.NAME, "loop$name"))
                 if (stmtBlock in predBlock.nextDFG) {
-                    edge.addProperty(Properties.NAME, "loop$name")
+                    edge.addProperties(properties)
                 } else {
                     // this edge shows that the value reaches the next iteration
-                    properties = mutableMapOf(Pair(Properties.NAME, "loop$name"))
                     predBlock.addNextDFG(stmtBlock, properties)
                 }
                 // read-write dependency
@@ -150,13 +171,12 @@ class DFGSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
 
         val depth = { node: Node -> parentInfo[node]?.depth ?: 0 }
 
-
         val subtreeNodes = movableStatements.associateWith { SubgraphWalker.flattenAST(it) }
 
-        val assignments = variableData.values
-            .flatMap { it.assignments }
+        val allReferences = variableData.values
+            .flatMap { it.assignments.toMutableList().let { lst -> lst.addAll(it.references); lst } }
 
-        val referenceParentStatement = assignments
+        val referenceParentStatement = allReferences
             .associateWith { ref ->
                 // find parent statement with the greatest depth -> immediate parent statement
                 val parentStatements = movableStatements.filter { subtreeNodes[it]!!.contains(ref) }
@@ -166,10 +186,10 @@ class DFGSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
 
         for (statement: Statement in movableStatements) {
 
-            val references = getImmediateChildReferences(statement, subtreeNodes)
+            val childReferences = getImmediateChildReferences(statement, subtreeNodes)
 
             // map to assignments/declarations/... where current value might be set
-            val valueDefinitions = references.flatMap { it.prevDFG }
+            val valueDependencies = childReferences.flatMap { it.prevDFG }
                 //only references to values, not methods
                 .filterNot { it is MethodDeclaration }
                 .distinct()
@@ -177,16 +197,17 @@ class DFGSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
                 .filter { assignment -> isLocal(assignment, statement) }
 
             // map to movable statements that contain these value definitions
-            val definitionStatements = valueDefinitions.mapNotNull { assignment ->
-                if (assignment is ParameterDeclaration) assignment
-                else referenceParentStatement[assignment]
+            val dependentStatements = valueDependencies.flatMap { dfgPredecessor ->
+                when (dfgPredecessor) {
+                    is ParameterDeclaration, is AssignExpression -> listOf(dfgPredecessor)
+                    is FieldDeclaration -> listOf()
+                    else -> listOfNotNull(referenceParentStatement[dfgPredecessor])
                     // but no self-dependencies
-                    .let { if (it == statement) null else it }
-            }
 
-            definitionStatements
-                //TODO: must they be excluded?
-                // .filter { parent(it) == parent(statement) }
+                }
+            }.filterNot { it == statement }
+
+            dependentStatements
                 .forEach { dfgPredecessor ->
                     dfgPredecessor.addNextDFG(statement)
                 }
@@ -197,9 +218,10 @@ class DFGSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
     private fun getImmediateChildReferences(
         statement: Statement,
         subtreeNodes: Map<Statement, List<Node>>,
-    ): List<Reference> {
+    ): List<Node> {
         val statements: List<Node?> = when (statement) {
             is WhileStatement -> listOf(statement.condition)
+            is DoStatement -> listOf(statement.condition)
             is IfStatement -> listOf(statement.condition)
             is ForStatement -> listOf(
                 statement.initializerStatement,
@@ -207,11 +229,14 @@ class DFGSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
                 statement.iterationStatement
             )
 
+            is ForEachStatement -> listOf(statement.iterable, statement.variable)
+
             is TryStatement -> statement.resources
             else -> listOf(statement)
         }
 
-        return statements.filterNotNull().flatMap { subtreeNodes[it]!! }.filterIsInstance<Reference>()
+        return statements.filterNotNull().flatMap { subtreeNodes[it]!! }
+            .filter { it is Reference || it is AssignExpression }
     }
 
     private fun getSiblingAncestors(
@@ -281,7 +306,10 @@ class DFGSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
             val index = block.statements.indexOf(it)
             val cpgNthEdge: CpgNthEdge<Block, Statement> = CpgNthEdge(BLOCK__STATEMENTS, index)
             RemoveOperation.apply(it, block, cpgNthEdge, true)
-
+            if (it is DeclarationStatement) {
+                val deletedVariables = it.declarations.filterIsInstance<VariableDeclaration>()
+                block.localEdges.removeIf { it.end in deletedVariables }
+            }
             DummyNeighbor.getInstance().clear()
         }
 
@@ -290,6 +318,7 @@ class DFGSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
     private fun getBlocks(statement: Statement): List<Block> {
         val statements = when (statement) {
             is Block -> listOf(statement)
+            is DoStatement -> listOf(statement.statement!!)
             is WhileStatement -> listOf(statement.statement!!)
             is ForStatement -> listOf(statement.statement!!)
             is ForEachStatement -> listOf(statement.statement!!)
@@ -311,12 +340,12 @@ class DFGSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
         parent: Block,
     ) {
         // save entry point to keep EOG graph intact at the end
-        val entry = TransformationHelper.getEogBorders(parent.statements[0]).entries[0]
-        val eogPred = TransformationHelper.getEntryEdges(parent.statements[0], entry, false)
+        val entry = TransformationUtil.getEogBorders(parent.statements[0]).entries[0]
+        val eogPred = TransformationUtil.getEntryEdges(parent, entry, false)
             .map { it.start }
 
-        val exit = TransformationHelper.getEogBorders(parent.statements.last()).exits[0]
-        val eogSucc = TransformationHelper.getExitEdges(parent.statements.last(), listOf(exit), false)
+        val exit = TransformationUtil.getEogBorders(parent.statements.last()).exits[0]
+        val eogSucc = TransformationUtil.getExitEdges(parent, listOf(exit), false)
             .map { it.end }
 
         val worklist = mutableListOf<Statement>()
@@ -333,26 +362,21 @@ class DFGSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
         relevantStatementsInThisBlock
             .filter(allSuccessorsDone)
             .map { it as Statement }
-            .sortedBy {
-                when (it) {
-                    is ReturnStatement -> 2
-                    !in essentialNodesOut -> 1
-                    else -> 0
-                }
-            }
             .let { them -> worklist.addAll(them) }
 
         while (worklist.isNotEmpty()) {
+            worklist.sortWith(compareStatement(essentialNodesOut))
             val element = worklist.removeLast()
             if (!allSuccessorsDone(element)) {
                 continue
             }
             // insert before last element
             if (done.isNotEmpty()) {
+
                 // Implicit return statement has no location, but should remain the last element
                 val newSuccessor = done[0]
-                if (!TransformationHelper.isAstSuccessor(element, newSuccessor)) {
-                    TransformationHelper.insertBefore(element, newSuccessor)
+                if (!TransformationUtil.isAstSuccessor(element, newSuccessor)) {
+                    TransformationUtil.insertBefore(element, newSuccessor)
                 }
                 // TODO: Make it so that this is not necessary
                 DummyNeighbor.getInstance().clear()
@@ -381,13 +405,16 @@ class DFGSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
         parent.statementEdges.clear()
         done.forEach { parent.addStatement(it) }
 
-        val newEntry = TransformationHelper.getEogBorders(parent.statements[0]).entries[0]
+        val newEntry = TransformationUtil.getEogBorders(parent.statements[0]).entries[0]
 
         newEntry.prevEOGEdges.filter { it.start is DummyNeighbor }.forEach {
             it.start.nextEOGEdges.remove(it)
             it.end.prevEOGEdges.remove(it)
         }
-        eogPred.filter { !TransformationHelper.isEogSuccessor(it, newEntry) }
+
+        // eogPred may be DummyNeighbor if
+        eogPred.filterNot { it is DummyNeighbor }
+            .filterNot { TransformationUtil.isEogSuccessor(it, newEntry) }
             .forEach {
                 val edge = it.nextEOGEdges.find { e -> e.end is DummyNeighbor }!!
                 DummyNeighbor.getInstance().prevEOGEdges.remove(edge)
@@ -396,15 +423,15 @@ class DFGSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
             }
 
 
-        val newExit = TransformationHelper.getEogBorders((parent.statements.last())).exits[0]
+        val newExit = TransformationUtil.getEogBorders((parent.statements.last())).exits[0]
         if (exit != newExit) {
             newExit.nextEOGEdges.filter { it.end is DummyNeighbor }.forEach {
                 it.start.nextEOGEdges.remove(it)
                 it.end.prevEOGEdges.remove(it)
             }
-            eogSucc.filter { succ -> !TransformationHelper.isEogSuccessor(exit, succ) }
+            eogSucc.filter { succ -> !TransformationUtil.isEogSuccessor(exit, succ) }
                 .forEach {
-                    val edge = it.prevEOGEdges.find { e->e.start is DummyNeighbor }!!
+                    val edge = it.prevEOGEdges.find { e -> e.start is DummyNeighbor }!!
                     edge.start = newExit
                     newExit.addNextEOG(edge)
                 }
@@ -444,7 +471,7 @@ class DFGSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
         val worklist = mutableListOf<T>()
         worklist.addAll(initList)
         while (worklist.isNotEmpty()) {
-            val el = worklist.removeAt(0)
+            val el: T = worklist.removeAt(0)
             val result = f(el)
             successors(el)?.filter { it !in worklist }
                 ?.filter { succFilter(it, result) }
@@ -455,7 +482,7 @@ class DFGSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
 
     private fun isBlockStatement(node: Node): Boolean {
         return when (node) {
-            is Block, is WhileStatement, is ForStatement, is ForEachStatement, is IfStatement -> {
+            is Block, is WhileStatement, is DoStatement, is ForStatement, is ForEachStatement, is IfStatement -> {
                 true
             }
 
@@ -476,6 +503,7 @@ class DFGSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
         /*
             Mark the following nodes as essential:
             - method calls
+            - assignments to fields
             - ...nodes with side effects
             - and blocks that contain essential nodes
 
@@ -513,6 +541,16 @@ class DFGSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
                 return isEssential
             }
 
+            is DoStatement -> {
+                val children = listOfNotNull(node.condition, node.statement)
+                val isEssential = children.map { extractEssentialNodes(it, essentialNodes) }.any { it }
+                if (isEssential) {
+                    essentialNodes.add(node)
+                    node.condition?.let { essentialNodes.add(it) }
+                }
+                return isEssential
+            }
+
             is ReturnStatement, is CallExpression -> {
                 essentialNodes.add(node)
                 return true
@@ -528,17 +566,19 @@ class DFGSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
             }
 
             is UnaryOperator -> {
-                if (node.operatorCode == "throw") {
+                if (node.operatorCode == "throw" || extractEssentialNodes(node.input, essentialNodes)) {
                     essentialNodes.add(node)
                     return true
                 }
-                return extractEssentialNodes(node.input, essentialNodes)
+                return false
             }
 
             is AssignmentHolder -> {
-                val containsFieldAssignment = node.assignments.any { assignment ->
-                    assignment.target is Reference && (assignment.target as Reference).refersTo is FieldDeclaration
-                }
+                val containsFieldAssignment = node.assignments
+                    .filterNot { it.target == node }
+                    .any { assignment ->
+                        extractEssentialNodes(assignment.target as Statement, essentialNodes)
+                    }
                 if (containsFieldAssignment) {
                     essentialNodes.add(node)
                     return true
@@ -556,13 +596,15 @@ class DFGSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
 
             is Reference -> {
                 // is this reference used to write a non-local value? Maybe there is a better way to do it
-                val isEssential = with(node.refersTo?.scope) {
-                    this !is BlockScope
-                            && this !is LoopScope
-                            && this !is TryScope
-                } && node.access in listOf(AccessValues.WRITE, AccessValues.READWRITE)
+                val isEssential = node is MemberExpression
+                        && node.access in listOf(AccessValues.WRITE, AccessValues.READWRITE)
+
                 if (isEssential) essentialNodes.add(node)
                 return isEssential
+            }
+
+            is SubscriptExpression -> {
+                return true
             }
 
             is IfStatement -> {
@@ -604,10 +646,88 @@ class DFGSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
                 return node.body != null && extractEssentialNodes(node.body!!, essentialNodes)
             }
 
+            is BreakStatement, is ContinueStatement -> {
+                essentialNodes.add(node)
+                return true
+            }
 
+            is ConditionalExpression -> {
+                val children = listOfNotNull(node.condition, node.thenExpression, node.elseExpression)
+                val isEssential = children.map { extractEssentialNodes(it, essentialNodes) }.any { it }
+                if (isEssential) {
+                    essentialNodes.add(node)
+                    return true
+                }
+            }
+
+            is DeclarationStatement -> {
+                val children = node.declarations.filterIsInstance<VariableDeclaration>().mapNotNull { it.initializer }
+                val isEssential = children.map { extractEssentialNodes(it, essentialNodes) }.any { it }
+                if (isEssential) {
+                    essentialNodes.add(node)
+                    return true
+                }
+            }
+
+            is NewArrayExpression -> {
+                val children = listOfNotNull(node.initializer)
+                val isEssential = children.map { extractEssentialNodes(it, essentialNodes) }.any { it }
+                if (isEssential) {
+                    essentialNodes.add(node)
+                    return true
+                }
+            }
+
+            is CastExpression -> {
+                val children = listOfNotNull(node.expression)
+                val isEssential = children.map { extractEssentialNodes(it, essentialNodes) }.any { it }
+                if (isEssential) {
+                    essentialNodes.add(node)
+                    return true
+                }
+            }
+
+            else -> return false
         }
         return false
     }
+
+    private fun compareStatement(essentialNodes: MutableList<Statement>): (Statement, Statement) -> Int {
+        return lambda@{ n1, n2 ->
+            val byType = getSortIndexByType(n1, essentialNodes) - getSortIndexByType(n2, essentialNodes)
+            if (byType != 0) return@lambda byType
+            val byTokens = compareTokenSequence(n1, n2)
+            if (byTokens != 0) return@lambda byTokens
+            else return@lambda NodeOrderStrategy.flattenStatement(n1).size - NodeOrderStrategy.flattenStatement(n2).size
+        }
+    }
+
+    private fun getSortIndexByType(node: Node, essentialNodes: MutableList<Statement>): Int =
+        when (node) {
+            is ReturnStatement -> 2
+            !in essentialNodes -> 1
+            else -> 0
+        }
+
+    private fun compareTokenSequence(n1: Statement, n2: Statement): Int {
+        val nodes1 = NodeOrderStrategy.flattenStatement(n1).iterator()
+        val nodes2 = NodeOrderStrategy.flattenStatement(n2).iterator()
+
+        val tokens1 = CpgNodeListener.tokenIterator(nodes1);
+        val tokens2 = CpgNodeListener.tokenIterator(nodes2);
+
+        while (tokens1.hasNext() && tokens2.hasNext()) {
+            val next1 = tokens1.next().type.let { if (it is CpgTokenType) it.ordinal else 0 }
+            val next2 = tokens2.next().type.let { if (it is CpgTokenType) it.ordinal else 0 }
+            val compare = next1 - next2
+            if (compare != 0) return compare
+        }
+        return if (tokens1.hasNext()) 1;
+        else if (tokens2.hasNext()) -1;
+        else 0
+
+    }
+
 
     private fun getMovableStatements(
         statement: Node?,
@@ -624,7 +744,16 @@ class DFGSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
                 children.flatMap { getMovableStatements(it, statement, parentInfo, depth + 1) }
             }
 
-            is Block -> statement.statements.flatMap { getMovableStatements(it, statement, parentInfo, depth + 1) }
+            is Block -> {
+                val result =
+                    statement.statements.flatMap { getMovableStatements(it, statement, parentInfo, depth + 1) }
+                        .toMutableList()
+                if (parent is Block) {
+                    // inner block without control statement that would enforce it
+                    result.add(statement)
+                }
+                result
+            }
 
             is WhileStatement -> {
                 val result: MutableList<Statement> =
@@ -710,12 +839,6 @@ class DFGSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
         return statements
     }
 
-    private fun sortBw(f: KFunction1<Node, Iterator<Node>>): (Node) -> Iterator<Node> {
-        return { node: Node ->
-            f.call(node).asSequence().sortedBy { n1 -> n1.location?.region }.toList().asReversed().iterator()
-        }
-    }
-
     private fun handle(node: Node): Boolean {
         var change = false
 
@@ -745,7 +868,10 @@ class DFGSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
                     )
                 } else {
                     change =
-                        node.assignments.map { assignment: Assignment -> state.registerAssignment(assignment, node) }
+                        node.assignments
+                            // cannot handle Array accesses
+                            .filterNot { it.target is SubscriptExpression }
+                            .map { assignment: Assignment -> state.registerAssignment(assignment, node) }
                             .fold(false, Boolean::or)
                 }
             }
@@ -785,6 +911,9 @@ class DFGSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
     override fun cleanup() {
     }
 
+    /**
+     * This class saves all data concerning the visibility and usage of variables at a statement in a method.
+     */
     private class State : HashMap<Declaration, VariableData> {
         constructor()
 
@@ -820,6 +949,9 @@ class DFGSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
 
     }
 
+    /**
+     * This class saves all data concerning a local variable.
+     */
     private class VariableData {
         private val currentReferences: MutableSet<Reference> = mutableSetOf()
         private var currentAssignments: MutableList<Node> = mutableListOf()
@@ -829,13 +961,14 @@ class DFGSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
 
         fun resolve(node: Node): Boolean {
             val change = currentReferences
-                .filter { reference: Reference -> node !in reference.prevDFG }
+                .filterNot { reference: Reference -> node in reference.prevDFG }
                 .map { reference ->
-                    reference.addPrevDFG(node)
+                    node.addNextDFG(reference)
                     true
                 }.any()
 
             if (node !in assignments) assignments.add(node)
+            currentAssignments.filter { node != it }.forEach { node.addNextDFG(it) }
             currentAssignments.clear()
 
             // if it IS a declaration, then from this point on the variable is undefined yet
@@ -856,7 +989,7 @@ class DFGSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
                 if (reference in it.prevDFG) {
                     return false
                 }
-                it.addPrevDFG(reference) // read-write dependency
+                reference.addNextDFG(it) // read-write dependency
                 return true
             }.fold(false, Boolean::or)
         }
@@ -878,6 +1011,10 @@ class DFGSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
                     currentAssignments == other.currentAssignments &&
                     references == other.references &&
                     assignments == other.assignments
+        }
+
+        override fun hashCode(): Int {
+            return javaClass.hashCode()
         }
 
     }

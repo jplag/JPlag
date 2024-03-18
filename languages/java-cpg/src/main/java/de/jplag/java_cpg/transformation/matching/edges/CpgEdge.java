@@ -1,13 +1,13 @@
 package de.jplag.java_cpg.transformation.matching.edges;
 
-import de.fraunhofer.aisec.cpg.graph.Node;
+import static de.jplag.java_cpg.transformation.matching.edges.IEdge.EdgeCategory.*;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-import static de.jplag.java_cpg.transformation.matching.edges.IEdge.EdgeCategory.*;
+import de.fraunhofer.aisec.cpg.graph.Node;
 
 /**
  * This is a wrapper for a graph edge (with a 1:1 relation).
@@ -23,24 +23,21 @@ public class CpgEdge<S extends Node, T extends Node> implements IEdge<S, T> {
 
     /**
      * Creates a new {@link CpgEdge} with a getter and setter for the target node.
-     *
      * @param getter the getter
      * @param setter the setter
      * @param category the edge category
      */
-    public CpgEdge(Function<S, T> getter,
-                   BiConsumer<S, T> setter, EdgeCategory category) {
+    public CpgEdge(Function<S, T> getter, BiConsumer<S, T> setter, EdgeCategory category) {
         this.getter = getter;
         this.setter = setter;
         this.category = category;
     }
 
-    public CpgEdge(Function<S, T> getter,
-                   BiConsumer<S, T> setter) {
+    public CpgEdge(Function<S, T> getter, BiConsumer<S, T> setter) {
         this(getter, setter, AST);
     }
 
-    public static <S extends Node, T extends Node> CpgEdge<S, T> listValued(Function<S, List<T>> getRhs, BiConsumer<S,List<T>> setRhs) {
+    public static <S extends Node, T extends Node> CpgEdge<S, T> listValued(Function<S, List<T>> getRhs, BiConsumer<S, List<T>> setRhs) {
         return new CpgEdge<>(node -> getRhs.apply(node).get(0), (node, value) -> setRhs.accept(node, List.of(value)));
     }
 
@@ -71,22 +68,17 @@ public class CpgEdge<S extends Node, T extends Node> implements IEdge<S, T> {
         return toClass;
     }
 
-
     public Function<S, T> getter() {
         return getter;
     }
-
 
     public BiConsumer<S, T> setter() {
         return setter;
     }
 
-
     @Override
     public String toString() {
-        return "CpgEdge[" +
-            "getter=" + getter + ", " +
-            "setter=" + setter + ']';
+        return "CpgEdge[" + "getter=" + getter + ", " + "setter=" + setter + ']';
     }
 
     @Override
@@ -103,7 +95,6 @@ public class CpgEdge<S extends Node, T extends Node> implements IEdge<S, T> {
     public boolean isAnalytic() {
         return category == ANALYTIC;
     }
-
 
     public boolean isReference() {
         return category == REFERENCE;

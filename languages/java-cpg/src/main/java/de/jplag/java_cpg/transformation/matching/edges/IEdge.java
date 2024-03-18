@@ -35,7 +35,8 @@ public interface IEdge<S extends Node, T extends Node> {
     Class<T> getToClass();
 
     /**
-     * If true, this edge should be treated as equivalent to this one in the context of stepping through the source and target {@link GraphPattern}s.
+     * If true, this edge should be treated as equivalent to this one in the context of stepping through the source and
+     * target {@link GraphPattern}s.
      * @param other the edge to check for equivalence
      * @return true if the other edge is equivalent
      */
@@ -46,6 +47,8 @@ public interface IEdge<S extends Node, T extends Node> {
     boolean isAnalytic();
 
     enum EdgeCategory {
-        AST, REFERENCE, ANALYTIC
+        AST,
+        REFERENCE,
+        ANALYTIC
     }
 }

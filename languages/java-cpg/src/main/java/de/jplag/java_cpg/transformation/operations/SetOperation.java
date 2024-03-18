@@ -1,5 +1,12 @@
 package de.jplag.java_cpg.transformation.operations;
 
+import static de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.desc;
+
+import java.util.Objects;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.fraunhofer.aisec.cpg.TranslationContext;
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.graph.scopes.Scope;
@@ -7,19 +14,18 @@ import de.jplag.java_cpg.transformation.matching.edges.CpgEdge;
 import de.jplag.java_cpg.transformation.matching.pattern.Match;
 import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
 import de.jplag.java_cpg.transformation.matching.pattern.WildcardGraphPattern;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.Objects;
-
+/**
+ * Sets the target {@link Node} of a previously newly created edge to a {@link Node}.
+ * @param <S> type of the parent node, defined by the edge
+ * @param <T> type of the related node, defined by the edge
+ */
 public final class SetOperation<S extends Node, T extends Node> extends GraphOperationImpl<S, T> {
     private static final Logger logger;
     private final NodePattern<? extends T> newChildPattern;
     private final boolean disconnectEog;
 
-    public SetOperation(NodePattern<? extends S> parentPattern,
-                        CpgEdge<S, T> edge,
-                        NodePattern<? extends T> newChildPattern, boolean disconnectEog) {
+    public SetOperation(NodePattern<? extends S> parentPattern, CpgEdge<S, T> edge, NodePattern<? extends T> newChildPattern, boolean disconnectEog) {
         super(parentPattern, edge);
         this.newChildPattern = newChildPattern;
         this.disconnectEog = disconnectEog;
@@ -41,6 +47,10 @@ public final class SetOperation<S extends Node, T extends Node> extends GraphOpe
 
         Scope parentScope = Objects.requireNonNullElse(ctx.getScopeManager().lookupScope(parent), parent.getScope());
         newChild.setScope(parentScope);
+        Scope childScope = ctx.getScopeManager().lookupScope(newChild);
+        if (!Objects.isNull(childScope)) {
+            childScope.setParent(parentScope);
+        }
 
         if (disconnectEog) {
             logger.warn("disconnectEog in SetOperation – not yet implemented");

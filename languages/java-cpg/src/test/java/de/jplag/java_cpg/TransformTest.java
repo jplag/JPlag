@@ -1,8 +1,9 @@
 package de.jplag.java_cpg;
 
-import de.jplag.ParsingException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import de.jplag.ParsingException;
 
 /**
  * Test cases regarding the extraction edge try vs. try with resource.

@@ -1,8 +1,14 @@
 package de.jplag.java_cpg.transformation.matching.pattern;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import de.fraunhofer.aisec.cpg.graph.*;
 import de.fraunhofer.aisec.cpg.graph.declarations.Declaration;
 import de.fraunhofer.aisec.cpg.graph.declarations.MethodDeclaration;
+import de.fraunhofer.aisec.cpg.graph.declarations.RecordDeclaration;
 import de.fraunhofer.aisec.cpg.graph.declarations.ValueDeclaration;
 import de.fraunhofer.aisec.cpg.graph.statements.*;
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*;
@@ -12,22 +18,15 @@ import de.jplag.java_cpg.transformation.matching.edges.CpgMultiEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgNthEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgPropertyEdge;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-
 /**
  * Contains convenience methods to create elements of {@link GraphPattern}s and {@link NodePattern}s.
  */
 public class PatternUtil {
     /**
      * Creates a Predicate that checks if a node has a non-null related Node via the given edge.
-     *
      * @param edge the edge
-     * @param <S>  the source node type
-     * @param <T>  the target node type
+     * @param <S> the source node type
+     * @param <T> the target node type
      * @return the predicate
      */
     public static <S extends Node, T extends Node> Predicate<S> notNull(CpgEdge<S, T> edge) {
@@ -41,13 +40,13 @@ public class PatternUtil {
     public static <S extends Node, T extends Node, C extends T> Predicate<S> notInstanceOf(CpgEdge<S, T> edge, Class<C> clazz) {
         return s -> !clazz.isInstance(edge.getter().apply(s));
     }
+
     /**
      * Creates a proxy for the nth element of a 1:n relation.
-     *
      * @param edge the 1:n relation edge
-     * @param n    the index of the edge
-     * @param <S>  the source node type
-     * @param <T>  the target node type
+     * @param n the index of the edge
+     * @param <S> the source node type
+     * @param <T> the target node type
      * @return the nth edge
      */
     public static <S extends Node, T extends Node> CpgEdge<S, T> nthElement(CpgMultiEdge<S, T> edge, int n) {
@@ -56,15 +55,22 @@ public class PatternUtil {
 
     /**
      * Creates a {@link Predicate} that checks if the related object is equal to the given value.
-     *
      * @param propertyEdge a function to get the related object
-     * @param value        the value to check against
-     * @param <S>          the source node type
-     * @param <P>          the predicate type
+     * @param value the value to check against
+     * @param <S> the source node type
+     * @param <P> the predicate type
      * @return the predicate
      */
     public static <S extends Node, P> Predicate<S> attributeEquals(CpgPropertyEdge<S, P> propertyEdge, P value) {
         return s -> Objects.equals(propertyEdge.get(s), value);
+    }
+
+    public static <S extends Node, P> Predicate<S> attributeToStringEquals(CpgPropertyEdge<S, P> propertyEdge, String value) {
+        return s -> Objects.equals(propertyEdge.get(s).toString(), value);
+    }
+
+    public static <S extends Node, P> Predicate<S> attributeToStringStartsWith(CpgPropertyEdge<S, P> propertyEdge, String value) {
+        return s -> propertyEdge.get(s).toString().startsWith(value);
     }
 
     public static <S extends Node, P> Predicate<S> attributeContains(CpgPropertyEdge<S, List<P>> propertyEdge, P value) {
@@ -81,11 +87,10 @@ public class PatternUtil {
 
     /**
      * Creates a {@link Predicate} that checks if the 1:n relation targets exactly the number of nodes specified.
-     *
      * @param edge the 1:n edge
-     * @param n    the number to check against
-     * @param <S>  the source node type
-     * @param <T>  the target node type
+     * @param n the number to check against
+     * @param <S> the source node type
+     * @param <T> the target node type
      * @return the predicate
      */
     public static <S extends Node, T extends Node> Predicate<S> nElements(CpgMultiEdge<S, T> edge, int n) {
@@ -94,11 +99,10 @@ public class PatternUtil {
 
     /**
      * Creates a {@link Predicate} that checks if the property value is contained in the list of values given.
-     *
-     * @param getter         a function to get the property value
+     * @param getter a function to get the property value
      * @param acceptedValues a list of accepted values
-     * @param <S>            the source node type
-     * @param <P>            the property value type
+     * @param <S> the source node type
+     * @param <P> the property value type
      * @return the predicate
      */
     public static <S extends Node, P> Predicate<S> oneOf(CpgPropertyEdge<S, P> getter, List<P> acceptedValues) {
@@ -107,17 +111,15 @@ public class PatternUtil {
 
     /**
      * Creates a new {@link Node} of the type specified by the given {@link NodePattern}.
-     *
      * @param pattern the pattern
-     * @param <T>     the node pattern type
+     * @param <T> the node pattern type
      * @return the new {@link Node}
      */
     public static <T extends Node> T instantiate(NodePattern<T> pattern) {
         try {
             // every Node type has a constructor without parameters
             return pattern.getRootClass().getDeclaredConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
     }
@@ -170,23 +172,21 @@ public class PatternUtil {
 
         while (!workList.isEmpty()) {
             Node node = workList.remove(0);
-            if (seen.contains(node)) continue;
+            if (seen.contains(node))
+                continue;
 
             if (node instanceof Reference reference) {
-                currentReferences.computeIfAbsent(reference.getRefersTo(), declaration -> new ArrayList<>())
-                    .add(reference);
-               // statementToReferences.computeIfAbsent(currentStatement, statement -> new ArrayList<>())
-                 //   .add(reference);
+                currentReferences.computeIfAbsent(reference.getRefersTo(), declaration -> new ArrayList<>()).add(reference);
+                // statementToReferences.computeIfAbsent(currentStatement, statement -> new ArrayList<>())
+                // .add(reference);
             } else if (node instanceof AssignmentHolder assignmentHolder) {
                 for (Assignment assignment : assignmentHolder.getAssignments()) {
                     ValueDeclaration declaration = (ValueDeclaration) assignment.getTarget();
                     List<Reference> valueReferences = currentReferences.getOrDefault(declaration, List.of());
-                    valueReferences.forEach(reference -> possibleValues.computeIfAbsent(reference, it -> new ArrayList<>())
-                        .add(assignment));
+                    valueReferences.forEach(reference -> possibleValues.computeIfAbsent(reference, it -> new ArrayList<>()).add(assignment));
                     valueReferences.clear();
                 }
-            } else if (node instanceof UnaryOperator operator
-                    && operator.getInput() instanceof Reference ref
+            } else if (node instanceof UnaryOperator operator && operator.getInput() instanceof Reference ref
                     && ref.getAccess().equals(AccessValues.READWRITE)) {
                 Assignment assignment = new Assignment(operator, ref, null);
 
@@ -198,9 +198,6 @@ public class PatternUtil {
             seen.add(node);
             workList.addAll(0, node.getPrevEOG());
         }
-
-
-
 
     }
 
@@ -216,13 +213,38 @@ public class PatternUtil {
     }
 
     /**
-     * Creates a new {@link Predicate} that checks whether this node contains exactly one exit.
-     * This should hold e.g. for non-branching statements, loop statements, and method bodies if they do not contain a
-     * return statement other than the last return statement of the method.
-     *
+     * Creates a new {@link Predicate} that checks whether this node contains exactly one exit. This should hold e.g. for
+     * non-branching statements, loop statements, and method bodies if they do not contain a return statement other than the
+     * last return statement of the method.
      * @return the predicate
      */
     public static Predicate<Node> isEogConfluent() {
         return node -> SubgraphWalker.INSTANCE.getEOGPathEdges(node).getExits().size() == 1;
+    }
+
+    public static Predicate<Expression> isConstant() {
+        return expression -> expression instanceof Literal<?>;
+    }
+
+    public static Predicate<Expression> isFieldReference() {
+        return expression -> {
+            if (!(expression instanceof MemberExpression fieldAccess)) {
+                return false;
+            }
+            if (!(fieldAccess.getBase() instanceof Reference thisOrClassReference))
+                return false;
+            return thisOrClassReference.getName().toString().equals("this") || thisOrClassReference.getRefersTo() instanceof RecordDeclaration;
+        };
+    }
+
+    public static <T extends Node> Predicate<T> or(Predicate<T> predicate1, Predicate<T> predicate2) {
+        return t -> predicate1.test(t) || predicate2.test(t);
+    }
+
+    public static String desc(Node node) {
+        node.getName();
+        return "%s(%s%s)".formatted(node.getClass().getSimpleName(),
+                node.getName().getLocalName().isEmpty() ? "" : "\"" + node.getName().getLocalName() + "\", ",
+                Objects.requireNonNullElse(node.getLocation(), "<no location>"));
     }
 }

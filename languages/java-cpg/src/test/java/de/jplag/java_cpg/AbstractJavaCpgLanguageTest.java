@@ -24,7 +24,7 @@ public abstract class AbstractJavaCpgLanguageTest {
     protected static final Path BASE_PATH = Path.of("src", "test", "resources", "java");
     private static final String LOG_MESSAGE = "Tokens of {}: {}";
     private final Logger logger = LoggerFactory.getLogger(AbstractJavaCpgLanguageTest.class);
-    private de.jplag.java_cpg.Language language;
+    private JavaCpgLanguage language;
     protected File baseDirectory;
 
     /**
@@ -32,7 +32,7 @@ public abstract class AbstractJavaCpgLanguageTest {
      */
     @BeforeEach
     void setUp() {
-        language = new Language();
+        language = new JavaCpgLanguage();
         baseDirectory = BASE_PATH.toFile();
         assertTrue(baseDirectory.exists(), "Could not find base directory!");
     }

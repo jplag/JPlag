@@ -1,5 +1,18 @@
 package de.jplag.java_cpg;
 
+import java.io.File;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
+
+import de.jplag.java_cpg.transformation.matching.pattern.SimpleGraphPattern;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.fraunhofer.aisec.cpg.TranslationResult;
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.graph.declarations.MethodDeclaration;
@@ -10,29 +23,14 @@ import de.jplag.java_cpg.transformation.matching.PatternRepository;
 import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern;
 import de.jplag.java_cpg.transformation.matching.pattern.GraphPatternBuilder;
 import de.jplag.java_cpg.transformation.matching.pattern.Match;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-
-import java.io.File;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Stream;
 
 public class MatchingTest extends AbstractJavaCpgLanguageTest {
-
 
     public static final Logger LOGGER = LoggerFactory.getLogger(MatchingTest.class);
 
     public static Stream<Arguments> providePairs() {
-        return Stream.of(
-            Arguments.of("IfElseWithNegatedCondition.java", IfStatement.class, PatternRepository.ifElseWithNegatedCondition()),
-            Arguments.of("GetterSetter.java", MethodDeclaration.class, PatternRepository.setterMethod())
-        );
+        return Stream.of(Arguments.of("IfElseWithNegatedCondition.java", IfStatement.class, PatternRepository.ifElseWithNegatedCondition().build()),
+                Arguments.of("GetterSetter.java", MethodDeclaration.class, PatternRepository.setterMethod().build()));
     }
 
     @ParameterizedTest
@@ -47,7 +45,7 @@ public class MatchingTest extends AbstractJavaCpgLanguageTest {
             detector.loadGraph(graph);
             List<T> rootCandidates = detector.getNodesOfType(rootType);
 
-            GraphPattern pattern1 = builder.build();
+            SimpleGraphPattern<?> pattern1 = (SimpleGraphPattern<?>) builder.build();
             Assertions.assertTrue(rootCandidates.stream().anyMatch(candidate -> {
                 List<Match> matches = pattern1.recursiveMatch(candidate);
                 if (matches.isEmpty()) {

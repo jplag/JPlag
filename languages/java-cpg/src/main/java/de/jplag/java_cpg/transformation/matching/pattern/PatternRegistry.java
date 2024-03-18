@@ -1,23 +1,30 @@
 package de.jplag.java_cpg.transformation.matching.pattern;
 
-import de.fraunhofer.aisec.cpg.graph.Node;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class PatternRegistry {
+import de.jplag.java_cpg.transformation.GraphTransformation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.fraunhofer.aisec.cpg.graph.Node;
+
+/**
+ * The {@link PatternRegistry} saves the {@link NodePattern}s involved in a {@link GraphTransformation} and their identifiers.
+ */
+class PatternRegistry {
     public static final String WILDCARD_PARENT_ID = "wildcardParent#";
     private final Map<String, NodePattern<?>> patternById;
     private final Map<NodePattern<?>, String> idByPattern;
+    /**
+     *  A NodePattern that represents the {@link GraphPattern}. If not set, it is the (first) root of the {@link GraphPattern}.
+     */
     private NodePattern<?> representingNode;
 
     private static final Logger logger = LoggerFactory.getLogger(PatternRegistry.class);
     private int wildcardCounter;
-
 
     public PatternRegistry() {
         this.patternById = new HashMap<>();

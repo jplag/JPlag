@@ -1,5 +1,12 @@
 package de.jplag.java_cpg.transformation.operations;
 
+import static de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.desc;
+
+import java.util.Objects;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.fraunhofer.aisec.cpg.TranslationContext;
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.graph.scopes.Scope;
@@ -8,14 +15,9 @@ import de.jplag.java_cpg.transformation.matching.edges.CpgMultiEdge;
 import de.jplag.java_cpg.transformation.matching.pattern.Match;
 import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
 import de.jplag.java_cpg.transformation.matching.pattern.WildcardGraphPattern;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Objects;
 
 /**
  * Replaces the target {@link Node} of an edge by another {@link Node}.
- *
  * @param <S> type of the parentPattern node, defined by the edge
  * @param <T> type of the destination node, defined by the edge
  */
@@ -31,14 +33,13 @@ public final class ReplaceOperation<S extends Node, T extends Node> extends Grap
     private final boolean disconnectEog;
 
     /**
-     * @param parentPattern   source node of the edge
-     * @param edge            edge of which the target shall be replaced
+     * @param parentPattern source node of the edge
+     * @param edge edge of which the target shall be replaced
      * @param newChildPattern replacement node
-     * @param disconnectEog   if true, the replaced element is inserted into the EOG graph at the target
+     * @param disconnectEog if true, the replaced element is inserted into the EOG graph at the target
      */
-    public ReplaceOperation(NodePattern<? extends S> parentPattern,
-                            CpgEdge<S, T> edge,
-                            NodePattern<? extends T> newChildPattern, boolean disconnectEog) {
+    public ReplaceOperation(NodePattern<? extends S> parentPattern, CpgEdge<S, T> edge, NodePattern<? extends T> newChildPattern,
+            boolean disconnectEog) {
         super(parentPattern, edge);
         this.newChildPattern = newChildPattern;
         this.disconnectEog = disconnectEog;
@@ -60,13 +61,17 @@ public final class ReplaceOperation<S extends Node, T extends Node> extends Grap
 
         Scope parentScope = Objects.requireNonNullElse(ctx.getScopeManager().lookupScope(parent), parent.getScope());
         newTarget.setScope(parentScope);
+        Scope childScope = ctx.getScopeManager().lookupScope(newTarget);
+        if (!Objects.isNull(childScope)) {
+            childScope.setParent(parentScope);
+        }
 
         if (!disconnectEog) {
             return;
         }
 
-        TransformationHelper.transferEogPredecessor(oldTarget, newTarget);
-        TransformationHelper.transferEogSuccessor(oldTarget, newTarget);
+        TransformationUtil.transferEogPredecessor(oldTarget, newTarget);
+        TransformationUtil.transferEogSuccessor(oldTarget, newTarget);
     }
 
     @Override
@@ -89,10 +94,8 @@ public final class ReplaceOperation<S extends Node, T extends Node> extends Grap
 
     @Override
     public GraphOperation instantiateAny1ofNEdge(Match match) {
-        CpgMultiEdge<S,T>.Any1ofNEdge any1ofNEdge = (CpgMultiEdge<S,T>.Any1ofNEdge) edge;
-        return new ReplaceOperation<>(parentPattern, match.getEdge(any1ofNEdge), newChildPattern, this.disconnectEog);
+        CpgMultiEdge<S, T>.Any1ofNEdge any1ofNEdge = (CpgMultiEdge<S, T>.Any1ofNEdge) edge;
+        return new ReplaceOperation<>(parentPattern, match.getEdge(this.parentPattern, any1ofNEdge), newChildPattern, this.disconnectEog);
     }
-
-
 
 }

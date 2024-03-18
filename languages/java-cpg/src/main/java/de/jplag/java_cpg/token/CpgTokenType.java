@@ -3,12 +3,16 @@ package de.jplag.java_cpg.token;
 import de.jplag.TokenType;
 
 /**
- *  A {@link CpgTokenType} represents a type of {@link CpgToken} related to a syntactic element of code.
+ * A {@link CpgTokenType} represents a type of {@link CpgToken} related to a syntactic element of code.
  */
 public enum CpgTokenType implements TokenType {
 
     RECORD_DECL_BEGIN("CLASS{"),
     RECORD_DECL_END("}CLASS"),
+
+    ENUM_DECL_BEGIN("ENUM{"),
+    ENUM_DECL_END("}ENUM"),
+    ENUM_ELEMENT("ENUM_ELEMENT"),
 
     FIELD_DECL("FIELD_DECL", false),
 
@@ -24,6 +28,7 @@ public enum CpgTokenType implements TokenType {
     METHOD_ARGUMENT("ARG"),
 
     CONSTRUCTOR_CALL("NEW()"),
+    NEW_ARRAY("NEW_ARRAY"),
 
     IF_STATEMENT("IF"),
     IF_BLOCK_BEGIN("THEN{"),
@@ -46,6 +51,7 @@ public enum CpgTokenType implements TokenType {
     SWITCH_BLOCK_START("SWITCH{"),
     SWITCH_BLOCK_END("}SWITCH"),
     CASE_STATEMENT("CASE"),
+    DEFAULT_STATEMENT("DEFAULT"),
 
     BREAK("BREAK"),
     CONTINUE("CONTINUE"),
@@ -58,16 +64,19 @@ public enum CpgTokenType implements TokenType {
     TRY_STATEMENT("TRY{"),
     TRY_BLOCK_START("TRY{"),
     TRY_BLOCK_END("}TRY"),
+    THROW("THROW"),
     CATCH_CLAUSE_BEGIN("CATCH{"),
     CATCH_CLAUSE_END("}CATCH"),
     FINALLY_CLAUSE_BEGIN("FINALLY{"),
     FINALLY_CLAUSE_END("}FINALLY"),
 
+    SYNCHRONIZED_STATEMENT("SYNC"),
+    SYNCHRONIZED_BLOCK_START("SYNC{"),
+    SYNCHRONIZED_BLOCK_END("}SYNC"),
 
     // TODO: set excluded
     BLOCK_BEGIN("{", false),
     BLOCK_END("}", false);
-
 
     private final boolean isExcluded;
     private final String description;

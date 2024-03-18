@@ -1,9 +1,9 @@
 package de.jplag.java_cpg.transformation.operations;
 
+import java.util.*;
+
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.graph.edge.PropertyEdge;
-
-import java.util.*;
 
 /**
  * A special singleton {@link Node} to serve as an intermediary neighbor for {@link Node}s while they are moved around.

@@ -10,329 +10,418 @@ import de.fraunhofer.aisec.cpg.graph.statements.expressions.*;
  */
 public abstract class ACpgNodeListener extends IVisitorExitor<Node> {
 
-    void visit(ConstructorDeclaration constructorDeclaration) {
-        
+    void exit(AssertStatement assertStatement) {
+    }
+
+    void exit(AssignExpression assignExpression) {
+    }
+
+    void exit(BinaryOperator binaryoperator) {
+    }
+
+    void exit(Block block) {
+    }
+
+    void exit(BreakStatement breakStatement) {
+    }
+
+    void exit(CallExpression callExpression) {
+    }
+
+    void exit(CaseStatement caseStatement) {
+    }
+
+    void exit(CastExpression castExpression) {
+    }
+
+    void exit(CatchClause catchclause) {
+    }
+
+    void exit(ConditionalExpression conditionalExpression) {
+    }
+
+    void exit(ConstructExpression constructExpression) {
     }
 
     void exit(ConstructorDeclaration constructorDeclaration) {
-        
     }
 
-    void visit(Declaration declaration) {
-        
+    void exit(ContinueStatement continueStatement) {
     }
 
     void exit(Declaration declaration) {
-        
-    }
-
-    void visit(DeclarationSequence declarationsequence) {
-        
     }
 
     void exit(DeclarationSequence declarationsequence) {
-        
     }
 
-    void visit(EnumConstantDeclaration enumconstantDeclaration) {
-        
+    void exit(DeclarationStatement declarationStatement) {
+    }
+
+    void exit(DefaultStatement defaultStatement) {
+    }
+
+    void exit(DeleteExpression deleteExpression) {
+    }
+
+    void exit(DoStatement doStatement) {
+    }
+
+    void exit(EmptyStatement emptyStatement) {
     }
 
     void exit(EnumConstantDeclaration enumconstantDeclaration) {
-        
-    }
-
-    void visit(EnumDeclaration enumDeclaration) {
-        
     }
 
     void exit(EnumDeclaration enumDeclaration) {
-        
     }
 
-    void visit(FieldDeclaration fieldDeclaration) {
-        
+    void exit(Expression expression) {
+    }
+
+    void exit(ExpressionList expressionlist) {
     }
 
     void exit(FieldDeclaration fieldDeclaration) {
-        
     }
 
-    void visit(FunctionDeclaration functionDeclaration) {
-        
+    void exit(ForEachStatement foreachStatement) {
+    }
+
+    void exit(ForStatement forStatement) {
     }
 
     void exit(FunctionDeclaration functionDeclaration) {
-        
-    }
-
-    void visit(FunctionTemplateDeclaration functiontemplateDeclaration) {
-        
     }
 
     void exit(FunctionTemplateDeclaration functiontemplateDeclaration) {
-        
     }
 
-    void visit(IncludeDeclaration includeDeclaration) {
-        
+    void exit(GotoStatement gotoStatement) {
+    }
+
+    void exit(IfStatement ifStatement) {
     }
 
     void exit(IncludeDeclaration includeDeclaration) {
-        
+    }
+
+    void exit(InitializerListExpression initializerlistExpression) {
+    }
+
+    void exit(KeyValueExpression keyvalueExpression) {
+    }
+
+    void exit(LabelStatement labelStatement) {
+    }
+
+    void exit(LambdaExpression lambdaExpression) {
+    }
+
+    void exit(Literal<?> literal) {
+    }
+
+    void exit(MemberCallExpression membercallExpression) {
+    }
+
+    void exit(MemberExpression memberExpression) {
+    }
+
+    void exit(MethodDeclaration methodDeclaration) {
+    }
+
+    void exit(NamespaceDeclaration namespaceDeclaration) {
+    }
+
+    void exit(NewArrayExpression newarrayExpression) {
+    }
+
+    void exit(NewExpression newExpression) {
+    }
+
+    void exit(ParameterDeclaration parameterDeclaration) {
+    }
+
+    void exit(ProblemDeclaration problemDeclaration) {
+    }
+
+    void exit(ProblemExpression problemExpression) {
+    }
+
+    void exit(RangeExpression rangeExpression) {
+    }
+
+    void exit(RecordDeclaration recordDeclaration) {
+    }
+
+    void exit(RecordTemplateDeclaration recordtemplateDeclaration) {
+    }
+
+    void exit(Reference reference) {
+    }
+
+    void exit(ReturnStatement returnStatement) {
+    }
+
+    void exit(ShortCircuitOperator shortcircuitoperator) {
+    }
+
+    void exit(Statement Statement) {
+    }
+
+    void exit(SubscriptExpression subscriptExpression) {
+    }
+
+    void exit(SwitchStatement switchStatement) {
+    }
+
+    void exit(SynchronizedStatement synchronizedStatement) {
+    }
+
+    void exit(TemplateDeclaration templateDeclaration) {
+    }
+
+    void exit(TranslationUnitDeclaration translationunitDeclaration) {
+    }
+
+    void exit(TryStatement tryStatement) {
+    }
+
+    void exit(TupleDeclaration tupleDeclaration) {
+    }
+
+    void exit(TypedefDeclaration typedefDeclaration) {
+    }
+
+    void exit(TypeExpression typeExpression) {
+    }
+
+    void exit(TypeIdExpression typeidExpression) {
+    }
+
+    void exit(TypeParameterDeclaration typeparameterDeclaration) {
+    }
+
+    void exit(UnaryOperator unaryoperator) {
+    }
+
+    void exit(UsingDeclaration usingDeclaration) {
+    }
+
+    void exit(ValueDeclaration valueDeclaration) {
+    }
+
+    void exit(VariableDeclaration variableDeclaration) {
+    }
+
+    void exit(WhileStatement whileStatement) {
+    }
+
+    void visit(AssertStatement assertStatement) {
+    }
+
+    void visit(AssignExpression assignExpression) {
+    }
+
+    void visit(BinaryOperator binaryoperator) {
+    }
+
+    void visit(Block block) {
+    }
+
+    void visit(BreakStatement breakStatement) {
+    }
+
+    void visit(CallExpression callExpression) {
+    }
+
+    void visit(CaseStatement caseStatement) {
+    }
+
+    void visit(CastExpression castExpression) {
+    }
+
+    void visit(CatchClause catchclause) {
+    }
+
+    void visit(ConditionalExpression conditionalExpression) {
+    }
+
+    void visit(ConstructExpression constructExpression) {
+    }
+
+    void visit(ConstructorDeclaration constructorDeclaration) {
+    }
+
+    void visit(ContinueStatement continueStatement) {
+    }
+
+    void visit(Declaration declaration) {
+    }
+
+    void visit(DeclarationSequence declarationsequence) {
+    }
+
+    void visit(DeclarationStatement declarationStatement) {
+    }
+
+    void visit(DefaultStatement defaultStatement) {
+    }
+
+    void visit(DeleteExpression deleteExpression) {
+    }
+
+    void visit(DoStatement doStatement) {
+    }
+
+    void visit(EmptyStatement emptyStatement) {
+    }
+
+    void visit(EnumConstantDeclaration enumconstantDeclaration) {
+    }
+
+    void visit(EnumDeclaration enumDeclaration) {
+    }
+
+    void visit(Expression expression) {
+    }
+
+    void visit(ExpressionList expressionlist) {
+    }
+
+    void visit(FieldDeclaration fieldDeclaration) {
+    }
+
+    void visit(ForEachStatement foreachStatement) {
+    }
+
+    void visit(ForStatement forStatement) {
+    }
+
+    void visit(FunctionDeclaration functionDeclaration) {
+    }
+
+    void visit(FunctionTemplateDeclaration functiontemplateDeclaration) {
+    }
+
+    void visit(GotoStatement gotoStatement) {
+    }
+
+    void visit(IfStatement ifStatement) {
+    }
+
+    void visit(IncludeDeclaration includeDeclaration) {
+    }
+
+    void visit(InitializerListExpression initializerlistExpression) {
+    }
+
+    void visit(KeyValueExpression keyvalueExpression) {
+    }
+
+    void visit(LabelStatement labelStatement) {
+    }
+
+    void visit(LambdaExpression lambdaExpression) {
+    }
+
+    void visit(Literal<?> literal) {
+    }
+
+    void visit(MemberCallExpression membercallExpression) {
+    }
+
+    void visit(MemberExpression memberExpression) {
     }
 
     void visit(MethodDeclaration methodDeclaration) {
-        
     }
 
-    void exit(MethodDeclaration methodDeclaration) {}
+    void visit(NamespaceDeclaration namespaceDeclaration) {
+    }
 
-    void visit(NamespaceDeclaration namespaceDeclaration) {}
+    void visit(NewArrayExpression newarrayExpression) {
+    }
 
-    void exit(NamespaceDeclaration namespaceDeclaration) {}
+    void visit(NewExpression newExpression) {
+    }
 
-    void visit(ParameterDeclaration parameterDeclaration) {}
+    void visit(ParameterDeclaration parameterDeclaration) {
+    }
 
-    void exit(ParameterDeclaration parameterDeclaration) {}
+    void visit(ProblemDeclaration problemDeclaration) {
+    }
 
-    void visit(ProblemDeclaration problemDeclaration) {}
+    void visit(ProblemExpression problemExpression) {
+    }
 
-    void exit(ProblemDeclaration problemDeclaration) {}
+    void visit(RangeExpression rangeExpression) {
+    }
 
-    void visit(RecordDeclaration recordDeclaration) {}
+    void visit(RecordDeclaration recordDeclaration) {
+    }
 
-    void exit(RecordDeclaration recordDeclaration) {}
+    void visit(RecordTemplateDeclaration recordtemplateDeclaration) {
+    }
 
-    void visit(RecordTemplateDeclaration recordtemplateDeclaration) {}
+    void visit(Reference reference) {
+    }
 
-    void exit(RecordTemplateDeclaration recordtemplateDeclaration) {}
+    void visit(ReturnStatement returnStatement) {
+    }
 
-    void visit(TemplateDeclaration templateDeclaration) {}
+    void visit(ShortCircuitOperator shortcircuitoperator) {
+    }
 
-    void exit(TemplateDeclaration templateDeclaration) {}
+    void visit(Statement Statement) {
+    }
 
-    void visit(TranslationUnitDeclaration translationunitDeclaration) {}
+    void visit(SubscriptExpression subscriptExpression) {
+    }
 
-    void exit(TranslationUnitDeclaration translationunitDeclaration) {}
+    void visit(SwitchStatement switchStatement) {
+    }
 
-    void visit(TupleDeclaration tupleDeclaration) {}
+    void visit(SynchronizedStatement synchronizedStatement) {
+    }
 
-    void exit(TupleDeclaration tupleDeclaration) {}
+    void visit(TemplateDeclaration templateDeclaration) {
+    }
 
-    void visit(TypedefDeclaration typedefDeclaration) {}
+    void visit(TranslationUnitDeclaration translationunitDeclaration) {
+    }
 
-    void exit(TypedefDeclaration typedefDeclaration) {}
+    void visit(TryStatement tryStatement) {
+    }
 
-    void visit(TypeParameterDeclaration typeparameterDeclaration) {}
+    void visit(TupleDeclaration tupleDeclaration) {
+    }
 
-    void exit(TypeParameterDeclaration typeparameterDeclaration) {}
+    void visit(TypedefDeclaration typedefDeclaration) {
+    }
 
-    void visit(UsingDeclaration usingDeclaration) {}
+    void visit(TypeExpression typeExpression) {
+    }
 
-    void exit(UsingDeclaration usingDeclaration) {}
+    void visit(TypeIdExpression typeidExpression) {
+    }
 
-    void visit(ValueDeclaration valueDeclaration) {}
+    void visit(TypeParameterDeclaration typeparameterDeclaration) {
+    }
 
-    void exit(ValueDeclaration valueDeclaration) {}
+    void visit(UnaryOperator unaryoperator) {
+    }
 
-    void visit(VariableDeclaration variableDeclaration) {}
+    void visit(UsingDeclaration usingDeclaration) {
+    }
 
-    void exit(VariableDeclaration variableDeclaration) {}
+    void visit(ValueDeclaration valueDeclaration) {
+    }
 
-    void visit(ASMDeclarationStatement asmDeclarationStatement) {}
+    void visit(VariableDeclaration variableDeclaration) {
+    }
 
-    void exit(ASMDeclarationStatement asmDeclarationStatement) {}
+    void visit(WhileStatement whileStatement) {
+    }
 
-    void visit(AssertStatement assertStatement) {}
-
-    void exit(AssertStatement assertStatement) {}
-
-    void visit(BreakStatement breakStatement) {}
-
-    void exit(BreakStatement breakStatement) {}
-
-    void visit(CaseStatement caseStatement) {}
-
-    void exit(CaseStatement caseStatement) {}
-
-    void visit(CatchClause catchclause) {}
-
-    void exit(CatchClause catchclause) {}
-
-    void visit(ContinueStatement continueStatement) {}
-
-    void exit(ContinueStatement continueStatement) {}
-
-    void visit(DeclarationStatement declarationStatement) {}
-
-    void exit(DeclarationStatement declarationStatement) {}
-
-    void visit(DefaultStatement defaultStatement) {}
-
-    void exit(DefaultStatement defaultStatement) {}
-
-    void visit(DoStatement doStatement) {}
-
-    void exit(DoStatement doStatement) {}
-
-    void visit(EmptyStatement emptyStatement) {}
-
-    void exit(EmptyStatement emptyStatement) {}
-
-    void visit(ForEachStatement foreachStatement) {}
-
-    void exit(ForEachStatement foreachStatement) {}
-
-    void visit(ForStatement forStatement) {}
-
-    void exit(ForStatement forStatement) {}
-
-    void visit(GotoStatement gotoStatement) {}
-
-    void exit(GotoStatement gotoStatement) {}
-
-    void visit(IfStatement ifStatement) {}
-
-    void exit(IfStatement ifStatement) {}
-
-    void visit(LabelStatement labelStatement) {}
-
-    void exit(LabelStatement labelStatement) {}
-
-    void visit(ReturnStatement returnStatement) {}
-
-    void exit(ReturnStatement returnStatement) {}
-
-    void visit(Statement Statement) {}
-
-    void exit(Statement Statement) {}
-
-    void visit(SwitchStatement switchStatement) {}
-
-    void exit(SwitchStatement switchStatement) {}
-
-    void visit(SynchronizedStatement synchronizedStatement) {}
-
-    void exit(SynchronizedStatement synchronizedStatement) {}
-
-    void visit(TryStatement tryStatement) {}
-
-    void exit(TryStatement tryStatement) {}
-
-    void visit(WhileStatement whileStatement) {}
-
-    void exit(WhileStatement whileStatement) {}
-
-    void visit(AssignExpression assignExpression) {}
-
-    void exit(AssignExpression assignExpression) {}
-
-    void visit(BinaryOperator binaryoperator) {}
-
-    void exit(BinaryOperator binaryoperator) {}
-
-    void visit(Block block) {}
-
-    void exit(Block block) {}
-
-    void visit(CallExpression callExpression) {}
-
-    void exit(CallExpression callExpression) {}
-
-    void visit(CastExpression castExpression) {}
-
-    void exit(CastExpression castExpression) {}
-
-    void visit(ConditionalExpression conditionalExpression) {}
-
-    void exit(ConditionalExpression conditionalExpression) {}
-
-    void visit(ConstructExpression constructExpression) {}
-
-    void exit(ConstructExpression constructExpression) {}
-
-    void visit(ConstructorCallExpression constructorCallExpression) {}
-
-    void exit(ConstructorCallExpression constructorCallExpression) {}
-
-    void visit(DeleteExpression deleteExpression) {}
-
-    void exit(DeleteExpression deleteExpression) {}
-
-    void visit(DesignatedInitializerExpression designatedinitializerExpression) {}
-
-    void exit(DesignatedInitializerExpression designatedinitializerExpression) {}
-
-    void visit(Expression expression) {}
-
-    void exit(Expression expression) {}
-
-    void visit(ExpressionList expressionlist) {}
-
-    void exit(ExpressionList expressionlist) {}
-
-    void visit(InitializerListExpression initializerlistExpression) {}
-
-    void exit(InitializerListExpression initializerlistExpression) {}
-
-    void visit(KeyValueExpression keyvalueExpression) {}
-
-    void exit(KeyValueExpression keyvalueExpression) {}
-
-    void visit(LambdaExpression lambdaExpression) {}
-
-    void exit(LambdaExpression lambdaExpression) {}
-
-    void visit(Literal<?> literal) {}
-
-    void exit(Literal<?> literal) {}
-
-    void visit(MemberCallExpression membercallExpression) {}
-
-    void exit(MemberCallExpression membercallExpression) {}
-
-    void visit(MemberExpression memberExpression) {}
-
-    void exit(MemberExpression memberExpression) {}
-
-    void visit(NewArrayExpression newarrayExpression) {}
-
-    void exit(NewArrayExpression newarrayExpression) {}
-
-    void visit(NewExpression newExpression) {}
-
-    void exit(NewExpression newExpression) {}
-
-    void visit(ProblemExpression problemExpression) {}
-
-    void exit(ProblemExpression problemExpression) {}
-
-    void visit(RangeExpression rangeExpression) {}
-
-    void exit(RangeExpression rangeExpression) {}
-
-    void visit(Reference reference) {}
-
-    void exit(Reference reference) {}
-
-    void visit(ShortCircuitOperator shortcircuitoperator) {}
-
-    void exit(ShortCircuitOperator shortcircuitoperator) {}
-
-    void visit(SubscriptExpression subscriptExpression) {}
-
-    void exit(SubscriptExpression subscriptExpression) {}
-
-    void visit(TypeExpression typeExpression) {}
-
-    void exit(TypeExpression typeExpression) {}
-
-    void visit(TypeIdExpression typeidExpression) {}
-
-    void exit(TypeIdExpression typeidExpression) {}
-
-    void visit(UnaryOperator unaryoperator) {}
-
-    void exit(UnaryOperator unaryoperator) {}
 }

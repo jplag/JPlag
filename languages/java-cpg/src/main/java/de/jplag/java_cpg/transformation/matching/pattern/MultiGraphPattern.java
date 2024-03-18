@@ -1,14 +1,18 @@
 package de.jplag.java_cpg.transformation.matching.pattern;
 
-import de.fraunhofer.aisec.cpg.graph.Node;
-
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
+import de.fraunhofer.aisec.cpg.graph.Node;
+import de.jplag.java_cpg.transformation.GraphTransformation;
+
+/**
+ * A {@link MultiGraphPattern} is a {@link GraphPattern} that involves multiple subtrees that may or may not be linked to each other directly in the AST.
+ * It can be used to facilitate the formulation of complex {@link GraphTransformation}s.
+ */
 public class MultiGraphPattern extends GraphPatternImpl {
     private final List<SimpleGraphPattern<?>> subgraphs;
 
@@ -24,11 +28,13 @@ public class MultiGraphPattern extends GraphPatternImpl {
     }
 
     @Override
-    public Iterator<Match> multiMatch(Map<NodePattern<?>, List<? extends Node>> rootCandidateMap) {
+    public List<Match> match(Map<NodePattern<?>, List<? extends Node>> rootCandidateMap) {
         List<Match> matches = new ArrayList<>();
         matches.add(new Match(this));
         getRoots().forEach(root -> {
-            if (matches.isEmpty()) return;
+            if (matches.isEmpty()) {
+                return;
+            }
             List<? extends Node> rootCandidates = rootCandidateMap.get(root);
             List<Match> rootMatches = rootCandidates.stream().flatMap(rootCandidate -> {
                 List<Match> matchesCopy = copy(matches);
@@ -39,20 +45,15 @@ public class MultiGraphPattern extends GraphPatternImpl {
             matches.addAll(rootMatches);
             // root matches from the nth root get passed on to the (n+1)th root
         });
-        return matches.stream().sorted().toList().iterator();
+        return matches.stream().sorted().toList();
     }
 
     @Override
     public boolean validate(Match match) {
-        Map<NodePattern<?>, List<? extends Node>> rootCandidates = getRoots().stream().collect(Collectors.toMap(
-            root -> root,
-            root -> List.of(match.get(root))
-        ));
-        Iterator<Match> matches = multiMatch(rootCandidates);
-        while (matches.hasNext()) {
-            if (matches.next().equals(match)) return true;
-        }
-        return false;
+        Map<NodePattern<?>, List<? extends Node>> rootCandidates = getRoots().stream()
+                .collect(Collectors.toMap(root -> root, root -> List.of(match.get(root))));
+        List<Match> matches = match(rootCandidates);
+        return matches.stream().anyMatch(match::equals);
     }
 
     @Override
@@ -66,8 +67,4 @@ public class MultiGraphPattern extends GraphPatternImpl {
         }
     }
 
-    @Override
-    public <T extends Node> List<Match> recursiveMatch(T candidate) {
-        return null;
-    }
 }

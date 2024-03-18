@@ -4,7 +4,6 @@ import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
-import de.fraunhofer.aisec.cpg.passes.order.ExecuteBefore
 import de.jplag.java_cpg.transformation.GraphTransformation
 import de.jplag.java_cpg.transformation.matching.CpgIsomorphismDetector
 import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern
@@ -13,43 +12,25 @@ import de.jplag.java_cpg.transformation.operations.DummyNeighbor
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+
 /**
- * This pass handles the transformations in the pipeline of the CPG process.
+ * A ATransformationPass is an abstract transformation pass. All transformation passes function the same way, but need
+ * to be separate classes to work with the CPG pipeline.
  */
-@ExecuteBefore(TokenizationPass::class)
-class CleanupTransformationPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
+abstract class ATransformationPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
-    companion object {
-
-        @JvmStatic
-        val transformations: MutableList<GraphTransformation<*>> = ArrayList()
-
-        @JvmStatic
-        fun registerTransformation(transformation: GraphTransformation<*>) {
-            transformations.add(transformation)
-        }
-
-        @JvmStatic
-        fun registerTransformations(newTransformations: Array<GraphTransformation<*>>) {
-            transformations.addAll(newTransformations)
-        }
-
-        @JvmStatic
-        fun clearTransformations() {
-            transformations.clear()
-        }
-
-        @JvmStatic
-        val logger: Logger = LoggerFactory.getLogger(CleanupTransformationPass::class.java)
-    }
+    val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     override fun accept(t: TranslationResult) {
         val detector = CpgIsomorphismDetector()
-        for (transformation: GraphTransformation<*> in transformations) {
+        for (transformation: GraphTransformation<*> in getPhaseSpecificTransformations()) {
             detector.loadGraph(t)
             instantiate(transformation, detector)
         }
+
     }
+
+    abstract fun getPhaseSpecificTransformations(): List<GraphTransformation<*>>
 
     /**
      * Applies the given transformation to all the matches that the detector can find.
@@ -62,10 +43,14 @@ class CleanupTransformationPass(ctx: TranslationContext) : TranslationResultPass
         var invalidated: Boolean
         do {
             invalidated = false
-            val matches: Iterator<Match> = detector.getMatches(sourcePattern)
+            var matches: List<Match> = detector.getMatches(sourcePattern)
 
-            while (matches.hasNext()) {
-                val match = matches.next()
+            if (transformation.executionOrder == GraphTransformation.ExecutionOrder.DESCENDING_LOCATION) {
+                matches = matches.reversed();
+            }
+
+            for (match: Match in matches) {
+                // transformations may lead to other matches being invalidated
                 if (detector.validateMatch(match, sourcePattern)) {
                     count++
                     transformation.apply(match, ctx)
@@ -95,4 +80,5 @@ class CleanupTransformationPass(ctx: TranslationContext) : TranslationResultPass
             }
         }
     }
+
 }

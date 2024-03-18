@@ -6,8 +6,11 @@ import java.util.List;
 
 /**
  * Container for a languages options. Should be implemented per language.
+ * @author robin
+ * @version $Id: $Id
  */
 public abstract class LanguageOptions {
+    /** Constant <code>EMPTY_OPTIONS</code> */
     public static final LanguageOptions EMPTY_OPTIONS = new LanguageOptions() {
     };
 
@@ -73,6 +76,9 @@ public abstract class LanguageOptions {
     }
 
     /**
+     * <p>
+     * getOptionsAsList.
+     * </p>
      * @return The list of all options
      */
     public List<LanguageOption<?>> getOptionsAsList() {

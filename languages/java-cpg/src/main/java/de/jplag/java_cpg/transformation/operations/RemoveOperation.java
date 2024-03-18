@@ -1,5 +1,11 @@
 package de.jplag.java_cpg.transformation.operations;
 
+import java.util.List;
+import java.util.Objects;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.fraunhofer.aisec.cpg.TranslationContext;
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.graph.edge.Properties;
@@ -11,11 +17,6 @@ import de.jplag.java_cpg.transformation.matching.edges.CpgNthEdge;
 import de.jplag.java_cpg.transformation.matching.pattern.Match;
 import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
 import de.jplag.java_cpg.transformation.matching.pattern.WildcardGraphPattern;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.Objects;
 
 /**
  * This operation removes a {@link Node} from its AST context.
@@ -49,11 +50,12 @@ public final class RemoveOperation<S extends Node, T extends Node> extends Graph
     }
 
     public static <S extends Node, T extends Node> void apply(T element, S parent, CpgEdge<S, T> edge, boolean disconnectEog) {
-        logger.debug("Remove " + element.toString());
 
         if (!(edge instanceof CpgNthEdge<S, T> nthEdge)) {
+            logger.debug("Remove " + element.toString());
             edge.setter().accept(parent, null);
         } else if (nthEdge.getMultiEdge().isEdgeValued()) {
+            logger.debug("Remove %s (Element no. %d of %s)".formatted(element.toString(), nthEdge.getIndex(), parent));
             // set edge indices of successors
             List<PropertyEdge<T>> siblingEdges = nthEdge.getMultiEdge().getAllEdges(parent);
             int index = nthEdge.getIndex();
@@ -68,7 +70,7 @@ public final class RemoveOperation<S extends Node, T extends Node> extends Graph
             }
 
         } else {
-            //nthEdge is node-valued
+            // nthEdge is node-valued
             List<T> siblings = nthEdge.getMultiEdge().getAllTargets(parent);
             siblings.remove(element);
         }
@@ -77,11 +79,11 @@ public final class RemoveOperation<S extends Node, T extends Node> extends Graph
             return;
         }
 
-        List<Node> predExits = TransformationHelper.disconnectFromPredecessor(element);
-        Node succEntry = TransformationHelper.disconnectFromSuccessor(element);
+        List<Node> predExits = TransformationUtil.disconnectFromPredecessor(element);
+        Node succEntry = TransformationUtil.disconnectFromSuccessor(element);
 
         if (!Objects.isNull(succEntry) && succEntry != DummyNeighbor.getInstance()) {
-            predExits.forEach(exit -> TransformationHelper.connectNewSuccessor(exit, succEntry, false));
+            predExits.forEach(exit -> TransformationUtil.connectNewSuccessor(exit, succEntry, false));
         }
     }
 
@@ -104,7 +106,7 @@ public final class RemoveOperation<S extends Node, T extends Node> extends Graph
     @Override
     public GraphOperation instantiateAny1ofNEdge(Match match) {
         CpgMultiEdge<S, T>.Any1ofNEdge any1OfNEdge = (CpgMultiEdge<S, T>.Any1ofNEdge) edge;
-        return new RemoveOperation<>(parentPattern, match.getEdge(any1OfNEdge), this.disconnectEog);
+        return new RemoveOperation<>(parentPattern, match.getEdge(this.parentPattern, any1OfNEdge), this.disconnectEog);
     }
 
 }

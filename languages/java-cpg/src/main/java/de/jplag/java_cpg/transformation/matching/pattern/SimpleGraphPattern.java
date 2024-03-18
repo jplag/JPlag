@@ -1,16 +1,16 @@
 package de.jplag.java_cpg.transformation.matching.pattern;
 
-import de.fraunhofer.aisec.cpg.graph.Node;
-
 import java.util.*;
 import java.util.function.BiConsumer;
+
+import de.fraunhofer.aisec.cpg.graph.Node;
 
 /**
  * A {@link SimpleGraphPattern} describes the occurrence and relation of {@link Node}s in a Graph and their properties.
  * A SimpleGraphPattern has exactly one root {@link NodePattern}.
  * @param <T> the root {@link Node} type of the graph pattern
  */
-public class SimpleGraphPattern<T extends Node> extends GraphPatternImpl  {
+public class SimpleGraphPattern<T extends Node> extends GraphPatternImpl {
 
     private NodePattern<T> root;
 
@@ -41,8 +41,8 @@ public class SimpleGraphPattern<T extends Node> extends GraphPatternImpl  {
     }
 
     @Override
-    public Iterator<Match> multiMatch(Map<NodePattern<?>, List<? extends Node>> rootCandidates) {
-        return rootCandidates.get(root).stream().map(this::recursiveMatch).flatMap(List::stream).sorted().toList().iterator();
+    public List<Match> match(Map<NodePattern<?>, List<? extends Node>> rootCandidates) {
+        return rootCandidates.get(root).stream().map(this::recursiveMatch).flatMap(List::stream).toList();
     }
 
     /**
@@ -64,11 +64,11 @@ public class SimpleGraphPattern<T extends Node> extends GraphPatternImpl  {
         return matches.stream().anyMatch(match::equals);
     }
 
-
     @Override
     public void compareTo(GraphPattern targetPattern, BiConsumer<NodePattern<?>, NodePattern<?>> compareFunction) {
         if (!(targetPattern instanceof SimpleGraphPattern<?> tTarget && Objects.equals(root.getClass(), tTarget.root.getClass()))) {
-            throw new RuntimeException("Invalid Transformation: SimpleGraphPattern %s is incompatible with %s".formatted(this.toString(), targetPattern.toString()));
+            throw new RuntimeException(
+                    "Invalid Transformation: SimpleGraphPattern %s is incompatible with %s".formatted(this.toString(), targetPattern.toString()));
         }
         compareFunction.accept(this.root, tTarget.getRoot());
     }
@@ -80,6 +80,5 @@ public class SimpleGraphPattern<T extends Node> extends GraphPatternImpl  {
     protected void setRoot(NodePattern<T> rootPattern) {
         this.root = rootPattern;
     }
-
 
 }
