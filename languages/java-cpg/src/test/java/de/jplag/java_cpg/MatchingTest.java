@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import de.jplag.java_cpg.transformation.matching.pattern.SimpleGraphPattern;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -20,9 +19,9 @@ import de.fraunhofer.aisec.cpg.graph.statements.IfStatement;
 import de.jplag.ParsingException;
 import de.jplag.java_cpg.transformation.matching.CpgIsomorphismDetector;
 import de.jplag.java_cpg.transformation.matching.PatternRepository;
-import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern;
 import de.jplag.java_cpg.transformation.matching.pattern.GraphPatternBuilder;
 import de.jplag.java_cpg.transformation.matching.pattern.Match;
+import de.jplag.java_cpg.transformation.matching.pattern.SimpleGraphPattern;
 
 public class MatchingTest extends AbstractJavaCpgLanguageTest {
 
@@ -51,7 +50,7 @@ public class MatchingTest extends AbstractJavaCpgLanguageTest {
                 if (matches.isEmpty()) {
                     return false;
                 }
-                LOGGER.info("Mapping contained %d nodes.".formatted(matches.get(0).getSize()));
+                LOGGER.info("Mapping contained %d nodes.".formatted(matches.getFirst().getSize()));
                 return true;
             }));
         } catch (ParsingException e) {

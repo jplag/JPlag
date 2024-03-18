@@ -22,9 +22,8 @@ import de.jplag.java_cpg.transformation.operations.*;
 /**
  * This saves all information related to a transformation on a graph. Note that the source and target patterns have to
  * have compatible root types, otherwise the transformed graph may not be semantically correct.
- * @param <T> the common root {@link Node} type of the source and target {@link NodePattern}s.
  */
-public interface GraphTransformation<T extends Node> {
+public interface GraphTransformation {
 
     /**
      * Applies the transformation to the Graph represented by the given {@link Match} which indicates which {@link Node}s
@@ -79,7 +78,7 @@ public interface GraphTransformation<T extends Node> {
         DESCENDING_LOCATION
     }
 
-    class GraphTransformationImpl<T extends Node> implements GraphTransformation<T> {
+    class GraphTransformationImpl<T extends Node> implements GraphTransformation {
         private final static Logger logger = LoggerFactory.getLogger(GraphTransformationImpl.class);
         protected final GraphPattern sourcePattern;
         protected final GraphPattern targetPattern;
@@ -211,7 +210,7 @@ public interface GraphTransformation<T extends Node> {
             return new Builder<>(sourcePattern, targetPattern, name, phase);
         }
 
-        private GraphTransformation<T> calculateTransformation() {
+        private GraphTransformation calculateTransformation() {
             List<CreateNodeOperation<?>> newNodes = this.createNewNodes(sourcePattern, targetPattern);
             List<GraphOperation> ops = new ArrayList<>();
             sourcePattern.compareTo(targetPattern, (srcPattern, tgtPattern) -> compare(srcPattern, tgtPattern, null, ops, null));
@@ -287,7 +286,6 @@ public interface GraphTransformation<T extends Node> {
 
         }
 
-
         private <S extends Node> void handleSimpleRelationships(NodePattern<S> source, NodePattern<S> target, List<GraphOperation> ops) {
             List<NodePattern.RelatedNode<? super S, ?>> unprocessedTargetRelated = new ArrayList<>(target.getRelatedNodes());
             for (NodePattern.RelatedNode<? super S, ?> sourceRelated : source.getRelatedNodes()) {
@@ -295,8 +293,7 @@ public interface GraphTransformation<T extends Node> {
                     continue;
 
                 Optional<? extends NodePattern.RelatedNode> maybeNextTarget = unprocessedTargetRelated.stream()
-                        .filter(rel -> sourceRelated.edge().isEquivalentTo(rel.edge()))
-                        .map(rel -> sourceRelated.getClass().cast(rel)).findFirst();
+                        .filter(rel -> sourceRelated.edge().isEquivalentTo(rel.edge())).map(rel -> sourceRelated.getClass().cast(rel)).findFirst();
 
                 maybeNextTarget.ifPresent(unprocessedTargetRelated::remove);
                 recurseSimple(source, sourceRelated, maybeNextTarget.orElse(null), ops);
@@ -398,7 +395,7 @@ public interface GraphTransformation<T extends Node> {
             }
         }
 
-        public GraphTransformation<T> build() {
+        public GraphTransformation build() {
             return this.calculateTransformation();
         }
 

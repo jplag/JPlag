@@ -3,8 +3,6 @@ package de.jplag.java_cpg.transformation.matching;
 import static de.jplag.java_cpg.transformation.matching.edges.Edges.*;
 import static de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.*;
 
-import java.util.List;
-
 import de.fraunhofer.aisec.cpg.graph.declarations.FieldDeclaration;
 import de.fraunhofer.aisec.cpg.graph.declarations.MethodDeclaration;
 import de.fraunhofer.aisec.cpg.graph.declarations.ParameterDeclaration;
@@ -18,11 +16,10 @@ import de.fraunhofer.aisec.cpg.graph.types.IncompleteType;
 import de.fraunhofer.aisec.cpg.graph.types.ObjectType;
 import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern;
 import de.jplag.java_cpg.transformation.matching.pattern.GraphPatternBuilder;
-import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
 import de.jplag.java_cpg.transformation.matching.pattern.PatternUtil;
 
 /**
- *  This class is used to collect sub-patterns that may appear repetitively, or used in tests.
+ * This class is used to collect sub-patterns that may appear repetitively, or used in tests.
  */
 public final class PatternRepository {
 
@@ -74,6 +71,5 @@ public final class PatternRepository {
         };
 
     }
-
 
 }

@@ -36,7 +36,7 @@ public class CreateTransformTest extends AbstractJavaCpgLanguageTest {
 
     @ParameterizedTest
     @MethodSource("provideTuples")
-    public <T extends Node> void createTransformTest(String fileName, GraphTransformation<T> transformation)
+    public void createTransformTest(String fileName, GraphTransformation transformation)
             throws ParsingException, InterruptedException, ConnectException {
 
         Set<File> files = Set.of(new File(baseDirectory, fileName));
@@ -51,7 +51,7 @@ public class CreateTransformTest extends AbstractJavaCpgLanguageTest {
 
     }
 
-    private <T extends Node> void instantiate(GraphTransformation<T> transformation) {
+    private <T extends Node> void instantiate(GraphTransformation transformation) {
         GraphPattern sourcePattern = transformation.getSourcePattern();
         List<Match> maybeMatch = detector.getMatches(sourcePattern);
 

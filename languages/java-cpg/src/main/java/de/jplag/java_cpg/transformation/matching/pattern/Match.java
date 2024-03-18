@@ -11,8 +11,8 @@ import de.jplag.java_cpg.transformation.matching.edges.CpgMultiEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgNthEdge;
 
 /**
- * A {@link Match} stores the mapping between a {@link GraphPattern} and {@link Node}s matching the pattern.
- * Especially, a {@link WildcardGraphPattern.ParentNodePattern}'s match in the sourceGraph can be saved.
+ * A {@link Match} stores the mapping between a {@link GraphPattern} and {@link Node}s matching the pattern. Especially,
+ * a {@link WildcardGraphPattern.ParentNodePattern}'s match in the sourceGraph can be saved.
  */
 public class Match implements Comparable<Match> {
 

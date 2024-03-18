@@ -10,8 +10,9 @@ import de.fraunhofer.aisec.cpg.graph.Node;
 import de.jplag.java_cpg.transformation.GraphTransformation;
 
 /**
- * A {@link MultiGraphPattern} is a {@link GraphPattern} that involves multiple subtrees that may or may not be linked to each other directly in the AST.
- * It can be used to facilitate the formulation of complex {@link GraphTransformation}s.
+ * A {@link MultiGraphPattern} is a {@link GraphPattern} that involves multiple subtrees that may or may not be linked
+ * to each other directly in the AST. It can be used to facilitate the formulation of complex
+ * {@link GraphTransformation}s.
  */
 public class MultiGraphPattern extends GraphPatternImpl {
     private final List<SimpleGraphPattern<?>> subgraphs;

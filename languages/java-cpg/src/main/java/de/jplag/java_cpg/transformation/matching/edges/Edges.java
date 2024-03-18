@@ -1,6 +1,5 @@
 package de.jplag.java_cpg.transformation.matching.edges;
 
-import static de.jplag.java_cpg.transformation.matching.edges.EdgeUtil.getLocalName;
 import static de.jplag.java_cpg.transformation.matching.edges.IEdge.EdgeCategory.ANALYTIC;
 import static de.jplag.java_cpg.transformation.matching.edges.IEdge.EdgeCategory.REFERENCE;
 
@@ -8,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 import de.fraunhofer.aisec.cpg.graph.Component;
 import de.fraunhofer.aisec.cpg.graph.Name;
@@ -21,11 +19,8 @@ import de.fraunhofer.aisec.cpg.graph.types.IncompleteType;
 import de.fraunhofer.aisec.cpg.graph.types.ObjectType;
 import de.fraunhofer.aisec.cpg.graph.types.Type;
 import de.fraunhofer.aisec.cpg.sarif.PhysicalLocation;
-
 import de.jplag.java_cpg.transformation.GraphTransformation.Builder;
 import de.jplag.java_cpg.transformation.matching.pattern.WildcardGraphPattern;
-import kotlin.Pair;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * A constant class containing relevant {@link IEdge} objects.
@@ -173,12 +168,12 @@ public class Edges {
     }
 
     /**
-     * Registers AST edges to be found by {@link WildcardGraphPattern}s and by the general {@link Builder}.
-     * @param edge the e
-     * @param sClass
-     * @param tClass
-     * @param <S>
-     * @param <T>
+     * Registers an AST edge type to be found by {@link WildcardGraphPattern}s and by the general {@link Builder}.
+     * @param edge the edge
+     * @param sClass node class of the edge source
+     * @param tClass node class of the edge target
+     * @param <S> type of the edge source
+     * @param <T> type of the edge target
      */
     private static <S extends Node, T extends Node> void register(IEdge<S, T> edge, Class<S> sClass, Class<T> tClass) {
         edge.setFromClass(sClass);
@@ -187,6 +182,12 @@ public class Edges {
         toType.computeIfAbsent(tClass, c -> new ArrayList<>()).add(edge);
     }
 
+    /**
+     * Gets the list of edges with the given node class as target.
+     * @param tClass the target node class
+     * @return the list of edges
+     * @param <T> the target node type
+     */
     public static <T extends Node> List<IEdge<? extends Node, ? super T>> getEdgesToType(Class<T> tClass) {
         List<IEdge<?, ? super T>> result = new ArrayList<>();
         Class<? super T> type = tClass;

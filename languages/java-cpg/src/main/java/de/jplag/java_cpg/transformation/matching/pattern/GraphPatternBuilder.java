@@ -1,14 +1,15 @@
 package de.jplag.java_cpg.transformation.matching.pattern;
 
+import java.util.*;
+import java.util.function.Predicate;
+
+import org.jetbrains.annotations.NotNull;
+
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.jplag.java_cpg.transformation.matching.edges.CpgEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgMultiEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgPropertyEdge;
 import de.jplag.java_cpg.transformation.matching.pattern.NodePattern.ForAllRelatedNode;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.*;
-import java.util.function.Predicate;
 
 /**
  * Abstract builder class for {@link GraphPattern}s, offering convenience methods.
@@ -28,17 +29,16 @@ public abstract class GraphPatternBuilder {
 
     /**
      * Creates a {@link NodePattern} of the given {@link Node} {@link Class}.
-     *
-     * @param tClass        the class of the represented {@link Node}
-     * @param id            an identifier for this {@link NodePattern}
-     * @param patterns      the pattern registry as in-out parameter
+     * @param tClass the class of the represented {@link Node}
+     * @param id an identifier for this {@link NodePattern}
+     * @param patterns the pattern registry as in-out parameter
      * @param modifications the modifications to be applied to the new {@link NodePattern}
-     * @param <T>           the {@link Node} type of the represented {@link Node}
+     * @param <T> the {@link Node} type of the represented {@link Node}
      * @return the node pattern
      */
     @NotNull
     private static <T extends Node> NodePattern<T> createNodePattern(Class<T> tClass, String id, PatternRegistry patterns,
-                                                                     List<PatternModification<? super T>> modifications) {
+            List<PatternModification<? super T>> modifications) {
         NodePattern<T> related = NodePattern.forNodeType(tClass);
         patterns.put(id, related);
         modifications.forEach(m -> m.apply(related, patterns));
@@ -46,12 +46,12 @@ public abstract class GraphPatternBuilder {
     }
 
     /**
-     * Creates a {@link PatternModification} that adds the {@link MatchProperty} to a {@link NodePattern} that a specific attribute of a matching {@link Node} must be equal to the same attribute of another {@link Node}.
-     *
+     * Creates a {@link PatternModification} that adds the {@link MatchProperty} to a {@link NodePattern} that a specific
+     * attribute of a matching {@link Node} must be equal to the same attribute of another {@link Node}.
      * @param propertyEdge the property edge
-     * @param otherId      the identifier of the other {@link NodePattern}
-     * @param <S>          the {@link Node} type
-     * @param <P>          the attribute type
+     * @param otherId the identifier of the other {@link NodePattern}
+     * @param <S> the {@link Node} type
+     * @param <P> the attribute type
      * @return the {@link PatternModification}
      */
     public static <S extends Node, P> PatternModification<S> equalAttributes(CpgPropertyEdge<S, P> propertyEdge, String otherId) {
@@ -59,11 +59,11 @@ public abstract class GraphPatternBuilder {
     }
 
     /**
-     * Creates a {@link PatternModification} that adds the {@link MatchProperty} to a {@link NodePattern} that the assigned value is unchanged between the evaluation of the two given {@link Node}s.
-     *
+     * Creates a {@link PatternModification} that adds the {@link MatchProperty} to a {@link NodePattern} that the assigned
+     * value is unchanged between the evaluation of the two given {@link Node}s.
      * @param startId the identifier of the starting node id
-     * @param endId   the identifier of the end node id
-     * @param <S>     the type of
+     * @param endId the identifier of the end node id
+     * @param <S> the type of
      * @return the {@link PatternModification}
      */
     public static <S extends Node> PatternModification<S> assignedValueStableBetween(String startId, String endId) {
@@ -77,18 +77,16 @@ public abstract class GraphPatternBuilder {
     /**
      * Builds a {@link SimpleGraphPattern}. The specifics of the structure of the SimpleGraphPattern are defined in the
      * concrete subclasses of {@link GraphPatternBuilder}.
-     *
      * @return the graph pattern
      */
     public abstract GraphPattern build();
 
     /**
      * Convenience method to create a {@link NodePattern}.
-     *
-     * @param tClass        the {@link Node} class of the pattern
-     * @param id            the ID for the pattern
+     * @param tClass the {@link Node} class of the pattern
+     * @param id the ID for the pattern
      * @param modifications a list of modifications to the {@link NodePattern}
-     * @param <T>           the node type
+     * @param <T> the node type
      * @return the node pattern
      */
     @SafeVarargs
@@ -105,8 +103,8 @@ public abstract class GraphPatternBuilder {
     }
 
     /**
-     * Creates an empty {@link WildcardGraphPattern}. It can be used as a target pattern for a {@link de.jplag.java_cpg.transformation.GraphTransformation} where a {@link Node} shall be removed.
-     *
+     * Creates an empty {@link WildcardGraphPattern}. It can be used as a target pattern for a
+     * {@link de.jplag.java_cpg.transformation.GraphTransformation} where a {@link Node} shall be removed.
      * @return the wildcard graph pattern
      */
     protected SimpleGraphPattern<Node> emptyWildcardParent() {
@@ -126,15 +124,14 @@ public abstract class GraphPatternBuilder {
      */
     @SafeVarargs
     public final <T extends Node, R extends Node, C extends R> PatternModification<T> forAllRelated(CpgMultiEdge<T, R> multiEdge, Class<C> cClass,
-                                                                                                    String id, PatternModification<? super C>... modifications) {
+            String id, PatternModification<? super C>... modifications) {
         return new AddForAllRelated<>(multiEdge, cClass, id, Arrays.asList(modifications));
     }
 
     /**
      * Creates a {@link MultiGraphPattern} from the given {@link SimpleGraphPattern}s.
-     *
-     * @param subgraphs
-     * @return
+     * @param subgraphs the subgraph patterns
+     * @return the multi graph pattern
      */
     public final MultiGraphPattern multiRoot(SimpleGraphPattern<?>... subgraphs) {
         return new MultiGraphPattern(List.of(subgraphs), patterns);
@@ -143,7 +140,6 @@ public abstract class GraphPatternBuilder {
     /**
      * Creates a {@link PatternListModification} that adds a {@link NodePattern} to a {@link NodeListPattern}.
      * @param cClass the concrete class of the added NodePattern
-     * @param tClass the added node class as defined by the AST edge to the parent
      * @param id the identifier for the node pattern
      * @param modifications the modifications to be applied to the node
      * @return the pattern list modification
@@ -151,16 +147,14 @@ public abstract class GraphPatternBuilder {
      * @param <C> the concrete type of the added node
      */
     @SafeVarargs
-    public final <T extends Node, C extends T> PatternListModification<T> node(Class<C> cClass, Class<T> tClass, String id,
-                                                                               PatternModification<C>... modifications) {
-        return new AddNode<>(cClass, tClass, id, Arrays.asList(modifications));
+    public final <T extends Node, C extends T> PatternListModification<T> node(Class<C> cClass, String id, PatternModification<C>... modifications) {
+        return new AddNode<>(cClass, id, Arrays.asList(modifications));
     }
 
     /**
      * Creates a {@link PatternModification} to add a property to a {@link NodePattern}.
-     *
      * @param property the predicate establishing the property
-     * @param <T>      the target {@link Node} type
+     * @param <T> the target {@link Node} type
      * @return the pattern modification
      */
     public final <T extends Node> PatternModification<T> property(Predicate<T> property) {
@@ -168,97 +162,90 @@ public abstract class GraphPatternBuilder {
     }
 
     /**
-
-     * Creates a {@link PatternModification} that adds a new node pattern that is related to the reference node pattern
-     * via a 1:n relation.
-     *
-     * @param edge          the edge type connecting the node patterns
-     * @param rClass        the class object indicating the specified target's class type
-     * @param id            the name of the new related node pattern
+     * Creates a {@link PatternModification} that adds a new node pattern that is related to the reference node pattern via
+     * a 1:n relation.
+     * @param edge the edge type connecting the node patterns
+     * @param rClass the class object indicating the specified target's class type
+     * @param id the name of the new related node pattern
      * @param modifications a list of modifications targeting the new node pattern
-     * @param <T>           the type of the source node pattern
-     * @param <R>           the type of the relation target, defined by the edge
-     * @param <C>           the concrete type of the related node pattern
+     * @param <T> the type of the source node pattern
+     * @param <R> the type of the relation target, defined by the edge
+     * @param <C> the concrete type of the related node pattern
      * @return the pattern modification object
      */
     @SafeVarargs
     public final <T extends Node, R extends Node, C extends R> PatternModification<T> related(CpgEdge<T, R> edge, Class<C> rClass, String id,
-                                                                                              PatternModification<? super C>... modifications) {
+            PatternModification<? super C>... modifications) {
         return new AddRelatedNode<>(edge, rClass, id, Arrays.asList(modifications));
     }
 
     /**
-     * Creates a {@link PatternModification} that adds a new node pattern that is related to the reference node pattern
-     * via a 1:n relation.
-     *
-     * @param edge          the edge type connecting the node patterns
-     * @param rClass        the class object indicating the specified target's class type
-     * @param id            the name of the new related node pattern
+     * Creates a {@link PatternModification} that adds a new node pattern that is related to the reference node pattern via
+     * a 1:n relation.
+     * @param edge the edge type connecting the node patterns
+     * @param rClass the class object indicating the specified target's class type
+     * @param id the name of the new related node pattern
      * @param modifications a list of modifications targeting the new node pattern
-     * @param <T>           the type of the source node pattern
-     * @param <R>           the type of the relation target, defined by the edge
-     * @param <C>           the concrete type of the related node pattern
+     * @param <T> the type of the source node pattern
+     * @param <R> the type of the relation target, defined by the edge
+     * @param <C> the concrete type of the related node pattern
      * @return the pattern modification object
      */
     @SafeVarargs
     public final <T extends Node, R extends Node, C extends R> PatternModification<T> related1ToN(CpgMultiEdge<T, R> edge, Class<C> rClass, String id,
-                                                                                                  PatternModification<? super C>... modifications) {
+            PatternModification<? super C>... modifications) {
         return new AddRelated1ToNNode<>(edge, rClass, id, Arrays.asList(modifications));
     }
 
     /**
      * Creates a {@link PatternModification} to add a sequence of related node pattern to a {@link NodePattern}.
-     *
-     * @param edge   the multi-edge establishing the relation
+     * @param edge the multi-edge establishing the relation
      * @param cClass the (super)type class of the related nodes
-     * @param <S>    the source {@link Node} type
-     * @param <T>    the target {@link Node} type
+     * @param <S> the source {@link Node} type
+     * @param <T> the target {@link Node} type
      * @return the pattern modification
      */
     @SafeVarargs
     public final <S extends Node, T extends Node, C extends T> PatternModification<S> related1ToNSequence(CpgMultiEdge<S, T> edge, Class<C> cClass,
-                                                                                                          PatternListModification<C>... modifications) {
+            PatternListModification<C>... modifications) {
         return new AddRelated1ToNSequence<>(edge, cClass, Arrays.asList(modifications));
     }
 
     /**
      * Creates a {@link PatternModification} to add a 1:1 relation to an existing {@link NodePattern}.
-     *
      * @param edge the edge establishing the relation
-     * @param id   the ID of the existing target {@link NodePattern}
-     * @param <S>  the target {@link Node} type
+     * @param id the ID of the existing target {@link NodePattern}
+     * @param <S> the target {@link Node} type
      * @return the pattern modification
      */
     @SafeVarargs
     public final <S extends Node, T extends Node, C extends T> PatternModification<S> relatedExisting(CpgEdge<S, T> edge, Class<C> cClass, String id,
-                                                                                                      PatternModification<? super C>... modifications) {
+            PatternModification<? super C>... modifications) {
         return new AddRelatedExistingNode<>(edge, cClass, id, List.of(modifications));
     }
 
     /**
      * Creates a {@link PatternModification} to add a 1:n relation to an existing {@link NodePattern}.
-     *
      * @param edge the multi-edge establishing the relation
-     * @param id   the ID of the existing target {@link NodePattern}
-     * @param <T>  the target {@link Node} type
-     * @param <R>  the related {@link Node} type
+     * @param id the ID of the existing target {@link NodePattern}
+     * @param <T> the target {@link Node} type
+     * @param <R> the related {@link Node} type
      * @return the pattern modification
      */
     @SafeVarargs
     public final <T extends Node, R extends Node, C extends R> PatternModification<T> relatedExisting1ToN(CpgMultiEdge<T, R> edge, Class<C> cClass,
-                                                                                                          String id, PatternModification<C>... modifications) {
+            String id, PatternModification<C>... modifications) {
         return new AddRelatedExisting1ToNNode<>(edge, cClass, id, List.of(modifications));
     }
 
     public final <T extends Node> PatternModification<T> setRepresentingNode() {
-        return new SetRepresentingNode();
+        return new SetRepresentingNode<>();
     }
 
     /**
      * Creates a {@link PatternModification} that sets a flag to indicate that the child patterns contained in this pattern
      * are not relevant for the transformation calculation, but only for the pattern matching.
-     *
-     * @param <T>
+     * @param <T> the target node pattern type
      * @return the pattern modification
      */
     public final <T extends Node> PatternModification<T> stopRecursion() {
@@ -267,16 +254,15 @@ public abstract class GraphPatternBuilder {
 
     /**
      * Convenience method to create a {@link WildcardGraphPattern} with the specified child {@link NodePattern}.
-     *
-     * @param tClass        the child {@link Node} class
-     * @param childId       the ID for the child pattern
+     * @param tClass the child {@link Node} class
+     * @param childId the ID for the child pattern
      * @param modifications a list of modifications targeting the child node pattern
-     * @param <T>           the child {@link Node} type
+     * @param <T> the child {@link Node} type
      * @return the {@link WildcardGraphPattern}
      */
     @SafeVarargs
     public final <T extends Node> WildcardGraphPattern<T> wildcardParent(Class<T> tClass, String childId,
-                                                                         PatternModification<? super T>... modifications) {
+            PatternModification<? super T>... modifications) {
         NodePattern<T> child;
         if (!patterns.containsPattern(childId)) {
             child = createNodePattern(tClass, childId, patterns, Arrays.asList(modifications));
@@ -289,14 +275,12 @@ public abstract class GraphPatternBuilder {
 
     /**
      * {@link PatternModification}s serve to modify a {@link NodePattern}, e.g. add relations and properties to it.
-     *
      * @param <T> the target {@link Node} type
      */
     public sealed interface PatternModification<T extends Node> {
         /**
          * Applies this {@link PatternModification} to the given target {@link NodePattern}.
-         *
-         * @param target   the target {@link NodePattern}
+         * @param target the target {@link NodePattern}
          * @param patterns the current {@link SimpleGraphPattern}'s patterns
          */
         void apply(NodePattern<? extends T> target, PatternRegistry patterns);
@@ -309,7 +293,6 @@ public abstract class GraphPatternBuilder {
 
     /**
      * A PatternModification to add a {@link NodePattern} related via a {@link CpgEdge}.
-     *
      * @param <S> The source {@link Node} type
      * @param <T> The target {@link Node} type, specified by the edge
      * @param <C> The concrete target {@link Node} type
@@ -324,10 +307,9 @@ public abstract class GraphPatternBuilder {
 
         /**
          * Creates a new {@link AddRelatedNode} object.
-         *
-         * @param edge          the edge connecting the source node with the target node
-         * @param rClass        the concrete class of the target node
-         * @param id            the id for the related node
+         * @param edge the edge connecting the source node with the target node
+         * @param rClass the concrete class of the target node
+         * @param id the id for the related node
          * @param modifications list of modifications to the target node
          */
         public AddRelatedNode(CpgEdge<S, T> edge, Class<C> rClass, String id, List<PatternModification<? super C>> modifications) {
@@ -350,7 +332,7 @@ public abstract class GraphPatternBuilder {
         private final String id;
         private final List<PatternModification<? super C>> modifications;
 
-        public AddNode(Class<C> cClass, Class<T> tClass, String id, List<PatternModification<? super C>> modifications) {
+        public AddNode(Class<C> cClass, String id, List<PatternModification<? super C>> modifications) {
             this.cClass = cClass;
             this.id = id;
             this.modifications = modifications;
@@ -365,7 +347,6 @@ public abstract class GraphPatternBuilder {
 
     /**
      * A {@link PatternModification} to add a {@link NodePattern} related via a CpgEdge that has already been created.
-     *
      * @param <S> The source {@link Node} type
      * @param <T> The target {@link Node} type, specified by the edge
      */
@@ -378,9 +359,9 @@ public abstract class GraphPatternBuilder {
 
         /**
          * Creates a new {@link AddRelatedExistingNode} object.
-         *
          * @param edge the edge connecting the source node with the target node
-         * @param id   the id for the related node
+         * @param cClass the node class of the related node
+         * @param id the id for the related node
          */
         public AddRelatedExistingNode(CpgEdge<S, T> edge, Class<C> cClass, String id, List<PatternModification<? super C>> modifications) {
             this.getter = edge;
@@ -395,9 +376,9 @@ public abstract class GraphPatternBuilder {
             modifications.forEach(m -> m.apply(related, patterns));
         }
     }
+
     /**
      * A {@link PatternModification} to add a required {@link Predicate} property to a NodePattern.
-     *
      * @param <T> The target {@link Node} type
      */
 
@@ -416,7 +397,6 @@ public abstract class GraphPatternBuilder {
 
     /**
      * A {@link PatternModification} to add a {@link NodePattern} related via a CpgMultiEdge that has already been created.
-     *
      * @param <S> The source {@link Node} type
      * @param <T> The target {@link Node} type, specified by the edge
      */
@@ -428,9 +408,8 @@ public abstract class GraphPatternBuilder {
 
         /**
          * Creates a new {@link AddRelatedExisting1ToNNode} object.
-         *
          * @param edge the edge connecting the source node with the target node
-         * @param id   the id for the related node
+         * @param id the id for the related node
          */
         public AddRelatedExisting1ToNNode(CpgMultiEdge<S, T> edge, Class<C> cClass, String id, List<PatternModification<C>> modifications) {
             this.edge = edge;
@@ -448,7 +427,6 @@ public abstract class GraphPatternBuilder {
 
     /**
      * A {@link PatternModification} to add a {@link NodePattern} related via a CpgMultiEdge.
-     *
      * @param <S> The source {@link Node} type
      * @param <T> The target {@link Node} type, specified by the edge
      * @param <C> The concrete target {@link Node} type
@@ -461,10 +439,9 @@ public abstract class GraphPatternBuilder {
 
         /**
          * Creates a new {@link AddRelated1ToNNode} object.
-         *
-         * @param edge          the edge connecting the source node with the target node
-         * @param cClass        the concrete class of the target node
-         * @param id            the id for the related node
+         * @param edge the edge connecting the source node with the target node
+         * @param cClass the concrete class of the target node
+         * @param id the id for the related node
          * @param modifications list of modifications to the target node
          */
         public AddRelated1ToNNode(CpgMultiEdge<S, T> edge, Class<C> cClass, String id, List<PatternModification<? super C>> modifications) {
@@ -491,9 +468,8 @@ public abstract class GraphPatternBuilder {
 
         /**
          * Creates a new {@link AddForAllRelated} object.
-         *
-         * @param edge          the edge connecting the source node with the target node
-         * @param cClass        the concrete class of the target node
+         * @param edge the edge connecting the source node with the target node
+         * @param cClass the concrete class of the target node
          * @param modifications list of modifications to the target node
          */
         public AddForAllRelated(CpgMultiEdge<S, T> edge, Class<C> cClass, String id, List<PatternModification<? super C>> modifications) {
@@ -531,8 +507,7 @@ public abstract class GraphPatternBuilder {
         }
     }
 
-    private record AddEqualAttributes<P, S extends Node>(CpgPropertyEdge<S, P> propertyEdge,
-                                                         String otherId) implements PatternModification<S> {
+    private record AddEqualAttributes<P, S extends Node>(CpgPropertyEdge<S, P> propertyEdge, String otherId) implements PatternModification<S> {
         @Override
         public void apply(NodePattern<? extends S> target, PatternRegistry patterns) {
             NodePattern<S> otherPattern = (NodePattern<S>) patterns.getPattern(otherId);
@@ -569,8 +544,7 @@ public abstract class GraphPatternBuilder {
         }
     }
 
-    private record AddAssignedValueStableBetween<S extends Node>(String startId,
-                                                                 String endId) implements PatternModification<S> {
+    private record AddAssignedValueStableBetween<S extends Node>(String startId, String endId) implements PatternModification<S> {
 
         @Override
         public void apply(NodePattern<? extends S> target, PatternRegistry patterns) {

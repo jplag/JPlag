@@ -365,8 +365,7 @@ public interface NodePattern<T extends Node> {
     }
 
     /**
-     * Pair of a node pattern of a related node and a function to get from a reference node to a candidate related
-     * node.
+     * Pair of a node pattern of a related node and a function to get from a reference node to a candidate related node.
      * @param <T> type of the reference node
      * @param <R> type of the related node
      * @param pattern the pattern describing the related node

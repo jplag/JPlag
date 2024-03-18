@@ -32,7 +32,7 @@ public class JavaCpgLanguage implements Language {
      * Adds the given {@link GraphTransformation} to the list to apply to the submissions.
      * @param transformation the transformation
      */
-    public void addTransformation(GraphTransformation<?> transformation) {
+    public void addTransformation(GraphTransformation transformation) {
         this.cpgAdapter.addTransformation(transformation);
     }
 
@@ -40,7 +40,7 @@ public class JavaCpgLanguage implements Language {
      * Adds the given {@link GraphTransformation}s to the list to apply to the submissions.
      * @param transformations the transformations
      */
-    public void addTransformations(GraphTransformation<?>[] transformations) {
+    public void addTransformations(GraphTransformation[] transformations) {
         this.cpgAdapter.addTransformations(transformations);
     }
 
@@ -78,7 +78,7 @@ public class JavaCpgLanguage implements Language {
      * Returns the set of transformations required to ensure that the tokenization works properly.
      * @return the array of obligatory transformations
      */
-    private GraphTransformation<?>[] obligatoryTransformations() {
+    private GraphTransformation[] obligatoryTransformations() {
         return new GraphTransformation[] {wrapThenStatement, wrapElseStatement, wrapForStatement, wrapWhileStatement, wrapDoStatement};
     }
 
@@ -86,7 +86,7 @@ public class JavaCpgLanguage implements Language {
      * Returns a set of transformations suggested for use.
      * @return the array of recommended transformations
      */
-    public GraphTransformation<?>[] standardTransformations() {
+    public GraphTransformation[] standardTransformations() {
         return new GraphTransformation[] {removeOptionalOfCall,               // 3
                 removeOptionalGetCall,              // 4
                 moveConstantToOnlyUsingClass,       // 6
@@ -100,7 +100,7 @@ public class JavaCpgLanguage implements Language {
      * Returns a set of all transformations.
      * @return the array of all transformations
      */
-    public GraphTransformation<?>[] allTransformations() {
+    public GraphTransformation[] allTransformations() {
         return new GraphTransformation[] {ifWithNegatedConditionResolution,   // 1
                 forStatementToWhileStatement,       // 2
                 removeOptionalOfCall,               // 3

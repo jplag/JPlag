@@ -23,34 +23,34 @@ import de.jplag.java_cpg.transformation.matching.pattern.SimpleGraphPattern;
  */
 public class TransformationRepository {
     /*
-    * These constants are supposed to avoid uselessly building the same graph transformations multiple times.
-    * Alternatively, all factory methods could be public and use private fields to create a kind-of singleton pattern.
-    */
-    public static final GraphTransformation<IfStatement> ifWithNegatedConditionResolution = ifWithNegatedConditionResolution();
-    public static final GraphTransformation<Node> forStatementToWhileStatement = forStatementToWhileStatement();
-    public static final GraphTransformation<RecordDeclaration> removeGetterMethod = removeGetterMethod();
-    public static final GraphTransformation<Node> removeUnusedVariableDeclaration = removeUnusedVariableDeclaration();
-    public static final GraphTransformation<Node> removeUnusedVariableDeclarationStatement = removeUnusedVariableDeclarationStatement();
-    public static final GraphTransformation<Node> removeEmptyDeclarationStatement = removeEmptyDeclarationStatement();
-    public static final GraphTransformation<TranslationUnitDeclaration> removeLibraryRecord = removeLibraryRecord();
-    public static final GraphTransformation<RecordDeclaration> removeLibraryField = removeLibraryField();
-    public static final GraphTransformation<Node> moveConstantToOnlyUsingClass = moveConstantToOnlyUsingClass();
-    public static final GraphTransformation<Node> inlineSingleUseVariable = inlineSingleUseVariable();
+     * These constants are supposed to avoid uselessly building the same graph transformations multiple times.
+     * Alternatively, all factory methods could be public and use private fields to create a kind-of singleton pattern.
+     */
+    public static final GraphTransformation ifWithNegatedConditionResolution = ifWithNegatedConditionResolution();
+    public static final GraphTransformation forStatementToWhileStatement = forStatementToWhileStatement();
+    public static final GraphTransformation removeGetterMethod = removeGetterMethod();
+    public static final GraphTransformation removeUnusedVariableDeclaration = removeUnusedVariableDeclaration();
+    public static final GraphTransformation removeUnusedVariableDeclarationStatement = removeUnusedVariableDeclarationStatement();
+    public static final GraphTransformation removeEmptyDeclarationStatement = removeEmptyDeclarationStatement();
+    public static final GraphTransformation removeLibraryRecord = removeLibraryRecord();
+    public static final GraphTransformation removeLibraryField = removeLibraryField();
+    public static final GraphTransformation moveConstantToOnlyUsingClass = moveConstantToOnlyUsingClass();
+    public static final GraphTransformation inlineSingleUseVariable = inlineSingleUseVariable();
 
-    public static final GraphTransformation<Node> inlineSingleUseConstant = inlineSingleUseConstant();
-    public static final GraphTransformation<RecordDeclaration> removeEmptyConstructor = removeEmptyConstructor();
+    public static final GraphTransformation inlineSingleUseConstant = inlineSingleUseConstant();
+    public static final GraphTransformation removeEmptyConstructor = removeEmptyConstructor();
 
-    public static final GraphTransformation<NamespaceDeclaration> removeEmptyRecord = removeEmptyRecord();
-    public static final GraphTransformation<RecordDeclaration> removeImplicitStandardConstructor = removeImplicitStandardConstructor();
-    public static final GraphTransformation<Node> removeOptionalOfCall = removeOptionalOfCall();
-    public static final GraphTransformation<Node> removeOptionalGetCall = removeOptionalGetCall();
-    public static final GraphTransformation<RecordDeclaration> removeUnsupportedConstructor = removeUnsupportedConstructor();
-    public static final GraphTransformation<RecordDeclaration> removeUnsupportedMethod = removeUnsupportedMethod();
-    public static final GraphTransformation<IfStatement> wrapElseStatement = wrapElseStatement();
-    public static final GraphTransformation<ForStatement> wrapForStatement = wrapForStatement();
-    public static final GraphTransformation<IfStatement> wrapThenStatement = wrapThenStatement();
-    public static final GraphTransformation<WhileStatement> wrapWhileStatement = wrapWhileStatement();
-    public static final GraphTransformation<DoStatement> wrapDoStatement = wrapDoStatement();
+    public static final GraphTransformation removeEmptyRecord = removeEmptyRecord();
+    public static final GraphTransformation removeImplicitStandardConstructor = removeImplicitStandardConstructor();
+    public static final GraphTransformation removeOptionalOfCall = removeOptionalOfCall();
+    public static final GraphTransformation removeOptionalGetCall = removeOptionalGetCall();
+    public static final GraphTransformation removeUnsupportedConstructor = removeUnsupportedConstructor();
+    public static final GraphTransformation removeUnsupportedMethod = removeUnsupportedMethod();
+    public static final GraphTransformation wrapElseStatement = wrapElseStatement();
+    public static final GraphTransformation wrapForStatement = wrapForStatement();
+    public static final GraphTransformation wrapThenStatement = wrapThenStatement();
+    public static final GraphTransformation wrapWhileStatement = wrapWhileStatement();
+    public static final GraphTransformation wrapDoStatement = wrapDoStatement();
 
     private TransformationRepository() {
     }
@@ -60,7 +60,7 @@ public class TransformationRepository {
      * blocks.
      * @return the graph transformation object
      */
-    private static GraphTransformation<IfStatement> ifWithNegatedConditionResolution() {
+    private static GraphTransformation ifWithNegatedConditionResolution() {
         SimpleGraphPattern<IfStatement> sourcePattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<IfStatement> build() {
@@ -92,7 +92,7 @@ public class TransformationRepository {
      * {@link VariableDeclaration}.
      * @return the graph transformation object
      */
-    private static GraphTransformation<Node> removeUnusedVariableDeclarationStatement() {
+    private static GraphTransformation removeUnusedVariableDeclarationStatement() {
         SimpleGraphPattern<Node> sourcePattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<Node> build() {
@@ -124,7 +124,7 @@ public class TransformationRepository {
      * </ul>
      * @return the graph transformation object
      */
-    private static GraphTransformation<Node> removeUnusedVariableDeclaration() {
+    private static GraphTransformation removeUnusedVariableDeclaration() {
         SimpleGraphPattern<Node> sourcePattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<Node> build() {
@@ -146,7 +146,7 @@ public class TransformationRepository {
      * Creates a {@link GraphTransformation} that removes a {@link DeclarationStatement} with no {@link Declaration}s.
      * @return the graph transformation object
      */
-    private static GraphTransformation<Node> removeEmptyDeclarationStatement() {
+    private static GraphTransformation removeEmptyDeclarationStatement() {
         SimpleGraphPattern<Node> sourcePattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<Node> build() {
@@ -168,7 +168,7 @@ public class TransformationRepository {
      * Creates a {@link GraphTransformation} that replaces {@link ForStatement}s by equivalent {@link WhileStatement}s.
      * @return the graph transformation
      */
-    private static GraphTransformation<Node> forStatementToWhileStatement() {
+    private static GraphTransformation forStatementToWhileStatement() {
         SimpleGraphPattern<Node> sourcePattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<Node> build() {
@@ -184,13 +184,10 @@ public class TransformationRepository {
             @Override
             public SimpleGraphPattern<Node> build() {
                 return wildcardParent(Block.class, "surroundingBlock",
-                        related1ToNSequence(BLOCK__STATEMENTS, Statement.class, node(Statement.class, Statement.class, "initStatement"),
-                                node(WhileStatement.class, Statement.class, "whileStatement",
-                                        related(WHILE_STATEMENT__CONDITION, Expression.class, "condition"),
-                                        related(WHILE_STATEMENT__STATEMENT, Block.class, "whileStatementBody",
-                                                related1ToNSequence(BLOCK__STATEMENTS, Statement.class,
-                                                        node(Statement.class, Statement.class, "body"),
-                                                        node(Statement.class, Statement.class, "iterationStatement"))))));
+                        related1ToNSequence(BLOCK__STATEMENTS, Statement.class, node(Statement.class, "initStatement"),
+                                node(WhileStatement.class, "whileStatement", related(WHILE_STATEMENT__CONDITION, Expression.class, "condition"),
+                                        related(WHILE_STATEMENT__STATEMENT, Block.class, "whileStatementBody", related1ToNSequence(BLOCK__STATEMENTS,
+                                                Statement.class, node(Statement.class, "body"), node(Statement.class, "iterationStatement"))))));
             }
 
         }.build();
@@ -204,7 +201,7 @@ public class TransformationRepository {
      * are fields of library classes that the CPG is unable to resolve correctly.
      * @return the graph transformation
      */
-    private static GraphTransformation<RecordDeclaration> removeLibraryField() {
+    private static GraphTransformation removeLibraryField() {
         /*
          * The SymbolResolver pass may interpret references to the standard library (e.g. java.util.List) as fields of the
          * current record. This transformation removes these fields.
@@ -232,7 +229,7 @@ public class TransformationRepository {
      * TranslationUnitDeclarations. These are classes from libraries that the CPG is unable to resolve correctly.
      * @return the graph transformation
      */
-    private static GraphTransformation<TranslationUnitDeclaration> removeLibraryRecord() {
+    private static GraphTransformation removeLibraryRecord() {
         SimpleGraphPattern<TranslationUnitDeclaration> sourcePattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<TranslationUnitDeclaration> build() {
@@ -255,7 +252,7 @@ public class TransformationRepository {
      * This serves to counter the formation of constant classes.
      * @return the graph transformation
      */
-    private static GraphTransformation<Node> moveConstantToOnlyUsingClass() {
+    private static GraphTransformation moveConstantToOnlyUsingClass() {
         MultiGraphPattern sourcePattern = new GraphPatternBuilder() {
             @Override
             public MultiGraphPattern build() {
@@ -299,7 +296,7 @@ public class TransformationRepository {
      * reference.
      * @return the graph transformation
      */
-    private static GraphTransformation<Node> inlineSingleUseVariable() {
+    private static GraphTransformation inlineSingleUseVariable() {
         MultiGraphPattern sourcePattern = new GraphPatternBuilder() {
             @Override
             public MultiGraphPattern build() {
@@ -337,7 +334,7 @@ public class TransformationRepository {
      * the value of the variable.
      * @return the graph transformation
      */
-    private static GraphTransformation<Node> inlineSingleUseConstant() {
+    private static GraphTransformation inlineSingleUseConstant() {
         MultiGraphPattern sourcePattern = new GraphPatternBuilder() {
             @Override
             public MultiGraphPattern build() {
@@ -373,7 +370,7 @@ public class TransformationRepository {
      * These are representations of the implicit constructor without parameters inherited from the Object class.
      * @return the graph transformation
      */
-    private static GraphTransformation<RecordDeclaration> removeImplicitStandardConstructor() {
+    private static GraphTransformation removeImplicitStandardConstructor() {
         SimpleGraphPattern<RecordDeclaration> sourcePattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<RecordDeclaration> build() {
@@ -399,7 +396,7 @@ public class TransformationRepository {
      * Creates a {@link GraphTransformation} that removes ConstructorDeclarations with an empty body.
      * @return the graph transformation
      */
-    private static GraphTransformation<RecordDeclaration> removeEmptyConstructor() {
+    private static GraphTransformation removeEmptyConstructor() {
         SimpleGraphPattern<RecordDeclaration> sourcePattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<RecordDeclaration> build() {
@@ -428,7 +425,7 @@ public class TransformationRepository {
      * ThrowStatement.
      * @return the graph transformation
      */
-    private static GraphTransformation<RecordDeclaration> removeUnsupportedConstructor() {
+    private static GraphTransformation removeUnsupportedConstructor() {
         SimpleGraphPattern<RecordDeclaration> sourcePattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<RecordDeclaration> build() {
@@ -459,7 +456,7 @@ public class TransformationRepository {
      * ThrowStatement.
      * @return the graph transformation
      */
-    private static GraphTransformation<RecordDeclaration> removeUnsupportedMethod() {
+    private static GraphTransformation removeUnsupportedMethod() {
         SimpleGraphPattern<RecordDeclaration> sourcePattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<RecordDeclaration> build() {
@@ -488,7 +485,7 @@ public class TransformationRepository {
      * Creates a {@link GraphTransformation} that removes MethodDeclarations with an empty body.
      * @return the graph transformation
      */
-    private static GraphTransformation<NamespaceDeclaration> removeEmptyRecord() {
+    private static GraphTransformation removeEmptyRecord() {
         SimpleGraphPattern<NamespaceDeclaration> sourcePattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<NamespaceDeclaration> build() {
@@ -509,12 +506,12 @@ public class TransformationRepository {
     }
 
     /**
-     * BEWARE: This transformation breaks the comparison algorithm, leading to a higher similarity value. <br>
+     * <b>BEWARE:</b> This transformation breaks the comparison algorithm, leading to a higher similarity value. <br>
      * <br>
      * Creates a {@link GraphTransformation} that removes TranslationUnits with no declarations.
      * @return the graph transformation
      */
-    private static GraphTransformation<Component> removeEmptyFile() {
+    private static GraphTransformation removeEmptyFile() {
         SimpleGraphPattern<Component> sourcePattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<Component> build() {
@@ -538,7 +535,7 @@ public class TransformationRepository {
      * is not a {@link Block}.
      * @return the graph transformation
      */
-    private static GraphTransformation<IfStatement> wrapThenStatement() {
+    private static GraphTransformation wrapThenStatement() {
         return wrapInBlock(IfStatement.class, IF_STATEMENT__THEN_STATEMENT, "wrapThenStatement");
     }
 
@@ -547,7 +544,7 @@ public class TransformationRepository {
      * is not a {@link Block}.
      * @return the graph transformation
      */
-    private static GraphTransformation<IfStatement> wrapElseStatement() {
+    private static GraphTransformation wrapElseStatement() {
         return wrapInBlock(IfStatement.class, IF_STATEMENT__ELSE_STATEMENT, "wrapElseStatement");
     }
 
@@ -556,7 +553,7 @@ public class TransformationRepository {
      * is not a {@link Block}.
      * @return the graph transformation
      */
-    private static GraphTransformation<ForStatement> wrapForStatement() {
+    private static GraphTransformation wrapForStatement() {
         return wrapInBlock(ForStatement.class, FOR_STATEMENT__STATEMENT, "wrapForStatement");
     }
 
@@ -565,7 +562,7 @@ public class TransformationRepository {
      * is not a {@link Block}.
      * @return the graph transformation
      */
-    private static GraphTransformation<WhileStatement> wrapWhileStatement() {
+    private static GraphTransformation wrapWhileStatement() {
         return wrapInBlock(null, WHILE_STATEMENT__STATEMENT, "wrapWhileStatement");
     }
 
@@ -574,11 +571,11 @@ public class TransformationRepository {
      * is not a {@link Block}.
      * @return the graph transformation
      */
-    private static GraphTransformation<DoStatement> wrapDoStatement() {
+    private static GraphTransformation wrapDoStatement() {
         return wrapInBlock(DoStatement.class, DO_STATEMENT__STATEMENT, "wrapDoWhileStatement");
     }
 
-    private static <T extends Node> GraphTransformation<T> wrapInBlock(Class<T> tClass, final CpgEdge<T, Statement> blockEdge, String name) {
+    private static <T extends Node> GraphTransformation wrapInBlock(Class<T> tClass, final CpgEdge<T, Statement> blockEdge, String name) {
         SimpleGraphPattern<T> sourcePattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<T> build() {
@@ -602,7 +599,7 @@ public class TransformationRepository {
      * contain only a {@link ReturnStatement} with a constant or field reference as the return value.
      * @return the graph transformation
      */
-    private static GraphTransformation<RecordDeclaration> removeGetterMethod() {
+    private static GraphTransformation removeGetterMethod() {
         SimpleGraphPattern<RecordDeclaration> sourcePattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<RecordDeclaration> build() {
@@ -636,7 +633,7 @@ public class TransformationRepository {
      * Creates a {@link GraphTransformation} that replaces calls to Optional.of(x) with their argument x.
      * @return the graph transformation
      */
-    private static GraphTransformation<Node> removeOptionalOfCall() {
+    private static GraphTransformation removeOptionalOfCall() {
         MultiGraphPattern sourcePattern = new GraphPatternBuilder() {
             @Override
             public MultiGraphPattern build() {
@@ -667,7 +664,7 @@ public class TransformationRepository {
      * called.
      * @return the graph transformation
      */
-    private static GraphTransformation<Node> removeOptionalGetCall() {
+    private static GraphTransformation removeOptionalGetCall() {
         MultiGraphPattern sourcePattern = new GraphPatternBuilder() {
             @Override
             public MultiGraphPattern build() {

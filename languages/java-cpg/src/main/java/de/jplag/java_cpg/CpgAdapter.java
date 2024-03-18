@@ -26,7 +26,7 @@ public class CpgAdapter {
     private List<Token> tokenList;
     private boolean reorderingEnabled = true;
 
-    public CpgAdapter(GraphTransformation<?>... transformations) {
+    public CpgAdapter(GraphTransformation... transformations) {
         addTransformations(transformations);
     }
 
@@ -85,11 +85,11 @@ public class CpgAdapter {
      * Registers the given transformations to be applied in the transformation step.
      * @param transformations the transformations
      */
-    public void addTransformations(GraphTransformation<?>[] transformations) {
+    public void addTransformations(GraphTransformation[] transformations) {
         Arrays.stream(transformations).forEach(this::addTransformation);
     }
 
-    public void addTransformation(GraphTransformation<?> transformation) {
+    public void addTransformation(GraphTransformation transformation) {
         switch (transformation.getPhase()) {
             case OBLIGATORY -> PrepareTransformationPass.registerTransformation(transformation);
             case AST_TRANSFORM -> AstTransformationPass.registerTransformation(transformation);

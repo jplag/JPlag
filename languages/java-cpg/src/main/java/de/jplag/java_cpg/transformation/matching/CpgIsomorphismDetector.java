@@ -48,7 +48,8 @@ public class CpgIsomorphismDetector {
     }
 
     /**
-     * Registers a concrete {@link Node} of a CPG so that it can be considered as a root candidate of a {@link GraphPattern}.
+     * Registers a concrete {@link Node} of a CPG so that it can be considered as a root candidate of a
+     * {@link GraphPattern}.
      * @param node the node
      */
     private void registerNode(Node node) {
@@ -83,9 +84,8 @@ public class CpgIsomorphismDetector {
     }
 
     /**
-     * Verifies that the given match of the source {@link GraphPattern} is still valid. After a transformation involving the match's {@link Node}s,
-     * a match may be invalidated.
-     *
+     * Verifies that the given match of the source {@link GraphPattern} is still valid. After a transformation involving the
+     * match's {@link Node}s, a match may be invalidated.
      * @param match the match
      * @return true iff the match is still valid
      */
@@ -96,8 +96,8 @@ public class CpgIsomorphismDetector {
     /**
      * This comparator imposes a total order on classes by using their class hierarchy and name, where
      * <ul>
-     *     <li>different subclasses of a common superclass are ordered alphanumerically</li>
-     *     <li>the sublist of subclasses of a superclass comes directly after the superclass</li>
+     * <li>different subclasses of a common superclass are ordered alphanumerically</li>
+     * <li>the sublist of subclasses of a superclass comes directly after the superclass</li>
      * </ul>
      */
     private static final class ClassComparator implements Comparator<Class<?>> {
@@ -164,8 +164,8 @@ public class CpgIsomorphismDetector {
             FIRST_COMPATIBLE(0, -1, 1),
 
             /**
-             * In this mode, a binary search of a class A in a list returns the position <b>after</b> the last class B in the list so that
-             * B is a subclass or equal to A.
+             * In this mode, a binary search of a class A in a list returns the position <b>after</b> the last class B in the list
+             * so that B is a subclass or equal to A.
              */
             FIRST_INCOMPATIBLE(1, 1, 1);
 

@@ -23,20 +23,20 @@ abstract class ATransformationPass(ctx: TranslationContext) : TranslationResultP
 
     override fun accept(t: TranslationResult) {
         val detector = CpgIsomorphismDetector()
-        for (transformation: GraphTransformation<*> in getPhaseSpecificTransformations()) {
+        for (transformation: GraphTransformation in getPhaseSpecificTransformations()) {
             detector.loadGraph(t)
             instantiate(transformation, detector)
         }
 
     }
 
-    abstract fun getPhaseSpecificTransformations(): List<GraphTransformation<*>>
+    abstract fun getPhaseSpecificTransformations(): List<GraphTransformation>
 
     /**
      * Applies the given transformation to all the matches that the detector can find.
      * @param <T> The concrete node type of the target node/GraphTransformation/Match
      */
-    private fun <T : Node?> instantiate(transformation: GraphTransformation<T>, detector: CpgIsomorphismDetector) {
+    private fun instantiate(transformation: GraphTransformation, detector: CpgIsomorphismDetector) {
         val sourcePattern: GraphPattern = transformation.sourcePattern
 
         var count = 0

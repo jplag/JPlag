@@ -5,21 +5,23 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import de.jplag.java_cpg.transformation.GraphTransformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.fraunhofer.aisec.cpg.graph.Node;
+import de.jplag.java_cpg.transformation.GraphTransformation;
 
 /**
- * The {@link PatternRegistry} saves the {@link NodePattern}s involved in a {@link GraphTransformation} and their identifiers.
+ * The {@link PatternRegistry} saves the {@link NodePattern}s involved in a {@link GraphTransformation} and their
+ * identifiers.
  */
-class PatternRegistry {
+public class PatternRegistry {
     public static final String WILDCARD_PARENT_ID = "wildcardParent#";
     private final Map<String, NodePattern<?>> patternById;
     private final Map<NodePattern<?>, String> idByPattern;
     /**
-     *  A NodePattern that represents the {@link GraphPattern}. If not set, it is the (first) root of the {@link GraphPattern}.
+     * A NodePattern that represents the {@link GraphPattern}. If not set, it is the (first) root of the
+     * {@link GraphPattern}.
      */
     private NodePattern<?> representingNode;
 

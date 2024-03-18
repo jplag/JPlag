@@ -53,7 +53,7 @@ public class PlagiarismDetectionTest {
 
     @ParameterizedTest
     @MethodSource("getArguments")
-    public void testPlagiarismPair(String submissionsPath, GraphTransformation<?>[] transformation) {
+    public void testPlagiarismPair(String submissionsPath, GraphTransformation[] transformation) {
 
         language.addTransformations(transformation);
 

@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import de.fraunhofer.aisec.cpg.graph.Node;
 
 /**
- *  This abstract class contains the method implementations common to all types of concrete {@link GraphPattern}s.
+ * This abstract class contains the method implementations common to all types of concrete {@link GraphPattern}s.
  */
 public abstract class GraphPatternImpl implements GraphPattern {
     protected final PatternRegistry patternRegistry;

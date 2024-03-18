@@ -1,12 +1,10 @@
 package de.jplag.java_cpg.transformation.matching.edges;
 
-import de.fraunhofer.aisec.cpg.graph.Node;
-import de.fraunhofer.aisec.cpg.graph.declarations.Declaration;
-import de.fraunhofer.aisec.cpg.graph.declarations.RecordDeclaration;
-import de.fraunhofer.aisec.cpg.graph.scopes.Scope;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Function;
+import de.fraunhofer.aisec.cpg.graph.Node;
+import de.fraunhofer.aisec.cpg.graph.declarations.RecordDeclaration;
+import de.fraunhofer.aisec.cpg.graph.scopes.Scope;
 
 /**
  * This class provides auxiliary methods to build edges.
