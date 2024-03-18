@@ -1,5 +1,7 @@
 package de.jplag.java_cpg.transform;
 
+import static de.jplag.java_cpg.transformation.TransformationRepository.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,7 +24,6 @@ import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.java_cpg.JavaCpgLanguage;
 import de.jplag.java_cpg.transformation.GraphTransformation;
-import de.jplag.java_cpg.transformation.TransformationRepository;
 
 /**
  * An integration test that checks whether pairs of submissions are accepted as equal after being subjected to different
@@ -41,14 +42,15 @@ public class PlagiarismDetectionTest {
     }
 
     private static Stream<Arguments> getArguments() {
-        return Stream.of(Arguments.of("singleUseVariable", new GraphTransformation[] {TransformationRepository.inlineSingleUseVariable}),
-                Arguments.of("constantClass", new GraphTransformation[] {TransformationRepository.moveConstantToOnlyUsingClass}),
-                Arguments.of("for2While", new GraphTransformation[] {TransformationRepository.forStatementToWhileStatement}),
-                Arguments.of("negatedIf", new GraphTransformation[] {TransformationRepository.ifWithNegatedConditionResolution}),
-                Arguments.of("unusedVariables",
-                        new GraphTransformation[] {TransformationRepository.removeUnusedVariableDeclarationStatement,
-                                TransformationRepository.removeUnusedVariableDeclaration, TransformationRepository.removeEmptyDeclarationStatement}),
-                Arguments.of("dfgLinearization", new GraphTransformation[] {}));
+        return Stream
+                .of(Arguments.of("singleUseVariable", new GraphTransformation[] {inlineSingleUseVariable}),
+                        Arguments.of("constantClass",
+                                new GraphTransformation[] {moveConstantToOnlyUsingClass, removeLibraryRecord, removeLibraryField}),
+                        Arguments.of("for2While", new GraphTransformation[] {forStatementToWhileStatement}),
+                        Arguments.of("negatedIf", new GraphTransformation[] {ifWithNegatedConditionResolution}),
+                        Arguments.of("unusedVariables", new GraphTransformation[] {removeUnusedVariableDeclarationStatement,
+                                removeUnusedVariableDeclaration, removeEmptyDeclarationStatement}),
+                        Arguments.of("dfgLinearization", new GraphTransformation[] {}));
     }
 
     @ParameterizedTest

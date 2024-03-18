@@ -19,7 +19,6 @@ import de.fraunhofer.aisec.cpg.graph.statements.IfStatement;
 import de.jplag.ParsingException;
 import de.jplag.java_cpg.transformation.matching.CpgIsomorphismDetector;
 import de.jplag.java_cpg.transformation.matching.PatternRepository;
-import de.jplag.java_cpg.transformation.matching.pattern.GraphPatternBuilder;
 import de.jplag.java_cpg.transformation.matching.pattern.Match;
 import de.jplag.java_cpg.transformation.matching.pattern.SimpleGraphPattern;
 
@@ -34,7 +33,7 @@ public class MatchingTest extends AbstractJavaCpgLanguageTest {
 
     @ParameterizedTest
     @MethodSource("providePairs")
-    public <T extends Node> void testMatch(String filename, Class<T> rootType, GraphPatternBuilder builder) {
+    public <T extends Node> void testMatch(String filename, Class<T> rootType, SimpleGraphPattern<T> pattern) {
         File file = new File(baseDirectory, filename);
         try {
             CpgAdapter cpgAdapter = new CpgAdapter();
@@ -44,9 +43,8 @@ public class MatchingTest extends AbstractJavaCpgLanguageTest {
             detector.loadGraph(graph);
             List<T> rootCandidates = detector.getNodesOfType(rootType);
 
-            SimpleGraphPattern<?> pattern1 = (SimpleGraphPattern<?>) builder.build();
             Assertions.assertTrue(rootCandidates.stream().anyMatch(candidate -> {
-                List<Match> matches = pattern1.recursiveMatch(candidate);
+                List<Match> matches = pattern.recursiveMatch(candidate);
                 if (matches.isEmpty()) {
                     return false;
                 }

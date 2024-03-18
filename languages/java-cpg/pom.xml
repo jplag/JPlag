@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>de.jplag</groupId>
@@ -17,13 +15,19 @@
         <kotlin.version>1.9.0</kotlin.version>
     </properties>
 
-
     <dependencies>
 
         <dependency>
             <groupId>${cpg.groupId}</groupId>
             <artifactId>cpg-core</artifactId>
             <version>${cpg.version}</version>
+
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j2-impl</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>${cpg.groupId}</groupId>
@@ -33,11 +37,6 @@
         <dependency>
             <groupId>${cpg.groupId}</groupId>
             <artifactId>cpg-analysis</artifactId>
-            <version>${cpg.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${cpg.groupId}</groupId>
-            <artifactId>cpg-neo4j</artifactId>
             <version>${cpg.version}</version>
         </dependency>
         <dependency>
@@ -51,20 +50,7 @@
             <version>${kotlin.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>de.jplag</groupId>
-            <artifactId>jplag</artifactId>
-            <version>${revision}</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
-
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories>
 
     <build>
         <plugins>
@@ -72,31 +58,30 @@
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${kotlin.version}</version>
-                <executions>
-                    <execution>
-                        <id>compile</id>
-                        <phase>process-sources</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>test-compile</id>
-                        <phase>test-compile</phase>
-                        <goals>
-                            <goal>test-compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
                 <configuration>
                     <jvmTarget>1.8</jvmTarget>
                     <args>
                         <arg>-Xcontext-receivers</arg>
                     </args>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <phase>process-sources</phase>
+                    </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                        <phase>test-compile</phase>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
-
 
 </project>
