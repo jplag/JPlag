@@ -98,7 +98,7 @@ public class ComparisonReportWriter {
         List<Token> tokensFirst = comparison.firstSubmission().getTokenList().subList(match.startOfFirst(), match.endOfFirst() + 1);
         List<Token> tokensSecond = comparison.secondSubmission().getTokenList().subList(match.startOfSecond(), match.endOfSecond() + 1);
 
-        Comparator<? super Token> lineComparator = Comparator.comparingInt(Token::getLine);
+        Comparator<? super Token> lineComparator = Comparator.comparingInt(Token::getLine).thenComparingInt(Token::getColumn);
 
         Token startOfFirst = tokensFirst.stream().min(lineComparator).orElseThrow();
         Token endOfFirst = tokensFirst.stream().max(lineComparator).orElseThrow();
@@ -108,7 +108,9 @@ public class ComparisonReportWriter {
         return new Match(
                 FilePathUtil.getRelativeSubmissionPath(startOfFirst.getFile(), comparison.firstSubmission(), submissionToIdFunction).toString(),
                 FilePathUtil.getRelativeSubmissionPath(startOfSecond.getFile(), comparison.secondSubmission(), submissionToIdFunction).toString(),
-                startOfFirst.getLine(), endOfFirst.getLine(), startOfSecond.getLine(), endOfSecond.getLine(), match.length());
+                startOfFirst.getLine(), startOfFirst.getColumn(), endOfFirst.getLine(), endOfFirst.getColumn() + endOfFirst.getLength(),
+                startOfSecond.getLine(), startOfSecond.getColumn(), endOfSecond.getLine(), endOfSecond.getColumn() + endOfSecond.getLength(),
+                match.length());
     }
 
 }
