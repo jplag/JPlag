@@ -123,9 +123,13 @@ export class ComparisonFactory extends BaseFactory {
       firstFile: slash(match.file1 as string),
       secondFile: slash(match.file2 as string),
       startInFirst: match.start1 as number,
+      startColumnInFirst: ((match['start1_col'] as number) || 1) - 1,
       endInFirst: match.end1 as number,
+      endColumnInFirst: ((match['end1_col'] as number) || Infinity) - 1,
       startInSecond: match.start2 as number,
+      startColumnInSecond: ((match['start2_col'] as number) || 1) - 1,
       endInSecond: match.end2 as number,
+      endColumnInSecond: ((match['end2_col'] as number) || Infinity) - 1,
       tokens: match.tokens as number
     }
   }
