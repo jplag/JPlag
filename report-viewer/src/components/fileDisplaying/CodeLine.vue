@@ -5,11 +5,12 @@
     :style="{
       gridRowStart: lineNumber
     }"
+    ref="lineRef"
   >
     <div
       v-for="(part, index) in textParts"
       :key="index"
-      class="h-full last:flex-1"
+      class="print-excact h-full last:flex-1"
       @click="matchSelected(part.match)"
       :style="{
         background:
@@ -50,9 +51,19 @@ const emit = defineEmits(['matchSelected'])
 
 function matchSelected(match?: MatchInSingleFile) {
   if (match) {
-    emit('matchSelected', match)
+    emit('matchSelected', match.match)
   }
 }
+
+const lineRef = ref<HTMLElement | null>(null)
+
+function scrollTo() {
+  if (lineRef.value) {
+    lineRef.value.scrollIntoView({ block: 'center' })
+  }
+}
+
+defineExpose({ scrollTo })
 
 interface TextPart {
   line: string

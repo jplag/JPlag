@@ -44,7 +44,7 @@
             :line="line.line"
             :lineNumber="index + 1"
             :matches="line.matches"
-            @matchSelected="matchSelected"
+            @matchSelected="(match) => matchSelected(match)"
           />
         </div>
 
@@ -94,7 +94,7 @@ const props = defineProps({
 const emit = defineEmits(['matchSelected'])
 
 const collapsed = ref(true)
-const lineRefs = ref<HTMLElement[]>([])
+const lineRefs = ref<(typeof CodeLine)[]>([])
 
 const codeLines: Ref<{ line: string; matches: MatchInSingleFile[] }[]> = computed(() =>
   highlight(props.file.data, props.highlightLanguage).map((line, index) => {
@@ -116,7 +116,7 @@ function matchSelected(match: Match) {
 function scrollTo(lineNumber: number) {
   collapsed.value = false
   nextTick(function () {
-    lineRefs.value[lineNumber - 1].scrollIntoView({ block: 'center' })
+    lineRefs.value[lineNumber - 1].scrollTo()
   })
 }
 
