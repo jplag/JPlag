@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.jplag.java_cpg.transformation.matching.edges.CpgEdge;
+import de.jplag.java_cpg.transformation.matching.edges.CpgMultiEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgMultiEdge.AnyOfNEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgNthEdge;
 import de.jplag.java_cpg.transformation.matching.pattern.WildcardGraphPattern.ParentNodePattern;
@@ -130,7 +131,7 @@ public class Match implements Comparable<Match> {
      */
     public <S extends Node, T extends Node> CpgNthEdge<S, T> resolveAnyOfNEdge(NodePattern<?> parent, NodePattern.RelatedOneToNNode<S, T> relation,
             int index) {
-        AnyOfNEdge any1ofNEdge = relation.edge().getAnyOfNEdgeTo(relation.pattern());
+        CpgMultiEdge<S, T>.AnyOfNEdge any1ofNEdge = relation.edge().getAnyOfNEdgeTo(relation.pattern());
         CpgNthEdge<S, T> concreteEdgePattern = new CpgNthEdge<>(any1ofNEdge.getMultiEdge(), index);
         EdgeMapKey key = new EdgeMapKey(parent, any1ofNEdge);
         this.edgeMap.put(key, concreteEdgePattern);

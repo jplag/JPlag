@@ -15,7 +15,7 @@ import de.fraunhofer.aisec.cpg.graph.Node;
  */
 public class SimpleGraphPattern<T extends Node> extends GraphPatternImpl {
 
-    private NodePattern<T> root;
+    private final NodePattern<T> root;
 
     /**
      * Creates a new {@link de.jplag.java_cpg.transformation.matching.pattern.SimpleGraphPattern} with the given root
@@ -41,13 +41,11 @@ public class SimpleGraphPattern<T extends Node> extends GraphPatternImpl {
         return root;
     }
 
-    /** {@inheritDoc} */
     @Override
     public List<NodePattern<?>> getRoots() {
         return List.of(root);
     }
 
-    /** {@inheritDoc} */
     @Override
     public List<Match> match(Map<NodePattern<?>, List<? extends Node>> rootCandidates) {
         return rootCandidates.get(root).stream().map(this::recursiveMatch).flatMap(List::stream).toList();
@@ -68,7 +66,6 @@ public class SimpleGraphPattern<T extends Node> extends GraphPatternImpl {
         return matches;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean validate(Match match) {
         Node rootCandidate = match.get(this.root);
@@ -76,7 +73,6 @@ public class SimpleGraphPattern<T extends Node> extends GraphPatternImpl {
         return matches.stream().anyMatch(match::equals);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void compareTo(GraphPattern targetPattern, BiConsumer<NodePattern<?>, NodePattern<?>> compareFunction) {
         if (!(targetPattern instanceof SimpleGraphPattern<?> tTarget && Objects.equals(root.getClass(), tTarget.root.getClass()))) {
@@ -84,15 +80,6 @@ public class SimpleGraphPattern<T extends Node> extends GraphPatternImpl {
                     "Invalid Transformation: SimpleGraphPattern %s is incompatible with %s".formatted(this.toString(), targetPattern.toString()));
         }
         compareFunction.accept(this.root, tTarget.getRoot());
-    }
-
-    /**
-     * Sets the root {@link de.jplag.java_cpg.transformation.matching.pattern.NodePattern} of this
-     * {@link de.jplag.java_cpg.transformation.matching.pattern.SimpleGraphPattern}.
-     * @param rootPattern the root
-     */
-    protected void setRoot(NodePattern<T> rootPattern) {
-        this.root = rootPattern;
     }
 
 }

@@ -10,7 +10,6 @@ import de.fraunhofer.aisec.cpg.TranslationContext;
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.graph.edge.Properties;
 import de.fraunhofer.aisec.cpg.graph.edge.PropertyEdge;
-import de.jplag.java_cpg.transformation.TransformationException;
 import de.jplag.java_cpg.transformation.matching.edges.CpgEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgMultiEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgNthEdge;
@@ -50,34 +49,31 @@ public final class RemoveOperation<S extends Node, T extends Node> extends Graph
 
     }
 
-    /** {@inheritDoc} */
     @Override
-    public void resolveAndApply(Match match, TranslationContext ctx) throws TransformationException {
+    public void resolveAndApply(Match match, TranslationContext ctx) {
         S parent = match.get(parentPattern);
         T element = edge.getter().apply(parent);
-        apply(element, parent, edge, disconnectEog);
+        apply(parent, element, edge, disconnectEog);
     }
 
     /**
-     * <p>
-     * apply.
-     * </p>
-     * @param element a T object
-     * @param parent a S object
-     * @param edge a {@link de.jplag.java_cpg.transformation.matching.edges.CpgEdge} object
-     * @param disconnectEog a boolean
-     * @param <S> a S class
-     * @param <T> a T class
+     * Applies a {@link RemoveOperation} to the given nodes.
+     * @param <S> the source node type
+     * @param <T> the target node type
+     * @param source the source node
+     * @param child the target node
+     * @param edge the edge
+     * @param disconnectEog if true, the target node will be disconnected from the EOG graph
      */
-    public static <S extends Node, T extends Node> void apply(T element, S parent, CpgEdge<S, T> edge, boolean disconnectEog) {
+    public static <S extends Node, T extends Node> void apply(S source, T child, CpgEdge<S, T> edge, boolean disconnectEog) {
 
         if (!(edge instanceof CpgNthEdge<S, T> nthEdge)) {
-            logger.debug("Remove " + element.toString());
-            edge.setter().accept(parent, null);
+            logger.debug("Remove " + child.toString());
+            edge.setter().accept(source, null);
         } else if (nthEdge.getMultiEdge().isEdgeValued()) {
-            logger.debug("Remove %s (Element no. %d of %s)".formatted(element.toString(), nthEdge.getIndex(), parent));
+            logger.debug("Remove %s (Element no. %d of %s)".formatted(child.toString(), nthEdge.getIndex(), source));
             // set edge indices of successors
-            List<PropertyEdge<T>> siblingEdges = nthEdge.getMultiEdge().getAllEdges(parent);
+            List<PropertyEdge<T>> siblingEdges = nthEdge.getMultiEdge().getAllEdges(source);
             int index = nthEdge.getIndex();
 
             // remove edge
@@ -91,29 +87,27 @@ public final class RemoveOperation<S extends Node, T extends Node> extends Graph
 
         } else {
             // nthEdge is node-valued
-            List<T> siblings = nthEdge.getMultiEdge().getAllTargets(parent);
-            siblings.remove(element);
+            List<T> siblings = nthEdge.getMultiEdge().getAllTargets(source);
+            siblings.remove(child);
         }
 
         if (!disconnectEog) {
             return;
         }
 
-        List<Node> predExits = TransformationUtil.disconnectFromPredecessor(element);
-        Node succEntry = TransformationUtil.disconnectFromSuccessor(element);
+        List<Node> predExits = TransformationUtil.disconnectFromPredecessor(child);
+        Node succEntry = TransformationUtil.disconnectFromSuccessor(child);
 
         if (!Objects.isNull(succEntry) && succEntry != DummyNeighbor.getInstance()) {
             predExits.forEach(exit -> TransformationUtil.connectNewSuccessor(exit, succEntry, false));
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public NodePattern<?> getTarget() {
         return parentPattern;
     }
 
-    /** {@inheritDoc} */
     @Override
     public GraphOperation instantiateWildcard(Match match) {
         WildcardGraphPattern.ParentNodePattern<T> wcParent = (WildcardGraphPattern.ParentNodePattern<T>) this.parentPattern;
@@ -125,7 +119,6 @@ public final class RemoveOperation<S extends Node, T extends Node> extends Graph
         return new RemoveOperation<>(wildcardMatch.parentPattern(), wildcardMatch.edge(), this.disconnectEog);
     }
 
-    /** {@inheritDoc} */
     @Override
     public GraphOperation instantiateAnyOfNEdge(Match match) {
         CpgMultiEdge<S, T>.AnyOfNEdge anyOfNEdge = (CpgMultiEdge<S, T>.AnyOfNEdge) edge;

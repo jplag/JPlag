@@ -136,7 +136,6 @@ public final class CpgMultiEdge<S extends Node, T extends Node> extends AEdge<S,
         return this.valueType == ValueType.EDGE_VALUED;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isEquivalentTo(IEdge<?, ?> other) {
         return Objects.equals(this, other);

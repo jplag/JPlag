@@ -305,7 +305,7 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
             val block = parentInfo[it]!!.parent as Block
             val index = block.statements.indexOf(it)
             val cpgNthEdge: CpgNthEdge<Block, Statement> = CpgNthEdge(BLOCK__STATEMENTS, index)
-            RemoveOperation.apply(it, block, cpgNthEdge, true)
+            RemoveOperation.apply(block, it, cpgNthEdge, true)
             if (it is DeclarationStatement) {
                 val deletedVariables = it.declarations.filterIsInstance<VariableDeclaration>()
                 block.localEdges.removeIf { it.end in deletedVariables }

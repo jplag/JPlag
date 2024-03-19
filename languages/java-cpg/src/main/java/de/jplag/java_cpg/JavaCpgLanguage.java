@@ -78,6 +78,7 @@ public class JavaCpgLanguage implements Language {
     public void resetTransformations() {
         this.cpgAdapter.clearTransformations();
         this.cpgAdapter.addTransformations(this.obligatoryTransformations());
+        this.cpgAdapter.addTransformations(this.standardTransformations());
     }
 
     /**

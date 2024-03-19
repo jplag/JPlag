@@ -10,11 +10,16 @@ import de.fraunhofer.aisec.cpg.graph.Node;
  * @param getter function to get the property
  * @param setter function to set the property
  * @param <S> the node type of the source
- * @param <T> the type of the property
+ * @param <P> the type of the property
  */
-public record CpgPropertyEdge<S extends Node, T>(Function<S, T> getter, BiConsumer<S, T> setter) {
+public record CpgAttributeEdge<S extends Node, P>(Function<S, P> getter, BiConsumer<S, P> setter) {
 
-    public T get(S s) {
+    /**
+     * Gets the property related to the given node.
+     * @param s the source node
+     * @return the property
+     */
+    public P get(S s) {
         return getter.apply(s);
     }
 }

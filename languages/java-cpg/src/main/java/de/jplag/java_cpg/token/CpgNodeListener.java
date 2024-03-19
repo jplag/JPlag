@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Objects;
 
+import org.jetbrains.annotations.NotNull;
+
 import de.fraunhofer.aisec.cpg.graph.Name;
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.graph.declarations.*;
@@ -401,7 +403,7 @@ public class CpgNodeListener extends ACpgNodeListener {
      * Visits a {@link Node}.
      * @param node the node
      */
-    public void visit(Node node) {
+    public void visit(@NotNull Node node) {
         super.visit(node);
     }
 

@@ -94,16 +94,14 @@ public class NodeOrderStrategy implements IStrategy<Node> {
         List<Node> declarations = new ArrayList<>(List.of(node));
         while (!declarations.isEmpty()) {
             Node declaration = declarations.removeFirst();
-            if (declaration instanceof Component component) {
-                declarations.addAll(component.getTranslationUnits());
-            } else if (declaration instanceof TranslationUnitDeclaration tu) {
-                declarations.addAll(tu.getDeclarations());
-            } else if (declaration instanceof NamespaceDeclaration namespaceDeclaration) {
-                declarations.addAll(namespaceDeclaration.getDeclarations());
-            } else if (declaration instanceof RecordDeclaration recordDeclaration) {
-                result.add(recordDeclaration);
-            } else {
-                // do nothing
+            switch (declaration) {
+                case Component component -> declarations.addAll(component.getTranslationUnits());
+                case TranslationUnitDeclaration tu -> declarations.addAll(tu.getDeclarations());
+                case NamespaceDeclaration namespaceDeclaration -> declarations.addAll(namespaceDeclaration.getDeclarations());
+                case RecordDeclaration recordDeclaration -> result.add(recordDeclaration);
+                case null, default -> {
+                    // do nothing
+                }
             }
 
         }
