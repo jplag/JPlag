@@ -18,12 +18,15 @@ import de.jplag.java_cpg.transformation.GraphTransformation;
  */
 @MetaInfServices(de.jplag.Language.class)
 public class JavaCpgLanguage implements Language {
-    public static final int DEFAULT_MINIMUM_TOKEN_MATCH = 9;
-    public static final String[] FILE_EXTENSIONS = {".java"};
-    public static final String NAME = "Java Code Property Graph module";
+    private static final int DEFAULT_MINIMUM_TOKEN_MATCH = 9;
+    private static final String[] FILE_EXTENSIONS = {".java"};
+    private static final String NAME = "Java Code Property Graph module";
     private static final String IDENTIFIER = "java-cpg";
     private final CpgAdapter cpgAdapter;
 
+    /**
+     * Creates a new {@link JavaCpgLanguage}.
+     */
     public JavaCpgLanguage() {
         this.cpgAdapter = new CpgAdapter(allTransformations());
     }
@@ -69,6 +72,9 @@ public class JavaCpgLanguage implements Language {
         return false;
     }
 
+    /**
+     * Resets the set of transformations to the obligatory transformations only.
+     */
     public void resetTransformations() {
         this.cpgAdapter.clearTransformations();
         this.cpgAdapter.addTransformations(this.obligatoryTransformations());
@@ -87,12 +93,12 @@ public class JavaCpgLanguage implements Language {
      * @return the array of recommended transformations
      */
     public GraphTransformation[] standardTransformations() {
-        return new GraphTransformation[] {removeOptionalOfCall,               // 3
-                removeOptionalGetCall,              // 4
-                moveConstantToOnlyUsingClass,       // 6
-                inlineSingleUseVariable,            // 8
-                removeLibraryRecord,                // 11
-                removeEmptyRecord,                  // 16
+        return new GraphTransformation[] {removeOptionalOfCall,               // 1
+                removeOptionalGetCall,              // 2
+                moveConstantToOnlyUsingClass,       // 5
+                inlineSingleUseVariable,            // 7
+                removeLibraryRecord,                // 10
+                removeEmptyRecord,                  // 15
         };
     }
 
@@ -101,22 +107,22 @@ public class JavaCpgLanguage implements Language {
      * @return the array of all transformations
      */
     public GraphTransformation[] allTransformations() {
-        return new GraphTransformation[] {ifWithNegatedConditionResolution,   // 1
-                forStatementToWhileStatement,       // 2
-                removeOptionalOfCall,               // 3
-                removeOptionalGetCall,              // 4
-                removeGetterMethod,                 // 5
-                moveConstantToOnlyUsingClass,       // 6
-                inlineSingleUseConstant,            // 7
-                inlineSingleUseVariable,            // 8
-                removeEmptyDeclarationStatement,    // 9
-                removeImplicitStandardConstructor,  // 10
-                removeLibraryRecord,                // 11
-                removeLibraryField,                 // 12
-                removeEmptyConstructor,             // 13
-                removeUnsupportedConstructor,       // 14
-                removeUnsupportedMethod,            // 15
-                removeEmptyRecord,                  // 16
+        return new GraphTransformation[] {ifWithNegatedConditionResolution,   // 0
+                forStatementToWhileStatement,       // 1
+                removeOptionalOfCall,               // 2
+                removeOptionalGetCall,              // 3
+                removeGetterMethod,                 // 4
+                moveConstantToOnlyUsingClass,       // 5
+                inlineSingleUseConstant,            // 6
+                inlineSingleUseVariable,            // 7
+                removeEmptyDeclarationStatement,    // 8
+                removeImplicitStandardConstructor,  // 9
+                removeLibraryRecord,                // 10
+                removeLibraryField,                 // 11
+                removeEmptyConstructor,             // 12
+                removeUnsupportedConstructor,       // 13
+                removeUnsupportedMethod,            // 14
+                removeEmptyRecord,                  // 15
         };
     }
 

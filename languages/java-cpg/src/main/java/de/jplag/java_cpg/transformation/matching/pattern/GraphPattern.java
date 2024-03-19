@@ -30,6 +30,10 @@ public interface GraphPattern {
     /**
      * Adds a newly created {@link NodePattern} to this pattern. This occurs when a {@link GraphTransformation} includes the
      * generation of new {@link Node}s.
+     * @param roleName a {@link String} object
+     * @param newNode a {@link NodePattern} object
+     * @param <T> a T class
+     * @return a {@link NodePattern} object
      */
     <T extends Node> NodePattern<T> addNode(String roleName, NodePattern<T> newNode);
 

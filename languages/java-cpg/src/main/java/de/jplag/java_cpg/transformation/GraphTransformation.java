@@ -16,7 +16,6 @@ import de.jplag.java_cpg.transformation.matching.edges.CpgEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgMultiEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgNthEdge;
 import de.jplag.java_cpg.transformation.matching.pattern.*;
-import de.jplag.java_cpg.transformation.matching.pattern.SimpleGraphPattern;
 import de.jplag.java_cpg.transformation.operations.*;
 
 /**
@@ -29,19 +28,43 @@ public interface GraphTransformation {
      * Applies the transformation to the Graph represented by the given {@link Match} which indicates which {@link Node}s
      * shall be involved in the transformation.
      * @param match the match of this {@link GraphTransformation}'s source pattern to a concrete graph
+     * @param ctx a {@link TranslationContext} object
      */
     void apply(Match match, TranslationContext ctx);
 
-    GraphPattern getSourcePattern();
-
-    GraphPattern getTargetPattern();
-
-    ExecutionPhase getPhase();
-
-    String getName();
-
+    /**
+     * Gets the {@link ExecutionPhase} for this {@link GraphTransformation}
+     * @return a {@link ExecutionOrder} object
+     */
     ExecutionOrder getExecutionOrder();
 
+    /**
+     * Gets the name for this {@link GraphTransformation}.
+     * @return the name
+     */
+    String getName();
+
+    /**
+     * Gets the {@link ExecutionPhase} for this {@link GraphTransformation}.
+     * @return the execution phase
+     */
+    ExecutionPhase getPhase();
+
+    /**
+     * Gets the source {@link GraphPattern} for this {@link GraphTransformation}.
+     * @return the source pattern
+     */
+    GraphPattern getSourcePattern();
+
+    /**
+     * Gets the target {@link GraphPattern} for this {@link GraphTransformation}.
+     * @return the target pattern
+     */
+    GraphPattern getTargetPattern();
+
+    /**
+     * Determines in which transformation pass this transformation is executed.
+     */
     enum ExecutionPhase {
 
         /**
@@ -54,14 +77,11 @@ public interface GraphTransformation {
          */
         AST_TRANSFORM(false),
         /**
-         * Executes after the EOG is constructed, right before the TokenizationPass.
-         * <p>
-         * Usages:
+         * Executes after the EOG is constructed, right before the TokenizationPass. Usages:
          * <ul>
          * <li>Transformations that rely on usage, type information</li>
          * <li>Removing elements that shall be excluded from Tokenization</li>
          * </ul>
-         * </p>
          */
         CPG_TRANSFORM(true);
 
@@ -72,6 +92,10 @@ public interface GraphTransformation {
         }
     }
 
+    /**
+     * Determines the order in which matches of this {@link GraphTransformation} should be processed in order to ensure
+     * correct and efficient processing.
+     */
     enum ExecutionOrder {
 
         ASCENDING_LOCATION,
@@ -104,22 +128,11 @@ public interface GraphTransformation {
             List<GraphOperation> concreteOperations = instantiate(operations, match);
 
             // create nodes of the target graph missing from the source graph
-            newNodes.forEach(op -> op.resolve(match, ctx));
+            newNodes.forEach(op -> op.resolveAndApply(match, ctx));
 
             logger.debug("Apply %s to node %s".formatted(name, match.get(sourcePattern.getRepresentingNode())));
             // apply other operations
             apply(match, concreteOperations, ctx);
-        }
-
-        private List<GraphOperation> instantiate(List<GraphOperation> operations, Match match) {
-            return operations.stream().map((GraphOperation op) -> {
-                if (op.isWildcarded()) {
-                    return op.instantiateWildcard(match);
-                } else if (op.isMultiEdged()) {
-                    return op.instantiateAny1ofNEdge(match);
-                }
-                return op;
-            }).toList();
         }
 
         /**
@@ -132,12 +145,27 @@ public interface GraphTransformation {
         protected void apply(Match match, List<GraphOperation> operations, TranslationContext ctx) {
             for (GraphOperation op : operations) {
                 try {
-                    op.resolve(match, ctx);
+                    op.resolveAndApply(match, ctx);
                 } catch (TransformationException | RuntimeException e) {
                     throw new RuntimeException(e);
                 }
             }
             DummyNeighbor.getInstance().clear();
+        }
+
+        @Override
+        public ExecutionOrder getExecutionOrder() {
+            return this.executionOrder;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public ExecutionPhase getPhase() {
+            return phase;
         }
 
         @Override
@@ -150,19 +178,15 @@ public interface GraphTransformation {
             return targetPattern;
         }
 
-        @Override
-        public ExecutionPhase getPhase() {
-            return phase;
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public ExecutionOrder getExecutionOrder() {
-            return this.executionOrder;
+        private List<GraphOperation> instantiate(List<GraphOperation> operations, Match match) {
+            return operations.stream().map((GraphOperation op) -> {
+                if (op.isWildcarded()) {
+                    return op.instantiateWildcard(match);
+                } else if (op.isMultiEdged()) {
+                    return op.instantiateAnyOfNEdge(match);
+                }
+                return op;
+            }).toList();
         }
 
         @Override
@@ -210,28 +234,16 @@ public interface GraphTransformation {
             return new Builder<>(sourcePattern, targetPattern, name, phase);
         }
 
+        public GraphTransformation build() {
+            return this.calculateTransformation();
+        }
+
         private GraphTransformation calculateTransformation() {
             List<CreateNodeOperation<?>> newNodes = this.createNewNodes(sourcePattern, targetPattern);
             List<GraphOperation> ops = new ArrayList<>();
             sourcePattern.compareTo(targetPattern, (srcPattern, tgtPattern) -> compare(srcPattern, tgtPattern, null, ops, null));
 
             return new GraphTransformationImpl<>(sourcePattern, targetPattern, name, phase, newNodes, ops, executionOrder);
-        }
-
-        private List<CreateNodeOperation<?>> createNewNodes(GraphPattern sourcePattern, GraphPattern targetPattern) {
-            List<String> newRoles = new ArrayList<>(targetPattern.getAllIds());
-            newRoles.removeAll(sourcePattern.getAllIds());
-
-            List<CreateNodeOperation<?>> newNodes = new ArrayList<>();
-            for (String roleName : newRoles) {
-                // new node pattern needed for the transformation calculation
-                NodePattern<?> newPattern = sourcePattern.addNode(roleName, targetPattern.getPattern(roleName));
-
-                // new nodes needed for the transformation application
-                CreateNodeOperation<?> createNodeOperation = new CreateNodeOperation<>(sourcePattern, roleName, newPattern);
-                newNodes.add(createNodeOperation);
-            }
-            return newNodes;
         }
 
         /**
@@ -286,6 +298,62 @@ public interface GraphTransformation {
 
         }
 
+        private List<CreateNodeOperation<?>> createNewNodes(GraphPattern sourcePattern, GraphPattern targetPattern) {
+            List<String> newRoles = new ArrayList<>(targetPattern.getAllIds());
+            newRoles.removeAll(sourcePattern.getAllIds());
+
+            List<CreateNodeOperation<?>> newNodes = new ArrayList<>();
+            for (String roleName : newRoles) {
+                // new node pattern needed for the transformation calculation
+                NodePattern<?> newPattern = sourcePattern.addNode(roleName, targetPattern.getPattern(roleName));
+
+                // new nodes needed for the transformation application
+                CreateNodeOperation<?> createNodeOperation = new CreateNodeOperation<>(sourcePattern, roleName, newPattern);
+                newNodes.add(createNodeOperation);
+            }
+            return newNodes;
+        }
+
+        private <T extends Node, AT extends T> void handleMultiRelationships(NodePattern<AT> target, List<GraphOperation> ops,
+                NodePattern<AT> newSource) {
+            List<NodePattern.RelatedOneToNNode<? super AT, ?>> allTargetRelated = target.getRelated1ToNNodes();
+            for (NodePattern.RelatedOneToNNode<? super AT, ?> sourceRelated : newSource.getRelated1ToNNodes()) {
+                if (sourceRelated.edge().isAnalytic())
+                    continue;
+
+                Optional<NodePattern.RelatedOneToNNode> maybeTargetRelated = allTargetRelated.stream()
+                        .filter(rel -> sourceRelated.edge().isEquivalentTo(rel.edge()))
+                        // exactly 1 candidate -> role names may differ, possible replacement
+                        // more than 1 candidate -> role names must match
+                        .filter(rel -> allTargetRelated.size() == 1
+                                || sourcePattern.getId(sourceRelated.pattern()).equals(targetPattern.getId(rel.pattern())))
+                        .findFirst().map(rel -> sourceRelated.getClass().cast(rel));
+
+                maybeTargetRelated.ifPresent(allTargetRelated::remove);
+
+                recurseMulti(newSource, sourceRelated, maybeTargetRelated.orElse(null), ops);
+            }
+
+            for (NodePattern.RelatedOneToNNode targetRelated : allTargetRelated) {
+                // needs to be inserted
+                recurseMulti(newSource, targetRelated, targetRelated, ops);
+            }
+        }
+
+        private <S extends Node> void handleSequenceRelationships(NodePattern<S> source, NodePattern<S> target, List<GraphOperation> ops) {
+            List<NodePattern.Related1ToNSequence<? super S, ?>> allTargetRelated = target.getRelated1ToNSequences();
+            for (NodePattern.Related1ToNSequence<? super S, ?> sourceRelated : source.getRelated1ToNSequences()) {
+                if (sourceRelated.edge().isAnalytic())
+                    continue;
+
+                Optional<NodePattern.Related1ToNSequence> maybeTargetRelated = allTargetRelated.stream()
+                        .filter(rel -> sourceRelated.edge().isEquivalentTo(rel.edge())).findFirst().map(rel -> sourceRelated.getClass().cast(rel));
+
+                maybeTargetRelated.ifPresent(allTargetRelated::remove);
+                recurseSequence(source, sourceRelated, maybeTargetRelated.orElse(null), ops);
+            }
+        }
+
         private <S extends Node> void handleSimpleRelationships(NodePattern<S> source, NodePattern<S> target, List<GraphOperation> ops) {
             List<NodePattern.RelatedNode<? super S, ?>> unprocessedTargetRelated = new ArrayList<>(target.getRelatedNodes());
             for (NodePattern.RelatedNode<? super S, ?> sourceRelated : source.getRelatedNodes()) {
@@ -305,53 +373,10 @@ public interface GraphTransformation {
             }
         }
 
-        /**
-         * Try to iterate into the related nodes.
-         * @param <S> Type of the source node, defined by the edge
-         * @param <R> Type of the related node, defined by the edge
-         * @param parent Parent of the next source node
-         * @param sourceRelated Relation in the source graph that is currently recursed into.
-         * @param targetRelated Relation in the target graph equivalent to sourceRelated.
-         * @param ops List to save transformations into
-         */
-        private <S extends Node, P extends S, R extends Node> void recurseSimple(NodePattern<P> parent, NodePattern.RelatedNode<S, R> sourceRelated,
-                NodePattern.RelatedNode<S, R> targetRelated, List<GraphOperation> ops) {
-            NodePattern<? extends R> nextSource = sourceRelated.pattern();
-
-            NodePattern<? extends R> nextTarget = Objects.isNull(targetRelated) ? nextSource : targetRelated.pattern();
-            compare(nextSource, nextTarget, parent, ops, sourceRelated.edge());
-        }
-
-        private <T extends Node, AT extends T> void handleMultiRelationships(NodePattern<AT> target, List<GraphOperation> ops,
-                NodePattern<AT> newSource) {
-            List<NodePattern.Related1ToNNode<? super AT, ?>> allTargetRelated = target.getRelated1ToNNodes();
-            for (NodePattern.Related1ToNNode<? super AT, ?> sourceRelated : newSource.getRelated1ToNNodes()) {
-                if (sourceRelated.edge().isAnalytic())
-                    continue;
-
-                Optional<NodePattern.Related1ToNNode> maybeTargetRelated = allTargetRelated.stream()
-                        .filter(rel -> sourceRelated.edge().isEquivalentTo(rel.edge()))
-                        // exactly 1 candidate -> role names may differ, possible replacement
-                        // more than 1 candidate -> role names must match
-                        .filter(rel -> allTargetRelated.size() == 1
-                                || sourcePattern.getId(sourceRelated.pattern()).equals(targetPattern.getId(rel.pattern())))
-                        .findFirst().map(rel -> sourceRelated.getClass().cast(rel));
-
-                maybeTargetRelated.ifPresent(allTargetRelated::remove);
-
-                recurseMulti(newSource, sourceRelated, maybeTargetRelated.orElse(null), ops);
-            }
-
-            for (NodePattern.Related1ToNNode targetRelated : allTargetRelated) {
-                // needs to be inserted
-                recurseMulti(newSource, targetRelated, targetRelated, ops);
-            }
-        }
-
         private <S extends Node, P extends S, R extends Node> void recurseMulti(NodePattern<P> parent,
-                NodePattern.Related1ToNNode<S, R> sourceRelated, NodePattern.Related1ToNNode<S, ?> targetRelated, List<GraphOperation> ops) {
+                NodePattern.RelatedOneToNNode<S, R> sourceRelated, NodePattern.RelatedOneToNNode<S, ?> targetRelated, List<GraphOperation> ops) {
             NodePattern<? extends R> nextSource = sourceRelated.pattern();
-            CpgMultiEdge<S, R>.Any1ofNEdge incomingEdge = sourceRelated.edge().getAny1ofNEdgeTo(nextSource);
+            CpgMultiEdge<S, R>.AnyOfNEdge incomingEdge = sourceRelated.edge().getAnyOfNEdgeTo(nextSource);
 
             NodePattern<? extends R> nextTarget;
             if (Objects.isNull(targetRelated)) {
@@ -359,25 +384,11 @@ public interface GraphTransformation {
                 nextTarget = nextSource;
             } else {
                 // R is guaranteed by the equal edge type
-                NodePattern.Related1ToNNode<S, R> target1ofN = (NodePattern.Related1ToNNode<S, R>) targetRelated;
+                NodePattern.RelatedOneToNNode<S, R> target1ofN = (NodePattern.RelatedOneToNNode<S, R>) targetRelated;
                 nextTarget = target1ofN.pattern();
             }
             compare(nextSource, nextTarget, parent, ops, incomingEdge);
 
-        }
-
-        private <S extends Node> void handleSequenceRelationships(NodePattern<S> source, NodePattern<S> target, List<GraphOperation> ops) {
-            List<NodePattern.Related1ToNSequence<? super S, ?>> allTargetRelated = target.getRelated1ToNSequences();
-            for (NodePattern.Related1ToNSequence<? super S, ?> sourceRelated : source.getRelated1ToNSequences()) {
-                if (sourceRelated.edge().isAnalytic())
-                    continue;
-
-                Optional<NodePattern.Related1ToNSequence> maybeTargetRelated = allTargetRelated.stream()
-                        .filter(rel -> sourceRelated.edge().isEquivalentTo(rel.edge())).findFirst().map(rel -> sourceRelated.getClass().cast(rel));
-
-                maybeTargetRelated.ifPresent(allTargetRelated::remove);
-                recurseSequence(source, sourceRelated, maybeTargetRelated.orElse(null), ops);
-            }
         }
 
         private <S extends Node, P extends S, R extends Node> void recurseSequence(NodePattern<P> parent,
@@ -395,8 +406,21 @@ public interface GraphTransformation {
             }
         }
 
-        public GraphTransformation build() {
-            return this.calculateTransformation();
+        /**
+         * Try to iterate into the related nodes.
+         * @param <S> Type of the source node, defined by the edge
+         * @param <R> Type of the related node, defined by the edge
+         * @param parent Parent of the next source node
+         * @param sourceRelated Relation in the source graph that is currently recursed into.
+         * @param targetRelated Relation in the target graph equivalent to sourceRelated.
+         * @param ops List to save transformations into
+         */
+        private <S extends Node, P extends S, R extends Node> void recurseSimple(NodePattern<P> parent, NodePattern.RelatedNode<S, R> sourceRelated,
+                NodePattern.RelatedNode<S, R> targetRelated, List<GraphOperation> ops) {
+            NodePattern<? extends R> nextSource = sourceRelated.pattern();
+
+            NodePattern<? extends R> nextTarget = Objects.isNull(targetRelated) ? nextSource : targetRelated.pattern();
+            compare(nextSource, nextTarget, parent, ops, sourceRelated.edge());
         }
 
         public GraphTransformation.Builder<T> setExecutionOrder(ExecutionOrder executionOrder) {

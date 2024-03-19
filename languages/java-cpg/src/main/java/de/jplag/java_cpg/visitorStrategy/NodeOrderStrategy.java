@@ -29,9 +29,12 @@ import com.google.common.collect.Iterators;
  */
 public class NodeOrderStrategy implements IStrategy<Node> {
 
-    public static final boolean useCallGraphOrder = false;
+    private static final boolean useCallGraphOrder = true;
     private List<MethodDeclaration> methodOrder;
 
+    /**
+     * Creates a new {@link NodeOrderStrategy}.
+     */
     public NodeOrderStrategy() {
 
     }
@@ -133,6 +136,12 @@ public class NodeOrderStrategy implements IStrategy<Node> {
         return block.getStatements().stream().map(TransformationUtil::getEntry).iterator();
     }
 
+    /**
+     * Finds all child {@link Node}s of the given {@link Statement} in the order determined by the
+     * {@link NodeOrderStrategy}.
+     * @param statement the statement
+     * @return a list of all child nodes
+     */
     public static List<Node> flattenStatement(Statement statement) {
         List<Node> astChildren = SubgraphWalker.INSTANCE.flattenAST(statement);
         NodeOrderStrategy strategy = new NodeOrderStrategy();

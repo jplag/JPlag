@@ -6,9 +6,10 @@ import java.util.function.Predicate;
 import org.jetbrains.annotations.NotNull;
 
 import de.fraunhofer.aisec.cpg.graph.Node;
+import de.jplag.java_cpg.transformation.GraphTransformation;
+import de.jplag.java_cpg.transformation.matching.edges.CpgAttributeEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgMultiEdge;
-import de.jplag.java_cpg.transformation.matching.edges.CpgPropertyEdge;
 import de.jplag.java_cpg.transformation.matching.pattern.NodePattern.ForAllRelatedNode;
 
 /**
@@ -54,7 +55,7 @@ public abstract class GraphPatternBuilder {
      * @param <P> the attribute type
      * @return the {@link PatternModification}
      */
-    public static <S extends Node, P> PatternModification<S> equalAttributes(CpgPropertyEdge<S, P> propertyEdge, String otherId) {
+    public static <S extends Node, P> PatternModification<S> equalAttributes(CpgAttributeEdge<S, P> propertyEdge, String otherId) {
         return new AddEqualAttributes<>(propertyEdge, otherId);
     }
 
@@ -70,6 +71,13 @@ public abstract class GraphPatternBuilder {
         return new AddAssignedValueStableBetween<>(startId, endId);
     }
 
+    /**
+     * Creates a {@link PatternModification} that adds a {@link Predicate} property to a {@link NodePattern} that specifies
+     * that matching {@link Node}s not be equal to the {@link Node} given by the identifier.
+     * @param otherId the identifier of the other {@link Node}
+     * @param <S> the {@link Node} type of the target node
+     * @return the pattern modification
+     */
     public static <S extends Node> PatternModification<S> notEqualTo(String otherId) {
         return new AddNotEqualTo<>(otherId);
     }
@@ -103,8 +111,8 @@ public abstract class GraphPatternBuilder {
     }
 
     /**
-     * Creates an empty {@link WildcardGraphPattern}. It can be used as a target pattern for a
-     * {@link de.jplag.java_cpg.transformation.GraphTransformation} where a {@link Node} shall be removed.
+     * Creates an empty {@link WildcardGraphPattern}. It can be used as a target pattern for a {@link GraphTransformation}
+     * where a {@link Node} shall be removed.
      * @return the wildcard graph pattern
      */
     protected SimpleGraphPattern<Node> emptyWildcardParent() {
@@ -117,10 +125,10 @@ public abstract class GraphPatternBuilder {
      * @param cClass the concrete class object of the for-all related nodes
      * @param id the identifier for the related nodes
      * @param modifications the modifications for the created node pattern
-     * @return the pattern modification
      * @param <T> the type of source node
      * @param <R> the type of related node, defined by the edge
      * @param <C> the concrete type of related node
+     * @return the pattern modification
      */
     @SafeVarargs
     public final <T extends Node, R extends Node, C extends R> PatternModification<T> forAllRelated(CpgMultiEdge<T, R> multiEdge, Class<C> cClass,
@@ -142,9 +150,9 @@ public abstract class GraphPatternBuilder {
      * @param cClass the concrete class of the added NodePattern
      * @param id the identifier for the node pattern
      * @param modifications the modifications to be applied to the node
-     * @return the pattern list modification
      * @param <T> the node type of the added node as defined by the edge
      * @param <C> the concrete type of the added node
+     * @return the pattern list modification
      */
     @SafeVarargs
     public final <T extends Node, C extends T> PatternListModification<T> node(Class<C> cClass, String id, PatternModification<C>... modifications) {
@@ -203,6 +211,8 @@ public abstract class GraphPatternBuilder {
      * @param cClass the (super)type class of the related nodes
      * @param <S> the source {@link Node} type
      * @param <T> the target {@link Node} type
+     * @param modifications a {@link PatternListModification} object
+     * @param <C> a C class
      * @return the pattern modification
      */
     @SafeVarargs
@@ -216,6 +226,10 @@ public abstract class GraphPatternBuilder {
      * @param edge the edge establishing the relation
      * @param id the ID of the existing target {@link NodePattern}
      * @param <S> the target {@link Node} type
+     * @param cClass a {@link Class} object
+     * @param modifications a {@link PatternModification} object
+     * @param <T> a T class
+     * @param <C> a C class
      * @return the pattern modification
      */
     @SafeVarargs
@@ -230,6 +244,9 @@ public abstract class GraphPatternBuilder {
      * @param id the ID of the existing target {@link NodePattern}
      * @param <T> the target {@link Node} type
      * @param <R> the related {@link Node} type
+     * @param cClass a {@link Class} object
+     * @param modifications a {@link PatternModification} object
+     * @param <C> a C class
      * @return the pattern modification
      */
     @SafeVarargs
@@ -238,6 +255,12 @@ public abstract class GraphPatternBuilder {
         return new AddRelatedExisting1ToNNode<>(edge, cClass, id, List.of(modifications));
     }
 
+    /**
+     * Creates a {@link PatternModification} that sets the target {@link NodePattern} as the representative of the
+     * NodePattern. {@link Node}s matching this {@link NodePattern} will be the representative of the {@link Match}.
+     * @param <T> the {@link Node} type
+     * @return the pattern modification
+     */
     public final <T extends Node> PatternModification<T> setRepresentingNode() {
         return new SetRepresentingNode<>();
     }
@@ -507,7 +530,7 @@ public abstract class GraphPatternBuilder {
         }
     }
 
-    private record AddEqualAttributes<P, S extends Node>(CpgPropertyEdge<S, P> propertyEdge, String otherId) implements PatternModification<S> {
+    private record AddEqualAttributes<P, S extends Node>(CpgAttributeEdge<S, P> propertyEdge, String otherId) implements PatternModification<S> {
         @Override
         public void apply(NodePattern<? extends S> target, PatternRegistry patterns) {
             NodePattern<S> otherPattern = (NodePattern<S>) patterns.getPattern(otherId);

@@ -17,6 +17,11 @@ import de.jplag.java_cpg.transformation.GraphTransformation;
 public class MultiGraphPattern extends GraphPatternImpl {
     private final List<SimpleGraphPattern<?>> subgraphs;
 
+    /**
+     * Creates a new {@link MultiGraphPattern}.
+     * @param subgraphs the child graphs
+     * @param patterns the pattern registry
+     */
     public MultiGraphPattern(List<SimpleGraphPattern<?>> subgraphs, PatternRegistry patterns) {
         super(patterns);
         this.subgraphs = subgraphs;

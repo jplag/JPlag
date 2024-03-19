@@ -17,7 +17,7 @@ import de.jplag.TokenType;
  */
 public abstract class CpgTokenConsumer implements TokenConsumer {
 
-    public static final Logger logger = LoggerFactory.getLogger(CpgTokenConsumer.class);
+    private static final Logger logger = LoggerFactory.getLogger(CpgTokenConsumer.class);
     /**
      * This is used as the Token's length if the token spans multiple lines. The value is supposed to be greater than the
      * length of any sensible line of code.
@@ -32,6 +32,12 @@ public abstract class CpgTokenConsumer implements TokenConsumer {
             return MULTILINE_TOKEN_LENGTH;
     }
 
+    /**
+     * Adds a new {@link de.jplag.Token} for the given {@link TokenType} and {@link Node}.
+     * @param type the {@link de.jplag.TokenType}
+     * @param node the represented {@link de.fraunhofer.aisec.cpg.graph.Node}
+     * @param isEndToken true iff the token represents the end of a block
+     */
     public void addToken(TokenType type, Node node, boolean isEndToken) {
         logger.debug(type.toString() + "/" + node.toString());
         PhysicalLocation location = node.getLocation();

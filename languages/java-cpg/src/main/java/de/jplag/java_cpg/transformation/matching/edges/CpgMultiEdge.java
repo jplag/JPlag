@@ -1,6 +1,6 @@
 package de.jplag.java_cpg.transformation.matching.edges;
 
-import static de.jplag.java_cpg.transformation.matching.edges.IEdge.EdgeCategory.ANALYTIC;
+import static de.jplag.java_cpg.transformation.matching.edges.CpgMultiEdge.ValueType.NODE_VALUED;
 import static de.jplag.java_cpg.transformation.matching.edges.IEdge.EdgeCategory.AST;
 
 import java.util.HashMap;
@@ -19,33 +19,28 @@ import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
  * @param <S> The type of the source node
  * @param <T> The type of the target node
  */
-public final class CpgMultiEdge<S extends Node, T extends Node> implements IEdge<S, T> {
+public final class CpgMultiEdge<S extends Node, T extends Node> extends AEdge<S, T> {
     private final Function<S, List<T>> getter;
     private final Function<S, List<PropertyEdge<T>>> getEdges;
-    private final EdgeCategory category;
     private final TriConsumer<S, Integer, T> setter;
-    private final boolean edgeValued;
-    private Class<S> fromClass;
-    private Class<T> toClass;
-    private final Map<NodePattern<?>, Any1ofNEdge> any1ofNEdges;
+    private final Map<NodePattern<?>, AnyOfNEdge> any1ofNEdges;
+    private final ValueType valueType;
 
     /**
      * Creates a new CpgMultiEdge.
      * @param getter a function to get all the target nodes
      * @param setter a function to set the nth target node
-     * @param edgeValued if true, then this relation is represented by a {@link List} of {@link PropertyEdge}s. Otherwise,
-     * it returns a list of {@link Node}s.
+     * @param valueType describes the type of representation of this edge in the CPG.
      * @param getEdges if edgeValued, then this should be a function to get all the target edges, null otherwise.
      * @param category category of the edge
      */
-    public CpgMultiEdge(Function<S, List<T>> getter, TriConsumer<S, Integer, T> setter, boolean edgeValued,
+    public CpgMultiEdge(Function<S, List<T>> getter, TriConsumer<S, Integer, T> setter, ValueType valueType,
             Function<S, List<PropertyEdge<T>>> getEdges, EdgeCategory category) {
+        super(category);
         this.getter = getter;
         this.setter = setter;
-        // TODO: Model edgeValued as enum {NODE, EDGE} instead?
-        this.edgeValued = edgeValued;
+        this.valueType = valueType;
         this.getEdges = getEdges;
-        this.category = category;
 
         this.any1ofNEdges = new HashMap<>();
     }
@@ -61,24 +56,40 @@ public final class CpgMultiEdge<S extends Node, T extends Node> implements IEdge
         return edgeValued(getter, AST);
     }
 
+    /**
+     * A shorthand to create an edge-valued {@link CpgMultiEdge}.
+     * @param getter a function to get all the edges
+     * @param category the category of the edge
+     * @param <S> The type of the source node
+     * @param <T> The type of the target node
+     * @return the new {@link CpgMultiEdge}
+     */
     public static <S extends Node, T extends Node> CpgMultiEdge<S, T> edgeValued(Function<S, List<PropertyEdge<T>>> getter, EdgeCategory category) {
         Function<S, List<T>> getNodes = (S node) -> getter.apply(node).stream().map(PropertyEdge::getEnd).toList();
         TriConsumer<S, Integer, T> setOne = (S node, Integer n, T value) -> getter.apply(node).get(n).setEnd(value);
-        return new CpgMultiEdge<>(getNodes, setOne, true, getter, category);
+        return new CpgMultiEdge<>(getNodes, setOne, ValueType.EDGE_VALUED, getter, category);
     }
 
     /**
      * A shorthand to create a node-valued {@link CpgMultiEdge}.
      * @param getter a function to get all the nodes
+     * @param category the edge category
      * @param <S> The type of the source node
      * @param <T> The type of the target node
      * @return the new {@link CpgMultiEdge}
      */
     public static <S extends Node, T extends Node> CpgMultiEdge<S, T> nodeValued(Function<S, List<T>> getter, EdgeCategory category) {
         TriConsumer<S, Integer, T> setOne = (S node, Integer n, T value) -> getter.apply(node).set(n, value);
-        return new CpgMultiEdge<>(getter, setOne, false, null, category);
+        return new CpgMultiEdge<>(getter, setOne, NODE_VALUED, null, category);
     }
 
+    /**
+     * A shorthand to create a node-valued AST {@link CpgMultiEdge}.
+     * @param getter a function to get all the nodes
+     * @param <S> The type of the source node
+     * @param <T> The type of the target node
+     * @return the new {@link CpgMultiEdge}
+     */
     public static <S extends Node, T extends Node> CpgMultiEdge<S, T> nodeValued(Function<S, List<T>> getter) {
         return nodeValued(getter, AST);
     }
@@ -92,32 +103,29 @@ public final class CpgMultiEdge<S extends Node, T extends Node> implements IEdge
         return getter.apply(s);
     }
 
-    public Class<S> getFromClass() {
-        return this.fromClass;
-    }
-
-    public void setFromClass(Class<S> sClass) {
-        this.fromClass = sClass;
-    }
-
-    public Class<T> getToClass() {
-        return toClass;
-    }
-
-    public void setToClass(Class<T> tClass) {
-        this.toClass = tClass;
-    }
-
+    /**
+     * Get the getter function of this multi edge.
+     * @return the getter
+     */
     public Function<S, List<T>> getter() {
         return getter;
     }
 
+    /**
+     * Gets the setter function of this multi edge.
+     * @return a {@link TriConsumer} object
+     */
     public TriConsumer<S, Integer, T> setter() {
         return setter;
     }
 
-    public <R extends Node, S extends Node> CpgMultiEdge<S, R>.Any1ofNEdge getAny1ofNEdgeTo(NodePattern<? extends R> pattern) {
-        return (CpgMultiEdge<S, R>.Any1ofNEdge) this.any1ofNEdges.computeIfAbsent(pattern, p -> new Any1ofNEdge());
+    /**
+     * Gets a {@link AnyOfNEdge} from this {@link CpgMultiEdge} directed at the given {@link NodePattern}.
+     * @param pattern the pattern
+     * @return the 'any of n' edge
+     */
+    public CpgMultiEdge<S, T>.AnyOfNEdge getAnyOfNEdgeTo(NodePattern<? extends T> pattern) {
+        return this.any1ofNEdges.computeIfAbsent(pattern, p -> new AnyOfNEdge());
     }
 
     /**
@@ -125,9 +133,10 @@ public final class CpgMultiEdge<S extends Node, T extends Node> implements IEdge
      * @return true if this edge is edge-valued, false if this edge is node-valued.
      */
     public boolean isEdgeValued() {
-        return edgeValued;
+        return this.valueType == ValueType.EDGE_VALUED;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isEquivalentTo(IEdge<?, ?> other) {
         return Objects.equals(this, other);
@@ -142,31 +151,43 @@ public final class CpgMultiEdge<S extends Node, T extends Node> implements IEdge
         return getEdges.apply(s);
     }
 
-    public boolean isAst() {
-        return category == AST;
-    }
-
-    @Override
-    public boolean isAnalytic() {
-        return category == ANALYTIC;
-    }
-
-    public EdgeCategory getCategory() {
-        return category;
-    }
-
     /**
-     * A {@link Any1ofNEdge} serves as a placeholder for a {@link CpgNthEdge} during transformation calculation as long as
+     * A {@link AnyOfNEdge} serves as a placeholder for a {@link CpgNthEdge} during transformation calculation as long as
      * the index is not known.
      */
-    public class Any1ofNEdge extends CpgNthEdge<S, T> {
+    public class AnyOfNEdge extends CpgNthEdge<S, T> {
 
-        public Any1ofNEdge() {
+        /**
+         * Creates a new {@link AnyOfNEdge} for the corresponding {@link CpgMultiEdge}.
+         */
+        public AnyOfNEdge() {
             super(CpgMultiEdge.this, -1);
         }
 
+        /**
+         * Gets the corresponding {@link CpgMultiEdge}.
+         * @return the multi edge
+         */
         public CpgMultiEdge<S, T> getMultiEdge() {
             return CpgMultiEdge.this;
         }
+    }
+
+    /**
+     * Describes the type of connection between nodes via an edge.
+     */
+    public enum ValueType {
+        /**
+         * An edge where the targets can be accessed directly as nodes.
+         */
+        NODE_VALUED,
+        /**
+         * An edge where the target can be accessed via {@link PropertyEdge}s.
+         */
+        EDGE_VALUED,
+        /**
+         * An edge where the target is a List of nodes.
+         */
+        LIST_VALUED
     }
 }

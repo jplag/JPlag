@@ -19,37 +19,62 @@ import de.jplag.java_cpg.transformation.matching.pattern.PatternUtil;
 import de.jplag.java_cpg.transformation.matching.pattern.SimpleGraphPattern;
 
 /**
- * Contains factory methods to create different {@link GraphTransformation}s.
+ * Contains factory methods to create different {@link de.jplag.java_cpg.transformation.GraphTransformation}s.
+ * @author robin
+ * @version $Id: $Id
  */
 public class TransformationRepository {
     /*
      * These constants are supposed to avoid uselessly building the same graph transformations multiple times.
      * Alternatively, all factory methods could be public and use private fields to create a kind-of singleton pattern.
      */
+    /** Constant <code>ifWithNegatedConditionResolution</code> */
     public static final GraphTransformation ifWithNegatedConditionResolution = ifWithNegatedConditionResolution();
+    /** Constant <code>forStatementToWhileStatement</code> */
     public static final GraphTransformation forStatementToWhileStatement = forStatementToWhileStatement();
+    /** Constant <code>removeGetterMethod</code> */
     public static final GraphTransformation removeGetterMethod = removeGetterMethod();
+    /** Constant <code>removeUnusedVariableDeclaration</code> */
     public static final GraphTransformation removeUnusedVariableDeclaration = removeUnusedVariableDeclaration();
+    /** Constant <code>removeUnusedVariableDeclarationStatement</code> */
     public static final GraphTransformation removeUnusedVariableDeclarationStatement = removeUnusedVariableDeclarationStatement();
+    /** Constant <code>removeEmptyDeclarationStatement</code> */
     public static final GraphTransformation removeEmptyDeclarationStatement = removeEmptyDeclarationStatement();
+    /** Constant <code>removeLibraryRecord</code> */
     public static final GraphTransformation removeLibraryRecord = removeLibraryRecord();
+    /** Constant <code>removeLibraryField</code> */
     public static final GraphTransformation removeLibraryField = removeLibraryField();
+    /** Constant <code>moveConstantToOnlyUsingClass</code> */
     public static final GraphTransformation moveConstantToOnlyUsingClass = moveConstantToOnlyUsingClass();
+    /** Constant <code>inlineSingleUseVariable</code> */
     public static final GraphTransformation inlineSingleUseVariable = inlineSingleUseVariable();
 
+    /** Constant <code>inlineSingleUseConstant</code> */
     public static final GraphTransformation inlineSingleUseConstant = inlineSingleUseConstant();
+    /** Constant <code>removeEmptyConstructor</code> */
     public static final GraphTransformation removeEmptyConstructor = removeEmptyConstructor();
 
+    /** Constant <code>removeEmptyRecord</code> */
     public static final GraphTransformation removeEmptyRecord = removeEmptyRecord();
+    /** Constant <code>removeImplicitStandardConstructor</code> */
     public static final GraphTransformation removeImplicitStandardConstructor = removeImplicitStandardConstructor();
+    /** Constant <code>removeOptionalOfCall</code> */
     public static final GraphTransformation removeOptionalOfCall = removeOptionalOfCall();
+    /** Constant <code>removeOptionalGetCall</code> */
     public static final GraphTransformation removeOptionalGetCall = removeOptionalGetCall();
+    /** Constant <code>removeUnsupportedConstructor</code> */
     public static final GraphTransformation removeUnsupportedConstructor = removeUnsupportedConstructor();
+    /** Constant <code>removeUnsupportedMethod</code> */
     public static final GraphTransformation removeUnsupportedMethod = removeUnsupportedMethod();
+    /** Constant <code>wrapElseStatement</code> */
     public static final GraphTransformation wrapElseStatement = wrapElseStatement();
+    /** Constant <code>wrapForStatement</code> */
     public static final GraphTransformation wrapForStatement = wrapForStatement();
+    /** Constant <code>wrapThenStatement</code> */
     public static final GraphTransformation wrapThenStatement = wrapThenStatement();
+    /** Constant <code>wrapWhileStatement</code> */
     public static final GraphTransformation wrapWhileStatement = wrapWhileStatement();
+    /** Constant <code>wrapDoStatement</code> */
     public static final GraphTransformation wrapDoStatement = wrapDoStatement();
 
     private TransformationRepository() {

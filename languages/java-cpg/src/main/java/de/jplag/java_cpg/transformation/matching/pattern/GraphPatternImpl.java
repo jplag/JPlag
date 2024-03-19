@@ -12,6 +12,10 @@ public abstract class GraphPatternImpl implements GraphPattern {
     protected final PatternRegistry patternRegistry;
     protected NodePattern<?> representingNode;
 
+    /**
+     * Constructs a new {@link GraphPatternImpl} from a {@link PatternRegistry}.
+     * @param patterns a {@link PatternRegistry} object
+     */
     public GraphPatternImpl(PatternRegistry patterns) {
         representingNode = patterns.getRepresentingNode();
         this.patternRegistry = patterns;
@@ -30,11 +34,6 @@ public abstract class GraphPatternImpl implements GraphPattern {
         return patternRegistry.getId(pattern);
     }
 
-    /**
-     * Gets the {@link NodePattern} corresponding to the given {@link String} ID.
-     * @param id the ID
-     * @return the node pattern
-     */
     public NodePattern<?> getPattern(String id) {
         return patternRegistry.getPattern(id);
     }
@@ -43,20 +42,16 @@ public abstract class GraphPatternImpl implements GraphPattern {
         return patternRegistry.allIds();
     }
 
-    /**
-     * Adds a copy of the given (transformation target) {@link NodePattern} to this (transformation source)
-     * {@link SimpleGraphPattern}.
-     * @param roleName the {@link String} ID of the {@link NodePattern}
-     * @param pattern the node pattern
-     * @param <T> The node type of the {@link NodePattern}
-     * @return a copy of the given {@link NodePattern}
-     */
     public <T extends Node> NodePattern<T> addNode(String roleName, NodePattern<T> pattern) {
         NodePattern<T> patternCopy = pattern.deepCopy();
         this.patternRegistry.put(roleName, patternCopy);
         return patternCopy;
     }
 
+    /**
+     * Gets the <code>representingNode</code> of this {@link GraphPatternImpl}.
+     * @return the representative {@link de.jplag.java_cpg.transformation.matching.pattern.NodePattern}
+     */
     public NodePattern<?> getRepresentingNode() {
         return representingNode;
     }

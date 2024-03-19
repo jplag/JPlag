@@ -13,24 +13,25 @@ import de.fraunhofer.aisec.cpg.graph.edge.PropertyEdge;
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.Block;
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.UnaryOperator;
 import de.fraunhofer.aisec.cpg.helpers.SubgraphWalker;
-import de.jplag.java_cpg.transformation.GraphTransformation;
 
 /**
- * This class is a collection of auxiliary methods related to {@link GraphTransformation}s.
+ * This class is a collection of auxiliary methods related to
+ * {@link de.jplag.java_cpg.transformation.GraphTransformation}s.
  */
 public final class TransformationUtil {
 
-    static final Logger logger = LoggerFactory.getLogger(TransformationUtil.class);
-    public static final DummyNeighbor DUMMY = DummyNeighbor.getInstance();
+    private static final Logger logger = LoggerFactory.getLogger(TransformationUtil.class);
+    private static final DummyNeighbor DUMMY = DummyNeighbor.getInstance();
 
     private TransformationUtil() {
         /* should not be instantiated */
     }
 
     /**
-     * Gets the {@link SubgraphWalker.Border} of the given node's sub-AST that links to outer nodes via EOG edges.
+     * Gets the {@link de.fraunhofer.aisec.cpg.helpers.SubgraphWalker.Border} of the given node's sub-AST that links to
+     * outer nodes via EOG edges.
      * @param astRoot the root of the sub-AST
-     * @return the EOG {@link SubgraphWalker.Border} of the AST
+     * @return the EOG {@link de.fraunhofer.aisec.cpg.helpers.SubgraphWalker.Border} of the AST
      */
     public static SubgraphWalker.Border getEogBorders(Node astRoot) {
         SubgraphWalker.Border result;
@@ -93,6 +94,13 @@ public final class TransformationUtil {
         exits.forEach(exit -> connectNewSuccessor(exit, newSuccessor, true));
     }
 
+    /**
+     * <p>
+     * disconnectFromSuccessor.
+     * </p>
+     * @param astRoot a {@link de.fraunhofer.aisec.cpg.graph.Node} object
+     * @return a {@link de.fraunhofer.aisec.cpg.graph.Node} object
+     */
     public static Node disconnectFromSuccessor(Node astRoot) {
         Node exit = getExit(astRoot);
         List<PropertyEdge<Node>> exitEdges = new ArrayList<>(getExitEdges(astRoot, List.of(exit), true));
@@ -159,6 +167,13 @@ public final class TransformationUtil {
         return entry;
     }
 
+    /**
+     * <p>
+     * disconnectFromPredecessor.
+     * </p>
+     * @param astRoot a {@link de.fraunhofer.aisec.cpg.graph.Node} object
+     * @return a {@link java.util.List} object
+     */
     public static List<Node> disconnectFromPredecessor(Node astRoot) {
         Node entry = getEntry(astRoot);
 
@@ -184,6 +199,13 @@ public final class TransformationUtil {
         return predExits;
     }
 
+    /**
+     * <p>
+     * getEntry.
+     * </p>
+     * @param astRoot a {@link de.fraunhofer.aisec.cpg.graph.Node} object
+     * @return a {@link de.fraunhofer.aisec.cpg.graph.Node} object
+     */
     public static Node getEntry(Node astRoot) {
         return getEogBorders(astRoot).getEntries().getFirst();
     }
@@ -215,6 +237,15 @@ public final class TransformationUtil {
         return entry;
     }
 
+    /**
+     * <p>
+     * getEntryEdges.
+     * </p>
+     * @param astParent a {@link de.fraunhofer.aisec.cpg.graph.Node} object
+     * @param entry a {@link de.fraunhofer.aisec.cpg.graph.Node} object
+     * @param useDummies a boolean
+     * @return a {@link java.util.List} object
+     */
     @NotNull
     public static List<PropertyEdge<Node>> getEntryEdges(Node astParent, Node entry, boolean useDummies) {
         List<PropertyEdge<Node>> currentEntryEdges = entry.getPrevEOGEdges().stream().filter(e -> !isAstChild(astParent, e.getStart())).toList();
@@ -235,6 +266,15 @@ public final class TransformationUtil {
         }
     }
 
+    /**
+     * <p>
+     * getExitEdges.
+     * </p>
+     * @param astParent a {@link de.fraunhofer.aisec.cpg.graph.Node} object
+     * @param exits a {@link java.util.List} object
+     * @param useDummies a boolean
+     * @return a {@link java.util.List} object
+     */
     @NotNull
     public static List<PropertyEdge<Node>> getExitEdges(Node astParent, List<Node> exits, boolean useDummies) {
         List<PropertyEdge<Node>> currentExitEdges = exits.stream().flatMap(n -> n.getNextEOGEdges().stream())
@@ -256,6 +296,13 @@ public final class TransformationUtil {
 
     }
 
+    /**
+     * <p>
+     * insertBefore.
+     * </p>
+     * @param target a {@link de.fraunhofer.aisec.cpg.graph.Node} object
+     * @param newSuccessor a {@link de.fraunhofer.aisec.cpg.graph.Node} object
+     */
     public static void insertBefore(Node target, Node newSuccessor) {
         Node entry = getEntry(target);
         List<Node> exits = getEogBorders(target).getExits();
@@ -268,6 +315,13 @@ public final class TransformationUtil {
         exits.forEach(exit -> connectNewSuccessor(exit, succEntry, false));
     }
 
+    /**
+     * <p>
+     * insertAfter.
+     * </p>
+     * @param target a {@link de.fraunhofer.aisec.cpg.graph.Node} object
+     * @param newPredecessor a {@link de.fraunhofer.aisec.cpg.graph.Node} object
+     */
     public static void insertAfter(Node target, Node newPredecessor) {
         Node entry = getEntry(target);
         Node exit = getExit(target);
@@ -280,6 +334,14 @@ public final class TransformationUtil {
         connectNewSuccessor(predExit, entry, false);
     }
 
+    /**
+     * <p>
+     * isAstSuccessor.
+     * </p>
+     * @param element a {@link de.fraunhofer.aisec.cpg.graph.Node} object
+     * @param maybeSuccessor a {@link de.fraunhofer.aisec.cpg.graph.Node} object
+     * @return a boolean
+     */
     public static boolean isAstSuccessor(Node element, Node maybeSuccessor) {
 
         List<Node> exits = getEogBorders(element).getExits();
@@ -289,6 +351,14 @@ public final class TransformationUtil {
         return entryEdges.stream().anyMatch(e -> exits.contains(e.getStart()));
     }
 
+    /**
+     * <p>
+     * isEogSuccessor.
+     * </p>
+     * @param exit a {@link de.fraunhofer.aisec.cpg.graph.Node} object
+     * @param maybeSuccessor a {@link de.fraunhofer.aisec.cpg.graph.Node} object
+     * @return a boolean
+     */
     public static boolean isEogSuccessor(Node exit, Node maybeSuccessor) {
         Node entry = getEntry(maybeSuccessor);
         List<PropertyEdge<Node>> entryEdges = getEntryEdges(maybeSuccessor, entry, false);

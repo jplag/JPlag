@@ -14,12 +14,9 @@ import de.fraunhofer.aisec.cpg.graph.Node;
  * @param <S> The type of the source node
  * @param <T> The type of the target node
  */
-public class CpgEdge<S extends Node, T extends Node> implements IEdge<S, T> {
+public class CpgEdge<S extends Node, T extends Node> extends AEdge<S, T> {
     private final Function<S, T> getter;
     private final BiConsumer<S, T> setter;
-    private final EdgeCategory category;
-    private Class<S> fromClass;
-    private Class<T> toClass;
 
     /**
      * Creates a new {@link CpgEdge} with a getter and setter for the target node.
@@ -28,17 +25,30 @@ public class CpgEdge<S extends Node, T extends Node> implements IEdge<S, T> {
      * @param category the edge category
      */
     public CpgEdge(Function<S, T> getter, BiConsumer<S, T> setter, EdgeCategory category) {
+        super(category);
         this.getter = getter;
         this.setter = setter;
-        this.category = category;
     }
 
+    /**
+     * Creates a new {@link CpgEdge} with a getter and setter for the target node.
+     * @param getter the getter
+     * @param setter the setter
+     */
     public CpgEdge(Function<S, T> getter, BiConsumer<S, T> setter) {
         this(getter, setter, AST);
     }
 
-    public static <S extends Node, T extends Node> CpgEdge<S, T> listValued(Function<S, List<T>> getRhs, BiConsumer<S, List<T>> setRhs) {
-        return new CpgEdge<>(node -> getRhs.apply(node).get(0), (node, value) -> setRhs.accept(node, List.of(value)));
+    /**
+     * Creates a new list-valued {@link CpgEdge} with a getter and setter for the target node list.
+     * @param getter the getter
+     * @param setter the setter
+     * @param <S> The type of the source node
+     * @param <T> The type of the target node
+     * @return a {@link CpgEdge} object
+     */
+    public static <S extends Node, T extends Node> CpgEdge<S, T> listValued(Function<S, List<T>> getter, BiConsumer<S, List<T>> setter) {
+        return new CpgEdge<>(node -> getter.apply(node).get(0), (node, value) -> setter.accept(node, List.of(value)));
     }
 
     /**
@@ -50,28 +60,18 @@ public class CpgEdge<S extends Node, T extends Node> implements IEdge<S, T> {
         return getter.apply(from);
     }
 
-    @Override
-    public void setFromClass(Class<S> sClass) {
-        this.fromClass = sClass;
-    }
-
-    @Override
-    public void setToClass(Class<T> tClass) {
-        this.toClass = tClass;
-    }
-
-    public Class<S> getFromClass() {
-        return fromClass;
-    }
-
-    public Class<T> getToClass() {
-        return toClass;
-    }
-
+    /**
+     * Gets the getter function of this {@link CpgEdge}, used to get the targets from a given source.
+     * @return the getter
+     */
     public Function<S, T> getter() {
         return getter;
     }
 
+    /**
+     * Gets the setter function of this {@link CpgEdge}, used to set the targets for a given source.
+     * @return the setter
+     */
     public BiConsumer<S, T> setter() {
         return setter;
     }
@@ -86,17 +86,4 @@ public class CpgEdge<S extends Node, T extends Node> implements IEdge<S, T> {
         return Objects.equals(this, other);
     }
 
-    @Override
-    public boolean isAst() {
-        return category == AST;
-    }
-
-    @Override
-    public boolean isAnalytic() {
-        return category == ANALYTIC;
-    }
-
-    public boolean isReference() {
-        return category == REFERENCE;
-    }
 }

@@ -17,9 +17,15 @@ import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
  */
 public class CpgIsomorphismDetector {
 
-    public static final Logger logger = LoggerFactory.getLogger(CpgIsomorphismDetector.class);
+    private static final Logger logger = LoggerFactory.getLogger(CpgIsomorphismDetector.class);
     private TreeMap<Class<? extends Node>, List<Node>> nodeMap;
     private ClassComparator classComparator;
+
+    /**
+     * Creates a new {@link CpgIsomorphismDetector}.
+     */
+    public CpgIsomorphismDetector() {
+    }
 
     /**
      * Sets the current graph to find pattern matches in.
@@ -87,6 +93,7 @@ public class CpgIsomorphismDetector {
      * Verifies that the given match of the source {@link GraphPattern} is still valid. After a transformation involving the
      * match's {@link Node}s, a match may be invalidated.
      * @param match the match
+     * @param sourcePattern the source pattern
      * @return true iff the match is still valid
      */
     public boolean validateMatch(Match match, GraphPattern sourcePattern) {

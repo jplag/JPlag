@@ -20,7 +20,7 @@ import de.jplag.java_cpg.transformation.matching.pattern.Match;
 import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
 
 /**
- * Inserts the target {@link Node} into a collection of other subnodes of the parent {@link Node}.
+ * Inserts the target {@link Node} into a collection of other child nodes of the parent {@link Node}.
  * @param <S> type of the parentPattern node, defined by the edge
  * @param <T> type of the target node, defined by the edge
  */
@@ -37,6 +37,7 @@ public final class InsertOperation<S extends Node, T extends Node> extends Graph
     private final boolean connectEog;
 
     /**
+     * Creates a new {@link InsertOperation}.
      * @param parentPattern source node of the edge
      * @param edge edge where an element shall be inserted
      * @param newChildPattern node to be inserted
@@ -51,7 +52,7 @@ public final class InsertOperation<S extends Node, T extends Node> extends Graph
     }
 
     @Override
-    public void resolve(Match match, TranslationContext ctx) {
+    public void resolveAndApply(Match match, TranslationContext ctx) {
         S parent = match.get(parentPattern);
         // match should contain newChildPattern node because of Builder.createNewNodes()
         T newTarget = match.get(newChildPattern);
@@ -62,6 +63,13 @@ public final class InsertOperation<S extends Node, T extends Node> extends Graph
 
     }
 
+    /**
+     * Applies the InsertOperation on the given {@link Node}s.
+     * @param ctx the translation context
+     * @param parent the parent node
+     * @param newTarget the new child node
+     * @param index the insertion index
+     */
     public void apply(TranslationContext ctx, S parent, T newTarget, int index) {
         PropertyEdge<T> newEdge = new PropertyEdge<>(parent, newTarget);
         newEdge.addProperty(Properties.INDEX, index);
@@ -114,11 +122,11 @@ public final class InsertOperation<S extends Node, T extends Node> extends Graph
     }
 
     @Override
-    public GraphOperation instantiateAny1ofNEdge(Match match) {
-        CpgMultiEdge<S, T>.Any1ofNEdge any1OfNEdge = (CpgMultiEdge<S, T>.Any1ofNEdge) edge;
-        CpgNthEdge<S, T> edge1 = match.getEdge(this.parentPattern, any1OfNEdge);
+    public GraphOperation instantiateAnyOfNEdge(Match match) {
+        CpgMultiEdge<S, T>.AnyOfNEdge anyOfNEdge = (CpgMultiEdge<S, T>.AnyOfNEdge) edge;
+        CpgNthEdge<S, T> edge1 = match.getEdge(this.parentPattern, anyOfNEdge);
         if (Objects.isNull(edge1)) {
-            edge1 = new CpgNthEdge<>(any1OfNEdge.getMultiEdge(), 0);
+            edge1 = new CpgNthEdge<>(anyOfNEdge.getMultiEdge(), 0);
         }
         return new InsertOperation<>(parentPattern, edge1, newChildPattern, this.connectEog);
     }

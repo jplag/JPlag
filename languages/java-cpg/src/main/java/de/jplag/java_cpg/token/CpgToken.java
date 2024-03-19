@@ -13,6 +13,15 @@ import de.jplag.TokenType;
 public class CpgToken extends Token {
     private final Name name;
 
+    /**
+     * Creates a new {@link CpgToken}.
+     * @param tokenType the {@link de.jplag.TokenType}
+     * @param file the {@link java.io.File} that contains the represented piece of code
+     * @param startLine the starting line of the represented code
+     * @param startColumn the starting column of the represented code
+     * @param length the length of the represented code
+     * @param name the name of the represented CPG node
+     */
     public CpgToken(TokenType tokenType, File file, int startLine, int startColumn, int length, Name name) {
         super(tokenType, file, startLine, startColumn, length);
         this.name = name;

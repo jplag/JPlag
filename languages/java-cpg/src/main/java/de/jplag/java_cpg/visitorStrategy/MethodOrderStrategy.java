@@ -23,12 +23,15 @@ import de.fraunhofer.aisec.cpg.helpers.SubgraphWalker;
  * This class contains methods to put a call graph oriented order on methods.
  */
 public class MethodOrderStrategy {
-    public static final String START_OF_GENERIC_CLASS = "^(\\w+ +)*class +\\w+ *<.*";
-    public static final Logger logger = LoggerFactory.getLogger(MethodOrderStrategy.class);
+    private static final String START_OF_GENERIC_CLASS = "^(\\w+ +)*class +\\w+ *<.*";
+    private static final Logger logger = LoggerFactory.getLogger(MethodOrderStrategy.class);
     private final NodeOrderStrategy nodeOrderStrategy;
     private int index;
     private List<MethodDeclaration> allMethods;
 
+    /**
+     * Creates a new {@link MethodOrderStrategy}.
+     */
     public MethodOrderStrategy() {
         this.index = 0;
         this.nodeOrderStrategy = new NodeOrderStrategy();

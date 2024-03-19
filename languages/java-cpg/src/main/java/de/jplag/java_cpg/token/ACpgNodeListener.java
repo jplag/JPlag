@@ -6,9 +6,15 @@ import de.fraunhofer.aisec.cpg.graph.statements.*;
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*;
 
 /**
- * This class provides empty dummy implementations for {@link CpgNodeListener}s.
+ * This class provides empty dummy implementations for {@link de.jplag.java_cpg.token.CpgNodeListener}s.
  */
 public abstract class ACpgNodeListener extends IVisitorExitor<Node> {
+
+    /**
+     * Creates a new {@link ACpgNodeListener}.
+     */
+    public ACpgNodeListener() {
+    }
 
     void exit(AssertStatement assertStatement) {
     }

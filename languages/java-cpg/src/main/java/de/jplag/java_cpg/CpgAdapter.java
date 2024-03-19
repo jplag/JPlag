@@ -14,6 +14,7 @@ import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.java_cpg.passes.*;
 import de.jplag.java_cpg.transformation.GraphTransformation;
+import de.jplag.java_cpg.transformation.GraphTransformation.ExecutionPhase;
 
 import kotlin.jvm.JvmClassMappingKt;
 import kotlin.reflect.KClass;
@@ -26,6 +27,10 @@ public class CpgAdapter {
     private List<Token> tokenList;
     private boolean reorderingEnabled = true;
 
+    /**
+     * Constructor for CpgAdapter.
+     * @param transformations a list of {@link GraphTransformation}s
+     */
     public CpgAdapter(GraphTransformation... transformations) {
         addTransformations(transformations);
     }
@@ -89,6 +94,10 @@ public class CpgAdapter {
         Arrays.stream(transformations).forEach(this::addTransformation);
     }
 
+    /**
+     * Adds a transformation at the end of its respective ATransformationPass.
+     * @param transformation a {@link GraphTransformation}
+     */
     public void addTransformation(GraphTransformation transformation) {
         switch (transformation.getPhase()) {
             case OBLIGATORY -> PrepareTransformationPass.registerTransformation(transformation);
@@ -97,11 +106,18 @@ public class CpgAdapter {
         }
     }
 
+    /**
+     * Clears all non-{@link ExecutionPhase#OBLIGATORY} transformations from the pipeline.
+     */
     public void clearTransformations() {
         AstTransformationPass.clearTransformations();
         CpgTransformationPass.clearTransformations();
     }
 
+    /**
+     * Sets <code>reorderingEnabled</code>. If true, statements may be reordered.
+     * @param enabled value for reorderingEnabled.
+     */
     public void setReorderingEnabled(boolean enabled) {
         this.reorderingEnabled = enabled;
     }

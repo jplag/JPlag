@@ -40,7 +40,7 @@ public class Edges {
     public static CpgEdge<AssignExpression, Expression> ASSIGN_EXPRESSION__RHS = CpgEdge.listValued(AssignExpression::getRhs,
             AssignExpression::setRhs);
     public static CpgEdge<BinaryOperator, Expression> BINARY_OPERATOR__LHS = new CpgEdge<>(BinaryOperator::getLhs, BinaryOperator::setLhs);
-    public static CpgPropertyEdge<BinaryOperator, String> BINARY_OPERATOR__OPERATOR_CODE = new CpgPropertyEdge<>(BinaryOperator::getOperatorCode,
+    public static CpgAttributeEdge<BinaryOperator, String> BINARY_OPERATOR__OPERATOR_CODE = new CpgAttributeEdge<>(BinaryOperator::getOperatorCode,
             BinaryOperator::setOperatorCode);
     public static CpgEdge<BinaryOperator, Expression> BINARY_OPERATOR__RHS = new CpgEdge<>(BinaryOperator::getRhs, BinaryOperator::setRhs);
     public static CpgMultiEdge<Block, Declaration> BLOCK__DECLARATIONS = CpgMultiEdge.nodeValued(Block::getDeclarations, REFERENCE);
@@ -53,8 +53,8 @@ public class Edges {
             .nodeValued(Component::getTranslationUnits);
     public static CpgMultiEdge<DeclarationStatement, Declaration> DECLARATION_STATEMENT__DECLARATIONS = CpgMultiEdge
             .edgeValued(DeclarationStatement::getDeclarationEdges);
-    public static CpgPropertyEdge<FieldDeclaration, List<String>> FIELD_DECLARATION__MODIFIERS = new CpgPropertyEdge<>(FieldDeclaration::getModifiers,
-            FieldDeclaration::setModifiers);
+    public static CpgAttributeEdge<FieldDeclaration, List<String>> FIELD_DECLARATION__MODIFIERS = new CpgAttributeEdge<>(
+            FieldDeclaration::getModifiers, FieldDeclaration::setModifiers);
     public static CpgEdge<ForStatement, Expression> FOR_STATEMENT__CONDITION = new CpgEdge<>(ForStatement::getCondition, ForStatement::setCondition);
     public static CpgEdge<ForStatement, Statement> FOR_STATEMENT__INITIALIZER_STATEMENT = new CpgEdge<>(ForStatement::getInitializerStatement,
             ForStatement::setInitializerStatement);
@@ -83,9 +83,9 @@ public class Edges {
             MethodDeclaration::getRecordDeclaration, MethodDeclaration::setRecordDeclaration, REFERENCE);
     public static CpgMultiEdge<NamespaceDeclaration, Declaration> NAMESPACE_DECLARATION__DECLARATIONS = CpgMultiEdge
             .nodeValued(NamespaceDeclaration::getDeclarations);
-    public static CpgPropertyEdge<Node, PhysicalLocation> NODE__LOCATION = new CpgPropertyEdge<>(Node::getLocation, Node::setLocation);
-    public static CpgPropertyEdge<Declaration, Name> NODE__NAME = new CpgPropertyEdge<>(Node::getName, Node::setName);
-    public static CpgPropertyEdge<Declaration, String> NODE__LOCAL_NAME = new CpgPropertyEdge<>(EdgeUtil::getLocalName, null);
+    public static CpgAttributeEdge<Node, PhysicalLocation> NODE__LOCATION = new CpgAttributeEdge<>(Node::getLocation, Node::setLocation);
+    public static CpgAttributeEdge<Declaration, Name> NODE__NAME = new CpgAttributeEdge<>(Node::getName, Node::setName);
+    public static CpgAttributeEdge<Declaration, String> NODE__LOCAL_NAME = new CpgAttributeEdge<>(EdgeUtil::getLocalName, null);
 
     public static CpgEdge<ObjectType, RecordDeclaration> OBJECT_TYPE__RECORD_DECLARATION = new CpgEdge<>(ObjectType::getRecordDeclaration,
             ObjectType::setRecordDeclaration, REFERENCE);
@@ -105,9 +105,9 @@ public class Edges {
             SubscriptExpression::getArrayExpression, SubscriptExpression::setArrayExpression);
     public static CpgMultiEdge<TranslationUnitDeclaration, Declaration> TRANSLATION_UNIT__DECLARATIONS = CpgMultiEdge
             .edgeValued(TranslationUnitDeclaration::getDeclarationEdges);
-    public static CpgPropertyEdge<IncompleteType, String> TYPE__TYPE_NAME = new CpgPropertyEdge<>(Type::getTypeName, null);
+    public static CpgAttributeEdge<IncompleteType, String> TYPE__TYPE_NAME = new CpgAttributeEdge<>(Type::getTypeName, null);
     public static CpgEdge<UnaryOperator, Expression> UNARY_OPERATOR__INPUT = new CpgEdge<>(UnaryOperator::getInput, UnaryOperator::setInput);
-    public static CpgPropertyEdge<UnaryOperator, String> UNARY_OPERATOR__OPERATOR_CODE = new CpgPropertyEdge<>(UnaryOperator::getOperatorCode,
+    public static CpgAttributeEdge<UnaryOperator, String> UNARY_OPERATOR__OPERATOR_CODE = new CpgAttributeEdge<>(UnaryOperator::getOperatorCode,
             UnaryOperator::setOperatorCode);
     public static CpgMultiEdge<ValueDeclaration, Reference> VALUE_DECLARATION__USAGES = CpgMultiEdge.edgeValued(ValueDeclaration::getUsageEdges,
             REFERENCE);
@@ -176,8 +176,8 @@ public class Edges {
      * @param <T> type of the edge target
      */
     private static <S extends Node, T extends Node> void register(IEdge<S, T> edge, Class<S> sClass, Class<T> tClass) {
-        edge.setFromClass(sClass);
-        edge.setToClass(tClass);
+        edge.setSourceClass(sClass);
+        edge.setTargetClass(tClass);
         fromType.computeIfAbsent(sClass, c -> new ArrayList<>()).add(edge);
         toType.computeIfAbsent(tClass, c -> new ArrayList<>()).add(edge);
     }
@@ -185,8 +185,8 @@ public class Edges {
     /**
      * Gets the list of edges with the given node class as target.
      * @param tClass the target node class
-     * @return the list of edges
      * @param <T> the target node type
+     * @return the list of edges
      */
     public static <T extends Node> List<IEdge<? extends Node, ? super T>> getEdgesToType(Class<T> tClass) {
         List<IEdge<?, ? super T>> result = new ArrayList<>();

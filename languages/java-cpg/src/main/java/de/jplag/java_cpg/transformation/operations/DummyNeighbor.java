@@ -27,6 +27,10 @@ public class DummyNeighbor extends Node {
         targetMap = new HashMap<>();
     }
 
+    /**
+     * Gets the singleton instance.
+     * @return the {@link DummyNeighbor} node
+     */
     public static DummyNeighbor getInstance() {
         return INSTANCE;
     }
@@ -82,6 +86,9 @@ public class DummyNeighbor extends Node {
         }
     }
 
+    /**
+     * Clears the saved edges.
+     */
     public void clear() {
         targetMap.clear();
         sourceMap.clear();

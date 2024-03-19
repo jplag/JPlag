@@ -18,6 +18,8 @@ import de.jplag.java_cpg.transformation.matching.edges.IEdge;
  * This class represents a pattern where the root node's parent is unknown, but involved in a transformation (e.g. the
  * root node is moved/deleted).
  * @param <T> The node type of the child node of the wildcard parent
+ * @author robin
+ * @version $Id: $Id
  */
 public class WildcardGraphPattern<T extends Node> extends SimpleGraphPattern<Node> {
     private final ParentNodePattern<T> wildcardParent;
@@ -34,6 +36,7 @@ public class WildcardGraphPattern<T extends Node> extends SimpleGraphPattern<Nod
         patterns.put(patterns.createWildcardId(), wildcardParent);
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<Match> recursiveMatch(Node rootCandidate) {
         // rootCandidate is actually candidate for wildcard parent pattern!
@@ -45,6 +48,7 @@ public class WildcardGraphPattern<T extends Node> extends SimpleGraphPattern<Nod
         return matches;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean validate(Match match) {
         Node rootCandidate = match.get(this.wildcardParent);
@@ -54,6 +58,7 @@ public class WildcardGraphPattern<T extends Node> extends SimpleGraphPattern<Nod
 
     /**
      * Pattern to describe the unknown AST context that a node may appear in.
+     * @param <T> the child node type
      */
     public static class ParentNodePattern<T extends Node> extends NodePattern.NodePatternImpl<Node> {
         private final NodePattern<T> childPattern;
@@ -84,7 +89,7 @@ public class WildcardGraphPattern<T extends Node> extends SimpleGraphPattern<Nod
 
             List<Match> resultMatches = new ArrayList<>();
             // This node should match if it has a fitting edge and child
-            edgesToType.stream().filter(e -> e.getFromClass().isAssignableFrom(node.getClass())).forEach(e -> {
+            edgesToType.stream().filter(e -> e.getSourceClass().isAssignableFrom(node.getClass())).forEach(e -> {
                 List<Match> matchesCopy = new ArrayList<>(matches.stream().map(Match::copy).toList());
                 matchesCopy.forEach(match -> match.register(this, node));
                 wildCardMatch(e, node, matchesCopy);
@@ -131,7 +136,7 @@ public class WildcardGraphPattern<T extends Node> extends SimpleGraphPattern<Nod
 
         @Override
         public List<Class<? extends Node>> getCandidateClasses() {
-            return edgesToType.stream().map(IEdge::getFromClass).collect(Collectors.toList());
+            return edgesToType.stream().map(IEdge::getSourceClass).collect(Collectors.toList());
         }
 
         public NodePattern<T> getChildPattern() {
@@ -141,12 +146,13 @@ public class WildcardGraphPattern<T extends Node> extends SimpleGraphPattern<Nod
 
     /**
      * This models an edge unknown at creation time, of which the target is a T node.
+     * @param <T> the target node type
      */
     public static class Edge<T extends Node> extends CpgEdge<Node, T> {
 
         private Edge(Class<T> tClass) {
             super(null, null, AST);
-            this.setToClass(tClass);
+            this.setTargetClass(tClass);
         }
 
         @Override

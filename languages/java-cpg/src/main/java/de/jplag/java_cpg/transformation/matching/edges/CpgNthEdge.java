@@ -5,6 +5,8 @@ import de.fraunhofer.aisec.cpg.graph.Node;
 /**
  * A {@link CpgNthEdge} represents an individual {@link de.fraunhofer.aisec.cpg.graph.edge.PropertyEdge} out of a
  * {@link CpgMultiEdge}.
+ * @param <S> source node type
+ * @param <T> target node type
  */
 public class CpgNthEdge<S extends Node, T extends Node> extends CpgEdge<S, T> {
     private final CpgMultiEdge<S, T> multiEdge;
@@ -19,8 +21,8 @@ public class CpgNthEdge<S extends Node, T extends Node> extends CpgEdge<S, T> {
         super(t -> edge.getAllTargets(t).get(index), (t, r) -> edge.setter().accept(t, index, r), edge.getCategory());
         this.multiEdge = edge;
         this.index = index;
-        this.setFromClass(edge.getFromClass());
-        this.setToClass(edge.getToClass());
+        this.setSourceClass(edge.getSourceClass());
+        this.setTargetClass(edge.getTargetClass());
     }
 
     @Override

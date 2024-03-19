@@ -25,12 +25,21 @@ public class CpgNodeListener extends ACpgNodeListener {
     private final LinkedList<TokenType> openBlocks;
     private final LinkedList<BlockTokens> expectedBlocks;
 
+    /**
+     * Creates a new {@link CpgNodeListener}.
+     * @param consumer the {@link CpgTokenConsumer} that receives the tokens.
+     */
     public CpgNodeListener(CpgTokenConsumer consumer) {
         this.tokenConsumer = consumer;
         this.expectedBlocks = new LinkedList<>();
         this.openBlocks = new LinkedList<>();
     }
 
+    /**
+     * This is used to iterate over {@link Token} list, comparing them one {@link Token} at a time.
+     * @param nodes an iterator for {@link Node}s
+     * @return an iterator for {@link Token}s
+     */
     public static Iterator<Token> tokenIterator(Iterator<Node> nodes) {
         return new Iterator<>() {
 
@@ -388,6 +397,10 @@ public class CpgNodeListener extends ACpgNodeListener {
         tokenConsumer.addToken(METHOD_CALL, memberCallExpression, false);
     }
 
+    /**
+     * Visits a {@link Node}.
+     * @param node the node
+     */
     public void visit(Node node) {
         super.visit(node);
     }

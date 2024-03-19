@@ -20,12 +20,18 @@ import de.jplag.java_cpg.transformation.matching.pattern.PatternUtil;
 
 /**
  * This class is used to collect sub-patterns that may appear repetitively, or used in tests.
+ * @author robin
+ * @version $Id: $Id
  */
 public final class PatternRepository {
 
     private PatternRepository() {
         /* should not be instantiated */}
 
+    /**
+     * Creates a {@link GraphPatternBuilder} for an {@link IfStatement} with an else statement.
+     * @return the graph pattern builder
+     */
     public static GraphPatternBuilder ifElseWithNegatedCondition() {
 
         return new GraphPatternBuilder() {
@@ -41,6 +47,10 @@ public final class PatternRepository {
         };
     }
 
+    /**
+     * Creates a {@link GraphPatternBuilder} for a setter method
+     * @return a {@link de.jplag.java_cpg.transformation.matching.pattern.GraphPatternBuilder} object
+     */
     public static GraphPatternBuilder setterMethod() {
         return new GraphPatternBuilder() {
 

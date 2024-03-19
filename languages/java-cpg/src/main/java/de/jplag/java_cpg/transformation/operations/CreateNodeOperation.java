@@ -27,7 +27,7 @@ public record CreateNodeOperation<N extends Node>(GraphPattern sourceGraph, Stri
             CatchClause.class, RecordDeclaration.class, TemplateDeclaration.class, TryStatement.class, NamespaceDeclaration.class);
 
     @Override
-    public void resolve(Match match, TranslationContext ctx) {
+    public void resolveAndApply(Match match, TranslationContext ctx) {
         N newNode = PatternUtil.instantiate(pattern);
         match.register(pattern, newNode);
 
@@ -48,7 +48,7 @@ public record CreateNodeOperation<N extends Node>(GraphPattern sourceGraph, Stri
     }
 
     @Override
-    public GraphOperation instantiateAny1ofNEdge(Match match) {
+    public GraphOperation instantiateAnyOfNEdge(Match match) {
         throw new RuntimeException("Cannot instantiate CreateNodeOperation");
     }
 

@@ -16,15 +16,27 @@ import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
 import de.jplag.java_cpg.transformation.matching.pattern.WildcardGraphPattern;
 
 /**
- * Sets the target {@link Node} of a previously newly created edge to a {@link Node}.
+ * Sets the target {@link de.fraunhofer.aisec.cpg.graph.Node} of a previously newly created edge to a
+ * {@link de.fraunhofer.aisec.cpg.graph.Node}.
  * @param <S> type of the parent node, defined by the edge
  * @param <T> type of the related node, defined by the edge
+ * @author robin
+ * @version $Id: $Id
  */
 public final class SetOperation<S extends Node, T extends Node> extends GraphOperationImpl<S, T> {
     private static final Logger logger;
     private final NodePattern<? extends T> newChildPattern;
     private final boolean disconnectEog;
 
+    /**
+     * <p>
+     * Constructor for SetOperation.
+     * </p>
+     * @param parentPattern a {@link de.jplag.java_cpg.transformation.matching.pattern.NodePattern} object
+     * @param edge a {@link de.jplag.java_cpg.transformation.matching.edges.CpgEdge} object
+     * @param newChildPattern a {@link de.jplag.java_cpg.transformation.matching.pattern.NodePattern} object
+     * @param disconnectEog a boolean
+     */
     public SetOperation(NodePattern<? extends S> parentPattern, CpgEdge<S, T> edge, NodePattern<? extends T> newChildPattern, boolean disconnectEog) {
         super(parentPattern, edge);
         this.newChildPattern = newChildPattern;
@@ -35,8 +47,9 @@ public final class SetOperation<S extends Node, T extends Node> extends GraphOpe
         logger = LoggerFactory.getLogger(SetOperation.class);
     }
 
+    /** {@inheritDoc} */
     @Override
-    public void resolve(Match match, TranslationContext ctx) {
+    public void resolveAndApply(Match match, TranslationContext ctx) {
         S parent = match.get(parentPattern);
         // match should contain newChildPattern node because of Builder.createNewNodes()
         T newChild = match.get(newChildPattern);
@@ -57,11 +70,13 @@ public final class SetOperation<S extends Node, T extends Node> extends GraphOpe
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public NodePattern<?> getTarget() {
         return parentPattern;
     }
 
+    /** {@inheritDoc} */
     @Override
     public GraphOperation instantiateWildcard(Match match) {
         if (!(this.parentPattern instanceof WildcardGraphPattern.ParentNodePattern<?>)) {
@@ -71,8 +86,9 @@ public final class SetOperation<S extends Node, T extends Node> extends GraphOpe
         throw new RuntimeException("Cannot apply SetOperation with WildcardGraphPattern.ParentPattern as parentPattern.");
     }
 
+    /** {@inheritDoc} */
     @Override
-    public GraphOperation instantiateAny1ofNEdge(Match match) {
+    public GraphOperation instantiateAnyOfNEdge(Match match) {
         throw new RuntimeException("Cannot apply SetOperation with Any1ofNEdge.");
     }
 

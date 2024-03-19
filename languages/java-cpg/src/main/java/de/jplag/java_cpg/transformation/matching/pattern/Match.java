@@ -7,19 +7,20 @@ import java.util.stream.Collectors;
 
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.jplag.java_cpg.transformation.matching.edges.CpgEdge;
-import de.jplag.java_cpg.transformation.matching.edges.CpgMultiEdge;
+import de.jplag.java_cpg.transformation.matching.edges.CpgMultiEdge.AnyOfNEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgNthEdge;
+import de.jplag.java_cpg.transformation.matching.pattern.WildcardGraphPattern.ParentNodePattern;
 
 /**
  * A {@link Match} stores the mapping between a {@link GraphPattern} and {@link Node}s matching the pattern. Especially,
- * a {@link WildcardGraphPattern.ParentNodePattern}'s match in the sourceGraph can be saved.
+ * a {@link ParentNodePattern}'s match in the sourceGraph can be saved.
  */
 public class Match implements Comparable<Match> {
 
     private final Map<NodePattern<? extends Node>, Node> patternToNode;
     private final GraphPattern pattern;
     private final Match parent;
-    private final Map<WildcardGraphPattern.ParentNodePattern<?>, WildcardMatch<?, ?>> wildcardMatches;
+    private final Map<ParentNodePattern<?>, WildcardMatch<?, ?>> wildcardMatches;
     private final Map<EdgeMapKey, CpgEdge<?, ?>> edgeMap;
 
     private final int childId;
@@ -39,6 +40,11 @@ public class Match implements Comparable<Match> {
         this.wildcardMatches = new HashMap<>();
     }
 
+    /**
+     * Creates a new {@link Match}.
+     * @param pattern the {@link GraphPattern} that this is a match of
+     * @param parent the parent {@link Match}
+     */
     public Match(GraphPattern pattern, Match parent) {
         this.pattern = pattern;
         patternToNode = new HashMap<>(parent.patternToNode);
@@ -61,13 +67,14 @@ public class Match implements Comparable<Match> {
 
     /**
      * Saves the concrete parent {@link Node} and edge corresponding to a {@link WildcardGraphPattern}.
-     * @param <S> the concrete node type of the parent
-     * @param parent the parent
+     * @param parentPattern the parent node pattern
+     * @param parent the concrete parent node
      * @param edge the edge
+     * @param <S> the node type of the parent as specified by the edge
+     * @param <T> the node type of the child as specified by the edge
      */
-    public <S extends Node, T extends Node> void resolveWildcard(WildcardGraphPattern.ParentNodePattern<T> parentPattern, S parent,
-            CpgEdge<S, ? super T> edge) {
-        NodePattern<S> concreteRoot = NodePattern.forNodeType(edge.getFromClass());
+    public <S extends Node, T extends Node> void resolveWildcard(ParentNodePattern<T> parentPattern, S parent, CpgEdge<S, ? super T> edge) {
+        NodePattern<S> concreteRoot = NodePattern.forNodeType(edge.getSourceClass());
         concreteRoot.addRelatedNodePattern(parentPattern.getChildPattern(), edge);
 
         this.wildcardMatches.put(parentPattern, new WildcardMatch<>(concreteRoot, edge));
@@ -102,17 +109,28 @@ public class Match implements Comparable<Match> {
     }
 
     /**
-     * Gets the current wildcard match.
-     * @return the wildcard match
+     * Gets the current wildcard match for the given {@link ParentNodePattern}.
+     * @param node the wildcard parent node pattern
+     * @return the wildcard match for the pattern
+     * @param <T> the node type of the child
      */
-    public <T extends Node> WildcardMatch<?, T> getWildcardMatch(WildcardGraphPattern.ParentNodePattern<T> node) {
+    public <T extends Node> WildcardMatch<?, T> getWildcardMatch(ParentNodePattern<T> node) {
         WildcardMatch<?, T> wildcardMatch = (WildcardMatch<?, T>) wildcardMatches.get(node);
         return wildcardMatch;
     }
 
-    public <S extends Node, T extends Node> CpgNthEdge<S, T> resolveAny1ofNEdge(NodePattern<?> parent, NodePattern.Related1ToNNode<S, T> relation,
+    /**
+     * Resolves an {@link AnyOfNEdge} to a concrete {@link CpgNthEdge}.
+     * @param parent the parent node pattern
+     * @param relation the relation object
+     * @param index the child index
+     * @param <S> the parent node type
+     * @param <T> the child node type
+     * @return the nth edge
+     */
+    public <S extends Node, T extends Node> CpgNthEdge<S, T> resolveAnyOfNEdge(NodePattern<?> parent, NodePattern.RelatedOneToNNode<S, T> relation,
             int index) {
-        CpgMultiEdge<S, T>.Any1ofNEdge any1ofNEdge = relation.edge().getAny1ofNEdgeTo(relation.pattern());
+        AnyOfNEdge any1ofNEdge = relation.edge().getAnyOfNEdgeTo(relation.pattern());
         CpgNthEdge<S, T> concreteEdgePattern = new CpgNthEdge<>(any1ofNEdge.getMultiEdge(), index);
         EdgeMapKey key = new EdgeMapKey(parent, any1ofNEdge);
         this.edgeMap.put(key, concreteEdgePattern);
@@ -158,6 +176,10 @@ public class Match implements Comparable<Match> {
                 + (getRepresentingNode() == null ? "" : "[%s]".formatted(desc(getRepresentingNode())));
     }
 
+    /**
+     * Removes a node from this {@link Match}.
+     * @param pattern the pattern
+     */
     public void remove(NodePattern<?> pattern) {
         this.patternToNode.remove(pattern);
     }
@@ -199,10 +221,22 @@ public class Match implements Comparable<Match> {
         return true;
     }
 
-    public <S extends Node, T extends Node> CpgNthEdge<S, T> getEdge(NodePattern<? extends S> parentPattern, CpgMultiEdge<S, T>.Any1ofNEdge edge) {
-        return (CpgNthEdge<S, T>) this.edgeMap.get(new EdgeMapKey(parentPattern, edge));
+    /**
+     * Gets the concrete {@link CpgNthEdge} for a {@link AnyOfNEdge} in this {@link Match}.
+     * @param sourcePattern the source pattern
+     * @param edge the any-of-n edge
+     * @param <S> the source node type
+     * @param <T> the target node type
+     * @return the nth edge
+     */
+    public <S extends Node, T extends Node> CpgNthEdge<S, T> getEdge(NodePattern<? extends S> sourcePattern, AnyOfNEdge edge) {
+        return (CpgNthEdge<S, T>) this.edgeMap.get(new EdgeMapKey(sourcePattern, edge));
     }
 
+    /**
+     * Gets the representing {@link Node} of this {@link Match}.
+     * @return the representing node.
+     */
     public Node getRepresentingNode() {
         NodePattern<?> representingNodePattern = this.pattern.getRepresentingNode();
         if (Objects.isNull(representingNodePattern)) {
@@ -221,7 +255,7 @@ public class Match implements Comparable<Match> {
     /* package-private */ public record WildcardMatch<S extends Node, T extends Node>(NodePattern<? extends S> parentPattern, CpgEdge<S, T> edge) {
     }
 
-    private record EdgeMapKey(NodePattern<?> parent, CpgMultiEdge<?, ?>.Any1ofNEdge edge) {
+    private record EdgeMapKey(NodePattern<?> parent, AnyOfNEdge edge) {
 
     }
 }

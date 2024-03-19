@@ -1,5 +1,7 @@
 package de.jplag.java_cpg.transformation.matching.edges;
 
+import java.util.Objects;
+
 import org.jetbrains.annotations.NotNull;
 
 import de.fraunhofer.aisec.cpg.graph.Node;
@@ -14,13 +16,21 @@ public final class EdgeUtil {
     private EdgeUtil() {
     }
 
-    public static <N extends Node> RecordDeclaration getRecord(N node) {
+    /**
+     * Gets the {@link RecordDeclaration} that a {@link Node} is located in.
+     * @param node a node
+     * @return the record declaration
+     */
+    public static RecordDeclaration getRecord(Node node) {
 
         Scope scope = node.getScope();
-        while (!(scope.getAstNode() instanceof RecordDeclaration record)) {
+        while (!Objects.isNull(scope)) {
+            if (scope.getAstNode() instanceof RecordDeclaration record) {
+                return record;
+            }
             scope = scope.getParent();
         }
-        return record;
+        return null;
     }
 
     @NotNull
