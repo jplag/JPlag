@@ -542,8 +542,16 @@ public class JPlagGoListener extends GoParserBaseListener {
                 expectAndLeave(GoBlockContext.IF_BLOCK);
                 enterContext(GoBlockContext.ELSE_BLOCK);
             }
-            case "{" -> transformToken(getCurrentContext().getBegin(), token);
-            case "}" -> transformToken(getCurrentContext().getEnd(), token);
+            case "{" -> {
+                if (getCurrentContext() != null) {
+                    transformToken(getCurrentContext().getBegin(), token);
+                }
+            }
+            case "}" -> {
+                if (getCurrentContext() != null) {
+                    transformToken(getCurrentContext().getEnd(), token);
+                }
+            }
             default -> {
                 // do nothing.
             }

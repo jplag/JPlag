@@ -71,7 +71,7 @@ import Interactable from '../InteractableComponent.vue'
 import type { Match } from '@/model/Match'
 import type { SubmissionFile } from '@/model/File'
 import { highlight } from '@/utils/CodeHighlighter'
-import type { ParserLanguage } from '@/model/Language'
+import type { Language } from '@/model/Language'
 import { getMatchColor } from '@/utils/ColorUtils'
 import ToolTipComponent from '../ToolTipComponent.vue'
 
@@ -94,7 +94,7 @@ const props = defineProps({
    * Language of the file.
    */
   highlightLanguage: {
-    type: String as PropType<ParserLanguage>,
+    type: String as PropType<Language>,
     required: true
   }
 })
