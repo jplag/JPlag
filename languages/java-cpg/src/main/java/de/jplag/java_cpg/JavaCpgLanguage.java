@@ -64,7 +64,12 @@ public class JavaCpgLanguage implements Language {
 
     @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return cpgAdapter.adapt(files, normalize);
+        try {
+            return cpgAdapter.adapt(files, normalize);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return List.of();
+        }
     }
 
     @Override

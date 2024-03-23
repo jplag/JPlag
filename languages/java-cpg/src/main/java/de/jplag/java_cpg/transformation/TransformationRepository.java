@@ -2,10 +2,10 @@ package de.jplag.java_cpg.transformation;
 
 import static de.jplag.java_cpg.transformation.GraphTransformation.ExecutionOrder.ASCENDING_LOCATION;
 import static de.jplag.java_cpg.transformation.GraphTransformation.ExecutionPhase.*;
+import static de.jplag.java_cpg.transformation.Role.*;
 import static de.jplag.java_cpg.transformation.matching.edges.Edges.*;
 import static de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.*;
 
-import de.fraunhofer.aisec.cpg.graph.Component;
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.graph.declarations.*;
 import de.fraunhofer.aisec.cpg.graph.statements.*;
@@ -28,53 +28,96 @@ public class TransformationRepository {
      * These constants are supposed to avoid uselessly building the same graph transformations multiple times.
      * Alternatively, all factory methods could be public and use private fields to create a kind-of singleton pattern.
      */
-    /** Constant <code>ifWithNegatedConditionResolution</code> */
+    /**
+     * Constant <code>ifWithNegatedConditionResolution</code>
+     */
     public static final GraphTransformation ifWithNegatedConditionResolution = ifWithNegatedConditionResolution();
-    /** Constant <code>forStatementToWhileStatement</code> */
+    /**
+     * Constant <code>forStatementToWhileStatement</code>
+     */
     public static final GraphTransformation forStatementToWhileStatement = forStatementToWhileStatement();
-    /** Constant <code>removeGetterMethod</code> */
+    /**
+     * Constant <code>removeGetterMethod</code>
+     */
     public static final GraphTransformation removeGetterMethod = removeGetterMethod();
-    /** Constant <code>removeUnusedVariableDeclaration</code> */
+    /**
+     * Constant <code>removeUnusedVariableDeclaration</code>
+     */
     public static final GraphTransformation removeUnusedVariableDeclaration = removeUnusedVariableDeclaration();
-    /** Constant <code>removeUnusedVariableDeclarationStatement</code> */
-    public static final GraphTransformation removeUnusedVariableDeclarationStatement = removeUnusedVariableDeclarationStatement();
-    /** Constant <code>removeEmptyDeclarationStatement</code> */
+
+    /**
+     * Constant <code>removeEmptyDeclarationStatement</code>
+     */
     public static final GraphTransformation removeEmptyDeclarationStatement = removeEmptyDeclarationStatement();
-    /** Constant <code>removeLibraryRecord</code> */
+    /**
+     * Constant <code>removeLibraryRecord</code>
+     */
     public static final GraphTransformation removeLibraryRecord = removeLibraryRecord();
-    /** Constant <code>removeLibraryField</code> */
+    /**
+     * Constant <code>removeLibraryField</code>
+     */
     public static final GraphTransformation removeLibraryField = removeLibraryField();
-    /** Constant <code>moveConstantToOnlyUsingClass</code> */
+    /**
+     * Constant <code>moveConstantToOnlyUsingClass</code>
+     */
     public static final GraphTransformation moveConstantToOnlyUsingClass = moveConstantToOnlyUsingClass();
-    /** Constant <code>inlineSingleUseVariable</code> */
+    /**
+     * Constant <code>inlineSingleUseVariable</code>
+     */
     public static final GraphTransformation inlineSingleUseVariable = inlineSingleUseVariable();
 
-    /** Constant <code>inlineSingleUseConstant</code> */
+    /**
+     * Constant <code>inlineSingleUseConstant</code>
+     */
     public static final GraphTransformation inlineSingleUseConstant = inlineSingleUseConstant();
-    /** Constant <code>removeEmptyConstructor</code> */
+    /**
+     * Constant <code>removeEmptyConstructor</code>
+     */
     public static final GraphTransformation removeEmptyConstructor = removeEmptyConstructor();
 
-    /** Constant <code>removeEmptyRecord</code> */
+    /**
+     * Constant <code>removeEmptyRecord</code>
+     */
     public static final GraphTransformation removeEmptyRecord = removeEmptyRecord();
-    /** Constant <code>removeImplicitStandardConstructor</code> */
+    /**
+     * Constant <code>removeImplicitStandardConstructor</code>
+     */
     public static final GraphTransformation removeImplicitStandardConstructor = removeImplicitStandardConstructor();
-    /** Constant <code>removeOptionalOfCall</code> */
+    /**
+     * Constant <code>removeOptionalOfCall</code>
+     */
     public static final GraphTransformation removeOptionalOfCall = removeOptionalOfCall();
-    /** Constant <code>removeOptionalGetCall</code> */
+    /**
+     * Constant <code>removeOptionalGetCall</code>
+     */
     public static final GraphTransformation removeOptionalGetCall = removeOptionalGetCall();
-    /** Constant <code>removeUnsupportedConstructor</code> */
+    /**
+     * Constant <code>removeUnsupportedConstructor</code>
+     */
     public static final GraphTransformation removeUnsupportedConstructor = removeUnsupportedConstructor();
-    /** Constant <code>removeUnsupportedMethod</code> */
+    /**
+     * Constant <code>removeUnsupportedMethod</code>
+     */
     public static final GraphTransformation removeUnsupportedMethod = removeUnsupportedMethod();
-    /** Constant <code>wrapElseStatement</code> */
+    /**
+     * Constant <code>wrapElseStatement</code>
+     */
     public static final GraphTransformation wrapElseStatement = wrapElseStatement();
-    /** Constant <code>wrapForStatement</code> */
+    /**
+     * Constant <code>wrapForStatement</code>
+     */
     public static final GraphTransformation wrapForStatement = wrapForStatement();
-    /** Constant <code>wrapThenStatement</code> */
+    /**
+     * Constant <code>wrapThenStatement</code>
+     */
     public static final GraphTransformation wrapThenStatement = wrapThenStatement();
-    /** Constant <code>wrapWhileStatement</code> */
+    /**
+     * Constant <code>wrapWhileStatement</code>
+     */
     public static final GraphTransformation wrapWhileStatement = wrapWhileStatement();
-    /** Constant <code>wrapDoStatement</code> */
+    /**
+     * Constant <code>wrapDoStatement</code>
+     */
     public static final GraphTransformation wrapDoStatement = wrapDoStatement();
 
     private TransformationRepository() {
@@ -89,12 +132,12 @@ public class TransformationRepository {
         SimpleGraphPattern<IfStatement> sourcePattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<IfStatement> build() {
-                return create(IfStatement.class, "ifStatement",
-                        related(IF_STATEMENT__CONDITION, UnaryOperator.class, "condition",
+                return create(IfStatement.class, IF_STATEMENT,
+                        related(IF_STATEMENT__CONDITION, UnaryOperator.class, CONDITION,
                                 property(attributeEquals(UNARY_OPERATOR__OPERATOR_CODE, "!")),
-                                related(UNARY_OPERATOR__INPUT, Expression.class, "innerCondition")),
-                        related(IF_STATEMENT__THEN_STATEMENT, Statement.class, "thenStatement"),
-                        related(IF_STATEMENT__ELSE_STATEMENT, Statement.class, "elseStatement"));
+                                related(UNARY_OPERATOR__INPUT, Expression.class, INNER_CONDITION)),
+                        related(IF_STATEMENT__THEN_STATEMENT, Statement.class, THEN_STATEMENT),
+                        related(IF_STATEMENT__ELSE_STATEMENT, Statement.class, ELSE_STATEMENT));
             }
         }.build();
 
@@ -102,38 +145,14 @@ public class TransformationRepository {
 
             @Override
             public SimpleGraphPattern<IfStatement> build() {
-                return create(IfStatement.class, "ifStatement", related(IF_STATEMENT__CONDITION, Expression.class, "innerCondition"),
-                        related(IF_STATEMENT__THEN_STATEMENT, Statement.class, "elseStatement"),
-                        related(IF_STATEMENT__ELSE_STATEMENT, Statement.class, "thenStatement"));
+                return create(IfStatement.class, IF_STATEMENT, related(IF_STATEMENT__CONDITION, Expression.class, INNER_CONDITION),
+                        related(IF_STATEMENT__THEN_STATEMENT, Statement.class, ELSE_STATEMENT),
+                        related(IF_STATEMENT__ELSE_STATEMENT, Statement.class, THEN_STATEMENT));
             }
         }.build();
 
         return GraphTransformation.Builder.from(sourcePattern, targetPattern, "ifWithNegatedConditionResolution", AST_TRANSFORM)
                 .setExecutionOrder(ASCENDING_LOCATION).build();
-    }
-
-    /**
-     * Creates a {@link GraphTransformation} that removes a {@link DeclarationStatement} with exactly one unused
-     * {@link VariableDeclaration}.
-     * @return the graph transformation object
-     */
-    private static GraphTransformation removeUnusedVariableDeclarationStatement() {
-        SimpleGraphPattern<Node> sourcePattern = new GraphPatternBuilder() {
-            @Override
-            public SimpleGraphPattern<Node> build() {
-                return wildcardParent(DeclarationStatement.class, "declStmt", setRepresentingNode(),
-                        property(notEmpty(DECLARATION_STATEMENT__DECLARATIONS)), forAllRelated(DECLARATION_STATEMENT__DECLARATIONS,
-                                VariableDeclaration.class, "varDecl", property(nElements(VALUE_DECLARATION__USAGES, 0))));
-            }
-        }.build();
-
-        SimpleGraphPattern<Node> targetPattern = new GraphPatternBuilder() {
-            @Override
-            public SimpleGraphPattern<Node> build() {
-                return emptyWildcardParent();
-            }
-        }.build();
-        return GraphTransformation.Builder.from(sourcePattern, targetPattern, "removeUnusedVariableDeclarationStatements", CPG_TRANSFORM).build();
     }
 
     /**
@@ -150,17 +169,24 @@ public class TransformationRepository {
      * @return the graph transformation object
      */
     private static GraphTransformation removeUnusedVariableDeclaration() {
-        SimpleGraphPattern<Node> sourcePattern = new GraphPatternBuilder() {
+        MultiGraphPattern sourcePattern = new GraphPatternBuilder() {
             @Override
-            public SimpleGraphPattern<Node> build() {
-                return wildcardParent(VariableDeclaration.class, "variableDecl", setRepresentingNode(),
-                        property(nElements(VALUE_DECLARATION__USAGES, 0)));
+            public MultiGraphPattern build() {
+                return multiRoot(
+                        wildcardParent(VariableDeclaration.class, VARIABLE_DECLARATION, setRepresentingNode(),
+                                property(nElements(VALUE_DECLARATION__USAGES, 0))),
+                        create(Statement.class, CONTAINING_STATEMENT,
+                                relatedExisting1ToN(STATEMENT__LOCALS, VariableDeclaration.class, VARIABLE_DECLARATION)));
             }
         }.build();
-        SimpleGraphPattern<Node> targetPattern = new GraphPatternBuilder() {
+        MultiGraphPattern targetPattern = new GraphPatternBuilder() {
             @Override
-            public SimpleGraphPattern<Node> build() {
-                return emptyWildcardParent();
+            public MultiGraphPattern build() {
+                return multiRoot(
+                        // Remove VariableDeclaration
+                        emptyWildcardParent(),
+                        // Remove reference to local variable
+                        create(Statement.class, CONTAINING_STATEMENT));
             }
         }.build();
 
@@ -175,7 +201,7 @@ public class TransformationRepository {
         SimpleGraphPattern<Node> sourcePattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<Node> build() {
-                return wildcardParent(DeclarationStatement.class, "declStatement", setRepresentingNode(),
+                return wildcardParent(DeclarationStatement.class, DECLARATION_STATEMENT, setRepresentingNode(),
                         property(PatternUtil.nElements(DECLARATION_STATEMENT__DECLARATIONS, 0)));
             }
         }.build();
@@ -197,22 +223,22 @@ public class TransformationRepository {
         SimpleGraphPattern<Node> sourcePattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<Node> build() {
-                return wildcardParent(ForStatement.class, "forStatement", setRepresentingNode(),
-                        related(FOR_STATEMENT__INITIALIZER_STATEMENT, Statement.class, "initStatement"),
-                        related(FOR_STATEMENT__CONDITION, Expression.class, "condition"),
-                        related(FOR_STATEMENT__ITERATION_STATEMENT, Statement.class, "iterationStatement"),
-                        related(FOR_STATEMENT__STATEMENT, Statement.class, "body"));
+                return wildcardParent(ForStatement.class, FOR_STATEMENT, setRepresentingNode(),
+                        related(FOR_STATEMENT__INITIALIZER_STATEMENT, Statement.class, INITIALIZATION_STATEMENT),
+                        related(FOR_STATEMENT__CONDITION, Expression.class, CONDITION),
+                        related(FOR_STATEMENT__ITERATION_STATEMENT, Statement.class, ITERATION_STATEMENT),
+                        related(FOR_STATEMENT__STATEMENT, Statement.class, BODY));
             }
         }.build();
 
         SimpleGraphPattern<Node> targetPattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<Node> build() {
-                return wildcardParent(Block.class, "surroundingBlock",
-                        related1ToNSequence(BLOCK__STATEMENTS, Statement.class, node(Statement.class, "initStatement"),
-                                node(WhileStatement.class, "whileStatement", related(WHILE_STATEMENT__CONDITION, Expression.class, "condition"),
-                                        related(WHILE_STATEMENT__STATEMENT, Block.class, "whileStatementBody", related1ToNSequence(BLOCK__STATEMENTS,
-                                                Statement.class, node(Statement.class, "body"), node(Statement.class, "iterationStatement"))))));
+                return wildcardParent(Block.class, SURROUNDING_BLOCK,
+                        relatedConsecutive(BLOCK__STATEMENTS, Statement.class, node(Statement.class, INITIALIZATION_STATEMENT),
+                                node(WhileStatement.class, WHILE_STATEMENT, related(WHILE_STATEMENT__CONDITION, Expression.class, CONDITION),
+                                        related(WHILE_STATEMENT__STATEMENT, Block.class, WHILE_STATEMENT_BODY, relatedConsecutive(BLOCK__STATEMENTS,
+                                                Statement.class, node(Statement.class, BODY), node(Statement.class, ITERATION_STATEMENT))))));
             }
 
         }.build();
@@ -234,14 +260,14 @@ public class TransformationRepository {
         SimpleGraphPattern<RecordDeclaration> sourcePattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<RecordDeclaration> build() {
-                return create(RecordDeclaration.class, "recordDecl", related1ToN(RECORD_DECLARATION__FIELDS, FieldDeclaration.class, "fieldDecl",
-                        setRepresentingNode(), property(attributeEquals(NODE__LOCATION, null))));
+                return create(RecordDeclaration.class, RECORD_DECLARATION, related1ToN(RECORD_DECLARATION__FIELDS, FieldDeclaration.class,
+                        FIELD_DECLARATION, setRepresentingNode(), property(attributeEquals(NODE__LOCATION, null))));
             }
         }.build();
         SimpleGraphPattern<RecordDeclaration> targetPattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<RecordDeclaration> build() {
-                return create(RecordDeclaration.class, "recordDecl");
+                return create(RecordDeclaration.class, RECORD_DECLARATION);
             }
         }.build();
 
@@ -258,14 +284,14 @@ public class TransformationRepository {
         SimpleGraphPattern<TranslationUnitDeclaration> sourcePattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<TranslationUnitDeclaration> build() {
-                return create(TranslationUnitDeclaration.class, "declarationContainer", related1ToN(TRANSLATION_UNIT__DECLARATIONS,
-                        RecordDeclaration.class, "declaration", setRepresentingNode(), property(attributeEquals(NODE__LOCATION, null))));
+                return create(TranslationUnitDeclaration.class, DECLARATION_CONTAINER, related1ToN(TRANSLATION_UNIT__DECLARATIONS,
+                        RecordDeclaration.class, DECLARATION, setRepresentingNode(), property(attributeEquals(NODE__LOCATION, null))));
             }
         }.build();
         SimpleGraphPattern<TranslationUnitDeclaration> targetPattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<TranslationUnitDeclaration> build() {
-                return create(TranslationUnitDeclaration.class, "declarationContainer");
+                return create(TranslationUnitDeclaration.class, DECLARATION_CONTAINER);
             }
         }.build();
 
@@ -278,23 +304,24 @@ public class TransformationRepository {
      * @return the graph transformation
      */
     private static GraphTransformation moveConstantToOnlyUsingClass() {
+
         MultiGraphPattern sourcePattern = new GraphPatternBuilder() {
             @Override
             public MultiGraphPattern build() {
                 return multiRoot(
-                        create(RecordDeclaration.class, "definingRecord", related1ToN(RECORD_DECLARATION__FIELDS, FieldDeclaration.class,
-                                "fieldDeclaration", setRepresentingNode(), stopRecursion(), // no transformations beyond this point
+                        create(RecordDeclaration.class, DEFINING_RECORD, related1ToN(RECORD_DECLARATION__FIELDS, FieldDeclaration.class,
+                                FIELD_DECLARATION, setRepresentingNode(), stopRecursion(), // no transformations beyond this point
                                 property(attributeContains(FIELD_DECLARATION__MODIFIERS, "final")),
                                 property(attributeContains(FIELD_DECLARATION__MODIFIERS, "static")), property(notEmpty(VALUE_DECLARATION__USAGES)),
-                                related(nthElement(VALUE_DECLARATION__USAGES, 0), MemberExpression.class, "firstUsage",
-                                        related(MEMBER_EXPRESSION__RECORD_DECLARATION, RecordDeclaration.class, "usingRecord",
-                                                notEqualTo("definingRecord"))),
-                                forAllRelated(VALUE_DECLARATION__USAGES, MemberExpression.class, "fieldUsages",
-                                        relatedExisting(MEMBER_EXPRESSION__RECORD_DECLARATION, RecordDeclaration.class, "usingRecord")))),
-                        create(RecordDeclaration.class, "usingRecord"
+                                related(nthElement(VALUE_DECLARATION__USAGES, 0), MemberExpression.class, FIRST_CONSTANT_USAGE,
+                                        related(MEMBER_EXPRESSION__RECORD_DECLARATION, RecordDeclaration.class, USING_RECORD,
+                                                notEqualTo(DEFINING_RECORD))),
+                                forAllRelated(VALUE_DECLARATION__USAGES, MemberExpression.class, FIELD_USAGE,
+                                        relatedExisting(MEMBER_EXPRESSION__RECORD_DECLARATION, RecordDeclaration.class, USING_RECORD)))),
+                        create(RecordDeclaration.class, USING_RECORD
                 // field declaration should go here
-                ), create(MemberExpression.class, "firstUsage", related(MEMBER_EXPRESSION__BASE, Reference.class, "defRecordReference",
-                        relatedExisting(REFERENCE__REFERS_TO, RecordDeclaration.class, "definingRecord")))
+                ), create(MemberExpression.class, FIRST_CONSTANT_USAGE, related(MEMBER_EXPRESSION__BASE, Reference.class, DEFINING_RECORD_REFERENCE,
+                        relatedExisting(REFERENCE__REFERS_TO, RecordDeclaration.class, DEFINING_RECORD)))
 
                 );
             }
@@ -302,13 +329,13 @@ public class TransformationRepository {
         MultiGraphPattern targetPattern = new GraphPatternBuilder() {
             @Override
             public MultiGraphPattern build() {
-                return multiRoot(create(RecordDeclaration.class, "definingRecord"
+                return multiRoot(create(RecordDeclaration.class, DEFINING_RECORD
                 // field declaration removed from here
-                ), create(RecordDeclaration.class, "usingRecord",
-                        related1ToN(RECORD_DECLARATION__FIELDS, FieldDeclaration.class, "fieldDeclaration")),
-                        create(MemberExpression.class, "firstUsage", related(MEMBER_EXPRESSION__BASE, Reference.class, "defRecordReference",
-                                // adjust reference
-                                relatedExisting(REFERENCE__REFERS_TO, RecordDeclaration.class, "usingRecord"))));
+                ), create(RecordDeclaration.class, USING_RECORD, related1ToN(RECORD_DECLARATION__FIELDS, FieldDeclaration.class, FIELD_DECLARATION)),
+                        create(MemberExpression.class, FIRST_CONSTANT_USAGE,
+                                related(MEMBER_EXPRESSION__BASE, Reference.class, DEFINING_RECORD_REFERENCE,
+                                        // adjust reference
+                                        relatedExisting(REFERENCE__REFERS_TO, RecordDeclaration.class, USING_RECORD))));
             }
         }.build();
 
@@ -327,13 +354,15 @@ public class TransformationRepository {
             public MultiGraphPattern build() {
                 return multiRoot(
                         // parent pointer
-                        wildcardParent(VariableDeclaration.class, "varDecl", setRepresentingNode(), property(notNull(NODE__LOCATION)),
+                        wildcardParent(VariableDeclaration.class, VARIABLE_DECLARATION, setRepresentingNode(), property(notNull(NODE__LOCATION)),
                                 property(nElements(VALUE_DECLARATION__USAGES, 1)),
-                                related(nthElement(VALUE_DECLARATION__USAGES, 0), Reference.class, "variableUsage"),
-                                related(VARIABLE_DECLARATION__INITIALIZER, Expression.class, "varValue",
-                                        assignedValueStableBetween("varDecl", "variableUsage"))),
-                        wildcardParent(Reference.class, "variableUsage", relatedExisting(REFERENCE__REFERS_TO, VariableDeclaration.class, "varDecl")),
-                        wildcardParent(Block.class, "scopeBlock", relatedExisting1ToN(STATEMENT__LOCALS, VariableDeclaration.class, "varDecl")));
+                                related(nthElement(VALUE_DECLARATION__USAGES, 0), Reference.class, VARIABLE_USAGE),
+                                related(VARIABLE_DECLARATION__INITIALIZER, Expression.class, VARIABLE_VALUE,
+                                        assignedValueStableBetween(VARIABLE_DECLARATION, VARIABLE_USAGE))),
+                        wildcardParent(Reference.class, VARIABLE_USAGE,
+                                relatedExisting(REFERENCE__REFERS_TO, VariableDeclaration.class, VARIABLE_DECLARATION)),
+                        wildcardParent(Block.class, SCOPE_BLOCK,
+                                relatedExisting1ToN(STATEMENT__LOCALS, VariableDeclaration.class, VARIABLE_DECLARATION)));
             }
         }.build();
 
@@ -344,9 +373,9 @@ public class TransformationRepository {
                         // remove variable declaration from AST parent
                         emptyWildcardParent(),
                         // replace variable reference by value
-                        wildcardParent(Expression.class, "varValue"),
+                        wildcardParent(Expression.class, VARIABLE_VALUE),
                         // delete "local" edge
-                        wildcardParent(Block.class, "scopeBlock"));
+                        wildcardParent(Block.class, SCOPE_BLOCK));
             }
         }.build();
 
@@ -365,14 +394,15 @@ public class TransformationRepository {
             public MultiGraphPattern build() {
                 return multiRoot(
                         // parent pointer
-                        create(RecordDeclaration.class, "containingClass",
-                                related1ToN(RECORD_DECLARATION__FIELDS, FieldDeclaration.class, "fieldDecl", setRepresentingNode(),
+                        create(RecordDeclaration.class, CONTAINING_RECORD,
+                                related1ToN(RECORD_DECLARATION__FIELDS, FieldDeclaration.class, FIELD_DECLARATION, setRepresentingNode(),
                                         property(notNull(NODE__LOCATION)), property(attributeContains(FIELD_DECLARATION__MODIFIERS, "final")),
                                         property(attributeContains(FIELD_DECLARATION__MODIFIERS, "static")),
                                         property(nElements(VALUE_DECLARATION__USAGES, 1)),
-                                        related(nthElement(VALUE_DECLARATION__USAGES, 0), Reference.class, "fieldUsage"),
-                                        related(VARIABLE_DECLARATION__INITIALIZER, Expression.class, "fieldValue"))),
-                        wildcardParent(Reference.class, "fieldUsage", relatedExisting(REFERENCE__REFERS_TO, FieldDeclaration.class, "fieldDecl")));
+                                        related(nthElement(VALUE_DECLARATION__USAGES, 0), Reference.class, FIELD_USAGE),
+                                        related(VARIABLE_DECLARATION__INITIALIZER, Expression.class, FIELD_VALUE))),
+                        wildcardParent(Reference.class, FIELD_USAGE,
+                                relatedExisting(REFERENCE__REFERS_TO, FieldDeclaration.class, FIELD_DECLARATION)));
             }
         }.build();
 
@@ -381,9 +411,9 @@ public class TransformationRepository {
             public MultiGraphPattern build() {
                 return multiRoot(
                         // remove field declaration from class
-                        create(RecordDeclaration.class, "containingClass"),
+                        create(RecordDeclaration.class, CONTAINING_RECORD),
                         // replace variable reference by value
-                        wildcardParent(Expression.class, "fieldValue"));
+                        wildcardParent(Expression.class, FIELD_VALUE));
             }
         }.build();
 
@@ -400,8 +430,8 @@ public class TransformationRepository {
             @Override
             public SimpleGraphPattern<RecordDeclaration> build() {
 
-                return create(RecordDeclaration.class, "definingRecord", related1ToN(RECORD_DECLARATION__CONSTRUCTORS, ConstructorDeclaration.class,
-                        "constructor", property(attributeEquals(NODE__LOCATION, null))));
+                return create(RecordDeclaration.class, DEFINING_RECORD, related1ToN(RECORD_DECLARATION__CONSTRUCTORS, ConstructorDeclaration.class,
+                        CONSTRUCTOR_DECLARATION, property(attributeEquals(NODE__LOCATION, null))));
             }
         }.build();
 
@@ -409,7 +439,7 @@ public class TransformationRepository {
             @Override
             public SimpleGraphPattern<RecordDeclaration> build() {
                 // remove constructor declaration from record
-                return create(RecordDeclaration.class, "definingRecord");
+                return create(RecordDeclaration.class, DEFINING_RECORD);
             }
         }.build();
 
@@ -425,11 +455,11 @@ public class TransformationRepository {
         SimpleGraphPattern<RecordDeclaration> sourcePattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<RecordDeclaration> build() {
-                return create(RecordDeclaration.class, "containingRecord",
-                        related1ToN(RECORD_DECLARATION__CONSTRUCTORS, ConstructorDeclaration.class, "constructorDecl", setRepresentingNode(),
+                return create(RecordDeclaration.class, CONTAINING_RECORD,
+                        related1ToN(RECORD_DECLARATION__CONSTRUCTORS, ConstructorDeclaration.class, CONSTRUCTOR_DECLARATION, setRepresentingNode(),
                                 stopRecursion(),
-                                related(METHOD_DECLARATION__BODY, Block.class, "methodBlock", property(nElements(BLOCK__STATEMENTS, 1)),
-                                        related(nthElement(BLOCK__STATEMENTS, 0), ReturnStatement.class, "returnStatement",
+                                related(METHOD_DECLARATION__BODY, Block.class, METHOD_BLOCK, property(nElements(BLOCK__STATEMENTS, 1)),
+                                        related(nthElement(BLOCK__STATEMENTS, 0), ReturnStatement.class, RETURN_STATEMENT,
                                                 property(attributeEquals(NODE__LOCATION, null))))));
 
             }
@@ -438,7 +468,7 @@ public class TransformationRepository {
         SimpleGraphPattern<RecordDeclaration> targetPattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<RecordDeclaration> build() {
-                return create(RecordDeclaration.class, "containingRecord");
+                return create(RecordDeclaration.class, CONTAINING_RECORD);
             }
         }.build();
 
@@ -454,13 +484,13 @@ public class TransformationRepository {
         SimpleGraphPattern<RecordDeclaration> sourcePattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<RecordDeclaration> build() {
-                return create(RecordDeclaration.class, "containingRecord",
-                        related1ToN(RECORD_DECLARATION__CONSTRUCTORS, ConstructorDeclaration.class, "constructorDecl", setRepresentingNode(),
+                return create(RecordDeclaration.class, CONTAINING_RECORD,
+                        related1ToN(RECORD_DECLARATION__CONSTRUCTORS, ConstructorDeclaration.class, CONSTRUCTOR_DECLARATION, setRepresentingNode(),
                                 stopRecursion(),
-                                related(METHOD_DECLARATION__BODY, Block.class, "methodBlock", property(nElements(BLOCK__STATEMENTS, 2)),
-                                        related(nthElement(BLOCK__STATEMENTS, 0), UnaryOperator.class, "throwException",
+                                related(METHOD_DECLARATION__BODY, Block.class, METHOD_BLOCK, property(nElements(BLOCK__STATEMENTS, 2)),
+                                        related(nthElement(BLOCK__STATEMENTS, 0), UnaryOperator.class, THROW_EXCEPTION,
                                                 property(attributeEquals(UNARY_OPERATOR__OPERATOR_CODE, "throw"))),
-                                        related(nthElement(BLOCK__STATEMENTS, 1), ReturnStatement.class, "returnStatement",
+                                        related(nthElement(BLOCK__STATEMENTS, 1), ReturnStatement.class, RETURN_STATEMENT,
                                                 property(attributeEquals(NODE__LOCATION, null))))));
 
             }
@@ -469,7 +499,7 @@ public class TransformationRepository {
         SimpleGraphPattern<RecordDeclaration> targetPattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<RecordDeclaration> build() {
-                return create(RecordDeclaration.class, "containingRecord");
+                return create(RecordDeclaration.class, CONTAINING_RECORD);
             }
         }.build();
 
@@ -485,12 +515,12 @@ public class TransformationRepository {
         SimpleGraphPattern<RecordDeclaration> sourcePattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<RecordDeclaration> build() {
-                return create(RecordDeclaration.class, "containingRecord",
-                        related1ToN(RECORD_DECLARATION__METHODS, MethodDeclaration.class, "methodDecl", setRepresentingNode(), stopRecursion(),
-                                related(METHOD_DECLARATION__BODY, Block.class, "methodBlock", property(nElements(BLOCK__STATEMENTS, 2)),
-                                        related(nthElement(BLOCK__STATEMENTS, 0), UnaryOperator.class, "throwException",
+                return create(RecordDeclaration.class, CONTAINING_RECORD,
+                        related1ToN(RECORD_DECLARATION__METHODS, MethodDeclaration.class, METHOD_DECLARATION, setRepresentingNode(), stopRecursion(),
+                                related(METHOD_DECLARATION__BODY, Block.class, METHOD_BLOCK, property(nElements(BLOCK__STATEMENTS, 2)),
+                                        related(nthElement(BLOCK__STATEMENTS, 0), UnaryOperator.class, THROW_EXCEPTION,
                                                 property(attributeEquals(UNARY_OPERATOR__OPERATOR_CODE, "throw"))),
-                                        related(nthElement(BLOCK__STATEMENTS, 1), ReturnStatement.class, "returnStatement",
+                                        related(nthElement(BLOCK__STATEMENTS, 1), ReturnStatement.class, RETURN_STATEMENT,
                                                 property(attributeEquals(NODE__LOCATION, null))))));
 
             }
@@ -499,7 +529,7 @@ public class TransformationRepository {
         SimpleGraphPattern<RecordDeclaration> targetPattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<RecordDeclaration> build() {
-                return create(RecordDeclaration.class, "containingRecord");
+                return create(RecordDeclaration.class, CONTAINING_RECORD);
             }
         }.build();
 
@@ -514,8 +544,8 @@ public class TransformationRepository {
         SimpleGraphPattern<NamespaceDeclaration> sourcePattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<NamespaceDeclaration> build() {
-                return create(NamespaceDeclaration.class, "containingFile",
-                        related1ToN(NAMESPACE_DECLARATION__DECLARATIONS, RecordDeclaration.class, "emptyRecord", setRepresentingNode(),
+                return create(NamespaceDeclaration.class, CONTAINING_FILE,
+                        related1ToN(NAMESPACE_DECLARATION__DECLARATIONS, RecordDeclaration.class, EMPTY_RECORD, setRepresentingNode(),
                                 property(nElements(RECORD_DECLARATION__FIELDS, 0)), property(nElements(RECORD_DECLARATION__METHODS, 0))));
             }
         }.build();
@@ -524,35 +554,10 @@ public class TransformationRepository {
             @Override
             public SimpleGraphPattern<NamespaceDeclaration> build() {
                 // remove RecordDeclaration from NamespaceDeclaration
-                return create(NamespaceDeclaration.class, "containingFile");
+                return create(NamespaceDeclaration.class, CONTAINING_FILE);
             }
         }.build();
         return GraphTransformation.Builder.from(sourcePattern, targetPattern, "removeEmptyRecord", CPG_TRANSFORM).build();
-    }
-
-    /**
-     * <b>BEWARE:</b> This transformation breaks the comparison algorithm, leading to a higher similarity value. <br>
-     * <br>
-     * Creates a {@link GraphTransformation} that removes TranslationUnits with no declarations.
-     * @return the graph transformation
-     */
-    private static GraphTransformation removeEmptyFile() {
-        SimpleGraphPattern<Component> sourcePattern = new GraphPatternBuilder() {
-            @Override
-            public SimpleGraphPattern<Component> build() {
-                return create(Component.class, "project", related1ToN(COMPONENT__TRANSLATION_UNITS, TranslationUnitDeclaration.class, "emptyFile",
-                        property(nElements(TRANSLATION_UNIT__DECLARATIONS, 0))));
-            }
-        }.build();
-
-        SimpleGraphPattern<Component> targetPattern = new GraphPatternBuilder() {
-            @Override
-            public SimpleGraphPattern<Component> build() {
-                // remove RecordDeclaration from TranslationUnitDeclaration
-                return create(Component.class, "project");
-            }
-        }.build();
-        return GraphTransformation.Builder.from(sourcePattern, targetPattern, "removeEmptyFile", CPG_TRANSFORM).build();
     }
 
     /**
@@ -561,7 +566,7 @@ public class TransformationRepository {
      * @return the graph transformation
      */
     private static GraphTransformation wrapThenStatement() {
-        return wrapInBlock(IfStatement.class, IF_STATEMENT__THEN_STATEMENT, "wrapThenStatement");
+        return wrapInBlock(IfStatement.class, IF_STATEMENT, IF_STATEMENT__THEN_STATEMENT, "wrapThenStatement");
     }
 
     /**
@@ -570,7 +575,7 @@ public class TransformationRepository {
      * @return the graph transformation
      */
     private static GraphTransformation wrapElseStatement() {
-        return wrapInBlock(IfStatement.class, IF_STATEMENT__ELSE_STATEMENT, "wrapElseStatement");
+        return wrapInBlock(IfStatement.class, IF_STATEMENT, IF_STATEMENT__ELSE_STATEMENT, "wrapElseStatement");
     }
 
     /**
@@ -579,7 +584,7 @@ public class TransformationRepository {
      * @return the graph transformation
      */
     private static GraphTransformation wrapForStatement() {
-        return wrapInBlock(ForStatement.class, FOR_STATEMENT__STATEMENT, "wrapForStatement");
+        return wrapInBlock(ForStatement.class, FOR_STATEMENT, FOR_STATEMENT__STATEMENT, "wrapForStatement");
     }
 
     /**
@@ -588,7 +593,7 @@ public class TransformationRepository {
      * @return the graph transformation
      */
     private static GraphTransformation wrapWhileStatement() {
-        return wrapInBlock(null, WHILE_STATEMENT__STATEMENT, "wrapWhileStatement");
+        return wrapInBlock(WhileStatement.class, WHILE_STATEMENT, WHILE_STATEMENT__STATEMENT, "wrapWhileStatement");
     }
 
     /**
@@ -597,23 +602,22 @@ public class TransformationRepository {
      * @return the graph transformation
      */
     private static GraphTransformation wrapDoStatement() {
-        return wrapInBlock(DoStatement.class, DO_STATEMENT__STATEMENT, "wrapDoWhileStatement");
+        return wrapInBlock(DoStatement.class, DO_STATEMENT, DO_STATEMENT__STATEMENT, "wrapDoWhileStatement");
     }
 
-    private static <T extends Node> GraphTransformation wrapInBlock(Class<T> tClass, final CpgEdge<T, Statement> blockEdge, String name) {
+    private static <T extends Node> GraphTransformation wrapInBlock(Class<T> tClass, Role role, final CpgEdge<T, Statement> blockEdge, String name) {
         SimpleGraphPattern<T> sourcePattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<T> build() {
-                return create(tClass, "whileStatement", property(notInstanceOf(blockEdge, Block.class)),
-                        related(blockEdge, Statement.class, "doStmt"));
+                return create(tClass, role, property(notInstanceOf(blockEdge, Block.class)), related(blockEdge, Statement.class, THEN_STATEMENT));
             }
         }.build();
 
         SimpleGraphPattern<T> targetPattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<T> build() {
-                return create(tClass, "whileStatement",
-                        related(blockEdge, Block.class, "whileBlock", related(nthElement(BLOCK__STATEMENTS, 0), Statement.class, "doStmt")));
+                return create(tClass, role, related(blockEdge, Block.class, Role.WRAPPING_BLOCK,
+                        related(nthElement(BLOCK__STATEMENTS, 0), Statement.class, THEN_STATEMENT)));
             }
         }.build();
         return GraphTransformation.Builder.from(sourcePattern, targetPattern, name, OBLIGATORY).setExecutionOrder(ASCENDING_LOCATION).build();
@@ -628,16 +632,16 @@ public class TransformationRepository {
         SimpleGraphPattern<RecordDeclaration> sourcePattern = new GraphPatternBuilder() {
             @Override
             public SimpleGraphPattern<RecordDeclaration> build() {
-                return create(RecordDeclaration.class, "classDeclaration", related1ToN(RECORD_DECLARATION__METHODS, MethodDeclaration.class,
-                        "methodDeclaration", setRepresentingNode(), stopRecursion(),
-                        related(VALUE_DECLARATION__TYPE, FunctionType.class, "methodType", property(nElements(FUNCTION_TYPE__RETURN_TYPES, 1)),
-                                // ObjectType in contrast to void, which is an IncompleteType
-                                related(nthElement(FUNCTION_TYPE__RETURN_TYPES, 0), ObjectType.class, "returnType")),
-                        related(METHOD_DECLARATION__BODY, Block.class, "methodBlock", property(nElements(BLOCK__STATEMENTS, 1)),
-                                related(nthElement(BLOCK__STATEMENTS, 0), ReturnStatement.class, "returnStatement",
-                                        property(nElements(RETURN_STATEMENT__RETURN_VALUES, 1)),
-                                        related(nthElement(RETURN_STATEMENT__RETURN_VALUES, 0), Expression.class, "returnValue",
-                                                property(or(isConstant(), isFieldReference())))))));
+                return create(RecordDeclaration.class, CLASS_DECLARATION,
+                        related1ToN(RECORD_DECLARATION__METHODS, MethodDeclaration.class, METHOD_DECLARATION, setRepresentingNode(), stopRecursion(),
+                                related(VALUE_DECLARATION__TYPE, FunctionType.class, METHOD_TYPE, property(nElements(FUNCTION_TYPE__RETURN_TYPES, 1)),
+                                        // ObjectType in contrast to void, which is an IncompleteType
+                                        related(nthElement(FUNCTION_TYPE__RETURN_TYPES, 0), ObjectType.class, RETURN_TYPE)),
+                                related(METHOD_DECLARATION__BODY, Block.class, METHOD_BLOCK, property(nElements(BLOCK__STATEMENTS, 1)),
+                                        related(nthElement(BLOCK__STATEMENTS, 0), ReturnStatement.class, RETURN_STATEMENT,
+                                                property(nElements(RETURN_STATEMENT__RETURN_VALUES, 1)),
+                                                related(nthElement(RETURN_STATEMENT__RETURN_VALUES, 0), Expression.class, RETURN_VALUE,
+                                                        property(or(isConstant(), isFieldReference())))))));
             }
         }.build();
 
@@ -645,7 +649,7 @@ public class TransformationRepository {
 
             @Override
             public SimpleGraphPattern<RecordDeclaration> build() {
-                return create(RecordDeclaration.class, "classDeclaration"
+                return create(RecordDeclaration.class, CLASS_DECLARATION
                 // remove MethodDeclaration
                 );
             }
@@ -662,11 +666,11 @@ public class TransformationRepository {
         MultiGraphPattern sourcePattern = new GraphPatternBuilder() {
             @Override
             public MultiGraphPattern build() {
-                return multiRoot(wildcardParent(MemberCallExpression.class, "memberCall",
-                        related1ToN(CALL_EXPRESSION__INVOKES, MethodDeclaration.class, "methodDeclaration",
+                return multiRoot(wildcardParent(MemberCallExpression.class, MEMBER_CALL,
+                        related1ToN(CALL_EXPRESSION__INVOKES, MethodDeclaration.class, METHOD_DECLARATION,
                                 property(attributeToStringEquals(NODE__NAME, "Optional.of"))),
                         property(nElements(CALL_EXPRESSION__ARGUMENTS, 1)),
-                        related(nthElement(CALL_EXPRESSION__ARGUMENTS, 0), Expression.class, "argument")));
+                        related(nthElement(CALL_EXPRESSION__ARGUMENTS, 0), Expression.class, ARGUMENT)));
             }
         }.build();
 
@@ -676,7 +680,7 @@ public class TransformationRepository {
             public MultiGraphPattern build() {
                 return multiRoot(
                         // replace Optional.of(x) by x
-                        wildcardParent(Expression.class, "argument"));
+                        wildcardParent(Expression.class, ARGUMENT));
 
             }
         }.build();
@@ -693,14 +697,13 @@ public class TransformationRepository {
         MultiGraphPattern sourcePattern = new GraphPatternBuilder() {
             @Override
             public MultiGraphPattern build() {
-                return multiRoot(wildcardParent(MemberCallExpression.class, "memberCall", setRepresentingNode(), stopRecursion(),
-                        related(CALL_EXPRESSION__CALLEE, MemberExpression.class, "getMethodReference",
-                                related(MEMBER_EXPRESSION__BASE, Expression.class, "optionalObject")),
-
-                        related1ToN(CALL_EXPRESSION__INVOKES, MethodDeclaration.class, "methodDeclaration",
-                                property(attributeToStringEquals(NODE__LOCAL_NAME, "get")),
-                                related(METHOD_DECLARATION__RECORD_DECLARATION, RecordDeclaration.class, "optionalClass",
-                                        property(attributeToStringStartsWith(NODE__NAME, "java.util.Optional")))),
+                return multiRoot(wildcardParent(MemberCallExpression.class, MEMBER_CALL, setRepresentingNode(), stopRecursion(),
+                        related(CALL_EXPRESSION__CALLEE, MemberExpression.class, GETTER_METHOD_REFERENCE,
+                                related(MEMBER_EXPRESSION__BASE, Expression.class, OPTIONAL_OBJECT)),
+                        related1ToN(CALL_EXPRESSION__INVOKES, MethodDeclaration.class, METHOD_DECLARATION,
+                                property(attributeToStringEquals(METHOD_DECLARATION__LOCAL_NAME, "get")),
+                                related(METHOD_DECLARATION__RECORD_DECLARATION, RecordDeclaration.class, OPTIONAL_CLASS,
+                                        property(attributeToStringStartsWith(RECORD_DECLARATION__NAME, "java.util.Optional")))),
                         property(nElements(CALL_EXPRESSION__ARGUMENTS, 0))));
             }
         }.build();
@@ -711,7 +714,7 @@ public class TransformationRepository {
             public MultiGraphPattern build() {
                 return multiRoot(
                         // replace Optional.get() by the proper value
-                        wildcardParent(Expression.class, "optionalObject"));
+                        wildcardParent(Expression.class, OPTIONAL_OBJECT));
             }
         }.build();
 

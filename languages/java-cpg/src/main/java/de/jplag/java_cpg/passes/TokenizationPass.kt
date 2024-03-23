@@ -11,7 +11,7 @@ import de.jplag.TokenType
 import de.jplag.java_cpg.token.CpgNodeListener
 import de.jplag.java_cpg.token.CpgToken
 import de.jplag.java_cpg.token.CpgTokenConsumer
-import de.jplag.java_cpg.visitorStrategy.NodeOrderStrategy
+import de.jplag.java_cpg.visitor.NodeOrderStrategy
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File

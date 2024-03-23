@@ -42,27 +42,25 @@ public class PlagiarismDetectionTest {
     }
 
     private static Stream<Arguments> getArguments() {
-        return Stream
-                .of(Arguments.of("singleUseVariable", new GraphTransformation[] {inlineSingleUseVariable}),
-                        Arguments.of("constantClass",
-                                new GraphTransformation[] {moveConstantToOnlyUsingClass, removeLibraryRecord, removeLibraryField}),
-                        Arguments.of("for2While", new GraphTransformation[] {forStatementToWhileStatement}),
-                        Arguments.of("negatedIf", new GraphTransformation[] {ifWithNegatedConditionResolution}),
-                        Arguments.of("unusedVariables", new GraphTransformation[] {removeUnusedVariableDeclarationStatement,
-                                removeUnusedVariableDeclaration, removeEmptyDeclarationStatement}),
-                        Arguments.of("dfgLinearization", new GraphTransformation[] {}));
+        return Stream.of(Arguments.of("singleUseVariable", new GraphTransformation[] {inlineSingleUseVariable}),
+                Arguments.of("constantClass", new GraphTransformation[] {moveConstantToOnlyUsingClass, removeLibraryRecord, removeLibraryField}),
+                Arguments.of("for2While", new GraphTransformation[] {forStatementToWhileStatement}),
+                Arguments.of("negatedIf", new GraphTransformation[] {ifWithNegatedConditionResolution}),
+                Arguments.of("unusedVariables", new GraphTransformation[] {removeUnusedVariableDeclaration, removeEmptyDeclarationStatement}),
+                Arguments.of("dfgLinearization", new GraphTransformation[] {}));
     }
 
     @ParameterizedTest
     @MethodSource("getArguments")
-    public void testPlagiarismPair(String submissionsPath, GraphTransformation[] transformation) {
-
+    void testPlagiarismPair(String submissionsPath, GraphTransformation[] transformation) {
+        language.resetTransformations();
         language.addTransformations(transformation);
 
         File root = new File(baseDirectory, submissionsPath);
         File[] content = root.listFiles();
+        Assertions.assertNotNull(content);
         List<Set<File>> submissions = new ArrayList<>();
-        if (content != null && Arrays.stream(content).anyMatch(File::isDirectory)) {
+        if (Arrays.stream(content).anyMatch(File::isDirectory)) {
             Arrays.stream(content).map(submissionDir -> {
                 try (Stream<Path> stream = Files.walk(submissionDir.toPath())) {
                     return stream.map(Path::toFile).filter(File::isFile).collect(Collectors.toSet());
@@ -70,6 +68,9 @@ public class PlagiarismDetectionTest {
                     throw new RuntimeException(e);
                 }
             }).forEach(submissions::add);
+        } else {
+            // single-file submission
+            Arrays.stream(content).map(Set::of).forEach(submissions::add);
         }
 
         List<List<Token>> results = new ArrayList<>();

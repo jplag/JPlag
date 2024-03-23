@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import de.fraunhofer.aisec.cpg.graph.Component;
 import de.fraunhofer.aisec.cpg.graph.Name;
@@ -35,92 +36,103 @@ public class Edges {
      */
     private static final Map<Class<?>, List<IEdge<?, ?>>> toType;
 
-    public static CpgEdge<AssignExpression, Expression> ASSIGN_EXPRESSION__LHS = CpgEdge.listValued(AssignExpression::getLhs,
+    public static final CpgEdge<AssignExpression, Expression> ASSIGN_EXPRESSION__LHS = CpgEdge.listValued(AssignExpression::getLhs,
             AssignExpression::setLhs);
-    public static CpgEdge<AssignExpression, Expression> ASSIGN_EXPRESSION__RHS = CpgEdge.listValued(AssignExpression::getRhs,
+    public static final CpgEdge<AssignExpression, Expression> ASSIGN_EXPRESSION__RHS = CpgEdge.listValued(AssignExpression::getRhs,
             AssignExpression::setRhs);
-    public static CpgEdge<BinaryOperator, Expression> BINARY_OPERATOR__LHS = new CpgEdge<>(BinaryOperator::getLhs, BinaryOperator::setLhs);
-    public static CpgAttributeEdge<BinaryOperator, String> BINARY_OPERATOR__OPERATOR_CODE = new CpgAttributeEdge<>(BinaryOperator::getOperatorCode,
-            BinaryOperator::setOperatorCode);
-    public static CpgEdge<BinaryOperator, Expression> BINARY_OPERATOR__RHS = new CpgEdge<>(BinaryOperator::getRhs, BinaryOperator::setRhs);
-    public static CpgMultiEdge<Block, Declaration> BLOCK__DECLARATIONS = CpgMultiEdge.nodeValued(Block::getDeclarations, REFERENCE);
-    public static CpgMultiEdge<Block, Statement> BLOCK__STATEMENTS = CpgMultiEdge.edgeValued(Block::getStatementEdges);
-    public static CpgMultiEdge<CallExpression, Expression> CALL_EXPRESSION__ARGUMENTS = CpgMultiEdge.edgeValued(CallExpression::getArgumentEdges);
-    public static CpgEdge<CallExpression, Expression> CALL_EXPRESSION__CALLEE = new CpgEdge<>(CallExpression::getCallee, CallExpression::setCallee);
-    public static CpgMultiEdge<CallExpression, FunctionDeclaration> CALL_EXPRESSION__INVOKES = CpgMultiEdge.edgeValued(CallExpression::getInvokeEdges,
-            REFERENCE);
-    public static CpgMultiEdge<Component, TranslationUnitDeclaration> COMPONENT__TRANSLATION_UNITS = CpgMultiEdge
+    public static final CpgEdge<BinaryOperator, Expression> BINARY_OPERATOR__LHS = new CpgEdge<>(BinaryOperator::getLhs, BinaryOperator::setLhs);
+    public static final CpgAttributeEdge<BinaryOperator, String> BINARY_OPERATOR__OPERATOR_CODE = new CpgAttributeEdge<>(
+            BinaryOperator::getOperatorCode, BinaryOperator::setOperatorCode);
+    public static final CpgEdge<BinaryOperator, Expression> BINARY_OPERATOR__RHS = new CpgEdge<>(BinaryOperator::getRhs, BinaryOperator::setRhs);
+    public static final CpgMultiEdge<Block, Declaration> BLOCK__DECLARATIONS = CpgMultiEdge.nodeValued(Block::getDeclarations, REFERENCE);
+    public static final CpgMultiEdge<Block, Statement> BLOCK__STATEMENTS = CpgMultiEdge.edgeValued(Block::getStatementEdges);
+    public static final CpgMultiEdge<CallExpression, Expression> CALL_EXPRESSION__ARGUMENTS = CpgMultiEdge
+            .edgeValued(CallExpression::getArgumentEdges);
+    public static final CpgEdge<CallExpression, Expression> CALL_EXPRESSION__CALLEE = new CpgEdge<>(CallExpression::getCallee,
+            CallExpression::setCallee);
+    public static final CpgMultiEdge<CallExpression, FunctionDeclaration> CALL_EXPRESSION__INVOKES = CpgMultiEdge
+            .edgeValued(CallExpression::getInvokeEdges, REFERENCE);
+    public static final CpgMultiEdge<Component, TranslationUnitDeclaration> COMPONENT__TRANSLATION_UNITS = CpgMultiEdge
             .nodeValued(Component::getTranslationUnits);
-    public static CpgMultiEdge<DeclarationStatement, Declaration> DECLARATION_STATEMENT__DECLARATIONS = CpgMultiEdge
+    public static final CpgMultiEdge<DeclarationStatement, Declaration> DECLARATION_STATEMENT__DECLARATIONS = CpgMultiEdge
             .edgeValued(DeclarationStatement::getDeclarationEdges);
-    public static CpgAttributeEdge<FieldDeclaration, List<String>> FIELD_DECLARATION__MODIFIERS = new CpgAttributeEdge<>(
+    public static final CpgAttributeEdge<FieldDeclaration, List<String>> FIELD_DECLARATION__MODIFIERS = new CpgAttributeEdge<>(
             FieldDeclaration::getModifiers, FieldDeclaration::setModifiers);
-    public static CpgEdge<ForStatement, Expression> FOR_STATEMENT__CONDITION = new CpgEdge<>(ForStatement::getCondition, ForStatement::setCondition);
-    public static CpgEdge<ForStatement, Statement> FOR_STATEMENT__INITIALIZER_STATEMENT = new CpgEdge<>(ForStatement::getInitializerStatement,
+    public static final CpgEdge<ForStatement, Expression> FOR_STATEMENT__CONDITION = new CpgEdge<>(ForStatement::getCondition,
+            ForStatement::setCondition);
+    public static final CpgEdge<ForStatement, Statement> FOR_STATEMENT__INITIALIZER_STATEMENT = new CpgEdge<>(ForStatement::getInitializerStatement,
             ForStatement::setInitializerStatement);
-    public static CpgEdge<ForStatement, Statement> FOR_STATEMENT__ITERATION_STATEMENT = new CpgEdge<>(ForStatement::getIterationStatement,
+    public static final CpgEdge<ForStatement, Statement> FOR_STATEMENT__ITERATION_STATEMENT = new CpgEdge<>(ForStatement::getIterationStatement,
             ForStatement::setIterationStatement);
-    public static CpgEdge<ForStatement, Statement> FOR_STATEMENT__STATEMENT = new CpgEdge<>(ForStatement::getStatement, ForStatement::setStatement);
-    public static CpgMultiEdge<FunctionDeclaration, FunctionDeclaration> FUNCTION_DECLARATION__OVERRIDES = CpgMultiEdge
+    public static final CpgEdge<ForStatement, Statement> FOR_STATEMENT__STATEMENT = new CpgEdge<>(ForStatement::getStatement,
+            ForStatement::setStatement);
+    public static final CpgMultiEdge<FunctionDeclaration, FunctionDeclaration> FUNCTION_DECLARATION__OVERRIDES = CpgMultiEdge
             .nodeValued(FunctionDeclaration::getOverrides, REFERENCE);
-    public static CpgMultiEdge<FunctionDeclaration, FunctionDeclaration> FUNCTION_DECLARATION__OVERRIDDEN_BY = CpgMultiEdge
+    public static final CpgMultiEdge<FunctionDeclaration, FunctionDeclaration> FUNCTION_DECLARATION__OVERRIDDEN_BY = CpgMultiEdge
             .nodeValued(FunctionDeclaration::getOverriddenBy, REFERENCE);
-    public static CpgMultiEdge<FunctionType, Type> FUNCTION_TYPE__PARAMETERS = CpgMultiEdge.nodeValued(FunctionType::getParameters);
-    public static CpgMultiEdge<FunctionType, Type> FUNCTION_TYPE__RETURN_TYPES = CpgMultiEdge.nodeValued(FunctionType::getReturnTypes);
-    public static CpgEdge<IfStatement, Expression> IF_STATEMENT__CONDITION = new CpgEdge<>(IfStatement::getCondition, IfStatement::setCondition);
-    public static CpgEdge<IfStatement, Statement> IF_STATEMENT__ELSE_STATEMENT = new CpgEdge<>(IfStatement::getElseStatement,
+    public static final CpgMultiEdge<FunctionType, Type> FUNCTION_TYPE__PARAMETERS = CpgMultiEdge.nodeValued(FunctionType::getParameters);
+    public static final CpgMultiEdge<FunctionType, Type> FUNCTION_TYPE__RETURN_TYPES = CpgMultiEdge.nodeValued(FunctionType::getReturnTypes);
+    public static final CpgEdge<IfStatement, Expression> IF_STATEMENT__CONDITION = new CpgEdge<>(IfStatement::getCondition,
+            IfStatement::setCondition);
+    public static final CpgEdge<IfStatement, Statement> IF_STATEMENT__ELSE_STATEMENT = new CpgEdge<>(IfStatement::getElseStatement,
             IfStatement::setElseStatement);
-    public static CpgEdge<IfStatement, Statement> IF_STATEMENT__THEN_STATEMENT = new CpgEdge<>(IfStatement::getThenStatement,
+    public static final CpgEdge<IfStatement, Statement> IF_STATEMENT__THEN_STATEMENT = new CpgEdge<>(IfStatement::getThenStatement,
             IfStatement::setThenStatement);
-    public static CpgEdge<MemberExpression, RecordDeclaration> MEMBER_EXPRESSION__RECORD_DECLARATION = new CpgEdge<>(EdgeUtil::getRecord, null,
+    public static final CpgEdge<MemberExpression, RecordDeclaration> MEMBER_EXPRESSION__RECORD_DECLARATION = new CpgEdge<>(EdgeUtil::getRecord, null,
             ANALYTIC);
-    public static CpgEdge<MemberExpression, Expression> MEMBER_EXPRESSION__BASE = new CpgEdge<>(MemberExpression::getBase, MemberExpression::setBase);
-    public static CpgEdge<MethodDeclaration, Statement> METHOD_DECLARATION__BODY = new CpgEdge<>(MethodDeclaration::getBody,
+    public static final CpgEdge<MemberExpression, Expression> MEMBER_EXPRESSION__BASE = new CpgEdge<>(MemberExpression::getBase,
+            MemberExpression::setBase);
+    public static final CpgEdge<MethodDeclaration, Statement> METHOD_DECLARATION__BODY = new CpgEdge<>(MethodDeclaration::getBody,
             MethodDeclaration::setBody);
-    public static CpgMultiEdge<MethodDeclaration, ParameterDeclaration> METHOD_DECLARATION__PARAMETERS = CpgMultiEdge
+    public static final CpgMultiEdge<MethodDeclaration, ParameterDeclaration> METHOD_DECLARATION__PARAMETERS = CpgMultiEdge
             .nodeValued(MethodDeclaration::getParameters);
-    public static CpgEdge<MethodDeclaration, RecordDeclaration> METHOD_DECLARATION__RECORD_DECLARATION = new CpgEdge<>(
+    public static final CpgEdge<MethodDeclaration, RecordDeclaration> METHOD_DECLARATION__RECORD_DECLARATION = new CpgEdge<>(
             MethodDeclaration::getRecordDeclaration, MethodDeclaration::setRecordDeclaration, REFERENCE);
-    public static CpgMultiEdge<NamespaceDeclaration, Declaration> NAMESPACE_DECLARATION__DECLARATIONS = CpgMultiEdge
+    public static final CpgMultiEdge<NamespaceDeclaration, Declaration> NAMESPACE_DECLARATION__DECLARATIONS = CpgMultiEdge
             .nodeValued(NamespaceDeclaration::getDeclarations);
-    public static CpgAttributeEdge<Node, PhysicalLocation> NODE__LOCATION = new CpgAttributeEdge<>(Node::getLocation, Node::setLocation);
-    public static CpgAttributeEdge<Declaration, Name> NODE__NAME = new CpgAttributeEdge<>(Node::getName, Node::setName);
-    public static CpgAttributeEdge<Declaration, String> NODE__LOCAL_NAME = new CpgAttributeEdge<>(EdgeUtil::getLocalName, null);
+    public static final CpgAttributeEdge<Node, PhysicalLocation> NODE__LOCATION = new CpgAttributeEdge<>(Node::getLocation, Node::setLocation);
+    public static final CpgAttributeEdge<Declaration, Name> NODE__NAME = new CpgAttributeEdge<>(Node::getName, Node::setName);
+    public static final CpgAttributeEdge<Declaration, String> NODE__LOCAL_NAME = new CpgAttributeEdge<>(EdgeUtil::getLocalName, null);
+    public static final CpgAttributeEdge<MethodDeclaration, String> METHOD_DECLARATION__LOCAL_NAME = new CpgAttributeEdge<>(EdgeUtil::getLocalName,
+            null);
 
-    public static CpgEdge<ObjectType, RecordDeclaration> OBJECT_TYPE__RECORD_DECLARATION = new CpgEdge<>(ObjectType::getRecordDeclaration,
+    public static final CpgEdge<ObjectType, RecordDeclaration> OBJECT_TYPE__RECORD_DECLARATION = new CpgEdge<>(ObjectType::getRecordDeclaration,
             ObjectType::setRecordDeclaration, REFERENCE);
-    public static CpgMultiEdge<RecordDeclaration, FieldDeclaration> RECORD_DECLARATION__FIELDS = CpgMultiEdge
+    public static final CpgMultiEdge<RecordDeclaration, FieldDeclaration> RECORD_DECLARATION__FIELDS = CpgMultiEdge
             .edgeValued(RecordDeclaration::getFieldEdges);
-    public static CpgMultiEdge<RecordDeclaration, MethodDeclaration> RECORD_DECLARATION__METHODS = CpgMultiEdge
+    public static final CpgMultiEdge<RecordDeclaration, MethodDeclaration> RECORD_DECLARATION__METHODS = CpgMultiEdge
             .edgeValued(RecordDeclaration::getMethodEdges);
-    public static CpgMultiEdge<RecordDeclaration, ConstructorDeclaration> RECORD_DECLARATION__CONSTRUCTORS = CpgMultiEdge
+    public static final CpgAttributeEdge<RecordDeclaration, Name> RECORD_DECLARATION__NAME = new CpgAttributeEdge<>(Node::getName, Node::setName);
+    public static final CpgMultiEdge<RecordDeclaration, ConstructorDeclaration> RECORD_DECLARATION__CONSTRUCTORS = CpgMultiEdge
             .edgeValued(RecordDeclaration::getConstructorEdges);
-    public static CpgEdge<Reference, Declaration> REFERENCE__REFERS_TO = new CpgEdge<>(Reference::getRefersTo, Reference::setRefersTo, REFERENCE);
-    public static CpgMultiEdge<ReturnStatement, Expression> RETURN_STATEMENT__RETURN_VALUES = CpgMultiEdge
-            .nodeValued(ReturnStatement::getReturnValues);
-    public static CpgMultiEdge<Statement, VariableDeclaration> STATEMENT__LOCALS = CpgMultiEdge.edgeValued(Statement::getLocalEdges, REFERENCE);
-    public static CpgEdge<SubscriptExpression, Expression> SUBSCRIPT_EXPRESSION__SUBSCRIPT_EXPRESSION = new CpgEdge<>(
-            SubscriptExpression::getSubscriptExpression, SubscriptExpression::setSubscriptExpression);
-    public static CpgEdge<SubscriptExpression, Expression> SUBSCRIPT_EXPRESSION__ARRAY_EXPRESSION = new CpgEdge<>(
-            SubscriptExpression::getArrayExpression, SubscriptExpression::setArrayExpression);
-    public static CpgMultiEdge<TranslationUnitDeclaration, Declaration> TRANSLATION_UNIT__DECLARATIONS = CpgMultiEdge
-            .edgeValued(TranslationUnitDeclaration::getDeclarationEdges);
-    public static CpgAttributeEdge<IncompleteType, String> TYPE__TYPE_NAME = new CpgAttributeEdge<>(Type::getTypeName, null);
-    public static CpgEdge<UnaryOperator, Expression> UNARY_OPERATOR__INPUT = new CpgEdge<>(UnaryOperator::getInput, UnaryOperator::setInput);
-    public static CpgAttributeEdge<UnaryOperator, String> UNARY_OPERATOR__OPERATOR_CODE = new CpgAttributeEdge<>(UnaryOperator::getOperatorCode,
-            UnaryOperator::setOperatorCode);
-    public static CpgMultiEdge<ValueDeclaration, Reference> VALUE_DECLARATION__USAGES = CpgMultiEdge.edgeValued(ValueDeclaration::getUsageEdges,
+    public static final CpgEdge<Reference, Declaration> REFERENCE__REFERS_TO = new CpgEdge<>(Reference::getRefersTo, Reference::setRefersTo,
             REFERENCE);
-    public static CpgEdge<ValueDeclaration, Type> VALUE_DECLARATION__TYPE = new CpgEdge<>(ValueDeclaration::getType, ValueDeclaration::setType);
-    public static CpgEdge<VariableDeclaration, Expression> VARIABLE_DECLARATION__INITIALIZER = new CpgEdge<>(VariableDeclaration::getInitializer,
-            VariableDeclaration::setInitializer);
-    public static CpgEdge<WhileStatement, Statement> WHILE_STATEMENT__STATEMENT = new CpgEdge<>(WhileStatement::getStatement,
+    public static final CpgMultiEdge<ReturnStatement, Expression> RETURN_STATEMENT__RETURN_VALUES = CpgMultiEdge
+            .nodeValued(ReturnStatement::getReturnValues);
+    public static final CpgMultiEdge<Statement, VariableDeclaration> STATEMENT__LOCALS = CpgMultiEdge.edgeValued(Statement::getLocalEdges, REFERENCE);
+    public static final CpgEdge<SubscriptExpression, Expression> SUBSCRIPT_EXPRESSION__SUBSCRIPT_EXPRESSION = new CpgEdge<>(
+            SubscriptExpression::getSubscriptExpression, SubscriptExpression::setSubscriptExpression);
+    public static final CpgEdge<SubscriptExpression, Expression> SUBSCRIPT_EXPRESSION__ARRAY_EXPRESSION = new CpgEdge<>(
+            SubscriptExpression::getArrayExpression, SubscriptExpression::setArrayExpression);
+    public static final CpgMultiEdge<TranslationUnitDeclaration, Declaration> TRANSLATION_UNIT__DECLARATIONS = CpgMultiEdge
+            .edgeValued(TranslationUnitDeclaration::getDeclarationEdges);
+    public static final CpgAttributeEdge<IncompleteType, String> TYPE__TYPE_NAME = new CpgAttributeEdge<>(Type::getTypeName, null);
+    public static final CpgEdge<UnaryOperator, Expression> UNARY_OPERATOR__INPUT = new CpgEdge<>(UnaryOperator::getInput, UnaryOperator::setInput);
+    public static final CpgAttributeEdge<UnaryOperator, String> UNARY_OPERATOR__OPERATOR_CODE = new CpgAttributeEdge<>(UnaryOperator::getOperatorCode,
+            UnaryOperator::setOperatorCode);
+    public static final CpgMultiEdge<ValueDeclaration, Reference> VALUE_DECLARATION__USAGES = CpgMultiEdge.edgeValued(ValueDeclaration::getUsageEdges,
+            REFERENCE);
+    public static final CpgEdge<ValueDeclaration, Type> VALUE_DECLARATION__TYPE = new CpgEdge<>(ValueDeclaration::getType, ValueDeclaration::setType);
+    public static final CpgEdge<VariableDeclaration, Expression> VARIABLE_DECLARATION__INITIALIZER = new CpgEdge<>(
+            VariableDeclaration::getInitializer, VariableDeclaration::setInitializer);
+    public static final CpgEdge<WhileStatement, Statement> WHILE_STATEMENT__STATEMENT = new CpgEdge<>(WhileStatement::getStatement,
             WhileStatement::setStatement);
-    public static CpgEdge<WhileStatement, Expression> WHILE_STATEMENT__CONDITION = new CpgEdge<>(WhileStatement::getCondition,
+    public static final CpgEdge<WhileStatement, Expression> WHILE_STATEMENT__CONDITION = new CpgEdge<>(WhileStatement::getCondition,
             WhileStatement::setCondition);
 
-    public static CpgEdge<DoStatement, Statement> DO_STATEMENT__STATEMENT = new CpgEdge<>(DoStatement::getStatement, DoStatement::setStatement);
-    public static CpgEdge<DoStatement, Expression> DO_STATEMENT__CONDITION = new CpgEdge<>(DoStatement::getCondition, DoStatement::setCondition);
+    public static final CpgEdge<DoStatement, Statement> DO_STATEMENT__STATEMENT = new CpgEdge<>(DoStatement::getStatement, DoStatement::setStatement);
+    public static final CpgEdge<DoStatement, Expression> DO_STATEMENT__CONDITION = new CpgEdge<>(DoStatement::getCondition,
+            DoStatement::setCondition);
 
     static {
         fromType = new HashMap<>();
@@ -186,16 +198,13 @@ public class Edges {
      * Gets the list of edges with the given node class as target.
      * @param tClass the target node class
      * @param <T> the target node type
-     * @return the list of edges
      */
-    public static <T extends Node> List<IEdge<? extends Node, ? super T>> getEdgesToType(Class<T> tClass) {
-        List<IEdge<?, ? super T>> result = new ArrayList<>();
+    public static <T extends Node> void getEdgesToType(Class<T> tClass, Consumer<IEdge<? extends Node, ? super T>> consumer) {
         Class<? super T> type = tClass;
         while (Node.class.isAssignableFrom(type)) {
-            toType.getOrDefault(type, List.of()).stream().map(e -> (IEdge<?, ? super T>) e).forEach(result::add);
+            toType.getOrDefault(type, List.of()).stream().map(e -> (IEdge<? extends Node, ? super T>) e).forEach(consumer);
             type = getSuperclass(type);
         }
-        return result;
     }
 
     private static <T extends Node> Class<? super T> getSuperclass(Class<? super T> type) {

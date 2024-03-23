@@ -25,6 +25,7 @@ public class CpgIsomorphismDetector {
      * Creates a new {@link CpgIsomorphismDetector}.
      */
     public CpgIsomorphismDetector() {
+        classComparator = new ClassComparator();
     }
 
     /**
@@ -32,7 +33,6 @@ public class CpgIsomorphismDetector {
      * @param root The root {@link Node} of the graph.
      */
     public void loadGraph(Node root) {
-        classComparator = new ClassComparator();
         nodeMap = new TreeMap<>(classComparator);
 
         List<Node> allNodes = SubgraphWalker.INSTANCE.flattenAST(root);
@@ -48,7 +48,7 @@ public class CpgIsomorphismDetector {
         Map<NodePattern<?>, List<? extends Node>> rootCandidateMap = sourcePattern.getRoots().stream().collect(Collectors.toMap(root -> root,
                 root -> root.getCandidateClasses().stream().map(this::getNodesOfType).flatMap(List::stream).distinct().toList()));
         List<Match> matches = sourcePattern.match(rootCandidateMap);
-        logger.info("Got %d matches looking at %d nodes".formatted(matches.size(), NodePattern.NodePatternImpl.getCounter()));
+        logger.info("Got {} matches looking at {} nodes", matches.size(), NodePattern.NodePatternImpl.getCounter());
         NodePattern.NodePatternImpl.resetCounter();
         return matches;
     }
@@ -84,9 +84,7 @@ public class CpgIsomorphismDetector {
         if (firstIncompatible != null) {
             subMap = subMap.headMap(firstIncompatible);
         }
-        List<T> nodes = subMap.values().stream().flatMap(List::stream).map(superClass::cast).toList();
-
-        return nodes;
+        return subMap.values().stream().flatMap(List::stream).map(superClass::cast).toList();
     }
 
     /**
@@ -129,11 +127,12 @@ public class CpgIsomorphismDetector {
             Class<?> super1 = o1.getSuperclass();
             Class<?> super2 = o2.getSuperclass();
 
-            Class<?> comp1, comp2;
-            Mode mode = this.mode;
+            Class<?> comp1;
+            Class<?> comp2;
+            Mode previousMode = this.mode;
             setMode(Mode.FIRST_COMPATIBLE);
             int res = (int) Math.signum(compare(super1, super2));
-            setMode(mode);
+            setMode(previousMode);
             if (res == -1 && super1.isAssignableFrom(super2)) {
                 // super1 is common supertype
                 comp1 = o1;

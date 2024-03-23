@@ -8,8 +8,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Objects;
 
-import org.jetbrains.annotations.NotNull;
-
 import de.fraunhofer.aisec.cpg.graph.Name;
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.graph.declarations.*;
@@ -81,47 +79,8 @@ public class CpgNodeListener extends ACpgNodeListener {
     }
 
     @Override
-    public void exit(ConstructorDeclaration constructorDeclaration) {
-    }
-
-    @Override
-    public void exit(Declaration declaration) {
-
-    }
-
-    @Override
-    public void exit(DeclarationSequence declarationsequence) {
-
-    }
-
-    @Override
-    public void exit(EnumConstantDeclaration enumconstantDeclaration) {
-
-    }
-
-    @Override
     public void exit(EnumDeclaration enumDeclaration) {
         tokenConsumer.addToken(ENUM_DECL_END, enumDeclaration, true);
-    }
-
-    @Override
-    public void exit(FieldDeclaration fieldDeclaration) {
-
-    }
-
-    @Override
-    public void exit(FunctionDeclaration functionDeclaration) {
-
-    }
-
-    @Override
-    public void exit(FunctionTemplateDeclaration functiontemplateDeclaration) {
-
-    }
-
-    @Override
-    public void exit(IncludeDeclaration includeDeclaration) {
-
     }
 
     @Override
@@ -130,41 +89,13 @@ public class CpgNodeListener extends ACpgNodeListener {
     }
 
     @Override
-    public void exit(TupleDeclaration tupleDeclaration) {
-
-    }
-
-    @Override
-    public void exit(BreakStatement breakStatement) {
-    }
-
-    @Override
-    public void exit(CaseStatement caseStatement) {
-    }
-
-    @Override
     public void exit(CatchClause catchclause) {
         tokenConsumer.addToken(CATCH_CLAUSE_END, catchclause, true);
     }
 
     @Override
-    public void exit(DeclarationStatement declarationStatement) {
-
-    }
-
-    @Override
-    public void exit(DefaultStatement defaultStatement) {
-
-    }
-
-    @Override
     public void exit(DoStatement doStatement) {
         tokenConsumer.addToken(DO_WHILE_BLOCK_END, doStatement, true);
-    }
-
-    @Override
-    public void exit(SynchronizedStatement synchronizedStatement) {
-
     }
 
     @Override
@@ -188,16 +119,6 @@ public class CpgNodeListener extends ACpgNodeListener {
     }
 
     @Override
-    public void visit(Declaration declaration) {
-
-    }
-
-    @Override
-    public void visit(DeclarationSequence declarationsequence) {
-
-    }
-
-    @Override
     public void visit(EnumConstantDeclaration enumConstantDeclaration) {
         tokenConsumer.addToken(ENUM_ELEMENT, enumConstantDeclaration, false);
     }
@@ -214,7 +135,7 @@ public class CpgNodeListener extends ACpgNodeListener {
 
     @Override
     public void visit(IncludeDeclaration includeDeclaration) {
-
+        tokenConsumer.addToken(INCLUDE, includeDeclaration, false);
     }
 
     @Override
@@ -236,11 +157,6 @@ public class CpgNodeListener extends ACpgNodeListener {
     @Override
     public void visit(RecordDeclaration recordDeclaration) {
         tokenConsumer.addToken(RECORD_DECL_BEGIN, recordDeclaration, false);
-    }
-
-    @Override
-    public void visit(TupleDeclaration tupleDeclaration) {
-
     }
 
     @Override
@@ -271,11 +187,6 @@ public class CpgNodeListener extends ACpgNodeListener {
     @Override
     public void visit(ContinueStatement continueStatement) {
         tokenConsumer.addToken(CONTINUE, continueStatement, false);
-    }
-
-    @Override
-    public void visit(DeclarationStatement declarationStatement) {
-
     }
 
     @Override
@@ -319,6 +230,11 @@ public class CpgNodeListener extends ACpgNodeListener {
             expect(IF_BLOCK_BEGIN, IF_BLOCK_END);
         }
 
+    }
+
+    @Override
+    public void visit(LambdaExpression lambdaExpression) {
+        tokenConsumer.addToken(LAMBDA_EXPRESSION, lambdaExpression, false);
     }
 
     @Override
@@ -397,14 +313,6 @@ public class CpgNodeListener extends ACpgNodeListener {
     @Override
     public void visit(MemberCallExpression memberCallExpression) {
         tokenConsumer.addToken(METHOD_CALL, memberCallExpression, false);
-    }
-
-    /**
-     * Visits a {@link Node}.
-     * @param node the node
-     */
-    public void visit(@NotNull Node node) {
-        super.visit(node);
     }
 
     private record BlockTokens(CpgTokenType opening, CpgTokenType closing) {

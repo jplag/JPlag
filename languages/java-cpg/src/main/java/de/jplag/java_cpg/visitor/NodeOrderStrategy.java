@@ -1,4 +1,4 @@
-package de.jplag.java_cpg.visitorStrategy;
+package de.jplag.java_cpg.visitor;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -29,14 +29,14 @@ import com.google.common.collect.Iterators;
  */
 public class NodeOrderStrategy implements IStrategy<Node> {
 
-    private static final boolean useCallGraphOrder = true;
+    private static final boolean USE_CALL_GRAPH_ORDER = true;
     private List<MethodDeclaration> methodOrder;
 
     /**
      * Creates a new {@link NodeOrderStrategy}.
      */
     public NodeOrderStrategy() {
-
+        // nothing to do yet
     }
 
     @Override
@@ -85,8 +85,8 @@ public class NodeOrderStrategy implements IStrategy<Node> {
         return Iterators.concat(mainFiles.iterator(), otherFiles.iterator());
     }
 
-    private static boolean isMainClass(RecordDeclaration record) {
-        return record.getMethods().stream().anyMatch(NodeOrderStrategy::isMainMethod);
+    private static boolean isMainClass(RecordDeclaration recordDeclaration) {
+        return recordDeclaration.getMethods().stream().anyMatch(NodeOrderStrategy::isMainMethod);
     }
 
     private List<RecordDeclaration> getTopLevelRecords(Node node) {
@@ -178,7 +178,7 @@ public class NodeOrderStrategy implements IStrategy<Node> {
     }
 
     private int walkMethods(MethodDeclaration method1, MethodDeclaration method2) {
-        if (useCallGraphOrder && Objects.isNull(methodOrder)) {
+        if (USE_CALL_GRAPH_ORDER && Objects.isNull(methodOrder)) {
             return Comparator.<MethodDeclaration, Region>comparing(m -> m.getLocation() == null ? null : m.getLocation().getRegion()).compare(method1,
                     method2);
         }

@@ -2,6 +2,8 @@ package de.jplag.java_cpg.transformation.operations;
 
 import java.util.*;
 
+import org.jetbrains.annotations.Nullable;
+
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.graph.edge.PropertyEdge;
 
@@ -10,7 +12,7 @@ import de.fraunhofer.aisec.cpg.graph.edge.PropertyEdge;
  */
 public class DummyNeighbor extends Node {
 
-    private final static DummyNeighbor INSTANCE = new DummyNeighbor();
+    private static final DummyNeighbor INSTANCE = new DummyNeighbor();
 
     /**
      * Maps detached nodes to the edge that they were previously a source of.
@@ -92,5 +94,15 @@ public class DummyNeighbor extends Node {
     public void clear() {
         targetMap.clear();
         sourceMap.clear();
+    }
+
+    @Override
+    public boolean equals(@Nullable Object other) {
+        return other == INSTANCE;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

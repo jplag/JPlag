@@ -1,7 +1,6 @@
-package de.jplag.java_cpg.visitorStrategy;
+package de.jplag.java_cpg.visitor;
 
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -23,7 +22,7 @@ import de.fraunhofer.aisec.cpg.helpers.SubgraphWalker;
  * This class contains methods to put a call graph oriented order on methods.
  */
 public class MethodOrderStrategy {
-    private static final String START_OF_GENERIC_CLASS = "^(\\w+ +)*class +\\w+ *<.*";
+    private static final String START_OF_GENERIC_CLASS = ".*class\\s*\\w+\\s*<.*";
     private static final Logger logger = LoggerFactory.getLogger(MethodOrderStrategy.class);
     private final NodeOrderStrategy nodeOrderStrategy;
     private int index;
@@ -39,8 +38,8 @@ public class MethodOrderStrategy {
 
     private static List<MethodDeclaration> getFunctionCandidates(MethodDeclaration methodDeclaration, CallExpression call) {
 
-        RecordDeclaration record = methodDeclaration.getRecordDeclaration();
-        if (Objects.isNull(record)) {
+        RecordDeclaration recordDeclaration = methodDeclaration.getRecordDeclaration();
+        if (Objects.isNull(recordDeclaration)) {
             return List.of();
         }
         List<MethodDeclaration> candidates;
@@ -49,12 +48,13 @@ public class MethodOrderStrategy {
             // we have to find a candidate ourselves
             if (call.getCode() != null && call.getCode().startsWith("super")) {
                 // already filtered
-                return getSuperConstructorCandidates(methodDeclaration, call);
+                return getSuperConstructorCandidates(constructor, call);
             } else {
-                candidates = new ArrayList<>(record.getConstructors());
+                candidates = new ArrayList<>(recordDeclaration.getConstructors());
             }
         } else {
-            candidates = record.getMethods().stream().filter(m -> m.getName().equals(methodDeclaration.getName())).collect(Collectors.toList());
+            candidates = recordDeclaration.getMethods().stream().filter(m -> m.getName().equals(methodDeclaration.getName()))
+                    .collect(Collectors.toCollection(ArrayList::new));
             // add overriding methods
             List.copyOf(candidates).stream().map(MethodDeclaration::getOverriddenBy).flatMap(List::stream).map(MethodDeclaration.class::cast)
                     .forEach(candidates::add);
@@ -120,33 +120,32 @@ public class MethodOrderStrategy {
         if (isTypeArgument)
             return true;
 
-        RecordDeclaration record = objectType.getRecordDeclaration();
-        if (Objects.isNull(record))
+        RecordDeclaration recordDeclaration = objectType.getRecordDeclaration();
+        if (Objects.isNull(recordDeclaration))
             return false;
-        String code = record.getCode();
+        String code = recordDeclaration.getCode();
         if (Objects.isNull(code))
             return false;
         String firstLine = code.split("\\{")[0];
-        boolean isGenericType = Pattern.compile(START_OF_GENERIC_CLASS).matcher(firstLine).matches();
-        return isGenericType;
+        return firstLine.matches(START_OF_GENERIC_CLASS);
     }
 
-    private static List<MethodDeclaration> getSuperConstructorCandidates(MethodDeclaration MethodDeclaration, CallExpression call) {
-        RecordDeclaration recordDeclaration = MethodDeclaration.getRecordDeclaration();
+    private static List<MethodDeclaration> getSuperConstructorCandidates(MethodDeclaration methodDeclaration, CallExpression call) {
+        RecordDeclaration recordDeclaration = methodDeclaration.getRecordDeclaration();
         if (recordDeclaration == null)
             return List.of();
 
         List<RecordDeclaration> superClassDeclarations = new ArrayList<>();
         superClassDeclarations.add(recordDeclaration);
         do {
-            RecordDeclaration record = superClassDeclarations.removeFirst();
-            List<MethodDeclaration> candidates = record.getConstructors().stream()
+            RecordDeclaration superClassDeclaration = superClassDeclarations.removeFirst();
+            List<MethodDeclaration> candidates = superClassDeclaration.getConstructors().stream()
                     .filter(constructor -> isImplicitStandardConstructor(constructor) || constructor.getLocation() != null)
                     .filter(constructor -> hasSignature(constructor, call)).map(MethodDeclaration.class::cast).toList();
             if (!candidates.isEmpty()) {
                 return candidates;
             }
-            Set<RecordDeclaration> superTypes = record.getSuperTypeDeclarations();
+            Set<RecordDeclaration> superTypes = superClassDeclaration.getSuperTypeDeclarations();
             superClassDeclarations.addAll(superTypes);
         } while (!superClassDeclarations.isEmpty());
         return List.of();
@@ -170,7 +169,7 @@ public class MethodOrderStrategy {
         invokes.forEach(methodDeclaration -> {
             var candidates = getFunctionCandidates(methodDeclaration, call);
             if (candidates.isEmpty()) {
-                logger.warn("No candidate for " + call);
+                logger.warn("No candidate for {}", call);
             }
             candidates.forEach(candidate -> {
                 if ((!callGraphIndex.contains(methodDeclaration) || callGraphIndex.indexOf(methodDeclaration) >= index)
@@ -190,13 +189,12 @@ public class MethodOrderStrategy {
 
         List<MethodDeclaration> candidatesWithSameName = allMethods.stream().filter(method -> method.getName().getLocalName().equals(methodName))
                 .toList();
-        List<MethodDeclaration> candidatesWithSameSignature = candidatesWithSameName.stream().filter(method -> hasSignature(method, call)).toList();
-        return candidatesWithSameSignature;
+        return candidatesWithSameName.stream().filter(method -> hasSignature(method, call)).toList();
     }
 
     List<MethodDeclaration> setupMethodCallGraphOrder(TranslationResult result) {
         List<Node> astChildren = SubgraphWalker.INSTANCE.flattenAST(result);
-        List<MethodDeclaration> methods = astChildren.stream().filter(node -> node instanceof MethodDeclaration).map(MethodDeclaration.class::cast)
+        List<MethodDeclaration> methods = astChildren.stream().filter(MethodDeclaration.class::isInstance).map(MethodDeclaration.class::cast)
                 .toList();
         this.allMethods = methods;
 
@@ -206,12 +204,14 @@ public class MethodOrderStrategy {
             List<MethodDeclaration> functionIndex = traverseCallGraph(mainMethod);
             indices.add(functionIndex);
         });
-        Optional<List<MethodDeclaration>> largestIndex = indices.stream().max(Comparator.comparing(List::size));
-        largestIndex.ifPresent(index -> {
-            allMethods.stream().filter(m -> !index.contains(m)).filter(m -> m.getLocation() != null)
-                    .sorted(Comparator.comparing(m -> m.getLocation().getRegion())).forEach(index::add);
-        });
-        return largestIndex.orElse(allMethods);
+        Optional<List<MethodDeclaration>> maybeLargestIndex = indices.stream().max(Comparator.comparing(List::size));
+        if (maybeLargestIndex.isPresent()) {
+            List<MethodDeclaration> largestIndex = maybeLargestIndex.get();
+            allMethods.stream().filter(m -> !largestIndex.contains(m)).filter(m -> m.getLocation() != null)
+                    .sorted(Comparator.comparing(m -> m.getLocation().getRegion())).forEach(largestIndex::add);
+            return largestIndex;
+        }
+        return allMethods;
     }
 
     private List<MethodDeclaration> traverseCallGraph(MethodDeclaration mainMethod) {
@@ -223,9 +223,7 @@ public class MethodOrderStrategy {
 
         index = 0;
         List<MethodDeclaration> newFunctions = new ArrayList<>();
-        walker.registerOnNodeVisit(node -> {
-            handleNode(node, callGraphIndex, newFunctions);
-        });
+        walker.registerOnNodeVisit(node -> handleNode(node, callGraphIndex, newFunctions));
         while (index < callGraphIndex.size()) {
             MethodDeclaration next = callGraphIndex.get(index++);
             walker.iterate(next);

@@ -36,8 +36,7 @@ public class CreateTransformTest extends AbstractJavaCpgLanguageTest {
 
     @ParameterizedTest
     @MethodSource("provideTuples")
-    public void createTransformTest(String fileName, GraphTransformation transformation)
-            throws ParsingException, InterruptedException, ConnectException {
+    void createTransformTest(String fileName, GraphTransformation transformation) throws ParsingException, InterruptedException, ConnectException {
 
         Set<File> files = Set.of(new File(baseDirectory, fileName));
         CpgAdapter cpgAdapter = new CpgAdapter();

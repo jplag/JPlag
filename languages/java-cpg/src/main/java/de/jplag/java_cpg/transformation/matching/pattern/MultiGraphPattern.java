@@ -3,6 +3,7 @@ package de.jplag.java_cpg.transformation.matching.pattern;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
@@ -25,12 +26,15 @@ public class MultiGraphPattern extends GraphPatternImpl {
     public MultiGraphPattern(List<SimpleGraphPattern<?>> subgraphs, PatternRegistry patterns) {
         super(patterns);
         this.subgraphs = subgraphs;
+        if (Objects.isNull(representingNode)) {
+            representingNode = subgraphs.getFirst().getRoot();
+        }
     }
 
     @Override
-    public List<NodePattern<?>> getRoots() {
-        return subgraphs.stream().map(SimpleGraphPattern::getRoot).collect(Collectors.toList());
-
+    public List<NodePattern<Node>> getRoots() {
+        return subgraphs.stream().map(SimpleGraphPattern::getRoot).map(root -> (NodePattern<Node>) root)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override
@@ -44,7 +48,7 @@ public class MultiGraphPattern extends GraphPatternImpl {
             List<? extends Node> rootCandidates = rootCandidateMap.get(root);
             List<Match> rootMatches = rootCandidates.stream().flatMap(rootCandidate -> {
                 List<Match> matchesCopy = copy(matches);
-                root.recursiveMatch(rootCandidate, matchesCopy, null);
+                root.recursiveMatch(rootCandidate, matchesCopy);
                 return matchesCopy.stream();
             }).toList();
             matches.clear();

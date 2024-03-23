@@ -35,63 +35,18 @@ public class CpgAdapter {
         addTransformations(transformations);
     }
 
-    /* package-private */ List<Token> adapt(Set<File> files, boolean normalize) throws ParsingException {
+    /* package-private */ List<Token> adapt(Set<File> files, boolean normalize) throws ParsingException, InterruptedException {
         assert !files.isEmpty();
-
+        tokenList = null;
         if (!normalize) {
             clearTransformations();
             setReorderingEnabled(false);
         }
-        TranslationResult translationResult = translate(files);
+        // TokenizationPass sets tokenList
+
+        translate(files);
 
         return tokenList;
-    }
-
-    /* package-private */ TranslationResult translate(Set<File> files) throws ParsingException {
-        InferenceConfiguration inferenceConfiguration = InferenceConfiguration.builder().guessCastExpressions(true).inferRecords(true)
-                .inferDfgForUnresolvedCalls(true).build();
-
-        TranslationResult translationResult;
-        TokenizationPass.Companion.setCallback(CpgAdapter.this::setTokenList);
-        try {
-            TranslationConfiguration.Builder configBuilder = new TranslationConfiguration.Builder().inferenceConfiguration(inferenceConfiguration)
-                    .sourceLocations(files.toArray(new File[] {})).registerLanguage(new JavaLanguage());
-
-            List<Class<? extends Pass<?>>> passClasses = new ArrayList<>(
-                    List.of(TypeResolver.class, TypeHierarchyResolver.class, ImportResolver.class, SymbolResolver.class, FixAstPass.class,
-                            DynamicInvokeResolver.class, FilenameMapper.class, AstTransformationPass.class, EvaluationOrderGraphPass.class,  // creates
-                                                                                                                                             // EOG
-                            DfgSortPass.class, CpgTransformationPass.class, TokenizationPass.class));
-
-            if (!reorderingEnabled)
-                passClasses.remove(DfgSortPass.class);
-
-            for (Class<? extends Pass<?>> passClass : passClasses) {
-                configBuilder.registerPass(getKClass(passClass));
-            }
-
-            translationResult = TranslationManager.builder().config(configBuilder.build()).build().analyze().get();
-
-        } catch (InterruptedException | ExecutionException | ConfigurationException e) {
-            throw new ParsingException(List.copyOf(files).getFirst(), e);
-        }
-        return translationResult;
-    }
-
-    private <T extends Pass<?>> KClass<T> getKClass(Class<T> javaPassClass) {
-        return JvmClassMappingKt.getKotlinClass(javaPassClass);
-    }
-
-    private void setTokenList(List<Token> tokenList) {
-        this.tokenList = tokenList;
-    }
-
-    /**
-     * Registers the given transformations to be applied in the transformation step.
-     * @param transformations the transformations
-     */
-    public void addTransformations(GraphTransformation[] transformations) {
-        Arrays.stream(transformations).forEach(this::addTransformation);
     }
 
     /**
@@ -107,11 +62,23 @@ public class CpgAdapter {
     }
 
     /**
+     * Registers the given transformations to be applied in the transformation step.
+     * @param transformations the transformations
+     */
+    public void addTransformations(GraphTransformation[] transformations) {
+        Arrays.stream(transformations).forEach(this::addTransformation);
+    }
+
+    /**
      * Clears all non-{@link ExecutionPhase#OBLIGATORY} transformations from the pipeline.
      */
     public void clearTransformations() {
         AstTransformationPass.clearTransformations();
         CpgTransformationPass.clearTransformations();
+    }
+
+    private <T extends Pass<?>> KClass<T> getKClass(Class<T> javaPassClass) {
+        return JvmClassMappingKt.getKotlinClass(javaPassClass);
     }
 
     /**
@@ -120,5 +87,42 @@ public class CpgAdapter {
      */
     public void setReorderingEnabled(boolean enabled) {
         this.reorderingEnabled = enabled;
+    }
+
+    private void setTokenList(List<Token> tokenList) {
+        this.tokenList = tokenList;
+    }
+
+    /* package-private */ TranslationResult translate(Set<File> files) throws ParsingException, InterruptedException {
+        InferenceConfiguration inferenceConfiguration = InferenceConfiguration.builder().guessCastExpressions(true).inferRecords(true)
+                .inferDfgForUnresolvedCalls(true).build();
+
+        TranslationResult translationResult;
+        TokenizationPass.Companion.setCallback(CpgAdapter.this::setTokenList);
+        try {
+            TranslationConfiguration.Builder configBuilder = new TranslationConfiguration.Builder().inferenceConfiguration(inferenceConfiguration)
+                    .sourceLocations(files.toArray(new File[] {})).registerLanguage(new JavaLanguage());
+
+            List<Class<? extends Pass<?>>> passClasses = new ArrayList<>(List.of(TypeResolver.class, TypeHierarchyResolver.class,
+                    ImportResolver.class, SymbolResolver.class, PrepareTransformationPass.class, FixAstPass.class, DynamicInvokeResolver.class,
+                    FilenameMapper.class, AstTransformationPass.class, EvaluationOrderGraphPass.class,  // creates
+                    // EOG
+                    DfgSortPass.class, CpgTransformationPass.class, TokenizationPass.class));
+
+            if (!reorderingEnabled)
+                passClasses.remove(DfgSortPass.class);
+
+            for (Class<? extends Pass<?>> passClass : passClasses) {
+                configBuilder.registerPass(getKClass(passClass));
+            }
+
+            translationResult = TranslationManager.builder().config(configBuilder.build()).build().analyze().get();
+
+        } catch (InterruptedException e) {
+            throw e;
+        } catch (ExecutionException | ConfigurationException e) {
+            throw new ParsingException(List.copyOf(files).getFirst(), e);
+        }
+        return translationResult;
     }
 }

@@ -25,8 +25,8 @@ public final class EdgeUtil {
 
         Scope scope = node.getScope();
         while (!Objects.isNull(scope)) {
-            if (scope.getAstNode() instanceof RecordDeclaration record) {
-                return record;
+            if (scope.getAstNode() instanceof RecordDeclaration classDecl) {
+                return classDecl;
             }
             scope = scope.getParent();
         }

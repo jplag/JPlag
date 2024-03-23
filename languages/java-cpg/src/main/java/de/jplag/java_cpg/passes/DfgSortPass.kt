@@ -14,13 +14,14 @@ import de.fraunhofer.aisec.cpg.passes.order.DependsOn
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import de.jplag.java_cpg.token.CpgNodeListener
 import de.jplag.java_cpg.token.CpgTokenType
+import de.jplag.java_cpg.transformation.TransformationException
 import de.jplag.java_cpg.transformation.matching.edges.CpgNthEdge
 import de.jplag.java_cpg.transformation.matching.edges.Edges.BLOCK__STATEMENTS
 import de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.desc
 import de.jplag.java_cpg.transformation.operations.DummyNeighbor
 import de.jplag.java_cpg.transformation.operations.RemoveOperation
 import de.jplag.java_cpg.transformation.operations.TransformationUtil
-import de.jplag.java_cpg.visitorStrategy.NodeOrderStrategy
+import de.jplag.java_cpg.visitor.NodeOrderStrategy
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.*
@@ -64,13 +65,13 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
             returnStatements,
             { val change = handle(it); change },
             { it.prevEOG.sortedBy { it.location?.region }.reversed() },
-            succFilter = { node, change -> change }
+            succFilter = { _, change -> change }
         )
 
         val parentInfo = mutableMapOf<Node, ParentInfo>()
         val movableStatements = getMovableStatements(root, null, parentInfo)
 
-        val finalState = stateSafe[root]!!
+        val finalState = stateSafe[root] ?: throw TransformationException("EOG traversion did not reach the start - cannot sort statements")
 
         /*
          * Sets DFG edges between statements
@@ -125,7 +126,7 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
         parentInfo: MutableMap<Node, ParentInfo>,
     ) {
         val depth = { node: Node -> parentInfo[node]?.depth ?: 0 }
-        val parent = { node: Node -> parentInfo[node]!!.parent }
+        val parent = { node: Node -> parentInfo[node]?.parent ?: node }
 
         val dfgEdges = relevantStatements.filterIsInstance<Statement>()
             .flatMap { statement -> statement.prevDFGEdges }
@@ -179,7 +180,7 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
         val referenceParentStatement = allReferences
             .associateWith { ref ->
                 // find parent statement with the greatest depth -> immediate parent statement
-                val parentStatements = movableStatements.filter { subtreeNodes[it]!!.contains(ref) }
+                val parentStatements = movableStatements.filter { subtreeNodes[it]?.contains(ref) ?: false }
                 val immediateParent = parentStatements.maxByOrNull { depth(it) }
                 immediateParent
             }
@@ -235,7 +236,7 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
             else -> listOf(statement)
         }
 
-        return statements.filterNotNull().flatMap { subtreeNodes[it]!! }
+        return statements.filterNotNull().flatMap { subtreeNodes[it] ?: listOf() }
             .filter { it is Reference || it is AssignExpression }
     }
 
@@ -298,11 +299,11 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
         parentInfo: MutableMap<Node, ParentInfo>,
     ) {
         val irrelevantStatements = statements.filter { it !in relevantStatements }
-            .filter { parentInfo[it]!!.parent is Block }
+            .filter { parentInfo[it]?.parent is Block }
             .distinct()
 
         irrelevantStatements.forEach {
-            val block = parentInfo[it]!!.parent as Block
+            val block = parentInfo[it]?.parent as Block
             val index = block.statements.indexOf(it)
             val cpgNthEdge: CpgNthEdge<Block, Statement> = CpgNthEdge(BLOCK__STATEMENTS, index)
             RemoveOperation.apply(block, it, cpgNthEdge, true)
@@ -318,15 +319,12 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
     private fun getBlocks(statement: Statement): List<Block> {
         val statements = when (statement) {
             is Block -> listOf(statement)
-            is DoStatement -> listOf(statement.statement!!)
-            is WhileStatement -> listOf(statement.statement!!)
-            is ForStatement -> listOf(statement.statement!!)
-            is ForEachStatement -> listOf(statement.statement!!)
+            is DoStatement -> listOfNotNull(statement.statement)
+            is WhileStatement -> listOfNotNull(statement.statement)
+            is ForStatement -> listOfNotNull(statement.statement)
+            is ForEachStatement -> listOfNotNull(statement.statement)
             is IfStatement ->
-                if (statement.elseStatement != null) listOf(
-                    statement.thenStatement!!,
-                    statement.elseStatement!!
-                ) else listOf(statement.thenStatement!!)
+                listOfNotNull(statement.thenStatement, statement.elseStatement)
 
             else -> listOf(statement)
         }
@@ -353,7 +351,7 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
 
         val relevantStatementsInThisBlock =
             relevantStatements.filter { parentMap[it]?.let { it.parent == parent } == true }
-        val allSuccessorsDone: (Node) -> Boolean = { it: Node ->
+        val allSuccessorsDone: (Node) -> Boolean = {
             it.nextDFG.none { e ->
                 e !in done &&
                         relevantStatementsInThisBlock.indexOf(e) >= 0
@@ -925,9 +923,9 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
         }
 
         override fun putAll(from: Map<out Declaration, VariableData>) {
-            from.keys.forEach { key: Declaration? ->
-                val info: VariableData? = this[key]!!
-                info?.merge(from[key])
+            from.entries.forEach {
+                val info: VariableData = this[it.key]
+                info.merge(it.value)
             }
         }
 
@@ -937,14 +935,14 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
         }
 
         fun registerAssignment(assignment: Assignment, node: de.fraunhofer.aisec.cpg.graph.Node): Boolean {
-            val target = assignment.target.let { return@let if (it is Reference) it.refersTo else it }
-            return this[target]!!.resolve(node)
+            val target = assignment.target.let { if (it is Reference) it.refersTo else it }
+            return this[target]?.resolve(node) ?: false
         }
 
         fun registerReference(reference: Reference): Boolean {
             // may be class or enum reference
             if (reference.refersTo !is ValueDeclaration || reference.refersTo is FunctionDeclaration) return false
-            return this[reference.refersTo]!!.register(reference)
+            return this[reference.refersTo]?.register(reference) ?: false
         }
 
     }

@@ -39,7 +39,7 @@ public abstract class CpgTokenConsumer implements TokenConsumer {
      * @param isEndToken true iff the token represents the end of a block
      */
     public void addToken(TokenType type, Node node, boolean isEndToken) {
-        logger.debug(type.toString() + "/" + node.toString());
+        logger.debug("{} / {}", type, node);
         PhysicalLocation location = node.getLocation();
 
         File file;

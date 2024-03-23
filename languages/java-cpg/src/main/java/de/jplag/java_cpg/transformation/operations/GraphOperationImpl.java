@@ -1,8 +1,8 @@
 package de.jplag.java_cpg.transformation.operations;
 
 import de.fraunhofer.aisec.cpg.graph.Node;
+import de.jplag.java_cpg.transformation.matching.edges.AnyOfNEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgEdge;
-import de.jplag.java_cpg.transformation.matching.edges.CpgMultiEdge;
 import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
 import de.jplag.java_cpg.transformation.matching.pattern.WildcardGraphPattern;
 
@@ -29,11 +29,13 @@ public abstract class GraphOperationImpl<S extends Node, T extends Node> impleme
 
     @Override
     public boolean isMultiEdged() {
-        return this.edge instanceof CpgMultiEdge<S, ? super T>.AnyOfNEdge;
+        return this.edge instanceof AnyOfNEdge;
     }
 
     @Override
     public boolean isWildcarded() {
         return this.parentPattern instanceof WildcardGraphPattern.ParentNodePattern && this.edge instanceof WildcardGraphPattern.Edge;
     }
+
+    public abstract <S2 extends Node> GraphOperationImpl<S2, T> fromWildcardMatch(NodePattern<? extends S2> pattern, CpgEdge<S2, T> edge);
 }

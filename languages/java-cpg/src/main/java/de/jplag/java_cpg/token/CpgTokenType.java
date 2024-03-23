@@ -7,6 +7,8 @@ import de.jplag.TokenType;
  */
 public enum CpgTokenType implements TokenType {
 
+    INCLUDE("INCLUDE"),
+
     RECORD_DECL_BEGIN("CLASS{"),
     RECORD_DECL_END("}CLASS"),
 
@@ -73,8 +75,7 @@ public enum CpgTokenType implements TokenType {
     SYNCHRONIZED_STATEMENT("SYNC"),
     SYNCHRONIZED_BLOCK_START("SYNC{"),
     SYNCHRONIZED_BLOCK_END("}SYNC"),
-
-    // TODO: set excluded
+    LAMBDA_EXPRESSION("LAMBDA"),
     BLOCK_BEGIN("{", false),
     BLOCK_END("}", false);
 

@@ -7,17 +7,20 @@ import java.util.function.BiConsumer;
 
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.jplag.java_cpg.transformation.GraphTransformation;
+import de.jplag.java_cpg.transformation.Role;
 
 /**
  * A {@link GraphPattern} represents a collection of CPG nodes related to each other in specific ways.
  */
 public interface GraphPattern {
 
+    NodePattern<Node> getPattern(Role role);
+
     /**
      * Returns a collection of the identifiers of all {@link NodePattern}s of this {@link GraphPattern}.
      * @return the identifiers
      */
-    Collection<String> getAllIds();
+    Collection<Role> getAllRoles();
 
     /**
      * Compares this {@link GraphPattern} to another {@link GraphPattern} in order to generate a {@link GraphTransformation}
@@ -30,38 +33,38 @@ public interface GraphPattern {
     /**
      * Adds a newly created {@link NodePattern} to this pattern. This occurs when a {@link GraphTransformation} includes the
      * generation of new {@link Node}s.
-     * @param roleName a {@link String} object
-     * @param newNode a {@link NodePattern} object
-     * @param <T> a T class
-     * @return a {@link NodePattern} object
+     * @param role the role of the node pattern
+     * @param newNode the new node pattern (gets copied)
+     * @param <T> the node type
+     * @return the new node pattern
      */
-    <T extends Node> NodePattern<T> addNode(String roleName, NodePattern<T> newNode);
+    <T extends Node> NodePattern<T> addNode(Role role, NodePattern<T> newNode);
 
     /**
-     * Gets the {@link NodePattern} associated to the given identifier.
-     * @param id the identifier
+     * Gets the {@link NodePattern} associated to the given role.
+     * @param role the role
      * @return the node pattern
      */
-    NodePattern<?> getPattern(String id);
+    <T extends Node> NodePattern<T> getPattern(Role role, Class<T> nodeClass);
 
     /**
      * Gets the identifier that the given {@link NodePattern} is associated to in this {@link GraphPattern}.
      * @param pattern the node pattern
      * @return the identifier
      */
-    String getId(NodePattern<?> pattern);
+    <T extends Node> Role getRole(NodePattern<T> pattern);
 
     /**
      * Gets the representing node of this {@link GraphPattern}.
      * @return the representing node
      */
-    NodePattern<?> getRepresentingNode();
+    NodePattern<Node> getRepresentingNode();
 
     /**
      * Returns the list of root {@link NodePattern}s.
      * @return the root(s).
      */
-    List<NodePattern<?>> getRoots();
+    List<NodePattern<Node>> getRoots();
 
     /**
      * Matches the given candidate {@link Node}s against the respective root {@link NodePattern}s of this

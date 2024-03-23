@@ -2,7 +2,6 @@ package de.jplag.java_cpg.passes
 
 import de.fraunhofer.aisec.cpg.TranslationContext
 import de.fraunhofer.aisec.cpg.TranslationResult
-import de.fraunhofer.aisec.cpg.graph.Node
 import de.fraunhofer.aisec.cpg.passes.TranslationResultPass
 import de.jplag.java_cpg.transformation.GraphTransformation
 import de.jplag.java_cpg.transformation.matching.CpgIsomorphismDetector
@@ -23,7 +22,8 @@ abstract class ATransformationPass(ctx: TranslationContext) : TranslationResultP
 
     override fun accept(t: TranslationResult) {
         val detector = CpgIsomorphismDetector()
-        for (transformation: GraphTransformation in getPhaseSpecificTransformations()) {
+        val transformations = getPhaseSpecificTransformations()
+        for (transformation: GraphTransformation in transformations) {
             detector.loadGraph(t)
             instantiate(transformation, detector)
         }

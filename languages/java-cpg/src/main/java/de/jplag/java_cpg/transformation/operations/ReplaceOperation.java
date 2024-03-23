@@ -1,7 +1,5 @@
 package de.jplag.java_cpg.transformation.operations;
 
-import static de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.desc;
-
 import java.util.Objects;
 
 import org.slf4j.Logger;
@@ -10,21 +8,18 @@ import org.slf4j.LoggerFactory;
 import de.fraunhofer.aisec.cpg.TranslationContext;
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.graph.scopes.Scope;
+import de.jplag.java_cpg.transformation.matching.edges.AnyOfNEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgEdge;
-import de.jplag.java_cpg.transformation.matching.edges.CpgMultiEdge;
 import de.jplag.java_cpg.transformation.matching.pattern.Match;
 import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
 import de.jplag.java_cpg.transformation.matching.pattern.WildcardGraphPattern;
 
 /**
- * Replaces the target {@link de.fraunhofer.aisec.cpg.graph.Node} of an edge by another
- * {@link de.fraunhofer.aisec.cpg.graph.Node}.
- * @param <S> type of the parentPattern node, defined by the edge
- * @param <T> type of the destination node, defined by the edge
- * @author robin
- * @version $Id: $Id
+ * Replaces the target {@link Node} of an edge by another {@link Node}.
+ * @param <T> type of the target node, defined by the edge
+ * @param <R> type of the related node, defined by the edge
  */
-public final class ReplaceOperation<S extends Node, T extends Node> extends GraphOperationImpl<S, T> {
+public final class ReplaceOperation<T extends Node, R extends Node> extends GraphOperationImpl<T, R> {
 
     private static final Logger logger;
 
@@ -32,7 +27,7 @@ public final class ReplaceOperation<S extends Node, T extends Node> extends Grap
         logger = LoggerFactory.getLogger(ReplaceOperation.class);
     }
 
-    private final NodePattern<? extends T> newChildPattern;
+    private final NodePattern<? extends R> newChildPattern;
     private final boolean disconnectEog;
 
     /**
@@ -44,7 +39,7 @@ public final class ReplaceOperation<S extends Node, T extends Node> extends Grap
      * @param newChildPattern replacement node
      * @param disconnectEog if true, the replaced element is inserted into the EOG graph at the target
      */
-    public ReplaceOperation(NodePattern<? extends S> parentPattern, CpgEdge<S, T> edge, NodePattern<? extends T> newChildPattern,
+    public ReplaceOperation(NodePattern<? extends T> parentPattern, CpgEdge<T, R> edge, NodePattern<? extends R> newChildPattern,
             boolean disconnectEog) {
         super(parentPattern, edge);
         this.newChildPattern = newChildPattern;
@@ -54,13 +49,13 @@ public final class ReplaceOperation<S extends Node, T extends Node> extends Grap
     /** {@inheritDoc} */
     @Override
     public void resolveAndApply(Match match, TranslationContext ctx) {
-        S parent = match.get(parentPattern);
+        T parent = match.get(parentPattern);
         // match should contain newChildPattern node because of Builder.createNewNodes()
-        T newTarget = match.get(newChildPattern);
+        R newTarget = match.get(newChildPattern);
 
         // Replace AST edge
-        T oldTarget = edge.getter().apply(parent);
-        logger.debug("Replace %s by %s".formatted(desc(oldTarget), desc(newTarget)));
+        R oldTarget = edge.getter().apply(parent);
+        logger.debug("Replace {} by {}", oldTarget, newTarget);
         if (Objects.isNull(newTarget.getLocation())) {
             newTarget.setLocation(oldTarget.getLocation());
         }
@@ -81,30 +76,19 @@ public final class ReplaceOperation<S extends Node, T extends Node> extends Grap
         TransformationUtil.transferEogSuccessor(oldTarget, newTarget);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public NodePattern<?> getTarget() {
-        return parentPattern;
-    }
-
-    /** {@inheritDoc} */
     @Override
     public GraphOperation instantiateWildcard(Match match) {
-        WildcardGraphPattern.ParentNodePattern<T> wcParent = (WildcardGraphPattern.ParentNodePattern<T>) this.parentPattern;
-        Match.WildcardMatch<?, T> wcMatch = match.getWildcardMatch(wcParent);
-        return fromWildcardMatch(wcMatch);
+        WildcardGraphPattern.ParentNodePattern<R> wcParent = (WildcardGraphPattern.ParentNodePattern<R>) this.parentPattern;
+        return match.instantiateGraphOperation(wcParent, this);
     }
 
-    private <S extends Node> ReplaceOperation<S, T> fromWildcardMatch(Match.WildcardMatch<S, T> wildcardMatch) {
-        NodePattern<? extends S> sNodePattern = wildcardMatch.parentPattern();
-        CpgEdge<S, T> edge1 = wildcardMatch.edge();
-        return new ReplaceOperation<>(sNodePattern, edge1, newChildPattern, this.disconnectEog);
+    public <T2 extends Node> ReplaceOperation<T2, R> fromWildcardMatch(NodePattern<? extends T2> pattern, CpgEdge<T2, R> edge) {
+        return new ReplaceOperation<>(pattern, edge, this.newChildPattern, this.disconnectEog);
     }
 
-    /** {@inheritDoc} */
     @Override
     public GraphOperation instantiateAnyOfNEdge(Match match) {
-        CpgMultiEdge<S, T>.AnyOfNEdge any1ofNEdge = (CpgMultiEdge<S, T>.AnyOfNEdge) edge;
+        AnyOfNEdge<T, R> any1ofNEdge = (AnyOfNEdge<T, R>) edge;
         return new ReplaceOperation<>(parentPattern, match.getEdge(this.parentPattern, any1ofNEdge), newChildPattern, this.disconnectEog);
     }
 

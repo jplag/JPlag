@@ -65,9 +65,9 @@ public final class TransformationUtil {
 
     private static void checkBorder(Node astRoot, SubgraphWalker.Border result) {
         if (result.getEntries().isEmpty()) {
-            logger.debug("AST subtree of %s has no EOG entry".formatted(astRoot));
+            logger.debug("AST subtree of {} has no EOG entry", astRoot);
         } else if (result.getEntries().size() > 1) {
-            logger.debug("AST subtree of %s has multiple EOG entries".formatted(astRoot));
+            logger.debug("AST subtree of {} has multiple EOG entries", astRoot);
         }
     }
 
@@ -214,7 +214,7 @@ public final class TransformationUtil {
         return getEogBorders(astRoot).getExits().getFirst();
     }
 
-    static Node connectNewPredecessor(Node target, Node newPredecessor, boolean asAstRoot) {
+    static Node connectNewPredecessor(Node target, Node newPredecessor) {
         Node entry = getEntry(target);
         List<Node> exits = getEogBorders(newPredecessor).getExits();
         List<PropertyEdge<Node>> exitEdges = getExitEdges(target, exits, true);

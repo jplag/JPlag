@@ -9,10 +9,13 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import de.fraunhofer.aisec.cpg.graph.Node;
+import de.jplag.java_cpg.transformation.Role;
 import de.jplag.java_cpg.transformation.matching.edges.CpgEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgMultiEdge;
 import de.jplag.java_cpg.transformation.matching.edges.Edges;
 import de.jplag.java_cpg.transformation.matching.edges.IEdge;
+import de.jplag.java_cpg.transformation.matching.pattern.NodePattern.NodePatternImpl;
+import de.jplag.java_cpg.transformation.matching.pattern.relation.RelatedNode;
 
 /**
  * This class represents a pattern where the root node's parent is unknown, but involved in a transformation (e.g. the
@@ -28,7 +31,7 @@ public class WildcardGraphPattern<T extends Node> extends SimpleGraphPattern<Nod
      * Creates a new {@link WildcardGraphPattern}.
      * @param tClass The node type of the child node
      * @param child The node pattern representing the child node
-     * @param patterns A mapping of {@link String} IDs to {@link NodePattern}s.
+     * @param patterns A mapping of {@link Role}s to {@link NodePattern}s.
      */
     WildcardGraphPattern(Class<T> tClass, NodePattern<T> child, PatternRegistry patterns) {
         super(new ParentNodePattern<>(tClass, child), patterns);
@@ -36,19 +39,17 @@ public class WildcardGraphPattern<T extends Node> extends SimpleGraphPattern<Nod
         patterns.put(patterns.createWildcardId(), wildcardParent);
     }
 
-    /** {@inheritDoc} */
     @Override
     public List<Match> recursiveMatch(Node rootCandidate) {
-        // rootCandidate is actually candidate for wildcard parent pattern!
+        // rootCandidate is actually candidate for wildcard parent patterns!
         List<Match> matches = new ArrayList<>();
         matches.add(new Match(this));
 
-        this.wildcardParent.recursiveMatch(rootCandidate, matches, null);
+        this.wildcardParent.recursiveMatch(rootCandidate, matches);
 
         return matches;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean validate(Match match) {
         Node rootCandidate = match.get(this.wildcardParent);
@@ -60,7 +61,7 @@ public class WildcardGraphPattern<T extends Node> extends SimpleGraphPattern<Nod
      * Pattern to describe the unknown AST context that a node may appear in.
      * @param <T> the child node type
      */
-    public static class ParentNodePattern<T extends Node> extends NodePattern.NodePatternImpl<Node> {
+    public static class ParentNodePattern<T extends Node> extends NodePatternImpl<Node> {
         private final NodePattern<T> childPattern;
         private final List<IEdge<? extends Node, ? super T>> edgesToType;
 
@@ -80,24 +81,23 @@ public class WildcardGraphPattern<T extends Node> extends SimpleGraphPattern<Nod
             }
 
             edge = new Edge<>(tClass);
-            this.addRelatedNodePattern(child, edge);
-            edgesToType = Edges.getEdgesToType(tClass);
+            this.addRelation(new RelatedNode<>(child, edge));
+            edgesToType = new ArrayList<>();
+            Edges.getEdgesToType(tClass, e -> edgesToType.addLast(e));
         }
 
         @Override
-        public void recursiveMatch(Node node, List<Match> matches, CpgEdge<?, ?> incoming) {
+        public void recursiveMatch(Node node, List<Match> matches) {
 
-            List<Match> resultMatches = new ArrayList<>();
             // This node should match if it has a fitting edge and child
-            edgesToType.stream().filter(e -> e.getSourceClass().isAssignableFrom(node.getClass())).forEach(e -> {
+            List<Match> resultMatches = edgesToType.stream().filter(e -> e.getSourceClass().isAssignableFrom(node.getClass())).map(e -> {
                 List<Match> matchesCopy = new ArrayList<>(matches.stream().map(Match::copy).toList());
                 matchesCopy.forEach(match -> match.register(this, node));
                 wildCardMatch(e, node, matchesCopy);
-
-                resultMatches.addAll(matchesCopy);
-            });
+                return matchesCopy;
+            }).flatMap(List::stream).toList();
             matches.clear();
-            matches.addAll(resultMatches.stream().toList());
+            matches.addAll(resultMatches);
         }
 
         /**
@@ -115,7 +115,7 @@ public class WildcardGraphPattern<T extends Node> extends SimpleGraphPattern<Nod
                     // target is not part of the graph or empty
                     matches.clear();
                 } else {
-                    childPattern.recursiveMatch(target, matches, singleEdge);
+                    childPattern.recursiveMatch(target, matches);
                     matches.forEach(match -> match.resolveWildcard(this, from, singleEdge));
                 }
             } else if (e instanceof CpgMultiEdge<S, ? super T> multiEdge) {
@@ -125,7 +125,7 @@ public class WildcardGraphPattern<T extends Node> extends SimpleGraphPattern<Nod
                     var matchesCopy = new ArrayList<>(matches.stream().map(Match::copy).toList());
                     Node target = targets.get(i);
                     CpgEdge<S, ? super T> edge = nthElement(multiEdge, i);
-                    childPattern.recursiveMatch(target, matchesCopy, edge);
+                    childPattern.recursiveMatch(target, matchesCopy);
                     matchesCopy.forEach(match -> match.resolveWildcard(this, from, edge));
                     resultMatches.addAll(matchesCopy);
                 }
@@ -136,12 +136,53 @@ public class WildcardGraphPattern<T extends Node> extends SimpleGraphPattern<Nod
 
         @Override
         public List<Class<? extends Node>> getCandidateClasses() {
-            return edgesToType.stream().map(IEdge::getSourceClass).collect(Collectors.toList());
+            return edgesToType.stream().map(IEdge::getSourceClass).collect(Collectors.toCollection(ArrayList::new));
         }
 
         public NodePattern<T> getChildPattern() {
             return childPattern;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
+            if (!super.equals(o))
+                return false;
+
+            ParentNodePattern<?> that = (ParentNodePattern<?>) o;
+
+            if (getChildPattern() != null ? !getChildPattern().equals(that.getChildPattern()) : that.getChildPattern() != null)
+                return false;
+            return Objects.equals(edgesToType, that.edgesToType);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = super.hashCode();
+            result = 31 * result + (getChildPattern() != null ? getChildPattern().hashCode() : 0);
+            result = 31 * result + (edgesToType != null ? edgesToType.hashCode() : 0);
+            return result;
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        WildcardGraphPattern<?> that = (WildcardGraphPattern<?>) o;
+
+        return Objects.equals(wildcardParent, that.wildcardParent);
+    }
+
+    @Override
+    public int hashCode() {
+        return wildcardParent != null ? wildcardParent.hashCode() : 0;
     }
 
     /**

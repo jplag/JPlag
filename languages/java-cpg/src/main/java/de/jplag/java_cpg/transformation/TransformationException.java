@@ -1,18 +1,15 @@
 package de.jplag.java_cpg.transformation;
 
 /**
- * An {@link java.lang.Exception} respective to the Transformation process.
- * @author robin
- * @version $Id: $Id
+ * An {@link java.lang.Exception} that relates to the Transformation process.
  */
-public class TransformationException extends Exception {
-    /**
-     * <p>
-     * Constructor for TransformationException.
-     * </p>
-     * @param msg a {@link java.lang.String} object
-     */
+public class TransformationException extends RuntimeException {
+
     public TransformationException(String msg) {
         super(msg);
+    }
+
+    public TransformationException(Exception e) {
+        super(e);
     }
 }

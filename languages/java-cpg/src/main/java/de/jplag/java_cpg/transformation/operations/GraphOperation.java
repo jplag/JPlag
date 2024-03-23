@@ -5,13 +5,12 @@ import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.graph.edge.PropertyEdge;
 import de.jplag.java_cpg.transformation.GraphTransformation;
 import de.jplag.java_cpg.transformation.TransformationException;
+import de.jplag.java_cpg.transformation.matching.edges.AnyOfNEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgMultiEdge;
-import de.jplag.java_cpg.transformation.matching.edges.CpgMultiEdge.AnyOfNEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgNthEdge;
 import de.jplag.java_cpg.transformation.matching.edges.IEdge;
 import de.jplag.java_cpg.transformation.matching.pattern.Match;
 import de.jplag.java_cpg.transformation.matching.pattern.Match.WildcardMatch;
-import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
 import de.jplag.java_cpg.transformation.matching.pattern.WildcardGraphPattern.Edge;
 import de.jplag.java_cpg.transformation.matching.pattern.WildcardGraphPattern.ParentNodePattern;
 
@@ -27,12 +26,6 @@ public interface GraphOperation {
      * @throws TransformationException if the graph is malformed.
      */
     void resolveAndApply(Match match, TranslationContext ctx) throws TransformationException;
-
-    /**
-     * Gets the {@link NodePattern} representing the {@link Node} where the operation is intended to be applied.
-     * @return the target
-     */
-    NodePattern<?> getTarget();
 
     /**
      * If the target nodes of this {@link GraphOperation} is a {@link ParentNodePattern}, then this method creates a

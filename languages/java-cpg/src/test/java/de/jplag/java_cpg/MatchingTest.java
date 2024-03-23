@@ -1,11 +1,12 @@
 package de.jplag.java_cpg;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -33,7 +34,7 @@ public class MatchingTest extends AbstractJavaCpgLanguageTest {
 
     @ParameterizedTest
     @MethodSource("providePairs")
-    public <T extends Node> void testMatch(String filename, Class<T> rootType, SimpleGraphPattern<T> pattern) {
+    <T extends Node> void testMatch(String filename, Class<T> rootType, SimpleGraphPattern<T> pattern) throws InterruptedException {
         File file = new File(baseDirectory, filename);
         try {
             CpgAdapter cpgAdapter = new CpgAdapter();
@@ -43,7 +44,7 @@ public class MatchingTest extends AbstractJavaCpgLanguageTest {
             detector.loadGraph(graph);
             List<T> rootCandidates = detector.getNodesOfType(rootType);
 
-            Assertions.assertTrue(rootCandidates.stream().anyMatch(candidate -> {
+            assertTrue(rootCandidates.stream().anyMatch(candidate -> {
                 List<Match> matches = pattern.recursiveMatch(candidate);
                 if (matches.isEmpty()) {
                     return false;

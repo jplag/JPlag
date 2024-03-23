@@ -42,6 +42,10 @@ class FixAstPass(ctx: TranslationContext) : ComponentPass(ctx) {
         logger.info("Fixed $successFields fields and $successMethods methods, sum: ${successFields + successMethods}.")
     }
 
+    override fun cleanup() {
+        // all clean already
+    }
+
     private fun fixSuperFieldReference(field: FieldDeclaration, ref: MemberExpression): Boolean {
         return fixReference(ref, field) { it.recordDeclaration.fields }
     }
@@ -76,9 +80,7 @@ class FixAstPass(ctx: TranslationContext) : ComponentPass(ctx) {
         return true
     }
 
-    override fun cleanup() {
 
-    }
 
 
 }

@@ -19,7 +19,7 @@ import de.jplag.TokenType;
 import de.jplag.java_cpg.token.CpgNodeListener;
 import de.jplag.java_cpg.token.CpgToken;
 import de.jplag.java_cpg.token.CpgTokenConsumer;
-import de.jplag.java_cpg.visitorStrategy.NodeOrderStrategy;
+import de.jplag.java_cpg.visitor.NodeOrderStrategy;
 
 /**
  * This pass tokenizes the {@link de.fraunhofer.aisec.cpg.TranslationResult}. It is a duplicate of
@@ -28,7 +28,7 @@ import de.jplag.java_cpg.visitorStrategy.NodeOrderStrategy;
  */
 public class JTokenizationPass extends TranslationResultPass {
 
-    private static final Logger logger = LoggerFactory.getLogger(TokenizationPass.class);
+    private static final Logger logger = LoggerFactory.getLogger(JTokenizationPass.class);
     private final ArrayList<Token> tokenList = new ArrayList<>();
     private final CpgTokenConsumer consumer = new ConcreteCpgTokenConsumer();
     private final NodeOrderStrategy strategy = new NodeOrderStrategy();
@@ -63,7 +63,7 @@ public class JTokenizationPass extends TranslationResultPass {
      * </p>
      */
     public void cleanup() {
-        logger.info("Found %d tokens".formatted(tokenList.size()));
+        logger.info("Found {} tokens", tokenList.size());
     }
 
     private class ConcreteCpgTokenConsumer extends CpgTokenConsumer {

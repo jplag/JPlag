@@ -9,24 +9,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.fraunhofer.aisec.cpg.graph.Node;
+import de.jplag.java_cpg.transformation.GraphTransformation;
+import de.jplag.java_cpg.transformation.Role;
 
 /**
- * The {@link de.jplag.java_cpg.transformation.matching.pattern.PatternRegistry} saves the
- * {@link de.jplag.java_cpg.transformation.matching.pattern.NodePattern}s involved in a
- * {@link de.jplag.java_cpg.transformation.GraphTransformation} and their identifiers.
- * @author robin
- * @version $Id: $Id
+ * The {@link PatternRegistry} saves the {@link NodePattern}s involved in a {@link GraphTransformation} and their
+ * identifiers.
  */
 public class PatternRegistry {
-    /** Constant <code>WILDCARD_PARENT_ID="wildcardParent#"</code> */
-    public static final String WILDCARD_PARENT_ID = "wildcardParent#";
-    private final Map<String, NodePattern<?>> patternById;
-    private final Map<NodePattern<?>, String> idByPattern;
+    private static final String WILDCARD_PARENT_ID = "wildcardParent#";
+    private final Map<Role, NodePattern<?>> patternByRole;
+    private final Map<NodePattern<?>, Role> roleByPattern;
+
     /**
      * A NodePattern that represents the {@link GraphPattern}. If not set, it is the (first) root of the
      * {@link GraphPattern}.
      */
-    private NodePattern<?> representingNode;
+    private NodePattern<Node> representingNode;
 
     private static final Logger logger = LoggerFactory.getLogger(PatternRegistry.class);
     private int wildcardCounter;
@@ -37,9 +36,8 @@ public class PatternRegistry {
      * </p>
      */
     public PatternRegistry() {
-        this.patternById = new HashMap<>();
-        this.idByPattern = new HashMap<>();
-        this.wildcardCounter = 0;
+        this.patternByRole = new HashMap<>();
+        this.roleByPattern = new HashMap<>();
     }
 
     /**
@@ -48,76 +46,76 @@ public class PatternRegistry {
      * </p>
      * @param patternByRoleName a {@link java.util.Map} object
      */
-    public void addAll(Map<String, NodePattern<?>> patternByRoleName) {
-        this.patternById.putAll(patternByRoleName);
-        this.idByPattern.putAll(patternByRoleName.keySet().stream().collect(Collectors.toMap(patternByRoleName::get, k -> k)));
+    public void addAll(Map<Role, NodePattern<?>> patternByRoleName) {
+        this.patternByRole.putAll(patternByRoleName);
+        this.roleByPattern.putAll(patternByRoleName.keySet().stream().collect(Collectors.toMap(patternByRoleName::get, k -> k)));
     }
 
     /**
      * <p>
      * getPattern.
      * </p>
-     * @param nodePatternId a {@link java.lang.String} object
-     * @return a {@link de.jplag.java_cpg.transformation.matching.pattern.NodePattern} object
+     * @param nodePatternRole a {@link java.lang.String} object
+     * @return a {@link NodePattern} object
      */
-    public NodePattern<?> getPattern(String nodePatternId) {
-        return patternById.get(nodePatternId);
-    }
-
-    /**
-     * <p>
-     * getId.
-     * </p>
-     * @param nodePattern a {@link de.jplag.java_cpg.transformation.matching.pattern.NodePattern} object
-     * @return a {@link java.lang.String} object
-     */
-    public String getId(NodePattern<?> nodePattern) {
-        return idByPattern.get(nodePattern);
-    }
-
-    /**
-     * <p>
-     * allIds.
-     * </p>
-     * @return a {@link java.util.Collection} object
-     */
-    public Collection<String> allIds() {
-        return patternById.keySet();
-    }
-
-    /**
-     * <p>
-     * put.
-     * </p>
-     * @param id a {@link java.lang.String} object
-     * @param pattern a {@link de.jplag.java_cpg.transformation.matching.pattern.NodePattern} object
-     * @param <T> a T class
-     */
-    public <T extends Node> void put(String id, NodePattern<T> pattern) {
-        if (patternById.containsKey(id)) {
-            logger.warn("A NodePattern with the id '%s' is already present in the PatternRegistry");
+    public <T extends Node> NodePattern<T> getPattern(Role nodePatternRole, Class<T> targetClass) {
+        NodePattern<?> nodePattern = patternByRole.get(nodePatternRole);
+        if (!targetClass.isAssignableFrom(nodePattern.getRootClass())) {
+            throw new ClassCastException("Pattern %s is incompatible with target class %s".formatted(nodePatternRole, targetClass));
         }
-        this.patternById.put(id, pattern);
-        this.idByPattern.put(pattern, id);
+        @SuppressWarnings("unchecked")
+        NodePattern<T> castNodePattern = (NodePattern<T>) nodePattern;
+        return castNodePattern;
+    }
+
+    /**
+     * Gets the {@link Role} of a {@link NodePattern}.
+     * @param nodePattern the node pattern
+     * @return the role
+     */
+    public Role getRole(NodePattern<?> nodePattern) {
+        return roleByPattern.get(nodePattern);
+    }
+
+    /**
+     * Gets a list of all registered roles.
+     * @return list of roles
+     */
+    public Collection<Role> allRoles() {
+        return patternByRole.keySet();
+    }
+
+    /**
+     * Registers the given {@link NodePattern} with its {@link Role}.
+     * @param role the role
+     * @param pattern the node pattern
+     */
+    public void put(Role role, NodePattern<?> pattern) {
+        if (patternByRole.containsKey(role)) {
+            logger.warn("A NodePattern with the role '{}' is already present in the PatternRegistry", role.name());
+        }
+        pattern.setRole(role);
+        this.patternByRole.put(role, pattern);
+        this.roleByPattern.put(pattern, role);
     }
 
     /**
      * <p>
      * Setter for the field <code>representingNode</code>.
      * </p>
-     * @param representingNode a {@link de.jplag.java_cpg.transformation.matching.pattern.NodePattern} object
+     * @param representingNode a {@link NodePattern} object
      */
     public void setRepresentingNode(NodePattern<?> representingNode) {
-        this.representingNode = representingNode;
+        this.representingNode = (NodePattern<Node>) representingNode;
     }
 
     /**
      * <p>
      * Getter for the field <code>representingNode</code>.
      * </p>
-     * @return a {@link de.jplag.java_cpg.transformation.matching.pattern.NodePattern} object
+     * @return a {@link NodePattern} object
      */
-    public NodePattern<?> getRepresentingNode() {
+    public NodePattern<Node> getRepresentingNode() {
         return this.representingNode;
     }
 
@@ -127,18 +125,18 @@ public class PatternRegistry {
      * </p>
      * @return a {@link java.lang.String} object
      */
-    public String createWildcardId() {
-        return WILDCARD_PARENT_ID + wildcardCounter++;
+    public Role createWildcardId() {
+        return new Role(WILDCARD_PARENT_ID + wildcardCounter++);
     }
 
     /**
      * <p>
      * containsPattern.
      * </p>
-     * @param notePatternId a {@link java.lang.String} object
+     * @param notePatternRole a {@link java.lang.String} object
      * @return a boolean
      */
-    public boolean containsPattern(String notePatternId) {
-        return patternById.containsKey(notePatternId);
+    public boolean containsPattern(Role notePatternRole) {
+        return patternByRole.containsKey(notePatternRole);
     }
 }

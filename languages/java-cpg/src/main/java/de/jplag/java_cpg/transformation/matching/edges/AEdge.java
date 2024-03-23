@@ -21,7 +21,7 @@ public abstract class AEdge<S extends Node, T extends Node> implements IEdge<S, 
      * Creates a new AEdge of the given category
      * @param category the category
      */
-    public AEdge(EdgeCategory category) {
+    protected AEdge(EdgeCategory category) {
         this.category = category;
     }
 
@@ -69,8 +69,6 @@ public abstract class AEdge<S extends Node, T extends Node> implements IEdge<S, 
     public boolean isReference() {
         return category == REFERENCE;
     }
-
-    public abstract boolean isEquivalentTo(IEdge<?, ?> other);
 
     /**
      * {@inheritDoc}

@@ -10,17 +10,19 @@ import de.fraunhofer.aisec.cpg.graph.declarations.RecordDeclaration;
 import de.fraunhofer.aisec.cpg.graph.declarations.TemplateDeclaration;
 import de.fraunhofer.aisec.cpg.graph.statements.*;
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.Block;
+import de.jplag.java_cpg.transformation.Role;
+import de.jplag.java_cpg.transformation.TransformationException;
 import de.jplag.java_cpg.transformation.matching.pattern.*;
 
 /**
  * Creates a new {@link Node} in the graph. Note: The new {@link Node} needs to be inserted into the graph via other
  * {@link GraphOperation}s.
  * @param sourceGraph the graph
- * @param roleName the role name of the new {@link Node}
+ * @param role the role of the new {@link Node}
  * @param pattern the {@link NodePattern} representing the new {@link Node}
  * @param <N> the new {@link Node}'s type
  */
-public record CreateNodeOperation<N extends Node>(GraphPattern sourceGraph, String roleName, NodePattern<N> pattern) implements GraphOperation {
+public record CreateNodeOperation<N extends Node>(GraphPattern sourceGraph, Role role, NodePattern<N> pattern) implements GraphOperation {
 
     private static final List<Class<? extends Node>> scopedNodeClasses = List.of(Block.class, WhileStatement.class, DoStatement.class,
             AssertStatement.class, ForStatement.class, ForEachStatement.class, SwitchStatement.class, FunctionDeclaration.class, IfStatement.class,
@@ -38,18 +40,13 @@ public record CreateNodeOperation<N extends Node>(GraphPattern sourceGraph, Stri
     }
 
     @Override
-    public NodePattern<?> getTarget() {
-        return null;
-    }
-
-    @Override
     public GraphOperation instantiateWildcard(Match match) {
-        throw new RuntimeException("Cannot instantiate CreateNodeOperation");
+        throw new TransformationException("Cannot instantiate CreateNodeOperation");
     }
 
     @Override
     public GraphOperation instantiateAnyOfNEdge(Match match) {
-        throw new RuntimeException("Cannot instantiate CreateNodeOperation");
+        throw new TransformationException("Cannot instantiate CreateNodeOperation");
     }
 
     @Override

@@ -5,11 +5,11 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import de.fraunhofer.aisec.cpg.graph.*;
+import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.graph.declarations.Declaration;
 import de.fraunhofer.aisec.cpg.graph.declarations.RecordDeclaration;
-import de.fraunhofer.aisec.cpg.graph.statements.*;
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*;
+import de.jplag.java_cpg.transformation.TransformationException;
 import de.jplag.java_cpg.transformation.matching.edges.CpgAttributeEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgMultiEdge;
@@ -21,6 +21,11 @@ import de.jplag.java_cpg.transformation.matching.edges.CpgNthEdge;
  * {@link de.jplag.java_cpg.transformation.matching.pattern.NodePattern}s.
  */
 public class PatternUtil {
+
+    private PatternUtil() {
+        // should not be instantiated
+    }
+
     /**
      * Creates a Predicate that checks if a node has a non-null related Node via the given edge.
      * @param edge the edge
@@ -177,7 +182,7 @@ public class PatternUtil {
             // every Node type has a constructor without parameters
             return pattern.getRootClass().getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new RuntimeException(e);
+            throw new TransformationException(e);
         }
     }
 
