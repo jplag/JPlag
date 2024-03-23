@@ -2,6 +2,7 @@ package de.jplag.java_cpg.visitor;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +23,6 @@ import de.fraunhofer.aisec.cpg.helpers.SubgraphWalker;
  * This class contains methods to put a call graph oriented order on methods.
  */
 public class MethodOrderStrategy {
-    private static final String START_OF_GENERIC_CLASS = ".*class\\s*\\w+\\s*<.*";
     private static final Logger logger = LoggerFactory.getLogger(MethodOrderStrategy.class);
     private final NodeOrderStrategy nodeOrderStrategy;
     private int index;
@@ -126,8 +126,13 @@ public class MethodOrderStrategy {
         String code = recordDeclaration.getCode();
         if (Objects.isNull(code))
             return false;
-        String firstLine = code.split("\\{")[0];
-        return firstLine.matches(START_OF_GENERIC_CLASS);
+        OptionalInt cutOffIndex = Stream.of("{", "implements", "extends").mapToInt(code::indexOf).filter(i -> i > 0).min();
+        if (cutOffIndex.isEmpty()) {
+            return false;
+        }
+        String firstLine = code.substring(0, cutOffIndex.getAsInt());
+        // does it contain an angle bracket as a start for type parameters?
+        return firstLine.contains("<");
     }
 
     private static List<MethodDeclaration> getSuperConstructorCandidates(MethodDeclaration methodDeclaration, CallExpression call) {
