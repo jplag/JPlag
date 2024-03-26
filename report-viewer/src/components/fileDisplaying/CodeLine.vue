@@ -141,7 +141,7 @@ function getNextLinePartTillColumn(endCol: number) {
     } else if (props.line[lineIndex.value] == '\t') {
       part += '    '
       lineIndex.value++
-      colIndex.value++
+      colIndex.value += 8
     } else {
       part += props.line[lineIndex.value]
       lineIndex.value++
