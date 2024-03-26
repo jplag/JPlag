@@ -28,7 +28,7 @@ public class CpgAdapter {
     private boolean reorderingEnabled = true;
 
     /**
-     * Constructor for CpgAdapter.
+     * Constructs a new CpgAdapter.
      * @param transformations a list of {@link GraphTransformation}s
      */
     public CpgAdapter(GraphTransformation... transformations) {

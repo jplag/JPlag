@@ -25,7 +25,7 @@ public final class CpgMultiEdge<T extends Node, R extends Node> extends AEdge<T,
     private final TriConsumer<T, Integer, R> setter;
     private final Map<NodePattern<?>, AnyOfNEdge<T, R>> any1ofNEdges;
     private final ValueType valueType;
-    private HashMap<NodePattern<R>, Integer> sequenceNodes;
+    private final HashMap<NodePattern<R>, Integer> sequenceNodes;
 
     /**
      * Creates a new CpgMultiEdge.
@@ -62,7 +62,7 @@ public final class CpgMultiEdge<T extends Node, R extends Node> extends AEdge<T,
      * A shorthand to create an edge-valued {@link CpgMultiEdge}.
      * @param getter a function to get all the edges
      * @param category the category of the edge
-     * @param <R> The type of the target node
+     * @param <T> The type of the target node
      * @param <R> The type of the related node
      * @return the new {@link CpgMultiEdge}
      */
@@ -119,7 +119,7 @@ public final class CpgMultiEdge<T extends Node, R extends Node> extends AEdge<T,
 
     /**
      * Gets the setter function of this multi edge.
-     * @return a {@link TriConsumer} object
+     * @return the setter
      */
     public TriConsumer<T, Integer, R> setter() {
         return setter;

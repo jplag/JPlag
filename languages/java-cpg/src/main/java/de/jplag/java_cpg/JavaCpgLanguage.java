@@ -99,13 +99,8 @@ public class JavaCpgLanguage implements Language {
      * @return the array of recommended transformations
      */
     public GraphTransformation[] standardTransformations() {
-        return new GraphTransformation[] {removeOptionalOfCall,               // 1
-                removeOptionalGetCall,              // 2
-                moveConstantToOnlyUsingClass,       // 5
-                inlineSingleUseVariable,            // 7
-                removeLibraryRecord,                // 10
-                removeEmptyRecord,                  // 15
-        };
+        return new GraphTransformation[] {removeOptionalOfCall, removeOptionalGetCall, moveConstantToOnlyUsingClass, inlineSingleUseVariable,
+                removeLibraryRecord, removeEmptyRecord,};
     }
 
     /**
@@ -113,23 +108,10 @@ public class JavaCpgLanguage implements Language {
      * @return the array of all transformations
      */
     public GraphTransformation[] allTransformations() {
-        return new GraphTransformation[] {ifWithNegatedConditionResolution,   // 0
-                forStatementToWhileStatement,       // 1
-                removeOptionalOfCall,               // 2
-                removeOptionalGetCall,              // 3
-                removeGetterMethod,                 // 4
-                moveConstantToOnlyUsingClass,       // 5
-                inlineSingleUseConstant,            // 6
-                inlineSingleUseVariable,            // 7
-                removeEmptyDeclarationStatement,    // 8
-                removeImplicitStandardConstructor,  // 9
-                removeLibraryRecord,                // 10
-                removeLibraryField,                 // 11
-                removeEmptyConstructor,             // 12
-                removeUnsupportedConstructor,       // 13
-                removeUnsupportedMethod,            // 14
-                removeEmptyRecord,                  // 15
-        };
+        return new GraphTransformation[] {ifWithNegatedConditionResolution, forStatementToWhileStatement, removeOptionalOfCall, removeOptionalGetCall,
+                removeGetterMethod, moveConstantToOnlyUsingClass, inlineSingleUseConstant, inlineSingleUseVariable, removeEmptyDeclarationStatement,
+                removeImplicitStandardConstructor, removeLibraryRecord, removeLibraryField, removeEmptyConstructor, removeUnsupportedConstructor,
+                removeUnsupportedMethod, removeEmptyRecord,};
     }
 
     @Override

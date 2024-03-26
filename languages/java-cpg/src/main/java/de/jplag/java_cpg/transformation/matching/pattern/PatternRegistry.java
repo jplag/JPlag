@@ -3,7 +3,6 @@ package de.jplag.java_cpg.transformation.matching.pattern;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,9 +30,7 @@ public class PatternRegistry {
     private int wildcardCounter;
 
     /**
-     * <p>
-     * Constructor for PatternRegistry.
-     * </p>
+     * Creates a new {@link PatternRegistry}.
      */
     public PatternRegistry() {
         this.patternByRole = new HashMap<>();
@@ -41,27 +38,14 @@ public class PatternRegistry {
     }
 
     /**
-     * <p>
-     * addAll.
-     * </p>
-     * @param patternByRoleName a {@link java.util.Map} object
+     * Gets the {@link NodePattern} with the given {@link Role}, cast to the given {@link Node} class.
+     * @param role the role
+     * @return the node pattern associated to the role
      */
-    public void addAll(Map<Role, NodePattern<?>> patternByRoleName) {
-        this.patternByRole.putAll(patternByRoleName);
-        this.roleByPattern.putAll(patternByRoleName.keySet().stream().collect(Collectors.toMap(patternByRoleName::get, k -> k)));
-    }
-
-    /**
-     * <p>
-     * getPattern.
-     * </p>
-     * @param nodePatternRole a {@link java.lang.String} object
-     * @return a {@link NodePattern} object
-     */
-    public <T extends Node> NodePattern<T> getPattern(Role nodePatternRole, Class<T> targetClass) {
-        NodePattern<?> nodePattern = patternByRole.get(nodePatternRole);
+    public <T extends Node> NodePattern<T> getPattern(Role role, Class<T> targetClass) {
+        NodePattern<?> nodePattern = patternByRole.get(role);
         if (!targetClass.isAssignableFrom(nodePattern.getRootClass())) {
-            throw new ClassCastException("Pattern %s is incompatible with target class %s".formatted(nodePatternRole, targetClass));
+            throw new ClassCastException("Pattern %s is incompatible with target class %s".formatted(role, targetClass));
         }
         @SuppressWarnings("unchecked")
         NodePattern<T> castNodePattern = (NodePattern<T>) nodePattern;
@@ -100,43 +84,35 @@ public class PatternRegistry {
     }
 
     /**
-     * <p>
-     * Setter for the field <code>representingNode</code>.
-     * </p>
-     * @param representingNode a {@link NodePattern} object
+     * Sets the representing node of the associated graph pattern.
+     * @param representingNode the representing node
      */
     public void setRepresentingNode(NodePattern<?> representingNode) {
         this.representingNode = (NodePattern<Node>) representingNode;
     }
 
     /**
-     * <p>
-     * Getter for the field <code>representingNode</code>.
-     * </p>
-     * @return a {@link NodePattern} object
+     * Gets the {@link NodePattern} of the associated {@link GraphPattern} that is marked representative.
+     * @return the representative node pattern
      */
     public NodePattern<Node> getRepresentingNode() {
         return this.representingNode;
     }
 
     /**
-     * <p>
-     * createWildcardId.
-     * </p>
-     * @return a {@link java.lang.String} object
+     * Creates a new Role for a wildcard parent pattern.
+     * @return the role
      */
-    public Role createWildcardId() {
+    public Role createWildcardRole() {
         return new Role(WILDCARD_PARENT_ID + wildcardCounter++);
     }
 
     /**
-     * <p>
-     * containsPattern.
-     * </p>
-     * @param notePatternRole a {@link java.lang.String} object
-     * @return a boolean
+     * Determines whether a pattern with the given role is present in this {@link PatternRegistry}.
+     * @param role the role
+     * @return true iff the pattern is in the registry
      */
-    public boolean containsPattern(Role notePatternRole) {
-        return patternByRole.containsKey(notePatternRole);
+    public boolean containsPattern(Role role) {
+        return patternByRole.containsKey(role);
     }
 }

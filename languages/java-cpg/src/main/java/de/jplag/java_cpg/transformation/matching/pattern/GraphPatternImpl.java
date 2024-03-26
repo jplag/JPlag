@@ -15,7 +15,7 @@ public abstract class GraphPatternImpl implements GraphPattern {
 
     /**
      * Constructs a new {@link GraphPatternImpl} from a {@link PatternRegistry}.
-     * @param patterns a {@link PatternRegistry} object
+     * @param patterns the {@link PatternRegistry} for this graph pattern
      */
     protected GraphPatternImpl(PatternRegistry patterns) {
         representingNode = patterns.getRepresentingNode();
@@ -59,7 +59,7 @@ public abstract class GraphPatternImpl implements GraphPattern {
 
     /**
      * Gets the <code>representingNode</code> of this {@link GraphPatternImpl}.
-     * @return the representative {@link de.jplag.java_cpg.transformation.matching.pattern.NodePattern}
+     * @return the representative {@link NodePattern}
      */
     public NodePattern<Node> getRepresentingNode() {
         return (NodePattern<Node>) representingNode;

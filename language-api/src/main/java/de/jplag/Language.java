@@ -8,32 +8,26 @@ import de.jplag.options.LanguageOptions;
 
 /**
  * Common interface for all languages. Each language-front end must provide a concrete language implementation.
- * @author robin
- * @version $Id: $Id
  */
 public interface Language {
 
     /**
      * Suffixes for the files containing code of the language. An empty array means all suffixes are valid.
-     * @return an array of {@link java.lang.String} objects
      */
     String[] suffixes();
 
     /**
      * Descriptive name of the language.
-     * @return a {@link java.lang.String} object
      */
     String getName();
 
     /**
      * Identifier of the language used for CLI options and dynamic loading. You should use some name within {@code [a-z_-]+}
-     * @return a {@link java.lang.String} object
      */
     String getIdentifier();
 
     /**
      * Minimum number of tokens required for a match.
-     * @return a int
      */
     int minimumTokenMatch();
 
@@ -41,7 +35,6 @@ public interface Language {
      * Parses a set of files. Override this method, if you don't require normalization.
      * @param files are the files to parse.
      * @return the list of parsed JPlag tokens.
-     * @throws de.jplag.ParsingException if an error during parsing the files occurred.
      * @deprecated Replaced by {@link #parse(Set, boolean)}
      */
     @Deprecated(forRemoval = true)
@@ -54,14 +47,12 @@ public interface Language {
      * @param files are the files to parse.
      * @param normalize True, if the tokens should be normalized
      * @return the list of parsed JPlag tokens.
-     * @throws de.jplag.ParsingException if an error during parsing the files occurred.
      */
     List<Token> parse(Set<File> files, boolean normalize) throws ParsingException;
 
     /**
      * Indicates whether the tokens returned by parse have semantic information added to them, i.e. whether the token
      * attribute semantics is null or not.
-     * @return a boolean
      */
     default boolean tokensHaveSemantics() {
         return false;
@@ -69,7 +60,6 @@ public interface Language {
 
     /**
      * Determines whether a fixed-width font should be used to display that language.
-     * @return a boolean
      */
     default boolean isPreformatted() {
         return true;
@@ -78,7 +68,6 @@ public interface Language {
     /**
      * Indicates whether the input files (code) should be used as representation in the report, or different files that form
      * a view on the input files.
-     * @return a boolean
      */
     default boolean useViewFiles() {
         return false;
@@ -86,7 +75,6 @@ public interface Language {
 
     /**
      * If the language uses representation files, this method returns the suffix used for the representation files.
-     * @return a {@link java.lang.String} object
      */
     default String viewFileSuffix() {
         return "";
@@ -118,9 +106,6 @@ public interface Language {
     }
 
     /**
-     * <p>
-     * supportsNormalization.
-     * </p>
      * @return True, if this language supports token sequence normalization. This does not include other normalization
      * mechanisms that might be part of the language modules.
      */

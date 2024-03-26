@@ -10,6 +10,7 @@ import de.fraunhofer.aisec.cpg.graph.Name;
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.sarif.PhysicalLocation;
 import de.fraunhofer.aisec.cpg.sarif.Region;
+import de.jplag.Token;
 import de.jplag.TokenType;
 
 /**
@@ -33,9 +34,9 @@ public abstract class CpgTokenConsumer implements TokenConsumer {
     }
 
     /**
-     * Adds a new {@link de.jplag.Token} for the given {@link TokenType} and {@link Node}.
-     * @param type the {@link de.jplag.TokenType}
-     * @param node the represented {@link de.fraunhofer.aisec.cpg.graph.Node}
+     * Adds a new {@link Token} for the given {@link TokenType} and {@link Node}.
+     * @param type the {@link TokenType}
+     * @param node the represented {@link Node}
      * @param isEndToken true iff the token represents the end of a block
      */
     public void addToken(TokenType type, Node node, boolean isEndToken) {

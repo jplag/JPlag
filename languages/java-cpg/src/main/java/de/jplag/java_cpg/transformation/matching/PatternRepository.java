@@ -48,7 +48,7 @@ public final class PatternRepository {
 
     /**
      * Creates a {@link GraphPatternBuilder} for a setter method
-     * @return a {@link de.jplag.java_cpg.transformation.matching.pattern.GraphPatternBuilder} object
+     * @return the {@link GraphPatternBuilder}
      */
     public static GraphPatternBuilder setterMethod() {
         return new GraphPatternBuilder() {

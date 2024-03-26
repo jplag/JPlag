@@ -11,68 +11,69 @@ import de.fraunhofer.aisec.cpg.graph.Node;
 
 /**
  * This is a wrapper for a graph edge (with a 1:1 relation).
- * @param <S> The type of the source node
- * @param <T> The type of the target node
+ * @param <T> The type of the source node
+ * @param <R> The type of the related node
  */
-public class CpgEdge<S extends Node, T extends Node> extends AEdge<S, T> {
-    private final Function<S, T> getter;
-    private final BiConsumer<S, T> setter;
+public class CpgEdge<T extends Node, R extends Node> extends AEdge<T, R> {
+    private final Function<T, R> getter;
+    private final BiConsumer<T, R> setter;
 
     /**
-     * Creates a new {@link CpgEdge} with a getter and setter for the target node.
+     * Creates a new {@link CpgEdge} with a getter and setter for the related node.
      * @param getter the getter
      * @param setter the setter
      * @param category the edge category
      */
-    public CpgEdge(Function<S, T> getter, BiConsumer<S, T> setter, EdgeCategory category) {
+    public CpgEdge(Function<T, R> getter, BiConsumer<T, R> setter, EdgeCategory category) {
         super(category);
         this.getter = getter;
         this.setter = setter;
     }
 
     /**
-     * Creates a new {@link CpgEdge} with a getter and setter for the target node.
+     * Creates a new {@link CpgEdge} with a getter and setter for the related node.
      * @param getter the getter
      * @param setter the setter
      */
-    public CpgEdge(Function<S, T> getter, BiConsumer<S, T> setter) {
+    public CpgEdge(Function<T, R> getter, BiConsumer<T, R> setter) {
         this(getter, setter, AST);
     }
 
     /**
-     * Creates a new list-valued {@link CpgEdge} with a getter and setter for the target node list.
+     * Creates a new list-valued {@link CpgEdge} with a getter and setter for the related node list.
      * @param getter the getter
      * @param setter the setter
-     * @param <S> The type of the source node
-     * @param <T> The type of the target node
-     * @return a {@link CpgEdge} object
+     * @param <T> The type of the source node
+     * @param <R> The type of the related node
+     * @return the new {@link CpgEdge}
      */
-    public static <S extends Node, T extends Node> CpgEdge<S, T> listValued(Function<S, List<T>> getter, BiConsumer<S, List<T>> setter) {
-        return new CpgEdge<>(node -> getter.apply(node).get(0), (node, value) -> setter.accept(node, List.of(value)));
+    public static <T extends Node, R extends Node> CpgEdge<T, R> listValued(Function<T, List<R>> getter, BiConsumer<T, List<R>> setter) {
+        // used only for assignment left-hand sides and right-hand sides, where in Java only one value is allowed
+        return new CpgEdge<>(node -> getter.apply(node).getFirst(), (node, value) -> setter.accept(node, List.of(value)));
     }
 
     /**
-     * Gets the target node of this edge starting from the given source node.
+     * Gets the related node of this edge starting from the given source node.
      * @param from the source node
-     * @return the target node
+     * @return the related node
      */
-    public T getRelated(S from) {
+    public R getRelated(T from) {
         return getter.apply(from);
     }
 
     /**
-     * Gets the getter function of this {@link CpgEdge}, used to get the targets from a given source.
+     * Gets the getter function of this {@link CpgEdge}, used to get the relateds from a given source.
      * @return the getter
      */
-    public Function<S, T> getter() {
+    public Function<T, R> getter() {
         return getter;
     }
 
     /**
-     * Gets the setter function of this {@link CpgEdge}, used to set the targets for a given source.
+     * Gets the setter function of this {@link CpgEdge}, used to set the relateds for a given source.
      * @return the setter
      */
-    public BiConsumer<S, T> setter() {
+    public BiConsumer<T, R> setter() {
         return setter;
     }
 

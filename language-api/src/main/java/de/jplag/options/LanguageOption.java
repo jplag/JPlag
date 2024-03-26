@@ -3,8 +3,6 @@ package de.jplag.options;
 /**
  * A single language specific option.
  * @param <T> The type of the options value
- * @author robin
- * @version $Id: $Id
  */
 public interface LanguageOption<T> {
     /**

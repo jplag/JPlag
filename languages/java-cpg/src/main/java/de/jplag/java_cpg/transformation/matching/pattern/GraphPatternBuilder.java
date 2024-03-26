@@ -56,11 +56,11 @@ public abstract class GraphPatternBuilder {
      * attribute of a matching {@link Node} must be equal to the same attribute of another {@link Node}.
      * @param propertyEdge the property edge
      * @param otherRole the role of the other {@link NodePattern}
-     * @param <S> the {@link Node} type
+     * @param <T> the {@link Node} type
      * @param <P> the attribute type
-     * @return the {@link PatternModification}
+     * @return the pattern modification
      */
-    public static <S extends Node, P> PatternModification<S> equalAttributes(CpgAttributeEdge<S, P> propertyEdge, Class<S> sClass, Role otherRole) {
+    public static <T extends Node, P> PatternModification<T> equalAttributes(CpgAttributeEdge<T, P> propertyEdge, Class<T> sClass, Role otherRole) {
         return new AddEqualAttributes<>(propertyEdge, sClass, otherRole);
     }
 
@@ -69,10 +69,10 @@ public abstract class GraphPatternBuilder {
      * value is unchanged between the evaluation of the two given {@link Node}s.
      * @param startRole the role of the starting node role
      * @param endRole the role of the end node role
-     * @param <S> the type of
-     * @return the {@link PatternModification}
+     * @param <T> the type of
+     * @return the pattern modification
      */
-    public static <S extends Node> PatternModification<S> assignedValueStableBetween(Role startRole, Role endRole) {
+    public static <T extends Node> PatternModification<T> assignedValueStableBetween(Role startRole, Role endRole) {
         return new AddAssignedValueStableBetween<>(startRole, endRole);
     }
 
@@ -80,10 +80,10 @@ public abstract class GraphPatternBuilder {
      * Creates a {@link PatternModification} that adds a {@link Predicate} property to a {@link NodePattern} that specifies
      * that matching {@link Node}s not be equal to the {@link Node} given by the role.
      * @param otherRole the role of the other {@link Node}
-     * @param <S> the {@link Node} type of the target node
+     * @param <T> the {@link Node} type of the target node
      * @return the pattern modification
      */
-    public static <S extends Node> PatternModification<S> notEqualTo(Role otherRole) {
+    public static <T extends Node> PatternModification<T> notEqualTo(Role otherRole) {
         return new AddNotEqualTo<>(otherRole);
     }
 
@@ -139,7 +139,7 @@ public abstract class GraphPatternBuilder {
      * @param <T> the type of source node
      * @param <R> the type of related node, defined by the edge
      * @param <C> the concrete type of related node
-     * @return the patterns modification
+     * @return the pattern modification
      */
     @SafeVarargs
     public final <T extends Node, R extends Node, C extends R> PatternModification<T> forAllRelated(CpgMultiEdge<T, R> multiEdge, Class<C> cClass,
@@ -174,7 +174,7 @@ public abstract class GraphPatternBuilder {
      * Creates a {@link PatternModification} to add a property to a {@link NodePattern}.
      * @param property the predicate establishing the property
      * @param <T> the target {@link Node} type
-     * @return the patterns modification
+     * @return the pattern modification
      */
     public final <T extends Node> PatternModification<T> property(Predicate<T> property) {
         return new AddProperty<>(property);
@@ -190,7 +190,7 @@ public abstract class GraphPatternBuilder {
      * @param <T> the type of the source node patterns
      * @param <R> the type of the relation target, defined by the edge
      * @param <C> the concrete type of the related node patterns
-     * @return the patterns modification object
+     * @return the pattern modification object
      */
     @SafeVarargs
     public final <T extends Node, R extends Node, C extends R> PatternModification<T> related(CpgEdge<T, R> edge, Class<C> rClass, Role role,
@@ -208,7 +208,7 @@ public abstract class GraphPatternBuilder {
      * @param <T> the type of the source node patterns
      * @param <R> the type of the relation target, defined by the edge
      * @param <C> the concrete type of the related node patterns
-     * @return the patterns modification object
+     * @return the pattern modification object
      */
     @SafeVarargs
     public final <T extends Node, R extends Node, C extends R> PatternModification<T> related1ToN(CpgMultiEdge<T, R> edge, Class<C> rClass, Role role,
@@ -220,15 +220,15 @@ public abstract class GraphPatternBuilder {
      * Creates a {@link PatternModification} to add a 1:1 relation to an existing {@link NodePattern}.
      * @param edge the edge establishing the relation
      * @param role the {@link Role} of the existing target {@link NodePattern}
-     * @param <S> the target {@link Node} type
-     * @param cClass a {@link Class} object
-     * @param modifications a {@link PatternModification} object
-     * @param <T> a T class
-     * @param <C> a C class
-     * @return the patterns modification
+     * @param cClass the class of the related node
+     * @param modifications modifications to the related node
+     * @param <T> the target node type, as specified by the edge
+     * @param <R> the related node type, as specified by the edge
+     * @param <C> the concrete node type of the related node
+     * @return the pattern modification
      */
     @SafeVarargs
-    public final <S extends Node, T extends Node, C extends T> PatternModification<S> relatedExisting(CpgEdge<S, T> edge, Class<C> cClass, Role role,
+    public final <T extends Node, R extends Node, C extends R> PatternModification<T> relatedExisting(CpgEdge<T, R> edge, Class<C> cClass, Role role,
             PatternModification<? super C>... modifications) {
         return new AddRelatedExistingNode<>(edge, cClass, role, List.of(modifications));
     }
@@ -237,11 +237,11 @@ public abstract class GraphPatternBuilder {
      * Creates a {@link PatternModification} to add a 1:n relation to an existing {@link NodePattern}.
      * @param edge the multi-edge establishing the relation
      * @param role the {@link Role} of the existing target {@link NodePattern}
-     * @param <T> the target {@link Node} type
-     * @param <R> the related {@link Node} type
-     * @param modifications a {@link PatternModification} object
-     * @param <C> a C class
-     * @return the patterns modification
+     * @param modifications modifications to the related node
+     * @param <T> the target node type, as specified by the edge
+     * @param <R> the related node type, as specified by the edge
+     * @param <C> the concrete node type of the related node
+     * @return the pattern modification
      */
     @SafeVarargs
     public final <T extends Node, R extends Node, C extends R> PatternModification<T> relatedExisting1ToN(CpgMultiEdge<T, R> edge, Class<C> cClass,
@@ -253,7 +253,7 @@ public abstract class GraphPatternBuilder {
      * Creates a {@link PatternModification} that sets the target {@link NodePattern} as the representative of the
      * NodePattern. {@link Node}s matching this {@link NodePattern} will be the representative of the {@link Match}.
      * @param <T> the {@link Node} type
-     * @return the patterns modification
+     * @return the pattern modification
      */
     public final <T extends Node> PatternModification<T> setRepresentingNode() {
         return new SetRepresentingNode<>();
@@ -263,7 +263,7 @@ public abstract class GraphPatternBuilder {
      * Creates a {@link PatternModification} that sets a flag to indicate that the child patterns contained in this patterns
      * are not relevant for the transformation calculation, but only for the patterns matching.
      * @param <T> the target node patterns type
-     * @return the patterns modification
+     * @return the pattern modification
      */
     public final <T extends Node> PatternModification<T> stopRecursion() {
         return new StopRecursion<>();
@@ -623,14 +623,14 @@ public abstract class GraphPatternBuilder {
         }
     }
 
-    private record AddAssignedValueStableBetween<S extends Node>(Role startRole, Role endRole) implements PatternModification<S> {
+    private record AddAssignedValueStableBetween<T extends Node>(Role startRole, Role endRole) implements PatternModification<T> {
 
         @Override
-        public void apply(NodePattern<? extends S> target, PatternRegistry patterns) {
+        public void apply(NodePattern<? extends T> target, PatternRegistry patterns) {
             NodePattern<Node> startNP = patterns.getPattern(startRole, Node.class);
             NodePattern<Node> endNP = patterns.getPattern(endRole, Node.class);
-            MatchProperty<S> matchProperty = (s, match) -> {
-                Set<Node> assignNodes = PatternUtil.dfgReferences(s);
+            MatchProperty<T> matchProperty = (t, match) -> {
+                Set<Node> assignNodes = PatternUtil.dfgReferences(t);
                 // s is a constant term
                 if (assignNodes.isEmpty()) {
                     return true;

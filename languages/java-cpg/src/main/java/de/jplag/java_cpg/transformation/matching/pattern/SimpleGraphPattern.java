@@ -18,7 +18,7 @@ public class SimpleGraphPattern<T extends Node> extends GraphPatternImpl {
     /**
      * Creates a new {@link SimpleGraphPattern} with the given root {@link NodePattern}.
      * @param root the root {@link NodePattern}
-     * @param patterns a {@link PatternRegistry} object
+     * @param patterns the {@link PatternRegistry} for this graph pattern
      */
     public SimpleGraphPattern(NodePattern<T> root, PatternRegistry patterns) {
         super(patterns);
@@ -52,11 +52,9 @@ public class SimpleGraphPattern<T extends Node> extends GraphPatternImpl {
     }
 
     /**
-     * Checks this {@link SimpleGraphPattern} against the given concrete {@link Node} for
-     * {@link de.jplag.java_cpg.transformation.matching.pattern.Match}es.
-     * @param rootCandidate the possible root {@link Node} of
-     * {@link de.jplag.java_cpg.transformation.matching.pattern.Match}es
-     * @return the list of {@link de.jplag.java_cpg.transformation.matching.pattern.Match}es found
+     * Checks this {@link SimpleGraphPattern} against the given concrete {@link Node} for {@link Match}es.
+     * @param rootCandidate the possible root {@link Node} of {@link Match}es
+     * @return the list of {@link Match}es found
      * @param <C> a C class
      */
     public <C extends Node> List<Match> recursiveMatch(C rootCandidate) {

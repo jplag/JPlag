@@ -6,20 +6,12 @@ import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration
 import de.fraunhofer.aisec.cpg.helpers.SubgraphWalker
 import de.fraunhofer.aisec.cpg.passes.TranslationUnitPass
 import java.util.*
-import java.util.function.Consumer
-import kotlin.reflect.KClass
 
 /**
  * A pass that prints all found nodes to the console.
  */
 class PrintPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
 
-    companion object {
-        @JvmStatic
-        val KClass: KClass<PrintPass> = PrintPass::class
-    }
-
-    override fun cleanup() {}
 
     override fun accept(translationUnitDeclaration: TranslationUnitDeclaration) {
         val graphWalker = SubgraphWalker.IterativeGraphWalker()
@@ -35,5 +27,9 @@ class PrintPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
         for (node in translationUnitDeclaration.astChildren) {
             graphWalker.iterate(node)
         }
+    }
+
+    override fun cleanup() {
+        // Nothing to do
     }
 }

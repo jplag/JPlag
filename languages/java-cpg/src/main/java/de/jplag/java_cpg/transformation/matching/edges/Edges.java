@@ -30,11 +30,11 @@ public class Edges {
     /**
      * A {@link Map} to retrieve all {@link IEdge}s with a specific source type.
      */
-    private static final Map<Class<?>, List<IEdge<?, ?>>> fromType;
+    private static final Map<Class<?>, List<IEdge<?, ?>>> edgesBySourceType;
     /**
      * A {@link Map} to retrieve all {@link IEdge}s with a specific target type.
      */
-    private static final Map<Class<?>, List<IEdge<?, ?>>> toType;
+    private static final Map<Class<?>, List<IEdge<?, ?>>> edgesByTargetType;
 
     public static final CpgEdge<AssignExpression, Expression> ASSIGN_EXPRESSION__LHS = CpgEdge.listValued(AssignExpression::getLhs,
             AssignExpression::setLhs);
@@ -135,8 +135,8 @@ public class Edges {
             DoStatement::setCondition);
 
     static {
-        fromType = new HashMap<>();
-        toType = new HashMap<>();
+        edgesBySourceType = new HashMap<>();
+        edgesByTargetType = new HashMap<>();
 
         register(ASSIGN_EXPRESSION__LHS, AssignExpression.class, Expression.class);
         register(ASSIGN_EXPRESSION__RHS, AssignExpression.class, Expression.class);
@@ -184,25 +184,25 @@ public class Edges {
      * @param edge the edge
      * @param sClass node class of the edge source
      * @param tClass node class of the edge target
-     * @param <S> type of the edge source
-     * @param <T> type of the edge target
+     * @param <T> type of the edge source
+     * @param <R> type of the related node
      */
-    private static <S extends Node, T extends Node> void register(IEdge<S, T> edge, Class<S> sClass, Class<T> tClass) {
+    private static <T extends Node, R extends Node> void register(IEdge<T, R> edge, Class<T> sClass, Class<R> tClass) {
         edge.setSourceClass(sClass);
-        edge.setTargetClass(tClass);
-        fromType.computeIfAbsent(sClass, c -> new ArrayList<>()).add(edge);
-        toType.computeIfAbsent(tClass, c -> new ArrayList<>()).add(edge);
+        edge.setRelatedClass(tClass);
+        edgesBySourceType.computeIfAbsent(sClass, c -> new ArrayList<>()).add(edge);
+        edgesByTargetType.computeIfAbsent(tClass, c -> new ArrayList<>()).add(edge);
     }
 
     /**
      * Gets the list of edges with the given node class as target.
      * @param tClass the target node class
-     * @param <T> the target node type
+     * @param <R> the related node type
      */
-    public static <T extends Node> void getEdgesToType(Class<T> tClass, Consumer<IEdge<? extends Node, ? super T>> consumer) {
-        Class<? super T> type = tClass;
+    public static <R extends Node> void getEdgesToType(Class<R> tClass, Consumer<IEdge<? extends Node, ? super R>> consumer) {
+        Class<? super R> type = tClass;
         while (Node.class.isAssignableFrom(type)) {
-            toType.getOrDefault(type, List.of()).stream().map(e -> (IEdge<? extends Node, ? super T>) e).forEach(consumer);
+            edgesByTargetType.getOrDefault(type, List.of()).stream().map(e -> (IEdge<? extends Node, ? super R>) e).forEach(consumer);
             type = getSuperclass(type);
         }
     }

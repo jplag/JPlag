@@ -15,16 +15,15 @@ import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
 import de.jplag.java_cpg.transformation.matching.pattern.WildcardGraphPattern;
 
 /**
- * Sets the target {@link de.fraunhofer.aisec.cpg.graph.Node} of a previously newly created edge to a
- * {@link de.fraunhofer.aisec.cpg.graph.Node}.
- * @param <S> type of the parent node, defined by the edge
- * @param <T> type of the related node, defined by the edge
+ * Sets the target {@link Node} of a previously newly created edge to a {@link Node}.
+ * @param <T> type of the parent node, defined by the edge
+ * @param <R> type of the related node, defined by the edge
  */
-public final class SetOperation<S extends Node, T extends Node> extends GraphOperationImpl<S, T> {
+public final class SetOperation<T extends Node, R extends Node> extends GraphOperationImpl<T, R> {
     private static final Logger logger;
     public static final String WILDCARD_ERROR_MESSAGE = "Cannot apply SetOperation with WildcardGraphPattern.ParentPattern as parentPattern.";
     public static final String MULTI_EDGE_ERROR_MESSAGE = "Cannot apply SetOperation with Any1ofNEdge.";
-    private final NodePattern<? extends T> newChildPattern;
+    private final NodePattern<? extends R> newChildPattern;
 
     /**
      * Creates a new {@link SetOperation}.
@@ -32,7 +31,7 @@ public final class SetOperation<S extends Node, T extends Node> extends GraphOpe
      * @param edge the edge relating the parent and child
      * @param newChildPattern the new child node pattern
      */
-    public SetOperation(NodePattern<? extends S> parentPattern, CpgEdge<S, T> edge, NodePattern<? extends T> newChildPattern) {
+    public SetOperation(NodePattern<? extends T> parentPattern, CpgEdge<T, R> edge, NodePattern<? extends R> newChildPattern) {
         super(parentPattern, edge);
         this.newChildPattern = newChildPattern;
     }
@@ -42,15 +41,15 @@ public final class SetOperation<S extends Node, T extends Node> extends GraphOpe
     }
 
     @Override
-    public <S2 extends Node> GraphOperationImpl<S2, T> fromWildcardMatch(NodePattern<? extends S2> pattern, CpgEdge<S2, T> edge) {
+    public <S2 extends Node> GraphOperationImpl<S2, R> fromWildcardMatch(NodePattern<? extends S2> pattern, CpgEdge<S2, R> edge) {
         throw new TransformationException(WILDCARD_ERROR_MESSAGE);
     }
 
     @Override
     public void resolveAndApply(Match match, TranslationContext ctx) {
-        S parent = match.get(parentPattern);
+        T parent = match.get(parentPattern);
         // match should contain newChildPattern node because of Builder.createNewNodes()
-        T newChild = match.get(newChildPattern);
+        R newChild = match.get(newChildPattern);
         logger.debug("Set {} as AST child of {}", newChild, parent);
 
         assert Objects.isNull(edge.getter().apply(parent));

@@ -3,10 +3,12 @@ package de.jplag.java_cpg.token;
 import java.io.File;
 
 import de.fraunhofer.aisec.cpg.graph.Name;
+import de.fraunhofer.aisec.cpg.graph.Node;
+import de.jplag.Token;
 import de.jplag.TokenType;
 
 /**
- * This interface represents classes that can consume and save {@link de.jplag.Token}s.
+ * This interface represents classes that can consume and save {@link Token}s.
  */
 public interface TokenConsumer {
 
@@ -17,7 +19,7 @@ public interface TokenConsumer {
      * @param startLine the line where the represented code starts
      * @param startColumn the column where the represented code starts
      * @param length The length of the represented code
-     * @param name the name of the represented {@link de.fraunhofer.aisec.cpg.graph.Node}
+     * @param name the name of the represented {@link Node}
      */
     void addToken(TokenType type, File file, int startLine, int startColumn, int length, Name name);
 

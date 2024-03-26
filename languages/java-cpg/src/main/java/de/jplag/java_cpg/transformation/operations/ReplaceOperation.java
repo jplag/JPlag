@@ -31,9 +31,7 @@ public final class ReplaceOperation<T extends Node, R extends Node> extends Grap
     private final boolean disconnectEog;
 
     /**
-     * <p>
-     * Constructor for ReplaceOperation.
-     * </p>
+     * Constructs a new ReplaceOperation.
      * @param parentPattern source node of the edge
      * @param edge edge of which the target shall be replaced
      * @param newChildPattern replacement node

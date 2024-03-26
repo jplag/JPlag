@@ -410,7 +410,7 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
             it.end.prevEOGEdges.remove(it)
         }
 
-        // eogPred may be DummyNeighbor if
+        //rebuild EOG edges into the block
         eogPred.filterNot { it is DummyNeighbor }
             .filterNot { TransformationUtil.isEogSuccessor(it, newEntry) }
             .forEach {
@@ -420,7 +420,7 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
                 newEntry.addPrevEOG(edge)
             }
 
-
+        //rebuild EOG edges out of the block
         val newExit = TransformationUtil.getEogBorders((parent.statements.last())).exits[0]
         if (exit != newExit) {
             newExit.nextEOGEdges.filter { it.end is DummyNeighbor }.forEach {

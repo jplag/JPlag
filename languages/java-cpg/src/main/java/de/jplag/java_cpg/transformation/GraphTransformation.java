@@ -25,13 +25,13 @@ public interface GraphTransformation {
      * Applies the transformation to the Graph represented by the given {@link Match} which indicates which {@link Node}s
      * shall be involved in the transformation.
      * @param match the match of this {@link GraphTransformation}'s source pattern to a concrete graph
-     * @param ctx a {@link TranslationContext} object
+     * @param ctx the current {@link TranslationContext}
      */
     void apply(Match match, TranslationContext ctx);
 
     /**
-     * Gets the {@link ExecutionPhase} for this {@link GraphTransformation}
-     * @return a {@link ExecutionOrder} object
+     * Gets the {@link ExecutionOrder} for this {@link GraphTransformation}
+     * @return the execution order
      */
     ExecutionOrder getExecutionOrder();
 

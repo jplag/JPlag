@@ -60,8 +60,8 @@ public interface NodePattern<T extends Node> {
     NodePattern<T> deepCopy();
 
     /**
-     * Gets the list of node classes of possible candidates for this node pattern.
-     * @return a {@link List} object
+     * Gets the list of node classes of potential candidates for this node pattern.
+     * @return the candidate classes
      */
     List<Class<? extends T>> getCandidateClasses();
 

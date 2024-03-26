@@ -35,16 +35,13 @@ public class JTokenizationPass extends TranslationResultPass {
     Consumer<List<Token>> callback = null;
 
     /**
-     * <p>
-     * Constructor for JTokenizationPass.
-     * </p>
-     * @param ctx a {@link de.fraunhofer.aisec.cpg.TranslationContext} object
+     * Constructs a new JTokenizationPass.
+     * @param ctx the current {@link de.fraunhofer.aisec.cpg.TranslationContext}
      */
     public JTokenizationPass(@NotNull TranslationContext ctx) {
         super(ctx);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void accept(TranslationResult translationResult) {
         tokenList.clear();
@@ -57,11 +54,7 @@ public class JTokenizationPass extends TranslationResultPass {
         callback.accept(tokenList);
     }
 
-    /**
-     * <p>
-     * cleanup.
-     * </p>
-     */
+    @Override
     public void cleanup() {
         logger.info("Found {} tokens", tokenList.size());
     }

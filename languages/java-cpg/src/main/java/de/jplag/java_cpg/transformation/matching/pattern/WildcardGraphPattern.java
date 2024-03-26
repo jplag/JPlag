@@ -20,12 +20,10 @@ import de.jplag.java_cpg.transformation.matching.pattern.relation.RelatedNode;
 /**
  * This class represents a pattern where the root node's parent is unknown, but involved in a transformation (e.g. the
  * root node is moved/deleted).
- * @param <T> The node type of the child node of the wildcard parent
- * @author robin
- * @version $Id: $Id
+ * @param <R> The node type of the child node of the wildcard parent
  */
-public class WildcardGraphPattern<T extends Node> extends SimpleGraphPattern<Node> {
-    private final ParentNodePattern<T> wildcardParent;
+public class WildcardGraphPattern<R extends Node> extends SimpleGraphPattern<Node> {
+    private final ParentNodePattern<R> wildcardParent;
 
     /**
      * Creates a new {@link WildcardGraphPattern}.
@@ -33,10 +31,10 @@ public class WildcardGraphPattern<T extends Node> extends SimpleGraphPattern<Nod
      * @param child The node pattern representing the child node
      * @param patterns A mapping of {@link Role}s to {@link NodePattern}s.
      */
-    WildcardGraphPattern(Class<T> tClass, NodePattern<T> child, PatternRegistry patterns) {
+    WildcardGraphPattern(Class<R> tClass, NodePattern<R> child, PatternRegistry patterns) {
         super(new ParentNodePattern<>(tClass, child), patterns);
-        this.wildcardParent = (ParentNodePattern<T>) getRoot();
-        patterns.put(patterns.createWildcardId(), wildcardParent);
+        this.wildcardParent = (ParentNodePattern<R>) getRoot();
+        patterns.put(patterns.createWildcardRole(), wildcardParent);
     }
 
     @Override
@@ -59,22 +57,22 @@ public class WildcardGraphPattern<T extends Node> extends SimpleGraphPattern<Nod
 
     /**
      * Pattern to describe the unknown AST context that a node may appear in.
-     * @param <T> the child node type
+     * @param <R> the child node type
      */
-    public static class ParentNodePattern<T extends Node> extends NodePatternImpl<Node> {
-        private final NodePattern<T> childPattern;
-        private final List<IEdge<? extends Node, ? super T>> edgesToType;
+    public static class ParentNodePattern<R extends Node> extends NodePatternImpl<Node> {
+        private final NodePattern<R> childPattern;
+        private final List<IEdge<? extends Node, ? super R>> edgesToType;
 
         /**
          * Creates a new {@link ParentNodePattern} for the given child {@link NodePattern}.
          * @param tClass The {@link Node} type class of the child
          * @param child the child node pattern
          */
-        public ParentNodePattern(Class<T> tClass, NodePattern<T> child) {
+        public ParentNodePattern(Class<R> tClass, NodePattern<R> child) {
             super(Node.class);
             this.childPattern = child;
 
-            Edge<T> edge;
+            Edge<R> edge;
             if (Objects.isNull(child)) {
                 edgesToType = null;
                 return;
@@ -102,14 +100,14 @@ public class WildcardGraphPattern<T extends Node> extends SimpleGraphPattern<Nod
 
         /**
          * Checks for a match of the wild card pattern starting with the parent node.
-         * @param <S> The parent {@link Node} type
+         * @param <T> The parent {@link Node} type
          * @param e The edge from the parent to the child
          * @param parent the parent {@link Node}
          * @param matches the current set of open matches
          */
-        private <S extends Node> void wildCardMatch(IEdge<S, ? super T> e, Node parent, List<Match> matches) {
-            S from = (S) parent;
-            if (e instanceof CpgEdge<S, ? super T> singleEdge) {
+        private <T extends Node> void wildCardMatch(IEdge<T, ? super R> e, Node parent, List<Match> matches) {
+            T from = (T) parent;
+            if (e instanceof CpgEdge<T, ? super R> singleEdge) {
                 Node target = singleEdge.getRelated(from);
                 if (Objects.isNull(target)) {
                     // target is not part of the graph or empty
@@ -118,13 +116,13 @@ public class WildcardGraphPattern<T extends Node> extends SimpleGraphPattern<Nod
                     childPattern.recursiveMatch(target, matches);
                     matches.forEach(match -> match.resolveWildcard(this, from, singleEdge));
                 }
-            } else if (e instanceof CpgMultiEdge<S, ? super T> multiEdge) {
+            } else if (e instanceof CpgMultiEdge<T, ? super R> multiEdge) {
                 List<? extends Node> targets = multiEdge.getAllTargets(from);
                 var resultMatches = new ArrayList<Match>();
                 for (int i = 0; i < targets.size(); i++) {
                     var matchesCopy = new ArrayList<>(matches.stream().map(Match::copy).toList());
                     Node target = targets.get(i);
-                    CpgEdge<S, ? super T> edge = nthElement(multiEdge, i);
+                    CpgEdge<T, ? super R> edge = nthElement(multiEdge, i);
                     childPattern.recursiveMatch(target, matchesCopy);
                     matchesCopy.forEach(match -> match.resolveWildcard(this, from, edge));
                     resultMatches.addAll(matchesCopy);
@@ -139,7 +137,7 @@ public class WildcardGraphPattern<T extends Node> extends SimpleGraphPattern<Nod
             return edgesToType.stream().map(IEdge::getSourceClass).collect(Collectors.toCollection(ArrayList::new));
         }
 
-        public NodePattern<T> getChildPattern() {
+        public NodePattern<R> getChildPattern() {
             return childPattern;
         }
 
@@ -186,14 +184,14 @@ public class WildcardGraphPattern<T extends Node> extends SimpleGraphPattern<Nod
     }
 
     /**
-     * This models an edge unknown at creation time, of which the target is a T node.
-     * @param <T> the target node type
+     * This models a wildcard edge unknown at creation time, of which the target is an R node.
+     * @param <R> the related node type
      */
-    public static class Edge<T extends Node> extends CpgEdge<Node, T> {
+    public static class Edge<R extends Node> extends CpgEdge<Node, R> {
 
-        private Edge(Class<T> tClass) {
+        private Edge(Class<R> tClass) {
             super(null, null, AST);
-            this.setTargetClass(tClass);
+            this.setRelatedClass(tClass);
         }
 
         @Override

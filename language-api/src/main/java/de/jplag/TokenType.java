@@ -5,8 +5,6 @@ package de.jplag;
  * be extracted from code written in that language. A token type is expected to be stateless, thus it is recommended to
  * use an <code>enum</code> or <code>record</code>.
  * @see SharedTokenType
- * @author robin
- * @version $Id: $Id
  */
 public interface TokenType {
     /**

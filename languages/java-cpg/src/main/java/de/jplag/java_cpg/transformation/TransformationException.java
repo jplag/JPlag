@@ -1,7 +1,7 @@
 package de.jplag.java_cpg.transformation;
 
 /**
- * An {@link java.lang.Exception} that relates to the Transformation process.
+ * An {@link Exception} that relates to the Transformation process.
  */
 public class TransformationException extends RuntimeException {
 

@@ -29,8 +29,6 @@ import com.ibm.icu.text.CharsetMatch;
 
 /**
  * Encapsulates various interactions with files to prevent issues with file encodings.
- * @author robin
- * @version $Id: $Id
  */
 public class FileUtils {
     private static final Charset DEFAULT_OUTPUT_CHARSET = StandardCharsets.UTF_8;

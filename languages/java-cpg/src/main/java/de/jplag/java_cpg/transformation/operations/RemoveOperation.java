@@ -19,11 +19,9 @@ import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
 import de.jplag.java_cpg.transformation.matching.pattern.WildcardGraphPattern;
 
 /**
- * This operation removes a {@link de.fraunhofer.aisec.cpg.graph.Node} from its AST context.
- * @param <T> the parent {@link de.fraunhofer.aisec.cpg.graph.Node} type
- * @param <R> the target {@link de.fraunhofer.aisec.cpg.graph.Node} type
- * @author robin
- * @version $Id: $Id
+ * This operation removes a {@link Node} from its AST context.
+ * @param <T> the parent {@link Node} type
+ * @param <R> the target {@link Node} type
  */
 public final class RemoveOperation<T extends Node, R extends Node> extends GraphOperationImpl<T, R> {
 

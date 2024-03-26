@@ -1,15 +1,15 @@
 package de.jplag.java_cpg.transformation.matching.edges;
 
 import de.fraunhofer.aisec.cpg.graph.Node;
+import de.fraunhofer.aisec.cpg.graph.edge.PropertyEdge;
 
 /**
- * A {@link CpgNthEdge} represents an individual {@link de.fraunhofer.aisec.cpg.graph.edge.PropertyEdge} out of a
- * {@link CpgMultiEdge}.
- * @param <S> source node type
- * @param <T> target node type
+ * A {@link CpgNthEdge} represents an individual {@link PropertyEdge} out of a {@link CpgMultiEdge}.
+ * @param <T> source node type
+ * @param <R> target node type
  */
-public class CpgNthEdge<S extends Node, T extends Node> extends CpgEdge<S, T> {
-    private final CpgMultiEdge<S, T> multiEdge;
+public class CpgNthEdge<T extends Node, R extends Node> extends CpgEdge<T, R> {
+    private final CpgMultiEdge<T, R> multiEdge;
     private final int index;
 
     /**
@@ -17,12 +17,12 @@ public class CpgNthEdge<S extends Node, T extends Node> extends CpgEdge<S, T> {
      * @param edge The {@link CpgMultiEdge} that represents multiple edges
      * @param index The index of this edge
      */
-    public CpgNthEdge(CpgMultiEdge<S, T> edge, int index) {
+    public CpgNthEdge(CpgMultiEdge<T, R> edge, int index) {
         super(t -> edge.getAllTargets(t).get(index), (t, r) -> edge.setter().accept(t, index, r), edge.getCategory());
         this.multiEdge = edge;
         this.index = index;
         this.setSourceClass(edge.getSourceClass());
-        this.setTargetClass(edge.getTargetClass());
+        this.setRelatedClass(edge.getRelatedClass());
     }
 
     @Override
@@ -37,7 +37,7 @@ public class CpgNthEdge<S extends Node, T extends Node> extends CpgEdge<S, T> {
      * Returns the multi edge object of which this edge is one.
      * @return the multi edge
      */
-    public CpgMultiEdge<S, T> getMultiEdge() {
+    public CpgMultiEdge<T, R> getMultiEdge() {
         return multiEdge;
     }
 

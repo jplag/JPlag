@@ -6,34 +6,34 @@ import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern;
 
 /**
  * This serves as an interface to wrap any kind of {@link PropertyEdge}.
- * @param <S> the source node type
- * @param <T> the target node type
+ * @param <T> the source node type
+ * @param <R> the related node type
  */
-public interface IEdge<S extends Node, T extends Node> {
+public interface IEdge<T extends Node, R extends Node> {
 
     /**
      * Sets the class object representing the source {@link Node} type.
      * @param sourceClass the source {@link Node} class
      */
-    void setSourceClass(Class<S> sourceClass);
+    void setSourceClass(Class<T> sourceClass);
 
     /**
-     * Sets the class object representing the target {@link Node} type.
-     * @param targetClass the target {@link Node} class
+     * Sets the class object representing the related {@link Node} type.
+     * @param relatedClass the related {@link Node} class
      */
-    void setTargetClass(Class<T> targetClass);
+    void setRelatedClass(Class<R> relatedClass);
 
     /**
      * Gets the class object representing the source {@link Node} type.
      * @return the source {@link Node} class
      */
-    Class<S> getSourceClass();
+    Class<T> getSourceClass();
 
     /**
      * Gets the class object representing the target {@link Node} type.
      * @return the target {@link Node} class
      */
-    Class<T> getTargetClass();
+    Class<R> getRelatedClass();
 
     /**
      * If true, this edge should be treated as equivalent to this one in the context of stepping through the source and

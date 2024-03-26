@@ -16,9 +16,7 @@ import de.jplag.java_cpg.transformation.matching.edges.CpgMultiEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgNthEdge;
 
 /**
- * Contains convenience methods to create elements of
- * {@link de.jplag.java_cpg.transformation.matching.pattern.GraphPattern}s and
- * {@link de.jplag.java_cpg.transformation.matching.pattern.NodePattern}s.
+ * Contains convenience methods to create elements of {@link GraphPattern}s and {@link NodePattern}s.
  */
 public class PatternUtil {
 
@@ -29,22 +27,22 @@ public class PatternUtil {
     /**
      * Creates a Predicate that checks if a node has a non-null related Node via the given edge.
      * @param edge the edge
-     * @param <S> the source node type
-     * @param <T> the target node type
+     * @param <T> the source node type
+     * @param <R> the target node type
      * @return the predicate
      */
-    public static <S extends Node, T extends Node> Predicate<S> notNull(CpgEdge<S, T> edge) {
+    public static <T extends Node, R extends Node> Predicate<T> notNull(CpgEdge<T, R> edge) {
         return s -> !Objects.isNull(edge.getRelated(s));
     }
 
     /**
      * Creates a {@link Predicate} property for an edge that specifies that its target shall not be null.
      * @param edge the edge
-     * @param <S> the source node type
+     * @param <T> the source node type
      * @param <P> the target property type
      * @return the predicate
      */
-    public static <S extends Node, P> Predicate<S> notNull(CpgAttributeEdge<S, P> edge) {
+    public static <T extends Node, P> Predicate<T> notNull(CpgAttributeEdge<T, P> edge) {
         return s -> !Objects.isNull(edge.getter().apply(s));
     }
 
@@ -53,12 +51,12 @@ public class PatternUtil {
      * type.
      * @param edge the edge
      * @param clazz the concrete node class
-     * @param <S> the source node type
-     * @param <T> the target node type as specified by the edge
+     * @param <T> the source node type
+     * @param <R> the target node type as specified by the edge
      * @param <C> the concrete target node type
      * @return the predicate
      */
-    public static <S extends Node, T extends Node, C extends T> Predicate<S> notInstanceOf(CpgEdge<S, T> edge, Class<C> clazz) {
+    public static <T extends Node, R extends Node, C extends R> Predicate<T> notInstanceOf(CpgEdge<T, R> edge, Class<C> clazz) {
         return s -> !clazz.isInstance(edge.getter().apply(s));
     }
 
@@ -66,11 +64,11 @@ public class PatternUtil {
      * Creates a proxy for the nth element of a 1:n relation.
      * @param edge the 1:n relation edge
      * @param n the index of the edge
-     * @param <S> the source node type
-     * @param <T> the target node type
+     * @param <T> the source node type
+     * @param <R> the target node type
      * @return the nth edge
      */
-    public static <S extends Node, T extends Node> CpgEdge<S, T> nthElement(CpgMultiEdge<S, T> edge, int n) {
+    public static <T extends Node, R extends Node> CpgEdge<T, R> nthElement(CpgMultiEdge<T, R> edge, int n) {
         return new CpgNthEdge<>(edge, n);
     }
 
@@ -78,24 +76,24 @@ public class PatternUtil {
      * Creates a {@link Predicate} that checks if the related attribute is equal to the given value.
      * @param attributeEdge a function to get the related attribute
      * @param value the value to check against
-     * @param <S> the source node type
+     * @param <T> the source node type
      * @param <P> the predicate type
      * @return the predicate
      */
-    public static <S extends Node, P> Predicate<S> attributeEquals(CpgAttributeEdge<S, P> attributeEdge, P value) {
-        return s -> Objects.equals(attributeEdge.get(s), value);
+    public static <T extends Node, P> Predicate<T> attributeEquals(CpgAttributeEdge<T, P> attributeEdge, P value) {
+        return t -> Objects.equals(attributeEdge.get(t), value);
     }
 
     /**
      * Creates a predicate property for an edge that specifies that its target attribute shall be equal to the given String.
      * @param attributeEdge the attribute edge
      * @param value the required value
-     * @param <S> the source node type
+     * @param <T> the source node type
      * @param <P> the attribute type
      * @return the predicate
      */
-    public static <S extends Node, P> Predicate<S> attributeToStringEquals(CpgAttributeEdge<S, P> attributeEdge, String value) {
-        return s -> Objects.equals(attributeEdge.get(s).toString(), value);
+    public static <T extends Node, P> Predicate<T> attributeToStringEquals(CpgAttributeEdge<T, P> attributeEdge, String value) {
+        return t -> Objects.equals(attributeEdge.get(t).toString(), value);
     }
 
     /**
@@ -103,12 +101,12 @@ public class PatternUtil {
      * with the given {@link String}.
      * @param attributeEdge the attribute edge
      * @param value the required starting substring
-     * @param <S> the source node type
+     * @param <T> the source node type
      * @param <P> the target attribute type
      * @return the predicate
      */
-    public static <S extends Node, P> Predicate<S> attributeToStringStartsWith(CpgAttributeEdge<S, P> attributeEdge, String value) {
-        return s -> attributeEdge.get(s).toString().startsWith(value);
+    public static <T extends Node, P> Predicate<T> attributeToStringStartsWith(CpgAttributeEdge<T, P> attributeEdge, String value) {
+        return t -> attributeEdge.get(t).toString().startsWith(value);
     }
 
     /**
@@ -116,68 +114,67 @@ public class PatternUtil {
      * value.
      * @param attributeEdge the attribute edge
      * @param value the required contained value
-     * @param <S> the source node type
+     * @param <T> the source node type
      * @param <P> The target attributes type
      * @return the predicate
      */
-    public static <S extends Node, P> Predicate<S> attributeContains(CpgAttributeEdge<S, List<P>> attributeEdge, P value) {
-        return s -> attributeEdge.get(s).contains(value);
+    public static <T extends Node, P> Predicate<T> attributeContains(CpgAttributeEdge<T, List<P>> attributeEdge, P value) {
+        return t -> attributeEdge.get(t).contains(value);
     }
 
     /**
      * Creates a predicate property for an edge that specifies that the target node list is not empty.
      * @param edge the edge
-     * @param <S> the source node type
-     * @param <T> the target node type
+     * @param <T> the source node type
+     * @param <R> the target node type
      * @return the predicate
      */
-    public static <S extends Node, T extends Node> Predicate<S> notEmpty(CpgMultiEdge<S, T> edge) {
-        return s -> !edge.getAllTargets(s).isEmpty();
+    public static <T extends Node, R extends Node> Predicate<T> notEmpty(CpgMultiEdge<T, R> edge) {
+        return t -> !edge.getAllTargets(t).isEmpty();
     }
 
     /**
      * Creates a {@link Predicate} property for an edge that specifies that the target node list is empty.
      * @param edge the edge
-     * @param <S> the source node type
-     * @param <T> the target node type
+     * @param <T> the source node type
+     * @param <R> the target node type
      * @return the predicate
      */
-    public static <S extends Node, T extends Node> Predicate<S> isEmpty(CpgMultiEdge<S, T> edge) {
-        return s -> edge.getAllTargets(s).isEmpty();
+    public static <T extends Node, R extends Node> Predicate<T> isEmpty(CpgMultiEdge<T, R> edge) {
+        return t -> edge.getAllTargets(t).isEmpty();
     }
 
     /**
      * Creates a {@link Predicate} that checks if the 1:n relation targets exactly the number of nodes specified.
      * @param edge the 1:n edge
      * @param n the number to check against
-     * @param <S> the source node type
-     * @param <T> the target node type
+     * @param <T> the source node type
+     * @param <R> the target node type
      * @return the predicate
      */
-    public static <S extends Node, T extends Node> Predicate<S> nElements(CpgMultiEdge<S, T> edge, int n) {
-        return s -> edge.getAllTargets(s).size() == n;
+    public static <T extends Node, R extends Node> Predicate<T> nElements(CpgMultiEdge<T, R> edge, int n) {
+        return t -> edge.getAllTargets(t).size() == n;
     }
 
     /**
      * Creates a {@link Predicate} that checks if the property value is contained in the list of values given.
      * @param getter a function to get the property value
      * @param acceptedValues a list of accepted values
-     * @param <S> the source node type
+     * @param <T> the source node type
      * @param <P> the property value type
      * @return the predicate
      */
-    public static <S extends Node, P> Predicate<S> oneOf(CpgAttributeEdge<S, P> getter, List<P> acceptedValues) {
-        return s -> acceptedValues.contains(getter.get(s));
+    public static <T extends Node, P> Predicate<T> oneOf(CpgAttributeEdge<T, P> getter, List<P> acceptedValues) {
+        return t -> acceptedValues.contains(getter.get(t));
     }
 
     /**
-     * Creates a new {@link de.fraunhofer.aisec.cpg.graph.Node} of the type specified by the given
-     * {@link de.jplag.java_cpg.transformation.matching.pattern.NodePattern}.
+     * Creates a new {@link Node} of the type specified by the given {@link NodePattern}.
      * @param pattern the pattern
-     * @param <T> the node pattern type
-     * @return the new {@link de.fraunhofer.aisec.cpg.graph.Node}
+     * @param <R> the node pattern type
+     * @return the new {@link Node}
      */
-    public static <T extends Node> T instantiate(NodePattern<T> pattern) {
+    public static <R extends Node> R instantiate(NodePattern<R> pattern) {
         try {
             // every Node type has a constructor without parameters
             return pattern.getRootClass().getDeclaredConstructor().newInstance();
@@ -197,17 +194,21 @@ public class PatternUtil {
         while (!workList.isEmpty()) {
             Node candidate = workList.pop();
 
-            if (candidate instanceof Literal<?>) {
-                // Literal is constant
-            } else if (candidate instanceof CallExpression call) {
-                workList.addAll(call.getArguments());
-                if (call instanceof MemberCallExpression memberCall) {
-                    workList.add(memberCall.getBase());
+            switch (candidate) {
+                case Literal<?> ignored -> {
+                    // Literal is constant
                 }
-            } else if (candidate instanceof Reference ref) {
-                references.add(ref.getRefersTo());
-            } else {
-                workList.addAll(candidate.getPrevDFG());
+                case null -> {
+                    // do nothing
+                }
+                case CallExpression call -> {
+                    workList.addAll(call.getArguments());
+                    if (call instanceof MemberCallExpression memberCall) {
+                        workList.add(memberCall.getBase());
+                    }
+                }
+                case Reference ref -> references.add(ref.getRefersTo());
+                default -> workList.addAll(candidate.getPrevDFG());
             }
         }
         return references.stream().flatMap(decl -> decl.getPrevDFG().stream()).collect(Collectors.toSet());

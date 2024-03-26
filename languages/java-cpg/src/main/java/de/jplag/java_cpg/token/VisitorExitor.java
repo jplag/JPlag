@@ -12,7 +12,7 @@ import de.fraunhofer.aisec.cpg.processing.IVisitor;
  * of {@link IVisitor}.
  * @param <V> the object type to visit and exit
  */
-public abstract class IVisitorExitor<V extends IVisitable<V>> extends IVisitor<V> {
+public abstract class VisitorExitor<V extends IVisitable<V>> extends IVisitor<V> {
 
     private static final String EXIT_METHOD_IDENTIFIER = "exit";
 

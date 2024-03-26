@@ -19,9 +19,7 @@ import de.jplag.java_cpg.transformation.matching.pattern.PatternUtil;
 import de.jplag.java_cpg.transformation.matching.pattern.SimpleGraphPattern;
 
 /**
- * Contains factory methods to create different {@link de.jplag.java_cpg.transformation.GraphTransformation}s.
- * @author robin
- * @version $Id: $Id
+ * Contains factory methods to create different {@link GraphTransformation}s.
  */
 public class TransformationRepository {
     /*
@@ -158,14 +156,6 @@ public class TransformationRepository {
     /**
      * Creates a {@link GraphTransformation} that replaces a {@link VariableDeclaration} of an unused variable by an
      * {@link EmptyStatement}.
-     * <p>
-     * May target the following edges:<br>
-     * <ul>
-     * <li>Statement --LOCALS*--> VariableDeclaration</li>
-     * <li>AssignExpression --DECLARATIONS*--> VariableDeclaration</li>
-     * <li>CatchClause --PARAMETER--> VariableDeclaration</li>
-     * <li>MethodDeclaration --RECEIVER--> VariableDeclaration</li>
-     * </ul>
      * @return the graph transformation object
      */
     private static GraphTransformation removeUnusedVariableDeclaration() {

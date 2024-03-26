@@ -6,16 +6,16 @@ import de.fraunhofer.aisec.cpg.graph.Node;
 
 /**
  * This abstract class contains the method implementations common to all {@link IEdge}s.
- * @param <S> the source node type
- * @param <T> the target node type
+ * @param <T> the source node type
+ * @param <R> the related node type
  */
-public abstract class AEdge<S extends Node, T extends Node> implements IEdge<S, T> {
+public abstract class AEdge<T extends Node, R extends Node> implements IEdge<T, R> {
     /**
      * The {@link EdgeCategory} of the edge.
      */
     protected final EdgeCategory category;
-    private Class<S> sourceClass;
-    private Class<T> targetClass;
+    private Class<T> sourceClass;
+    private Class<R> relatedClass;
 
     /**
      * Creates a new AEdge of the given category
@@ -37,16 +37,16 @@ public abstract class AEdge<S extends Node, T extends Node> implements IEdge<S, 
      * Gets the source node class of this edge.
      * @return the source node class
      */
-    public Class<S> getSourceClass() {
+    public Class<T> getSourceClass() {
         return this.sourceClass;
     }
 
     /**
-     * Gets the target node class of this edge.
-     * @return the target node class
+     * Gets the related node class of this edge.
+     * @return the related node class
      */
-    public Class<T> getTargetClass() {
-        return targetClass;
+    public Class<R> getRelatedClass() {
+        return relatedClass;
     }
 
     /**
@@ -70,17 +70,11 @@ public abstract class AEdge<S extends Node, T extends Node> implements IEdge<S, 
         return category == REFERENCE;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void setSourceClass(Class<S> sourceClass) {
+    public void setSourceClass(Class<T> sourceClass) {
         this.sourceClass = sourceClass;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void setTargetClass(Class<T> targetClass) {
-        this.targetClass = targetClass;
+    public void setRelatedClass(Class<R> relatedClass) {
+        this.relatedClass = relatedClass;
     }
 }

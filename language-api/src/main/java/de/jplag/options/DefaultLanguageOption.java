@@ -3,8 +3,6 @@ package de.jplag.options;
 /**
  * Default implementation for {@link de.jplag.options.LanguageOption}
  * @param <T> The type of the option
- * @author robin
- * @version $Id: $Id
  */
 public class DefaultLanguageOption<T> implements LanguageOption<T> {
     private final OptionType<T> type;

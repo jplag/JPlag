@@ -145,12 +145,12 @@ public class Match implements Comparable<Match> {
      * Gets the concrete {@link CpgNthEdge} for a {@link AnyOfNEdge} in this {@link Match}.
      * @param sourcePattern the source pattern
      * @param edge the any-of-n edge
-     * @param <S> the source node type
-     * @param <T> the target node type
+     * @param <T> the source node type
+     * @param <R> the related node type
      * @return the nth edge
      */
-    public <S extends Node, T extends Node> CpgNthEdge<S, T> getEdge(NodePattern<? extends S> sourcePattern, AnyOfNEdge<S, T> edge) {
-        return (CpgNthEdge<S, T>) this.edgeMap.get(new EdgeMapKey<>(sourcePattern, edge));
+    public <T extends Node, R extends Node> CpgNthEdge<T, R> getEdge(NodePattern<? extends T> sourcePattern, AnyOfNEdge<T, R> edge) {
+        return (CpgNthEdge<T, R>) this.edgeMap.get(new EdgeMapKey<>(sourcePattern, edge));
     }
 
     private LinkedList<Integer> getFullID() {
@@ -224,11 +224,11 @@ public class Match implements Comparable<Match> {
      * @param parentPattern the parent node pattern
      * @param parent the concrete parent node
      * @param edge the edge
-     * @param <S> the node type of the parent as specified by the edge
-     * @param <T> the node type of the child as specified by the edge
+     * @param <T> the node type of the parent as specified by the edge
+     * @param <R> the node type of the child as specified by the edge
      */
-    public <S extends Node, T extends Node> void resolveWildcard(ParentNodePattern<T> parentPattern, S parent, CpgEdge<S, ? super T> edge) {
-        NodePattern<S> concreteRoot = NodePattern.forNodeType(edge.getSourceClass());
+    public <T extends Node, R extends Node> void resolveWildcard(ParentNodePattern<R> parentPattern, T parent, CpgEdge<T, ? super R> edge) {
+        NodePattern<T> concreteRoot = NodePattern.forNodeType(edge.getSourceClass());
         concreteRoot.addRelation(new RelatedNode<>(parentPattern.getChildPattern(), edge));
 
         this.wildcardMatches.put(parentPattern, new WildcardMatch<>(concreteRoot, edge));
@@ -243,17 +243,17 @@ public class Match implements Comparable<Match> {
 
     /**
      * Saves the data related to a concrete occurrence of a {@link WildcardGraphPattern}.
-     * @param <T> the concrete type of the child, specified by the edge
+     * @param <R> the concrete type of the child, specified by the edge
      */
-    public static final class WildcardMatch<S extends Node, T extends Node> {
-        private final NodePattern<? extends S> parentPattern;
-        private final CpgEdge<S, T> edge;
+    public static final class WildcardMatch<T extends Node, R extends Node> {
+        private final NodePattern<? extends T> parentPattern;
+        private final CpgEdge<T, R> edge;
 
         /**
          * @param parentPattern A concrete {@link NodePattern} for the parent
          * @param edge the edge
          */
-        public WildcardMatch(NodePattern<? extends S> parentPattern, CpgEdge<S, T> edge) {
+        public WildcardMatch(NodePattern<? extends T> parentPattern, CpgEdge<T, R> edge) {
             this.parentPattern = parentPattern;
             this.edge = edge;
         }
@@ -273,7 +273,7 @@ public class Match implements Comparable<Match> {
             return Objects.hash(parentPattern, edge);
         }
 
-        public GraphOperation instantiateGraphOperation(BiFunction<NodePattern<? extends S>, CpgEdge<S, T>, GraphOperation> factoryMethod) {
+        public GraphOperation instantiateGraphOperation(BiFunction<NodePattern<? extends T>, CpgEdge<T, R>, GraphOperation> factoryMethod) {
             return factoryMethod.apply(this.parentPattern, this.edge);
         }
 
