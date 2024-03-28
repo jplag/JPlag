@@ -1,4 +1,4 @@
-package de.jplag.cli;
+package de.jplag.cli.picocli;
 
 import picocli.CommandLine;
 

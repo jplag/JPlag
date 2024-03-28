@@ -89,7 +89,7 @@ public class ReportViewer implements HttpHandler {
 
     /**
      * Do not call manually. Called by the running web server.
-     * @param exchange The http reqest
+     * @param exchange The http request
      * @throws IOException If the IO handling goes wrong
      */
     @Override
