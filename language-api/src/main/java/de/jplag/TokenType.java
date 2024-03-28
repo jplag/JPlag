@@ -9,6 +9,7 @@ package de.jplag;
 public interface TokenType {
     /**
      * Returns the user-readable description of this token type.
+     * @return a {@link java.lang.String} object
      */
     String getDescription();
 

@@ -55,7 +55,7 @@ public class CliOptions implements Runnable {
             "--mode"}, description = "The mode of JPlag: either only run analysis, only open the viewer, or do both (default: ${DEFAULT_VALUE})")
     public JPlagMode mode = JPlagMode.RUN;
 
-    @Option(names = {"--normalize"}, description = "Activate the normalization of tokens. Supported for languages: Java, C++.")
+    @Option(names = {"--normalize"}, description = "Activate the normalization of tokens. Supported for languages: Java, Java-CPG, C++.")
     public boolean normalize = false;
 
     @ArgGroup(heading = "%nAdvanced%n", exclusive = false)

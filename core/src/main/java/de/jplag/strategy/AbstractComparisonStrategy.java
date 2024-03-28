@@ -20,7 +20,7 @@ import de.jplag.options.JPlagOptions;
 
 public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
 
-    private final Logger logger = LoggerFactory.getLogger(ComparisonStrategy.class);
+    private final Logger logger = LoggerFactory.getLogger(AbstractComparisonStrategy.class);
 
     private final GreedyStringTiling greedyStringTiling;
 
