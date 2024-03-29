@@ -105,12 +105,23 @@ public class ComparisonReportWriter {
         Token startOfSecond = tokensSecond.stream().min(lineComparator).orElseThrow();
         Token endOfSecond = tokensSecond.stream().max(lineComparator).orElseThrow();
 
-        return new Match(
-                FilePathUtil.getRelativeSubmissionPath(startOfFirst.getFile(), comparison.firstSubmission(), submissionToIdFunction).toString(),
-                FilePathUtil.getRelativeSubmissionPath(startOfSecond.getFile(), comparison.secondSubmission(), submissionToIdFunction).toString(),
-                startOfFirst.getLine(), startOfFirst.getColumn(), endOfFirst.getLine(), endOfFirst.getColumn() + endOfFirst.getLength(),
-                startOfSecond.getLine(), startOfSecond.getColumn(), endOfSecond.getLine(), endOfSecond.getColumn() + endOfSecond.getLength(),
-                match.length());
+        String firstFileName = FilePathUtil.getRelativeSubmissionPath(startOfFirst.getFile(), comparison.firstSubmission(), submissionToIdFunction)
+                .toString();
+        String secondFileName = FilePathUtil.getRelativeSubmissionPath(startOfSecond.getFile(), comparison.secondSubmission(), submissionToIdFunction)
+                .toString();
+
+        int startLineFirst = startOfFirst.getLine();
+        int startColumnFirst = startOfFirst.getColumn();
+        int endLineFirst = endOfFirst.getLine();
+        int endColumnFirst = endOfFirst.getColumn() + endOfFirst.getLength();
+
+        int startLineSecond = startOfSecond.getLine();
+        int startColumnSecond = startOfSecond.getColumn();
+        int endLineSecond = endOfSecond.getLine();
+        int endColumnSecond = endOfSecond.getColumn() + endOfSecond.getLength();
+
+        return new Match(firstFileName, secondFileName, startLineFirst, startColumnFirst, endLineFirst, endColumnFirst, startLineSecond,
+                startColumnSecond, endLineSecond, endColumnSecond, match.length());
     }
 
 }
