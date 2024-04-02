@@ -65,7 +65,6 @@ public class Submission implements Comparable<Submission> {
 
     private Map<File, Integer> fileTokenCount;
 
-    private long parsingTimeInMillis;
 
     /**
      * Creates a submission.
@@ -97,10 +96,6 @@ public class Submission implements Comparable<Submission> {
             return false;
         }
         return otherSubmission.getName().equals(name);
-    }
-
-    public long getParsingTime() {
-        return parsingTimeInMillis;
     }
 
     @Override
@@ -258,9 +253,7 @@ public class Submission implements Comparable<Submission> {
         }
 
         try {
-            long timeBeforeParsing = System.currentTimeMillis();
             tokenList = language.parse(new HashSet<>(files), normalize);
-            parsingTimeInMillis = System.currentTimeMillis() - timeBeforeParsing;
             if (logger.isDebugEnabled()) {
                 for (Token token : tokenList) {
                     logger.debug(String.join(" | ", token.getType().toString(), Integer.toString(token.getLine()), token.getSemantics().toString()));

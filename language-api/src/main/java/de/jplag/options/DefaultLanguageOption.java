@@ -1,7 +1,7 @@
 package de.jplag.options;
 
 /**
- * Default implementation for {@link de.jplag.options.LanguageOption}
+ * Default implementation for {@link LanguageOption}
  * @param <T> The type of the option
  */
 public class DefaultLanguageOption<T> implements LanguageOption<T> {
@@ -25,38 +25,32 @@ public class DefaultLanguageOption<T> implements LanguageOption<T> {
         this.hasValue = false;
     }
 
-    /** {@inheritDoc} */
     @Override
     public OptionType<T> getType() {
         return this.type;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getName() {
         return this.name;
     }
 
-    /** {@inheritDoc} */
     @Override
     public T getValue() {
         return this.value;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return this.description;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setValue(T value) {
         this.value = value;
         this.hasValue = true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean hasValue() {
         return this.hasValue;
