@@ -26,18 +26,13 @@ public final class CLI {
 
     private static final String DEFAULT_FILE_ENDING = ".zip";
 
-    private final JPlagRunner runner;
     private final CliInputHandler inputHandler;
-    private final OutputFileGenerator outputFileGenerator;
 
     /**
      * Creates a cli.
-     * @param runner The way to run JPlag
      * @param args The command line arguments
      */
-    public CLI(JPlagRunner runner, OutputFileGenerator outputFileGenerator, String[] args) {
-        this.runner = runner;
-        this.outputFileGenerator = outputFileGenerator;
+    public CLI(String[] args) {
         this.inputHandler = new CliInputHandler(args);
     }
 
@@ -92,11 +87,11 @@ public final class CLI {
     public File runJPlag() throws ExitException, FileNotFoundException {
         JPlagOptionsBuilder optionsBuilder = new JPlagOptionsBuilder(this.inputHandler);
         JPlagOptions options = optionsBuilder.buildOptions();
-        JPlagResult result = this.runner.runJPlag(options);
+        JPlagResult result = JPlagRunner.runJPlag(options);
 
         File target = new File(getResultFilePath());
-        this.outputFileGenerator.generateJPlagResultZip(result, target);
-        this.outputFileGenerator.generateCsvOutput(result, new File(getResultFileBaseName()), this.inputHandler.getCliOptions());
+        OutputFileGenerator.generateJPlagResultZip(result, target);
+        OutputFileGenerator.generateCsvOutput(result, new File(getResultFileBaseName()), this.inputHandler.getCliOptions());
 
         return target;
     }
@@ -107,7 +102,7 @@ public final class CLI {
      * @throws IOException If something went wrong with the internal server
      */
     public void runViewer(File zipFile) throws IOException {
-        this.runner.runInternalServer(zipFile, this.inputHandler.getCliOptions().advanced.port);
+        JPlagRunner.runInternalServer(zipFile, this.inputHandler.getCliOptions().advanced.port);
     }
 
     private void finalizeLogger() {
@@ -132,7 +127,7 @@ public final class CLI {
     }
 
     public static void main(String[] args) {
-        CLI cli = new CLI(JPlagRunner.DEFAULT_JPLAG_RUNNER, OutputFileGenerator.DEFAULT_OUTPUT_FILE_GENERATOR, args);
+        CLI cli = new CLI(args);
         if (cli.executeCliAndHandleErrors()) {
             System.exit(1);
         }
