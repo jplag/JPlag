@@ -24,10 +24,9 @@ public final class OutputFileGenerator {
     /**
      * Exports the given result as CSVs, if the csvExport is activated in the options. Both a full and an anonymized version
      * will be written.
-     *
-     * @param result     The result to export
+     * @param result The result to export
      * @param outputRoot The root folder for the output
-     * @param options    The cli options
+     * @param options The cli options
      */
     public static void generateCsvOutput(JPlagResult result, File outputRoot, CliOptions options) {
         if (options.advanced.csvExport) {
@@ -42,8 +41,7 @@ public final class OutputFileGenerator {
 
     /**
      * Generates the JPLag result zip
-     *
-     * @param result     The JPlag result
+     * @param result The JPlag result
      * @param outputFile The output file
      * @throws FileNotFoundException If the file cannot be written
      */

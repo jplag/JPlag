@@ -25,7 +25,6 @@ public final class JPlagRunner {
 
     /**
      * Executes JPlag
-     *
      * @param options The options to pass to JPlag
      * @return The result returned by JPlag
      * @throws ExitException If JPlag throws an error
@@ -36,9 +35,8 @@ public final class JPlagRunner {
 
     /**
      * Runs the internal server. Blocks until the server has stopped.
-     *
      * @param zipFile The zip file to pass to the server. May be null.
-     * @param port    The port to open the server on
+     * @param port The port to open the server on
      * @throws IOException If the internal server throws an exception
      */
     public static void runInternalServer(File zipFile, int port) throws IOException {
