@@ -16,25 +16,12 @@
     >
       <Container
         class="flex max-h-0 min-h-full flex-1 flex-col overflow-hidden print:max-h-none print:min-h-0 print:flex-none"
+        v-if="cluster.members.length >= 35 || !canShowRadarChart"
       >
         <div
           class="flex max-h-full flex-col overflow-hidden print:flex-none"
           v-if="cluster.members.length < 35"
         >
-          <OptionsSelectorComponent
-            :labels="clusterVisualizationOptions"
-            @selectionChanged="
-              (index) => (selectedClusterVisualization = index == 0 ? 'Graph' : 'Radar')
-            "
-            title="Cluster Visualization:"
-            class="mb-3"
-            v-if="canShowRadarChart"
-          />
-          <ClusterRadarChart
-            v-if="selectedClusterVisualization == 'Radar'"
-            :cluster="clusterListElement"
-            class="flex-grow"
-          />
           <ClusterGraph
             v-if="selectedClusterVisualization == 'Graph'"
             :cluster="clusterListElement"
@@ -51,6 +38,23 @@
           </p>
         </div>
       </Container>
+      <TabbedContainer
+        class="flex max-h-0 min-h-full flex-1 flex-col overflow-hidden print:max-h-none print:min-h-0 print:flex-none"
+        :tabs="clusterVisualizationOptions"
+        v-else
+      >
+        <template #Graph>
+          <ClusterGraph
+            :cluster="clusterListElement"
+            class="flex-grow print:max-h-full print:max-w-full print:flex-grow-0"
+            @line-hovered="(value) => (highlightedElement = value)"
+          />
+        </template>
+        <template #Radar>
+          <ClusterRadarChart :cluster="clusterListElement" class="flex-grow" />
+        </template>
+      </TabbedContainer>
+
       <TabbedContainer
         class="flex max-h-0 min-h-full w-1/3 flex-col space-y-2 print:hidden"
         :tabs="['Members', 'Similar Comparisons']"
@@ -93,7 +97,6 @@ import type { ClusterListElement, ClusterListElementMember } from '@/model/Clust
 import { MetricType } from '@/model/MetricType'
 import type { Overview } from '@/model/Overview'
 import { computed, ref, onErrorCaptured, type PropType, type Ref } from 'vue'
-import OptionsSelectorComponent from '@/components/optionsSelectors/OptionsSelectorComponent.vue'
 import { redirectOnError } from '@/router'
 import TabbedContainer from '@/components/TabbedContainer.vue'
 
