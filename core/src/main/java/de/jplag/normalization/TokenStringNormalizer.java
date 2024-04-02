@@ -11,6 +11,9 @@ import org.jgrapht.Graphs;
 import org.jgrapht.graph.SimpleDirectedGraph;
 
 import de.jplag.Token;
+import de.jplag.logging.ProgressBar;
+import de.jplag.logging.ProgressBarLogger;
+import de.jplag.logging.ProgressBarType;
 
 /**
  * Performs token sequence normalization.
@@ -28,6 +31,7 @@ public class TokenStringNormalizer {
      * @return The normalized token sequence.
      */
     public static List<Token> normalize(List<Token> tokens) {
+        ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.TokenStringNormalizer, 0);
         SimpleDirectedGraph<Statement, MultipleEdge> normalizationGraph = new NormalizationGraphConstructor(tokens).get();
         List<Token> normalizedTokens = new ArrayList<>(tokens.size());
         spreadKeep(normalizationGraph);
@@ -50,6 +54,7 @@ public class TokenStringNormalizer {
             } while (!roots.isEmpty());
             roots = newRoots;
         }
+        progressBar.dispose();
         return normalizedTokens;
     }
 

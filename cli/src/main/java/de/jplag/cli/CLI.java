@@ -24,8 +24,8 @@ import org.slf4j.LoggerFactory;
 import de.jplag.JPlag;
 import de.jplag.JPlagResult;
 import de.jplag.Language;
+import de.jplag.cli.logger.CliProgressBarProvider;
 import de.jplag.cli.logger.CollectedLoggerFactory;
-import de.jplag.cli.logger.TongfeiProgressBarProvider;
 import de.jplag.cli.server.ReportViewer;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.Preprocessing;
@@ -85,7 +85,7 @@ public final class CLI {
             ParseResult parseResult = cli.parseOptions(args);
 
             if (!parseResult.isUsageHelpRequested() && !(parseResult.subcommand() != null && parseResult.subcommand().isUsageHelpRequested())) {
-                ProgressBarLogger.setProgressBarProvider(new TongfeiProgressBarProvider());
+                ProgressBarLogger.setProgressBarProvider(new CliProgressBarProvider());
                 switch (cli.options.mode) {
                     case RUN -> cli.runJPlag(parseResult);
                     case VIEW -> cli.runViewer(null);

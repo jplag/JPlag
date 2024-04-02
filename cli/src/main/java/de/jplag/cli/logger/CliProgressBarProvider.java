@@ -10,11 +10,15 @@ import me.tongfei.progressbar.ProgressBarStyle;
 /**
  * A ProgressBar provider, that used the tongfei progress bar library underneath, to show progress bars on the cli.
  */
-public class TongfeiProgressBarProvider implements ProgressBarProvider {
+public class CliProgressBarProvider implements ProgressBarProvider {
     @Override
     public ProgressBar initProgressBar(ProgressBarType type, int totalSteps) {
-        me.tongfei.progressbar.ProgressBar progressBar = new ProgressBarBuilder().setTaskName(type.getDefaultText()).setInitialMax(totalSteps)
-                .setStyle(ProgressBarStyle.ASCII).build();
-        return new TongfeiProgressBar(progressBar);
+        if (type.isIdleBar()) {
+            return new IdleBar(type.getDefaultText());
+        } else {
+            me.tongfei.progressbar.ProgressBar progressBar = new ProgressBarBuilder().setTaskName(type.getDefaultText()).setInitialMax(totalSteps)
+                    .setStyle(ProgressBarStyle.ASCII).build();
+            return new TongfeiProgressBar(progressBar);
+        }
     }
 }
