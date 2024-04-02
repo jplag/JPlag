@@ -35,6 +35,7 @@ public interface Language {
      * Parses a set of files. Override this method, if you don't require normalization.
      * @param files are the files to parse.
      * @return the list of parsed JPlag tokens.
+     * @throws ParsingException if an error during parsing the files occurred.
      * @deprecated Replaced by {@link #parse(Set, boolean)}
      */
     @Deprecated(forRemoval = true)
@@ -47,6 +48,7 @@ public interface Language {
      * @param files are the files to parse.
      * @param normalize True, if the tokens should be normalized
      * @return the list of parsed JPlag tokens.
+     * @throws ParsingException if an error during parsing the files occurred.
      */
     List<Token> parse(Set<File> files, boolean normalize) throws ParsingException;
 

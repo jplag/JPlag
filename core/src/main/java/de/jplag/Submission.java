@@ -65,7 +65,6 @@ public class Submission implements Comparable<Submission> {
 
     private Map<File, Integer> fileTokenCount;
 
-
     /**
      * Creates a submission.
      * @param name Identification of the submission (directory or filename).
