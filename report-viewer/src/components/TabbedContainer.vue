@@ -12,7 +12,10 @@
             : 'border-b bg-container-secondary-light dark:bg-container-secondary-dark'
         "
       >
-        <ToolTipComponent v-if="toolTips[index]" :direction="index < 2 ? 'right' : 'bottom'">
+        <ToolTipComponent
+          v-if="toolTips[index]"
+          :direction="index < firstBottomTooltipIndex ? 'right' : 'bottom'"
+        >
           <template #default>
             <p class="p-2 px-5">{{ tabNames[index] }}</p>
           </template>
@@ -42,6 +45,11 @@ const props = defineProps({
   tabs: {
     type: Array<string | ToolTipLabel>,
     required: true
+  },
+  firstBottomTooltipIndex: {
+    type: Number,
+    required: false,
+    default: 2
   }
 })
 

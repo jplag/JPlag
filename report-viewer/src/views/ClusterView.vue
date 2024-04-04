@@ -57,7 +57,8 @@
 
       <TabbedContainer
         class="flex max-h-0 min-h-full w-1/3 flex-col space-y-2 print:hidden"
-        :tabs="['Members', 'Similar Comparisons']"
+        :tabs="comparisonTableOptions"
+        :first-bottom-tooltip-index="1"
       >
         <template #Members>
           <ComparisonsTable
@@ -122,6 +123,16 @@ const clusterVisualizationOptions = [
     displayValue: 'Radar',
     tooltip:
       'A radar chart showing the he other submissions in the cluster, relative one submission.'
+  }
+]
+const comparisonTableOptions = [
+  {
+    displayValue: 'Members',
+    tooltip: 'Comparisons between the cluster members.'
+  },
+  {
+    displayValue: 'Similar Comparisons',
+    tooltip: 'Comparisons between the cluster members\nand other submissions.'
   }
 ]
 const usedMetric = MetricType.AVERAGE
