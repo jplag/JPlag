@@ -40,14 +40,15 @@ public class TokenCollector {
     }
 
     <T> void addToken(TokenType jplagType, Function<T, CodeSemantics> semanticsSupplier, T entity,
-            Function<T, org.antlr.v4.runtime.Token> extractToken, VariableRegistry variableRegistry) {
+                      Function<T, org.antlr.v4.runtime.Token> extractStartToken, Function<T, org.antlr.v4.runtime.Token> extractEndToken, VariableRegistry variableRegistry) {
         if (jplagType == null) {
             return;
         }
-        org.antlr.v4.runtime.Token antlrToken = extractToken.apply(entity);
+        org.antlr.v4.runtime.Token antlrToken = extractStartToken.apply(entity);
+        org.antlr.v4.runtime.Token antlrEndToken = extractEndToken.apply(entity);
         int line = antlrToken.getLine();
         int column = antlrToken.getCharPositionInLine() + 1;
-        int length = antlrToken.getText().length();
+        int length = (antlrEndToken.getStartIndex() - antlrToken.getStartIndex()) + antlrEndToken.getText().length();
         Token token;
         if (extractsSemantics) {
             if (semanticsSupplier == null) {
