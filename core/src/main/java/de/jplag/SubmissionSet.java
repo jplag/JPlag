@@ -95,7 +95,7 @@ public class SubmissionSet {
     }
 
     public void normalizeSubmissions() {
-        submissions.forEach(Submission::normalize);
+        ProgressBarLogger.iterate(ProgressBarType.TOKEN_STRING_NORMALIZATION, submissions, Submission::normalize);
     }
 
     private List<Submission> filterValidSubmissions() {
