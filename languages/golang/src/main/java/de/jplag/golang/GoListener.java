@@ -72,6 +72,10 @@ import static de.jplag.golang.GoTokenType.VARIABLE_DECLARATION;
 
 import java.util.function.Function;
 
+import org.antlr.v4.runtime.ParserRuleContext;
+
+import de.jplag.antlr.AbstractAntlrListener;
+import de.jplag.antlr.ContextVisitor;
 import de.jplag.golang.grammar.GoParser.ArgumentsContext;
 import de.jplag.golang.grammar.GoParser.ArrayTypeContext;
 import de.jplag.golang.grammar.GoParser.AssignmentContext;
@@ -120,10 +124,6 @@ import de.jplag.golang.grammar.GoParser.TypeCaseClauseContext;
 import de.jplag.golang.grammar.GoParser.TypeNameContext;
 import de.jplag.golang.grammar.GoParser.TypeSwitchStmtContext;
 import de.jplag.golang.grammar.GoParser.VarDeclContext;
-import org.antlr.v4.runtime.ParserRuleContext;
-
-import de.jplag.antlr.AbstractAntlrListener;
-import de.jplag.antlr.ContextVisitor;
 
 public class GoListener extends AbstractAntlrListener {
     public GoListener() {
