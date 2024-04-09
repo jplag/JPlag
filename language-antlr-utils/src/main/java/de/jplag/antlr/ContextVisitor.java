@@ -114,7 +114,7 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
      */
     public <V extends ParserRuleContext> ContextVisitor<V> delegateContext(Function<T, V> mapper) {
         ContextVisitor<V> visitor = new ContextVisitor<>((ignore) -> true);
-        this.delegate = new DelegateVisitor<>(visitor, mapper);
+        this.delegate = new ContextDelegateVisitor<>(visitor, mapper);
         return visitor;
     }
 

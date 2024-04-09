@@ -48,7 +48,7 @@ public class TokenCollector {
         org.antlr.v4.runtime.Token antlrEndToken = extractEndToken.apply(entity);
         int line = antlrToken.getLine();
         int column = antlrToken.getCharPositionInLine() + 1;
-        int length = (antlrEndToken.getStartIndex() - antlrToken.getStartIndex()) + antlrEndToken.getText().length();
+        int length = (antlrEndToken.getStopIndex() - antlrToken.getStartIndex()) + 1;
         Token token;
         if (extractsSemantics) {
             if (semanticsSupplier == null) {
