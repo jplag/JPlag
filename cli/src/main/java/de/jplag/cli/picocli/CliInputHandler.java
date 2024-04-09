@@ -39,6 +39,9 @@ public class CliInputHandler {
     private static final String DESCRIPTION_PATTERN = "%nJPlag - %s%n%s%n%n";
     private static final String CREDITS = "Created by IPD Tichy, Guido Malpohl, and others. Maintained by Timur Saglam and Sebastian Hahner. Logo by Sandro Koch.";
 
+    private static final String PARAMETER_SHORT_PREFIX = "  -";
+    private static final String PARAMETER_SHORT_ADDITIONAL_INDENT = "    ";
+
     private static final Random RANDOM = new SecureRandom();
 
     private final String[] args;
@@ -62,8 +65,8 @@ public class CliInputHandler {
         cli.setHelpFactory(new HelpFactory());
 
         cli.getHelpSectionMap().put(SECTION_KEY_OPTION_LIST, help -> help.optionList().lines().map(it -> {
-            if (it.startsWith("  -")) {
-                return "    " + it;
+            if (it.startsWith(PARAMETER_SHORT_PREFIX)) {
+                return PARAMETER_SHORT_ADDITIONAL_INDENT + it;
             }
             return it;
         }).collect(Collectors.joining(System.lineSeparator())));
