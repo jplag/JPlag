@@ -117,8 +117,7 @@ function computeTextParts() {
   lineIndex.value = 0
   colIndex.value = 0
 
-  for (let i = 0; i < lineParts.length; i++) {
-    const matchPart = lineParts[i]
+  for (const matchPart of lineParts) {
     const line = getNextLinePartTillColumn(matchPart.end)
     textParts.push({ line, match: matchPart.match })
   }
