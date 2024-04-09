@@ -1,10 +1,10 @@
 package de.jplag.cli.logger;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 class IdleBarTest {
     private static final String TEST_BAR_TEXT = "Test";
@@ -32,7 +32,8 @@ class IdleBarTest {
 
         String result = outputStream.toString();
         String[] animationFrames = result.substring(1).split("\\r");
-        Assertions.assertTrue(Math.abs(animationFrames.length - (TEST_TIME / IDLE_BAR_ANIMATION_DELAY)) <= 2, "Unexpected number of animation frames.");
+        Assertions.assertTrue(Math.abs(animationFrames.length - (TEST_TIME / IDLE_BAR_ANIMATION_DELAY)) <= 2,
+                "Unexpected number of animation frames.");
 
         String firstFrame = animationFrames[0];
         int numberOfSpaces = firstFrame.lastIndexOf('>') - firstFrame.indexOf('<') - 3 - 1;
@@ -43,9 +44,8 @@ class IdleBarTest {
 
     /**
      * Checks that the given string matches the expected content of an animation frame
-     *
-     * @param output         The animation frame
-     * @param frameIndex     The index of the frame
+     * @param output The animation frame
+     * @param frameIndex The index of the frame
      * @param numberOfSpaces The number of spaces within the bar
      */
     private void checkIdleBarOutput(String output, int frameIndex, int numberOfSpaces) {
@@ -55,9 +55,7 @@ class IdleBarTest {
             offset = numberOfSpaces - offset;
         }
 
-        String expectedOutput = TEST_BAR_TEXT + ' ' + '<' +
-                " ".repeat(offset) + "<+>" + " ".repeat(numberOfSpaces - offset) +
-                '>';
+        String expectedOutput = TEST_BAR_TEXT + ' ' + '<' + " ".repeat(offset) + "<+>" + " ".repeat(numberOfSpaces - offset) + '>';
 
         int endOfPredictableOutput = output.lastIndexOf(' ');
         String predictableOutput = output.substring(0, endOfPredictableOutput);
