@@ -18,8 +18,6 @@ public class IdleBar implements ProgressBar {
     private final String text;
     private int length;
 
-    String emptyLine;
-
     private int currentPos;
     private int currentDirection;
 
@@ -33,7 +31,7 @@ public class IdleBar implements ProgressBar {
         this.text = text;
         try {
             Terminal terminal = TerminalBuilder.terminal();
-            this.length = terminal.getWidth() / 2;
+            this.length = Math.min(terminal.getWidth() / 2, terminal.getWidth() - 50);
             terminal.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -41,12 +39,6 @@ public class IdleBar implements ProgressBar {
         if (this.length < 10) {
             this.length = 10;
         }
-
-        StringBuilder empty = new StringBuilder();
-        empty.append('\r');
-        empty.append(" ".repeat(Math.max(0, length + 4 + text.length() + 10)));
-        empty.append('\r');
-        this.emptyLine = empty.toString();
     }
 
     public void start() {
@@ -73,7 +65,7 @@ public class IdleBar implements ProgressBar {
                 currentDirection *= -1;
             }
             try {
-                Thread.sleep(100);
+                Thread.sleep(200);
             } catch (InterruptedException ignore) {
                 // ignore wakeup
             }
@@ -106,7 +98,7 @@ public class IdleBar implements ProgressBar {
     public static void main(String[] args) throws InterruptedException {
         IdleBar bar = new IdleBar("Printing progress");
         bar.start();
-        Thread.sleep(10000);
+        Thread.sleep(20000);
         bar.dispose();
     }
 }
