@@ -75,11 +75,11 @@
             </template>
           </ComparisonsTable>
         </template>
-        <template #Similar-Comparisons>
+        <template #Related-Comparisons>
           <ComparisonsTable
-            :topComparisons="closeComparisons"
+            :topComparisons="relatedComparisons"
             class="max-h-0 min-h-full flex-1 overflow-hidden"
-            header="Comparisons close to the Cluster:"
+            header="Comparisons related to the Cluster:"
           />
         </template>
       </TabbedContainer>
@@ -131,7 +131,7 @@ const comparisonTableOptions = [
     tooltip: 'Comparisons between the cluster members.'
   },
   {
-    displayValue: 'Similar Comparisons',
+    displayValue: 'Related Comparisons',
     tooltip: 'Comparisons between the cluster members\nand other submissions.'
   }
 ]
@@ -153,7 +153,7 @@ comparisons.value
     c.id = counter
   })
 
-const closeComparisons = computed(() =>
+const relatedComparisons = computed(() =>
   props.overview.topComparisons.filter(
     (c) =>
       (props.cluster.members.includes(c.firstSubmissionId) &&
@@ -163,7 +163,7 @@ const closeComparisons = computed(() =>
   )
 )
 counter = 0
-closeComparisons.value
+relatedComparisons.value
   .sort((a, b) => b.similarities[usedMetric] - a.similarities[usedMetric])
   .forEach((c) => {
     c.sortingPlace = counter++
