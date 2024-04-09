@@ -131,6 +131,7 @@ const textParts = computeTextParts()
 function getNextLinePartTillColumn(endCol: number) {
   let part = ''
   while (colIndex.value <= endCol && lineIndex.value < props.line.length) {
+    // spans from highlighting do not count as characters in the code
     if (props.line[lineIndex.value] == '<') {
       while (props.line[lineIndex.value] != '>') {
         part += props.line[lineIndex.value]
@@ -139,9 +140,18 @@ function getNextLinePartTillColumn(endCol: number) {
       part += props.line[lineIndex.value]
       lineIndex.value++
     } else if (props.line[lineIndex.value] == '\t') {
+      // display tabs properly
       part += '    '
       lineIndex.value++
       colIndex.value += 8
+    } else if (props.line[lineIndex.value] == '&') {
+      // html escape characters for e.g. <,>,&
+      while (props.line[lineIndex.value] != ';') {
+        part += props.line[lineIndex.value]
+        lineIndex.value++
+      }
+      lineIndex.value++
+      colIndex.value++
     } else {
       part += props.line[lineIndex.value]
       lineIndex.value++
