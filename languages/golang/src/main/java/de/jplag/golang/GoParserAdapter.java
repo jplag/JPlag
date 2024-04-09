@@ -1,13 +1,14 @@
 package de.jplag.golang;
 
-import de.jplag.antlr.AbstractAntlrListener;
-import de.jplag.antlr.AbstractAntlrParserAdapter;
-import de.jplag.golang.grammar.GoLexer;
-import de.jplag.golang.grammar.GoParser;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.ParserRuleContext;
+
+import de.jplag.antlr.AbstractAntlrListener;
+import de.jplag.antlr.AbstractAntlrParserAdapter;
+import de.jplag.golang.grammar.GoLexer;
+import de.jplag.golang.grammar.GoParser;
 
 public class GoParserAdapter extends AbstractAntlrParserAdapter<GoParser> {
     @Override

@@ -1,8 +1,8 @@
 package de.jplag.antlr;
 
-import de.jplag.semantics.VariableRegistry;
-
 import java.util.function.Function;
+
+import de.jplag.semantics.VariableRegistry;
 
 /**
  * Holds the data passed to the (quasi-static) listeners.

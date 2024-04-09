@@ -32,7 +32,7 @@ public class DelegateVisitor<T, V> {
     public boolean isPresent(T entity) {
         try {
             return this.mapper.apply(entity) != null;
-        } catch (Exception e) { //If something goes wrong during mapping, the delegate is not present
+        } catch (Exception e) { // If something goes wrong during mapping, the delegate is not present
             return false;
         }
     }

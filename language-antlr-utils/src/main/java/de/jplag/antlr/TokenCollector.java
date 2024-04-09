@@ -40,7 +40,8 @@ public class TokenCollector {
     }
 
     <T> void addToken(TokenType jplagType, Function<T, CodeSemantics> semanticsSupplier, T entity,
-                      Function<T, org.antlr.v4.runtime.Token> extractStartToken, Function<T, org.antlr.v4.runtime.Token> extractEndToken, VariableRegistry variableRegistry) {
+            Function<T, org.antlr.v4.runtime.Token> extractStartToken, Function<T, org.antlr.v4.runtime.Token> extractEndToken,
+            VariableRegistry variableRegistry) {
         if (jplagType == null) {
             return;
         }

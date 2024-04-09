@@ -18,7 +18,6 @@ import de.jplag.semantics.VariableRegistry;
 
 /**
  * The abstract visitor.
- *
  * @param <T> The type of the visited entity.
  */
 public abstract class AbstractVisitor<T> {
@@ -39,7 +38,6 @@ public abstract class AbstractVisitor<T> {
 
     /**
      * Add an action the visitor runs upon entering the entity.
-     *
      * @param handler The action, takes the entity and the variable registry as parameter.
      * @return Self
      */
@@ -50,7 +48,6 @@ public abstract class AbstractVisitor<T> {
 
     /**
      * Add an action the visitor runs upon entering the entity.
-     *
      * @param handler The action, takes the entity as parameter.
      * @return Self
      */
@@ -61,7 +58,6 @@ public abstract class AbstractVisitor<T> {
 
     /**
      * Tell the visitor that it should generate a token upon entering the entity. Should only be invoked once per visitor.
-     *
      * @param tokenType The type of the token.
      * @return Self
      */
@@ -73,7 +69,6 @@ public abstract class AbstractVisitor<T> {
     /**
      * Tell the visitor that it should generate a token upon entering the entity. Should only be invoked once per visitor.
      * Alias for {@link #mapEnter(TokenType)}.
-     *
      * @param tokenType The type of the token.
      * @return Self
      */
@@ -84,7 +79,6 @@ public abstract class AbstractVisitor<T> {
 
     /**
      * Tell the visitor that if it generates a token upon entering the entity, it should have semantics.
-     *
      * @param semanticsSupplier A function that takes the entity and returns the semantics.
      * @return Self
      */
@@ -95,7 +89,6 @@ public abstract class AbstractVisitor<T> {
 
     /**
      * Tell the visitor that if it generates a token upon entering the entity, it should have semantics.
-     *
      * @param semanticsSupplier A function that returns the semantics.
      * @return Self
      */
@@ -106,7 +99,6 @@ public abstract class AbstractVisitor<T> {
 
     /**
      * Tell the visitor that if it generates a token upon entering the entity, it should have semantics of type control.
-     *
      * @return Self
      */
     public AbstractVisitor<T> withControlSemantics() {
@@ -141,7 +133,8 @@ public abstract class AbstractVisitor<T> {
         addToken(data, tokenType, semantics, extractToken, extractToken);
     }
 
-    void addToken(HandlerData<T> data, TokenType tokenType, Function<T, CodeSemantics> semantics, Function<T, Token> extractStartToken, Function<T, Token> extractEndToken) {
+    void addToken(HandlerData<T> data, TokenType tokenType, Function<T, CodeSemantics> semantics, Function<T, Token> extractStartToken,
+            Function<T, Token> extractEndToken) {
         data.collector().addToken(tokenType, semantics, data.entity(), extractStartToken, extractEndToken, data.variableRegistry());
     }
 

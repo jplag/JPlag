@@ -1,13 +1,129 @@
 package de.jplag.golang;
 
-import de.jplag.antlr.AbstractAntlrListener;
-import de.jplag.antlr.ContextVisitor;
-import de.jplag.golang.grammar.GoParser.*;
-import org.antlr.v4.runtime.ParserRuleContext;
+import static de.jplag.golang.GoTokenType.ARGUMENT;
+import static de.jplag.golang.GoTokenType.ARRAY_BODY_BEGIN;
+import static de.jplag.golang.GoTokenType.ARRAY_BODY_END;
+import static de.jplag.golang.GoTokenType.ARRAY_CONSTRUCTOR;
+import static de.jplag.golang.GoTokenType.ARRAY_ELEMENT;
+import static de.jplag.golang.GoTokenType.ASSIGNMENT;
+import static de.jplag.golang.GoTokenType.BREAK;
+import static de.jplag.golang.GoTokenType.CASE_BLOCK_BEGIN;
+import static de.jplag.golang.GoTokenType.CASE_BLOCK_END;
+import static de.jplag.golang.GoTokenType.CONTINUE;
+import static de.jplag.golang.GoTokenType.DEFER;
+import static de.jplag.golang.GoTokenType.ELSE_BLOCK_BEGIN;
+import static de.jplag.golang.GoTokenType.ELSE_BLOCK_END;
+import static de.jplag.golang.GoTokenType.FALLTHROUGH;
+import static de.jplag.golang.GoTokenType.FOR_BLOCK_BEGIN;
+import static de.jplag.golang.GoTokenType.FOR_BLOCK_END;
+import static de.jplag.golang.GoTokenType.FOR_STATEMENT;
+import static de.jplag.golang.GoTokenType.FUNCTION_BODY_BEGIN;
+import static de.jplag.golang.GoTokenType.FUNCTION_BODY_END;
+import static de.jplag.golang.GoTokenType.FUNCTION_DECLARATION;
+import static de.jplag.golang.GoTokenType.FUNCTION_LITERAL;
+import static de.jplag.golang.GoTokenType.FUNCTION_PARAMETER;
+import static de.jplag.golang.GoTokenType.GO;
+import static de.jplag.golang.GoTokenType.GOTO;
+import static de.jplag.golang.GoTokenType.IF_BLOCK_BEGIN;
+import static de.jplag.golang.GoTokenType.IF_BLOCK_END;
+import static de.jplag.golang.GoTokenType.IF_STATEMENT;
+import static de.jplag.golang.GoTokenType.IMPORT_CLAUSE;
+import static de.jplag.golang.GoTokenType.IMPORT_CLAUSE_BEGIN;
+import static de.jplag.golang.GoTokenType.IMPORT_CLAUSE_END;
+import static de.jplag.golang.GoTokenType.IMPORT_DECLARATION;
+import static de.jplag.golang.GoTokenType.INTERFACE_BLOCK_BEGIN;
+import static de.jplag.golang.GoTokenType.INTERFACE_BLOCK_END;
+import static de.jplag.golang.GoTokenType.INTERFACE_DECLARATION;
+import static de.jplag.golang.GoTokenType.INTERFACE_METHOD;
+import static de.jplag.golang.GoTokenType.INVOCATION;
+import static de.jplag.golang.GoTokenType.MAP_BODY_BEGIN;
+import static de.jplag.golang.GoTokenType.MAP_BODY_END;
+import static de.jplag.golang.GoTokenType.MAP_CONSTRUCTOR;
+import static de.jplag.golang.GoTokenType.MAP_ELEMENT;
+import static de.jplag.golang.GoTokenType.MEMBER_DECLARATION;
+import static de.jplag.golang.GoTokenType.NAMED_TYPE_BODY_BEGIN;
+import static de.jplag.golang.GoTokenType.NAMED_TYPE_BODY_END;
+import static de.jplag.golang.GoTokenType.NAMED_TYPE_CONSTRUCTOR;
+import static de.jplag.golang.GoTokenType.NAMED_TYPE_ELEMENT;
+import static de.jplag.golang.GoTokenType.PACKAGE;
+import static de.jplag.golang.GoTokenType.RECEIVER;
+import static de.jplag.golang.GoTokenType.RECEIVE_STATEMENT;
+import static de.jplag.golang.GoTokenType.RETURN;
+import static de.jplag.golang.GoTokenType.SELECT_BLOCK_BEGIN;
+import static de.jplag.golang.GoTokenType.SELECT_BLOCK_END;
+import static de.jplag.golang.GoTokenType.SELECT_STATEMENT;
+import static de.jplag.golang.GoTokenType.SEND_STATEMENT;
+import static de.jplag.golang.GoTokenType.SLICE_BODY_BEGIN;
+import static de.jplag.golang.GoTokenType.SLICE_BODY_END;
+import static de.jplag.golang.GoTokenType.SLICE_CONSTRUCTOR;
+import static de.jplag.golang.GoTokenType.SLICE_ELEMENT;
+import static de.jplag.golang.GoTokenType.STATEMENT_BLOCK_BEGIN;
+import static de.jplag.golang.GoTokenType.STATEMENT_BLOCK_END;
+import static de.jplag.golang.GoTokenType.STRUCT_BODY_BEGIN;
+import static de.jplag.golang.GoTokenType.STRUCT_BODY_END;
+import static de.jplag.golang.GoTokenType.STRUCT_DECLARATION;
+import static de.jplag.golang.GoTokenType.SWITCH_BLOCK_BEGIN;
+import static de.jplag.golang.GoTokenType.SWITCH_BLOCK_END;
+import static de.jplag.golang.GoTokenType.SWITCH_CASE;
+import static de.jplag.golang.GoTokenType.SWITCH_STATEMENT;
+import static de.jplag.golang.GoTokenType.TYPE_ASSERTION;
+import static de.jplag.golang.GoTokenType.TYPE_CONSTRAINT;
+import static de.jplag.golang.GoTokenType.VARIABLE_DECLARATION;
 
 import java.util.function.Function;
 
-import static de.jplag.golang.GoTokenType.*;
+import de.jplag.golang.grammar.GoParser.ArgumentsContext;
+import de.jplag.golang.grammar.GoParser.ArrayTypeContext;
+import de.jplag.golang.grammar.GoParser.AssignmentContext;
+import de.jplag.golang.grammar.GoParser.BlockContext;
+import de.jplag.golang.grammar.GoParser.BreakStmtContext;
+import de.jplag.golang.grammar.GoParser.CommCaseContext;
+import de.jplag.golang.grammar.GoParser.CommClauseContext;
+import de.jplag.golang.grammar.GoParser.CompositeLitContext;
+import de.jplag.golang.grammar.GoParser.ConstSpecContext;
+import de.jplag.golang.grammar.GoParser.ContinueStmtContext;
+import de.jplag.golang.grammar.GoParser.DeferStmtContext;
+import de.jplag.golang.grammar.GoParser.ExprCaseClauseContext;
+import de.jplag.golang.grammar.GoParser.ExprSwitchStmtContext;
+import de.jplag.golang.grammar.GoParser.ExpressionContext;
+import de.jplag.golang.grammar.GoParser.FallthroughStmtContext;
+import de.jplag.golang.grammar.GoParser.FieldDeclContext;
+import de.jplag.golang.grammar.GoParser.ForStmtContext;
+import de.jplag.golang.grammar.GoParser.FunctionDeclContext;
+import de.jplag.golang.grammar.GoParser.FunctionLitContext;
+import de.jplag.golang.grammar.GoParser.GoStmtContext;
+import de.jplag.golang.grammar.GoParser.GotoStmtContext;
+import de.jplag.golang.grammar.GoParser.IfStmtContext;
+import de.jplag.golang.grammar.GoParser.ImportDeclContext;
+import de.jplag.golang.grammar.GoParser.ImportSpecContext;
+import de.jplag.golang.grammar.GoParser.InterfaceTypeContext;
+import de.jplag.golang.grammar.GoParser.KeyedElementContext;
+import de.jplag.golang.grammar.GoParser.LiteralTypeContext;
+import de.jplag.golang.grammar.GoParser.MapTypeContext;
+import de.jplag.golang.grammar.GoParser.MethodDeclContext;
+import de.jplag.golang.grammar.GoParser.MethodSpecContext;
+import de.jplag.golang.grammar.GoParser.PackageClauseContext;
+import de.jplag.golang.grammar.GoParser.ParameterDeclContext;
+import de.jplag.golang.grammar.GoParser.ReceiverContext;
+import de.jplag.golang.grammar.GoParser.RecvStmtContext;
+import de.jplag.golang.grammar.GoParser.ReturnStmtContext;
+import de.jplag.golang.grammar.GoParser.SelectStmtContext;
+import de.jplag.golang.grammar.GoParser.SendStmtContext;
+import de.jplag.golang.grammar.GoParser.ShortVarDeclContext;
+import de.jplag.golang.grammar.GoParser.SliceTypeContext;
+import de.jplag.golang.grammar.GoParser.StatementContext;
+import de.jplag.golang.grammar.GoParser.StatementListContext;
+import de.jplag.golang.grammar.GoParser.StructTypeContext;
+import de.jplag.golang.grammar.GoParser.SwitchStmtContext;
+import de.jplag.golang.grammar.GoParser.TypeAssertionContext;
+import de.jplag.golang.grammar.GoParser.TypeCaseClauseContext;
+import de.jplag.golang.grammar.GoParser.TypeNameContext;
+import de.jplag.golang.grammar.GoParser.TypeSwitchStmtContext;
+import de.jplag.golang.grammar.GoParser.VarDeclContext;
+import org.antlr.v4.runtime.ParserRuleContext;
+
+import de.jplag.antlr.AbstractAntlrListener;
+import de.jplag.antlr.ContextVisitor;
 
 public class GoListener extends AbstractAntlrListener {
     public GoListener() {
@@ -64,9 +180,11 @@ public class GoListener extends AbstractAntlrListener {
 
     private void controlFlowRules() {
         visit(IfStmtContext.class).delegateTerminal(IfStmtContext::IF).map(IF_STATEMENT);
-        visit(BlockContext.class, context -> context.parent instanceof IfStmtContext && context.equals(((IfStmtContext)context.parent).block(0))).map(IF_BLOCK_BEGIN, IF_BLOCK_END);
-        //TODO no else token?
-        visit(BlockContext.class, context -> context.parent instanceof IfStmtContext && context.equals(((IfStmtContext)context.parent).block(1))).map(ELSE_BLOCK_BEGIN, ELSE_BLOCK_END);
+        visit(BlockContext.class, context -> context.parent instanceof IfStmtContext && context.equals(((IfStmtContext) context.parent).block(0)))
+                .map(IF_BLOCK_BEGIN, IF_BLOCK_END);
+        // TODO no else token?
+        visit(BlockContext.class, context -> context.parent instanceof IfStmtContext && context.equals(((IfStmtContext) context.parent).block(1)))
+                .map(ELSE_BLOCK_BEGIN, ELSE_BLOCK_END);
 
         visit(ForStmtContext.class).map(FOR_STATEMENT);
         visit(ForStmtContext.class).delegateTerminal(context -> context.block().L_CURLY()).map(FOR_BLOCK_BEGIN);
@@ -150,18 +268,19 @@ public class GoListener extends AbstractAntlrListener {
     }
 
     private <T extends ParserRuleContext> ContextVisitor<CompositeLitContext> visitCompositeLitDelegate(Class<T> type) {
-        return visit(CompositeLitContext.class, context -> context.literalType().children.stream().anyMatch(it -> type.isAssignableFrom(it.getClass())));
+        return visit(CompositeLitContext.class,
+                context -> context.literalType().children.stream().anyMatch(it -> type.isAssignableFrom(it.getClass())));
     }
 
     private ContextVisitor<KeyedElementContext> visitKeyedElement(Function<LiteralTypeContext, ?> typeGetter) {
         return visit(KeyedElementContext.class, context -> {
             CompositeLitContext parent = getAncestor(context, CompositeLitContext.class);
-            if(parent == null) {
+            if (parent == null) {
                 return false;
             }
 
             LiteralTypeContext typeContext = parent.literalType();
-            if(typeContext == null) {
+            if (typeContext == null) {
                 return false;
             }
 
