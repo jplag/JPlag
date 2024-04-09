@@ -7,7 +7,7 @@ public enum ProgressBarType {
     LOADING("Loading Submissions  ", false),
     PARSING("Parsing Submissions  ", false),
     COMPARING("Comparing Submissions", false),
-    TokenStringNormalizer("Normalizing token Sequence ", true);
+    TOKEN_STRING_NORMALIZER("Normalizing token Sequence ", true);
 
     private final String defaultText;
     private final boolean isIdleBar;

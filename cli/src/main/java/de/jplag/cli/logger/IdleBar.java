@@ -1,6 +1,7 @@
 package de.jplag.cli.logger;
 
 import java.io.IOException;
+import java.io.PrintStream;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.jline.terminal.Terminal;
@@ -12,6 +13,8 @@ import de.jplag.logging.ProgressBar;
  * Prints an idle progress bar, that does not count upwards.
  */
 public class IdleBar implements ProgressBar {
+    private final PrintStream output;
+
     private final Thread runner;
 
     private long startTime;
@@ -24,6 +27,7 @@ public class IdleBar implements ProgressBar {
     private boolean running = false;
 
     public IdleBar(String text) {
+        this.output = System.out;
         this.runner = new Thread(this::run);
         this.length = 50;
         this.currentDirection = -1;
@@ -33,8 +37,8 @@ public class IdleBar implements ProgressBar {
             Terminal terminal = TerminalBuilder.terminal();
             this.length = Math.min(terminal.getWidth() / 2, terminal.getWidth() - 50);
             terminal.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException ignore) {
+            // ignore exceptions here. If we cannot access the terminal, we guess a width
         }
         if (this.length < 10) {
             this.length = 10;
@@ -53,21 +57,22 @@ public class IdleBar implements ProgressBar {
         try {
             this.runner.join();
         } catch (InterruptedException ignored) {
+            Thread.currentThread().interrupt();
         }
-        System.out.println();
+        this.output.println();
     }
 
     private void run() {
         while (running) {
-            System.out.print('\r');
-            System.out.print(printLine());
+            this.output.print('\r');
+            this.output.print(printLine());
             if (currentPos == 0 || currentPos == length - 1) {
                 currentDirection *= -1;
             }
             try {
                 Thread.sleep(200);
             } catch (InterruptedException ignore) {
-                // ignore wakeup
+                Thread.currentThread().interrupt();
             }
             currentPos += currentDirection;
         }
@@ -93,12 +98,6 @@ public class IdleBar implements ProgressBar {
 
     @Override
     public void step(int number) {
-    }
-
-    public static void main(String[] args) throws InterruptedException {
-        IdleBar bar = new IdleBar("Printing progress");
-        bar.start();
-        Thread.sleep(20000);
-        bar.dispose();
+        // does nothing, because the idle bar has no steps
     }
 }
