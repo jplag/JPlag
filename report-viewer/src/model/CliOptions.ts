@@ -1,8 +1,8 @@
-import type { ParserLanguage } from './Language'
+import type { Language } from './Language'
 import type { MetricType } from './MetricType'
 
 export interface CliOptions {
-  language: ParserLanguage
+  language: Language
   minTokenMatch: number
   submissionDirectories: string[]
   oldDirectories: string[]

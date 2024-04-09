@@ -64,20 +64,19 @@ const searchStringValue = computed({
     emit('update:searchString', value)
     // Update the anonymous set
 
-    const searches = value
+    const searchParts = value
       .trimEnd()
       .toLowerCase()
       .split(/ +/g)
       .map((s) => s.trim().replace(/,/g, ''))
-    if (searches.length == 0) {
+    if (searchParts.length == 0) {
       return
     }
 
-    for (const search of searches) {
-      for (const submissionId of store().getSubmissionIds) {
-        if (submissionId.toLowerCase() == search) {
-          store().state.anonymous.delete(submissionId)
-        }
+    for (const submissionId of store().getSubmissionIds) {
+      const submissionParts = submissionId.toLowerCase().split(/ +/g)
+      if (submissionParts.every((part) => searchParts.includes(part))) {
+        store().state.anonymous.delete(submissionId)
       }
     }
   }

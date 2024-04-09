@@ -55,7 +55,7 @@ export class BaseFactory {
     if (request.status == 200) {
       const blob = await request.blob()
       // Check that file is not the index.html
-      if (blob.type == 'text/html') {
+      if (blob.type.includes('text/html')) {
         throw new Error(`Could not find ${path} in local files.`)
       }
       return blob
