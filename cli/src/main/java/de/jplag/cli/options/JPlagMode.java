@@ -1,4 +1,4 @@
-package de.jplag.cli;
+package de.jplag.cli.options;
 
 /**
  * The mode JPlag runs in. This influences which steps JPlag will execute.
