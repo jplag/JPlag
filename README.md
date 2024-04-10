@@ -94,7 +94,7 @@ Parameter descriptions:
                         The maximum number of comparisons that will be shown in the generated report, if set to -1 all comparisons will be shown (default: 500)
       -new, --new=<newDirectories>[,<newDirectories>...]
                         Root-directories with submissions to check for plagiarism (same as root).
-      --normalize       Activate the normalization of tokens. Supported for languages: Java, C++.
+      --normalize       Activate the normalization of tokens. Supported for languages: Java, Java-CPG, C++.
       -old, --old=<oldDirectories>[,<oldDirectories>...]
                         Root-directories with prior submissions to compare against.
   -r, --result-file=<resultFile>
