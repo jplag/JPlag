@@ -3,19 +3,20 @@
     <FontAwesomeIcon
       :icon="['fas', 'magnifying-glass']"
       class="text-gray-500"
-      @click="emit('searchClicked', parseFloat(inputText))"
+      @click="handleSearchClick"
     />
     <input
       type="number"
       class="flex-auto border-0 bg-transparent outline-none placeholder:text-gray-500"
       :placeholder="placeholder"
       v-model="inputText"
+      @input="handleInputChange"
     />
   </Interactable>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref } from 'vue'
 import Interactable from './InteractableComponent.vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -23,31 +24,18 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 
 library.add(faMagnifyingGlass)
 
-const props = defineProps({
-  placeholder: {
-    type: String,
-    default: 'Enter similarity threshold',
-    required: false
-  },
-  modelValue: {
-    type: Number,
-    default: 0,
-    required: false
-  }
-})
+const emit = defineEmits(['update:similarityThreshold'])
 
-const emit = defineEmits<{
-  (e: 'inputChanged', v: number): void
-  (e: 'searchClicked', v: number): void
-  (e: 'update:modelValue', v: number): void
-}>()
+const inputText = ref('')
 
-const inputText = computed({
-  get: () => props.modelValue.toString(),
-  set: (value) => {
-    const numValue = parseFloat(value)
-    emit('update:modelValue', numValue)
-    emit('inputChanged', numValue)
-  }
-})
+function handleInputChange() {
+  const numValue = parseFloat(inputText.value) || 0
+  emit('update:similarityThreshold', numValue)
+}
+
+// Define the handleSearchClick function to emit the current value
+function handleSearchClick() {
+  const numValue = parseFloat(inputText.value) || 0
+  emit('update:similarityThreshold', numValue)
+}
 </script>

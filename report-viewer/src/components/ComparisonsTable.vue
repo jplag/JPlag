@@ -1,10 +1,9 @@
-<!--
-  Table which display all of the comparisons with their participating ids and similarity percentage for the selected metric.
--->
 <template>
   <div class="flex flex-col">
     <ComparisonTableFilter
       v-model:search-string="searchString"
+      :threshold="similarityThreshold"
+      @update:threshold="similarityThreshold = $event"
       :enable-cluster-sorting="clusters != undefined"
       :header="header"
     />
@@ -196,6 +195,36 @@ const props = defineProps({
   }
 })
 
+const similarityThreshold = ref(0)
+
+function getFilteredComparisons(comparisons: ComparisonListElement[]) {
+  let filteredBySearch = filterBySearch(comparisons)
+
+  return filteredBySearch.filter((c) => {
+    const maxSimilarity = Math.max(
+      c.similarities[MetricType.AVERAGE],
+      c.similarities[MetricType.MAXIMUM]
+    )
+    console.log(maxSimilarity)
+    console.log(similarityThreshold.value)
+    return maxSimilarity >= similarityThreshold.value / 100
+  })
+}
+function filterBySearch(comparisons: ComparisonListElement[]) {
+  const searches = searchString.value
+    .trimEnd()
+    .toLowerCase()
+    .split(/ +/g)
+    .map((s) => s.trim().replace(/,/g, ''))
+  return searches.length == 0
+    ? comparisons
+    : comparisons.filter((c) => {
+        const id1 = c.firstSubmissionId.toLowerCase()
+        const id2 = c.secondSubmissionId.toLowerCase()
+        return searches.some((s) => id1.includes(s) || id2.includes(s))
+      })
+}
+
 const displayedComparisons = computed(() => {
   const comparisons = getFilteredComparisons(getSortedComparisons(Array.from(props.topComparisons)))
   let index = 1
@@ -206,30 +235,6 @@ const displayedComparisons = computed(() => {
 })
 
 const searchString = ref('')
-
-/**
- * This function gets called when the search bar for the comparison table has been updated.
- * It updates the displayed comparisons to only show the ones that  have part of any search result in their id. The search is not case sensitive. The parts can be separated by commas or spaces.
- * It also updates the anonymous set to unhide a submission if its name was typed in the search bar at any point in time.
- *
- * @param newVal The new value of the search bar
- */
-function getFilteredComparisons(comparisons: ComparisonListElement[]) {
-  const searches = searchString.value
-    .trimEnd()
-    .toLowerCase()
-    .split(/ +/g)
-    .map((s) => s.trim().replace(/,/g, ''))
-  if (searches.length == 0) {
-    return comparisons
-  }
-
-  return comparisons.filter((c) => {
-    const id1 = c.firstSubmissionId.toLowerCase()
-    const id2 = c.secondSubmissionId.toLowerCase()
-    return searches.some((s) => id1.includes(s) || id2.includes(s))
-  })
-}
 
 function getSortedComparisons(comparisons: ComparisonListElement[]) {
   comparisons.sort(

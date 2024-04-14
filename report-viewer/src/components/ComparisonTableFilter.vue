@@ -15,13 +15,16 @@
       </ToolTipComponent>
       <ToolTipComponent direction="bottom" class="min-w-[50%] flex-grow">
         <template #default>
-          <SimThresBarComponent placeholder="Filter/Unhide Comparisons" />
+          <SimThresBarComponent
+            placeholder="Enter threshold filter percentage"
+            @update:similarityThreshold="handleThresholdChange"
+          />
         </template>
         <template #tooltip>
           <p class="whitespace-pre text-sm">
-            Type in the name of a submission to only show comparisons that contain this submission.
+            Enter an integer between 0-100 and all submissions with that similarity percentage or
+            lower will be filtered out.
           </p>
-          <p class="whitespace-pre text-sm">Fully written out names get unhidden.</p>
         </template>
       </ToolTipComponent>
 
@@ -63,12 +66,11 @@ const props = defineProps({
   header: {
     type: String,
     default: 'Top Comparisons:'
-  }
+  },
+  threshold: Number
 })
 
-const emit = defineEmits<{
-  (e: 'update:searchString', v: string): void
-}>()
+const emit = defineEmits(['update:searchString', 'update:threshold'])
 
 const searchStringValue = computed({
   get: () => props.searchString,
@@ -131,5 +133,9 @@ function changeAnonymousForAll() {
   } else {
     store().state.anonymous = new Set(store().getSubmissionIds)
   }
+}
+
+function handleThresholdChange(value: Number) {
+  emit('update:threshold', value)
 }
 </script>
