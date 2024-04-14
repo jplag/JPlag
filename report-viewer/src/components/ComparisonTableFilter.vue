@@ -13,6 +13,17 @@
           <p class="whitespace-pre text-sm">Fully written out names get unhidden.</p>
         </template>
       </ToolTipComponent>
+      <ToolTipComponent direction="bottom" class="min-w-[50%] flex-grow">
+        <template #default>
+          <SimThresBarComponent placeholder="Filter/Unhide Comparisons" />
+        </template>
+        <template #tooltip>
+          <p class="whitespace-pre text-sm">
+            Type in the name of a submission to only show comparisons that contain this submission.
+          </p>
+          <p class="whitespace-pre text-sm">Fully written out names get unhidden.</p>
+        </template>
+      </ToolTipComponent>
 
       <ButtonComponent class="w-24" @click="changeAnonymousForAll()">
         {{
@@ -32,6 +43,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import SearchBarComponent from './SearchBarComponent.vue'
+import SimThresBarComponent from './SimThresBarComponent.vue'
 import ToolTipComponent from './ToolTipComponent.vue'
 import ButtonComponent from './ButtonComponent.vue'
 import OptionsSelector from './optionsSelectors/OptionsSelectorComponent.vue'
