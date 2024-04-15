@@ -49,7 +49,15 @@ All supported languages and their supported versions are listed below.
 | Text (naive)                                           |                                                                                      - | text              |                               legacy                                |  CoreNLP  |
 
 ## Download and Installation
-You need Java SE 21 to run or build JPlag.
+You need Java SE 21 to run or build JPlag. To install Java SE 21 on your WSL, run:
+```
+sudo apt update
+sudo apt install openjdk-21-jdk
+```
+Afterwards, check your Java version by running:
+```
+java --version
+```
 
 ### Downloading a release
 * Download a [released version](https://github.com/jplag/jplag/releases).
@@ -67,21 +75,23 @@ JPlag is released on [Maven Central](https://search.maven.org/search?q=de.jplag)
 
 ### Building from sources 
 1. Download or clone the code from this repository.
-2. Run `mvn clean package` from the root of the repository to compile and build all submodules.
-   Run `mvn clean package assembly:single` instead if you need the full jar which includes all dependencies.
-   Run `mvn -P with-report-viewer clean package assembly:single` to build the full jar with the report viewer. In this case, you'll need [Node.js](https://nodejs.org/en/download) installed.
-3. You will find the generated JARs in the subdirectory `cli/target`.
+2. There are 3 build options:
+   - Run `mvn clean package` from the root of the repository to compile and build all submodules.
+   - Run `mvn clean package assembly:single` instead if you need the full jar which includes all dependencies.
+   - Run `mvn -P with-report-viewer clean package assembly:single` to build the full jar with the report viewer. In this case, you'll need [Node.js](https://nodejs.org/en/download) installed.
+4. You will find the generated JARs in the subdirectory `cli/target`.
 
 ## Usage
 JPlag can either be used via the CLI or directly via its Java API. For more information, see the [usage information in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag). If you are using the CLI, you can display your results via [jplag.github.io](https://jplag.github.io/JPlag/). No data will leave your computer!
 
 ### CLI
 *Note that the [legacy CLI](https://github.com/jplag/jplag/blob/legacy/README.md) is varying slightly.*
-The language can either be set with the -l parameter or as a subcommand (`jplag [jplag options] <language name> [language options]`). A subcommand takes priority over the -l option.
-When using the subcommand, language-specific arguments can be set. A list of language-specific options can be obtained by requesting the help page of a subcommand (e.g. `jplag java -h`).
+- The default language is Java but it can either be changed with the `-l` parameter or as a subcommand (`jplag [jplag options] <language name> [language options]`). A subcommand takes priority over the -l option.
+- When using the subcommand, language-specific arguments can be set. A list of language-specific options can be obtained by requesting the help page of a subcommand (e.g. `jplag java -h`).
 
+
+### Parameter descriptions:
 ```
-Parameter descriptions: 
       [root-dirs[,root-dirs...]...]
                         Root-directory with submissions to check for plagiarism.
       -bc, --bc, --base-code=<baseCode>
@@ -101,9 +111,11 @@ Parameter descriptions:
                         Name of the file in which the comparison results will be stored (default: results). Missing .zip endings will be automatically added.
   -t, --min-tokens=<minTokenMatch>
                         Tunes the comparison sensitivity by adjusting the minimum token required to be counted as a matching section. A smaller value increases the sensitivity but might lead to more
-                          false-positives.
+			false-positives.
+```
 
-Advanced
+#### Advanced
+```
       --csv-export      Export pairwise similarity values as a CSV file.
   -d, --debug           Store on-parsable files in error folder.
   -m, --similarity-threshold=<similarityThreshold>
@@ -115,22 +127,28 @@ Advanced
                         Look in directories <root-dir>/*/<dir> for programs.
   -x, --exclusion-file=<exclusionFileName>
                         All files named in this file will be ignored in the comparison (line-separated list).
+```
 
-Clustering
+#### Clustering
+```
       --cluster-alg, --cluster-algorithm=<{AGGLOMERATIVE, SPECTRAL}>
                         Specifies the clustering algorithm (default: spectral).
       --cluster-metric=<{AVG, MIN, MAX, INTERSECTION}>
                         The similarity metric used for clustering (default: average similarity).
       --cluster-skip    Skips the cluster calculation.
+```
 
-Subsequence Match Merging
+#### Subsequence Match Merging
+```
       --gap-size=<maximumGapSize>
                         Maximal gap between neighboring matches to be merged (between 1 and minTokenMatch, default: 6).
       --match-merging   Enables merging of neighboring matches to counteract obfuscation attempts.
       --neighbor-length=<minimumNeighborLength>
                         Minimal length of neighboring matches to be merged (between 1 and minTokenMatch, default: 2).
+```
 
-Subcommands (supported languages):
+#### Subcommands (supported languages):
+```
   c
   cpp
   csharp
