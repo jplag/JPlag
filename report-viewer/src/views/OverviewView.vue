@@ -105,15 +105,21 @@
                     i == 0 ? 'linear' : 'logarithmic')
               "
             />
-            <ToolTipComponent direction="bottom" class="flex-grow-0 print:hidden">
+            <ToolTipComponent direction="bottom" class="mt-2 print:hidden">
               <template #default>
-                <Button @click="router.push({ name: 'xScale' })"> Linear </Button>
-                <Button @click="router.push({ name: 'xScale' })"> Logarithmic </Button>
+                <Label @click="router.push({ name: 'xScale' })"> Linear </Label>
               </template>
               <template #tooltip>
                 <p class="whitespace-pre text-sm">
                   The linear scale uses an equidistant interval to provide the graph data.
                 </p>
+              </template>
+            </ToolTipComponent>
+            <ToolTipComponent direction="right" class="felx-grow-0 print:hidden">
+              <template #default>
+                <Button @click="router.push({ name: 'xScale' })"> Logarithmic </Button>
+              </template>
+              <template #tooltip>
                 <p class="whitespace-pre text-sm">
                   The logarithmic scale uses an exponential interval to provide the graph data.
                 </p>
