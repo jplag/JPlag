@@ -107,7 +107,7 @@
             />
             <TextInformation label="linear" class="flex-grow-0">
               <template #default>
-                {{ DistributionDiagram.xScale.PropType == 'linear' }}
+                {{ DistributionDiagram.xScale.label == 'linear' }}
               </template>
               <template #tooltip>
                 <div class="whitespace-pre text-sm">
