@@ -83,9 +83,9 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
      * @param mapper The mapper function
      */
     public TerminalVisitor delegateTerminal(Function<T, TerminalNode> mapper) {
-        TerminalVisitor delegate = new TerminalVisitor((ignore) -> true);
-        this.delegate = new DelegateVisitor<>(delegate, parentData -> mapper.apply(parentData).getSymbol());
-        return delegate;
+        TerminalVisitor delegateVisitor = new TerminalVisitor(ignore -> true);
+        this.delegate = new DelegateVisitor<>(delegateVisitor, parentData -> mapper.apply(parentData).getSymbol());
+        return delegateVisitor;
     }
 
     /**
@@ -95,10 +95,10 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
      * @param mapper The mapper function
      */
     public TerminalVisitor delegateTerminalExit(Function<T, TerminalNode> mapper) {
-        TerminalVisitor delegate = new TerminalVisitor((ignore) -> true);
-        this.delegate = new DelegateVisitor<>(delegate, parentData -> mapper.apply(parentData).getSymbol());
+        TerminalVisitor delegateVisitor = new TerminalVisitor(ignore -> true);
+        this.delegate = new DelegateVisitor<>(delegateVisitor, parentData -> mapper.apply(parentData).getSymbol());
         this.delegate.mapOnExit();
-        return delegate;
+        return delegateVisitor;
     }
 
     /**
@@ -107,7 +107,7 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
      * @param mapper The mapper function
      */
     public <V extends ParserRuleContext> ContextVisitor<V> delegateContext(Function<T, V> mapper) {
-        ContextVisitor<V> visitor = new ContextVisitor<>((ignore) -> true);
+        ContextVisitor<V> visitor = new ContextVisitor<>(ignore -> true);
         this.delegate = new ContextDelegateVisitor<>(visitor, mapper);
         return visitor;
     }
