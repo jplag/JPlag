@@ -79,7 +79,7 @@ JPlag is released on [Maven Central](https://search.maven.org/search?q=de.jplag)
    - Run `mvn clean package` from the root of the repository to compile and build all submodules.
    - Run `mvn clean package assembly:single` instead if you need the full jar which includes all dependencies.
    - Run `mvn -P with-report-viewer clean package assembly:single` to build the full jar with the report viewer. In this case, you'll need [Node.js](https://nodejs.org/en/download) installed.
-4. You will find the generated JARs in the subdirectory `cli/target`.
+4. You will find the generated JARs in the subdirectory `./cli/target`.
 
 ## Usage
 JPlag can either be used via the CLI or directly via its Java API. For more information, see the [usage information in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag). If you are using the CLI, you can display your results via [jplag.github.io](https://jplag.github.io/JPlag/). No data will leave your computer!
