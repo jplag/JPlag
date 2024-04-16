@@ -97,7 +97,17 @@
             <OptionsSelector
               class="mt-2"
               title="Scale x-Axis:"
-              :labels="['Linear', 'Logarithmic']"
+              :labels="[
+                {
+                  displayValue: 'Linear',
+                  tooltip: 'Uses a linear scale with equidistant intervals for the x-axis.'
+                },
+                {
+                  displayValue: 'Logarithmic',
+                  tooltip:
+                    'Uses a logarithmic scale with exponential intervals for the x-axis to emphasize differences in smaller values.'
+                }
+              ]"
               :defaultSelected="store().uiState.distributionChartConfig.xScale == 'linear' ? 0 : 1"
               @selection-changed="
                 (i: number) =>

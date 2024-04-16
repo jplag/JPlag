@@ -105,7 +105,10 @@ const tableSortingOptions = computed(() => {
     }
   })
   if (props.enableClusterSorting) {
-    options.push('Cluster')
+    options.push({
+      displayValue: 'Cluster',
+      tooltip: 'Clustering of multiple files based on similarity percentages.'
+    })
   }
   return options
 })
