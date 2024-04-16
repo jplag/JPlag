@@ -105,13 +105,16 @@
                     i == 0 ? 'linear' : 'logarithmic')
               "
             />
-            <ToolTipComponent direction="bottom" class="flex-grow-0 print:hidden">
+            <TextInformation label="linear" class="flex-grow-0">
               <template #default>
-                <label for="linear"
-                  >The linear scale uses an equidistant interval to provide the graph data.</label
-                >
+                {{ DistributionDiagram.xScale.type == 'linear' }}
               </template>
-            </ToolTipComponent>
+              <template #tooltip>
+                <div class="whitespace-pre text-sm">
+                  <p>The linear scale uses an equidistant interval to provide the graph data.</p>
+                </div>
+              </template>
+            </TextInformation>
           </ScrollableComponent>
         </div>
       </Container>
