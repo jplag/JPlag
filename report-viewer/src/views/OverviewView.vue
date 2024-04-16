@@ -105,10 +105,10 @@
                     i == 0 ? 'linear' : 'logarithmic')
               "
             />
-            <ToolTipComponent>
+            <ToolTipComponent direction="bottom" class="flex-grow-0 print:hidden">
               <template #default>
-                <label for="linear">
-                  The linear scale uses an equidistant interval to provide the graph data.</label
+                <label for="linear"
+                  >The linear scale uses an equidistant interval to provide the graph data.</label
                 >
               </template>
             </ToolTipComponent>
