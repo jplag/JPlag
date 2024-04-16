@@ -13,6 +13,20 @@
           <p class="whitespace-pre text-sm">Fully written out names get unhidden.</p>
         </template>
       </ToolTipComponent>
+      <ToolTipComponent direction="bottom" class="min-w-[50%] flex-grow">
+        <template #default>
+          <SimThresBarComponent
+            placeholder="Enter threshold filter percentage"
+            @update:similarityThreshold="handleThresholdChange"
+          />
+        </template>
+        <template #tooltip>
+          <p class="whitespace-pre text-sm">
+            Enter an integer between 0-100 and all submissions with that similarity percentage or
+            lower will be filtered out.
+          </p>
+        </template>
+      </ToolTipComponent>
 
       <ButtonComponent class="w-24" @click="changeAnonymousForAll()">
         {{
@@ -32,6 +46,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import SearchBarComponent from './SearchBarComponent.vue'
+import SimThresBarComponent from './SimThresBarComponent.vue'
 import ToolTipComponent from './ToolTipComponent.vue'
 import ButtonComponent from './ButtonComponent.vue'
 import OptionsSelector from './optionsSelectors/OptionsSelectorComponent.vue'
@@ -51,12 +66,11 @@ const props = defineProps({
   header: {
     type: String,
     default: 'Top Comparisons:'
-  }
+  },
+  threshold: Number
 })
 
-const emit = defineEmits<{
-  (e: 'update:searchString', v: string): void
-}>()
+const emit = defineEmits(['update:searchString', 'update:threshold'])
 
 const searchStringValue = computed({
   get: () => props.searchString,
@@ -122,5 +136,9 @@ function changeAnonymousForAll() {
   } else {
     store().state.anonymous = new Set(store().getSubmissionIds)
   }
+}
+
+function handleThresholdChange(value: Number) {
+  emit('update:threshold', value)
 }
 </script>
