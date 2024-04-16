@@ -105,22 +105,11 @@
                     i == 0 ? 'linear' : 'logarithmic')
               "
             />
-            <template #default>
-              {{ OptionsSelector.xScale == 'linear' }}
-            </template>
-            <template #tooltip>
-              <p class="whitespace-pre text-sm">
-                The linear scale uses an equidistant interval to provide the graph data.
-              </p>
-            </template>
-            <ToolTipComponent direction="right" class="felx-grow-0 print:hidden">
+            <ToolTipComponent>
               <template #default>
-                <Button @click="router.push({ name: 'xScale' })"> Logarithmic </Button>
-              </template>
-              <template #tooltip>
-                <p class="whitespace-pre text-sm">
-                  The logarithmic scale uses an exponential interval to provide the graph data.
-                </p>
+                <label for="linear">
+                  The linear scale uses an equidistant interval to provide the graph data.</label
+                >
               </template>
             </ToolTipComponent>
           </ScrollableComponent>
