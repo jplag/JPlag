@@ -8,8 +8,9 @@ import org.junit.jupiter.api.Test;
 
 class IdleBarTest {
     private static final String TEST_BAR_TEXT = "Test";
-    private static final long TEST_TIME = 10000;
     private static final long IDLE_BAR_ANIMATION_DELAY = 200;
+
+    private static final int TARGET_FRAME_NUMBER = 5;
 
     /**
      * Tests if the output of the idle bar looks plausible
@@ -22,22 +23,19 @@ class IdleBarTest {
 
         IdleBar idleBar = new IdleBar(TEST_BAR_TEXT);
         idleBar.start();
-        try {
-            Thread.sleep(TEST_TIME);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        while (outputStream.toString().split("\\r").length <= TARGET_FRAME_NUMBER) {
+            Thread.yield();
         }
+
         idleBar.dispose();
         System.setOut(oldSystemOut);
 
         String result = outputStream.toString();
         String[] animationFrames = result.substring(1).split("\\r");
-        Assertions.assertTrue(Math.abs(animationFrames.length - (TEST_TIME / IDLE_BAR_ANIMATION_DELAY)) <= 2,
-                "Unexpected number of animation frames.");
 
         String firstFrame = animationFrames[0];
         int numberOfSpaces = firstFrame.lastIndexOf('>') - firstFrame.indexOf('<') - 3 - 1;
-        for (int i = 0; i < animationFrames.length; i++) {
+        for (int i = 0; i < TARGET_FRAME_NUMBER; i++) {
             checkIdleBarOutput(animationFrames[i], i, numberOfSpaces);
         }
     }

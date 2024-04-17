@@ -12,6 +12,9 @@ import org.slf4j.LoggerFactory;
 import de.jplag.JPlagComparison;
 import de.jplag.Submission;
 import de.jplag.clustering.algorithm.GenericClusteringAlgorithm;
+import de.jplag.logging.ProgressBar;
+import de.jplag.logging.ProgressBarLogger;
+import de.jplag.logging.ProgressBarType;
 
 /**
  * Runs the clustering according to an options object.
@@ -42,6 +45,8 @@ public class ClusteringFactory {
             logger.info(CLUSTERING_PARAMETERS, options.algorithm(), options.preprocessor());
         }
 
+        ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.CLUSTERING, 0);
+
         // init algorithm
         GenericClusteringAlgorithm clusteringAlgorithm = options.algorithm().create(options);
 
@@ -62,6 +67,8 @@ public class ClusteringFactory {
         // remove bad clusters
         result = removeBadClusters(result);
         logClusters(result);
+
+        progressBar.dispose();
 
         return List.of(result);
     }
