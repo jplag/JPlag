@@ -10,6 +10,8 @@ import de.jplag.Match;
 import de.jplag.SharedTokenType;
 import de.jplag.Submission;
 import de.jplag.Token;
+import de.jplag.logging.ProgressBarLogger;
+import de.jplag.logging.ProgressBarType;
 import de.jplag.options.JPlagOptions;
 
 /**
@@ -44,7 +46,7 @@ public class MatchMerging {
         List<JPlagComparison> comparisons = new ArrayList<>(result.getAllComparisons());
         List<JPlagComparison> comparisonsMerged = new ArrayList<>();
 
-        for (JPlagComparison comparison : comparisons) {
+        ProgressBarLogger.iterate(ProgressBarType.MATCH_MERGING, comparisons, comparison -> {
             Submission leftSubmission = comparison.firstSubmission().copy();
             Submission rightSubmission = comparison.secondSubmission().copy();
             List<Match> globalMatches = new ArrayList<>(comparison.matches());
@@ -52,7 +54,7 @@ public class MatchMerging {
             globalMatches = mergeNeighbors(globalMatches, leftSubmission, rightSubmission);
             globalMatches = globalMatches.stream().filter(it -> it.length() >= options.minimumTokenMatch()).toList();
             comparisonsMerged.add(new JPlagComparison(leftSubmission, rightSubmission, globalMatches, new ArrayList<>()));
-        }
+        });
 
         long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
         return new JPlagResult(comparisonsMerged, result.getSubmissions(), result.getDuration() + durationInMillis, options);

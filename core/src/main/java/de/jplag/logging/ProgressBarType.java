@@ -7,6 +7,8 @@ public enum ProgressBarType {
     LOADING("Loading Submissions  ", false),
     PARSING("Parsing Submissions  ", false),
     COMPARING("Comparing Submissions", false),
+    MATCH_MERGING("Merging matched subsequences ", false),
+    TOKEN_STRING_NORMALIZATION("Normalizing Token Sequence", false),
     CLUSTERING("Finding clusters ", true);
 
     private final String defaultText;
