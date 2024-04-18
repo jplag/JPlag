@@ -37,12 +37,20 @@
         </template>
         <template #tooltip>
           <p class="whitespace-pre text-sm">
-            Match between {{ getFileName(match.firstFile) }} (Line {{ match.startInFirst }}-{{
-              match.endInFirst
-            }}) and {{ getFileName(match.secondFile) }} (Line {{ match.startInSecond }}-{{
-              match.endInSecond
+            Match between {{ getFileName(match.firstFile) }} (Line {{ match.startInFirst.line }}-{{
+              match.endInFirst.line
+            }}) and {{ getFileName(match.secondFile) }} (Line {{ match.startInSecond.line }}-{{
+              match.endInSecond.line
             }}) <br />
             Match is {{ match.tokens }} tokens long. <br />
+            <span v-if="showTokenRanges(match)">
+              Token ranges: {{ match.startInFirst.tokenListIndex }}-{{
+                match.endInFirst.tokenListIndex
+              }}
+              and {{ match.startInSecond.tokenListIndex }}-{{ match.endInSecond.tokenListIndex }}.
+              <br />
+            </span>
+
             Click to show in code view.
           </p>
         </template>
@@ -116,5 +124,14 @@ function getTooltipDirection(index: number): ToolTipDirection {
     return 'left'
   }
   return 'bottom'
+}
+
+function showTokenRanges(match: Match) {
+  return (
+    !isNaN(match.startInFirst.tokenListIndex) &&
+    !isNaN(match.startInSecond.tokenListIndex) &&
+    !isNaN(match.endInFirst.tokenListIndex) &&
+    !isNaN(match.endInSecond.tokenListIndex)
+  )
 }
 </script>

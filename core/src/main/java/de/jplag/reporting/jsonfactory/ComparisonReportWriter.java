@@ -105,10 +105,23 @@ public class ComparisonReportWriter {
         Token startOfSecond = tokensSecond.stream().min(lineComparator).orElseThrow();
         Token endOfSecond = tokensSecond.stream().max(lineComparator).orElseThrow();
 
-        return new Match(
-                FilePathUtil.getRelativeSubmissionPath(startOfFirst.getFile(), comparison.firstSubmission(), submissionToIdFunction).toString(),
-                FilePathUtil.getRelativeSubmissionPath(startOfSecond.getFile(), comparison.secondSubmission(), submissionToIdFunction).toString(),
-                startOfFirst.getLine(), endOfFirst.getLine(), startOfSecond.getLine(), endOfSecond.getLine(), match.length());
+        String firstFileName = FilePathUtil.getRelativeSubmissionPath(startOfFirst.getFile(), comparison.firstSubmission(), submissionToIdFunction)
+                .toString();
+        String secondFileName = FilePathUtil.getRelativeSubmissionPath(startOfSecond.getFile(), comparison.secondSubmission(), submissionToIdFunction)
+                .toString();
+
+        int startLineFirst = startOfFirst.getLine();
+        int endLineFirst = endOfFirst.getLine();
+        int startTokenFirst = match.startOfFirst();
+        int endTokenFirst = match.endOfFirst();
+
+        int startLineSecond = startOfSecond.getLine();
+        int endLineSecond = endOfSecond.getLine();
+        int startTokenSecond = match.startOfSecond();
+        int endTokenSecond = match.endOfSecond();
+
+        return new Match(firstFileName, secondFileName, startLineFirst, endLineFirst, startTokenFirst, endTokenFirst, startLineSecond, endLineSecond,
+                startTokenSecond, endTokenSecond, match.length());
     }
 
 }

@@ -12,10 +12,15 @@
 export interface Match {
   firstFile: string
   secondFile: string
-  startInFirst: number
-  endInFirst: number
-  startInSecond: number
-  endInSecond: number
+  startInFirst: CodePosition
+  endInFirst: CodePosition
+  startInSecond: CodePosition
+  endInSecond: CodePosition
   tokens: number
   colorIndex?: number
+}
+
+export interface CodePosition {
+  line: number
+  tokenListIndex: number
 }

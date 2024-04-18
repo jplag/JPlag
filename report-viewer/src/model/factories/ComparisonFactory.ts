@@ -122,10 +122,22 @@ export class ComparisonFactory extends BaseFactory {
     return {
       firstFile: slash(match.file1 as string),
       secondFile: slash(match.file2 as string),
-      startInFirst: match.start1 as number,
-      endInFirst: match.end1 as number,
-      startInSecond: match.start2 as number,
-      endInSecond: match.end2 as number,
+      startInFirst: {
+        line: match.start1 as number,
+        tokenListIndex: (match.startToken1 as number) ?? NaN
+      },
+      endInFirst: {
+        line: match.end1 as number,
+        tokenListIndex: (match.endToken1 as number) ?? NaN
+      },
+      startInSecond: {
+        line: match.start2 as number,
+        tokenListIndex: (match.startToken2 as number) ?? NaN
+      },
+      endInSecond: {
+        line: match.end2 as number,
+        tokenListIndex: (match.endToken2 as number) ?? NaN
+      },
       tokens: match.tokens as number
     }
   }
@@ -134,10 +146,10 @@ export class ComparisonFactory extends BaseFactory {
     const maxColorCount = getMatchColorCount()
     let currentColorIndex = 0
     const matchesFirst = Array.from(matches)
-      .sort((a, b) => a.startInFirst - b.startInFirst)
+      .sort((a, b) => a.startInFirst.line - b.startInFirst.line)
       .sort((a, b) => (a.firstFile > b.firstFile ? 1 : -1))
     const matchesSecond = Array.from(matches)
-      .sort((a, b) => a.startInSecond - b.startInSecond)
+      .sort((a, b) => a.startInSecond.line - b.startInSecond.line)
       .sort((a, b) => (a.secondFile > b.secondFile ? 1 : -1))
     const sortedSize = Array.from(matches).sort((a, b) => b.tokens - a.tokens)
 
