@@ -15,7 +15,7 @@ test('Test comparison table and comparsion view', async ({ page }) => {
   const comparisonTableAverageSorted = await page.getByText(/Cluster[0-9]/).textContent()
   expect(comparisonTableAverageSorted).toContain('100Purple FishBeige Dog')
 
-  await comparisonContainer.getByText('Maximum Similarity', { exact: true }).click()
+  await comparisonContainer.getByText('Maximum Similarity', { exact: true }).click({ force: true })
   // check for elements in maximum similarity table
   await page.getByPlaceholder('Filter/Unhide Comparisons').fill('Blue')
   const comparisonTableMaxSorted = await page.getByText(/Cluster[0-9]/).textContent()
