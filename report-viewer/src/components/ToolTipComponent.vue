@@ -1,13 +1,13 @@
 <template>
-  <div class="group inline">
-    <div ref="contentRef"><slot></slot></div>
+  <div class="group pointer-events-none inline">
+    <div ref="contentRef" class="pointer-events-auto"><slot></slot></div>
     <span
       class="invisible absolute box-border delay-0 group-hover:visible group-hover:delay-200"
       ref="tooltipRef"
       v-if="$slots.tooltip"
     >
       <span
-        class="arrowBase relative z-10 block rounded-md bg-tooltip px-1 text-center text-white after:absolute after:border-4 after:border-solid after:border-transparent"
+        class="arrowBase pointer-events-auto relative z-10 block rounded-md bg-tooltip px-1 text-center text-white after:absolute after:border-4 after:border-solid after:border-transparent"
         :style="tooltipPosition"
         :class="{
           'after:top-1/2 after:-mt-1': props.direction == 'left' || props.direction == 'right',
