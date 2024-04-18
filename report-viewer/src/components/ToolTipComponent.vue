@@ -1,76 +1,85 @@
 <template>
-  <div class="group relative inline-block">
-    <slot></slot>
-    <div
-      class="invisible absolute z-10 rounded-md px-1 text-center text-white delay-0 group-hover:visible group-hover:delay-200"
-      :style="tooltipPosition"
+  <div class="group inline">
+    <div ref="contentRef"><slot></slot></div>
+    <span
+      class="invisible absolute box-border delay-0 group-hover:visible group-hover:delay-200"
+      ref="tooltipRef"
+      v-if="$slots.tooltip"
     >
-      <slot name="tooltip"></slot>
-      <div class="absolute border-4 border-solid" :style="arrowStyle" v-if="$slots.tooltip">
-        <!-- Arrow -->
-      </div>
-    </div>
+      <span
+        class="arrowBase relative z-10 block rounded-md bg-tooltip px-1 text-center text-white after:absolute after:border-4 after:border-solid after:border-transparent"
+        :style="tooltipPosition"
+        :class="{
+          'after:top-1/2 after:-mt-1': props.direction == 'left' || props.direction == 'right',
+          'after:!left-1/2 after:-ml-1': props.direction == 'top' || props.direction == 'bottom',
+          'after:top-full after:!border-t-tooltip': props.direction == 'top',
+          'after:bottom-full after:!border-b-tooltip': props.direction == 'bottom',
+          'after:left-full after:!border-l-tooltip': props.direction == 'left',
+          'after:right-full after:!border-r-tooltip': props.direction == 'right'
+        }"
+      >
+        <slot name="tooltip"></slot>
+      </span>
+    </span>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { ToolTipDirection } from '@/model/ui/ToolTip'
-import { computed, type PropType, type StyleValue } from 'vue'
+import { computed, ref, type PropType, type Ref, type StyleValue } from 'vue'
 
 const props = defineProps({
   direction: {
     type: String as PropType<ToolTipDirection>,
     required: false,
     default: 'top'
+  },
+  /** Sometimes the absolute div is centered horizontally on the content. Set this to true if that is the case. */
+  toolTipContainerWillBeCentered: {
+    type: Boolean,
+    required: false,
+    default: false
   }
 })
 
-const opacity = 0.8
+const contentRef: Ref<HTMLElement | null> = ref(null)
+const tooltipRef: Ref<HTMLElement | null> = ref(null)
+const arrowOffset = 4
 
 const tooltipPosition = computed(() => {
   const style: StyleValue = {}
-
-  if (props.direction == 'left' || props.direction == 'right') {
-    style.top = '50%'
-    style.transform = 'translateY(-50%)'
-    if (props.direction == 'left') {
-      style.right = '105%'
-    } else {
-      style.left = '105%'
-    }
+  const contentDiv = contentRef.value
+  const tooltipDiv = tooltipRef.value
+  if (!contentDiv || !tooltipDiv) {
+    return style
+  }
+  // zeros the tooltip on the topleft of the content
+  let top = -contentDiv.offsetHeight
+  let left = props.toolTipContainerWillBeCentered ? -contentDiv.offsetWidth / 2 : 0
+  if (props.direction == 'right' || props.direction == 'left') {
+    top += (contentDiv.offsetHeight - tooltipDiv.offsetHeight) / 2
   } else {
-    style.left = '50%'
-    style.transform = 'translateX(-50%)'
-    if (props.direction == 'top') {
-      style.bottom = '105%'
-    } else {
-      style.top = '105%'
-    }
-  }
-  style.backgroundColor = `rgba(0,0,0,${opacity})`
-
-  return style
-})
-
-const arrowStyle = computed(() => {
-  const style: StyleValue = {}
-  style.content = ' '
-
-  style.borderColor = ''
-  for (const dir of ['top', 'right', 'bottom', 'left']) {
-    style.borderColor += dir == props.direction ? `rgba(0,0,0,${opacity}) ` : 'transparent '
+    left -= (tooltipDiv.offsetWidth - contentDiv.offsetWidth) / 2
   }
 
-  if (props.direction == 'left' || props.direction == 'right') {
-    style.top = '50%'
-    style.marginTop = '-4px'
+  if (props.direction == 'right') {
+    left += contentDiv.offsetWidth + arrowOffset
+  } else if (props.direction == 'left') {
+    left -= tooltipDiv.offsetWidth + arrowOffset
+  } else if (props.direction == 'bottom') {
+    top += contentDiv.offsetHeight + arrowOffset
   } else {
-    style.left = '50%'
-    style.marginLeft = '-4px'
+    top -= tooltipDiv.offsetHeight + arrowOffset
   }
 
-  style[props.direction] = '100%'
-
+  style.top = top + 'px'
+  style.left = left + 'px'
   return style
 })
 </script>
+
+<style scoped>
+.arrowBase::after {
+  content: ' ';
+}
+</style>
