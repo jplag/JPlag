@@ -13,9 +13,13 @@ export interface Match {
   firstFile: string
   secondFile: string
   startInFirst: number
+  startColumnInFirst: number
   endInFirst: number
+  endColumnInFirst: number
   startInSecond: number
+  startColumnInSecond: number
   endInSecond: number
+  endColumnInSecond: number
   tokens: number
   colorIndex?: number
 }

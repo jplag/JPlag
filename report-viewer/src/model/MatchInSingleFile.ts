@@ -40,4 +40,20 @@ export class MatchInSingleFile {
       return this._match.endInSecond
     }
   }
+
+  get startColumn(): number {
+    if (this._index === 1) {
+      return this._match.startColumnInFirst
+    } else {
+      return this._match.startColumnInSecond
+    }
+  }
+
+  get endColumn(): number {
+    if (this._index === 1) {
+      return this._match.endColumnInFirst
+    } else {
+      return this._match.endColumnInSecond
+    }
+  }
 }

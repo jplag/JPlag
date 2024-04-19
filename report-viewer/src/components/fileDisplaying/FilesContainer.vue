@@ -28,7 +28,7 @@
             !matches.get(file.fileName) ? [] : (matches.get(file.fileName) as MatchInSingleFile[])
           "
           :highlight-language="highlightLanguage"
-          @line-selected="(match) => $emit('lineSelected', match)"
+          @match-selected="(match) => $emit('matchSelected', match)"
           class="mt-1 first:mt-0"
         />
       </VueDraggableNext>
@@ -83,7 +83,7 @@ const props = defineProps({
   }
 })
 
-defineEmits(['lineSelected'])
+defineEmits(['matchSelected'])
 
 const codePanels: Ref<(typeof CodePanel)[]> = ref([])
 
