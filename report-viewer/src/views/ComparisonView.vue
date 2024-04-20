@@ -1,6 +1,3 @@
-<!--
-  A view displaying the .json file of a comparison from a JPlag report.
--->
 <template>
   <div class="absolute bottom-0 left-0 right-0 top-0 flex flex-col">
     <div class="relative left-0 right-0 top-0 flex space-x-5 p-5 pb-0 print:p-0">
@@ -24,17 +21,19 @@
           </ToolTipComponent>
         </h2>
         <div class="flex flex-row space-x-10">
-          <TextInformation label="Average Similarity" class="font-bold"
-            >{{ (comparison.similarities[MetricType.AVERAGE] * 100).toFixed(2) }}%</TextInformation
-          >
+          <TextInformation label="Average Similarity" class="font-bold">
+            {{ (comparison.similarities[MetricType.AVERAGE] * 100).toFixed(2) }}%
+          </TextInformation>
           <TextInformation
             v-if="comparison.firstSimilarity"
             :label="`Similarity ${store().getDisplayName(comparison.firstSubmissionId)}`"
             tooltip-side="right"
           >
-            <template #default>{{ (comparison.firstSimilarity * 100).toFixed(2) }}%</template>
-            <template #tooltip
-              ><div class="whitespace-pre text-sm">
+            <template #default>
+              {{ (comparison.firstSimilarity * 100).toFixed(2) }}%
+            </template>
+            <template #tooltip>
+              <div class="whitespace-pre text-sm">
                 <p>
                   Percentage of code from
                   {{ store().getDisplayName(comparison.firstSubmissionId) }} that was found in the
@@ -44,16 +43,19 @@
                   The numbers might not be symmetric, due to the submissions having different
                   lengths.
                 </p>
-              </div></template
-            >
+              </div>
+            </template>
           </TextInformation>
           <TextInformation
             v-if="comparison.secondSimilarity"
             :label="`Similarity ${store().getDisplayName(comparison.secondSubmissionId)}`"
             tooltip-side="right"
-            ><template #default>{{ (comparison.secondSimilarity * 100).toFixed(2) }}%</template>
-            <template #tooltip
-              ><div class="whitespace-pre text-sm">
+          >
+            <template #default>
+              {{ (comparison.secondSimilarity * 100).toFixed(2) }}%
+            </template>
+            <template #tooltip>
+              <div class="whitespace-pre text-sm">
                 <p>
                   Percentage of code from
                   {{ store().getDisplayName(comparison.secondSubmissionId) }} that was found in the
@@ -63,9 +65,9 @@
                   The numbers might not be symmetric, due to the submissions having different
                   lengths.
                 </p>
-              </div></template
-            ></TextInformation
-          >
+              </div>
+            </template>
+          </TextInformation>
         </div>
         <MatchList
           :id1="firstId"
@@ -174,8 +176,17 @@ function print() {
   window.print()
 }
 
+// Color-Coded Similarity Scores
+function getColorForSimilarity(similarity: number): string {
+  // Define your color scale based on similarity score
+  if (similarity >= 0.9) return '#ff0000'; // Red for high similarity
+  if (similarity >= 0.7) return '#ff9900'; // Orange for medium similarity
+  if (similarity >= 0.5) return '#ffff00'; // Yellow for low similarity
+  return '#00ff00'; // Green for very low similarity
+}
+
 // This code is responsible for changing the theme of the highlighted code depending on light/dark mode
-// Changing the used style itsself is the desired solution (https://github.com/highlightjs/highlight.js/issues/2115)
+// Changing the used style itself is the desired solution (https://github.com/highlightjs/highlight.js/issues/2115)
 const styleholder: Ref<Node | null> = ref(null)
 
 onMounted(() => {
