@@ -70,9 +70,9 @@ jobs:
           {zip: "folderMultiRoot.zip", name: "folderMultiRoot", folder: "f0", language: "java", cliArgs: "--new f1"},
           {zip: "mixedMultiRoot.zip", name: "mixedBaseFile", folder: "f0", language: "java", cliArgs: "--new f1"},
           {zip: "mixedMultiRoot.zip", name: "mixedBaseFolder", folder: "f1", language: "java", cliArgs: "--new f0"},
-          {zip: "cpp.zip", name: "cpp", folder: "cpp", language: "cpp", cliArgs: ""},
-          {zip: "csharp.zip", name: "csharp", folder: "csharp", language: "csharp", cliArgs: ""},
-          {zip: "python.zip", name: "python", folder: "python", language: "python3", cliArgs: ""}
+          {zip: "cpp.zip", name: "cpp", folder: "./cpp", language: "cpp", cliArgs: ""},
+          {zip: "csharp.zip", name: "csharp", folder: "./csharp", language: "csharp", cliArgs: ""},
+          {zip: "python.zip", name: "python", folder: "./python", language: "python3", cliArgs: ""}
           ]
 
     steps:
