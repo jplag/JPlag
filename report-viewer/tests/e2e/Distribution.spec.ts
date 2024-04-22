@@ -26,7 +26,7 @@ test('Test distribution diagram', async ({ page }) => {
 async function selectOptions(page: Page, options: string[]) {
   const distributionDiagramContainer = page.getByText('Distribution of Comparisons:Options:')
   for (const option of options) {
-    await distributionDiagramContainer.getByText(option, { exact: true }).click({ force: true })
+    await distributionDiagramContainer.getByText(option, { exact: true }).click()
   }
   // This timeout is so that the screenshot is taken after the animation is finished
   await page.waitForTimeout(3000)
