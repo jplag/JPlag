@@ -85,7 +85,7 @@
         :matches="comparison.matchesInFirstSubmission"
         :file-owner-display-name="store().getDisplayName(comparison.firstSubmissionId)"
         :highlight-language="language"
-        @line-selected="showMatchInSecond"
+        @match-selected="showMatchInSecond"
         class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
       />
       <FilesContainer
@@ -94,7 +94,7 @@
         :matches="comparison.matchesInSecondSubmissions"
         :file-owner-display-name="store().getDisplayName(comparison.secondSubmissionId)"
         :highlight-language="language"
-        @line-selected="showMatchInFirst"
+        @match-selected="showMatchInFirst"
         class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
       />
     </div>

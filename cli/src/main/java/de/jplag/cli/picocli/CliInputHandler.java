@@ -61,7 +61,7 @@ public class CliInputHandler {
     }
 
     private CommandLine buildCommandLine() {
-        CommandLine cli = new CommandLine(this.options);
+        CommandLine cli = new CommandLine(this.options).setCaseInsensitiveEnumValuesAllowed(true);
         cli.setHelpFactory(new HelpFactory());
 
         cli.getHelpSectionMap().put(SECTION_KEY_OPTION_LIST, help -> help.optionList().lines().map(it -> {

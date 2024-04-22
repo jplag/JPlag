@@ -22,5 +22,6 @@ export interface Match {
 
 export interface CodePosition {
   line: number
+  column: number
   tokenListIndex: number
 }

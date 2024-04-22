@@ -51,8 +51,7 @@ public class CliOptions implements Runnable {
             "--result-file"}, description = "Name of the file in which the comparison results will be stored (default: ${DEFAULT-VALUE}). Missing .zip endings will be automatically added.")
     public String resultFile = "results";
 
-    @Option(names = {"-M",
-            "--mode"}, description = "The mode of JPlag: either only run analysis, only open the viewer, or do both (default: ${DEFAULT_VALUE})")
+    @Option(names = {"-M", "--mode"}, description = "The mode of JPlag. One of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE})")
     public JPlagMode mode = JPlagMode.RUN;
 
     @Option(names = {"--normalize"}, description = "Activate the normalization of tokens. Supported for languages: Java, C++.")
@@ -109,10 +108,12 @@ public class CliOptions implements Runnable {
         public ClusteringEnabled enabled = new ClusteringEnabled();
 
         public static class ClusteringEnabled {
-            @Option(names = {"--cluster-alg", "--cluster-algorithm"}, description = "Specifies the clustering algorithm (default: ${DEFAULT-VALUE}).")
+            @Option(names = {"--cluster-alg",
+                    "--cluster-algorithm"}, description = "Specifies the clustering algorithm. Available algorithms: ${COMPLETION-CANDIDATES} (default: ${DEFAULT-VALUE}).")
             public ClusteringAlgorithm algorithm = new ClusteringOptions().algorithm();
 
-            @Option(names = {"--cluster-metric"}, description = "The similarity metric used for clustering (default: ${DEFAULT-VALUE}).")
+            @Option(names = {
+                    "--cluster-metric"}, description = "The similarity metric used for clustering. Available metrics: ${COMPLETION-CANDIDATES} (default: ${DEFAULT-VALUE}).")
             public SimilarityMetric metric = new ClusteringOptions().similarityMetric();
         }
     }

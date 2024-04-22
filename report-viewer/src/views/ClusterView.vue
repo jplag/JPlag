@@ -16,25 +16,12 @@
     >
       <Container
         class="flex max-h-0 min-h-full flex-1 flex-col overflow-hidden print:max-h-none print:min-h-0 print:flex-none"
+        v-if="cluster.members.length >= 35 || !canShowRadarChart"
       >
         <div
           class="flex max-h-full flex-col overflow-hidden print:flex-none"
           v-if="cluster.members.length < 35"
         >
-          <OptionsSelectorComponent
-            :labels="clusterVisualizationOptions"
-            @selectionChanged="
-              (index) => (selectedClusterVisualization = index == 0 ? 'Graph' : 'Radar')
-            "
-            title="Cluster Visualization:"
-            class="mb-3"
-            v-if="canShowRadarChart"
-          />
-          <ClusterRadarChart
-            v-if="selectedClusterVisualization == 'Radar'"
-            :cluster="clusterListElement"
-            class="flex-grow"
-          />
           <ClusterGraph
             v-if="selectedClusterVisualization == 'Graph'"
             :cluster="clusterListElement"
@@ -51,21 +38,51 @@
           </p>
         </div>
       </Container>
-      <Container class="flex max-h-0 min-h-full w-1/3 flex-col space-y-2 print:hidden">
-        <ComparisonsTable
-          :topComparisons="comparisons"
-          class="min-h-0 flex-1"
-          header="Comparisons of Cluster Members:"
-          :highlighted-row-ids="highlightedElement ?? undefined"
-        >
-          <template #footer v-if="comparisons.length < maxAmountOfComparisonsInCluster">
-            <p class="w-full pt-1 text-center font-bold">
-              Not all comparisons inside the cluster are shown. To see more, re-run JPlag with a
-              higher maximum number argument.
-            </p>
-          </template>
-        </ComparisonsTable>
-      </Container>
+      <TabbedContainer
+        class="flex max-h-0 min-h-full flex-1 flex-col overflow-hidden print:max-h-none print:min-h-0 print:flex-none"
+        :tabs="clusterVisualizationOptions"
+        v-else
+      >
+        <template #Graph>
+          <ClusterGraph
+            :cluster="clusterListElement"
+            class="flex-grow print:max-h-full print:max-w-full print:flex-grow-0"
+            @line-hovered="(value) => (highlightedElement = value)"
+          />
+        </template>
+        <template #Radar>
+          <ClusterRadarChart :cluster="clusterListElement" class="flex-grow" />
+        </template>
+      </TabbedContainer>
+
+      <TabbedContainer
+        class="flex max-h-0 min-h-full w-1/3 flex-col space-y-2 print:hidden"
+        :tabs="comparisonTableOptions"
+        :first-bottom-tooltip-index="1"
+      >
+        <template #Members>
+          <ComparisonsTable
+            :topComparisons="comparisons"
+            class="max-h-0 min-h-full flex-1 overflow-hidden"
+            header="Comparisons of Cluster Members:"
+            :highlighted-row-ids="highlightedElement ?? undefined"
+          >
+            <template #footer v-if="comparisons.length < maxAmountOfComparisonsInCluster">
+              <p class="w-full pt-1 text-center font-bold">
+                Not all comparisons inside the cluster are shown. To see more, re-run JPlag with a
+                higher maximum number argument.
+              </p>
+            </template>
+          </ComparisonsTable>
+        </template>
+        <template #Related-Comparisons>
+          <ComparisonsTable
+            :topComparisons="relatedComparisons"
+            class="max-h-0 min-h-full flex-1 overflow-hidden"
+            header="Comparisons related to the Cluster:"
+          />
+        </template>
+      </TabbedContainer>
     </div>
   </div>
 </template>
@@ -78,12 +95,11 @@ import Container from '@/components/ContainerComponent.vue'
 import TextInformation from '@/components/TextInformation.vue'
 import type { Cluster } from '@/model/Cluster'
 import type { ClusterListElement, ClusterListElementMember } from '@/model/ClusterListElement'
-import type { ComparisonListElement } from '@/model/ComparisonListElement'
 import { MetricType } from '@/model/MetricType'
 import type { Overview } from '@/model/Overview'
 import { computed, ref, onErrorCaptured, type PropType, type Ref } from 'vue'
-import OptionsSelectorComponent from '@/components/optionsSelectors/OptionsSelectorComponent.vue'
 import { redirectOnError } from '@/router'
+import TabbedContainer from '@/components/TabbedContainer.vue'
 
 const props = defineProps({
   overview: {
@@ -96,7 +112,6 @@ const props = defineProps({
   }
 })
 
-const comparisons = [] as Array<ComparisonListElement>
 const clusterMemberList = new Map() as ClusterListElementMember
 const selectedClusterVisualization: Ref<'Graph' | 'Radar'> = ref('Graph')
 const clusterVisualizationOptions = [
@@ -110,26 +125,45 @@ const clusterVisualizationOptions = [
       'A radar chart showing the he other submissions in the cluster, relative one submission.'
   }
 ]
+const comparisonTableOptions = [
+  {
+    displayValue: 'Members',
+    tooltip: 'Comparisons between the cluster members.'
+  },
+  {
+    displayValue: 'Related Comparisons',
+    tooltip: 'Comparisons between the cluster members\nand other submissions.'
+  }
+]
 const usedMetric = MetricType.AVERAGE
 
-function getComparisonFor(id1: string, id2: string) {
-  return props.overview.topComparisons.find(
+const comparisons = computed(() =>
+  props.overview.topComparisons.filter(
     (c) =>
-      (c.firstSubmissionId === id1 && c.secondSubmissionId === id2) ||
-      (c.firstSubmissionId === id2 && c.secondSubmissionId === id1)
+      props.cluster.members.includes(c.firstSubmissionId) &&
+      props.cluster.members.includes(c.secondSubmissionId)
   )
-}
+)
 
-for (let i = 0; i < props.cluster.members.length; i++) {
-  for (let j = i + 1; j < props.cluster.members.length; j++) {
-    const comparison = getComparisonFor(props.cluster.members[i], props.cluster.members[j])
-    if (comparison) {
-      comparisons.push(comparison)
-    }
-  }
-}
 let counter = 0
-comparisons
+comparisons.value
+  .sort((a, b) => b.similarities[usedMetric] - a.similarities[usedMetric])
+  .forEach((c) => {
+    c.sortingPlace = counter++
+    c.id = counter
+  })
+
+const relatedComparisons = computed(() =>
+  props.overview.topComparisons.filter(
+    (c) =>
+      (props.cluster.members.includes(c.firstSubmissionId) &&
+        !props.cluster.members.includes(c.secondSubmissionId)) ||
+      (!props.cluster.members.includes(c.firstSubmissionId) &&
+        props.cluster.members.includes(c.secondSubmissionId))
+  )
+)
+counter = 0
+relatedComparisons.value
   .sort((a, b) => b.similarities[usedMetric] - a.similarities[usedMetric])
   .forEach((c) => {
     c.sortingPlace = counter++
@@ -138,7 +172,7 @@ comparisons
 
 for (const member of props.cluster.members) {
   const membersComparisons: { matchedWith: string; similarity: number }[] = []
-  comparisons
+  comparisons.value
     .filter((c) => c.firstSubmissionId === member || c.secondSubmissionId === member)
     .forEach((c) => {
       membersComparisons.push({

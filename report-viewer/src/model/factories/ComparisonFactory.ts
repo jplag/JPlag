@@ -124,18 +124,22 @@ export class ComparisonFactory extends BaseFactory {
       secondFile: slash(match.file2 as string),
       startInFirst: {
         line: match.start1 as number,
+        column: ((match['start1_col'] as number) || 1) - 1,
         tokenListIndex: (match.startToken1 as number) ?? NaN
       },
       endInFirst: {
         line: match.end1 as number,
+        column: ((match['end1_col'] as number) || Infinity) - 1,
         tokenListIndex: (match.endToken1 as number) ?? NaN
       },
       startInSecond: {
         line: match.start2 as number,
+        column: ((match['start2_col'] as number) || 1) - 1,
         tokenListIndex: (match.startToken2 as number) ?? NaN
       },
       endInSecond: {
         line: match.end2 as number,
+        column: ((match['end2_col'] as number) || Infinity) - 1,
         tokenListIndex: (match.endToken2 as number) ?? NaN
       },
       tokens: match.tokens as number
