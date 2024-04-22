@@ -41,18 +41,18 @@ const testSets: DataSet[] = [
   },
   {
     datasetName: 'python-report.zip',
-    firstSubmissionName: '02.py',
-    secondSubmissionName: '01.py'
+    firstSubmissionName: '01.py',
+    secondSubmissionName: '02.py'
   },
   {
     datasetName: 'cpp-report.zip',
-    firstSubmissionName: '02.cpp',
-    secondSubmissionName: '01.cpp'
+    firstSubmissionName: '01.cpp',
+    secondSubmissionName: '02.cpp'
   },
   {
     datasetName: 'csharp-report.zip',
-    firstSubmissionName: '02.cs',
-    secondSubmissionName: '01.cs'
+    firstSubmissionName: '01.cs',
+    secondSubmissionName: '02.cs'
   }
 ]
 
