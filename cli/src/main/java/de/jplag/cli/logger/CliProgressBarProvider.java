@@ -14,7 +14,9 @@ public class CliProgressBarProvider implements ProgressBarProvider {
     @Override
     public ProgressBar initProgressBar(ProgressBarType type, int totalSteps) {
         if (type.isIdleBar()) {
-            return new IdleBar(type.getDefaultText());
+            IdleBar idleBar = new IdleBar(type.getDefaultText());
+            idleBar.start();
+            return idleBar;
         } else {
             me.tongfei.progressbar.ProgressBar progressBar = new ProgressBarBuilder().setTaskName(type.getDefaultText()).setInitialMax(totalSteps)
                     .setStyle(ProgressBarStyle.ASCII).build();

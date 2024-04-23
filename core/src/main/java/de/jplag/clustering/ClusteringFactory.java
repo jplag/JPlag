@@ -66,9 +66,9 @@ public class ClusteringFactory {
 
         // remove bad clusters
         result = removeBadClusters(result);
-        logClusters(result);
 
         progressBar.dispose();
+        logClusters(result);
 
         return List.of(result);
     }
