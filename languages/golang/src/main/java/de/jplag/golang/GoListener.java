@@ -184,10 +184,9 @@ public class GoListener extends AbstractAntlrListener {
 
     private void controlFlowRules() {
         visit(IfStmtContext.class).delegateTerminal(IfStmtContext::IF).map(IF_STATEMENT);
-        visit(BlockContext.class, context -> context.parent instanceof IfStmtContext && context.equals(((IfStmtContext) context.parent).block(0)))
-                .map(IF_BLOCK_BEGIN, IF_BLOCK_END);
-        // TODO no else token?
-        visit(BlockContext.class, context -> context.parent instanceof IfStmtContext && context.equals(((IfStmtContext) context.parent).block(1)))
+        visit(BlockContext.class, context -> context.parent instanceof IfStmtContext ifStmt && context.equals((ifStmt).block(0))).map(IF_BLOCK_BEGIN,
+                IF_BLOCK_END);
+        visit(BlockContext.class, context -> context.parent instanceof IfStmtContext ifStmt && context.equals((ifStmt).block(1)))
                 .map(ELSE_BLOCK_BEGIN, ELSE_BLOCK_END);
 
         visit(ForStmtContext.class).map(FOR_STATEMENT);
