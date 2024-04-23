@@ -125,6 +125,10 @@ import de.jplag.golang.grammar.GoParser.TypeNameContext;
 import de.jplag.golang.grammar.GoParser.TypeSwitchStmtContext;
 import de.jplag.golang.grammar.GoParser.VarDeclContext;
 
+/**
+ * Provides token extraction rules for {@link GoLanguage} Based on an older implementation of the language module; see
+ * JPlagGoListener.java in the history.
+ */
 public class GoListener extends AbstractAntlrListener {
     public GoListener() {
         metaDeclarations();
