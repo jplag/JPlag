@@ -31,7 +31,7 @@ public class Scanner extends AbstractParser {
             } catch (ParsingException e) {
                 throw e;
             } catch (Exception e) {
-                throw new ParsingException(file, "Unexpected error during parsing.\n" + e.getMessage(), e);
+                throw new ParsingException(file, "Unexpected error during parsing." + System.lineSeparator() + e.getMessage(), e);
             }
             tokens.add(Token.fileEnd(currentFile));
         }
