@@ -39,6 +39,17 @@ const props = defineProps({
     type: Boolean,
     required: false,
     default: false
+  },
+  /** Can be set if the tooltip is inside a scrollable container */
+  scrollOffsetX: {
+    type: Number,
+    required: false,
+    default: 0
+  },
+  scrollOffsetY: {
+    type: Number,
+    required: false,
+    default: 0
   }
 })
 
@@ -54,8 +65,9 @@ const tooltipPosition = computed(() => {
     return style
   }
   // zeros the tooltip on the topleft of the content
-  let top = -contentDiv.offsetHeight
-  let left = props.toolTipContainerWillBeCentered ? -contentDiv.offsetWidth / 2 : 0
+  let top = -contentDiv.offsetHeight - props.scrollOffsetY
+  let left =
+    (props.toolTipContainerWillBeCentered ? -contentDiv.offsetWidth / 2 : 0) - props.scrollOffsetX
   if (props.direction == 'right' || props.direction == 'left') {
     top += (contentDiv.offsetHeight - tooltipDiv.offsetHeight) / 2
   } else {

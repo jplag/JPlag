@@ -16,11 +16,14 @@
 
     <div
       class="print-excact flex w-full flex-row space-x-1 overflow-x-auto print:flex-wrap print:space-y-1 print:overflow-x-hidden"
+      ref="scrollableList"
+      @scroll="updateScrollOffset()"
     >
       <ToolTipComponent
         :direction="getTooltipDirection(index)"
         v-for="[index, match] in matches?.entries()"
         :key="index"
+        :scrollOffsetX="scrollOffsetX"
       >
         <template #default>
           <OptionComponent
@@ -89,6 +92,7 @@ import OptionComponent from '../optionsSelectors/OptionComponent.vue'
 import ToolTipComponent from '@/components/ToolTipComponent.vue'
 import { getMatchColor } from '@/utils/ColorUtils'
 import type { ToolTipDirection } from '@/model/ui/ToolTip'
+import { ref, type Ref } from 'vue'
 
 const props = defineProps({
   /**
@@ -133,5 +137,14 @@ function showTokenRanges(match: Match) {
     !isNaN(match.endInFirst.tokenListIndex) &&
     !isNaN(match.endInSecond.tokenListIndex)
   )
+}
+
+const scrollableList: Ref<HTMLElement | null> = ref(null)
+const scrollOffsetX = ref(0)
+
+function updateScrollOffset() {
+  if (scrollableList.value) {
+    scrollOffsetX.value = scrollableList.value.scrollLeft
+  }
 }
 </script>
