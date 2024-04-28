@@ -47,7 +47,7 @@
             }}) <br />
             Match is {{ match.tokens }} tokens long. <br />
             <span v-if="showTokenRanges(match)">
-              Token ranges: {{ match.startInFirst.tokenListIndex }}-{{
+              Token indeces of match: {{ match.startInFirst.tokenListIndex }}-{{
                 match.endInFirst.tokenListIndex
               }}
               and {{ match.startInSecond.tokenListIndex }}-{{ match.endInSecond.tokenListIndex }}.
