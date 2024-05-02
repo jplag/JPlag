@@ -49,8 +49,8 @@ const store = defineStore('store', {
      */
     getSubmissionFile:
       (state) =>
-      (submissionId: string, fileName: string): SubmissionFile => {
-        return state.state.submissions[submissionId].get(fileName) as SubmissionFile
+      (submissionId: string, fileName: string): SubmissionFile | undefined => {
+        return state.state.submissions[submissionId].get(fileName)
       },
     /**
      * @param name the name of the submission
