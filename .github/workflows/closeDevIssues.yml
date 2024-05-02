@@ -18,4 +18,4 @@ jobs:
       working-directory: .github/workflows/scripts
       run: |
         pip install requests
-        python closeDevIssues.py ${{ secrets.GITHUB_TOKEN }} ${{ github.event.pull_request.number }}
+        python closeDevIssues.py ${{ secrets.GITHUB_TOKEN }} jplag JPlag ${{ github.event.pull_request.number }}

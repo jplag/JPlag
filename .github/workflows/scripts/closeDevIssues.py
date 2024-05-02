@@ -4,9 +4,9 @@ import sys
 
 headers = {"Authorization": f"Bearer {sys.argv[1]}"}
 
-owner = "jplag"
-repo = "JPlag"
-pr_number = int(sys.argv[2])
+owner = sys.argv[2]
+repo = sys.argv[3]
+pr_number = int(sys.argv[4])
 
 query = f"""
 {{
