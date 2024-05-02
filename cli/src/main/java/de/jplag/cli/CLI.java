@@ -16,6 +16,7 @@ import de.jplag.cli.picocli.CliInputHandler;
 import de.jplag.exceptions.ExitException;
 import de.jplag.logging.ProgressBarLogger;
 import de.jplag.options.JPlagOptions;
+import de.jplag.util.FileUtils;
 
 /**
  * Command line interface class, allows using via command line.
@@ -152,7 +153,7 @@ public final class CLI {
             throw new CliException(OUTPUT_FILE_EXISTS);
         }
 
-        if (!(targetFile.canWrite() || (!targetFile.exists() && targetFile.getAbsoluteFile().getParentFile().canWrite()))) {
+        if (FileUtils.checkWritable(targetFile)) {
             throw new CliException(String.format(OUTPUT_FILE_NOT_WRITABLE, targetFileName));
         }
 
