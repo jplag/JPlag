@@ -2,54 +2,67 @@ package de.jplag.cli;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.IOException;
+
 import org.junit.jupiter.api.Test;
 
-class OldNewRootDirectoriesArgumentTest extends CommandLineInterfaceTest {
+import de.jplag.cli.test.CliArg;
+import de.jplag.cli.test.CliArgBuilder;
+import de.jplag.cli.test.CliTest;
+import de.jplag.exceptions.ExitException;
+import de.jplag.options.JPlagOptions;
+
+class OldNewRootDirectoriesArgumentTest extends CliTest {
     @Test
-    void testNoRootDirectories() throws CliException {
-        buildOptionsFromCLI(arguments());
+    void testNoRootDirectories() throws ExitException, IOException {
+        JPlagOptions options = runCliForOptions();
 
         assertEquals(0, options.submissionDirectories().size());
         assertEquals(0, options.oldSubmissionDirectories().size());
     }
 
     @Test
-    void testTwoRootDirectoryArguments() throws CliException {
-        buildOptionsFromCLI(arguments().rootDirectory("root1", "root2"));
+    void testTwoRootDirectoryArguments() throws ExitException, IOException {
+        JPlagOptions options = runCliForOptions(args -> args.with(CliArg.SUBMISSION_DIRECTORIES, new String[] {"root1", "root2"}));
 
         assertEquals(2, options.submissionDirectories().size());
         assertEquals(0, options.oldSubmissionDirectories().size());
     }
 
     @Test
-    void testNewOption() throws CliException {
-        buildOptionsFromCLI(arguments().newRootDirectories("root1", "root2"));
+    void testNewOption() throws ExitException, IOException {
+        JPlagOptions options = runCliForOptions(args -> args.with(CliArg.NEW_SUBMISSION_DIRECTORIES, new String[] {"root1", "root2"}));
 
         assertEquals(2, options.submissionDirectories().size());
         assertEquals(0, options.oldSubmissionDirectories().size());
     }
 
     @Test
-    void testDoubleNewOption() throws CliException {
-        buildOptionsFromCLI(arguments().newRootDirectories("root1").newRootDirectories("root2"));
+    void testDoubleNewOption() throws ExitException, IOException {
+        JPlagOptions options = runCliForOptions(args -> args.with(CliArg.NEW_SUBMISSION_DIRECTORIES, new String[] {"root1", "root2"}));
 
         assertEquals(2, options.submissionDirectories().size());
         assertEquals(0, options.oldSubmissionDirectories().size());
     }
 
     @Test
-    void testOldOption() throws CliException {
-        buildOptionsFromCLI(arguments().oldRootDirectories("root1"));
+    void testOldOption() throws ExitException, IOException {
+        JPlagOptions options = runCliForOptions(args -> args.with(CliArg.OLD_SUBMISSION_DIRECTORIES, new String[] {"root1"}));
 
         assertEquals(0, options.submissionDirectories().size());
         assertEquals(1, options.oldSubmissionDirectories().size());
     }
 
     @Test
-    void testNewAndOldOption() throws CliException {
-        buildOptionsFromCLI(arguments().newRootDirectories("root2").oldRootDirectories("root2"));
+    void testNewAndOldOption() throws ExitException, IOException {
+        JPlagOptions options = runCliForOptions(args -> args.with(CliArg.NEW_SUBMISSION_DIRECTORIES, new String[] {"root1"})
+                .with(CliArg.OLD_SUBMISSION_DIRECTORIES, new String[] {"root1"}));
 
         assertEquals(1, options.submissionDirectories().size());
         assertEquals(1, options.oldSubmissionDirectories().size());
+    }
+
+    @Override
+    public void initializeParameters(CliArgBuilder args) {
     }
 }
