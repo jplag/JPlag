@@ -153,7 +153,7 @@ public final class CLI {
             throw new CliException(OUTPUT_FILE_EXISTS);
         }
 
-        if (FileUtils.checkWritable(targetFile)) {
+        if (!FileUtils.checkWritable(targetFile)) {
             throw new CliException(String.format(OUTPUT_FILE_NOT_WRITABLE, targetFileName));
         }
 
