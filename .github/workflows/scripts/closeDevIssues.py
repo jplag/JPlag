@@ -25,7 +25,7 @@ query = f"""
 }}
 """
 
-def run_query(query): # A simple function to use requests.post to make the API call. Note the json= section.
+def run_query(query):
     request = requests.post('https://api.github.com/graphql', json={'query': query}, headers=headers)
     if request.status_code == 200:
         return request.json()
