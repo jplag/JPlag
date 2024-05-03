@@ -7,10 +7,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import de.jplag.cli.picocli.CliInputHandler;
 
@@ -18,7 +18,7 @@ public class CheckResultFileWritableTest extends CommandLineInterfaceTest {
     private static Field inputHandlerField;
     private static Method getWritableFileMethod;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() throws NoSuchFieldException, NoSuchMethodException {
         Class<CLI> cliClass = CLI.class;
         inputHandlerField = cliClass.getDeclaredField("inputHandler");
