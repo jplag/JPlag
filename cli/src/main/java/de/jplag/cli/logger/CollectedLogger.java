@@ -29,7 +29,7 @@ public class CollectedLogger extends JPlagLoggerBase {
     private final ConcurrentLinkedDeque<LogEntry> allErrors = new ConcurrentLinkedDeque<>();
 
     public CollectedLogger(String name) {
-        super(LOG_LEVEL_INFO, name);
+        super(name);
     }
 
     @Override

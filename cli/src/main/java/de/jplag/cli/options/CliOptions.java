@@ -2,6 +2,8 @@ package de.jplag.cli.options;
 
 import java.io.File;
 
+import org.slf4j.event.Level;
+
 import de.jplag.Language;
 import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
@@ -98,6 +100,9 @@ public class CliOptions implements Runnable {
 
         @Option(names = "--csv-export", description = "Export pairwise similarity values as a CSV file.")
         public boolean csvExport = false;
+
+        @Option(names = "--log-level", description = "Set the log level for the cli.")
+        public Level logLevel = Level.INFO;
     }
 
     public static class Clustering {
