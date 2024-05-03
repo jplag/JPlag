@@ -1,9 +1,9 @@
 package de.jplag.python3.grammar;
 
-import org.antlr.v4.runtime.*;
-
 import java.util.ArrayDeque;
 import java.util.Deque;
+
+import org.antlr.v4.runtime.*;
 
 abstract class Python3LexerBase extends Lexer {
     // A queue where extra tokens are pushed on (see the NEWLINE lexer rule).
@@ -75,10 +75,10 @@ abstract class Python3LexerBase extends Lexer {
     // following rules into account:
     //
     // "Tabs are replaced (from left to right) by one to eight spaces
-    //  such that the total number of characters up to and including
-    //  the replacement is a multiple of eight [...]"
+    // such that the total number of characters up to and including
+    // the replacement is a multiple of eight [...]"
     //
-    //  -- https://docs.python.org/3.1/reference/lexical_analysis.html#indentation
+    // -- https://docs.python.org/3.1/reference/lexical_analysis.html#indentation
     static int getIndentationCount(String spaces) {
         int count = 0;
         for (char ch : spaces.toCharArray()) {
@@ -99,15 +99,15 @@ abstract class Python3LexerBase extends Lexer {
         return super.getCharPositionInLine() == 0 && super.getLine() == 1;
     }
 
-    void openBrace(){
+    void openBrace() {
         this.opened++;
     }
 
-    void closeBrace(){
+    void closeBrace() {
         this.opened--;
     }
 
-    void onNewLine(){
+    void onNewLine() {
         String newLine = getText().replaceAll("[^\r\n\f]+", "");
         String spaces = getText().replaceAll("[\r\n\f]+", "");
 
@@ -119,22 +119,19 @@ abstract class Python3LexerBase extends Lexer {
             // If we're inside a list or on a blank line, ignore all indents,
             // dedents and line breaks.
             skip();
-        }
-        else {
+        } else {
             emit(commonToken(Python3Lexer.NEWLINE, newLine));
             int indent = getIndentationCount(spaces);
             int previous = indents.isEmpty() ? 0 : indents.peek();
             if (indent == previous) {
                 // skip indents of the same size as the present indent-size
                 skip();
-            }
-            else if (indent > previous) {
+            } else if (indent > previous) {
                 indents.push(indent);
                 emit(commonToken(Python3Lexer.INDENT, spaces));
-            }
-            else {
+            } else {
                 // Possibly emit more than 1 DEDENT token.
-                while(!indents.isEmpty() && indents.peek() > indent) {
+                while (!indents.isEmpty() && indents.peek() > indent) {
                     this.emit(createDedent());
                     indents.pop();
                 }
@@ -143,8 +140,7 @@ abstract class Python3LexerBase extends Lexer {
     }
 
     @Override
-    public void reset()
-    {
+    public void reset() {
         tokens = new java.util.LinkedList<>();
         indents = new ArrayDeque<>();
         opened = 0;
