@@ -112,16 +112,20 @@ public class ComparisonReportWriter {
 
         int startLineFirst = startOfFirst.getLine();
         int startColumnFirst = startOfFirst.getColumn();
+        int startTokenFirst = match.startOfFirst();
         int endLineFirst = endOfFirst.getLine();
         int endColumnFirst = endOfFirst.getColumn() + endOfFirst.getLength() - 1;
+        int endTokenFirst = match.endOfFirst();
 
         int startLineSecond = startOfSecond.getLine();
         int startColumnSecond = startOfSecond.getColumn();
+        int startTokenSecond = match.startOfSecond();
         int endLineSecond = endOfSecond.getLine();
         int endColumnSecond = endOfSecond.getColumn() + endOfSecond.getLength() - 1;
+        int endTokenSecond = match.endOfSecond();
 
-        return new Match(firstFileName, secondFileName, startLineFirst, startColumnFirst, endLineFirst, endColumnFirst, startLineSecond,
-                startColumnSecond, endLineSecond, endColumnSecond, match.length());
+        return new Match(firstFileName, secondFileName, startLineFirst, startColumnFirst, startTokenFirst, endLineFirst, endColumnFirst,
+                endTokenFirst, startLineSecond, startColumnSecond, startTokenSecond, endLineSecond, endColumnSecond, endTokenSecond, match.length());
     }
 
 }

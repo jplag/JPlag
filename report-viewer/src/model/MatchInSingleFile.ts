@@ -24,9 +24,9 @@ export class MatchInSingleFile {
    */
   get start(): number {
     if (this._index === 1) {
-      return this._match.startInFirst
+      return this._match.startInFirst.line
     } else {
-      return this._match.startInSecond
+      return this._match.startInSecond.line
     }
   }
 
@@ -35,25 +35,25 @@ export class MatchInSingleFile {
    */
   get end(): number {
     if (this._index === 1) {
-      return this._match.endInFirst
+      return this._match.endInFirst.line
     } else {
-      return this._match.endInSecond
+      return this._match.endInSecond.line
     }
   }
 
   get startColumn(): number {
     if (this._index === 1) {
-      return this._match.startColumnInFirst
+      return this._match.startInFirst.column
     } else {
-      return this._match.startColumnInSecond
+      return this._match.startInSecond.column
     }
   }
 
   get endColumn(): number {
     if (this._index === 1) {
-      return this._match.endColumnInFirst
+      return this._match.endInFirst.column
     } else {
-      return this._match.endColumnInSecond
+      return this._match.endInSecond.column
     }
   }
 }
