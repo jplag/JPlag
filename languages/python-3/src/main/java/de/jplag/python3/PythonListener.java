@@ -1,36 +1,5 @@
 package de.jplag.python3;
 
-import static de.jplag.python3.Python3TokenType.APPLY;
-import static de.jplag.python3.Python3TokenType.ARRAY;
-import static de.jplag.python3.Python3TokenType.ASSERT;
-import static de.jplag.python3.Python3TokenType.ASSIGN;
-import static de.jplag.python3.Python3TokenType.BREAK;
-import static de.jplag.python3.Python3TokenType.CLASS_BEGIN;
-import static de.jplag.python3.Python3TokenType.CLASS_END;
-import static de.jplag.python3.Python3TokenType.CONTINUE;
-import static de.jplag.python3.Python3TokenType.DEC_BEGIN;
-import static de.jplag.python3.Python3TokenType.DEC_END;
-import static de.jplag.python3.Python3TokenType.DEL;
-import static de.jplag.python3.Python3TokenType.EXCEPT_BEGIN;
-import static de.jplag.python3.Python3TokenType.EXCEPT_END;
-import static de.jplag.python3.Python3TokenType.FINALLY;
-import static de.jplag.python3.Python3TokenType.FOR_BEGIN;
-import static de.jplag.python3.Python3TokenType.FOR_END;
-import static de.jplag.python3.Python3TokenType.IF_BEGIN;
-import static de.jplag.python3.Python3TokenType.IF_END;
-import static de.jplag.python3.Python3TokenType.IMPORT;
-import static de.jplag.python3.Python3TokenType.LAMBDA;
-import static de.jplag.python3.Python3TokenType.METHOD_BEGIN;
-import static de.jplag.python3.Python3TokenType.METHOD_END;
-import static de.jplag.python3.Python3TokenType.RAISE;
-import static de.jplag.python3.Python3TokenType.RETURN;
-import static de.jplag.python3.Python3TokenType.TRY_BEGIN;
-import static de.jplag.python3.Python3TokenType.WHILE_BEGIN;
-import static de.jplag.python3.Python3TokenType.WHILE_END;
-import static de.jplag.python3.Python3TokenType.WITH_BEGIN;
-import static de.jplag.python3.Python3TokenType.WITH_END;
-import static de.jplag.python3.Python3TokenType.YIELD;
-
 import de.jplag.antlr.AbstractAntlrListener;
 import de.jplag.python3.grammar.Python3Parser;
 import de.jplag.python3.grammar.Python3Parser.Assert_stmtContext;
@@ -57,6 +26,8 @@ import de.jplag.python3.grammar.Python3Parser.With_stmtContext;
 import de.jplag.python3.grammar.Python3Parser.Yield_argContext;
 import de.jplag.python3.grammar.Python3Parser.Yield_stmtContext;
 
+import static de.jplag.python3.Python3TokenType.*;
+
 public class PythonListener extends AbstractAntlrListener {
     public PythonListener() {
         statements();
@@ -76,6 +47,9 @@ public class PythonListener extends AbstractAntlrListener {
         visit(Continue_stmtContext.class).map(CONTINUE);
         visit(Del_stmtContext.class).map(DEL);
         visit(Python3Parser.FINALLY).map(FINALLY);
+
+        visit(Python3Parser.ASYNC).map(ASYNC);
+        visit(Python3Parser.AWAIT).map(AWAIT);
 
         visit(Except_clauseContext.class).map(EXCEPT_BEGIN, EXCEPT_END);
     }
