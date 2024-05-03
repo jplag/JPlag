@@ -50,9 +50,10 @@ def subsequences_matching_regex(input_string, regex):
 
 # gets all issues linked to pr either via the closing keywords or the sidebar
 def get_linked_issues(result):
+    issue_body = result['body'].lower() + "." # we append a dot to the end of the body to make sure the last word is checked with the regex
     closing_issues = []
     for keyword in closing_keywords:
-        closing_issues.extend(subsequences_matching_regex(result['body'].lower(), f'{keyword} #([0-9]+)'))
+        closing_issues.extend(subsequences_matching_regex(issue_body, f'{keyword} #([0-9]+)[^0-9]'))
     for k in result['closingIssuesReferences']['nodes']:
         closing_issues.append(k['number'])
     return list(set(closing_issues))
