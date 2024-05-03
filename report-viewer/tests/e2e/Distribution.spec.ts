@@ -38,11 +38,11 @@ function getTestCombinations() {
     ['Linear', 'Logarithmic']
   ]
 
-  const combinations: string[][] = []
-
   const baseOptions = options.map((o) => o[0])
+  const combinations: string[][] = [baseOptions]
+
   for (let i = 0; i < options.length; i++) {
-    for (let j = 0; j < options[i].length; j++) {
+    for (let j = 1; j < options[i].length; j++) {
       const combination = Array.from(baseOptions)
       combination[i] = options[i][j]
       combinations.push(combination)
