@@ -1,5 +1,7 @@
 package de.jplag.python3;
 
+import static de.jplag.python3.Python3TokenType.*;
+
 import de.jplag.antlr.AbstractAntlrListener;
 import de.jplag.python3.grammar.Python3Parser;
 import de.jplag.python3.grammar.Python3Parser.Assert_stmtContext;
@@ -25,8 +27,6 @@ import de.jplag.python3.grammar.Python3Parser.While_stmtContext;
 import de.jplag.python3.grammar.Python3Parser.With_stmtContext;
 import de.jplag.python3.grammar.Python3Parser.Yield_argContext;
 import de.jplag.python3.grammar.Python3Parser.Yield_stmtContext;
-
-import static de.jplag.python3.Python3TokenType.*;
 
 public class PythonListener extends AbstractAntlrListener {
     public PythonListener() {
