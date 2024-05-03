@@ -61,7 +61,7 @@ result = run_query(query)['data']['repository']['pullRequest']
 issues = get_linked_issues(result)
 
 def close_issue(issue_number):
-    requests.post(f"https://api.github.com/repos/{owner}/{repo}/issues/{issue_number}/comments", json={"body": f"Closed by #{pr_number}"}, headers=headers)
+    requests.post(f"https://api.github.com/repos/{owner}/{repo}/issues/{issue_number}/comments", json={"body": f"Closed by #{pr_number}."}, headers=headers)
     requests.patch(f"https://api.github.com/repos/{owner}/{repo}/issues/{issue_number}", json={"state": "closed"}, headers=headers)
 
 if result['baseRefName'] != "develop":
