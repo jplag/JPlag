@@ -26,7 +26,7 @@ public final class CLI {
     private static final Logger logger = LoggerFactory.getLogger(CLI.class);
 
     private static final String DEFAULT_FILE_ENDING = ".zip";
-    private static final int NAME_COLLISION_TRIES = 4;
+    private static final int NAME_COLLISION_ATTEMPTS = 4;
 
     private static final String OUTPUT_FILE_EXISTS = "The output file (also with suffixes e.g. results(1).zip) already exists. You can use --overwrite to overwrite the file.";
     private static final String OUTPUT_FILE_NOT_WRITABLE = "The output file (%s) cannot be written to.";
