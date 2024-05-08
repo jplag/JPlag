@@ -143,7 +143,7 @@ public final class CLI {
     private String getWritableFileName() throws CliException {
         int retryAttempt = 0;
         while (!this.inputHandler.getCliOptions().advanced.overwrite && new File(getOffsetFileName(retryAttempt)).exists()
-                && retryAttempt < NAME_COLLISION_TRIES) {
+                && retryAttempt < NAME_COLLISION_ATTEMPTS) {
             retryAttempt++;
         }
 
