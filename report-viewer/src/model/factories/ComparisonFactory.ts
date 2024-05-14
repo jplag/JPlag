@@ -32,14 +32,20 @@ export class ComparisonFactory extends BaseFactory {
 
     const matches = json.matches as Array<Record<string, unknown>>
     matches.forEach((match) => {
-      store().getSubmissionFile(
-        firstSubmissionId,
-        slash(match.file1 as string)
-      ).matchedTokenCount += match.tokens as number
-      store().getSubmissionFile(
+      const fileOfFirst = store().getSubmissionFile(firstSubmissionId, slash(match.file1 as string))
+      const fileOfSecond = store().getSubmissionFile(
         secondSubmissionId,
         slash(match.file2 as string)
-      ).matchedTokenCount += match.tokens as number
+      )
+
+      if (fileOfFirst == undefined || fileOfSecond == undefined) {
+        throw new Error(
+          `The report viewer expected to find the file ${fileOfFirst == undefined ? match.file1 : match.file2} in the submissions, but did not find it.`
+        )
+      }
+
+      fileOfFirst.matchedTokenCount += match.tokens as number
+      fileOfSecond.matchedTokenCount += match.tokens as number
     })
 
     const unColoredMatches = matches.map((match) => this.getMatch(match))
@@ -115,7 +121,13 @@ export class ComparisonFactory extends BaseFactory {
     if (store().state.localModeUsed && !store().state.zipModeUsed) {
       return await this.getLocalFile('files/' + fileName).then((file) => file.text())
     }
-    return store().getSubmissionFile(submissionId, fileName).data
+    const file = store().getSubmissionFile(submissionId, fileName)
+    if (file == undefined) {
+      throw new Error(
+        `The report viewer expected to find the file ${fileName} in the submissions, but did not find it.`
+      )
+    }
+    return file.data
   }
 
   private static getMatch(match: Record<string, unknown>): Match {
