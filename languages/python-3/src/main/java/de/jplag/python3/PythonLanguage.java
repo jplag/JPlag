@@ -27,7 +27,7 @@ public class PythonLanguage implements de.jplag.Language {
 
     @Override
     public String getName() {
-        return "Python3 Parser";
+        return "Python3";
     }
 
     @Override
