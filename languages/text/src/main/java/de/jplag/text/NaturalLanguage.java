@@ -31,7 +31,7 @@ public class NaturalLanguage implements de.jplag.Language {
 
     @Override
     public String getName() {
-        return "Text Parser (naive)";
+        return "Text (naive)";
     }
 
     @Override
