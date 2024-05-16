@@ -31,7 +31,7 @@ public class DynamicEmfLanguage extends EmfLanguage { // currently not included 
 
     @Override
     public String getName() {
-        return "EMF-Dynamic";
+        return NAME;
     }
 
     @Override
