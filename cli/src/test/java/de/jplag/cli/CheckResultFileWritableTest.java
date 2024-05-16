@@ -29,7 +29,7 @@ public class CheckResultFileWritableTest extends CommandLineInterfaceTest {
     }
 
     @Test
-    public void testNonExistingWritableFile() throws Throwable {
+    void testNonExistingWritableFile() throws Throwable {
         File directory = Files.createTempDirectory("JPlagTest").toFile();
         File targetFile = new File(directory, "results.zip");
 
@@ -38,7 +38,7 @@ public class CheckResultFileWritableTest extends CommandLineInterfaceTest {
     }
 
     @Test
-    public void testNonExistingNotWritableFile() throws IOException {
+    void testNonExistingNotWritableFile() throws IOException {
         File directory = Files.createTempDirectory("JPlagTest").toFile();
         Assumptions.assumeTrue(directory.setWritable(false));
         File targetFile = new File(directory, "results.zip");
@@ -49,7 +49,7 @@ public class CheckResultFileWritableTest extends CommandLineInterfaceTest {
     }
 
     @Test
-    public void testExistingFile() throws Throwable {
+    void testExistingFile() throws Throwable {
         File directory = Files.createTempDirectory("JPlagTest").toFile();
         File targetFile = new File(directory, "results.zip");
         Assumptions.assumeTrue(targetFile.createNewFile());
@@ -59,7 +59,7 @@ public class CheckResultFileWritableTest extends CommandLineInterfaceTest {
     }
 
     @Test
-    public void testExistingFileOverwrite() throws Throwable {
+    void testExistingFileOverwrite() throws Throwable {
         File directory = Files.createTempDirectory("JPlagTest").toFile();
         File targetFile = new File(directory, "results.zip");
         Assumptions.assumeTrue(targetFile.createNewFile());
@@ -69,7 +69,7 @@ public class CheckResultFileWritableTest extends CommandLineInterfaceTest {
     }
 
     @Test
-    public void testExistingNotWritableFile() throws IOException {
+    void testExistingNotWritableFile() throws IOException {
         File directory = Files.createTempDirectory("JPlagTest").toFile();
         File targetFile = new File(directory, "results.zip");
         Assumptions.assumeTrue(targetFile.createNewFile());
