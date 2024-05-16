@@ -41,7 +41,7 @@ public class EmfLanguage implements de.jplag.Language {
 
     @Override
     public String getName() {
-        return "EMF";
+        return NAME;
     }
 
     @Override
