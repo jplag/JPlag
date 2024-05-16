@@ -12,7 +12,7 @@ import de.jplag.Token;
 @MetaInfServices(de.jplag.Language.class)
 public class GoLanguage implements de.jplag.Language {
 
-    private static final String NAME = "Go Parser";
+    private static final String NAME = "Go";
     private static final String IDENTIFIER = "go";
     private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
     private static final String[] FILE_EXTENSIONS = {".go"};
