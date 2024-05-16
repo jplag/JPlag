@@ -53,7 +53,8 @@ export default {
           DEFAULT: '#0070f3',
           dark: '#00c'
         },
-        error: '#dc322f'
+        error: '#dc322f',
+        tooltip: 'rgba(0,0,0,0.8)'
       },
       borderWidth: {
         1: '1px'
