@@ -16,7 +16,6 @@ import de.jplag.Language;
 import de.jplag.cli.options.CliOptions;
 import de.jplag.cli.options.LanguageLoader;
 import de.jplag.cli.test.CliArg;
-import de.jplag.cli.test.CliArgBuilder;
 import de.jplag.cli.test.CliTest;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
@@ -56,11 +55,6 @@ class LanguageTest extends CliTest {
         String[] suffixes = {"x", "y", "z"};
         JPlagOptions options = runCliForOptions(args -> args.with(CliArg.SUFFIXES, suffixes));
         assertEquals(List.of(suffixes), options.fileSuffixes());
-    }
-
-    @Override
-    public void initializeParameters(CliArgBuilder args) {
-        addDefaultParameters();
     }
 
     public static Collection<Language> getAllLanguages() {

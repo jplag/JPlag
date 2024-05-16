@@ -8,7 +8,6 @@ import java.io.IOException;
 import org.junit.jupiter.api.Test;
 
 import de.jplag.cli.test.CliArg;
-import de.jplag.cli.test.CliArgBuilder;
 import de.jplag.cli.test.CliTest;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
@@ -45,10 +44,5 @@ class StoredMatchesTest extends CliTest {
         assertThrowsExactly(CliException.class, () -> {
             runCliForOptions(args -> args.withInvalid(CliArg.SHOWN_COMPARISONS, "Not an integer..."));
         });
-    }
-
-    @Override
-    public void initializeParameters(CliArgBuilder args) {
-        addDefaultParameters();
     }
 }

@@ -8,7 +8,6 @@ import java.io.IOException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import de.jplag.cli.test.CliArgBuilder;
 import de.jplag.cli.test.CliTest;
 import de.jplag.exceptions.ExitException;
 import de.jplag.merging.MergingOptions;
@@ -28,10 +27,5 @@ class MergingOptionsTest extends CliTest {
         assertEquals(MergingOptions.DEFAULT_ENABLED, options.mergingOptions().enabled());
         assertEquals(MergingOptions.DEFAULT_NEIGHBOR_LENGTH, options.mergingOptions().minimumNeighborLength());
         assertEquals(MergingOptions.DEFAULT_GAP_SIZE, options.mergingOptions().maximumGapSize());
-    }
-
-    @Override
-    public void initializeParameters(CliArgBuilder args) {
-        addDefaultParameters();
     }
 }

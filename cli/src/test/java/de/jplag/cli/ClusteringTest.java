@@ -9,13 +9,13 @@ import java.io.IOException;
 import org.junit.jupiter.api.Test;
 
 import de.jplag.cli.test.CliArg;
-import de.jplag.cli.test.CliArgBuilder;
 import de.jplag.cli.test.CliTest;
 import de.jplag.clustering.Preprocessing;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 
 class ClusteringTest extends CliTest {
+    private static final double CLUSTERING_TEST_PERCENTILE = .5;
 
     @Test
     void parseSkipClustering() throws ExitException, IOException {
@@ -31,10 +31,10 @@ class ClusteringTest extends CliTest {
 
     @Test
     void parsePercentilePreProcessor() throws ExitException, IOException {
-        JPlagOptions options = runCliForOptions(args -> args.with(CliArg.CLUSTER_PP_PERCENTILE, .5));
+        JPlagOptions options = runCliForOptions(args -> args.with(CliArg.CLUSTER_PP_PERCENTILE, CLUSTERING_TEST_PERCENTILE));
 
         assertEquals(Preprocessing.PERCENTILE, options.clusteringOptions().preprocessor());
-        assertEquals(0.5, options.clusteringOptions().preprocessorPercentile());
+        assertEquals(CLUSTERING_TEST_PERCENTILE, options.clusteringOptions().preprocessorPercentile());
     }
 
     @Test
@@ -47,10 +47,5 @@ class ClusteringTest extends CliTest {
     void parseNoPreProcessor() throws ExitException, IOException {
         JPlagOptions options = runCliForOptions(args -> args.with(CliArg.CLUSTER_PP_NONE));
         assertEquals(Preprocessing.NONE, options.clusteringOptions().preprocessor());
-    }
-
-    @Override
-    public void initializeParameters(CliArgBuilder args) {
-        addDefaultParameters();
     }
 }

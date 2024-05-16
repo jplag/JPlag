@@ -8,7 +8,6 @@ import java.io.IOException;
 import org.junit.jupiter.api.Test;
 
 import de.jplag.cli.test.CliArg;
-import de.jplag.cli.test.CliArgBuilder;
 import de.jplag.cli.test.CliResult;
 import de.jplag.cli.test.CliTest;
 import de.jplag.exceptions.ExitException;
@@ -31,10 +30,5 @@ class BaseCodeOptionTest extends CliTest {
         JPlagOptions options = result.jPlagOptions();
 
         assertEquals(NAME, options.baseCodeSubmissionDirectory().getName());
-    }
-
-    @Override
-    public void initializeParameters(CliArgBuilder args) {
-        addDefaultParameters();
     }
 }

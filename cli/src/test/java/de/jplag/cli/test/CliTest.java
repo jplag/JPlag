@@ -50,24 +50,21 @@ public abstract class CliTest {
     }
 
     protected CliResult runCli(Consumer<CliArgBuilder> additionalOptionsBuilder) throws ExitException, IOException {
-        try {
-            try (MockedStatic<JPlagRunner> runnerMock = Mockito.mockStatic(JPlagRunner.class)) {
-                runnerMock.when(() -> JPlagRunner.runJPlag(Mockito.any())).thenReturn(new JPlagResult(Collections.emptyList(), null, 1, null));
-                try (MockedStatic<OutputFileGenerator> generatorMock = Mockito.mockStatic(OutputFileGenerator.class)) {
-                    generatorMock.when(() -> OutputFileGenerator.generateJPlagResultZip(Mockito.any(), Mockito.any())).then(invocationOnMock -> null);
+        try (MockedStatic<JPlagRunner> runnerMock = Mockito.mockStatic(JPlagRunner.class);
+                MockedStatic<OutputFileGenerator> generatorMock = Mockito.mockStatic(OutputFileGenerator.class)) {
+            runnerMock.when(() -> JPlagRunner.runJPlag(Mockito.any())).thenReturn(new JPlagResult(Collections.emptyList(), null, 1, null));
+            generatorMock.when(() -> OutputFileGenerator.generateJPlagResultZip(Mockito.any(), Mockito.any())).then(invocationOnMock -> null);
 
-                    CliArgBuilder copy = this.args.copy();
-                    additionalOptionsBuilder.accept(copy);
+            CliArgBuilder copy = this.args.copy();
+            additionalOptionsBuilder.accept(copy);
 
-                    CLI cli = new CLI(copy.buildArguments());
-                    cli.executeCli();
+            CLI cli = new CLI(copy.buildArguments());
+            cli.executeCli();
 
-                    CliInputHandler inputHandler = (CliInputHandler) inputHandlerField.get(cli);
-                    JPlagOptionsBuilder optionsBuilder = new JPlagOptionsBuilder(inputHandler);
+            CliInputHandler inputHandler = (CliInputHandler) inputHandlerField.get(cli);
+            JPlagOptionsBuilder optionsBuilder = new JPlagOptionsBuilder(inputHandler);
 
-                    return new CliResult(optionsBuilder.buildOptions());
-                }
-            }
+            return new CliResult(optionsBuilder.buildOptions());
         } catch (IllegalAccessException e) {
             Assumptions.abort("Could not access private field in CLI for test.");
             return null; // will not be executed
@@ -83,5 +80,7 @@ public abstract class CliTest {
         this.args.with(CliArg.SUBMISSION_DIRECTORIES, new String[] {CURRENT_DIRECTORY});
     }
 
-    public abstract void initializeParameters(CliArgBuilder args);
+    public void initializeParameters(CliArgBuilder args) {
+        this.addDefaultParameters();
+    }
 }

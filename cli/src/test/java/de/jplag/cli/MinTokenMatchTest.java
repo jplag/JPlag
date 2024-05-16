@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import de.jplag.cli.test.CliArg;
-import de.jplag.cli.test.CliArgBuilder;
 import de.jplag.cli.test.CliTest;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
@@ -52,10 +51,5 @@ class MinTokenMatchTest extends CliTest {
         int expectedValue = 50;
         JPlagOptions options = runCliForOptions(args -> args.with(CliArg.MIN_TOKEN_MATCH, expectedValue));
         assertEquals(expectedValue, options.minimumTokenMatch().intValue());
-    }
-
-    @Override
-    public void initializeParameters(CliArgBuilder args) {
-        addDefaultParameters();
     }
 }

@@ -8,7 +8,6 @@ import java.io.IOException;
 import org.junit.jupiter.api.Test;
 
 import de.jplag.cli.test.CliArg;
-import de.jplag.cli.test.CliArgBuilder;
 import de.jplag.cli.test.CliTest;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
@@ -46,10 +45,5 @@ class SimilarityThresholdTest extends CliTest {
         double expectedValue = 0.5;
         JPlagOptions options = runCliForOptions(args -> args.with(CliArg.SIMILARITY_THRESHOLD, expectedValue));
         assertEquals(expectedValue, options.similarityThreshold(), DELTA);
-    }
-
-    @Override
-    public void initializeParameters(CliArgBuilder args) {
-        addDefaultParameters();
     }
 }
