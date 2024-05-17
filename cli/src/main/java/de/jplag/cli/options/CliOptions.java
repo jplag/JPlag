@@ -98,6 +98,9 @@ public class CliOptions implements Runnable {
 
         @Option(names = "--csv-export", description = "Export pairwise similarity values as a CSV file.")
         public boolean csvExport = false;
+
+        @Option(names = "--overwrite", description = "Existing result files will be overwritten.")
+        public boolean overwrite = false;
     }
 
     public static class Clustering {
