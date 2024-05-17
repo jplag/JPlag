@@ -52,7 +52,7 @@ public class JavacAdapter {
                 ast.accept(scanner, null);
                 parser.add(Token.semanticFileEnd(file));
             }
-        } catch (IOException exception) {
+        } catch (Exception exception) {
             throw new ParsingException(null, exception.getMessage(), exception);
         }
         parsingExceptions.addAll(processErrors(listener));
