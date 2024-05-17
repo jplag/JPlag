@@ -20,7 +20,7 @@ public class PythonLanguage extends AbstractAntlrLanguage {
 
     @Override
     public String getName() {
-        return "Python3 Parser";
+        return "Python3";
     }
 
     @Override

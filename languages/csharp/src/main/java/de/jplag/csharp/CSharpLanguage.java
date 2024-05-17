@@ -25,7 +25,7 @@ public class CSharpLanguage extends AbstractAntlrLanguage {
 
     @Override
     public String getName() {
-        return NAME;
+        return "C#";
     }
 
     @Override

@@ -23,7 +23,7 @@ public class CPPLanguage extends AbstractAntlrLanguage {
 
     @Override
     public String getName() {
-        return "C++ Parser";
+        return "C++";
     }
 
     @Override

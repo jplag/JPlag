@@ -26,7 +26,7 @@ public class SchemeLanguage implements de.jplag.Language {
 
     @Override
     public String getName() {
-        return "SchemeR4RS Parser [basic markup]";
+        return "SchemeR4RS [basic markup]";
     }
 
     @Override

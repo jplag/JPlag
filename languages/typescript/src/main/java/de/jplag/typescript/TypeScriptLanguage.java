@@ -20,7 +20,7 @@ public class TypeScriptLanguage extends AbstractAntlrLanguage {
 
     @Override
     public String getName() {
-        return "Typescript Parser";
+        return "Typescript";
     }
 
     @Override
