@@ -1,5 +1,6 @@
 package de.jplag.reporting.jsonfactory;
 
+import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +59,7 @@ public class ComparisonReportWriter {
             var comparisonReport = new ComparisonReport(firstSubmissionId, secondSubmissionId,
                     Map.of(SimilarityMetric.AVG.name(), comparison.similarity(), SimilarityMetric.MAX.name(), comparison.maximalSimilarity()),
                     convertMatchesToReportMatches(comparison), comparison.similarityOfFirst(), comparison.similarityOfSecond());
-            resultWriter.addJsonEntry(comparisonReport, fileName);
+            resultWriter.addJsonEntry(comparisonReport, Path.of(fileName));
         }
     }
 
@@ -97,16 +98,34 @@ public class ComparisonReportWriter {
         List<Token> tokensFirst = comparison.firstSubmission().getTokenList().subList(match.startOfFirst(), match.endOfFirst() + 1);
         List<Token> tokensSecond = comparison.secondSubmission().getTokenList().subList(match.startOfSecond(), match.endOfSecond() + 1);
 
-        Comparator<? super Token> lineComparator = Comparator.comparingInt(Token::getLine);
+        Comparator<? super Token> lineComparator = Comparator.comparingInt(Token::getLine).thenComparingInt(Token::getColumn);
 
         Token startOfFirst = tokensFirst.stream().min(lineComparator).orElseThrow();
         Token endOfFirst = tokensFirst.stream().max(lineComparator).orElseThrow();
         Token startOfSecond = tokensSecond.stream().min(lineComparator).orElseThrow();
         Token endOfSecond = tokensSecond.stream().max(lineComparator).orElseThrow();
 
-        return new Match(FilePathUtil.getRelativeSubmissionPath(startOfFirst.getFile(), comparison.firstSubmission(), submissionToIdFunction),
-                FilePathUtil.getRelativeSubmissionPath(startOfSecond.getFile(), comparison.secondSubmission(), submissionToIdFunction),
-                startOfFirst.getLine(), endOfFirst.getLine(), startOfSecond.getLine(), endOfSecond.getLine(), match.length());
+        String firstFileName = FilePathUtil.getRelativeSubmissionPath(startOfFirst.getFile(), comparison.firstSubmission(), submissionToIdFunction)
+                .toString();
+        String secondFileName = FilePathUtil.getRelativeSubmissionPath(startOfSecond.getFile(), comparison.secondSubmission(), submissionToIdFunction)
+                .toString();
+
+        int startLineFirst = startOfFirst.getLine();
+        int startColumnFirst = startOfFirst.getColumn();
+        int startTokenFirst = match.startOfFirst();
+        int endLineFirst = endOfFirst.getLine();
+        int endColumnFirst = endOfFirst.getColumn() + endOfFirst.getLength() - 1;
+        int endTokenFirst = match.endOfFirst();
+
+        int startLineSecond = startOfSecond.getLine();
+        int startColumnSecond = startOfSecond.getColumn();
+        int startTokenSecond = match.startOfSecond();
+        int endLineSecond = endOfSecond.getLine();
+        int endColumnSecond = endOfSecond.getColumn() + endOfSecond.getLength() - 1;
+        int endTokenSecond = match.endOfSecond();
+
+        return new Match(firstFileName, secondFileName, startLineFirst, startColumnFirst, startTokenFirst, endLineFirst, endColumnFirst,
+                endTokenFirst, startLineSecond, startColumnSecond, startTokenSecond, endLineSecond, endColumnSecond, endTokenSecond, match.length());
     }
 
 }

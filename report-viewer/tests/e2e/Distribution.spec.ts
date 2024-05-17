@@ -4,7 +4,7 @@ import { uploadFile } from './TestUtils'
 test('Test distribution diagram', async ({ page }) => {
   await page.goto('/')
 
-  await uploadFile('result_small_cluster.zip', page)
+  await uploadFile('progpedia-report.zip', page)
 
   const options = getTestCombinations()
   selectOptions(page, options[0])
@@ -26,7 +26,7 @@ test('Test distribution diagram', async ({ page }) => {
 async function selectOptions(page: Page, options: string[]) {
   const distributionDiagramContainer = page.getByText('Distribution of Comparisons:Options:')
   for (const option of options) {
-    await distributionDiagramContainer.getByText(option).first().click()
+    await distributionDiagramContainer.getByText(option, { exact: true }).click()
   }
   // This timeout is so that the screenshot is taken after the animation is finished
   await page.waitForTimeout(3000)
@@ -34,15 +34,15 @@ async function selectOptions(page: Page, options: string[]) {
 
 function getTestCombinations() {
   const options = [
-    ['Average', 'Maximum'],
+    ['Average Similarity', 'Maximum Similarity'],
     ['Linear', 'Logarithmic']
   ]
 
-  const combinations: string[][] = []
-
   const baseOptions = options.map((o) => o[0])
+  const combinations: string[][] = [baseOptions]
+
   for (let i = 0; i < options.length; i++) {
-    for (let j = 0; j < options[i].length; j++) {
+    for (let j = 1; j < options[i].length; j++) {
       const combination = Array.from(baseOptions)
       combination[i] = options[i][j]
       combinations.push(combination)

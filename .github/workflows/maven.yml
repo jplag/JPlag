@@ -57,7 +57,7 @@ jobs:
     - name: Upload Assembly
       uses: actions/upload-artifact@v4
       with:
-        name: "JPlag"
-        path: "jplag.cli/target/jplag-*-jar-with-dependencies.jar"
+        name: "JPlag Jar"
+        path: "cli/target/jplag-*-jar-with-dependencies.jar"
 
 

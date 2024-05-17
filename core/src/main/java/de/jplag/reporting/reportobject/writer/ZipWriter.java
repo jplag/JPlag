@@ -6,11 +6,14 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.jplag.reporting.FilePathUtil;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -39,9 +42,9 @@ public class ZipWriter implements JPlagResultWriter {
     }
 
     @Override
-    public void addJsonEntry(Object jsonContent, String path) {
+    public void addJsonEntry(Object jsonContent, Path path) {
         try {
-            this.file.putNextEntry(new ZipEntry(path));
+            this.file.putNextEntry(new ZipEntry(FilePathUtil.pathAsZipPath(path)));
             this.file.write(objectMapper.writeValueAsBytes(jsonContent));
             this.file.closeEntry();
         } catch (IOException e) {
@@ -50,9 +53,9 @@ public class ZipWriter implements JPlagResultWriter {
     }
 
     @Override
-    public void addFileContentEntry(String path, File original) {
+    public void addFileContentEntry(Path path, File original) {
         try (FileInputStream inputStream = new FileInputStream(original)) {
-            this.file.putNextEntry(new ZipEntry(path));
+            this.file.putNextEntry(new ZipEntry(FilePathUtil.pathAsZipPath(path)));
             inputStream.transferTo(this.file);
         } catch (IOException e) {
             logger.error(String.format(COPY_FILE_ERROR, original.getAbsolutePath(), path), e);
@@ -60,9 +63,9 @@ public class ZipWriter implements JPlagResultWriter {
     }
 
     @Override
-    public void writeStringEntry(String entry, String path) {
+    public void writeStringEntry(String entry, Path path) {
         try {
-            this.file.putNextEntry(new ZipEntry(path));
+            this.file.putNextEntry(new ZipEntry(FilePathUtil.pathAsZipPath(path)));
             this.file.write(entry.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             logger.error(String.format(WRITE_STRING_ERROR, path), e);

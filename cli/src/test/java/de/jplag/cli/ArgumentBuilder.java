@@ -138,7 +138,7 @@ public class ArgumentBuilder {
     }
 
     /**
-     * Sets the similarity threshold as a string, so invalid values can be configures
+     * Sets the similarity threshold as a string, so invalid values can be configured
      * @param value The value
      * @return self reference
      */

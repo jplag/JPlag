@@ -1,4 +1,4 @@
-package de.jplag.cli;
+package de.jplag.cli.options;
 
 import java.util.Collections;
 import java.util.Map;
