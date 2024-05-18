@@ -10,7 +10,7 @@ import de.jplag.emf.parser.EcoreParser;
  * @author Timur Saglam
  */
 public class DynamicEmfLanguage extends EmfLanguage { // currently not included in the CLI
-    private static final String NAME = "EMF metamodels (dynamically created token set)";
+    private static final String NAME = "EMF metamodels";
     private static final String IDENTIFIER = "emf-dynamic";
 
     private static final int DEFAULT_MIN_TOKEN_MATCH = 10;

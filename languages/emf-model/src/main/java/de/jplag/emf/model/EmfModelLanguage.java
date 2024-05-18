@@ -16,7 +16,7 @@ import de.jplag.emf.model.parser.DynamicModelParser;
  */
 @MetaInfServices(de.jplag.Language.class)
 public class EmfModelLanguage extends DynamicEmfLanguage {
-    private static final String NAME = "EMF models (dynamically created token set)";
+    private static final String NAME = "EMF models";
     private static final String IDENTIFIER = "emf-model";
 
     public static final String VIEW_FILE_SUFFIX = ".treeview";
