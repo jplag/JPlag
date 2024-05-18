@@ -2,28 +2,28 @@
  * Enum for the language parsers JPlag supports
  */
 enum ParserLanguage {
-  JAVA = 'Javac based AST plugin',
-  PYTHON = 'Python3 Parser',
-  C = 'C Scanner',
-  CPP_OLD = 'C/C++ Scanner [basic markup]',
-  CPP = 'C++ Parser',
-  CPP_2 = 'C/C++ Parser',
-  C_SHARP = 'C# 6 Parser',
+  JAVA = 'Java',
+  PYTHON = 'Python',
+  C = 'C',
+  CPP_OLD = 'C/C++ [basic markup]',
+  CPP = 'C++',
+  CPP_2 = 'C/C++',
+  C_SHARP = 'C#',
   EMF_METAMODEL_DYNAMIC = 'emf-dynamic',
   EMF_METAMODEL = 'EMF metamodel',
-  EMF_MODEL = 'EMF models (dynamically created token set)',
-  GO = 'Go Parser',
-  KOTLIN = 'Kotlin Parser',
-  R_LANG = 'R Parser',
-  RUST = 'Rust Language Module',
-  SCALA = 'Scala parser',
-  SCHEME = 'SchemeR4RS Parser [basic markup]',
-  SWIFT = 'Swift Parser',
-  TEXT = 'Text Parser (naive)',
-  SCXML = 'SCXML (Statechart XML)',
-  LLVM = 'LLVMIR Parser',
+  EMF_MODEL = 'EMF models',
+  GO = 'Go',
+  KOTLIN = 'Kotlin',
+  R_LANG = 'R',
+  RUST = 'Rust',
+  SCALA = 'Scala',
+  SCHEME = 'SchemeR4RS',
+  SWIFT = 'Swift',
+  TEXT = 'Text',
+  SCXML = 'SCXML',
+  LLVM = 'LLVMIR',
   JAVASCRIPT = 'JavaScript',
-  TYPESCRIPT = 'Typescript Parser'
+  TYPESCRIPT = 'Typescript'
 }
 
 /**
