@@ -178,4 +178,26 @@ public class FileUtils {
         writer.write(content);
         writer.close();
     }
+
+    /**
+     * Checks if the given file can be written to. If the file does not exist checks if it can be created.
+     * @param file The file to check
+     * @return true, if the file can be written to
+     */
+    public static boolean checkWritable(File file) {
+        if (file.exists()) {
+            return file.canWrite();
+        } else {
+            return checkParentWritable(file);
+        }
+    }
+
+    /**
+     * Checks if the parent file can be written to.
+     * @param file The file to check
+     * @return true, if the parent can be written to
+     */
+    public static boolean checkParentWritable(File file) {
+        return file.getAbsoluteFile().getParentFile().canWrite();
+    }
 }

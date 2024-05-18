@@ -1,23 +1,16 @@
 package de.jplag.python3;
 
-import java.io.File;
-import java.util.List;
-import java.util.Set;
-
 import org.kohsuke.MetaInfServices;
 
-import de.jplag.ParsingException;
-import de.jplag.Token;
+import de.jplag.antlr.AbstractAntlrLanguage;
 
 @MetaInfServices(de.jplag.Language.class)
-public class PythonLanguage implements de.jplag.Language {
+public class PythonLanguage extends AbstractAntlrLanguage {
 
     private static final String IDENTIFIER = "python3";
 
-    private final Parser parser;
-
     public PythonLanguage() {
-        parser = new Parser();
+        super(new PythonParserAdapter());
     }
 
     @Override
@@ -38,10 +31,5 @@ public class PythonLanguage implements de.jplag.Language {
     @Override
     public int minimumTokenMatch() {
         return 12;
-    }
-
-    @Override
-    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return this.parser.parse(files);
     }
 }

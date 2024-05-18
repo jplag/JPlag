@@ -28,7 +28,7 @@
             !matches.get(file.fileName) ? [] : (matches.get(file.fileName) as MatchInSingleFile[])
           "
           :highlight-language="highlightLanguage"
-          @line-selected="(match) => $emit('lineSelected', match)"
+          @match-selected="(match) => $emit('matchSelected', match)"
           class="mt-1 first:mt-0"
         />
       </VueDraggableNext>
@@ -48,7 +48,7 @@ import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCompressAlt } from '@fortawesome/free-solid-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import type { ParserLanguage } from '@/model/Language'
+import type { Language } from '@/model/Language'
 
 library.add(faCompressAlt)
 
@@ -78,12 +78,12 @@ const props = defineProps({
    * Language of the files.
    */
   highlightLanguage: {
-    type: String as PropType<ParserLanguage>,
+    type: String as PropType<Language>,
     required: true
   }
 })
 
-defineEmits(['lineSelected'])
+defineEmits(['matchSelected'])
 
 const codePanels: Ref<(typeof CodePanel)[]> = ref([])
 

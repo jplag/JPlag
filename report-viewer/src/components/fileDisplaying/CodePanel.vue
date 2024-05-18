@@ -22,39 +22,31 @@
 
     <div class="mx-1 overflow-x-auto print:!mx-0 print:overflow-x-hidden">
       <div class="print:display-initial w-fit min-w-full !text-xs" :class="{ hidden: collapsed }">
-        <table
+        <div
           v-if="file.data.trim() !== ''"
-          class="w-full print:table-auto"
-          :aria-describedby="`Content of file ${file.fileName}`"
+          class="grid w-full grid-cols-[auto_1fr] gap-x-2 print:table-auto"
         >
+          <div
+            v-for="(_, index) in codeLines"
+            :key="index"
+            class="col-span-1 col-start-1 row-span-1 text-right"
+            :style="{
+              gridRowStart: index + 1
+            }"
+          >
+            {{ index + 1 }}
+          </div>
           <!-- One row in table per code line -->
-          <tr
+          <CodeLine
             v-for="(line, index) in codeLines"
             :key="index"
-            class="w-full cursor-default"
-            :class="{ 'cursor-pointer': line.match !== null }"
-            @click="lineSelected(index)"
-          >
-            <!-- Line number -->
-            <td class="float-right pr-3">{{ index + 1 }}</td>
-            <!-- Code line -->
-            <td
-              class="print-excact w-full"
-              :style="{
-                background:
-                  line.match !== null
-                    ? getMatchColor(0.3, line.match.colorIndex)
-                    : 'hsla(0, 0%, 0%, 0)'
-              }"
-            >
-              <pre
-                v-html="line.line"
-                class="code-font print-excact break-child !bg-transparent print:whitespace-pre-wrap"
-                ref="lineRefs"
-              ></pre>
-            </td>
-          </tr>
-        </table>
+            ref="lineRefs"
+            :line="line.line"
+            :lineNumber="index + 1"
+            :matches="line.matches"
+            @matchSelected="(match) => matchSelected(match)"
+          />
+        </div>
 
         <div v-else class="flex flex-col items-start overflow-x-auto">
           <i>Empty File</i>
@@ -68,12 +60,12 @@
 import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
 import { ref, nextTick, type PropType, computed, type Ref } from 'vue'
 import Interactable from '../InteractableComponent.vue'
-import type { Match } from '@/model/Match'
 import type { SubmissionFile } from '@/model/File'
 import { highlight } from '@/utils/CodeHighlighter'
-import type { ParserLanguage } from '@/model/Language'
-import { getMatchColor } from '@/utils/ColorUtils'
+import type { Language } from '@/model/Language'
 import ToolTipComponent from '../ToolTipComponent.vue'
+import CodeLine from './CodeLine.vue'
+import type { Match } from '@/model/Match'
 
 const props = defineProps({
   /**
@@ -94,29 +86,27 @@ const props = defineProps({
    * Language of the file.
    */
   highlightLanguage: {
-    type: String as PropType<ParserLanguage>,
+    type: String as PropType<Language>,
     required: true
   }
 })
 
-const emit = defineEmits(['lineSelected'])
+const emit = defineEmits(['matchSelected'])
 
 const collapsed = ref(true)
-const lineRefs = ref<HTMLElement[]>([])
+const lineRefs = ref<(typeof CodeLine)[]>([])
 
-const codeLines: Ref<{ line: string; match: null | Match }[]> = computed(() =>
+const codeLines: Ref<{ line: string; matches: MatchInSingleFile[] }[]> = computed(() =>
   highlight(props.file.data, props.highlightLanguage).map((line, index) => {
     return {
       line,
-      match: props.matches?.find((m) => m.start <= index + 1 && index + 1 <= m.end)?.match ?? null
+      matches: props.matches?.filter((m) => m.start <= index + 1 && index + 1 <= m.end) ?? []
     }
   })
 )
 
-function lineSelected(lineIndex: number) {
-  if (codeLines.value[lineIndex].match !== null) {
-    emit('lineSelected', codeLines.value[lineIndex].match)
-  }
+function matchSelected(match: Match) {
+  emit('matchSelected', match)
 }
 
 /**
@@ -126,7 +116,7 @@ function lineSelected(lineIndex: number) {
 function scrollTo(lineNumber: number) {
   collapsed.value = false
   nextTick(function () {
-    lineRefs.value[lineNumber - 1].scrollIntoView({ block: 'center' })
+    lineRefs.value[lineNumber - 1].scrollTo()
   })
 }
 
@@ -154,16 +144,3 @@ function getFileDisplayName(file: SubmissionFile): string {
     : file.fileName
 }
 </script>
-
-<style scoped>
-.code-font {
-  font-family: 'JetBrains Mono NL', monospace !important;
-}
-
-@media print {
-  .break-child *,
-  .break-child {
-    word-break: break-word;
-  }
-}
-</style>

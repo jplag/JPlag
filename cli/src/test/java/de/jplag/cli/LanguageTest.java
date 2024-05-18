@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import de.jplag.Language;
+import de.jplag.cli.options.CliOptions;
+import de.jplag.cli.options.LanguageLoader;
 
 class LanguageTest extends CommandLineInterfaceTest {
 

@@ -1,23 +1,28 @@
 package de.jplag.cli;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.JPlagResult;
+import de.jplag.cli.options.CliOptions;
 import de.jplag.csv.comparisons.CsvComparisonOutput;
+import de.jplag.reporting.reportobject.ReportObjectFactory;
 
+/**
+ * Manages the creation of output files
+ */
 public final class OutputFileGenerator {
     private static final Logger logger = LoggerFactory.getLogger(OutputFileGenerator.class);
 
     private OutputFileGenerator() {
-        // Prevents default constructor
     }
 
     /**
-     * Exports the given result as csvs, if the csvExport is activated in the options. Both a full and an anonymized version
+     * Exports the given result as CSVs, if the csvExport is activated in the options. Both a full and an anonymized version
      * will be written.
      * @param result The result to export
      * @param outputRoot The root folder for the output
@@ -32,5 +37,18 @@ public final class OutputFileGenerator {
                 logger.warn("Could not write csv results", e);
             }
         }
+    }
+
+    /**
+     * Generates the JPLag result zip
+     * @param result The JPlag result
+     * @param outputFile The output file
+     * @throws FileNotFoundException If the file cannot be written
+     */
+    public static void generateJPlagResultZip(JPlagResult result, File outputFile) throws FileNotFoundException {
+        ReportObjectFactory reportObjectFactory = new ReportObjectFactory(outputFile);
+        reportObjectFactory.createAndSaveReport(result);
+        logger.info("Successfully written the result: {}", outputFile.getPath());
+        logger.info("View the result using --mode or at: https://jplag.github.io/JPlag/");
     }
 }

@@ -26,19 +26,22 @@ enum ParserLanguage {
   TYPESCRIPT = 'Typescript'
 }
 
+type Language = ParserLanguage | 'unknown language'
+
 /**
  * Gets the LanguageParser enum value for the given language
  * @param language String representation of language the files were parsed with
  * @returns The LanguageParser enum value
  */
-function getLanguageParser(language: string): ParserLanguage {
+function getLanguageParser(language: string): Language {
   for (const key in ParserLanguage) {
     if (ParserLanguage[key as keyof typeof ParserLanguage] === language) {
       return ParserLanguage[key as keyof typeof ParserLanguage]
     }
   }
 
-  throw new Error(`Language ${language} not found`)
+  console.warn(`Unknown language: ${language}\nCode highlighting might not work correctly.`)
+  return 'unknown language'
 }
 
-export { ParserLanguage, getLanguageParser }
+export { ParserLanguage, type Language, getLanguageParser }
