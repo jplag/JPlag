@@ -8,7 +8,6 @@ import de.jplag.Submission;
 
 public final class FilePathUtil {
     private static final String ZIP_PATH_SEPARATOR = "/"; // Paths in zip files are always separated by a slash
-    private static final String WINDOWS_PATH_SEPARATOR = "\\";
 
     private FilePathUtil() {
         // private constructor to prevent instantiation
@@ -21,30 +20,39 @@ public final class FilePathUtil {
      * @param submissionToIdFunction Function to map names to ids
      * @return Relative path
      */
-    public static String getRelativeSubmissionPath(File file, Submission submission, Function<Submission, String> submissionToIdFunction) {
+    public static Path getRelativeSubmissionPath(File file, Submission submission, Function<Submission, String> submissionToIdFunction) {
         if (file.toPath().equals(submission.getRoot().toPath())) {
-            return Path.of(submissionToIdFunction.apply(submission), submissionToIdFunction.apply(submission)).toString();
+            return Path.of(submissionToIdFunction.apply(submission), submissionToIdFunction.apply(submission));
         }
-        return Path.of(submissionToIdFunction.apply(submission), submission.getRoot().toPath().relativize(file.toPath()).toString()).toString();
+        return Path.of(submissionToIdFunction.apply(submission), submission.getRoot().toPath().relativize(file.toPath()).toString());
     }
 
     /**
-     * Joins logical paths using a slash. This method ensures, that no duplicate slashes are created in between.
-     * @param left The left path segment
-     * @param right The right path segment
-     * @return The joined paths
+     * Forces a path to be relative. If the path is absolute, the returned path will be relative to the root.
+     * @param path The path to relativize
+     * @return The relative path
      */
-    public static String joinZipPathSegments(String left, String right) {
-        String rightStripped = right;
-        while (rightStripped.startsWith(ZIP_PATH_SEPARATOR) || rightStripped.startsWith(WINDOWS_PATH_SEPARATOR)) {
-            rightStripped = rightStripped.substring(1);
+    public static Path forceRelativePath(Path path) {
+        if (path.isAbsolute()) {
+            return Path.of("/").relativize(path);
         }
+        return path;
+    }
 
-        String leftStripped = left;
-        while (leftStripped.endsWith(ZIP_PATH_SEPARATOR) || leftStripped.startsWith(WINDOWS_PATH_SEPARATOR)) {
-            leftStripped = leftStripped.substring(0, leftStripped.length() - 1);
+    /**
+     * Formats the path for usage with zip files. Returns the path segments separated by {@link #ZIP_PATH_SEPARATOR}
+     * @param path The path to format
+     * @return The zip file path
+     */
+    public static String pathAsZipPath(Path path) {
+        Path relativePath = forceRelativePath(path);
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < relativePath.getNameCount(); i++) {
+            if (i != 0) {
+                builder.append(ZIP_PATH_SEPARATOR);
+            }
+            builder.append(relativePath.getName(i));
         }
-
-        return leftStripped + ZIP_PATH_SEPARATOR + rightStripped;
+        return builder.toString();
     }
 }

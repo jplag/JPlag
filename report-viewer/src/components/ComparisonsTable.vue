@@ -120,7 +120,11 @@
                     }"
                     class="flex w-full justify-center text-center"
                   >
-                    <ToolTipComponent class="w-fit" direction="left">
+                    <ToolTipComponent
+                      class="w-fit"
+                      direction="left"
+                      :tool-tip-container-will-be-centered="true"
+                    >
                       <template #default>
                         {{ clusters?.[item.clusterIndex].members?.length }}
                         <FontAwesomeIcon

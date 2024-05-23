@@ -85,7 +85,7 @@
         :matches="comparison.matchesInFirstSubmission"
         :file-owner-display-name="store().getDisplayName(comparison.firstSubmissionId)"
         :highlight-language="language"
-        @line-selected="showMatchInSecond"
+        @match-selected="showMatchInSecond"
         class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
       />
       <FilesContainer
@@ -94,7 +94,7 @@
         :matches="comparison.matchesInSecondSubmissions"
         :file-owner-display-name="store().getDisplayName(comparison.secondSubmissionId)"
         :highlight-language="language"
-        @line-selected="showMatchInFirst"
+        @match-selected="showMatchInFirst"
         class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
       />
     </div>
@@ -113,7 +113,7 @@ import MatchList from '@/components/fileDisplaying/MatchList.vue'
 import FilesContainer from '@/components/fileDisplaying/FilesContainer.vue'
 import { store } from '@/stores/store'
 import Container from '@/components/ContainerComponent.vue'
-import { ParserLanguage } from '@/model/Language'
+import type { Language } from '@/model/Language'
 import hljsLightMode from 'highlight.js/styles/vs.css?raw'
 import hljsDarkMode from 'highlight.js/styles/vs2015.css?raw'
 import { MetricType } from '@/model/MetricType'
@@ -129,7 +129,7 @@ const props = defineProps({
     required: true
   },
   language: {
-    type: Object as PropType<ParserLanguage>,
+    type: String as PropType<Language>,
     required: true
   }
 })
@@ -148,7 +148,7 @@ const panel2: Ref<typeof FilesContainer | null> = ref(null)
  * @param line (line number)
  */
 function showMatchInFirst(match: Match) {
-  panel1.value?.scrollTo(match.firstFile, match.startInFirst)
+  panel1.value?.scrollTo(match.firstFile, match.startInFirst.line)
 }
 
 /**
@@ -157,7 +157,7 @@ function showMatchInFirst(match: Match) {
  * @param line (line number)
  */
 function showMatchInSecond(match: Match) {
-  panel2.value?.scrollTo(match.secondFile, match.startInSecond)
+  panel2.value?.scrollTo(match.secondFile, match.startInSecond.line)
 }
 
 /**

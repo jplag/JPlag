@@ -138,7 +138,7 @@ public class ArgumentBuilder {
     }
 
     /**
-     * Sets the similarity threshold as a string, so invalid values can be configures
+     * Sets the similarity threshold as a string, so invalid values can be configured
      * @param value The value
      * @return self reference
      */
@@ -165,6 +165,26 @@ public class ArgumentBuilder {
     public ArgumentBuilder shownComparisons(String value) {
         this.arguments.add("-n");
         this.arguments.add(value);
+        return this;
+    }
+
+    /**
+     * Sets the result file
+     * @param path The path to the result file
+     * @return self reference
+     */
+    public ArgumentBuilder resultFile(String path) {
+        this.arguments.add("-r");
+        this.arguments.add(path);
+        return this;
+    }
+
+    /**
+     * Adds the overwrite argument
+     * @return self reference
+     */
+    public ArgumentBuilder overwrite() {
+        this.arguments.add("--overwrite");
         return this;
     }
 

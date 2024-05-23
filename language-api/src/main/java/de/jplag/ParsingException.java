@@ -76,8 +76,9 @@ public class ParsingException extends Exception {
 
     private static String constructMessage(File file, String reason) {
         StringBuilder messageBuilder = new StringBuilder();
-        if (reason == null || !reason.contains(file.toString())) {
-            messageBuilder.append("failed to parse '%s'".formatted(file));
+        String fileName = file == null ? "<null>" : file.toString();
+        if (reason == null || !reason.contains(fileName)) {
+            messageBuilder.append("failed to parse '%s'".formatted(fileName));
         }
         if (reason != null && !reason.isBlank()) {
             messageBuilder.append(reason);

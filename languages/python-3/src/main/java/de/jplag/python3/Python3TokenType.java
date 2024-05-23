@@ -32,7 +32,9 @@ public enum Python3TokenType implements TokenType {
     YIELD("YIELD"),
     DEL("DEL"),
     WITH_BEGIN("WITH}"),
-    WITH_END("}WITH");
+    WITH_END("}WITH"),
+    ASYNC("ASYNC"),
+    AWAIT("AWAIT");
 
     private final String description;
 

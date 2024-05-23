@@ -26,7 +26,13 @@ public class Scanner extends AbstractParser {
         for (File file : files) {
             this.currentFile = file;
             logger.trace("Scanning file {}", currentFile);
-            CPPScanner.scanFile(file, this);
+            try {
+                CPPScanner.scanFile(file, this);
+            } catch (ParsingException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new ParsingException(file, "Unexpected error during parsing." + System.lineSeparator() + e.getMessage(), e);
+            }
             tokens.add(Token.fileEnd(currentFile));
         }
         return tokens;
