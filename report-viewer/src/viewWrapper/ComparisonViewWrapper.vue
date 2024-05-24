@@ -8,7 +8,7 @@
       <LoadingCircle class="mx-auto" />
     </div>
 
-    <RepositoryReference />
+    <VersionRepositoryReference />
   </div>
 </template>
 
@@ -21,7 +21,7 @@ import { ComparisonFactory } from '@/model/factories/ComparisonFactory'
 import LoadingCircle from '@/components/LoadingCircle.vue'
 import { redirectOnError } from '@/router'
 import type { Language } from '@/model/Language'
-import RepositoryReference from '@/components/RepositoryReference.vue'
+import VersionRepositoryReference from '@/components/VersionRepositoryReference.vue'
 
 const props = defineProps({
   comparisonFileName: {

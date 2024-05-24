@@ -32,7 +32,7 @@
       <div v-else>Demo of JPlag v{{ reportViewerVersion.toString() }}</div>
       <div>Displays the result of JPlag on the Progpedia dataset.</div>
     </div>
-    <RepositoryReference :override-style="false" />
+    <VersionRepositoryReference :show-version="false" :override-style="false" />
   </div>
 </template>
 
@@ -40,7 +40,7 @@
 import { Version } from '@/model/Version'
 import { ref } from 'vue'
 import { minimalReportVersion, reportViewerVersion } from '@/model/Version'
-import RepositoryReference from './RepositoryReference.vue'
+import VersionRepositoryReference from './VersionRepositoryReference.vue'
 
 const newestVersion = ref(new Version(-1, -1, -1))
 const isDemo = import.meta.env.MODE == 'demo'
