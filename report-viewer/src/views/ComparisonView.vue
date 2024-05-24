@@ -28,7 +28,6 @@
             >{{ (comparison.similarities[MetricType.AVERAGE] * 100).toFixed(2) }}%</TextInformation
           >
           <TextInformation
-            v-if="comparison.firstSimilarity"
             :label="`Similarity ${store().getDisplayName(comparison.firstSubmissionId)}`"
             tooltip-side="right"
           >
@@ -48,7 +47,6 @@
             >
           </TextInformation>
           <TextInformation
-            v-if="comparison.secondSimilarity"
             :label="`Similarity ${store().getDisplayName(comparison.secondSubmissionId)}`"
             tooltip-side="right"
             ><template #default>{{ (comparison.secondSimilarity * 100).toFixed(2) }}%</template>
