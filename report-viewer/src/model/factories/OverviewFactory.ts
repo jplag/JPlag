@@ -7,8 +7,6 @@ import { getLanguageParser } from '../Language'
 import { Distribution } from '../Distribution'
 import { MetricType } from '../MetricType'
 import { BaseFactory } from './BaseFactory'
-import { HundredValueDistribution } from '../HundredValueDistribution'
-import { TenValueDistribution } from '../TenValueDistribution'
 
 /**
  * Factory class for creating Overview objects
@@ -53,41 +51,20 @@ export class OverviewFactory extends BaseFactory {
       dateOfExecution,
       duration,
       this.extractTopComparisons(json, clusters),
-      this.extractDistributions(json),
+      this.extractDistributions(json.distributions as Record<string, Array<number>>),
       clusters,
       totalComparisons
     )
   }
 
   private static extractDistributions(
-    json: Record<string, unknown>
-  ): Record<MetricType, Distribution> {
-    if (json.distributions) {
-      return this.extractDistributionsFromMap(json.distributions as Record<string, Array<number>>)
-    } else if (json.metrics) {
-      return this.extractDistributionsFromMetrics(json.metrics as Array<Record<string, unknown>>)
-    }
-    throw new Error('No distributions found')
-  }
-
-  private static extractDistributionsFromMap(
-    distributionsMap: Record<string, Array<number>>
+    json: Record<string, Array<number>>
   ): Record<MetricType, Distribution> {
     const distributions = {} as Record<MetricType, Distribution>
-    for (const [key, value] of Object.entries(distributionsMap)) {
-      distributions[key as MetricType] = new HundredValueDistribution(value as Array<number>)
+    for (const [key, value] of Object.entries(json)) {
+      distributions[key as MetricType] = new Distribution(value as Array<number>)
     }
     return distributions
-  }
-
-  /** @deprecated since 5.0.0. Use the new format with {@link extractDistributionsFromMap} */
-  private static extractDistributionsFromMetrics(
-    metrics: Array<Record<string, unknown>>
-  ): Record<MetricType, Distribution> {
-    return {
-      [MetricType.AVERAGE]: new TenValueDistribution(metrics[0].distribution as Array<number>),
-      [MetricType.MAXIMUM]: new TenValueDistribution(metrics[1].distribution as Array<number>)
-    }
   }
 
   private static extractTopComparisons(
