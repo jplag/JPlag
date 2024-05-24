@@ -1,7 +1,10 @@
 {
   "id1": "root1",
   "id2": "root2",
-  "similarity": 0.6900452488687783,
+  "similarities": {
+    "AVG": 0.45,
+    "MAX": 0.5
+  },
   "matches": [
     {
       "file1": "root2\\Structure.java",
@@ -40,5 +43,7 @@
       "end2": 132,
       "tokens": 23
     }
-  ]
+  ],
+  "first_similarity": 0.4,
+  "second_similarity": 0.5
 }
