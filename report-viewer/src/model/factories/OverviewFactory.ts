@@ -50,7 +50,7 @@ export class OverviewFactory extends BaseFactory {
       matchSensitivity,
       dateOfExecution,
       duration,
-      this.extractTopComparisons(json, clusters),
+      this.extractTopComparisons(json.top_comparisons as Array<Record<string, unknown>>, clusters),
       this.extractDistributions(json.distributions as Record<string, Array<number>>),
       clusters,
       totalComparisons
@@ -68,30 +68,12 @@ export class OverviewFactory extends BaseFactory {
   }
 
   private static extractTopComparisons(
-    json: Record<string, unknown>,
+    json: Array<Record<string, unknown>>,
     clusters: Cluster[]
   ): Array<ComparisonListElement> {
-    if (json.top_comparisons) {
-      return this.extractTopComparisonsFromMap(
-        json.top_comparisons as Array<Record<string, unknown>>,
-        clusters
-      )
-    } else if (json.metrics) {
-      return this.extractTopComparisonsFromMetrics(
-        json.metrics as Array<Record<string, unknown>>,
-        clusters
-      )
-    }
-    throw new Error('No top comparisons found')
-  }
-
-  private static extractTopComparisonsFromMap(
-    jsonComparisons: Array<Record<string, unknown>>,
-    clusters: Cluster[]
-  ) {
     const comparisons = [] as Array<ComparisonListElement>
     let counter = 0
-    for (const topComparison of jsonComparisons) {
+    for (const topComparison of json) {
       const comparison = {
         sortingPlace: counter++,
         id: counter,
@@ -108,53 +90,6 @@ export class OverviewFactory extends BaseFactory {
         )
       })
     }
-    return comparisons
-  }
-
-  /** @deprecated since 5.0.0. Use the new format with {@link extractTopComparisonsFromMap} */
-  private static extractTopComparisonsFromMetrics(
-    metrics: Array<Record<string, unknown>>,
-    clusters: Cluster[]
-  ) {
-    const averageSimilarities: Map<string, number> = new Map<string, number>()
-    const comparisons = [] as Array<ComparisonListElement>
-
-    // Save the average similarities in a temporary map to combine them with the max similarities later
-    for (const comparison of metrics[0].topComparisons as Array<Record<string, unknown>>) {
-      averageSimilarities.set(
-        (comparison.first_submission as string) + '-' + (comparison.second_submission as string),
-        comparison.similarity as number
-      )
-    }
-
-    // Extract the max similarities and combine them with the average similarities
-    let counter = 0
-    for (const topComparison of metrics[1].topComparisons as Array<Record<string, unknown>>) {
-      const avg = averageSimilarities.get(
-        (topComparison.first_submission as string) +
-          '-' +
-          (topComparison.second_submission as string)
-      )
-      const comparison = {
-        sortingPlace: counter++,
-        id: counter,
-        firstSubmissionId: topComparison.first_submission as string,
-        secondSubmissionId: topComparison.second_submission as string,
-        similarities: {
-          [MetricType.AVERAGE]: avg as number,
-          [MetricType.MAXIMUM]: topComparison.similarity as number
-        }
-      }
-      comparisons.push({
-        ...comparison,
-        clusterIndex: this.getClusterIndex(
-          clusters,
-          comparison.firstSubmissionId,
-          comparison.secondSubmissionId
-        )
-      })
-    }
-
     return comparisons
   }
 
