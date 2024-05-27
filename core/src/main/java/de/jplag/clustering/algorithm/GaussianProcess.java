@@ -74,8 +74,9 @@ public class GaussianProcess {
      */
     public static GaussianProcess fit(List<RealVector> observedCoordinates, double[] observations, double noise, boolean normalize,
             double[] lengthScale) {
-        if (observedCoordinates.isEmpty())
+        if (observedCoordinates.isEmpty()) {
             throw new IllegalArgumentException("Observed coordinates are empty");
+        }
         if (observedCoordinates.size() != observations.length) {
             throw new IllegalArgumentException(MessageFormat.format("Observed coordinates and observations are of different dimensions {0} and {1}",
                     observedCoordinates.size(), observations.length));
@@ -176,12 +177,15 @@ public class GaussianProcess {
         int[] mindCharPos = DoubleStream.of(mean).mapToInt(toCharPos).toArray();
 
         for (int i = 0; i < width; i++) {
-            if (upperCharPos[i] > 0 && upperCharPos[i] < height)
+            if (upperCharPos[i] > 0 && upperCharPos[i] < height) {
                 out[upperCharPos[i]][i] = '-';
-            if (lowerCharPos[i] > 0 && lowerCharPos[i] < height)
+            }
+            if (lowerCharPos[i] > 0 && lowerCharPos[i] < height) {
                 out[lowerCharPos[i]][i] = '-';
-            if (mindCharPos[i] > 0 && mindCharPos[i] < height)
+            }
+            if (mindCharPos[i] > 0 && mindCharPos[i] < height) {
                 out[mindCharPos[i]][i] = '+';
+            }
         }
 
         StringBuilder stringBuilder = new StringBuilder();

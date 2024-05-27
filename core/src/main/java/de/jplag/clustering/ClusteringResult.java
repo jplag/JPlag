@@ -76,12 +76,14 @@ public class ClusteringResult<T> {
             RealMatrix percentagesOfSimilaritySums = new Array2DRowRealMatrix(clustering.size(), clustering.size());
             percentagesOfSimilaritySums = percentagesOfSimilaritySums.scalarMultiply(0);
             for (int i = 0; i < numberOfSubmissions; i++) {
-                if (!clusterIndicesOfSubmissionIndices.containsKey(i))
+                if (!clusterIndicesOfSubmissionIndices.containsKey(i)) {
                     continue;
+                }
                 int clusterA = clusterIndicesOfSubmissionIndices.get(i);
                 for (int j = i + 1; j < numberOfSubmissions; j++) {
-                    if (!clusterIndicesOfSubmissionIndices.containsKey(j))
+                    if (!clusterIndicesOfSubmissionIndices.containsKey(j)) {
                         continue;
+                    }
                     int clusterB = clusterIndicesOfSubmissionIndices.get(j);
                     percentagesOfSimilaritySums.addToEntry(clusterA, clusterB, similarity.getEntry(i, j));
                     percentagesOfSimilaritySums.addToEntry(clusterB, clusterA, similarity.getEntry(i, j));
