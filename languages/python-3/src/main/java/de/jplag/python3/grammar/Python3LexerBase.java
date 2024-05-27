@@ -3,7 +3,11 @@ package de.jplag.python3.grammar;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CommonToken;
+import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.Token;
 
 abstract class Python3LexerBase extends Lexer {
     // A queue where extra tokens are pushed on (see the NEWLINE lexer rule).
@@ -46,7 +50,7 @@ abstract class Python3LexerBase extends Lexer {
             }
 
             // Put the EOF back on the token stream.
-            this.emit(commonToken(Python3Lexer.EOF, "<EOF>"));
+            this.emit(commonToken(Recognizer.EOF, "<EOF>"));
         }
 
         Token next = super.nextToken();
