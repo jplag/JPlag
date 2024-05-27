@@ -52,7 +52,7 @@ public class DeltaSummaryStatistics {
     /**
      * Customized implementation of {@link DoubleSummaryStatistics} with a customized textual representation.
      */
-    private class FormattedDoubleSummaryStatistics extends DoubleSummaryStatistics {
+    private final class FormattedDoubleSummaryStatistics extends DoubleSummaryStatistics {
         @Override
         public String toString() {
             return String.format("count=%d, average=%.4f, min=%.4f, max=%.4f", getCount(), getAverage(), getMin(), getMax());

@@ -30,7 +30,7 @@ import com.ibm.icu.text.CharsetMatch;
 /**
  * Encapsulates various interactions with files to prevent issues with file encodings.
  */
-public class FileUtils {
+public final class FileUtils {
     private static final Charset DEFAULT_OUTPUT_CHARSET = StandardCharsets.UTF_8;
     private static final char BYTE_ORDER_MARK = '\uFEFF';
     private static final int SINGLE_CHAR_BUFFER_SIZE = 10;
@@ -158,7 +158,7 @@ public class FileUtils {
     }
 
     /**
-     * Opens a file writer, using the default charset for JPlag
+     * Opens a file writer, using the default charset for JPlag.
      * @param file The file to write
      * @return The file writer, configured with the default charset
      * @throws IOException If the file does not exist or is not writable
@@ -168,7 +168,7 @@ public class FileUtils {
     }
 
     /**
-     * Writes the given content into the given file using the default charset
+     * Writes the given content into the given file using the default charset.
      * @param file The file
      * @param content The content
      * @throws IOException If any error occurs
@@ -187,9 +187,8 @@ public class FileUtils {
     public static boolean checkWritable(File file) {
         if (file.exists()) {
             return file.canWrite();
-        } else {
-            return checkParentWritable(file);
         }
+        return checkParentWritable(file);
     }
 
     /**

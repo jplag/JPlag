@@ -47,7 +47,7 @@ public abstract class LanguageModuleTest {
     private final List<TokenType> languageTokens;
 
     /**
-     * Creates a new language module test
+     * Creates a new language module test.
      * @param language The language to test
      * @param languageTokens All tokens, that can be reported by the module. The end file token can be omitted.
      */
@@ -58,7 +58,7 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Creates a new language module test
+     * Creates a new language module test.
      * @param language The language to test
      * @param languageTokens All tokens, that can be reported by the module. The end file token can be omitted.
      */
@@ -67,7 +67,7 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Creates a new language module test
+     * Creates a new language module test.
      * @param language The language to test
      * @param tokenEnum The enum containing the token types
      */
@@ -278,13 +278,13 @@ public abstract class LanguageModuleTest {
      * Collects all tests, that should be executed.
      * @param collector Use to collect the tests
      */
-    abstract protected void collectTestData(TestDataCollector collector);
+    protected abstract void collectTestData(TestDataCollector collector);
 
     /**
      * Configure which lines should not be checked for source coverage.
      * @param collector Used to ignore lines
      */
-    abstract protected void configureIgnoredLines(TestSourceIgnoredLinesCollector collector);
+    protected abstract void configureIgnoredLines(TestSourceIgnoredLinesCollector collector);
 
     /**
      * Returns the default directory structure by default.

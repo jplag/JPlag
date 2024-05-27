@@ -3,7 +3,7 @@ package de.jplag.cli.server;
 import java.io.InputStream;
 
 /**
- * Data for a http response
+ * Data for a http response.
  * @param stream The stream containing the binary data
  * @param contentType The type of data
  * @param size The total size of the data
@@ -18,7 +18,7 @@ public record ResponseData(InputStream stream, ContentType contentType, int size
     }
 
     /**
-     * Constructor with unknown size
+     * Constructor with unknown size.
      * @param data The binary data
      * @param contentType The type of content
      */

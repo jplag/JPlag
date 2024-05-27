@@ -9,8 +9,8 @@ import java.util.function.Function;
  */
 public class DelegateVisitor<T, V> {
     private final AbstractVisitor<V> delegate;
-    protected final Function<T, V> mapper;
     private boolean mapOnExit;
+    protected final Function<T, V> mapper;
 
     /**
      * @param delegate The target visitor to use
@@ -23,7 +23,7 @@ public class DelegateVisitor<T, V> {
     }
 
     /**
-     * Delegates entering the original context
+     * Delegates entering the original context.
      * @param parentData The data of the original visitor
      */
     public void delegateEnter(HandlerData<T> parentData) {
@@ -41,7 +41,7 @@ public class DelegateVisitor<T, V> {
     }
 
     /**
-     * Delegates exiting the original context
+     * Delegates exiting the original context.
      * @param parentData The data of the original visitor
      */
     public void delegateExit(HandlerData<T> parentData) {
@@ -51,7 +51,7 @@ public class DelegateVisitor<T, V> {
     }
 
     /**
-     * Checks if the target entity is present in the given antlr entity
+     * Checks if the target entity is present in the given antlr entity.
      * @param entity The original antlr entity
      * @return is present
      */

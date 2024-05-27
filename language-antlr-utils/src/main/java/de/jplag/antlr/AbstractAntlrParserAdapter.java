@@ -43,7 +43,7 @@ public abstract class AbstractAntlrParserAdapter<T extends Parser> extends Abstr
     }
 
     /**
-     * Parsers the set of files
+     * Parsers the set of files.
      * @param files The files
      * @return The extracted tokens
      * @throws ParsingException If anything goes wrong

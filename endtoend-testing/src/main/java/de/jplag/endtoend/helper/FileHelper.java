@@ -12,7 +12,7 @@ import java.util.zip.ZipFile;
 /**
  * Helper class to perform all necessary operations or functions on files or folders.
  */
-public class FileHelper {
+public final class FileHelper {
     private static final int ZIP_THRESHOLD_ENTRIES = 100000;
     private static final int ZIP_THRESHOLD_SIZE = 1000000000;
     private static final double ZIP_THRESHOLD_RATIO = 10;
