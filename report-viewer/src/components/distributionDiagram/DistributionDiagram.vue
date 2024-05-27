@@ -2,8 +2,12 @@
   Bar diagram, displaying the distribution for the selected metric.
 -->
 <template>
-  <div>
-    <Bar :data="chartData" :options="options" />
+  <div class="flex flex-col">
+    <div class="h-3/4 w-full print:h-fit print:w-fit">
+      <Bar :data="chartData" :options="options" />
+    </div>
+
+    <DistributionDiagramOptions class="flex-grow print:grow-0" />
   </div>
 </template>
 
@@ -14,13 +18,18 @@ import { Chart, registerables } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { graphColors } from '@/utils/ColorUtils'
 import type { Distribution } from '@/model/Distribution'
+import { MetricType } from '@/model/MetricType'
+import { store } from '@/stores/store'
+import DistributionDiagramOptions from './DistributionDiagramOptions.vue'
 
 Chart.register(...registerables)
 Chart.register(ChartDataLabels)
 
+console.log('AAA')
+
 const props = defineProps({
-  distribution: {
-    type: Object as PropType<Distribution>,
+  distributions: {
+    type: Object as PropType<Record<MetricType, Distribution>>,
     required: true
   },
   xScale: {
@@ -30,7 +39,10 @@ const props = defineProps({
   }
 })
 
-const maxVal = computed(() => Math.max(...props.distribution.splitIntoTenBuckets()))
+const graphOptions = computed(() => store().uiState.distributionChartConfig)
+const distribution = computed(() => props.distributions[graphOptions.value.metric])
+
+const maxVal = computed(() => Math.max(...distribution.value.splitIntoTenBuckets()))
 const labels = [
   '91-100%',
   '81-90%',
@@ -59,7 +71,7 @@ const chartData = computed(() => {
     datasets: [
       {
         ...dataSetStyle.value,
-        data: props.distribution.splitIntoTenBuckets()
+        data: distribution.value.splitIntoTenBuckets()
       }
     ]
   }
@@ -75,21 +87,21 @@ const options = computed(() => {
         //Highest count of submissions in a percentage range. We set the diagrams maximum shown value to maxVal + 5,
         //otherwise maximum is set to the highest count of submissions and is one bar always reaches the end.
         suggestedMax:
-          props.xScale === 'linear'
+          graphOptions.value.xScale === 'linear'
             ? maxVal.value + 5
             : 10 ** Math.ceil(Math.log10(maxVal.value + 5)),
-        type: props.xScale,
+        type: graphOptions.value.xScale,
         ticks: {
           // ensures that in log mode tick labels are not overlappein
-          minRotation: props.xScale === 'logarithmic' ? 30 : 0,
+          minRotation: graphOptions.value.xScale === 'logarithmic' ? 30 : 0,
           autoSkipPadding: 10,
           color: graphColors.ticksAndFont.value,
           // ensures that in log mode ticks are placed evenly appart
           callback: function (value: any) {
-            if (props.xScale === 'logarithmic' && (value + '').match(/1(0)*[^1-9.]/)) {
+            if (graphOptions.value.xScale === 'logarithmic' && (value + '').match(/1(0)*[^1-9.]/)) {
               return value
             }
-            if (props.xScale !== 'logarithmic') {
+            if (graphOptions.value.xScale !== 'logarithmic') {
               return value
             }
           }
