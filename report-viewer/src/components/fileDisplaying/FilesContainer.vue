@@ -8,9 +8,7 @@
         Files of
         {{ fileOwnerDisplayName }}:
       </h3>
-      <div v-if="tokenCount >= 0" class="text-gray-600 dark:text-gray-300">
-        {{ tokenCount }} total tokens
-      </div>
+      <div class="text-gray-600 dark:text-gray-300">{{ tokenCount }} total tokens</div>
       <Button @click="collapseAll()" class="space-x-2 print:hidden"
         ><FontAwesomeIcon :icon="['fas', 'compress-alt']" />
         <p>Collapse All</p></Button

@@ -53,39 +53,18 @@ export class ComparisonFactory extends BaseFactory {
     return new Comparison(
       firstSubmissionId,
       secondSubmissionId,
-      this.extractSimilarities(json),
+      this.extractSimilarities(json.similarities as Record<string, number>),
       filesOfFirstSubmission,
       filesOfSecondSubmission,
       this.colorMatches(unColoredMatches),
-      json.first_similarity as number | undefined,
-      json.second_similarity as number | undefined
+      json.first_similarity as number,
+      json.second_similarity as number
     )
   }
 
-  private static extractSimilarities(json: Record<string, unknown>): Record<MetricType, number> {
-    if (json.similarities) {
-      return this.extractSimilaritiesFromMap(json.similarities as Record<string, number>)
-    } else if (json.similarity) {
-      return this.extractSimilaritiesFromSingleValue(json.similarity as number)
-    }
-    throw new Error('No similarities found in comparison file')
-  }
-
-  /** @deprecated since 5.0.0. Use the new format with {@link extractSimilaritiesFromMap} */
-  private static extractSimilaritiesFromSingleValue(
-    avgSimilarity: number
-  ): Record<MetricType, number> {
-    return {
-      [MetricType.AVERAGE]: avgSimilarity,
-      [MetricType.MAXIMUM]: Number.NaN
-    }
-  }
-
-  private static extractSimilaritiesFromMap(
-    similarityMap: Record<string, number>
-  ): Record<MetricType, number> {
+  private static extractSimilarities(json: Record<string, number>): Record<MetricType, number> {
     const similarities = {} as Record<MetricType, number>
-    for (const [key, value] of Object.entries(similarityMap)) {
+    for (const [key, value] of Object.entries(json)) {
       similarities[key as MetricType] = value
     }
     return similarities
@@ -136,23 +115,23 @@ export class ComparisonFactory extends BaseFactory {
       secondFile: slash(match.file2 as string),
       startInFirst: {
         line: match.start1 as number,
-        column: ((match['start1_col'] as number) || 1) - 1,
-        tokenListIndex: (match.startToken1 as number) ?? NaN
+        column: (match['start1_col'] as number) - 1,
+        tokenListIndex: match.startToken1 as number
       },
       endInFirst: {
         line: match.end1 as number,
-        column: ((match['end1_col'] as number) || Infinity) - 1,
-        tokenListIndex: (match.endToken1 as number) ?? NaN
+        column: (match['end1_col'] as number) - 1,
+        tokenListIndex: match.endToken1 as number
       },
       startInSecond: {
         line: match.start2 as number,
-        column: ((match['start2_col'] as number) || 1) - 1,
-        tokenListIndex: (match.startToken2 as number) ?? NaN
+        column: (match['start2_col'] as number) - 1,
+        tokenListIndex: match.startToken2 as number
       },
       endInSecond: {
         line: match.end2 as number,
-        column: ((match['end2_col'] as number) || Infinity) - 1,
-        tokenListIndex: (match.endToken2 as number) ?? NaN
+        column: (match['end2_col'] as number) - 1,
+        tokenListIndex: match.endToken2 as number
       },
       tokens: match.tokens as number
     }
