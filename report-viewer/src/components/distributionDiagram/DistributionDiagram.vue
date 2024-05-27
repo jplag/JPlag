@@ -57,7 +57,7 @@ const labels = [
 ]
 const dataSetStyle = computed(() => {
   return {
-    label: 'Comparison Count',
+    label: 'Comparisons in bucket',
     backgroundColor: graphColors.contentFill,
     borderWidth: 1,
     borderColor: graphColors.contentBorder,
@@ -130,7 +130,10 @@ const options = computed(() => {
         clamp: true
       },
       legend: {
-        display: false
+        display: true,
+        position: 'bottom',
+        align: 'end',
+        onClick: () => {}
       }
     }
   }
