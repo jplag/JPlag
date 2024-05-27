@@ -29,7 +29,8 @@ const store = defineStore('store', {
       comparisonTableClusterSorting: false,
       distributionChartConfig: {
         metric: MetricType.AVERAGE,
-        xScale: 'linear'
+        xScale: 'linear',
+        resolution: 10
       }
     }
   }),

@@ -15,4 +15,11 @@ export class Distribution {
     }
     return tenValueArray
   }
+
+  /**
+   * Returns the distribution summed at every percentile
+   */
+  public splitIntoOneHundredBuckets(): number[] {
+    return Array.from(this._distribution)
+  }
 }

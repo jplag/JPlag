@@ -25,8 +25,6 @@ import DistributionDiagramOptions from './DistributionDiagramOptions.vue'
 Chart.register(...registerables)
 Chart.register(ChartDataLabels)
 
-console.log('AAA')
-
 const props = defineProps({
   distributions: {
     type: Object as PropType<Record<MetricType, Distribution>>,
@@ -41,20 +39,22 @@ const props = defineProps({
 
 const graphOptions = computed(() => store().uiState.distributionChartConfig)
 const distribution = computed(() => props.distributions[graphOptions.value.metric])
+const distributionData = computed(() =>
+  graphOptions.value.resolution == 10
+    ? distribution.value.splitIntoTenBuckets()
+    : distribution.value.splitIntoOneHundredBuckets()
+)
 
-const maxVal = computed(() => Math.max(...distribution.value.splitIntoTenBuckets()))
-const labels = [
-  '91-100%',
-  '81-90%',
-  '71-80%',
-  '61-70%',
-  '51-60%',
-  '41-50%',
-  '31-40%',
-  '21-30%',
-  '11-20%',
-  '0-10%'
-]
+const maxVal = computed(() => Math.max(...distributionData.value))
+
+const labels = computed(() => {
+  let labels = []
+  for (let i = 0; i < distributionData.value.length; i++) {
+    labels.push(getDataPointLabel(i))
+  }
+  return labels.reverse()
+})
+
 const dataSetStyle = computed(() => {
   return {
     label: 'Comparisons in bucket',
@@ -67,11 +67,11 @@ const dataSetStyle = computed(() => {
 
 const chartData = computed(() => {
   return {
-    labels: labels,
+    labels: labels.value,
     datasets: [
       {
         ...dataSetStyle.value,
-        data: distribution.value.splitIntoTenBuckets()
+        data: distributionData.value
       }
     ]
   }
@@ -112,7 +112,17 @@ const options = computed(() => {
       },
       y: {
         ticks: {
-          color: graphColors.ticksAndFont.value
+          color: graphColors.ticksAndFont.value,
+          callback: function (reversedValue: any) {
+            const value = distributionData.value.length - reversedValue - 1
+            if (graphOptions.value.resolution == 10) {
+              return getDataPointLabel(value)
+            } else {
+              if (value == 99 || value % 10 == 0) {
+                return getDataPointLabel(value)
+              }
+            }
+          }
         },
         grid: {
           color: graphColors.gridLines.value
@@ -121,13 +131,15 @@ const options = computed(() => {
     },
     plugins: {
       datalabels: {
+        display: graphOptions.value.resolution == 10,
         color: graphColors.ticksAndFont.value,
         font: {
           weight: 'bold' as 'bold'
         },
         anchor: 'end' as 'end',
         align: 'end' as 'end',
-        clamp: true
+        clamp: true,
+        text: 'test'
       },
       legend: {
         display: true,
@@ -138,4 +150,12 @@ const options = computed(() => {
     }
   }
 })
+
+function getDataPointLabel(index: number) {
+  if (graphOptions.value.resolution == 10) {
+    return index * 10 + '-' + (index * 10 + 10) + '%'
+  } else {
+    return index + '-' + (index + 1) + '%'
+  }
+}
 </script>

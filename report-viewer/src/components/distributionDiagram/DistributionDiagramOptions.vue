@@ -20,6 +20,15 @@
             (store().uiState.distributionChartConfig.xScale = i == 0 ? 'linear' : 'logarithmic')
         "
       />
+      <OptionsSelector
+        class="mt-2"
+        title="Resolution:"
+        :labels="['10', '100']"
+        :defaultSelected="store().uiState.distributionChartConfig.resolution == 10 ? 0 : 1"
+        @selection-changed="
+          (i: number) => (store().uiState.distributionChartConfig.resolution = i == 0 ? 10 : 100)
+        "
+      />
     </ScrollableComponent>
   </div>
 </template>
