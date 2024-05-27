@@ -14,12 +14,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public record Version(@JsonProperty("major") int major, @JsonProperty("minor") int minor, @JsonProperty("patch") int patch) {
 
-    private static final Logger logger = LoggerFactory.getLogger(Version.class);
-
     /**
      * The default version for development (0.0.0).
      */
     public static final Version DEVELOPMENT = new Version(0, 0, 0);
+
+    private static final Logger logger = LoggerFactory.getLogger(Version.class);
 
     /**
      * Parse a version string (e.g., {@code v0.0.1} or {@code 0.0.1} or {@code 0.0.1-SNAPSHOT}).

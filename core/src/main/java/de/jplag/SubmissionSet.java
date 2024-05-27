@@ -151,12 +151,13 @@ public class SubmissionSet {
         int tooShort = 0;
         ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.PARSING, submissions.size());
         for (Submission submission : submissions) {
-            boolean ok;
+            boolean successful;
 
             logger.trace("------ Parsing submission: " + submission.getName());
             currentSubmissionName = submission.getName();
 
-            if (!(ok = submission.parse(options.debugParser(), options.normalize()))) {
+            successful = submission.parse(options.debugParser(), options.normalize());
+            if (!successful) {
                 errors++;
             }
 
@@ -165,11 +166,11 @@ public class SubmissionSet {
                         submission.getNumberOfTokens(), options.minimumTokenMatch());
                 submission.setTokenList(null);
                 tooShort++;
-                ok = false;
+                successful = false;
                 submission.markAsErroneous();
             }
 
-            if (ok) {
+            if (successful) {
                 logger.trace("OK");
             } else {
                 logger.error("ERROR -> Submission {} removed", currentSubmissionName);
