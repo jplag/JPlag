@@ -17,7 +17,7 @@ import de.jplag.util.FileUtils;
 class FileTestData implements TestData {
     private final File file;
 
-    public FileTestData(File file) {
+    FileTestData(File file) {
         this.file = file;
     }
 
