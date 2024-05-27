@@ -14,7 +14,7 @@ public interface Routing {
     }
 
     /**
-     * Gets the data for the given url
+     * Gets the data for the given url.
      * @param subPath The remaining suffix of the url, that is not yet interpreted
      * @param request The original http request
      * @param viewer The current report viewer
