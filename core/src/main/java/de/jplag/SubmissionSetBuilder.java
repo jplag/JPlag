@@ -28,7 +28,8 @@ import de.jplag.logging.ProgressBarType;
 import de.jplag.options.JPlagOptions;
 
 /**
- * Builder class for the creation of a {@link SubmissionSet}.
+ * This class is responsible for the creation of a {@link SubmissionSet}. It processes multiple root directories of
+ * submission, verifies the validity of submission, and processes the necessary source code files.
  * @author Timur Saglam
  */
 public class SubmissionSetBuilder {
@@ -159,9 +160,11 @@ public class SubmissionSetBuilder {
         if (!baseCodeSubmissionDirectory.exists()) {
             throw new BasecodeException("Basecode directory \"%s\" does not exist".formatted(baseCodeSubmissionDirectory));
         }
-        String errorMessage = isExcludedEntry(baseCodeSubmissionDirectory);
-        if (errorMessage != null) {
-            throw new BasecodeException(errorMessage); // Stating an excluded path as basecode isn't very useful.
+
+        if (isFileExcluded(baseCodeSubmissionDirectory)) {// Stating an excluded path as basecode isn't very useful.
+            throw new BasecodeException("Exclude submission: " + baseCodeSubmissionDirectory.getName());
+        } else if (baseCodeSubmissionDirectory.isFile() && !hasValidSuffix(baseCodeSubmissionDirectory)) {
+            throw new BasecodeException("Ignore submission with invalid suffix: " + baseCodeSubmissionDirectory.getName());
         }
 
         Submission baseCodeSubmission = processSubmission(baseCodeSubmissionDirectory.getName(), baseCodeSubmissionDirectory, false);
@@ -185,22 +188,6 @@ public class SubmissionSetBuilder {
         } catch (SecurityException exception) {
             throw new RootDirectoryException("Cannot list files of the root directory! " + exception.getMessage(), exception);
         }
-    }
-
-    /**
-     * Check that the given submission entry is not invalid due to exclusion names or bad suffix.
-     * @param submissionEntry Entry to check.
-     * @return Error message if the entry should be ignored.
-     */
-    private String isExcludedEntry(File submissionEntry) {
-        if (isFileExcluded(submissionEntry)) {
-            return "Exclude submission: " + submissionEntry.getName();
-        }
-
-        if (submissionEntry.isFile() && !hasValidSuffix(submissionEntry)) {
-            return "Ignore submission with invalid suffix: " + submissionEntry.getName();
-        }
-        return null;
     }
 
     /**
@@ -232,9 +219,12 @@ public class SubmissionSetBuilder {
     }
 
     private void processSubmissionFile(SubmissionFileData file, boolean multipleRoots, Map<File, Submission> foundSubmissions) throws ExitException {
-        String errorMessage = isExcludedEntry(file.submissionFile());
-        if (errorMessage != null) {
-            logger.error(errorMessage);
+        if (isFileExcluded(file.submissionFile())) {
+            logger.error("Exclude submission: {}", file.submissionFile().getName());
+        }
+
+        if (file.submissionFile().isFile() && !hasValidSuffix(file.submissionFile())) {
+            logger.debug("Ignore submission with invalid suffix: {}", file.submissionFile().getName());
         }
 
         String rootDirectoryPrefix = multipleRoots ? (file.root().getName() + File.separator) : "";

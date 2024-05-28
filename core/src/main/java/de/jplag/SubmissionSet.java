@@ -1,6 +1,6 @@
 package de.jplag;
 
-import static de.jplag.SubmissionState.*;
+import static de.jplag.SubmissionState.VALID;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,9 @@ import de.jplag.logging.ProgressBarType;
 import de.jplag.options.JPlagOptions;
 
 /**
- * Collection of all submissions and their basecode if it exists. Parses all submissions upon creation.
+ * This class represents a collection of submissions to be checked for plagiarism. It manages both valid and invalid
+ * submissions, as well as an optional base code submission. Instances of this class are responsible for parsing
+ * submissions, filtering them based on their validity, and providing access to the valid and invalid submissions.
  */
 public class SubmissionSet {
     private static final Logger logger = LoggerFactory.getLogger(SubmissionSet.class);
@@ -154,7 +156,7 @@ public class SubmissionSet {
             boolean successful = submission.parse(options.debugParser(), options.normalize(), options.minimumTokenMatch());
             if (!successful) {
                 errors++;
-                logger.error("ERROR -> Submission {} removed with reason {}", currentSubmissionName, submission.getState());
+                logger.debug("ERROR -> Submission {} removed with reason {}", currentSubmissionName, submission.getState());
             }
             progressBar.step();
         }

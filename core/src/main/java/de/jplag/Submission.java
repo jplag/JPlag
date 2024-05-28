@@ -1,6 +1,10 @@
 package de.jplag;
 
-import static de.jplag.SubmissionState.*;
+import static de.jplag.SubmissionState.CANNOT_PARSE;
+import static de.jplag.SubmissionState.NOTHING_TO_PARSE;
+import static de.jplag.SubmissionState.TOO_SMALL;
+import static de.jplag.SubmissionState.UNPARSED;
+import static de.jplag.SubmissionState.VALID;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,7 +27,9 @@ import de.jplag.normalization.TokenStringNormalizer;
 import de.jplag.options.JPlagOptions;
 
 /**
- * Represents a single submission. A submission can contain either a single file or multiple files.
+ * This class represents a single submission, which can either be a single file or a directory containing multiple
+ * files. It encapsulates the details and processing logic required to handle the submission files, including parsing,
+ * tokenization, and normalization.
  */
 public class Submission implements Comparable<Submission> {
     private static final Logger logger = LoggerFactory.getLogger(Submission.class);
@@ -233,7 +239,7 @@ public class Submission implements Comparable<Submission> {
         }
 
         if (tokenList == null || tokenList.size() < minimalTokens) {
-            logger.error("Submission {} contains {} tokens, which below the minimum match length ({})!", name, tokenList.size(), minimalTokens);
+            logger.error("Submission {} contains {} tokens, which below the minimum match length {}!", name, tokenList.size(), minimalTokens);
             state = TOO_SMALL;
             return false;
         }
