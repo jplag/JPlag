@@ -161,9 +161,10 @@ public class SubmissionSetBuilder {
             throw new BasecodeException("Basecode directory \"%s\" does not exist".formatted(baseCodeSubmissionDirectory));
         }
 
-        if (isFileExcluded(baseCodeSubmissionDirectory)) {// Stating an excluded path as basecode isn't very useful.
+        if (isFileExcluded(baseCodeSubmissionDirectory)) { // Stating an excluded path as basecode isn't very useful.
             throw new BasecodeException("Exclude submission: " + baseCodeSubmissionDirectory.getName());
-        } else if (baseCodeSubmissionDirectory.isFile() && !hasValidSuffix(baseCodeSubmissionDirectory)) {
+        }
+        if (baseCodeSubmissionDirectory.isFile() && !hasValidSuffix(baseCodeSubmissionDirectory)) {
             throw new BasecodeException("Ignore submission with invalid suffix: " + baseCodeSubmissionDirectory.getName());
         }
 
@@ -199,23 +200,23 @@ public class SubmissionSetBuilder {
      * @throws ExitException when an error has been found with the entry.
      */
     private Submission processSubmission(String submissionName, File submissionFile, boolean isNew) throws ExitException {
-
-        if (submissionFile.isDirectory() && options.subdirectoryName() != null) {
+        File file = submissionFile;
+        if (file.isDirectory() && options.subdirectoryName() != null) {
             // Use subdirectory instead
-            submissionFile = new File(submissionFile, options.subdirectoryName());
+            file = new File(file, options.subdirectoryName());
 
-            if (!submissionFile.exists()) {
+            if (!file.exists()) {
                 throw new SubmissionException(
                         String.format("Submission %s does not contain the given subdirectory '%s'", submissionName, options.subdirectoryName()));
             }
 
-            if (!submissionFile.isDirectory()) {
+            if (!file.isDirectory()) {
                 throw new SubmissionException(String.format("The given subdirectory '%s' is not a directory!", options.subdirectoryName()));
             }
         }
 
-        submissionFile = makeCanonical(submissionFile, it -> new SubmissionException("Cannot create submission: " + submissionName, it));
-        return new Submission(submissionName, submissionFile, isNew, parseFilesRecursively(submissionFile), options.language());
+        file = makeCanonical(file, it -> new SubmissionException("Cannot create submission: " + submissionName, it));
+        return new Submission(submissionName, file, isNew, parseFilesRecursively(file), options.language());
     }
 
     private void processSubmissionFile(SubmissionFileData file, boolean multipleRoots, Map<File, Submission> foundSubmissions) throws ExitException {

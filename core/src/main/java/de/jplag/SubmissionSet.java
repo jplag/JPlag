@@ -130,9 +130,8 @@ public class SubmissionSet {
             if (baseCode.getState() == SubmissionState.TOO_SMALL) {
                 throw new BasecodeException("Basecode contains %d token(s), which is below the minimum match length (%d)!"
                         .formatted(baseCode.getNumberOfTokens(), options.minimumTokenMatch()));
-            } else {
-                throw new BasecodeException("Error while parsing the basecode submission!");
             }
+            throw new BasecodeException("Error while parsing the basecode submission!");
 
         }
     }
