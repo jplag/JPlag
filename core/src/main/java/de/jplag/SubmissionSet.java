@@ -151,28 +151,24 @@ public class SubmissionSet {
         int tooShort = 0;
         ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.PARSING, submissions.size());
         for (Submission submission : submissions) {
-            boolean successful;
 
             logger.trace("------ Parsing submission: " + submission.getName());
             currentSubmissionName = submission.getName();
 
-            successful = submission.parse(options.debugParser(), options.normalize());
+            boolean successful = submission.parse(options.debugParser(), options.normalize());
             if (!successful) {
                 errors++;
             }
 
-            if (submission.getTokenList() != null && submission.getNumberOfTokens() < options.minimumTokenMatch()) {
+            if (submission.getNumberOfTokens() < options.minimumTokenMatch()) {
                 logger.error("Submission {} contains {} token(s), which is less than the minimum match length ({})!", currentSubmissionName,
                         submission.getNumberOfTokens(), options.minimumTokenMatch());
-                submission.setTokenList(null);
                 tooShort++;
                 successful = false;
                 submission.markAsErroneous();
             }
 
-            if (successful) {
-                logger.trace("OK");
-            } else {
+            if (!successful) {
                 logger.error("ERROR -> Submission {} removed", currentSubmissionName);
             }
             progressBar.step();
@@ -180,19 +176,13 @@ public class SubmissionSet {
         progressBar.dispose();
 
         int validSubmissions = submissions.size() - errors - tooShort;
-        logger.trace(validSubmissions + " submissions parsed successfully!");
-        logger.trace(errors + " parser error" + (errors != 1 ? "s!" : "!"));
-        logger.trace(tooShort + " too short submission" + (tooShort != 1 ? "s!" : "!"));
-        printDetails(submissions, startTime, tooShort);
+        logger.info(validSubmissions + " submissions parsed successfully!");
+        logger.info(errors + " parser error" + (errors != 1 ? "s!" : "!"));
+        logger.info(tooShort + " undersized submission" + (tooShort != 1 ? "s!" : "!"));
+        printDetails(submissions, startTime);
     }
 
-    private void printDetails(List<Submission> submissions, long startTime, int tooShort) {
-        if (tooShort == 1) {
-            logger.trace(tooShort + " submission is not valid because it contains fewer tokens than minimum match length allows.");
-        } else if (tooShort > 1) {
-            logger.trace(tooShort + " submissions are not valid because they contain fewer tokens than minimum match length allows.");
-        }
-
+    private void printDetails(List<Submission> submissions, long startTime) {
         long duration = System.currentTimeMillis() - startTime;
         String timePerSubmission = submissions.isEmpty() ? "n/a" : Long.toString(duration / submissions.size());
         logger.trace("Total time for parsing: " + TimeUtil.formatDuration(duration));
