@@ -64,7 +64,7 @@ public abstract class AbstractComparisonStrategy implements ComparisonStrategy {
      */
     private List<SubmissionTuple> buildComparisonTuples(List<Submission> submissions) {
         List<SubmissionTuple> tuples = new ArrayList<>();
-        List<Submission> validSubmissions = submissions.stream().filter(s -> s.getTokenList() != null).toList();
+        List<Submission> validSubmissions = submissions.stream().toList();
 
         for (int i = 0; i < (validSubmissions.size() - 1); i++) {
             Submission first = validSubmissions.get(i);
