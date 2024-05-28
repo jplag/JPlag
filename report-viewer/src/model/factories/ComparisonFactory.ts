@@ -10,6 +10,8 @@ import { MetricType } from '../MetricType'
  * Factory class for creating Comparison objects
  */
 export class ComparisonFactory extends BaseFactory {
+  private static readonly SUBMISSION_FILE_INDEX_FOLDER_NAME = 'submissionFileIndex'
+
   public static async getComparison(fileName: string): Promise<Comparison> {
     return await this.extractComparison(JSON.parse(await this.getFile(fileName)))
   }
@@ -21,12 +23,10 @@ export class ComparisonFactory extends BaseFactory {
   private static async extractComparison(json: Record<string, unknown>): Promise<Comparison> {
     const firstSubmissionId = json.id1 as string
     const secondSubmissionId = json.id2 as string
-    await this.getFile(`submissionFileIndex.json`)
-      .then(async () => {
-        await this.loadSubmissionFiles(firstSubmissionId)
-        await this.loadSubmissionFiles(secondSubmissionId)
-      })
-      .catch(() => {})
+    await Promise.all([
+      this.loadSubmissionFiles(firstSubmissionId),
+      this.loadSubmissionFiles(secondSubmissionId)
+    ])
     const filesOfFirstSubmission = store().filesOfSubmission(firstSubmissionId)
     const filesOfSecondSubmission = store().filesOfSubmission(secondSubmissionId)
 
@@ -73,9 +73,9 @@ export class ComparisonFactory extends BaseFactory {
   private static async getSubmissionFileList(
     submissionId: string
   ): Promise<Record<string, { token_count: number }>> {
-    return JSON.parse(await this.getFile(`submissionFileIndex.json`)).submission_file_indexes[
-      submissionId
-    ]
+    return JSON.parse(
+      await this.getFile(slash(`${this.SUBMISSION_FILE_INDEX_FOLDER_NAME}/${submissionId}.json`))
+    )
   }
 
   private static async loadSubmissionFiles(submissionId: string) {
