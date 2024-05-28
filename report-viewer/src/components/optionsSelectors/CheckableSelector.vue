@@ -31,6 +31,8 @@
 <script setup lang="ts">
 import type { ToolTipLabel } from '@/model/ui/ToolTip'
 import { computed, ref, type PropType, type Ref, watch } from 'vue'
+import ToolTipComponent from '@/components/ToolTipComponent.vue'
+import OptionComponent from './OptionComponent.vue'
 
 const props = defineProps({
   title: {
