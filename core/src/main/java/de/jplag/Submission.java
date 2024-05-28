@@ -1,5 +1,7 @@
 package de.jplag;
 
+import static de.jplag.SubmissionState.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,48 +23,21 @@ import de.jplag.normalization.TokenStringNormalizer;
 import de.jplag.options.JPlagOptions;
 
 /**
- * Represents a single submission. A submission can contain multiple files.
+ * Represents a single submission. A submission can contain either a single file or multiple files.
  */
 public class Submission implements Comparable<Submission> {
     private static final Logger logger = LoggerFactory.getLogger(Submission.class);
 
-    /**
-     * Identification of the submission (often a directory or file name).
-     */
-    private final String name;
-
-    /**
-     * Root of the submission files (including the subdir if used).
-     */
-    private final File submissionRootFile;
-
-    /**
-     * Whether the submission is new. That is, must be checked for plagiarism.
-     */
-    private final boolean isNew;
-
-    /**
-     * Files of the submission.
-     */
+    private final String name; // identifier for the submission (a directory or file name).
+    private final File submissionRootFile; // Root of the submission, a director or file (including the subdir if used).
+    private final boolean isNew; // old submissions are only checked against new ones.
     private final Collection<File> files;
-
-    /**
-     * Whether an error occurred during parsing the submission files.
-     */
-    private boolean hasErrors;
-
-    /**
-     * Parse result, tokens from all files.
-     */
-    private List<Token> tokenList;
-
-    /**
-     * Base code comparison
-     */
-    private JPlagComparison baseCodeComparison;
-
     private final Language language;
 
+    private boolean hasErrors; // whether an error occurred during parsing the submission files.
+    private SubmissionState state; // whether an error occurred during parsing or not
+    private List<Token> tokenList; // list of tokens from all files, used for comparison
+    private JPlagComparison baseCodeComparison; // Comparison of thus submission with the base code
     private Map<File, Integer> fileTokenCount;
 
     /**
@@ -79,6 +54,7 @@ public class Submission implements Comparable<Submission> {
         this.isNew = isNew;
         this.files = files;
         this.language = language;
+        state = UNPARSED;
     }
 
     @Override
@@ -245,9 +221,10 @@ public class Submission implements Comparable<Submission> {
      */
     /* package-private */ boolean parse(boolean debugParser, boolean normalize) {
         if (files == null || files.isEmpty()) {
-            logger.error("ERROR: nothing to parse for submission \"{}\"", name);
+            logger.error("Nothing to parse for submission \"{}\"", name);
             tokenList = null;
             hasErrors = true; // invalidate submission
+            state = NOTHING_TO_PARSE;
             return false;
         }
 
@@ -261,20 +238,14 @@ public class Submission implements Comparable<Submission> {
         } catch (ParsingException e) {
             String shortenedMessage = e.getMessage().replace(submissionRootFile.toString(), name);
             logger.warn("Failed to parse submission {}:{}{}", name, System.lineSeparator(), shortenedMessage);
-            tokenList = null;
             hasErrors = true;
             if (debugParser) {
                 copySubmission();
             }
+            state = CANNOT_PARSE;
             return false;
         }
-
-        if (tokenList.size() < 3) {
-            logger.error("Submission \"{}\" is too short!", name);
-            tokenList = null;
-            hasErrors = true; // invalidate submission
-            return false;
-        }
+        state = VALID;
         return true;
     }
 
