@@ -238,7 +238,7 @@ public class Submission implements Comparable<Submission> {
             return false;
         }
 
-        if (tokenList == null || tokenList.size() < minimalTokens) {
+        if (tokenList.size() < minimalTokens) {
             logger.error("Submission {} contains {} tokens, which below the minimum match length {}!", name, tokenList.size(), minimalTokens);
             state = TOO_SMALL;
             return false;

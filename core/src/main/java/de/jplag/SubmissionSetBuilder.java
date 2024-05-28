@@ -221,16 +221,14 @@ public class SubmissionSetBuilder {
     private void processSubmissionFile(SubmissionFileData file, boolean multipleRoots, Map<File, Submission> foundSubmissions) throws ExitException {
         if (isFileExcluded(file.submissionFile())) {
             logger.error("Exclude submission: {}", file.submissionFile().getName());
+        } else if (file.submissionFile().isFile() && !hasValidSuffix(file.submissionFile())) {
+            logger.error("Ignore submission with invalid suffix: {}", file.submissionFile().getName());
+        } else {
+            String rootDirectoryPrefix = multipleRoots ? (file.root().getName() + File.separator) : "";
+            String submissionName = rootDirectoryPrefix + file.submissionFile().getName();
+            Submission submission = processSubmission(submissionName, file.submissionFile(), file.isNew());
+            foundSubmissions.put(submission.getRoot(), submission);
         }
-
-        if (file.submissionFile().isFile() && !hasValidSuffix(file.submissionFile())) {
-            logger.debug("Ignore submission with invalid suffix: {}", file.submissionFile().getName());
-        }
-
-        String rootDirectoryPrefix = multipleRoots ? (file.root().getName() + File.separator) : "";
-        String submissionName = rootDirectoryPrefix + file.submissionFile().getName();
-        Submission submission = processSubmission(submissionName, file.submissionFile(), file.isNew());
-        foundSubmissions.put(submission.getRoot(), submission);
     }
 
     /**

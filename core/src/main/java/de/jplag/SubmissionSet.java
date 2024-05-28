@@ -163,8 +163,8 @@ public class SubmissionSet {
         progressBar.dispose();
 
         int validSubmissions = submissions.size() - errors;
-        logger.debug(validSubmissions + " submissions parsed successfully!");
-        logger.debug(errors + " parser error" + (errors != 1 ? "s!" : "!"));
+        logger.debug("{} submissions parsed successfully!", validSubmissions);
+        logger.debug("{} parser error{}!", errors, (errors != 1 ? "s" : ""));
     }
 
 }
