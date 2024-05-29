@@ -59,7 +59,7 @@ public class Submission implements Comparable<Submission> {
         this.isNew = isNew;
         this.files = files;
         this.language = language;
-        tokenList = Collections.emptyList();
+        tokenList = Collections.emptyList(); // Placeholder, will be replaced when submission is parsed
         state = UNPARSED;
     }
 
