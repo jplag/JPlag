@@ -173,7 +173,7 @@ public class Submission implements Comparable<Submission> {
      * @param tokenList is the list of these tokens.
      */
     public void setTokenList(List<Token> tokenList) {
-        this.tokenList = tokenList;
+        this.tokenList = Collections.unmodifiableList(new ArrayList<>(tokenList));
     }
 
     /**
@@ -283,7 +283,7 @@ public class Submission implements Comparable<Submission> {
      */
     public Submission copy() {
         Submission copy = new Submission(name, submissionRootFile, isNew, files, language);
-        copy.setTokenList(new ArrayList<>(tokenList));
+        copy.setTokenList(tokenList);
         copy.setBaseCodeComparison(baseCodeComparison);
         copy.state = state;
         return copy;
