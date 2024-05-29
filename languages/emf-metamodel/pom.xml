@@ -15,6 +15,11 @@
             <version>${emfatic.version}</version>
         </dependency>
         <dependency>
+    		<groupId>org.eclipse.platform</groupId>
+    		<artifactId>org.eclipse.core.resources</artifactId>
+    		<version>${eclipse.core.version}</version>
+		</dependency>
+        <dependency>
             <groupId>org.eclipse.emf</groupId>
             <artifactId>org.eclipse.emf.ecore</artifactId>
             <version>${emf.version}</version>
