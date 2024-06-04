@@ -30,17 +30,20 @@ export class ComparisonFactory extends BaseFactory {
     const filesOfFirstSubmission = store().filesOfSubmission(firstSubmissionId)
     const filesOfSecondSubmission = store().filesOfSubmission(secondSubmissionId)
 
-    const matches = json.matches as Array<Record<string, unknown>>
+    const matches = json.matches as Array<Match>
     matches.forEach((match) => {
-      const fileOfFirst = store().getSubmissionFile(firstSubmissionId, slash(match.file1 as string))
+      const fileOfFirst = store().getSubmissionFile(
+        firstSubmissionId,
+        slash(match.firstFile as string)
+      )
       const fileOfSecond = store().getSubmissionFile(
         secondSubmissionId,
-        slash(match.file2 as string)
+        slash(match.secondFile as string)
       )
 
       if (fileOfFirst == undefined || fileOfSecond == undefined) {
         throw new Error(
-          `The report viewer expected to find the file ${fileOfFirst == undefined ? match.file1 : match.file2} in the submissions, but did not find it.`
+          `The report viewer expected to find the file ${fileOfFirst == undefined ? match.firstFile : match.secondFile} in the submissions, but did not find it.`
         )
       }
 
@@ -48,15 +51,13 @@ export class ComparisonFactory extends BaseFactory {
       fileOfSecond.matchedTokenCount += match.tokens as number
     })
 
-    const unColoredMatches = matches.map((match) => this.getMatch(match))
-
     return new Comparison(
       firstSubmissionId,
       secondSubmissionId,
       this.extractSimilarities(json.similarities as Record<string, number>),
       filesOfFirstSubmission,
       filesOfSecondSubmission,
-      this.colorMatches(unColoredMatches),
+      this.colorMatches(matches),
       json.first_similarity as number,
       json.second_similarity as number
     )
