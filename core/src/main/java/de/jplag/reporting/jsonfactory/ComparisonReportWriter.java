@@ -111,11 +111,12 @@ public class ComparisonReportWriter {
         String secondFileName = FilePathUtil.getRelativeSubmissionPath(startOfSecond.getFile(), comparison.secondSubmission(), submissionToIdFunction)
                 .toString();
 
-        CodePosition startInFirst = new CodePosition(startOfFirst.getLine(), startOfFirst.getColumn(), match.startOfFirst());
+        CodePosition startInFirst = new CodePosition(startOfFirst.getLine(), startOfFirst.getColumn() - 1, match.startOfFirst());
         CodePosition endInFirst = new CodePosition(endOfFirst.getLine(), endOfFirst.getColumn() + endOfFirst.getLength() - 1, match.endOfFirst());
 
-        CodePosition startInSecond = new CodePosition(startOfSecond.getLine(), startOfSecond.getColumn(), match.startOfSecond());
-        CodePosition endInSecond = new CodePosition(endOfSecond.getLine(), endOfSecond.getColumn() + endOfFirst.getLength() - 1, match.endOfSecond());
+        CodePosition startInSecond = new CodePosition(startOfSecond.getLine(), startOfSecond.getColumn() - 1, match.startOfSecond());
+        CodePosition endInSecond = new CodePosition(endOfSecond.getLine(), endOfSecond.getColumn() + endOfSecond.getLength() - 1,
+                match.endOfSecond());
 
         return new Match(firstFileName, secondFileName, startInFirst, endInFirst, startInSecond, endInSecond, match.length());
     }
