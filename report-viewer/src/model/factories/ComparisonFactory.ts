@@ -30,7 +30,9 @@ export class ComparisonFactory extends BaseFactory {
     const filesOfFirstSubmission = store().filesOfSubmission(firstSubmissionId)
     const filesOfSecondSubmission = store().filesOfSubmission(secondSubmissionId)
 
-    const matches = json.matches as Array<Match>
+    const matches = (json.matches as Array<Match>).map((match) => {
+      return { ...match, firstFile: slash(match.firstFile), secondFile: slash(match.secondFile) }
+    })
     matches.forEach((match) => {
       const fileOfFirst = store().getSubmissionFile(
         firstSubmissionId,
@@ -108,34 +110,6 @@ export class ComparisonFactory extends BaseFactory {
       )
     }
     return file.data
-  }
-
-  private static getMatch(match: Record<string, unknown>): Match {
-    return {
-      firstFile: slash(match.file1 as string),
-      secondFile: slash(match.file2 as string),
-      startInFirst: {
-        line: match.start1 as number,
-        column: (match['start1_col'] as number) - 1,
-        tokenListIndex: match.startToken1 as number
-      },
-      endInFirst: {
-        line: match.end1 as number,
-        column: (match['end1_col'] as number) - 1,
-        tokenListIndex: match.endToken1 as number
-      },
-      startInSecond: {
-        line: match.start2 as number,
-        column: (match['start2_col'] as number) - 1,
-        tokenListIndex: match.startToken2 as number
-      },
-      endInSecond: {
-        line: match.end2 as number,
-        column: (match['end2_col'] as number) - 1,
-        tokenListIndex: match.endToken2 as number
-      },
-      tokens: match.tokens as number
-    }
   }
 
   private static colorMatches(matches: Match[]): Match[] {
