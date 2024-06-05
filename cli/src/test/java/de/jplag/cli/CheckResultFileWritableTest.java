@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import de.jplag.cli.test.CliTest;
 
-public class CheckResultFileWritableTest extends CliTest {
+class CheckResultFileWritableTest extends CliTest {
     @Test
     void testNonExistingWritableFile() throws Throwable {
         File directory = Files.createTempDirectory("JPlagTest").toFile();
