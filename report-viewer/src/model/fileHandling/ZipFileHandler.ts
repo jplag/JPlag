@@ -12,10 +12,7 @@ export class ZipFileHandler extends FileHandler {
     return jszip.loadAsync(file).then(async (zip) => {
       for (const originalFileName of Object.keys(zip.files)) {
         const unixFileName = slash(originalFileName)
-        if (
-          /((.+\/)*)(files|submissions)\/(.+)\/(.+)/.test(unixFileName) &&
-          !/^__MACOSX\//.test(unixFileName)
-        ) {
+        if (/\/?(files)\//.test(unixFileName) && !/\/?__MACOSX\//.test(unixFileName)) {
           const directoryPath = unixFileName.substring(0, unixFileName.lastIndexOf('/'))
           const fileBase = unixFileName.substring(unixFileName.lastIndexOf('/') + 1)
 
@@ -30,6 +27,8 @@ export class ZipFileHandler extends FileHandler {
               submissionId: slash(submissionFileName),
               fileName: slash(fullPathFileName),
               data: data,
+              // These two properties will be determined at a later time (when loading the submission file index)
+              tokenCount: NaN,
               matchedTokenCount: NaN
             })
           })

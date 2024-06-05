@@ -25,4 +25,7 @@ public record CliArgument<T>(String name, boolean isPositional) {
     public static CliArgument<Boolean> CLUSTER_PP_NONE = new CliArgument<>("cluster-pp-none", false);
 
     public static CliArgument<String> LANGUAGE = new CliArgument<>("l", false);
+
+    public static CliArgument<String> RESULT_FILE = new CliArgument<>("r", false);
+    public static CliArgument<Boolean> OVERWRITE_RESULT_FILE = new CliArgument<>("overwrite", false);
 }

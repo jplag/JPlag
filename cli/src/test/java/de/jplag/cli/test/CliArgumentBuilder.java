@@ -43,8 +43,9 @@ public class CliArgumentBuilder {
         }
     }
 
-    public void with(CliArgument<Boolean> argument) {
+    public CliArgumentBuilder with(CliArgument<Boolean> argument) {
         with(argument, true);
+        return this;
     }
 
     String[] buildArguments() {

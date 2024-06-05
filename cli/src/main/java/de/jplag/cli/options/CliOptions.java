@@ -98,6 +98,9 @@ public class CliOptions implements Runnable {
 
         @Option(names = "--csv-export", description = "Export pairwise similarity values as a CSV file.")
         public boolean csvExport = false;
+
+        @Option(names = "--overwrite", description = "Existing result files will be overwritten.")
+        public boolean overwrite = false;
     }
 
     public static class Clustering {
@@ -123,7 +126,7 @@ public class CliOptions implements Runnable {
         public boolean enabled = MergingOptions.DEFAULT_ENABLED;
 
         @Option(names = {
-                "--neighbor-length"}, description = "Minimal length of neighboring matches to be merged (between 1 and minTokenMatch, default: ${DEFAULT-VALUE}).%n")
+                "--neighbor-length"}, description = "Minimal length of neighboring matches to be merged (between 1 and minTokenMatch, default: ${DEFAULT-VALUE}).")
         public int minimumNeighborLength = MergingOptions.DEFAULT_NEIGHBOR_LENGTH;
 
         @Option(names = {

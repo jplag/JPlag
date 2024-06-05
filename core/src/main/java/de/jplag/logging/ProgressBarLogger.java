@@ -69,7 +69,11 @@ public class ProgressBarLogger {
 
         public DummyBar(ProgressBarType type, int totalSteps) {
             this.currentStep = 0;
-            logger.info("{} ({})", type.getDefaultText(), totalSteps);
+            if (type.isIdleBar()) {
+                logger.info("{} - started", type.getDefaultText());
+            } else {
+                logger.info("{} ({})", type.getDefaultText(), totalSteps);
+            }
         }
 
         @Override

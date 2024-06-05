@@ -7,7 +7,11 @@
       {{ title }}
     </div>
     <div v-for="[index, label] in labels.entries()" :key="index">
-      <ToolTipComponent v-if="(label as ToolTipLabel).displayValue !== undefined" direction="right">
+      <ToolTipComponent
+        v-if="(label as ToolTipLabel).displayValue !== undefined"
+        direction="right"
+        :tool-tip-container-will-be-centered="true"
+      >
         <template #default>
           <OptionComponent
             :label="(label as ToolTipLabel).displayValue"

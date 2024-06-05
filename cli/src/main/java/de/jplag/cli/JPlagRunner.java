@@ -24,7 +24,7 @@ public final class JPlagRunner {
     }
 
     /**
-     * Executes JPlag
+     * Executes JPlag.
      * @param options The options to pass to JPlag
      * @return The result returned by JPlag
      * @throws ExitException If JPlag throws an error

@@ -28,7 +28,6 @@
             >{{ (comparison.similarities[MetricType.AVERAGE] * 100).toFixed(2) }}%</TextInformation
           >
           <TextInformation
-            v-if="comparison.firstSimilarity"
             :label="`Similarity ${store().getDisplayName(comparison.firstSubmissionId)}`"
             tooltip-side="right"
           >
@@ -48,7 +47,6 @@
             >
           </TextInformation>
           <TextInformation
-            v-if="comparison.secondSimilarity"
             :label="`Similarity ${store().getDisplayName(comparison.secondSubmissionId)}`"
             tooltip-side="right"
             ><template #default>{{ (comparison.secondSimilarity * 100).toFixed(2) }}%</template>
@@ -85,7 +83,7 @@
         :matches="comparison.matchesInFirstSubmission"
         :file-owner-display-name="store().getDisplayName(comparison.firstSubmissionId)"
         :highlight-language="language"
-        @line-selected="showMatchInSecond"
+        @match-selected="showMatchInSecond"
         class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
       />
       <FilesContainer
@@ -94,7 +92,7 @@
         :matches="comparison.matchesInSecondSubmissions"
         :file-owner-display-name="store().getDisplayName(comparison.secondSubmissionId)"
         :highlight-language="language"
-        @line-selected="showMatchInFirst"
+        @match-selected="showMatchInFirst"
         class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
       />
     </div>
@@ -148,7 +146,7 @@ const panel2: Ref<typeof FilesContainer | null> = ref(null)
  * @param line (line number)
  */
 function showMatchInFirst(match: Match) {
-  panel1.value?.scrollTo(match.firstFile, match.startInFirst)
+  panel1.value?.scrollTo(match.firstFile, match.startInFirst.line)
 }
 
 /**
@@ -157,7 +155,7 @@ function showMatchInFirst(match: Match) {
  * @param line (line number)
  */
 function showMatchInSecond(match: Match) {
-  panel2.value?.scrollTo(match.secondFile, match.startInSecond)
+  panel2.value?.scrollTo(match.secondFile, match.startInSecond.line)
 }
 
 /**

@@ -2,6 +2,8 @@ package de.jplag.cli.test;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.function.Consumer;
 
@@ -26,12 +28,16 @@ public abstract class CliTest {
     protected static final String CURRENT_DIRECTORY = ".";
     protected static final double DELTA = 1E-5;
     private static final Field inputHandlerField;
+    private static final Method getWritableFileMethod;
 
     static {
         try {
             inputHandlerField = CLI.class.getDeclaredField("inputHandler");
             inputHandlerField.setAccessible(true);
-        } catch (NoSuchFieldException e) {
+
+            getWritableFileMethod = CLI.class.getDeclaredMethod("getWritableFileName");
+            getWritableFileMethod.setAccessible(true);
+        } catch (NoSuchFieldException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
     }
@@ -78,6 +84,29 @@ public abstract class CliTest {
 
     /**
      * Runs the cli
+     * @return The target path used by the cli
+     * @throws ExitException If JPlag throws an exception
+     * @throws IOException If JPlag throws an exception
+     * @see #runCli()
+     */
+    protected String runCliForTargetPath() throws IOException, ExitException {
+        return runCli().targetPath();
+    }
+
+    /**
+     * Runs the cli using custom options
+     * @param additionalOptionsBuilder May modify the {@link CliArgumentBuilder} object to set custom options for this run.
+     * @return The target path used by the cli
+     * @throws ExitException If JPlag throws an exception
+     * @throws IOException If JPlag throws an exception
+     * @see #runCli()
+     */
+    protected String runCliForTargetPath(Consumer<CliArgumentBuilder> additionalOptionsBuilder) throws IOException, ExitException {
+        return runCli(additionalOptionsBuilder).targetPath();
+    }
+
+    /**
+     * Runs the cli
      * @return The options returned by the cli
      * @throws ExitException If JPlag throws an exception
      * @throws IOException If JPlag throws an exception
@@ -98,8 +127,10 @@ public abstract class CliTest {
             CliInputHandler inputHandler = (CliInputHandler) inputHandlerField.get(cli);
             JPlagOptionsBuilder optionsBuilder = new JPlagOptionsBuilder(inputHandler);
 
-            return new CliResult(optionsBuilder.buildOptions());
-        } catch (IllegalAccessException e) {
+            String targetPath = (String) getWritableFileMethod.invoke(cli);
+
+            return new CliResult(optionsBuilder.buildOptions(), targetPath);
+        } catch (IllegalAccessException | InvocationTargetException e) {
             Assumptions.abort("Could not access private field in CLI for test.");
             return null; // will not be executed
         }

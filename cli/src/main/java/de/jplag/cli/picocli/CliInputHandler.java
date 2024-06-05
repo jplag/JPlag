@@ -23,7 +23,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.ParseResult;
 
 /**
- * Handles the parsing of the command line arguments
+ * Handles the parsing of the command line arguments.
  */
 public class CliInputHandler {
     private static final String OPTION_LIST_HEADING = "Parameter descriptions: ";
@@ -69,7 +69,7 @@ public class CliInputHandler {
                 return PARAMETER_SHORT_ADDITIONAL_INDENT + it;
             }
             return it;
-        }).collect(Collectors.joining(System.lineSeparator())));
+        }).collect(Collectors.joining(System.lineSeparator())) + System.lineSeparator());
 
         buildSubcommands().forEach(cli::addSubcommand);
 
