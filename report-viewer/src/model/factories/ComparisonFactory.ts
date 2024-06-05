@@ -49,8 +49,8 @@ export class ComparisonFactory extends BaseFactory {
         )
       }
 
-      fileOfFirst.matchedTokenCount += match.tokens as number
-      fileOfSecond.matchedTokenCount += match.tokens as number
+      fileOfFirst.matchedTokenCount += match.tokens
+      fileOfSecond.matchedTokenCount += match.tokens
     })
 
     return new Comparison(
