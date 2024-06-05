@@ -6,8 +6,8 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
-import de.jplag.cli.test.CliArg;
-import de.jplag.cli.test.CliArgBuilder;
+import de.jplag.cli.test.CliArgument;
+import de.jplag.cli.test.CliArgumentBuilder;
 import de.jplag.cli.test.CliTest;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
@@ -27,7 +27,7 @@ class OldNewRootDirectoriesArgumentTest extends CliTest {
 
     @Test
     void testTwoRootDirectoryArguments() throws ExitException, IOException {
-        JPlagOptions options = runCliForOptions(args -> args.with(CliArg.SUBMISSION_DIRECTORIES, TEST_ROOT_BOTH));
+        JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.SUBMISSION_DIRECTORIES, TEST_ROOT_BOTH));
 
         assertEquals(2, options.submissionDirectories().size());
         assertEquals(0, options.oldSubmissionDirectories().size());
@@ -35,7 +35,7 @@ class OldNewRootDirectoriesArgumentTest extends CliTest {
 
     @Test
     void testNewOption() throws ExitException, IOException {
-        JPlagOptions options = runCliForOptions(args -> args.with(CliArg.NEW_SUBMISSION_DIRECTORIES, TEST_ROOT_1));
+        JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.NEW_SUBMISSION_DIRECTORIES, TEST_ROOT_1));
 
         assertEquals(1, options.submissionDirectories().size());
         assertEquals(0, options.oldSubmissionDirectories().size());
@@ -43,7 +43,7 @@ class OldNewRootDirectoriesArgumentTest extends CliTest {
 
     @Test
     void testDoubleNewOption() throws ExitException, IOException {
-        JPlagOptions options = runCliForOptions(args -> args.with(CliArg.NEW_SUBMISSION_DIRECTORIES, TEST_ROOT_BOTH));
+        JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.NEW_SUBMISSION_DIRECTORIES, TEST_ROOT_BOTH));
 
         assertEquals(2, options.submissionDirectories().size());
         assertEquals(0, options.oldSubmissionDirectories().size());
@@ -51,7 +51,7 @@ class OldNewRootDirectoriesArgumentTest extends CliTest {
 
     @Test
     void testOldOption() throws ExitException, IOException {
-        JPlagOptions options = runCliForOptions(args -> args.with(CliArg.OLD_SUBMISSION_DIRECTORIES, TEST_ROOT_1));
+        JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.OLD_SUBMISSION_DIRECTORIES, TEST_ROOT_1));
 
         assertEquals(0, options.submissionDirectories().size());
         assertEquals(1, options.oldSubmissionDirectories().size());
@@ -60,13 +60,13 @@ class OldNewRootDirectoriesArgumentTest extends CliTest {
     @Test
     void testNewAndOldOption() throws ExitException, IOException {
         JPlagOptions options = runCliForOptions(
-                args -> args.with(CliArg.NEW_SUBMISSION_DIRECTORIES, TEST_ROOT_1).with(CliArg.OLD_SUBMISSION_DIRECTORIES, TEST_ROOT_2));
+                args -> args.with(CliArgument.NEW_SUBMISSION_DIRECTORIES, TEST_ROOT_1).with(CliArgument.OLD_SUBMISSION_DIRECTORIES, TEST_ROOT_2));
 
         assertEquals(1, options.submissionDirectories().size());
         assertEquals(1, options.oldSubmissionDirectories().size());
     }
 
     @Override
-    public void initializeParameters(CliArgBuilder args) {
+    public void initializeParameters(CliArgumentBuilder args) {
     }
 }

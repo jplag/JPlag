@@ -8,21 +8,24 @@ import java.util.Map;
 import org.apache.commons.math3.util.Pair;
 import org.junit.jupiter.api.Assumptions;
 
-public class CliArgBuilder {
-    private final Map<CliArg<?>, Object> namedArgs;
-    private final List<Pair<CliArg<?>, Object>> positionalArgs;
+public class CliArgumentBuilder {
+    private static final String LONG_OPTION_PREFIX = "--";
+    private static final String SHORT_OPTION_PREFIX = "-";
 
-    public CliArgBuilder() {
+    private final Map<CliArgument<?>, Object> namedArgs;
+    private final List<Pair<CliArgument<?>, Object>> positionalArgs;
+
+    public CliArgumentBuilder() {
         this.namedArgs = new HashMap<>();
         this.positionalArgs = new ArrayList<>();
     }
 
-    private CliArgBuilder(Map<CliArg<?>, Object> namedArgs, List<Pair<CliArg<?>, Object>> positionalArgs) {
+    private CliArgumentBuilder(Map<CliArgument<?>, Object> namedArgs, List<Pair<CliArgument<?>, Object>> positionalArgs) {
         this.namedArgs = namedArgs;
         this.positionalArgs = positionalArgs;
     }
 
-    public <T> CliArgBuilder with(CliArg<T> argument, T value) {
+    public <T> CliArgumentBuilder with(CliArgument<T> argument, T value) {
         if (argument.isPositional()) {
             positionalArgs.add(new Pair<>(argument, value));
         } else {
@@ -32,7 +35,7 @@ public class CliArgBuilder {
         return this;
     }
 
-    public <T> void withInvalid(CliArg<T> argument, String value) {
+    public <T> void withInvalid(CliArgument<T> argument, String value) {
         if (argument.isPositional()) {
             positionalArgs.add(new Pair<>(argument, value));
         } else {
@@ -40,7 +43,7 @@ public class CliArgBuilder {
         }
     }
 
-    public void with(CliArg<Boolean> argument) {
+    public void with(CliArgument<Boolean> argument) {
         with(argument, true);
     }
 
@@ -62,15 +65,15 @@ public class CliArgBuilder {
         String valueText = formatArgValue(value);
         if (name.length() == 1) {
             if (valueText.isEmpty()) {
-                return new String[] {"-" + name};
+                return new String[] {SHORT_OPTION_PREFIX + name};
             } else {
-                return new String[] {"-" + name, valueText};
+                return new String[] {SHORT_OPTION_PREFIX + name, valueText};
             }
         } else {
             if (valueText.isEmpty()) {
-                return new String[] {"--" + name};
+                return new String[] {LONG_OPTION_PREFIX + name};
             } else {
-                return new String[] {"--" + name + "=" + formatArgValue(value)};
+                return new String[] {LONG_OPTION_PREFIX + name + "=" + formatArgValue(value)};
             }
         }
     }
@@ -85,9 +88,9 @@ public class CliArgBuilder {
         };
     }
 
-    public CliArgBuilder copy() {
-        Map<CliArg<?>, Object> namedArgsCopy = new HashMap<>(this.namedArgs);
-        List<Pair<CliArg<?>, Object>> positionalArgsCopy = new ArrayList<>(this.positionalArgs);
-        return new CliArgBuilder(namedArgsCopy, positionalArgsCopy);
+    public CliArgumentBuilder copy() {
+        Map<CliArgument<?>, Object> namedArgsCopy = new HashMap<>(this.namedArgs);
+        List<Pair<CliArgument<?>, Object>> positionalArgsCopy = new ArrayList<>(this.positionalArgs);
+        return new CliArgumentBuilder(namedArgsCopy, positionalArgsCopy);
     }
 }

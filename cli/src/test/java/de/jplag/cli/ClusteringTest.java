@@ -8,7 +8,7 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
-import de.jplag.cli.test.CliArg;
+import de.jplag.cli.test.CliArgument;
 import de.jplag.cli.test.CliTest;
 import de.jplag.clustering.Preprocessing;
 import de.jplag.exceptions.ExitException;
@@ -19,7 +19,7 @@ class ClusteringTest extends CliTest {
 
     @Test
     void parseSkipClustering() throws ExitException, IOException {
-        JPlagOptions options = runCliForOptions(args -> args.with(CliArg.SKIP_CLUSTERING));
+        JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.SKIP_CLUSTERING));
         assertFalse(options.clusteringOptions().enabled());
     }
 
@@ -31,7 +31,7 @@ class ClusteringTest extends CliTest {
 
     @Test
     void parsePercentilePreProcessor() throws ExitException, IOException {
-        JPlagOptions options = runCliForOptions(args -> args.with(CliArg.CLUSTER_PP_PERCENTILE, CLUSTERING_TEST_PERCENTILE));
+        JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.CLUSTER_PP_PERCENTILE, CLUSTERING_TEST_PERCENTILE));
 
         assertEquals(Preprocessing.PERCENTILE, options.clusteringOptions().preprocessor());
         assertEquals(CLUSTERING_TEST_PERCENTILE, options.clusteringOptions().preprocessorPercentile());
@@ -39,13 +39,13 @@ class ClusteringTest extends CliTest {
 
     @Test
     void parseCdfPreProcessor() throws ExitException, IOException {
-        JPlagOptions options = runCliForOptions(args -> args.with(CliArg.CLUSTER_PP_CDF));
+        JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.CLUSTER_PP_CDF));
         assertEquals(Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION, options.clusteringOptions().preprocessor());
     }
 
     @Test
     void parseNoPreProcessor() throws ExitException, IOException {
-        JPlagOptions options = runCliForOptions(args -> args.with(CliArg.CLUSTER_PP_NONE));
+        JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.CLUSTER_PP_NONE));
         assertEquals(Preprocessing.NONE, options.clusteringOptions().preprocessor());
     }
 }

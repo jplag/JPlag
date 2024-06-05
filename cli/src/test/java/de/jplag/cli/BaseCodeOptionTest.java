@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
-import de.jplag.cli.test.CliArg;
+import de.jplag.cli.test.CliArgument;
 import de.jplag.cli.test.CliResult;
 import de.jplag.cli.test.CliTest;
 import de.jplag.exceptions.ExitException;
@@ -26,7 +26,7 @@ class BaseCodeOptionTest extends CliTest {
 
     @Test
     void testCustomName() throws ExitException, IOException {
-        CliResult result = runCli(options -> options.with(CliArg.BASE_CODE, NAME));
+        CliResult result = runCli(options -> options.with(CliArgument.BASE_CODE, NAME));
         JPlagOptions options = result.jPlagOptions();
 
         assertEquals(NAME, options.baseCodeSubmissionDirectory().getName());

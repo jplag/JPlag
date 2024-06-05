@@ -15,7 +15,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import de.jplag.Language;
 import de.jplag.cli.options.CliOptions;
 import de.jplag.cli.options.LanguageLoader;
-import de.jplag.cli.test.CliArg;
+import de.jplag.cli.test.CliArgument;
 import de.jplag.cli.test.CliTest;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
@@ -31,7 +31,7 @@ class LanguageTest extends CliTest {
     @Test
     void testInvalidLanguage() {
         Assertions.assertThrowsExactly(CliException.class, () -> {
-            runCli(args -> args.with(CliArg.LANGUAGE, "Piet"));
+            runCli(args -> args.with(CliArgument.LANGUAGE, "Piet"));
         });
     }
 
@@ -44,7 +44,7 @@ class LanguageTest extends CliTest {
     @ParameterizedTest
     @MethodSource("getAllLanguages")
     void testValidLanguages(Language language) throws ExitException, IOException {
-        JPlagOptions options = runCliForOptions(args -> args.with(CliArg.LANGUAGE, language.getIdentifier()));
+        JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.LANGUAGE, language.getIdentifier()));
 
         assertEquals(language.getIdentifier(), options.language().getIdentifier());
         assertEquals(Arrays.asList(language.suffixes()), options.fileSuffixes());
@@ -53,7 +53,7 @@ class LanguageTest extends CliTest {
     @Test
     void testCustomSuffixes() throws ExitException, IOException {
         String[] suffixes = {"x", "y", "z"};
-        JPlagOptions options = runCliForOptions(args -> args.with(CliArg.SUFFIXES, suffixes));
+        JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.SUFFIXES, suffixes));
         assertEquals(List.of(suffixes), options.fileSuffixes());
     }
 

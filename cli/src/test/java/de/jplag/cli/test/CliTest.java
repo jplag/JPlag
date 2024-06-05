@@ -16,6 +16,12 @@ import de.jplag.cli.picocli.CliInputHandler;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 
+/**
+ * Base class for Cli tests.
+ * <p>
+ * A test class may override the initializeParameters method, to set different default arguments for all test in the
+ * class. Each test method should call runCli or runCliForOptions, to execute the cli.
+ */
 public abstract class CliTest {
     protected static final String CURRENT_DIRECTORY = ".";
     protected static final double DELTA = 1E-5;
@@ -30,32 +36,60 @@ public abstract class CliTest {
         }
     }
 
-    private final CliArgBuilder args;
+    private final CliArgumentBuilder defaultArgumentBuilder;
 
     public CliTest() {
-        this.args = new CliArgBuilder();
+        this.defaultArgumentBuilder = new CliArgumentBuilder();
     }
 
+    /**
+     * Executes the cli using the default parameters. JPlag itself is not called as a part of this, only the cli.
+     * @return The cli artifacts
+     * @throws ExitException If JPlag throws an exception
+     * @throws IOException If JPlag throws an exception
+     */
     protected CliResult runCli() throws ExitException, IOException {
         return runCli(ignore -> {
         });
     }
 
+    /**
+     * Runs the cli
+     * @return The options returned by the cli
+     * @throws ExitException If JPlag throws an exception
+     * @throws IOException If JPlag throws an exception
+     * @see #runCli()
+     */
     protected JPlagOptions runCliForOptions() throws ExitException, IOException {
         return runCli().jPlagOptions();
     }
 
-    protected JPlagOptions runCliForOptions(Consumer<CliArgBuilder> additionalOptionsBuilder) throws ExitException, IOException {
+    /**
+     * Runs the cli using custom options
+     * @param additionalOptionsBuilder May modify the {@link CliArgumentBuilder} object to set custom options for this run.
+     * @return The options returned by the cli
+     * @throws ExitException If JPlag throws an exception
+     * @throws IOException If JPlag throws an exception
+     * @see #runCli()
+     */
+    protected JPlagOptions runCliForOptions(Consumer<CliArgumentBuilder> additionalOptionsBuilder) throws ExitException, IOException {
         return runCli(additionalOptionsBuilder).jPlagOptions();
     }
 
-    protected CliResult runCli(Consumer<CliArgBuilder> additionalOptionsBuilder) throws ExitException, IOException {
+    /**
+     * Runs the cli
+     * @return The options returned by the cli
+     * @throws ExitException If JPlag throws an exception
+     * @throws IOException If JPlag throws an exception
+     * @see #runCli()
+     */
+    protected CliResult runCli(Consumer<CliArgumentBuilder> additionalOptionsBuilder) throws ExitException, IOException {
         try (MockedStatic<JPlagRunner> runnerMock = Mockito.mockStatic(JPlagRunner.class);
                 MockedStatic<OutputFileGenerator> generatorMock = Mockito.mockStatic(OutputFileGenerator.class)) {
             runnerMock.when(() -> JPlagRunner.runJPlag(Mockito.any())).thenReturn(new JPlagResult(Collections.emptyList(), null, 1, null));
             generatorMock.when(() -> OutputFileGenerator.generateJPlagResultZip(Mockito.any(), Mockito.any())).then(invocationOnMock -> null);
 
-            CliArgBuilder copy = this.args.copy();
+            CliArgumentBuilder copy = this.defaultArgumentBuilder.copy();
             additionalOptionsBuilder.accept(copy);
 
             CLI cli = new CLI(copy.buildArguments());
@@ -73,14 +107,21 @@ public abstract class CliTest {
 
     @BeforeEach
     void setup() {
-        this.initializeParameters(this.args);
+        this.initializeParameters(this.defaultArgumentBuilder);
     }
 
+    /**
+     * Adds the default parameters for this instance of {@link CliTest}
+     */
     public void addDefaultParameters() {
-        this.args.with(CliArg.SUBMISSION_DIRECTORIES, new String[] {CURRENT_DIRECTORY});
+        this.defaultArgumentBuilder.with(CliArgument.SUBMISSION_DIRECTORIES, new String[] {CURRENT_DIRECTORY});
     }
 
-    public void initializeParameters(CliArgBuilder args) {
+    /**
+     * Used to add options for all tests in this test class
+     * @param args The arguments builder
+     */
+    public void initializeParameters(CliArgumentBuilder args) {
         this.addDefaultParameters();
     }
 }
