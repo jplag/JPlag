@@ -73,7 +73,7 @@
                 class="tableRow"
                 :class="{
                   'bg-container-secondary-light dark:bg-container-secondary-dark': item.id % 2 == 1,
-                  '!bg-accent !bg-opacity-30 ': isHighlightedRow(item)
+                  '!bg-accent !bg-opacity-30': isHighlightedRow(item)
                 }"
               >
                 <RouterLink
