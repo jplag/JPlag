@@ -1,5 +1,5 @@
 {
-  "jplag_version": { "major": 5, "minor": 1, "patch": 0 },
+  "jplag_version": { "major": 6, "minor": 0, "patch": 0 },
   "submission_folder_path": ["files"],
   "base_code_folder_path": "",
   "language": "Javac based AST plugin",
