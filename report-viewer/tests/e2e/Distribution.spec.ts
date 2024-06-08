@@ -35,7 +35,8 @@ async function selectOptions(page: Page, options: string[]) {
 function getTestCombinations() {
   const options = [
     ['Average Similarity', 'Maximum Similarity'],
-    ['Linear', 'Logarithmic']
+    ['Linear', 'Logarithmic'],
+    ['10', '20', '25', '50', '100']
   ]
 
   const baseOptions = options.map((o) => o[0])
