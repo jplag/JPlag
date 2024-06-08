@@ -22,13 +22,14 @@
       />
       <OptionsSelector
         class="mt-2"
-        title="Resolution:"
+        title="Bucket Count:"
         :labels="resolutionOptions.map((div) => div.toString())"
         :defaultSelected="
-          resolutionOptions.indexOf(store().uiState.distributionChartConfig.resolution)
+          resolutionOptions.indexOf(store().uiState.distributionChartConfig.bucketCount)
         "
         @selection-changed="
-          (i: number) => (store().uiState.distributionChartConfig.resolution = resolutionOptions[i])
+          (i: number) =>
+            (store().uiState.distributionChartConfig.bucketCount = resolutionOptions[i])
         "
       />
     </ScrollableComponent>

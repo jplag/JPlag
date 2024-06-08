@@ -40,7 +40,7 @@ const props = defineProps({
 const graphOptions = computed(() => store().uiState.distributionChartConfig)
 const distribution = computed(() => props.distributions[graphOptions.value.metric])
 const distributionData = computed(() =>
-  distribution.value.splitIntoBuckets(graphOptions.value.resolution)
+  distribution.value.splitIntoBuckets(graphOptions.value.bucketCount)
 )
 
 const maxVal = computed(() => Math.max(...distributionData.value))
@@ -113,16 +113,16 @@ const options = computed(() => {
           color: graphColors.ticksAndFont.value,
           callback: function (reversedValue: any) {
             const value = distributionData.value.length - reversedValue - 1
-            if (graphOptions.value.resolution <= 10) {
+            if (graphOptions.value.bucketCount <= 10) {
               return getDataPointLabel(value)
             } else {
               let labelBreakPoint = 10
-              if (graphOptions.value.resolution <= 25) {
+              if (graphOptions.value.bucketCount <= 25) {
                 labelBreakPoint = 5
               } else {
-                labelBreakPoint = Math.floor(graphOptions.value.resolution / 10)
+                labelBreakPoint = Math.floor(graphOptions.value.bucketCount / 10)
               }
-              if (value == graphOptions.value.resolution - 1 || value % labelBreakPoint == 0) {
+              if (value == graphOptions.value.bucketCount - 1 || value % labelBreakPoint == 0) {
                 return getDataPointLabel(value)
               }
             }
@@ -135,7 +135,7 @@ const options = computed(() => {
     },
     plugins: {
       datalabels: {
-        display: graphOptions.value.resolution <= 20,
+        display: graphOptions.value.bucketCount <= 20,
         color: graphColors.ticksAndFont.value,
         font: {
           weight: 'bold' as 'bold'
@@ -156,7 +156,7 @@ const options = computed(() => {
 })
 
 function getDataPointLabel(index: number) {
-  let perBucket = 100 / graphOptions.value.resolution
+  let perBucket = 100 / graphOptions.value.bucketCount
   return index * perBucket + '-' + (index * perBucket + perBucket) + '%'
 }
 </script>
