@@ -40,9 +40,7 @@ const props = defineProps({
 const graphOptions = computed(() => store().uiState.distributionChartConfig)
 const distribution = computed(() => props.distributions[graphOptions.value.metric])
 const distributionData = computed(() =>
-  graphOptions.value.resolution == 10
-    ? distribution.value.splitIntoTenBuckets()
-    : distribution.value.splitIntoOneHundredBuckets()
+  distribution.value.splitIntoBuckets(graphOptions.value.resolution)
 )
 
 const maxVal = computed(() => Math.max(...distributionData.value))
@@ -115,10 +113,16 @@ const options = computed(() => {
           color: graphColors.ticksAndFont.value,
           callback: function (reversedValue: any) {
             const value = distributionData.value.length - reversedValue - 1
-            if (graphOptions.value.resolution == 10) {
+            if (graphOptions.value.resolution <= 10) {
               return getDataPointLabel(value)
             } else {
-              if (value == 99 || value % 10 == 0) {
+              let labelBreakPoint = 10
+              if (graphOptions.value.resolution <= 25) {
+                labelBreakPoint = 5
+              } else {
+                labelBreakPoint = Math.floor(graphOptions.value.resolution / 10)
+              }
+              if (value == graphOptions.value.resolution - 1 || value % labelBreakPoint == 0) {
                 return getDataPointLabel(value)
               }
             }
@@ -131,7 +135,7 @@ const options = computed(() => {
     },
     plugins: {
       datalabels: {
-        display: graphOptions.value.resolution == 10,
+        display: graphOptions.value.resolution <= 20,
         color: graphColors.ticksAndFont.value,
         font: {
           weight: 'bold' as 'bold'
@@ -143,8 +147,8 @@ const options = computed(() => {
       },
       legend: {
         display: true,
-        position: 'bottom',
-        align: 'end',
+        position: 'bottom' as 'bottom',
+        align: 'end' as 'end',
         onClick: () => {}
       }
     }
@@ -152,10 +156,7 @@ const options = computed(() => {
 })
 
 function getDataPointLabel(index: number) {
-  if (graphOptions.value.resolution == 10) {
-    return index * 10 + '-' + (index * 10 + 10) + '%'
-  } else {
-    return index + '-' + (index + 1) + '%'
-  }
+  let perBucket = 100 / graphOptions.value.resolution
+  return index * perBucket + '-' + (index * perBucket + perBucket) + '%'
 }
 </script>

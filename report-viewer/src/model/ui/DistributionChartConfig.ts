@@ -1,3 +1,4 @@
+import type { BucketOptions } from '../Distribution'
 import type { MetricType } from '../MetricType'
 
 /**
@@ -6,5 +7,5 @@ import type { MetricType } from '../MetricType'
 export interface DistributionChartConfig {
   metric: MetricType
   xScale: 'linear' | 'logarithmic'
-  resolution: 10 | 100
+  resolution: BucketOptions
 }

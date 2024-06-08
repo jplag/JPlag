@@ -23,10 +23,12 @@
       <OptionsSelector
         class="mt-2"
         title="Resolution:"
-        :labels="['10', '100']"
-        :defaultSelected="store().uiState.distributionChartConfig.resolution == 10 ? 0 : 1"
+        :labels="resolutionOptions.map((div) => div.toString())"
+        :defaultSelected="
+          resolutionOptions.indexOf(store().uiState.distributionChartConfig.resolution)
+        "
         @selection-changed="
-          (i: number) => (store().uiState.distributionChartConfig.resolution = i == 0 ? 10 : 100)
+          (i: number) => (store().uiState.distributionChartConfig.resolution = resolutionOptions[i])
         "
       />
     </ScrollableComponent>
@@ -39,4 +41,7 @@ import { store } from '@/stores/store'
 import MetricSelector from '@/components/optionsSelectors/MetricSelector.vue'
 import OptionsSelector from '@/components/optionsSelectors/OptionsSelectorComponent.vue'
 import ScrollableComponent from '../ScrollableComponent.vue'
+import { type BucketOptions } from '@/model/Distribution'
+
+const resolutionOptions = [10, 20, 25, 50, 100] as BucketOptions[]
 </script>
