@@ -11,9 +11,9 @@ const store = defineStore('store', {
     state: {
       submissionIdsToComparisonFileName: new Map<string, Map<string, string>>(),
       anonymous: new Set(),
-      anonymousIds: {},
-      files: {},
-      submissions: {},
+      anonymousIds: new Map(),
+      files: new Map(),
+      submissions: new Map(),
       // Mode that was used to load the files
       localModeUsed: false,
       zipModeUsed: false,
@@ -41,7 +41,7 @@ const store = defineStore('store', {
     filesOfSubmission:
       (state) =>
       (submissionId: string): SubmissionFile[] => {
-        return Array.from(state.state.submissions[submissionId].values())
+        return Array.from(state.state.submissions.get(submissionId)?.values() ?? [])
       },
     /**
      * @param submissionID the name of the submission
@@ -50,7 +50,14 @@ const store = defineStore('store', {
     getSubmissionFile:
       (state) =>
       (submissionId: string, fileName: string): SubmissionFile | undefined => {
-        return state.state.submissions[submissionId].get(fileName)
+        return state.state.submissions.get(submissionId)?.get(fileName)
+      },
+    getFile:
+      (state) =>
+      (fileName: string): string | undefined => {
+        const index = Array.from(state.state.files.keys()).find((name) => name.endsWith(fileName))
+        console.log(fileName, index, Object.keys(state.state.files))
+        return index != undefined ? state.state.files.get(index) : undefined
       },
     /**
      * @param name the name of the submission
@@ -84,7 +91,7 @@ const store = defineStore('store', {
         const index = expectedFileName
           ? Object.keys(this.state.files).find((name) => name.endsWith(expectedFileName))
           : undefined
-        return index != undefined ? this.state.files[index] : undefined
+        return index != undefined ? this.state.files.get(index) : undefined
       }
     },
     /**
@@ -99,10 +106,10 @@ const store = defineStore('store', {
      * @returns the anonymous name of the submission
      */
     getAnonymousName: (state) => (submissionId: string) => {
-      let number = state.state.anonymousIds[submissionId]
+      let number = state.state.anonymousIds.get(submissionId)
       if (!number) {
         const next = Object.keys(state.state.anonymousIds).length + 1
-        state.state.anonymousIds[submissionId] = next
+        state.state.anonymousIds.set(submissionId, next)
         number = next
       }
       return 'anon' + number
@@ -125,9 +132,9 @@ const store = defineStore('store', {
       this.state = {
         submissionIdsToComparisonFileName: new Map<string, Map<string, string>>(),
         anonymous: new Set(),
-        anonymousIds: {},
-        files: {},
-        submissions: {},
+        anonymousIds: new Map(),
+        files: new Map(),
+        submissions: new Map(),
         localModeUsed: false,
         zipModeUsed: false,
         singleModeUsed: false,
@@ -172,7 +179,7 @@ const store = defineStore('store', {
      * @param file the file to save
      */
     saveFile(file: File) {
-      this.state.files[file.fileName] = file.data
+      this.state.files.set(file.fileName, file.data)
     },
     /**
      * Saves the given submission names
@@ -186,13 +193,12 @@ const store = defineStore('store', {
      * @param submissionFile the file to save
      */
     saveSubmissionFile(submissionFile: SubmissionFile) {
-      if (!this.state.submissions[submissionFile.submissionId]) {
-        this.state.submissions[submissionFile.submissionId] = new Map()
+      if (!this.state.submissions.get(submissionFile.submissionId)) {
+        this.state.submissions.set(submissionFile.submissionId, new Map())
       }
-      this.state.submissions[submissionFile.submissionId].set(
-        submissionFile.fileName,
-        submissionFile
-      )
+      this.state.submissions
+        .get(submissionFile.submissionId)!
+        .set(submissionFile.fileName, submissionFile)
     },
     /**
      * Sets the loading type

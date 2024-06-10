@@ -10,7 +10,7 @@ const store = {
     localModeUsed: false,
     zipModeUsed: true,
     singleModeUsed: false,
-    files: {}
+    files: new Map()
   },
   saveSubmissionNames: (map) => {
     expect(map.has('A')).toBeTruthy()
@@ -36,7 +36,7 @@ describe('Test JSON to Overview', () => {
   })
 
   it('Post 5.0', async () => {
-    store.state.files['overview.json'] = JSON.stringify(validNew)
+    store.state.files.set('overview.json', JSON.stringify(validNew))
 
     expect(await OverviewFactory.getOverview()).toEqual({
       _submissionFolderPath: ['files'],
@@ -142,7 +142,7 @@ describe('Test JSON to Overview', () => {
 
 describe('Outdated JSON to Overview', () => {
   it('Outdated version', async () => {
-    store.state.files['overview.json'] = JSON.stringify(outdated)
+    store.state.files.set('overview.json', JSON.stringify(outdated))
     expect(() => OverviewFactory.getOverview()).rejects.toThrowError()
   })
 })

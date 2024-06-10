@@ -13,12 +13,12 @@ export interface State {
   /**
    * Maps the submission id to the number of anonymous ids.
    */
-  anonymousIds: Record<string, number>
+  anonymousIds: Map<string, number>
   /**
    * Stored files if zip mode is used. Stores the files as key - file name, value - file string
    */
-  files: Record<string, string>
-  submissions: Record<string, Map<string, SubmissionFile>>
+  files: Map<string, string>
+  submissions: Map<string, Map<string, SubmissionFile>>
   /**
    * Indicates whether local mode is used.
    */

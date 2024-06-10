@@ -9,7 +9,7 @@ const store = {
     localModeUsed: false,
     zipModeUsed: true,
     singleModeUsed: false,
-    files: {}
+    files: new Map()
   },
   getComparisonFileName: (id1: string, id2: string) => {
     return `${id1}-${id2}.json`
@@ -45,7 +45,7 @@ describe('Test JSON to Comparison', () => {
   })
 
   it('Post 5.0', async () => {
-    store.state.files['root1-root2.json'] = JSON.stringify(validNew)
+    store.state.files.set('root1-root2.json', JSON.stringify(validNew))
 
     const result = await ComparisonFactory.getComparison(
       store.getComparisonFileName('root1', 'root2')

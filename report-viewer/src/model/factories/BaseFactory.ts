@@ -33,11 +33,7 @@ export class BaseFactory {
   }
 
   private static getFileFromStore(path: string): string {
-    const index = Object.keys(store().state.files).find((name) => name.endsWith(path))
-    if (index == undefined) {
-      throw new Error(`Could not find ${path} in zip file.`)
-    }
-    const file = store().state.files[index]
+    const file = store().getFile(path)
     if (file == undefined) {
       throw new Error(`Could not load ${path}.`)
     }
