@@ -16,8 +16,6 @@ import de.jplag.reporting.FilePathUtil;
 import de.jplag.reporting.reportobject.model.BaseCodeMatch;
 import de.jplag.reporting.reportobject.writer.JPlagResultWriter;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class BaseCodeReportWriter {
 
     private final JPlagResultWriter resultWriter;
@@ -56,8 +54,8 @@ public class BaseCodeReportWriter {
         Token start = tokensFirst.stream().min(lineComparator).orElseThrow();
         Token end = tokensFirst.stream().max(lineComparator).orElseThrow();
 
-        return new BaseCodeMatch(FilePathUtil.getRelativeSubmissionPath(start.getFile(), submission, submissionToIdFunction).toString(), start.getLine(),
-                start.getColumn(), match.startOfFirst(),
-                end.getLine(), end.getColumn() + end.getLength() - 1, match.endOfFirst(), match.length());
+        return new BaseCodeMatch(FilePathUtil.getRelativeSubmissionPath(start.getFile(), submission, submissionToIdFunction).toString(),
+                start.getLine(), start.getColumn(), match.startOfFirst(), end.getLine(), end.getColumn() + end.getLength() - 1, match.endOfFirst(),
+                match.length());
     }
 }
