@@ -8,9 +8,7 @@
         Files of
         {{ fileOwnerDisplayName }}:
       </h3>
-      <div v-if="tokenCount >= 0" class="text-gray-600 dark:text-gray-300">
-        {{ tokenCount }} total tokens
-      </div>
+      <div class="text-gray-600 dark:text-gray-300">{{ tokenCount }} total tokens</div>
       <Button @click="collapseAll()" class="space-x-2 print:hidden"
         ><FontAwesomeIcon :icon="['fas', 'compress-alt']" />
         <p>Collapse All</p></Button
@@ -28,7 +26,7 @@
             !matches.get(file.fileName) ? [] : (matches.get(file.fileName) as MatchInSingleFile[])
           "
           :highlight-language="highlightLanguage"
-          @line-selected="(match) => $emit('lineSelected', match)"
+          @match-selected="(match: Match) => $emit('matchSelected', match)"
           class="mt-1 first:mt-0"
           :base-code-matches="baseCodeMatches"
         />
@@ -49,8 +47,9 @@ import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCompressAlt } from '@fortawesome/free-solid-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import type { ParserLanguage } from '@/model/Language'
+import type { Language } from '@/model/Language'
 import type { BaseCodeMatch } from '@/model/BaseCodeReport'
+import type { Match } from '@/model/Match'
 
 library.add(faCompressAlt)
 
@@ -80,7 +79,7 @@ const props = defineProps({
    * Language of the files.
    */
   highlightLanguage: {
-    type: String as PropType<ParserLanguage>,
+    type: String as PropType<Language>,
     required: true
   },
   /**
@@ -92,7 +91,7 @@ const props = defineProps({
   }
 })
 
-defineEmits(['lineSelected'])
+defineEmits(['matchSelected'])
 
 const codePanels: Ref<(typeof CodePanel)[]> = ref([])
 

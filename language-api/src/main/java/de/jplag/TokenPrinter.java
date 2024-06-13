@@ -193,7 +193,7 @@ public final class TokenPrinter {
     /**
      * A proxy for the StringBuilder that keeps track of the position inside the output.
      */
-    private static class PrinterOutputBuilder {
+    private static final class PrinterOutputBuilder {
         public static final String LINE_SEPARATOR = System.lineSeparator();
         private final StringBuilder builder = new StringBuilder();
         private int columnIndex = 1;

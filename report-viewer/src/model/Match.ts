@@ -1,3 +1,5 @@
+import type { MatchColorIndex } from '@/utils/ColorUtils'
+
 /**
  * Match between two files of two submissions.
  * @property firstFile - Path to the file of the first submission.
@@ -12,10 +14,16 @@
 export interface Match {
   firstFile: string
   secondFile: string
-  startInFirst: number
-  endInFirst: number
-  startInSecond: number
-  endInSecond: number
+  startInFirst: CodePosition
+  endInFirst: CodePosition
+  startInSecond: CodePosition
+  endInSecond: CodePosition
   tokens: number
-  colorIndex?: number
+  colorIndex: MatchColorIndex
+}
+
+export interface CodePosition {
+  line: number
+  column: number
+  tokenListIndex: number
 }

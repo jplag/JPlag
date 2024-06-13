@@ -1,19 +1,21 @@
 <template>
-  <ComparisonView
-    v-if="comparison && language"
-    :comparison="comparison"
-    :language="language"
-    :first-base-code-matches="firstBaseCodeMatches"
-    :second-base-code-matches="secondBaseCodeMatches"
-  />
-  <div
-    v-else
-    class="absolute bottom-0 left-0 right-0 top-0 flex flex-col items-center justify-center"
-  >
-    <LoadingCircle class="mx-auto" />
-  </div>
+  <div>
+    <ComparisonView
+      v-if="comparison && language && firstBaseCodeMatches && secondBaseCodeMatches"
+      :comparison="comparison"
+      :language="language"
+      :first-base-code-matches="firstBaseCodeMatches"
+      :second-base-code-matches="secondBaseCodeMatches"
+    />
+    <div
+      v-else
+      class="absolute bottom-0 left-0 right-0 top-0 flex flex-col items-center justify-center"
+    >
+      <LoadingCircle class="mx-auto" />
+    </div>
 
-  <RepositoryReference />
+    <RepositoryReference />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -24,7 +26,7 @@ import type { Comparison } from '@/model/Comparison'
 import { ComparisonFactory } from '@/model/factories/ComparisonFactory'
 import LoadingCircle from '@/components/LoadingCircle.vue'
 import { redirectOnError } from '@/router'
-import type { ParserLanguage } from '@/model/Language'
+import type { Language } from '@/model/Language'
 import RepositoryReference from '@/components/RepositoryReference.vue'
 import type { BaseCodeMatch } from '@/model/BaseCodeReport'
 import { BaseCodeReportFactory } from '@/model/factories/BaseCodeReportFactory'
@@ -37,9 +39,9 @@ const props = defineProps({
 })
 
 const comparison: Ref<Comparison | null> = ref(null)
-const language: Ref<ParserLanguage | null> = ref(null)
-const firstBaseCodeMatches: Ref<BaseCodeMatch[]> = ref([])
-const secondBaseCodeMatches: Ref<BaseCodeMatch[]> = ref([])
+const language: Ref<Language | null> = ref(null)
+const firstBaseCodeMatches: Ref<BaseCodeMatch[] | null> = ref(null)
+const secondBaseCodeMatches: Ref<BaseCodeMatch[] | null> = ref(null)
 
 // This eslint rule is disabled to allow the use of await in the setup function. Disabling this rule is safe, because the props are gathered from the url, so changing them would reload the pafe anyway.
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss

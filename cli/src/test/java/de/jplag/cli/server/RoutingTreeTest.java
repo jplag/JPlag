@@ -54,7 +54,7 @@ class RoutingTreeTest {
     }
 
     @Test
-    void testPartialPathRouteWithSubpath() {
+    void testPartialPathRouteWithSubPath() {
         RoutingTree routingTree = new RoutingTree();
         routingTree.insertRouting("/path/", new TestRouting("/path/"));
         routingTree.insertRouting("/path/subPath/a.html", new TestRouting(""));
@@ -65,13 +65,7 @@ class RoutingTreeTest {
         assertEquals("/path/", ((TestRouting) result.getRight()).path);
     }
 
-    private static class TestRouting implements Routing {
-        private final String path;
-
-        public TestRouting(String path) {
-            this.path = path;
-        }
-
+    private record TestRouting(String path) implements Routing {
         @Override
         public ResponseData fetchData(RoutingPath subPath, HttpExchange request, ReportViewer viewer) {
             return null;

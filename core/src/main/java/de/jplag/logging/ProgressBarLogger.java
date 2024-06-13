@@ -1,5 +1,9 @@
 package de.jplag.logging;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.function.Consumer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +36,26 @@ public class ProgressBarLogger {
         ProgressBarLogger.progressBarProvider = progressBarProvider;
     }
 
+    /**
+     * Iterates over the given collection while showing and updating a progress bar of the given type. The progress bar is
+     * updated, everytime the given action is done.
+     * @param type The type of progress bar
+     * @param data The data to iterate over
+     * @param action The action to call for each item
+     * @param <T> The type of data
+     */
+    public static <T> void iterate(ProgressBarType type, Collection<T> data, Consumer<T> action) {
+        Iterator<T> iterator = data.iterator();
+        ProgressBar progressBar = ProgressBarLogger.createProgressBar(type, data.size());
+
+        while (iterator.hasNext()) {
+            action.accept(iterator.next());
+            progressBar.step();
+        }
+
+        progressBar.dispose();
+    }
+
     private static class DummyProvider implements ProgressBarProvider {
         @Override
         public ProgressBar initProgressBar(ProgressBarType type, int totalSteps) {
@@ -45,7 +69,11 @@ public class ProgressBarLogger {
 
         public DummyBar(ProgressBarType type, int totalSteps) {
             this.currentStep = 0;
-            logger.info("{} ({})", type.getDefaultText(), totalSteps);
+            if (type.isIdleBar()) {
+                logger.info("{} - started", type.getDefaultText());
+            } else {
+                logger.info("{} ({})", type.getDefaultText(), totalSteps);
+            }
         }
 
         @Override

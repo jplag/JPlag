@@ -1,5 +1,6 @@
 package de.jplag.reporting.jsonfactory;
 
+import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -45,7 +46,7 @@ public class BaseCodeReportWriter {
         if (submission.getBaseCodeComparison() != null) {
             matches = submission.getBaseCodeComparison().matches().stream().map(match -> convertToBaseCodeMatch(submission, match)).toList();
         }
-        resultWriter.addJsonEntry(matches, FilePathUtil.joinZipPathSegments(BASEPATH, submissionToIdFunction.apply(submission).concat(".json")));
+        resultWriter.addJsonEntry(matches, Path.of(BASEPATH, submissionToIdFunction.apply(submission).concat(".json")));
     }
 
     private BaseCodeMatch convertToBaseCodeMatch(Submission submission, Match match) {
@@ -55,7 +56,8 @@ public class BaseCodeReportWriter {
         Token start = tokensFirst.stream().min(lineComparator).orElseThrow();
         Token end = tokensFirst.stream().max(lineComparator).orElseThrow();
 
-        return new BaseCodeMatch(FilePathUtil.getRelativeSubmissionPath(start.getFile(), submission, submissionToIdFunction), start.getLine(),
-                end.getLine(), match.length());
+        return new BaseCodeMatch(FilePathUtil.getRelativeSubmissionPath(start.getFile(), submission, submissionToIdFunction).toString(), start.getLine(),
+                start.getColumn(), match.startOfFirst(),
+                end.getLine(), end.getColumn() + end.getLength() - 1, match.endOfFirst(), match.length());
     }
 }

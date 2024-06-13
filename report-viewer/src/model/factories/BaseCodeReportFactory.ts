@@ -1,5 +1,5 @@
 import slash from 'slash'
-import type { BaseCodeMatch } from '../BaseCodeReport'
+import { BaseCodeMatch } from '../BaseCodeReport'
 import { BaseFactory } from './BaseFactory'
 
 export class BaseCodeReportFactory extends BaseFactory {
@@ -13,15 +13,21 @@ export class BaseCodeReportFactory extends BaseFactory {
   }
 
   private static async extractReport(json: Record<string, unknown>[]): Promise<BaseCodeMatch[]> {
-    return json
-      .map((match: Record<string, unknown>) => {
-        return {
-          fileName: match['file_name'] as string,
-          start: match['start'] as number,
-          end: match['end'] as number,
-          tokens: match['tokens'] as number
-        }
-      })
-      .sort((a, b) => a.start - b.start)
+    return json.map((match: Record<string, unknown>) => {
+      return new BaseCodeMatch(
+        match['file_name'] as string,
+        {
+          line: match['startLine'] as number,
+          column: (match['startCol'] as number) - 1,
+          tokenListIndex: match['startIndex'] as number
+        },
+        {
+          line: match['endLine'] as number,
+          column: (match['endCol'] as number) - 1,
+          tokenListIndex: match['endIndex'] as number
+        },
+        match['tokens'] as number
+      )
+    })
   }
 }

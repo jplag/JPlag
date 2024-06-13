@@ -1,6 +1,7 @@
 package de.jplag.normalization;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -25,7 +26,7 @@ public class TokenStringNormalizer {
      * subsequent independent statements have been put in a fixed order. Works by first constructing a Normalization Graph
      * and then turning it back into a token sequence.
      * @param tokens The original token sequence, remains unaltered.
-     * @return The normalized token sequence.
+     * @return The normalized token sequence as unmodifiable list.
      */
     public static List<Token> normalize(List<Token> tokens) {
         SimpleDirectedGraph<Statement, MultipleEdge> normalizationGraph = new NormalizationGraphConstructor(tokens).get();
@@ -50,7 +51,7 @@ public class TokenStringNormalizer {
             } while (!roots.isEmpty());
             roots = newRoots;
         }
-        return normalizedTokens;
+        return Collections.unmodifiableList(normalizedTokens);
     }
 
     /**

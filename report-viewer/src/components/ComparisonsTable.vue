@@ -73,7 +73,7 @@
                 class="tableRow"
                 :class="{
                   'bg-container-secondary-light dark:bg-container-secondary-dark': item.id % 2 == 1,
-                  '!bg-accent !bg-opacity-30 ': isHighlightedRow(item)
+                  '!bg-accent !bg-opacity-30': isHighlightedRow(item)
                 }"
               >
                 <RouterLink
@@ -120,7 +120,11 @@
                     }"
                     class="flex w-full justify-center text-center"
                   >
-                    <ToolTipComponent class="w-fit" direction="left">
+                    <ToolTipComponent
+                      class="w-fit"
+                      direction="left"
+                      :tool-tip-container-will-be-centered="true"
+                    >
                       <template #default>
                         {{ clusters?.[item.clusterIndex].members?.length }}
                         <FontAwesomeIcon

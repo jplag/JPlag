@@ -52,6 +52,10 @@ public class ParsingException extends Exception {
         super(constructMessage(file, reason), cause);
     }
 
+    private ParsingException(String message) {
+        super(message);
+    }
+
     /**
      * Creates a new parsing exception which wraps the provided exceptions. If no exception to wrap is provided, null is
      * returned. If only one exception is provided, it is returned.
@@ -70,14 +74,11 @@ public class ParsingException extends Exception {
         };
     }
 
-    private ParsingException(String message) {
-        super(message);
-    }
-
     private static String constructMessage(File file, String reason) {
         StringBuilder messageBuilder = new StringBuilder();
-        if (reason == null || !reason.contains(file.toString())) {
-            messageBuilder.append("failed to parse '%s'".formatted(file));
+        String fileName = file == null ? "<null>" : file.toString();
+        if (reason == null || !reason.contains(fileName)) {
+            messageBuilder.append("failed to parse '%s'".formatted(fileName));
         }
         if (reason != null && !reason.isBlank()) {
             messageBuilder.append(reason);

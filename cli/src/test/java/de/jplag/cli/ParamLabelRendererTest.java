@@ -8,10 +8,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import de.jplag.cli.picocli.ParameterLabelRenderer;
+
 import picocli.CommandLine;
 
 /**
- * Tests for the custom {@link ParamLabelRenderer}
+ * Tests for the custom {@link ParameterLabelRenderer}
  */
 class ParamLabelRendererTest {
     private CommandLine.Help.IParamLabelRenderer paramLabelRenderer;
@@ -31,7 +33,7 @@ class ParamLabelRendererTest {
         CommandLine.Help help = commandLine.getHelp();
 
         this.baseLabelRenderer = help.parameterLabelRenderer();
-        this.paramLabelRenderer = new ParamLabelRenderer(this.baseLabelRenderer);
+        this.paramLabelRenderer = new ParameterLabelRenderer(this.baseLabelRenderer);
 
         this.ansi = help.ansi();
         this.styles = help.colorScheme().optionStyles();
