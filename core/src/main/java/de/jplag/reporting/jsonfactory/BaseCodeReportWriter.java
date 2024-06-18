@@ -42,17 +42,21 @@ public class BaseCodeReportWriter {
     private void writeBaseCodeFile(Submission submission) {
         List<BaseCodeMatch> matches = List.of();
         if (submission.getBaseCodeComparison() != null) {
-            matches = submission.getBaseCodeComparison().matches().stream().map(match -> convertToBaseCodeMatch(submission, match)).toList();
+            JPlagComparison baseCodeComparison = submission.getBaseCodeComparison();
+            boolean takeLeft = baseCodeComparison.firstSubmission().equals(submission);
+            matches = baseCodeComparison.matches().stream().map(match -> convertToBaseCodeMatch(submission, match, takeLeft)).toList();
         }
         resultWriter.addJsonEntry(matches, Path.of(BASEPATH, submissionToIdFunction.apply(submission).concat(".json")));
     }
 
-    private BaseCodeMatch convertToBaseCodeMatch(Submission submission, Match match) {
-        List<Token> tokensFirst = submission.getTokenList().subList(match.startOfFirst(), match.endOfFirst() + 1);
+    private BaseCodeMatch convertToBaseCodeMatch(Submission submission, Match match, boolean takeLeft) {
+        List<Token> tokens = submission.getTokenList().subList(
+                takeLeft ? match.startOfFirst() : match.startOfSecond(),
+                (takeLeft ? match.endOfFirst():match.endOfSecond()) + 1);
 
         Comparator<? super Token> lineComparator = Comparator.comparingInt(Token::getLine);
-        Token start = tokensFirst.stream().min(lineComparator).orElseThrow();
-        Token end = tokensFirst.stream().max(lineComparator).orElseThrow();
+        Token start = tokens.stream().min(lineComparator).orElseThrow();
+        Token end = tokens.stream().max(lineComparator).orElseThrow();
 
         return new BaseCodeMatch(FilePathUtil.getRelativeSubmissionPath(start.getFile(), submission, submissionToIdFunction).toString(),
                 start.getLine(), start.getColumn(), match.startOfFirst(), end.getLine(), end.getColumn() + end.getLength() - 1, match.endOfFirst(),
