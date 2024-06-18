@@ -16,7 +16,15 @@ public abstract class JPlagLoggerBase extends AbstractLogger {
 
     private static final Level LOG_LEVEL_FOR_EXTERNAL_LIBRARIES = LOG_LEVEL_ERROR;
 
-    public static Level currentLogLevel = LOG_LEVEL_INFO;
+    private static Level currentLogLevel = LOG_LEVEL_INFO;
+
+    public static void setLogLevel(Level logLevel) {
+        currentLogLevel = logLevel;
+    }
+
+    public static Level getLogLevel() {
+        return currentLogLevel;
+    }
 
     /**
      * @param name The name of the logger
@@ -76,7 +84,7 @@ public abstract class JPlagLoggerBase extends AbstractLogger {
     }
 
     private boolean isLogLevelEnabled(Level logLevel) {
-        return logLevel.toInt() >= (isJPlagLog() ? this.currentLogLevel.toInt() : LOG_LEVEL_FOR_EXTERNAL_LIBRARIES.toInt());
+        return logLevel.toInt() >= (isJPlagLog() ? currentLogLevel.toInt() : LOG_LEVEL_FOR_EXTERNAL_LIBRARIES.toInt());
     }
 
     private boolean isJPlagLog() {
