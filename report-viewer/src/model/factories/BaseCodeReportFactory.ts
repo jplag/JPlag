@@ -1,6 +1,7 @@
 import slash from 'slash'
 import { BaseCodeMatch } from '../BaseCodeReport'
 import { BaseFactory } from './BaseFactory'
+import type { CodePosition } from '../Match'
 
 export class BaseCodeReportFactory extends BaseFactory {
   static basePath = 'basecode'
@@ -16,16 +17,8 @@ export class BaseCodeReportFactory extends BaseFactory {
     return json.map((match: Record<string, unknown>) => {
       return new BaseCodeMatch(
         match['file_name'] as string,
-        {
-          line: match['startLine'] as number,
-          column: (match['startCol'] as number) - 1,
-          tokenListIndex: match['startIndex'] as number
-        },
-        {
-          line: match['endLine'] as number,
-          column: (match['endCol'] as number) - 1,
-          tokenListIndex: match['endIndex'] as number
-        },
+        match['start'] as CodePosition,
+        match['end'] as CodePosition,
         match['tokens'] as number
       )
     })

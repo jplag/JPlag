@@ -7,40 +7,103 @@
   },
   "matches": [
     {
-      "file1": "root2\\Structure.java",
-      "file2": "root1\\Structure.java",
-      "start1": 3,
-      "end1": 120,
-      "start2": 1,
-      "end2": 118,
+      "firstFile": "root2\\Structure.java",
+      "secondFile": "root1\\Structure.java",
+      "startInFirst": {
+        "line": 1,
+        "column": 1,
+        "tokenListIndex": 0
+      },
+      "endInFirst": {
+        "line": 3,
+        "column": 16,
+        "tokenListIndex": 139
+      },
+      "startInSecond": {
+        "line": 1,
+        "column": 1,
+        "tokenListIndex": 0
+      },
+      "endInSecond": {
+        "line": 3,
+        "column": 16,
+        "tokenListIndex": 139
+      },
       "tokens": 139
     },
     {
-      "file1": "root2\\Submission.java",
-      "file2": "root1\\Submission.java",
-      "start1": 129,
-      "end1": 155,
-      "start2": 134,
-      "end2": 160,
+      "firstFile": "root2\\Submission.java",
+      "secondFile": "root1\\Submission.java",
+      "startInFirst": {
+        "line": 129,
+        "column": 1,
+        "tokenListIndex": 200
+      },
+      "endInFirst": {
+        "line": 155,
+        "column": 89,
+        "tokenListIndex": 234
+      },
+      "startInSecond": {
+        "line": 134,
+        "column": 1,
+        "tokenListIndex": 205
+      },
+      "endInSecond": {
+        "line": 160,
+        "column": 89,
+        "tokenListIndex": 239
+      },
       "tokens": 34
     },
     {
-      "file1": "root2\\Submission.java",
-      "file2": "root1\\Submission.java",
-      "start1": 165,
-      "end1": 194,
-      "start2": 173,
-      "end2": 203,
+      "firstFile": "root2\\Submission.java",
+      "secondFile": "root1\\Submission.java",
+      "startInFirst": {
+        "line": 165,
+        "column": 1,
+        "token": 240
+      },
+      "endInFirst": {
+        "line": 194,
+        "column": 89,
+        "token": 273
+      },
+      "startInSecond": {
+        "line": 173,
+        "column": 1,
+        "token": 248
+      },
+      "endInSecond": {
+        "line": 203,
+        "column": 89,
+        "token": 281
+      },
       "tokens": 33
     },
-
     {
-      "file1": "root2\\Submission.java",
-      "file2": "root1\\Submission.java",
-      "start1": 112,
-      "end1": 127,
-      "start2": 116,
-      "end2": 132,
+      "firstFile": "root2\\Submission.java",
+      "secondFile": "root1\\Submission.java",
+      "startInFirst": {
+        "line": 112,
+        "column": 1,
+        "token": 101
+      },
+      "endInFirst": {
+        "line": 127,
+        "column": 89,
+        "token": 124
+      },
+      "startInSecond": {
+        "line": 116,
+        "column": 1,
+        "token": 105
+      },
+      "endInSecond": {
+        "line": 132,
+        "column": 89,
+        "token": 128
+      },
       "tokens": 23
     }
   ],

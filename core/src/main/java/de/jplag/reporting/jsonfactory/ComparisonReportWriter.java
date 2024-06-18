@@ -14,6 +14,7 @@ import de.jplag.Submission;
 import de.jplag.Token;
 import de.jplag.options.SimilarityMetric;
 import de.jplag.reporting.FilePathUtil;
+import de.jplag.reporting.reportobject.model.CodePosition;
 import de.jplag.reporting.reportobject.model.ComparisonReport;
 import de.jplag.reporting.reportobject.model.Match;
 import de.jplag.reporting.reportobject.writer.JPlagResultWriter;
@@ -110,22 +111,14 @@ public class ComparisonReportWriter {
         String secondFileName = FilePathUtil.getRelativeSubmissionPath(startOfSecond.getFile(), comparison.secondSubmission(), submissionToIdFunction)
                 .toString();
 
-        int startLineFirst = startOfFirst.getLine();
-        int startColumnFirst = startOfFirst.getColumn();
-        int startTokenFirst = match.startOfFirst();
-        int endLineFirst = endOfFirst.getLine();
-        int endColumnFirst = endOfFirst.getColumn() + endOfFirst.getLength() - 1;
-        int endTokenFirst = match.endOfFirst();
+        CodePosition startInFirst = new CodePosition(startOfFirst.getLine(), startOfFirst.getColumn() - 1, match.startOfFirst());
+        CodePosition endInFirst = new CodePosition(endOfFirst.getLine(), endOfFirst.getColumn() + endOfFirst.getLength() - 1, match.endOfFirst());
 
-        int startLineSecond = startOfSecond.getLine();
-        int startColumnSecond = startOfSecond.getColumn();
-        int startTokenSecond = match.startOfSecond();
-        int endLineSecond = endOfSecond.getLine();
-        int endColumnSecond = endOfSecond.getColumn() + endOfSecond.getLength() - 1;
-        int endTokenSecond = match.endOfSecond();
+        CodePosition startInSecond = new CodePosition(startOfSecond.getLine(), startOfSecond.getColumn() - 1, match.startOfSecond());
+        CodePosition endInSecond = new CodePosition(endOfSecond.getLine(), endOfSecond.getColumn() + endOfSecond.getLength() - 1,
+                match.endOfSecond());
 
-        return new Match(firstFileName, secondFileName, startLineFirst, startColumnFirst, startTokenFirst, endLineFirst, endColumnFirst,
-                endTokenFirst, startLineSecond, startColumnSecond, startTokenSecond, endLineSecond, endColumnSecond, endTokenSecond, match.length());
+        return new Match(firstFileName, secondFileName, startInFirst, endInFirst, startInSecond, endInSecond, match.length());
     }
 
 }

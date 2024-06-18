@@ -14,6 +14,7 @@ import de.jplag.Submission;
 import de.jplag.Token;
 import de.jplag.reporting.FilePathUtil;
 import de.jplag.reporting.reportobject.model.BaseCodeMatch;
+import de.jplag.reporting.reportobject.model.CodePosition;
 import de.jplag.reporting.reportobject.writer.JPlagResultWriter;
 
 public class BaseCodeReportWriter {
@@ -50,16 +51,19 @@ public class BaseCodeReportWriter {
     }
 
     private BaseCodeMatch convertToBaseCodeMatch(Submission submission, Match match, boolean takeLeft) {
-        List<Token> tokens = submission.getTokenList().subList(
-                takeLeft ? match.startOfFirst() : match.startOfSecond(),
-                (takeLeft ? match.endOfFirst():match.endOfSecond()) + 1);
+        List<Token> tokens = submission.getTokenList().subList(takeLeft ? match.startOfFirst() : match.startOfSecond(),
+                (takeLeft ? match.endOfFirst() : match.endOfSecond()) + 1);
 
         Comparator<? super Token> lineComparator = Comparator.comparingInt(Token::getLine);
         Token start = tokens.stream().min(lineComparator).orElseThrow();
         Token end = tokens.stream().max(lineComparator).orElseThrow();
 
+        CodePosition startPosition = new CodePosition(start.getLine(), start.getColumn() - 1,
+                takeLeft ? match.startOfFirst() : match.startOfSecond());
+        CodePosition endPosition = new CodePosition(end.getLine(), end.getColumn() + end.getLength() - 1,
+                takeLeft ? match.endOfFirst() : match.endOfSecond());
+
         return new BaseCodeMatch(FilePathUtil.getRelativeSubmissionPath(start.getFile(), submission, submissionToIdFunction).toString(),
-                start.getLine(), start.getColumn(), match.startOfFirst(), end.getLine(), end.getColumn() + end.getLength() - 1, match.endOfFirst(),
-                match.length());
+                startPosition, endPosition, match.length());
     }
 }
