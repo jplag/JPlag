@@ -30,25 +30,28 @@ export class ComparisonFactory extends BaseFactory {
     const filesOfFirstSubmission = store().filesOfSubmission(firstSubmissionId)
     const filesOfSecondSubmission = store().filesOfSubmission(secondSubmissionId)
 
-    const matches = json.matches as Array<Record<string, unknown>>
+    const matches = (json.matches as Array<Match>).map((match) => {
+      return { ...match, firstFile: slash(match.firstFile), secondFile: slash(match.secondFile) }
+    })
     matches.forEach((match) => {
-      const fileOfFirst = store().getSubmissionFile(firstSubmissionId, slash(match.file1 as string))
+      const fileOfFirst = store().getSubmissionFile(
+        firstSubmissionId,
+        slash(match.firstFile as string)
+      )
       const fileOfSecond = store().getSubmissionFile(
         secondSubmissionId,
-        slash(match.file2 as string)
+        slash(match.secondFile as string)
       )
 
       if (fileOfFirst == undefined || fileOfSecond == undefined) {
         throw new Error(
-          `The report viewer expected to find the file ${fileOfFirst == undefined ? match.file1 : match.file2} in the submissions, but did not find it.`
+          `The report viewer expected to find the file ${fileOfFirst == undefined ? match.firstFile : match.secondFile} in the submissions, but did not find it.`
         )
       }
 
-      fileOfFirst.matchedTokenCount += match.tokens as number
-      fileOfSecond.matchedTokenCount += match.tokens as number
+      fileOfFirst.matchedTokenCount += match.tokens
+      fileOfSecond.matchedTokenCount += match.tokens
     })
-
-    const unColoredMatches = matches.map((match) => this.getMatch(match))
 
     return new Comparison(
       firstSubmissionId,
@@ -56,7 +59,7 @@ export class ComparisonFactory extends BaseFactory {
       this.extractSimilarities(json.similarities as Record<string, number>),
       filesOfFirstSubmission,
       filesOfSecondSubmission,
-      this.colorMatches(unColoredMatches),
+      this.colorMatches(matches),
       json.first_similarity as number,
       json.second_similarity as number
     )
@@ -107,34 +110,6 @@ export class ComparisonFactory extends BaseFactory {
       )
     }
     return file.data
-  }
-
-  private static getMatch(match: Record<string, unknown>): Match {
-    return {
-      firstFile: slash(match.file1 as string),
-      secondFile: slash(match.file2 as string),
-      startInFirst: {
-        line: match.start1 as number,
-        column: (match['start1_col'] as number) - 1,
-        tokenListIndex: match.startToken1 as number
-      },
-      endInFirst: {
-        line: match.end1 as number,
-        column: (match['end1_col'] as number) - 1,
-        tokenListIndex: match.endToken1 as number
-      },
-      startInSecond: {
-        line: match.start2 as number,
-        column: (match['start2_col'] as number) - 1,
-        tokenListIndex: match.startToken2 as number
-      },
-      endInSecond: {
-        line: match.end2 as number,
-        column: (match['end2_col'] as number) - 1,
-        tokenListIndex: match.endToken2 as number
-      },
-      tokens: match.tokens as number
-    }
   }
 
   private static colorMatches(matches: Match[]): Match[] {
