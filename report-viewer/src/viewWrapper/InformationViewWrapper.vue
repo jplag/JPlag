@@ -1,6 +1,6 @@
 <template>
   <div>
-    <InformationView v-if="overview" :overview="overview" :options="cliOptions" />
+    <InformationView v-if="overview && cliOptions" :overview="overview" :options="cliOptions" />
     <div
       v-else
       class="absolute bottom-0 left-0 right-0 top-0 flex flex-col items-center justify-center"

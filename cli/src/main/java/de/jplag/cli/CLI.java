@@ -17,6 +17,7 @@ import de.jplag.cli.picocli.CliInputHandler;
 import de.jplag.exceptions.ExitException;
 import de.jplag.logging.ProgressBarLogger;
 import de.jplag.options.JPlagOptions;
+import de.jplag.util.FileUtils;
 
 /**
  * Command line interface class, allows using via command line.
@@ -26,6 +27,10 @@ public final class CLI {
     private static final Logger logger = LoggerFactory.getLogger(CLI.class);
 
     private static final String DEFAULT_FILE_ENDING = ".zip";
+    private static final int NAME_COLLISION_ATTEMPTS = 4;
+
+    private static final String OUTPUT_FILE_EXISTS = "The output file (also with suffixes e.g. results(1).zip) already exists. You can use --overwrite to overwrite the file.";
+    private static final String OUTPUT_FILE_NOT_WRITABLE = "The output file (%s) cannot be written to.";
 
     private final CliInputHandler inputHandler;
 
@@ -38,7 +43,7 @@ public final class CLI {
     }
 
     /**
-     * Executes the cli
+     * Executes the cli.
      * @throws ExitException If anything on the side of JPlag goes wrong
      * @throws IOException If any files did not work
      */
@@ -81,17 +86,18 @@ public final class CLI {
     }
 
     /**
-     * Runs JPlag and returns the file the result has been written to
+     * Runs JPlag and returns the file the result has been written to.
      * @return The file containing the result
      * @throws ExitException If JPlag threw an exception
      * @throws FileNotFoundException If the file could not be written
      */
     public File runJPlag() throws ExitException, FileNotFoundException {
+        File target = new File(getWritableFileName());
+
         JPlagOptionsBuilder optionsBuilder = new JPlagOptionsBuilder(this.inputHandler);
         JPlagOptions options = optionsBuilder.buildOptions();
         JPlagResult result = JPlagRunner.runJPlag(options);
 
-        File target = new File(getResultFilePath());
         OutputFileGenerator.generateJPlagResultZip(result, target);
         OutputFileGenerator.generateCsvOutput(result, new File(getResultFileBaseName()), this.inputHandler.getCliOptions());
 
@@ -99,7 +105,7 @@ public final class CLI {
     }
 
     /**
-     * Runs the report viewer using the given file as the default result.zip
+     * Runs the report viewer using the given file as the default result.zip.
      * @param zipFile The zip file to pass to the viewer. Can be null, if no result should be opened by default
      * @throws IOException If something went wrong with the internal server
      */
@@ -126,6 +132,34 @@ public final class CLI {
     private String getResultFileBaseName() {
         String defaultOutputFile = getResultFilePath();
         return defaultOutputFile.substring(0, defaultOutputFile.length() - DEFAULT_FILE_ENDING.length());
+    }
+
+    private String getOffsetFileName(int offset) {
+        if (offset <= 0) {
+            return getResultFilePath();
+        } else {
+            return getResultFileBaseName() + "(" + offset + ")" + DEFAULT_FILE_ENDING;
+        }
+    }
+
+    private String getWritableFileName() throws CliException {
+        int retryAttempt = 0;
+        while (!this.inputHandler.getCliOptions().advanced.overwrite && new File(getOffsetFileName(retryAttempt)).exists()
+                && retryAttempt < NAME_COLLISION_ATTEMPTS) {
+            retryAttempt++;
+        }
+
+        String targetFileName = this.getOffsetFileName(retryAttempt);
+        File targetFile = new File(targetFileName);
+        if (!this.inputHandler.getCliOptions().advanced.overwrite && targetFile.exists()) {
+            throw new CliException(OUTPUT_FILE_EXISTS);
+        }
+
+        if (!FileUtils.checkWritable(targetFile)) {
+            throw new CliException(String.format(OUTPUT_FILE_NOT_WRITABLE, targetFileName));
+        }
+
+        return targetFileName;
     }
 
     public static void main(String[] args) {

@@ -16,7 +16,7 @@ import de.jplag.util.FileUtils;
 class InlineTestData implements TestData {
     private final String testData;
 
-    public InlineTestData(String testData) {
+    InlineTestData(String testData) {
         this.testData = testData;
     }
 

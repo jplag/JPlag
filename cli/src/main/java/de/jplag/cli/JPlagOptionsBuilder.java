@@ -16,7 +16,7 @@ import de.jplag.merging.MergingOptions;
 import de.jplag.options.JPlagOptions;
 
 /**
- * Handles the building of JPlag options from the cli options
+ * Handles the building of JPlag options from the cli options.
  */
 public class JPlagOptionsBuilder {
     private static final Logger logger = LoggerFactory.getLogger(JPlagOptionsBuilder.class);
@@ -25,7 +25,7 @@ public class JPlagOptionsBuilder {
     private final CliOptions cliOptions;
 
     /**
-     * @param cliInputHandler The cli handler containing the parsed cli options
+     * @param cliInputHandler The cli handler containing the parsed cli options.
      */
     public JPlagOptionsBuilder(CliInputHandler cliInputHandler) {
         this.cliInputHandler = cliInputHandler;

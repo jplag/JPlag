@@ -8,7 +8,7 @@ import java.io.IOException;
 import com.sun.net.httpserver.HttpExchange;
 
 /**
- * Responds with a given file
+ * Responds with a given file.
  */
 public class RoutingStaticFile implements Routing {
     private final byte[] data;

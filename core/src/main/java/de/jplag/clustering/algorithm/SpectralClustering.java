@@ -48,8 +48,9 @@ public class SpectralClustering implements GenericClusteringAlgorithm {
         weights.walkInOptimizedOrder(new DefaultRealMatrixChangingVisitor() {
             @Override
             public double visit(int row, int column, double value) {
-                if (row == column)
+                if (row == column) {
                     return 0;
+                }
                 return similarityMatrix.getEntry(row, column);
             }
         });
@@ -58,8 +59,9 @@ public class SpectralClustering implements GenericClusteringAlgorithm {
         diagonalPowMinus1Over2.walkInOptimizedOrder(new DefaultRealMatrixChangingVisitor() {
             @Override
             public double visit(int row, int column, double value) {
-                if (row != column)
+                if (row != column) {
                     return 0;
+                }
                 return 1 / Math.sqrt(weights.getRowVector(row).getL1Norm());
             }
         });

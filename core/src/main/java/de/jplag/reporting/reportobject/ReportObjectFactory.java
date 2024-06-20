@@ -149,10 +149,10 @@ public class ReportObjectFactory {
                 List.of(), // failedSubmissionNames
                 result.getOptions().excludedFiles(), // excludedFiles
                 result.getOptions().minimumTokenMatch(), // matchSensitivity
-                getDate(),// dateOfExecution
+                getDate(), // dateOfExecution
                 result.getDuration(), // executionTime
                 MetricMapper.getDistributions(result), // distribution
-                new MetricMapper(submissionToIdFunction).getTopComparisons(result),// topComparisons
+                new MetricMapper(submissionToIdFunction).getTopComparisons(result), // topComparisons
                 clusteringResultMapper.map(result), // clusters
                 totalComparisons); // totalComparisons
 

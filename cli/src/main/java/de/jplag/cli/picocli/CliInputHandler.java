@@ -23,7 +23,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.ParseResult;
 
 /**
- * Handles the parsing of the command line arguments
+ * Handles the parsing of the command line arguments.
  */
 public class CliInputHandler {
     private static final String OPTION_LIST_HEADING = "Parameter descriptions: ";

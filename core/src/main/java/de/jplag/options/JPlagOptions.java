@@ -230,9 +230,8 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
         if (similarityThreshold < 0) {
             logger.warn("Minimum threshold of 0 used instead of {}", similarityThreshold);
             return 0;
-        } else {
-            return similarityThreshold;
         }
+        return similarityThreshold;
     }
 
     private Integer normalizeMaximumNumberOfComparisons(Integer maximumNumberOfComparisons) {

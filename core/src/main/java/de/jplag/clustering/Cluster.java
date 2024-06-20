@@ -63,8 +63,9 @@ public class Cluster<T> {
      */
     public double getCommunityStrengthPerConnection() {
         int size = members.size();
-        if (size < 2)
+        if (size < 2) {
             return 0;
+        }
         return getCommunityStrength() / connections();
     }
 
@@ -79,8 +80,9 @@ public class Cluster<T> {
         double posCommunityStrengthSum = goodClusters.stream().mapToDouble(Cluster::getCommunityStrengthPerConnection).sum();
 
         int size = clusteringResult.getClusters().size();
-        if (size < 2)
+        if (size < 2) {
             return getCommunityStrengthPerConnection();
+        }
         return getCommunityStrengthPerConnection() / posCommunityStrengthSum;
     }
 

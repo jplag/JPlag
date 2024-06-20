@@ -5,7 +5,7 @@
   <Interactable class="mx-2 !shadow print:!mx-0 print:!border-0 print:!p-0">
     <div @click="collapsed = !collapsed" class="flex px-2 font-bold print:whitespace-pre-wrap">
       <span class="flex-1">{{ getFileDisplayName(file) }}</span>
-      <ToolTipComponent v-if="file.tokenCount != undefined" direction="left" class="font-normal">
+      <ToolTipComponent direction="left" class="font-normal">
         <template #default
           ><span class="text-gray-600 dark:text-gray-300"
             >{{ Math.round((file.matchedTokenCount / (file.tokenCount - 1)) * 100) }}%</span

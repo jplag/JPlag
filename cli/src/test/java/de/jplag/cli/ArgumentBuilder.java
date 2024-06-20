@@ -169,6 +169,26 @@ public class ArgumentBuilder {
     }
 
     /**
+     * Sets the result file
+     * @param path The path to the result file
+     * @return self reference
+     */
+    public ArgumentBuilder resultFile(String path) {
+        this.arguments.add("-r");
+        this.arguments.add(path);
+        return this;
+    }
+
+    /**
+     * Adds the overwrite argument
+     * @return self reference
+     */
+    public ArgumentBuilder overwrite() {
+        this.arguments.add("--overwrite");
+        return this;
+    }
+
+    /**
      * Sets the shown comparisons option
      * @param value The option value
      * @return self reference

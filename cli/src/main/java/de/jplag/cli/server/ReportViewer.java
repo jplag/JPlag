@@ -35,6 +35,7 @@ public class ReportViewer implements HttpHandler {
     private HttpServer server;
 
     /**
+     * Launches a locally hosted report viewer.
      * @param zipFile The zip file to use for the report viewer
      * @param port The port to use for the server. You can use 0 to use any free port.
      * @throws IOException If the zip file cannot be read

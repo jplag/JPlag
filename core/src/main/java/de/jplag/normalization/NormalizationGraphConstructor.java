@@ -110,8 +110,7 @@ class NormalizationGraphConstructor {
                 addIncomingEdgeToCurrent(node, EdgeType.VARIABLE_ORDER, variable);
             }
             for (Statement node : variableReads.getOrDefault(variable, Set.of())) {
-                EdgeType edgeType = inCurrentBidirectionalBlock.contains(node) ? //
-                        EdgeType.VARIABLE_REVERSE_FLOW : EdgeType.VARIABLE_ORDER;
+                EdgeType edgeType = inCurrentBidirectionalBlock.contains(node) ? EdgeType.VARIABLE_REVERSE_FLOW : EdgeType.VARIABLE_ORDER;
                 addIncomingEdgeToCurrent(node, edgeType, variable);
             }
         }
