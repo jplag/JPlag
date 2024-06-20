@@ -59,7 +59,8 @@ public class IdleBar implements ProgressBar {
         } catch (InterruptedException ignored) {
             Thread.currentThread().interrupt();
         }
-        this.output.println();
+        this.output.print('\r');
+        this.output.println(this.text + ": complete");
     }
 
     private void run() {
