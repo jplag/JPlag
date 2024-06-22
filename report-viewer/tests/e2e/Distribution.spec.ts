@@ -30,7 +30,7 @@ async function selectOptions(page: Page, options: string[]) {
     await distributionDiagramContainer.getByText(option, { exact: true }).click()
   }
   // This timeout is so that the screenshot is taken after the animation is finished
-  await page.waitForTimeout(100)
+  await page.waitForTimeout(1000)
 }
 
 function getTestCombinations() {
