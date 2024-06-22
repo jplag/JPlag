@@ -133,6 +133,7 @@ const options = computed(() => {
         }
       }
     },
+    animation: false as false,
     plugins: {
       datalabels: {
         display: graphOptions.value.bucketCount <= 20,
