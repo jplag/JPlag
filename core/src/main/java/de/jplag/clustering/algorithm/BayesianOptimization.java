@@ -34,7 +34,6 @@ public class BayesianOptimization {
     private final int initialPoints;
     private final double noise;
     private final RealVector lengthScale;
-    private boolean debug = false;
 
     /**
      * @param minima of the explored parameters
@@ -60,11 +59,6 @@ public class BayesianOptimization {
         this.maxEvaluations = maxEvaluations;
         this.noise = noise;
         this.lengthScale = lengthScale;
-    }
-
-    // TODO This method is not used
-    public void setDebugLogging(boolean debug) {
-        this.debug = debug;
     }
 
     private Stream<RealVector> sampleSolutionSpace() {
@@ -96,9 +90,8 @@ public class BayesianOptimization {
 
         if (spliterator.tryAdvance(result::add)) {
             return Optional.of(result.get(0));
-        } else {
-            return Optional.empty();
         }
+        return Optional.empty();
     }
 
     /**
@@ -113,8 +106,9 @@ public class BayesianOptimization {
         int nonZeroAcquisitions = 0;
         for (int i = 0; i < MAXIMUM_ACQ_FN_EVALS_PER_ITERATION && nonZeroAcquisitions < MAX_NON_ZERO_ACQ_FN_EVALS_PER_ITERATION; i++) {
             double[] location = getNext(samples).orElseThrow().toArray();
-            if (acquisitionFunction(gaussianProcess, location, yMax) == 0)
+            if (acquisitionFunction(gaussianProcess, location, yMax) == 0) {
                 continue;
+            }
             nonZeroAcquisitions++;
             double acquisition = -BFGS.minimize(coordinates -> -acquisitionFunction(gaussianProcess, coordinates, yMax), 5, location, min, max,
                     0.00001, 1000);
@@ -162,7 +156,7 @@ public class BayesianOptimization {
             } else {
                 // GPR
                 GaussianProcess gpr = fit(testedCoordinates, observations);
-                if (debug && logger.isDebugEnabled()) {
+                if (logger.isDebugEnabled()) {
                     logger.debug(gpr.toString(minima, maxima, 100, 25, 0));
                 }
                 coordinates = maxAcq(gpr, best.score, poiSampler, zeroAcquisitionsCounter);

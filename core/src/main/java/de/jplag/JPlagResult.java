@@ -140,8 +140,8 @@ public class JPlagResult {
         for (JPlagComparison comparison : comparisons) {
             double similarity = similarityExtractor.applyAsDouble(comparison); // extract similarity: 0.0 <= similarity <= 1.0
             int index = (int) (similarity * SIMILARITY_DISTRIBUTION_SIZE); // divide similarity by bucket size to find index of correct bucket.
-            index = Math.min(index, SIMILARITY_DISTRIBUTION_SIZE - 1);// index is out of bounds when similarity is 1.0. decrease by one to count
-                                                                      // towards the highest value bucket
+            index = Math.min(index, SIMILARITY_DISTRIBUTION_SIZE - 1); // index is out of bounds when similarity is 1.0. decrease by one to count
+                                                                       // towards the highest value bucket
             similarityDistribution[index]++; // count comparison towards its determined bucket.
         }
         return similarityDistribution;

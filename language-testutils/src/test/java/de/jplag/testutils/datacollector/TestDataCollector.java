@@ -109,7 +109,7 @@ public class TestDataCollector {
     }
 
     /**
-     * Data for tests, that also require a list of tokens
+     * Data for tests, that also require a list of tokens.
      * @param tokens The list of tokens
      * @param data The test data
      */
@@ -122,9 +122,9 @@ public class TestDataCollector {
     }
 
     /**
-     * A builder used to configure tests for a set of data
+     * A builder used to configure tests for a set of data.
      */
-    public class TestDataContext {
+    public final class TestDataContext {
         private final Set<TestData> testData;
 
         private TestDataContext(Set<TestData> testData) {
@@ -133,7 +133,7 @@ public class TestDataCollector {
         }
 
         /**
-         * Test the data set for source coverage
+         * Test the data set for source coverage.
          * @return self reference
          */
         public TestDataContext testSourceCoverage() {
@@ -142,7 +142,7 @@ public class TestDataCollector {
         }
 
         /**
-         * Test the data set for token coverage
+         * Test the data set for token coverage.
          * @return self reference
          */
         public TestDataContext testTokenCoverage() {
