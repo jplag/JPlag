@@ -136,10 +136,10 @@ const options = computed(() => {
     animation: false as false,
     plugins: {
       datalabels: {
-        display: graphOptions.value.bucketCount <= 20,
         color: graphColors.ticksAndFont.value,
         font: {
-          weight: 'bold' as 'bold'
+          weight: 'bold' as 'bold',
+          size: getDataLabelFontSize()
         },
         anchor: 'end' as 'end',
         align: 'end' as 'end',
@@ -159,5 +159,15 @@ const options = computed(() => {
 function getDataPointLabel(index: number) {
   let perBucket = 100 / graphOptions.value.bucketCount
   return index * perBucket + '-' + (index * perBucket + perBucket) + '%'
+}
+
+function getDataLabelFontSize() {
+  if (graphOptions.value.bucketCount == 100) {
+    return 7
+  }
+  if (graphOptions.value.bucketCount == 50) {
+    return 10
+  }
+  return 12
 }
 </script>
