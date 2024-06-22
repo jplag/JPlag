@@ -11,7 +11,7 @@ import org.slf4j.event.Level;
 import org.slf4j.helpers.MessageFormatter;
 
 /**
- * A logger implementation, that prints all errors during finalization
+ * A logger implementation, that prints all errors during finalization.
  */
 public class CollectedLogger extends JPlagLoggerBase {
     private static final int MAXIMUM_MESSAGE_LENGTH = 32;

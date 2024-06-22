@@ -29,6 +29,12 @@ public abstract sealed class OptionType<T> {
         }
     }
 
+    private final Class<T> javaType;
+
+    private OptionType(Class<T> javaType) {
+        this.javaType = javaType;
+    }
+
     public static StringType string() {
         return StringType.INSTANCE;
     }
@@ -39,12 +45,6 @@ public abstract sealed class OptionType<T> {
 
     public static BooleanType bool() {
         return BooleanType.INSTANCE;
-    }
-
-    private final Class<T> javaType;
-
-    private OptionType(Class<T> javaType) {
-        this.javaType = javaType;
     }
 
     public Class<T> getJavaType() {

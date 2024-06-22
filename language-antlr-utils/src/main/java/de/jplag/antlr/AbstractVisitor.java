@@ -25,8 +25,8 @@ public abstract class AbstractVisitor<T> {
 
     private final Predicate<T> condition;
     private final List<Consumer<HandlerData<T>>> entryHandlers;
-    protected TokenType entryTokenType;
     private Function<T, CodeSemantics> entrySemantics;
+    protected TokenType entryTokenType;
 
     /**
      * @param condition The condition for the visit.

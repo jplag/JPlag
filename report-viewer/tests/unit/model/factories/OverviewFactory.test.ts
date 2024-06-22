@@ -1,10 +1,8 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest'
 import { OverviewFactory } from '@/model/factories/OverviewFactory'
 import { MetricType } from '@/model/MetricType'
-import { HundredValueDistribution } from '@/model/HundredValueDistribution'
-import { TenValueDistribution } from '@/model/TenValueDistribution'
-import validNew from './ValidNewOverview.json'
-import validOld from './ValidOldOverview.json'
+import { Distribution } from '@/model/Distribution'
+import validNew from './ValidOverview.json'
 import outdated from './OutdatedOverview.json'
 
 const store = {
@@ -117,13 +115,13 @@ describe('Test JSON to Overview', () => {
         }
       ],
       _distributions: {
-        [MetricType.MAXIMUM]: new HundredValueDistribution([
+        [MetricType.MAXIMUM]: new Distribution([
           1, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0
         ]),
-        [MetricType.AVERAGE]: new HundredValueDistribution([
+        [MetricType.AVERAGE]: new Distribution([
           1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0,
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -137,49 +135,6 @@ describe('Test JSON to Overview', () => {
           members: ['C', 'A', 'B', 'D']
         }
       ],
-      _totalComparisons: 6
-    })
-  })
-
-  it('Pre 5.0', async () => {
-    store.state.files['overview.json'] = JSON.stringify(validOld)
-    expect(await OverviewFactory.getOverview()).toEqual({
-      _submissionFolderPath: ['test'],
-      _baseCodeFolderPath: '',
-      _language: 'Javac based AST plugin',
-      _fileExtensions: ['.java', '.JAVA'],
-      _matchSensitivity: 9,
-      _dateOfExecution: '12/07/23',
-      _durationOfExecution: 34,
-      _topComparisons: [
-        {
-          firstSubmissionId: 'A',
-          secondSubmissionId: 'B',
-          similarities: {
-            [MetricType.AVERAGE]: 0.6900452488687783,
-            [MetricType.MAXIMUM]: 0.9457364341085271
-          },
-          sortingPlace: 0,
-          id: 1,
-          clusterIndex: -1
-        },
-        {
-          firstSubmissionId: 'C',
-          secondSubmissionId: 'D',
-          similarities: {
-            [MetricType.AVERAGE]: 0.6954045248868778,
-            [MetricType.MAXIMUM]: 0.83500530023
-          },
-          sortingPlace: 1,
-          id: 2,
-          clusterIndex: -1
-        }
-      ],
-      _distributions: {
-        [MetricType.AVERAGE]: new TenValueDistribution([0, 0, 0, 1, 0, 0, 0, 0, 0, 0]),
-        [MetricType.MAXIMUM]: new TenValueDistribution([1, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-      },
-      _clusters: [],
       _totalComparisons: 6
     })
   })
