@@ -87,7 +87,7 @@ function getMatchColor(alpha: number, index: MatchColorIndex) {
 }
 
 function getBaseCodeColor(opacity: number) {
-  return `hsla(0, 0%, ${store().uiState.useDarkMode ? '50%' : '25%'}, ${opacity})`
+  return `hsla(0, 0%, 75%, ${opacity})`
 }
 
 const graphRGB = {

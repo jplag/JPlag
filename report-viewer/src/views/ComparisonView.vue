@@ -69,6 +69,8 @@
           :id1="firstId"
           :id2="secondId"
           :matches="comparison.allMatches"
+          :basecode-in-first="firstBaseCodeMatches"
+          :basecode-in-second="secondBaseCodeMatches"
           @match-selected="showMatch"
         />
       </Container>
