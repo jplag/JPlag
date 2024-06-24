@@ -8,12 +8,18 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 import org.slf4j.Marker;
 import org.slf4j.event.Level;
+import org.slf4j.helpers.AbstractLogger;
 import org.slf4j.helpers.MessageFormatter;
 
 /**
- * A logger implementation, that prints all errors during finalization.
+ * A logger implementation that prints all errors during finalization. Handles the enabled log levels for SLF4J.
  */
-public class CollectedLogger extends JPlagLoggerBase {
+public class CollectedLogger extends AbstractLogger {
+
+    private static final String JPLAG_LOGGER_PREFIX = "de.jplag.";
+
+    private static final Level LOG_LEVEL_FOR_EXTERNAL_LIBRARIES = Level.ERROR;
+
     private static final int MAXIMUM_MESSAGE_LENGTH = 32;
 
     private static final PrintStream TARGET_STREAM = System.out;
@@ -28,8 +34,25 @@ public class CollectedLogger extends JPlagLoggerBase {
 
     private final ConcurrentLinkedDeque<LogEntry> allErrors = new ConcurrentLinkedDeque<>();
 
-    public CollectedLogger(String name) {
-        super(LOG_LEVEL_INFO, name);
+    private final Level currentLogLevel;
+
+    /**
+     * Creates a logger with a specific name and {@link Level.INFO}.
+     * @param currentLogLevel is the current log level.
+     * @param name is the name of the logger.
+     */
+    CollectedLogger(String name) {
+        this(Level.INFO, name);
+    }
+
+    /**
+     * Creates a logger with a specific name and level.
+     * @param currentLogLevel is the current log level.
+     * @param name is the name of the logger.
+     */
+    CollectedLogger(Level currentLogLevel, String name) {
+        this.currentLogLevel = currentLogLevel;
+        this.name = name;
     }
 
     @Override
@@ -37,7 +60,7 @@ public class CollectedLogger extends JPlagLoggerBase {
         String logMessage = prepareFormattedMessage(format, args);
         LogEntry entry = new LogEntry(logMessage, cause, new Date(), level);
 
-        if (level == LOG_LEVEL_ERROR && !isFinalizing) {
+        if (level == Level.ERROR && !isFinalizing) {
             allErrors.add(entry);
         } else {
             printLogEntry(entry);
@@ -72,21 +95,82 @@ public class CollectedLogger extends JPlagLoggerBase {
     }
 
     void printAllErrorsForLogger() {
-        this.isFinalizing = true;
-        ArrayList<LogEntry> errors = new ArrayList<>(this.allErrors);
+        isFinalizing = true;
+        ArrayList<LogEntry> errors = new ArrayList<>(allErrors);
 
         if (!errors.isEmpty()) {
             info("Summary of all errors:");
-            this.allErrors.removeAll(errors);
-            for (LogEntry errorEntry : errors) {
-                printLogEntry(errorEntry);
-            }
+            allErrors.clear();
+            errors.forEach(this::printLogEntry);
         }
 
-        this.isFinalizing = false;
+        isFinalizing = false;
     }
 
     private String computeShortName() {
         return name.substring(name.lastIndexOf(".") + 1);
+    }
+
+    @Override
+    public boolean isTraceEnabled() {
+        return isLogLevelEnabled(Level.TRACE);
+    }
+
+    @Override
+    public boolean isTraceEnabled(Marker marker) {
+        return isTraceEnabled();
+    }
+
+    @Override
+    public boolean isDebugEnabled() {
+        return isLogLevelEnabled(Level.DEBUG);
+    }
+
+    @Override
+    public boolean isDebugEnabled(Marker marker) {
+        return isDebugEnabled();
+    }
+
+    @Override
+    public boolean isInfoEnabled() {
+        return isLogLevelEnabled(Level.INFO);
+    }
+
+    @Override
+    public boolean isInfoEnabled(Marker marker) {
+        return isInfoEnabled();
+    }
+
+    @Override
+    public boolean isWarnEnabled() {
+        return isLogLevelEnabled(Level.WARN);
+    }
+
+    @Override
+    public boolean isWarnEnabled(Marker marker) {
+        return isWarnEnabled();
+    }
+
+    @Override
+    public boolean isErrorEnabled() {
+        return isLogLevelEnabled(Level.ERROR);
+    }
+
+    @Override
+    public boolean isErrorEnabled(Marker marker) {
+        return isErrorEnabled();
+    }
+
+    private boolean isLogLevelEnabled(Level logLevel) {
+        return logLevel.toInt() >= (isJPlagLog() ? currentLogLevel.toInt() : LOG_LEVEL_FOR_EXTERNAL_LIBRARIES.toInt());
+    }
+
+    private boolean isJPlagLog() {
+        return name.startsWith(JPLAG_LOGGER_PREFIX);
+    }
+
+    @Override
+    protected String getFullyQualifiedCallerName() {
+        return null; // does not seem to be used by anything, but is required by SLF4J
     }
 }
