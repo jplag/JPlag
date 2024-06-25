@@ -17,10 +17,9 @@ public class CliProgressBarProvider implements ProgressBarProvider {
             IdleBar idleBar = new IdleBar(type.getDefaultText());
             idleBar.start();
             return idleBar;
-        } else {
-            me.tongfei.progressbar.ProgressBar progressBar = new ProgressBarBuilder().setTaskName(type.getDefaultText()).setInitialMax(totalSteps)
-                    .setStyle(ProgressBarStyle.ASCII).build();
-            return new TongfeiProgressBar(progressBar);
         }
+        me.tongfei.progressbar.ProgressBar progressBar = new ProgressBarBuilder().setTaskName(type.getDefaultText()).setInitialMax(totalSteps)
+                .setStyle(ProgressBarStyle.ASCII).build();
+        return new TongfeiProgressBar(progressBar);
     }
 }
