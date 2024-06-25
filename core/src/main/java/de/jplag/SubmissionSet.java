@@ -99,7 +99,9 @@ public class SubmissionSet {
     }
 
     public void normalizeSubmissions() {
-        baseCodeSubmission.normalize();
+        if(baseCodeSubmission != null) {
+            baseCodeSubmission.normalize();
+        }
         ProgressBarLogger.iterate(ProgressBarType.TOKEN_STRING_NORMALIZATION, submissions, Submission::normalize);
     }
 
