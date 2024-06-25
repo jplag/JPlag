@@ -4,7 +4,7 @@ import { BaseFactory } from './BaseFactory'
 import type { CodePosition } from '../Match'
 
 export class BaseCodeReportFactory extends BaseFactory {
-  static basePath = 'basecode'
+  private static readonly basePath = 'basecode'
 
   public static async getReport(submissionId: string): Promise<BaseCodeMatch[]> {
     const a = await this.extractReport(
