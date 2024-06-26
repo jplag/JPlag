@@ -10,7 +10,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import io.soabase.recordbuilder.core.RecordBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +23,7 @@ import de.jplag.util.FileUtils;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.soabase.recordbuilder.core.RecordBuilder;
 
 /**
  * This record defines the options to configure {@link JPlag}.
@@ -49,21 +49,13 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  * @param debugParser If true, submissions that cannot be parsed will be stored in a separate directory.
  */
 @RecordBuilder()
-public record JPlagOptions(
-        @JsonSerialize(using = LanguageSerializer.class) Language language,
-        @JsonProperty("min_token_match") Integer minimumTokenMatch,
-        @JsonProperty("submission_directories") Set<File> submissionDirectories,
-        @JsonProperty("old_directories") Set<File> oldSubmissionDirectories,
-        @JsonProperty("base_directory") File baseCodeSubmissionDirectory,
-        @JsonProperty("subdirectory_name") String subdirectoryName,
-        @JsonProperty("file_suffixes") List<String> fileSuffixes,
-        @JsonProperty("exclusion_file_name") String exclusionFileName,
-        @JsonProperty("similarity_metric") SimilarityMetric similarityMetric,
-        @JsonProperty("similarity_threshold") double similarityThreshold,
-        @JsonProperty("max_comparisons") int maximumNumberOfComparisons,
-        @JsonProperty("cluster") ClusteringOptions clusteringOptions,
-        boolean debugParser,
-        @JsonProperty("merging") MergingOptions mergingOptions,
+public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Language language,
+        @JsonProperty("min_token_match") Integer minimumTokenMatch, @JsonProperty("submission_directories") Set<File> submissionDirectories,
+        @JsonProperty("old_directories") Set<File> oldSubmissionDirectories, @JsonProperty("base_directory") File baseCodeSubmissionDirectory,
+        @JsonProperty("subdirectory_name") String subdirectoryName, @JsonProperty("file_suffixes") List<String> fileSuffixes,
+        @JsonProperty("exclusion_file_name") String exclusionFileName, @JsonProperty("similarity_metric") SimilarityMetric similarityMetric,
+        @JsonProperty("similarity_threshold") double similarityThreshold, @JsonProperty("max_comparisons") int maximumNumberOfComparisons,
+        @JsonProperty("cluster") ClusteringOptions clusteringOptions, boolean debugParser, @JsonProperty("merging") MergingOptions mergingOptions,
         @JsonProperty("normalize") boolean normalize) implements JPlagOptionsBuilder.With {
 
     public static final double DEFAULT_SIMILARITY_THRESHOLD = 0;
