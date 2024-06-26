@@ -8,9 +8,11 @@ import de.jplag.logging.ProgressBar;
 public class VoidProgressBar implements ProgressBar {
     @Override
     public void step(int number) {
+        // does nothing see class description
     }
 
     @Override
     public void dispose() {
+        // does nothing see class description
     }
 }

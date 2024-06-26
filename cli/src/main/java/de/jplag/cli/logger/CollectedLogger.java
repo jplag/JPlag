@@ -20,7 +20,7 @@ public class CollectedLogger extends AbstractLogger {
     private static final Level LOG_LEVEL_FOR_EXTERNAL_LIBRARIES = Level.ERROR;
     private static final int MAXIMUM_MESSAGE_LENGTH = 32;
     private static final PrintStream TARGET_STREAM = System.out;
-    private static Level CURRENT_LOG_LEVEL = Level.INFO;
+    private static Level currentLogLevel = Level.INFO;
 
     private final transient SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss_SSS");
     private final ConcurrentLinkedDeque<LogEntry> allErrors = new ConcurrentLinkedDeque<>();
@@ -126,7 +126,7 @@ public class CollectedLogger extends AbstractLogger {
     }
 
     private boolean isLogLevelEnabled(Level logLevel) {
-        return logLevel.toInt() >= (isJPlagLog() ? CURRENT_LOG_LEVEL.toInt() : LOG_LEVEL_FOR_EXTERNAL_LIBRARIES.toInt());
+        return logLevel.toInt() >= (isJPlagLog() ? currentLogLevel.toInt() : LOG_LEVEL_FOR_EXTERNAL_LIBRARIES.toInt());
     }
 
     private String prepareFormattedMessage(String format, Object[] args) {
@@ -156,10 +156,10 @@ public class CollectedLogger extends AbstractLogger {
     }
 
     public static Level getLogLevel() {
-        return CURRENT_LOG_LEVEL;
+        return currentLogLevel;
     }
 
     public static void setLogLevel(Level logLevel) {
-        CURRENT_LOG_LEVEL = logLevel;
+        currentLogLevel = logLevel;
     }
 }
