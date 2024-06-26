@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import de.jplag.cli.logger.CollectedLogger;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import de.jplag.JPlag;
 import de.jplag.JPlagResult;
 import de.jplag.cli.logger.CliProgressBarProvider;
+import de.jplag.cli.logger.CollectedLogger;
 import de.jplag.cli.logger.CollectedLoggerFactory;
 import de.jplag.cli.picocli.CliInputHandler;
 import de.jplag.exceptions.ExitException;
