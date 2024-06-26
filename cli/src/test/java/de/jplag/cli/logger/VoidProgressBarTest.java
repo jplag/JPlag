@@ -32,15 +32,15 @@ class VoidProgressBarTest {
     @ParameterizedTest
     @MethodSource("getRelevantLogLevels")
     void testVoidProgressBarCreated(Level logLevel) {
-        Level originalLogLevel = JPlagLoggerBase.getLogLevel();
-        JPlagLoggerBase.setLogLevel(logLevel);
+        Level originalLogLevel = CollectedLogger.getLogLevel();
+        CollectedLogger.setLogLevel(logLevel);
 
         ProgressBar progressBar = new CliProgressBarProvider().initProgressBar(ProgressBarType.CLUSTERING, 10);
         progressBar.dispose();
 
         Assertions.assertInstanceOf(VoidProgressBar.class, progressBar);
 
-        JPlagLoggerBase.setLogLevel(originalLogLevel);
+        CollectedLogger.setLogLevel(originalLogLevel);
     }
 
     public static Level[] getRelevantLogLevels() {

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import de.jplag.cli.logger.CollectedLogger;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,6 @@ import de.jplag.JPlag;
 import de.jplag.JPlagResult;
 import de.jplag.cli.logger.CliProgressBarProvider;
 import de.jplag.cli.logger.CollectedLoggerFactory;
-import de.jplag.cli.logger.JPlagLoggerBase;
 import de.jplag.cli.picocli.CliInputHandler;
 import de.jplag.exceptions.ExitException;
 import de.jplag.logging.ProgressBarLogger;
@@ -51,7 +51,7 @@ public final class CLI {
         logger.debug("Your version of JPlag is {}", JPlag.JPLAG_VERSION);
 
         if (!this.inputHandler.parse()) {
-            JPlagLoggerBase.setLogLevel(this.inputHandler.getCliOptions().advanced.logLevel);
+            CollectedLogger.setLogLevel(this.inputHandler.getCliOptions().advanced.logLevel);
             ProgressBarLogger.setProgressBarProvider(new CliProgressBarProvider());
 
             switch (this.inputHandler.getCliOptions().mode) {

@@ -142,7 +142,7 @@ function getNextLinePartTillColumn(endCol: number) {
       // display tabs properly
       part += '    '
       lineIndex.value++
-      colIndex.value += 8
+      colIndex.value += 1
     } else if (props.line[lineIndex.value] == '&') {
       // html escape characters for e.g. <,>,&
       while (props.line[lineIndex.value] != ';') {
