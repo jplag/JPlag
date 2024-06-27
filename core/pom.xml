@@ -37,6 +37,12 @@
             <version>${revision}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.soabase.record-builder</groupId>
+            <artifactId>record-builder-processor</artifactId>
+            <version>41</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
