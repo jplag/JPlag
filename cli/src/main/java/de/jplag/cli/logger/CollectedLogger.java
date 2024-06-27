@@ -20,10 +20,10 @@ public class CollectedLogger extends AbstractLogger {
     private static final Level LOG_LEVEL_FOR_EXTERNAL_LIBRARIES = Level.ERROR;
     private static final int MAXIMUM_MESSAGE_LENGTH = 32;
     private static final PrintStream TARGET_STREAM = System.out;
+    private static Level currentLogLevel = Level.INFO;
 
     private final transient SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss_SSS");
     private final ConcurrentLinkedDeque<LogEntry> allErrors = new ConcurrentLinkedDeque<>();
-    private final Level currentLogLevel;
 
     /**
      * Indicator whether finalization is in progress.
@@ -33,21 +33,10 @@ public class CollectedLogger extends AbstractLogger {
 
     /**
      * Creates a logger with a specific name and level.
-     * @param currentLogLevel is the current log level.
-     * @param name is the name of the logger.
-     */
-    CollectedLogger(Level currentLogLevel, String name) {
-        this.currentLogLevel = currentLogLevel;
-        this.name = name;
-    }
-
-    /**
-     * Creates a logger with a specific name and {@link Level.INFO}.
-     * @param currentLogLevel is the current log level.
      * @param name is the name of the logger.
      */
     CollectedLogger(String name) {
-        this(Level.INFO, name);
+        this.name = name;
     }
 
     @Override
@@ -164,5 +153,13 @@ public class CollectedLogger extends AbstractLogger {
             entry.cause().printStackTrace(TARGET_STREAM);
         }
         TARGET_STREAM.flush();
+    }
+
+    public static Level getLogLevel() {
+        return currentLogLevel;
+    }
+
+    public static void setLogLevel(Level logLevel) {
+        currentLogLevel = logLevel;
     }
 }

@@ -2,6 +2,8 @@ package de.jplag.cli.options;
 
 import java.io.File;
 
+import org.slf4j.event.Level;
+
 import de.jplag.Language;
 import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
@@ -101,6 +103,9 @@ public class CliOptions implements Runnable {
 
         @Option(names = "--overwrite", description = "Existing result files will be overwritten.")
         public boolean overwrite = false;
+
+        @Option(names = "--log-level", description = "Set the log level for the cli.")
+        public Level logLevel = Level.INFO;
     }
 
     public static class Clustering {
