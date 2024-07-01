@@ -11,7 +11,7 @@
       </template>
       <template #tooltip>
         <div class="whitespace-pre text-sm">
-          Parts of comparison, that are copied from the basecode. <br />
+          Sections that are likely base code (thus ignored in similarity calculation). <br />
           <p>
             {{ store().getDisplayName(id1) }}:
             {{ basecodeInFirst.map((b) => b.match.tokens).reduce((a, b) => a + b, 0) }} Tokens,
