@@ -74,11 +74,20 @@ function getMatchColorCount() {
   return matchColors.length
 }
 
-function getMatchColor(alpha: number, index?: number) {
+type MatchColorIndex = number | undefined | 'base'
+
+function getMatchColor(alpha: number, index: MatchColorIndex) {
   if (index == undefined) {
     return 'rgba(0,0,0,0)'
   }
+  if (index == 'base') {
+    return getBaseCodeColor(alpha)
+  }
   return `rgba(${matchColors[index].red}, ${matchColors[index].green}, ${matchColors[index].blue}, ${alpha})`
+}
+
+function getBaseCodeColor(opacity: number) {
+  return `hsla(0, 0%, 75%, ${opacity})`
 }
 
 const graphRGB = {
@@ -104,4 +113,4 @@ const graphColors = {
   }
 }
 
-export { generateColors, graphColors, getMatchColorCount, getMatchColor }
+export { generateColors, graphColors, getMatchColorCount, getMatchColor, type MatchColorIndex }
