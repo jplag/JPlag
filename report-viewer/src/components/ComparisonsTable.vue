@@ -228,10 +228,26 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
     return comparisons
   }
 
+  const nameSearches = searches.filter((s) => !/index:[0-9]+/.test(s))
+  const indexSearches = searches
+    .filter((s) => /index:[0-9]+/.test(s))
+    .map((s) => s.substring(6))
+    .map((s) => parseInt(s))
+
   return comparisons.filter((c) => {
     const id1 = c.firstSubmissionId.toLowerCase()
     const id2 = c.secondSubmissionId.toLowerCase()
-    return searches.some((s) => id1.includes(s) || id2.includes(s))
+    if (nameSearches.some((s) => id1.includes(s) || id2.includes(s))) {
+      return true
+    }
+    if (indexSearches.includes(c.sortingPlace + 1)) {
+      return true
+    }
+    if (nameSearches.some((s) => (c.sortingPlace + 1).toString().includes(s))) {
+      return true
+    }
+
+    return false
   })
 }
 
