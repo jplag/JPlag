@@ -7,7 +7,7 @@
   >
     <ToolTipComponent direction="right" v-if="hasBaseCode" class="pr-3">
       <template #default>
-        <OptionComponent label="Basecode" :style="{ background: getMatchColor(0.3, 'base') }" />
+        <OptionComponent label="Base Code" :style="{ background: getMatchColor(0.3, 'base') }" />
       </template>
       <template #tooltip>
         <div class="whitespace-pre text-sm">
