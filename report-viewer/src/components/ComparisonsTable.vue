@@ -228,27 +228,76 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
     return comparisons
   }
 
-  const nameSearches = searches.filter((s) => !/index:[0-9]+/.test(s))
   const indexSearches = searches
     .filter((s) => /index:[0-9]+/.test(s))
     .map((s) => s.substring(6))
     .map((s) => parseInt(s))
 
+  const metricSearches = searches.filter((s) => /((avg|max):)?(>|<)=?[0-9]+%?/.test(s))
+
   return comparisons.filter((c) => {
+    // name search
     const id1 = c.firstSubmissionId.toLowerCase()
     const id2 = c.secondSubmissionId.toLowerCase()
-    if (nameSearches.some((s) => id1.includes(s) || id2.includes(s))) {
+    if (searches.some((s) => id1.includes(s) || id2.includes(s))) {
       return true
     }
+
+    // index search
     if (indexSearches.includes(c.sortingPlace + 1)) {
       return true
     }
-    if (nameSearches.some((s) => (c.sortingPlace + 1).toString().includes(s))) {
+    if (searches.some((s) => (c.sortingPlace + 1).toString().includes(s))) {
       return true
+    }
+
+    // metric search
+    const searchPerMetric: Record<MetricType, string[]> = {
+      [MetricType.AVERAGE]: [],
+      [MetricType.MAXIMUM]: []
+    }
+    metricSearches.forEach((s) => {
+      const regexResult = /^(?:(avg|max):)?((?:>|<)=?[0-9]+%?$)/.exec(s)
+      if (regexResult) {
+        const metric = regexResult[1] == 'avg' ? MetricType.AVERAGE : MetricType.MAXIMUM
+        searchPerMetric[metric].push(regexResult[2])
+      } else {
+        searchPerMetric[MetricType.AVERAGE].push(s)
+        searchPerMetric[MetricType.MAXIMUM].push(s)
+      }
+    })
+    for (const metric of [MetricType.AVERAGE, MetricType.MAXIMUM]) {
+      for (const search of searchPerMetric[metric]) {
+        const regexResult = /((?:>|<)=?)([0-9]+)%?/.exec(search)!
+        const operator = regexResult[1]
+        const value = parseInt(regexResult[2])
+        if (evaluateMetricComparison(c.similarities[metric] * 100, operator, value)) {
+          return true
+        }
+      }
     }
 
     return false
   })
+
+  function evaluateMetricComparison(
+    comparisonMetric: number,
+    operator: string,
+    checkValue: number
+  ) {
+    switch (operator) {
+      case '>':
+        return comparisonMetric > checkValue
+      case '<':
+        return comparisonMetric < checkValue
+      case '>=':
+        return comparisonMetric >= checkValue
+      case '<=':
+        return comparisonMetric <= checkValue
+      default:
+        return false
+    }
+  }
 }
 
 function getSortedComparisons(comparisons: ComparisonListElement[]) {
