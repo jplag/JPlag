@@ -29,19 +29,19 @@ import com.sun.source.util.Trees;
 
 public class JavacAdapter {
 
-    private static final JavaCompiler javac = ToolProvider.getSystemJavaCompiler();
+    private static final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 
     public void parseFiles(Set<File> files, final Parser parser) throws ParsingException {
         var listener = new DiagnosticCollector<>();
 
         List<ParsingException> parsingExceptions = new ArrayList<>();
         final Charset guessedCharset = FileUtils.detectCharsetFromMultiple(files);
-        try (final StandardJavaFileManager fileManager = javac.getStandardFileManager(listener, null, guessedCharset)) {
+        try (final StandardJavaFileManager fileManager = compiler.getStandardFileManager(listener, null, guessedCharset)) {
             var javaFiles = fileManager.getJavaFileObjectsFromFiles(files);
 
             // We need to disable annotation processing, see
             // https://stackoverflow.com/questions/72737445/system-java-compiler-behaves-different-depending-on-dependencies-defined-in-mave
-            final CompilationTask task = javac.getTask(null, fileManager, listener,
+            final CompilationTask task = compiler.getTask(null, fileManager, listener,
                     List.of("-proc:none", "--enable-preview", "--release=" + JavaLanguage.JAVA_VERSION), null, javaFiles);
             final Trees trees = Trees.instance(task);
             final SourcePositions positions = new FixedSourcePositions(trees.getSourcePositions());
