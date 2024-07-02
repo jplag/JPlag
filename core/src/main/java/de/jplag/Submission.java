@@ -23,6 +23,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jplag.exceptions.LanguageException;
 import de.jplag.normalization.TokenStringNormalizer;
 import de.jplag.options.JPlagOptions;
 
@@ -218,8 +219,9 @@ public class Submission implements Comparable<Submission> {
      * @param normalize specifies if the tokens sequences should be normalized.
      * @param minimalTokens specifies the minimum number of tokens required of a valid submission.
      * @return Whether parsing was successful.
+     * @throws LanguageException if the language parser is not able to parse at all.
      */
-    /* package-private */ boolean parse(boolean debugParser, boolean normalize, int minimalTokens) {
+    /* package-private */ boolean parse(boolean debugParser, boolean normalize, int minimalTokens) throws LanguageException {
         if (files == null || files.isEmpty()) {
             logger.error("Nothing to parse for submission \"{}\"", name);
             state = NOTHING_TO_PARSE;
@@ -228,6 +230,8 @@ public class Submission implements Comparable<Submission> {
 
         try {
             tokenList = language.parse(new HashSet<>(files), normalize);
+        } catch (CriticalParsingException e) {
+            throw new LanguageException(e.getMessage(), e.getCause());
         } catch (ParsingException e) {
             String shortenedMessage = e.getMessage().replace(submissionRootFile.toString(), name);
             logger.warn("Failed to parse submission {}:{}{}", name, System.lineSeparator(), shortenedMessage);
