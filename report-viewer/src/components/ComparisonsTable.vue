@@ -259,7 +259,14 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
     metricSearches.forEach((s) => {
       const regexResult = /^(?:(avg|max):)?((?:>|<)=?[0-9]+%?$)/.exec(s)
       if (regexResult) {
-        const metric = regexResult[1] == 'avg' ? MetricType.AVERAGE : MetricType.MAXIMUM
+        const metricName = regexResult[1]
+        let metric = MetricType.AVERAGE
+        for (const m of [MetricType.AVERAGE, MetricType.MAXIMUM]) {
+          if (metricToolTips[m].shortName.toLowerCase() == metricName) {
+            metric = m
+            break
+          }
+        }
         searchPerMetric[metric].push(regexResult[2])
       } else {
         searchPerMetric[MetricType.AVERAGE].push(s)
