@@ -15,7 +15,6 @@ import de.jplag.Token;
 import de.jplag.reporting.FilePathUtil;
 import de.jplag.reporting.reportobject.model.BaseCodeMatch;
 import de.jplag.reporting.reportobject.model.CodePosition;
-import de.jplag.reporting.reportobject.model.ComparisonReport;
 import de.jplag.reporting.reportobject.writer.JPlagResultWriter;
 
 /**
