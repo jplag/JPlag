@@ -15,19 +15,32 @@ import de.jplag.Token;
 import de.jplag.reporting.FilePathUtil;
 import de.jplag.reporting.reportobject.model.BaseCodeMatch;
 import de.jplag.reporting.reportobject.model.CodePosition;
+import de.jplag.reporting.reportobject.model.ComparisonReport;
 import de.jplag.reporting.reportobject.writer.JPlagResultWriter;
 
+/**
+ * Writes the comparisons of each Submission to the basecode in its own file
+ */
 public class BaseCodeReportWriter {
 
     private final JPlagResultWriter resultWriter;
     private final Function<Submission, String> submissionToIdFunction;
     public static final String BASEPATH = "basecode";
 
+    /**
+     * Creates a new BaseCodeReportWriter
+     * @param submissionToIdFunction Function for translating a submission to a unique id
+     * @param resultWriter Writer used for writing the result
+     */
     public BaseCodeReportWriter(Function<Submission, String> submissionToIdFunction, JPlagResultWriter resultWriter) {
         this.submissionToIdFunction = submissionToIdFunction;
         this.resultWriter = resultWriter;
     }
 
+    /**
+     * Writes the basecode of each submission in the result into its own file in the result writer
+     * @param jPlagResult The result containing the submissions
+     */
     public void writeBaseCodeReport(JPlagResult jPlagResult) {
         Set<Submission> submissions = new HashSet<>();
 
