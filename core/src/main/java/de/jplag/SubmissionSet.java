@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
+import de.jplag.exceptions.LanguageException;
 import de.jplag.exceptions.SubmissionException;
 import de.jplag.logging.ProgressBar;
 import de.jplag.logging.ProgressBarLogger;
@@ -127,7 +128,7 @@ public class SubmissionSet {
     /**
      * Parse the given base code submission.
      */
-    private void parseBaseCodeSubmission(Submission baseCode) throws BasecodeException {
+    private void parseBaseCodeSubmission(Submission baseCode) throws BasecodeException, LanguageException {
         logger.trace("----- Parsing basecode submission: " + baseCode.getName());
         if (!baseCode.parse(options.debugParser(), options.normalize(), options.minimumTokenMatch())) {
             if (baseCode.getState() == SubmissionState.TOO_SMALL) {
@@ -143,7 +144,7 @@ public class SubmissionSet {
      * Parse all given submissions.
      * @param submissions The list of submissions
      */
-    private void parseSubmissions(List<Submission> submissions) {
+    private void parseSubmissions(List<Submission> submissions) throws LanguageException {
         if (submissions.isEmpty()) {
             logger.error("No submissions to parse!");
             return;
