@@ -108,6 +108,7 @@ Advanced
   -d, --debug           Store on-parsable files in error folder.
   -m, --similarity-threshold=<similarityThreshold>
                         Comparison similarity threshold [0.0-1.0]: All comparisons above this threshold will be saved (default: 0.0).
+  --overwrite           Existing result files will be overwritten.
   -p, --suffixes=<suffixes>[,<suffixes>...]
                         comma-separated list of all filename suffixes that are included.
   -P, --port=<port>     The port used for the internal report viewer (default: 1996).
