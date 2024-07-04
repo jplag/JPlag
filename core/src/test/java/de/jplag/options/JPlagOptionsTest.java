@@ -1,11 +1,12 @@
 package de.jplag.options;
 
-import de.jplag.java.JavaLanguage;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+
+import de.jplag.java.JavaLanguage;
 
 class JPlagOptionsTest {
     @Test
