@@ -14,15 +14,22 @@
           Sections that are likely base code (thus ignored in similarity calculation). <br />
           <p>
             {{ store().getDisplayName(id1) }}:
-            {{ basecodeInFirst.map((b) => b.match.tokens).reduce((a, b) => a + b, 0) }} Tokens,
-            Lines: {{ store().getDisplayName(id1 ?? '') }}: Lines
-            {{ basecodeInFirst.map((b) => `${b.start}-${b.end}`).join(',') }}
+
+            <span v-if="basecodeInFirst.length > 0">
+              {{ basecodeInFirst.map((b) => b.match.tokens).reduce((a, b) => a + b, 0) }} Tokens,
+              Lines: {{ store().getDisplayName(id1 ?? '') }}: Lines
+              {{ basecodeInFirst.map((b) => `${b.start}-${b.end}`).join(',') }}
+            </span>
+            <span v-else>No Basecode in Submission</span>
           </p>
           <p>
             {{ store().getDisplayName(id2) }}:
-            {{ basecodeInSecond.map((b) => b.match.tokens).reduce((a, b) => a + b, 0) }} Tokens,
-            Lines: {{ store().getDisplayName(id2 ?? '') }}: Lines
-            {{ basecodeInSecond.map((b) => `${b.start}-${b.end}`).join(',') }}
+            <span v-if="basecodeInSecond.length > 0">
+              {{ basecodeInSecond.map((b) => b.match.tokens).reduce((a, b) => a + b, 0) }} Tokens,
+              Lines: {{ store().getDisplayName(id2 ?? '') }}: Lines
+              {{ basecodeInSecond.map((b) => `${b.start}-${b.end}`).join(',') }}
+            </span>
+            <span v-else>No Basecode in Submission</span>
           </p>
         </div>
       </template>
