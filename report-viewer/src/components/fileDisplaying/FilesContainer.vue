@@ -16,7 +16,7 @@
     </div>
 
     <ScrollableComponent class="flex-grow">
-      <VueDraggableNext>
+      <VueDraggableNext @update="$emit('filesMoved')">
         <CodePanel
           v-for="(file, index) in files"
           :key="index"
@@ -81,7 +81,7 @@ const props = defineProps({
   }
 })
 
-defineEmits(['matchSelected'])
+defineEmits(['matchSelected', 'filesMoved'])
 
 const codePanels: Ref<(typeof CodePanel)[]> = ref([])
 

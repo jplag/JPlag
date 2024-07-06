@@ -71,6 +71,13 @@
           :matches="comparison.allMatches"
           @match-selected="showMatch"
         />
+        <OptionsSelectorComponent
+          class="mt-2"
+          ref="sortingOptionSelector"
+          title="File Sorting:"
+          :labels="sortingOptions.map((o) => fileSortingTooltips[o])"
+          @selectionChanged="(index: number) => changeFileSorting(index)"
+        />
       </Container>
     </div>
     <div ref="styleholder"></div>
@@ -84,6 +91,7 @@
         :file-owner-display-name="store().getDisplayName(comparison.firstSubmissionId)"
         :highlight-language="language"
         @match-selected="showMatchInSecond"
+        @files-moved="filesMoved()"
         class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
       />
       <FilesContainer
@@ -93,6 +101,7 @@
         :file-owner-display-name="store().getDisplayName(comparison.secondSubmissionId)"
         :highlight-language="language"
         @match-selected="showMatchInFirst"
+        @files-moved="filesMoved()"
         class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
       />
     </div>
@@ -118,6 +127,8 @@ import { MetricType } from '@/model/MetricType'
 import { Comparison } from '@/model/Comparison'
 import { redirectOnError } from '@/router'
 import ToolTipComponent from '@/components/ToolTipComponent.vue'
+import { FileSortingOptions, fileSortingTooltips } from '@/model/ui/FileSortingOptions'
+import OptionsSelectorComponent from '@/components/optionsSelectors/OptionsSelectorComponent.vue'
 
 library.add(faPrint)
 
@@ -166,6 +177,27 @@ function showMatchInSecond(match: Match) {
 function showMatch(match: Match) {
   showMatchInFirst(match)
   showMatchInSecond(match)
+}
+
+const sortingOptions = [
+  FileSortingOptions.ALPHABETICAL,
+  FileSortingOptions.MATCH_COVERAGE,
+  FileSortingOptions.MATCH_COUNT,
+  FileSortingOptions.MATCH_SIZE
+]
+const movedAfterSorting = ref(false)
+const sortingOptionSelector: Ref<typeof OptionsSelectorComponent | null> = ref(null)
+
+function changeFileSorting(index: number) {
+  movedAfterSorting.value = false
+  store().uiState.fileSorting = sortingOptions[index]
+}
+
+function filesMoved() {
+  movedAfterSorting.value = true
+  if (sortingOptionSelector.value) {
+    sortingOptionSelector.value.select(-2)
+  }
 }
 
 function print() {
