@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import type { State, UIState } from './state'
 import { MetricType } from '@/model/MetricType'
 import type { SubmissionFile, File } from '@/model/File'
+import { FileSortingOptions } from '@/model/ui/FileSortingOptions'
 
 /**
  * The store is a global state management system. It is used to store the state of the application.
@@ -31,7 +32,8 @@ const store = defineStore('store', {
         metric: MetricType.AVERAGE,
         xScale: 'linear',
         bucketCount: 10
-      }
+      },
+      fileSorting: FileSortingOptions.ALPHABETICAL
     }
   }),
   getters: {
