@@ -16,15 +16,13 @@
     </div>
 
     <ScrollableComponent class="flex-grow">
-      <VueDraggableNext @update="$emit('filesMoved')">
+      <VueDraggableNext @update="emitFileMoving()">
         <CodePanel
-          v-for="(file, index) in files"
-          :key="index"
+          v-for="file in sortedFiles"
+          :key="file.fileName"
           ref="codePanels"
           :file="file"
-          :matches="
-            !matches.get(file.fileName) ? [] : (matches.get(file.fileName) as MatchInSingleFile[])
-          "
+          :matches="matchesPerFile[file.fileName]"
           :highlight-language="highlightLanguage"
           @match-selected="(match) => $emit('matchSelected', match)"
           class="mt-1 first:mt-0"
@@ -41,12 +39,13 @@ import Container from '../ContainerComponent.vue'
 import Button from '../ButtonComponent.vue'
 import ScrollableComponent from '../ScrollableComponent.vue'
 import { VueDraggableNext } from 'vue-draggable-next'
-import { computed, ref, type PropType, type Ref } from 'vue'
+import { computed, ref, type ComputedRef, type PropType, type Ref } from 'vue'
 import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCompressAlt } from '@fortawesome/free-solid-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import type { Language } from '@/model/Language'
+import { FileSortingOptions } from '@/model/ui/FileSortingOptions'
 
 library.add(faCompressAlt)
 
@@ -78,10 +77,84 @@ const props = defineProps({
   highlightLanguage: {
     type: String as PropType<Language>,
     required: true
+  },
+  /**
+   * Sorting to use
+   */
+  sorting: {
+    type: Number as PropType<FileSortingOptions>,
+    required: false,
+    default: FileSortingOptions.ALPHABETICAL
   }
 })
 
-defineEmits(['matchSelected', 'filesMoved'])
+const emit = defineEmits(['matchSelected', 'filesMoved'])
+
+const matchesPerFile = computed(() => {
+  const matches: Record<string, MatchInSingleFile[]> = {}
+  for (const file of props.files) {
+    matches[file.fileName] = !props.matches.get(file.fileName)
+      ? []
+      : (props.matches.get(file.fileName) as MatchInSingleFile[])
+  }
+  return matches
+})
+
+const sortedFiles: ComputedRef<SubmissionFile[]> = computed(() => {
+  switch (props.sorting) {
+    case FileSortingOptions.ALPHABETICAL:
+      return Array.from(props.files).sort((a, b) => a.fileName.localeCompare(b.fileName))
+
+    case FileSortingOptions.MATCH_SIZE: {
+      const largestMatch: Record<string, number> = {}
+      for (const file of props.files) {
+        largestMatch[file.fileName] = Math.max(
+          ...matchesPerFile.value[file.fileName].map((match) => match.match.tokens)
+        )
+      }
+      return Array.from(props.files).sort(
+        (a, b) => largestMatch[b.fileName] - largestMatch[a.fileName]
+      )
+    }
+
+    case FileSortingOptions.MATCH_COUNT: {
+      const matchCount: Record<string, number> = {}
+      for (const file of props.files) {
+        matchCount[file.fileName] = matchesPerFile.value[file.fileName].length
+      }
+      return Array.from(props.files).sort((a, b) => matchCount[b.fileName] - matchCount[a.fileName])
+    }
+
+    case FileSortingOptions.MATCH_COVERAGE: {
+      const matchCoverage: Record<string, number> = {}
+      for (const file of props.files) {
+        const matches = matchesPerFile.value[file.fileName]
+        const totalTokens = matches.reduce((acc, match) => acc + match.match.tokens, 0)
+        matchCoverage[file.fileName] =
+          totalTokens / (file.tokenCount > 0 ? file.tokenCount : Infinity)
+      }
+      return Array.from(props.files).sort(
+        (a, b) => matchCoverage[b.fileName] - matchCoverage[a.fileName]
+      )
+    }
+
+    default: {
+      if (sortedFiles.value && sortedFiles.value.length > 0) {
+        return sortedFiles.value
+      }
+      return props.files
+    }
+  }
+})
+
+const shouldEmitFileMoving = ref(true)
+
+function emitFileMoving() {
+  if (!shouldEmitFileMoving.value) {
+    return
+  }
+  emit('filesMoved')
+}
 
 const codePanels: Ref<(typeof CodePanel)[]> = ref([])
 

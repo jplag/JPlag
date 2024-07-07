@@ -90,6 +90,7 @@
         :matches="comparison.matchesInFirstSubmission"
         :file-owner-display-name="store().getDisplayName(comparison.firstSubmissionId)"
         :highlight-language="language"
+        :sorting="store().uiState.fileSorting"
         @match-selected="showMatchInSecond"
         @files-moved="filesMoved()"
         class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
@@ -100,6 +101,7 @@
         :matches="comparison.matchesInSecondSubmissions"
         :file-owner-display-name="store().getDisplayName(comparison.secondSubmissionId)"
         :highlight-language="language"
+        :sorting="store().uiState.fileSorting"
         @match-selected="showMatchInFirst"
         @files-moved="filesMoved()"
         class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
@@ -189,6 +191,7 @@ const movedAfterSorting = ref(false)
 const sortingOptionSelector: Ref<typeof OptionsSelectorComponent | null> = ref(null)
 
 function changeFileSorting(index: number) {
+  console.log('Test')
   movedAfterSorting.value = false
   store().uiState.fileSorting = sortingOptions[index]
 }
