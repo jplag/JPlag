@@ -330,7 +330,9 @@ public class SubmissionSetBuilder {
         }
 
         String rootDirectoryPrefix = rootDirectoryNamePrefixesMapper.get(file.root());
-        String submissionName = rootDirectoryPrefix + File.separator + file.submissionFile().getName();
+        String submissionName = rootDirectoryPrefix.isEmpty()
+                ? file.submissionFile().getName()
+                : rootDirectoryPrefix + File.separator + file.submissionFile().getName();
         Submission submission = processSubmission(submissionName, file.submissionFile(), file.isNew());
         foundSubmissions.put(submission.getRoot(), submission);
     }
