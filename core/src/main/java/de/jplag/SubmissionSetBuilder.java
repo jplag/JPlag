@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +31,7 @@ import de.jplag.options.JPlagOptions;
 
 /**
  * Builder class for the creation of a {@link SubmissionSet}.
+ *
  * @author Timur Saglam
  */
 public class SubmissionSetBuilder {
@@ -39,8 +42,9 @@ public class SubmissionSetBuilder {
 
     /**
      * Creates a builder for submission sets.
+     *
      * @param language is the language of the submissions.
-     * @param options are the configured options.
+     * @param options  are the configured options.
      * @deprecated in favor of {@link #SubmissionSetBuilder(JPlagOptions)}.
      */
     @Deprecated(since = "4.3.0")
@@ -50,6 +54,7 @@ public class SubmissionSetBuilder {
 
     /**
      * Creates a builder for submission sets.
+     *
      * @param options are the configured options.
      */
     public SubmissionSetBuilder(JPlagOptions options) {
@@ -58,6 +63,7 @@ public class SubmissionSetBuilder {
 
     /**
      * Builds a submission set for all submissions of a specific directory.
+     *
      * @return the newly built submission set.
      * @throws ExitException if the directory cannot be read.
      */
@@ -65,11 +71,6 @@ public class SubmissionSetBuilder {
         Set<File> submissionDirectories = verifyRootDirectories(options.submissionDirectories(), true);
         Set<File> oldSubmissionDirectories = verifyRootDirectories(options.oldSubmissionDirectories(), false);
         checkForNonOverlappingRootDirectories(submissionDirectories, oldSubmissionDirectories);
-
-        // For backward compatibility, don't prefix submission names with their root directory
-        // if there is only one root directory.
-        int numberOfRootDirectories = submissionDirectories.size() + oldSubmissionDirectories.size();
-        boolean multipleRoots = (numberOfRootDirectories > 1);
 
         List<SubmissionFileData> submissionFiles = new ArrayList<>();
         for (File submissionDirectory : submissionDirectories) {
@@ -79,10 +80,13 @@ public class SubmissionSetBuilder {
             submissionFiles.addAll(listSubmissionFiles(submissionDirectory, false));
         }
 
+        Set<File> allRootDirectories = submissionFiles.stream().map(SubmissionFileData::root).collect(Collectors.toSet());
+        Map<File, String> rootDirectoryNamePrefixesMapper = getRootDirectoryNamesPrefixesMapper(allRootDirectories);
+
         ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.LOADING, submissionFiles.size());
         Map<File, Submission> foundSubmissions = new HashMap<>();
         for (SubmissionFileData submissionFile : submissionFiles) {
-            processSubmissionFile(submissionFile, multipleRoots, foundSubmissions);
+            processSubmissionFile(submissionFile, rootDirectoryNamePrefixesMapper, foundSubmissions);
             progressBar.step();
         }
         progressBar.dispose();
@@ -100,6 +104,92 @@ public class SubmissionSetBuilder {
             submissions = new ArrayList<>(rootFiles.stream().map(foundSubmissions::get).toList());
         }
         return new SubmissionSet(submissions, baseCodeSubmission.orElse(null), options);
+    }
+
+    private static String[] getCanonicalPathComponents(File path) {
+        try {
+            return path.getCanonicalPath().split(File.separator.equals("\\") ? "\\\\" : File.separator);
+        } catch (Exception e) {
+            throw new RuntimeException("Error getting canonical path", e);
+        }
+    }
+
+    public static File getCommonAncestor(File firstPath, File secondPath) {
+        String[] firstComponents = getCanonicalPathComponents(firstPath);
+        String[] secondComponents = getCanonicalPathComponents(secondPath);
+
+        int minLength = Math.min(firstComponents.length, secondComponents.length);
+        int commonLength = 0;
+
+        for (int i = 0; i < minLength; i++) {
+            if (firstComponents[i].equals(secondComponents[i])) {
+                commonLength++;
+            } else {
+                break;
+            }
+        }
+
+        if (commonLength == 0) {
+            return null;
+        }
+
+        StringBuilder commonPath = new StringBuilder(firstComponents[0]);
+        for (int i = 1; i < commonLength; i++) {
+            commonPath.append(File.separator).append(firstComponents[i]);
+        }
+
+        return new File(commonPath.toString());
+    }
+
+    private String findCommonPathPrefix(List<File> canonicalPaths) {
+        if (canonicalPaths == null) {
+            return "";
+        }
+
+        File prefix = canonicalPaths.getFirst();
+        for (int i = 1; i < canonicalPaths.size(); i++) {
+            prefix = getCommonAncestor(prefix, canonicalPaths.get(i));
+        }
+
+        return prefix == null ? null : prefix.toString();
+    }
+
+    private String getPathPrefix(File path, String commonPrefix) {
+        String result = path.toString().substring(commonPrefix.length());
+        return result.startsWith(File.separator) ? result.substring(1) : result;
+    }
+
+    private Map<File, String> getRootDirectoryNamesPrefixesMapper(Set<File> allRootDirectories) {
+        Map<String, List<File>> conflicts = getRootDirectoryNameConflicts(allRootDirectories);
+
+        Map<File, String> result = new HashMap<>();
+        conflicts.forEach((name, paths) -> {
+            if (paths.size() > 1) {
+                String commonPrefix = findCommonPathPrefix(paths);
+                for (File path : paths) {
+                    result.put(path, getPathPrefix(path, commonPrefix));
+                }
+            } else {
+                result.put(paths.getFirst(), "");
+            }
+        });
+
+        return result;
+    }
+
+    private static Map<String, List<File>> getRootDirectoryNameConflicts(Set<File> allRootDirectories) {
+        Map<String, List<File>> conflicts = new HashMap<>();
+
+        for (File rootDir : allRootDirectories) {
+            String roodDirName = rootDir.getName();
+            if (conflicts.containsKey(roodDirName)) {
+                conflicts.get(roodDirName).add(rootDir);
+            } else {
+                conflicts.put(roodDirName, Stream.of(rootDir).collect(Collectors.toList()));
+            }
+        }
+
+        return conflicts;
     }
 
     /**
@@ -189,6 +279,7 @@ public class SubmissionSetBuilder {
 
     /**
      * Check that the given submission entry is not invalid due to exclusion names or bad suffix.
+     *
      * @param submissionEntry Entry to check.
      * @return Error message if the entry should be ignored.
      */
@@ -205,9 +296,10 @@ public class SubmissionSetBuilder {
 
     /**
      * Process the given directory entry as a submission, the path MUST not be excluded.
+     *
      * @param submissionName The name of the submission
      * @param submissionFile the file for the submission.
-     * @param isNew states whether submissions found in the root directory must be checked for plagiarism.
+     * @param isNew          states whether submissions found in the root directory must be checked for plagiarism.
      * @return The entry converted to a submission.
      * @throws ExitException when an error has been found with the entry.
      */
@@ -231,20 +323,21 @@ public class SubmissionSetBuilder {
         return new Submission(submissionName, submissionFile, isNew, parseFilesRecursively(submissionFile), options.language());
     }
 
-    private void processSubmissionFile(SubmissionFileData file, boolean multipleRoots, Map<File, Submission> foundSubmissions) throws ExitException {
+    private void processSubmissionFile(SubmissionFileData file, Map<File, String> rootDirectoryNamePrefixesMapper, Map<File, Submission> foundSubmissions) throws ExitException {
         String errorMessage = isExcludedEntry(file.submissionFile());
         if (errorMessage != null) {
             logger.error(errorMessage);
         }
 
-        String rootDirectoryPrefix = multipleRoots ? (file.root().getName() + File.separator) : "";
-        String submissionName = rootDirectoryPrefix + file.submissionFile().getName();
+        String rootDirectoryPrefix = rootDirectoryNamePrefixesMapper.get(file.root());
+        String submissionName = rootDirectoryPrefix + File.separator + file.submissionFile().getName();
         Submission submission = processSubmission(submissionName, file.submissionFile(), file.isNew());
         foundSubmissions.put(submission.getRoot(), submission);
     }
 
     /**
      * Checks if a file has a valid suffix for the current language.
+     *
      * @param file is the file to check.
      * @return true if the file suffix matches the language.
      */
@@ -269,6 +362,7 @@ public class SubmissionSetBuilder {
      * Recursively scan the given directory for nested files. Excluded files and files with an invalid suffix are ignored.
      * <p>
      * If the given file is not a directory, the input will be returned as a singleton list.
+     *
      * @param file - File to start the scan from.
      * @return a list of nested files.
      */
