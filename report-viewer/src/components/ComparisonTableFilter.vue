@@ -12,13 +12,12 @@
           </p>
           <p class="whitespace-pre text-sm">Fully written out names get unhidden.</p>
           <p class="whitespace-pre text-sm">
-            You can also filter by index by just writing a number or select a specific one by
-            writing <i>index:number</i>
+            You can also filter by index by entering a number or typing <i>index:number</i>
           </p>
           <p class="whitespace-pre text-sm">
-            You can filter for specific similarity percantages by writing a &lt;/&gt;/&lt;=/&gt;=
+            You can filter for specific similarity thresholds via &lt;/&gt;/&lt;=/&gt;=
             followed by the percentage. <br />
-            You can filter for a specific metric, by prefacing the percentage with the three letter
+            You can filter for a specific metric by prefacing the percentage with the three-letter
             metric name (e.g. <i>avg:>80</i>)
           </p>
         </template>
