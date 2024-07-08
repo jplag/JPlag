@@ -32,6 +32,29 @@
             (store().uiState.distributionChartConfig.bucketCount = resolutionOptions[i])
         "
       />
+
+      <div>
+        <h3
+          class="test-lg flex cursor-pointer items-center"
+          @click="showAdvancedOptions = !showAdvancedOptions"
+        >
+          <FontAwesomeIcon
+            :icon="showAdvancedOptions ? faAngleDown : faAngleRight"
+            class="h-4 w-4"
+          />
+          <span>Advanced</span>
+        </h3>
+        <div v-if="showAdvancedOptions" class="pl-2">
+          <BooleanSelector
+            v-model="store().uiState.distributionChartConfig.showBinomialCurve"
+            :label="{
+              displayValue: 'Show Binomial Curve',
+              tooltip:
+                'Shows a curve representing a binomial distribution. The expected value of the distribution is the mean of the comparisons.'
+            }"
+          />
+        </div>
+      </div>
     </ScrollableComponent>
   </div>
 </template>
@@ -43,6 +66,15 @@ import MetricSelector from '@/components/optionsSelectors/MetricSelector.vue'
 import OptionsSelector from '@/components/optionsSelectors/OptionsSelectorComponent.vue'
 import ScrollableComponent from '../ScrollableComponent.vue'
 import { type BucketOptions } from '@/model/Distribution'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faAngleDown, faAngleRight } from '@fortawesome/free-solid-svg-icons'
+import BooleanSelector from '@/components/optionsSelectors/BooleanSelector.vue'
+import { ref } from 'vue'
+
+library.add(faAngleDown, faAngleRight)
 
 const resolutionOptions = [10, 20, 25, 50, 100] as BucketOptions[]
+
+const showAdvancedOptions = ref(false)
 </script>

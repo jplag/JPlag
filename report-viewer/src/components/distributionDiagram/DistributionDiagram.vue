@@ -21,7 +21,7 @@ import type { Distribution } from '@/model/Distribution'
 import { MetricType } from '@/model/MetricType'
 import { store } from '@/stores/store'
 import DistributionDiagramOptions from './DistributionDiagramOptions.vue'
-import { binomialCoefficients } from '@/model/ui/BinomicalCoefficient'
+import { binomialCoefficients } from '@/model/ui/BinomialCoefficient'
 
 Chart.register(...registerables)
 Chart.register(ChartDataLabels)
@@ -65,35 +65,39 @@ const dataSetStyle = computed(() => {
 })
 
 const chartData = computed(() => {
-  const totalComparisons = distributionData.value.reduce((a, b) => a + b, 0)
-  const bucketSum = distributionData.value
-    .map((value, index) => value * index)
-    .reduce((a, b) => a + b, 0)
-  const E = bucketSum / totalComparisons
-  const p = E / graphOptions.value.bucketCount
-  const q = 1 - p
-  let binomialDistribution = binomialCoefficients[graphOptions.value.bucketCount]
-    .map(
-      (value, idx) =>
-        value * p ** idx * q ** (graphOptions.value.bucketCount - idx) * totalComparisons
-    )
-    .map(Math.round)
+  const dataSets = [
+    {
+      ...dataSetStyle.value,
+      data: distributionData.value
+    }
+  ]
+  if (graphOptions.value.showBinomialCurve) {
+    const totalComparisons = distributionData.value.reduce((a, b) => a + b, 0)
+    const bucketSum = distributionData.value
+      .map((value, index) => value * index)
+      .reduce((a, b) => a + b, 0)
+    const E = bucketSum / totalComparisons
+    const p = E / graphOptions.value.bucketCount
+    const q = 1 - p
+    let binomialDistribution = binomialCoefficients[graphOptions.value.bucketCount]
+      .map(
+        (value, idx) =>
+          value * p ** idx * q ** (graphOptions.value.bucketCount - idx) * totalComparisons
+      )
+      .map(Math.round)
+    dataSets.push({
+      label: 'Binomial Curve',
+      backgroundColor: 'rgba(0, 0, 255, 1)',
+      borderWidth: 1,
+      borderColor: 'rgba(0, 0, 255, 1)',
+      type: 'line',
+      data: binomialDistribution
+    })
+  }
+
   return {
     labels: labels.value,
-    datasets: [
-      {
-        ...dataSetStyle.value,
-        data: distributionData.value.map((value) => (value > 0 ? value : 1e-1))
-      },
-      {
-        label: 'Expected',
-        backgroundColor: 'rgba(0, 0, 255, 1)',
-        borderWidth: 1,
-        borderColor: 'rgba(0, 0, 255, 1)',
-        type: 'line',
-        data: binomialDistribution
-      }
-    ]
+    datasets: dataSets.reverse()
   }
 })
 
@@ -176,7 +180,7 @@ const options = computed(() => {
         clamp: true,
         text: 'test',
         display: (context: any) => {
-          return context.datasetIndex === 0
+          return context.datasetIndex === chartData.value.datasets.length - 1
         }
       },
       legend: {

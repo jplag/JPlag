@@ -30,7 +30,8 @@ const store = defineStore('store', {
       distributionChartConfig: {
         metric: MetricType.AVERAGE,
         xScale: 'linear',
-        bucketCount: 10
+        bucketCount: 10,
+        showBinomialCurve: false
       }
     }
   }),

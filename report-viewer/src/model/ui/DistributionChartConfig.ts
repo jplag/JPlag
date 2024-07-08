@@ -8,4 +8,5 @@ export interface DistributionChartConfig {
   metric: MetricType
   xScale: 'linear' | 'logarithmic'
   bucketCount: BucketOptions
+  showBinomialCurve: boolean
 }
