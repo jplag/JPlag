@@ -44,7 +44,7 @@
             :line="line.line"
             :lineNumber="index + 1"
             :matches="line.matches"
-            @matchSelected="(match) => matchSelected(match)"
+            @matchSelected="(match: Match) => matchSelected(match)"
           />
         </div>
 
@@ -66,6 +66,7 @@ import type { Language } from '@/model/Language'
 import ToolTipComponent from '../ToolTipComponent.vue'
 import CodeLine from './CodeLine.vue'
 import type { Match } from '@/model/Match'
+import type { BaseCodeMatch } from '@/model/BaseCodeReport'
 
 const props = defineProps({
   /**
@@ -80,6 +81,10 @@ const props = defineProps({
    */
   matches: {
     type: Array<MatchInSingleFile>,
+    required: true
+  },
+  baseCodeMatches: {
+    type: Array<BaseCodeMatch>,
     required: true
   },
   /**
@@ -98,10 +103,12 @@ const lineRefs = ref<(typeof CodeLine)[]>([])
 
 const codeLines: Ref<{ line: string; matches: MatchInSingleFile[] }[]> = computed(() =>
   highlight(props.file.data, props.highlightLanguage).map((line, index) => {
-    return {
-      line,
-      matches: props.matches?.filter((m) => m.start <= index + 1 && index + 1 <= m.end) ?? []
-    }
+    const matches = props.matches.filter((m) => m.start <= index + 1 && index + 1 <= m.end)
+    const baseCodeMatches = props.baseCodeMatches.filter(
+      (m) => m.start <= index + 1 && index + 1 <= m.end
+    )
+    matches.push(...baseCodeMatches)
+    return { line, matches }
   })
 )
 

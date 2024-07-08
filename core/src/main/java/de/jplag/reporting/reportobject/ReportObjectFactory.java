@@ -25,6 +25,7 @@ import de.jplag.Language;
 import de.jplag.Submission;
 import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.FilePathUtil;
+import de.jplag.reporting.jsonfactory.BaseCodeReportWriter;
 import de.jplag.reporting.jsonfactory.ComparisonReportWriter;
 import de.jplag.reporting.reportobject.mapper.ClusteringResultMapper;
 import de.jplag.reporting.reportobject.mapper.MetricMapper;
@@ -92,6 +93,7 @@ public class ReportObjectFactory {
         writeSubmissionIndexFile(result);
         writeReadMeFile();
         writeOptionsFiles(result.getOptions());
+        writeBaseCodeReport(result);
 
         this.resultWriter.close();
     }
@@ -124,6 +126,11 @@ public class ReportObjectFactory {
     private void writeComparisons(JPlagResult result) {
         ComparisonReportWriter comparisonReportWriter = new ComparisonReportWriter(submissionToIdFunction, this.resultWriter);
         submissionNameToNameToComparisonFileName = comparisonReportWriter.writeComparisonReports(result);
+    }
+
+    private void writeBaseCodeReport(JPlagResult result) {
+        BaseCodeReportWriter baseCodeReportWriter = new BaseCodeReportWriter(submissionToIdFunction, this.resultWriter);
+        baseCodeReportWriter.writeBaseCodeReport(result);
     }
 
     private void writeOverview(JPlagResult result) {

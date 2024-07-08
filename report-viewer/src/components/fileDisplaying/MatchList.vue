@@ -5,6 +5,36 @@
   <div
     class="flex h-fit min-w-0 max-w-full flex-row space-x-1 overflow-x-hidden text-xs print:hidden"
   >
+    <ToolTipComponent direction="right" v-if="hasBaseCode" class="pr-3">
+      <template #default>
+        <OptionComponent label="Base Code" :style="{ background: getMatchColor(0.3, 'base') }" />
+      </template>
+      <template #tooltip>
+        <div class="whitespace-pre text-sm">
+          Sections that are likely base code (thus ignored in similarity calculation). <br />
+          <p>
+            {{ store().getDisplayName(id1) }}:
+
+            <span v-if="basecodeInFirst.length > 0">
+              {{ basecodeInFirst.map((b) => b.match.tokens).reduce((a, b) => a + b, 0) }} Tokens,
+              Lines: {{ store().getDisplayName(id1 ?? '') }}: Lines
+              {{ basecodeInFirst.map((b) => `${b.start}-${b.end}`).join(',') }}
+            </span>
+            <span v-else>No Basecode in Submission</span>
+          </p>
+          <p>
+            {{ store().getDisplayName(id2) }}:
+            <span v-if="basecodeInSecond.length > 0">
+              {{ basecodeInSecond.map((b) => b.match.tokens).reduce((a, b) => a + b, 0) }} Tokens,
+              Lines: {{ store().getDisplayName(id2 ?? '') }}: Lines
+              {{ basecodeInSecond.map((b) => `${b.start}-${b.end}`).join(',') }}
+            </span>
+            <span v-else>No Basecode in Submission</span>
+          </p>
+        </div>
+      </template>
+    </ToolTipComponent>
+
     <ToolTipComponent direction="right">
       <template #default>
         <OptionComponent label="Match Files: TokenCount" />
@@ -82,6 +112,13 @@
         <td class="px-2">{{ match.startInSecond }} - {{ match.endInSecond }}</td>
         <td class="px-2">{{ match.tokens }}</td>
       </tr>
+      <tr
+        v-if="hasBaseCode"
+        :style="{ background: getMatchColor(0.3, 'base') }"
+        class="print-excact"
+      >
+        <td class="px-2" colspan="5">Basecode in submissions</td>
+      </tr>
     </table>
   </div>
 </template>
@@ -92,7 +129,9 @@ import OptionComponent from '../optionsSelectors/OptionComponent.vue'
 import ToolTipComponent from '@/components/ToolTipComponent.vue'
 import { getMatchColor } from '@/utils/ColorUtils'
 import type { ToolTipDirection } from '@/model/ui/ToolTip'
-import { ref, type Ref } from 'vue'
+import { ref, type Ref, computed } from 'vue'
+import type { BaseCodeMatch } from '@/model/BaseCodeReport'
+import { store } from '@/stores/store'
 
 const props = defineProps({
   /**
@@ -100,19 +139,32 @@ const props = defineProps({
    * type: Array<Match>
    */
   matches: {
-    type: Array<Match>
+    type: Array<Match>,
+    required: true
   },
   /**
    * ID of first submission
    */
   id1: {
-    type: String
+    type: String,
+    required: true
   },
   /**
    * ID of second submission
    */
   id2: {
-    type: String
+    type: String,
+    required: true
+  },
+  basecodeInFirst: {
+    type: Array<BaseCodeMatch>,
+    required: false,
+    default: () => []
+  },
+  basecodeInSecond: {
+    type: Array<BaseCodeMatch>,
+    required: false,
+    default: () => []
   }
 })
 
@@ -147,4 +199,8 @@ function updateScrollOffset() {
     scrollOffsetX.value = scrollableList.value.scrollLeft
   }
 }
+
+const hasBaseCode = computed(() => {
+  return props.basecodeInFirst.length > 0 || props.basecodeInSecond.length > 0
+})
 </script>

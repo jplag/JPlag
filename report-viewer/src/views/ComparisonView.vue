@@ -69,6 +69,8 @@
           :id1="firstId"
           :id2="secondId"
           :matches="comparison.allMatches"
+          :basecode-in-first="firstBaseCodeMatches"
+          :basecode-in-second="secondBaseCodeMatches"
           @match-selected="showMatch"
         />
       </Container>
@@ -83,6 +85,7 @@
         :matches="comparison.matchesInFirstSubmission"
         :file-owner-display-name="store().getDisplayName(comparison.firstSubmissionId)"
         :highlight-language="language"
+        :base-code-matches="firstBaseCodeMatches"
         @match-selected="showMatchInSecond"
         class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
       />
@@ -92,6 +95,7 @@
         :matches="comparison.matchesInSecondSubmissions"
         :file-owner-display-name="store().getDisplayName(comparison.secondSubmissionId)"
         :highlight-language="language"
+        :base-code-matches="secondBaseCodeMatches"
         @match-selected="showMatchInFirst"
         class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
       />
@@ -118,6 +122,7 @@ import { MetricType } from '@/model/MetricType'
 import { Comparison } from '@/model/Comparison'
 import { redirectOnError } from '@/router'
 import ToolTipComponent from '@/components/ToolTipComponent.vue'
+import type { BaseCodeMatch } from '@/model/BaseCodeReport'
 
 library.add(faPrint)
 
@@ -128,6 +133,14 @@ const props = defineProps({
   },
   language: {
     type: String as PropType<Language>,
+    required: true
+  },
+  firstBaseCodeMatches: {
+    type: Array as PropType<BaseCodeMatch[]>,
+    required: true
+  },
+  secondBaseCodeMatches: {
+    type: Array as PropType<BaseCodeMatch[]>,
     required: true
   }
 })
