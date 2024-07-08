@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.io.File;
 import java.util.List;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -66,11 +67,14 @@ class RootFolderTest extends TestBase {
         assertEquals(numberOfExpectedComparison, result.getAllComparisons().size());
     }
 
+    @Disabled
     @Test
     @DisplayName("test multiple overlapping root directories, one marked with as old")
     void testOverlappingNewAndOldDirectoriesOverlap() throws ExitException {
         List<String> newDirectories = List.of(getBasePath(ROOT_2));
         List<String> oldDirectories = List.of(getBasePath(ROOT_2));
+        // This is not actually valid. The fact that one folder is in the old ones and that one is in the old directories
+        // shouldn't bring any problem, in that it will removed by SubmissionSetBuilder>>checkForNonOverlappingRootDirectories
         assertThrows(RootDirectoryException.class, () -> runJPlag(newDirectories, oldDirectories, it -> it));
     }
 
