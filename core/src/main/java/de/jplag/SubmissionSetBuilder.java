@@ -72,6 +72,11 @@ public class SubmissionSetBuilder {
         Set<File> oldSubmissionDirectories = verifyRootDirectories(options.oldSubmissionDirectories(), false);
         checkForNonOverlappingRootDirectories(submissionDirectories, oldSubmissionDirectories);
 
+        // For backward compatibility, don't prefix submission names with their root directory
+        // if there is only one root directory.
+        int numberOfRootDirectories = submissionDirectories.size() + oldSubmissionDirectories.size();
+        boolean multipleRoots = (numberOfRootDirectories > 1);
+
         List<SubmissionFileData> submissionFiles = new ArrayList<>();
         for (File submissionDirectory : submissionDirectories) {
             submissionFiles.addAll(listSubmissionFiles(submissionDirectory, true));
@@ -86,7 +91,7 @@ public class SubmissionSetBuilder {
         ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.LOADING, submissionFiles.size());
         Map<File, Submission> foundSubmissions = new HashMap<>();
         for (SubmissionFileData submissionFile : submissionFiles) {
-            processSubmissionFile(submissionFile, rootDirectoryNamePrefixesMapper, foundSubmissions);
+            processSubmissionFile(submissionFile, multipleRoots, rootDirectoryNamePrefixesMapper, foundSubmissions);
             progressBar.step();
         }
         progressBar.dispose();
@@ -323,13 +328,16 @@ public class SubmissionSetBuilder {
         return new Submission(submissionName, submissionFile, isNew, parseFilesRecursively(submissionFile), options.language());
     }
 
-    private void processSubmissionFile(SubmissionFileData file, Map<File, String> rootDirectoryNamePrefixesMapper, Map<File, Submission> foundSubmissions) throws ExitException {
+    private void processSubmissionFile(SubmissionFileData file, boolean multipleRoots, Map<File, String> rootDirectoryNamePrefixesMapper, Map<File, Submission> foundSubmissions) throws ExitException {
         String errorMessage = isExcludedEntry(file.submissionFile());
         if (errorMessage != null) {
             logger.error(errorMessage);
         }
 
         String rootDirectoryPrefix = rootDirectoryNamePrefixesMapper.get(file.root());
+        rootDirectoryPrefix = rootDirectoryPrefix.isEmpty() && multipleRoots
+                ? file.root().getName()
+                : rootDirectoryPrefix;
         String submissionName = rootDirectoryPrefix.isEmpty()
                 ? file.submissionFile().getName()
                 : rootDirectoryPrefix + File.separator + file.submissionFile().getName();
