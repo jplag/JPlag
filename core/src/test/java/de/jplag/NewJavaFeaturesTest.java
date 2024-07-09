@@ -7,7 +7,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import de.jplag.exceptions.ExitException;
-import de.jplag.java.JavaLanguage;
 
 public class NewJavaFeaturesTest extends TestBase {
 
@@ -23,14 +22,16 @@ public class NewJavaFeaturesTest extends TestBase {
     private static final String JAVA_VERSION_KEY = "java.version";
     private static final String CI_VARIABLE = "CI";
 
+    public static final int JAVA_VERSION = 21;
+
     @Test
     @DisplayName("test comparison of Java files with modern language features")
     public void testJavaFeatureDuplicates() throws ExitException {
         // pre-condition
         String actualJavaVersion = System.getProperty(JAVA_VERSION_KEY);
         boolean isCiRun = System.getenv(CI_VARIABLE) != null;
-        boolean isCorrectJavaVersion = actualJavaVersion.startsWith(String.valueOf(JavaLanguage.JAVA_VERSION));
-        assumeTrue(isCorrectJavaVersion || isCiRun, VERSION_MISMATCH_MESSAGE.formatted(actualJavaVersion, JavaLanguage.JAVA_VERSION));
+        boolean isCorrectJavaVersion = actualJavaVersion.startsWith(String.valueOf(JAVA_VERSION));
+        assumeTrue(isCorrectJavaVersion || isCiRun, VERSION_MISMATCH_MESSAGE.formatted(actualJavaVersion, JAVA_VERSION));
 
         JPlagResult result = runJPlagWithExclusionFile(ROOT_DIRECTORY, EXCLUSION_FILE_NAME);
 
