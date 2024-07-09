@@ -3,10 +3,7 @@ package de.jplag.java;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
@@ -16,6 +13,7 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jplag.ParsingException;
 import de.jplag.Token;
@@ -29,20 +27,38 @@ import com.sun.source.util.Trees;
 
 public class JavacAdapter {
 
+    private static final Logger logger = LoggerFactory.getLogger(JavacAdapter.class);
+
     private static final JavaCompiler javac = ToolProvider.getSystemJavaCompiler();
+    private static final boolean USE_PREVIEW_FEATURES = usePreviewFeatures();
+
+    private static boolean usePreviewFeatures() {
+        // We only enable preview features, if Java versions are matching. See https://github.com/jplag/JPlag/discussions/1851
+        boolean previewFeatures = JavaLanguage.JAVA_VERSION == Integer.parseInt(System.getProperty("java.specification.version"));
+        if (!previewFeatures) {
+            logger.info("Preview features are disabled for Java. Please switch to Java {} to enable preview features.", JavaLanguage.JAVA_VERSION);
+        }
+        return previewFeatures;
+    }
 
     public void parseFiles(Set<File> files, final Parser parser) throws ParsingException {
         var listener = new DiagnosticCollector<>();
 
-        List<ParsingException> parsingExceptions = new ArrayList<>();
         final Charset guessedCharset = FileUtils.detectCharsetFromMultiple(files);
         try (final StandardJavaFileManager fileManager = javac.getStandardFileManager(listener, null, guessedCharset)) {
             var javaFiles = fileManager.getJavaFileObjectsFromFiles(files);
 
             // We need to disable annotation processing, see
             // https://stackoverflow.com/questions/72737445/system-java-compiler-behaves-different-depending-on-dependencies-defined-in-mave
-            final CompilationTask task = javac.getTask(null, fileManager, listener,
-                    List.of("-proc:none", "--enable-preview", "--release=" + JavaLanguage.JAVA_VERSION), null, javaFiles);
+            List<String> options = new ArrayList<>();
+            options.add("-proc:none");
+
+            if (USE_PREVIEW_FEATURES) {
+                options.add("--enable-preview");
+                options.add("--release=" + JavaLanguage.JAVA_VERSION);
+            }
+
+            final CompilationTask task = javac.getTask(null, fileManager, listener, options, null, javaFiles);
             final Trees trees = Trees.instance(task);
             final SourcePositions positions = new FixedSourcePositions(trees.getSourcePositions());
             for (final CompilationUnitTree ast : executeCompilationTask(task, parser.logger)) {
@@ -55,9 +71,9 @@ public class JavacAdapter {
         } catch (Exception exception) {
             throw new ParsingException(null, exception.getMessage(), exception);
         }
-        parsingExceptions.addAll(processErrors(listener));
+        List<ParsingException> parsingExceptions = new ArrayList<>(processErrors(listener));
         if (!parsingExceptions.isEmpty()) {
-            throw ParsingException.wrappingExceptions(parsingExceptions);
+            throw Objects.requireNonNull(ParsingException.wrappingExceptions(parsingExceptions));
         }
     }
 
