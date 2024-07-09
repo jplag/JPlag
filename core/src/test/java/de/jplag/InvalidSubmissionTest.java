@@ -6,9 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.util.*;
 
+import de.jplag.reporting.reportobject.ReportObjectFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -20,8 +22,8 @@ class InvalidSubmissionTest extends TestBase {
     private static final String SAMPLE_NAME = "InvalidSubmissions";
 
     @Test
-    @DisplayName("test that it works with a single submission")
-    void testSingleSubmission() throws ExitException {
+    @DisplayName("test that it works with a multiple roots")
+    void testMultipleRootsSubmission() throws ExitException {
         List<String> submissions = new ArrayList<>();
         submissions.add(getBasePath("basecode/A"));
         submissions.add(getBasePath("basecode/B"));
@@ -31,7 +33,17 @@ class InvalidSubmissionTest extends TestBase {
         assertEquals(results.get(0), "A"+File.separator+"TerrainType.java");
         assertEquals(results.get(1), "B"+File.separator+"TerrainType.java");
         assertEquals(results.get(2), "base"+File.separator+"TerrainType.java");
+    }
 
+    @Test
+    @DisplayName("test that it works with a single submission")
+    void testSingleSubmission() throws ExitException, FileNotFoundException {
+        String submission = "basecode/A";
+        Set<File> oldSubmissions = new HashSet<>();
+        oldSubmissions.add(new File(getBasePath("basecode/B")));
+        oldSubmissions.add(new File(getBasePath("basecode/base")));
+        JPlagResult result = runJPlag(submission, it -> it.withOldSubmissionDirectories(oldSubmissions));
+        assertEquals(result.getAllComparisons().size(), 2);
     }
 
     /**
