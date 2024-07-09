@@ -31,7 +31,7 @@ public class JavacAdapter {
 
     private static final String NO_ANNOTATION_PROCESSING = "-proc:none";
     private static final String PREVIEW_FLAG = "--enable-preview";
-    private static final String RELEASE_VERSION_FLAG = "--release=";
+    private static final String RELEASE_VERSION_OPTION = "--release=";
 
     private static final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 
@@ -44,7 +44,7 @@ public class JavacAdapter {
             var javaFiles = fileManager.getJavaFileObjectsFromFiles(files);
 
             // We need to disable annotation processing, see https://stackoverflow.com/q/72737445
-            String releaseVersion = RELEASE_VERSION_FLAG + Runtime.version().feature(); // required for preview flag
+            String releaseVersion = RELEASE_VERSION_OPTION + Runtime.version().feature(); // required for preview flag
             List<String> options = List.of(NO_ANNOTATION_PROCESSING, PREVIEW_FLAG, releaseVersion);
             final CompilationTask task = compiler.getTask(null, fileManager, listener, options, null, javaFiles);
             final Trees trees = Trees.instance(task);
