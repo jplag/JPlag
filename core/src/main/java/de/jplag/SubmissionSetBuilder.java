@@ -31,7 +31,6 @@ import de.jplag.options.JPlagOptions;
 
 /**
  * Builder class for the creation of a {@link SubmissionSet}.
- *
  * @author Timur Saglam
  */
 public class SubmissionSetBuilder {
@@ -42,9 +41,8 @@ public class SubmissionSetBuilder {
 
     /**
      * Creates a builder for submission sets.
-     *
      * @param language is the language of the submissions.
-     * @param options  are the configured options.
+     * @param options are the configured options.
      * @deprecated in favor of {@link #SubmissionSetBuilder(JPlagOptions)}.
      */
     @Deprecated(since = "4.3.0")
@@ -54,7 +52,6 @@ public class SubmissionSetBuilder {
 
     /**
      * Creates a builder for submission sets.
-     *
      * @param options are the configured options.
      */
     public SubmissionSetBuilder(JPlagOptions options) {
@@ -63,7 +60,6 @@ public class SubmissionSetBuilder {
 
     /**
      * Builds a submission set for all submissions of a specific directory.
-     *
      * @return the newly built submission set.
      * @throws ExitException if the directory cannot be read.
      */
@@ -284,7 +280,6 @@ public class SubmissionSetBuilder {
 
     /**
      * Check that the given submission entry is not invalid due to exclusion names or bad suffix.
-     *
      * @param submissionEntry Entry to check.
      * @return Error message if the entry should be ignored.
      */
@@ -301,10 +296,9 @@ public class SubmissionSetBuilder {
 
     /**
      * Process the given directory entry as a submission, the path MUST not be excluded.
-     *
      * @param submissionName The name of the submission
      * @param submissionFile the file for the submission.
-     * @param isNew          states whether submissions found in the root directory must be checked for plagiarism.
+     * @param isNew states whether submissions found in the root directory must be checked for plagiarism.
      * @return The entry converted to a submission.
      * @throws ExitException when an error has been found with the entry.
      */
@@ -328,18 +322,16 @@ public class SubmissionSetBuilder {
         return new Submission(submissionName, submissionFile, isNew, parseFilesRecursively(submissionFile), options.language());
     }
 
-    private void processSubmissionFile(SubmissionFileData file, boolean multipleRoots, Map<File, String> rootDirectoryNamePrefixesMapper, Map<File, Submission> foundSubmissions) throws ExitException {
+    private void processSubmissionFile(SubmissionFileData file, boolean multipleRoots, Map<File, String> rootDirectoryNamePrefixesMapper,
+            Map<File, Submission> foundSubmissions) throws ExitException {
         String errorMessage = isExcludedEntry(file.submissionFile());
         if (errorMessage != null) {
             logger.error(errorMessage);
         }
 
         String rootDirectoryPrefix = rootDirectoryNamePrefixesMapper.get(file.root());
-        rootDirectoryPrefix = rootDirectoryPrefix.isEmpty() && multipleRoots
-                ? file.root().getName()
-                : rootDirectoryPrefix;
-        String submissionName = rootDirectoryPrefix.isEmpty()
-                ? file.submissionFile().getName()
+        rootDirectoryPrefix = rootDirectoryPrefix.isEmpty() && multipleRoots ? file.root().getName() : rootDirectoryPrefix;
+        String submissionName = rootDirectoryPrefix.isEmpty() ? file.submissionFile().getName()
                 : rootDirectoryPrefix + File.separator + file.submissionFile().getName();
         Submission submission = processSubmission(submissionName, file.submissionFile(), file.isNew());
         foundSubmissions.put(submission.getRoot(), submission);
@@ -347,7 +339,6 @@ public class SubmissionSetBuilder {
 
     /**
      * Checks if a file has a valid suffix for the current language.
-     *
      * @param file is the file to check.
      * @return true if the file suffix matches the language.
      */
@@ -372,7 +363,6 @@ public class SubmissionSetBuilder {
      * Recursively scan the given directory for nested files. Excluded files and files with an invalid suffix are ignored.
      * <p>
      * If the given file is not a directory, the input will be returned as a singleton list.
-     *
      * @param file - File to start the scan from.
      * @return a list of nested files.
      */

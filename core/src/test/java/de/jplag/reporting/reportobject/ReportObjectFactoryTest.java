@@ -1,5 +1,7 @@
 package de.jplag.reporting.reportobject;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -13,8 +15,6 @@ import de.jplag.JPlagResult;
 import de.jplag.TestBase;
 import de.jplag.exceptions.ExitException;
 import de.jplag.reporting.reportobject.model.Version;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class ReportObjectFactoryTest extends TestBase {
     private static final String BASECODE = "basecode";
@@ -57,7 +57,6 @@ class ReportObjectFactoryTest extends TestBase {
 
     /**
      * Checks if the given file is a valid archive
-     *
      * @param file The file to check
      * @return True, if file is an archive
      */

@@ -10,7 +10,6 @@ import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.util.*;
 
-import de.jplag.reporting.reportobject.ReportObjectFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -30,9 +29,9 @@ class InvalidSubmissionTest extends TestBase {
         submissions.add(getBasePath("basecode/base"));
         JPlagResult result = runJPlag(submissions, it -> it);
         List<String> results = result.getSubmissions().getSubmissions().stream().map(Submission::getName).sorted().toList();
-        assertEquals(results.get(0), "A"+File.separator+"TerrainType.java");
-        assertEquals(results.get(1), "B"+File.separator+"TerrainType.java");
-        assertEquals(results.get(2), "base"+File.separator+"TerrainType.java");
+        assertEquals(results.get(0), "A" + File.separator + "TerrainType.java");
+        assertEquals(results.get(1), "B" + File.separator + "TerrainType.java");
+        assertEquals(results.get(2), "base" + File.separator + "TerrainType.java");
     }
 
     @Test
@@ -65,7 +64,7 @@ class InvalidSubmissionTest extends TestBase {
             if (errorSubmissions != null)
                 Arrays.sort(errorSubmissions); // File systems don't promise alphabetical order.
             deleteDirectory(errorFolder.getParentFile());
-            assertArrayEquals(new String[]{"A", "B"}, errorSubmissions);
+            assertArrayEquals(new String[] {"A", "B"}, errorSubmissions);
         }
     }
 }
