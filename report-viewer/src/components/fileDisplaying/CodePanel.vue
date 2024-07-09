@@ -30,6 +30,7 @@
             v-for="(_, index) in codeLines"
             :key="index"
             class="col-span-1 col-start-1 row-span-1 text-right"
+            ref="lineRefs"
             :style="{
               gridRowStart: index + 1
             }"
@@ -40,7 +41,6 @@
           <CodeLine
             v-for="(line, index) in codeLines"
             :key="index"
-            ref="lineRefs"
             :line="line.line"
             :lineNumber="index + 1"
             :matches="line.matches"
@@ -94,7 +94,7 @@ const props = defineProps({
 const emit = defineEmits(['matchSelected'])
 
 const collapsed = ref(true)
-const lineRefs = ref<(typeof CodeLine)[]>([])
+const lineRefs = ref<HTMLElement[]>([])
 
 const codeLines: Ref<{ line: string; matches: MatchInSingleFile[] }[]> = computed(() =>
   highlight(props.file.data, props.highlightLanguage).map((line, index) => {
@@ -116,7 +116,7 @@ function matchSelected(match: Match) {
 function scrollTo(lineNumber: number) {
   collapsed.value = false
   nextTick(function () {
-    lineRefs.value[lineNumber - 1].scrollTo()
+    lineRefs.value[lineNumber - 1].scrollIntoView({ block: 'nearest' })
   })
 }
 

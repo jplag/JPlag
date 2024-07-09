@@ -57,14 +57,6 @@ function matchSelected(match?: MatchInSingleFile) {
 
 const lineRef = ref<HTMLElement | null>(null)
 
-function scrollTo() {
-  if (lineRef.value) {
-    lineRef.value.scrollIntoView({ block: 'center' })
-  }
-}
-
-defineExpose({ scrollTo })
-
 interface TextPart {
   line: string
   match?: MatchInSingleFile
