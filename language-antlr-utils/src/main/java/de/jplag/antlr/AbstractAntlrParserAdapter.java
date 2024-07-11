@@ -62,6 +62,8 @@ public abstract class AbstractAntlrParserAdapter<T extends Parser> extends Abstr
             Lexer lexer = this.createLexer(CharStreams.fromReader(reader));
             CommonTokenStream tokenStream = new CommonTokenStream(lexer);
             T parser = this.createParser(tokenStream);
+            parser.removeErrorListeners();
+            parser.addErrorListener(new AntlrLoggerErrorListener());
             ParserRuleContext entryContext = this.getEntryContext(parser);
             ParseTreeWalker treeWalker = new ParseTreeWalker();
             InternalListener listener = new InternalListener(this.getListener(), collector);
