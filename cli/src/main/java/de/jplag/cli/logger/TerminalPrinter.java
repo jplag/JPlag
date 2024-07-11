@@ -27,7 +27,7 @@ public class TerminalPrinter {
     }
 
     private final Queue<String> outputQueue;
-    private final PrintStream targetStream;
+    private PrintStream targetStream;
 
     private boolean isDelayed;
 
@@ -65,6 +65,13 @@ public class TerminalPrinter {
             this.isDelayed = false;
             this.printQueue();
         }
+    }
+
+    /**
+     * Changes the output stream messages are written to
+     */
+    public void setOutputStream(PrintStream printStream) {
+        this.targetStream = printStream;
     }
 
     private void printQueue() {
