@@ -85,7 +85,7 @@ export class ZipFileHandler extends FileHandler {
       filesOrSubmissionsIndex_originalFileName +
         (rootName === 'files' ? 'files'.length : 'submissions'.length)
     )
-    if (originalPathWithoutSubmissions.charAt(0) === '\\') {
+    if (originalPathWithoutSubmissions.startsWith('\\')) {
       fullPath = unixSubfolderPathAfterSubmissions + '\\' + fileBase
       while (fullPath.includes('/')) {
         fullPath = fullPath.replace('/', '\\')

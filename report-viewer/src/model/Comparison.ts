@@ -103,7 +103,7 @@ export class Comparison {
   private groupMatchesByFileName(index: 1 | 2): Map<string, Array<MatchInSingleFile>> {
     const acc = new Map<string, Array<MatchInSingleFile>>()
     this._allMatches.forEach((val) => {
-      const name = index === 1 ? (val.firstFile as string) : (val.secondFile as string)
+      const name = index === 1 ? val.firstFile : val.secondFile
 
       if (!acc.get(name)) {
         acc.set(name, [])

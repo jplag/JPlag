@@ -180,13 +180,13 @@ export class OverviewFactory extends BaseFactory {
       sessionStorage.setItem('versionAlert', 'true')
     }
     if (jsonVersion.compareTo(minimalVersion) < 0) {
-      throw (
+      throw new Error(
         "The result's version(" +
-        jsonVersion.toString() +
-        ') is older than the minimal support version of the report viewer(' +
-        minimalVersion.toString() +
-        '). ' +
-        'Can not read the report.'
+          jsonVersion.toString() +
+          ') is older than the minimal support version of the report viewer(' +
+          minimalVersion.toString() +
+          '). ' +
+          'Can not read the report.'
       )
     }
   }
