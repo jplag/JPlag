@@ -4,9 +4,16 @@ import java.io.PrintStream;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
+/**
+ * Prints strings to stdout. Provides the option to delay the actual printing.
+ */
 public class TerminalPrinter {
     private static TerminalPrinter instance;
 
+    /**
+     * Threadsafe singleton getter
+     * @return The singleton instance
+     */
     public static TerminalPrinter getInstance() {
         synchronized (TerminalPrinter.class) {
             if (instance == null) {
@@ -30,6 +37,10 @@ public class TerminalPrinter {
         this.isDelayed = false;
     }
 
+    /**
+     * Prints the given string to the terminal appending a line-break
+     * @param output The string to print
+     */
     public void println(String output) {
         synchronized (TerminalPrinter.class) {
             this.outputQueue.offer(output);
@@ -37,12 +48,18 @@ public class TerminalPrinter {
         }
     }
 
+    /**
+     * Stops printing to the terminal until {@link #unDelay()} is called
+     */
     public void delay() {
         synchronized (TerminalPrinter.class) {
             this.isDelayed = true;
         }
     }
 
+    /**
+     * Resumes printing if {@link #delay()} was called
+     */
     public void unDelay() {
         synchronized (TerminalPrinter.class) {
             this.isDelayed = false;
