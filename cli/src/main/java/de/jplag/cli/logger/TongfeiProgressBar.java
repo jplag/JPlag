@@ -1,14 +1,13 @@
 package de.jplag.cli.logger;
 
-import de.jplag.logging.ProgressBar;
-
 /**
  * A ProgressBar, that used the tongfei progress bar library underneath, to show progress bars on the cli.
  */
-public class TongfeiProgressBar implements ProgressBar {
+public class TongfeiProgressBar extends LogDelayingProgressBar {
     private final me.tongfei.progressbar.ProgressBar progressBar;
 
     public TongfeiProgressBar(me.tongfei.progressbar.ProgressBar progressBar) {
+        super();
         this.progressBar = progressBar;
     }
 
@@ -19,6 +18,7 @@ public class TongfeiProgressBar implements ProgressBar {
 
     @Override
     public void dispose() {
+        super.dispose();
         this.progressBar.close();
     }
 }
