@@ -20,7 +20,7 @@ export class OverviewFactory extends BaseFactory {
   }
 
   /**
-   * Creates an overview object from a json object created by by JPlag
+   * Creates an overview object from a json object created by JPlag
    * @param json the json object
    */
   private static extractOverview(json: Record<string, unknown>): Overview {

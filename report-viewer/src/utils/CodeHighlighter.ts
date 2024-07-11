@@ -5,8 +5,8 @@ import llvm from 'highlight.js/lib/languages/llvm'
 import typescript from 'highlight.js/lib/languages/typescript'
 
 /**
- * Hightlights the given code with the given language.
- * Splits the resulting html into seperate lines.
+ * Highlights the given code with the given language.
+ * Splits the resulting html into separate lines.
  * The returned string is an array of html lines, consisting of spans with the hljs classes and the code.
  * Source: https://stackoverflow.com/a/70656181
  * @param code Code to highlight

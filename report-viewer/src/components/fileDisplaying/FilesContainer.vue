@@ -112,7 +112,7 @@ function scrollTo(file: string, line: number) {
 }
 
 /**
- * Collapses all of the code panels.
+ * Collapses all the code panels.
  */
 function collapseAll() {
   codePanels.value.forEach((panel) => panel.collapse())

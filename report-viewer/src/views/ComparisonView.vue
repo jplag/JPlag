@@ -154,7 +154,7 @@ const panel1: Ref<typeof FilesContainer | null> = ref(null)
 const panel2: Ref<typeof FilesContainer | null> = ref(null)
 
 /**
- * Shows a match in the first files container when clicked on a line in the second files container.
+ * Shows a match in the first files container when clicked on a line in the second file container.
  * @param file (file name)
  * @param line (line number)
  */
@@ -163,7 +163,7 @@ function showMatchInFirst(match: Match) {
 }
 
 /**
- * Shows a match in the second files container, when clicked on a line in the second files container.
+ * Shows a match in the second files container, when clicked on a line in the second file container.
  * @param file (file name)
  * @param line (line number)
  */
@@ -186,7 +186,7 @@ function print() {
 }
 
 // This code is responsible for changing the theme of the highlighted code depending on light/dark mode
-// Changing the used style itsself is the desired solution (https://github.com/highlightjs/highlight.js/issues/2115)
+// Changing the used style itself is the desired solution (https://github.com/highlightjs/highlight.js/issues/2115)
 const styleholder: Ref<Node | null> = ref(null)
 
 onMounted(() => {

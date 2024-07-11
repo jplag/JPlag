@@ -213,8 +213,8 @@ const searchString = ref('')
 
 /**
  * This function gets called when the search bar for the comparison table has been updated.
- * It updates the displayed comparisons to only show the ones that  have part of any search result in their id. The search is not case sensitive. The parts can be separated by commas or spaces.
- * It also updates the anonymous set to unhide a submission if its name was typed in the search bar at any point in time.
+ * It updates the displayed comparisons to only show the ones that  have part of any search result in their id. The search is not case-sensitive. The parts can be separated by commas or spaces.
+ * It also updates the anonymous set to un-hide a submission if its name was typed in the search bar at any point in time.
  *
  * @param newVal The new value of the search bar
  */
@@ -393,17 +393,5 @@ watch(
 
 .tableCell {
   @apply mx-3 flex flex-row items-center justify-center text-center;
-}
-
-/* Tooltip arrow. Defined down here bacause of the content attribute */
-.tooltipArrow::after {
-  content: ' ';
-  position: absolute;
-  top: 50%;
-  left: 100%;
-  margin-top: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: transparent transparent transparent rgba(0, 0, 0, 0.9);
 }
 </style>

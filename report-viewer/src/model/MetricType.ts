@@ -1,5 +1,5 @@
 /**
- * This enum maps the metric type to the index they have in the generated JSON and respectivly in the store.
+ * This enum maps the metric type to the index they have in the generated JSON and respectively in the store.
  */
 export enum MetricType {
   AVERAGE = 'AVG',
@@ -23,6 +23,6 @@ export const metricToolTips: Record<MetricType, MetricToolTipData> = {
     longName: 'Maximum Similarity',
     shortName: 'MAX',
     tooltip:
-      'The maximum similarity of the two files.\nUsefull if programms are very dfferent in size.'
+      'The maximum similarity of the two files.\nUseful if programms are very different in size.'
   }
 }
