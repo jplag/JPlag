@@ -213,10 +213,9 @@ const searchString = ref('')
 
 /**
  * This function gets called when the search bar for the comparison table has been updated.
- * It updates the displayed comparisons to only show the ones that  have part of any search result in their id. The search is not case-sensitive. The parts can be separated by commas or spaces.
- * It also updates the anonymous set to un-hide a submission if its name was typed in the search bar at any point in time.
+ * It returns the input list, with the filter given in searchString applied.
  *
- * @param newVal The new value of the search bar
+ * @param comparisons Sorted list of comparisons
  */
 function getFilteredComparisons(comparisons: ComparisonListElement[]) {
   const searches = searchString.value

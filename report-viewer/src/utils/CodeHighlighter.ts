@@ -16,7 +16,7 @@ import typescript from 'highlight.js/lib/languages/typescript'
 export function highlight(code: string, lang: Language) {
   const highlightedCode = hljs.highlight(code, { language: getHighlightLanguage(lang) }).value
   const openTags: string[] = []
-  const formattedCode = highlightedCode
+  return highlightedCode
     .replace(/(<span [^>]*>)|(<\/span>)|(\n)/g, (match: string) => {
       if (match === '\n') {
         return '</span>'.repeat(openTags.length) + '\n' + openTags.join('')
@@ -31,7 +31,6 @@ export function highlight(code: string, lang: Language) {
       return match
     })
     .split('\n')
-  return formattedCode
 }
 
 function getHighlightLanguage(lang: Language) {

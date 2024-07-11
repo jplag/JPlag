@@ -152,6 +152,7 @@ export class OverviewFactory extends BaseFactory {
    * Compares the two versions and shows an alert if they are not equal and puts out a warning if they are not
    * @param jsonVersion the version of the json file
    * @param reportViewerVersion the version of the report viewer
+   * @param minimalVersion the minimal report version expected
    */
   static compareVersions(
     jsonVersion: Version,

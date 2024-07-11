@@ -10,9 +10,9 @@ export class Comparison {
   private readonly _firstSubmissionId: string
   private readonly _secondSubmissionId: string
   private readonly _similarities: Record<MetricType, number>
-  private _filesOfFirstSubmission: SubmissionFile[]
-  private _filesOfSecondSubmission: SubmissionFile[]
-  private _allMatches: Array<Match>
+  private readonly _filesOfFirstSubmission: SubmissionFile[]
+  private readonly _filesOfSecondSubmission: SubmissionFile[]
+  private readonly _allMatches: Array<Match>
   private readonly _firstSimilarity: number
   private readonly _secondSimilarity: number
 
