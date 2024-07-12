@@ -400,7 +400,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     public Void visitNewArray(NewArrayTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        addToken(JavaTokenType.J_NEWARRAY, start, 3, new CodeSemantics());
+        addToken(JavaTokenType.J_NEWARRAY, start, node.toString().length(), new CodeSemantics());
         scan(node.getType(), null);
         scan(node.getDimensions(), null);
         boolean hasInit = node.getInitializers() != null && !node.getInitializers().isEmpty();
