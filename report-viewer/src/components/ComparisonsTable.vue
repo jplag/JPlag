@@ -256,7 +256,7 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
       [MetricType.MAXIMUM]: []
     }
     metricSearches.forEach((s) => {
-      const regexResult = /^(?:(avg|max):)?((?:[<>])=?[0-9]+%?$)/.exec(s)
+      const regexResult = /^(?:(avg|max):)?([<>]=?[0-9]+%?$)/.exec(s)
       if (regexResult) {
         const metricName = regexResult[1]
         let metric = MetricType.AVERAGE
@@ -274,7 +274,7 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
     })
     for (const metric of [MetricType.AVERAGE, MetricType.MAXIMUM]) {
       for (const search of searchPerMetric[metric]) {
-        const regexResult = /((?:[<>])=?)([0-9]+)%?/.exec(search)!
+        const regexResult = /([<>]=?)([0-9]+)%?/.exec(search)!
         const operator = regexResult[1]
         const value = parseInt(regexResult[2])
         if (evaluateMetricComparison(c.similarities[metric] * 100, operator, value)) {
