@@ -458,7 +458,8 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     public Void visitVariable(VariableTree node, Void unused) {
         if (!node.getName().contentEquals(ANONYMOUS_VARIABLE_NAME)) {
             long start = positions.getStartPosition(ast, node);
-            int length = node.toString().length() - (node.getInitializer() == null ? 0 : node.getInitializer().toString().length());
+            long end = positions.getEndPosition(ast, node) - 1;
+            end -= node.getInitializer() == null ? 0 : node.getInitializer().toString().length();
             String name = node.getName().toString();
             boolean inLocalScope = variableRegistry.inLocalScope();
             // this presents a problem when classes are declared in local scopes, which can happen in ad-hoc implementations
@@ -470,7 +471,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
             } else {
                 semantics = CodeSemantics.createKeep();
             }
-            addToken(JavaTokenType.J_VARDEF, start, length, semantics);
+            addToken(JavaTokenType.J_VARDEF, start, end, semantics);
             // manually add variable to semantics since identifier isn't visited
             variableRegistry.setNextVariableAccessType(VariableAccessType.WRITE);
             variableRegistry.registerVariableAccess(name, !inLocalScope);
