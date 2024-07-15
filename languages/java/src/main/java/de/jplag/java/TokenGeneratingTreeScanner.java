@@ -380,10 +380,11 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     @Override
     public Void visitNewClass(NewClassTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
+        long end = positions.getEndPosition(ast, node.getIdentifier());
         if (!node.getTypeArguments().isEmpty()) {
             addToken(JavaTokenType.J_GENERIC, start, 3 + node.getIdentifier().toString().length(), new CodeSemantics());
         }
-        addToken(JavaTokenType.J_NEWCLASS, start, node.toString().length(), new CodeSemantics());
+        addToken(JavaTokenType.J_NEWCLASS, start, end, new CodeSemantics());
         super.visitNewClass(node, null);
         return null;
     }
@@ -399,8 +400,8 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     @Override
     public Void visitNewArray(NewArrayTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        long end = positions.getEndPosition(ast, node) - 1;
-        addToken(JavaTokenType.J_NEWARRAY, start, node.toString().length(), new CodeSemantics());
+        long end = node.getType() == null ? start + 1 : positions.getEndPosition(ast, node.getType());
+        addToken(JavaTokenType.J_NEWARRAY, start, end, new CodeSemantics());
         scan(node.getType(), null);
         scan(node.getDimensions(), null);
         boolean hasInit = node.getInitializers() != null && !node.getInitializers().isEmpty();
@@ -411,6 +412,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         scan(node.getInitializers(), null);
         // super method has annotation processing but we have it disabled anyways
         if (hasInit) {
+            end = positions.getEndPosition(ast, node.getInitializers().getLast()) - 1;
             addToken(JavaTokenType.J_ARRAY_INIT_END, end, 1, new CodeSemantics());
         }
         return null;
