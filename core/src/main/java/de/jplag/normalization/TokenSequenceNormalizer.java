@@ -33,10 +33,8 @@ public class TokenSequenceNormalizer {
         propagateKeepStatus(normalizationGraph);
         if (sorting) {
             return normalizeWithSorting(tokens, normalizationGraph);
-        } else {
-            return normalizeWithoutSorting(normalizationGraph, tokens);
         }
-
+        return normalizeWithoutSorting(normalizationGraph, tokens);
     }
 
     // Add tokens in normalized original order, removing dead tokens

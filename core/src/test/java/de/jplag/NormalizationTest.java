@@ -24,9 +24,9 @@ class NormalizationTest extends TestBase {
         JPlagOptions options = getDefaultOptions("normalization");
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         submissionSet = builder.buildSubmissionSet();
-
     }
 
+    // normalize submission set and initialize fields
     private void normalizeSubmissions(boolean sorting) {
         submissionSet.normalizeSubmissions(sorting);
         Function<Submission, List<TokenType>> getTokenString = submission -> submission.getTokenList().stream().map(Token::getType).toList();
@@ -41,10 +41,11 @@ class NormalizationTest extends TestBase {
         Assertions.assertIterableEquals(originalTokenString, tokenStringMap.get("SquaresInserted.java"));
     }
 
-    @Test
-    void testReorderingNormalization() {
-        normalizeSubmissions(true);
-        Assertions.assertIterableEquals(originalTokenString, tokenStringMap.get("SquaresReordered.java"));
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void testReorderingNormalization(boolean sorting) {
+        normalizeSubmissions(sorting);
+        Assertions.assertEquals(sorting, originalTokenString.equals(tokenStringMap.get("SquaresReordered.java")));
     }
 
     @Test
