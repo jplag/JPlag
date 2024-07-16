@@ -58,7 +58,7 @@
 
 <script setup lang="ts">
 import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
-import { ref, nextTick, type PropType, computed, type Ref } from 'vue'
+import { ref, type PropType, computed, type Ref } from 'vue'
 import Interactable from '../InteractableComponent.vue'
 import type { SubmissionFile } from '@/model/File'
 import { highlight } from '@/utils/CodeHighlighter'
@@ -117,26 +117,25 @@ function matchSelected(match: Match) {
 }
 
 /**
- * Scrolls to the line number in the file.
- * @param lineNumber line number in the file
- */
-function scrollTo(lineNumber: number) {
-  collapsed.value = false
-  nextTick(function () {
-    lineRefs.value[lineNumber - 1].scrollIntoView({ block: 'nearest' })
-  })
-}
-
-/**
  * Collapses the container.
  */
 function collapse() {
   collapsed.value = true
 }
 
+function expand() {
+  console.log('expand')
+  collapsed.value = false
+}
+
+function getLineRect(lineNumber: number): DOMRect {
+  return lineRefs.value[lineNumber - 1].getBoundingClientRect()
+}
+
 defineExpose({
-  scrollTo,
-  collapse
+  collapse,
+  expand,
+  getLineRect
 })
 
 /**
