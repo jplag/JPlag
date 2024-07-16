@@ -16,24 +16,34 @@ import de.jplag.Token;
 /**
  * Performs token sequence normalization.
  */
-public class TokenStringNormalizer {
+public class TokenSequenceNormalizer {
 
-    private TokenStringNormalizer() {
+    private TokenSequenceNormalizer() {
     }
 
     /**
      * Performs token sequence normalization. Tokens representing dead code have been eliminated and tokens representing
-     * subsequent independent statements have been put in a fixed order. Works by first constructing a Normalization Graph
-     * and then turning it back into a token sequence.
+     * subsequent independent statements have been put in a fixed order if sorting is true. Works by first constructing a
+     * Normalization Graph and then turning it back into a token sequence.
      * @param tokens The original token sequence, remains unaltered.
-     * @return The normalized token sequence as unmodifiable list.
+     * @param sorting Boolean flag to control if the tokens should be topologically sorted.
+     * @return The normalized token sequence.
      */
-    public static List<Token> normalize(List<Token> tokens) {
+    public static List<Token> normalize(List<Token> tokens, boolean sorting) {
         SimpleDirectedGraph<Statement, MultipleEdge> normalizationGraph = new NormalizationGraphConstructor(tokens).get();
+        propagateKeepStatus(normalizationGraph);
+        if (sorting) {
+            return normalizeWithSorting(tokens, normalizationGraph);
+        } else {
+            return normalizeWithoutSorting(normalizationGraph, tokens);
+        }
+
+    }
+
+    // Add tokens in normalized original order, removing dead tokens
+    private static List<Token> normalizeWithSorting(List<Token> tokens, SimpleDirectedGraph<Statement, MultipleEdge> normalizationGraph) {
         List<Token> normalizedTokens = new ArrayList<>(tokens.size());
-        spreadKeep(normalizationGraph);
-        PriorityQueue<Statement> roots = normalizationGraph.vertexSet().stream() //
-                .filter(v -> !Graphs.vertexHasPredecessors(normalizationGraph, v)) //
+        PriorityQueue<Statement> roots = normalizationGraph.vertexSet().stream().filter(v -> !Graphs.vertexHasPredecessors(normalizationGraph, v))
                 .collect(Collectors.toCollection(PriorityQueue::new));
         while (!roots.isEmpty()) {
             PriorityQueue<Statement> newRoots = new PriorityQueue<>();
@@ -51,13 +61,24 @@ public class TokenStringNormalizer {
             } while (!roots.isEmpty());
             roots = newRoots;
         }
-        return Collections.unmodifiableList(normalizedTokens);
+        return normalizedTokens;
+    }
+
+    // Add tokens in the original order, removing dead tokens
+    private static List<Token> normalizeWithoutSorting(SimpleDirectedGraph<Statement, MultipleEdge> normalizationGraph, List<Token> tokens) {
+        List<Token> normalizedTokens = new ArrayList<>(tokens.size());
+        for (Statement statement : normalizationGraph.vertexSet()) {
+            if (statement.semantics().keep()) {
+                normalizedTokens.addAll(statement.tokens());
+            }
+        }
+        return normalizedTokens;
     }
 
     /**
      * Spread keep status to every node that does not represent dead code. Nodes without keep status are later eliminated.
      */
-    private static void spreadKeep(SimpleDirectedGraph<Statement, MultipleEdge> normalizationGraph) {
+    private static void propagateKeepStatus(SimpleDirectedGraph<Statement, MultipleEdge> normalizationGraph) {
         Queue<Statement> visit = new LinkedList<>(normalizationGraph.vertexSet().stream() //
                 .filter(tl -> tl.semantics().keep()).toList());
         while (!visit.isEmpty()) {

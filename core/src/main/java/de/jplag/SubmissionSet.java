@@ -99,11 +99,17 @@ public class SubmissionSet {
         return invalidSubmissions;
     }
 
-    public void normalizeSubmissions() {
+    /**
+     * Normalizes the token sequences of all submissions (including basecode). This makes the token sequence invariant to
+     * dead code insertion and independent statement reordering by removing dead tokens and optionally reordering tokens to
+     * a deterministic order.
+     * @param sorting determines whether to perform topological sorting during normalization.
+     */
+    public void normalizeSubmissions(boolean sorting) {
         if (baseCodeSubmission != null) {
-            baseCodeSubmission.normalize();
+            baseCodeSubmission.normalize(sorting);
         }
-        ProgressBarLogger.iterate(ProgressBarType.TOKEN_STRING_NORMALIZATION, submissions, Submission::normalize);
+        ProgressBarLogger.iterate(ProgressBarType.TOKEN_STRING_NORMALIZATION, submissions, submission -> submission.normalize(sorting));
     }
 
     private List<Submission> filterValidSubmissions() {
