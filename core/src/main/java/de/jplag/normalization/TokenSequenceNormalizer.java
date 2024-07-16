@@ -15,9 +15,10 @@ import de.jplag.Token;
 /**
  * Performs token sequence normalization.
  */
-public class TokenSequenceNormalizer {
+public final class TokenSequenceNormalizer {
 
     private TokenSequenceNormalizer() {
+        // private constructor for non-instantiability.
     }
 
     /**
