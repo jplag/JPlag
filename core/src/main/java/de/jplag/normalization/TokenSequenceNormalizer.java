@@ -8,7 +8,6 @@ import java.util.Queue;
 import java.util.stream.Collectors;
 
 import org.jgrapht.Graphs;
-import org.jgrapht.graph.SimpleDirectedGraph;
 
 import de.jplag.Token;
 
@@ -24,30 +23,32 @@ public final class TokenSequenceNormalizer {
     /**
      * Performs token sequence normalization. Tokens representing dead code have been eliminated and tokens representing
      * subsequent independent statements have been put in a fixed order if sorting is true. Works by first constructing a
-     * Normalization Graph and then turning it back into a token sequence.
+     * Normalization Graph and then turning it back into a token sequence. For more information refer to the
+     * <a href="https://doi.org/10.1145/3639478.3643074">corresponding paper</a>
      * @param tokens The original token sequence, remains unaltered.
      * @param sorting Boolean flag to control if the tokens should be topologically sorted.
      * @return The normalized token sequence.
      */
     public static List<Token> normalize(List<Token> tokens, boolean sorting) {
-        SimpleDirectedGraph<Statement, MultipleEdge> normalizationGraph = new NormalizationGraphConstructor(tokens).get();
-        propagateKeepStatus(normalizationGraph);
+        NormalizationGraph graph = new NormalizationGraph(tokens);
+        propagateCriticalityStatus(graph);
         if (sorting) {
-            return normalizeWithSorting(tokens, normalizationGraph);
+            return normalizeWithSorting(tokens, graph);
         }
-        return normalizeWithoutSorting(normalizationGraph, tokens);
+        return normalizeWithoutSorting(tokens, graph);
     }
 
     // Add tokens in normalized original order, removing dead tokens
-    private static List<Token> normalizeWithSorting(List<Token> tokens, SimpleDirectedGraph<Statement, MultipleEdge> normalizationGraph) {
+    private static List<Token> normalizeWithSorting(List<Token> tokens, NormalizationGraph normalizationGraph) {
         List<Token> normalizedTokens = new ArrayList<>(tokens.size());
-        PriorityQueue<Statement> roots = normalizationGraph.vertexSet().stream().filter(v -> !Graphs.vertexHasPredecessors(normalizationGraph, v))
+        PriorityQueue<Statement> roots = normalizationGraph.vertexSet().stream() //
+                .filter(v -> !Graphs.vertexHasPredecessors(normalizationGraph, v)) //
                 .collect(Collectors.toCollection(PriorityQueue::new));
         while (!roots.isEmpty()) {
             PriorityQueue<Statement> newRoots = new PriorityQueue<>();
             do {
                 Statement statement = roots.poll();
-                if (statement.semantics().keep()) {
+                if (statement.semantics().isCritical()) {
                     normalizedTokens.addAll(statement.tokens());
                 }
                 for (Statement successor : Graphs.successorListOf(normalizationGraph, statement)) {
@@ -63,10 +64,10 @@ public final class TokenSequenceNormalizer {
     }
 
     // Add tokens in the original order, removing dead tokens
-    private static List<Token> normalizeWithoutSorting(SimpleDirectedGraph<Statement, MultipleEdge> normalizationGraph, List<Token> tokens) {
+    private static List<Token> normalizeWithoutSorting(List<Token> tokens, NormalizationGraph normalizationGraph) {
         List<Token> normalizedTokens = new ArrayList<>(tokens.size());
         for (Statement statement : normalizationGraph.vertexSet()) {
-            if (statement.semantics().keep()) {
+            if (statement.semantics().isCritical()) {
                 normalizedTokens.addAll(statement.tokens());
             }
         }
@@ -74,22 +75,25 @@ public final class TokenSequenceNormalizer {
     }
 
     /**
-     * Spread keep status to every node that does not represent dead code. Nodes without keep status are later eliminated.
+     * Spread criticality status to every node that does not represent dead code. Nodes without keep criticality are later
+     * eliminated (dead nodes). Before calling this method, only the statements that directly affect the behavior are marked
+     * as critical. After calling this method, this also holds true for statement that (transitively) depend (read/write) on
+     * the critical ones.
      */
-    private static void propagateKeepStatus(SimpleDirectedGraph<Statement, MultipleEdge> normalizationGraph) {
+    private static void propagateCriticalityStatus(NormalizationGraph normalizationGraph) {
         Queue<Statement> visit = new LinkedList<>(normalizationGraph.vertexSet().stream() //
-                .filter(tl -> tl.semantics().keep()).toList());
+                .filter(tl -> tl.semantics().isCritical()).toList());
         while (!visit.isEmpty()) {
             Statement current = visit.remove();
             for (Statement predecessor : Graphs.predecessorListOf(normalizationGraph, current)) {  // performance of iteration?
-                if (!predecessor.semantics().keep() && normalizationGraph.getEdge(predecessor, current).isVariableFlow()) {
-                    predecessor.markKeep();
+                if (!predecessor.semantics().isCritical() && normalizationGraph.getEdge(predecessor, current).isVariableFlow()) {
+                    predecessor.markAsCritical();
                     visit.add(predecessor);
                 }
             }
             for (Statement successor : Graphs.successorListOf(normalizationGraph, current)) {
-                if (!successor.semantics().keep() && normalizationGraph.getEdge(current, successor).isVariableReverseFlow()) {
-                    successor.markKeep();
+                if (!successor.semantics().isCritical() && normalizationGraph.getEdge(current, successor).isVariableReverseFlow()) {
+                    successor.markAsCritical();
                     visit.add(successor);
                 }
             }
