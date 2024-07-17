@@ -23,13 +23,13 @@ public class NormalizationGraph extends SimpleDirectedGraph<Statement, MultipleE
     private static final long serialVersionUID = -8407465274643809647L; // generated
 
     private int bidirectionalBlockDepth;
-    private final Collection<Statement> fullPositionSignificanceIncoming;
-    private Statement lastFullPositionSignificance;
-    private Statement lastPartialPositionSignificance;
-    private final Map<Variable, Collection<Statement>> variableReads;
-    private final Map<Variable, Collection<Statement>> variableWrites;
-    private final Set<Statement> inCurrentBidirectionalBlock;
-    private Statement current;
+    private final transient Collection<Statement> fullPositionSignificanceIncoming;
+    private transient Statement lastFullPositionSignificance;
+    private transient Statement lastPartialPositionSignificance;
+    private final transient Map<Variable, Collection<Statement>> variableReads;
+    private final transient Map<Variable, Collection<Statement>> variableWrites;
+    private final transient Set<Statement> inCurrentBidirectionalBlock;
+    private transient Statement current;
 
     /**
      * Creates a new normalization graph.
