@@ -145,9 +145,10 @@ defineExpose({
  * @return new path of file
  */
 function getFileDisplayName(file: SubmissionFile): string {
-  const filePathLength = file.fileName.length
+  const fileDisplayName = file.displayFileName ?? file.fileName
+  const filePathLength = fileDisplayName.length
   return filePathLength > 40
-    ? '...' + file.fileName.substring(filePathLength - 40, filePathLength)
-    : file.fileName
+    ? '...' + fileDisplayName.substring(filePathLength - 40, filePathLength)
+    : fileDisplayName
 }
 </script>
