@@ -4,7 +4,20 @@
 <template>
   <Interactable class="mx-2 !shadow print:!mx-0 print:!border-0 print:!p-0">
     <div @click="collapsed = !collapsed" class="flex px-2 font-bold print:whitespace-pre-wrap">
-      <span class="flex-1">{{ getFileDisplayName(file) }}</span>
+      <ToolTipComponent direction="right" v-if="getFileDisplayName(file) != file.fileName">
+        <template #default
+          ><span>{{ getFileDisplayName(file) }}</span></template
+        >
+        <template #tooltip
+          ><p class="whitespace max-w-[22rem] text-sm font-normal">
+            {{ file.fileName }}
+          </p></template
+        >
+      </ToolTipComponent>
+      <span v-else>{{ file.fileName }}</span>
+
+      <span class="flex-1"></span>
+
       <ToolTipComponent direction="left" class="font-normal">
         <template #default
           ><span class="text-gray-600 dark:text-gray-300"
