@@ -5,6 +5,7 @@ import { getMatchColorCount } from '@/utils/ColorUtils'
 import slash from 'slash'
 import { BaseFactory } from './BaseFactory'
 import { MetricType } from '../MetricType'
+import type { SubmissionFile } from '../File'
 
 /**
  * Factory class for creating Comparison objects
@@ -57,8 +58,8 @@ export class ComparisonFactory extends BaseFactory {
       firstSubmissionId,
       secondSubmissionId,
       this.extractSimilarities(json.similarities as Record<string, number>),
-      filesOfFirstSubmission,
-      filesOfSecondSubmission,
+      this.getFilesWithDisplayNames(filesOfFirstSubmission),
+      this.getFilesWithDisplayNames(filesOfSecondSubmission),
       this.colorMatches(matches),
       json.first_similarity as number,
       json.second_similarity as number
@@ -151,5 +152,25 @@ export class ComparisonFactory extends BaseFactory {
       currentColorIndex = (currentColorIndex + 1) % maxColorCount
     }
     return sortedSize
+  }
+
+  private static getFilesWithDisplayNames(files: SubmissionFile[]): SubmissionFile[] {
+    let longestPrefix = files[0].fileName
+    for (let i = 1; i < files.length; i++) {
+      if (longestPrefix == '') {
+        break
+      }
+
+      while (!files[i].fileName.startsWith(longestPrefix)) {
+        longestPrefix = longestPrefix.substring(0, longestPrefix.length - 1)
+      }
+    }
+
+    return files.map((f) => {
+      return {
+        ...f,
+        displayFileName: f.fileName.substring(longestPrefix.length)
+      }
+    })
   }
 }

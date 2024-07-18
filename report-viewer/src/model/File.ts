@@ -28,4 +28,8 @@ export interface SubmissionFile extends File {
    * Number of tokens in the file that are matched.
    */
   matchedTokenCount: number
+  /**
+   * The name to be displayed in the report viewer. If not defined, the file name should be chosen
+   */
+  displayFileName?: string
 }
