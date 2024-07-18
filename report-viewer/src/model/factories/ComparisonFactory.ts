@@ -159,7 +159,6 @@ export class ComparisonFactory extends BaseFactory {
     if (files.length == 1) {
       return files
     }
-    console.log(files)
     let longestPrefix = files[0].fileName
     for (let i = 1; i < files.length; i++) {
       if (longestPrefix == '') {
