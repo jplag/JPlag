@@ -17,11 +17,11 @@ const store = {
   filesOfSubmission: (name: string) => {
     return [
       {
-        name: `${name}/Structure.java`,
+        fileName: `${name}/Structure.java`,
         value: ''
       },
       {
-        name: `${name}/Submission.java`,
+        fileName: `${name}/Submission.java`,
         value: ''
       }
     ]
@@ -30,7 +30,8 @@ const store = {
     return {
       fileName: name,
       submissionId: id,
-      matchedTokenCount: 0
+      matchedTokenCount: 0,
+      displayName: name
     }
   }
 }

@@ -156,9 +156,10 @@ export class ComparisonFactory extends BaseFactory {
   }
 
   private static getFilesWithDisplayNames(files: SubmissionFile[]): SubmissionFile[] {
-    if (files.length == 0) {
+    if (files.length == 1) {
       return files
     }
+    console.log(files)
     let longestPrefix = files[0].fileName
     for (let i = 1; i < files.length; i++) {
       if (longestPrefix == '') {
