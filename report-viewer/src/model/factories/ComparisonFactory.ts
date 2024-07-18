@@ -92,7 +92,8 @@ export class ComparisonFactory extends BaseFactory {
           submissionId: submissionId,
           data: await this.getSubmissionFileContent(submissionId, slash(filePath)),
           tokenCount: fileList[filePath].token_count,
-          matchedTokenCount: 0
+          matchedTokenCount: 0,
+          displayFileName: slash(filePath)
         })
       }
     } catch (e) {
@@ -155,6 +156,9 @@ export class ComparisonFactory extends BaseFactory {
   }
 
   private static getFilesWithDisplayNames(files: SubmissionFile[]): SubmissionFile[] {
+    if (files.length == 0) {
+      return files
+    }
     let longestPrefix = files[0].fileName
     for (let i = 1; i < files.length; i++) {
       if (longestPrefix == '') {

@@ -29,7 +29,8 @@ export class ZipFileHandler extends FileHandler {
               data: data,
               // These two properties will be determined at a later time (when loading the submission file index)
               tokenCount: NaN,
-              matchedTokenCount: NaN
+              matchedTokenCount: NaN,
+              displayFileName: slash(fullPathFileName)
             })
           })
         } else {

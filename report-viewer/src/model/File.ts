@@ -29,7 +29,7 @@ export interface SubmissionFile extends File {
    */
   matchedTokenCount: number
   /**
-   * The name to be displayed in the report viewer. If not defined, the file name should be chosen
+   * The name to be displayed in the report viewer
    */
-  displayFileName?: string
+  displayFileName: string
 }
