@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-class TerminalPrinterTest {
+class DelayablePrinterTest {
     private final static String TEST_MESSAGE = "Hello World";
 
     private static ByteArrayOutputStream outputStream;
@@ -17,35 +17,35 @@ class TerminalPrinterTest {
     @BeforeAll
     static void setUp() {
         outputStream = new ByteArrayOutputStream();
-        TerminalPrinter.getInstance().setOutputStream(new PrintStream(outputStream));
+        DelayablePrinter.getInstance().setOutputStream(new PrintStream(outputStream));
     }
 
     @AfterAll
     static void tearDown() {
-        TerminalPrinter.getInstance().setOutputStream(System.out);
+        DelayablePrinter.getInstance().setOutputStream(System.out);
     }
 
     @AfterEach
     void cleanUpAfterTest() {
-        TerminalPrinter.getInstance().unDelay();
+        DelayablePrinter.getInstance().resume();
         outputStream.reset();
     }
 
     @Test
     void testDelay() {
-        TerminalPrinter.getInstance().delay();
-        TerminalPrinter.getInstance().println(TEST_MESSAGE);
+        DelayablePrinter.getInstance().delay();
+        DelayablePrinter.getInstance().println(TEST_MESSAGE);
 
         Assertions.assertEquals("", outputStream.toString());
 
-        TerminalPrinter.getInstance().unDelay();
+        DelayablePrinter.getInstance().resume();
 
         Assertions.assertEquals(TEST_MESSAGE + System.lineSeparator(), outputStream.toString());
     }
 
     @Test
     void testDirectPrinting() {
-        TerminalPrinter.getInstance().println(TEST_MESSAGE);
+        DelayablePrinter.getInstance().println(TEST_MESSAGE);
         Assertions.assertEquals(TEST_MESSAGE + System.lineSeparator(), outputStream.toString());
     }
 }

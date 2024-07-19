@@ -7,11 +7,11 @@ import de.jplag.logging.ProgressBar;
  */
 public abstract class LogDelayingProgressBar implements ProgressBar {
     protected LogDelayingProgressBar() {
-        TerminalPrinter.getInstance().delay();
+        DelayablePrinter.getInstance().delay();
     }
 
     @Override
     public void dispose() {
-        TerminalPrinter.getInstance().unDelay();
+        DelayablePrinter.getInstance().resume();
     }
 }

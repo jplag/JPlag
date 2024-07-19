@@ -148,7 +148,7 @@ public class CollectedLogger extends AbstractLogger {
 
     private void printLogEntry(LogEntry entry) {
         StringBuilder output = prepareLogOutput(entry);
-        TerminalPrinter.getInstance().println(output.toString());
+        DelayablePrinter.getInstance().println(output.toString());
         if (entry.cause() != null) {
             this.printStackTrace(entry.cause());
         }
@@ -166,6 +166,6 @@ public class CollectedLogger extends AbstractLogger {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         error.printStackTrace(new PrintStream(outputStream));
         String stackTrace = outputStream.toString();
-        TerminalPrinter.getInstance().println(stackTrace);
+        DelayablePrinter.getInstance().println(stackTrace);
     }
 }
