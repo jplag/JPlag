@@ -1,17 +1,10 @@
-cd ./report-viewer
-npx lint-staged
-
-
-#spotless
+#!/bin/bash
 
 #prevents the shell from aborting if maven returns a non zero exit code
 set +e
 echo Checking spotless
-cd ..
 mvn spotless:check &> /dev/null
 exitCode=$?
-
-echo $exitCode
 
 if [ $exitCode -gt 0 ]
 then
