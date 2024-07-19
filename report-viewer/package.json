@@ -19,14 +19,14 @@
     "prepare": "cd .. && husky report-viewer/.husky"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^6.5.2",
+    "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/free-brands-svg-icons": "^6.5.2",
-    "@fortawesome/free-solid-svg-icons": "^6.5.2",
+    "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/vue-fontawesome": "^3.0.8",
     "chart.js": "^4.4.3",
     "chartjs-chart-graph": "^4.3.1",
     "chartjs-plugin-datalabels": "^2.2.0",
-    "highlight.js": "^11.9.0",
+    "highlight.js": "^11.10.0",
     "jszip": "^3.10.0",
     "pinia": "^2.1.7",
     "slash": "^5.1.0",
@@ -56,10 +56,10 @@
     "postcss": "^8.4.35",
     "prettier": "^3.3.2",
     "prettier-plugin-tailwindcss": "^0.6.5",
-    "tailwindcss": "^3.4.4",
+    "tailwindcss": "^3.4.6",
     "typescript": "^5.5.3",
-    "vite": "^5.3.1",
+    "vite": "^5.3.4",
     "vitest": "^2.0.1",
-    "vue-tsc": "^2.0.21"
+    "vue-tsc": "^2.0.26"
   }
 }
