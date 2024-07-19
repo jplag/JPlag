@@ -1,12 +1,14 @@
 package de.jplag;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.nio.file.Path;
-import java.util.Arrays;
+import java.util.*;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,6 +19,31 @@ import de.jplag.exceptions.SubmissionException;
 class InvalidSubmissionTest extends TestBase {
 
     private static final String SAMPLE_NAME = "InvalidSubmissions";
+
+    @Test
+    @DisplayName("test that it works with a multiple roots")
+    void testMultipleRootsSubmission() throws ExitException {
+        List<String> submissions = new ArrayList<>();
+        submissions.add(getBasePath("basecode/A"));
+        submissions.add(getBasePath("basecode/B"));
+        submissions.add(getBasePath("basecode/base"));
+        JPlagResult result = runJPlag(submissions, it -> it);
+        List<String> results = result.getSubmissions().getSubmissions().stream().map(Submission::getName).sorted().toList();
+        assertEquals(results.get(0), "A" + File.separator + "TerrainType.java");
+        assertEquals(results.get(1), "B" + File.separator + "TerrainType.java");
+        assertEquals(results.get(2), "base" + File.separator + "TerrainType.java");
+    }
+
+    @Test
+    @DisplayName("test that it works with a single submission")
+    void testSingleSubmission() throws ExitException, FileNotFoundException {
+        String submission = "basecode/A";
+        Set<File> oldSubmissions = new HashSet<>();
+        oldSubmissions.add(new File(getBasePath("basecode/B")));
+        oldSubmissions.add(new File(getBasePath("basecode/base")));
+        JPlagResult result = runJPlag(submission, it -> it.withOldSubmissionDirectories(oldSubmissions));
+        assertEquals(result.getAllComparisons().size(), 2);
+    }
 
     /**
      * Tests if invalid submissions are correctly filtered, leading to no valid submissions. The debug options lead to the
