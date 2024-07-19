@@ -1,5 +1,5 @@
 <!--
-  Offers a unstyled scrollable container
+  Offers a un-styled scrollable container
 -->
 <template>
   <div class="overflow-y-auto print:overflow-y-visible">

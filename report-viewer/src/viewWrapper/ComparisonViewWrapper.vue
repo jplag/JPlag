@@ -43,7 +43,7 @@ const language: Ref<Language | null> = ref(null)
 const firstBaseCodeMatches: Ref<BaseCodeMatch[] | null> = ref(null)
 const secondBaseCodeMatches: Ref<BaseCodeMatch[] | null> = ref(null)
 
-// This eslint rule is disabled to allow the use of await in the setup function. Disabling this rule is safe, because the props are gathered from the url, so changing them would reload the pafe anyway.
+// This eslint rule is disabled to allow the use of await in the setup function. Disabling this rule is safe, because the props are gathered from the url, so changing them would reload the page anyway.
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const comparisonPromise = ComparisonFactory.getComparison(props.comparisonFileName)
   .then((comp) => {
@@ -59,7 +59,7 @@ OverviewFactory.getOverview()
     language.value = overview.language
   })
   .catch((error) => {
-    redirectOnError(error, 'Could not load coparison:\n')
+    redirectOnError(error, 'Could not load comparison:\n')
   })
 
 comparisonPromise

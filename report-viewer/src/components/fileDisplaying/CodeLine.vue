@@ -10,7 +10,7 @@
     <div
       v-for="(part, index) in textParts"
       :key="index"
-      class="print-excact h-full last:flex-1"
+      class="print-exact h-full last:flex-1"
       @click="matchSelected(part.match)"
       :style="{
         background:
@@ -21,7 +21,7 @@
     >
       <pre
         v-html="part.line"
-        class="code-font print-excact break-child !bg-transparent print:whitespace-pre-wrap"
+        class="code-font print-exact break-child !bg-transparent print:whitespace-pre-wrap"
       ></pre>
     </div>
   </div>

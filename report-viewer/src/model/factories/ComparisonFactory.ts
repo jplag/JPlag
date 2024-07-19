@@ -15,7 +15,7 @@ export class ComparisonFactory extends BaseFactory {
   }
 
   /**
-   * Creates a comparison object from a json object created by by JPlag
+   * Creates a comparison object from a json object created by JPlag
    * @param json the json object
    */
   private static async extractComparison(json: Record<string, unknown>): Promise<Comparison> {
