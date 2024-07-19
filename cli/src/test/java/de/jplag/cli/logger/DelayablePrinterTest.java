@@ -10,7 +10,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class DelayablePrinterTest {
-    private final static String TEST_MESSAGE = "Hello World";
+    private static final String TEST_MESSAGE = "Hello World";
 
     private static ByteArrayOutputStream outputStream;
 

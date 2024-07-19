@@ -35,7 +35,7 @@ public class DelayablePrinter {
      * Prints the given string to the terminal appending a line-break
      * @param output The string to print
      */
-    synchronized public void println(String output) {
+    public synchronized void println(String output) {
         this.outputQueue.offer(output);
         this.printQueue();
     }
@@ -43,14 +43,14 @@ public class DelayablePrinter {
     /**
      * Stops printing to the terminal until {@link #resume()} is called
      */
-    synchronized public void delay() {
+    public synchronized void delay() {
         this.isDelayed = true;
     }
 
     /**
      * Resumes printing if {@link #delay()} was called
      */
-    synchronized public void resume() {
+    public synchronized void resume() {
         this.isDelayed = false;
         this.printQueue();
     }
@@ -62,7 +62,7 @@ public class DelayablePrinter {
         this.targetStream = printStream;
     }
 
-    synchronized private void printQueue() {
+    private synchronized void printQueue() {
         if (!this.isDelayed) {
             while (!this.outputQueue.isEmpty()) {
                 this.targetStream.println(this.outputQueue.poll());
