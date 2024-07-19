@@ -30,6 +30,7 @@
             v-for="(_, index) in codeLines"
             :key="index"
             class="col-span-1 col-start-1 row-span-1 text-right"
+            ref="lineRefs"
             :style="{
               gridRowStart: index + 1
             }"
@@ -40,7 +41,6 @@
           <CodeLine
             v-for="(line, index) in codeLines"
             :key="index"
-            ref="lineRefs"
             :line="line.line"
             :lineNumber="index + 1"
             :matches="line.matches"
@@ -58,7 +58,7 @@
 
 <script setup lang="ts">
 import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
-import { ref, nextTick, type PropType, computed, type Ref } from 'vue'
+import { ref, type PropType, computed, type Ref } from 'vue'
 import Interactable from '../InteractableComponent.vue'
 import type { SubmissionFile } from '@/model/File'
 import { highlight } from '@/utils/CodeHighlighter'
@@ -94,7 +94,7 @@ const props = defineProps({
 const emit = defineEmits(['matchSelected'])
 
 const collapsed = ref(true)
-const lineRefs = ref<(typeof CodeLine)[]>([])
+const lineRefs = ref<HTMLElement[]>([])
 
 const codeLines: Ref<{ line: string; matches: MatchInSingleFile[] }[]> = computed(() =>
   highlight(props.file.data, props.highlightLanguage).map((line, index) => {
@@ -110,26 +110,25 @@ function matchSelected(match: Match) {
 }
 
 /**
- * Scrolls to the line number in the file.
- * @param lineNumber line number in the file
- */
-function scrollTo(lineNumber: number) {
-  collapsed.value = false
-  nextTick(function () {
-    lineRefs.value[lineNumber - 1].scrollTo()
-  })
-}
-
-/**
  * Collapses the container.
  */
 function collapse() {
   collapsed.value = true
 }
 
+function expand() {
+  console.log('expand')
+  collapsed.value = false
+}
+
+function getLineRect(lineNumber: number): DOMRect {
+  return lineRefs.value[lineNumber - 1].getBoundingClientRect()
+}
+
 defineExpose({
-  scrollTo,
-  collapse
+  collapse,
+  expand,
+  getLineRect
 })
 
 /**

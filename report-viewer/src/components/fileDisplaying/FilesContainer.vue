@@ -17,7 +17,7 @@
       >
     </div>
 
-    <ScrollableComponent class="flex-grow">
+    <ScrollableComponent class="flex-grow" ref="scrollContainer">
       <VueDraggableNext>
         <CodePanel
           v-for="(file, index) in files"
@@ -43,7 +43,7 @@ import Container from '../ContainerComponent.vue'
 import Button from '../ButtonComponent.vue'
 import ScrollableComponent from '../ScrollableComponent.vue'
 import { VueDraggableNext } from 'vue-draggable-next'
-import { computed, ref, type PropType, type Ref } from 'vue'
+import { computed, nextTick, ref, type PropType, type Ref } from 'vue'
 import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCompressAlt } from '@fortawesome/free-solid-svg-icons'
@@ -86,6 +86,7 @@ const props = defineProps({
 defineEmits(['matchSelected'])
 
 const codePanels: Ref<(typeof CodePanel)[]> = ref([])
+const scrollContainer: Ref<typeof ScrollableComponent | null> = ref(null)
 
 const tokenCount = computed(() => {
   return props.files.reduce((acc, file) => (file.tokenCount ?? 0) + acc - 1, 0)
@@ -99,7 +100,19 @@ const tokenCount = computed(() => {
 function scrollTo(file: string, line: number) {
   const fileIndex = Array.from(props.files).findIndex((f) => f.fileName === file)
   if (fileIndex !== -1) {
-    codePanels.value[fileIndex].scrollTo(line)
+    console.log(fileIndex)
+    codePanels.value[fileIndex].expand()
+    nextTick(() => {
+      if (!scrollContainer.value) {
+        console.log('null')
+        return
+      }
+      const childToScrollTo = codePanels.value[fileIndex].getLineRect(line) as DOMRect
+      const scrollBox = scrollContainer.value.getRoot() as HTMLElement
+      scrollBox.scrollTo({
+        top: childToScrollTo.top + scrollBox.scrollTop - (scrollBox.clientHeight * 2) / 3
+      })
+    })
   }
 }
 
