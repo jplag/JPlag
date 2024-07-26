@@ -52,7 +52,6 @@ public class IdleBar extends LogDelayingProgressBar {
 
     @Override
     public void dispose() {
-        super.dispose();
         this.running = false;
         try {
             this.runner.join();
@@ -61,6 +60,7 @@ public class IdleBar extends LogDelayingProgressBar {
         }
         this.output.print('\r');
         this.output.println(this.text + ": complete");
+        super.dispose();
     }
 
     private void run() {

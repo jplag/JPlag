@@ -18,7 +18,7 @@ public class TongfeiProgressBar extends LogDelayingProgressBar {
 
     @Override
     public void dispose() {
-        super.dispose();
         this.progressBar.close();
+        super.dispose();
     }
 }
