@@ -16,7 +16,7 @@
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore --max-warnings 0",
     "format": "prettier --write src/",
-    "prepare": "cd .. && python gitHooks/installHooks.py"
+    "prepare": "git config --local core.hooksPath gitHooks/hooks"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.6.0",

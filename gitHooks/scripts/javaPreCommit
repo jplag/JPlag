@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if ! command -v <the_command> &> /dev/null #checks if maven is installed
+then
+    exit 0
+fi
+
 #prevents the shell from aborting if maven returns a non zero exit code
 set +e
 echo Checking spotless
