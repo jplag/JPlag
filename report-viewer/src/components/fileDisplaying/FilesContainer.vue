@@ -39,13 +39,14 @@ import Container from '../ContainerComponent.vue'
 import Button from '../ButtonComponent.vue'
 import ScrollableComponent from '../ScrollableComponent.vue'
 import { VueDraggableNext } from 'vue-draggable-next'
-import { computed, ref, type ComputedRef, type PropType, type Ref } from 'vue'
+import { computed, ref, type PropType, type Ref } from 'vue'
 import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCompressAlt } from '@fortawesome/free-solid-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import type { Language } from '@/model/Language'
 import { FileSortingOptions } from '@/model/ui/FileSortingOptions'
+import { store } from '@/stores/store'
 
 library.add(faCompressAlt)
 
@@ -77,14 +78,6 @@ const props = defineProps({
   highlightLanguage: {
     type: String as PropType<Language>,
     required: true
-  },
-  /**
-   * Sorting to use
-   */
-  sorting: {
-    type: Number as PropType<FileSortingOptions>,
-    required: false,
-    default: FileSortingOptions.ALPHABETICAL
   }
 })
 
@@ -100,10 +93,17 @@ const matchesPerFile = computed(() => {
   return matches
 })
 
-const sortedFiles: ComputedRef<SubmissionFile[]> = computed(() => {
-  switch (props.sorting) {
-    case FileSortingOptions.ALPHABETICAL:
-      return Array.from(props.files).sort((a, b) => a.fileName.localeCompare(b.fileName))
+const sortedFiles: Ref<SubmissionFile[]> = ref([])
+sortFiles(store().uiState.fileSorting ?? FileSortingOptions.ALPHABETICAL)
+
+function sortFiles(fileSorting: FileSortingOptions) {
+  switch (fileSorting) {
+    case FileSortingOptions.ALPHABETICAL: {
+      sortedFiles.value = Array.from(props.files).sort((a, b) =>
+        a.fileName.localeCompare(b.fileName)
+      )
+      break
+    }
 
     case FileSortingOptions.MATCH_SIZE: {
       const largestMatch: Record<string, number> = {}
@@ -112,9 +112,10 @@ const sortedFiles: ComputedRef<SubmissionFile[]> = computed(() => {
           ...matchesPerFile.value[file.fileName].map((match) => match.match.tokens)
         )
       }
-      return Array.from(props.files).sort(
+      sortedFiles.value = Array.from(props.files).sort(
         (a, b) => largestMatch[b.fileName] - largestMatch[a.fileName]
       )
+      break
     }
 
     case FileSortingOptions.MATCH_COUNT: {
@@ -122,7 +123,10 @@ const sortedFiles: ComputedRef<SubmissionFile[]> = computed(() => {
       for (const file of props.files) {
         matchCount[file.fileName] = matchesPerFile.value[file.fileName].length
       }
-      return Array.from(props.files).sort((a, b) => matchCount[b.fileName] - matchCount[a.fileName])
+      sortedFiles.value = Array.from(props.files).sort(
+        (a, b) => matchCount[b.fileName] - matchCount[a.fileName]
+      )
+      break
     }
 
     case FileSortingOptions.MATCH_COVERAGE: {
@@ -133,19 +137,13 @@ const sortedFiles: ComputedRef<SubmissionFile[]> = computed(() => {
         matchCoverage[file.fileName] =
           totalTokens / (file.tokenCount > 0 ? file.tokenCount : Infinity)
       }
-      return Array.from(props.files).sort(
+      sortedFiles.value = Array.from(props.files).sort(
         (a, b) => matchCoverage[b.fileName] - matchCoverage[a.fileName]
       )
-    }
-
-    default: {
-      if (sortedFiles.value && sortedFiles.value.length > 0) {
-        return sortedFiles.value
-      }
-      return props.files
+      break
     }
   }
-})
+}
 
 const shouldEmitFileMoving = ref(true)
 
@@ -182,6 +180,7 @@ function collapseAll() {
 }
 
 defineExpose({
-  scrollTo
+  scrollTo,
+  sortFiles
 })
 </script>

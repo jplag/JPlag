@@ -77,6 +77,7 @@
           title="File Sorting:"
           :labels="sortingOptions.map((o) => fileSortingTooltips[o])"
           @selectionChanged="(index: number) => changeFileSorting(index)"
+          :default-selected="sortingOptions.indexOf(store().uiState.fileSorting)"
         />
       </Container>
     </div>
@@ -90,7 +91,6 @@
         :matches="comparison.matchesInFirstSubmission"
         :file-owner-display-name="store().getDisplayName(comparison.firstSubmissionId)"
         :highlight-language="language"
-        :sorting="store().uiState.fileSorting"
         @match-selected="showMatchInSecond"
         @files-moved="filesMoved()"
         class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
@@ -101,7 +101,6 @@
         :matches="comparison.matchesInSecondSubmissions"
         :file-owner-display-name="store().getDisplayName(comparison.secondSubmissionId)"
         :highlight-language="language"
-        :sorting="store().uiState.fileSorting"
         @match-selected="showMatchInFirst"
         @files-moved="filesMoved()"
         class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
@@ -191,9 +190,13 @@ const movedAfterSorting = ref(false)
 const sortingOptionSelector: Ref<typeof OptionsSelectorComponent | null> = ref(null)
 
 function changeFileSorting(index: number) {
-  console.log('Test')
   movedAfterSorting.value = false
+  if (index < 0) {
+    return
+  }
   store().uiState.fileSorting = sortingOptions[index]
+  panel1.value?.sortFiles(store().uiState.fileSorting)
+  panel2.value?.sortFiles(store().uiState.fileSorting)
 }
 
 function filesMoved() {
