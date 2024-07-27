@@ -25,6 +25,7 @@ import de.jplag.Language;
 import de.jplag.Submission;
 import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.FilePathUtil;
+import de.jplag.reporting.jsonfactory.BaseCodeReportWriter;
 import de.jplag.reporting.jsonfactory.ComparisonReportWriter;
 import de.jplag.reporting.reportobject.mapper.ClusteringResultMapper;
 import de.jplag.reporting.reportobject.mapper.MetricMapper;
@@ -92,6 +93,7 @@ public class ReportObjectFactory {
         writeSubmissionIndexFile(result);
         writeReadMeFile();
         writeOptionsFiles(result.getOptions());
+        writeBaseCodeReport(result);
 
         this.resultWriter.close();
     }
@@ -126,6 +128,11 @@ public class ReportObjectFactory {
         submissionNameToNameToComparisonFileName = comparisonReportWriter.writeComparisonReports(result);
     }
 
+    private void writeBaseCodeReport(JPlagResult result) {
+        BaseCodeReportWriter baseCodeReportWriter = new BaseCodeReportWriter(submissionToIdFunction, this.resultWriter);
+        baseCodeReportWriter.writeBaseCodeReport(result);
+    }
+
     private void writeOverview(JPlagResult result) {
         List<File> folders = new ArrayList<>();
         folders.addAll(result.getOptions().submissionDirectories());
@@ -149,10 +156,10 @@ public class ReportObjectFactory {
                 List.of(), // failedSubmissionNames
                 result.getOptions().excludedFiles(), // excludedFiles
                 result.getOptions().minimumTokenMatch(), // matchSensitivity
-                getDate(),// dateOfExecution
+                getDate(), // dateOfExecution
                 result.getDuration(), // executionTime
                 MetricMapper.getDistributions(result), // distribution
-                new MetricMapper(submissionToIdFunction).getTopComparisons(result),// topComparisons
+                new MetricMapper(submissionToIdFunction).getTopComparisons(result), // topComparisons
                 clusteringResultMapper.map(result), // clusters
                 totalComparisons); // totalComparisons
 

@@ -64,7 +64,7 @@ const tooltipPosition = computed(() => {
   if (!contentDiv || !tooltipDiv) {
     return style
   }
-  // zeros the tooltip on the topleft of the content
+  // zeros the tooltip on the top-left of the content
   let top = -contentDiv.offsetHeight - props.scrollOffsetY
   let left =
     (props.toolTipContainerWillBeCentered ? -contentDiv.offsetWidth / 2 : 0) - props.scrollOffsetX

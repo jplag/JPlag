@@ -1,5 +1,6 @@
 package de.jplag.cli.picocli;
 
+import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_COMMAND_LIST_HEADING;
 import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_DESCRIPTION_HEADING;
 import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_OPTION_LIST;
 import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_SYNOPSIS;
@@ -23,7 +24,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.ParseResult;
 
 /**
- * Handles the parsing of the command line arguments
+ * Handles the parsing of the command line arguments.
  */
 public class CliInputHandler {
     private static final String OPTION_LIST_HEADING = "Parameter descriptions: ";
@@ -70,6 +71,7 @@ public class CliInputHandler {
             }
             return it;
         }).collect(Collectors.joining(System.lineSeparator())) + System.lineSeparator());
+        cli.getHelpSectionMap().put(SECTION_KEY_COMMAND_LIST_HEADING, help -> "Languages:" + System.lineSeparator());
 
         buildSubcommands().forEach(cli::addSubcommand);
 

@@ -3,6 +3,7 @@ package de.jplag.clustering;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,9 +42,8 @@ public class ClusteringFactory {
         if (!options.enabled()) {
             logger.warn(CLUSTERING_DISABLED);
             return Collections.emptyList();
-        } else {
-            logger.info(CLUSTERING_PARAMETERS, options.algorithm(), options.preprocessor());
         }
+        logger.info(CLUSTERING_PARAMETERS, options.algorithm(), options.preprocessor());
 
         ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.CLUSTERING, 0);
 
@@ -80,7 +80,7 @@ public class ClusteringFactory {
 
     private static void logClusters(ClusteringResult<Submission> result) {
         var clusters = new ArrayList<>(result.getClusters());
-        clusters.sort((first, second) -> Double.compare(second.getAverageSimilarity(), first.getAverageSimilarity()));
+        clusters.sort(Comparator.comparing(Cluster<Submission>::getAverageSimilarity).reversed());
         logger.trace(CLUSTERING_RESULT, clusters.size());
         clusters.forEach(ClusteringFactory::logCluster);
     }

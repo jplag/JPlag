@@ -78,35 +78,7 @@
         class="flex max-h-0 min-h-full flex-1 flex-col print:max-h-none print:min-h-fit print:flex-none"
       >
         <h2>Distribution of Comparisons:</h2>
-        <DistributionDiagram
-          :distribution="overview.distribution[store().uiState.distributionChartConfig.metric]"
-          :x-scale="store().uiState.distributionChartConfig.xScale"
-          class="h-2/3 w-full print:h-fit print:w-fit"
-        />
-        <div class="flex flex-grow flex-col space-y-1 print:grow-0">
-          <h3 class="text-lg underline">Options:</h3>
-          <ScrollableComponent class="h-fit flex-grow">
-            <MetricSelector
-              class="mt-2"
-              title="Metric:"
-              :defaultSelected="store().uiState.distributionChartConfig.metric"
-              @selection-changed="
-                (metric: MetricType) => (store().uiState.distributionChartConfig.metric = metric)
-              "
-            />
-            <OptionsSelector
-              class="mt-2"
-              title="Scale x-Axis:"
-              :labels="['Linear', 'Logarithmic']"
-              :defaultSelected="store().uiState.distributionChartConfig.xScale == 'linear' ? 0 : 1"
-              @selection-changed="
-                (i: number) =>
-                  (store().uiState.distributionChartConfig.xScale =
-                    i == 0 ? 'linear' : 'logarithmic')
-              "
-            />
-          </ScrollableComponent>
-        </div>
+        <DistributionDiagram :distributions="overview.distribution" class="flex-grow" />
       </Container>
 
       <Container class="flex max-h-0 min-h-full flex-1 flex-col print:hidden">
@@ -130,17 +102,13 @@
 <script setup lang="ts">
 import { computed, type PropType, onErrorCaptured } from 'vue'
 import { redirectOnError, router } from '@/router'
-import DistributionDiagram from '@/components/DistributionDiagram.vue'
+import DistributionDiagram from '@/components/distributionDiagram/DistributionDiagram.vue'
 import ComparisonsTable from '@/components/ComparisonsTable.vue'
 import { store } from '@/stores/store'
 import Container from '@/components/ContainerComponent.vue'
 import Button from '@/components/ButtonComponent.vue'
-import ScrollableComponent from '@/components/ScrollableComponent.vue'
-import { MetricType } from '@/model/MetricType'
 import TextInformation from '@/components/TextInformation.vue'
-import MetricSelector from '@/components/optionsSelectors/MetricSelector.vue'
 import ToolTipComponent from '@/components/ToolTipComponent.vue'
-import OptionsSelector from '@/components/optionsSelectors/OptionsSelectorComponent.vue'
 import { Overview } from '@/model/Overview'
 
 const props = defineProps({

@@ -28,7 +28,6 @@
             >{{ (comparison.similarities[MetricType.AVERAGE] * 100).toFixed(2) }}%</TextInformation
           >
           <TextInformation
-            v-if="comparison.firstSimilarity"
             :label="`Similarity ${store().getDisplayName(comparison.firstSubmissionId)}`"
             tooltip-side="right"
           >
@@ -48,7 +47,6 @@
             >
           </TextInformation>
           <TextInformation
-            v-if="comparison.secondSimilarity"
             :label="`Similarity ${store().getDisplayName(comparison.secondSubmissionId)}`"
             tooltip-side="right"
             ><template #default>{{ (comparison.secondSimilarity * 100).toFixed(2) }}%</template>
@@ -71,6 +69,8 @@
           :id1="firstId"
           :id2="secondId"
           :matches="comparison.allMatches"
+          :basecode-in-first="firstBaseCodeMatches"
+          :basecode-in-second="secondBaseCodeMatches"
           @match-selected="showMatch"
         />
       </Container>
@@ -85,6 +85,7 @@
         :matches="comparison.matchesInFirstSubmission"
         :file-owner-display-name="store().getDisplayName(comparison.firstSubmissionId)"
         :highlight-language="language"
+        :base-code-matches="firstBaseCodeMatches"
         @match-selected="showMatchInSecond"
         class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
       />
@@ -94,6 +95,7 @@
         :matches="comparison.matchesInSecondSubmissions"
         :file-owner-display-name="store().getDisplayName(comparison.secondSubmissionId)"
         :highlight-language="language"
+        :base-code-matches="secondBaseCodeMatches"
         @match-selected="showMatchInFirst"
         class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
       />
@@ -120,6 +122,7 @@ import { MetricType } from '@/model/MetricType'
 import { Comparison } from '@/model/Comparison'
 import { redirectOnError } from '@/router'
 import ToolTipComponent from '@/components/ToolTipComponent.vue'
+import type { BaseCodeMatch } from '@/model/BaseCodeReport'
 
 library.add(faPrint)
 
@@ -130,6 +133,14 @@ const props = defineProps({
   },
   language: {
     type: String as PropType<Language>,
+    required: true
+  },
+  firstBaseCodeMatches: {
+    type: Array as PropType<BaseCodeMatch[]>,
+    required: true
+  },
+  secondBaseCodeMatches: {
+    type: Array as PropType<BaseCodeMatch[]>,
     required: true
   }
 })
@@ -143,18 +154,16 @@ const panel1: Ref<typeof FilesContainer | null> = ref(null)
 const panel2: Ref<typeof FilesContainer | null> = ref(null)
 
 /**
- * Shows a match in the first files container when clicked on a line in the second files container.
- * @param file (file name)
- * @param line (line number)
+ * Shows a match in the first files container when clicked on a line in the second file container.
+ * @param match The match to scroll to
  */
 function showMatchInFirst(match: Match) {
   panel1.value?.scrollTo(match.firstFile, match.startInFirst.line)
 }
 
 /**
- * Shows a match in the second files container, when clicked on a line in the second files container.
- * @param file (file name)
- * @param line (line number)
+ * Shows a match in the second files container, when clicked on a line in the second file container.
+ * @param match The match to scroll to
  */
 function showMatchInSecond(match: Match) {
   panel2.value?.scrollTo(match.secondFile, match.startInSecond.line)
@@ -162,7 +171,6 @@ function showMatchInSecond(match: Match) {
 
 /**
  * Shows a match in the first and second files container.
- * @param e The click event
  * @param match The match to show
  */
 function showMatch(match: Match) {
@@ -175,7 +183,7 @@ function print() {
 }
 
 // This code is responsible for changing the theme of the highlighted code depending on light/dark mode
-// Changing the used style itsself is the desired solution (https://github.com/highlightjs/highlight.js/issues/2115)
+// Changing the used style itself is the desired solution (https://github.com/highlightjs/highlight.js/issues/2115)
 const styleholder: Ref<Node | null> = ref(null)
 
 onMounted(() => {

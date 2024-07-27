@@ -5,6 +5,7 @@ import { getMatchColorCount } from '@/utils/ColorUtils'
 import slash from 'slash'
 import { BaseFactory } from './BaseFactory'
 import { MetricType } from '../MetricType'
+import type { SubmissionFile } from '../File'
 
 /**
  * Factory class for creating Comparison objects
@@ -15,7 +16,7 @@ export class ComparisonFactory extends BaseFactory {
   }
 
   /**
-   * Creates a comparison object from a json object created by by JPlag
+   * Creates a comparison object from a json object created by JPlag
    * @param json the json object
    */
   private static async extractComparison(json: Record<string, unknown>): Promise<Comparison> {
@@ -30,62 +31,44 @@ export class ComparisonFactory extends BaseFactory {
     const filesOfFirstSubmission = store().filesOfSubmission(firstSubmissionId)
     const filesOfSecondSubmission = store().filesOfSubmission(secondSubmissionId)
 
-    const matches = json.matches as Array<Record<string, unknown>>
+    const matches = (json.matches as Array<Match>).map((match) => {
+      return { ...match, firstFile: slash(match.firstFile), secondFile: slash(match.secondFile) }
+    })
     matches.forEach((match) => {
-      const fileOfFirst = store().getSubmissionFile(firstSubmissionId, slash(match.file1 as string))
+      const fileOfFirst = store().getSubmissionFile(
+        firstSubmissionId,
+        slash(match.firstFile as string)
+      )
       const fileOfSecond = store().getSubmissionFile(
         secondSubmissionId,
-        slash(match.file2 as string)
+        slash(match.secondFile as string)
       )
 
       if (fileOfFirst == undefined || fileOfSecond == undefined) {
         throw new Error(
-          `The report viewer expected to find the file ${fileOfFirst == undefined ? match.file1 : match.file2} in the submissions, but did not find it.`
+          `The report viewer expected to find the file ${fileOfFirst == undefined ? match.firstFile : match.secondFile} in the submissions, but did not find it.`
         )
       }
 
-      fileOfFirst.matchedTokenCount += match.tokens as number
-      fileOfSecond.matchedTokenCount += match.tokens as number
+      fileOfFirst.matchedTokenCount += match.tokens
+      fileOfSecond.matchedTokenCount += match.tokens
     })
-
-    const unColoredMatches = matches.map((match) => this.getMatch(match))
 
     return new Comparison(
       firstSubmissionId,
       secondSubmissionId,
-      this.extractSimilarities(json),
-      filesOfFirstSubmission,
-      filesOfSecondSubmission,
-      this.colorMatches(unColoredMatches),
-      json.first_similarity as number | undefined,
-      json.second_similarity as number | undefined
+      this.extractSimilarities(json.similarities as Record<string, number>),
+      this.getFilesWithDisplayNames(filesOfFirstSubmission),
+      this.getFilesWithDisplayNames(filesOfSecondSubmission),
+      this.colorMatches(matches),
+      json.first_similarity as number,
+      json.second_similarity as number
     )
   }
 
-  private static extractSimilarities(json: Record<string, unknown>): Record<MetricType, number> {
-    if (json.similarities) {
-      return this.extractSimilaritiesFromMap(json.similarities as Record<string, number>)
-    } else if (json.similarity) {
-      return this.extractSimilaritiesFromSingleValue(json.similarity as number)
-    }
-    throw new Error('No similarities found in comparison file')
-  }
-
-  /** @deprecated since 5.0.0. Use the new format with {@link extractSimilaritiesFromMap} */
-  private static extractSimilaritiesFromSingleValue(
-    avgSimilarity: number
-  ): Record<MetricType, number> {
-    return {
-      [MetricType.AVERAGE]: avgSimilarity,
-      [MetricType.MAXIMUM]: Number.NaN
-    }
-  }
-
-  private static extractSimilaritiesFromMap(
-    similarityMap: Record<string, number>
-  ): Record<MetricType, number> {
+  private static extractSimilarities(json: Record<string, number>): Record<MetricType, number> {
     const similarities = {} as Record<MetricType, number>
-    for (const [key, value] of Object.entries(similarityMap)) {
+    for (const [key, value] of Object.entries(json)) {
       similarities[key as MetricType] = value
     }
     return similarities
@@ -109,7 +92,8 @@ export class ComparisonFactory extends BaseFactory {
           submissionId: submissionId,
           data: await this.getSubmissionFileContent(submissionId, slash(filePath)),
           tokenCount: fileList[filePath].token_count,
-          matchedTokenCount: 0
+          matchedTokenCount: 0,
+          displayFileName: slash(filePath)
         })
       }
     } catch (e) {
@@ -128,34 +112,6 @@ export class ComparisonFactory extends BaseFactory {
       )
     }
     return file.data
-  }
-
-  private static getMatch(match: Record<string, unknown>): Match {
-    return {
-      firstFile: slash(match.file1 as string),
-      secondFile: slash(match.file2 as string),
-      startInFirst: {
-        line: match.start1 as number,
-        column: ((match['start1_col'] as number) || 1) - 1,
-        tokenListIndex: (match.startToken1 as number) ?? NaN
-      },
-      endInFirst: {
-        line: match.end1 as number,
-        column: ((match['end1_col'] as number) || Infinity) - 1,
-        tokenListIndex: (match.endToken1 as number) ?? NaN
-      },
-      startInSecond: {
-        line: match.start2 as number,
-        column: ((match['start2_col'] as number) || 1) - 1,
-        tokenListIndex: (match.startToken2 as number) ?? NaN
-      },
-      endInSecond: {
-        line: match.end2 as number,
-        column: ((match['end2_col'] as number) || Infinity) - 1,
-        tokenListIndex: (match.endToken2 as number) ?? NaN
-      },
-      tokens: match.tokens as number
-    }
   }
 
   private static colorMatches(matches: Match[]): Match[] {
@@ -197,5 +153,28 @@ export class ComparisonFactory extends BaseFactory {
       currentColorIndex = (currentColorIndex + 1) % maxColorCount
     }
     return sortedSize
+  }
+
+  private static getFilesWithDisplayNames(files: SubmissionFile[]): SubmissionFile[] {
+    if (files.length == 1) {
+      return files
+    }
+    let longestPrefix = files[0].fileName
+    for (let i = 1; i < files.length; i++) {
+      if (longestPrefix == '') {
+        break
+      }
+
+      while (!files[i].fileName.startsWith(longestPrefix)) {
+        longestPrefix = longestPrefix.substring(0, longestPrefix.length - 1)
+      }
+    }
+
+    return files.map((f) => {
+      return {
+        ...f,
+        displayFileName: f.fileName.substring(longestPrefix.length)
+      }
+    })
   }
 }

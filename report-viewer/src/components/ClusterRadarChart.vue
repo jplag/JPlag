@@ -132,7 +132,7 @@ const radarChartOptions = computed(() => {
   }
 })
 
-const chartData: Ref<ChartData<'radar', (number | null)[], unknown>> = computed(() => {
+const chartData: Ref<ChartData<'radar', (number | null)[]>> = computed(() => {
   return {
     labels: labels.value,
     datasets: [

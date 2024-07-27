@@ -1,7 +1,7 @@
 <template>
   <div :class="{ dark: store().uiState.useDarkMode }">
     <div
-      class="max-w-screen max-h-fit min-h-screen bg-backgorund-light text-black dark:bg-backgorund-dark dark:text-amber-50"
+      class="max-w-screen max-h-fit min-h-screen bg-background-light text-black dark:bg-background-dark dark:text-amber-50"
     >
       <RouterView class="max-h-screen overflow-hidden print:max-h-none print:overflow-visible" />
 

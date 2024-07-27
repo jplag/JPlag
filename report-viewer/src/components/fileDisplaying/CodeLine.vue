@@ -10,7 +10,7 @@
     <div
       v-for="(part, index) in textParts"
       :key="index"
-      class="print-excact h-full last:flex-1"
+      class="print-exact h-full last:flex-1"
       @click="matchSelected(part.match)"
       :style="{
         background:
@@ -21,7 +21,7 @@
     >
       <pre
         v-html="part.line"
-        class="code-font print-excact break-child !bg-transparent print:whitespace-pre-wrap"
+        class="code-font print-exact break-child !bg-transparent print:whitespace-pre-wrap"
       ></pre>
     </div>
   </div>
@@ -56,14 +56,6 @@ function matchSelected(match?: MatchInSingleFile) {
 }
 
 const lineRef = ref<HTMLElement | null>(null)
-
-function scrollTo() {
-  if (lineRef.value) {
-    lineRef.value.scrollIntoView({ block: 'center' })
-  }
-}
-
-defineExpose({ scrollTo })
 
 interface TextPart {
   line: string
@@ -142,7 +134,7 @@ function getNextLinePartTillColumn(endCol: number) {
       // display tabs properly
       part += '    '
       lineIndex.value++
-      colIndex.value += 8
+      colIndex.value += 1
     } else if (props.line[lineIndex.value] == '&') {
       // html escape characters for e.g. <,>,&
       while (props.line[lineIndex.value] != ';') {

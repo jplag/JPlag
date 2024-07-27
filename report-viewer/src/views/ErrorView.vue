@@ -60,7 +60,7 @@ defineProps({
 onErrorCaptured((error) => {
   console.error(error)
   alert(
-    'An error occured that could not be handeled. Please check the console for more information.'
+    'An error occurred that could not be handled. Please check the console for more information.'
   )
   return false
 })

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import de.jplag.JPlag;
 import de.jplag.JPlagResult;
 import de.jplag.cli.logger.CliProgressBarProvider;
+import de.jplag.cli.logger.CollectedLogger;
 import de.jplag.cli.logger.CollectedLoggerFactory;
 import de.jplag.cli.picocli.CliInputHandler;
 import de.jplag.exceptions.ExitException;
@@ -42,7 +43,7 @@ public final class CLI {
     }
 
     /**
-     * Executes the cli
+     * Executes the cli.
      * @throws ExitException If anything on the side of JPlag goes wrong
      * @throws IOException If any files did not work
      */
@@ -50,6 +51,7 @@ public final class CLI {
         logger.debug("Your version of JPlag is {}", JPlag.JPLAG_VERSION);
 
         if (!this.inputHandler.parse()) {
+            CollectedLogger.setLogLevel(this.inputHandler.getCliOptions().advanced.logLevel);
             ProgressBarLogger.setProgressBarProvider(new CliProgressBarProvider());
 
             switch (this.inputHandler.getCliOptions().mode) {
@@ -84,7 +86,7 @@ public final class CLI {
     }
 
     /**
-     * Runs JPlag and returns the file the result has been written to
+     * Runs JPlag and returns the file the result has been written to.
      * @return The file containing the result
      * @throws ExitException If JPlag threw an exception
      * @throws FileNotFoundException If the file could not be written
@@ -103,7 +105,7 @@ public final class CLI {
     }
 
     /**
-     * Runs the report viewer using the given file as the default result.zip
+     * Runs the report viewer using the given file as the default result.zip.
      * @param zipFile The zip file to pass to the viewer. Can be null, if no result should be opened by default
      * @throws IOException If something went wrong with the internal server
      */

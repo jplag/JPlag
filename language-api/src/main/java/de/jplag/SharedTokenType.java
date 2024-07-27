@@ -11,13 +11,13 @@ public enum SharedTokenType implements TokenType {
 
     private final String description;
 
+    SharedTokenType(String description) {
+        this.description = description;
+    }
+
     @Override
     public String getDescription() {
         return description;
-    }
-
-    SharedTokenType(String description) {
-        this.description = description;
     }
 
     @Override

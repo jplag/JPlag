@@ -13,7 +13,7 @@ import de.jplag.csv.comparisons.CsvComparisonOutput;
 import de.jplag.reporting.reportobject.ReportObjectFactory;
 
 /**
- * Manages the creation of output files
+ * Manages the creation of output files.
  */
 public final class OutputFileGenerator {
     private static final Logger logger = LoggerFactory.getLogger(OutputFileGenerator.class);
@@ -40,7 +40,7 @@ public final class OutputFileGenerator {
     }
 
     /**
-     * Generates the JPLag result zip
+     * Generates the JPLag result zip.
      * @param result The JPlag result
      * @param outputFile The output file
      * @throws FileNotFoundException If the file cannot be written

@@ -43,7 +43,7 @@ public abstract class AbstractAntlrParserAdapter<T extends Parser> extends Abstr
     }
 
     /**
-     * Parsers the set of files
+     * Parsers the set of files.
      * @param files The files
      * @return The extracted tokens
      * @throws ParsingException If anything goes wrong
@@ -62,6 +62,8 @@ public abstract class AbstractAntlrParserAdapter<T extends Parser> extends Abstr
             Lexer lexer = this.createLexer(CharStreams.fromReader(reader));
             CommonTokenStream tokenStream = new CommonTokenStream(lexer);
             T parser = this.createParser(tokenStream);
+            parser.removeErrorListeners();
+            parser.addErrorListener(new AntlrLoggerErrorListener());
             ParserRuleContext entryContext = this.getEntryContext(parser);
             ParseTreeWalker treeWalker = new ParseTreeWalker();
             InternalListener listener = new InternalListener(this.getListener(), collector);
