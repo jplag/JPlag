@@ -14,15 +14,7 @@
           :icon="store().uiState.useDarkMode ? ['fas', 'sun'] : ['fas', 'moon']"
         />
       </Button>
-      <ToastComponent
-        v-if="
-          !isDemo &&
-          !newestVersion.isInvalid() &&
-          !reportViewerVersion.isDevVersion() &&
-          newestVersion.compareTo(reportViewerVersion) > 0
-        "
-        :time-to-live="10000"
-      >
+      <ToastComponent v-if="showToast" :time-to-live="10000">
         You are using an outdated version of the JPlag Report Viewer ({{
           reportViewerVersion.toString()
         }}).<br />
@@ -44,13 +36,31 @@ import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons'
 import { store } from './stores/store'
 import ToastComponent from './components/ToastComponent.vue'
 import { Version, reportViewerVersion } from './model/Version'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 library.add(faMoon)
 library.add(faSun)
 
 const newestVersion = ref(new Version(-1, -1, -1))
 const isDemo = import.meta.env.MODE == 'demo'
+const hasShownToast = ref(sessionStorage.getItem('hasShownToast') == 'true')
+
+const showToast = computed(() => {
+  const value =
+    !isDemo &&
+    !newestVersion.value.isInvalid() &&
+    !reportViewerVersion.isDevVersion() &&
+    newestVersion.value.compareTo(reportViewerVersion) > 0 &&
+    !hasShownToast.value
+
+  if (value) {
+    sessionStorage.setItem('hasShownToast', 'true')
+  } else {
+    sessionStorage.removeItem('hasShownToast')
+  }
+
+  return value
+})
 
 fetch('https://api.github.com/repos/jplag/JPlag/releases/latest')
   .then((response) => response.json())
