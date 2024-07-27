@@ -1,17 +1,22 @@
 <template>
   <div
     :class="{
-      'absolute bottom-1 left-5 text-xs text-black dark:text-white print:hidden': overrideStyle
+      'absolute bottom-1 left-5 space-x-2 text-xs text-black dark:text-white print:hidden':
+        overrideStyle
     }"
   >
     <span
       v-if="!reportViewerVersion.isDevVersion() && !reportViewerVersion.isInvalid() && showVersion"
       >JPlag v{{ reportViewerVersion.toString() }}</span
     >
-    JPlag is open source. Bug reports and feature requests can be submitted on
-    <a href="https://github.com/jplag/JPlag/issues" class="text-link-dark underline dark:text-link"
-      ><FontAwesomeIcon :icon="faGithub" /> GitHub</a
-    >
+    <span>
+      JPlag is open source. Bug reports and feature requests can be submitted on
+      <a
+        href="https://github.com/jplag/JPlag/issues"
+        class="text-link-dark underline dark:text-link"
+        ><FontAwesomeIcon :icon="faGithub" /> GitHub</a
+      >
+    </span>
   </div>
 </template>
 

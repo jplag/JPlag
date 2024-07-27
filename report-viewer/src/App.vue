@@ -14,6 +14,23 @@
           :icon="store().uiState.useDarkMode ? ['fas', 'sun'] : ['fas', 'moon']"
         />
       </Button>
+      <ToastComponent
+        v-if="
+          !isDemo &&
+          !newestVersion.isInvalid() &&
+          !reportViewerVersion.isDevVersion() &&
+          newestVersion.compareTo(reportViewerVersion) > 0
+        "
+        :time-to-live="10000"
+      >
+        You are using an outdated version of the JPlag Report Viewer ({{
+          reportViewerVersion.toString()
+        }}).<br />
+        Version {{ newestVersion.toString() }} is available on
+        <a href="https://github.com/jplag/JPlag/releases/latest" class="text-link underline"
+          >GitHub</a
+        >.
+      </ToastComponent>
     </div>
   </div>
 </template>
@@ -25,7 +42,29 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons'
 import { store } from './stores/store'
+import ToastComponent from './components/ToastComponent.vue'
+import { Version, reportViewerVersion } from './model/Version'
+import { ref } from 'vue'
 
 library.add(faMoon)
 library.add(faSun)
+
+const newestVersion = ref(new Version(-1, -1, -1))
+const isDemo = import.meta.env.MODE == 'demo'
+
+fetch('https://api.github.com/repos/jplag/JPlag/releases/latest')
+  .then((response) => response.json())
+  .then((data) => {
+    const versionString = data.tag_name
+    // remove the 'v' from the version string and split it into an array
+    const versionArray = versionString.substring(1).split('.')
+    newestVersion.value = new Version(
+      parseInt(versionArray[0]),
+      parseInt(versionArray[1]),
+      parseInt(versionArray[2])
+    )
+  })
+  .catch(() => {
+    newestVersion.value = new Version(-1, -1, -1)
+  })
 </script>
