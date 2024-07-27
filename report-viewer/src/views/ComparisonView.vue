@@ -69,6 +69,8 @@
           :id1="firstId"
           :id2="secondId"
           :matches="comparison.allMatches"
+          :basecode-in-first="firstBaseCodeMatches"
+          :basecode-in-second="secondBaseCodeMatches"
           @match-selected="showMatch"
         />
         <OptionsSelectorComponent
@@ -91,6 +93,7 @@
         :matches="comparison.matchesInFirstSubmission"
         :file-owner-display-name="store().getDisplayName(comparison.firstSubmissionId)"
         :highlight-language="language"
+        :base-code-matches="firstBaseCodeMatches"
         @match-selected="showMatchInSecond"
         @files-moved="filesMoved()"
         class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
@@ -101,6 +104,7 @@
         :matches="comparison.matchesInSecondSubmissions"
         :file-owner-display-name="store().getDisplayName(comparison.secondSubmissionId)"
         :highlight-language="language"
+        :base-code-matches="secondBaseCodeMatches"
         @match-selected="showMatchInFirst"
         @files-moved="filesMoved()"
         class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
@@ -130,6 +134,7 @@ import { redirectOnError } from '@/router'
 import ToolTipComponent from '@/components/ToolTipComponent.vue'
 import { FileSortingOptions, fileSortingTooltips } from '@/model/ui/FileSortingOptions'
 import OptionsSelectorComponent from '@/components/optionsSelectors/OptionsSelectorComponent.vue'
+import type { BaseCodeMatch } from '@/model/BaseCodeReport'
 
 library.add(faPrint)
 
@@ -140,6 +145,14 @@ const props = defineProps({
   },
   language: {
     type: String as PropType<Language>,
+    required: true
+  },
+  firstBaseCodeMatches: {
+    type: Array as PropType<BaseCodeMatch[]>,
+    required: true
+  },
+  secondBaseCodeMatches: {
+    type: Array as PropType<BaseCodeMatch[]>,
     required: true
   }
 })
@@ -153,18 +166,16 @@ const panel1: Ref<typeof FilesContainer | null> = ref(null)
 const panel2: Ref<typeof FilesContainer | null> = ref(null)
 
 /**
- * Shows a match in the first files container when clicked on a line in the second files container.
- * @param file (file name)
- * @param line (line number)
+ * Shows a match in the first files container when clicked on a line in the second file container.
+ * @param match The match to scroll to
  */
 function showMatchInFirst(match: Match) {
   panel1.value?.scrollTo(match.firstFile, match.startInFirst.line)
 }
 
 /**
- * Shows a match in the second files container, when clicked on a line in the second files container.
- * @param file (file name)
- * @param line (line number)
+ * Shows a match in the second files container, when clicked on a line in the second file container.
+ * @param match The match to scroll to
  */
 function showMatchInSecond(match: Match) {
   panel2.value?.scrollTo(match.secondFile, match.startInSecond.line)
@@ -172,7 +183,6 @@ function showMatchInSecond(match: Match) {
 
 /**
  * Shows a match in the first and second files container.
- * @param e The click event
  * @param match The match to show
  */
 function showMatch(match: Match) {
@@ -211,7 +221,7 @@ function print() {
 }
 
 // This code is responsible for changing the theme of the highlighted code depending on light/dark mode
-// Changing the used style itsself is the desired solution (https://github.com/highlightjs/highlight.js/issues/2115)
+// Changing the used style itself is the desired solution (https://github.com/highlightjs/highlight.js/issues/2115)
 const styleholder: Ref<Node | null> = ref(null)
 
 onMounted(() => {

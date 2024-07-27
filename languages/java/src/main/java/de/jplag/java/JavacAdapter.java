@@ -29,6 +29,10 @@ import com.sun.source.util.Trees;
 
 public class JavacAdapter {
 
+    private static final String NO_ANNOTATION_PROCESSING = "-proc:none";
+    private static final String PREVIEW_FLAG = "--enable-preview";
+    private static final String RELEASE_VERSION_OPTION = "--release=";
+
     private static final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 
     public void parseFiles(Set<File> files, final Parser parser) throws ParsingException {
@@ -39,10 +43,10 @@ public class JavacAdapter {
         try (final StandardJavaFileManager fileManager = compiler.getStandardFileManager(listener, null, guessedCharset)) {
             var javaFiles = fileManager.getJavaFileObjectsFromFiles(files);
 
-            // We need to disable annotation processing, see
-            // https://stackoverflow.com/questions/72737445/system-java-compiler-behaves-different-depending-on-dependencies-defined-in-mave
-            final CompilationTask task = compiler.getTask(null, fileManager, listener,
-                    List.of("-proc:none", "--enable-preview", "--release=" + JavaLanguage.JAVA_VERSION), null, javaFiles);
+            // We need to disable annotation processing, see https://stackoverflow.com/q/72737445
+            String releaseVersion = RELEASE_VERSION_OPTION + Runtime.version().feature(); // required for preview flag
+            List<String> options = List.of(NO_ANNOTATION_PROCESSING, PREVIEW_FLAG, releaseVersion);
+            final CompilationTask task = compiler.getTask(null, fileManager, listener, options, null, javaFiles);
             final Trees trees = Trees.instance(task);
             final SourcePositions positions = new FixedSourcePositions(trees.getSourcePositions());
             for (final CompilationUnitTree ast : executeCompilationTask(task, parser.logger)) {

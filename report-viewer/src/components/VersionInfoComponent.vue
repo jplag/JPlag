@@ -37,9 +37,8 @@
 </template>
 
 <script setup lang="ts">
-import { Version } from '@/model/Version'
 import { ref } from 'vue'
-import { minimalReportVersion, reportViewerVersion } from '@/model/Version'
+import { minimalReportVersion, reportViewerVersion, Version } from '@/model/Version'
 import RepositoryReference from './RepositoryReference.vue'
 
 const newestVersion = ref(new Version(-1, -1, -1))

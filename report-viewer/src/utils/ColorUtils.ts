@@ -32,7 +32,7 @@ function generateColors(
 }
 
 /**
- * Genertes an array of HSL-Colors for a given interval
+ * Generates an array of HSL-Colors for a given interval
  * @param intervalStart start of the interval [0,360]
  * @param intervalEnd end of the interval [0,360] and > intervalStart
  * @param numberOfColorsInInterval Number of colors to generate in the interval
@@ -59,7 +59,7 @@ function generateColorsForInterval(
   return colors
 }
 
-/** This is the list of colors that are used as the background colot of matches in the comparison view */
+/** This is the list of colors that are used as the background color of matches in the comparison view */
 const matchColors: { red: number; green: number; blue: number }[] = [
   { red: 255, green: 122, blue: 0 },
   { red: 0, green: 133, blue: 255 },
@@ -74,11 +74,20 @@ function getMatchColorCount() {
   return matchColors.length
 }
 
-function getMatchColor(alpha: number, index?: number) {
+type MatchColorIndex = number | undefined | 'base'
+
+function getMatchColor(alpha: number, index: MatchColorIndex) {
   if (index == undefined) {
     return 'rgba(0,0,0,0)'
   }
+  if (index == 'base') {
+    return getBaseCodeColor(alpha)
+  }
   return `rgba(${matchColors[index].red}, ${matchColors[index].green}, ${matchColors[index].blue}, ${alpha})`
+}
+
+function getBaseCodeColor(opacity: number) {
+  return `hsla(0, 0%, 75%, ${opacity})`
 }
 
 const graphRGB = {
@@ -104,4 +113,4 @@ const graphColors = {
   }
 }
 
-export { generateColors, graphColors, getMatchColorCount, getMatchColor }
+export { generateColors, graphColors, getMatchColorCount, getMatchColor, type MatchColorIndex }

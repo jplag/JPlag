@@ -2,7 +2,7 @@
   <div class="space-y-2">
     <div class="flex flex-row flex-wrap items-center gap-x-8 gap-y-2">
       <h2>{{ header }}</h2>
-      <ToolTipComponent direction="bottom" class="min-w-[50%] flex-grow">
+      <ToolTipComponent direction="left" class="min-w-[50%] flex-grow">
         <template #default>
           <SearchBarComponent placeholder="Filter/Unhide Comparisons" v-model="searchStringValue" />
         </template>
@@ -11,6 +11,15 @@
             Type in the name of a submission to only show comparisons that contain this submission.
           </p>
           <p class="whitespace-pre text-sm">Fully written out names get unhidden.</p>
+          <p class="whitespace-pre text-sm">
+            You can also filter by index by entering a number or typing <i>index:number</i>
+          </p>
+          <p class="whitespace-pre text-sm">
+            You can filter for specific similarity thresholds via &lt;/&gt;/&lt;=/&gt;= followed by
+            the percentage. <br />
+            You can filter for a specific metric by prefacing the percentage with the three-letter
+            metric name (e.g. <i>avg:>80</i>)
+          </p>
         </template>
       </ToolTipComponent>
 

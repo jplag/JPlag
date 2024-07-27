@@ -17,7 +17,7 @@
     @apply h-[6px] w-[6px] cursor-pointer;
   }
   *::-webkit-scrollbar-track {
-    @apply rounded-full border-2 bg-scrollbar-backgorund-light dark:bg-scrollbar-backgorund-dark;
+    @apply rounded-full border-2 bg-scrollbar-background-light dark:bg-scrollbar-background-dark;
   }
   *::-webkit-scrollbar-thumb {
     @apply rounded-full border-2 bg-scrollbar-thumb-light dark:bg-scrollbar-thumb-dark;
@@ -29,7 +29,7 @@
     overflow-wrap: anywhere;
   }
 
-  .print-excact {
+  .print-exact {
     print-color-adjust: exact;
   }
 

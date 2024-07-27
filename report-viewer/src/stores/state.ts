@@ -52,12 +52,3 @@ export interface UIState {
   distributionChartConfig: DistributionChartConfig
   fileSorting: FileSortingOptions
 }
-
-/**
- * Load configuration is used to indicate which mode is used.
- */
-export interface LoadConfiguration {
-  local: boolean
-  zip: boolean
-  single: boolean
-}

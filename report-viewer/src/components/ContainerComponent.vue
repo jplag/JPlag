@@ -1,5 +1,5 @@
-<!-- 
-  Base Component to seperate content into multiple chunks 
+<!--
+  Base Component to separate content into multiple chunks
 -->
 <template>
   <div

@@ -11,12 +11,16 @@
       <div>
         <img
           class="mx-auto mt-8 h-auto w-60"
+          height="168"
+          width="240"
           src="@/assets/jplag-light-transparent.png"
           alt="JPlag Logo"
           v-if="store().uiState.useDarkMode"
         />
         <img
           class="mx-auto mt-8 h-auto w-60"
+          height="168"
+          width="240"
           src="@/assets/jplag-dark-transparent.png"
           alt="JPlag Logo"
           v-else

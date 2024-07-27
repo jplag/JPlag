@@ -6,9 +6,7 @@ test('Test comparison table and comparsion view', async ({ page }) => {
 
   await uploadFile('progpedia-report.zip', page)
 
-  const comparisonContainer = page.getByText(
-    'Top Comparisons: Type in the name of a submission to only show comparisons that contain this submission. Fully written out names get unhidden.Hide AllSort By'
-  )
+  const comparisonContainer = page.getByText('Hide AllSort By')
 
   // check for elements in average similarity table
   await page.getByPlaceholder('Filter/Unhide Comparisons').fill('Purple')

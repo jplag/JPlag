@@ -90,11 +90,11 @@ const options = computed(() => {
             : 10 ** Math.ceil(Math.log10(maxVal.value + 5)),
         type: graphOptions.value.xScale,
         ticks: {
-          // ensures that in log mode tick labels are not overlappein
+          // ensures that in log mode tick labels are not overlapping
           minRotation: graphOptions.value.xScale === 'logarithmic' ? 30 : 0,
           autoSkipPadding: 10,
           color: graphColors.ticksAndFont.value,
-          // ensures that in log mode ticks are placed evenly appart
+          // ensures that in log mode ticks are placed evenly apart
           callback: function (value: any) {
             if (graphOptions.value.xScale === 'logarithmic' && (value + '').match(/1(0)*[^1-9.]/)) {
               return value
