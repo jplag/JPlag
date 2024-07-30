@@ -26,16 +26,12 @@ public final class TokenSequenceNormalizer {
      * Normalization Graph and then turning it back into a token sequence. For more information refer to the
      * <a href="https://doi.org/10.1145/3639478.3643074">corresponding paper</a>
      * @param tokens The original token sequence, remains unaltered.
-     * @param sorting Boolean flag to control if the tokens should be topologically sorted.
      * @return The normalized token sequence.
      */
-    public static List<Token> normalize(List<Token> tokens, boolean sorting) {
+    public static List<Token> normalize(List<Token> tokens) {
         NormalizationGraph graph = new NormalizationGraph(tokens);
         propagateCriticalityStatus(graph);
-        if (sorting) {
-            return normalizeWithSorting(tokens, graph);
-        }
-        return normalizeWithoutSorting(tokens, graph);
+        return normalizeWithSorting(tokens, graph);
     }
 
     // Add tokens in normalized original order, removing dead tokens
@@ -59,17 +55,6 @@ public final class TokenSequenceNormalizer {
                 }
             } while (!roots.isEmpty());
             roots = newRoots;
-        }
-        return normalizedTokens;
-    }
-
-    // Add tokens in the original order, removing dead tokens
-    private static List<Token> normalizeWithoutSorting(List<Token> tokens, NormalizationGraph normalizationGraph) {
-        List<Token> normalizedTokens = new ArrayList<>(tokens.size());
-        for (Statement statement : normalizationGraph.vertexSet()) {
-            if (statement.semantics().isCritical()) {
-                normalizedTokens.addAll(statement.tokens());
-            }
         }
         return normalizedTokens;
     }

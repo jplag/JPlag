@@ -256,11 +256,10 @@ public class Submission implements Comparable<Submission> {
     /**
      * Perform token sequence normalization, which makes the token sequence invariant to dead code insertion and independent
      * statement reordering.
-     * @param sorting determines whether to perform topological sorting during normalization.
      */
-    void normalize(boolean sorting) {
+    void normalize() {
         List<Integer> originalOrder = getOrder(tokenList);
-        tokenList = TokenSequenceNormalizer.normalize(tokenList, sorting);
+        tokenList = TokenSequenceNormalizer.normalize(tokenList);
         List<Integer> normalizedOrder = getOrder(tokenList);
 
         logger.debug("original line order: {}", originalOrder);

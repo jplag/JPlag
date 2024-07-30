@@ -72,8 +72,7 @@ public class JPlag {
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
         if (options.normalize() && options.language().supportsNormalization() && options.language().requiresCoreNormalization()) {
-            boolean normalizeOrder = !options.mergingOptions().enabled(); // match merging conflicts with sorting
-            submissionSet.normalizeSubmissions(normalizeOrder);
+            submissionSet.normalizeSubmissions();
         }
         int submissionCount = submissionSet.numberOfSubmissions();
         if (submissionCount < 2) {
