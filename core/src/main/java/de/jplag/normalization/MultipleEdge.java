@@ -6,7 +6,7 @@ import java.util.Set;
 import de.jplag.semantics.Variable;
 
 /**
- * Models a multiple edge in the normalization graph. Contains multiple edges.
+ * Models multiple edges between two nodes in the normalization graph.
  */
 class MultipleEdge {
     private final Set<Edge> edges;
