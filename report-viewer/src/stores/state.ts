@@ -1,6 +1,7 @@
 import type { SubmissionFile } from '@/model/File'
 import type { MetricType } from '@/model/MetricType'
 import type { DistributionChartConfig } from '@/model/ui/DistributionChartConfig'
+import type { FileSortingOptions } from '@/model/ui/FileSortingOptions'
 
 /**
  * Local store. Stores the state of the application.
@@ -49,4 +50,5 @@ export interface UIState {
   comparisonTableSortingMetric: MetricType
   comparisonTableClusterSorting: boolean
   distributionChartConfig: DistributionChartConfig
+  fileSorting: FileSortingOptions
 }

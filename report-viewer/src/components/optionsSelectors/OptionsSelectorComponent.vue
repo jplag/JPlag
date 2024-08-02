@@ -73,4 +73,8 @@ function select(index: number) {
   emit('selectionChanged', index)
   selected.value = index
 }
+
+defineExpose({
+  select
+})
 </script>
