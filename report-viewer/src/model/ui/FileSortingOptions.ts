@@ -10,18 +10,18 @@ export enum FileSortingOptions {
 export const fileSortingTooltips: Record<FileSortingOptions, ToolTipLabel> = {
   [FileSortingOptions.ALPHABETICAL]: {
     displayValue: 'Alphabetical',
-    tooltip: 'Sort files alphabetically. This will result in a package like sorting.'
+    tooltip: 'Sort files alphabetically, similar to package structure.'
   },
   [FileSortingOptions.MATCH_COVERAGE]: {
     displayValue: 'Match Coverage',
-    tooltip: 'Sort files by the percentage of tokens that are part of a match.'
+    tooltip: 'Sort files by the percentage of tokens included in a match.'
   },
   [FileSortingOptions.MATCH_COUNT]: {
     displayValue: 'Match Count',
-    tooltip: 'Sort files by the number of matches found in the file.'
+    tooltip: 'Sort files by the number of matches found.'
   },
   [FileSortingOptions.MATCH_SIZE]: {
     displayValue: 'Match Size',
-    tooltip: 'Sort files, so that the largest matches are at the top.'
+    tooltip: 'Sort files by match size, with the largest matches at the top.'
   }
 }
