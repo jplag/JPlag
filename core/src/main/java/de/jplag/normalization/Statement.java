@@ -8,7 +8,7 @@ import de.jplag.Token;
 import de.jplag.semantics.CodeSemantics;
 
 /**
- * Models statements, which are the nodes of the normalization graph.
+ * Models statements, which are the nodes of the normalization graph. A statement refers to one or more tokens.
  */
 class Statement implements Comparable<Statement> {
 
@@ -16,6 +16,11 @@ class Statement implements Comparable<Statement> {
     private final int lineNumber;
     private final CodeSemantics semantics;
 
+    /**
+     * Constructs a new Statement.
+     * @param tokens the list of tokens that represent this statement.
+     * @param lineNumber the line number where this statement occurs in the source code.
+     */
     Statement(List<Token> tokens, int lineNumber) {
         this.tokens = Collections.unmodifiableList(tokens);
         this.lineNumber = lineNumber;
@@ -30,8 +35,8 @@ class Statement implements Comparable<Statement> {
         return semantics;
     }
 
-    void markKeep() {
-        semantics.markKeep();
+    void markAsCritical() {
+        semantics.markAsCritical();
     }
 
     private int tokenOrdinal(Token token) {

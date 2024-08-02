@@ -29,7 +29,8 @@ export class ZipFileHandler extends FileHandler {
               data: data,
               // These two properties will be determined at a later time (when loading the submission file index)
               tokenCount: NaN,
-              matchedTokenCount: NaN
+              matchedTokenCount: NaN,
+              displayFileName: slash(fullPathFileName)
             })
           })
         } else {
@@ -85,7 +86,7 @@ export class ZipFileHandler extends FileHandler {
       filesOrSubmissionsIndex_originalFileName +
         (rootName === 'files' ? 'files'.length : 'submissions'.length)
     )
-    if (originalPathWithoutSubmissions.charAt(0) === '\\') {
+    if (originalPathWithoutSubmissions.startsWith('\\')) {
       fullPath = unixSubfolderPathAfterSubmissions + '\\' + fileBase
       while (fullPath.includes('/')) {
         fullPath = fullPath.replace('/', '\\')

@@ -1,5 +1,6 @@
 package de.jplag.cli.logger;
 
+import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,7 +20,6 @@ public class CollectedLogger extends AbstractLogger {
     private static final String JPLAG_LOGGER_PREFIX = "de.jplag.";
     private static final Level LOG_LEVEL_FOR_EXTERNAL_LIBRARIES = Level.ERROR;
     private static final int MAXIMUM_MESSAGE_LENGTH = 32;
-    private static final PrintStream TARGET_STREAM = System.out;
     private static Level currentLogLevel = Level.INFO;
 
     private final transient SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss_SSS");
@@ -148,11 +148,10 @@ public class CollectedLogger extends AbstractLogger {
 
     private void printLogEntry(LogEntry entry) {
         StringBuilder output = prepareLogOutput(entry);
-        TARGET_STREAM.println(output);
+        DelayablePrinter.getInstance().println(output.toString());
         if (entry.cause() != null) {
-            entry.cause().printStackTrace(TARGET_STREAM);
+            this.printStackTrace(entry.cause());
         }
-        TARGET_STREAM.flush();
     }
 
     public static Level getLogLevel() {
@@ -161,5 +160,12 @@ public class CollectedLogger extends AbstractLogger {
 
     public static void setLogLevel(Level logLevel) {
         currentLogLevel = logLevel;
+    }
+
+    private void printStackTrace(Throwable error) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        error.printStackTrace(new PrintStream(outputStream));
+        String stackTrace = outputStream.toString();
+        DelayablePrinter.getInstance().println(stackTrace);
     }
 }

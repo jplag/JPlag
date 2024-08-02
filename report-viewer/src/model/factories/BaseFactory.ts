@@ -5,7 +5,7 @@ import { ZipFileHandler } from '@/model/fileHandling/ZipFileHandler'
  * This class provides some basic functionality for the factories.
  */
 export class BaseFactory {
-  public static zipFileName = 'results.zip'
+  public static readonly zipFileName = 'results.zip'
 
   /**
    * Returns the content of a file through the stored loading type.

@@ -11,7 +11,7 @@ export default {
           light: '#000000',
           dark: '#ffffff'
         },
-        backgorund: {
+        background: {
           light: 'hsl(0, 0%, 97%)',
           dark: 'hsl(180, 80%, 3%)'
         },
@@ -36,7 +36,7 @@ export default {
           }
         },
         scrollbar: {
-          backgorund: {
+          background: {
             light: colors.slate[100],
             dark: '#30363D'
           },

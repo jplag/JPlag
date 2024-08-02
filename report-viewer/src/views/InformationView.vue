@@ -68,7 +68,7 @@
               }}</TextInformation>
             </div>
 
-            <TextInformation v-else label="Agglomerative Treshold">{{
+            <TextInformation v-else label="Agglomerative Threshold">{{
               options.clusterOptions.agglomerativeThreshold
             }}</TextInformation>
 

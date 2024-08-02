@@ -14,7 +14,7 @@
       <LoadingCircle class="mx-auto" />
     </div>
 
-    <RepositoryReference />
+    <VersionRepositoryReference />
   </div>
 </template>
 
@@ -27,7 +27,7 @@ import { ComparisonFactory } from '@/model/factories/ComparisonFactory'
 import LoadingCircle from '@/components/LoadingCircle.vue'
 import { redirectOnError } from '@/router'
 import type { Language } from '@/model/Language'
-import RepositoryReference from '@/components/RepositoryReference.vue'
+import VersionRepositoryReference from '@/components/VersionRepositoryReference.vue'
 import type { BaseCodeMatch } from '@/model/BaseCodeReport'
 import { BaseCodeReportFactory } from '@/model/factories/BaseCodeReportFactory'
 
@@ -43,7 +43,7 @@ const language: Ref<Language | null> = ref(null)
 const firstBaseCodeMatches: Ref<BaseCodeMatch[] | null> = ref(null)
 const secondBaseCodeMatches: Ref<BaseCodeMatch[] | null> = ref(null)
 
-// This eslint rule is disabled to allow the use of await in the setup function. Disabling this rule is safe, because the props are gathered from the url, so changing them would reload the pafe anyway.
+// This eslint rule is disabled to allow the use of await in the setup function. Disabling this rule is safe, because the props are gathered from the url, so changing them would reload the page anyway.
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
 const comparisonPromise = ComparisonFactory.getComparison(props.comparisonFileName)
   .then((comp) => {
@@ -59,7 +59,7 @@ OverviewFactory.getOverview()
     language.value = overview.language
   })
   .catch((error) => {
-    redirectOnError(error, 'Could not load coparison:\n')
+    redirectOnError(error, 'Could not load comparison:\n')
   })
 
 comparisonPromise

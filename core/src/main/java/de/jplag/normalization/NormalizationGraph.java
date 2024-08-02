@@ -14,21 +14,28 @@ import de.jplag.Token;
 import de.jplag.semantics.Variable;
 
 /**
- * Constructs the normalization graph.
+ * Token normalization graph, which is a directed graph based on nodes of type {@link Statement} and edges of type
+ * {@link MultipleEdge}. This class class inherits from {@link SimpleDirectedGraph} to provide a data structure for the
+ * token sequence normalization.
  */
-class NormalizationGraphConstructor {
-    private final SimpleDirectedGraph<Statement, MultipleEdge> graph;
-    private int bidirectionalBlockDepth;
-    private final Collection<Statement> fullPositionSignificanceIncoming;
-    private Statement lastFullPositionSignificance;
-    private Statement lastPartialPositionSignificance;
-    private final Map<Variable, Collection<Statement>> variableReads;
-    private final Map<Variable, Collection<Statement>> variableWrites;
-    private final Set<Statement> inCurrentBidirectionalBlock;
-    private Statement current;
+public class NormalizationGraph extends SimpleDirectedGraph<Statement, MultipleEdge> {
 
-    NormalizationGraphConstructor(List<Token> tokens) {
-        graph = new SimpleDirectedGraph<>(MultipleEdge.class);
+    private static final long serialVersionUID = -8407465274643809647L; // generated
+
+    private int bidirectionalBlockDepth;
+    private final transient Collection<Statement> fullPositionSignificanceIncoming;
+    private transient Statement lastFullPositionSignificance;
+    private transient Statement lastPartialPositionSignificance;
+    private final transient Map<Variable, Collection<Statement>> variableReads;
+    private final transient Map<Variable, Collection<Statement>> variableWrites;
+    private final transient Set<Statement> inCurrentBidirectionalBlock;
+    private transient Statement current;
+
+    /**
+     * Creates a new normalization graph.
+     */
+    public NormalizationGraph(List<Token> tokens) {
+        super(MultipleEdge.class);
         bidirectionalBlockDepth = 0;
         fullPositionSignificanceIncoming = new ArrayList<>();
         variableReads = new HashMap<>();
@@ -45,12 +52,8 @@ class NormalizationGraphConstructor {
         addStatement(builderForCurrent.build());
     }
 
-    SimpleDirectedGraph<Statement, MultipleEdge> get() {
-        return graph;
-    }
-
     private void addStatement(Statement statement) {
-        graph.addVertex(statement);
+        addVertex(statement);
         this.current = statement;
         processBidirectionalBlock();
         processFullPositionSignificance();
@@ -123,10 +126,10 @@ class NormalizationGraphConstructor {
      * @param cause the variable that caused the edge, may be null
      */
     private void addIncomingEdgeToCurrent(Statement start, EdgeType type, Variable cause) {
-        MultipleEdge multipleEdge = graph.getEdge(start, current);
+        MultipleEdge multipleEdge = getEdge(start, current);
         if (multipleEdge == null) {
             multipleEdge = new MultipleEdge();
-            graph.addEdge(start, current, multipleEdge);
+            addEdge(start, current, multipleEdge);
         }
         multipleEdge.addEdge(type, cause);
     }
@@ -135,4 +138,5 @@ class NormalizationGraphConstructor {
         variableMap.putIfAbsent(variable, new ArrayList<>());
         variableMap.get(variable).add(current);
     }
+
 }
