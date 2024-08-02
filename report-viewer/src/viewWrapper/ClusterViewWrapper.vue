@@ -8,7 +8,7 @@
       <LoadingCircle class="mx-auto" />
     </div>
 
-    <RepositoryReference />
+    <VersionRepositoryReference />
   </div>
 </template>
 
@@ -19,7 +19,7 @@ import ClusterView from '@/views/ClusterView.vue'
 import LoadingCircle from '@/components/LoadingCircle.vue'
 import type { Overview } from '@/model/Overview'
 import { redirectOnError } from '@/router'
-import RepositoryReference from '@/components/RepositoryReference.vue'
+import VersionRepositoryReference from '@/components/VersionRepositoryReference.vue'
 
 const props = defineProps({
   clusterIndex: {
