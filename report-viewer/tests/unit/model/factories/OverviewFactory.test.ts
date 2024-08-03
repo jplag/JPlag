@@ -41,7 +41,7 @@ describe('Test JSON to Overview', () => {
     expect(await OverviewFactory.getOverview()).toEqual({
       _submissionFolderPath: ['files'],
       _baseCodeFolderPath: '',
-      _language: 'Javac based AST plugin',
+      _language: 'Java',
       _fileExtensions: ['.java', '.JAVA'],
       _matchSensitivity: 9,
       _dateOfExecution: '12/07/23',
