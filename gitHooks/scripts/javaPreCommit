@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if ! command -v <the_command> &> /dev/null #checks if maven is installed
+if ! command -v mvn &> /dev/null #checks if maven is installed
 then
     echo "Maven is not installed. Spotless will not be checked"
     exit 0
