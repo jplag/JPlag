@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import javax.json.Json;
 import javax.json.JsonArray;
+import javax.json.JsonReader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,9 +57,10 @@ public class JPlagVersionChecker {
     private static JsonArray fetchApi() throws IOException, URISyntaxException {
         URL url = new URI(API_URL).toURL();
         URLConnection connection = url.openConnection();
-        connection.getInputStream();
 
-        return Json.createReader(connection.getInputStream()).readArray();
+        try (JsonReader reader = Json.createReader(connection.getInputStream())) {
+            return reader.readArray();
+        }
     }
 
     private static Version getNewestVersion(JsonArray apiResult) {
