@@ -110,7 +110,7 @@ public final class CLI {
      * @throws IOException If something went wrong with the internal server
      */
     public void runViewer(File zipFile) throws IOException {
-        finalizeLogger(); //Prints the errors. The later finalizeLogger will print any errors logged after this point.
+        finalizeLogger(); // Prints the errors. The later finalizeLogger will print any errors logged after this point.
         JPlagRunner.runInternalServer(zipFile, this.inputHandler.getCliOptions().advanced.port);
     }
 
