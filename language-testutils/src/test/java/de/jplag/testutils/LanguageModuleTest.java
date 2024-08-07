@@ -222,7 +222,7 @@ public abstract class LanguageModuleTest {
     }
 
     final List<TokenPositionTestData> getTokenPositionTestData() {
-        return this.collector.getTokenPositionTestData();
+        return ignoreEmptyTestType(this.collector.getTokenPositionTestData());
     }
 
     /**
