@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -32,6 +33,7 @@ import de.jplag.TokenType;
 import de.jplag.testutils.datacollector.TestData;
 import de.jplag.testutils.datacollector.TestDataCollector;
 import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
+import de.jplag.testutils.datacollector.TokenPositionTestData;
 
 /**
  * Base class for language module tests. Automatically adds all common tests types for jplag languages.
@@ -196,6 +198,33 @@ public abstract class LanguageModuleTest {
         return ignoreEmptyTestType(this.collector.getTokenSequenceTest());
     }
 
+    @ParameterizedTest
+    @MethodSource("getTokenPositionTestData")
+    @DisplayName("Tests if the extracted tokens contain the tokens specified in the test files.")
+    final void testTokenPositions(TokenPositionTestData testData) throws ParsingException, IOException {
+        List<Token> extractedTokens = parseTokens(testData);
+        List<TokenPositionTestData.TokenData> failedTokens = new ArrayList<>();
+
+        for (TokenPositionTestData.TokenData expectedToken : testData.getExpectedTokens()) {
+            TokenType expectedType = this.languageTokens.stream().filter(type -> type.toString().equals(expectedToken.typeName())).findFirst().get();
+
+            if (extractedTokens.stream().noneMatch(token -> token.getType() == expectedType && token.getLine() == expectedToken.line()
+                    && token.getColumn() == expectedToken.col() && token.getLength() == expectedToken.length())) {
+                failedTokens.add(expectedToken);
+            }
+        }
+
+        if (!failedTokens.isEmpty()) {
+            String failDescriptors = String.join(System.lineSeparator(), failedTokens.stream()
+                    .map(token -> token.typeName() + " at (" + token.line() + ":" + token.col() + ") with length " + token.length()).toList());
+            fail("Some tokens weren't extracted with the correct properties:" + System.lineSeparator() + failDescriptors);
+        }
+    }
+
+    final List<TokenPositionTestData> getTokenPositionTestData() {
+        return this.collector.getTokenPositionTestData();
+    }
+
     /**
      * Tests all configured test sources for a monotone order of tokens
      * @param data The test source
@@ -249,6 +278,11 @@ public abstract class LanguageModuleTest {
     @BeforeAll
     final void collectTestData() {
         collectTestData(this.collector);
+    }
+
+    @AfterAll
+    final void releaseTmpFiles() {
+        TmpFileHolder.deleteTmpFiles();
     }
 
     private List<Token> parseTokens(TestData source) throws ParsingException, IOException {
