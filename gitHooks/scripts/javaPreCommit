@@ -1,0 +1,19 @@
+#!/bin/bash
+
+if ! command -v mvn &> /dev/null #checks if maven is installed
+then
+    echo "Maven is not installed. Spotless will not be checked"
+    exit 0
+fi
+
+#prevents the shell from aborting if maven returns a non zero exit code
+set +e
+echo Checking spotless
+mvn spotless:check &> /dev/null
+exitCode=$?
+
+if [ $exitCode -gt 0 ]
+then
+	echo "Spotless failed. Please run 'mvn spotless:apply' to fix."
+fi
+exit $exitCode
