@@ -26,7 +26,7 @@ public class JPlagVersionChecker {
     private static final Logger logger = LoggerFactory.getLogger(JPlagVersionChecker.class);
     private static final String EXPECTED_VERSION_FORMAT = "v\\d\\.\\d\\.\\d+";
     private static final String WARNING_UNABLE_TO_FETCH = "Unable to fetch version information. New version notification will not work.";
-    private static final String NEWER_VERSION_AVAILABLE = "There is a newer version ({}) available. You can fetch the newest version here: https://github.com/jplag/JPlag/releases.";
+    private static final String NEWER_VERSION_AVAILABLE = "There is a newer version ({}) available. You can download the newest version here: https://github.com/jplag/JPlag/releases";
     private static final String UNEXPECTED_ERROR = "There was an unexpected error, when checking for new versions. Please report this on: https://github.com/jplag/JPlag/issues";
 
     private JPlagVersionChecker() {
@@ -51,9 +51,9 @@ public class JPlagVersionChecker {
                 return Optional.of(newest);
             }
         } catch (IOException | URISyntaxException e) {
-            logger.warn(WARNING_UNABLE_TO_FETCH);
+            logger.info(WARNING_UNABLE_TO_FETCH);
         } catch (Exception e) {
-            logger.error(UNEXPECTED_ERROR, e);
+            logger.warn(UNEXPECTED_ERROR, e);
         }
 
         return Optional.empty();
