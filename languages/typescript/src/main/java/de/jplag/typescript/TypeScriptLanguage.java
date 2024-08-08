@@ -11,6 +11,7 @@ import de.jplag.antlr.AbstractAntlrLanguage;
 public class TypeScriptLanguage extends AbstractAntlrLanguage {
 
     private static final String IDENTIFIER = "typescript";
+    private static final String NAME = "TypeScript";
     private final TypeScriptLanguageOptions options = new TypeScriptLanguageOptions();
 
     @Override
@@ -20,7 +21,7 @@ public class TypeScriptLanguage extends AbstractAntlrLanguage {
 
     @Override
     public String getName() {
-        return "Typescript Parser";
+        return NAME;
     }
 
     @Override

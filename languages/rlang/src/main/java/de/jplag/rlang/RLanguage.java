@@ -15,7 +15,7 @@ import de.jplag.Token;
 @MetaInfServices(de.jplag.Language.class)
 public class RLanguage implements de.jplag.Language {
 
-    private static final String NAME = "R Parser";
+    private static final String NAME = "R";
     private static final String IDENTIFIER = "rlang";
     private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
     private static final String[] FILE_EXTENSION = {".R", ".r"};

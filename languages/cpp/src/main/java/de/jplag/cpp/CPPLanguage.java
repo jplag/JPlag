@@ -10,6 +10,7 @@ import de.jplag.antlr.AbstractAntlrLanguage;
  */
 @MetaInfServices(Language.class)
 public class CPPLanguage extends AbstractAntlrLanguage {
+    private static final String NAME = "C++";
     private static final String IDENTIFIER = "cpp";
 
     public CPPLanguage() {
@@ -23,7 +24,7 @@ public class CPPLanguage extends AbstractAntlrLanguage {
 
     @Override
     public String getName() {
-        return "C++ Parser";
+        return NAME;
     }
 
     @Override

@@ -1,5 +1,5 @@
 {
-  "language": "Javac based AST plugin",
+  "language": "Java",
   "min_token_match": 9,
   "submission_directories": [
     ".\\files"

@@ -14,6 +14,7 @@ import de.jplag.Token;
  */
 @MetaInfServices(de.jplag.Language.class)
 public class JavaLanguage implements de.jplag.Language {
+    private static final String NAME = "Java";
     private static final String IDENTIFIER = "java";
 
     private final Parser parser;
@@ -29,7 +30,7 @@ public class JavaLanguage implements de.jplag.Language {
 
     @Override
     public String getName() {
-        return "Javac based AST plugin";
+        return NAME;
     }
 
     @Override

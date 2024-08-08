@@ -18,6 +18,7 @@ import de.jplag.Token;
 public class NaturalLanguage implements de.jplag.Language {
 
     private static final String IDENTIFIER = "text";
+    private static final String NAME = "Text (naive)";
     private final ParserAdapter parserAdapter;
 
     public NaturalLanguage() {
@@ -31,7 +32,7 @@ public class NaturalLanguage implements de.jplag.Language {
 
     @Override
     public String getName() {
-        return "Text Parser (naive)";
+        return NAME;
     }
 
     @Override

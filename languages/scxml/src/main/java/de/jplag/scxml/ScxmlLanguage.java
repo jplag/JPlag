@@ -26,7 +26,7 @@ public class ScxmlLanguage implements de.jplag.Language {
      */
     public static final String VIEW_FILE_SUFFIX = ".scxmlview";
 
-    private static final String NAME = "SCXML (Statechart XML)";
+    private static final String NAME = "SCXML";
     private static final String IDENTIFIER = "scxml";
     private static final int DEFAULT_MIN_TOKEN_MATCH = 6;
 

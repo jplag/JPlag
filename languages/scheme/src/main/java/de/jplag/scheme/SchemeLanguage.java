@@ -12,6 +12,7 @@ import de.jplag.Token;
 @MetaInfServices(de.jplag.Language.class)
 public class SchemeLanguage implements de.jplag.Language {
 
+    private static final String NAME = "Scheme";
     private static final String IDENTIFIER = "scheme";
     private final de.jplag.scheme.Parser parser;
 
@@ -26,7 +27,7 @@ public class SchemeLanguage implements de.jplag.Language {
 
     @Override
     public String getName() {
-        return "SchemeR4RS Parser [basic markup]";
+        return NAME;
     }
 
     @Override

@@ -14,7 +14,7 @@ class ScalaLanguage extends de.jplag.Language {
 
   override def suffixes: Array[String] = fileExtensions
 
-  override def getName = "Scala parser"
+  override def getName = "Scala"
 
   override def getIdentifier = "scala"
 

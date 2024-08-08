@@ -10,7 +10,7 @@ import de.jplag.antlr.AbstractAntlrLanguage;
 @MetaInfServices(de.jplag.Language.class)
 public class KotlinLanguage extends AbstractAntlrLanguage {
 
-    private static final String NAME = "Kotlin Parser";
+    private static final String NAME = "Kotlin";
     private static final String IDENTIFIER = "kotlin";
     private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
     private static final String[] FILE_EXTENSIONS = {".kt"};
