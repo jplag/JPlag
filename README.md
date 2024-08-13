@@ -182,11 +182,6 @@ try {
 We're happy to incorporate all improvements to JPlag into this codebase. Feel free to fork the project and send pull requests.
 Please consider our [guidelines for contributions](https://github.com/jplag/JPlag/wiki/3.-Contributing-to-JPlag).
 
-### Git hooks
-
-The repository contains a pre-commit hook, that prevents commits if fail spotless.
-To set up the hooks, call `git config --local core.hooksPath gitHooks/hooks` once within your local repository.
-
 ## Contact
 If you encounter bugs or other issues, please report them [here](https://github.com/jplag/jplag/issues).
 For other purposes, you can contact us at jplag@ipd.kit.edu .
