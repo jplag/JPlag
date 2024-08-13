@@ -176,7 +176,7 @@ public abstract class LanguageModuleTest {
     final void testTokenSequence(TestDataCollector.TokenListTest test) throws ParsingException, IOException {
         List<TokenType> actual = extractTokenTypes(test.data());
         List<TokenType> expected = new ArrayList<>(test.tokens());
-        if (expected.get(expected.size() - 1) != SharedTokenType.FILE_END) {
+        if (expected.getLast() != SharedTokenType.FILE_END) {
             expected.add(SharedTokenType.FILE_END);
         }
         assertTokensMatch(expected, actual, "Extracted token from " + test.data().describeTestSource() + " does not match expected sequence.");
@@ -198,6 +198,12 @@ public abstract class LanguageModuleTest {
         return ignoreEmptyTestType(this.collector.getTokenSequenceTest());
     }
 
+    /**
+     * Tests if the tokens specified for the token position tests are present in the sources
+     * @param testData The specifications of the expected tokens and the test source
+     * @throws ParsingException If the parsing fails
+     * @throws IOException If IO operations fail. If this happens, that should be unrelated to the test itself.
+     */
     @ParameterizedTest
     @MethodSource("getTokenPositionTestData")
     @DisplayName("Tests if the extracted tokens contain the tokens specified in the test files.")
@@ -206,7 +212,8 @@ public abstract class LanguageModuleTest {
         List<TokenPositionTestData.TokenData> failedTokens = new ArrayList<>();
 
         for (TokenPositionTestData.TokenData expectedToken : testData.getExpectedTokens()) {
-            TokenType expectedType = this.languageTokens.stream().filter(type -> type.toString().equals(expectedToken.typeName())).findFirst().get();
+            TokenType expectedType = this.languageTokens.stream().filter(type -> type.toString().equals(expectedToken.typeName())).findFirst()
+                    .orElseThrow(() -> new IOException(String.format("The token type %s does not exist.", expectedToken.typeName())));
 
             if (extractedTokens.stream().noneMatch(token -> token.getType() == expectedType && token.getLine() == expectedToken.line()
                     && token.getColumn() == expectedToken.col() && token.getLength() == expectedToken.length())) {
@@ -221,6 +228,9 @@ public abstract class LanguageModuleTest {
         }
     }
 
+    /**
+     * @return All token positions tests that are configured
+     */
     final List<TokenPositionTestData> getTokenPositionTestData() {
         return ignoreEmptyTestType(this.collector.getTokenPositionTestData());
     }
@@ -260,8 +270,7 @@ public abstract class LanguageModuleTest {
     final void testTokenSequencesEndsWithFileEnd(TestData data) throws ParsingException, IOException {
         List<Token> tokens = parseTokens(data);
 
-        assertEquals(SharedTokenType.FILE_END, tokens.get(tokens.size() - 1).getType(),
-                "Last token in " + data.describeTestSource() + " is not file end.");
+        assertEquals(SharedTokenType.FILE_END, tokens.getLast().getType(), "Last token in " + data.describeTestSource() + " is not file end.");
     }
 
     /**

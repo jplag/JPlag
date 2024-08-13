@@ -12,12 +12,20 @@ import de.jplag.Token;
 import de.jplag.testutils.TmpFileHolder;
 import de.jplag.util.FileUtils;
 
+/**
+ * Test sources with token information Reads token position test specifications form a file and provides the token
+ * information for tests. The sources cna be used as regular test sources.
+ */
 public class TokenPositionTestData implements TestData {
     private final List<String> sourceLines;
     private final List<TokenData> expectedTokens;
 
     private final String descriptor;
 
+    /**
+     * @param testFile The file containing the test specifications
+     * @throws IOException If the file cannot be read
+     */
     public TokenPositionTestData(File testFile) throws IOException {
         this.sourceLines = new ArrayList<>();
         this.expectedTokens = new ArrayList<>();
@@ -65,10 +73,20 @@ public class TokenPositionTestData implements TestData {
         return this.descriptor;
     }
 
+    /**
+     * @return A list of the expected tokens for this test source
+     */
     public List<TokenData> getExpectedTokens() {
         return expectedTokens;
     }
 
+    /**
+     * Information about a single token
+     * @param typeName The name of the token type
+     * @param line The line the token is in
+     * @param col The column the token is in
+     * @param length The length of the token
+     */
     public record TokenData(String typeName, int line, int col, int length) {
     }
 }
