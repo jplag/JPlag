@@ -11,7 +11,7 @@ import de.jplag.antlr.AbstractAntlrLanguage;
 @MetaInfServices(Language.class)
 public class LLVMIRLanguage extends AbstractAntlrLanguage {
 
-    private static final String NAME = "LLVMIR";
+    private static final String NAME = "LLVM IR";
     private static final String IDENTIFIER = "llvmir";
     private static final int DEFAULT_MIN_TOKEN_MATCH = 70;
     private static final String[] FILE_EXTENSIONS = {".ll"};
