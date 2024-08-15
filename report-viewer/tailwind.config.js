@@ -13,23 +13,23 @@ export default {
         },
         background: {
           light: 'hsl(0, 0%, 97%)',
-          dark: 'hsl(180, 80%, 8%)'
+          dark: 'hsl(230, 10%, 8%)'
         },
         container: {
           light: 'hsl(0, 0%, 98%)',
-          dark: 'hsl(200, 20%, 15%)',
+          dark: 'hsl(250, 10%, 15%)',
           border: {
             light: 'hsl(0, 0%, 80%)',
             dark: 'hsl(0, 0%, 25%)'
           },
           secondary: {
             light: 'hsl(0, 0%, 95%)',
-            dark: 'hsl(200, 20%, 20%)'
+            dark: 'hsl(250, 10%, 20%)'
           }
         },
         interactable: {
           light: 'hsl(0, 0%, 100%)',
-          dark: 'hsl(180, 30%, 20%)',
+          dark: 'hsl(250, 10%, 20%)',
           border: {
             light: 'hsl(0, 0%, 75%)',
             dark: 'hsl(0, 0%, 25%)'
