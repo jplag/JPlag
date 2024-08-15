@@ -2,28 +2,26 @@
  * Enum for the language parsers JPlag supports
  */
 enum ParserLanguage {
-  JAVA = 'Javac based AST plugin',
-  PYTHON = 'Python3 Parser',
-  C = 'C Scanner',
-  CPP_OLD = 'C/C++ Scanner [basic markup]',
-  CPP = 'C++ Parser',
-  CPP_2 = 'C/C++ Parser',
-  C_SHARP = 'C# 6 Parser',
+  JAVA = 'java',
+  PYTHON = 'python3',
+  C = 'c',
+  CPP = 'cpp',
+  C_SHARP = 'csharp',
   EMF_METAMODEL_DYNAMIC = 'emf-dynamic',
   EMF_METAMODEL = 'EMF metamodel',
   EMF_MODEL = 'EMF models (dynamically created token set)',
-  GO = 'Go Parser',
-  KOTLIN = 'Kotlin Parser',
-  R_LANG = 'R Parser',
-  RUST = 'Rust Language Module',
-  SCALA = 'Scala parser',
-  SCHEME = 'SchemeR4RS Parser [basic markup]',
-  SWIFT = 'Swift Parser',
-  TEXT = 'Text Parser (naive)',
-  SCXML = 'SCXML (Statechart XML)',
-  LLVM = 'LLVMIR Parser',
-  JAVASCRIPT = 'JavaScript',
-  TYPESCRIPT = 'Typescript Parser'
+  GO = 'go',
+  KOTLIN = 'kotlin',
+  R_LANG = 'rlang',
+  RUST = 'rust',
+  SCALA = 'scale',
+  SCHEME = 'scheme',
+  SWIFT = 'swift',
+  TEXT = 'text',
+  SCXML = 'scxml',
+  LLVM = 'llvmir',
+  JAVASCRIPT = 'javascript',
+  TYPESCRIPT = 'typescript'
 }
 
 type Language = ParserLanguage | 'unknown language'
