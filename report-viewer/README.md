@@ -16,6 +16,12 @@ npm run dev
 
 ### Compile and build
 There are different ways to build the report-viewer.
+
+The report viewer will be build and packaged with the cli in a jar file if build with the `with-report-viewer` profile:
+```
+mvn -Pwith-report-viewer clean package assembly:single
+```
+
 To build it in the standard way, without any base url, run:
 ```
 npm run build
@@ -32,7 +38,6 @@ To build the demo version run:
 npm run build:demo
 ```
 Similar to the production build, this build will have `demo` as its base url.
-<br />
 
 
 ## Contrubuting
