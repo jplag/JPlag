@@ -40,6 +40,11 @@
       <div v-else-if="exampleFiles" class="pt-5">
         <Button class="mx-auto w-fit text-xl" @click="continueWithLocal()"> View Example </Button>
       </div>
+      <div class="text-xl font-bold text-error">
+        The hosted report viewer is no longer being updated. It does not support the latest features
+        of JPlag. <br />
+        The report viewer of version 6.0.0 or newer is started from the cli directly.
+      </div>
       <div v-if="errors.length > 0" class="text-error">
         <p>{{ getErrorText() }}</p>
         <p>For more details check the console.</p>
