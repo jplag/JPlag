@@ -26,24 +26,29 @@ import static de.jplag.rlang.RTokenType.WHILE_BEGIN;
 import static de.jplag.rlang.RTokenType.WHILE_END;
 
 import de.jplag.antlr.AbstractAntlrListener;
-import de.jplag.rlang.grammar.RParser.Access_packageContext;
-import de.jplag.rlang.grammar.RParser.Assign_func_declarationContext;
-import de.jplag.rlang.grammar.RParser.Assign_valueContext;
-import de.jplag.rlang.grammar.RParser.Assign_value_listContext;
-import de.jplag.rlang.grammar.RParser.Break_statementContext;
-import de.jplag.rlang.grammar.RParser.Compound_statementContext;
-import de.jplag.rlang.grammar.RParser.Constant_boolContext;
-import de.jplag.rlang.grammar.RParser.Constant_numberContext;
-import de.jplag.rlang.grammar.RParser.Constant_stringContext;
-import de.jplag.rlang.grammar.RParser.For_statementContext;
-import de.jplag.rlang.grammar.RParser.Function_callContext;
-import de.jplag.rlang.grammar.RParser.Function_definitionContext;
+import de.jplag.rlang.grammar.RParser.ArrayAccessContext;
+import de.jplag.rlang.grammar.RParser.AssignmentContext;
+import de.jplag.rlang.grammar.RParser.BreakContext;
+import de.jplag.rlang.grammar.RParser.ComplexContext;
+import de.jplag.rlang.grammar.RParser.CompoundStatementContext;
+import de.jplag.rlang.grammar.RParser.FalseContext;
+import de.jplag.rlang.grammar.RParser.FloatContext;
+import de.jplag.rlang.grammar.RParser.ForContext;
+import de.jplag.rlang.grammar.RParser.FunctionCallContext;
+import de.jplag.rlang.grammar.RParser.FunctionDefinitionContext;
 import de.jplag.rlang.grammar.RParser.HelpContext;
-import de.jplag.rlang.grammar.RParser.If_statementContext;
-import de.jplag.rlang.grammar.RParser.Index_statementContext;
-import de.jplag.rlang.grammar.RParser.Next_statementContext;
-import de.jplag.rlang.grammar.RParser.Repeat_statementContext;
-import de.jplag.rlang.grammar.RParser.While_statementContext;
+import de.jplag.rlang.grammar.RParser.HexContext;
+import de.jplag.rlang.grammar.RParser.IfContext;
+import de.jplag.rlang.grammar.RParser.IfElseContext;
+import de.jplag.rlang.grammar.RParser.IntContext;
+import de.jplag.rlang.grammar.RParser.ListAccessContext;
+import de.jplag.rlang.grammar.RParser.NamespaceAccessContext;
+import de.jplag.rlang.grammar.RParser.NextContext;
+import de.jplag.rlang.grammar.RParser.RepeatContext;
+import de.jplag.rlang.grammar.RParser.StringContext;
+import de.jplag.rlang.grammar.RParser.SubContext;
+import de.jplag.rlang.grammar.RParser.TrueContext;
+import de.jplag.rlang.grammar.RParser.WhileContext;
 
 /**
  * Contains mapping for RLang to create JPlag tokens from ANTLR tokens
@@ -58,37 +63,43 @@ public class RListener extends AbstractAntlrListener {
     }
 
     private void header() {
-        visit(Index_statementContext.class).mapRange(INDEX);
-        visit(Access_packageContext.class).map(PACKAGE);
+        visit(ArrayAccessContext.class).mapRange(INDEX);
+        visit(ListAccessContext.class).mapRange(INDEX);
+        visit(NamespaceAccessContext.class).map(PACKAGE);
     }
 
     private void functions() {
-        visit(Function_definitionContext.class).map(BEGIN_FUNCTION, END_FUNCTION);
-        visit(Function_callContext.class).mapRange(FUNCTION_CALL);
+        visit(FunctionDefinitionContext.class).map(BEGIN_FUNCTION, END_FUNCTION);
+        visit(FunctionCallContext.class).mapRange(FUNCTION_CALL);
 
-        visit(Compound_statementContext.class).map(COMPOUND_BEGIN, COMPOUND_END);
+        visit(CompoundStatementContext.class).map(COMPOUND_BEGIN, COMPOUND_END);
         visit(HelpContext.class).map(HELP);
     }
 
     private void literals() {
-        visit(Constant_numberContext.class).map(NUMBER);
-        visit(Constant_stringContext.class).map(STRING);
-        visit(Constant_boolContext.class).map(BOOL);
+        visit(HexContext.class).map(NUMBER);
+        visit(IntContext.class).map(NUMBER);
+        visit(FloatContext.class).map(NUMBER);
+        visit(ComplexContext.class).map(NUMBER);
+        visit(StringContext.class).map(STRING);
+        visit(TrueContext.class).map(BOOL);
+        visit(FalseContext.class).map(BOOL);
     }
 
     private void controlStructures() {
-        visit(If_statementContext.class).map(IF_BEGIN, IF_END);
-        visit(For_statementContext.class).map(FOR_BEGIN, FOR_END);
-        visit(While_statementContext.class).map(WHILE_BEGIN, WHILE_END);
-        visit(Repeat_statementContext.class).map(REPEAT_BEGIN, REPEAT_END);
+        visit(IfContext.class).map(IF_BEGIN, IF_END);
+        visit(IfElseContext.class).map(IF_BEGIN, IF_END);
+        visit(ForContext.class).map(FOR_BEGIN, FOR_END);
+        visit(WhileContext.class).map(WHILE_BEGIN, WHILE_END);
+        visit(RepeatContext.class).map(REPEAT_BEGIN, REPEAT_END);
 
-        visit(Next_statementContext.class).map(NEXT);
-        visit(Break_statementContext.class).map(BREAK);
+        visit(NextContext.class).map(NEXT);
+        visit(BreakContext.class).map(BREAK);
     }
 
     private void assignments() {
-        visit(Assign_valueContext.class).map(ASSIGN);
-        visit(Assign_func_declarationContext.class).map(ASSIGN_FUNC);
-        visit(Assign_value_listContext.class).map(ASSIGN_LIST);
+        visit(AssignmentContext.class, context -> context.ASSIGN() != null).map(ASSIGN);
+        visit(AssignmentContext.class, context -> context.EQUALS() != null).map(ASSIGN_FUNC);
+        visit(SubContext.class).map(ASSIGN_LIST);
     }
 }
