@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -36,6 +38,27 @@ class ReportObjectFactoryTest extends TestBase {
         assertNotNull(result);
         assertTrue(isArchive(testZip));
     }
+
+     @Test
+     void testWithSamenameSubmissions() throws ExitException, IOException {
+        File submission1 = new File(BASE_PATH, "basecode/A");
+        File submission2 = new File(BASE_PATH, "basecode/B");
+        File submission3 = new File(BASE_PATH, "basecode-sameNameOfSubdirectoryAndRootdirectory/A");
+        File submission4 = new File(BASE_PATH, "basecode-sameNameOfSubdirectoryAndRootdirectory/A");
+         List<String> submissions = Stream.of(submission1, submission2, submission3, submission4).map(File::toString).toList();
+         JPlagResult result = runJPlag(submissions, it -> it.withBaseCodeSubmissionDirectory(new File(BASE_PATH, BASECODE_BASE)));
+         File testZip = File.createTempFile("result", ".zip");
+         ReportObjectFactory reportObjectFactory = new ReportObjectFactory(testZip);
+         reportObjectFactory.createAndSaveReport(result);
+
+         assertNotNull(result);
+         assertTrue(isArchive(testZip));
+
+         String[] expectedSubmissionNames = new String[] { "B/TerrainType.java", "basecode/A/TerrainType.java" };
+         for (String expected : expectedSubmissionNames) {
+             assertTrue(result.getSubmissions().getSubmissions().stream().anyMatch(submission -> submission.getName().equals(expected)));
+         }
+     }
 
     /**
      * Checks if the given file is a valid archive
