@@ -215,16 +215,18 @@ public abstract class LanguageModuleTest {
             TokenType expectedType = this.languageTokens.stream().filter(type -> type.toString().equals(expectedToken.typeName())).findFirst()
                     .orElseThrow(() -> new IOException(String.format("The token type %s does not exist.", expectedToken.typeName())));
 
-            if (extractedTokens.stream().noneMatch(token -> token.getType() == expectedType && token.getLine() == expectedToken.line()
-                    && token.getColumn() == expectedToken.col() && token.getLength() == expectedToken.length())) {
+            if (extractedTokens.stream().noneMatch(token -> token.getType() == expectedType && token.getLine() == expectedToken.lineNumber()
+                    && token.getColumn() == expectedToken.columnNumber() && token.getLength() == expectedToken.length())) {
                 failedTokens.add(expectedToken);
             }
         }
 
         if (!failedTokens.isEmpty()) {
-            String failDescriptors = String.join(System.lineSeparator(), failedTokens.stream()
-                    .map(token -> token.typeName() + " at (" + token.line() + ":" + token.col() + ") with length " + token.length()).toList());
-            fail("Some tokens weren't extracted with the correct properties:" + System.lineSeparator() + failDescriptors);
+            String failureDescriptors = String.join(System.lineSeparator(),
+                    failedTokens.stream().map(
+                            token -> token.typeName() + " at (" + token.lineNumber() + ":" + token.columnNumber() + ") with length " + token.length())
+                            .toList());
+            fail("Some tokens weren't extracted with the correct properties:" + System.lineSeparator() + failureDescriptors);
         }
     }
 
@@ -290,8 +292,8 @@ public abstract class LanguageModuleTest {
     }
 
     @AfterAll
-    final void releaseTmpFiles() {
-        TmpFileHolder.deleteTmpFiles();
+    final void deleteTemporaryFiles() {
+        TemporaryFileHolder.deleteTemporaryFiles();
     }
 
     private List<Token> parseTokens(TestData source) throws ParsingException, IOException {

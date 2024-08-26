@@ -8,7 +8,7 @@ import java.util.List;
 import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
-import de.jplag.testutils.TmpFileHolder;
+import de.jplag.testutils.TemporaryFileHolder;
 import de.jplag.util.FileUtils;
 
 /**
@@ -26,7 +26,7 @@ class InlineTestData implements TestData {
         File file = File.createTempFile("testSource", language.suffixes()[0]);
         FileUtils.write(file, this.testData);
         List<Token> tokens = language.parse(Collections.singleton(file));
-        TmpFileHolder.tmpFiles.add(file);
+        TemporaryFileHolder.temporaryFiles.add(file);
         return tokens;
     }
 

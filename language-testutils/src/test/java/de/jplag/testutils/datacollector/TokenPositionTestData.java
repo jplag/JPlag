@@ -9,12 +9,12 @@ import java.util.List;
 import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
-import de.jplag.testutils.TmpFileHolder;
+import de.jplag.testutils.TemporaryFileHolder;
 import de.jplag.util.FileUtils;
 
 /**
  * Test sources with token information Reads token position test specifications form a file and provides the token
- * information for tests. The sources cna be used as regular test sources.
+ * information for tests. The sources can be used as regular test sources.
  */
 public class TokenPositionTestData implements TestData {
     private final List<String> sourceLines;
@@ -44,12 +44,12 @@ public class TokenPositionTestData implements TestData {
             }
 
             if (sourceLine.charAt(0) == '$') {
-                int col = sourceLine.indexOf('|');
-                String[] parts = sourceLine.split(" ", 0);
+                int column = sourceLine.indexOf('|');
+                String[] tokenDescriptionParts = sourceLine.split(" ", 0);
 
-                String typeName = parts[parts.length - 2];
-                int length = Integer.parseInt(parts[parts.length - 1]);
-                this.expectedTokens.add(new TokenData(typeName, currentLine, col, length));
+                String typeName = tokenDescriptionParts[tokenDescriptionParts.length - 2];
+                int length = Integer.parseInt(tokenDescriptionParts[tokenDescriptionParts.length - 1]);
+                this.expectedTokens.add(new TokenData(typeName, currentLine, column, length));
             }
         }
     }
@@ -59,7 +59,7 @@ public class TokenPositionTestData implements TestData {
         File file = File.createTempFile("testSource", language.suffixes()[0]);
         FileUtils.write(file, String.join(System.lineSeparator(), sourceLines));
         List<Token> tokens = language.parse(Collections.singleton(file));
-        TmpFileHolder.tmpFiles.add(file);
+        TemporaryFileHolder.temporaryFiles.add(file);
         return tokens;
     }
 
@@ -83,10 +83,10 @@ public class TokenPositionTestData implements TestData {
     /**
      * Information about a single token
      * @param typeName The name of the token type
-     * @param line The line the token is in
-     * @param col The column the token is in
+     * @param lineNumber The line the token is in (1 based)
+     * @param columnNumber The column the token is in (1 based)
      * @param length The length of the token
      */
-    public record TokenData(String typeName, int line, int col, int length) {
+    public record TokenData(String typeName, int lineNumber, int columnNumber, int length) {
     }
 }

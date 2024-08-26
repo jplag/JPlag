@@ -86,18 +86,18 @@ public class TestDataCollector {
      * @throws IOException If the files cannot be read
      */
     public TestDataContext addTokenPositionTests(String directoryName) {
-        File dir = new File(this.testFileLocation, directoryName);
-        Set<TestData> allData = new HashSet<>();
-        for (File file : Objects.requireNonNull(dir.listFiles())) {
+        File directory = new File(this.testFileLocation, directoryName);
+        Set<TestData> allTestsInDirectory = new HashSet<>();
+        for (File file : Objects.requireNonNull(directory.listFiles())) {
             try {
                 TokenPositionTestData data = new TokenPositionTestData(file);
-                allData.add(data);
+                allTestsInDirectory.add(data);
                 this.tokenPositionTestData.add(data);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-        return new TestDataContext(allData);
+        return new TestDataContext(allTestsInDirectory);
     }
 
     /**
