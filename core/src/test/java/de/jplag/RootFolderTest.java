@@ -101,4 +101,17 @@ class RootFolderTest extends TestBase {
             assertEquals(expectedName, effectiveName);
         }
     }
+
+    @Test
+    @DisplayName("test single new submission")
+    void testSingleNewSubmission() throws  ExitException {
+        List<String> newSubmissions = List.of(getBasePath("basecode" + File.separator + "A"));
+        List<String> oldSubmissions = List.of(getBasePath("basecode" + File.separator + "B"));
+        JPlagResult result = runJPlag(newSubmissions, oldSubmissions, it -> it);
+        long numberOfNewSubmissions = result.getSubmissions().getSubmissions().stream().filter(Submission::isNew).count();
+        long numberOfOldSubmissions = result.getSubmissions().getSubmissions().stream().filter(it -> !it.isNew()).count();
+        assertEquals(1, numberOfNewSubmissions);
+        assertEquals(1, numberOfOldSubmissions);
+    }
+
 }
