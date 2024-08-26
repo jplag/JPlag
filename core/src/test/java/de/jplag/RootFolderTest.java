@@ -87,10 +87,8 @@ class RootFolderTest extends TestBase {
     @Test
     @DisplayName("test multiple submissions with same folder name")
     void testSubmissionsWithSameFolderName() throws ExitException {
-        String[] roots = new String[]{"A", "B", "base"};
-        List<String> submissions = Arrays.stream(roots)
-                .map(it -> getBasePath("basecode" + File.separator + it))
-                .toList();
+        String[] roots = new String[] {"A", "B", "base"};
+        List<String> submissions = Arrays.stream(roots).map(it -> getBasePath("basecode" + File.separator + it)).toList();
         JPlagResult result = runJPlag(submissions, it -> it);
         List<String> submissionNames = result.getSubmissions().getSubmissions().stream().map(Submission::getName).sorted().toList();
         String conflictingFile = "TerrainType.java";
@@ -104,7 +102,7 @@ class RootFolderTest extends TestBase {
 
     @Test
     @DisplayName("test single new submission")
-    void testSingleNewSubmission() throws  ExitException {
+    void testSingleNewSubmission() throws ExitException {
         List<String> newSubmissions = List.of(getBasePath("basecode" + File.separator + "A"));
         List<String> oldSubmissions = List.of(getBasePath("basecode" + File.separator + "B"));
         JPlagResult result = runJPlag(newSubmissions, oldSubmissions, it -> it);
