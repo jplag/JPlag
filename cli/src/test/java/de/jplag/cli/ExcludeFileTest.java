@@ -13,7 +13,7 @@ import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 
 public class ExcludeFileTest extends CliTest {
-    private static final String excludeFileName = "exclusions";
+    private static final String EXCLUDE_FILE_NAME = "exclusions";
 
     @Test
     void testNoDefaultExcludeFile() throws IOException, ExitException {
@@ -23,7 +23,7 @@ public class ExcludeFileTest extends CliTest {
 
     @Test
     void testSetExcludeFile() throws IOException, ExitException {
-        JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.EXCLUDE_FILES, excludeFileName));
-        assertEquals(excludeFileName, options.exclusionFileName());
+        JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.EXCLUDE_FILES, EXCLUDE_FILE_NAME));
+        assertEquals(EXCLUDE_FILE_NAME, options.exclusionFileName());
     }
 }
