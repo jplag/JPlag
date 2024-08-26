@@ -1,5 +1,7 @@
 package de.jplag;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.io.File;
 import java.util.List;
 
@@ -7,8 +9,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import de.jplag.exceptions.ExitException;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test class for the multi-root feature and the old-new feature.
