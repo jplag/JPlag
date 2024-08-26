@@ -2,6 +2,7 @@ import { beforeAll, describe, expect, it, vi } from 'vitest'
 import { OverviewFactory } from '@/model/factories/OverviewFactory'
 import { MetricType } from '@/model/MetricType'
 import { Distribution } from '@/model/Distribution'
+import { ParserLanguage } from '@/model/Language'
 import validNew from './ValidOverview.json'
 import outdated from './OutdatedOverview.json'
 
@@ -41,7 +42,7 @@ describe('Test JSON to Overview', () => {
     expect(await OverviewFactory.getOverview()).toEqual({
       _submissionFolderPath: ['files'],
       _baseCodeFolderPath: '',
-      _language: 'Javac based AST plugin',
+      _language: ParserLanguage.JAVA,
       _fileExtensions: ['.java', '.JAVA'],
       _matchSensitivity: 9,
       _dateOfExecution: '12/07/23',
