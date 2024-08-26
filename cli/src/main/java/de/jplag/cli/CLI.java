@@ -49,6 +49,7 @@ public final class CLI {
      */
     public void executeCli() throws ExitException, IOException {
         logger.debug("Your version of JPlag is {}", JPlag.JPLAG_VERSION);
+        JPlagVersionChecker.printVersionNotification();
 
         if (!this.inputHandler.parse()) {
             CollectedLogger.setLogLevel(this.inputHandler.getCliOptions().advanced.logLevel);
@@ -110,6 +111,7 @@ public final class CLI {
      * @throws IOException If something went wrong with the internal server
      */
     public void runViewer(File zipFile) throws IOException {
+        finalizeLogger(); // Prints the errors. The later finalizeLogger will print any errors logged after this point.
         JPlagRunner.runInternalServer(zipFile, this.inputHandler.getCliOptions().advanced.port);
     }
 

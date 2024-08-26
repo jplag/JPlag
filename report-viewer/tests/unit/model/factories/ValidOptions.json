@@ -1,5 +1,5 @@
 {
-  "language": "Java",
+  "language": "java",
   "min_token_match": 9,
   "submission_directories": [
     ".\\files"
