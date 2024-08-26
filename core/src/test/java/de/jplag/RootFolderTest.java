@@ -3,6 +3,7 @@ package de.jplag;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -81,5 +82,23 @@ class RootFolderTest extends TestBase {
         JPlagResult result = runJPlag(newDirectories, oldDirectories, it -> it.withBaseCodeSubmissionDirectory(new File(basecodePath)));
         int numberOfExpectedComparison = 1 + ROOT_COUNT_2 * (ROOT_COUNT_1 - 1); // -1 for basecode
         assertEquals(numberOfExpectedComparison, result.getAllComparisons().size());
+    }
+
+    @Test
+    @DisplayName("test multiple submissions with same folder name")
+    void testSubmissionsWithSameFolderName() throws ExitException {
+        String[] roots = new String[]{"A", "B", "base"};
+        List<String> submissions = Arrays.stream(roots)
+                .map(it -> getBasePath("basecode" + File.separator + it))
+                .toList();
+        JPlagResult result = runJPlag(submissions, it -> it);
+        List<String> submissionNames = result.getSubmissions().getSubmissions().stream().map(Submission::getName).sorted().toList();
+        String conflictingFile = "TerrainType.java";
+
+        for (int i = 0; i < roots.length; i++) {
+            String expectedName = roots[i] + File.separator + conflictingFile;
+            String effectiveName = submissionNames.get(i);
+            assertEquals(expectedName, effectiveName);
+        }
     }
 }
