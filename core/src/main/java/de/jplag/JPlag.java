@@ -106,7 +106,7 @@ public class JPlag {
 
     private static void checkForConfigurationConsistency(JPlagOptions options) {
         if (options.normalize() && !options.language().supportsNormalization()) {
-            logger.error(String.format("The language %s cannot be used with normalization.", options.language().getName()));
+            logger.error("The language {} cannot be used with normalization.", options.language().getName());
         }
     }
 }
