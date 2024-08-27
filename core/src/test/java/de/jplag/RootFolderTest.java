@@ -3,7 +3,6 @@ package de.jplag;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -92,7 +91,8 @@ class RootFolderTest extends TestBase {
         List<String> newSubmissionsNames = List.of("2023");
         List<String> oldSubmissionsNames = List.of("2022", "2021", "2020");
         List<String> newSubmissions = newSubmissionsNames.stream().map(it -> getBasePath("SubmissionsWithSameName" + File.separator + it)).toList();
-        List<String> oldSubmissions = oldSubmissionsNames.stream().map(it -> getBasePath("SubmissionsWithSameName" + File.separator + "old" + File.separator + it)).toList();
+        List<String> oldSubmissions = oldSubmissionsNames.stream()
+                .map(it -> getBasePath("SubmissionsWithSameName" + File.separator + "old" + File.separator + it)).toList();
 
         JPlagResult result = runJPlag(newSubmissions, oldSubmissions, it -> it);
 
