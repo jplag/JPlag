@@ -40,6 +40,11 @@ const testSets: DataSet[] = [
     secondSubmissionName: 'f1\\\\|/1'
   },
   {
+    datasetName: 'singleNewSubmission-report.zip',
+    firstSubmissionName: '2023\\\\|/QSort2023.java',
+    secondSubmissionName: '2022\\\\|/QSort2022.java'
+  },
+  {
     datasetName: 'python-report.zip',
     firstSubmissionName: '01.py',
     secondSubmissionName: '02.py'
