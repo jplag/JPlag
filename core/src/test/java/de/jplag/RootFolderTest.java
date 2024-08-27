@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -87,29 +89,36 @@ class RootFolderTest extends TestBase {
     @Test
     @DisplayName("test multiple submissions with same folder name")
     void testSubmissionsWithSameFolderName() throws ExitException {
-        String[] roots = new String[] {"A", "B", "base"};
-        List<String> submissions = Arrays.stream(roots).map(it -> getBasePath("basecode" + File.separator + it)).toList();
-        JPlagResult result = runJPlag(submissions, it -> it);
-        List<String> submissionNames = result.getSubmissions().getSubmissions().stream().map(Submission::getName).sorted().toList();
-        String conflictingFile = "TerrainType.java";
+        List<String> newSubmissionsNames = List.of("2023");
+        List<String> oldSubmissionsNames = List.of("2022", "2021", "2020");
+        List<String> newSubmissions = newSubmissionsNames.stream().map(it -> getBasePath("SubmissionsWithSameName" + File.separator + it)).toList();
+        List<String> oldSubmissions = oldSubmissionsNames.stream().map(it -> getBasePath("SubmissionsWithSameName" + File.separator + "old" + File.separator + it)).toList();
 
-        for (int i = 0; i < roots.length; i++) {
-            String expectedName = roots[i] + File.separator + conflictingFile;
-            String effectiveName = submissionNames.get(i);
-            assertEquals(expectedName, effectiveName);
-        }
+        JPlagResult result = runJPlag(newSubmissions, oldSubmissions, it -> it);
+
+        long numberOfNewSubmissions = result.getSubmissions().getSubmissions().stream().filter(Submission::isNew).count();
+        long numberOfOldSubmissions = result.getSubmissions().getSubmissions().stream().filter(it -> !it.isNew()).count();
+        assertEquals(2, numberOfNewSubmissions);
+        assertEquals(6, numberOfOldSubmissions);
+
+        Set<String> submissionNames = result.getSubmissions().getSubmissions().stream().map(Submission::getName).collect(Collectors.toSet());
+        Set<String> expectedNames = Set.of("2023/gr1", "2023/gr2", "2022/gr1", "2022/gr2", "2021/gr1", "2021/gr2", "2020/gr1", "2020/gr2");
+        assertEquals(expectedNames, submissionNames);
     }
 
     @Test
     @DisplayName("test single new submission")
     void testSingleNewSubmission() throws ExitException {
-        List<String> newSubmissions = List.of(getBasePath("basecode" + File.separator + "A"));
-        List<String> oldSubmissions = List.of(getBasePath("basecode" + File.separator + "B"));
+        List<String> newSubmissionsNames = List.of("2023");
+        List<String> oldSubmissionsNames = List.of("2022", "2021", "2020");
+        List<String> newSubmissions = newSubmissionsNames.stream().map(it -> getBasePath("SingleNewSubmission" + File.separator + it)).toList();
+        List<String> oldSubmissions = oldSubmissionsNames.stream().map(it -> getBasePath("SingleNewSubmission" + File.separator + it)).toList();
+
         JPlagResult result = runJPlag(newSubmissions, oldSubmissions, it -> it);
+
         long numberOfNewSubmissions = result.getSubmissions().getSubmissions().stream().filter(Submission::isNew).count();
         long numberOfOldSubmissions = result.getSubmissions().getSubmissions().stream().filter(it -> !it.isNew()).count();
         assertEquals(1, numberOfNewSubmissions);
-        assertEquals(1, numberOfOldSubmissions);
+        assertEquals(3, numberOfOldSubmissions);
     }
-
 }
