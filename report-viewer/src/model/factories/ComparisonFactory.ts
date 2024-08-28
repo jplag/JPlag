@@ -44,8 +44,6 @@ export class ComparisonFactory extends BaseFactory {
         slash(match.secondFile as string)
       )
 
-      console.log(secondSubmissionId, match.secondFile, fileOfSecond)
-
       if (fileOfFirst == undefined || fileOfSecond == undefined) {
         throw new Error(
           `The report viewer expected to find the file ${fileOfFirst == undefined ? match.firstFile : match.secondFile} in the submissions, but did not find it.`
