@@ -28,7 +28,7 @@
     "chartjs-plugin-datalabels": "^2.2.0",
     "highlight.js": "^11.10.0",
     "jszip": "^3.10.0",
-    "pinia": "^2.1.7",
+    "pinia": "^2.2.2",
     "slash": "^5.1.0",
     "vue": "^3.4.38",
     "vue-chartjs": "^5.3.1",
