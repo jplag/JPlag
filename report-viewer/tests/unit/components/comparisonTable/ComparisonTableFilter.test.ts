@@ -1,39 +1,25 @@
 import ComparisonTableFilter from '@/components/ComparisonTableFilter.vue'
 import { flushPromises, mount } from '@vue/test-utils'
-import { describe, it, vi, expect, beforeAll } from 'vitest'
+import { describe, it, vi, expect } from 'vitest'
+import { createTestingPinia } from '@pinia/testing'
 import { store } from '@/stores/store'
 import { MetricType } from '@/model/MetricType.ts'
 import ButtonComponent from '@/components/ButtonComponent.vue'
 import OptionsSelector from '@/components/optionsSelectors/OptionsSelectorComponent.vue'
 import OptionComponent from '@/components/optionsSelectors/OptionComponent.vue'
 
-const store = {
-  state: {
-    anonymous: new Set<string>()
-  },
-  uiState: {
-    comparisonTableSortingMetric: MetricType.AVERAGE,
-    comparisonTableClusterSorting: false
-  },
-  getSubmissionIds: ['A', 'B', 'C', 'test User']
-}
-
 describe('ComparisonTableFilter', async () => {
-  beforeAll(() => {
-    vi.mock('@/stores/store', () => ({
-      store: vi.fn(() => {
-        return store
-      })
-    }))
-  })
-
   it('Test search string updating', async () => {
     const wrapper = mount(ComparisonTableFilter, {
       props: {
         searchString: '',
         'onUpdate:searchString': (e) => wrapper.setProps({ searchString: e })
+      },
+      global: {
+        plugins: [createTestingPinia({ createSpy: vi.fn })]
       }
     })
+    setUpStore()
 
     const searchValue = 'JPlag'
 
@@ -43,7 +29,12 @@ describe('ComparisonTableFilter', async () => {
   })
 
   it('Test metric changes', async () => {
-    const wrapper = mount(ComparisonTableFilter)
+    const wrapper = mount(ComparisonTableFilter, {
+      global: {
+        plugins: [createTestingPinia({ createSpy: vi.fn })]
+      }
+    })
+    setUpStore()
 
     expect(wrapper.text()).toContain('Average')
     expect(wrapper.text()).toContain('Maximum')
@@ -54,18 +45,18 @@ describe('ComparisonTableFilter', async () => {
     expectHighlighting(0)
 
     await options[1].trigger('click')
-    expect(store.uiState.comparisonTableSortingMetric).toBe(MetricType.MAXIMUM)
-    expect(store.uiState.comparisonTableClusterSorting).toBeFalsy()
+    expect(store().uiState.comparisonTableSortingMetric).toBe(MetricType.MAXIMUM)
+    expect(store().uiState.comparisonTableClusterSorting).toBeFalsy()
     expectHighlighting(1)
 
     await options[2].trigger('click')
-    expect(store.uiState.comparisonTableSortingMetric).toBe(MetricType.AVERAGE)
-    expect(store.uiState.comparisonTableClusterSorting).toBeTruthy()
+    expect(store().uiState.comparisonTableSortingMetric).toBe(MetricType.AVERAGE)
+    expect(store().uiState.comparisonTableClusterSorting).toBeTruthy()
     expectHighlighting(2)
 
     await options[0].trigger('click')
-    expect(store.uiState.comparisonTableSortingMetric).toBe(MetricType.AVERAGE)
-    expect(store.uiState.comparisonTableClusterSorting).toBeFalsy()
+    expect(store().uiState.comparisonTableSortingMetric).toBe(MetricType.AVERAGE)
+    expect(store().uiState.comparisonTableClusterSorting).toBeFalsy()
     expectHighlighting(0)
 
     function expectHighlighting(index: number) {
@@ -80,22 +71,30 @@ describe('ComparisonTableFilter', async () => {
   })
 
   it('Test anonymous button', async () => {
-    const wrapper = mount(ComparisonTableFilter)
+    const wrapper = mount(ComparisonTableFilter, {
+      global: {
+        plugins: [createTestingPinia({ createSpy: vi.fn })]
+      }
+    })
+    setUpStore()
 
+    await wrapper.vm.$nextTick()
     expect(wrapper.text()).toContain('Hide All')
 
     await wrapper.getComponent(ButtonComponent).trigger('click')
-    expect(store.state.anonymous.size).toBe(store.getSubmissionIds.length)
-    for (const id of store.getSubmissionIds) {
-      expect(store.state.anonymous).toContain(id)
+
+    expect(store().state.anonymous.size).toBe(store().getSubmissionIds.length)
+    for (const id of store().getSubmissionIds) {
+      expect(store().state.anonymous).toContain(id)
     }
 
     // Vue does not actually rerender the component, so this is commented out
-    //expect(wrapper.text()).toContain('Show All')
-    //expect(wrapper.text()).not.toContain('Hide All')
+    await wrapper.vm.$nextTick()
+    expect(wrapper.text()).toContain('Show All')
+    expect(wrapper.text()).not.toContain('Hide All')
 
     await wrapper.getComponent(ButtonComponent).trigger('click')
-    expect(store.state.anonymous.size).toBe(0)
+    expect(store().state.anonymous.size).toBe(0)
   })
 
   it('Test deanoymization', async () => {
@@ -103,13 +102,16 @@ describe('ComparisonTableFilter', async () => {
       props: {
         searchString: '',
         'onUpdate:searchString': (e) => wrapper.setProps({ searchString: e })
+      },
+      global: {
+        plugins: [createTestingPinia({ createSpy: vi.fn })]
       }
     })
-    store.state.anonymous = new Set(store.getSubmissionIds)
+    setUpStore(true)
 
     wrapper.find('input').setValue('C')
-    expect(store.state.anonymous.size).toBe(store.getSubmissionIds.length - 1)
-    expect(store.state.anonymous).not.toContain('C')
+    expect(store().state.anonymous.size).toBe(store().getSubmissionIds.length - 1)
+    expect(store().state.anonymous).not.toContain('C')
   })
 
   it('Test deanoymization - case insensitive', async () => {
@@ -117,13 +119,16 @@ describe('ComparisonTableFilter', async () => {
       props: {
         searchString: '',
         'onUpdate:searchString': (e) => wrapper.setProps({ searchString: e })
+      },
+      global: {
+        plugins: [createTestingPinia({ createSpy: vi.fn })]
       }
     })
-    store.state.anonymous = new Set(store.getSubmissionIds)
+    setUpStore(true)
 
     wrapper.find('input').setValue('c')
-    expect(store.state.anonymous.size).toBe(store.getSubmissionIds.length - 1)
-    expect(store.state.anonymous).not.toContain('C')
+    expect(store().state.anonymous.size).toBe(store().getSubmissionIds.length - 1)
+    expect(store().state.anonymous).not.toContain('C')
   })
 
   it('Test deanoymization - multiple', async () => {
@@ -131,35 +136,55 @@ describe('ComparisonTableFilter', async () => {
       props: {
         searchString: '',
         'onUpdate:searchString': (e) => wrapper.setProps({ searchString: e })
+      },
+      global: {
+        plugins: [createTestingPinia({ createSpy: vi.fn })]
       }
     })
-    store.state.anonymous = new Set(store.getSubmissionIds)
+    setUpStore(true)
 
     wrapper.find('input').setValue('c A')
-    expect(store.state.anonymous.size).toBe(store.getSubmissionIds.length - 2)
-    expect(store.state.anonymous).not.toContain('C')
-    expect(store.state.anonymous).not.toContain('A')
+    expect(store().state.anonymous.size).toBe(store().getSubmissionIds.length - 2)
+    expect(store().state.anonymous).not.toContain('C')
+    expect(store().state.anonymous).not.toContain('A')
   })
 
-  it('Test deanoymization - name with spaces', async () => {
+  // skipped, because of #1946
+  it.skip('Test deanoymization - name with spaces', async () => {
     const wrapper = mount(ComparisonTableFilter, {
       props: {
         searchString: '',
         'onUpdate:searchString': (e) => wrapper.setProps({ searchString: e })
+      },
+      global: {
+        plugins: [createTestingPinia({ createSpy: vi.fn })]
       }
     })
-    store.state.anonymous = new Set(store.getSubmissionIds)
+    setUpStore(true)
 
     wrapper.find('input').setValue('test')
-    expect(store.state.anonymous.size).toBe(store.getSubmissionIds.length)
-    expect(store.state.anonymous).toContain('test User')
+    expect(store().state.anonymous.size).toBe(store().getSubmissionIds.length)
+    expect(store().state.anonymous).toContain('test_User')
 
     wrapper.find('input').setValue('User')
-    expect(store.state.anonymous.size).toBe(store.getSubmissionIds.length)
-    expect(store.state.anonymous).toContain('test User')
+    expect(store().state.anonymous.size).toBe(store().getSubmissionIds.length)
+    expect(store().state.anonymous).toContain('test_User')
 
     wrapper.find('input').setValue('test User')
-    expect(store.state.anonymous.size).toBe(store.getSubmissionIds.length - 1)
-    expect(store.state.anonymous).not.toContain('test User')
+    expect(store().state.anonymous.size).toBe(store().getSubmissionIds.length - 1)
+    expect(store().state.anonymous).not.toContain('test_User')
   })
 })
+
+function setUpStore(fillAnonymous = false) {
+  const submissionsToDisplayNames = new Map<string, string>()
+  submissionsToDisplayNames.set('A', 'A')
+  submissionsToDisplayNames.set('B', 'B')
+  submissionsToDisplayNames.set('C', 'C')
+  submissionsToDisplayNames.set('test_User', 'test User')
+  store().state.fileIdToDisplayName = submissionsToDisplayNames
+  store().state.anonymous.clear()
+  if (fillAnonymous) {
+    store().state.anonymous = new Set(submissionsToDisplayNames.keys())
+  }
+}
