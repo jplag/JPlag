@@ -31,7 +31,7 @@ For production builds (for example to host on GitHub Pages in a repository calle
 ```
 npm run build:prod
 ```
-When hosting this build it will be need to accasible under `yourdomain.tld/JPlag/`.
+When hosting this build it will need to be accessible under `yourdomain.tld/JPlag/`.
 
 To build the demo version run:
 ```
