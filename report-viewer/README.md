@@ -40,11 +40,11 @@ npm run build:demo
 Similar to the production build, this build will have `demo` as its base url.
 
 
-## Contrubuting
+## Contributing
 
 We're happy to incorporate all improvements to JPlag into this codebase. Feel free to fork the project and send pull requests. Please consider our guidelines for contributions.
 
-Before commiting please run the following commands to ensure that the code is properly formatted and linted.
+Before committing please run the following commands to ensure that the code is properly formatted and linted.
 ```
 npm run format
 npm run lint
