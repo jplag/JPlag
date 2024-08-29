@@ -12,7 +12,7 @@ import de.jplag.cli.test.CliTest;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 
-public class SuffixesTest extends CliTest {
+class SuffixesTest extends CliTest {
     private static final List<String> JAVA_SUFFIXES = List.of(".java", ".JAVA");
     private static final List<String> CUSTOM_SUFFIXES = List.of(".j", ".jva");
 

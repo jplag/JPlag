@@ -12,7 +12,7 @@ import de.jplag.cli.test.CliTest;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 
-public class ExcludeFileTest extends CliTest {
+class ExcludeFileTest extends CliTest {
     private static final String EXCLUDE_FILE_NAME = "exclusions";
 
     @Test

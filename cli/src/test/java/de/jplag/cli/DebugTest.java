@@ -12,7 +12,7 @@ import de.jplag.cli.test.CliTest;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 
-public class DebugTest extends CliTest {
+class DebugTest extends CliTest {
     @Test
     void testDefaultDebug() throws IOException, ExitException {
         JPlagOptions options = runCliForOptions();

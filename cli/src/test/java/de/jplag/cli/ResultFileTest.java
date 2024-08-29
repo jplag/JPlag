@@ -12,7 +12,7 @@ import de.jplag.cli.test.CliArgument;
 import de.jplag.cli.test.CliTest;
 import de.jplag.exceptions.ExitException;
 
-public class ResultFileTest extends CliTest {
+class ResultFileTest extends CliTest {
     private static final String DEFAULT_RESULT_FILE = "results.zip";
     private static final String TEST_RESULT_FILE = "customResults.zip";
     private static final String TEST_RESULT_FILE_WITH_AVOIDANCE = "customResults(1).zip";

@@ -12,7 +12,7 @@ import de.jplag.cli.test.CliTest;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 
-public class SubdirectoryTest extends CliTest {
+class SubdirectoryTest extends CliTest {
     private static final String TEST_SUBDIRECTORY = "dir";
 
     @Test

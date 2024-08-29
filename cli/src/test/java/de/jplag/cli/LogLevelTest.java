@@ -11,7 +11,7 @@ import de.jplag.cli.test.CliArgument;
 import de.jplag.cli.test.CliTest;
 import de.jplag.exceptions.ExitException;
 
-public class LogLevelTest extends CliTest {
+class LogLevelTest extends CliTest {
     private static final Level DEFAULT_LOG_LEVEL = Level.INFO;
 
     @Test
