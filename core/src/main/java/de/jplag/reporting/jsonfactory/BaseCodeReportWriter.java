@@ -66,9 +66,10 @@ public class BaseCodeReportWriter {
         List<Token> tokens = submission.getTokenList().subList(takeLeft ? match.startOfFirst() : match.startOfSecond(),
                 (takeLeft ? match.endOfFirst() : match.endOfSecond()) + 1);
 
-        Comparator<? super Token> lineComparator = Comparator.comparingInt(Token::getLine);
-        Token start = tokens.stream().min(lineComparator).orElseThrow();
-        Token end = tokens.stream().max(lineComparator).orElseThrow();
+        Comparator<? super Token> lineStartComparator = Comparator.comparingInt(Token::getLine).thenComparingInt(Token::getColumn);
+        Comparator<? super Token> lineEndComparator = Comparator.comparingInt(Token::getLine).thenComparingInt((Token t) -> t.getColumn() + t.getLength());
+        Token start = tokens.stream().min(lineStartComparator).orElseThrow();
+        Token end = tokens.stream().max(lineEndComparator).orElseThrow();
 
         CodePosition startPosition = new CodePosition(start.getLine(), start.getColumn() - 1,
                 takeLeft ? match.startOfFirst() : match.startOfSecond());
