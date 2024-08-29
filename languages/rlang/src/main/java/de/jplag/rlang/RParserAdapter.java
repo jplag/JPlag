@@ -83,8 +83,8 @@ public class RParserAdapter extends AbstractParser {
     /**
      * Adds a new {@link Token} to the current token list.
      * @param type the type of the new {@link Token}
-     * @param line the line of the Token in the current file
-     * @param start the start column of the Token in the line
+     * @param line the lineNumber of the Token in the current file
+     * @param start the start column of the Token in the lineNumber
      * @param length the length of the Token
      */
     /* package-private */ void addToken(TokenType type, int line, int start, int length) {
