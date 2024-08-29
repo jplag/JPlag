@@ -97,7 +97,7 @@ export class ComparisonFactory extends BaseFactory {
         })
       }
     } catch (e) {
-      console.log(e)
+      console.error(e)
     }
   }
 

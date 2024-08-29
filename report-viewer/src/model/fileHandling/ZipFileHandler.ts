@@ -8,7 +8,7 @@ import { FileHandler } from './FileHandler'
  */
 export class ZipFileHandler extends FileHandler {
   public async handleFile(file: Blob) {
-    console.log('Start handling zip file and storing necessary data...')
+    console.info('Start handling zip file and storing necessary data...')
     return jszip.loadAsync(file).then(async (zip) => {
       for (const originalFileName of Object.keys(zip.files)) {
         const unixFileName = slash(originalFileName)

@@ -137,7 +137,6 @@ function collapse() {
 }
 
 function expand() {
-  console.log('expand')
   collapsed.value = false
 }
 

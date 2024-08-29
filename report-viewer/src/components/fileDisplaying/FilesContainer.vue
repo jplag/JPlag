@@ -179,11 +179,9 @@ const tokenCount = computed(() => {
 function scrollTo(file: string, line: number) {
   const fileIndex = Array.from(props.files).findIndex((f) => f.fileName === file)
   if (fileIndex !== -1) {
-    console.log(fileIndex)
     codePanels.value[fileIndex].expand()
     nextTick(() => {
       if (!scrollContainer.value) {
-        console.log('null')
         return
       }
       const childToScrollTo = codePanels.value[fileIndex].getLineRect(line) as DOMRect
