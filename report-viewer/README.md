@@ -17,7 +17,7 @@ npm run dev
 ### Compile and build
 There are different ways to build the report-viewer.
 
-The report viewer will be build and packaged with the cli in a jar file if build with the `with-report-viewer` profile:
+The report viewer will be built and packaged with the cli in a jar file if built with the `with-report-viewer` profile:
 ```
 mvn -Pwith-report-viewer clean package assembly:single
 ```
