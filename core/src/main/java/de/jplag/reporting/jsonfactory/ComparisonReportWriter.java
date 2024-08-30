@@ -100,7 +100,8 @@ public class ComparisonReportWriter {
         List<Token> tokensSecond = comparison.secondSubmission().getTokenList().subList(match.startOfSecond(), match.endOfSecond() + 1);
 
         Comparator<? super Token> lineStartComparator = Comparator.comparingInt(Token::getLine).thenComparingInt(Token::getColumn);
-        Comparator<? super Token> lineEndComparator = Comparator.comparingInt(Token::getLine).thenComparingInt((Token t) -> t.getColumn() + t.getLength());
+        Comparator<? super Token> lineEndComparator = Comparator.comparingInt(Token::getLine)
+                .thenComparingInt((Token t) -> t.getColumn() + t.getLength());
 
         Token startOfFirst = tokensFirst.stream().min(lineStartComparator).orElseThrow();
         Token endOfFirst = tokensFirst.stream().max(lineEndComparator).orElseThrow();
