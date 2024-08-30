@@ -38,6 +38,19 @@ jobs:
         with:
           node-version: "18"
 
+      - name: Set version of Report Viewer
+        shell: bash
+        run: |
+          VERSION=$(grep "<revision>" pom.xml | grep -oPm1 "(?<=<revision>)[^-|<]+")
+          MAJOR=$(echo $VERSION | cut -d '.' -f 1)
+          MINOR=$(echo $VERSION | cut -d '.' -f 2)
+          PATCH=$(echo $VERSION | cut -d '.' -f 3)
+          json=$(cat report-viewer/src/version.json)
+          json=$(echo "$json" | jq --arg MAJOR "$MAJOR" --arg MINOR "$MINOR" --arg PATCH "$PATCH" '.report_viewer_version |= { "major": $MAJOR | tonumber, "minor": $MINOR | tonumber, "patch": $PATCH | tonumber }')
+          echo "$json" >  report-viewer/src/version.json
+          echo "Version of Report Viewer:"
+          cat report-viewer/src/version.json
+
       - name: Build JPlag
         run: mvn -Pwith-report-viewer -U -B clean package assembly:single
 

@@ -43,7 +43,7 @@ jobs:
           node-version: "18"
   
       - name: Build Assembly
-        run: mvn -Pwith-report-viewer -DskipTests clean package assembly:single
+        run: mvn -DskipTests clean package assembly:single
       
       - name: Rename Jar
         run: mv cli/target/jplag-*-jar-with-dependencies.jar cli/target/jplag.jar
