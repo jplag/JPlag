@@ -24,7 +24,7 @@ import de.jplag.reporting.reportobject.model.BaseCodeMatch;
 import de.jplag.reporting.reportobject.model.CodePosition;
 import de.jplag.reporting.reportobject.model.ComparisonReport;
 
-public class ReportTokenPositionTestTest {
+class ReportTokenPositionTestTest {
 
     @Test
     void testCorrectTokenPositionsInComparisonReport() {
