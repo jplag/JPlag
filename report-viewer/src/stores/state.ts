@@ -28,14 +28,6 @@ export interface State {
    * Indicates whether zip mode is used.
    */
   zipModeUsed: boolean
-  /**
-   * Indicates whether single file mode is used.
-   */
-  singleModeUsed: boolean
-  /**
-   * Files string if single mode is used.
-   */
-  singleFillRawContent: string
 
   fileIdToDisplayName: Map<string, string>
   submissionIdsToComparisonFileName: Map<string, Map<string, string>>
