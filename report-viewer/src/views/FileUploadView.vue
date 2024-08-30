@@ -40,10 +40,7 @@
           Continue with local files
         </Button>
       </div>
-      <LoadingCircle v-else-if="loadingFiles" class="space-y-5 pt-5" />
-      <div v-else-if="exampleFiles" class="pt-5">
-        <Button class="mx-auto w-fit text-xl" @click="continueWithLocal()"> View Example </Button>
-      </div>
+      <LoadingCircle v-else-if="loadingFiles || exampleFiles" class="space-y-5 pt-5" />
       <div v-if="errors.length > 0" class="text-error">
         <p>{{ getErrorText() }}</p>
         <p>For more details check the console.</p>
@@ -218,4 +215,8 @@ onErrorCaptured((error) => {
   registerError(error, 'unknown')
   return false
 })
+
+if (exampleFiles.value) {
+  continueWithLocal()
+}
 </script>
