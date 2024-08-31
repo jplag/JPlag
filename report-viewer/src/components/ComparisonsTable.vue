@@ -349,7 +349,8 @@ const darkmodeAlpha = 0.6
 if (props.clusters != undefined) {
   clusterIconHues = generateHues(props.clusters.length)
 }
-const clusterIconColors = computed(() => clusterIconHues.map((h) => {
+const clusterIconColors = computed(() =>
+  clusterIconHues.map((h) => {
     return `hsla(${h}, ${
       store().uiState.useDarkMode ? darkmodeSaturation : lightmodeSaturation
     }%, ${
