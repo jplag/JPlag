@@ -5,19 +5,13 @@ import { computed } from 'vue'
  * Generates an array of HSL-Colors
  * @param numberOfColors Number of colors to generate
  */
-function generateHues(
-  numberOfColors: number
-) {
+function generateHues(numberOfColors: number) {
   const numberOfColorsInFirstInterval = Math.round(
     ((80 - 20) / (80 - 20 + (340 - 160))) * numberOfColors
   ) // number of colors from the first interval
   const numberOfColorsInSecondInterval = numberOfColors - numberOfColorsInFirstInterval // number of colors from the second interval
 
-  const colors: Array<number> = generateColorsForInterval(
-    20,
-    80,
-    numberOfColorsInFirstInterval
-  )
+  const colors: Array<number> = generateColorsForInterval(20, 80, numberOfColorsInFirstInterval)
   colors.push(...generateColorsForInterval(160, 340, numberOfColorsInSecondInterval))
   return colors
 }
@@ -35,7 +29,7 @@ function generateHues(
 function generateColorsForInterval(
   intervalStart: number,
   intervalEnd: number,
-  numberOfColorsInInterval: number,
+  numberOfColorsInInterval: number
 ) {
   const hues: Array<number> = []
   const interval = intervalEnd - intervalStart
