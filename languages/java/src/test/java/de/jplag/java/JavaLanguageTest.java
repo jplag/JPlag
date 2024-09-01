@@ -73,6 +73,8 @@ public class JavaLanguageTest extends LanguageModuleTest {
 
         collector.testFile("AnonymousVariables.java").testTokenSequence(J_CLASS_BEGIN, J_METHOD_BEGIN, J_VARDEF, J_IF_BEGIN, J_IF_END, J_METHOD_END,
                 J_CLASS_END);
+
+        collector.addTokenPositionTests("tokenPositions");
     }
 
     @Override

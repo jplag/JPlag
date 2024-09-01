@@ -40,10 +40,7 @@
           Continue with local files
         </Button>
       </div>
-      <LoadingCircle v-else-if="loadingFiles" class="space-y-5 pt-5" />
-      <div v-else-if="exampleFiles" class="pt-5">
-        <Button class="mx-auto w-fit text-xl" @click="continueWithLocal()"> View Example </Button>
-      </div>
+      <LoadingCircle v-else-if="loadingFiles || exampleFiles" class="space-y-5 pt-5" />
       <div v-if="errors.length > 0" class="text-error">
         <p>{{ getErrorText() }}</p>
         <p>For more details check the console.</p>
@@ -62,7 +59,6 @@ import Button from '@/components/ButtonComponent.vue'
 import VersionInfoComponent from '@/components/VersionInfoComponent.vue'
 import LoadingCircle from '@/components/LoadingCircle.vue'
 import { ZipFileHandler } from '@/model/fileHandling/ZipFileHandler'
-import { JsonFileHandler } from '@/model/fileHandling/JsonFileHandler'
 import { BaseFactory } from '@/model/factories/BaseFactory'
 
 store().clearStore()
@@ -112,21 +108,6 @@ function navigateToOverview() {
 }
 
 /**
- * Handles a json file on drop. It read the file and passes the file string to next window.
- * @param file The json file to handle
- */
-async function handleJsonFile(file: Blob) {
-  try {
-    await new JsonFileHandler().handleFile(file)
-  } catch (e) {
-    registerError(e as Error, 'upload')
-    return
-  }
-  store().setLoadingType('single')
-  navigateToOverview()
-}
-
-/**
  * Handles a file on drop. It determines the file type and passes it to the corresponding handler.
  * @param file File to handle
  */
@@ -140,8 +121,6 @@ async function handleFile(file: Blob) {
       store().setLoadingType('zip')
       await new ZipFileHandler().handleFile(file)
       return navigateToOverview()
-    case 'application/json':
-      return await handleJsonFile(file)
     default:
       throw new Error(`Unknown MIME type '${file.type}'`)
   }
@@ -236,4 +215,8 @@ onErrorCaptured((error) => {
   registerError(error, 'unknown')
   return false
 })
+
+if (exampleFiles.value) {
+  continueWithLocal()
+}
 </script>

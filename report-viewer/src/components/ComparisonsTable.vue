@@ -236,9 +236,9 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
 
   return comparisons.filter((c) => {
     // name search
-    const id1 = c.firstSubmissionId.toLowerCase()
-    const id2 = c.secondSubmissionId.toLowerCase()
-    if (searches.some((s) => id1.includes(s) || id2.includes(s))) {
+    const name1 = store().submissionDisplayName(c.firstSubmissionId).toLowerCase()
+    const name2 = store().submissionDisplayName(c.secondSubmissionId).toLowerCase()
+    if (searches.some((s) => name1.includes(s) || name2.includes(s))) {
       return true
     }
 

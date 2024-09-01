@@ -28,4 +28,10 @@ public record CliArgument<T>(String name, boolean isPositional) {
 
     public static CliArgument<String> RESULT_FILE = new CliArgument<>("r", false);
     public static CliArgument<Boolean> OVERWRITE_RESULT_FILE = new CliArgument<>("overwrite", false);
+
+    public static CliArgument<String> LOG_LEVEL = new CliArgument<>("log-level", false);
+    public static CliArgument<Boolean> DEBUG = new CliArgument<>("d", false);
+
+    public static CliArgument<String> SUBDIRECTORY = new CliArgument<>("subdirectory", false);
+    public static CliArgument<String> EXCLUDE_FILES = new CliArgument<>("x", false);
 }

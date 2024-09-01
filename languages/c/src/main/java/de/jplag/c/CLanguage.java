@@ -12,6 +12,7 @@ import de.jplag.Token;
 
 @MetaInfServices(de.jplag.Language.class)
 public class CLanguage implements Language {
+    private static final String NAME = "C";
     private static final String IDENTIFIER = "c";
 
     private final Scanner scanner; // c code is scanned not parsed
@@ -27,7 +28,7 @@ public class CLanguage implements Language {
 
     @Override
     public String getName() {
-        return "C Scanner";
+        return NAME;
     }
 
     @Override

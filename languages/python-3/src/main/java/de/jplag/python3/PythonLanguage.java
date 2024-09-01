@@ -6,7 +6,7 @@ import de.jplag.antlr.AbstractAntlrLanguage;
 
 @MetaInfServices(de.jplag.Language.class)
 public class PythonLanguage extends AbstractAntlrLanguage {
-
+    private static final String NAME = "Python";
     private static final String IDENTIFIER = "python3";
 
     public PythonLanguage() {
@@ -20,7 +20,7 @@ public class PythonLanguage extends AbstractAntlrLanguage {
 
     @Override
     public String getName() {
-        return "Python3 Parser";
+        return NAME;
     }
 
     @Override

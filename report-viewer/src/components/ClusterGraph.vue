@@ -83,7 +83,7 @@ const hoverableEdges = computed(() => {
       const firstIndex = keys.value.indexOf(key)
       const secondIndex = keys.value.indexOf(match.matchedWith)
       if (firstIndex == -1 || secondIndex == -1) {
-        console.log(`Could not find index for ${key} or ${match.matchedWith}`)
+        console.warn(`Could not find index for ${key} or ${match.matchedWith}`)
       }
       if (firstIndex < secondIndex) {
         edges.push({

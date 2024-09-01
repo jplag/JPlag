@@ -36,5 +36,5 @@ OverviewFactory.getOverview()
 
 OptionsFactory.getCliOptions()
   .then((o) => (cliOptions.value = o))
-  .catch((error) => console.log('Could not load full options.', error))
+  .catch((error) => console.error('Could not load full options.', error))
 </script>

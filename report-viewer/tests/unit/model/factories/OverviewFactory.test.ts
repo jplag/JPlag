@@ -1,43 +1,25 @@
-import { beforeAll, describe, expect, it, vi } from 'vitest'
+import { beforeAll, describe, expect, it, vi, beforeEach } from 'vitest'
 import { OverviewFactory } from '@/model/factories/OverviewFactory'
 import { MetricType } from '@/model/MetricType'
 import { Distribution } from '@/model/Distribution'
 import { ParserLanguage } from '@/model/Language'
 import validNew from './ValidOverview.json'
 import outdated from './OutdatedOverview.json'
-
-const store = {
-  state: {
-    localModeUsed: false,
-    zipModeUsed: true,
-    singleModeUsed: false,
-    files: {}
-  },
-  saveSubmissionNames: (map) => {
-    expect(map.has('A')).toBeTruthy()
-    expect(map.has('B')).toBeTruthy()
-    expect(map.has('C')).toBeTruthy()
-    expect(map.has('D')).toBeTruthy()
-  },
-  saveComparisonFileLookup: (map) => {
-    expect(map.has('A')).toBeTruthy()
-    expect(map.has('B')).toBeTruthy()
-  }
-}
+import { setActivePinia, createPinia } from 'pinia'
+import { store } from '@/stores/store'
 
 describe('Test JSON to Overview', () => {
   beforeAll(() => {
-    vi.mock('@/stores/store', () => ({
-      store: vi.fn(() => {
-        return store
-      })
-    }))
-
     vi.spyOn(global.window, 'alert').mockImplementation(() => {})
   })
 
+  beforeEach(() => {
+    setActivePinia(createPinia())
+    store().setLoadingType('zip')
+  })
+
   it('Post 5.0', async () => {
-    store.state.files['overview.json'] = JSON.stringify(validNew)
+    store().state.files['overview.json'] = JSON.stringify(validNew)
 
     expect(await OverviewFactory.getOverview()).toEqual({
       _submissionFolderPath: ['files'],
@@ -143,7 +125,7 @@ describe('Test JSON to Overview', () => {
 
 describe('Outdated JSON to Overview', () => {
   it('Outdated version', async () => {
-    store.state.files['overview.json'] = JSON.stringify(outdated)
+    store().state.files['overview.json'] = JSON.stringify(outdated)
     expect(() => OverviewFactory.getOverview()).rejects.toThrowError()
   })
 })
