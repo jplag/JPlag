@@ -149,8 +149,7 @@ describe('ComparisonTableFilter', async () => {
     expect(store().state.anonymous).not.toContain('A')
   })
 
-  // skipped, because of #1946
-  it.skip('Test deanoymization - name with spaces', async () => {
+  it('Test deanoymization - name with spaces', async () => {
     const wrapper = mount(ComparisonTableFilter, {
       props: {
         searchString: '',
