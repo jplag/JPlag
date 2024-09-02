@@ -70,8 +70,8 @@ jobs:
           {zip: "folderMultiRoot.zip", name: "folderMultiRoot", folder: "f0", language: "java", cliArgs: "--new f1"},
           {zip: "mixedMultiRoot.zip", name: "mixedBaseFile", folder: "f0", language: "java", cliArgs: "--new f1"},
           {zip: "mixedMultiRoot.zip", name: "mixedBaseFolder", folder: "f1", language: "java", cliArgs: "--new f0"},
-          {zip: "singleNewSubmission.zip", name: "singleNewSubmission", folder: "2023", language: "java", cliArgs: "--old 2022 2021 2020"},
-          {zip: "submissionsWithSameName.zip", name: "submissionsWithSameName", folder: "2023", language: "java", cliArgs: "--old old/2022 old/2021 old/2020"},
+          {zip: "singleNewSubmission.zip", name: "singleNewSubmission", folder: "2023", language: "java", cliArgs: "-old 2022 2021 2020"},
+          {zip: "submissionsWithSameName.zip", name: "submissionsWithSameName", folder: "2023", language: "java", cliArgs: "-old old/2022 old/2021 old/2020"},
           {zip: "cpp.zip", name: "cpp", folder: "./cpp", language: "cpp", cliArgs: ""},
           {zip: "csharp.zip", name: "csharp", folder: "./csharp", language: "csharp", cliArgs: ""},
           {zip: "python.zip", name: "python", folder: "./python", language: "python3", cliArgs: ""}
