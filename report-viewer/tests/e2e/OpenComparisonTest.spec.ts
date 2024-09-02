@@ -48,8 +48,8 @@ const testSets: DataSet[] = [
   },
   {
     datasetName: 'submissionsWithSameName-report.zip',
-    firstSubmissionName: `20\\d\\d${regexpPathSeparator}gr\\d`,
-    secondSubmissionName: `20\\d\\d${regexpPathSeparator}gr\\d`
+    firstSubmissionName: `2020${regexpPathSeparator}gr1`,
+    secondSubmissionName: `2020${regexpPathSeparator}gr2`
   },
   {
     datasetName: 'python-report.zip',
