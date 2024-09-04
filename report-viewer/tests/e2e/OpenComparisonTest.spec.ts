@@ -8,7 +8,7 @@ interface DataSet {
   secondSubmissionName: string
 }
 
-const regexpPathSeparator = '(\\\\|\\/)';
+const regexPathSeparator = '(\\\\|\\/)';
 
 const testSets: DataSet[] = [
   {
@@ -43,13 +43,13 @@ const testSets: DataSet[] = [
   },
   {
     datasetName: 'singleNewSubmission-report.zip',
-    firstSubmissionName: `2023${regexpPathSeparator}QSort2023.java`,
-    secondSubmissionName: `2022${regexpPathSeparator}QSort2022.java`,
+    firstSubmissionName: `2023${regexPathSeparator}QSort2023.java`,
+    secondSubmissionName: `2022${regexPathSeparator}QSort2022.java`,
   },
   {
     datasetName: 'submissionsWithSameName-report.zip',
-    firstSubmissionName: `2023${regexpPathSeparator}gr1`,
-    secondSubmissionName: `2023${regexpPathSeparator}gr2`
+    firstSubmissionName: `2023${regexPathSeparator}gr1`,
+    secondSubmissionName: `2023${regexPathSeparator}gr2`
   },
   {
     datasetName: 'python-report.zip',
