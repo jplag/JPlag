@@ -21,6 +21,7 @@ public class TokenPositionTestData implements TestData {
     private final List<TokenData> expectedTokens;
 
     private final String descriptor;
+    private final String fileName;
 
     /**
      * @param testFile The file containing the test specifications
@@ -30,6 +31,7 @@ public class TokenPositionTestData implements TestData {
         this.sourceLines = new ArrayList<>();
         this.expectedTokens = new ArrayList<>();
         this.descriptor = "(Token position file: " + testFile.getName() + ")";
+        this.fileName = testFile.getName();
         this.readFile(testFile);
     }
 
@@ -88,5 +90,10 @@ public class TokenPositionTestData implements TestData {
      * @param length The length of the token
      */
     public record TokenData(String typeName, int lineNumber, int columnNumber, int length) {
+    }
+
+    @Override
+    public String toString() {
+        return this.fileName;
     }
 }
