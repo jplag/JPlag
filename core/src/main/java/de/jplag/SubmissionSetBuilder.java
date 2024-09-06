@@ -219,8 +219,7 @@ public class SubmissionSetBuilder {
         return new Submission(submissionName, file, isNew, parseFilesRecursively(file), options.language());
     }
 
-    private void processSubmissionFile(SubmissionFileData file, boolean multipleRoots,
-                                       Map<File, Submission> foundSubmissions) throws ExitException {
+    private void processSubmissionFile(SubmissionFileData file, boolean multipleRoots, Map<File, Submission> foundSubmissions) throws ExitException {
         if (isFileExcluded(file.submissionFile())) {
             logger.error("Exclude submission: {}", file.submissionFile().getName());
         } else if (file.submissionFile().isFile() && !hasValidSuffix(file.submissionFile())) {
