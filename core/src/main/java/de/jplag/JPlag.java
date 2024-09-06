@@ -1,7 +1,11 @@
 package de.jplag;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.Set;
 
 import de.jplag.exceptions.RootDirectoryException;
 import org.slf4j.Logger;
