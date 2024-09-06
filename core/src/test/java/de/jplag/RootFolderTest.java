@@ -4,9 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
+import de.jplag.exceptions.RootDirectoryException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -71,7 +70,7 @@ class RootFolderTest extends TestBase {
     void testOverlappingNewAndOldDirectoriesOverlap() throws ExitException {
         List<String> newDirectories = List.of(getBasePath(ROOT_2));
         List<String> oldDirectories = List.of(getBasePath(ROOT_2));
-        assertDoesNotThrow(() -> runJPlag(newDirectories, oldDirectories, it -> it));
+        assertThrows(RootDirectoryException.class, () -> runJPlag(newDirectories, oldDirectories, it -> it));
     }
 
     @Test
@@ -83,27 +82,6 @@ class RootFolderTest extends TestBase {
         JPlagResult result = runJPlag(newDirectories, oldDirectories, it -> it.withBaseCodeSubmissionDirectory(new File(basecodePath)));
         int numberOfExpectedComparison = 1 + ROOT_COUNT_2 * (ROOT_COUNT_1 - 1); // -1 for basecode
         assertEquals(numberOfExpectedComparison, result.getAllComparisons().size());
-    }
-
-    @Test
-    @DisplayName("test multiple submissions with same folder name")
-    void testSubmissionsWithSameFolderName() throws ExitException {
-        List<String> newSubmissionsNames = List.of("2023");
-        List<String> oldSubmissionsNames = List.of("2022", "2021", "2020");
-        List<String> newSubmissions = newSubmissionsNames.stream().map(it -> getBasePath("SubmissionsWithSameName" + File.separator + it)).toList();
-        List<String> oldSubmissions = oldSubmissionsNames.stream()
-                .map(it -> getBasePath("SubmissionsWithSameName" + File.separator + "old" + File.separator + it)).toList();
-
-        JPlagResult result = runJPlag(newSubmissions, oldSubmissions, it -> it);
-
-        long numberOfNewSubmissions = result.getSubmissions().getSubmissions().stream().filter(Submission::isNew).count();
-        long numberOfOldSubmissions = result.getSubmissions().getSubmissions().stream().filter(it -> !it.isNew()).count();
-        assertEquals(2, numberOfNewSubmissions);
-        assertEquals(6, numberOfOldSubmissions);
-
-        Set<String> submissionNames = result.getSubmissions().getSubmissions().stream().map(Submission::getName).collect(Collectors.toSet());
-        Set<String> expectedNames = Set.of("2023/gr1", "2023/gr2", "2022/gr1", "2022/gr2", "2021/gr1", "2021/gr2", "2020/gr1", "2020/gr2");
-        assertEquals(expectedNames, submissionNames);
     }
 
     @Test

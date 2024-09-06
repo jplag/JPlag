@@ -1,9 +1,9 @@
 package de.jplag;
 
 import java.io.File;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
+import de.jplag.exceptions.RootDirectoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,9 +103,30 @@ public class JPlag {
         }
     }
 
-    private static void checkForConfigurationConsistency(JPlagOptions options) {
+    private static void checkForConfigurationConsistency(JPlagOptions options) throws RootDirectoryException {
         if (options.normalize() && !options.language().supportsNormalization()) {
             logger.error("The language {} cannot be used with normalization.", options.language().getName());
         }
+
+        List<String> duplicateNames = getDuplicateSubmissionFolderNames(options);
+        if (!duplicateNames.isEmpty()) {
+            throw new RootDirectoryException(String.format("Duplicate root directory names found: %s", String.join(", ", duplicateNames)));
+        }
+    }
+
+    private static List<String> getDuplicateSubmissionFolderNames(JPlagOptions options) {
+        List<String> duplicateNames = new ArrayList<>();
+        Set<String> alreadyFoundNames = new HashSet<>();
+        for (File file : options.submissionDirectories()) {
+            if (!alreadyFoundNames.add(file.getName())) {
+                duplicateNames.add(file.getName());
+            }
+        }
+        for (File file : options.oldSubmissionDirectories()) {
+            if (!alreadyFoundNames.add(file.getName())) {
+                duplicateNames.add(file.getName());
+            }
+        }
+        return duplicateNames;
     }
 }

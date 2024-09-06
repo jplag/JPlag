@@ -47,11 +47,6 @@ const testSets: DataSet[] = [
     secondSubmissionName: `2022${regexPathSeparator}QSort2022.java`,
   },
   {
-    datasetName: 'submissionsWithSameName-report.zip',
-    firstSubmissionName: `2023${regexPathSeparator}gr1`,
-    secondSubmissionName: `2023${regexPathSeparator}gr2`
-  },
-  {
     datasetName: 'python-report.zip',
     firstSubmissionName: '01.py',
     secondSubmissionName: '02.py'
