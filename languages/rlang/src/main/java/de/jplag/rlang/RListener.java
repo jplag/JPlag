@@ -55,20 +55,20 @@ import de.jplag.rlang.grammar.RParser.WhileContext;
  */
 public class RListener extends AbstractAntlrListener {
     public RListener() {
-        header();
-        functions();
-        literals();
-        controlStructures();
-        assignments();
+        addHeaderRules();
+        addFunctionRules();
+        addLiteralRules();
+        addControlStructureRules();
+        addAssigmentRules();
     }
 
-    private void header() {
+    private void addHeaderRules() {
         visit(ArrayAccessContext.class).mapRange(INDEX);
         visit(ListAccessContext.class).mapRange(INDEX);
         visit(NamespaceAccessContext.class).map(PACKAGE);
     }
 
-    private void functions() {
+    private void addFunctionRules() {
         visit(FunctionDefinitionContext.class).map(BEGIN_FUNCTION, END_FUNCTION);
         visit(FunctionCallContext.class).mapRange(FUNCTION_CALL);
 
@@ -76,7 +76,7 @@ public class RListener extends AbstractAntlrListener {
         visit(HelpContext.class).map(HELP);
     }
 
-    private void literals() {
+    private void addLiteralRules() {
         visit(HexContext.class).map(NUMBER);
         visit(IntContext.class).map(NUMBER);
         visit(FloatContext.class).map(NUMBER);
@@ -86,7 +86,7 @@ public class RListener extends AbstractAntlrListener {
         visit(FalseContext.class).map(BOOL);
     }
 
-    private void controlStructures() {
+    private void addControlStructureRules() {
         visit(IfContext.class).map(IF_BEGIN, IF_END);
         visit(IfElseContext.class).map(IF_BEGIN, IF_END);
         visit(ForContext.class).map(FOR_BEGIN, FOR_END);
@@ -97,7 +97,7 @@ public class RListener extends AbstractAntlrListener {
         visit(BreakContext.class).map(BREAK);
     }
 
-    private void assignments() {
+    private void addAssigmentRules() {
         visit(AssignmentContext.class, context -> context.ASSIGN() != null).map(ASSIGN);
         visit(AssignmentContext.class, context -> context.EQUALS() != null).map(ASSIGN_FUNC);
         visit(SubContext.class).map(ASSIGN_LIST);
