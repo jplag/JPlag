@@ -177,7 +177,7 @@ const tokenCount = computed(() => {
  * @param line Line to scroll to.
  */
 function scrollTo(file: string, line: number) {
-  const fileIndex = Array.from(props.files).findIndex((f) => f.fileName === file)
+  const fileIndex = sortedFiles.value.findIndex((f) => f.fileName === file)
   if (fileIndex !== -1) {
     codePanels.value[fileIndex].expand()
     nextTick(() => {
