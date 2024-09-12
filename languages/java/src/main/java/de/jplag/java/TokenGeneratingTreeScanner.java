@@ -136,7 +136,8 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
             }
         }
 
-        long start = positions.getStartPosition(ast, node);
+        long start = positions.getEndPosition(ast, node.getModifiers()) + 1;
+        long nameLength = node.getSimpleName().length();
         long end = positions.getEndPosition(ast, node) - 1;
         CodeSemantics semantics = CodeSemantics.createControl();
         if (node.getKind() == Tree.Kind.ENUM) {
@@ -146,7 +147,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         } else if (node.getKind() == Tree.Kind.RECORD) {
             addToken(JavaTokenType.J_RECORD_BEGIN, start, 1, semantics);
         } else if (node.getKind() == Tree.Kind.ANNOTATION_TYPE) {
-            addToken(JavaTokenType.J_ANNO_T_BEGIN, start, 10, semantics);
+            addToken(JavaTokenType.J_ANNO_T_BEGIN, start - 2 /*@ is final modifier for annotations*/, (start - 2) + 11 + nameLength, semantics);
         } else if (node.getKind() == Tree.Kind.CLASS) {
             addToken(JavaTokenType.J_CLASS_BEGIN, start, 5, semantics);
         }
@@ -508,7 +509,8 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     @Override
     public Void visitAnnotation(AnnotationTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        addToken(JavaTokenType.J_ANNO, start, 1, new CodeSemantics());
+        String annotationName = node.getAnnotationType().toString();
+        addToken(JavaTokenType.J_ANNO, start, annotationName.length() + 1, new CodeSemantics());
         return super.visitAnnotation(node, null);
     }
 
