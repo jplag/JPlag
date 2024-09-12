@@ -35,11 +35,11 @@ If you want to add new tests we suggest doing the following tests:
    - Execute it on your device, so you can test your new test locally
    - If you want to add the dataset to `OpenComparisonTest.spec.ts` make sure there is a clear top comparison and you do not have multiple comparisons with the same percentage as the top comparison
 2) Add the test to the matrix in the [complete e2e tests workflow](../../../.github/workflows/complete-e2e.yml)
-  - zip: The name of the zip file in the files folder
-  - name: The name of the dataset. This name should be unique
-  - folder: This is the main folder of the dataset, that gets passed to JPlag as a positional argument
-  - language: The language JPlag should use. This should be the same name passed to the `-l` parameter
-  - cliArgs: Additional arguments to pass to JPlag. This could be used to specify basecode or give JPlag more folders over `--new`/`--old`
+   - zip: The name of the zip file in the files folder
+   - name: The name of the dataset. This name should be unique
+   - folder: This is the main folder of the dataset, that gets passed to JPlag as a positional argument
+   - language: The language JPlag should use. This should be the same name passed to the `-l` parameter
+   - cliArgs: Additional arguments to pass to JPlag. This could be used to specify basecode or give JPlag more folders over `--new`/`--old`
 
 3) Add the test to the playwright e2e tests.
    - Adding a test to `OpenComparisonTest`:
