@@ -173,7 +173,7 @@ import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons'
-import { generateColors } from '@/utils/ColorUtils'
+import { generateHues } from '@/utils/ColorUtils'
 import ToolTipComponent from './ToolTipComponent.vue'
 import { MetricType, metricToolTips } from '@/model/MetricType'
 import NameElement from './NameElement.vue'
@@ -339,10 +339,25 @@ function getClusterFor(clusterIndex: number) {
 
 const displayClusters = props.clusters != undefined
 
-let clusterIconColors = [] as Array<string>
+let clusterIconHues = [] as Array<number>
+const lightmodeSaturation = 80
+const lightmodeLightness = 50
+const lightmodeAlpha = 0.3
+const darkmodeSaturation = 90
+const darkmodeLightness = 65
+const darkmodeAlpha = 0.6
 if (props.clusters != undefined) {
-  clusterIconColors = generateColors(props.clusters.length, 0.8, 0.5, 1)
+  clusterIconHues = generateHues(props.clusters.length)
 }
+const clusterIconColors = computed(() =>
+  clusterIconHues.map((h) => {
+    return `hsla(${h}, ${
+      store().uiState.useDarkMode ? darkmodeSaturation : lightmodeSaturation
+    }%, ${
+      store().uiState.useDarkMode ? darkmodeLightness : lightmodeLightness
+    }%, ${store().uiState.useDarkMode ? darkmodeAlpha : lightmodeAlpha})`
+  })
+)
 
 function isHighlightedRow(item: ComparisonListElement) {
   return (
