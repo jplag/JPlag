@@ -46,7 +46,7 @@ If you want to add new tests we suggest doing the following tests:
      - Add the dataset name to the `datasets` array
      - Specify the name of the zip that should be opened. They follow the pattern `DATASET_NAME-report.zip`
      - Specify the names of the submissions of the top comparisons. These are given as regexes
-   - Adding a completly new Test:
+   - Adding a completely new Test:
      - Create a new file in this folder with the file ending `.spec.ts`
      - Add a new test according to the playwright documentation (examples are in the other tests)
      - The test should start like this
