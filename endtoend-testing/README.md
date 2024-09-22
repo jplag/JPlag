@@ -1,14 +1,14 @@
 # JPlag - End-To-End Testing
 
-The end-to-end test module contains test that report any chance in the similarities reported by JPlag.
+The end-to-end test module contains tests that report any chance in the similarities reported by JPlag.
 There are two kinds of tests:
 1. Simple tests that fail if the similarity between two submissions changed
 2. Gold standard tests
 
 ## Gold standard tests
 
-A gold standard tests serves as a metric for the change in detection quality. It needs a list of plagiarisms in the data set.
-The comparisons outputted by JPlag are split into comparisons that should be reported as plagiarisms and comparisons that shouldn't.
+A gold standard test serves as a metric for the change in detection quality. It needs a list of plagiarism instances in the data set.
+JPlag outputs comparisons split into those that should be reported as plagiarism and those that shouldn't.
 The test will fail if the average similarity on one of those groups changed. In contrast to the other kind of test, this offers a rough way to check if the changes made JPlag better or worse.
 
 ## Updating tests
@@ -25,9 +25,9 @@ This segment explains the steps for adding new test data
 
 New test data can be obtained in multiple ways.
 
-Ideally real world data is used. To use gold standard tests real world data needs to contain information about which submission pairs are plagiarism and which aren't.
+Ideally, real-world data is used. To use gold standard tests, real-world data needs to contain information about which submission pairs are plagiarism and which aren't.
 
-Alternatively test data can be generated using various methods. One such method is explained below.
+Alternatively, test data can be generated using various methods. One such method is explained below.
 
 The test data should be placed under [data](src/test/resources/data). It can either be added as a directory containing submissions or as a zip file.
 
