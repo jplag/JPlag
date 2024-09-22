@@ -165,17 +165,20 @@ const maximumSimilarity = computed(() => {
   return maximumSimilarity
 })
 
-function getClampedSimilarityFromKeyIndex(firstIndex: number, secondIndex: number) {
+function getClampedSimilarityFromKeyIndex(
+  firstIndex: number,
+  secondIndex: number,
+  min: number,
+  max: number
+) {
   const similarity = getSimilarityFromKeyIndex(firstIndex, secondIndex)
   if (similarity == 0) {
     return 0
   }
-  if (minimumSimilarity.value == maximumSimilarity.value) {
+  if (min == max) {
     return 1
   }
-  return (
-    (similarity - minimumSimilarity.value) / (maximumSimilarity.value - minimumSimilarity.value)
-  )
+  return (similarity - min) / (max - min)
 }
 
 function getEdgeAlphaFromKeyIndex(firstIndex: number, secondIndex: number) {
@@ -183,7 +186,16 @@ function getEdgeAlphaFromKeyIndex(firstIndex: number, secondIndex: number) {
   if (similarity == 0) {
     return 1
   }
-  return getClampedSimilarityFromKeyIndex(firstIndex, secondIndex) * 0.7 + 0.3
+  return (
+    getClampedSimilarityFromKeyIndex(
+      firstIndex,
+      secondIndex,
+      Math.min(minimumSimilarity.value, 0.5),
+      maximumSimilarity.value
+    ) *
+      0.7 +
+    0.3
+  )
 }
 
 function getEdgeWidth(firstIndex: number, secondIndex: number) {
@@ -191,7 +203,7 @@ function getEdgeWidth(firstIndex: number, secondIndex: number) {
   if (similarity == 0) {
     return 0.5
   }
-  return getClampedSimilarityFromKeyIndex(firstIndex, secondIndex) * 5 + 1
+  return getClampedSimilarityFromKeyIndex(firstIndex, secondIndex, 0, 1) * 5 + 1
 }
 
 function getEdgeDashStyle(firstIndex: number, secondIndex: number) {
