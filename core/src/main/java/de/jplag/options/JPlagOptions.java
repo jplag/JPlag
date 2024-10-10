@@ -59,7 +59,7 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
         @JsonProperty("normalize") boolean normalize) implements JPlagOptionsBuilder.With {
 
     public static final double DEFAULT_SIMILARITY_THRESHOLD = 0;
-    public static final int DEFAULT_SHOWN_COMPARISONS = 500;
+    public static final int DEFAULT_SHOWN_COMPARISONS = 2500;
     public static final int SHOW_ALL_COMPARISONS = 0;
     public static final SimilarityMetric DEFAULT_SIMILARITY_METRIC = SimilarityMetric.AVG;
     public static final String ERROR_FOLDER = "errors";
