@@ -1,7 +1,6 @@
 package de.jplag;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.util.List;
@@ -83,5 +82,21 @@ class RootFolderTest extends TestBase {
         JPlagResult result = runJPlag(newDirectories, oldDirectories, it -> it.withBaseCodeSubmissionDirectory(new File(basecodePath)));
         int numberOfExpectedComparison = 1 + ROOT_COUNT_2 * (ROOT_COUNT_1 - 1); // -1 for basecode
         assertEquals(numberOfExpectedComparison, result.getAllComparisons().size());
+    }
+
+    @Test
+    @DisplayName("test single new submission")
+    void testSingleNewSubmission() throws ExitException {
+        List<String> newSubmissionsNames = List.of("2023");
+        List<String> oldSubmissionsNames = List.of("2022", "2021", "2020");
+        List<String> newSubmissions = newSubmissionsNames.stream().map(it -> getBasePath("SingleNewSubmission" + File.separator + it)).toList();
+        List<String> oldSubmissions = oldSubmissionsNames.stream().map(it -> getBasePath("SingleNewSubmission" + File.separator + it)).toList();
+
+        JPlagResult result = runJPlag(newSubmissions, oldSubmissions, it -> it);
+
+        long numberOfNewSubmissions = result.getSubmissions().getSubmissions().stream().filter(Submission::isNew).count();
+        long numberOfOldSubmissions = result.getSubmissions().getSubmissions().stream().filter(it -> !it.isNew()).count();
+        assertEquals(1, numberOfNewSubmissions);
+        assertEquals(3, numberOfOldSubmissions);
     }
 }
