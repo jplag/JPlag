@@ -100,7 +100,8 @@ import de.jplag.semantics.VariableScope;
 class CPPListener extends AbstractAntlrListener {
 
     CPPListener() {
-        visit(ClassSpecifierContext.class, rule -> rule.classHead().Union() != null).map(UNION_BEGIN, UNION_END).addClassScope().withSemantics(CodeSemantics::createControl);
+        visit(ClassSpecifierContext.class, rule -> rule.classHead().Union() != null).map(UNION_BEGIN, UNION_END).addClassScope()
+                .withSemantics(CodeSemantics::createControl);
         mapClass(ClassKeyContext::Class, CLASS_BEGIN, CLASS_END);
         mapClass(ClassKeyContext::Struct, STRUCT_BEGIN, STRUCT_END);  // structs are basically just classes
         visit(EnumSpecifierContext.class).map(ENUM_BEGIN, ENUM_END).addClassScope().withSemantics(CodeSemantics::createControl);
