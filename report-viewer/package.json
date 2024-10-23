@@ -49,7 +49,7 @@
     "@vue/tsconfig": "^0.5.1",
     "autoprefixer": "^10.4.20",
     "eslint": "^8.57.1",
-    "eslint-plugin-vue": "^9.28.0",
+    "eslint-plugin-vue": "^9.29.1",
     "jsdom": "^25.0.1",
     "lint-staged": "^15.2.10",
     "npm-run-all": "^4.1.5",
