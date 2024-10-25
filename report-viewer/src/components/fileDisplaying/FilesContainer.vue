@@ -15,7 +15,13 @@
       >
     </div>
 
-    <ScrollableComponent class="flex-grow" ref="scrollContainer">
+    <AdvancedFilePanel
+      class="flex-grow"
+      :files="files"
+      :matches="matches"
+      :base-code-matches="baseCodeMatches"
+    />
+    <ScrollableComponent v-if="false" class="flex-grow" ref="scrollContainer">
       <VueDraggableNext @update="emitFileMoving()">
         <CodePanel
           v-for="file in sortedFiles"
@@ -50,6 +56,7 @@ import { FileSortingOptions } from '@/model/ui/FileSortingOptions'
 import { store } from '@/stores/store'
 import type { BaseCodeMatch } from '@/model/BaseCodeReport'
 import type { Match } from '@/model/Match'
+import AdvancedFilePanel from './advanced/AdvancedFilePanel.vue'
 
 library.add(faCompressAlt)
 
