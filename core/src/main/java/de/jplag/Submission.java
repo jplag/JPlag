@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.exceptions.LanguageException;
-import de.jplag.normalization.TokenStringNormalizer;
+import de.jplag.normalization.TokenSequenceNormalizer;
 import de.jplag.options.JPlagOptions;
 
 /**
@@ -259,7 +259,7 @@ public class Submission implements Comparable<Submission> {
      */
     void normalize() {
         List<Integer> originalOrder = getOrder(tokenList);
-        tokenList = TokenStringNormalizer.normalize(tokenList);
+        tokenList = TokenSequenceNormalizer.normalize(tokenList);
         List<Integer> normalizedOrder = getOrder(tokenList);
 
         logger.debug("original line order: {}", originalOrder);

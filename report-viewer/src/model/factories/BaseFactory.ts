@@ -5,7 +5,7 @@ import { ZipFileHandler } from '@/model/fileHandling/ZipFileHandler'
  * This class provides some basic functionality for the factories.
  */
 export class BaseFactory {
-  public static zipFileName = 'results.zip'
+  public static readonly zipFileName = 'results.zip'
 
   /**
    * Returns the content of a file through the stored loading type.
@@ -22,8 +22,6 @@ export class BaseFactory {
       return await (await this.getLocalFile(`/files/${path}`)).text()
     } else if (store().state.zipModeUsed) {
       return this.getFileFromStore(path)
-    } else if (store().state.singleModeUsed) {
-      return store().state.singleFillRawContent
     } else if (await this.useLocalZipMode()) {
       await new ZipFileHandler().handleFile(await this.getLocalFile(this.zipFileName))
       store().setLoadingType('zip')

@@ -4,7 +4,20 @@
 <template>
   <Interactable class="mx-2 !shadow print:!mx-0 print:!border-0 print:!p-0">
     <div @click="collapsed = !collapsed" class="flex px-2 font-bold print:whitespace-pre-wrap">
-      <span class="flex-1">{{ getFileDisplayName(file) }}</span>
+      <ToolTipComponent direction="right" v-if="getFileDisplayName(file) != file.fileName">
+        <template #default
+          ><span>{{ getFileDisplayName(file) }}</span></template
+        >
+        <template #tooltip
+          ><p class="whitespace max-w-[22rem] text-sm font-normal">
+            {{ file.fileName }}
+          </p></template
+        >
+      </ToolTipComponent>
+      <span v-else>{{ file.fileName }}</span>
+
+      <span class="flex-1"></span>
+
       <ToolTipComponent direction="left" class="font-normal">
         <template #default
           ><span class="text-gray-600 dark:text-gray-300"
@@ -30,6 +43,7 @@
             v-for="(_, index) in codeLines"
             :key="index"
             class="col-span-1 col-start-1 row-span-1 text-right"
+            ref="lineRefs"
             :style="{
               gridRowStart: index + 1
             }"
@@ -40,7 +54,6 @@
           <CodeLine
             v-for="(line, index) in codeLines"
             :key="index"
-            ref="lineRefs"
             :line="line.line"
             :lineNumber="index + 1"
             :matches="line.matches"
@@ -58,7 +71,7 @@
 
 <script setup lang="ts">
 import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
-import { ref, nextTick, type PropType, computed, type Ref } from 'vue'
+import { ref, type PropType, computed, type Ref } from 'vue'
 import Interactable from '../InteractableComponent.vue'
 import type { SubmissionFile } from '@/model/File'
 import { highlight } from '@/utils/CodeHighlighter'
@@ -99,7 +112,7 @@ const props = defineProps({
 const emit = defineEmits(['matchSelected'])
 
 const collapsed = ref(true)
-const lineRefs = ref<(typeof CodeLine)[]>([])
+const lineRefs = ref<HTMLElement[]>([])
 
 const codeLines: Ref<{ line: string; matches: MatchInSingleFile[] }[]> = computed(() =>
   highlight(props.file.data, props.highlightLanguage).map((line, index) => {
@@ -117,26 +130,24 @@ function matchSelected(match: Match) {
 }
 
 /**
- * Scrolls to the line number in the file.
- * @param lineNumber line number in the file
- */
-function scrollTo(lineNumber: number) {
-  collapsed.value = false
-  nextTick(function () {
-    lineRefs.value[lineNumber - 1].scrollTo()
-  })
-}
-
-/**
  * Collapses the container.
  */
 function collapse() {
   collapsed.value = true
 }
 
+function expand() {
+  collapsed.value = false
+}
+
+function getLineRect(lineNumber: number): DOMRect {
+  return lineRefs.value[lineNumber - 1].getBoundingClientRect()
+}
+
 defineExpose({
-  scrollTo,
-  collapse
+  collapse,
+  expand,
+  getLineRect
 })
 
 /**
@@ -145,9 +156,10 @@ defineExpose({
  * @return new path of file
  */
 function getFileDisplayName(file: SubmissionFile): string {
-  const filePathLength = file.fileName.length
+  const fileDisplayName = file.displayFileName ?? file.fileName
+  const filePathLength = fileDisplayName.length
   return filePathLength > 40
-    ? '...' + file.fileName.substring(filePathLength - 40, filePathLength)
-    : file.fileName
+    ? '...' + fileDisplayName.substring(filePathLength - 40, filePathLength)
+    : fileDisplayName
 }
 </script>

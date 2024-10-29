@@ -7,10 +7,9 @@ export class BaseCodeReportFactory extends BaseFactory {
   private static readonly basePath = 'basecode'
 
   public static async getReport(submissionId: string): Promise<BaseCodeMatch[]> {
-    const a = await this.extractReport(
+    return this.extractReport(
       JSON.parse(await this.getFile(slash(`${this.basePath}/${submissionId}.json`)))
     )
-    return a
   }
 
   private static async extractReport(json: Record<string, unknown>[]): Promise<BaseCodeMatch[]> {

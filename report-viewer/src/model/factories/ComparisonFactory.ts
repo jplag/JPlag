@@ -5,6 +5,7 @@ import { getMatchColorCount } from '@/utils/ColorUtils'
 import slash from 'slash'
 import { BaseFactory } from './BaseFactory'
 import { MetricType } from '../MetricType'
+import type { SubmissionFile } from '../File'
 
 /**
  * Factory class for creating Comparison objects
@@ -15,7 +16,7 @@ export class ComparisonFactory extends BaseFactory {
   }
 
   /**
-   * Creates a comparison object from a json object created by by JPlag
+   * Creates a comparison object from a json object created by JPlag
    * @param json the json object
    */
   private static async extractComparison(json: Record<string, unknown>): Promise<Comparison> {
@@ -57,8 +58,8 @@ export class ComparisonFactory extends BaseFactory {
       firstSubmissionId,
       secondSubmissionId,
       this.extractSimilarities(json.similarities as Record<string, number>),
-      filesOfFirstSubmission,
-      filesOfSecondSubmission,
+      this.getFilesWithDisplayNames(filesOfFirstSubmission),
+      this.getFilesWithDisplayNames(filesOfSecondSubmission),
       this.colorMatches(matches),
       json.first_similarity as number,
       json.second_similarity as number
@@ -91,11 +92,12 @@ export class ComparisonFactory extends BaseFactory {
           submissionId: submissionId,
           data: await this.getSubmissionFileContent(submissionId, slash(filePath)),
           tokenCount: fileList[filePath].token_count,
-          matchedTokenCount: 0
+          matchedTokenCount: 0,
+          displayFileName: slash(filePath)
         })
       }
     } catch (e) {
-      console.log(e)
+      console.error(e)
     }
   }
 
@@ -151,5 +153,28 @@ export class ComparisonFactory extends BaseFactory {
       currentColorIndex = (currentColorIndex + 1) % maxColorCount
     }
     return sortedSize
+  }
+
+  private static getFilesWithDisplayNames(files: SubmissionFile[]): SubmissionFile[] {
+    if (files.length == 1) {
+      return files
+    }
+    let longestPrefix = files[0].fileName
+    for (let i = 1; i < files.length; i++) {
+      if (longestPrefix == '') {
+        break
+      }
+
+      while (!files[i].fileName.startsWith(longestPrefix)) {
+        longestPrefix = longestPrefix.substring(0, longestPrefix.length - 1)
+      }
+    }
+
+    return files.map((f) => {
+      return {
+        ...f,
+        displayFileName: f.fileName.substring(longestPrefix.length)
+      }
+    })
   }
 }

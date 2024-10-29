@@ -15,16 +15,14 @@
       >
     </div>
 
-    <ScrollableComponent class="flex-grow">
-      <VueDraggableNext>
+    <ScrollableComponent class="flex-grow" ref="scrollContainer">
+      <VueDraggableNext @update="emitFileMoving()">
         <CodePanel
-          v-for="(file, index) in files"
-          :key="index"
+          v-for="file in sortedFiles"
+          :key="file.fileName"
           ref="codePanels"
           :file="file"
-          :matches="
-            !matches.get(file.fileName) ? [] : (matches.get(file.fileName) as MatchInSingleFile[])
-          "
+          :matches="matchesPerFile[file.fileName]"
           :highlight-language="highlightLanguage"
           @match-selected="(match: Match) => $emit('matchSelected', match)"
           class="mt-1 first:mt-0"
@@ -42,12 +40,14 @@ import Container from '../ContainerComponent.vue'
 import Button from '../ButtonComponent.vue'
 import ScrollableComponent from '../ScrollableComponent.vue'
 import { VueDraggableNext } from 'vue-draggable-next'
-import { computed, ref, type PropType, type Ref } from 'vue'
+import { computed, nextTick, ref, type PropType, type Ref } from 'vue'
 import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCompressAlt } from '@fortawesome/free-solid-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import type { Language } from '@/model/Language'
+import { FileSortingOptions } from '@/model/ui/FileSortingOptions'
+import { store } from '@/stores/store'
 import type { BaseCodeMatch } from '@/model/BaseCodeReport'
 import type { Match } from '@/model/Match'
 
@@ -91,9 +91,81 @@ const props = defineProps({
   }
 })
 
-defineEmits(['matchSelected'])
+const emit = defineEmits(['matchSelected', 'filesMoved'])
+
+const matchesPerFile = computed(() => {
+  const matches: Record<string, MatchInSingleFile[]> = {}
+  for (const file of props.files) {
+    matches[file.fileName] = !props.matches.get(file.fileName)
+      ? []
+      : (props.matches.get(file.fileName) as MatchInSingleFile[])
+  }
+  return matches
+})
+
+const sortedFiles: Ref<SubmissionFile[]> = ref([])
+sortFiles(store().uiState.fileSorting ?? FileSortingOptions.ALPHABETICAL)
+
+function sortFiles(fileSorting: FileSortingOptions) {
+  switch (fileSorting) {
+    case FileSortingOptions.ALPHABETICAL: {
+      sortedFiles.value = Array.from(props.files).sort((a, b) =>
+        a.fileName.localeCompare(b.fileName)
+      )
+      break
+    }
+
+    case FileSortingOptions.MATCH_SIZE: {
+      const largestMatch: Record<string, number> = {}
+      for (const file of props.files) {
+        largestMatch[file.fileName] = Math.max(
+          ...matchesPerFile.value[file.fileName].map((match) => match.match.tokens)
+        )
+      }
+      sortedFiles.value = Array.from(props.files).sort(
+        (a, b) => largestMatch[b.fileName] - largestMatch[a.fileName]
+      )
+      break
+    }
+
+    case FileSortingOptions.MATCH_COUNT: {
+      const matchCount: Record<string, number> = {}
+      for (const file of props.files) {
+        matchCount[file.fileName] = matchesPerFile.value[file.fileName].length
+      }
+      sortedFiles.value = Array.from(props.files).sort(
+        (a, b) => matchCount[b.fileName] - matchCount[a.fileName]
+      )
+      break
+    }
+
+    case FileSortingOptions.MATCH_COVERAGE: {
+      const matchCoverage: Record<string, number> = {}
+      for (const file of props.files) {
+        const matches = matchesPerFile.value[file.fileName]
+        const totalTokens = matches.reduce((acc, match) => acc + match.match.tokens, 0)
+        matchCoverage[file.fileName] =
+          totalTokens / (file.tokenCount > 0 ? file.tokenCount : Infinity)
+      }
+      sortedFiles.value = Array.from(props.files).sort(
+        (a, b) => matchCoverage[b.fileName] - matchCoverage[a.fileName]
+      )
+      break
+    }
+  }
+}
+
+const shouldEmitFileMoving = ref(true)
+
+function emitFileMoving() {
+  if (!shouldEmitFileMoving.value) {
+    return
+  }
+  emit('filesMoved')
+}
 
 const codePanels: Ref<(typeof CodePanel)[]> = ref([])
+const scrollContainer: Ref<typeof ScrollableComponent | null> = ref(null)
 
 const tokenCount = computed(() => {
   return props.files.reduce((acc, file) => (file.tokenCount ?? 0) + acc - 1, 0)
@@ -105,20 +177,31 @@ const tokenCount = computed(() => {
  * @param line Line to scroll to.
  */
 function scrollTo(file: string, line: number) {
-  const fileIndex = Array.from(props.files).findIndex((f) => f.fileName === file)
+  const fileIndex = sortedFiles.value.findIndex((f) => f.fileName === file)
   if (fileIndex !== -1) {
-    codePanels.value[fileIndex].scrollTo(line)
+    codePanels.value[fileIndex].expand()
+    nextTick(() => {
+      if (!scrollContainer.value) {
+        return
+      }
+      const childToScrollTo = codePanels.value[fileIndex].getLineRect(line) as DOMRect
+      const scrollBox = scrollContainer.value.getRoot() as HTMLElement
+      scrollBox.scrollTo({
+        top: childToScrollTo.top + scrollBox.scrollTop - (scrollBox.clientHeight * 2) / 3
+      })
+    })
   }
 }
 
 /**
- * Collapses all of the code panels.
+ * Collapses all the code panels.
  */
 function collapseAll() {
   codePanels.value.forEach((panel) => panel.collapse())
 }
 
 defineExpose({
-  scrollTo
+  scrollTo,
+  sortFiles
 })
 </script>

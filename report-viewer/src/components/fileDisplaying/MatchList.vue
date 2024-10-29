@@ -45,7 +45,7 @@
     </ToolTipComponent>
 
     <div
-      class="print-excact flex w-full flex-row space-x-1 overflow-x-auto print:flex-wrap print:space-y-1 print:overflow-x-hidden"
+      class="print-exact flex w-full flex-row space-x-1 overflow-x-auto print:flex-wrap print:space-y-1 print:overflow-x-hidden"
       ref="scrollableList"
       @scroll="updateScrollOffset()"
     >
@@ -77,7 +77,7 @@
             }}) <br />
             Match is {{ match.tokens }} tokens long. <br />
             <span v-if="showTokenRanges(match)">
-              Token indeces of match: {{ match.startInFirst.tokenListIndex }}-{{
+              Token indices of match: {{ match.startInFirst.tokenListIndex }}-{{
                 match.endInFirst.tokenListIndex
               }}
               and {{ match.startInSecond.tokenListIndex }}-{{ match.endInSecond.tokenListIndex }}.
@@ -104,7 +104,7 @@
         v-for="[index, match] in matches?.entries()"
         v-bind:key="index"
         :style="{ background: getMatchColor(0.3, match.colorIndex) }"
-        class="print-excact"
+        class="print-exact"
       >
         <td class="px-2">{{ getFileName(match.firstFile) }}</td>
         <td class="px-2">{{ match.startInFirst }} - {{ match.endInFirst }}</td>
@@ -115,7 +115,7 @@
       <tr
         v-if="hasBaseCode"
         :style="{ background: getMatchColor(0.3, 'base') }"
-        class="print-excact"
+        class="print-exact"
       >
         <td class="px-2" colspan="5">Basecode in submissions</td>
       </tr>

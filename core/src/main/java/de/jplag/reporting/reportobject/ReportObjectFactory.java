@@ -149,7 +149,7 @@ public class ReportObjectFactory {
                 missingComparisons);
         OverviewReport overviewReport = new OverviewReport(REPORT_VIEWER_VERSION, folders.stream().map(File::getPath).toList(), // submissionFolderPath
                 baseCodePath, // baseCodeFolderPath
-                result.getOptions().language().getName(), // language
+                result.getOptions().language().getIdentifier(), // language
                 result.getOptions().fileSuffixes(), // fileExtensions
                 submissionNameToIdMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey)), // submissionIds
                 submissionNameToNameToComparisonFileName, // result.getOptions().getMinimumTokenMatch(),

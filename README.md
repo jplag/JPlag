@@ -131,7 +131,7 @@ Subsequence Match Merging
       --neighbor-length=<minimumNeighborLength>
                         Minimal length of neighboring matches to be merged (between 1 and minTokenMatch, default: 2).
 
-Subcommands (supported languages):
+Languages:
   c
   cpp
   csharp

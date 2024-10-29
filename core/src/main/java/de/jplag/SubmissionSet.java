@@ -99,6 +99,11 @@ public class SubmissionSet {
         return invalidSubmissions;
     }
 
+    /**
+     * Normalizes the token sequences of all submissions (including basecode). This makes the token sequence invariant to
+     * dead code insertion and independent statement reordering by removing dead tokens and optionally reordering tokens to
+     * a deterministic order.
+     */
     public void normalizeSubmissions() {
         if (baseCodeSubmission != null) {
             baseCodeSubmission.normalize();

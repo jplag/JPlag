@@ -83,7 +83,7 @@ const searchStringValue = computed({
     }
 
     for (const submissionId of store().getSubmissionIds) {
-      const submissionParts = submissionId.toLowerCase().split(/ +/g)
+      const submissionParts = store().submissionDisplayName(submissionId).toLowerCase().split(/ +/g)
       if (submissionParts.every((part) => searchParts.includes(part))) {
         store().state.anonymous.delete(submissionId)
       }

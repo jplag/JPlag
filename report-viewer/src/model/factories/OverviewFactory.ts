@@ -20,7 +20,7 @@ export class OverviewFactory extends BaseFactory {
   }
 
   /**
-   * Creates an overview object from a json object created by by JPlag
+   * Creates an overview object from a json object created by JPlag
    * @param json the json object
    */
   private static extractOverview(json: Record<string, unknown>): Overview {
@@ -152,6 +152,7 @@ export class OverviewFactory extends BaseFactory {
    * Compares the two versions and shows an alert if they are not equal and puts out a warning if they are not
    * @param jsonVersion the version of the json file
    * @param reportViewerVersion the version of the report viewer
+   * @param minimalVersion the minimal report version expected
    */
   static compareVersions(
     jsonVersion: Version,
@@ -179,13 +180,13 @@ export class OverviewFactory extends BaseFactory {
       sessionStorage.setItem('versionAlert', 'true')
     }
     if (jsonVersion.compareTo(minimalVersion) < 0) {
-      throw (
+      throw new Error(
         "The result's version(" +
-        jsonVersion.toString() +
-        ') is older than the minimal support version of the report viewer(' +
-        minimalVersion.toString() +
-        '). ' +
-        'Can not read the report.'
+          jsonVersion.toString() +
+          ') is older than the minimal support version of the report viewer(' +
+          minimalVersion.toString() +
+          '). ' +
+          'Can not read the report.'
       )
     }
   }
