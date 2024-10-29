@@ -93,7 +93,7 @@ function prepareCanvas(): [CanvasRenderingContext2D | null, number, number] {
 }
 
 function drawTest() {
-  drawTokenSquares()
+  drawFileLines()
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -104,20 +104,21 @@ function drawFileLines() {
   }
 
   const padding = 4
-  const lineHeight = (HEIGHT - padding) / (props.files.length + padding)
+  const lineHeight = (HEIGHT - props.files.length * padding + padding) / props.files.length
   for (const [i, file] of props.files.entries()) {
+    let sum = file.tokenCount - 1
     const parts = fileParts.value[file.fileName]
     let x = 0
     for (const part of parts) {
       ctx.fillStyle =
         part.colorIndex !== undefined ? getMatchColor(1, part.colorIndex) : nonMatchColor.value
-      const l = Math.round((part.length / file.tokenCount) * WIDTH)
-      ctx.fillRect(x, i * (lineHeight + padding), l, lineHeight)
-      x += l
+      ctx.fillRect(x * WIDTH, i * (lineHeight + padding), (part.length / sum) * WIDTH, lineHeight)
+      x += part.length / sum
     }
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function drawTokenSquares() {
   const allMatches = props.files
     .flatMap((file) => props.matches.get(file.fileName) ?? [])
