@@ -147,7 +147,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         } else if (node.getKind() == Tree.Kind.RECORD) {
             addToken(JavaTokenType.J_RECORD_BEGIN, start, 1, semantics);
         } else if (node.getKind() == Tree.Kind.ANNOTATION_TYPE) {
-            addToken(JavaTokenType.J_ANNO_T_BEGIN, start - 2 /*@ is final modifier for annotations*/, (start - 2) + 11 + nameLength, semantics);
+            addToken(JavaTokenType.J_ANNO_T_BEGIN, start - 2 /* @ is final modifier for annotations */, (start - 2) + 11 + nameLength, semantics);
         } else if (node.getKind() == Tree.Kind.CLASS) {
             addToken(JavaTokenType.J_CLASS_BEGIN, start, 5, semantics);
         }
