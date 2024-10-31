@@ -23,7 +23,7 @@
     "@fortawesome/free-brands-svg-icons": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/vue-fontawesome": "^3.0.8",
-    "chart.js": "^4.4.5",
+    "chart.js": "^4.4.6",
     "chartjs-chart-graph": "^4.3.3",
     "chartjs-plugin-datalabels": "^2.2.0",
     "highlight.js": "^11.10.0",
