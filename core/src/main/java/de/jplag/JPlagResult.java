@@ -1,5 +1,6 @@
 package de.jplag;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.ToDoubleFunction;
@@ -120,6 +121,10 @@ public class JPlagResult {
 
     public List<ClusteringResult<Submission>> getClusteringResult() {
         return this.clusteringResult;
+    }
+
+    public List<Integer> calculateDistributionFor(ToDoubleFunction<JPlagComparison> similarityMetric) {
+        return Arrays.stream(calculateDistributionFor(this.comparisons, similarityMetric)).boxed().toList();
     }
 
     @Override
