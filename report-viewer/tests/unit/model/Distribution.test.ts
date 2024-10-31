@@ -2,10 +2,10 @@ import { describe, expect, it } from 'vitest'
 import { Distribution } from '@/model/Distribution'
 
 const distributionData = [
+  0, 7, 15, 42, 109, 225, 470, 869, 1442, 2052, 3025, 4056, 5091, 6130, 7023, 7292, 7445, 7177,
+  6343, 5373, 4309, 3163, 2244, 1544, 923, 493, 273, 168, 61, 31, 8, 12, 2, 1, 0, 1, 2, 0, 0, 0, 0,
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0,
-  1, 2, 12, 8, 31, 61, 168, 273, 493, 923, 1544, 2244, 3163, 4309, 5373, 6343, 7177, 7445, 7292,
-  7023, 6130, 5091, 4056, 3025, 2052, 1442, 869, 470, 225, 109, 42, 15, 7, 0
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 ]
 const distribution = new Distribution(distributionData)
 
@@ -14,7 +14,8 @@ describe('Distribution', () => {
     expect(distribution.splitIntoBuckets(10)).toEqual([0, 0, 0, 0, 0, 0, 26, 13209, 58955, 5231])
   }),
     it('get in 100 Buckets', () => {
-      expect(distribution.splitIntoBuckets(100)).toEqual(distributionData)
+      const reversedOriginal = Array.from(distributionData).reverse()
+      expect(distribution.splitIntoBuckets(100)).toEqual(reversedOriginal)
     }),
     it('get in 25 Buckets', () => {
       expect(distribution.splitIntoBuckets(25)).toEqual([
