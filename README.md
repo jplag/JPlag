@@ -2,7 +2,7 @@
 	<img alt="JPlag logo" src="core/src/main/resources/de/jplag/logo-dark.png" width="350">
 </p>
 
-# JPlag - Detecting Software Plagiarism
+# JPlag - Detecting Source Code Plagiarism
 [![CI Build](https://github.com/jplag/jplag/actions/workflows/maven.yml/badge.svg)](https://github.com/jplag/jplag/actions/workflows/maven.yml)
 [![Latest Release](https://img.shields.io/github/release/jplag/jplag.svg)](https://github.com/jplag/jplag/releases/latest)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.jplag/jplag/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.jplag/jplag)
@@ -13,7 +13,7 @@
 [![Java Version](https://img.shields.io/badge/java-SE%2021-yellowgreen)](#download-and-installation)
 
 
-JPlag finds pairwise similarities among a set of multiple programs. It can reliably detect software plagiarism and collusion in software development, even when obfuscated. All similarities are calculated locally, and no source code or plagiarism results are ever uploaded to the internet. JPlag supports a large number of programming and modeling languages.
+JPlag finds pairwise similarities among a set of multiple programs. It can reliably detect software plagiarism and collusion in software development, even when obfuscated. All similarities are calculated locally; no source code or plagiarism results are ever uploaded online. JPlag supports a large number of programming and modeling languages.
 
 * 📈 [JPlag Demo](https://jplag.github.io/Demo/)
 
@@ -53,7 +53,7 @@ You need Java SE 21 to run or build JPlag.
 
 ### Downloading a release
 * Download a [released version](https://github.com/jplag/jplag/releases).
-* In case you depend on the legacy version of JPlag we refer to the [legacy release v2.12.1](https://github.com/jplag/jplag/releases/tag/v2.12.1-SNAPSHOT) and the [legacy branch](https://github.com/jplag/jplag/tree/legacy).
+* In case you depend on the legacy version of JPlag, we refer to the [legacy release v2.12.1](https://github.com/jplag/jplag/releases/tag/v2.12.1-SNAPSHOT) and the [legacy branch](https://github.com/jplag/jplag/tree/legacy).
 
 ### Via Maven
 JPlag is released on [Maven Central](https://search.maven.org/search?q=de.jplag), it can be included as follows:
@@ -78,7 +78,7 @@ JPlag can either be used via the CLI or directly via its Java API. For more info
 ### CLI
 *Note that the [legacy CLI](https://github.com/jplag/jplag/blob/legacy/README.md) is varying slightly.*
 The language can either be set with the -l parameter or as a subcommand (`jplag [jplag options] <language name> [language options]`). A subcommand takes priority over the -l option.
-When using the subcommand, language-specific arguments can be set. A list of language-specific options can be obtained by requesting the help page of a subcommand (e.g. `jplag java -h`).
+Language-specific arguments can be set when using the subcommand. A list of language-specific options can be obtained by requesting the help page of a subcommand (e.g., `jplag java —h`).
 
 ```
 Parameter descriptions: 
@@ -184,7 +184,7 @@ Please consider our [guidelines for contributions](https://github.com/jplag/JPla
 
 ## Contact
 If you encounter bugs or other issues, please report them [here](https://github.com/jplag/jplag/issues).
-For other purposes, you can contact us at jplag@ipd.kit.edu .
-If you are doing research related to JPlag, we would love to know what you are doing. Feel free to contact us!
+For other purposes, you can contact us at jplag@ipd.kit.edu.
+We would love to hear about your research related to JPlag. Feel free to contact us!
 
 ### More information can be found in our [Wiki](https://github.com/jplag/JPlag/wiki)!
