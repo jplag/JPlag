@@ -11,8 +11,9 @@ export class Distribution {
   public splitIntoBuckets(bucketCount: BucketOptions): number[] {
     const bucketArray = new Array<number>(bucketCount).fill(0)
     const divisor = 100 / bucketCount
+    const reversedDistribution = Array.from(this._distribution).reverse()
     for (let i = 99; i >= 0; i--) {
-      bucketArray[Math.floor(i / divisor)] += this._distribution[i]
+      bucketArray[Math.floor(i / divisor)] += reversedDistribution[i]
     }
     return bucketArray
   }

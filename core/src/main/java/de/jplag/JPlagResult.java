@@ -1,5 +1,6 @@
 package de.jplag;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.ToDoubleFunction;
@@ -98,8 +99,8 @@ public class JPlagResult {
 
     /**
      * For the {@link SimilarityMetric} JPlag was run with, this returns the similarity distribution of detected matches in
-     * a 10-element array. Each entry represents the absolute frequency of matches whose similarity lies within the
-     * respective interval. Intervals: 0: [0% - 10%), 1: [10% - 20%), 2: [20% - 30%), ..., 9: [90% - 100%]
+     * a 100-element array. Each entry represents the absolute frequency of matches whose similarity lies within the
+     * respective interval. Intervals: 0: [0% - 1%), 1: [1% - 2%), 2: [2% - 3%), ..., 99: [99% - 100%]
      * @return the similarity distribution array.
      */
     public int[] getSimilarityDistribution() {
@@ -108,9 +109,9 @@ public class JPlagResult {
 
     /**
      * For the {@link SimilarityMetric#MAX} that is built in to every {@link JPlagComparison}, this returns the similarity
-     * distribution of detected matches in a 10-element array. Each entry represents the absolute frequency of matches whose
-     * similarity lies within the respective interval. Intervals: 0: [0% - 10%), 1: [10% - 20%), 2: [20% - 30%), ..., 9:
-     * [90% - 100%]
+     * distribution of detected matches in a 100-element array. Each entry represents the absolute frequency of matches
+     * whose similarity lies within the respective interval. Intervals: 0: [0% - 1%), 1: [1% - 20%), 2: [2% - 3%), ..., 99:
+     * [99% - 100%]
      * @return the similarity distribution array. When JPlag was run with the {@link SimilarityMetric#MAX}, this will return
      * the same distribution as {@link JPlagResult#getSimilarityDistribution()}
      */
@@ -120,6 +121,16 @@ public class JPlagResult {
 
     public List<ClusteringResult<Submission>> getClusteringResult() {
         return this.clusteringResult;
+    }
+
+    /**
+     * Calculates the distribution of all comparisons. The distribution is boxed to a 100-Element Array, index with ranges:
+     * 0: [0%, 1%), 1: [1%, 2%), ..., 99: [99%, 100%]
+     * @param similarityMetric Metric to use
+     * @return the similarity distribution
+     */
+    public List<Integer> calculateDistributionFor(ToDoubleFunction<JPlagComparison> similarityMetric) {
+        return Arrays.stream(calculateDistributionFor(this.comparisons, similarityMetric)).boxed().toList();
     }
 
     @Override
