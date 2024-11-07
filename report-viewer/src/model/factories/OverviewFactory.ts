@@ -5,7 +5,7 @@ import { store } from '@/stores/store'
 import { Version, minimalReportVersion, reportViewerVersion } from '../Version'
 import { getLanguageParser } from '../Language'
 import { Distribution } from '../Distribution'
-import { MetricType } from '../MetricType'
+import { MetricJsonIdentifier } from '../MetricType'
 import { BaseFactory } from './BaseFactory'
 
 /**
@@ -59,10 +59,10 @@ export class OverviewFactory extends BaseFactory {
 
   private static extractDistributions(
     json: Record<string, Array<number>>
-  ): Record<MetricType, Distribution> {
-    const distributions = {} as Record<MetricType, Distribution>
+  ): Record<MetricJsonIdentifier, Distribution> {
+    const distributions = {} as Record<MetricJsonIdentifier, Distribution>
     for (const [key, value] of Object.entries(json)) {
-      distributions[key as MetricType] = new Distribution(value as Array<number>)
+      distributions[key as MetricJsonIdentifier] = new Distribution(value as Array<number>)
     }
     return distributions
   }
@@ -79,7 +79,7 @@ export class OverviewFactory extends BaseFactory {
         id: counter,
         firstSubmissionId: topComparison.first_submission as string,
         secondSubmissionId: topComparison.second_submission as string,
-        similarities: topComparison.similarities as Record<MetricType, number>
+        similarities: topComparison.similarities as Record<MetricJsonIdentifier, number>
       }
       comparisons.push({
         ...comparison,

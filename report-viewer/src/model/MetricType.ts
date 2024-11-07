@@ -1,28 +1,148 @@
-/**
- * This enum maps the metric type to the index they have in the generated JSON and respectively in the store.
- */
-export enum MetricType {
-  AVERAGE = 'AVG',
-  MAXIMUM = 'MAX'
+export enum MetricJsonIdentifier {
+  AVERAGE_SIMILARITY = 'AVG',
+  MAXIMUM_SIMILARITY = 'MAX',
+  MINIMUM_SIMILARITY = 'MIN',
+  INTERSECTION = 'INTERSECTION',
+  SYMMETRIC = 'SYMMETRIC',
+  LONGEST_MATCH = 'LONGEST_MATCH',
+  OVERALL = 'OVERALL'
 }
 
-export type MetricToolTipData = {
-  longName: string
-  shortName: string
-  tooltip: string
-}
+export abstract class MetricType {
+  private readonly _shortName: string
+  private readonly _longName: string
+  private readonly _tooltip: string
+  private readonly _identifier: MetricJsonIdentifier
 
-export const metricToolTips: Record<MetricType, MetricToolTipData> = {
-  [MetricType.AVERAGE]: {
-    longName: 'Average Similarity',
-    shortName: 'AVG',
-    tooltip:
-      'The average similarity of the two files.\nA high similarity indicates that the programms work in a similar way.'
-  },
-  [MetricType.MAXIMUM]: {
-    longName: 'Maximum Similarity',
-    shortName: 'MAX',
-    tooltip:
-      'The maximum similarity of the two files.\nUseful if programms are very different in size.'
+  constructor(
+    shortName: string,
+    longName: string,
+    tooltip: string,
+    identifier: MetricJsonIdentifier
+  ) {
+    this._shortName = shortName
+    this._longName = longName
+    this._tooltip = tooltip
+    this._identifier = identifier
   }
+
+  get shortName() {
+    return this._shortName
+  }
+
+  get longName() {
+    return this._longName
+  }
+
+  get tooltip() {
+    return this._tooltip
+  }
+
+  get identifier() {
+    return this._identifier
+  }
+
+  abstract format(value: number): string
+}
+
+class IdentityMetricType extends MetricType {
+  constructor(
+    shortName: string,
+    longName: string,
+    tooltip: string,
+    identifier: MetricJsonIdentifier
+  ) {
+    super(shortName, longName, tooltip, identifier)
+  }
+
+  format(value: number): string {
+    return value.toString()
+  }
+}
+
+class PercentageMetricType extends MetricType {
+  constructor(
+    shortName: string,
+    longName: string,
+    tooltip: string,
+    identifier: MetricJsonIdentifier
+  ) {
+    super(shortName, longName, tooltip, identifier)
+  }
+
+  format(value: number): string {
+    return `${(value * 100).toFixed(2)}%`
+  }
+}
+
+export namespace MetricTypes {
+  export const AVERAGE_SIMILARITY = new PercentageMetricType(
+    'AVG',
+    'Average Similarity',
+    'The average similarity of the two files.\nA high similarity indicates that the programs work in a similar way.',
+    MetricJsonIdentifier.AVERAGE_SIMILARITY
+  )
+  export const MAXIMUM_SIMILARITY = new PercentageMetricType(
+    'MAX',
+    'Maximum Similarity',
+    'The maximum similarity of the two files.\nUseful if programs are very different in size.',
+    MetricJsonIdentifier.MAXIMUM_SIMILARITY
+  )
+  export const MINIMUM_SIMILARITY = new PercentageMetricType(
+    'MIN',
+    'Minimum Similarity',
+    'The minimum similarity of the two files.',
+    MetricJsonIdentifier.MINIMUM_SIMILARITY
+  )
+  export const INTERSECTION = new IdentityMetricType(
+    'INTER',
+    'Matched Tokens',
+    'The number of tokens that are matched between the two files.',
+    MetricJsonIdentifier.INTERSECTION
+  )
+  export const SYMMETRIC = new PercentageMetricType(
+    'SYM',
+    'Symmetric Similarity',
+    'A symmetric similarity measure.',
+    MetricJsonIdentifier.SYMMETRIC
+  )
+  export const LONGEST_MATCH = new IdentityMetricType(
+    'LONG',
+    'Longest Match',
+    'The number of tokens in the longest match.',
+    MetricJsonIdentifier.LONGEST_MATCH
+  )
+  export const OVERALL = new IdentityMetricType(
+    'ALL',
+    'Overall',
+    'Sum of both submission lengths.',
+    MetricJsonIdentifier.OVERALL
+  )
+
+  export const METRIC_LIST: MetricType[] = [
+    AVERAGE_SIMILARITY,
+    MAXIMUM_SIMILARITY,
+    MINIMUM_SIMILARITY,
+    INTERSECTION,
+    SYMMETRIC,
+    LONGEST_MATCH,
+    OVERALL
+  ]
+
+  export const METRIC_MAP: Record<MetricJsonIdentifier, MetricType> = {} as Record<
+    MetricJsonIdentifier,
+    MetricType
+  >
+  for (const metric of METRIC_LIST) {
+    METRIC_MAP[metric.identifier] = metric
+  }
+  export const METRIC_JSON_IDENTIFIERS = [
+    MetricJsonIdentifier.AVERAGE_SIMILARITY,
+    MetricJsonIdentifier.MAXIMUM_SIMILARITY,
+    MetricJsonIdentifier.MINIMUM_SIMILARITY,
+    MetricJsonIdentifier.INTERSECTION,
+    MetricJsonIdentifier.SYMMETRIC,
+    MetricJsonIdentifier.LONGEST_MATCH,
+    MetricJsonIdentifier.OVERALL
+  ]
 }

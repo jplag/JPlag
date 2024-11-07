@@ -1,4 +1,4 @@
-import type { MetricType } from './MetricType'
+import type { MetricJsonIdentifier } from './MetricType'
 
 /**
  * Comparison model used by the Comparison Table in Overview. Only the needed attributes to display are included.
@@ -16,6 +16,6 @@ export type ComparisonListElement = {
   id: number
   firstSubmissionId: string
   secondSubmissionId: string
-  similarities: Record<MetricType, number>
+  similarities: Record<MetricJsonIdentifier, number>
   clusterIndex: number
 }

@@ -1,7 +1,7 @@
 import type { Distribution } from './Distribution'
 import type { Cluster } from '@/model/Cluster'
 import type { ComparisonListElement } from './ComparisonListElement'
-import type { MetricType } from './MetricType'
+import type { MetricJsonIdentifier } from './MetricType'
 import type { Language } from './Language'
 
 /**
@@ -16,7 +16,7 @@ export class Overview {
   private readonly _dateOfExecution: string
   private readonly _durationOfExecution: number
   private readonly _topComparisons: Array<ComparisonListElement>
-  private readonly _distributions: Record<MetricType, Distribution>
+  private readonly _distributions: Record<MetricJsonIdentifier, Distribution>
   private readonly _clusters: Array<Cluster>
   private readonly _totalComparisons: number
 
@@ -29,7 +29,7 @@ export class Overview {
     dateOfExecution: string,
     durationOfExecution: number,
     topComparisons: Array<ComparisonListElement>,
-    distributions: Record<MetricType, Distribution>,
+    distributions: Record<MetricJsonIdentifier, Distribution>,
     clusters: Array<Cluster>,
     totalComparisons: number
   ) {

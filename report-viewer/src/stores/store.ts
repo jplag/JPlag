@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import type { State, UIState } from './state'
-import { MetricType } from '@/model/MetricType'
+import { MetricJsonIdentifier } from '@/model/MetricType'
 import type { SubmissionFile, File } from '@/model/File'
 import { FileSortingOptions } from '@/model/ui/FileSortingOptions'
 
@@ -23,10 +23,10 @@ const store = defineStore('store', {
     },
     uiState: {
       useDarkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
-      comparisonTableSortingMetric: MetricType.AVERAGE,
+      comparisonTableSortingMetric: MetricJsonIdentifier.AVERAGE_SIMILARITY,
       comparisonTableClusterSorting: false,
       distributionChartConfig: {
-        metric: MetricType.AVERAGE,
+        metric: MetricJsonIdentifier.AVERAGE_SIMILARITY,
         xScale: 'linear',
         bucketCount: 10
       },

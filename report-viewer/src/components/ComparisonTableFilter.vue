@@ -45,7 +45,7 @@ import ToolTipComponent from './ToolTipComponent.vue'
 import ButtonComponent from './ButtonComponent.vue'
 import OptionsSelector from './optionsSelectors/OptionsSelectorComponent.vue'
 import { store } from '@/stores/store'
-import { MetricType, metricToolTips } from '@/model/MetricType'
+import { MetricJsonIdentifier, MetricTypes } from '@/model/MetricType'
 import type { ToolTipLabel } from '@/model/ui/ToolTip'
 
 const props = defineProps({
@@ -93,7 +93,9 @@ const searchStringValue = computed({
 
 function changeSortingMetric(index: number) {
   store().uiState.comparisonTableSortingMetric =
-    index < tableSortingMetricOptions.length ? tableSortingMetricOptions[index] : MetricType.AVERAGE
+    index < tableSortingMetricOptions.length
+      ? tableSortingMetricOptions[index].identifier
+      : MetricJsonIdentifier.AVERAGE_SIMILARITY
   store().uiState.comparisonTableClusterSorting = tableSortingOptions.value[index] == 'Cluster'
 }
 
@@ -101,15 +103,17 @@ function getSortingMetric() {
   if (store().uiState.comparisonTableClusterSorting && props.enableClusterSorting) {
     return tableSortingOptions.value.indexOf('Cluster')
   }
-  return tableSortingMetricOptions.indexOf(store().uiState.comparisonTableSortingMetric)
+  return tableSortingMetricOptions.findIndex(
+    (m) => m.identifier == store().uiState.comparisonTableSortingMetric
+  )
 }
 
-const tableSortingMetricOptions = [MetricType.AVERAGE, MetricType.MAXIMUM]
+const tableSortingMetricOptions = MetricTypes.METRIC_LIST
 const tableSortingOptions = computed(() => {
   const options: (ToolTipLabel | string)[] = tableSortingMetricOptions.map((metric) => {
     return {
-      displayValue: metricToolTips[metric].longName,
-      tooltip: metricToolTips[metric].tooltip
+      displayValue: metric.longName,
+      tooltip: metric.tooltip
     }
   })
   if (props.enableClusterSorting) {

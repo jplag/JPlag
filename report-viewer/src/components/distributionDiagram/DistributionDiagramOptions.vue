@@ -7,7 +7,8 @@
         title="Metric:"
         :defaultSelected="store().uiState.distributionChartConfig.metric"
         @selection-changed="
-          (metric: MetricType) => (store().uiState.distributionChartConfig.metric = metric)
+          (metric: MetricJsonIdentifier) =>
+            (store().uiState.distributionChartConfig.metric = metric)
         "
       />
       <OptionsSelector
@@ -37,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { MetricType } from '@/model/MetricType'
+import { MetricJsonIdentifier } from '@/model/MetricType'
 import { store } from '@/stores/store'
 import MetricSelector from '@/components/optionsSelectors/MetricSelector.vue'
 import OptionsSelector from '@/components/optionsSelectors/OptionsSelectorComponent.vue'
