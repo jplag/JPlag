@@ -35,6 +35,14 @@
       :labels="tableSortingOptions"
       @selection-changed="(index: number) => changeSortingMetric(index)"
     />
+    <MetricSelector
+      title="Secondary Metric:"
+      :defaultSelected="store().uiState.comparisonTableSecondaryMetric"
+      @selection-changed="
+        (metric: MetricJsonIdentifier) => (store().uiState.comparisonTableSecondaryMetric = metric)
+      "
+      :metrics="secondaryMetricOptions"
+    />
   </div>
 </template>
 
@@ -47,6 +55,7 @@ import OptionsSelector from './optionsSelectors/OptionsSelectorComponent.vue'
 import { store } from '@/stores/store'
 import { MetricJsonIdentifier, MetricTypes } from '@/model/MetricType'
 import type { ToolTipLabel } from '@/model/ui/ToolTip'
+import MetricSelector from './optionsSelectors/MetricSelector.vue'
 
 const props = defineProps({
   searchString: {
@@ -121,6 +130,15 @@ const tableSortingOptions = computed(() => {
   }
   return options
 })
+
+const secondaryMetricOptions = [
+  MetricJsonIdentifier.MAXIMUM_SIMILARITY,
+  MetricJsonIdentifier.MINIMUM_SIMILARITY,
+  MetricJsonIdentifier.SYMMETRIC,
+  MetricJsonIdentifier.INTERSECTION,
+  MetricJsonIdentifier.LONGEST_MATCH,
+  MetricJsonIdentifier.OVERALL
+]
 
 /**
  * Sets the anonymous set to empty if it is full or adds all submission ids to it if it is not full

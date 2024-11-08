@@ -40,6 +40,7 @@ export interface State {
 export interface UIState {
   useDarkMode: boolean
   comparisonTableSortingMetric: MetricJsonIdentifier
+  comparisonTableSecondaryMetric: MetricJsonIdentifier
   comparisonTableClusterSorting: boolean
   distributionChartConfig: DistributionChartConfig
   fileSorting: FileSortingOptions

@@ -34,12 +34,17 @@
               <ToolTipComponent class="flex-1" :direction="displayClusters ? 'top' : 'left'">
                 <template #default>
                   <p class="w-full text-center">
-                    {{ MetricTypes.MAXIMUM_SIMILARITY.shortName }}
+                    {{
+                      MetricTypes.METRIC_MAP[store().uiState.comparisonTableSecondaryMetric]
+                        .shortName
+                    }}
                   </p>
                 </template>
                 <template #tooltip>
                   <p class="whitespace-pre text-sm">
-                    {{ MetricTypes.MAXIMUM_SIMILARITY.tooltip }}
+                    {{
+                      MetricTypes.METRIC_MAP[store().uiState.comparisonTableSecondaryMetric].tooltip
+                    }}
                   </p>
                 </template>
               </ToolTipComponent>
@@ -104,15 +109,15 @@
                     <div class="w-1/2">
                       {{
                         MetricTypes.AVERAGE_SIMILARITY.format(
-                          item.similarities[MetricTypes.AVERAGE_SIMILARITY.shortName]
+                          item.similarities[MetricTypes.AVERAGE_SIMILARITY.identifier]
                         )
                       }}
                     </div>
                     <div class="w-1/2">
                       {{
-                        MetricTypes.MAXIMUM_SIMILARITY.format(
-                          item.similarities[MetricTypes.MAXIMUM_SIMILARITY.shortName]
-                        )
+                        MetricTypes.METRIC_MAP[
+                          store().uiState.comparisonTableSecondaryMetric
+                        ].format(item.similarities[store().uiState.comparisonTableSecondaryMetric])
                       }}
                     </div>
                   </div>

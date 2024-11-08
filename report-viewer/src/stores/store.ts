@@ -24,6 +24,7 @@ const store = defineStore('store', {
     uiState: {
       useDarkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
       comparisonTableSortingMetric: MetricJsonIdentifier.AVERAGE_SIMILARITY,
+      comparisonTableSecondaryMetric: MetricJsonIdentifier.MAXIMUM_SIMILARITY,
       comparisonTableClusterSorting: false,
       distributionChartConfig: {
         metric: MetricJsonIdentifier.AVERAGE_SIMILARITY,
