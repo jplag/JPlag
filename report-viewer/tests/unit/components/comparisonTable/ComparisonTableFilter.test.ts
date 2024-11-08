@@ -3,7 +3,7 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { describe, it, vi, expect } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
 import { store } from '@/stores/store'
-import { MetricType } from '@/model/MetricType.ts'
+import { MetricJsonIdentifier } from '@/model/MetricType.ts'
 import ButtonComponent from '@/components/ButtonComponent.vue'
 import OptionsSelector from '@/components/optionsSelectors/OptionsSelectorComponent.vue'
 import OptionComponent from '@/components/optionsSelectors/OptionComponent.vue'
@@ -41,21 +41,31 @@ describe('ComparisonTableFilter', async () => {
     expect(wrapper.text()).toContain('Cluster')
 
     const options = wrapper.getComponent(OptionsSelector).findAllComponents(OptionComponent)
-
     expectHighlighting(0)
 
     await options[1].trigger('click')
-    expect(store().uiState.comparisonTableSortingMetric).toBe(MetricType.MAXIMUM)
+    expect(store().uiState.comparisonTableSortingMetric).toBe(
+      MetricJsonIdentifier.MAXIMUM_SIMILARITY
+    )
     expect(store().uiState.comparisonTableClusterSorting).toBeFalsy()
     expectHighlighting(1)
 
-    await options[2].trigger('click')
-    expect(store().uiState.comparisonTableSortingMetric).toBe(MetricType.AVERAGE)
+    await options[4].trigger('click')
+    expect(store().uiState.comparisonTableSortingMetric).toBe(MetricJsonIdentifier.SYMMETRIC)
+    expect(store().uiState.comparisonTableClusterSorting).toBeFalsy()
+    expectHighlighting(4)
+
+    await options[7].trigger('click')
+    expect(store().uiState.comparisonTableSortingMetric).toBe(
+      MetricJsonIdentifier.AVERAGE_SIMILARITY
+    )
     expect(store().uiState.comparisonTableClusterSorting).toBeTruthy()
-    expectHighlighting(2)
+    expectHighlighting(7)
 
     await options[0].trigger('click')
-    expect(store().uiState.comparisonTableSortingMetric).toBe(MetricType.AVERAGE)
+    expect(store().uiState.comparisonTableSortingMetric).toBe(
+      MetricJsonIdentifier.AVERAGE_SIMILARITY
+    )
     expect(store().uiState.comparisonTableClusterSorting).toBeFalsy()
     expectHighlighting(0)
 

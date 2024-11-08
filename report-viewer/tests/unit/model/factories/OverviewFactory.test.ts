@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it, vi, beforeEach } from 'vitest'
 import { OverviewFactory } from '@/model/factories/OverviewFactory'
-import { MetricType } from '@/model/MetricType'
+import { MetricJsonIdentifier } from '@/model/MetricType'
 import { Distribution } from '@/model/Distribution'
 import { ParserLanguage } from '@/model/Language'
 import validNew from './ValidOverview.json'
@@ -34,8 +34,13 @@ describe('Test JSON to Overview', () => {
           firstSubmissionId: 'A',
           secondSubmissionId: 'C',
           similarities: {
-            [MetricType.AVERAGE]: 0.9960435212660732,
-            [MetricType.MAXIMUM]: 0.9960435212660732
+            [MetricJsonIdentifier.AVERAGE_SIMILARITY]: 0.9960435212660732,
+            [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: 0.9960435212660732,
+            [MetricJsonIdentifier.MINIMUM_SIMILARITY]: 0.99,
+            [MetricJsonIdentifier.SYMMETRIC]: 0.98,
+            [MetricJsonIdentifier.LONGEST_MATCH]: 13,
+            [MetricJsonIdentifier.INTERSECTION]: 32,
+            [MetricJsonIdentifier.OVERALL]: 100
           },
           sortingPlace: 0,
           id: 1,
@@ -45,8 +50,13 @@ describe('Test JSON to Overview', () => {
           firstSubmissionId: 'D',
           secondSubmissionId: 'A',
           similarities: {
-            [MetricType.AVERAGE]: 0.751044776119403,
-            [MetricType.MAXIMUM]: 0.947289156626506
+            [MetricJsonIdentifier.AVERAGE_SIMILARITY]: 0.751044776119403,
+            [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: 0.947289156626506,
+            [MetricJsonIdentifier.MINIMUM_SIMILARITY]: 0.5,
+            [MetricJsonIdentifier.SYMMETRIC]: 0.8,
+            [MetricJsonIdentifier.LONGEST_MATCH]: 4,
+            [MetricJsonIdentifier.INTERSECTION]: 12,
+            [MetricJsonIdentifier.OVERALL]: 133
           },
           sortingPlace: 1,
           id: 2,
@@ -56,8 +66,13 @@ describe('Test JSON to Overview', () => {
           firstSubmissionId: 'D',
           secondSubmissionId: 'C',
           similarities: {
-            [MetricType.AVERAGE]: 0.751044776119403,
-            [MetricType.MAXIMUM]: 0.947289156626506
+            [MetricJsonIdentifier.AVERAGE_SIMILARITY]: 0.751044776119403,
+            [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: 0.947289156626506,
+            [MetricJsonIdentifier.MINIMUM_SIMILARITY]: 0.46,
+            [MetricJsonIdentifier.SYMMETRIC]: 0.78,
+            [MetricJsonIdentifier.LONGEST_MATCH]: 12,
+            [MetricJsonIdentifier.INTERSECTION]: 12,
+            [MetricJsonIdentifier.OVERALL]: 98
           },
           sortingPlace: 2,
           id: 3,
@@ -67,8 +82,13 @@ describe('Test JSON to Overview', () => {
           firstSubmissionId: 'B',
           secondSubmissionId: 'D',
           similarities: {
-            [MetricType.AVERAGE]: 0.28322981366459626,
-            [MetricType.MAXIMUM]: 0.8085106382978723
+            [MetricJsonIdentifier.AVERAGE_SIMILARITY]: 0.28322981366459626,
+            [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: 0.8085106382978723,
+            [MetricJsonIdentifier.MINIMUM_SIMILARITY]: 0.1,
+            [MetricJsonIdentifier.SYMMETRIC]: 0.456,
+            [MetricJsonIdentifier.LONGEST_MATCH]: 5,
+            [MetricJsonIdentifier.INTERSECTION]: 6,
+            [MetricJsonIdentifier.OVERALL]: 32
           },
           sortingPlace: 3,
           id: 4,
@@ -78,8 +98,13 @@ describe('Test JSON to Overview', () => {
           firstSubmissionId: 'B',
           secondSubmissionId: 'A',
           similarities: {
-            [MetricType.AVERAGE]: 0.2378472222222222,
-            [MetricType.MAXIMUM]: 0.9716312056737588
+            [MetricJsonIdentifier.AVERAGE_SIMILARITY]: 0.2378472222222222,
+            [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: 0.9716312056737588,
+            [MetricJsonIdentifier.MINIMUM_SIMILARITY]: 0.05,
+            [MetricJsonIdentifier.SYMMETRIC]: 0.23,
+            [MetricJsonIdentifier.LONGEST_MATCH]: 7,
+            [MetricJsonIdentifier.INTERSECTION]: 9,
+            [MetricJsonIdentifier.OVERALL]: 34
           },
           sortingPlace: 4,
           id: 5,
@@ -89,8 +114,13 @@ describe('Test JSON to Overview', () => {
           firstSubmissionId: 'B',
           secondSubmissionId: 'C',
           similarities: {
-            [MetricType.AVERAGE]: 0.2378472222222222,
-            [MetricType.MAXIMUM]: 0.9716312056737588
+            [MetricJsonIdentifier.AVERAGE_SIMILARITY]: 0.2378472222222222,
+            [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: 0.9716312056737588,
+            [MetricJsonIdentifier.MINIMUM_SIMILARITY]: 0.06,
+            [MetricJsonIdentifier.SYMMETRIC]: 0.235,
+            [MetricJsonIdentifier.LONGEST_MATCH]: 3,
+            [MetricJsonIdentifier.INTERSECTION]: 6,
+            [MetricJsonIdentifier.OVERALL]: 134
           },
           sortingPlace: 5,
           id: 6,
@@ -98,13 +128,25 @@ describe('Test JSON to Overview', () => {
         }
       ],
       _distributions: {
-        [MetricType.MAXIMUM]: new Distribution([
+        [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: new Distribution([
           1, 0, 2, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0
         ]),
-        [MetricType.AVERAGE]: new Distribution([
+        [MetricJsonIdentifier.AVERAGE_SIMILARITY]: new Distribution([
+          1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        ]),
+        [MetricJsonIdentifier.MINIMUM_SIMILARITY]: new Distribution([
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+          0, 0, 0, 0, 0, 0, 0, 0, 2, 3
+        ]),
+        [MetricJsonIdentifier.SYMMETRIC]: new Distribution([
           1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0,
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

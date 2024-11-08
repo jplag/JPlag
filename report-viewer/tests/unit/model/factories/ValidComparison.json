@@ -3,7 +3,13 @@
   "id2": "root2",
   "similarities": {
     "AVG": 0.45,
-    "MAX": 0.5
+    "MAX": 0.5,
+    "MIN": 0.4,
+    "LONGEST_MATCH": 139,
+    "INTERSECTION": 229,
+    "SYMMETRIC": 0.5,
+    "OVERALL": 916
+
   },
   "matches": [
     {

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
 import MetricSelector from '@/components/optionsSelectors/MetricSelector.vue'
-import { MetricType } from '@/model/MetricType'
+import { MetricJsonIdentifier, MetricTypes } from '@/model/MetricType'
 
 describe('OptionSelectorComponent', () => {
   it('renders all options', async () => {
@@ -12,20 +12,22 @@ describe('OptionSelectorComponent', () => {
     })
 
     expect(wrapper.text()).toContain('Test:')
-    expect(wrapper.text()).toContain('Average Similarity')
-    expect(wrapper.text()).toContain('Maximum Similarity')
+    for (const metric of MetricTypes.METRIC_LIST) {
+      expect(wrapper.text()).toContain(metric.longName)
+    }
   })
 
   it('renders given metrics only', async () => {
     const wrapper = mount(MetricSelector, {
       props: {
         title: 'Test:',
-        metrics: [MetricType.AVERAGE]
+        metrics: [MetricJsonIdentifier.AVERAGE_SIMILARITY, MetricJsonIdentifier.MINIMUM_SIMILARITY]
       }
     })
 
     expect(wrapper.text()).toContain('Test:')
     expect(wrapper.text()).toContain('Average Similarity')
+    expect(wrapper.text()).toContain('Minimum Similarity')
     expect(wrapper.text()).not.toContain('Maximum Similarity')
   })
 
@@ -40,6 +42,8 @@ describe('OptionSelectorComponent', () => {
 
     expect(wrapper.emitted('selectionChanged')).toBeTruthy()
     expect(wrapper.emitted('selectionChanged')?.length).toBe(1)
-    expect(wrapper.emitted('selectionChanged')?.[0]).toEqual([MetricType.MAXIMUM])
+    expect(wrapper.emitted('selectionChanged')?.[0]).toEqual([
+      MetricJsonIdentifier.MAXIMUM_SIMILARITY
+    ])
   })
 })
