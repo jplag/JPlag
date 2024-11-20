@@ -89,7 +89,8 @@ Parameter descriptions:
   -l, --language=<language>
                         Select the language of the submissions (default: java). See subcommands below.
   -M, --mode=<{RUN, VIEW, RUN_AND_VIEW}>
-                        The mode of JPlag: either only run analysis, only open the viewer, or do both (default: null)
+                          The mode of JPlag. If VIEW is chosen, you can specify a result file to display with either the positional argument, '--new', '--old' or '-r'. Make
+                            sure to only specify one if you do that. One of: RUN, VIEW, RUN_AND_VIEW (default: null)
   -n, --shown-comparisons=<shownComparisons>
                         The maximum number of comparisons that will be shown in the generated report, if set to -1 all comparisons will be shown (default: 500)
       -new, --new=<newDirectories>[,<newDirectories>...]
