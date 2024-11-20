@@ -30,6 +30,8 @@ public class GreedyStringTiling {
     private final Map<Submission, int[]> cachedTokenValueLists = new IdentityHashMap<>();
     private final Map<Submission, SubsequenceHashLookupTable> cachedHashLookupTables = new IdentityHashMap<>();
 
+    private static final String ERROR_INDEX_OUT_OF_BOUNDS = "GST index out of bounds. This is probably a random issue caused by multithreading issues. Length: %s, Index: %s";
+
     public GreedyStringTiling(JPlagOptions options) {
         this.options = options;
         // Ensures 1 <= neighborLength <= minimumTokenMatch
@@ -115,14 +117,14 @@ public class GreedyStringTiling {
             List<Match> iterationMatches = new ArrayList<>();
             for (int leftStartIndex = 0; leftStartIndex < leftValues.length - maximumMatchLength; leftStartIndex++) {
                 int leftSubsequenceHash = leftLookupTable.subsequenceHashForStartIndex(leftStartIndex);
-                if (leftMarked[leftStartIndex] || leftSubsequenceHash == SubsequenceHashLookupTable.NO_HASH) {
+                if (checkMark(leftMarked, leftStartIndex) || leftSubsequenceHash == SubsequenceHashLookupTable.NO_HASH) {
                     continue;
                 }
                 List<Integer> possiblyMatchingRightStartIndexes = rightLookupTable
                         .startIndexesOfPossiblyMatchingSubsequencesForSubsequenceHash(leftSubsequenceHash);
                 for (Integer rightStartIndex : possiblyMatchingRightStartIndexes) {
                     // comparison uses >= because it is assumed that the last token is a pivot (FILE_END)
-                    if (rightMarked[rightStartIndex] || maximumMatchLength >= rightValues.length - rightStartIndex) {
+                    if (checkMark(rightMarked, rightStartIndex) || maximumMatchLength >= rightValues.length - rightStartIndex) {
                         continue;
                     }
 
@@ -227,5 +229,13 @@ public class GreedyStringTiling {
             }
             return tokenValueList;
         }));
+    }
+
+    private boolean checkMark(boolean[] marks, int index) {
+        if (index >= marks.length) {
+            throw new IllegalStateException(String.format(ERROR_INDEX_OUT_OF_BOUNDS, marks.length, index));
+        }
+
+        return marks[index];
     }
 }
