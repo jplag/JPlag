@@ -78,31 +78,31 @@ class PercentageMetricType extends MetricType {
 export namespace MetricTypes {
   export const AVERAGE_SIMILARITY = new PercentageMetricType(
     'AVG',
-    'Average Similarity',
+    'Average',
     'The average similarity of the two files.\nA high similarity indicates that the programs work in a similar way.',
     MetricJsonIdentifier.AVERAGE_SIMILARITY
   )
   export const MAXIMUM_SIMILARITY = new PercentageMetricType(
     'MAX',
-    'Maximum Similarity',
+    'Maximum',
     'The maximum similarity of the two files.\nUseful if programs are very different in size.',
     MetricJsonIdentifier.MAXIMUM_SIMILARITY
   )
   export const MINIMUM_SIMILARITY = new PercentageMetricType(
     'MIN',
-    'Minimum Similarity',
+    'Minimum',
     'The minimum similarity of the two files.',
     MetricJsonIdentifier.MINIMUM_SIMILARITY
   )
   export const INTERSECTION = new IdentityMetricType(
-    'INTER',
+    'COUNT',
     'Matched Tokens',
     'The number of tokens that are matched between the two files.',
     MetricJsonIdentifier.INTERSECTION
   )
   export const SYMMETRIC = new PercentageMetricType(
     'SYM',
-    'Symmetric Similarity',
+    'Symmetric',
     'A symmetric similarity measure.',
     MetricJsonIdentifier.SYMMETRIC
   )
@@ -113,8 +113,8 @@ export namespace MetricTypes {
     MetricJsonIdentifier.LONGEST_MATCH
   )
   export const OVERALL = new IdentityMetricType(
-    'ALL',
-    'Overall',
+    'LEN',
+    'Overall Length',
     'Sum of both submission lengths.',
     MetricJsonIdentifier.OVERALL
   )

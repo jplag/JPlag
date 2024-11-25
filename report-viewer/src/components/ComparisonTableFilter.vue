@@ -30,7 +30,7 @@
       </ButtonComponent>
     </div>
     <OptionsSelector
-      title="Sort By:"
+      title="Sorting Metric:"
       :defaultSelected="getSortingMetric()"
       :labels="tableSortingOptions"
       @selection-changed="(index: number) => changeSortingMetric(index)"
