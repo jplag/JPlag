@@ -13,8 +13,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import de.jplag.Language;
+import de.jplag.LanguageLoader;
 import de.jplag.cli.options.CliOptions;
-import de.jplag.cli.options.LanguageLoader;
 import de.jplag.cli.test.CliArgument;
 import de.jplag.cli.test.CliTest;
 import de.jplag.exceptions.ExitException;

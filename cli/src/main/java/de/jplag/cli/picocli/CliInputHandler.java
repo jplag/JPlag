@@ -14,9 +14,9 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 import de.jplag.Language;
+import de.jplag.LanguageLoader;
 import de.jplag.cli.CliException;
 import de.jplag.cli.options.CliOptions;
-import de.jplag.cli.options.LanguageLoader;
 import de.jplag.options.LanguageOption;
 import de.jplag.options.LanguageOptions;
 
