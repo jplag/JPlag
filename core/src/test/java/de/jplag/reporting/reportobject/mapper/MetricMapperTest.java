@@ -49,8 +49,8 @@ public class MetricMapperTest {
     public void test_getTopComparisons() {
         // given
         JPlagResult jPlagResult = createJPlagResult(distribution(EXPECTED_AVG_DISTRIBUTION), distribution(EXPECTED_MAX_DISTRIBUTION),
-                comparison(submission("1", 22), submission("2", 30), .7, .8, .5, new int[] {9, 3, 1}),
-                comparison(submission("3", 202), submission("4", 134), .3, .9, .01, new int[] {1, 15, 23, 3}));
+                comparison(submission("1", 22), submission("2", 30), .7, .8, .5, .5, new int[] {9, 3, 1}),
+                comparison(submission("3", 202), submission("4", 134), .3, .9, .01, .25, new int[] {1, 15, 23, 3}));
 
         // when
         List<TopComparison> result = metricMapper.getTopComparisons(jPlagResult);
@@ -78,12 +78,12 @@ public class MetricMapperTest {
     }
 
     private Comparison comparison(CreateSubmission submission1, CreateSubmission submission2, double similarity, double maxSimilarity,
-            double minSimilarity, int[] matchLengths) {
-        return new Comparison(submission1, submission2, similarity, maxSimilarity, minSimilarity, matchLengths);
+            double minSimilarity, double symSimilarity, int[] matchLengths) {
+        return new Comparison(submission1, submission2, similarity, maxSimilarity, minSimilarity, symSimilarity, matchLengths);
     }
 
     private Comparison comparison(CreateSubmission submission1, CreateSubmission submission2, double similarity, double maxSimilarity) {
-        return comparison(submission1, submission2, similarity, maxSimilarity, 0, new int[0]);
+        return comparison(submission1, submission2, similarity, maxSimilarity, 0, 0, new int[0]);
     }
 
     private JPlagResult createJPlagResult(int[] avgDistribution, int[] maxDistribution, Comparison... createComparisonsDto) {
@@ -110,6 +110,7 @@ public class MetricMapperTest {
             doReturn(comparisonDto.similarity).when(mockedComparison).similarity();
             doReturn(comparisonDto.maxSimilarity).when(mockedComparison).maximalSimilarity();
             doReturn(comparisonDto.minSimilarity).when(mockedComparison).minimalSimilarity();
+            doReturn(comparisonDto.symSimilarity).when(mockedComparison).symmetricSimilarity();
             List<Match> matches = createMockMatchList(comparisonDto.matchLengths);
             doReturn(matches).when(mockedComparison).matches();
             doReturn(matches.stream().mapToInt(Match::length).sum()).when(mockedComparison).getNumberOfMatchedTokens();
@@ -131,7 +132,7 @@ public class MetricMapperTest {
     }
 
     private record Comparison(CreateSubmission submission1, CreateSubmission submission2, double similarity, double maxSimilarity,
-            double minSimilarity, int[] matchLengths) {
+            double minSimilarity, double symSimilarity, int[] matchLengths) {
     }
 
     private record CreateSubmission(String name, int tokenCount) {
