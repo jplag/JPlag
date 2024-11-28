@@ -154,7 +154,7 @@ public abstract class CliTest {
 
             String targetPath = (String) getWritableFileMethod.invoke(cli);
 
-            return new CliResult(optionsBuilder.buildOptions(), targetPath, CollectedLogger.getLogLevel());
+            return new CliResult(optionsBuilder.buildOptions(), targetPath, CollectedLogger.getLogLevel(), inputHandler);
         } catch (IllegalAccessException | InvocationTargetException e) {
             Assumptions.abort("Could not access private field in CLI for test.");
             return null; // will not be executed

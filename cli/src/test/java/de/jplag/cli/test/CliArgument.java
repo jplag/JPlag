@@ -34,4 +34,6 @@ public record CliArgument<T>(String name, boolean isPositional) {
 
     public static CliArgument<String> SUBDIRECTORY = new CliArgument<>("subdirectory", false);
     public static CliArgument<String> EXCLUDE_FILES = new CliArgument<>("x", false);
+
+    public static CliArgument<String> MODE = new CliArgument<>("mode", false);
 }
