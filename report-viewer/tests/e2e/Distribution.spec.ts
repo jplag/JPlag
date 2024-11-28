@@ -35,7 +35,7 @@ async function selectOptions(page: Page, options: string[]) {
 
 function getTestCombinations() {
   const options = [
-    ['Average Similarity', 'Maximum Similarity'],
+    ['Average', 'Maximum'],
     ['Linear', 'Logarithmic'],
     ['10', '20', '25', '50', '100']
   ]

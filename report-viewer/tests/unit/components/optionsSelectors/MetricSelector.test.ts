@@ -26,9 +26,9 @@ describe('OptionSelectorComponent', () => {
     })
 
     expect(wrapper.text()).toContain('Test:')
-    expect(wrapper.text()).toContain('Average Similarity')
-    expect(wrapper.text()).toContain('Minimum Similarity')
-    expect(wrapper.text()).not.toContain('Maximum Similarity')
+    expect(wrapper.text()).toContain('Average')
+    expect(wrapper.text()).toContain('Minimum')
+    expect(wrapper.text()).not.toContain('Maximum')
   })
 
   it('switch selection', async () => {

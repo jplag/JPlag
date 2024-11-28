@@ -6,14 +6,15 @@ test('Test comparison table and comparsion view', async ({ page }) => {
 
   await uploadFile('progpedia-report.zip', page)
 
-  const comparisonContainer = page.getByText('Hide AllSort By')
+  const comparisonContainer = page.getByText('Hide AllSorting Metric')
 
   // check for elements in average similarity table
   await page.getByPlaceholder('Filter/Unhide Comparisons').fill('Purple')
   const comparisonTableAverageSorted = await page.getByText(/Cluster[0-9]/).textContent()
   expect(comparisonTableAverageSorted).toContain('100Purple FishBeige Dog')
 
-  await comparisonContainer.getByText('Maximum Similarity', { exact: true }).click()
+  const sortingMetricSelector = comparisonContainer.getByText('Sorting Metric:Average')
+  await sortingMetricSelector.getByText('Maximum', { exact: true }).click()
   // check for elements in maximum similarity table
   await page.getByPlaceholder('Filter/Unhide Comparisons').fill('Blue')
   const comparisonTableMaxSorted = await page.getByText(/Cluster[0-9]/).textContent()
