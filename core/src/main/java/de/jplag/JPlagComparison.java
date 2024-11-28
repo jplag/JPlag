@@ -55,6 +55,19 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
     }
 
     /**
+     * @return A symmetric similarity in interval [0, 1]. O means no similarity, 1 means maximum similarity.
+     */
+    public final double symmetricSimilarity() {
+        boolean subtractBaseCode = firstSubmission.hasBaseCodeMatches() && secondSubmission.hasBaseCodeMatches();
+        int divisorA = firstSubmission.getSimilarityDivisor(subtractBaseCode);
+        int divisorB = secondSubmission.getSimilarityDivisor(subtractBaseCode);
+        if (divisorA + divisorB == 0) {
+            return 0.0;
+        }
+        return 2.0 * getNumberOfMatchedTokens() / (divisorA + divisorB);
+    }
+
+    /**
      * @return Similarity of the first submission in interval [0, 1]. O means no similarity, 1 means maximum similarity.
      */
     public final double similarityOfFirst() {
