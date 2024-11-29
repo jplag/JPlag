@@ -18,7 +18,7 @@ import { OverviewFactory } from '@/model/factories/OverviewFactory'
 import InformationView from '@/views/InformationView.vue'
 import type { Overview } from '@/model/Overview'
 import LoadingCircle from '@/components/LoadingCircle.vue'
-import { redirectOnError } from '@/router'
+import { redirectOnError, router } from '@/router'
 import { OptionsFactory } from '@/model/factories/OptionsFactory'
 import type { CliOptions } from '@/model/CliOptions'
 import VersionRepositoryReference from '@/components/VersionRepositoryReference.vue'
@@ -27,8 +27,12 @@ const overview: Ref<Overview | null> = ref(null)
 const cliOptions: Ref<CliOptions | undefined> = ref(undefined)
 
 OverviewFactory.getOverview()
-  .then((o) => {
-    overview.value = o
+  .then((r) => {
+    if (r.result == 'success') {
+      overview.value = r.overview
+    } else if (r.result == 'oldReport') {
+      router.push({ name: 'OldVersionRedirectView', params: { version: r.version.toString() } })
+    }
   })
   .catch((error) => {
     redirectOnError(error, 'Could not load information:\n', 'OverviewView', 'Back to overview')
