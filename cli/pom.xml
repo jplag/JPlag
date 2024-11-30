@@ -178,6 +178,11 @@
                         <targetPath>report-viewer</targetPath>
                         <directory>../report-viewer/dist</directory>
                     </resource>
+                    <!-- Even though it is already in the resources folder, it needs to be explicitly included to be part of the jar -->
+                    <resource>
+                        <targetPath>v5</targetPath>
+                        <directory>src/main/resources/v5</directory>
+                    </resource>
                 </resources>
                 <plugins>
                     <plugin>
