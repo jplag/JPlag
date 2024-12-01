@@ -67,6 +67,7 @@ export class BaseFactory {
       await this.getLocalFile(this.zipFileName)
       return true
     } catch (e) {
+      void e
       return false
     }
   }
