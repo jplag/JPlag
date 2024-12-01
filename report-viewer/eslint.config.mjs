@@ -13,7 +13,7 @@ export default [
     ignores: ['**/*.config.ts', 'node_modules/**', 'dist/**', '**/playwright-report/**']
   },
   {
-    files: ['**/*.js', '**/*.ts', '**/*.tsx', '**/*.vue'],
+    files: ['**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx', '**/*.vue'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
