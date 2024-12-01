@@ -10,7 +10,7 @@
     >
       <DropDownSelector
         :options="selectedOptions"
-        @selectionChanged="(value) => (idOfShownSubmission = value)"
+        @selection-changed="(value) => (idOfShownSubmission = value)"
       />
       <div class="flex min-h-0 flex-grow justify-center">
         <Radar :data="chartData" :options="radarChartOptions" />

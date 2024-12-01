@@ -7,7 +7,7 @@
       ></canvas>
       <div class="mt-5 text-xs font-bold text-gray-500 dark:text-gray-400 print:hidden">
         <p>Hover over an edge to highlight it in the table.</p>
-        <p class="mt-2" v-if="!allComparisonsPresent">
+        <p v-if="!allComparisonsPresent" class="mt-2">
           Not all comparisons of this cluster are present. These comparisons are indicated by the
           dashed lines. <br />
           To include more comparisons, increase the number of increased comparisons in the CLI.
@@ -306,13 +306,13 @@ const graphOptions = computed(() => {
         })
       }
     },
-    animation: false as false,
+    animation: false as const,
     plugins: {
       legend: { display: false },
       datalabels: {
         display: true,
         font: {
-          weight: 'bold' as 'bold',
+          weight: 'bold' as const,
           size: 12
         },
         formatter: (value: any, ctx: any) => {

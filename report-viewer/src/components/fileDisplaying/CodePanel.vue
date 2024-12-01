@@ -3,8 +3,8 @@
 -->
 <template>
   <Interactable class="mx-2 !shadow print:!mx-0 print:!border-0 print:!p-0">
-    <div @click="collapsed = !collapsed" class="flex px-2 font-bold print:whitespace-pre-wrap">
-      <ToolTipComponent direction="right" v-if="getFileDisplayName(file) != file.fileName">
+    <div class="flex px-2 font-bold print:whitespace-pre-wrap" @click="collapsed = !collapsed">
+      <ToolTipComponent v-if="getFileDisplayName(file) != file.fileName" direction="right">
         <template #default
           ><span>{{ getFileDisplayName(file) }}</span></template
         >
@@ -42,8 +42,8 @@
           <div
             v-for="(_, index) in codeLines"
             :key="index"
-            class="col-span-1 col-start-1 row-span-1 text-right"
             ref="lineRefs"
+            class="col-span-1 col-start-1 row-span-1 text-right"
             :style="{
               gridRowStart: index + 1
             }"
@@ -55,9 +55,9 @@
             v-for="(line, index) in codeLines"
             :key="index"
             :line="line.line"
-            :lineNumber="index + 1"
+            :line-number="index + 1"
             :matches="line.matches"
-            @matchSelected="(match: Match) => matchSelected(match)"
+            @match-selected="(match: Match) => matchSelected(match)"
           />
         </div>
 

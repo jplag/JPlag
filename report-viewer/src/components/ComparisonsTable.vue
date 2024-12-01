@@ -45,7 +45,7 @@
               </ToolTipComponent>
             </div>
           </div>
-          <div class="tableCellCluster items-center" v-if="displayClusters">Cluster</div>
+          <div v-if="displayClusters" class="tableCellCluster items-center">Cluster</div>
         </div>
       </div>
 
@@ -53,9 +53,9 @@
       <div class="flex flex-grow flex-col overflow-hidden">
         <DynamicScroller
           v-if="topComparisons.length > 0"
+          ref="dynamicScroller"
           :items="displayedComparisons"
           :min-item-size="48"
-          ref="dynamicScroller"
           ><template #default="{ item, index, active }">
             <DynamicScrollerItem
               :item="item"
@@ -111,7 +111,7 @@
                 </RouterLink>
 
                 <!-- Clusters -->
-                <div class="tableCellCluster flex !flex-col items-center" v-if="displayClusters">
+                <div v-if="displayClusters" class="tableCellCluster flex !flex-col items-center">
                   <RouterLink
                     v-if="item.clusterIndex >= 0"
                     :to="{

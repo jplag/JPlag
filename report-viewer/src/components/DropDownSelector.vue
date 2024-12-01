@@ -5,8 +5,8 @@
   <Interactable class="!cursor-default p-0">
     <select
       v-model="selectedOption"
-      @change="$emit('selectionChanged', selectedOption)"
       class="m-0 w-full cursor-pointer bg-interactable-light dark:bg-interactable-dark"
+      @change="$emit('selectionChanged', selectedOption)"
     >
       <option v-for="option in options" :key="option" :value="option">
         {{ store().getDisplayName(option) }}

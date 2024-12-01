@@ -1,27 +1,27 @@
 <template>
   <div
+    ref="lineRef"
     class="col-span-1 col-start-2 row-span-1 flex w-full cursor-default"
     :class="{ 'cursor-pointer': matches.length > 0 }"
     :style="{
       gridRowStart: lineNumber
     }"
-    ref="lineRef"
   >
     <div
       v-for="(part, index) in textParts"
       :key="index"
       class="print-exact h-full last:flex-1"
-      @click="matchSelected(part.match)"
       :style="{
         background:
           part.match != undefined
             ? getMatchColor(0.3, part.match.match.colorIndex)
             : 'hsla(0, 0%, 0%, 0)'
       }"
+      @click="matchSelected(part.match)"
     >
       <pre
-        v-html="part.line"
         class="code-font print-exact break-child !bg-transparent print:whitespace-pre-wrap"
+        v-html="part.line"
       ></pre>
     </div>
   </div>

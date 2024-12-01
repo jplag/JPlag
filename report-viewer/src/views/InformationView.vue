@@ -38,7 +38,7 @@
             store().state.uploadedFileName
           }}</TextInformation>
 
-          <div class="!mt-5 space-y-2" v-if="options.clusterOptions.enabled">
+          <div v-if="options.clusterOptions.enabled" class="!mt-5 space-y-2">
             <h3 class="font-bold">Clustering:</h3>
             <TextInformation label="Similarity Metric">{{
               metricToolTips[options.clusterOptions.similarityMetric].longName
@@ -86,7 +86,7 @@
             }}</TextInformation>
           </div>
 
-          <div class="mt-5 space-y-2" v-if="options.mergingOptions.enabled">
+          <div v-if="options.mergingOptions.enabled" class="mt-5 space-y-2">
             <h3 class="font-bold">Match Merging:</h3>
             <TextInformation label="Min Neighbor Length">{{
               options.mergingOptions.minNeighborLength

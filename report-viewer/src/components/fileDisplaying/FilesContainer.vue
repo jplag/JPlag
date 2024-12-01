@@ -9,13 +9,13 @@
         {{ fileOwnerDisplayName }}:
       </h3>
       <div class="text-gray-600 dark:text-gray-300">{{ tokenCount }} total tokens</div>
-      <Button @click="collapseAll()" class="space-x-2 print:hidden"
+      <Button class="space-x-2 print:hidden" @click="collapseAll()"
         ><FontAwesomeIcon :icon="['fas', 'compress-alt']" />
         <p>Collapse All</p></Button
       >
     </div>
 
-    <ScrollableComponent class="flex-grow" ref="scrollContainer">
+    <ScrollableComponent ref="scrollContainer" class="flex-grow">
       <VueDraggableNext @update="emitFileMoving()">
         <CodePanel
           v-for="file in sortedFiles"
@@ -24,9 +24,9 @@
           :file="file"
           :matches="matchesPerFile[file.fileName]"
           :highlight-language="highlightLanguage"
-          @match-selected="(match: Match) => $emit('matchSelected', match)"
           class="mt-1 first:mt-0"
           :base-code-matches="baseCodeMatches"
+          @match-selected="(match: Match) => $emit('matchSelected', match)"
         />
       </VueDraggableNext>
     </ScrollableComponent>
