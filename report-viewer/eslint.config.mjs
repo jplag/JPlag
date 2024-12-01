@@ -42,12 +42,5 @@ export default [
     rules: {
         '@typescript-eslint/no-unused-expressions': 'off'
     }
-  },
-  {
-    files: ['**/*.html'],
-    rules: {
-      'vue/comment-directive': 'off',
-    },
-  },
-
+  }
 ]

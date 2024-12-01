@@ -238,8 +238,11 @@ const graphData = computed(() => {
           y: calculateYPosition(index)
         })),
         edges: edges.value,
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in the library
         edgeLineBorderColor: (ctx: any) => getEdgeColor(ctx.raw.source, ctx.raw.target),
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in the library
         edgeLineBorderWidth: (ctx: any) => getEdgeWidth(ctx.raw.source, ctx.raw.target),
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in the library
         edgeLineBorderDash: (ctx: any) => getEdgeDashStyle(ctx.raw.source, ctx.raw.target)
       }
     ]
@@ -268,6 +271,7 @@ const graphOptions = computed(() => {
         right: xPadding.value
       }
     },
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in the library
     onHover: (event: any, elements: any) => {
       if (!event) {
         hoveredEdge.value = null
@@ -315,9 +319,11 @@ const graphOptions = computed(() => {
           weight: 'bold' as const,
           size: 12
         },
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in the library
         formatter: (value: any, ctx: any) => {
           return labels.value[ctx.dataIndex]
         },
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in the library
         align: (ctx: any) => degreeAroundCircle(ctx.dataIndex),
         offset: 8,
         color: graphColors.ticksAndFont.value

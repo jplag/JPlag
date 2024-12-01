@@ -95,7 +95,8 @@ const options = computed(() => {
           autoSkipPadding: 10,
           color: graphColors.ticksAndFont.value,
           // ensures that in log mode ticks are placed evenly apart
-          callback: function (value: unknown) {
+          /* eslint-disable @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in chart.js
+          callback: function (value: any) {
             if (graphOptions.value.xScale === 'logarithmic' && (value + '').match(/1(0)*[^1-9.]/)) {
               return value
             }
@@ -111,6 +112,7 @@ const options = computed(() => {
       y: {
         ticks: {
           color: graphColors.ticksAndFont.value,
+          /* eslint-disable @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in chart.js
           callback: function (reversedValue: any) {
             const value = distributionData.value.length - reversedValue - 1
             if (graphOptions.value.bucketCount <= 10) {

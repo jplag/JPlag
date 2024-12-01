@@ -188,7 +188,8 @@ const props = defineProps({
   },
   clusters: {
     type: Array<Cluster>,
-    required: false
+    required: false,
+    default: undefined
   },
   header: {
     type: String,
@@ -196,7 +197,8 @@ const props = defineProps({
   },
   highlightedRowIds: {
     type: Object as PropType<{ firstId: string; secondId: string }>,
-    required: false
+    required: false,
+    default: undefined
   }
 })
 
@@ -369,6 +371,7 @@ function isHighlightedRow(item: ComparisonListElement) {
   )
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const dynamicScroller: Ref<any | null> = ref(null)
 
 watch(
