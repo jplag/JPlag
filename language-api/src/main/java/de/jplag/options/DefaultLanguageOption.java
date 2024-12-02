@@ -20,7 +20,7 @@ public class DefaultLanguageOption<T> implements LanguageOption<T> {
         this.hasValue = true;
     }
 
-    DefaultLanguageOption(OptionType<T> type, String description, String name) {
+    DefaultLanguageOption(OptionType<T> type, String name, String description) {
         this(type, name, description, null);
         this.hasValue = false;
     }

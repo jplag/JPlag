@@ -56,7 +56,7 @@ public abstract class LanguageOptions {
      * @return The new option
      */
     protected <T> LanguageOption<T> createOption(OptionType<T> type, String name, String description) {
-        LanguageOption<T> option = new DefaultLanguageOption<>(type, description, name);
+        LanguageOption<T> option = new DefaultLanguageOption<>(type, name, description);
         this.options.add(option);
         return option;
     }
