@@ -29,6 +29,9 @@ import static de.jplag.java.JavaTokenType.J_TRY_BEGIN;
 import static de.jplag.java.JavaTokenType.J_TRY_END;
 import static de.jplag.java.JavaTokenType.J_VARDEF;
 
+import java.util.List;
+
+import de.jplag.TokenType;
 import de.jplag.testutils.LanguageModuleTest;
 import de.jplag.testutils.datacollector.TestDataCollector;
 import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
@@ -83,5 +86,10 @@ public class JavaLanguageTest extends LanguageModuleTest {
         collector.ignoreMultipleLines("/*", "*/");
         collector.ignoreLinesByPrefix("})");
         collector.ignoreByCondition(line -> line.contains("else") && !line.contains("if"));
+    }
+
+    @Override
+    protected List<TokenType> getIgnoredTokensForMonotoneTokenOrder() {
+        return List.of(JavaTokenType.J_ANNO);
     }
 }
