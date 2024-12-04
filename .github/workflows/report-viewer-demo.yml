@@ -102,7 +102,7 @@ jobs:
           npm run build-demo
         
       - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@v4.6.9
+        uses: JamesIves/github-pages-deploy-action@v4.7.2
         with:
           branch: gh-pages
           folder: report-viewer/dist
