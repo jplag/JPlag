@@ -23,7 +23,7 @@ import de.jplag.java.JavaTokenType;
 import de.jplag.multilang.MultiLanguage;
 import de.jplag.multilang.MultiLanguageOptions;
 
-public class MultilangTest {
+class MultilangTest {
     private static File testDataDirectory;
     private static File javaCode;
     private static File cppCode;
