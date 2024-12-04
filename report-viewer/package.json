@@ -30,7 +30,7 @@
     "jszip": "^3.10.0",
     "pinia": "^2.2.6",
     "slash": "^5.1.0",
-    "vue": "^3.5.12",
+    "vue": "^3.5.13",
     "vue-chartjs": "^5.3.2",
     "vue-draggable-next": "^2.2.1",
     "vue-router": "^4.4.5",
