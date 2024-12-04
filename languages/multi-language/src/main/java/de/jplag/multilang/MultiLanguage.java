@@ -23,7 +23,7 @@ public class MultiLanguage implements Language {
 
     @Override
     public String[] suffixes() {
-        return LanguageLoader.getAllAvailableLanguages().values().stream().filter(it -> !(it == this)).flatMap(it -> Arrays.stream(it.suffixes()))
+        return LanguageLoader.getAllAvailableLanguages().values().stream().filter(it -> it != this).flatMap(it -> Arrays.stream(it.suffixes()))
                 .toArray(String[]::new);
     }
 

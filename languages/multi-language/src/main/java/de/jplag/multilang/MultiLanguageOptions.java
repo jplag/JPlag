@@ -14,7 +14,7 @@ public class MultiLanguageOptions extends LanguageOptions {
     private static final String ERROR_NOT_ENOUGH_LANGUAGES = "To use multi language specify at least 1 language";
     private static final String OPTION_DESCRIPTION_LANGUAGES = "The languages that should be used. This is a ',' separated list";
 
-    public LanguageOption<String> languageNames = createOption(OptionType.string(), "languages", OPTION_DESCRIPTION_LANGUAGES);
+    private final LanguageOption<String> languageNames = createOption(OptionType.string(), "languages", OPTION_DESCRIPTION_LANGUAGES);
     private List<Language> languages = null;
 
     public List<Language> getLanguages() {
@@ -23,18 +23,20 @@ public class MultiLanguageOptions extends LanguageOptions {
                 throw new IllegalArgumentException(ERROR_NOT_ENOUGH_LANGUAGES);
             }
 
-            List<Language> languages = Arrays.stream(languageNames.getValue().split(","))
+            this.languages = Arrays.stream(languageNames.getValue().split(","))
                     .map(name -> LanguageLoader.getLanguage(name)
                             .orElseThrow(() -> new IllegalArgumentException(String.format(ERROR_LANGUAGE_NOT_FOUND, name))))
                     .filter(language -> !language.getClass().equals(MultiLanguage.class)).toList();
 
-            if (languages.isEmpty()) {
+            if (this.languages.isEmpty()) {
                 throw new IllegalArgumentException(ERROR_NOT_ENOUGH_LANGUAGES);
             }
-
-            this.languages = languages;
         }
 
         return this.languages;
+    }
+
+    public LanguageOption<String> getLanguageNames() {
+        return this.languageNames;
     }
 }

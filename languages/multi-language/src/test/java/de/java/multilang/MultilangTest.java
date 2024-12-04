@@ -44,7 +44,7 @@ public class MultilangTest {
     @Test
     void testMultiLanguageParsing() throws ParsingException {
         MultiLanguage languageModule = new MultiLanguage();
-        ((MultiLanguageOptions) languageModule.getOptions()).languageNames.setValue("java,cpp");
+        ((MultiLanguageOptions) languageModule.getOptions()).getLanguageNames().setValue("java,cpp");
 
         Set<File> sources = new TreeSet<>(List.of(javaCode, cppCode)); // Using TreeSet to ensure order of entries
         List<Token> tokens = languageModule.parse(sources, false);
@@ -63,7 +63,7 @@ public class MultilangTest {
     @Test
     void testInvalidLanguage() {
         MultiLanguage languageModule = new MultiLanguage();
-        ((MultiLanguageOptions) languageModule.getOptions()).languageNames.setValue("thisIsNotALanguage");
+        ((MultiLanguageOptions) languageModule.getOptions()).getLanguageNames().setValue("thisIsNotALanguage");
 
         Assertions.assertThrowsExactly(IllegalArgumentException.class, () -> {
             languageModule.parse(Set.of(javaCode, cppCode), false);
