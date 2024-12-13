@@ -1,6 +1,7 @@
 package de.jplag.cli.options;
 
 import de.jplag.Language;
+import de.jplag.LanguageLoader;
 
 import picocli.CommandLine;
 

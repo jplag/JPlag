@@ -3,7 +3,7 @@ package de.jplag.endtoend.helper;
 import java.io.IOException;
 
 import de.jplag.Language;
-import de.jplag.cli.options.LanguageLoader;
+import de.jplag.LanguageLoader;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;

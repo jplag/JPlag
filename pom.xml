@@ -83,7 +83,7 @@
         <emf.version>2.38.0</emf.version>
         <emf.ecore.version>2.40.0</emf.ecore.version>
         <emf.ecore.xmi.version>2.38.0</emf.ecore.xmi.version>
-        <eclipse.core.version>3.21.0</eclipse.core.version>
+        <eclipse.core.version>3.22.0</eclipse.core.version>
         <emfatic.version>1.1.0</emfatic.version>
 
         <!-- The Revision of JPlag -->
@@ -141,7 +141,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.18.1</version>
+                <version>2.18.2</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
