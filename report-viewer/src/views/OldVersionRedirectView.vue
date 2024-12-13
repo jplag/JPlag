@@ -55,6 +55,9 @@ const props = defineProps({
 })
 
 const uploadedVersion = computed(() => {
+  if (!props.version.match(/^\d+\.\d+\.\d+$/)) {
+    return Version.ERROR_VERSION
+  }
   const parts = props.version.split('.').map(Number)
   return new Version(parts[0], parts[1], parts[2])
 })
