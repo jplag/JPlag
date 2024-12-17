@@ -25,7 +25,9 @@
           :matches="matchesPerFile[file.fileName]"
           :highlight-language="highlightLanguage"
           class="mt-1 first:mt-0"
-          :base-code-matches="baseCodeMatches"
+          :base-code-matches="
+            baseCodeMatches.filter((match) => slash(match.fileName) === file.fileName)
+          "
           @match-selected="(match: Match) => $emit('matchSelected', match)"
         />
       </VueDraggableNext>
@@ -50,6 +52,7 @@ import { FileSortingOptions } from '@/model/ui/FileSortingOptions'
 import { store } from '@/stores/store'
 import type { BaseCodeMatch } from '@/model/BaseCodeReport'
 import type { Match } from '@/model/Match'
+import slash from 'slash'
 
 library.add(faCompressAlt)
 
