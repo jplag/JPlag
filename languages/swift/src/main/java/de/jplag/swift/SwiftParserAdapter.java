@@ -14,6 +14,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
+import de.jplag.LanguageLoader;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.swift.grammar.Swift5Lexer;
@@ -76,6 +77,6 @@ public class SwiftParserAdapter extends AbstractParser {
      * @param length the length of the Token
      */
     /* package-private */ void addToken(SwiftTokenType tokenType, int line, int column, int length) {
-        tokens.add(new Token(tokenType, currentFile, line, column, length));
+        tokens.add(new Token(tokenType, currentFile, line, column, length, LanguageLoader.getLanguage(SwiftLanguage.class).get()));
     }
 }

@@ -6,6 +6,8 @@ import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import de.jplag.AbstractParser;
+import de.jplag.Language;
+import de.jplag.LanguageLoader;
 import de.jplag.antlr.AbstractAntlrListener;
 import de.jplag.antlr.AbstractAntlrParserAdapter;
 import de.jplag.llvmir.grammar.LLVMIRLexer;
@@ -35,5 +37,10 @@ public class LLVMIRParserAdapter extends AbstractAntlrParserAdapter<LLVMIRParser
     @Override
     protected AbstractAntlrListener getListener() {
         return listener;
+    }
+
+    @Override
+    protected Language getLanguage() {
+        return LanguageLoader.getLanguage(LLVMIRLanguage.class).get();
     }
 }

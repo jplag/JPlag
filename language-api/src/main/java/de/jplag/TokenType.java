@@ -19,4 +19,8 @@ public interface TokenType {
     default Boolean isExcludedFromMatching() {
         return false;
     }
+
+    default Object getContext() {
+        return this.getClass();
+    }
 }

@@ -6,10 +6,13 @@ import java.util.List;
 import java.util.Set;
 
 import de.jplag.AbstractParser;
+import de.jplag.Language;
+import de.jplag.LanguageLoader;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
 public class Scanner extends AbstractParser {
+    private static final Language cLanguage = LanguageLoader.getLanguage(CLanguage.class).get();
     private File currentFile;
 
     private List<Token> tokens;
@@ -40,6 +43,6 @@ public class Scanner extends AbstractParser {
 
     public void add(CTokenType type, de.jplag.c.Token token) {
         int length = token.endColumn - token.beginColumn + 1;
-        tokens.add(new Token(type, currentFile, token.beginLine, token.beginColumn, length));
+        tokens.add(new Token(type, currentFile, token.beginLine, token.beginColumn, length, cLanguage));
     }
 }

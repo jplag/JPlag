@@ -8,6 +8,8 @@ import java.util.Properties;
 import java.util.Set;
 
 import de.jplag.AbstractParser;
+import de.jplag.Language;
+import de.jplag.LanguageLoader;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.util.FileUtils;
@@ -23,6 +25,7 @@ public class ParserAdapter extends AbstractParser {
     private static final String ANNOTATORS_KEY = "annotators";
     private static final String ANNOTATORS_VALUE = "tokenize";
     private final StanfordCoreNLP pipeline;
+    private static final Language textLanguage = LanguageLoader.getLanguage(NaturalLanguage.class).get();
 
     private List<Token> tokens;
     private File currentFile;
@@ -95,7 +98,7 @@ public class ParserAdapter extends AbstractParser {
         String text = label.originalText();
         int column = label.beginPosition() - currentLineBreakIndex;
         int length = label.endPosition() - label.beginPosition();
-        tokens.add(new Token(new TextTokenType(text), currentFile, currentLine, column, length));
+        tokens.add(new Token(new TextTokenType(text), currentFile, currentLine, column, length, textLanguage));
     }
 
     private String readFile(File file) throws ParsingException {

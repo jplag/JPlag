@@ -15,8 +15,11 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import de.jplag.AbstractParser;
+import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
+import de.jplag.antlr.treewalker.TreeWalker;
+import de.jplag.antlr.treewalker.TreeWalkerRuleBuilder;
 import de.jplag.util.FileUtils;
 
 /**
@@ -49,7 +52,7 @@ public abstract class AbstractAntlrParserAdapter<T extends Parser> extends Abstr
      * @throws ParsingException If anything goes wrong
      */
     public List<Token> parse(Set<File> files) throws ParsingException {
-        TokenCollector collector = new TokenCollector(extractsSemantics);
+        TokenCollector collector = new TokenCollector(extractsSemantics, getLanguage());
         for (File file : files) {
             parseFile(file, collector);
         }
@@ -65,7 +68,7 @@ public abstract class AbstractAntlrParserAdapter<T extends Parser> extends Abstr
             parser.removeErrorListeners();
             parser.addErrorListener(new AntlrLoggerErrorListener());
             ParserRuleContext entryContext = this.getEntryContext(parser);
-            ParseTreeWalker treeWalker = new ParseTreeWalker();
+            ParseTreeWalker treeWalker = new TreeWalker(this.initializeRuleBuilder());
             InternalListener listener = new InternalListener(this.getListener(), collector);
             for (ParseTree child : entryContext.children) {
                 treeWalker.walk(listener, child);
@@ -74,6 +77,10 @@ public abstract class AbstractAntlrParserAdapter<T extends Parser> extends Abstr
             throw new ParsingException(file, exception.getMessage(), exception);
         }
         collector.addFileEndToken();
+    }
+
+    protected TreeWalkerRuleBuilder initializeRuleBuilder() {
+        return new TreeWalkerRuleBuilder();
     }
 
     /**
@@ -101,4 +108,6 @@ public abstract class AbstractAntlrParserAdapter<T extends Parser> extends Abstr
      * @return The listener. Should be created once statically since it never changes.
      */
     protected abstract AbstractAntlrListener getListener();
+
+    protected abstract Language getLanguage();
 }

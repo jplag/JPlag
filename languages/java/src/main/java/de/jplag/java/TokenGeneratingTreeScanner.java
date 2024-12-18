@@ -1,8 +1,41 @@
 package de.jplag.java;
 
+import static de.jplag.tokentypes.AnnotationTokenTypes.ANNOTATION;
+import static de.jplag.tokentypes.ArraySyntaxTokenTypes.ARRAY_INITIALIZER_END;
+import static de.jplag.tokentypes.ArraySyntaxTokenTypes.ARRAY_INITIALIZER_START;
+import static de.jplag.tokentypes.ArraySyntaxTokenTypes.NEW_ARRAY;
+import static de.jplag.tokentypes.AssertTokenTypes.ASSERT;
+import static de.jplag.tokentypes.CodeStructureTokenTypes.CONTEXT_DEFINITION;
+import static de.jplag.tokentypes.CodeStructureTokenTypes.IMPORT;
+import static de.jplag.tokentypes.ExceptionHandlingTokenTypes.CATCH;
+import static de.jplag.tokentypes.ExceptionHandlingTokenTypes.FINALLY;
+import static de.jplag.tokentypes.ExceptionHandlingTokenTypes.THROW;
+import static de.jplag.tokentypes.ExceptionHandlingTokenTypes.TRY;
+import static de.jplag.tokentypes.ExceptionHandlingTokenTypes.TRY_END;
+import static de.jplag.tokentypes.ImperativeTokenType.ASSIGNMENT;
+import static de.jplag.tokentypes.ImperativeTokenType.BREAK;
+import static de.jplag.tokentypes.ImperativeTokenType.CALL;
+import static de.jplag.tokentypes.ImperativeTokenType.CONTINUE;
+import static de.jplag.tokentypes.ImperativeTokenType.ELSE;
+import static de.jplag.tokentypes.ImperativeTokenType.IF;
+import static de.jplag.tokentypes.ImperativeTokenType.IF_END;
+import static de.jplag.tokentypes.ImperativeTokenType.LOOP;
+import static de.jplag.tokentypes.ImperativeTokenType.LOOP_END;
+import static de.jplag.tokentypes.ImperativeTokenType.RETURN;
+import static de.jplag.tokentypes.ImperativeTokenType.STRUCTURE_DEFINITION;
+import static de.jplag.tokentypes.ImperativeTokenType.STRUCTURE_END;
+import static de.jplag.tokentypes.ImperativeTokenType.SWITCH;
+import static de.jplag.tokentypes.ImperativeTokenType.SWITCH_END;
+import static de.jplag.tokentypes.ImperativeTokenType.VARIABLE_DEFINITION;
+import static de.jplag.tokentypes.ObjectOrientationTokens.METHOD;
+import static de.jplag.tokentypes.ObjectOrientationTokens.METHOD_END;
+import static de.jplag.tokentypes.ObjectOrientationTokens.NEW;
+
 import java.io.File;
 import java.util.Set;
 
+import de.jplag.Language;
+import de.jplag.LanguageLoader;
 import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.semantics.CodeSemantics;
@@ -57,6 +90,7 @@ import com.sun.source.util.TreeScanner;
 
 final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     private final static String ANONYMOUS_VARIABLE_NAME = "";
+    private final static Language javaLanguage = LanguageLoader.getLanguage(JavaLanguage.class).get();
 
     private final File file;
     private final Parser parser;
@@ -83,7 +117,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     }
 
     public void addToken(TokenType type, File file, long line, long column, long length, CodeSemantics semantics) {
-        parser.add(new Token(type, file, (int) line, (int) column, (int) length, semantics));
+        parser.add(new Token(type, file, (int) line, (int) column, (int) length, semantics, javaLanguage));
         variableRegistry.updateSemantics(semantics);
     }
 
@@ -93,7 +127,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
      * @param position is the start position of the token.
      * @param length is the length of the token.
      */
-    private void addToken(JavaTokenType tokenType, long position, int length, CodeSemantics semantics) {
+    private void addToken(TokenType tokenType, long position, int length, CodeSemantics semantics) {
         addToken(tokenType, file, map.getLineNumber(position), map.getColumnNumber(position), length, semantics);
     }
 
@@ -103,7 +137,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
      * @param start is the start position of the token.
      * @param end is the end position of the token for the calculation of the length.
      */
-    private void addToken(JavaTokenType tokenType, long start, long end, CodeSemantics semantics) {
+    private void addToken(TokenType tokenType, long start, long end, CodeSemantics semantics) {
         addToken(tokenType, file, map.getLineNumber(start), map.getColumnNumber(start), (end - start), semantics);
     }
 
@@ -140,26 +174,23 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         long end = positions.getEndPosition(ast, node) - 1;
         CodeSemantics semantics = CodeSemantics.createControl();
         if (node.getKind() == Tree.Kind.ENUM) {
-            addToken(JavaTokenType.J_ENUM_BEGIN, start, 4, semantics);
+            addToken(STRUCTURE_DEFINITION, start, 4, semantics);
         } else if (node.getKind() == Tree.Kind.INTERFACE) {
-            addToken(JavaTokenType.J_INTERFACE_BEGIN, start, 9, semantics);
+            addToken(STRUCTURE_DEFINITION, start, 9, semantics);
         } else if (node.getKind() == Tree.Kind.RECORD) {
-            addToken(JavaTokenType.J_RECORD_BEGIN, start, 1, semantics);
+            addToken(STRUCTURE_DEFINITION, start, 1, semantics);
         } else if (node.getKind() == Tree.Kind.ANNOTATION_TYPE) {
-            addToken(JavaTokenType.J_ANNO_T_BEGIN, start, 10, semantics);
+            addToken(STRUCTURE_DEFINITION, start, 10, semantics);
         } else if (node.getKind() == Tree.Kind.CLASS) {
-            addToken(JavaTokenType.J_CLASS_BEGIN, start, 5, semantics);
+            addToken(STRUCTURE_DEFINITION, start, 5, semantics);
         }
         super.visitClass(node, null);
 
-        JavaTokenType tokenType = switch (node.getKind()) {
-            case ENUM -> JavaTokenType.J_ENUM_END;
-            case INTERFACE -> JavaTokenType.J_INTERFACE_END;
-            case RECORD -> JavaTokenType.J_RECORD_END;
-            case ANNOTATION_TYPE -> JavaTokenType.J_ANNO_T_END;
-            case CLASS -> JavaTokenType.J_CLASS_END;
+        TokenType tokenType = switch (node.getKind()) {
+            case ENUM, INTERFACE, RECORD, ANNOTATION_TYPE, CLASS -> STRUCTURE_END;
             default -> null;
         };
+
         if (tokenType != null) {
             semantics = CodeSemantics.createControl();
             addToken(tokenType, end, 1, semantics);
@@ -171,14 +202,14 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     @Override
     public Void visitImport(ImportTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        addToken(JavaTokenType.J_IMPORT, start, 6, CodeSemantics.createKeep());
+        addToken(IMPORT, start, 6, CodeSemantics.createKeep());
         return super.visitImport(node, null);
     }
 
     @Override
     public Void visitPackage(PackageTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        addToken(JavaTokenType.J_PACKAGE, start, 7, CodeSemantics.createControl());
+        addToken(CONTEXT_DEFINITION, start, 7, CodeSemantics.createControl());
         return super.visitPackage(node, null);
     }
 
@@ -187,16 +218,16 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         variableRegistry.enterLocalScope();
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        addToken(JavaTokenType.J_METHOD_BEGIN, start, node.getName().length(), CodeSemantics.createControl());
+        addToken(METHOD, start, node.getName().length(), CodeSemantics.createControl());
         super.visitMethod(node, null);
-        addToken(JavaTokenType.J_METHOD_END, end, 1, CodeSemantics.createControl());
+        addToken(METHOD_END, end, 1, CodeSemantics.createControl());
         variableRegistry.addAllNonLocalVariablesAsReads();
         variableRegistry.exitLocalScope();
         return null;
     }
 
     @Override
-    public Void visitSynchronized(SynchronizedTree node, Void unused) {
+    public Void visitSynchronized(SynchronizedTree node, Void unused) { // TODO
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         addToken(JavaTokenType.J_SYNC_BEGIN, start, 12, CodeSemantics.createControl());
@@ -209,9 +240,9 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     public Void visitDoWhileLoop(DoWhileLoopTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node.getStatement()) - 1;
-        addToken(JavaTokenType.J_LOOP_BEGIN, start, 2, CodeSemantics.createLoopBegin());
+        addToken(LOOP, start, 2, CodeSemantics.createLoopBegin());
         scan(node.getStatement(), null);
-        addToken(JavaTokenType.J_LOOP_END, end, 1, CodeSemantics.createLoopEnd());
+        addToken(LOOP_END, end, 1, CodeSemantics.createLoopEnd());
         scan(node.getCondition(), null);
         return null;
     }
@@ -220,9 +251,9 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     public Void visitWhileLoop(WhileLoopTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        addToken(JavaTokenType.J_LOOP_BEGIN, start, 5, CodeSemantics.createLoopBegin());
+        addToken(LOOP, start, 5, CodeSemantics.createLoopBegin());
         super.visitWhileLoop(node, null);
-        addToken(JavaTokenType.J_LOOP_END, end, 1, CodeSemantics.createLoopEnd());
+        addToken(LOOP_END, end, 1, CodeSemantics.createLoopEnd());
         return null;
     }
 
@@ -231,9 +262,12 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         variableRegistry.enterLocalScope();
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        addToken(JavaTokenType.J_LOOP_BEGIN, start, 3, CodeSemantics.createLoopBegin());
-        super.visitForLoop(node, null);
-        addToken(JavaTokenType.J_LOOP_END, end, 1, CodeSemantics.createLoopEnd());
+        addToken(LOOP, start, 3, CodeSemantics.createLoopBegin());
+        scan(node.getInitializer(), null);
+        scan(node.getCondition(), null);
+        scan(node.getStatement(), null);
+        scan(node.getUpdate(), null);
+        addToken(LOOP_END, end, 1, CodeSemantics.createLoopEnd());
         variableRegistry.exitLocalScope();
         return null;
     }
@@ -243,9 +277,9 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         variableRegistry.enterLocalScope();
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        addToken(JavaTokenType.J_LOOP_BEGIN, start, 3, CodeSemantics.createLoopBegin());
+        addToken(LOOP, start, 3, CodeSemantics.createLoopBegin());
         super.visitEnhancedForLoop(node, null);
-        addToken(JavaTokenType.J_LOOP_END, end, 1, CodeSemantics.createLoopEnd());
+        addToken(LOOP_END, end, 1, CodeSemantics.createLoopEnd());
         variableRegistry.exitLocalScope();
         return null;
     }
@@ -254,9 +288,9 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     public Void visitSwitch(SwitchTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        addToken(JavaTokenType.J_SWITCH_BEGIN, start, 6, CodeSemantics.createControl());
+        addToken(SWITCH, start, 6, CodeSemantics.createControl());
         super.visitSwitch(node, null);
-        addToken(JavaTokenType.J_SWITCH_END, end, 1, CodeSemantics.createControl());
+        addToken(SWITCH_END, end, 1, CodeSemantics.createControl());
         return null;
     }
 
@@ -264,14 +298,14 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     public Void visitSwitchExpression(SwitchExpressionTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        addToken(JavaTokenType.J_SWITCH_BEGIN, start, 6, CodeSemantics.createControl());
+        addToken(SWITCH, start, 6, CodeSemantics.createControl());
         super.visitSwitchExpression(node, null);
-        addToken(JavaTokenType.J_SWITCH_END, end, 1, CodeSemantics.createControl());
+        addToken(SWITCH_END, end, 1, CodeSemantics.createControl());
         return null;
     }
 
     @Override
-    public Void visitCase(CaseTree node, Void unused) {
+    public Void visitCase(CaseTree node, Void unused) { // TODO
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_CASE, start, 4, CodeSemantics.createControl());
 
@@ -296,19 +330,18 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     @Override
     public Void visitTry(TryTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        addToken(JavaTokenType.J_TRY_BEGIN, start, 3, CodeSemantics.createControl());
+        addToken(TRY, start, 3, CodeSemantics.createControl());
         scan(node.getResources(), null);
         scan(node.getBlock(), null);
         long end = positions.getEndPosition(ast, node);
         scan(node.getCatches(), null);
         if (node.getFinallyBlock() != null) {
             start = positions.getStartPosition(ast, node.getFinallyBlock());
-            addToken(JavaTokenType.J_FINALLY_BEGIN, start, 3, CodeSemantics.createControl());
+            addToken(FINALLY, start, 3, CodeSemantics.createControl());
             scan(node.getFinallyBlock(), null);
             end = positions.getEndPosition(ast, node.getFinallyBlock());
-            addToken(JavaTokenType.J_FINALLY_END, end, 1, CodeSemantics.createControl());
         }
-        addToken(JavaTokenType.J_TRY_END, end, 1, CodeSemantics.createControl());
+        addToken(TRY_END, end, 1, CodeSemantics.createControl());
         return null;
     }
 
@@ -317,9 +350,8 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         variableRegistry.enterLocalScope();
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        addToken(JavaTokenType.J_CATCH_BEGIN, start, 5, CodeSemantics.createControl());
+        addToken(CATCH, start, 5, CodeSemantics.createControl());
         super.visitCatch(node, null);
-        addToken(JavaTokenType.J_CATCH_END, end, 1, CodeSemantics.createControl());
         variableRegistry.exitLocalScope();
         return null;
     }
@@ -328,52 +360,47 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     public Void visitIf(IfTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
 
-        addToken(JavaTokenType.J_IF_BEGIN, start, 2, CodeSemantics.createControl());
+        addToken(IF, start, 2, CodeSemantics.createControl());
         scan(node.getCondition(), null);
         scan(node.getThenStatement(), null);
-        long end = positions.getEndPosition(ast, node.getThenStatement()) - 1;
-        addToken(JavaTokenType.J_IF_END, end, 1, CodeSemantics.createControl());
-        boolean isElseOnly = false;
         if (node.getElseStatement() != null) {
-            isElseOnly = node.getElseStatement().getKind() != Tree.Kind.IF;
+            boolean isElseOnly = node.getElseStatement().getKind() != Tree.Kind.IF;
             if (isElseOnly) {
                 start = positions.getStartPosition(ast, node.getElseStatement());
-                addToken(JavaTokenType.J_IF_BEGIN, start, 4, CodeSemantics.createControl());
+                addToken(ELSE, start, 4, CodeSemantics.createControl());
             }
         }
         scan(node.getElseStatement(), null);
-        if (isElseOnly) {
-            end = positions.getEndPosition(ast, node) - 1;
-            addToken(JavaTokenType.J_IF_END, end, 1, CodeSemantics.createControl());
-        }
+        long end = positions.getEndPosition(ast, node) - 1;
+        addToken(IF_END, end, 1, CodeSemantics.createControl());
         return null;
     }
 
     @Override
     public Void visitBreak(BreakTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        addToken(JavaTokenType.J_BREAK, start, 5, CodeSemantics.createControl());
+        addToken(BREAK, start, 5, CodeSemantics.createControl());
         return super.visitBreak(node, null);
     }
 
     @Override
     public Void visitContinue(ContinueTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        addToken(JavaTokenType.J_CONTINUE, start, 8, CodeSemantics.createControl());
+        addToken(CONTINUE, start, 8, CodeSemantics.createControl());
         return super.visitContinue(node, null);
     }
 
     @Override
     public Void visitReturn(ReturnTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        addToken(JavaTokenType.J_RETURN, start, 6, CodeSemantics.createControl());
+        addToken(RETURN, start, 6, CodeSemantics.createControl());
         return super.visitReturn(node, null);
     }
 
     @Override
     public Void visitThrow(ThrowTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        addToken(JavaTokenType.J_THROW, start, 5, CodeSemantics.createControl());
+        addToken(THROW, start, 5, CodeSemantics.createControl());
         return super.visitThrow(node, null);
     }
 
@@ -381,16 +408,16 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     public Void visitNewClass(NewClassTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node.getIdentifier());
-        if (!node.getTypeArguments().isEmpty()) {
+        if (!node.getTypeArguments().isEmpty()) { // TODO
             addToken(JavaTokenType.J_GENERIC, start, 3 + node.getIdentifier().toString().length(), new CodeSemantics());
         }
-        addToken(JavaTokenType.J_NEWCLASS, start, end, new CodeSemantics());
+        addToken(NEW, start, end, new CodeSemantics());
         super.visitNewClass(node, null);
         return null;
     }
 
     @Override
-    public Void visitTypeParameter(TypeParameterTree node, Void unused) {
+    public Void visitTypeParameter(TypeParameterTree node, Void unused) { // TODO
         long start = positions.getStartPosition(ast, node);
         // This is odd, but also done like this in Java 1.7
         addToken(JavaTokenType.J_GENERIC, start, 1, new CodeSemantics());
@@ -401,19 +428,19 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     public Void visitNewArray(NewArrayTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = node.getType() == null ? start + 1 : positions.getEndPosition(ast, node.getType());
-        addToken(JavaTokenType.J_NEWARRAY, start, end, new CodeSemantics());
+        addToken(NEW_ARRAY, start, end, new CodeSemantics());
         scan(node.getType(), null);
         scan(node.getDimensions(), null);
         boolean hasInit = node.getInitializers() != null && !node.getInitializers().isEmpty();
         if (hasInit) {
             start = positions.getStartPosition(ast, node.getInitializers().get(0));
-            addToken(JavaTokenType.J_ARRAY_INIT_BEGIN, start, 1, new CodeSemantics());
+            addToken(ARRAY_INITIALIZER_START, start, 1, new CodeSemantics());
         }
         scan(node.getInitializers(), null);
         // super method has annotation processing but we have it disabled anyways
         if (hasInit) {
             end = positions.getEndPosition(ast, node.getInitializers().getLast()) - 1;
-            addToken(JavaTokenType.J_ARRAY_INIT_END, end, 1, new CodeSemantics());
+            addToken(ARRAY_INITIALIZER_END, end, 1, new CodeSemantics());
         }
         return null;
     }
@@ -422,7 +449,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     public Void visitAssignment(AssignmentTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getStartPosition(ast, node.getExpression()) - 1;
-        addToken(JavaTokenType.J_ASSIGN, start, end, new CodeSemantics());
+        addToken(ASSIGNMENT, start, end, new CodeSemantics());
         variableRegistry.setNextVariableAccessType(VariableAccessType.WRITE);
         return super.visitAssignment(node, null);
     }
@@ -431,7 +458,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     public Void visitCompoundAssignment(CompoundAssignmentTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getStartPosition(ast, node.getExpression()) - 1;
-        addToken(JavaTokenType.J_ASSIGN, start, end, new CodeSemantics());
+        addToken(ASSIGNMENT, start, end, new CodeSemantics());
         variableRegistry.setNextVariableAccessType(VariableAccessType.READ_WRITE);
         return super.visitCompoundAssignment(node, null);
     }
@@ -441,7 +468,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         if (Set.of(Tree.Kind.PREFIX_INCREMENT, Tree.Kind.POSTFIX_INCREMENT, Tree.Kind.PREFIX_DECREMENT, Tree.Kind.POSTFIX_DECREMENT)
                 .contains(node.getKind())) {
             long start = positions.getStartPosition(ast, node);
-            addToken(JavaTokenType.J_ASSIGN, start, node.toString().length(), new CodeSemantics());
+            addToken(ASSIGNMENT, start, node.toString().length(), new CodeSemantics());
             variableRegistry.setNextVariableAccessType(VariableAccessType.READ_WRITE);
         }
         return super.visitUnary(node, null);
@@ -450,7 +477,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     @Override
     public Void visitAssert(AssertTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        addToken(JavaTokenType.J_ASSERT, start, 6, CodeSemantics.createControl());
+        addToken(ASSERT, start, 6, CodeSemantics.createControl());
         return super.visitAssert(node, null);
     }
 
@@ -471,7 +498,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
             } else {
                 semantics = CodeSemantics.createKeep();
             }
-            addToken(JavaTokenType.J_VARDEF, start, end, semantics);
+            addToken(VARIABLE_DEFINITION, start, end, semantics);
             // manually add variable to semantics since identifier isn't visited
             variableRegistry.setNextVariableAccessType(VariableAccessType.WRITE);
             variableRegistry.registerVariableAccess(name, !inLocalScope);
@@ -480,7 +507,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     }
 
     @Override
-    public Void visitConditionalExpression(ConditionalExpressionTree node, Void unused) {
+    public Void visitConditionalExpression(ConditionalExpressionTree node, Void unused) { // TODO
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_COND, start, 1, new CodeSemantics());
         return super.visitConditionalExpression(node, null);
@@ -492,7 +519,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         long end = positions.getEndPosition(ast, node.getMethodSelect());
         CodeSemantics codeSemantics = CRITICAL_METHODS.contains(node.getMethodSelect().toString()) ? CodeSemantics.createCritical()
                 : CodeSemantics.createControl();
-        addToken(JavaTokenType.J_APPLY, start, end, codeSemantics);
+        addToken(CALL, start, end, codeSemantics);
         variableRegistry.addAllNonLocalVariablesAsReads();
         scan(node.getTypeArguments(), null);
         // differentiate bar() and this.bar() (ignore) from bar.foo() (don't ignore)
@@ -508,12 +535,12 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     @Override
     public Void visitAnnotation(AnnotationTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        addToken(JavaTokenType.J_ANNO, start, 1, new CodeSemantics());
+        addToken(ANNOTATION, start, 1, new CodeSemantics());
         return super.visitAnnotation(node, null);
     }
 
     @Override
-    public Void visitModule(ModuleTree node, Void unused) {
+    public Void visitModule(ModuleTree node, Void unused) { // TODO
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
         addToken(JavaTokenType.J_MODULE_BEGIN, start, 6, CodeSemantics.createControl());
@@ -523,28 +550,28 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     }
 
     @Override
-    public Void visitRequires(RequiresTree node, Void unused) {
+    public Void visitRequires(RequiresTree node, Void unused) { // TODO
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_REQUIRES, start, 8, CodeSemantics.createControl());
         return super.visitRequires(node, null);
     }
 
     @Override
-    public Void visitProvides(ProvidesTree node, Void unused) {
+    public Void visitProvides(ProvidesTree node, Void unused) { // TODO
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_PROVIDES, start, 8, CodeSemantics.createControl());
         return super.visitProvides(node, null);
     }
 
     @Override
-    public Void visitExports(ExportsTree node, Void unused) {
+    public Void visitExports(ExportsTree node, Void unused) { // TODO
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_EXPORTS, start, 7, CodeSemantics.createControl());
         return super.visitExports(node, null);
     }
 
     @Override
-    public Void visitYield(YieldTree node, Void unused) {
+    public Void visitYield(YieldTree node, Void unused) { // TODO
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node);
         addToken(JavaTokenType.J_YIELD, start, end, CodeSemantics.createControl());
@@ -552,7 +579,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     }
 
     @Override
-    public Void visitDefaultCaseLabel(DefaultCaseLabelTree node, Void unused) {
+    public Void visitDefaultCaseLabel(DefaultCaseLabelTree node, Void unused) { // TODO
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node);
         addToken(JavaTokenType.J_DEFAULT, start, end, CodeSemantics.createControl());

@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.eclipse.emf.ecore.EObject;
 
+import de.jplag.LanguageLoader;
 import de.jplag.Token;
 import de.jplag.TokenTrace;
 import de.jplag.TokenType;
@@ -44,7 +45,7 @@ public class MetamodelToken extends Token {
      * @param eObject is the corresponding eObject in the model from which this token was extracted
      */
     public MetamodelToken(TokenType type, File file, TokenTrace trace, Optional<EObject> eObject) {
-        super(type, file, trace);
+        super(type, file, trace, LanguageLoader.getLanguage(EmfLanguage.class).get());
         this.eObject = eObject;
     }
 

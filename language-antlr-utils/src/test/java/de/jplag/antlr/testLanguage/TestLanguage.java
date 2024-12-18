@@ -1,13 +1,12 @@
 package de.jplag.antlr.testLanguage;
 
 import de.jplag.antlr.AbstractAntlrLanguage;
+import de.jplag.antlr.AbstractAntlrParserAdapter;
 
 public class TestLanguage extends AbstractAntlrLanguage {
-    /**
-     * New instance
-     */
-    public TestLanguage() {
-        super(new TestParserAdapter());
+    @Override
+    protected AbstractAntlrParserAdapter<?> initializeParser(boolean normalize) {
+        return new TestParserAdapter(this);
     }
 
     @Override

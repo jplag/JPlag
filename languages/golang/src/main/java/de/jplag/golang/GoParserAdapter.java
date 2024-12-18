@@ -5,6 +5,8 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import de.jplag.Language;
+import de.jplag.LanguageLoader;
 import de.jplag.antlr.AbstractAntlrListener;
 import de.jplag.antlr.AbstractAntlrParserAdapter;
 import de.jplag.golang.grammar.GoLexer;
@@ -29,5 +31,10 @@ public class GoParserAdapter extends AbstractAntlrParserAdapter<GoParser> {
     @Override
     protected AbstractAntlrListener getListener() {
         return new GoListener();
+    }
+
+    @Override
+    protected Language getLanguage() {
+        return LanguageLoader.getLanguage(GoLanguage.class).get();
     }
 }

@@ -2,7 +2,7 @@ package de.jplag.scala
 
 import de.jplag.scala.ScalaTokenType._
 import de.jplag.util.FileUtils
-import de.jplag.{AbstractParser, ParsingException, Token}
+import de.jplag.{AbstractParser, Language, LanguageLoader, ParsingException, Token}
 
 import java.io.File
 import java.util.stream.Collectors
@@ -10,8 +10,8 @@ import scala.collection.mutable.ListBuffer
 import scala.meta.Member.ParamClauseGroup
 import scala.meta._
 
+class Parser(private val language: Language) extends AbstractParser {
 
-class Parser extends AbstractParser {
     private var currentFile: File = _
 
     private var tokens: ListBuffer[Token] = _
@@ -374,7 +374,7 @@ class Parser extends AbstractParser {
      * @param length    length of the occurrence in the file
      */
     private def add(tokenType: ScalaTokenType, line: Int, column: Int, length: Int): Unit = {
-        tokens += new Token(tokenType, currentFile, line, column, length)
+        tokens += new Token(tokenType, currentFile, line, column, length, language)
     }
 
 
@@ -389,10 +389,10 @@ class Parser extends AbstractParser {
         if (node.pos.text.nonEmpty) {
             // SELF type tokens with no text content mess up the sequence
             if (fromEnd) {
-                tokens += new Token(tokenType, currentFile, node.pos.endLine + 1, node.pos.endColumn + 1, 0)
+                tokens += new Token(tokenType, currentFile, node.pos.endLine + 1, node.pos.endColumn + 1, 0, language)
             }
             else {
-                tokens += new Token(tokenType, currentFile, node.pos.startLine + 1, node.pos.endColumn + 1, node.pos.text.length)
+                tokens += new Token(tokenType, currentFile, node.pos.startLine + 1, node.pos.endColumn + 1, node.pos.text.length, language)
             }
         }
     }

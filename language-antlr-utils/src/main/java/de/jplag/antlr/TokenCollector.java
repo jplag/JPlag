@@ -9,6 +9,7 @@ import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jplag.Language;
 import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.semantics.CodeSemantics;
@@ -22,14 +23,16 @@ public class TokenCollector {
 
     private final List<Token> collected;
     private final boolean extractsSemantics;
+    private final Language language;
     private File file;
 
     /**
      * @param extractsSemantics If semantics are extracted
      */
-    TokenCollector(boolean extractsSemantics) {
+    TokenCollector(boolean extractsSemantics, Language language) {
         this.collected = new ArrayList<>();
         this.extractsSemantics = extractsSemantics;
+        this.language = language;
     }
 
     /**
@@ -56,13 +59,13 @@ public class TokenCollector {
                 throw new IllegalStateException(String.format("Expected semantics bud did not receive any for token %s", jplagType.getDescription()));
             }
             CodeSemantics semantics = semanticsSupplier.apply(entity);
-            token = new Token(jplagType, this.file, line, column, length, semantics);
+            token = new Token(jplagType, this.file, line, column, length, semantics, language);
             variableRegistry.updateSemantics(semantics);
         } else {
             if (semanticsSupplier != null) {
                 logger.warn("Received semantics for token {} despite not expecting any", jplagType.getDescription());
             }
-            token = new Token(jplagType, this.file, line, column, length);
+            token = new Token(jplagType, this.file, line, column, length, language);
         }
         addToken(token);
     }

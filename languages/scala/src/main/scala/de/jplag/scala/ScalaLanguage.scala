@@ -9,7 +9,7 @@ import java.util
 import scala.jdk.CollectionConverters.{SeqHasAsJava, SetHasAsScala}
 
 class ScalaLanguage extends de.jplag.Language {
-  private val parser = new Parser
+  private val parser = new Parser(this)
   private final val fileExtensions = Array(".scala", ".sc")
 
   override def suffixes: Array[String] = fileExtensions

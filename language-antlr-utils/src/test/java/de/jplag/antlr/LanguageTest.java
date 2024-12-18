@@ -60,7 +60,7 @@ class LanguageTest {
     private static class LanguageWithLazyParser extends LanguageWithoutParser {
         @Override
         protected AbstractAntlrParserAdapter<?> initializeParser(boolean normalize) {
-            return new TestParserAdapter();
+            return new TestParserAdapter(this);
         }
     }
 }

@@ -66,6 +66,10 @@ public final class LanguageLoader {
         return Optional.ofNullable(language);
     }
 
+    public static Optional<Language> getLanguage(Class<? extends Language> languageClass) {
+        return LanguageLoader.getAllAvailableLanguages().values().stream().filter(it -> languageClass.isAssignableFrom(it.getClass())).findFirst();
+    }
+
     /**
      * Get an unmodifiable set of all available languages with their identifiers.
      * @return identifiers of all available languages

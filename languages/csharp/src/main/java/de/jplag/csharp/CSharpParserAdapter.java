@@ -5,6 +5,8 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import de.jplag.Language;
+import de.jplag.LanguageLoader;
 import de.jplag.antlr.AbstractAntlrListener;
 import de.jplag.antlr.AbstractAntlrParserAdapter;
 import de.jplag.csharp.grammar.CSharpLexer;
@@ -33,5 +35,10 @@ public class CSharpParserAdapter extends AbstractAntlrParserAdapter<CSharpParser
     @Override
     protected AbstractAntlrListener getListener() {
         return new CSharpListener();
+    }
+
+    @Override
+    protected Language getLanguage() {
+        return LanguageLoader.getLanguage(CSharpLanguage.class).get();
     }
 }

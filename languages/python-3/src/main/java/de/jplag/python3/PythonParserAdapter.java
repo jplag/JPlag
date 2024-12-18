@@ -5,6 +5,8 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import de.jplag.Language;
+import de.jplag.LanguageLoader;
 import de.jplag.antlr.AbstractAntlrListener;
 import de.jplag.antlr.AbstractAntlrParserAdapter;
 import de.jplag.python3.grammar.Python3Lexer;
@@ -29,5 +31,10 @@ public class PythonParserAdapter extends AbstractAntlrParserAdapter<Python3Parse
     @Override
     protected AbstractAntlrListener getListener() {
         return new PythonListener();
+    }
+
+    @Override
+    protected Language getLanguage() {
+        return LanguageLoader.getLanguage(PythonLanguage.class).get();
     }
 }

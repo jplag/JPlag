@@ -5,6 +5,8 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import de.jplag.Language;
+import de.jplag.LanguageLoader;
 import de.jplag.antlr.AbstractAntlrListener;
 import de.jplag.antlr.AbstractAntlrParserAdapter;
 import de.jplag.kotlin.grammar.KotlinLexer;
@@ -31,5 +33,10 @@ public class KotlinParserAdapter extends AbstractAntlrParserAdapter<KotlinParser
     @Override
     protected AbstractAntlrListener getListener() {
         return listener;
+    }
+
+    @Override
+    protected Language getLanguage() {
+        return LanguageLoader.getLanguage(KotlinLanguage.class).get();
     }
 }

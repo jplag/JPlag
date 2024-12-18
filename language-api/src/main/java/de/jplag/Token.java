@@ -23,6 +23,7 @@ public class Token {
     private final File file;
     private final TokenType type;
     private CodeSemantics semantics; // value null if no semantics
+    private Language language;
 
     /**
      * Creates a token with column and length information.
@@ -31,8 +32,9 @@ public class Token {
      * @param line is the line index in the source code where the token resides. Index is 1-based.
      * @param column is the column index, meaning where the token starts in the line. Index is 1-based.
      * @param length is the length of the token in the source code.
+     * @param language The language that created the token
      */
-    public Token(TokenType type, File file, int line, int column, int length) {
+    public Token(TokenType type, File file, int line, int column, int length, Language language) {
         if (line == 0) {
             logger.warn("Creating a token with line index 0 while index is 1-based");
         }
@@ -44,6 +46,7 @@ public class Token {
         this.line = line;
         this.column = column;
         this.length = length;
+        this.language = language;
     }
 
     /**
@@ -51,9 +54,10 @@ public class Token {
      * @param type is the token type.
      * @param file is the name of the source code file.
      * @param trace is the tracing information of the token, meaning line, column, and length.
+     * @param language The language that created the token
      */
-    public Token(TokenType type, File file, TokenTrace trace) {
-        this(type, file, trace.line(), trace.column(), trace.length());
+    public Token(TokenType type, File file, TokenTrace trace, Language language) {
+        this(type, file, trace.line(), trace.column(), trace.length(), language);
     }
 
     /**
@@ -64,9 +68,10 @@ public class Token {
      * @param column is the column index, meaning where the token starts in the line. Index is 1-based.
      * @param length is the length of the token in the source code.
      * @param semantics is a record containing semantic information about the token.
+     * @param language The language that created the token
      */
-    public Token(TokenType type, File file, int line, int column, int length, CodeSemantics semantics) {
-        this(type, file, line, column, length);
+    public Token(TokenType type, File file, int line, int column, int length, CodeSemantics semantics, Language language) {
+        this(type, file, line, column, length, language);
         this.semantics = semantics;
     }
 
@@ -75,7 +80,7 @@ public class Token {
      * @param file is the name of the source code file.
      */
     public static Token fileEnd(File file) {
-        return new Token(SharedTokenType.FILE_END, file, NO_VALUE, NO_VALUE, NO_VALUE);
+        return new Token(SharedTokenType.FILE_END, file, NO_VALUE, NO_VALUE, NO_VALUE, null); // TODO null?
     }
 
     /**
@@ -85,7 +90,7 @@ public class Token {
      */
     public static Token semanticFileEnd(File file) {
         CodeSemantics semantics = CodeSemantics.createControl();
-        return new Token(SharedTokenType.FILE_END, file, NO_VALUE, NO_VALUE, NO_VALUE, semantics);
+        return new Token(SharedTokenType.FILE_END, file, NO_VALUE, NO_VALUE, NO_VALUE, semantics, null); // TODO null?
     }
 
     /**
@@ -136,5 +141,9 @@ public class Token {
      */
     public CodeSemantics getSemantics() {
         return semantics;
+    }
+
+    public Language getLanguage() {
+        return language;
     }
 }
