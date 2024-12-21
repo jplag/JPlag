@@ -141,6 +141,7 @@ function getNextLinePartTillColumn(endCol: number) {
         part += props.line[lineIndex.value]
         lineIndex.value++
       }
+      part += props.line[lineIndex.value]
       lineIndex.value++
       colIndex.value++
     } else {
