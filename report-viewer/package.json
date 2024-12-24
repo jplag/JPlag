@@ -14,7 +14,7 @@
     "build-dev": "run-p type-check && vite build --mode dev",
     "build-demo": "run-p type-check && vite build --mode demo",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore --max-warnings 0",
+    "lint": "eslint --max-warnings 0",
     "format": "prettier --write src/",
     "prepare": "git config --local core.hooksPath gitHooks/hooks"
   },
@@ -37,6 +37,8 @@
     "vue-virtual-scroller": "^2.0.0-beta.8"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/js": "^9.16.0",
     "@pinia/testing": "^0.1.7",
     "@playwright/test": "^1.49.1",
     "@rushstack/eslint-patch": "^1.10.4",
@@ -44,12 +46,12 @@
     "@types/node": "^22.9.0",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/eslint-config-prettier": "^10.1.0",
-    "@vue/eslint-config-typescript": "^13.0.0",
+    "@vue/eslint-config-typescript": "^14.1.4",
     "@vue/test-utils": "^2.4.6",
     "@vue/tsconfig": "^0.7.0",
     "autoprefixer": "^10.4.20",
-    "eslint": "^8.57.1",
-    "eslint-plugin-vue": "^9.30.0",
+    "eslint": "^9.16.0",
+    "eslint-plugin-vue": "^9.32.0",
     "jsdom": "^25.0.1",
     "lint-staged": "^15.2.10",
     "npm-run-all": "^4.1.5",
@@ -58,6 +60,7 @@
     "prettier-plugin-tailwindcss": "^0.6.9",
     "tailwindcss": "^3.4.16",
     "typescript": "^5.6.3",
+    "typescript-eslint": "^8.16.0",
     "vite": "^5.4.11",
     "vitest": "^2.1.8",
     "vue-tsc": "^2.1.10"
