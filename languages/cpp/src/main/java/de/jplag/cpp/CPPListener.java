@@ -3,7 +3,6 @@ package de.jplag.cpp;
 import static de.jplag.cpp.CPPTokenType.DEFAULT;
 import static de.jplag.cpp.CPPTokenType.GENERIC;
 import static de.jplag.cpp.CPPTokenType.NEWARRAY;
-import static de.jplag.cpp.CPPTokenType.QUESTIONMARK;
 import static de.jplag.tokentypes.ExceptionHandlingTokenTypes.TRY;
 import static de.jplag.tokentypes.ImperativeTokenType.ASSIGNMENT;
 import static de.jplag.tokentypes.ImperativeTokenType.CALL;
@@ -15,6 +14,7 @@ import static de.jplag.tokentypes.ImperativeTokenType.STRUCTURE_DEFINITION;
 import static de.jplag.tokentypes.ImperativeTokenType.STRUCTURE_END;
 import static de.jplag.tokentypes.ImperativeTokenType.SWITCH;
 import static de.jplag.tokentypes.ImperativeTokenType.VARIABLE_DEFINITION;
+import static de.jplag.tokentypes.InlineIfTokenTypes.CONDITION;
 import static de.jplag.tokentypes.ObjectOrientationTokens.NEW;
 
 import java.util.function.Function;
@@ -103,6 +103,8 @@ class CPPListener extends AbstractAntlrListener {
                 .onEnter((rule, varReg) -> varReg.setNextVariableAccessType(VariableAccessType.WRITE));
         visit(UnaryExpressionContext.class, rule -> rule.PlusPlus() != null || rule.MinusMinus() != null).map(ASSIGNMENT)
                 .withSemantics(CodeSemantics::new).onEnter((rule, varReg) -> varReg.setNextVariableAccessType(VariableAccessType.READ_WRITE));
+        visit(CPP14Parser.MemInitializerContext.class).mapRange(ASSIGNMENT).withSemantics(CodeSemantics::new)
+                .onEnter((rule, varReg) -> varReg.setNextVariableAccessType(VariableAccessType.WRITE));
 
         // TODO Maybe assert isn't right here, but it shouldn't matter
         visit(StaticAssertDeclarationContext.class).map(AssertTokenTypes.ASSERT).withSemantics(CodeSemantics::createControl);
@@ -115,6 +117,7 @@ class CPPListener extends AbstractAntlrListener {
         declarationRules();
         expressionRules();
         idRules();
+        javaCompatibility();
     }
 
     private void statementRules() {
@@ -143,7 +146,8 @@ class CPPListener extends AbstractAntlrListener {
 
     private void typeSpecifierRule() {
         visit(SimpleTypeSpecifierContext.class, rule -> {
-            if (hasAncestor(rule, MemberdeclarationContext.class, FunctionDefinitionContext.class)) {
+            if (hasAncestor(rule.getParent(), MemberdeclarationContext.class, FunctionDefinitionContext.class, SimpleTypeSpecifierContext.class,
+                    TemplateArgumentContext.class)) {
                 return true;
             }
             SimpleDeclarationContext parent = getAncestor(rule, SimpleDeclarationContext.class, TemplateArgumentContext.class,
@@ -170,6 +174,16 @@ class CPPListener extends AbstractAntlrListener {
                 variableRegistry.registerVariable(name, scope, true);
             }
         });
+
+        visit(DeclaratorContext.class, rule -> rule.getParent().getClass() == CPP14Parser.ForRangeDeclarationContext.class)
+                .mapRange(VARIABLE_DEFINITION).withSemantics(CodeSemantics::new).onEnter((rule, varReg) -> varReg
+                        .registerVariable(getDescendant(rule, UnqualifiedIdContext.class).getText(), VariableScope.LOCAL, false));
+    }
+
+    private void javaCompatibility() {
+        visit(CPP14Parser.LiteralContext.class, rule -> rule.StringLiteral() != null).mapRange(NEW).withSemantics(CodeSemantics::new);
+        visit(CPP14Parser.EqualityExpressionContext.class, rule -> !rule.Equal().isEmpty()).delegateTerminal(rule -> rule.Equal(0)).map(CALL)
+                .withSemantics(CodeSemantics::new);
     }
 
     private void declarationRules() {
@@ -182,27 +196,51 @@ class CPPListener extends AbstractAntlrListener {
             return noPointerInFunctionCallContext(noPointerDecl);
         }));
 
-        mapApply(visit(InitDeclaratorContext.class, rule -> rule.initializer() != null && rule.initializer().LeftParen() != null));
+        mapApply(visit(InitDeclaratorContext.class, rule -> rule.initializer() != null && rule.initializer().LeftParen() != null
+                && getDescendant(rule.getParent().getParent(), CPP14Parser.ClassNameContext.class) == null));
+        visit(CPP14Parser.IdExpressionContext.class, rule -> {
+            ParserRuleContext ancestor = rule.getParent().getParent().getParent().getParent().getParent();
+            if (ancestor == null || !ancestor.getClass().isAssignableFrom(InitDeclaratorContext.class)) {
+                return false;
+            }
+            InitDeclaratorContext parent = (InitDeclaratorContext) ancestor;
+
+            return parent.initializer() != null && parent.initializer().LeftParen() != null
+                    && getDescendant(parent.getParent().getParent(), CPP14Parser.ClassNameContext.class) != null;
+        }).map(ASSIGNMENT, NEW).onExit((ctx, varReg) -> varReg.setMutableWrite(false)).onEnter((ctx, varReg) -> {
+            varReg.addAllNonLocalVariablesAsReads();
+            varReg.setMutableWrite(true);
+        }).withControlSemantics();
         visit(DeclaratorContext.class, rule -> {
             ParserRuleContext parent = rule.getParent();
             BraceOrEqualInitializerContext desc = getDescendant(parent, BraceOrEqualInitializerContext.class);
             return (desc != null && desc.Assign() != null && (parent == desc.getParent() || parent == desc.getParent().getParent()));
         }).map(ASSIGNMENT).withSemantics(CodeSemantics::new).onEnter((ctx, varReg) -> varReg.setNextVariableAccessType(VariableAccessType.WRITE));
 
-        visit(ParameterDeclarationContext.class).map(VARIABLE_DEFINITION).withSemantics(CodeSemantics::new).onEnter((ctx, varReg) -> {
-            // don't register parameters in function declarations, e.g. bc6h_enc lines 117-120
-            if (hasAncestor(ctx, FunctionDefinitionContext.class, SimpleDeclarationContext.class) && ctx.declarator() != null) {
-                CPP14Parser.PointerDeclaratorContext pd = ctx.declarator().pointerDeclarator();
-                String name = pd.noPointerDeclarator().getText();
-                varReg.registerVariable(name, VariableScope.LOCAL, true);
-                varReg.setNextVariableAccessType(VariableAccessType.WRITE);
-            }
-        });
+        visit(CPP14Parser.InitDeclaratorListContext.class, rule -> {
+            CPP14Parser.TrailingTypeSpecifierContext specifier = getDescendant(rule.getParent(), CPP14Parser.TrailingTypeSpecifierContext.class);
+            return !(rule.initDeclarator().isEmpty() && rule.initDeclarator(0).declarator() == null
+                    && rule.initDeclarator(0).declarator().pointerDeclarator() == null) && specifier != null
+                    && getDescendant(specifier, CPP14Parser.ClassNameContext.class) != null
+                    && getDescendant(rule, CPP14Parser.InitializerContext.class) == null
+                    && rule.getParent().getClass() == SimpleDeclarationContext.class;
+        }).map(ASSIGNMENT, NEW).withSemantics(CodeSemantics::new);
+
+        visit(ParameterDeclarationContext.class, rule -> !hasAncestor(rule, TemplateArgumentContext.class)).map(VARIABLE_DEFINITION)
+                .withSemantics(CodeSemantics::new).onEnter((ctx, varReg) -> {
+                    // don't register parameters in function declarations, e.g. bc6h_enc lines 117-120
+                    if (hasAncestor(ctx, FunctionDefinitionContext.class, SimpleDeclarationContext.class) && ctx.declarator() != null) {
+                        CPP14Parser.PointerDeclaratorContext pd = ctx.declarator().pointerDeclarator();
+                        String name = pd.noPointerDeclarator().getText();
+                        varReg.registerVariable(name, VariableScope.LOCAL, true);
+                        varReg.setNextVariableAccessType(VariableAccessType.WRITE);
+                    }
+                });
     }
 
     private void expressionRules() {
         // TODO
-        visit(ConditionalExpressionContext.class, rule -> rule.Question() != null).map(QUESTIONMARK).withSemantics(CodeSemantics::new);
+        visit(ConditionalExpressionContext.class, rule -> rule.Question() != null).map(CONDITION).withSemantics(CodeSemantics::new);
 
         mapApply(visit(PostfixExpressionContext.class, rule -> rule.LeftParen() != null));
         visit(PostfixExpressionContext.class, rule -> rule.PlusPlus() != null || rule.MinusMinus() != null).map(ASSIGNMENT)

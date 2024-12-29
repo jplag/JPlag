@@ -17,6 +17,8 @@ import static de.jplag.tokentypes.ImperativeTokenType.BREAK;
 import static de.jplag.tokentypes.ImperativeTokenType.CALL;
 import static de.jplag.tokentypes.ImperativeTokenType.CONTINUE;
 import static de.jplag.tokentypes.ImperativeTokenType.ELSE;
+import static de.jplag.tokentypes.ImperativeTokenType.FUNCTION_DEFINITION;
+import static de.jplag.tokentypes.ImperativeTokenType.FUNCTION_END;
 import static de.jplag.tokentypes.ImperativeTokenType.IF;
 import static de.jplag.tokentypes.ImperativeTokenType.IF_END;
 import static de.jplag.tokentypes.ImperativeTokenType.LOOP;
@@ -27,8 +29,7 @@ import static de.jplag.tokentypes.ImperativeTokenType.STRUCTURE_END;
 import static de.jplag.tokentypes.ImperativeTokenType.SWITCH;
 import static de.jplag.tokentypes.ImperativeTokenType.SWITCH_END;
 import static de.jplag.tokentypes.ImperativeTokenType.VARIABLE_DEFINITION;
-import static de.jplag.tokentypes.ObjectOrientationTokens.METHOD;
-import static de.jplag.tokentypes.ObjectOrientationTokens.METHOD_END;
+import static de.jplag.tokentypes.InlineIfTokenTypes.CONDITION;
 import static de.jplag.tokentypes.ObjectOrientationTokens.NEW;
 
 import java.io.File;
@@ -64,6 +65,7 @@ import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.IfTree;
 import com.sun.source.tree.ImportTree;
 import com.sun.source.tree.LineMap;
+import com.sun.source.tree.LiteralTree;
 import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
 import com.sun.source.tree.MethodTree;
@@ -218,9 +220,9 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         variableRegistry.enterLocalScope();
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        addToken(METHOD, start, node.getName().length(), CodeSemantics.createControl());
+        addToken(FUNCTION_DEFINITION, start, node.getName().length(), CodeSemantics.createControl());
         super.visitMethod(node, null);
-        addToken(METHOD_END, end, 1, CodeSemantics.createControl());
+        addToken(FUNCTION_END, end, 1, CodeSemantics.createControl());
         variableRegistry.addAllNonLocalVariablesAsReads();
         variableRegistry.exitLocalScope();
         return null;
@@ -499,6 +501,10 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
                 semantics = CodeSemantics.createKeep();
             }
             addToken(VARIABLE_DEFINITION, start, end, semantics);
+            if (node.getInitializer() != null) {
+                long pos = positions.getStartPosition(ast, node.getInitializer());
+                addToken(ASSIGNMENT, pos, pos + 1, new CodeSemantics());
+            }
             // manually add variable to semantics since identifier isn't visited
             variableRegistry.setNextVariableAccessType(VariableAccessType.WRITE);
             variableRegistry.registerVariableAccess(name, !inLocalScope);
@@ -509,7 +515,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     @Override
     public Void visitConditionalExpression(ConditionalExpressionTree node, Void unused) { // TODO
         long start = positions.getStartPosition(ast, node);
-        addToken(JavaTokenType.J_COND, start, 1, new CodeSemantics());
+        addToken(CONDITION, start, 1, new CodeSemantics());
         return super.visitConditionalExpression(node, null);
     }
 
@@ -599,5 +605,15 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     public Void visitIdentifier(IdentifierTree node, Void unused) {
         variableRegistry.registerVariableAccess(node.toString(), false);
         return super.visitIdentifier(node, null);
+    }
+
+    @Override
+    public Void visitLiteral(LiteralTree node, Void unused) {
+        if (node.getKind() == Tree.Kind.STRING_LITERAL) {
+            long start = positions.getStartPosition(ast, node);
+            long end = positions.getEndPosition(ast, node);
+            addToken(NEW, start, end - start, new CodeSemantics()); // Strings are objects, so literals create an object
+        }
+        return super.visitLiteral(node, unused);
     }
 }

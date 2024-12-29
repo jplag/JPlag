@@ -369,7 +369,7 @@ simpleTypeSignednessModifier:
 
 simpleTypeSpecifier:
 	nestedNameSpecifier? theTypeName
-	| nestedNameSpecifier Template simpleTemplateId
+	| nestedNameSpecifier
 	| simpleTypeSignednessModifier
 	| simpleTypeSignednessModifier? simpleTypeLengthModifier+
 	| simpleTypeSignednessModifier? Char
