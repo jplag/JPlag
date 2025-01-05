@@ -1,0 +1,87 @@
+package com.assessment1.cuteapp;
+
+import android.graphics.Color;
+import android.media.MediaPlayer;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private TextView textView;
+    private Button clearButton;
+    private MediaPlayer mediaPlayer;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_main);
+
+        textView = findViewById(R.id.textView);
+        clearButton = findViewById(R.id.clearButton);
+        ImageView dogImage = findViewById(R.id.dogImg);
+        ImageView duckImage = findViewById(R.id.duckImg);
+        ImageView penguinImage = findViewById(R.id.penguinImg);
+
+        // Setting up click listeners for images
+        dogImage.setOnClickListener(v -> {
+            playSound(R.raw.dog_bark);
+            displayMessage("You clicked a DOG", Color.BLUE);
+        });
+
+        duckImage.setOnClickListener(v -> {
+            playSound(R.raw.duck_quack);
+            displayMessage("You clicked a DUCK", Color.GREEN);
+        });
+
+        penguinImage.setOnClickListener(v -> {
+            playSound(R.raw.penguin);
+            displayMessage("You clicked a PENGUIN", Color.MAGENTA);
+        });
+
+        // Clear button resets everything
+        clearButton.setOnClickListener(v -> resetApp());
+
+    }
+
+    private void displayMessage(String message, int color) {
+        textView.setText(message);
+        textView.setTextColor(color);
+        clearButton.setVisibility(View.VISIBLE);
+        clearButton.setBackgroundColor(color); // change button color
+        clearButton.setTextSize(20);
+    }
+
+    private void resetApp() {
+        textView.setText(R.string.select_an_animal);
+        textView.setTextColor(Color.BLACK); // reset text color
+        clearButton.setVisibility(View.GONE);
+        clearButton.setBackgroundColor(Color.TRANSPARENT); // reset button color
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+    }
+
+    private void playSound(int soundResId) {
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+        }
+        mediaPlayer = MediaPlayer.create(this, soundResId);
+        mediaPlayer.start();
+        mediaPlayer.setOnCompletionListener(MediaPlayer::release);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+    }
