@@ -1,6 +1,7 @@
 package de.jplag;
 
 import java.io.File;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,7 @@ public class Token {
     private final int column;
     private final int length;
     private final File file;
-    private final TokenType type;
+    private final List<TokenAttribute> type;
     private CodeSemantics semantics; // value null if no semantics
     private Language language;
 
@@ -34,7 +35,20 @@ public class Token {
      * @param length is the length of the token in the source code.
      * @param language The language that created the token
      */
-    public Token(TokenType type, File file, int line, int column, int length, Language language) {
+    public Token(TokenAttribute type, File file, int line, int column, int length, Language language) {
+        this(List.of(type), file, line, column, length, language);
+    }
+
+    /**
+     * Creates a token with column and length information.
+     * @param type is the token type.
+     * @param file is the name of the source code file.
+     * @param line is the line index in the source code where the token resides. Index is 1-based.
+     * @param column is the column index, meaning where the token starts in the line. Index is 1-based.
+     * @param length is the length of the token in the source code.
+     * @param language The language that created the token
+     */
+    public Token(List<TokenAttribute> type, File file, int line, int column, int length, Language language) {
         if (line == 0) {
             logger.warn("Creating a token with line index 0 while index is 1-based");
         }
@@ -56,7 +70,7 @@ public class Token {
      * @param trace is the tracing information of the token, meaning line, column, and length.
      * @param language The language that created the token
      */
-    public Token(TokenType type, File file, TokenTrace trace, Language language) {
+    public Token(TokenAttribute type, File file, TokenTrace trace, Language language) {
         this(type, file, trace.line(), trace.column(), trace.length(), language);
     }
 
@@ -70,27 +84,33 @@ public class Token {
      * @param semantics is a record containing semantic information about the token.
      * @param language The language that created the token
      */
-    public Token(TokenType type, File file, int line, int column, int length, CodeSemantics semantics, Language language) {
+    public Token(TokenAttribute type, File file, int line, int column, int length, CodeSemantics semantics, Language language) {
+        this(type, file, line, column, length, language);
+        this.semantics = semantics;
+    }
+
+    public Token(List<TokenAttribute> type, File file, int line, int column, int length, CodeSemantics semantics, Language language) {
         this(type, file, line, column, length, language);
         this.semantics = semantics;
     }
 
     /**
-     * Creates a token of type {@link SharedTokenType#FILE_END FILE_END} without information about line, column, and length.
+     * Creates a token of type {@link SharedTokenAttribute#FILE_END FILE_END} without information about line, column, and
+     * length.
      * @param file is the name of the source code file.
      */
     public static Token fileEnd(File file) {
-        return new Token(SharedTokenType.FILE_END, file, NO_VALUE, NO_VALUE, NO_VALUE, null); // TODO null?
+        return new Token(SharedTokenAttribute.FILE_END, file, NO_VALUE, NO_VALUE, NO_VALUE, null); // TODO null?
     }
 
     /**
-     * Creates a token of type {@link SharedTokenType#FILE_END FILE_END} without information about line, column, and length,
-     * but with semantic information.
+     * Creates a token of type {@link SharedTokenAttribute#FILE_END FILE_END} without information about line, column, and
+     * length, but with semantic information.
      * @param file is the name of the source code file.
      */
     public static Token semanticFileEnd(File file) {
         CodeSemantics semantics = CodeSemantics.createControl();
-        return new Token(SharedTokenType.FILE_END, file, NO_VALUE, NO_VALUE, NO_VALUE, semantics, null); // TODO null?
+        return new Token(SharedTokenAttribute.FILE_END, file, NO_VALUE, NO_VALUE, NO_VALUE, semantics, null); // TODO null?
     }
 
     /**
@@ -128,7 +148,11 @@ public class Token {
      * @return the type of the token.
      */
     public TokenType getType() {
-        return type;
+        return new TokenType(this.type);
+    }
+
+    public TokenAttribute getTypeCompat() {
+        return this.type.getFirst();
     }
 
     @Override

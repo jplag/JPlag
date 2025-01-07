@@ -15,7 +15,7 @@ import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
  */
 public class PythonLanguageTest extends LanguageModuleTest {
     public PythonLanguageTest() {
-        super(new PythonLanguage(), Python3TokenType.class);
+        super(new PythonLanguage(), Python3TokenAttribute.class);
     }
 
     @Override
@@ -24,10 +24,10 @@ public class PythonLanguageTest extends LanguageModuleTest {
 
         collector.testFile("base_features.py", "streams.py").testSourceCoverage();
 
-        collector.testFile("log.py").testSourceCoverage().testTokenSequence(Python3TokenType.IMPORT, Python3TokenType.ASSIGN, Python3TokenType.ARRAY,
-                Python3TokenType.APPLY);
+        collector.testFile("log.py").testSourceCoverage().testTokenSequence(Python3TokenAttribute.IMPORT, Python3TokenAttribute.ASSIGN,
+                Python3TokenAttribute.ARRAY, Python3TokenAttribute.APPLY);
 
-        collector.testFile("unicode.py").testSourceCoverage().testTokenSequence(Python3TokenType.ASSIGN);
+        collector.testFile("unicode.py").testSourceCoverage().testTokenSequence(Python3TokenAttribute.ASSIGN);
     }
 
     @Override

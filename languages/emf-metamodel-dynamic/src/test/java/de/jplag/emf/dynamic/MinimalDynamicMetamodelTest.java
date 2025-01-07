@@ -20,8 +20,8 @@ import org.slf4j.LoggerFactory;
 
 import de.jplag.ParsingException;
 import de.jplag.Token;
+import de.jplag.TokenAttribute;
 import de.jplag.TokenPrinter;
-import de.jplag.TokenType;
 import de.jplag.emf.EmfLanguage;
 import de.jplag.testutils.FileUtil;
 import de.jplag.testutils.TokenUtils;
@@ -48,11 +48,11 @@ class MinimalDynamicMetamodelTest {
     void testBookstoreMetamodels() throws ParsingException {
         List<File> testFiles = Arrays.stream(TEST_SUBJECTS).map(path -> new File(BASE_PATH.toFile(), path)).toList();
         List<Token> result = language.parse(new HashSet<>(testFiles), true);
-        List<TokenType> tokenTypes = result.stream().map(Token::getType).toList();
+        List<TokenAttribute> tokenTypes = result.stream().map(token -> token.getType().getAttributes().getFirst()).toList();
         logger.debug(TokenPrinter.printTokens(result, baseDirectory, Optional.of(EmfLanguage.VIEW_FILE_SUFFIX)));
-        logger.info("parsed token types: " + tokenTypes.stream().map(TokenType::getDescription).toList());
+        logger.info("parsed token types: " + tokenTypes.stream().map(TokenAttribute::getDescription).toList());
         assertEquals(94, tokenTypes.size());
-        assertEquals(7, new HashSet<>(tokenTypes.stream().filter(DynamicMetamodelTokenType.class::isInstance).toList()).size());
+        assertEquals(7, new HashSet<>(tokenTypes.stream().filter(DynamicMetamodelTokenAttribute.class::isInstance).toList()).size());
 
         var originalTokens = TokenUtils.tokenTypesByFile(result, testFiles.get(0));
         var renamedTokens = TokenUtils.tokenTypesByFile(result, testFiles.get(3));

@@ -40,7 +40,7 @@ class Statement implements Comparable<Statement> {
     }
 
     private int tokenOrdinal(Token token) {
-        return ((Enum<?>) token.getType()).ordinal(); // reflects the order the enums were declared in
+        return ((Enum<?>) token.getTypeCompat()).ordinal(); // reflects the order the enums were declared in
     }
 
     @Override

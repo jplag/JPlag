@@ -1,30 +1,30 @@
 package de.jplag.scxml.parser;
 
-import static de.jplag.scxml.ScxmlTokenType.ACTION_END;
-import static de.jplag.scxml.ScxmlTokenType.ASSIGNMENT;
-import static de.jplag.scxml.ScxmlTokenType.CANCEL;
-import static de.jplag.scxml.ScxmlTokenType.ELSE;
-import static de.jplag.scxml.ScxmlTokenType.ELSE_END;
-import static de.jplag.scxml.ScxmlTokenType.ELSE_IF;
-import static de.jplag.scxml.ScxmlTokenType.ELSE_IF_END;
-import static de.jplag.scxml.ScxmlTokenType.FOREACH;
-import static de.jplag.scxml.ScxmlTokenType.IF;
-import static de.jplag.scxml.ScxmlTokenType.IF_END;
-import static de.jplag.scxml.ScxmlTokenType.ON_ENTRY;
-import static de.jplag.scxml.ScxmlTokenType.ON_EXIT;
-import static de.jplag.scxml.ScxmlTokenType.RAISE;
-import static de.jplag.scxml.ScxmlTokenType.SCRIPT;
-import static de.jplag.scxml.ScxmlTokenType.SEND;
-import static de.jplag.scxml.ScxmlTokenType.STATE;
-import static de.jplag.scxml.ScxmlTokenType.STATE_END;
-import static de.jplag.scxml.ScxmlTokenType.TRANSITION;
-import static de.jplag.scxml.ScxmlTokenType.TRANSITION_END;
+import static de.jplag.scxml.ScxmlTokenAttribute.ACTION_END;
+import static de.jplag.scxml.ScxmlTokenAttribute.ASSIGNMENT;
+import static de.jplag.scxml.ScxmlTokenAttribute.CANCEL;
+import static de.jplag.scxml.ScxmlTokenAttribute.ELSE;
+import static de.jplag.scxml.ScxmlTokenAttribute.ELSE_END;
+import static de.jplag.scxml.ScxmlTokenAttribute.ELSE_IF;
+import static de.jplag.scxml.ScxmlTokenAttribute.ELSE_IF_END;
+import static de.jplag.scxml.ScxmlTokenAttribute.FOREACH;
+import static de.jplag.scxml.ScxmlTokenAttribute.IF;
+import static de.jplag.scxml.ScxmlTokenAttribute.IF_END;
+import static de.jplag.scxml.ScxmlTokenAttribute.ON_ENTRY;
+import static de.jplag.scxml.ScxmlTokenAttribute.ON_EXIT;
+import static de.jplag.scxml.ScxmlTokenAttribute.RAISE;
+import static de.jplag.scxml.ScxmlTokenAttribute.SCRIPT;
+import static de.jplag.scxml.ScxmlTokenAttribute.SEND;
+import static de.jplag.scxml.ScxmlTokenAttribute.STATE;
+import static de.jplag.scxml.ScxmlTokenAttribute.STATE_END;
+import static de.jplag.scxml.ScxmlTokenAttribute.TRANSITION;
+import static de.jplag.scxml.ScxmlTokenAttribute.TRANSITION_END;
 import static java.util.Map.entry;
 
 import java.util.List;
 import java.util.Map;
 
-import de.jplag.scxml.ScxmlTokenType;
+import de.jplag.scxml.ScxmlTokenAttribute;
 import de.jplag.scxml.parser.model.State;
 import de.jplag.scxml.parser.model.Statechart;
 import de.jplag.scxml.parser.model.StatechartElement;
@@ -94,7 +94,7 @@ public class SimpleScxmlTokenGenerator extends AbstractScxmlVisitor {
         visitActions(onExits, ON_EXIT);
     }
 
-    private void visitActions(List<Action> actions, ScxmlTokenType tokenType) {
+    private void visitActions(List<Action> actions, ScxmlTokenAttribute tokenType) {
         if (!actions.isEmpty()) {
             // Only extract a single ENTRY / EXIT token even if the state contains multiple.
             // Functionally, this makes no difference.
@@ -169,14 +169,15 @@ public class SimpleScxmlTokenGenerator extends AbstractScxmlVisitor {
             return;
         }
 
-        Map<Class<? extends StatechartElement>, ScxmlTokenType> tokenTypeMap = Map.ofEntries(entry(Send.class, SEND), entry(Cancel.class, CANCEL));
-        ScxmlTokenType type = tokenTypeMap.get(content.getClass());
+        Map<Class<? extends StatechartElement>, ScxmlTokenAttribute> tokenTypeMap = Map.ofEntries(entry(Send.class, SEND),
+                entry(Cancel.class, CANCEL));
+        ScxmlTokenAttribute type = tokenTypeMap.get(content.getClass());
         adapter.addToken(type, content);
     }
 
     @Override
     public void visitSimpleExecutableContent(SimpleExecutableContent content) {
-        ScxmlTokenType type = switch (content.type()) {
+        ScxmlTokenAttribute type = switch (content.type()) {
             case RAISE -> RAISE;
             case ASSIGNMENT -> ASSIGNMENT;
             case SCRIPT -> SCRIPT;

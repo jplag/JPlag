@@ -261,11 +261,7 @@ class EndToEndSuiteTest {
 
     private List<String> getTokenNames(Submission submission) {
         return submission.getTokenList().stream().map(it -> {
-            if (Enum.class.isAssignableFrom(it.getType().getClass())) {
-                return ((Enum<?>) it.getType()).name();
-            } else {
-                return it.getType().getDescription();
-            }
+            return it.getType().toString();
         }).toList();
     }
 }

@@ -1,9 +1,16 @@
 package de.jplag.cpp;
 
+import java.util.List;
+
 import org.kohsuke.MetaInfServices;
 
 import de.jplag.Language;
 import de.jplag.antlr.AbstractAntlrLanguage;
+import de.jplag.tokentypes.ArraySyntaxTokenTypes;
+import de.jplag.tokentypes.ExceptionHandlingTokenTypes;
+import de.jplag.tokentypes.ImperativeTokenAttribute;
+import de.jplag.tokentypes.InlineIfTokenTypes;
+import de.jplag.tokentypes.ObjectOrientationTokens;
 
 /**
  * The entry point for the ANTLR parser based C++ language module.
@@ -45,5 +52,11 @@ public class CPPLanguage extends AbstractAntlrLanguage {
     @Override
     public boolean supportsNormalization() {
         return true;
+    }
+
+    @Override
+    public List<Class<?>> getTokenContexts() {
+        return List.of(ArraySyntaxTokenTypes.class, ExceptionHandlingTokenTypes.class, ImperativeTokenAttribute.class, InlineIfTokenTypes.class,
+                ObjectOrientationTokens.class);
     }
 }

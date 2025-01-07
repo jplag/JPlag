@@ -7,7 +7,7 @@ import java.util.List;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Match;
-import de.jplag.SharedTokenType;
+import de.jplag.SharedTokenAttribute;
 import de.jplag.Submission;
 import de.jplag.Token;
 import de.jplag.logging.ProgressBarLogger;
@@ -152,7 +152,7 @@ public class MatchMerging {
      * @return true if FILE_END is in token
      */
     private boolean containsFileEndToken(List<Token> token) {
-        return token.stream().map(Token::getType).anyMatch(it -> it.equals(SharedTokenType.FILE_END));
+        return token.stream().map(Token::getType).anyMatch(it -> it.equals(SharedTokenAttribute.FILE_END));
     }
 
     /**

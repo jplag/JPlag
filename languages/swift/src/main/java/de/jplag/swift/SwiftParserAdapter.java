@@ -76,7 +76,7 @@ public class SwiftParserAdapter extends AbstractParser {
      * @param column the start column of the Token in the line
      * @param length the length of the Token
      */
-    /* package-private */ void addToken(SwiftTokenType tokenType, int line, int column, int length) {
+    /* package-private */ void addToken(SwiftTokenAttribute tokenType, int line, int column, int length) {
         tokens.add(new Token(tokenType, currentFile, line, column, length, LanguageLoader.getLanguage(SwiftLanguage.class).get()));
     }
 }

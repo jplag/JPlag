@@ -1,21 +1,21 @@
 package de.jplag.golang;
 
-import static de.jplag.golang.GoTokenType.ARGUMENT;
-import static de.jplag.golang.GoTokenType.ASSIGNMENT;
-import static de.jplag.golang.GoTokenType.FUNCTION_BODY_BEGIN;
-import static de.jplag.golang.GoTokenType.FUNCTION_BODY_END;
-import static de.jplag.golang.GoTokenType.FUNCTION_DECLARATION;
-import static de.jplag.golang.GoTokenType.IMPORT_CLAUSE;
-import static de.jplag.golang.GoTokenType.IMPORT_CLAUSE_BEGIN;
-import static de.jplag.golang.GoTokenType.IMPORT_CLAUSE_END;
-import static de.jplag.golang.GoTokenType.IMPORT_DECLARATION;
-import static de.jplag.golang.GoTokenType.INVOCATION;
-import static de.jplag.golang.GoTokenType.MEMBER_DECLARATION;
-import static de.jplag.golang.GoTokenType.PACKAGE;
-import static de.jplag.golang.GoTokenType.STRUCT_BODY_BEGIN;
-import static de.jplag.golang.GoTokenType.STRUCT_BODY_END;
-import static de.jplag.golang.GoTokenType.STRUCT_DECLARATION;
-import static de.jplag.golang.GoTokenType.VARIABLE_DECLARATION;
+import static de.jplag.golang.GoTokenAttribute.ARGUMENT;
+import static de.jplag.golang.GoTokenAttribute.ASSIGNMENT;
+import static de.jplag.golang.GoTokenAttribute.FUNCTION_BODY_BEGIN;
+import static de.jplag.golang.GoTokenAttribute.FUNCTION_BODY_END;
+import static de.jplag.golang.GoTokenAttribute.FUNCTION_DECLARATION;
+import static de.jplag.golang.GoTokenAttribute.IMPORT_CLAUSE;
+import static de.jplag.golang.GoTokenAttribute.IMPORT_CLAUSE_BEGIN;
+import static de.jplag.golang.GoTokenAttribute.IMPORT_CLAUSE_END;
+import static de.jplag.golang.GoTokenAttribute.IMPORT_DECLARATION;
+import static de.jplag.golang.GoTokenAttribute.INVOCATION;
+import static de.jplag.golang.GoTokenAttribute.MEMBER_DECLARATION;
+import static de.jplag.golang.GoTokenAttribute.PACKAGE;
+import static de.jplag.golang.GoTokenAttribute.STRUCT_BODY_BEGIN;
+import static de.jplag.golang.GoTokenAttribute.STRUCT_BODY_END;
+import static de.jplag.golang.GoTokenAttribute.STRUCT_DECLARATION;
+import static de.jplag.golang.GoTokenAttribute.VARIABLE_DECLARATION;
 
 import de.jplag.testutils.LanguageModuleTest;
 import de.jplag.testutils.datacollector.TestDataCollector;
@@ -28,7 +28,7 @@ class GoLanguageTest extends LanguageModuleTest {
     private static final String ARRAY_ELLIPSIS_DECLS_FILE = "ArrayEllipsisDecls.go";
 
     public GoLanguageTest() {
-        super(new GoLanguage(), GoTokenType.class);
+        super(new GoLanguage(), GoTokenAttribute.class);
     }
 
     @Override

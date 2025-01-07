@@ -1,11 +1,11 @@
 package de.jplag.csharp;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 
 /**
  * Based on the legacy C# 1.2 constants.
  */
-public enum CSharpTokenType implements TokenType {
+public enum CSharpTokenAttribute implements TokenAttribute {
     INVOCATION("INVOC"),
     OBJECT_CREATION("OBJECT"),
     ARRAY_CREATION("ARRAY"),
@@ -75,7 +75,7 @@ public enum CSharpTokenType implements TokenType {
         return this.description;
     }
 
-    CSharpTokenType(String description) {
+    CSharpTokenAttribute(String description) {
         this.description = description;
     }
 }

@@ -11,7 +11,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import de.jplag.AbstractParser;
 import de.jplag.ParsingException;
 import de.jplag.Token;
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 import de.jplag.emf.EmfLanguage;
 import de.jplag.emf.MetamodelToken;
 import de.jplag.emf.normalization.ModelSorter;
@@ -109,7 +109,7 @@ public class EcoreParser extends AbstractParser {
      * @param type is the token type.
      * @param source is the corresponding {@link EObject} for which the token is added.
      */
-    protected void addToken(TokenType type, EObject source) {
+    protected void addToken(TokenAttribute type, EObject source) {
         MetamodelToken token = new MetamodelToken(type, currentFile, source);
         tokens.add(treeView.convertToMetadataEnrichedToken(token));
     }

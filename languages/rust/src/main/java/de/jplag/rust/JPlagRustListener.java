@@ -1,87 +1,87 @@
 package de.jplag.rust;
 
-import static de.jplag.rust.RustTokenType.APPLY;
-import static de.jplag.rust.RustTokenType.ARGUMENT;
-import static de.jplag.rust.RustTokenType.ARRAY_BODY_END;
-import static de.jplag.rust.RustTokenType.ARRAY_BODY_START;
-import static de.jplag.rust.RustTokenType.ARRAY_ELEMENT;
-import static de.jplag.rust.RustTokenType.ASSIGNMENT;
-import static de.jplag.rust.RustTokenType.BREAK;
-import static de.jplag.rust.RustTokenType.CLOSURE;
-import static de.jplag.rust.RustTokenType.CLOSURE_BODY_END;
-import static de.jplag.rust.RustTokenType.CLOSURE_BODY_START;
-import static de.jplag.rust.RustTokenType.ELSE_BODY_END;
-import static de.jplag.rust.RustTokenType.ELSE_BODY_START;
-import static de.jplag.rust.RustTokenType.ELSE_STATEMENT;
-import static de.jplag.rust.RustTokenType.ENUM;
-import static de.jplag.rust.RustTokenType.ENUM_BODY_END;
-import static de.jplag.rust.RustTokenType.ENUM_BODY_START;
-import static de.jplag.rust.RustTokenType.ENUM_ITEM;
-import static de.jplag.rust.RustTokenType.EXTERN_BLOCK;
-import static de.jplag.rust.RustTokenType.EXTERN_BLOCK_END;
-import static de.jplag.rust.RustTokenType.EXTERN_BLOCK_START;
-import static de.jplag.rust.RustTokenType.EXTERN_CRATE;
-import static de.jplag.rust.RustTokenType.FOR_BODY_END;
-import static de.jplag.rust.RustTokenType.FOR_BODY_START;
-import static de.jplag.rust.RustTokenType.FOR_STATEMENT;
-import static de.jplag.rust.RustTokenType.FUNCTION;
-import static de.jplag.rust.RustTokenType.FUNCTION_BODY_END;
-import static de.jplag.rust.RustTokenType.FUNCTION_BODY_START;
-import static de.jplag.rust.RustTokenType.FUNCTION_PARAMETER;
-import static de.jplag.rust.RustTokenType.IF_BODY_END;
-import static de.jplag.rust.RustTokenType.IF_BODY_START;
-import static de.jplag.rust.RustTokenType.IF_STATEMENT;
-import static de.jplag.rust.RustTokenType.IMPLEMENTATION;
-import static de.jplag.rust.RustTokenType.IMPLEMENTATION_BODY_END;
-import static de.jplag.rust.RustTokenType.IMPLEMENTATION_BODY_START;
-import static de.jplag.rust.RustTokenType.INNER_ATTRIBUTE;
-import static de.jplag.rust.RustTokenType.INNER_BLOCK_END;
-import static de.jplag.rust.RustTokenType.INNER_BLOCK_START;
-import static de.jplag.rust.RustTokenType.LABEL;
-import static de.jplag.rust.RustTokenType.LOOP_BODY_END;
-import static de.jplag.rust.RustTokenType.LOOP_BODY_START;
-import static de.jplag.rust.RustTokenType.LOOP_STATEMENT;
-import static de.jplag.rust.RustTokenType.MACRO_INVOCATION;
-import static de.jplag.rust.RustTokenType.MACRO_INVOCATION_BODY_END;
-import static de.jplag.rust.RustTokenType.MACRO_INVOCATION_BODY_START;
-import static de.jplag.rust.RustTokenType.MACRO_RULE;
-import static de.jplag.rust.RustTokenType.MACRO_RULES_DEFINITION;
-import static de.jplag.rust.RustTokenType.MACRO_RULES_DEFINITION_BODY_END;
-import static de.jplag.rust.RustTokenType.MACRO_RULES_DEFINITION_BODY_START;
-import static de.jplag.rust.RustTokenType.MACRO_RULE_BODY_END;
-import static de.jplag.rust.RustTokenType.MACRO_RULE_BODY_START;
-import static de.jplag.rust.RustTokenType.MATCH_BODY_END;
-import static de.jplag.rust.RustTokenType.MATCH_BODY_START;
-import static de.jplag.rust.RustTokenType.MATCH_CASE;
-import static de.jplag.rust.RustTokenType.MATCH_EXPRESSION;
-import static de.jplag.rust.RustTokenType.MATCH_GUARD;
-import static de.jplag.rust.RustTokenType.MODULE;
-import static de.jplag.rust.RustTokenType.MODULE_END;
-import static de.jplag.rust.RustTokenType.MODULE_START;
-import static de.jplag.rust.RustTokenType.OUTER_ATTRIBUTE;
-import static de.jplag.rust.RustTokenType.RETURN;
-import static de.jplag.rust.RustTokenType.STATIC_ITEM;
-import static de.jplag.rust.RustTokenType.STRUCT;
-import static de.jplag.rust.RustTokenType.STRUCT_BODY_END;
-import static de.jplag.rust.RustTokenType.STRUCT_BODY_START;
-import static de.jplag.rust.RustTokenType.STRUCT_FIELD;
-import static de.jplag.rust.RustTokenType.STRUCT_INITIALISATION;
-import static de.jplag.rust.RustTokenType.TRAIT;
-import static de.jplag.rust.RustTokenType.TRAIT_BODY_END;
-import static de.jplag.rust.RustTokenType.TRAIT_BODY_START;
-import static de.jplag.rust.RustTokenType.TUPLE;
-import static de.jplag.rust.RustTokenType.TUPLE_ELEMENT;
-import static de.jplag.rust.RustTokenType.TUPLE_END;
-import static de.jplag.rust.RustTokenType.TUPLE_START;
-import static de.jplag.rust.RustTokenType.TYPE_ALIAS;
-import static de.jplag.rust.RustTokenType.TYPE_ARGUMENT;
-import static de.jplag.rust.RustTokenType.TYPE_PARAMETER;
-import static de.jplag.rust.RustTokenType.UNION;
-import static de.jplag.rust.RustTokenType.UNION_BODY_END;
-import static de.jplag.rust.RustTokenType.UNION_BODY_START;
-import static de.jplag.rust.RustTokenType.USE_DECLARATION;
-import static de.jplag.rust.RustTokenType.USE_ITEM;
-import static de.jplag.rust.RustTokenType.VARIABLE_DECLARATION;
+import static de.jplag.rust.RustTokenAttribute.APPLY;
+import static de.jplag.rust.RustTokenAttribute.ARGUMENT;
+import static de.jplag.rust.RustTokenAttribute.ARRAY_BODY_END;
+import static de.jplag.rust.RustTokenAttribute.ARRAY_BODY_START;
+import static de.jplag.rust.RustTokenAttribute.ARRAY_ELEMENT;
+import static de.jplag.rust.RustTokenAttribute.ASSIGNMENT;
+import static de.jplag.rust.RustTokenAttribute.BREAK;
+import static de.jplag.rust.RustTokenAttribute.CLOSURE;
+import static de.jplag.rust.RustTokenAttribute.CLOSURE_BODY_END;
+import static de.jplag.rust.RustTokenAttribute.CLOSURE_BODY_START;
+import static de.jplag.rust.RustTokenAttribute.ELSE_BODY_END;
+import static de.jplag.rust.RustTokenAttribute.ELSE_BODY_START;
+import static de.jplag.rust.RustTokenAttribute.ELSE_STATEMENT;
+import static de.jplag.rust.RustTokenAttribute.ENUM;
+import static de.jplag.rust.RustTokenAttribute.ENUM_BODY_END;
+import static de.jplag.rust.RustTokenAttribute.ENUM_BODY_START;
+import static de.jplag.rust.RustTokenAttribute.ENUM_ITEM;
+import static de.jplag.rust.RustTokenAttribute.EXTERN_BLOCK;
+import static de.jplag.rust.RustTokenAttribute.EXTERN_BLOCK_END;
+import static de.jplag.rust.RustTokenAttribute.EXTERN_BLOCK_START;
+import static de.jplag.rust.RustTokenAttribute.EXTERN_CRATE;
+import static de.jplag.rust.RustTokenAttribute.FOR_BODY_END;
+import static de.jplag.rust.RustTokenAttribute.FOR_BODY_START;
+import static de.jplag.rust.RustTokenAttribute.FOR_STATEMENT;
+import static de.jplag.rust.RustTokenAttribute.FUNCTION;
+import static de.jplag.rust.RustTokenAttribute.FUNCTION_BODY_END;
+import static de.jplag.rust.RustTokenAttribute.FUNCTION_BODY_START;
+import static de.jplag.rust.RustTokenAttribute.FUNCTION_PARAMETER;
+import static de.jplag.rust.RustTokenAttribute.IF_BODY_END;
+import static de.jplag.rust.RustTokenAttribute.IF_BODY_START;
+import static de.jplag.rust.RustTokenAttribute.IF_STATEMENT;
+import static de.jplag.rust.RustTokenAttribute.IMPLEMENTATION;
+import static de.jplag.rust.RustTokenAttribute.IMPLEMENTATION_BODY_END;
+import static de.jplag.rust.RustTokenAttribute.IMPLEMENTATION_BODY_START;
+import static de.jplag.rust.RustTokenAttribute.INNER_ATTRIBUTE;
+import static de.jplag.rust.RustTokenAttribute.INNER_BLOCK_END;
+import static de.jplag.rust.RustTokenAttribute.INNER_BLOCK_START;
+import static de.jplag.rust.RustTokenAttribute.LABEL;
+import static de.jplag.rust.RustTokenAttribute.LOOP_BODY_END;
+import static de.jplag.rust.RustTokenAttribute.LOOP_BODY_START;
+import static de.jplag.rust.RustTokenAttribute.LOOP_STATEMENT;
+import static de.jplag.rust.RustTokenAttribute.MACRO_INVOCATION;
+import static de.jplag.rust.RustTokenAttribute.MACRO_INVOCATION_BODY_END;
+import static de.jplag.rust.RustTokenAttribute.MACRO_INVOCATION_BODY_START;
+import static de.jplag.rust.RustTokenAttribute.MACRO_RULE;
+import static de.jplag.rust.RustTokenAttribute.MACRO_RULES_DEFINITION;
+import static de.jplag.rust.RustTokenAttribute.MACRO_RULES_DEFINITION_BODY_END;
+import static de.jplag.rust.RustTokenAttribute.MACRO_RULES_DEFINITION_BODY_START;
+import static de.jplag.rust.RustTokenAttribute.MACRO_RULE_BODY_END;
+import static de.jplag.rust.RustTokenAttribute.MACRO_RULE_BODY_START;
+import static de.jplag.rust.RustTokenAttribute.MATCH_BODY_END;
+import static de.jplag.rust.RustTokenAttribute.MATCH_BODY_START;
+import static de.jplag.rust.RustTokenAttribute.MATCH_CASE;
+import static de.jplag.rust.RustTokenAttribute.MATCH_EXPRESSION;
+import static de.jplag.rust.RustTokenAttribute.MATCH_GUARD;
+import static de.jplag.rust.RustTokenAttribute.MODULE;
+import static de.jplag.rust.RustTokenAttribute.MODULE_END;
+import static de.jplag.rust.RustTokenAttribute.MODULE_START;
+import static de.jplag.rust.RustTokenAttribute.OUTER_ATTRIBUTE;
+import static de.jplag.rust.RustTokenAttribute.RETURN;
+import static de.jplag.rust.RustTokenAttribute.STATIC_ITEM;
+import static de.jplag.rust.RustTokenAttribute.STRUCT;
+import static de.jplag.rust.RustTokenAttribute.STRUCT_BODY_END;
+import static de.jplag.rust.RustTokenAttribute.STRUCT_BODY_START;
+import static de.jplag.rust.RustTokenAttribute.STRUCT_FIELD;
+import static de.jplag.rust.RustTokenAttribute.STRUCT_INITIALISATION;
+import static de.jplag.rust.RustTokenAttribute.TRAIT;
+import static de.jplag.rust.RustTokenAttribute.TRAIT_BODY_END;
+import static de.jplag.rust.RustTokenAttribute.TRAIT_BODY_START;
+import static de.jplag.rust.RustTokenAttribute.TUPLE;
+import static de.jplag.rust.RustTokenAttribute.TUPLE_ELEMENT;
+import static de.jplag.rust.RustTokenAttribute.TUPLE_END;
+import static de.jplag.rust.RustTokenAttribute.TUPLE_START;
+import static de.jplag.rust.RustTokenAttribute.TYPE_ALIAS;
+import static de.jplag.rust.RustTokenAttribute.TYPE_ARGUMENT;
+import static de.jplag.rust.RustTokenAttribute.TYPE_PARAMETER;
+import static de.jplag.rust.RustTokenAttribute.UNION;
+import static de.jplag.rust.RustTokenAttribute.UNION_BODY_END;
+import static de.jplag.rust.RustTokenAttribute.UNION_BODY_START;
+import static de.jplag.rust.RustTokenAttribute.USE_DECLARATION;
+import static de.jplag.rust.RustTokenAttribute.USE_ITEM;
+import static de.jplag.rust.RustTokenAttribute.VARIABLE_DECLARATION;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -108,15 +108,15 @@ public class JPlagRustListener extends RustParserBaseListener implements ParseTr
         state.enter(RustContext.FILE);
     }
 
-    private void transformToken(Optional<RustTokenType> targetType, Token token) {
+    private void transformToken(Optional<RustTokenAttribute> targetType, Token token) {
         targetType.ifPresent(type -> transformToken(type, token));
     }
 
-    private void transformToken(RustTokenType targetType, Token token) {
+    private void transformToken(RustTokenAttribute targetType, Token token) {
         parserAdapter.addToken(targetType, token.getLine(), token.getCharPositionInLine() + 1, token.getText().length());
     }
 
-    private void transformToken(RustTokenType targetType, Token start, Token end) {
+    private void transformToken(RustTokenAttribute targetType, Token start, Token end) {
         parserAdapter.addToken(targetType, start.getLine(), start.getCharPositionInLine() + 1, end.getStopIndex() - start.getStartIndex() + 1);
     }
 
@@ -441,7 +441,7 @@ public class JPlagRustListener extends RustParserBaseListener implements ParseTr
 
     @Override
     public void enterStaticItem(RustParser.StaticItemContext context) {
-        RustTokenType tokenType = context.getParent() instanceof RustParser.ExternalItemContext ? STATIC_ITEM : VARIABLE_DECLARATION;
+        RustTokenAttribute tokenType = context.getParent() instanceof RustParser.ExternalItemContext ? STATIC_ITEM : VARIABLE_DECLARATION;
         transformToken(tokenType, context.getStart());
         super.enterStaticItem(context);
     }
@@ -749,7 +749,7 @@ public class JPlagRustListener extends RustParserBaseListener implements ParseTr
                 }
             }
             case "{" -> {
-                Optional<RustTokenType> startType = stateContext.getStartType();
+                Optional<RustTokenAttribute> startType = stateContext.getStartType();
                 startType.ifPresent(type -> transformToken(type, token));
                 switch (stateContext) {
                     case MACRO_RULE_BODY, MACRO_INVOCATION_BODY, MACRO_INNER -> state.enter(RustContext.MACRO_INNER);
@@ -760,7 +760,7 @@ public class JPlagRustListener extends RustParserBaseListener implements ParseTr
 
             }
             case "}" -> {
-                Optional<RustTokenType> endType = stateContext.getEndType();
+                Optional<RustTokenAttribute> endType = stateContext.getEndType();
                 endType.ifPresent(type -> transformToken(type, token));
 
                 if (stateContext == RustContext.MACRO_INNER) {
@@ -955,26 +955,26 @@ public class JPlagRustListener extends RustParserBaseListener implements ParseTr
          */
         STRUCT_INITIALISATION();
 
-        private final Optional<RustTokenType> startType;
-        private final Optional<RustTokenType> endType;
+        private final Optional<RustTokenAttribute> startType;
+        private final Optional<RustTokenAttribute> endType;
 
         RustContext() {
             this.startType = Optional.empty();
             this.endType = Optional.empty();
         }
 
-        RustContext(RustTokenType startType, RustTokenType endType) {
+        RustContext(RustTokenAttribute startType, RustTokenAttribute endType) {
             this.startType = Optional.of(startType);
             this.endType = Optional.of(endType);
         }
 
         @Override
-        public Optional<RustTokenType> getStartType() {
+        public Optional<RustTokenAttribute> getStartType() {
             return startType;
         }
 
         @Override
-        public Optional<RustTokenType> getEndType() {
+        public Optional<RustTokenAttribute> getEndType() {
             return endType;
         }
     }

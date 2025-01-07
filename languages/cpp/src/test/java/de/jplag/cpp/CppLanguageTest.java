@@ -33,44 +33,46 @@ public class CppLanguageTest extends LanguageModuleTest {
             """;
 
     public CppLanguageTest() {
-        super(new CPPLanguage(), CPPTokenType.class);
+        super(new CPPLanguage(), CPPTokenAttribute.class);
     }
 
     @Override
     protected void collectTestData(TestDataCollector collector) {
-        collector.inlineSource(formattedCode(intMethodCallFormatter, assignSnippets)).testContainedTokens(CPPTokenType.ASSIGN).testSourceCoverage();
+        collector.inlineSource(formattedCode(intMethodCallFormatter, assignSnippets)).testContainedTokens(CPPTokenAttribute.ASSIGN)
+                .testSourceCoverage();
 
-        collector.testFile("FunctionCall.cpp").testTokenSequence(CPPTokenType.FUNCTION_BEGIN, CPPTokenType.APPLY, CPPTokenType.APPLY,
-                CPPTokenType.APPLY, CPPTokenType.APPLY, CPPTokenType.FUNCTION_END).testSourceCoverage();
+        collector.testFile("FunctionCall.cpp").testTokenSequence(CPPTokenAttribute.FUNCTION_BEGIN, CPPTokenAttribute.APPLY, CPPTokenAttribute.APPLY,
+                CPPTokenAttribute.APPLY, CPPTokenAttribute.APPLY, CPPTokenAttribute.FUNCTION_END).testSourceCoverage();
 
         collector.testFile("Loop.cpp")
-                .testTokenSequence(CPPTokenType.FUNCTION_BEGIN, CPPTokenType.DO_BEGIN, CPPTokenType.GOTO, CPPTokenType.DO_END,
-                        CPPTokenType.WHILE_BEGIN, CPPTokenType.BREAK, CPPTokenType.WHILE_END, CPPTokenType.FOR_BEGIN, CPPTokenType.CONTINUE,
-                        CPPTokenType.FOR_END, CPPTokenType.RETURN, CPPTokenType.FUNCTION_END)
+                .testTokenSequence(CPPTokenAttribute.FUNCTION_BEGIN, CPPTokenAttribute.DO_BEGIN, CPPTokenAttribute.GOTO, CPPTokenAttribute.DO_END,
+                        CPPTokenAttribute.WHILE_BEGIN, CPPTokenAttribute.BREAK, CPPTokenAttribute.WHILE_END, CPPTokenAttribute.FOR_BEGIN,
+                        CPPTokenAttribute.CONTINUE, CPPTokenAttribute.FOR_END, CPPTokenAttribute.RETURN, CPPTokenAttribute.FUNCTION_END)
                 .testSourceCoverage();
 
-        collector.inlineSource(formattedCode(stringMethodCallFormatter, functionCallSnippets))
-                .testTokenSequence(CPPTokenType.FUNCTION_BEGIN, CPPTokenType.VARDEF, CPPTokenType.APPLY, CPPTokenType.FUNCTION_END)
+        collector.inlineSource(formattedCode(stringMethodCallFormatter, functionCallSnippets)).testTokenSequence(CPPTokenAttribute.FUNCTION_BEGIN,
+                CPPTokenAttribute.VARDEF, CPPTokenAttribute.APPLY, CPPTokenAttribute.FUNCTION_END).testSourceCoverage();
+
+        collector.testFile("IfElse.cpp")
+                .testTokenSequence(CPPTokenAttribute.FUNCTION_BEGIN, CPPTokenAttribute.VARDEF, CPPTokenAttribute.VARDEF, CPPTokenAttribute.VARDEF,
+                        CPPTokenAttribute.VARDEF, CPPTokenAttribute.IF_BEGIN, CPPTokenAttribute.ASSIGN, CPPTokenAttribute.ELSE,
+                        CPPTokenAttribute.IF_BEGIN, CPPTokenAttribute.ASSIGN, CPPTokenAttribute.ASSIGN, CPPTokenAttribute.ELSE,
+                        CPPTokenAttribute.ASSIGN, CPPTokenAttribute.IF_END, CPPTokenAttribute.IF_END, CPPTokenAttribute.FUNCTION_END)
                 .testSourceCoverage();
 
-        collector.testFile("IfElse.cpp").testTokenSequence(CPPTokenType.FUNCTION_BEGIN, CPPTokenType.VARDEF, CPPTokenType.VARDEF, CPPTokenType.VARDEF,
-                CPPTokenType.VARDEF, CPPTokenType.IF_BEGIN, CPPTokenType.ASSIGN, CPPTokenType.ELSE, CPPTokenType.IF_BEGIN, CPPTokenType.ASSIGN,
-                CPPTokenType.ASSIGN, CPPTokenType.ELSE, CPPTokenType.ASSIGN, CPPTokenType.IF_END, CPPTokenType.IF_END, CPPTokenType.FUNCTION_END)
-                .testSourceCoverage();
+        collector.inlineSource("double* b = new double[10];").testTokenSequence(CPPTokenAttribute.VARDEF, CPPTokenAttribute.ASSIGN,
+                CPPTokenAttribute.NEWARRAY);
 
-        collector.inlineSource("double* b = new double[10];").testTokenSequence(CPPTokenType.VARDEF, CPPTokenType.ASSIGN, CPPTokenType.NEWARRAY);
+        collector.inlineSource("int x = square(2);").testTokenSequence(CPPTokenAttribute.VARDEF, CPPTokenAttribute.ASSIGN, CPPTokenAttribute.APPLY);
 
-        collector.inlineSource("int x = square(2);").testTokenSequence(CPPTokenType.VARDEF, CPPTokenType.ASSIGN, CPPTokenType.APPLY);
+        collector.testFile("CallOutsideMethodInClass.cpp").testTokenSequence(CPPTokenAttribute.CLASS_BEGIN, CPPTokenAttribute.VARDEF,
+                CPPTokenAttribute.ASSIGN, CPPTokenAttribute.APPLY, CPPTokenAttribute.CLASS_END);
 
-        collector.testFile("CallOutsideMethodInClass.cpp").testTokenSequence(CPPTokenType.CLASS_BEGIN, CPPTokenType.VARDEF, CPPTokenType.ASSIGN,
-                CPPTokenType.APPLY, CPPTokenType.CLASS_END);
+        collector.testFile("Union.cpp").testTokenSequence(CPPTokenAttribute.UNION_BEGIN, CPPTokenAttribute.VARDEF, CPPTokenAttribute.VARDEF,
+                CPPTokenAttribute.VARDEF, CPPTokenAttribute.UNION_END).testSourceCoverage();
 
-        collector.testFile("Union.cpp")
-                .testTokenSequence(CPPTokenType.UNION_BEGIN, CPPTokenType.VARDEF, CPPTokenType.VARDEF, CPPTokenType.VARDEF, CPPTokenType.UNION_END)
-                .testSourceCoverage();
-
-        collector.testFile("IntArray.cpp").testTokenSequence(CPPTokenType.VARDEF, CPPTokenType.ASSIGN, CPPTokenType.BRACED_INIT_BEGIN,
-                CPPTokenType.BRACED_INIT_END, CPPTokenType.VARDEF, CPPTokenType.BRACED_INIT_BEGIN, CPPTokenType.BRACED_INIT_END);
+        collector.testFile("IntArray.cpp").testTokenSequence(CPPTokenAttribute.VARDEF, CPPTokenAttribute.ASSIGN, CPPTokenAttribute.BRACED_INIT_BEGIN,
+                CPPTokenAttribute.BRACED_INIT_END, CPPTokenAttribute.VARDEF, CPPTokenAttribute.BRACED_INIT_BEGIN, CPPTokenAttribute.BRACED_INIT_END);
 
         collector.testFile("bc6h_enc.h").testCoverages();
 

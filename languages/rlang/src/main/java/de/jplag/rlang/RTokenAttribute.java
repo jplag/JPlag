@@ -1,13 +1,13 @@
 package de.jplag.rlang;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 
 /**
  * Tokens in R that are deemed important when comparing submissions for plagiarisms. Based on an R module for JPlag
  * v2.15 by Olmo Kramer, see their <a href="https://github.com/CodeGra-de/jplag/tree/master/jplag.frontend.R">JPlag
  * fork</a>.
  */
-public enum RTokenType implements TokenType {
+public enum RTokenAttribute implements TokenAttribute {
     BEGIN_FUNCTION("FUNCTION{"),
     END_FUNCTION("}FUNCTION"),
     FUNCTION_CALL("FUNCTION()"),
@@ -40,7 +40,7 @@ public enum RTokenType implements TokenType {
         return this.description;
     }
 
-    RTokenType(String description) {
+    RTokenAttribute(String description) {
         this.description = description;
     }
 }

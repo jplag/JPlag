@@ -1,8 +1,8 @@
 package de.jplag.python3;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 
-public enum Python3TokenType implements TokenType {
+public enum Python3TokenAttribute implements TokenAttribute {
     IMPORT("IMPORT"),
     CLASS_BEGIN("CLASS{"),
     CLASS_END("}CLASS"),
@@ -43,7 +43,7 @@ public enum Python3TokenType implements TokenType {
         return this.description;
     }
 
-    Python3TokenType(String description) {
+    Python3TokenAttribute(String description) {
         this.description = description;
     }
 }

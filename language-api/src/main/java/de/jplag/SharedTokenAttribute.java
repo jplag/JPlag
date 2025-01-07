@@ -3,7 +3,7 @@ package de.jplag;
 /**
  * Shared token types that occur for any language.
  */
-public enum SharedTokenType implements TokenType {
+public enum SharedTokenAttribute implements TokenAttribute {
     /**
      * Marks the end of the file. Every parsed file must have this token type as its last element.
      */
@@ -11,7 +11,7 @@ public enum SharedTokenType implements TokenType {
 
     private final String description;
 
-    SharedTokenType(String description) {
+    SharedTokenAttribute(String description) {
         this.description = description;
     }
 

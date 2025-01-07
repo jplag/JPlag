@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 import de.jplag.options.JPlagOptions;
 
@@ -36,7 +37,7 @@ public class GreedyStringTiling {
         int minimumNeighborLength = Math.min(Math.max(options.mergingOptions().minimumNeighborLength(), 1), options.minimumTokenMatch());
         this.minimumMatchLength = options.mergingOptions().enabled() ? minimumNeighborLength : options.minimumTokenMatch();
         this.tokenTypeValues = new ConcurrentHashMap<>();
-        this.tokenTypeValues.put(SharedTokenType.FILE_END, 0);
+        this.tokenTypeValues.put(new TokenType(SharedTokenAttribute.FILE_END), 0);
     }
 
     /**
@@ -98,14 +99,18 @@ public class GreedyStringTiling {
      * @return the comparison results.
      */
     private JPlagComparison compareInternal(Submission leftSubmission, Submission rightSubmission) {
-        int[] leftValues = tokenValueListFromSubmission(leftSubmission);
-        int[] rightValues = tokenValueListFromSubmission(rightSubmission);
+        Set<Object> rightCommonContexts = rightSubmission.getCommonTokenContexts();
+        Set<Object> commonContexts = leftSubmission.getCommonTokenContexts().stream().filter(rightCommonContexts::contains)
+                .collect(Collectors.toSet());
+
+        int[] leftValues = tokenValueListFromSubmission(leftSubmission, commonContexts);
+        int[] rightValues = tokenValueListFromSubmission(rightSubmission, commonContexts);
 
         boolean[] leftMarked = calculateInitiallyMarked(leftSubmission);
         boolean[] rightMarked = calculateInitiallyMarked(rightSubmission);
 
-        SubsequenceHashLookupTable leftLookupTable = subsequenceHashLookupTableForSubmission(leftSubmission, leftMarked);
-        SubsequenceHashLookupTable rightLookupTable = subsequenceHashLookupTableForSubmission(rightSubmission, rightMarked);
+        SubsequenceHashLookupTable leftLookupTable = subsequenceHashLookupTableForSubmission(leftSubmission, leftMarked, commonContexts);
+        SubsequenceHashLookupTable rightLookupTable = subsequenceHashLookupTableForSubmission(rightSubmission, rightMarked, commonContexts);
 
         int maximumMatchLength;
         List<Match> globalMatches = new ArrayList<>();
@@ -205,21 +210,22 @@ public class GreedyStringTiling {
         return result;
     }
 
-    private SubsequenceHashLookupTable subsequenceHashLookupTableForSubmission(Submission submission, boolean[] marked) {
+    private SubsequenceHashLookupTable subsequenceHashLookupTableForSubmission(Submission submission, boolean[] marked,
+            Set<Object> tokenTypeConstraints) {
         return cachedHashLookupTables.computeIfAbsent(submission,
-                (key -> new SubsequenceHashLookupTable(minimumMatchLength, tokenValueListFromSubmission(key), marked)));
+                (key -> new SubsequenceHashLookupTable(minimumMatchLength, tokenValueListFromSubmission(key, tokenTypeConstraints), marked)));
     }
 
     /**
      * Converts the tokens of the submission to a list of values.
      * @param submission The submission from which to convert the tokens.
      */
-    private int[] tokenValueListFromSubmission(Submission submission) {
+    private int[] tokenValueListFromSubmission(Submission submission, Set<Object> contexts) {
         return cachedTokenValueLists.computeIfAbsent(submission, (key -> {
             List<Token> tokens = key.getTokenList();
             int[] tokenValueList = new int[tokens.size()];
             for (int i = 0; i < tokens.size(); i++) {
-                TokenType type = tokens.get(i).getType();
+                TokenType type = tokens.get(i).getType().constrained(contexts);
                 synchronized (tokenTypeValues) {
                     tokenTypeValues.putIfAbsent(type, tokenTypeValues.size());
                 }

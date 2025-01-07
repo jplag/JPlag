@@ -1,11 +1,11 @@
 package de.jplag.antlr.testLanguage;
 
-import static de.jplag.antlr.testLanguage.TestTokenType.ADDITION;
-import static de.jplag.antlr.testLanguage.TestTokenType.NUMBER;
-import static de.jplag.antlr.testLanguage.TestTokenType.SUBTRACTION;
-import static de.jplag.antlr.testLanguage.TestTokenType.SUB_EXPRESSION_BEGIN;
-import static de.jplag.antlr.testLanguage.TestTokenType.SUB_EXPRESSION_END;
-import static de.jplag.antlr.testLanguage.TestTokenType.VARDEF;
+import static de.jplag.antlr.testLanguage.TestTokenAttribute.ADDITION;
+import static de.jplag.antlr.testLanguage.TestTokenAttribute.NUMBER;
+import static de.jplag.antlr.testLanguage.TestTokenAttribute.SUBTRACTION;
+import static de.jplag.antlr.testLanguage.TestTokenAttribute.SUB_EXPRESSION_BEGIN;
+import static de.jplag.antlr.testLanguage.TestTokenAttribute.SUB_EXPRESSION_END;
+import static de.jplag.antlr.testLanguage.TestTokenAttribute.VARDEF;
 
 import de.jplag.antlr.AbstractAntlrListener;
 import de.jplag.antlr.TestParser;

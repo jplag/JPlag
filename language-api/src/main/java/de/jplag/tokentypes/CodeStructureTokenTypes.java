@@ -1,11 +1,11 @@
 package de.jplag.tokentypes;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 
 /**
  * Contains token types for code structures like packages or namespaces
  */
-public enum CodeStructureTokenTypes implements TokenType {
+public enum CodeStructureTokenTypes implements TokenAttribute {
     CONTEXT_DEFINITION("CONTEXT"),
     IMPORT("IMPORT"),;
 

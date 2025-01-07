@@ -1,11 +1,11 @@
 package de.jplag.emf;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 
 /**
  * Ecore meta-metamodel token type. Defines which tokens can be extracted from a metamodel.
  */
-public enum MetamodelTokenType implements TokenType {
+public enum MetamodelTokenAttribute implements TokenAttribute {
     PACKAGE("EPackage"),
     PACKAGE_END(PACKAGE),
     ANNOTATION("EAnnotation"),
@@ -46,7 +46,7 @@ public enum MetamodelTokenType implements TokenType {
      * Creates a normal metamodel token type.
      * @param description is the textual description.
      */
-    MetamodelTokenType(String description) {
+    MetamodelTokenAttribute(String description) {
         this.description = description;
         isEndToken = false;
     }
@@ -55,7 +55,7 @@ public enum MetamodelTokenType implements TokenType {
      * Create a metamodel end token type, meaning a token that indicates the end of a containment.
      * @param beginType is the corresponding begin token.
      */
-    MetamodelTokenType(MetamodelTokenType beginType) {
+    MetamodelTokenAttribute(MetamodelTokenAttribute beginType) {
         description = beginType.getDescription() + END_TOKEN_SUFFIX;
         isEndToken = true;
     }

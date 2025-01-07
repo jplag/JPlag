@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.ParsingException;
-import de.jplag.SharedTokenType;
+import de.jplag.SharedTokenAttribute;
 import de.jplag.Token;
 import de.jplag.TokenPrinter;
 
@@ -143,12 +143,12 @@ class ScalaLanguageTest {
      * @param fileName The file name of the complete code example
      */
     private void testTokenCoverage(List<Token> tokens, String fileName) {
-        var annotatedTokens = tokens.stream().map(Token::getType).collect(Collectors.toSet());
-        assertTrue(annotatedTokens.contains(SharedTokenType.FILE_END));
-        var annotatedScalaTokens = annotatedTokens.stream().filter(ScalaTokenType.class::isInstance).collect(Collectors.toSet());
-        var allScalaTokens = ScalaTokenType.values();
+        var annotatedTokens = tokens.stream().map(Token::getTypeCompat).collect(Collectors.toSet());
+        assertTrue(annotatedTokens.contains(SharedTokenAttribute.FILE_END));
+        var annotatedScalaTokens = annotatedTokens.stream().filter(ScalaTokenAttribute.class::isInstance).collect(Collectors.toSet());
+        var allScalaTokens = ScalaTokenAttribute.values();
         var missingScalaTokens = Arrays.stream(allScalaTokens).filter(token -> !annotatedScalaTokens.contains(token)).toList();
         assertTrue(missingScalaTokens.isEmpty(), "The following scala tokens are missing in the code example '%s':\n".formatted(fileName)
-                + String.join("\n", missingScalaTokens.stream().map(ScalaTokenType::getDescription).toList()));
+                + String.join("\n", missingScalaTokens.stream().map(ScalaTokenAttribute::getDescription).toList()));
     }
 }

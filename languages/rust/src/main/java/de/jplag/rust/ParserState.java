@@ -65,12 +65,12 @@ public class ParserState<C extends ParserState.Context> {
          * Returns the token type that marks the start of the Context.
          * @return the start type
          */
-        Optional<RustTokenType> getStartType();
+        Optional<RustTokenAttribute> getStartType();
 
         /**
          * Returns the token type that marks the end of the Context.
          * @return the end type
          */
-        Optional<RustTokenType> getEndType();
+        Optional<RustTokenAttribute> getEndType();
     }
 }

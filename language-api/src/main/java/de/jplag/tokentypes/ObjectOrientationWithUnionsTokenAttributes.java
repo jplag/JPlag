@@ -2,16 +2,13 @@ package de.jplag.tokentypes;
 
 import de.jplag.TokenAttribute;
 
-public enum ExceptionHandlingTokenTypes implements TokenAttribute {
-    THROW("THROW"),
-    TRY("TRY"),
-    TRY_END("TRY_END"),
-    CATCH("CATCH"),
-    FINALLY("FINALLY");
+public enum ObjectOrientationWithUnionsTokenAttributes implements TokenAttribute {
+    UNION_DEF("UNION_DEF"),
+    UNION_END("UNION_END"),;
 
     private String description;
 
-    ExceptionHandlingTokenTypes(String description) {
+    ObjectOrientationWithUnionsTokenAttributes(String description) {
         this.description = description;
     }
 

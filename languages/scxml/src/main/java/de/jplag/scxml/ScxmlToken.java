@@ -4,7 +4,7 @@ import java.io.File;
 
 import de.jplag.LanguageLoader;
 import de.jplag.Token;
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 import de.jplag.scxml.parser.model.StatechartElement;
 
 /**
@@ -20,7 +20,7 @@ public class ScxmlToken extends Token {
      * @param file the source statechart file
      * @param element the corresponding StatechartElement this token was extracted from
      */
-    public ScxmlToken(TokenType type, File file, StatechartElement element) {
+    public ScxmlToken(TokenAttribute type, File file, StatechartElement element) {
         super(type, file, NO_VALUE, NO_VALUE, NO_VALUE, LanguageLoader.getLanguage(ScxmlLanguage.class).get());
         this.element = element;
     }
@@ -34,7 +34,7 @@ public class ScxmlToken extends Token {
      * @param length the length of the token in the view file
      * @param element the corresponding StatechartElement this token was extracted from
      */
-    public ScxmlToken(TokenType type, File file, int line, int column, int length, StatechartElement element) {
+    public ScxmlToken(TokenAttribute type, File file, int line, int column, int length, StatechartElement element) {
         super(type, file, line, column, length, LanguageLoader.getLanguage(ScxmlLanguage.class).get());
         this.element = element;
     }

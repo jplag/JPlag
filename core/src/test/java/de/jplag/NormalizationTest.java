@@ -12,15 +12,16 @@ import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 
 class NormalizationTest extends TestBase {
-    private final Map<String, List<TokenType>> tokenStringMap;
-    private final List<TokenType> originalTokenString;
+    private final Map<String, List<TokenAttribute>> tokenStringMap;
+    private final List<TokenAttribute> originalTokenString;
 
     NormalizationTest() throws ExitException {
         JPlagOptions options = getDefaultOptions("normalization");
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
         submissionSet.normalizeSubmissions();
-        Function<Submission, List<TokenType>> getTokenString = submission -> submission.getTokenList().stream().map(Token::getType).toList();
+        Function<Submission, List<TokenAttribute>> getTokenString = submission -> submission.getTokenList().stream().map(Token::getTypeCompat)
+                .toList();
         tokenStringMap = submissionSet.getSubmissions().stream().collect(Collectors.toMap(Submission::getName, getTokenString));
         originalTokenString = tokenStringMap.get("Squares.java");
     }

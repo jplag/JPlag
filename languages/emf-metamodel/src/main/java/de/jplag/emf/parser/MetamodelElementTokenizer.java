@@ -16,95 +16,95 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.ETypeParameter;
 import org.eclipse.emf.ecore.util.EcoreSwitch;
 
-import de.jplag.TokenType;
-import de.jplag.emf.MetamodelTokenType;
+import de.jplag.TokenAttribute;
+import de.jplag.emf.MetamodelTokenAttribute;
 
 /**
- * Tokenizer for metamodel elements. Maps any {@link EObject} to a {@link MetamodelTokenType}.
+ * Tokenizer for metamodel elements. Maps any {@link EObject} to a {@link MetamodelTokenAttribute}.
  */
-public class MetamodelElementTokenizer extends EcoreSwitch<MetamodelTokenType> implements ModelingElementTokenizer {
+public class MetamodelElementTokenizer extends EcoreSwitch<MetamodelTokenAttribute> implements ModelingElementTokenizer {
 
     @Override
-    public TokenType element2Token(EObject modelElement) {
+    public TokenAttribute element2Token(EObject modelElement) {
         return doSwitch(modelElement);
     }
 
     @Override
-    public MetamodelTokenType caseEAnnotation(EAnnotation eAnnotation) {
-        return MetamodelTokenType.ANNOTATION;
+    public MetamodelTokenAttribute caseEAnnotation(EAnnotation eAnnotation) {
+        return MetamodelTokenAttribute.ANNOTATION;
     }
 
     @Override
-    public MetamodelTokenType caseEAttribute(EAttribute eAttribute) {
+    public MetamodelTokenAttribute caseEAttribute(EAttribute eAttribute) {
         if (eAttribute.isID()) {
-            return MetamodelTokenType.ID_ATTRIBUTE;
+            return MetamodelTokenAttribute.ID_ATTRIBUTE;
         }
-        return MetamodelTokenType.ATTRIBUTE;
+        return MetamodelTokenAttribute.ATTRIBUTE;
     }
 
     @Override
-    public MetamodelTokenType caseEClass(EClass eClass) {
+    public MetamodelTokenAttribute caseEClass(EClass eClass) {
         if (eClass.isInterface()) {
-            return MetamodelTokenType.INTERFACE;
+            return MetamodelTokenAttribute.INTERFACE;
         }
         if (eClass.isAbstract()) {
-            return MetamodelTokenType.ABSTRACT_CLASS;
+            return MetamodelTokenAttribute.ABSTRACT_CLASS;
         }
-        return MetamodelTokenType.CLASS;
+        return MetamodelTokenAttribute.CLASS;
     }
 
     @Override
-    public MetamodelTokenType caseEDataType(EDataType eDataType) {
-        return MetamodelTokenType.DATATYPE;
+    public MetamodelTokenAttribute caseEDataType(EDataType eDataType) {
+        return MetamodelTokenAttribute.DATATYPE;
     }
 
     @Override
-    public MetamodelTokenType caseETypeParameter(ETypeParameter eTypeParameter) {
-        return MetamodelTokenType.TYPE_PARAMETER;
+    public MetamodelTokenAttribute caseETypeParameter(ETypeParameter eTypeParameter) {
+        return MetamodelTokenAttribute.TYPE_PARAMETER;
     }
 
     @Override
-    public MetamodelTokenType caseEParameter(EParameter eParameter) {
-        return MetamodelTokenType.PARAMETER;
+    public MetamodelTokenAttribute caseEParameter(EParameter eParameter) {
+        return MetamodelTokenAttribute.PARAMETER;
     }
 
     @Override
-    public MetamodelTokenType caseEOperation(EOperation eOperation) {
-        return MetamodelTokenType.OPERATION;
+    public MetamodelTokenAttribute caseEOperation(EOperation eOperation) {
+        return MetamodelTokenAttribute.OPERATION;
     }
 
     @Override
-    public MetamodelTokenType caseEPackage(EPackage ePackage) {
-        return MetamodelTokenType.PACKAGE;
+    public MetamodelTokenAttribute caseEPackage(EPackage ePackage) {
+        return MetamodelTokenAttribute.PACKAGE;
     }
 
     @Override
-    public MetamodelTokenType caseEEnumLiteral(EEnumLiteral eEnumLiteral) {
-        return MetamodelTokenType.ENUM_LITERAL;
+    public MetamodelTokenAttribute caseEEnumLiteral(EEnumLiteral eEnumLiteral) {
+        return MetamodelTokenAttribute.ENUM_LITERAL;
     }
 
     @Override
-    public MetamodelTokenType caseEEnum(EEnum eEnum) {
-        return MetamodelTokenType.ENUM;
+    public MetamodelTokenAttribute caseEEnum(EEnum eEnum) {
+        return MetamodelTokenAttribute.ENUM;
     }
 
     @Override
-    public MetamodelTokenType caseEReference(EReference eReference) {
+    public MetamodelTokenAttribute caseEReference(EReference eReference) {
         if (eReference.isContainment()) {
             if (eReference.getUpperBound() == 1) {
-                return MetamodelTokenType.CONTAINMENT;
+                return MetamodelTokenAttribute.CONTAINMENT;
             }
-            return MetamodelTokenType.CONTAINMENT_MULT;
+            return MetamodelTokenAttribute.CONTAINMENT_MULT;
         }
         if (eReference.getUpperBound() == 1) {
-            return MetamodelTokenType.REFERENCE;
+            return MetamodelTokenAttribute.REFERENCE;
         }
-        return MetamodelTokenType.REFERENCE_MULT;
+        return MetamodelTokenAttribute.REFERENCE_MULT;
     }
 
     @Override
-    public Set<TokenType> allTokenTypes() {
-        return Set.of(MetamodelTokenType.values());
+    public Set<TokenAttribute> allTokenTypes() {
+        return Set.of(MetamodelTokenAttribute.values());
     }
 
 }

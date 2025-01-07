@@ -1,26 +1,64 @@
 package de.jplag;
 
-/**
- * Indicates the type of a token. Needs to be implemented for each language module to declare what types of tokens can
- * be extracted from code written in that language. A token type is expected to be stateless, thus it is recommended to
- * use an <code>enum</code> or <code>record</code>.
- * @see SharedTokenType
- */
-public interface TokenType {
-    /**
-     * Returns the user-readable description of this token type.
-     */
-    String getDescription();
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
-    /**
-     * Indicates that no matches containing this token type shall be generated. Defaults to <code>false</code>.
-     * @return <code>true</code> if token type is excluded from matching, otherwise <code>false</code>.
-     */
-    default Boolean isExcludedFromMatching() {
-        return false;
+public class TokenType {
+    private List<TokenAttribute> attributes;
+
+    public TokenType(List<TokenAttribute> attributes) {
+        this.attributes = attributes;
     }
 
-    default Object getContext() {
-        return this.getClass();
+    public TokenType(TokenAttribute attribute) {
+        this(List.of(attribute));
+    }
+
+    public boolean isFileEnd() {
+        return this.attributes.size() == 1 && this.attributes.getFirst() == SharedTokenAttribute.FILE_END;
+    }
+
+    public boolean matches(TokenAttribute... attributes) {
+        return this.attributes.equals(List.of(attributes));
+    }
+
+    public List<TokenAttribute> getAttributes() {
+        return this.attributes;
+    }
+
+    public boolean isExcludedFromMatching() {
+        return this.attributes.stream().anyMatch(TokenAttribute::isExcludedFromMatching);
+    }
+
+    public TokenType constrained(Set<Object> contexts) {
+        List<TokenAttribute> contained = this.attributes.stream().filter(it -> contexts.contains(it.getContext())).toList();
+        if (contained.isEmpty()) {
+            return this;
+        } else {
+            return new TokenType(contained);
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass())
+            return false;
+        TokenType tokenType = (TokenType) o;
+        return Objects.equals(attributes, tokenType.attributes);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(attributes);
+    }
+
+    @Override
+    public String toString() {
+        if (this.attributes.size() == 1) {
+            return this.attributes.getFirst().getDescription();
+        } else {
+            return "{" + String.join(", ", this.attributes.stream().map(TokenAttribute::getDescription).toList()) + "}";
+        }
     }
 }

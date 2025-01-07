@@ -1,8 +1,8 @@
 package de.jplag.antlr.testLanguage;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 
-public enum TestTokenType implements TokenType {
+public enum TestTokenAttribute implements TokenAttribute {
     ADDITION("PLUS("),
     SUBTRACTION("MINUS("),
     SUB_EXPRESSION_BEGIN("SUB {"),
@@ -13,7 +13,7 @@ public enum TestTokenType implements TokenType {
 
     private final String description;
 
-    TestTokenType(String description) {
+    TestTokenAttribute(String description) {
         this.description = description;
     }
 

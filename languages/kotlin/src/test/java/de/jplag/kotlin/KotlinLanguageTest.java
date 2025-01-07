@@ -9,7 +9,7 @@ import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
  */
 public class KotlinLanguageTest extends LanguageModuleTest {
     public KotlinLanguageTest() {
-        super(new KotlinLanguage(), KotlinTokenType.class);
+        super(new KotlinLanguage(), KotlinTokenAttribute.class);
     }
 
     @Override
@@ -17,10 +17,10 @@ public class KotlinLanguageTest extends LanguageModuleTest {
         collector.testFile("Complete.kt").testCoverages();
         collector.testFile("Game.kt").testSourceCoverage();
 
-        collector.testFile("HelloWorld.kt").testSourceCoverage().testTokenSequence(KotlinTokenType.PACKAGE, KotlinTokenType.FUNCTION,
-                KotlinTokenType.FUNCTION_BODY_BEGIN, KotlinTokenType.FUNCTION_INVOCATION, KotlinTokenType.FUNCTION_BODY_END);
+        collector.testFile("HelloWorld.kt").testSourceCoverage().testTokenSequence(KotlinTokenAttribute.PACKAGE, KotlinTokenAttribute.FUNCTION,
+                KotlinTokenAttribute.FUNCTION_BODY_BEGIN, KotlinTokenAttribute.FUNCTION_INVOCATION, KotlinTokenAttribute.FUNCTION_BODY_END);
 
-        collector.inlineSource("package de.jplag.kotlin\n").testSourceCoverage().testContainedTokens(KotlinTokenType.PACKAGE);
+        collector.inlineSource("package de.jplag.kotlin\n").testSourceCoverage().testContainedTokens(KotlinTokenAttribute.PACKAGE);
     }
 
     @Override

@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -311,5 +312,13 @@ public class Submission implements Comparable<Submission> {
             }
         }
         return fileTokenCount;
+    }
+
+    public Set<Language> getTokenLanguages() {
+        return this.tokenList.stream().map(Token::getLanguage).filter(Objects::nonNull).collect(Collectors.toSet());
+    }
+
+    public Set<Object> getCommonTokenContexts() {
+        return getTokenLanguages().stream().flatMap(it -> it.getTokenContexts().stream()).collect(Collectors.toSet());
     }
 }

@@ -20,8 +20,8 @@ import org.slf4j.LoggerFactory;
 
 import de.jplag.ParsingException;
 import de.jplag.Token;
+import de.jplag.TokenAttribute;
 import de.jplag.TokenPrinter;
-import de.jplag.TokenType;
 import de.jplag.text.NaturalLanguage;
 
 class NaturalLanguageTest {
@@ -46,7 +46,7 @@ class NaturalLanguageTest {
         List<Token> result = language.parse(Set.of(new File(BASE_PATH.toFile(), TEST_SUBJECT)));
         logger.info(TokenPrinter.printTokens(result, baseDirectory));
 
-        List<TokenType> tokenTypes = result.stream().map(Token::getType).toList();
+        List<TokenAttribute> tokenTypes = result.stream().map(Token::getTypeCompat).toList();
         assertEquals(283, tokenTypes.size());
         assertEquals(158, new HashSet<>(tokenTypes).size());
     }

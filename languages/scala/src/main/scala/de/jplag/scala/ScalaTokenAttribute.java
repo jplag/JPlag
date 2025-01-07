@@ -1,8 +1,8 @@
 package de.jplag.scala;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 
-public enum ScalaTokenType implements TokenType {
+public enum ScalaTokenAttribute implements TokenAttribute {
     PACKAGE("PACKAGE"),
     IMPORT("IMPORT"),
     CLASS_BEGIN("CLASS{"),
@@ -79,7 +79,7 @@ public enum ScalaTokenType implements TokenType {
         return description;
     }
 
-    ScalaTokenType(String description) {
+    ScalaTokenAttribute(String description) {
         this.description = description;
     }
 }

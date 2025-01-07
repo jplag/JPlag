@@ -1,20 +1,20 @@
 package de.jplag.antlr;
 
-import static de.jplag.antlr.testLanguage.TestTokenType.ADDITION;
-import static de.jplag.antlr.testLanguage.TestTokenType.NUMBER;
-import static de.jplag.antlr.testLanguage.TestTokenType.SUBTRACTION;
-import static de.jplag.antlr.testLanguage.TestTokenType.SUB_EXPRESSION_BEGIN;
-import static de.jplag.antlr.testLanguage.TestTokenType.SUB_EXPRESSION_END;
+import static de.jplag.antlr.testLanguage.TestTokenAttribute.ADDITION;
+import static de.jplag.antlr.testLanguage.TestTokenAttribute.NUMBER;
+import static de.jplag.antlr.testLanguage.TestTokenAttribute.SUBTRACTION;
+import static de.jplag.antlr.testLanguage.TestTokenAttribute.SUB_EXPRESSION_BEGIN;
+import static de.jplag.antlr.testLanguage.TestTokenAttribute.SUB_EXPRESSION_END;
 
 import de.jplag.antlr.testLanguage.TestLanguage;
-import de.jplag.antlr.testLanguage.TestTokenType;
+import de.jplag.antlr.testLanguage.TestTokenAttribute;
 import de.jplag.testutils.LanguageModuleTest;
 import de.jplag.testutils.datacollector.TestDataCollector;
 import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
 
 public class ParserTest extends LanguageModuleTest {
     public ParserTest() {
-        super(new TestLanguage(), TestTokenType.class);
+        super(new TestLanguage(), TestTokenAttribute.class);
     }
 
     @Override

@@ -1,8 +1,8 @@
 package de.jplag.golang;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 
-public enum GoTokenType implements TokenType {
+public enum GoTokenAttribute implements TokenAttribute {
     // TOP LEVEL STRUCTURES
 
     PACKAGE("PACKAGE"),
@@ -97,7 +97,7 @@ public enum GoTokenType implements TokenType {
         return this.description;
     }
 
-    GoTokenType(String description) {
+    GoTokenAttribute(String description) {
         this.description = description;
     }
 }

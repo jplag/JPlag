@@ -1,8 +1,8 @@
 package de.jplag.tokentypes;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 
-public enum ImperativeTokenType implements TokenType {
+public enum ImperativeTokenAttribute implements TokenAttribute {
     VARIABLE_DEFINITION("VAR_DEF"),
     ASSIGNMENT("ASSIGN"),
 
@@ -16,7 +16,7 @@ public enum ImperativeTokenType implements TokenType {
     SWITCH("SWITCH"),
     SWITCH_END("SWITCH_END"),
     CASE("CASE"),
-    CASE_END("CASE_END"),
+    DEFAULT("DEFAULT"),
     LOOP("LOOP"),
     LOOP_END("LOOP_END"),
     GOTO("GOTO"), // TODO different context?
@@ -30,7 +30,7 @@ public enum ImperativeTokenType implements TokenType {
 
     private String description;
 
-    ImperativeTokenType(String description) {
+    ImperativeTokenAttribute(String description) {
         this.description = description;
     }
 

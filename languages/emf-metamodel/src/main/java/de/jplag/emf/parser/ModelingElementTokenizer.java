@@ -7,10 +7,10 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 
 /**
- * Tokenizer for EMF modeling elements. Maps any {@link EObject} to a {@link TokenType}.
+ * Tokenizer for EMF modeling elements. Maps any {@link EObject} to a {@link TokenAttribute}.
  */
 public interface ModelingElementTokenizer {
 
@@ -19,7 +19,7 @@ public interface ModelingElementTokenizer {
      * @param modelElement is the model element.
      * @return the token type or null if no token is extracted for that element.
      */
-    TokenType element2Token(EObject modelElement);
+    TokenAttribute element2Token(EObject modelElement);
 
     /**
      * Returns the corresponding the token types for a list of model elements. See
@@ -27,7 +27,7 @@ public interface ModelingElementTokenizer {
      * @param modelElements contains the model elements.
      * @return the list of corresponding token types, might contain less entries than elements.
      */
-    default List<TokenType> elements2Tokens(List<EObject> modelElements) {
+    default List<TokenAttribute> elements2Tokens(List<EObject> modelElements) {
         return modelElements.stream().map(this::element2Token).filter(Objects::nonNull).toList();
     }
 
@@ -37,12 +37,12 @@ public interface ModelingElementTokenizer {
      * @param modelElement is the model element.
      * @return the optional token type.
      */
-    default Optional<TokenType> element2OptionalToken(EObject modelElement) {
+    default Optional<TokenAttribute> element2OptionalToken(EObject modelElement) {
         return Optional.ofNullable(element2Token(modelElement));
     }
 
     /**
      * @return the set of all known token types.
      */
-    Set<TokenType> allTokenTypes();
+    Set<TokenAttribute> allTokenTypes();
 }

@@ -1,8 +1,8 @@
 package de.jplag.swift;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 
-public enum SwiftTokenType implements TokenType {
+public enum SwiftTokenAttribute implements TokenAttribute {
     IMPORT("IMPORT"),
     CLASS_DECLARATION("CLASS"),
     STRUCT_DECLARATION("STRUCT"),
@@ -58,7 +58,7 @@ public enum SwiftTokenType implements TokenType {
         return description;
     }
 
-    SwiftTokenType(String description) {
+    SwiftTokenAttribute(String description) {
         this.description = description;
     }
 }

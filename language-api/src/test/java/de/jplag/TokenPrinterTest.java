@@ -29,37 +29,37 @@ class TokenPrinterTest {
         // See TokenPrinterTest.txt for the intended behaviour
         List<Token> tokens = new ArrayList<>();
         File testFile = new File(TEST_FILE_LOCATION.toFile(), TEST_FILE_NAME);
-        tokens.add(new Token(TestTokenType.STRING, testFile, 1, 1, "STRING".length(), null));
-        tokens.add(new Token(TestTokenType.STRING, testFile, 2, 1, "STRING".length() + 1, null));
-        tokens.add(new Token(TestTokenType.STRING, testFile, 3, 1, "STRING".length() + 2, null));
-        tokens.add(new Token(TestTokenType.STRING, testFile, 4, 1, "STRING".length() + 10, null));
+        tokens.add(new Token(TestTokenAttribute.STRING, testFile, 1, 1, "STRING".length(), null));
+        tokens.add(new Token(TestTokenAttribute.STRING, testFile, 2, 1, "STRING".length() + 1, null));
+        tokens.add(new Token(TestTokenAttribute.STRING, testFile, 3, 1, "STRING".length() + 2, null));
+        tokens.add(new Token(TestTokenAttribute.STRING, testFile, 4, 1, "STRING".length() + 10, null));
 
-        tokens.add(new Token(TestTokenType.STRING, testFile, 6, 3, 1, null));
-        tokens.add(new Token(TestTokenType.STRING, testFile, 7, 9, 1, null));
+        tokens.add(new Token(TestTokenAttribute.STRING, testFile, 6, 3, 1, null));
+        tokens.add(new Token(TestTokenAttribute.STRING, testFile, 7, 9, 1, null));
 
-        tokens.add(new Token(TestTokenType.STRING, testFile, 9, 1, 1, null));
-        tokens.add(new Token(TestTokenType.STRING, testFile, 9, 10, 1, null));
+        tokens.add(new Token(TestTokenAttribute.STRING, testFile, 9, 1, 1, null));
+        tokens.add(new Token(TestTokenAttribute.STRING, testFile, 9, 10, 1, null));
 
-        tokens.add(new Token(TestTokenType.STRING, testFile, 10, 1, 1, null));
-        tokens.add(new Token(TestTokenType.STRING, testFile, 10, 5, 1, null));
+        tokens.add(new Token(TestTokenAttribute.STRING, testFile, 10, 1, 1, null));
+        tokens.add(new Token(TestTokenAttribute.STRING, testFile, 10, 5, 1, null));
 
-        tokens.add(new Token(TestTokenType.STRING, testFile, 12, 1, 1, null));
-        tokens.add(new Token(TestTokenType.STRING, testFile, 12, 5, 1, null));
-        tokens.add(new Token(TestTokenType.STRING, testFile, 12, 10, 1, null));
+        tokens.add(new Token(TestTokenAttribute.STRING, testFile, 12, 1, 1, null));
+        tokens.add(new Token(TestTokenAttribute.STRING, testFile, 12, 5, 1, null));
+        tokens.add(new Token(TestTokenAttribute.STRING, testFile, 12, 10, 1, null));
 
-        tokens.add(new Token(TestTokenType.STRING, testFile, 14, 10, 1, null));
-        tokens.add(new Token(TestTokenType.STRING, testFile, 14, 5, 1, null));
-        tokens.add(new Token(TestTokenType.STRING, testFile, 14, 1, 1, null));
+        tokens.add(new Token(TestTokenAttribute.STRING, testFile, 14, 10, 1, null));
+        tokens.add(new Token(TestTokenAttribute.STRING, testFile, 14, 5, 1, null));
+        tokens.add(new Token(TestTokenAttribute.STRING, testFile, 14, 1, 1, null));
 
-        tokens.add(new Token(TestTokenType.STRING, testFile, 16, -5, 1, null));
+        tokens.add(new Token(TestTokenAttribute.STRING, testFile, 16, -5, 1, null));
 
-        tokens.add(new Token(TestTokenType.STRING, testFile, 19, 100, 1, null));
+        tokens.add(new Token(TestTokenAttribute.STRING, testFile, 19, 100, 1, null));
 
-        tokens.add(new Token(TestTokenType.STRING, testFile, 22, 1, 100, null));
+        tokens.add(new Token(TestTokenAttribute.STRING, testFile, 22, 1, 100, null));
 
         tokens.add(Token.fileEnd(testFile));
 
-        tokens.add(new Token(TestTokenType.STRING, testFile, 100, 1, 1, null));
+        tokens.add(new Token(TestTokenAttribute.STRING, testFile, 100, 1, 1, null));
 
         String output = TokenPrinter.printTokens(tokens, TEST_FILE_LOCATION.toFile());
         logger.info(output); // no additional newline required
@@ -86,7 +86,7 @@ class TokenPrinterTest {
                         continue;
                     }
                     Token currentToken = tokens.get(tokenIndex);
-                    assertTrue(lineToken.equalsIgnoreCase(currentToken.getType().getDescription()),
+                    assertTrue(lineToken.equalsIgnoreCase(currentToken.getType().toString()),
                             "expected: %s, actual: %s".formatted(lineToken, currentToken));
                     if (currentToken.getLine() != Token.NO_VALUE) {
                         assertEquals(lineIndex, currentToken.getLine(), "invalid line for token " + currentToken);
@@ -98,7 +98,7 @@ class TokenPrinterTest {
         assertEquals(tokens.size() - 1, tokenIndex, "incorrect number of tokens printed");
     }
 
-    private enum TestTokenType implements TokenType {
+    private enum TestTokenAttribute implements TokenAttribute {
         STRING("STRING");
 
         private final String description;
@@ -108,7 +108,7 @@ class TokenPrinterTest {
             return description;
         }
 
-        TestTokenType(String description) {
+        TestTokenAttribute(String description) {
             this.description = description;
         }
     }

@@ -3,10 +3,10 @@ package de.jplag.emf.dynamic;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 
-public record DynamicMetamodelTokenType(EClass eClass) implements TokenType {
-    public DynamicMetamodelTokenType(EObject eObject) {
+public record DynamicMetamodelTokenAttribute(EClass eClass) implements TokenAttribute {
+    public DynamicMetamodelTokenAttribute(EObject eObject) {
         this(eObject.eClass());
     }
 

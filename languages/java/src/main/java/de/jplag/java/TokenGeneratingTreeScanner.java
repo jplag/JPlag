@@ -12,37 +12,49 @@ import static de.jplag.tokentypes.ExceptionHandlingTokenTypes.FINALLY;
 import static de.jplag.tokentypes.ExceptionHandlingTokenTypes.THROW;
 import static de.jplag.tokentypes.ExceptionHandlingTokenTypes.TRY;
 import static de.jplag.tokentypes.ExceptionHandlingTokenTypes.TRY_END;
-import static de.jplag.tokentypes.ImperativeTokenType.ASSIGNMENT;
-import static de.jplag.tokentypes.ImperativeTokenType.BREAK;
-import static de.jplag.tokentypes.ImperativeTokenType.CALL;
-import static de.jplag.tokentypes.ImperativeTokenType.CONTINUE;
-import static de.jplag.tokentypes.ImperativeTokenType.ELSE;
-import static de.jplag.tokentypes.ImperativeTokenType.FUNCTION_DEFINITION;
-import static de.jplag.tokentypes.ImperativeTokenType.FUNCTION_END;
-import static de.jplag.tokentypes.ImperativeTokenType.IF;
-import static de.jplag.tokentypes.ImperativeTokenType.IF_END;
-import static de.jplag.tokentypes.ImperativeTokenType.LOOP;
-import static de.jplag.tokentypes.ImperativeTokenType.LOOP_END;
-import static de.jplag.tokentypes.ImperativeTokenType.RETURN;
-import static de.jplag.tokentypes.ImperativeTokenType.STRUCTURE_DEFINITION;
-import static de.jplag.tokentypes.ImperativeTokenType.STRUCTURE_END;
-import static de.jplag.tokentypes.ImperativeTokenType.SWITCH;
-import static de.jplag.tokentypes.ImperativeTokenType.SWITCH_END;
-import static de.jplag.tokentypes.ImperativeTokenType.VARIABLE_DEFINITION;
+import static de.jplag.tokentypes.ImperativeTokenAttribute.ASSIGNMENT;
+import static de.jplag.tokentypes.ImperativeTokenAttribute.BREAK;
+import static de.jplag.tokentypes.ImperativeTokenAttribute.CALL;
+import static de.jplag.tokentypes.ImperativeTokenAttribute.CASE;
+import static de.jplag.tokentypes.ImperativeTokenAttribute.CONTINUE;
+import static de.jplag.tokentypes.ImperativeTokenAttribute.DEFAULT;
+import static de.jplag.tokentypes.ImperativeTokenAttribute.ELSE;
+import static de.jplag.tokentypes.ImperativeTokenAttribute.FUNCTION_DEFINITION;
+import static de.jplag.tokentypes.ImperativeTokenAttribute.FUNCTION_END;
+import static de.jplag.tokentypes.ImperativeTokenAttribute.IF;
+import static de.jplag.tokentypes.ImperativeTokenAttribute.IF_END;
+import static de.jplag.tokentypes.ImperativeTokenAttribute.LOOP;
+import static de.jplag.tokentypes.ImperativeTokenAttribute.LOOP_END;
+import static de.jplag.tokentypes.ImperativeTokenAttribute.RETURN;
+import static de.jplag.tokentypes.ImperativeTokenAttribute.STRUCTURE_DEFINITION;
+import static de.jplag.tokentypes.ImperativeTokenAttribute.STRUCTURE_END;
+import static de.jplag.tokentypes.ImperativeTokenAttribute.SWITCH;
+import static de.jplag.tokentypes.ImperativeTokenAttribute.SWITCH_END;
+import static de.jplag.tokentypes.ImperativeTokenAttribute.VARIABLE_DEFINITION;
 import static de.jplag.tokentypes.InlineIfTokenTypes.CONDITION;
+import static de.jplag.tokentypes.ObjectOrientationTokens.CLASS_DEF;
+import static de.jplag.tokentypes.ObjectOrientationTokens.CLASS_END;
+import static de.jplag.tokentypes.ObjectOrientationTokens.ENUM_DEF;
+import static de.jplag.tokentypes.ObjectOrientationTokens.ENUM_END;
 import static de.jplag.tokentypes.ObjectOrientationTokens.NEW;
+import static de.jplag.tokentypes.ObjectOrientationWithInterfacesTokenAttributes.INTERFACE_DEF;
+import static de.jplag.tokentypes.ObjectOrientationWithInterfacesTokenAttributes.INTERFACE_END;
+import static de.jplag.tokentypes.SynchronizedTokenTypes.SYNCHRONIZED_END;
+import static de.jplag.tokentypes.SynchronizedTokenTypes.SYNCHRONIZED_START;
 
 import java.io.File;
+import java.util.List;
 import java.util.Set;
 
 import de.jplag.Language;
 import de.jplag.LanguageLoader;
 import de.jplag.Token;
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 import de.jplag.semantics.CodeSemantics;
 import de.jplag.semantics.VariableAccessType;
 import de.jplag.semantics.VariableRegistry;
 import de.jplag.semantics.VariableScope;
+import de.jplag.util.LazyLoader;
 
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.AssertTree;
@@ -92,7 +104,7 @@ import com.sun.source.util.TreeScanner;
 
 final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     private final static String ANONYMOUS_VARIABLE_NAME = "";
-    private final static Language javaLanguage = LanguageLoader.getLanguage(JavaLanguage.class).get();
+    private final static LazyLoader<Language> javaLanguage = new LazyLoader<>(() -> LanguageLoader.getLanguage(JavaLanguage.class).get());
 
     private final File file;
     private final Parser parser;
@@ -118,8 +130,12 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         this.variableRegistry = new VariableRegistry();
     }
 
-    public void addToken(TokenType type, File file, long line, long column, long length, CodeSemantics semantics) {
-        parser.add(new Token(type, file, (int) line, (int) column, (int) length, semantics, javaLanguage));
+    public void addToken(TokenAttribute type, File file, long line, long column, long length, CodeSemantics semantics) {
+        this.addToken(List.of(type), file, line, column, length, semantics);
+    }
+
+    public void addToken(List<TokenAttribute> type, File file, long line, long column, long length, CodeSemantics semantics) {
+        parser.add(new Token(type, file, (int) line, (int) column, (int) length, semantics, javaLanguage.get()));
         variableRegistry.updateSemantics(semantics);
     }
 
@@ -129,7 +145,11 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
      * @param position is the start position of the token.
      * @param length is the length of the token.
      */
-    private void addToken(TokenType tokenType, long position, int length, CodeSemantics semantics) {
+    private void addToken(TokenAttribute tokenType, long position, int length, CodeSemantics semantics) {
+        addToken(tokenType, file, map.getLineNumber(position), map.getColumnNumber(position), length, semantics);
+    }
+
+    private void addToken(List<TokenAttribute> tokenType, long position, int length, CodeSemantics semantics) {
         addToken(tokenType, file, map.getLineNumber(position), map.getColumnNumber(position), length, semantics);
     }
 
@@ -139,7 +159,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
      * @param start is the start position of the token.
      * @param end is the end position of the token for the calculation of the length.
      */
-    private void addToken(TokenType tokenType, long start, long end, CodeSemantics semantics) {
+    private void addToken(TokenAttribute tokenType, long start, long end, CodeSemantics semantics) {
         addToken(tokenType, file, map.getLineNumber(start), map.getColumnNumber(start), (end - start), semantics);
     }
 
@@ -176,20 +196,23 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         long end = positions.getEndPosition(ast, node) - 1;
         CodeSemantics semantics = CodeSemantics.createControl();
         if (node.getKind() == Tree.Kind.ENUM) {
-            addToken(STRUCTURE_DEFINITION, start, 4, semantics);
+            addToken(List.of(STRUCTURE_DEFINITION, ENUM_DEF), start, 4, semantics);
         } else if (node.getKind() == Tree.Kind.INTERFACE) {
-            addToken(STRUCTURE_DEFINITION, start, 9, semantics);
+            addToken(List.of(STRUCTURE_DEFINITION, CLASS_DEF, INTERFACE_DEF), start, 9, semantics);
         } else if (node.getKind() == Tree.Kind.RECORD) {
-            addToken(STRUCTURE_DEFINITION, start, 1, semantics);
+            addToken(STRUCTURE_DEFINITION, start, 1, semantics); // TODO
         } else if (node.getKind() == Tree.Kind.ANNOTATION_TYPE) {
-            addToken(STRUCTURE_DEFINITION, start, 10, semantics);
+            addToken(STRUCTURE_DEFINITION, start, 10, semantics); // TODO
         } else if (node.getKind() == Tree.Kind.CLASS) {
-            addToken(STRUCTURE_DEFINITION, start, 5, semantics);
+            addToken(List.of(STRUCTURE_DEFINITION, CLASS_DEF), start, 5, semantics);
         }
         super.visitClass(node, null);
 
-        TokenType tokenType = switch (node.getKind()) {
-            case ENUM, INTERFACE, RECORD, ANNOTATION_TYPE, CLASS -> STRUCTURE_END;
+        List<TokenAttribute> tokenType = switch (node.getKind()) {
+            case ENUM -> List.of(STRUCTURE_END, ENUM_END);
+            case INTERFACE -> List.of(STRUCTURE_END, CLASS_DEF, INTERFACE_END);
+            case CLASS -> List.of(STRUCTURE_END, CLASS_END);
+            case RECORD, ANNOTATION_TYPE -> List.of(STRUCTURE_END);
             default -> null;
         };
 
@@ -229,12 +252,12 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     }
 
     @Override
-    public Void visitSynchronized(SynchronizedTree node, Void unused) { // TODO
+    public Void visitSynchronized(SynchronizedTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        addToken(JavaTokenType.J_SYNC_BEGIN, start, 12, CodeSemantics.createControl());
+        addToken(SYNCHRONIZED_START, start, 12, CodeSemantics.createControl());
         super.visitSynchronized(node, null);
-        addToken(JavaTokenType.J_SYNC_END, end, 1, CodeSemantics.createControl());
+        addToken(SYNCHRONIZED_END, end, 1, CodeSemantics.createControl());
         return null;
     }
 
@@ -307,13 +330,13 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     }
 
     @Override
-    public Void visitCase(CaseTree node, Void unused) { // TODO
+    public Void visitCase(CaseTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        addToken(JavaTokenType.J_CASE, start, 4, CodeSemantics.createControl());
+        addToken(CASE, start, 4, CodeSemantics.createControl());
 
         this.scan(node.getLabels(), null);
         if (node.getGuard() != null) {
-            addToken(JavaTokenType.J_IF_BEGIN, positions.getStartPosition(ast, node.getGuard()), 0, CodeSemantics.createControl());
+            addToken(IF, positions.getStartPosition(ast, node.getGuard()), 0, CodeSemantics.createControl());
         }
         this.scan(node.getGuard(), null);
         if (node.getCaseKind() == CaseTree.CaseKind.RULE) {
@@ -323,7 +346,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         }
 
         if (node.getGuard() != null) {
-            addToken(JavaTokenType.J_IF_END, positions.getEndPosition(ast, node), 0, CodeSemantics.createControl());
+            addToken(IF_END, positions.getEndPosition(ast, node), 0, CodeSemantics.createControl());
         }
 
         return null;
@@ -411,7 +434,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node.getIdentifier());
         if (!node.getTypeArguments().isEmpty()) { // TODO
-            addToken(JavaTokenType.J_GENERIC, start, 3 + node.getIdentifier().toString().length(), new CodeSemantics());
+            addToken(JavaTokenAttribute.J_GENERIC, start, 3 + node.getIdentifier().toString().length(), new CodeSemantics());
         }
         addToken(NEW, start, end, new CodeSemantics());
         super.visitNewClass(node, null);
@@ -422,7 +445,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     public Void visitTypeParameter(TypeParameterTree node, Void unused) { // TODO
         long start = positions.getStartPosition(ast, node);
         // This is odd, but also done like this in Java 1.7
-        addToken(JavaTokenType.J_GENERIC, start, 1, new CodeSemantics());
+        addToken(JavaTokenAttribute.J_GENERIC, start, 1, new CodeSemantics());
         return super.visitTypeParameter(node, null);
     }
 
@@ -479,7 +502,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     @Override
     public Void visitAssert(AssertTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        addToken(ASSERT, start, 6, CodeSemantics.createControl());
+        addToken(List.of(ASSERT, CALL), start, 6, CodeSemantics.createControl());
         return super.visitAssert(node, null);
     }
 
@@ -513,7 +536,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     }
 
     @Override
-    public Void visitConditionalExpression(ConditionalExpressionTree node, Void unused) { // TODO
+    public Void visitConditionalExpression(ConditionalExpressionTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         addToken(CONDITION, start, 1, new CodeSemantics());
         return super.visitConditionalExpression(node, null);
@@ -549,30 +572,30 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     public Void visitModule(ModuleTree node, Void unused) { // TODO
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node) - 1;
-        addToken(JavaTokenType.J_MODULE_BEGIN, start, 6, CodeSemantics.createControl());
+        addToken(JavaTokenAttribute.J_MODULE_BEGIN, start, 6, CodeSemantics.createControl());
         super.visitModule(node, null);
-        addToken(JavaTokenType.J_MODULE_END, end, 1, CodeSemantics.createControl());
+        addToken(JavaTokenAttribute.J_MODULE_END, end, 1, CodeSemantics.createControl());
         return null;
     }
 
     @Override
     public Void visitRequires(RequiresTree node, Void unused) { // TODO
         long start = positions.getStartPosition(ast, node);
-        addToken(JavaTokenType.J_REQUIRES, start, 8, CodeSemantics.createControl());
+        addToken(JavaTokenAttribute.J_REQUIRES, start, 8, CodeSemantics.createControl());
         return super.visitRequires(node, null);
     }
 
     @Override
     public Void visitProvides(ProvidesTree node, Void unused) { // TODO
         long start = positions.getStartPosition(ast, node);
-        addToken(JavaTokenType.J_PROVIDES, start, 8, CodeSemantics.createControl());
+        addToken(JavaTokenAttribute.J_PROVIDES, start, 8, CodeSemantics.createControl());
         return super.visitProvides(node, null);
     }
 
     @Override
     public Void visitExports(ExportsTree node, Void unused) { // TODO
         long start = positions.getStartPosition(ast, node);
-        addToken(JavaTokenType.J_EXPORTS, start, 7, CodeSemantics.createControl());
+        addToken(JavaTokenAttribute.J_EXPORTS, start, 7, CodeSemantics.createControl());
         return super.visitExports(node, null);
     }
 
@@ -580,15 +603,15 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     public Void visitYield(YieldTree node, Void unused) { // TODO
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node);
-        addToken(JavaTokenType.J_YIELD, start, end, CodeSemantics.createControl());
+        addToken(JavaTokenAttribute.J_YIELD, start, end, CodeSemantics.createControl());
         return super.visitYield(node, null);
     }
 
     @Override
-    public Void visitDefaultCaseLabel(DefaultCaseLabelTree node, Void unused) { // TODO
+    public Void visitDefaultCaseLabel(DefaultCaseLabelTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node);
-        addToken(JavaTokenType.J_DEFAULT, start, end, CodeSemantics.createControl());
+        addToken(DEFAULT, start, end, CodeSemantics.createControl());
         return super.visitDefaultCaseLabel(node, null);
     }
 

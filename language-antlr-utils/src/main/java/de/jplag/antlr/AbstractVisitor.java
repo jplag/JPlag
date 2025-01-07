@@ -12,7 +12,7 @@ import org.antlr.v4.runtime.Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 import de.jplag.semantics.CodeSemantics;
 import de.jplag.semantics.VariableRegistry;
 
@@ -26,7 +26,7 @@ public abstract class AbstractVisitor<T> {
     private final Predicate<T> condition;
     private final List<Consumer<HandlerData<T>>> entryHandlers;
     private Function<T, CodeSemantics> entrySemantics;
-    protected TokenType entryTokenType;
+    protected List<TokenAttribute> entryTokenType;
 
     /**
      * @param condition The condition for the visit.
@@ -61,18 +61,28 @@ public abstract class AbstractVisitor<T> {
      * @param tokenType The type of the token.
      * @return Self
      */
-    public AbstractVisitor<T> mapEnter(TokenType tokenType) {
+    public AbstractVisitor<T> mapEnter(TokenAttribute tokenType) {
+        entryTokenType = List.of(tokenType);
+        return this;
+    }
+
+    /**
+     * Tell the visitor that it should generate a token upon entering the entity. Should only be invoked once per visitor.
+     * @param tokenType The type of the token.
+     * @return Self
+     */
+    public AbstractVisitor<T> mapEnter(List<TokenAttribute> tokenType) {
         entryTokenType = tokenType;
         return this;
     }
 
     /**
      * Tell the visitor that it should generate a token upon entering the entity. Should only be invoked once per visitor.
-     * Alias for {@link #mapEnter(TokenType)}.
+     * Alias for {@link #mapEnter(TokenAttribute)}.
      * @param tokenType The type of the token.
      * @return Self
      */
-    public AbstractVisitor<T> map(TokenType tokenType) {
+    public AbstractVisitor<T> map(TokenAttribute tokenType) {
         mapEnter(tokenType);
         return this;
     }
@@ -129,11 +139,11 @@ public abstract class AbstractVisitor<T> {
         entryHandlers.forEach(handler -> handler.accept(data));
     }
 
-    void addToken(HandlerData<T> data, TokenType tokenType, Function<T, CodeSemantics> semantics, Function<T, Token> extractToken) {
+    void addToken(HandlerData<T> data, List<TokenAttribute> tokenType, Function<T, CodeSemantics> semantics, Function<T, Token> extractToken) {
         addToken(data, tokenType, semantics, extractToken, extractToken);
     }
 
-    void addToken(HandlerData<T> data, TokenType tokenType, Function<T, CodeSemantics> semantics, Function<T, Token> extractStartToken,
+    void addToken(HandlerData<T> data, List<TokenAttribute> tokenType, Function<T, CodeSemantics> semantics, Function<T, Token> extractStartToken,
             Function<T, Token> extractEndToken) {
         data.collector().addToken(tokenType, semantics, data.entity(), extractStartToken, extractEndToken, data.variableRegistry());
     }

@@ -49,9 +49,9 @@ public class GenericEmfTreeView extends AbstractModelView {
         if (optionalEObject.isPresent()) {
             EObject object = optionalEObject.get();
             TokenTrace trace = objectToLine.get(object);
-            return new MetamodelToken(token.getType(), token.getFile(), trace, optionalEObject);
+            return new MetamodelToken(token.getType().getAttributes().getFirst(), token.getFile(), trace, optionalEObject);
         }
-        return new MetamodelToken(token.getType(), token.getFile());
+        return new MetamodelToken(token.getType().getAttributes().getFirst(), token.getFile());
     }
 
     private final class TreeViewBuilder extends AbstractMetamodelVisitor {

@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.ParsingException;
-import de.jplag.SharedTokenType;
+import de.jplag.SharedTokenAttribute;
 import de.jplag.Token;
 import de.jplag.TokenPrinter;
 
@@ -95,13 +95,13 @@ class RLanguageTest {
      * @param fileName The file name of the complete code example
      */
     private void testTokenCoverage(List<Token> tokens, String fileName) {
-        var annotatedTokens = tokens.stream().map(Token::getType).collect(Collectors.toSet());
-        assertTrue(annotatedTokens.contains(SharedTokenType.FILE_END));
-        var annotatedRTokens = annotatedTokens.stream().filter(RTokenType.class::isInstance).collect(Collectors.toSet());
-        var allRTokens = RTokenType.values();
+        var annotatedTokens = tokens.stream().map(Token::getTypeCompat).collect(Collectors.toSet());
+        assertTrue(annotatedTokens.contains(SharedTokenAttribute.FILE_END));
+        var annotatedRTokens = annotatedTokens.stream().filter(RTokenAttribute.class::isInstance).collect(Collectors.toSet());
+        var allRTokens = RTokenAttribute.values();
         var missingRTokens = Arrays.stream(allRTokens).filter(token -> !annotatedRTokens.contains(token)).toList();
         assertTrue(missingRTokens.isEmpty(), "The following R tokens are missing in the code example '%s':\n".formatted(fileName)
-                + String.join("\n", missingRTokens.stream().map(RTokenType::getDescription).toList()));
+                + String.join("\n", missingRTokens.stream().map(RTokenAttribute::getDescription).toList()));
     }
 
     private static String getNoCodeLineExpression() {

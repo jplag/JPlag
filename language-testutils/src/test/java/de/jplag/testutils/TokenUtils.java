@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import de.jplag.Token;
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 
 public final class TokenUtils {
 
@@ -18,8 +18,8 @@ public final class TokenUtils {
      * @param file is the target file.
      * @return the immutable list of token types.
      */
-    public static List<TokenType> tokenTypesByFile(List<Token> tokens, File file) {
-        return tokensByFile(tokens, file).stream().map(Token::getType).toList();
+    public static List<TokenAttribute> tokenTypesByFile(List<Token> tokens, File file) {
+        return tokensByFile(tokens, file).stream().map(Token::getTypeCompat).toList();
     }
 
     /**

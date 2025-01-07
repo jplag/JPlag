@@ -1,6 +1,6 @@
 package de.java.multilang;
 
-import static de.jplag.SharedTokenType.FILE_END;
+import static de.jplag.SharedTokenAttribute.FILE_END;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -17,9 +17,9 @@ import org.junit.jupiter.api.Test;
 
 import de.jplag.ParsingException;
 import de.jplag.Token;
-import de.jplag.TokenType;
-import de.jplag.cpp.CPPTokenType;
-import de.jplag.java.JavaTokenType;
+import de.jplag.TokenAttribute;
+import de.jplag.cpp.CPPTokenAttribute;
+import de.jplag.java.JavaTokenAttribute;
 import de.jplag.multilang.MultiLanguage;
 import de.jplag.multilang.MultiLanguageOptions;
 
@@ -28,8 +28,8 @@ class MultilangTest {
     private static File javaCode;
     private static File cppCode;
 
-    private static List<TokenType> expectedTokens = List.of(CPPTokenType.FUNCTION_BEGIN, CPPTokenType.RETURN, CPPTokenType.FUNCTION_END, FILE_END,
-            JavaTokenType.J_CLASS_BEGIN, JavaTokenType.J_CLASS_END, FILE_END);
+    private static List<TokenAttribute> expectedTokens = List.of(CPPTokenAttribute.FUNCTION_BEGIN, CPPTokenAttribute.RETURN,
+            CPPTokenAttribute.FUNCTION_END, FILE_END, JavaTokenAttribute.J_CLASS_BEGIN, JavaTokenAttribute.J_CLASS_END, FILE_END);
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -49,7 +49,7 @@ class MultilangTest {
         Set<File> sources = new TreeSet<>(List.of(javaCode, cppCode)); // Using TreeSet to ensure order of entries
         List<Token> tokens = languageModule.parse(sources, false);
 
-        Assertions.assertEquals(expectedTokens, tokens.stream().map(Token::getType).toList());
+        Assertions.assertEquals(expectedTokens, tokens.stream().map(Token::getTypeCompat).toList());
     }
 
     @Test

@@ -1,8 +1,8 @@
 package de.jplag.java;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 
-public enum JavaTokenType implements TokenType {
+public enum JavaTokenAttribute implements TokenAttribute {
     J_PACKAGE("PACKAGE"), // check
     J_IMPORT("IMPORT"), // check
     J_CLASS_BEGIN("CLASS{"), // check
@@ -81,7 +81,7 @@ public enum JavaTokenType implements TokenType {
         return this.description;
     }
 
-    JavaTokenType(String description) {
+    JavaTokenAttribute(String description) {
         this.description = description;
     }
 }

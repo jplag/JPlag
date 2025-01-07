@@ -1,6 +1,6 @@
 package de.jplag.scala
 
-import de.jplag.scala.ScalaTokenType._
+import ScalaTokenAttribute._
 import de.jplag.util.FileUtils
 import de.jplag.{AbstractParser, Language, LanguageLoader, ParsingException, Token}
 
@@ -35,8 +35,8 @@ class Parser(private val language: Language) extends AbstractParser {
          * @param after    opt. token type to insert at the end of the tree
          * @param traverse custom method of traversing the tree
          */
-        private case class TR(before: Option[ScalaTokenType] = None,
-                              after: Option[ScalaTokenType] = None,
+        private case class TR(before: Option[ScalaTokenAttribute] = None,
+                              after: Option[ScalaTokenAttribute] = None,
                               traverse: Tree => Unit = _.children.foreach(traverser.apply)
                              )
 
@@ -46,7 +46,7 @@ class Parser(private val language: Language) extends AbstractParser {
          * @param tree  opt. tree
          * @param token token type to insert at the beginning of the tree
          */
-        private def maybeAddAndApply(tree: Option[Tree], token: ScalaTokenType): Unit = tree match {
+        private def maybeAddAndApply(tree: Option[Tree], token: ScalaTokenAttribute): Unit = tree match {
             case Some(expression) =>
                 add(token, expression, fromEnd = false)
                 apply(expression)
@@ -309,7 +309,7 @@ class Parser(private val language: Language) extends AbstractParser {
          * @param doApply   if true, the substructure of each element is traversed
          * @tparam T list may contain more lists or leaves
          */
-        private def assignRecursively[T](els: List[T], tokenType: ScalaTokenType, doApply: Boolean = false): Unit = els.foreach {
+        private def assignRecursively[T](els: List[T], tokenType: ScalaTokenAttribute, doApply: Boolean = false): Unit = els.foreach {
             case treeList: List[_] => assignRecursively(treeList, tokenType)
             case el: Tree =>
                 add(tokenType, el, fromEnd = false)
@@ -373,7 +373,7 @@ class Parser(private val language: Language) extends AbstractParser {
      * @param column    column of the occurrence in the file
      * @param length    length of the occurrence in the file
      */
-    private def add(tokenType: ScalaTokenType, line: Int, column: Int, length: Int): Unit = {
+    private def add(tokenType: ScalaTokenAttribute, line: Int, column: Int, length: Int): Unit = {
         tokens += new Token(tokenType, currentFile, line, column, length, language)
     }
 
@@ -385,7 +385,7 @@ class Parser(private val language: Language) extends AbstractParser {
      * @param node      the tree that marks the occurrence
      * @param fromEnd   if true, the token is added at the end of the tree (length 0).
      */
-    private def add(tokenType: ScalaTokenType, node: Tree, fromEnd: Boolean): Unit = {
+    private def add(tokenType: ScalaTokenAttribute, node: Tree, fromEnd: Boolean): Unit = {
         if (node.pos.text.nonEmpty) {
             // SELF type tokens with no text content mess up the sequence
             if (fromEnd) {

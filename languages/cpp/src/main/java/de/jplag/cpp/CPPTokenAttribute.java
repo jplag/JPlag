@@ -1,11 +1,11 @@
 package de.jplag.cpp;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 
 /**
  * C++ token types extracted by this language module.
  */
-public enum CPPTokenType implements TokenType {
+public enum CPPTokenAttribute implements TokenAttribute {
     CLASS_BEGIN("CLASS{"),
     CLASS_END("}CLASS"),
     STRUCT_BEGIN("STRUCT{"),
@@ -56,7 +56,7 @@ public enum CPPTokenType implements TokenType {
         return this.description;
     }
 
-    CPPTokenType(String description) {
+    CPPTokenAttribute(String description) {
         this.description = description;
     }
 }

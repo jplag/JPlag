@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.ParsingException;
-import de.jplag.SharedTokenType;
+import de.jplag.SharedTokenAttribute;
 import de.jplag.Token;
 import de.jplag.TokenPrinter;
 
@@ -128,13 +128,13 @@ class RustLanguageTest {
      * @param fileName The file name of the complete code example
      */
     private void testTokenCoverage(List<Token> tokens, String fileName) {
-        var annotatedTokens = tokens.stream().map(Token::getType).collect(Collectors.toSet());
-        assertTrue(annotatedTokens.contains(SharedTokenType.FILE_END));
-        var annotatedRustTokens = annotatedTokens.stream().filter(RustTokenType.class::isInstance).collect(Collectors.toSet());
-        var allRustTokens = RustTokenType.values();
+        var annotatedTokens = tokens.stream().map(Token::getTypeCompat).collect(Collectors.toSet());
+        assertTrue(annotatedTokens.contains(SharedTokenAttribute.FILE_END));
+        var annotatedRustTokens = annotatedTokens.stream().filter(RustTokenAttribute.class::isInstance).collect(Collectors.toSet());
+        var allRustTokens = RustTokenAttribute.values();
         var missingRustTokens = Arrays.stream(allRustTokens).filter(token -> !annotatedRustTokens.contains(token)).toList();
         assertTrue(missingRustTokens.isEmpty(), "The following rust tokens are missing in the code example '%s':\n".formatted(fileName)
-                + String.join("\n", missingRustTokens.stream().map(RustTokenType::getDescription).toList()));
+                + String.join("\n", missingRustTokens.stream().map(RustTokenAttribute::getDescription).toList()));
     }
 
 }

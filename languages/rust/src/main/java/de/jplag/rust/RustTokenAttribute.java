@@ -1,8 +1,8 @@
 package de.jplag.rust;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 
-public enum RustTokenType implements TokenType {
+public enum RustTokenAttribute implements TokenAttribute {
     INNER_ATTRIBUTE("INNER_ATTR"),
     OUTER_ATTRIBUTE("OUTER_ATTR"),
 
@@ -119,7 +119,7 @@ public enum RustTokenType implements TokenType {
         return description;
     }
 
-    RustTokenType(String description) {
+    RustTokenAttribute(String description) {
         this.description = description;
     }
 

@@ -1,52 +1,52 @@
 package de.jplag.swift;
 
-import static de.jplag.swift.SwiftTokenType.ASSIGNMENT;
-import static de.jplag.swift.SwiftTokenType.BREAK;
-import static de.jplag.swift.SwiftTokenType.CATCH_BODY_BEGIN;
-import static de.jplag.swift.SwiftTokenType.CATCH_BODY_END;
-import static de.jplag.swift.SwiftTokenType.CLASS_BODY_BEGIN;
-import static de.jplag.swift.SwiftTokenType.CLASS_BODY_END;
-import static de.jplag.swift.SwiftTokenType.CLASS_DECLARATION;
-import static de.jplag.swift.SwiftTokenType.CLOSURE_BODY_BEGIN;
-import static de.jplag.swift.SwiftTokenType.CLOSURE_BODY_END;
-import static de.jplag.swift.SwiftTokenType.CONTINUE;
-import static de.jplag.swift.SwiftTokenType.DEFER_BODY_BEGIN;
-import static de.jplag.swift.SwiftTokenType.DEFER_BODY_END;
-import static de.jplag.swift.SwiftTokenType.DO_TRY_BODY_BEGIN;
-import static de.jplag.swift.SwiftTokenType.DO_TRY_BODY_END;
-import static de.jplag.swift.SwiftTokenType.ENUM_BODY_BEGIN;
-import static de.jplag.swift.SwiftTokenType.ENUM_BODY_END;
-import static de.jplag.swift.SwiftTokenType.ENUM_DECLARATION;
-import static de.jplag.swift.SwiftTokenType.ENUM_LITERAL;
-import static de.jplag.swift.SwiftTokenType.FALLTHROUGH;
-import static de.jplag.swift.SwiftTokenType.FOR_BODY_BEGIN;
-import static de.jplag.swift.SwiftTokenType.FOR_BODY_END;
-import static de.jplag.swift.SwiftTokenType.FUNCTION;
-import static de.jplag.swift.SwiftTokenType.FUNCTION_BODY_BEGIN;
-import static de.jplag.swift.SwiftTokenType.FUNCTION_BODY_END;
-import static de.jplag.swift.SwiftTokenType.FUNCTION_CALL;
-import static de.jplag.swift.SwiftTokenType.FUNCTION_PARAMETER;
-import static de.jplag.swift.SwiftTokenType.IF_BODY_BEGIN;
-import static de.jplag.swift.SwiftTokenType.IF_BODY_END;
-import static de.jplag.swift.SwiftTokenType.IMPORT;
-import static de.jplag.swift.SwiftTokenType.PROPERTY_ACCESSOR_BEGIN;
-import static de.jplag.swift.SwiftTokenType.PROPERTY_ACCESSOR_END;
-import static de.jplag.swift.SwiftTokenType.PROPERTY_DECLARATION;
-import static de.jplag.swift.SwiftTokenType.PROTOCOL_BODY_BEGIN;
-import static de.jplag.swift.SwiftTokenType.PROTOCOL_BODY_END;
-import static de.jplag.swift.SwiftTokenType.PROTOCOL_DECLARATION;
-import static de.jplag.swift.SwiftTokenType.REPEAT_WHILE_BODY_BEGIN;
-import static de.jplag.swift.SwiftTokenType.REPEAT_WHILE_BODY_END;
-import static de.jplag.swift.SwiftTokenType.RETURN;
-import static de.jplag.swift.SwiftTokenType.STRUCT_BODY_BEGIN;
-import static de.jplag.swift.SwiftTokenType.STRUCT_BODY_END;
-import static de.jplag.swift.SwiftTokenType.STRUCT_DECLARATION;
-import static de.jplag.swift.SwiftTokenType.SWITCH_BODY_BEGIN;
-import static de.jplag.swift.SwiftTokenType.SWITCH_BODY_END;
-import static de.jplag.swift.SwiftTokenType.SWITCH_CASE;
-import static de.jplag.swift.SwiftTokenType.THROW;
-import static de.jplag.swift.SwiftTokenType.WHILE_BODY_BEGIN;
-import static de.jplag.swift.SwiftTokenType.WHILE_BODY_END;
+import static de.jplag.swift.SwiftTokenAttribute.ASSIGNMENT;
+import static de.jplag.swift.SwiftTokenAttribute.BREAK;
+import static de.jplag.swift.SwiftTokenAttribute.CATCH_BODY_BEGIN;
+import static de.jplag.swift.SwiftTokenAttribute.CATCH_BODY_END;
+import static de.jplag.swift.SwiftTokenAttribute.CLASS_BODY_BEGIN;
+import static de.jplag.swift.SwiftTokenAttribute.CLASS_BODY_END;
+import static de.jplag.swift.SwiftTokenAttribute.CLASS_DECLARATION;
+import static de.jplag.swift.SwiftTokenAttribute.CLOSURE_BODY_BEGIN;
+import static de.jplag.swift.SwiftTokenAttribute.CLOSURE_BODY_END;
+import static de.jplag.swift.SwiftTokenAttribute.CONTINUE;
+import static de.jplag.swift.SwiftTokenAttribute.DEFER_BODY_BEGIN;
+import static de.jplag.swift.SwiftTokenAttribute.DEFER_BODY_END;
+import static de.jplag.swift.SwiftTokenAttribute.DO_TRY_BODY_BEGIN;
+import static de.jplag.swift.SwiftTokenAttribute.DO_TRY_BODY_END;
+import static de.jplag.swift.SwiftTokenAttribute.ENUM_BODY_BEGIN;
+import static de.jplag.swift.SwiftTokenAttribute.ENUM_BODY_END;
+import static de.jplag.swift.SwiftTokenAttribute.ENUM_DECLARATION;
+import static de.jplag.swift.SwiftTokenAttribute.ENUM_LITERAL;
+import static de.jplag.swift.SwiftTokenAttribute.FALLTHROUGH;
+import static de.jplag.swift.SwiftTokenAttribute.FOR_BODY_BEGIN;
+import static de.jplag.swift.SwiftTokenAttribute.FOR_BODY_END;
+import static de.jplag.swift.SwiftTokenAttribute.FUNCTION;
+import static de.jplag.swift.SwiftTokenAttribute.FUNCTION_BODY_BEGIN;
+import static de.jplag.swift.SwiftTokenAttribute.FUNCTION_BODY_END;
+import static de.jplag.swift.SwiftTokenAttribute.FUNCTION_CALL;
+import static de.jplag.swift.SwiftTokenAttribute.FUNCTION_PARAMETER;
+import static de.jplag.swift.SwiftTokenAttribute.IF_BODY_BEGIN;
+import static de.jplag.swift.SwiftTokenAttribute.IF_BODY_END;
+import static de.jplag.swift.SwiftTokenAttribute.IMPORT;
+import static de.jplag.swift.SwiftTokenAttribute.PROPERTY_ACCESSOR_BEGIN;
+import static de.jplag.swift.SwiftTokenAttribute.PROPERTY_ACCESSOR_END;
+import static de.jplag.swift.SwiftTokenAttribute.PROPERTY_DECLARATION;
+import static de.jplag.swift.SwiftTokenAttribute.PROTOCOL_BODY_BEGIN;
+import static de.jplag.swift.SwiftTokenAttribute.PROTOCOL_BODY_END;
+import static de.jplag.swift.SwiftTokenAttribute.PROTOCOL_DECLARATION;
+import static de.jplag.swift.SwiftTokenAttribute.REPEAT_WHILE_BODY_BEGIN;
+import static de.jplag.swift.SwiftTokenAttribute.REPEAT_WHILE_BODY_END;
+import static de.jplag.swift.SwiftTokenAttribute.RETURN;
+import static de.jplag.swift.SwiftTokenAttribute.STRUCT_BODY_BEGIN;
+import static de.jplag.swift.SwiftTokenAttribute.STRUCT_BODY_END;
+import static de.jplag.swift.SwiftTokenAttribute.STRUCT_DECLARATION;
+import static de.jplag.swift.SwiftTokenAttribute.SWITCH_BODY_BEGIN;
+import static de.jplag.swift.SwiftTokenAttribute.SWITCH_BODY_END;
+import static de.jplag.swift.SwiftTokenAttribute.SWITCH_CASE;
+import static de.jplag.swift.SwiftTokenAttribute.THROW;
+import static de.jplag.swift.SwiftTokenAttribute.WHILE_BODY_BEGIN;
+import static de.jplag.swift.SwiftTokenAttribute.WHILE_BODY_END;
 
 import org.antlr.v4.runtime.Token;
 
@@ -115,7 +115,7 @@ public class JPlagSwiftListener extends Swift5ParserBaseListener {
      * @param tokenType the custom token type that occurred.
      * @param token the corresponding grammar's token
      */
-    private void transformToken(SwiftTokenType tokenType, Token token) {
+    private void transformToken(SwiftTokenAttribute tokenType, Token token) {
         parserAdapter.addToken(tokenType, token.getLine(), token.getCharPositionInLine() + 1, token.getText().length());
     }
 
@@ -126,7 +126,7 @@ public class JPlagSwiftListener extends Swift5ParserBaseListener {
      * @param start the first Token of the context
      * @param end the last Token of the context
      */
-    private void transformToken(SwiftTokenType tokenType, Token start, Token end) {
+    private void transformToken(SwiftTokenAttribute tokenType, Token start, Token end) {
         parserAdapter.addToken(tokenType, start.getLine(), start.getCharPositionInLine() + 1, end.getStopIndex() - start.getStartIndex() + 1);
     }
 

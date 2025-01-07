@@ -20,7 +20,7 @@ import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.TokenTrace;
 import de.jplag.emf.MetamodelToken;
-import de.jplag.emf.MetamodelTokenType;
+import de.jplag.emf.MetamodelTokenAttribute;
 
 /**
  * Textual view of an EMF metamodel based on Emfatic. Emfatic code is generated for the metamodel and the model elements
@@ -82,7 +82,7 @@ public final class EmfaticModelView extends AbstractModelView {
         columnIndex += columnIndex == Token.NO_VALUE ? 0 : 1;
 
         TokenTrace trace = new TokenTrace(lineIndex, columnIndex, length);
-        return new MetamodelToken(token.getType(), token.getFile(), trace, token.getEObject());
+        return new MetamodelToken(token.getType().getAttributes().getFirst(), token.getFile(), trace, token.getEObject());
     }
 
     /**
@@ -168,7 +168,7 @@ public final class EmfaticModelView extends AbstractModelView {
      * Checks if a token is representing a end of a block, e.g. a closing bracket.
      */
     private boolean isEndToken(Token token) {
-        return token.getType() instanceof MetamodelTokenType type && type.isEndToken();
+        return token.getType().getAttributes().getFirst() instanceof MetamodelTokenAttribute type && type.isEndToken();
     }
 
     /**

@@ -11,7 +11,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 
 /**
  * Collects data for tests. Used by {@link de.jplag.testutils.LanguageModuleTest}s
@@ -144,7 +144,7 @@ public class TestDataCollector {
      * @param tokens The list of tokens
      * @param data The test data
      */
-    public record TokenListTest(List<TokenType> tokens, TestData data) {
+    public record TokenListTest(List<TokenAttribute> tokens, TestData data) {
 
         @Override
         public String toString() {
@@ -197,7 +197,7 @@ public class TestDataCollector {
          * @param tokens The set of tokens to check for.
          * @return self reference
          */
-        public TestDataContext testContainedTokens(TokenType... tokens) {
+        public TestDataContext testContainedTokens(TokenAttribute... tokens) {
             containedTokenData.addAll(listTestsFromArray(tokens));
             return this;
         }
@@ -208,12 +208,12 @@ public class TestDataCollector {
          * @param tokens The sequence of tokens to check for
          * @return self reference
          */
-        public TestDataContext testTokenSequence(TokenType... tokens) {
+        public TestDataContext testTokenSequence(TokenAttribute... tokens) {
             tokenSequenceTest.addAll(listTestsFromArray(tokens));
             return this;
         }
 
-        private List<TokenListTest> listTestsFromArray(TokenType... tokens) {
+        private List<TokenListTest> listTestsFromArray(TokenAttribute... tokens) {
             return this.testData.stream().map(it -> new TokenListTest(Arrays.asList(tokens), it)).toList();
         }
     }

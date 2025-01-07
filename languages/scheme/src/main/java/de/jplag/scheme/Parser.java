@@ -10,7 +10,7 @@ import de.jplag.Language;
 import de.jplag.LanguageLoader;
 import de.jplag.ParsingException;
 import de.jplag.Token;
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 
 public class Parser extends AbstractParser {
     private static final Language language = LanguageLoader.getLanguage(SchemeLanguage.class).get();
@@ -36,7 +36,7 @@ public class Parser extends AbstractParser {
         return tokens;
     }
 
-    public void add(TokenType type, de.jplag.scheme.Token token) {
+    public void add(TokenAttribute type, de.jplag.scheme.Token token) {
         int length = token.endColumn - token.beginColumn + 1;
         tokens.add(new Token(type, currentFile, token.beginLine, token.endLine, length, language));
     }

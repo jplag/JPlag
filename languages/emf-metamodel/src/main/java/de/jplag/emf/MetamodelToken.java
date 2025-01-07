@@ -7,8 +7,8 @@ import org.eclipse.emf.ecore.EObject;
 
 import de.jplag.LanguageLoader;
 import de.jplag.Token;
+import de.jplag.TokenAttribute;
 import de.jplag.TokenTrace;
-import de.jplag.TokenType;
 
 /**
  * EMF metamodel token.
@@ -24,7 +24,7 @@ public class MetamodelToken extends Token {
      * @param file is the source model file.
      * @param eObject is the corresponding eObject in the model from which this token was extracted.
      */
-    public MetamodelToken(TokenType type, File file, EObject eObject) {
+    public MetamodelToken(TokenAttribute type, File file, EObject eObject) {
         this(type, file, new TokenTrace(), Optional.of(eObject));
     }
 
@@ -33,7 +33,7 @@ public class MetamodelToken extends Token {
      * @param type is the type of the token.
      * @param file is the source model file.
      */
-    public MetamodelToken(TokenType type, File file) {
+    public MetamodelToken(TokenAttribute type, File file) {
         this(type, file, new TokenTrace(), Optional.empty());
     }
 
@@ -44,7 +44,7 @@ public class MetamodelToken extends Token {
      * @param trace is the tracing information of the token, meaning line, column, and length.
      * @param eObject is the corresponding eObject in the model from which this token was extracted
      */
-    public MetamodelToken(TokenType type, File file, TokenTrace trace, Optional<EObject> eObject) {
+    public MetamodelToken(TokenAttribute type, File file, TokenTrace trace, Optional<EObject> eObject) {
         super(type, file, trace, LanguageLoader.getLanguage(EmfLanguage.class).get());
         this.eObject = eObject;
     }

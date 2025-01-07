@@ -1,11 +1,11 @@
 package de.jplag.typescript;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 
 /**
  * Tokens extracted by the TypeScript language module
  */
-public enum TypeScriptTokenType implements TokenType {
+public enum TypeScriptTokenAttribute implements TokenAttribute {
 
     IMPORT("IMPORT"),
     EXPORT("EXPORT"),
@@ -51,7 +51,7 @@ public enum TypeScriptTokenType implements TokenType {
         return this.description;
     }
 
-    TypeScriptTokenType(String description) {
+    TypeScriptTokenAttribute(String description) {
         this.description = description;
     }
 }

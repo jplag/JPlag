@@ -1,9 +1,9 @@
 package de.jplag.text;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 
-public record TextTokenType(String description) implements TokenType {
-    public TextTokenType(String description) {
+public record TextTokenAttribute(String description) implements TokenAttribute {
+    public TextTokenAttribute(String description) {
         this.description = description.toLowerCase();
     }
 

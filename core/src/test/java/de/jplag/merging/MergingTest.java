@@ -16,7 +16,7 @@ import de.jplag.GreedyStringTiling;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Match;
-import de.jplag.SharedTokenType;
+import de.jplag.SharedTokenAttribute;
 import de.jplag.SubmissionSet;
 import de.jplag.SubmissionSetBuilder;
 import de.jplag.TestBase;
@@ -130,13 +130,13 @@ class MergingTest extends TestBase {
             List<Token> tokenRight = new ArrayList<>(comparison.secondSubmission().getTokenList());
 
             for (Token token : tokenLeft) {
-                if (token.getType().equals(SharedTokenType.FILE_END)) {
+                if (token.getType().equals(SharedTokenAttribute.FILE_END)) {
                     amountFileEndBefore++;
                 }
             }
 
             for (Token token : tokenRight) {
-                if (token.getType().equals(SharedTokenType.FILE_END)) {
+                if (token.getType().equals(SharedTokenAttribute.FILE_END)) {
                     amountFileEndBefore++;
                 }
             }
@@ -148,13 +148,13 @@ class MergingTest extends TestBase {
             List<Token> tokenRight = new ArrayList<>(comparison.secondSubmission().getTokenList());
 
             for (Token token : tokenLeft) {
-                if (token.getType().equals(SharedTokenType.FILE_END)) {
+                if (token.getType().equals(SharedTokenAttribute.FILE_END)) {
                     amountFileEndAfter++;
                 }
             }
 
             for (Token token : tokenRight) {
-                if (token.getType().equals(SharedTokenType.FILE_END)) {
+                if (token.getType().equals(SharedTokenAttribute.FILE_END)) {
                     amountFileEndAfter++;
                 }
             }

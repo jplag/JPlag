@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import de.jplag.Language;
 import de.jplag.Token;
+import de.jplag.TokenAttribute;
 import de.jplag.TokenType;
 import de.jplag.semantics.CodeSemantics;
 import de.jplag.semantics.VariableRegistry;
@@ -42,7 +43,7 @@ public class TokenCollector {
         return Collections.unmodifiableList(this.collected);
     }
 
-    <T> void addToken(TokenType jplagType, Function<T, CodeSemantics> semanticsSupplier, T entity,
+    <T> void addToken(List<TokenAttribute> jplagType, Function<T, CodeSemantics> semanticsSupplier, T entity,
             Function<T, org.antlr.v4.runtime.Token> extractStartToken, Function<T, org.antlr.v4.runtime.Token> extractEndToken,
             VariableRegistry variableRegistry) {
         if (jplagType == null) {
@@ -56,14 +57,14 @@ public class TokenCollector {
         Token token;
         if (extractsSemantics) {
             if (semanticsSupplier == null) {
-                throw new IllegalStateException(String.format("Expected semantics bud did not receive any for token %s", jplagType.getDescription()));
+                throw new IllegalStateException(String.format("Expected semantics bud did not receive any for token %s", new TokenType(jplagType)));
             }
             CodeSemantics semantics = semanticsSupplier.apply(entity);
             token = new Token(jplagType, this.file, line, column, length, semantics, language);
             variableRegistry.updateSemantics(semantics);
         } else {
             if (semanticsSupplier != null) {
-                logger.warn("Received semantics for token {} despite not expecting any", jplagType.getDescription());
+                logger.warn("Received semantics for token {} despite not expecting any", new TokenType(jplagType));
             }
             token = new Token(jplagType, this.file, line, column, length, language);
         }

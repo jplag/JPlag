@@ -1,28 +1,34 @@
 package de.jplag.cpp;
 
-import static de.jplag.cpp.CPPTokenType.DEFAULT;
-import static de.jplag.cpp.CPPTokenType.GENERIC;
-import static de.jplag.cpp.CPPTokenType.NEWARRAY;
+import static de.jplag.cpp.CPPTokenAttribute.CLASS_BEGIN;
+import static de.jplag.cpp.CPPTokenAttribute.CLASS_END;
+import static de.jplag.cpp.CPPTokenAttribute.GENERIC;
+import static de.jplag.cpp.CPPTokenAttribute.UNION_BEGIN;
+import static de.jplag.cpp.CPPTokenAttribute.UNION_END;
+import static de.jplag.tokentypes.ArraySyntaxTokenTypes.NEW_ARRAY;
 import static de.jplag.tokentypes.ExceptionHandlingTokenTypes.TRY;
-import static de.jplag.tokentypes.ImperativeTokenType.ASSIGNMENT;
-import static de.jplag.tokentypes.ImperativeTokenType.CALL;
-import static de.jplag.tokentypes.ImperativeTokenType.FUNCTION_DEFINITION;
-import static de.jplag.tokentypes.ImperativeTokenType.IF;
-import static de.jplag.tokentypes.ImperativeTokenType.LOOP;
-import static de.jplag.tokentypes.ImperativeTokenType.LOOP_END;
-import static de.jplag.tokentypes.ImperativeTokenType.STRUCTURE_DEFINITION;
-import static de.jplag.tokentypes.ImperativeTokenType.STRUCTURE_END;
-import static de.jplag.tokentypes.ImperativeTokenType.SWITCH;
-import static de.jplag.tokentypes.ImperativeTokenType.VARIABLE_DEFINITION;
+import static de.jplag.tokentypes.ImperativeTokenAttribute.ASSIGNMENT;
+import static de.jplag.tokentypes.ImperativeTokenAttribute.CALL;
+import static de.jplag.tokentypes.ImperativeTokenAttribute.FUNCTION_DEFINITION;
+import static de.jplag.tokentypes.ImperativeTokenAttribute.IF;
+import static de.jplag.tokentypes.ImperativeTokenAttribute.LOOP;
+import static de.jplag.tokentypes.ImperativeTokenAttribute.LOOP_END;
+import static de.jplag.tokentypes.ImperativeTokenAttribute.STRUCTURE_DEFINITION;
+import static de.jplag.tokentypes.ImperativeTokenAttribute.STRUCTURE_END;
+import static de.jplag.tokentypes.ImperativeTokenAttribute.SWITCH;
+import static de.jplag.tokentypes.ImperativeTokenAttribute.VARIABLE_DEFINITION;
 import static de.jplag.tokentypes.InlineIfTokenTypes.CONDITION;
+import static de.jplag.tokentypes.ObjectOrientationTokens.ENUM_DEF;
+import static de.jplag.tokentypes.ObjectOrientationTokens.ENUM_END;
 import static de.jplag.tokentypes.ObjectOrientationTokens.NEW;
 
+import java.util.List;
 import java.util.function.Function;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 import de.jplag.antlr.AbstractAntlrListener;
 import de.jplag.antlr.ContextVisitor;
 import de.jplag.cpp.grammar.CPP14Parser;
@@ -51,7 +57,6 @@ import de.jplag.cpp.grammar.CPP14Parser.PostfixExpressionContext;
 import de.jplag.cpp.grammar.CPP14Parser.SelectionStatementContext;
 import de.jplag.cpp.grammar.CPP14Parser.SimpleDeclarationContext;
 import de.jplag.cpp.grammar.CPP14Parser.SimpleTypeSpecifierContext;
-import de.jplag.cpp.grammar.CPP14Parser.StaticAssertDeclarationContext;
 import de.jplag.cpp.grammar.CPP14Parser.TemplateArgumentContext;
 import de.jplag.cpp.grammar.CPP14Parser.TemplateDeclarationContext;
 import de.jplag.cpp.grammar.CPP14Parser.ThrowExpressionContext;
@@ -62,9 +67,8 @@ import de.jplag.semantics.CodeSemantics;
 import de.jplag.semantics.VariableAccessType;
 import de.jplag.semantics.VariableRegistry;
 import de.jplag.semantics.VariableScope;
-import de.jplag.tokentypes.AssertTokenTypes;
 import de.jplag.tokentypes.ExceptionHandlingTokenTypes;
-import de.jplag.tokentypes.ImperativeTokenType;
+import de.jplag.tokentypes.ImperativeTokenAttribute;
 
 /**
  * Extracts tokens from the ANTLR parse tree. Token extraction is built to be similar to the Java language module. In
@@ -75,13 +79,15 @@ import de.jplag.tokentypes.ImperativeTokenType;
 class CPPListener extends AbstractAntlrListener {
 
     CPPListener() {
-        visit(ClassSpecifierContext.class, rule -> rule.classHead().Union() != null).map(STRUCTURE_DEFINITION, STRUCTURE_END).addClassScope()
+        visit(ClassSpecifierContext.class, rule -> rule.classHead().Union() != null)
+                .map(List.of(STRUCTURE_DEFINITION, UNION_BEGIN), List.of(STRUCTURE_END, UNION_END)).addClassScope() // TODO
                 .withSemantics(CodeSemantics::createControl);
-        mapClass(ClassKeyContext::Class, STRUCTURE_DEFINITION, STRUCTURE_END);
-        mapClass(ClassKeyContext::Struct, STRUCTURE_DEFINITION, STRUCTURE_END);  // structs are basically just classes
-        visit(EnumSpecifierContext.class).map(STRUCTURE_DEFINITION, STRUCTURE_END).addClassScope().withSemantics(CodeSemantics::createControl);
+        mapClass(ClassKeyContext::Class, List.of(STRUCTURE_DEFINITION, CLASS_BEGIN), List.of(CLASS_END, STRUCTURE_END));
+        mapClass(ClassKeyContext::Struct, List.of(STRUCTURE_DEFINITION), List.of(STRUCTURE_END));  // structs are basically just classes
+        visit(EnumSpecifierContext.class).map(List.of(STRUCTURE_DEFINITION, ENUM_DEF), List.of(STRUCTURE_END, ENUM_END)).addClassScope()
+                .withSemantics(CodeSemantics::createControl);
 
-        visit(FunctionDefinitionContext.class).map(FUNCTION_DEFINITION, ImperativeTokenType.FUNCTION_END).addLocalScope()
+        visit(FunctionDefinitionContext.class).map(FUNCTION_DEFINITION, ImperativeTokenAttribute.FUNCTION_END).addLocalScope()
                 .withSemantics(CodeSemantics::createControl);
 
         statementRules();
@@ -92,9 +98,8 @@ class CPPListener extends AbstractAntlrListener {
 
         visit(ThrowExpressionContext.class).map(ExceptionHandlingTokenTypes.THROW).withSemantics(CodeSemantics::createControl);
 
-        // TODO
         visit(NewExpressionContext.class, rule -> rule.newInitializer() != null).map(NEW).withSemantics(CodeSemantics::new);
-        visit(NewExpressionContext.class, rule -> rule.newInitializer() == null).map(NEWARRAY).withSemantics(CodeSemantics::new);
+        visit(NewExpressionContext.class, rule -> rule.newInitializer() == null).map(NEW_ARRAY).withSemantics(CodeSemantics::new);
 
         // TODO
         visit(TemplateDeclarationContext.class).map(GENERIC).withSemantics(CodeSemantics::new);
@@ -106,8 +111,6 @@ class CPPListener extends AbstractAntlrListener {
         visit(CPP14Parser.MemInitializerContext.class).mapRange(ASSIGNMENT).withSemantics(CodeSemantics::new)
                 .onEnter((rule, varReg) -> varReg.setNextVariableAccessType(VariableAccessType.WRITE));
 
-        // TODO Maybe assert isn't right here, but it shouldn't matter
-        visit(StaticAssertDeclarationContext.class).map(AssertTokenTypes.ASSERT).withSemantics(CodeSemantics::createControl);
         visit(EnumeratorDefinitionContext.class).map(VARIABLE_DEFINITION).withSemantics(CodeSemantics::new)
                 .onEnter((rule, varReg) -> varReg.setNextVariableAccessType(VariableAccessType.WRITE));
         // Removed because constructor parameters are generally ignored
@@ -126,22 +129,25 @@ class CPPListener extends AbstractAntlrListener {
         visit(IterationStatementContext.class, rule -> rule.While() != null && rule.Do() == null).map(LOOP, LOOP_END).addLocalScope()
                 .withLoopSemantics();
 
-        visit(SelectionStatementContext.class, rule -> rule.Switch() != null).map(SWITCH, ImperativeTokenType.SWITCH_END).addLocalScope()
+        visit(SelectionStatementContext.class, rule -> rule.Switch() != null).map(SWITCH, ImperativeTokenAttribute.SWITCH_END).addLocalScope()
                 .withSemantics(CodeSemantics::createControl);
-        visit(SelectionStatementContext.class, rule -> rule.If() != null).map(IF, ImperativeTokenType.IF_END).addLocalScope()
+        visit(SelectionStatementContext.class, rule -> rule.If() != null).map(IF, ImperativeTokenAttribute.IF_END).addLocalScope()
                 .withSemantics(CodeSemantics::createControl);
         // possible problem: variable from if visible in else, but in reality is not -- doesn't really matter
-        visit(CPP14Parser.Else).map(ImperativeTokenType.ELSE).withSemantics(CodeSemantics::createControl);
+        visit(CPP14Parser.Else).map(ImperativeTokenAttribute.ELSE).withSemantics(CodeSemantics::createControl);
 
-        visit(LabeledStatementContext.class, rule -> rule.Case() != null).map(ImperativeTokenType.CASE).withSemantics(CodeSemantics::createControl);
-        // TODO
-        visit(LabeledStatementContext.class, rule -> rule.Default() != null).map(DEFAULT).withSemantics(CodeSemantics::createControl);
-
-        visit(JumpStatementContext.class, rule -> rule.Break() != null).map(ImperativeTokenType.BREAK).withSemantics(CodeSemantics::createControl);
-        visit(JumpStatementContext.class, rule -> rule.Continue() != null).map(ImperativeTokenType.CONTINUE)
+        visit(LabeledStatementContext.class, rule -> rule.Case() != null).map(ImperativeTokenAttribute.CASE)
                 .withSemantics(CodeSemantics::createControl);
-        visit(JumpStatementContext.class, rule -> rule.Goto() != null).map(ImperativeTokenType.GOTO).withSemantics(CodeSemantics::createControl);
-        visit(JumpStatementContext.class, rule -> rule.Return() != null).map(ImperativeTokenType.RETURN).withSemantics(CodeSemantics::createControl);
+        visit(LabeledStatementContext.class, rule -> rule.Default() != null).map(ImperativeTokenAttribute.DEFAULT)
+                .withSemantics(CodeSemantics::createControl);
+
+        visit(JumpStatementContext.class, rule -> rule.Break() != null).map(ImperativeTokenAttribute.BREAK)
+                .withSemantics(CodeSemantics::createControl);
+        visit(JumpStatementContext.class, rule -> rule.Continue() != null).map(ImperativeTokenAttribute.CONTINUE)
+                .withSemantics(CodeSemantics::createControl);
+        visit(JumpStatementContext.class, rule -> rule.Goto() != null).map(ImperativeTokenAttribute.GOTO).withSemantics(CodeSemantics::createControl);
+        visit(JumpStatementContext.class, rule -> rule.Return() != null).map(ImperativeTokenAttribute.RETURN)
+                .withSemantics(CodeSemantics::createControl);
     }
 
     private void typeSpecifierRule() {
@@ -239,7 +245,6 @@ class CPPListener extends AbstractAntlrListener {
     }
 
     private void expressionRules() {
-        // TODO
         visit(ConditionalExpressionContext.class, rule -> rule.Question() != null).map(CONDITION).withSemantics(CodeSemantics::new);
 
         mapApply(visit(PostfixExpressionContext.class, rule -> rule.LeftParen() != null));
@@ -272,7 +277,8 @@ class CPPListener extends AbstractAntlrListener {
         return context != null && (context.parametersAndQualifiers() != null || context.LeftParen() != null);
     }
 
-    private void mapClass(Function<ClassKeyContext, TerminalNode> getTerminal, TokenType beginTokenType, TokenType endTokenType) {
+    private void mapClass(Function<ClassKeyContext, TerminalNode> getTerminal, List<TokenAttribute> beginTokenType,
+            List<TokenAttribute> endTokenType) {
         visit(ClassSpecifierContext.class, rule -> {
             ClassKeyContext classKey = rule.classHead().classKey();
             return classKey != null && getTerminal.apply(classKey) != null;

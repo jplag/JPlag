@@ -9,7 +9,7 @@ import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 import de.jplag.emf.parser.ModelingElementTokenizer;
 
 /**
@@ -30,13 +30,13 @@ public class TokenVectorGenerator {
      * order is determined by {@link ModelingElementTokenizer#allTokenTypes()}.
      */
     public TokenOccurenceVector generateOccurenceVector(Iterator<EObject> modelElements) {
-        Map<TokenType, Integer> tokenTypeHistogram = new HashMap<>();
+        Map<TokenAttribute, Integer> tokenTypeHistogram = new HashMap<>();
 
         while (modelElements.hasNext()) {
             tokenizer.element2OptionalToken(modelElements.next()).ifPresent(it -> tokenTypeHistogram.merge(it, 1, Integer::sum));
         }
         List<Integer> occurenceVector = new ArrayList<>();
-        for (TokenType type : tokenizer.allTokenTypes()) {
+        for (TokenAttribute type : tokenizer.allTokenTypes()) {
             occurenceVector.add(tokenTypeHistogram.getOrDefault(type, 0));
         }
         return new TokenOccurenceVector(normalize(occurenceVector));

@@ -1,8 +1,8 @@
 package de.jplag.tokentypes;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 
-public enum AnnotationTokenTypes implements TokenType {
+public enum AnnotationTokenTypes implements TokenAttribute {
     ANNOTATION("ANNO");
 
     private String description;

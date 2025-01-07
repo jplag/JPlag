@@ -1,8 +1,8 @@
 package de.jplag.kotlin;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 
-public enum KotlinTokenType implements TokenType {
+public enum KotlinTokenAttribute implements TokenAttribute {
     PACKAGE("PACKAGE"),
     IMPORT("IMPORT"),
     CLASS_DECLARATION("CLASS"),
@@ -81,7 +81,7 @@ public enum KotlinTokenType implements TokenType {
         return description;
     }
 
-    KotlinTokenType(String description) {
+    KotlinTokenAttribute(String description) {
         this.description = description;
     }
 }

@@ -52,7 +52,7 @@ options
 PARSER_BEGIN(SchemeParser)
 package de.jplag.scheme;
 
-import static de.jplag.scheme.SchemeTokenType.*;
+import static de.jplag.scheme.SchemeTokenAttribute.*;
 
 import java.io.File;
 import java.io.FileInputStream;

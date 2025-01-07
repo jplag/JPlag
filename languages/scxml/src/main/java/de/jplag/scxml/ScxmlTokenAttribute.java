@@ -1,11 +1,11 @@
 package de.jplag.scxml;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 
 /**
  * SCXML token type. Defines which tokens can be extracted from a statechart.
  */
-public enum ScxmlTokenType implements TokenType {
+public enum ScxmlTokenAttribute implements TokenAttribute {
 
     /**
      * Token for a transition.
@@ -134,7 +134,7 @@ public enum ScxmlTokenType implements TokenType {
      * Constructs a new SCXML token type with a description.
      * @param description the description for this token type
      */
-    ScxmlTokenType(String description) {
+    ScxmlTokenAttribute(String description) {
         this.description = description;
     }
 
@@ -144,7 +144,7 @@ public enum ScxmlTokenType implements TokenType {
      * @param description the description for this token type
      * @param isEndToken indicates that the token is an end token
      */
-    ScxmlTokenType(String description, boolean isEndToken) {
+    ScxmlTokenAttribute(String description, boolean isEndToken) {
         this(description);
         this.isEndToken = isEndToken;
     }

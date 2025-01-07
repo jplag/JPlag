@@ -8,6 +8,16 @@ import org.kohsuke.MetaInfServices;
 
 import de.jplag.ParsingException;
 import de.jplag.Token;
+import de.jplag.tokentypes.AnnotationTokenTypes;
+import de.jplag.tokentypes.ArraySyntaxTokenTypes;
+import de.jplag.tokentypes.AssertTokenTypes;
+import de.jplag.tokentypes.CodeStructureTokenTypes;
+import de.jplag.tokentypes.ExceptionHandlingTokenTypes;
+import de.jplag.tokentypes.ImperativeTokenAttribute;
+import de.jplag.tokentypes.InlineIfTokenTypes;
+import de.jplag.tokentypes.ObjectOrientationTokens;
+import de.jplag.tokentypes.ObjectOrientationWithInterfacesTokenAttributes;
+import de.jplag.tokentypes.SynchronizedTokenTypes;
 
 /**
  * Language for Java 9 and newer.
@@ -61,5 +71,12 @@ public class JavaLanguage implements de.jplag.Language {
     @Override
     public String toString() {
         return this.getIdentifier();
+    }
+
+    @Override
+    public List<Class<?>> getTokenContexts() {
+        return List.of(AnnotationTokenTypes.class, ArraySyntaxTokenTypes.class, AssertTokenTypes.class, CodeStructureTokenTypes.class,
+                ExceptionHandlingTokenTypes.class, ImperativeTokenAttribute.class, InlineIfTokenTypes.class, ObjectOrientationTokens.class,
+                SynchronizedTokenTypes.class, ObjectOrientationWithInterfacesTokenAttributes.class);
     }
 }

@@ -1,8 +1,8 @@
 package de.jplag.scheme;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 
-public enum SchemeTokenType implements TokenType {
+public enum SchemeTokenAttribute implements TokenAttribute {
     S_BOOL("BOOL"),
     S_NUMBER("NUMBER"),
     S_CHAR("CHAR"),
@@ -52,7 +52,7 @@ public enum SchemeTokenType implements TokenType {
         return this.description;
     }
 
-    SchemeTokenType(String description) {
+    SchemeTokenAttribute(String description) {
         this.description = description;
     }
 }

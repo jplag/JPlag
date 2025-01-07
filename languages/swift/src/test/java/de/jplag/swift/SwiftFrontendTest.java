@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.ParsingException;
-import de.jplag.SharedTokenType;
+import de.jplag.SharedTokenAttribute;
 import de.jplag.Token;
 import de.jplag.TokenPrinter;
 
@@ -144,13 +144,13 @@ class SwiftFrontendTest {
      * @param fileName The file name of the complete code example
      */
     private void testTokenCoverage(List<Token> tokens, String fileName) {
-        var annotatedTokens = tokens.stream().map(Token::getType).collect(Collectors.toSet());
-        assertTrue(annotatedTokens.contains(SharedTokenType.FILE_END));
-        var annotatedSwiftTokens = annotatedTokens.stream().filter(SwiftTokenType.class::isInstance).collect(Collectors.toSet());
-        var allSwiftTokens = SwiftTokenType.values();
+        var annotatedTokens = tokens.stream().map(Token::getTypeCompat).collect(Collectors.toSet());
+        assertTrue(annotatedTokens.contains(SharedTokenAttribute.FILE_END));
+        var annotatedSwiftTokens = annotatedTokens.stream().filter(SwiftTokenAttribute.class::isInstance).collect(Collectors.toSet());
+        var allSwiftTokens = SwiftTokenAttribute.values();
         var missingSwiftTokens = Arrays.stream(allSwiftTokens).filter(token -> !annotatedSwiftTokens.contains(token)).toList();
         assertTrue(missingSwiftTokens.isEmpty(), "The following Swift tokens are missing in the code example '%s':\n".formatted(fileName)
-                + String.join("\n", missingSwiftTokens.stream().map(SwiftTokenType::getDescription).toList()));
+                + String.join("\n", missingSwiftTokens.stream().map(SwiftTokenAttribute::getDescription).toList()));
     }
 
 }

@@ -12,7 +12,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 import de.jplag.semantics.CodeSemantics;
 import de.jplag.semantics.VariableRegistry;
 
@@ -22,7 +22,7 @@ import de.jplag.semantics.VariableRegistry;
  */
 public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor<T> {
     private final List<Consumer<HandlerData<T>>> exitHandlers;
-    private TokenType exitTokenType;
+    private List<TokenAttribute> exitTokenType;
     private Function<T, CodeSemantics> exitSemantics;
     private boolean lengthAsRange;
 
@@ -60,7 +60,17 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
      * @param tokenType The type of the token.
      * @return Self
      */
-    public ContextVisitor<T> mapExit(TokenType tokenType) {
+    public ContextVisitor<T> mapExit(TokenAttribute tokenType) {
+        exitTokenType = List.of(tokenType);
+        return this;
+    }
+
+    /**
+     * Tell the visitor that it should generate a token upon exiting the entity. Should only be invoked once per visitor.
+     * @param tokenType The type of the token.
+     * @return Self
+     */
+    public ContextVisitor<T> mapExit(List<TokenAttribute> tokenType) {
         exitTokenType = tokenType;
         return this;
     }
@@ -71,8 +81,8 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
      * @param tokenType The type of token to crate
      * @return Self
      */
-    public AbstractVisitor<T> mapRange(TokenType tokenType) {
-        this.entryTokenType = tokenType;
+    public AbstractVisitor<T> mapRange(TokenAttribute tokenType) {
+        this.entryTokenType = List.of(tokenType);
         this.lengthAsRange = true;
         return this;
     }
@@ -119,7 +129,7 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
      * @param exitTokenType The type of the token generated on exit.
      * @return Self
      */
-    public ContextVisitor<T> mapEnterExit(TokenType enterTokenType, TokenType exitTokenType) {
+    public ContextVisitor<T> mapEnterExit(TokenAttribute enterTokenType, TokenAttribute exitTokenType) {
         mapEnter(enterTokenType);
         mapExit(exitTokenType);
         return this;
@@ -127,12 +137,37 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
 
     /**
      * Tell the visitor that it should generate a token upon entering and one upon exiting the entity. Should only be
-     * invoked once per visitor. Alias for {@link #mapEnterExit(TokenType, TokenType)}.
+     * invoked once per visitor.
      * @param enterTokenType The type of the token generated on enter.
      * @param exitTokenType The type of the token generated on exit.
      * @return Self
      */
-    public ContextVisitor<T> map(TokenType enterTokenType, TokenType exitTokenType) {
+    public ContextVisitor<T> mapEnterExit(List<TokenAttribute> enterTokenType, List<TokenAttribute> exitTokenType) {
+        mapEnter(enterTokenType);
+        mapExit(exitTokenType);
+        return this;
+    }
+
+    /**
+     * Tell the visitor that it should generate a token upon entering and one upon exiting the entity. Should only be
+     * invoked once per visitor. Alias for {@link #mapEnterExit(TokenAttribute, TokenAttribute)}.
+     * @param enterTokenType The type of the token generated on enter.
+     * @param exitTokenType The type of the token generated on exit.
+     * @return Self
+     */
+    public ContextVisitor<T> map(TokenAttribute enterTokenType, TokenAttribute exitTokenType) {
+        mapEnterExit(enterTokenType, exitTokenType);
+        return this;
+    }
+
+    /**
+     * Tell the visitor that it should generate a token upon entering and one upon exiting the entity. Should only be
+     * invoked once per visitor. Alias for {@link #mapEnterExit(TokenAttribute, TokenAttribute)}.
+     * @param enterTokenType The type of the token generated on enter.
+     * @param exitTokenType The type of the token generated on exit.
+     * @return Self
+     */
+    public ContextVisitor<T> map(List<TokenAttribute> enterTokenType, List<TokenAttribute> exitTokenType) {
         mapEnterExit(enterTokenType, exitTokenType);
         return this;
     }

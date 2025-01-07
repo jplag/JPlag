@@ -1,8 +1,8 @@
 package de.jplag.c;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 
-public enum CTokenType implements TokenType {
+public enum CTokenAttribute implements TokenAttribute {
     C_BLOCK_BEGIN("BLOCK{"),
     C_BLOCK_END("}BLOCK"),
     C_QUESTIONMARK("COND"),
@@ -71,7 +71,7 @@ public enum CTokenType implements TokenType {
         return this.description;
     }
 
-    CTokenType(String description) {
+    CTokenAttribute(String description) {
         this.description = description;
     }
 }

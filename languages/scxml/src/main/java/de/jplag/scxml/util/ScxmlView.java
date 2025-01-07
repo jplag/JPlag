@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.scxml.ScxmlToken;
-import de.jplag.scxml.ScxmlTokenType;
+import de.jplag.scxml.ScxmlTokenAttribute;
 
 /**
  * A utility for generating a textual representation of SCXML statecharts. The contents of the view file are assembled
@@ -60,10 +60,10 @@ public class ScxmlView {
      */
     public ScxmlToken enhanceToken(ScxmlToken token, int depth) {
         String prefix = "  ".repeat(depth);
-        ScxmlTokenType type = (ScxmlTokenType) token.getType();
+        ScxmlTokenAttribute type = (ScxmlTokenAttribute) token.getTypeCompat();
         String element = token.getStatechartElement() == null ? "" : token.getStatechartElement().toString();
         String content = type.isEndToken() ? "}" : element;
         builder.append(prefix).append(content).append("\n");
-        return new ScxmlToken(token.getType(), token.getFile(), line++, prefix.length() + 1, content.length(), token.getStatechartElement());
+        return new ScxmlToken(token.getTypeCompat(), token.getFile(), line++, prefix.length() + 1, content.length(), token.getStatechartElement());
     }
 }

@@ -12,7 +12,7 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 import de.jplag.emf.parser.ModelingElementTokenizer;
 
 /**
@@ -22,7 +22,7 @@ import de.jplag.emf.parser.ModelingElementTokenizer;
 public class ContainmentOrderNormalizer implements Comparator<EObject> {
 
     private final List<EObject> modelElementsToSort;
-    private final Map<TokenType, List<EObject>> paths;
+    private final Map<TokenAttribute, List<EObject>> paths;
     private final ModelingElementTokenizer tokenizer;
     private final TokenVectorGenerator tokenVectorGenerator;
 
@@ -39,8 +39,8 @@ public class ContainmentOrderNormalizer implements Comparator<EObject> {
 
     @Override
     public int compare(EObject first, EObject second) {
-        TokenType firstType = tokenizer.element2Token(first);
-        TokenType secondType = tokenizer.element2Token(second);
+        TokenAttribute firstType = tokenizer.element2Token(first);
+        TokenAttribute secondType = tokenizer.element2Token(second);
 
         // 0. comparison if token types are absent for one or more elements.
         if (firstType == null && secondType == null) {
@@ -89,7 +89,7 @@ public class ContainmentOrderNormalizer implements Comparator<EObject> {
         return path;
     }
 
-    private List<EObject> calculatePath(TokenType type) {
+    private List<EObject> calculatePath(TokenAttribute type) {
         List<EObject> elements = modelElementsToSort.stream().filter(it -> type.equals(tokenizer.element2Token(it))).toList();
 
         // Generate token type distributions for the subtrees of the elements to sort:

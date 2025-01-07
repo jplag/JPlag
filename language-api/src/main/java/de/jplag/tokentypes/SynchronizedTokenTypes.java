@@ -2,16 +2,13 @@ package de.jplag.tokentypes;
 
 import de.jplag.TokenAttribute;
 
-public enum ExceptionHandlingTokenTypes implements TokenAttribute {
-    THROW("THROW"),
-    TRY("TRY"),
-    TRY_END("TRY_END"),
-    CATCH("CATCH"),
-    FINALLY("FINALLY");
+public enum SynchronizedTokenTypes implements TokenAttribute {
+    SYNCHRONIZED_START("SYNC_START"),
+    SYNCHRONIZED_END("SYNC_END");
 
     private String description;
 
-    ExceptionHandlingTokenTypes(String description) {
+    SynchronizedTokenTypes(String description) {
         this.description = description;
     }
 

@@ -1,8 +1,8 @@
 package de.jplag.tokentypes;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 
-public enum ArraySyntaxTokenTypes implements TokenType {
+public enum ArraySyntaxTokenTypes implements TokenAttribute {
     NEW_ARRAY("ARRAY_NEW"),
     ARRAY_INITIALIZER_START("ARRAY_INIT_START"),
     ARRAY_INITIALIZER_END("ARRAY_INIT_END"),;

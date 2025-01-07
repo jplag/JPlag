@@ -1,6 +1,5 @@
 package de.jplag.testutils;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertLinesMatch;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -26,8 +25,9 @@ import org.slf4j.LoggerFactory;
 
 import de.jplag.Language;
 import de.jplag.ParsingException;
-import de.jplag.SharedTokenType;
+import de.jplag.SharedTokenAttribute;
 import de.jplag.Token;
+import de.jplag.TokenAttribute;
 import de.jplag.TokenPrinter;
 import de.jplag.TokenType;
 import de.jplag.testutils.datacollector.TestData;
@@ -35,6 +35,7 @@ import de.jplag.testutils.datacollector.TestDataCollector;
 import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
 import de.jplag.testutils.datacollector.TokenPositionTestData;
 
+// TODO has to be updated for token attributes
 /**
  * Base class for language module tests. Automatically adds all common tests types for jplag languages.
  */
@@ -46,26 +47,26 @@ public abstract class LanguageModuleTest {
 
     private final TestDataCollector collector;
     private final Language language;
-    private final List<TokenType> languageTokens;
+    private final List<TokenAttribute> languageAttributes;
 
     /**
      * Creates a new language module test.
      * @param language The language to test
-     * @param languageTokens All tokens, that can be reported by the module. The end file token can be omitted.
+     * @param languageAttributes All tokens, that can be reported by the module. The end file token can be omitted.
      */
-    public LanguageModuleTest(Language language, List<TokenType> languageTokens) {
+    public LanguageModuleTest(Language language, List<TokenAttribute> languageAttributes) {
         this.language = language;
-        this.languageTokens = languageTokens;
+        this.languageAttributes = languageAttributes;
         this.collector = new TestDataCollector(this.getTestFileLocation());
     }
 
     /**
      * Creates a new language module test.
      * @param language The language to test
-     * @param languageTokens All tokens, that can be reported by the module. The end file token can be omitted.
+     * @param languageAttributes All tokens, that can be reported by the module. The end file token can be omitted.
      */
-    public LanguageModuleTest(Language language, TokenType[] languageTokens) {
-        this(language, Arrays.asList(languageTokens));
+    public LanguageModuleTest(Language language, TokenAttribute[] languageAttributes) {
+        this(language, Arrays.asList(languageAttributes));
     }
 
     /**
@@ -73,7 +74,7 @@ public abstract class LanguageModuleTest {
      * @param language The language to test
      * @param tokenEnum The enum containing the token types
      */
-    public <T extends Enum<T> & TokenType> LanguageModuleTest(Language language, Class<T> tokenEnum) {
+    public <T extends Enum<T> & TokenAttribute> LanguageModuleTest(Language language, Class<T> tokenEnum) {
         this(language, tokenEnum.getEnumConstants());
     }
 
@@ -119,7 +120,7 @@ public abstract class LanguageModuleTest {
     @DisplayName("Test that every token occurs at least once")
     final void testTokenCoverage(TestData data) throws ParsingException, IOException {
         List<TokenType> actualTokens = extractTokenTypes(data);
-        List<TokenType> languageTokens = new ArrayList<>(this.languageTokens);
+        List<TokenType> languageTokens = new ArrayList<>(this.languageAttributes.stream().map(TokenType::new).toList());
 
         languageTokens.removeAll(actualTokens);
 
@@ -146,7 +147,7 @@ public abstract class LanguageModuleTest {
     @DisplayName("Test that the specified tokens at least occur")
     final void testTokensContained(TestDataCollector.TokenListTest test) throws ParsingException, IOException {
         List<TokenType> actualTokens = extractTokenTypes(test.data());
-        List<TokenType> expectedTokens = new ArrayList<>(test.tokens());
+        List<TokenType> expectedTokens = new ArrayList<>(test.tokens().stream().map(TokenType::new).toList());
 
         for (TokenType foundToken : actualTokens) {
             expectedTokens.remove(foundToken);
@@ -175,9 +176,9 @@ public abstract class LanguageModuleTest {
     @DisplayName("Test if extracted token sequence matches")
     final void testTokenSequence(TestDataCollector.TokenListTest test) throws ParsingException, IOException {
         List<TokenType> actual = extractTokenTypes(test.data());
-        List<TokenType> expected = new ArrayList<>(test.tokens());
-        if (expected.getLast() != SharedTokenType.FILE_END) {
-            expected.add(SharedTokenType.FILE_END);
+        List<TokenType> expected = new ArrayList<>(test.tokens().stream().map(TokenType::new).toList());
+        if (!expected.getLast().isFileEnd()) {
+            expected.add(new TokenType(SharedTokenAttribute.FILE_END));
         }
         assertTokensMatch(expected, actual, "Extracted token from " + test.data().describeTestSource() + " does not match expected sequence.");
         assertIterableEquals(expected, actual);
@@ -212,10 +213,10 @@ public abstract class LanguageModuleTest {
         List<TokenPositionTestData.TokenData> failedTokens = new ArrayList<>();
 
         for (TokenPositionTestData.TokenData expectedToken : testData.getExpectedTokens()) {
-            TokenType expectedType = this.languageTokens.stream().filter(type -> type.toString().equals(expectedToken.typeName())).findFirst()
-                    .orElseThrow(() -> new IOException(String.format("The token type %s does not exist.", expectedToken.typeName())));
+            TokenAttribute expectedType = this.languageAttributes.stream().filter(type -> type.toString().equals(expectedToken.typeName()))
+                    .findFirst().orElseThrow(() -> new IOException(String.format("The token type %s does not exist.", expectedToken.typeName())));
 
-            if (extractedTokens.stream().noneMatch(token -> token.getType() == expectedType && token.getLine() == expectedToken.lineNumber()
+            if (extractedTokens.stream().noneMatch(token -> token.getType().matches(expectedType) && token.getLine() == expectedToken.lineNumber()
                     && token.getColumn() == expectedToken.columnNumber() && token.getLength() == expectedToken.length())) {
                 failedTokens.add(expectedToken);
             }
@@ -272,7 +273,7 @@ public abstract class LanguageModuleTest {
     final void testTokenSequencesEndsWithFileEnd(TestData data) throws ParsingException, IOException {
         List<Token> tokens = parseTokens(data);
 
-        assertEquals(SharedTokenType.FILE_END, tokens.getLast().getType(), "Last token in " + data.describeTestSource() + " is not file end.");
+        assertTrue(tokens.getLast().getType().isFileEnd(), "Last token in " + data.describeTestSource() + " is not file end.");
     }
 
     /**

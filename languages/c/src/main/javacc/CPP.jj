@@ -23,7 +23,7 @@ import java.io.InputStream;
 
 import de.jplag.ParsingException;
 
-import static de.jplag.c.CTokenType.*;
+import static de.jplag.c.CTokenAttribute.*;
 
 public class CPPScanner {
     private Scanner delegatingScanner;

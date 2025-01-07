@@ -12,7 +12,7 @@ import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.scxml.ScxmlLanguage;
 import de.jplag.scxml.ScxmlToken;
-import de.jplag.scxml.ScxmlTokenType;
+import de.jplag.scxml.ScxmlTokenAttribute;
 import de.jplag.scxml.parser.model.Statechart;
 import de.jplag.scxml.parser.model.StatechartElement;
 import de.jplag.scxml.util.AbstractScxmlVisitor;
@@ -85,7 +85,7 @@ public class ScxmlParserAdapter extends AbstractParser {
      * @param type the type of the token
      * @param source the statechart element associated with the token
      */
-    public void addToken(ScxmlTokenType type, StatechartElement source) {
+    public void addToken(ScxmlTokenAttribute type, StatechartElement source) {
         ScxmlToken token = new ScxmlToken(type, currentStatechartFile, source);
         Token enhancedToken = view.enhanceToken(token, visitor.getCurrentStatechartDepth());
         tokens.add(enhancedToken);
@@ -96,7 +96,7 @@ public class ScxmlParserAdapter extends AbstractParser {
      * information (see {@link ScxmlView}).
      * @param type the type of the token
      */
-    public void addEndToken(ScxmlTokenType type) {
+    public void addEndToken(ScxmlTokenAttribute type) {
         addToken(type, null);
     }
 

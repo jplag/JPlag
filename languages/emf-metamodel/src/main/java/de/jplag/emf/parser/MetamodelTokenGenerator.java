@@ -1,13 +1,13 @@
 package de.jplag.emf.parser;
 
-import static de.jplag.emf.MetamodelTokenType.ABSTRACT_CLASS_END;
-import static de.jplag.emf.MetamodelTokenType.BOUND;
-import static de.jplag.emf.MetamodelTokenType.CLASS_END;
-import static de.jplag.emf.MetamodelTokenType.ENUM_END;
-import static de.jplag.emf.MetamodelTokenType.INTERFACE_END;
-import static de.jplag.emf.MetamodelTokenType.PACKAGE_END;
-import static de.jplag.emf.MetamodelTokenType.RETURN_TYPE;
-import static de.jplag.emf.MetamodelTokenType.THROWS_DECLARATION;
+import static de.jplag.emf.MetamodelTokenAttribute.ABSTRACT_CLASS_END;
+import static de.jplag.emf.MetamodelTokenAttribute.BOUND;
+import static de.jplag.emf.MetamodelTokenAttribute.CLASS_END;
+import static de.jplag.emf.MetamodelTokenAttribute.ENUM_END;
+import static de.jplag.emf.MetamodelTokenAttribute.INTERFACE_END;
+import static de.jplag.emf.MetamodelTokenAttribute.PACKAGE_END;
+import static de.jplag.emf.MetamodelTokenAttribute.RETURN_TYPE;
+import static de.jplag.emf.MetamodelTokenAttribute.THROWS_DECLARATION;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EEnum;

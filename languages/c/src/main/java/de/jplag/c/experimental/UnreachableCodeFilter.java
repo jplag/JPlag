@@ -1,17 +1,17 @@
 package de.jplag.c.experimental;
 
-import static de.jplag.SharedTokenType.FILE_END;
-import static de.jplag.c.CTokenType.C_BLOCK_BEGIN;
-import static de.jplag.c.CTokenType.C_BLOCK_END;
-import static de.jplag.c.CTokenType.C_BREAK;
-import static de.jplag.c.CTokenType.C_CASE;
-import static de.jplag.c.CTokenType.C_CONTINUE;
-import static de.jplag.c.CTokenType.C_FOR;
-import static de.jplag.c.CTokenType.C_GOTO;
-import static de.jplag.c.CTokenType.C_IF;
-import static de.jplag.c.CTokenType.C_RETURN;
-import static de.jplag.c.CTokenType.C_THROW;
-import static de.jplag.c.CTokenType.C_WHILE;
+import static de.jplag.SharedTokenAttribute.FILE_END;
+import static de.jplag.c.CTokenAttribute.C_BLOCK_BEGIN;
+import static de.jplag.c.CTokenAttribute.C_BLOCK_END;
+import static de.jplag.c.CTokenAttribute.C_BREAK;
+import static de.jplag.c.CTokenAttribute.C_CASE;
+import static de.jplag.c.CTokenAttribute.C_CONTINUE;
+import static de.jplag.c.CTokenAttribute.C_FOR;
+import static de.jplag.c.CTokenAttribute.C_GOTO;
+import static de.jplag.c.CTokenAttribute.C_IF;
+import static de.jplag.c.CTokenAttribute.C_RETURN;
+import static de.jplag.c.CTokenAttribute.C_THROW;
+import static de.jplag.c.CTokenAttribute.C_WHILE;
 
 import java.util.List;
 import java.util.ListIterator;
@@ -59,7 +59,7 @@ public final class UnreachableCodeFilter {
                 if (isJumpToken(nextType)) {
                     return STATE_DEAD_BLOCK_BEGINNING;
                 }
-                if (nextType == C_CASE) {
+                if (nextType.matches(C_CASE)) {
                     return STATE_CASE_BLOCK;
                 }
                 return STATE_DEFAULT;
@@ -68,7 +68,7 @@ public final class UnreachableCodeFilter {
         STATE_BLOCK_BEGINNING {
             @Override
             TokenFilterState nextState(TokenType nextType) {
-                if (isBlockEndToken(nextType) || nextType == C_BLOCK_BEGIN) {
+                if (isBlockEndToken(nextType) || nextType.matches(C_BLOCK_BEGIN)) {
                     return STATE_DEFAULT;
                 }
                 return STATE_BLOCK_BEGINNING;
@@ -80,7 +80,7 @@ public final class UnreachableCodeFilter {
                 if (isBlockEndToken(nextType)) {
                     return STATE_DEFAULT;
                 }
-                if (nextType == C_CASE) {
+                if (nextType.matches(C_CASE)) {
                     return STATE_CASE_BLOCK;
                 }
                 return STATE_DEAD_BLOCK;
@@ -98,7 +98,7 @@ public final class UnreachableCodeFilter {
                 if (isBlockEndToken(nextType)) {
                     return STATE_DEFAULT;
                 }
-                if (nextType == C_CASE) {
+                if (nextType.matches(C_CASE)) {
                     return STATE_CASE_BLOCK;
                 }
                 return STATE_DEAD_BLOCK;
@@ -119,16 +119,16 @@ public final class UnreachableCodeFilter {
         };
 
         private static boolean isBlockStartToken(TokenType token) {
-            return token == C_WHILE || token == C_IF || token == C_FOR;
+            return token.matches(C_WHILE) || token.matches(C_IF) || token.matches(C_FOR);
         }
 
         private static boolean isBlockEndToken(TokenType token) {
-            return token == C_BLOCK_END || token == FILE_END;
+            return token.matches(C_BLOCK_END) || token.matches(FILE_END);
         }
 
         // jump tokens are tokens that force a code execution jump in EVERY case and therefore indicate unreachable code.
         private static boolean isJumpToken(TokenType token) {
-            return token == C_RETURN || token == C_BREAK || token == C_CONTINUE || token == C_THROW || token == C_GOTO;
+            return token.matches(C_RETURN) || token.matches(C_BREAK) || token.matches(C_CONTINUE) || token.matches(C_THROW) || token.matches(C_GOTO);
         }
 
         /**

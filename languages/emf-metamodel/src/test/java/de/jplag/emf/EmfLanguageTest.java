@@ -1,11 +1,11 @@
 package de.jplag.emf;
 
-import static de.jplag.emf.MetamodelTokenType.ATTRIBUTE;
-import static de.jplag.emf.MetamodelTokenType.CLASS;
-import static de.jplag.emf.MetamodelTokenType.CLASS_END;
-import static de.jplag.emf.MetamodelTokenType.CONTAINMENT_MULT;
-import static de.jplag.emf.MetamodelTokenType.PACKAGE;
-import static de.jplag.emf.MetamodelTokenType.PACKAGE_END;
+import static de.jplag.emf.MetamodelTokenAttribute.ATTRIBUTE;
+import static de.jplag.emf.MetamodelTokenAttribute.CLASS;
+import static de.jplag.emf.MetamodelTokenAttribute.CLASS_END;
+import static de.jplag.emf.MetamodelTokenAttribute.CONTAINMENT_MULT;
+import static de.jplag.emf.MetamodelTokenAttribute.PACKAGE;
+import static de.jplag.emf.MetamodelTokenAttribute.PACKAGE_END;
 
 import org.junit.jupiter.api.AfterEach;
 
@@ -20,7 +20,7 @@ import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
 public class EmfLanguageTest extends LanguageModuleTest {
 
     public EmfLanguageTest() {
-        super(new EmfLanguage(), MetamodelTokenType.class);
+        super(new EmfLanguage(), MetamodelTokenAttribute.class);
     }
 
     @Override

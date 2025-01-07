@@ -1,8 +1,8 @@
 package de.jplag.tokentypes;
 
-import de.jplag.TokenType;
+import de.jplag.TokenAttribute;
 
-public enum InlineIfTokenTypes implements TokenType {
+public enum InlineIfTokenTypes implements TokenAttribute {
     CONDITION("CONDITION");
 
     private String description;

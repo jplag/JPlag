@@ -3,7 +3,7 @@ package de.jplag.scxml.parser;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.jplag.scxml.ScxmlTokenType;
+import de.jplag.scxml.ScxmlTokenAttribute;
 import de.jplag.scxml.parser.model.StatechartElement;
 
 /**
@@ -34,7 +34,7 @@ public class PeekAdapter extends ScxmlParserAdapter {
     }
 
     @Override
-    public void addToken(ScxmlTokenType type, StatechartElement source) {
+    public void addToken(ScxmlTokenAttribute type, StatechartElement source) {
         tokenTypes.add(type.ordinal());
     }
 
