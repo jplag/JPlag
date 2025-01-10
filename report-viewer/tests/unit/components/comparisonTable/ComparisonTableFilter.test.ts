@@ -50,17 +50,12 @@ describe('ComparisonTableFilter', async () => {
     expect(store().uiState.comparisonTableClusterSorting).toBeFalsy()
     expectHighlighting(1)
 
-    await options[4].trigger('click')
-    expect(store().uiState.comparisonTableSortingMetric).toBe(MetricJsonIdentifier.SYMMETRIC)
-    expect(store().uiState.comparisonTableClusterSorting).toBeFalsy()
-    expectHighlighting(4)
-
-    await options[7].trigger('click')
+    await options[6].trigger('click')
     expect(store().uiState.comparisonTableSortingMetric).toBe(
       MetricJsonIdentifier.AVERAGE_SIMILARITY
     )
     expect(store().uiState.comparisonTableClusterSorting).toBeTruthy()
-    expectHighlighting(7)
+    expectHighlighting(6)
 
     await options[0].trigger('click')
     expect(store().uiState.comparisonTableSortingMetric).toBe(

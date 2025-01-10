@@ -10,7 +10,6 @@ public enum SimilarityMetric implements ToDoubleFunction<JPlagComparison> {
     MIN("minimum similarity", JPlagComparison::minimalSimilarity),
     MAX("maximal similarity", JPlagComparison::maximalSimilarity),
     INTERSECTION("matched tokens", it -> (double) it.getNumberOfMatchedTokens()),
-    SYMMETRIC("symmetric similarity", JPlagComparison::symmetricSimilarity),
     LONGEST_MATCH("number of tokens in the longest match", it -> it.matches().stream().mapToInt(Match::length).max().orElse(0)),
     OVERALL("Sum of both submission lengths", it -> it.firstSubmission().getNumberOfTokens() + it.secondSubmission().getNumberOfTokens());
 

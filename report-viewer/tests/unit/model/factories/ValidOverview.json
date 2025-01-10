@@ -34,44 +34,38 @@
       0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 2, 3
-    ],
-    "SYMMETRIC": [
-      1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-      0, 0, 0, 0, 0, 0, 0
     ]
   },
   "top_comparisons": [
     {
       "first_submission": "A",
       "second_submission": "C",
-      "similarities": { "AVG": 0.9960435212660732, "MAX": 0.9960435212660732, "MIN": 0.99, "SYMMETRIC": 0.98, "LONGEST_MATCH": 13.0, "INTERSECTION": 32.0, "OVERALL": 100.0 }
+      "similarities": { "AVG": 0.9960435212660732, "MAX": 0.9960435212660732, "MIN": 0.99, "LONGEST_MATCH": 13.0, "INTERSECTION": 32.0, "OVERALL": 100.0 }
     },
     {
       "first_submission": "D",
       "second_submission": "A",
-      "similarities": { "AVG": 0.751044776119403, "MAX": 0.947289156626506, "MIN": 0.5, "SYMMETRIC": 0.8, "LONGEST_MATCH": 4.0, "INTERSECTION": 12.0, "OVERALL": 133.0 }
+      "similarities": { "AVG": 0.751044776119403, "MAX": 0.947289156626506, "MIN": 0.5, "LONGEST_MATCH": 4.0, "INTERSECTION": 12.0, "OVERALL": 133.0 }
     },
     {
       "first_submission": "D",
       "second_submission": "C",
-      "similarities": { "AVG": 0.751044776119403, "MAX": 0.947289156626506, "MIN": 0.46, "SYMMETRIC": 0.78, "LONGEST_MATCH": 12.0, "INTERSECTION": 12.0, "OVERALL": 98.0 }
+      "similarities": { "AVG": 0.751044776119403, "MAX": 0.947289156626506, "MIN": 0.46, "LONGEST_MATCH": 12.0, "INTERSECTION": 12.0, "OVERALL": 98.0 }
     },
     {
       "first_submission": "B",
       "second_submission": "D",
-      "similarities": { "AVG": 0.28322981366459626, "MAX": 0.8085106382978723, "MIN": 0.1, "SYMMETRIC": 0.456, "LONGEST_MATCH": 5.0, "INTERSECTION": 6.0, "OVERALL": 32.0 }
+      "similarities": { "AVG": 0.28322981366459626, "MAX": 0.8085106382978723, "MIN": 0.1, "LONGEST_MATCH": 5.0, "INTERSECTION": 6.0, "OVERALL": 32.0 }
     },
     {
       "first_submission": "B",
       "second_submission": "A",
-      "similarities": { "AVG": 0.2378472222222222, "MAX": 0.9716312056737588, "MIN": 0.05, "SYMMETRIC": 0.23, "LONGEST_MATCH": 7.0, "INTERSECTION": 9.0, "OVERALL": 34.0 }
+      "similarities": { "AVG": 0.2378472222222222, "MAX": 0.9716312056737588, "MIN": 0.05, "LONGEST_MATCH": 7.0, "INTERSECTION": 9.0, "OVERALL": 34.0 }
     },
     {
       "first_submission": "B",
       "second_submission": "C",
-      "similarities": { "AVG": 0.2378472222222222, "MAX": 0.9716312056737588, "MIN": 0.06, "SYMMETRIC": 0.235, "LONGEST_MATCH": 3.0, "INTERSECTION": 6.0, "OVERALL": 134.0 }
+      "similarities": { "AVG": 0.2378472222222222, "MAX": 0.9716312056737588, "MIN": 0.06, "LONGEST_MATCH": 3.0, "INTERSECTION": 6.0, "OVERALL": 134.0 }
     }
   ],
   "clusters": [

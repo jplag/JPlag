@@ -63,7 +63,6 @@ describe('Test JSON to Comparison', () => {
     expect(result.similarities[MetricJsonIdentifier.MAXIMUM_SIMILARITY]).toBe(0.5)
     expect(result.similarities[MetricJsonIdentifier.MINIMUM_SIMILARITY]).toBe(0.4)
     expect(result.similarities[MetricJsonIdentifier.INTERSECTION]).toBe(229)
-    expect(result.similarities[MetricJsonIdentifier.SYMMETRIC]).toBe(0.5)
     expect(result.similarities[MetricJsonIdentifier.LONGEST_MATCH]).toBe(139)
     expect(result.similarities[MetricJsonIdentifier.OVERALL]).toBe(916)
 

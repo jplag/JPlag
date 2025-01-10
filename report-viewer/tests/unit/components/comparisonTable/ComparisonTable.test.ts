@@ -329,7 +329,7 @@ describe('ComparisonTable', async () => {
     expect(displayedComparisonsMaxSorted[2].firstSubmissionId).toBe('H')
     expect(displayedComparisonsMaxSorted[3].firstSubmissionId).toBe('E')
 
-    await metricOptions[7].trigger('click')
+    await metricOptions[6].trigger('click')
     await flushPromises()
 
     // Test sorting by cluster

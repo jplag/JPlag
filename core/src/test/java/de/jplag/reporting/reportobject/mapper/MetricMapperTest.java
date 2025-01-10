@@ -58,9 +58,9 @@ public class MetricMapperTest {
         // then
         Assertions.assertEquals(List.of(
                 new TopComparison("1", "2",
-                        Map.of("AVG", .7, "MAX", .8, "MIN", .5, "LONGEST_MATCH", 9.0, "INTERSECTION", 13.0, "SYMMETRIC", .5, "OVERALL", 52.0)),
+                        Map.of("AVG", .7, "MAX", .8, "MIN", .5, "LONGEST_MATCH", 9.0, "INTERSECTION", 13.0, "OVERALL", 52.0)),
                 new TopComparison("3", "4",
-                        Map.of("AVG", .3, "MAX", .9, "MIN", .01, "LONGEST_MATCH", 23.0, "INTERSECTION", 42.0, "SYMMETRIC", .25, "OVERALL", 336.0))),
+                        Map.of("AVG", .3, "MAX", .9, "MIN", .01, "LONGEST_MATCH", 23.0, "INTERSECTION", 42.0, "OVERALL", 336.0))),
                 result);
     }
 

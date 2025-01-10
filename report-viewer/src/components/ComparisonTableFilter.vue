@@ -134,7 +134,6 @@ const tableSortingOptions = computed(() => {
 const secondaryMetricOptions = [
   MetricJsonIdentifier.MAXIMUM_SIMILARITY,
   MetricJsonIdentifier.MINIMUM_SIMILARITY,
-  MetricJsonIdentifier.SYMMETRIC,
   MetricJsonIdentifier.INTERSECTION,
   MetricJsonIdentifier.LONGEST_MATCH,
   MetricJsonIdentifier.OVERALL

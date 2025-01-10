@@ -3,7 +3,6 @@ export enum MetricJsonIdentifier {
   MAXIMUM_SIMILARITY = 'MAX',
   MINIMUM_SIMILARITY = 'MIN',
   INTERSECTION = 'INTERSECTION',
-  SYMMETRIC = 'SYMMETRIC',
   LONGEST_MATCH = 'LONGEST_MATCH',
   OVERALL = 'OVERALL'
 }
@@ -75,6 +74,7 @@ class PercentageMetricType extends MetricType {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace MetricTypes {
   export const AVERAGE_SIMILARITY = new PercentageMetricType(
     'AVG',
@@ -100,12 +100,6 @@ export namespace MetricTypes {
     'The number of tokens that are matched between the two files.',
     MetricJsonIdentifier.INTERSECTION
   )
-  export const SYMMETRIC = new PercentageMetricType(
-    'SYM',
-    'Symmetric',
-    'A symmetric similarity measure.',
-    MetricJsonIdentifier.SYMMETRIC
-  )
   export const LONGEST_MATCH = new IdentityMetricType(
     'LONG',
     'Longest Match',
@@ -124,7 +118,6 @@ export namespace MetricTypes {
     MAXIMUM_SIMILARITY,
     MINIMUM_SIMILARITY,
     INTERSECTION,
-    SYMMETRIC,
     LONGEST_MATCH,
     OVERALL
   ]
@@ -141,7 +134,6 @@ export namespace MetricTypes {
     MetricJsonIdentifier.MAXIMUM_SIMILARITY,
     MetricJsonIdentifier.MINIMUM_SIMILARITY,
     MetricJsonIdentifier.INTERSECTION,
-    MetricJsonIdentifier.SYMMETRIC,
     MetricJsonIdentifier.LONGEST_MATCH,
     MetricJsonIdentifier.OVERALL
   ]
