@@ -15,12 +15,12 @@
       class="relative bottom-0 left-0 right-0 flex flex-grow justify-between space-x-5 px-5 pb-7 pt-5 print:grow-0 print:flex-col print:space-x-0 print:space-y-5 print:p-0"
     >
       <Container
-        class="flex max-h-0 min-h-full flex-1 flex-col overflow-hidden print:max-h-none print:min-h-0 print:flex-none"
         v-if="cluster.members.length >= 35 || !canShowRadarChart"
+        class="flex max-h-0 min-h-full flex-1 flex-col overflow-hidden print:max-h-none print:min-h-0 print:flex-none"
       >
         <div
-          class="flex max-h-full flex-col overflow-hidden print:flex-none"
           v-if="cluster.members.length < 35"
+          class="flex max-h-full flex-col overflow-hidden print:flex-none"
         >
           <ClusterGraph
             v-if="selectedClusterVisualization == 'Graph'"
@@ -39,9 +39,9 @@
         </div>
       </Container>
       <TabbedContainer
+        v-else
         class="flex max-h-0 min-h-full flex-1 flex-col overflow-hidden print:max-h-none print:min-h-0 print:flex-none"
         :tabs="clusterVisualizationOptions"
-        v-else
       >
         <template #Graph>
           <ClusterGraph
@@ -62,12 +62,12 @@
       >
         <template #Members>
           <ComparisonsTable
-            :topComparisons="comparisons"
+            :top-comparisons="comparisons"
             class="max-h-0 min-h-full flex-1 overflow-hidden"
             header="Comparisons of Cluster Members:"
             :highlighted-row-ids="highlightedElement ?? undefined"
           >
-            <template #footer v-if="comparisons.length < maxAmountOfComparisonsInCluster">
+            <template v-if="comparisons.length < maxAmountOfComparisonsInCluster" #footer>
               <p class="w-full pt-1 text-center font-bold">
                 Not all comparisons inside the cluster are shown. To see more, re-run JPlag with a
                 higher maximum number argument.
@@ -77,7 +77,7 @@
         </template>
         <template #Related-Comparisons>
           <ComparisonsTable
-            :topComparisons="relatedComparisons"
+            :top-comparisons="relatedComparisons"
             class="max-h-0 min-h-full flex-1 overflow-hidden"
             header="Comparisons related to the Cluster:"
           />

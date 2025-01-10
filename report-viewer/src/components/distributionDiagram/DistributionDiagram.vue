@@ -79,7 +79,7 @@ const options = computed(() => {
   return {
     responsive: true,
     maintainAspectRatio: false,
-    indexAxis: 'y' as 'y',
+    indexAxis: 'y' as const,
     scales: {
       x: {
         //Highest count of submissions in a percentage range. We set the diagrams maximum shown value to maxVal + 5,
@@ -95,6 +95,7 @@ const options = computed(() => {
           autoSkipPadding: 10,
           color: graphColors.ticksAndFont.value,
           // ensures that in log mode ticks are placed evenly apart
+          /* eslint-disable @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in chart.js
           callback: function (value: any) {
             if (graphOptions.value.xScale === 'logarithmic' && (value + '').match(/1(0)*[^1-9.]/)) {
               return value
@@ -111,6 +112,7 @@ const options = computed(() => {
       y: {
         ticks: {
           color: graphColors.ticksAndFont.value,
+          /* eslint-disable @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in chart.js
           callback: function (reversedValue: any) {
             const value = distributionData.value.length - reversedValue - 1
             if (graphOptions.value.bucketCount <= 10) {
@@ -133,23 +135,23 @@ const options = computed(() => {
         }
       }
     },
-    animation: false as false,
+    animation: false as const,
     plugins: {
       datalabels: {
         color: graphColors.ticksAndFont.value,
         font: {
-          weight: 'bold' as 'bold',
+          weight: 'bold' as const,
           size: getDataLabelFontSize()
         },
-        anchor: 'end' as 'end',
-        align: 'end' as 'end',
+        anchor: 'end' as const,
+        align: 'end' as const,
         clamp: true,
         text: 'test'
       },
       legend: {
         display: true,
-        position: 'bottom' as 'bottom',
-        align: 'end' as 'end',
+        position: 'bottom' as const,
+        align: 'end' as const,
         onClick: () => {}
       }
     }

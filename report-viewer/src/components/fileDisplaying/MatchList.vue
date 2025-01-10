@@ -5,7 +5,7 @@
   <div
     class="flex h-fit min-w-0 max-w-full flex-row space-x-1 overflow-x-hidden text-xs print:hidden"
   >
-    <ToolTipComponent direction="right" v-if="hasBaseCode" class="pr-3">
+    <ToolTipComponent v-if="hasBaseCode" direction="right" class="pr-3">
       <template #default>
         <OptionComponent label="Base Code" :style="{ background: getMatchColor(0.3, 'base') }" />
       </template>
@@ -45,20 +45,19 @@
     </ToolTipComponent>
 
     <div
-      class="print-exact flex w-full flex-row space-x-1 overflow-x-auto print:flex-wrap print:space-y-1 print:overflow-x-hidden"
       ref="scrollableList"
+      class="print-exact flex w-full flex-row space-x-1 overflow-x-auto print:flex-wrap print:space-y-1 print:overflow-x-hidden"
       @scroll="updateScrollOffset()"
     >
       <ToolTipComponent
-        :direction="getTooltipDirection(index)"
         v-for="[index, match] in matches?.entries()"
         :key="index"
-        :scrollOffsetX="scrollOffsetX"
+        :direction="getTooltipDirection(index)"
+        :scroll-offset-x="scrollOffsetX"
       >
         <template #default>
           <OptionComponent
             :style="{ background: getMatchColor(0.3, match.colorIndex) }"
-            @click="$emit('matchSelected', match)"
             :label="
               getFileName(match.firstFile) +
               ' - ' +
@@ -66,6 +65,7 @@
               ': ' +
               match.tokens
             "
+            @click="$emit('matchSelected', match)"
           />
         </template>
         <template #tooltip>
@@ -102,7 +102,7 @@
       </tr>
       <tr
         v-for="[index, match] in matches?.entries()"
-        v-bind:key="index"
+        :key="index"
         :style="{ background: getMatchColor(0.3, match.colorIndex) }"
         class="print-exact"
       >

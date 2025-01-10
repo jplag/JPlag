@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterAll;
@@ -247,7 +248,7 @@ public abstract class LanguageModuleTest {
     @MethodSource("getAllTestData")
     @DisplayName("Test that the tokens map to ascending line numbers")
     final void testMonotoneTokenOrder(TestData data) throws ParsingException, IOException {
-        List<Token> tokens = parseTokens(data);
+        List<Token> tokens = parseTokens(data).stream().filter(it -> !getIgnoredTokensForMonotoneTokenOrder().contains(it.getType())).toList();
 
         for (int i = 0; i < tokens.size() - 2; i++) {
             Token first = tokens.get(i);
@@ -337,5 +338,9 @@ public abstract class LanguageModuleTest {
      */
     protected File getTestFileLocation() {
         return new File(DEFAULT_TEST_CODE_PATH_BASE.toFile(), this.language.getIdentifier());
+    }
+
+    protected List<TokenType> getIgnoredTokensForMonotoneTokenOrder() {
+        return Collections.emptyList();
     }
 }

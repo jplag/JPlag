@@ -4,7 +4,7 @@
       <h2>{{ header }}</h2>
       <ToolTipComponent direction="left" class="min-w-[50%] flex-grow">
         <template #default>
-          <SearchBarComponent placeholder="Filter/Unhide Comparisons" v-model="searchStringValue" />
+          <SearchBarComponent v-model="searchStringValue" placeholder="Filter/Unhide Comparisons" />
         </template>
         <template #tooltip>
           <p class="whitespace-pre text-sm">
@@ -31,17 +31,17 @@
     </div>
     <OptionsSelector
       title="Sorting Metric:"
-      :defaultSelected="getSortingMetric()"
+      :default-selected="getSortingMetric()"
       :labels="tableSortingOptions"
       @selection-changed="(index: number) => changeSortingMetric(index)"
     />
     <MetricSelector
       title="Secondary Metric:"
-      :defaultSelected="store().uiState.comparisonTableSecondaryMetric"
+      :default-selected="store().uiState.comparisonTableSecondaryMetric"
+      :metrics="secondaryMetricOptions"
       @selection-changed="
         (metric: MetricJsonIdentifier) => (store().uiState.comparisonTableSecondaryMetric = metric)
       "
-      :metrics="secondaryMetricOptions"
     />
   </div>
 </template>

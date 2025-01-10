@@ -8,7 +8,7 @@
         {{ label }}:
         <i><slot name="default"></slot></i>
       </template>
-      <template #tooltip v-if="$slots.tooltip">
+      <template v-if="$slots.tooltip" #tooltip>
         <slot name="tooltip"></slot>
       </template>
     </ToolTipComponent>

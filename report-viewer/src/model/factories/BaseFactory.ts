@@ -66,8 +66,10 @@ export class BaseFactory {
     try {
       await this.getLocalFile(this.zipFileName)
       return true
+      /* eslint-disable @typescript-eslint/no-unused-vars */
     } catch (e) {
       return false
     }
+    /* eslint-enable @typescript-eslint/no-unused-vars */
   }
 }

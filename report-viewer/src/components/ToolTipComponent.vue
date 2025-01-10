@@ -2,9 +2,9 @@
   <div class="group pointer-events-none inline">
     <div ref="contentRef" class="pointer-events-auto"><slot></slot></div>
     <span
-      class="invisible absolute box-border delay-0 group-hover:visible group-hover:delay-200"
-      ref="tooltipRef"
       v-if="$slots.tooltip"
+      ref="tooltipRef"
+      class="invisible absolute box-border delay-0 group-hover:visible group-hover:delay-200"
     >
       <span
         class="arrowBase pointer-events-auto relative z-10 block rounded-md bg-tooltip px-1 text-center text-white after:absolute after:border-4 after:border-solid after:border-transparent"

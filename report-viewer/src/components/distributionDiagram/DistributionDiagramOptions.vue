@@ -5,18 +5,18 @@
       <MetricSelector
         class="mt-2"
         title="Metric:"
-        :defaultSelected="store().uiState.distributionChartConfig.metric"
+        :default-selected="store().uiState.distributionChartConfig.metric"
+        :metrics="metricOptions"
         @selection-changed="
           (metric: MetricJsonIdentifier) =>
             (store().uiState.distributionChartConfig.metric = metric)
         "
-        :metrics="metricOptions"
       />
       <OptionsSelector
         class="mt-2"
         title="Scale x-Axis:"
         :labels="['Linear', 'Logarithmic']"
-        :defaultSelected="store().uiState.distributionChartConfig.xScale == 'linear' ? 0 : 1"
+        :default-selected="store().uiState.distributionChartConfig.xScale == 'linear' ? 0 : 1"
         @selection-changed="
           (i: number) =>
             (store().uiState.distributionChartConfig.xScale = i == 0 ? 'linear' : 'logarithmic')
@@ -26,7 +26,7 @@
         class="mt-2"
         title="Bucket Count:"
         :labels="resolutionOptions.map((div) => div.toString())"
-        :defaultSelected="
+        :default-selected="
           resolutionOptions.indexOf(store().uiState.distributionChartConfig.bucketCount)
         "
         @selection-changed="

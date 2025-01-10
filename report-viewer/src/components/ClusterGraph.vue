@@ -7,7 +7,7 @@
       ></canvas>
       <div class="mt-5 text-xs font-bold text-gray-500 dark:text-gray-400 print:hidden">
         <p>Hover over an edge to highlight it in the table.</p>
-        <p class="mt-2" v-if="!allComparisonsPresent">
+        <p v-if="!allComparisonsPresent" class="mt-2">
           Not all comparisons of this cluster are present. These comparisons are indicated by the
           dashed lines. <br />
           To include more comparisons, increase the number of increased comparisons in the CLI.
@@ -238,8 +238,11 @@ const graphData = computed(() => {
           y: calculateYPosition(index)
         })),
         edges: edges.value,
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in the library
         edgeLineBorderColor: (ctx: any) => getEdgeColor(ctx.raw.source, ctx.raw.target),
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in the library
         edgeLineBorderWidth: (ctx: any) => getEdgeWidth(ctx.raw.source, ctx.raw.target),
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in the library
         edgeLineBorderDash: (ctx: any) => getEdgeDashStyle(ctx.raw.source, ctx.raw.target)
       }
     ]
@@ -268,6 +271,7 @@ const graphOptions = computed(() => {
         right: xPadding.value
       }
     },
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in the library
     onHover: (event: any, elements: any) => {
       if (!event) {
         hoveredEdge.value = null
@@ -306,18 +310,20 @@ const graphOptions = computed(() => {
         })
       }
     },
-    animation: false as false,
+    animation: false as const,
     plugins: {
       legend: { display: false },
       datalabels: {
         display: true,
         font: {
-          weight: 'bold' as 'bold',
+          weight: 'bold' as const,
           size: 12
         },
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in the library
         formatter: (value: any, ctx: any) => {
           return labels.value[ctx.dataIndex]
         },
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in the library
         align: (ctx: any) => degreeAroundCircle(ctx.dataIndex),
         offset: 8,
         color: graphColors.ticksAndFont.value

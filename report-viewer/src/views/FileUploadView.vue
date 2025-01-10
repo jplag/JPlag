@@ -10,20 +10,20 @@
     <div class="w-screen">
       <div>
         <img
+          v-if="store().uiState.useDarkMode"
           class="mx-auto mt-8 h-auto w-60"
           height="168"
           width="240"
           src="@/assets/jplag-light-transparent.png"
           alt="JPlag Logo"
-          v-if="store().uiState.useDarkMode"
         />
         <img
+          v-else
           class="mx-auto mt-8 h-auto w-60"
           height="168"
           width="240"
           src="@/assets/jplag-dark-transparent.png"
           alt="JPlag Logo"
-          v-else
         />
       </div>
       <h1 class="text-7xl">JPlag Report Viewer</h1>
@@ -36,7 +36,7 @@
           <div>Or click here to select a file</div>
         </div>
         <div>(No files will be uploaded)</div>
-        <Button class="mx-auto mt-8 w-fit" @click="continueWithLocal" v-if="localFiles">
+        <Button v-if="localFiles" class="mx-auto mt-8 w-fit" @click="continueWithLocal">
           Continue with local files
         </Button>
       </div>

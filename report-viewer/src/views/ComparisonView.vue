@@ -76,12 +76,12 @@
           @match-selected="showMatch"
         />
         <OptionsSelectorComponent
-          class="mt-2"
           ref="sortingOptionSelector"
+          class="mt-2"
           title="File Sorting:"
           :labels="sortingOptions.map((o) => fileSortingTooltips[o])"
-          @selectionChanged="(index: number) => changeFileSorting(index)"
           :default-selected="sortingOptions.indexOf(store().uiState.fileSorting)"
+          @selection-changed="(index: number) => changeFileSorting(index)"
         />
       </Container>
     </div>
@@ -96,9 +96,9 @@
         :file-owner-display-name="store().getDisplayName(comparison.firstSubmissionId)"
         :highlight-language="language"
         :base-code-matches="firstBaseCodeMatches"
+        class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
         @match-selected="showMatchInSecond"
         @files-moved="filesMoved()"
-        class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
       />
       <FilesContainer
         ref="panel2"
@@ -107,9 +107,9 @@
         :file-owner-display-name="store().getDisplayName(comparison.secondSubmissionId)"
         :highlight-language="language"
         :base-code-matches="secondBaseCodeMatches"
+        class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
         @match-selected="showMatchInFirst"
         @files-moved="filesMoved()"
-        class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
       />
     </div>
   </div>
