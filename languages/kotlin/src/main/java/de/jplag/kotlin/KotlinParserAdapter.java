@@ -9,6 +9,7 @@ import de.jplag.Language;
 import de.jplag.LanguageLoader;
 import de.jplag.antlr.AbstractAntlrListener;
 import de.jplag.antlr.AbstractAntlrParserAdapter;
+import de.jplag.antlr.treewalker.TreeWalkerRuleBuilder;
 import de.jplag.kotlin.grammar.KotlinLexer;
 import de.jplag.kotlin.grammar.KotlinParser;
 
@@ -38,5 +39,10 @@ public class KotlinParserAdapter extends AbstractAntlrParserAdapter<KotlinParser
     @Override
     protected Language getLanguage() {
         return LanguageLoader.getLanguage(KotlinLanguage.class).get();
+    }
+
+    @Override
+    protected TreeWalkerRuleBuilder initializeRuleBuilder() {
+        return new KotlinTreeWalkerRules();
     }
 }

@@ -93,13 +93,17 @@ delegationSpecifiers
     ;
 
 delegationSpecifier
-    : constructorInvocation
+    : extendsConstructorInvocation
     | userType
     | explicitDelegation
     ;
 
 constructorInvocation
     : userType callSuffix
+    ;
+
+extendsConstructorInvocation
+    : userType callSuffixExtends
     ;
 
 explicitDelegation
@@ -394,6 +398,11 @@ callSuffix
     : typeArguments valueArguments? annotatedLambda*
     | valueArguments annotatedLambda*
     | annotatedLambda+
+    ;
+
+callSuffixExtends
+    : typeArguments valueArguments?
+    | valueArguments
     ;
 
 annotatedLambda

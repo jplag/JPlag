@@ -1,5 +1,7 @@
 package de.jplag.antlr.treewalker;
 
+import java.util.List;
+
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
@@ -24,7 +26,15 @@ public class TreeWalkerNode<T extends ParserRuleContext> {
     }
 
     public void walkChild(ParseTree antlrContext) {
-        this.treeWalker.walk(this.listener, antlrContext);
+        if (antlrContext != null) {
+            this.treeWalker.walk(this.listener, antlrContext);
+        }
+    }
+
+    public void walkChildren(List<? extends ParseTree> children) {
+        for (ParseTree child : children) {
+            walkChild(child);
+        }
     }
 
     public T getAntlr() {
