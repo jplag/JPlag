@@ -1,8 +1,14 @@
 package de.jplag.kotlin;
 
+import java.util.List;
+
 import org.kohsuke.MetaInfServices;
 
 import de.jplag.antlr.AbstractAntlrLanguage;
+import de.jplag.tokentypes.CodeStructureTokenTypes;
+import de.jplag.tokentypes.ExceptionHandlingTokenTypes;
+import de.jplag.tokentypes.ImperativeTokenType;
+import de.jplag.tokentypes.ObjectOrientationTokens;
 
 /**
  * This represents the Kotlin language as a language supported by JPlag.
@@ -39,5 +45,8 @@ public class KotlinLanguage extends AbstractAntlrLanguage {
         return DEFAULT_MIN_TOKEN_MATCH;
     }
 
-    // TODO contexts
+    @Override
+    public List<Class<?>> getTokenContexts() {
+        return List.of(CodeStructureTokenTypes.class, ExceptionHandlingTokenTypes.class, ImperativeTokenType.class, ObjectOrientationTokens.class);
+    }
 }

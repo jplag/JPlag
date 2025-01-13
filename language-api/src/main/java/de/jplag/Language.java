@@ -1,6 +1,7 @@
 package de.jplag;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -51,6 +52,10 @@ public interface Language {
      * @throws ParsingException if an error during parsing the files occurred.
      */
     List<Token> parse(Set<File> files, boolean normalize) throws ParsingException;
+
+    default List<Class<?>> getTokenContexts() {
+        return Collections.emptyList();
+    }
 
     /**
      * Indicates whether the tokens returned by parse have semantic information added to them, i.e. whether the token
