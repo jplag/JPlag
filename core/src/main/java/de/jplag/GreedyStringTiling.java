@@ -33,9 +33,11 @@ public class GreedyStringTiling {
 
     private static final String ERROR_INDEX_OUT_OF_BOUNDS = """
                 GST index out of bounds. This is probably a random issue caused by multithreading issues.
-                Length: %s, Index: %s
+                Length of the list that caused the exception (the list of marks for the relevant submission): %s, Index in that list: %s
                 TokenCount: %s, TokenList: %s
                 CachedTokenCount: %s
+                Submission (cause of error): %s
+                Submission (other): %s
             """.trim().stripIndent();
 
     public GreedyStringTiling(JPlagOptions options) {
@@ -123,14 +125,16 @@ public class GreedyStringTiling {
             List<Match> iterationMatches = new ArrayList<>();
             for (int leftStartIndex = 0; leftStartIndex < leftValues.length - maximumMatchLength; leftStartIndex++) {
                 int leftSubsequenceHash = leftLookupTable.subsequenceHashForStartIndex(leftStartIndex);
-                if (checkMark(leftMarked, leftStartIndex, leftSubmission) || leftSubsequenceHash == SubsequenceHashLookupTable.NO_HASH) {
+                if (checkMark(leftMarked, leftStartIndex, leftSubmission, rightSubmission)
+                        || leftSubsequenceHash == SubsequenceHashLookupTable.NO_HASH) {
                     continue;
                 }
                 List<Integer> possiblyMatchingRightStartIndexes = rightLookupTable
                         .startIndexesOfPossiblyMatchingSubsequencesForSubsequenceHash(leftSubsequenceHash);
                 for (Integer rightStartIndex : possiblyMatchingRightStartIndexes) {
                     // comparison uses >= because it is assumed that the last token is a pivot (FILE_END)
-                    if (checkMark(rightMarked, rightStartIndex, rightSubmission) || maximumMatchLength >= rightValues.length - rightStartIndex) {
+                    if (checkMark(rightMarked, rightStartIndex, rightSubmission, leftSubmission)
+                            || maximumMatchLength >= rightValues.length - rightStartIndex) {
                         continue;
                     }
 
@@ -237,11 +241,11 @@ public class GreedyStringTiling {
         }));
     }
 
-    private boolean checkMark(boolean[] marks, int index, Submission submission) {
+    private boolean checkMark(boolean[] marks, int index, Submission submission, Submission otherSubmission) {
         if (index >= marks.length) {
             throw new IllegalStateException(String.format(ERROR_INDEX_OUT_OF_BOUNDS, marks.length, index, submission.getTokenList().size(),
                     submission.getTokenList().stream().map(it -> it.getType().getDescription()).collect(Collectors.joining(", ")),
-                    cachedTokenValueLists.get(submission).length));
+                    cachedTokenValueLists.get(submission).length, submission.getName(), otherSubmission.getName()));
         }
 
         return marks[index];
