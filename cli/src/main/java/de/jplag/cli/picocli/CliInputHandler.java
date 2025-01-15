@@ -30,7 +30,7 @@ import picocli.CommandLine.ParseResult;
 public class CliInputHandler {
     private static final String OPTION_LIST_HEADING = "Parameter descriptions: ";
 
-    private static final String AMBIGUOUS_VIEW_FILE = "There are multiple files selected for '--mode VIEW', Please make sure to only specify one.";
+    private static final String AMBIGUOUS_VIEW_FILE = "There are multiple files specified for '--mode VIEW', please make sure only to specify one.";
     private static final String UNKNOWN_LANGUAGE_EXCEPTION = "Language %s does not exists. Available languages are: %s";
     private static final String IMPOSSIBLE_EXCEPTION = "This should not have happened."
             + " Please create an issue on github (https://github.com/jplag/JPlag/issues) with the entire output.";
@@ -44,6 +44,8 @@ public class CliInputHandler {
 
     private static final String PARAMETER_SHORT_PREFIX = "  -";
     private static final String PARAMETER_SHORT_ADDITIONAL_INDENT = "    ";
+
+    private static final char RESULT_FILE_OPTION_NAME = 'r';
 
     private static final Random RANDOM = new SecureRandom();
 
@@ -183,7 +185,7 @@ public class CliInputHandler {
         validOptions.addAll(List.of(this.options.newDirectories));
         validOptions.addAll(List.of(this.options.oldDirectories));
 
-        if (this.parseResult.hasMatchedOption('r')) {
+        if (this.parseResult.hasMatchedOption(RESULT_FILE_OPTION_NAME)) {
             validOptions.add(new File(this.options.resultFile));
         }
 
