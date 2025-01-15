@@ -1,7 +1,7 @@
 <template>
   <div
-    class="absolute bottom-5 left-5 max-w-96 rounded-md border-2 border-accent-dark bg-container-light dark:bg-container-dark"
     v-if="timePassed < timeToLive && visible"
+    class="absolute bottom-5 left-5 max-w-96 rounded-md border-2 border-accent-dark bg-container-light dark:bg-container-dark"
   >
     <div class="flex">
       <div class="flex-grow p-2">

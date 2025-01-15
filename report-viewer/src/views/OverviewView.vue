@@ -87,7 +87,7 @@
           :top-comparisons="overview.topComparisons"
           class="min-h-0 flex-1 print:min-h-full print:flex-grow"
         >
-          <template #footer v-if="overview.topComparisons.length < overview.totalComparisons">
+          <template v-if="overview.topComparisons.length < overview.totalComparisons" #footer>
             <p class="w-full pt-1 text-center font-bold">
               Not all comparisons are shown. To see more, re-run JPlag with a higher maximum number
               argument.
