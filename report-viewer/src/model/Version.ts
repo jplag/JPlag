@@ -17,6 +17,9 @@ export class Version {
   }
 
   public toString(): string {
+    if (this.isDevVersion()) {
+      return 'dev'
+    }
     return this.major + '.' + this.minor + '.' + this.patch
   }
 
