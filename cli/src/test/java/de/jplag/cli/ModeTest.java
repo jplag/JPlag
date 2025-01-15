@@ -13,7 +13,7 @@ import de.jplag.cli.test.CliArgument;
 import de.jplag.cli.test.CliTest;
 import de.jplag.exceptions.ExitException;
 
-public class ModeTest extends CliTest {
+class ModeTest extends CliTest {
     @Test
     void testViewWithPositionalFile() throws IOException, ExitException {
         CliInputHandler inputHandler = this
@@ -46,7 +46,7 @@ public class ModeTest extends CliTest {
     }
 
     @Test
-    void testViewWithMultipleFiles() throws IOException, ExitException {
+    void testViewWithMultipleFiles() {
         assertThrowsExactly(CliException.class, () -> {
             this.runCli(args -> args.with(CliArgument.MODE, "view").with(CliArgument.RESULT_FILE, "result.zip")
                     .with(CliArgument.NEW_SUBMISSION_DIRECTORIES, new String[] {"test.zip"})).inputHandler();
@@ -55,5 +55,6 @@ public class ModeTest extends CliTest {
 
     @Override
     public void addDefaultParameters() {
+        // prevents the submission directory from being added to the parameters automatically
     }
 }
