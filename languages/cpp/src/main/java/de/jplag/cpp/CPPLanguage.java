@@ -8,7 +8,7 @@ import de.jplag.Language;
 import de.jplag.antlr.AbstractAntlrLanguage;
 import de.jplag.tokentypes.ArraySyntaxTokenTypes;
 import de.jplag.tokentypes.ExceptionHandlingTokenTypes;
-import de.jplag.tokentypes.ImperativeTokenAttribute;
+import de.jplag.tokentypes.ImperativeTokenType;
 import de.jplag.tokentypes.InlineIfTokenTypes;
 import de.jplag.tokentypes.ObjectOrientationTokens;
 
@@ -56,7 +56,7 @@ public class CPPLanguage extends AbstractAntlrLanguage {
 
     @Override
     public List<Class<?>> getTokenContexts() {
-        return List.of(ArraySyntaxTokenTypes.class, ExceptionHandlingTokenTypes.class, ImperativeTokenAttribute.class, InlineIfTokenTypes.class,
+        return List.of(ArraySyntaxTokenTypes.class, ExceptionHandlingTokenTypes.class, ImperativeTokenType.class, InlineIfTokenTypes.class,
                 ObjectOrientationTokens.class);
     }
 }

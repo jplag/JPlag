@@ -13,11 +13,9 @@ import de.jplag.tokentypes.ArraySyntaxTokenTypes;
 import de.jplag.tokentypes.AssertTokenTypes;
 import de.jplag.tokentypes.CodeStructureTokenTypes;
 import de.jplag.tokentypes.ExceptionHandlingTokenTypes;
-import de.jplag.tokentypes.ImperativeTokenAttribute;
+import de.jplag.tokentypes.ImperativeTokenType;
 import de.jplag.tokentypes.InlineIfTokenTypes;
 import de.jplag.tokentypes.ObjectOrientationTokens;
-import de.jplag.tokentypes.ObjectOrientationWithInterfacesTokenAttributes;
-import de.jplag.tokentypes.SynchronizedTokenTypes;
 
 /**
  * Language for Java 9 and newer.
@@ -76,7 +74,6 @@ public class JavaLanguage implements de.jplag.Language {
     @Override
     public List<Class<?>> getTokenContexts() {
         return List.of(AnnotationTokenTypes.class, ArraySyntaxTokenTypes.class, AssertTokenTypes.class, CodeStructureTokenTypes.class,
-                ExceptionHandlingTokenTypes.class, ImperativeTokenAttribute.class, InlineIfTokenTypes.class, ObjectOrientationTokens.class,
-                SynchronizedTokenTypes.class, ObjectOrientationWithInterfacesTokenAttributes.class);
+                ExceptionHandlingTokenTypes.class, ImperativeTokenType.class, InlineIfTokenTypes.class, ObjectOrientationTokens.class);
     }
 }
