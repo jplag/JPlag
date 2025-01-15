@@ -175,4 +175,7 @@ public class SubmissionSet {
         logger.debug("{} parser error{}!", errors, (errors != 1 ? "s" : ""));
     }
 
+    public JPlagOptions getOptions() {
+        return options;
+    }
 }
