@@ -3,16 +3,16 @@
     <div class="w-screen">
       <div>
         <img
+          v-if="store().uiState.useDarkMode"
           class="mx-auto mt-32 h-auto w-60"
           src="@/assets/jplag-light-transparent.png"
           alt="JPlag Logo"
-          v-if="store().uiState.useDarkMode"
         />
         <img
+          v-else
           class="mx-auto mt-32 h-auto w-60"
           src="@/assets/jplag-dark-transparent.png"
           alt="JPlag Logo"
-          v-else
         />
       </div>
       <Container class="mx-auto mt-10 w-fit max-w-5xl space-y-5 p-5">
