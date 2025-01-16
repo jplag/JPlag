@@ -101,8 +101,9 @@ public class JPlag {
     private static SubmissionSet stripNonCommonTokens(SubmissionSet submissionSet) throws ExitException {
         List<Submission> submissions = submissionSet.getSubmissions();
         Set<Class<?>> tokenContexts = submissions.stream()
-                .flatMap(it -> it.getTokenList().stream().flatMap(token -> token.getLanguage().getTokenContexts().stream()))
-                .collect(Collectors.toSet());
+                .flatMap(it -> it.getTokenList().stream().map(token -> token.getLanguage().getTokenContexts().stream())).reduce((left, right) -> {
+                    return left.filter(it -> right.anyMatch(rightElem -> rightElem.equals(it)));
+                }).get().collect(Collectors.toSet());
 
         List<Submission> strippedSubmissions = submissions.stream().map(sub -> {
             Submission copy = sub.copy();
