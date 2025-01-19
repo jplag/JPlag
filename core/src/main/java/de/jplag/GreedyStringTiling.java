@@ -98,14 +98,29 @@ public class GreedyStringTiling {
      * @return the comparison results.
      */
     private JPlagComparison compareInternal(Submission leftSubmission, Submission rightSubmission) {
-        int[] leftValues = tokenValueListFromSubmission(leftSubmission);
-        int[] rightValues = tokenValueListFromSubmission(rightSubmission);
+        List<Class<?>> contextsLeft = leftSubmission.getTokenList().stream().map(it -> it.getLanguage().getTokenContexts()).reduce((left, right) -> {
+            List<Class<?>> leftContexts = new ArrayList<>(left);
+            leftContexts.retainAll(right);
+            return leftContexts;
+        }).get();
+        List<Class<?>> contextsRight = rightSubmission.getTokenList().stream().map(it -> it.getLanguage().getTokenContexts())
+                .reduce((left, right) -> {
+                    List<Class<?>> leftContexts = new ArrayList<>(left);
+                    leftContexts.retainAll(right);
+                    return leftContexts;
+                }).get();
 
-        boolean[] leftMarked = calculateInitiallyMarked(leftSubmission);
-        boolean[] rightMarked = calculateInitiallyMarked(rightSubmission);
+        List<Class<?>> contexts = new ArrayList<>(contextsLeft);
+        contexts.retainAll(contextsRight);
 
-        SubsequenceHashLookupTable leftLookupTable = subsequenceHashLookupTableForSubmission(leftSubmission, leftMarked);
-        SubsequenceHashLookupTable rightLookupTable = subsequenceHashLookupTableForSubmission(rightSubmission, rightMarked);
+        int[] leftValues = tokenValueListFromSubmission(leftSubmission, contexts);
+        int[] rightValues = tokenValueListFromSubmission(rightSubmission, contexts);
+
+        boolean[] leftMarked = calculateInitiallyMarked(leftSubmission, contexts);
+        boolean[] rightMarked = calculateInitiallyMarked(rightSubmission, contexts);
+
+        SubsequenceHashLookupTable leftLookupTable = subsequenceHashLookupTableForSubmission(leftSubmission, leftMarked, contexts);
+        SubsequenceHashLookupTable rightLookupTable = subsequenceHashLookupTableForSubmission(rightSubmission, rightMarked, contexts);
 
         int maximumMatchLength;
         List<Match> globalMatches = new ArrayList<>();
@@ -195,9 +210,9 @@ public class GreedyStringTiling {
         matches.add(match);
     }
 
-    private boolean[] calculateInitiallyMarked(Submission submission) {
+    private boolean[] calculateInitiallyMarked(Submission submission, List<Class<?>> contexts) {
         Set<Token> baseCodeTokens = baseCodeMarkings.get(submission);
-        List<Token> tokens = submission.getTokenList();
+        List<Token> tokens = submission.getTokenList(contexts);
         boolean[] result = new boolean[tokens.size()];
         for (int i = 0; i < result.length; i++) {
             result[i] = tokens.get(i).getType().isExcludedFromMatching() || (baseCodeTokens != null && baseCodeTokens.contains(tokens.get(i)));
@@ -205,18 +220,18 @@ public class GreedyStringTiling {
         return result;
     }
 
-    private SubsequenceHashLookupTable subsequenceHashLookupTableForSubmission(Submission submission, boolean[] marked) {
+    private SubsequenceHashLookupTable subsequenceHashLookupTableForSubmission(Submission submission, boolean[] marked, List<Class<?>> contexts) {
         return cachedHashLookupTables.computeIfAbsent(submission,
-                (key -> new SubsequenceHashLookupTable(minimumMatchLength, tokenValueListFromSubmission(key), marked)));
+                (key -> new SubsequenceHashLookupTable(minimumMatchLength, tokenValueListFromSubmission(key, contexts), marked)));
     }
 
     /**
      * Converts the tokens of the submission to a list of values.
      * @param submission The submission from which to convert the tokens.
      */
-    private int[] tokenValueListFromSubmission(Submission submission) {
+    private int[] tokenValueListFromSubmission(Submission submission, List<Class<?>> contexts) {
         return cachedTokenValueLists.computeIfAbsent(submission, (key -> {
-            List<Token> tokens = key.getTokenList();
+            List<Token> tokens = key.getTokenList(contexts);
             int[] tokenValueList = new int[tokens.size()];
             for (int i = 0; i < tokens.size(); i++) {
                 TokenType type = tokens.get(i).getType();

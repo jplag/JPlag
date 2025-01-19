@@ -140,6 +140,10 @@ public class Submission implements Comparable<Submission> {
         return tokenList;
     }
 
+    public List<Token> getTokenList(List<Class<?>> contexts) {
+        return tokenList.stream().filter(it -> contexts.contains(it.getType().getContext())).toList();
+    }
+
     /**
      * @return Whether a comparison between the submission and the base code is available.
      */
