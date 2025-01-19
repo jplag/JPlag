@@ -141,6 +141,10 @@ public class Submission implements Comparable<Submission> {
         return tokenList;
     }
 
+    public List<Token> getTokenList(Set<Object> contexts) {
+        return tokenList.stream().filter(it -> !it.getType().constrained(contexts).getAttributes().isEmpty()).toList();
+    }
+
     /**
      * @return Whether a comparison between the submission and the base code is available.
      */

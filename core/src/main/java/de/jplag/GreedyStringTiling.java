@@ -106,8 +106,8 @@ public class GreedyStringTiling {
         int[] leftValues = tokenValueListFromSubmission(leftSubmission, commonContexts);
         int[] rightValues = tokenValueListFromSubmission(rightSubmission, commonContexts);
 
-        boolean[] leftMarked = calculateInitiallyMarked(leftSubmission);
-        boolean[] rightMarked = calculateInitiallyMarked(rightSubmission);
+        boolean[] leftMarked = calculateInitiallyMarked(leftSubmission, commonContexts);
+        boolean[] rightMarked = calculateInitiallyMarked(rightSubmission, commonContexts);
 
         SubsequenceHashLookupTable leftLookupTable = subsequenceHashLookupTableForSubmission(leftSubmission, leftMarked, commonContexts);
         SubsequenceHashLookupTable rightLookupTable = subsequenceHashLookupTableForSubmission(rightSubmission, rightMarked, commonContexts);
@@ -200,9 +200,9 @@ public class GreedyStringTiling {
         matches.add(match);
     }
 
-    private boolean[] calculateInitiallyMarked(Submission submission) {
+    private boolean[] calculateInitiallyMarked(Submission submission, Set<Object> contexts) {
         Set<Token> baseCodeTokens = baseCodeMarkings.get(submission);
-        List<Token> tokens = submission.getTokenList();
+        List<Token> tokens = submission.getTokenList(contexts);
         boolean[] result = new boolean[tokens.size()];
         for (int i = 0; i < result.length; i++) {
             result[i] = tokens.get(i).getType().isExcludedFromMatching() || (baseCodeTokens != null && baseCodeTokens.contains(tokens.get(i)));
@@ -222,7 +222,7 @@ public class GreedyStringTiling {
      */
     private int[] tokenValueListFromSubmission(Submission submission, Set<Object> contexts) {
         return cachedTokenValueLists.computeIfAbsent(submission, (key -> {
-            List<Token> tokens = key.getTokenList();
+            List<Token> tokens = key.getTokenList(contexts);
             int[] tokenValueList = new int[tokens.size()];
             for (int i = 0; i < tokens.size(); i++) {
                 TokenType type = tokens.get(i).getType().constrained(contexts);
