@@ -20,9 +20,11 @@ for (const oldVersion of oldVersionZips) {
     await uploadFile(oldVersion.zipName, page, '/old/' + oldVersion.version)
 
     const bodyContent = await page.locator('body').textContent()
-    expect(bodyContent).toContain('You are trying to open a report from an older version of JPlag')
+    expect(bodyContent).toContain(
+      'You are trying to open a report created with an older version of JPlag'
+    )
     expect(bodyContent).toContain(oldVersion.version)
-    expect(bodyContent).toContain('You can access the old report viewer here:')
+    expect(bodyContent).toContain('You can still view the old report here:')
     expect(bodyContent).toContain('Open old report viewer')
 
     const oldVersionLinkElement = await page.locator('a').first()

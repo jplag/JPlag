@@ -18,16 +18,20 @@
       <Container class="mx-auto mt-10 w-fit max-w-5xl space-y-5 p-5">
         <div class="space-y-2">
           <h3 class="text-2xl font-bold">
-            You are trying to open a report from an older version of JPlag
+            You are trying to open a report created with an older version of JPlag
           </h3>
           <p class="text-xl">
-            The report you are trying to open has version {{ uploadedVersion.toString() }}. <br />
-            The current version of JPlag is {{ reportViewerVersion.toString() }}. The report viewer
-            can open reports from version {{ minimalReportVersion.toString() }}<br />
-            You can access the old report viewer here:
+            Your report was created with JPlag version {{ uploadedVersion.toString() }}. <br />
+            The current version of JPlag is {{ reportViewerVersion.toString() }}. It supports
+            reports starting from version {{ minimalReportVersion.toString() }}<br />
+            <span v-if="requestedVersion !== null">You can still view the old report here:</span>
+            <span v-else
+              >Opening reports generated with version {{ uploadedVersion.toString() }} is not
+              supported by this report viewer.</span
+            >
           </p>
         </div>
-        <a :href="buildOldVersionLink()">
+        <a v-if="requestedVersion !== null" :href="buildOldVersionLink()">
           <Interactable class="mx-auto mt-2 !border-accent-dark !bg-accent !bg-opacity-50">
             Open old report viewer
           </Interactable>
