@@ -41,9 +41,8 @@
         <Button class="mx-auto w-fit text-xl" @click="continueWithLocal()"> View Example </Button>
       </div>
       <div class="text-xl font-bold text-error">
-        The hosted report viewer is no longer being updated. It does not support the latest features
-        of JPlag. <br />
-        The report viewer of version 6.0.0 or newer is started from the cli directly.
+        The hosted report viewer is no longer being updated and does not support the latest features of JPlag. <br />
+        Starting with JPlag version 6.0.0, the report viewer is launched directly in your browser when running JPlag.
       </div>
       <div v-if="errors.length > 0" class="text-error">
         <p>{{ getErrorText() }}</p>
