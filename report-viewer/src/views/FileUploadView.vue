@@ -41,6 +41,7 @@
         </Button>
         <a
           href="https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag"
+          target="_blank"
           class="text-link-dark underline dark:text-link"
         >
           How to use JPlag
