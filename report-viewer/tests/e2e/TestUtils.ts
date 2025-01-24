@@ -6,7 +6,12 @@ import { Page } from '@playwright/test'
  * Expects to be on the file upload page.
  * @param fileName
  */
-export async function uploadFile(fileName: string, page: Page, expectedURL: string = '/overview') {
+export async function uploadFile(
+  fileName: string,
+  page: Page,
+  waitCondition: (page: Page) => Promise<void> = async (page) =>
+    await page.locator('text="JPlag Report"').waitFor({ state: 'visible' })
+) {
   page.route('**/results.zip', async (route) => {
     await route.fulfill({
       // fullfill with the file
@@ -19,5 +24,5 @@ export async function uploadFile(fileName: string, page: Page, expectedURL: stri
 
   await page.goto('/')
 
-  await page.waitForURL(expectedURL)
+  await waitCondition(page)
 }
