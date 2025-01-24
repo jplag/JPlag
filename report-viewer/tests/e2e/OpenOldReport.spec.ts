@@ -16,7 +16,6 @@ const oldVersionZips = [
 
 for (const oldVersion of oldVersionZips) {
   test(`Test old version redirect for v${oldVersion.version}`, async ({ page }) => {
-    await page.goto('/')
     await uploadFile(oldVersion.zipName, page, '/old/' + oldVersion.version)
 
     const bodyContent = await page.locator('body').textContent()
@@ -34,7 +33,6 @@ for (const oldVersion of oldVersionZips) {
 }
 
 test('Test unsupported old version', async ({ page }) => {
-  await page.goto('/')
   await uploadFile('progpedia-report-v4_0_0.zip', page, '/old/4.0.0')
 
   const bodyContent = await page.locator('body').textContent()

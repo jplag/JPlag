@@ -58,8 +58,6 @@ const testSets: DataSet[] = [
 
 for (const testSet of testSets) {
   test(`Can open ${testSet.datasetName}`, async ({ page }) => {
-    await page.goto('/')
-
     await uploadFile(testSet.datasetName, page)
 
     const comparisonTable = await page.getByText('Cluster1').textContent()

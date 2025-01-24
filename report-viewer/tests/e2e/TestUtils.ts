@@ -1,4 +1,4 @@
-import { Page, expect } from '@playwright/test'
+import { Page } from '@playwright/test'
 
 /**
  * Selects a file in the file chooser and uploads it.
@@ -7,13 +7,17 @@ import { Page, expect } from '@playwright/test'
  * @param fileName
  */
 export async function uploadFile(fileName: string, page: Page, expectedURL: string = '/overview') {
-  expect(page).toHaveURL('/')
+  page.route('**/results.zip', async (route) => {
+    await route.fulfill({
+      // fullfill with the file
+      path: `./tests/e2e/assets/${fileName}`,
+      headers: {
+        'Content-Type': 'application/zip'
+      }
+    })
+  })
 
-  // upload file through file chooser
-  const fileChooserPromise = page.waitForEvent('filechooser')
-  await page.getByText('Drag and Drop zip/Json file on this page').click()
-  const fileChooser = await fileChooserPromise
-  await fileChooser.setFiles(`tests/e2e/assets/${fileName}`)
+  await page.goto('/')
 
   await page.waitForURL(expectedURL)
 }
