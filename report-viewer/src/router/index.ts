@@ -5,6 +5,7 @@ import ComparisonViewWrapper from '@/viewWrapper/ComparisonViewWrapper.vue'
 import ErrorView from '@/views/ErrorView.vue'
 import InformationViewWrapper from '@/viewWrapper/InformationViewWrapper.vue'
 import ClusterViewWrapper from '@/viewWrapper/ClusterViewWrapper.vue'
+import OldVersionRedirectView from '@/views/OldVersionRedirectView.vue'
 
 /**
  * The router is used to navigate between the different views of the application.
@@ -44,6 +45,12 @@ const router = createRouter({
       path: '/info',
       name: 'InfoView',
       component: InformationViewWrapper
+    },
+    {
+      path: '/old/:version',
+      name: 'OldVersionRedirectView',
+      component: OldVersionRedirectView,
+      props: true
     },
     {
       path: '/:pathMatch(.*)*',

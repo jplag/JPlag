@@ -6,7 +6,7 @@ import { Page, expect } from '@playwright/test'
  * Expects to be on the file upload page.
  * @param fileName
  */
-export async function uploadFile(fileName: string, page: Page) {
+export async function uploadFile(fileName: string, page: Page, expectedURL: string = '/overview') {
   expect(page).toHaveURL('/')
 
   // upload file through file chooser
@@ -15,5 +15,5 @@ export async function uploadFile(fileName: string, page: Page) {
   const fileChooser = await fileChooserPromise
   await fileChooser.setFiles(`tests/e2e/assets/${fileName}`)
 
-  await page.waitForURL('/overview')
+  await page.waitForURL(expectedURL)
 }
