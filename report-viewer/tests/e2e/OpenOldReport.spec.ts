@@ -25,7 +25,7 @@ for (const oldVersion of oldVersionZips) {
     )
     expect(bodyContent).toContain(oldVersion.version)
     expect(bodyContent).toContain('You can still view the old report here:')
-    expect(bodyContent).toContain('Open old report viewer')
+    expect(bodyContent).toContain('Open with old report viewer')
 
     const oldVersionLinkElement = await page.locator('a').first()
     const oldVersionURL = await oldVersionLinkElement.getAttribute('href')

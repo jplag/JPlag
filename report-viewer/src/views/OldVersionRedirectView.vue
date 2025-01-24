@@ -33,7 +33,7 @@
         </div>
         <a v-if="requestedVersion !== null" :href="buildOldVersionLink()">
           <Interactable class="mx-auto mt-2 !border-accent-dark !bg-accent !bg-opacity-50">
-            Open old report viewer
+            Open with old report viewer
           </Interactable>
         </a>
         <RouterLink :to="{ name: 'FileUploadView' }">
