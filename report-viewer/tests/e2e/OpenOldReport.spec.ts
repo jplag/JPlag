@@ -32,3 +32,18 @@ for (const oldVersion of oldVersionZips) {
     expect(oldVersionURL.endsWith('/v5/')).toBeTruthy()
   })
 }
+
+test('Test unsupported old version', async ({ page }) => {
+  await page.goto('/')
+  await uploadFile('progpedia-report-v4_0_0.zip', page, '/old/4.0.0')
+
+  const bodyContent = await page.locator('body').textContent()
+  expect(bodyContent).toContain(
+    'You are trying to open a report created with an older version of JPlag'
+  )
+  expect(bodyContent).not.toContain('You can still view the old report here:')
+  expect(bodyContent).not.toContain('Open with old report viewer')
+  expect(bodyContent).toContain(
+    'Opening reports generated with version 4.0.0 is not supported by this report viewer.'
+  )
+})
