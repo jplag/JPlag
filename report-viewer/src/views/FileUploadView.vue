@@ -39,6 +39,13 @@
         <Button v-if="localFiles" class="mx-auto mt-8 w-fit" @click="continueWithLocal">
           Continue with local files
         </Button>
+        <a
+          href="https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag"
+          target="_blank"
+          class="text-link-dark underline dark:text-link"
+        >
+          How to use JPlag
+        </a>
       </div>
       <LoadingCircle v-else-if="loadingFiles || exampleFiles" class="space-y-5 pt-5" />
       <div v-if="errors.length > 0" class="text-error">
