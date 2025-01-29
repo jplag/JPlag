@@ -3,6 +3,8 @@ package de.jplag.cli;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
@@ -32,6 +34,8 @@ public final class CLI {
     private static final String OUTPUT_FILE_EXISTS = "The output file (also with suffixes e.g. results(1).zip) already exists. You can use --overwrite to overwrite the file.";
     private static final String OUTPUT_FILE_NOT_WRITABLE = "The output file (%s) cannot be written to.";
 
+    private static final String ZIP_FILE_ENDING = ".zip";
+
     private final CliInputHandler inputHandler;
 
     /**
@@ -59,6 +63,7 @@ public final class CLI {
                 case RUN -> runJPlag();
                 case VIEW -> runViewer(null);
                 case RUN_AND_VIEW -> runViewer(runJPlag());
+                case AUTO -> selectModeAutomatically();
             }
         }
     }
@@ -113,6 +118,30 @@ public final class CLI {
     public void runViewer(File zipFile) throws IOException {
         finalizeLogger(); // Prints the errors. The later finalizeLogger will print any errors logged after this point.
         JPlagRunner.runInternalServer(zipFile, this.inputHandler.getCliOptions().advanced.port);
+    }
+
+    private void selectModeAutomatically() throws IOException, ExitException {
+        List<File> inputs = this.getAllInputs();
+
+        if (inputs.isEmpty()) {
+            this.runViewer(null);
+            return;
+        }
+
+        if (inputs.size() == 1 && inputs.getFirst().getName().endsWith(ZIP_FILE_ENDING)) {
+            this.runViewer(inputs.getFirst());
+            return;
+        }
+
+        this.runViewer(this.runJPlag());
+    }
+
+    private List<File> getAllInputs() {
+        List<File> inputs = new ArrayList<>();
+        inputs.addAll(List.of(this.inputHandler.getCliOptions().newDirectories));
+        inputs.addAll(List.of(this.inputHandler.getCliOptions().oldDirectories));
+        inputs.addAll(List.of(this.inputHandler.getCliOptions().rootDirectory));
+        return inputs;
     }
 
     private void finalizeLogger() {

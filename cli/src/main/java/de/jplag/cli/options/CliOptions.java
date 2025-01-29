@@ -53,8 +53,9 @@ public class CliOptions implements Runnable {
             "--result-file"}, description = "Name of the file in which the comparison results will be stored (default: ${DEFAULT-VALUE}). Missing .zip endings will be automatically added.")
     public String resultFile = "results";
 
-    @Option(names = {"-M", "--mode"}, description = "The mode of JPlag. One of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE})")
-    public JPlagMode mode = JPlagMode.RUN_AND_VIEW;
+    @Option(names = {"-M",
+            "--mode"}, description = "The mode of JPlag. By default JPlag will automatically select the mode based on your input files. If none are selected the viewer will open on the file select screen. If a single result zip is selected it will be opened in the viewer directly. Otherwise JPlag will run on the submissions in the input files and show the result in the viewer. One of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE})")
+    public JPlagMode mode = JPlagMode.AUTO;
 
     @Option(names = {"--normalize"}, description = "Activate the normalization of tokens. Supported for languages: Java, C++.")
     public boolean normalize = false;
