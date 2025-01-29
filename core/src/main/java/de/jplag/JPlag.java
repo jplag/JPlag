@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,10 +99,14 @@ public class JPlag {
 
     private static SubmissionSet stripNonCommonTokens(SubmissionSet submissionSet) throws ExitException {
         List<Submission> submissions = submissionSet.getSubmissions();
-        Set<Class<?>> tokenContexts = submissions.stream()
-                .flatMap(it -> it.getTokenList().stream().map(token -> token.getLanguage().getTokenContexts().stream())).reduce((left, right) -> {
-                    return left.filter(it -> right.anyMatch(rightElem -> rightElem.equals(it)));
-                }).get().collect(Collectors.toSet());
+        Set<Class<?>> tokenContexts = new HashSet<>(submissions.stream()
+                .flatMap(it -> it.getTokenList().stream()
+                        .map(token -> token.getLanguage() != null ? token.getLanguage().getTokenContexts() : new ArrayList<Class<?>>()))
+                .reduce((left, right) -> {
+                    List<Class<?>> result = new ArrayList<>(left);
+                    result.retainAll(right);
+                    return result;
+                }).get());
 
         List<Submission> strippedSubmissions = submissions.stream().map(sub -> {
             Submission copy = sub.copy();
@@ -111,7 +114,11 @@ public class JPlag {
             return copy;
         }).toList();
 
-        return new SubmissionSet(strippedSubmissions, submissionSet.getBaseCode(), submissionSet.getOptions());
+        if (submissionSet.hasBaseCode()) {
+            return new SubmissionSet(strippedSubmissions, submissionSet.getBaseCode(), submissionSet.getOptions());
+        } else {
+            return new SubmissionSet(strippedSubmissions, null, submissionSet.getOptions());
+        }
     }
 
     private static void logSkippedSubmissions(SubmissionSet submissionSet, JPlagOptions options) {
