@@ -1,7 +1,8 @@
 name: Check that all dependencies are in coverage report
 
 on:
-    push:
+  workflow_dispatch:
+  push:
     paths:
       - ".github/workflows/verify-coverage-report.yml"
       - "./scripts/checkCoverage.py"
