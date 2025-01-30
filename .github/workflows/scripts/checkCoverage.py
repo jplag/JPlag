@@ -19,9 +19,10 @@ def extract_artifact_id(xml):
     root = ET.fromstring(xml)
     return root.find("{http://maven.apache.org/POM/4.0.0}artifactId").text
 
+excluded_artifacts = ["coverage-report", "aggregator", "languages"]
 artifact_ids = [extract_artifact_id(get_file_content(file)) for file in get_all_pom_files()]
 print("All artifacts: " + str(artifact_ids))
-filtered_artifact_ids = [artifact_id for artifact_id in artifact_ids if "aggregator" not in artifact_id.lower() and "coverage-report" not in artifact_id.lower()]
+filtered_artifact_ids = [artifact_id for artifact_id in artifact_ids if artifact_id not in excluded_artifacts]
 
 coverage_report_pom = ""
 with open("../../../coverage-report/pom.xml", "r") as f:
