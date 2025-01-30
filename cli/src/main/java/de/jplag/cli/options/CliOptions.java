@@ -54,7 +54,7 @@ public class CliOptions implements Runnable {
     public String resultFile = "results";
 
     @Option(names = {"-M",
-            "--mode"}, description = "The mode of JPlag. By default JPlag will automatically select the mode based on the given input files. If none are given the report viewer will open on the file upload page. If a single result zip is given it will be opened in the report viewer directly. Otherwise JPlag will run on the submissions with the input files and show the result in the report viewer. One of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE})")
+            "--mode"}, description = "The mode of JPlag. By default JPlag will automatically select the mode based on the given input files. If none are given the report viewer will open on the file upload page. If a single result zip is given it will be opened in the report viewer directly. Otherwise, JPlag will check the given submissions and show the result in the report viewer. One of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE})")
     public JPlagMode mode = JPlagMode.AUTO;
 
     @Option(names = {"--normalize"}, description = "Activate the normalization of tokens. Supported for languages: Java, C++.")
