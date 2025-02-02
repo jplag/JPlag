@@ -138,4 +138,8 @@ public class ReportViewer implements HttpHandler {
     RoutingTree getRoutingTree() {
         return routingTree;
     }
+
+    public static boolean hasCompiledViewer() {
+        return ResponseData.fromResourceUrl("/" + REPORT_VIEWER_RESOURCE_PREFIX + "/index.html") != null;
+    }
 }

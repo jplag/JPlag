@@ -40,6 +40,10 @@ public final class JPlagRunner {
      * @throws IOException If the internal server throws an exception
      */
     public static void runInternalServer(File zipFile, int port) throws IOException {
+        if (!ReportViewer.hasCompiledViewer()) {
+            logger.info("The report viewer is not available. Check whether you compiled JPlag with the report viewer.");
+            return;
+        }
         ReportViewer reportViewer = new ReportViewer(zipFile, port);
         int actualPort = reportViewer.start();
         logger.info("ReportViewer started on port http://localhost:{}", actualPort);
