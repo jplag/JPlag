@@ -62,7 +62,7 @@ public final class CLI {
             switch (this.inputHandler.getCliOptions().mode) {
                 case RUN -> runJPlag();
                 case VIEW -> runViewer(null);
-                case RUN_AND_VIEW -> runViewer(runJPlag());
+                case RUN_AND_VIEW -> runAndView();
                 case AUTO -> selectModeAutomatically();
             }
         }
@@ -111,6 +111,15 @@ public final class CLI {
     }
 
     /**
+     * Runs JPlag and shows the result in the report viewer
+     * @throws IOException If something went wrong with the internal server
+     * @throws ExitException If JPlag threw an exception
+     */
+    public void runAndView() throws IOException, ExitException {
+        runViewer(runJPlag());
+    }
+
+    /**
      * Runs the report viewer using the given file as the default result.zip.
      * @param zipFile The zip file to pass to the viewer. Can be null, if no result should be opened by default
      * @throws IOException If something went wrong with the internal server
@@ -133,14 +142,14 @@ public final class CLI {
             return;
         }
 
-        this.runViewer(this.runJPlag());
+        this.runAndView();
     }
 
     private List<File> getAllInputs() {
         List<File> inputs = new ArrayList<>();
+        inputs.addAll(List.of(this.inputHandler.getCliOptions().rootDirectory));
         inputs.addAll(List.of(this.inputHandler.getCliOptions().newDirectories));
         inputs.addAll(List.of(this.inputHandler.getCliOptions().oldDirectories));
-        inputs.addAll(List.of(this.inputHandler.getCliOptions().rootDirectory));
         return inputs;
     }
 
