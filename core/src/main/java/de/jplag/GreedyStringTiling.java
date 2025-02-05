@@ -7,8 +7,6 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 import de.jplag.options.JPlagOptions;
@@ -22,14 +20,13 @@ import de.jplag.options.JPlagOptions;
  * String Similarity via Greedy String Tiling and Running Karp−Rabin Matching </a>
  */
 public class GreedyStringTiling {
-
     private final int minimumMatchLength;
     private final JPlagOptions options;
-    private final ConcurrentMap<TokenType, Integer> tokenTypeValues;
     private final Map<Submission, Set<Token>> baseCodeMarkings = new IdentityHashMap<>();
 
-    private final Map<Submission, int[]> cachedTokenValueLists = new IdentityHashMap<>();
     private final Map<Submission, SubsequenceHashLookupTable> cachedHashLookupTables = new IdentityHashMap<>();
+
+    private final TokenValueMapper tokenValueMapper;
 
     private static final String ERROR_INDEX_OUT_OF_BOUNDS = """
                 GST index out of bounds. This is probably a random issue caused by multithreading issues.
@@ -40,13 +37,13 @@ public class GreedyStringTiling {
                 Submission (other): %s
             """.trim().stripIndent();
 
-    public GreedyStringTiling(JPlagOptions options) {
+    public GreedyStringTiling(JPlagOptions options, TokenValueMapper tokenValueMapper) {
         this.options = options;
         // Ensures 1 <= neighborLength <= minimumTokenMatch
         int minimumNeighborLength = Math.min(Math.max(options.mergingOptions().minimumNeighborLength(), 1), options.minimumTokenMatch());
         this.minimumMatchLength = options.mergingOptions().enabled() ? minimumNeighborLength : options.minimumTokenMatch();
-        this.tokenTypeValues = new ConcurrentHashMap<>();
-        this.tokenTypeValues.put(SharedTokenType.FILE_END, 0);
+
+        this.tokenValueMapper = tokenValueMapper;
     }
 
     /**
@@ -108,8 +105,8 @@ public class GreedyStringTiling {
      * @return the comparison results.
      */
     private JPlagComparison compareInternal(Submission leftSubmission, Submission rightSubmission) {
-        int[] leftValues = tokenValueListFromSubmission(leftSubmission);
-        int[] rightValues = tokenValueListFromSubmission(rightSubmission);
+        int[] leftValues = this.tokenValueMapper.getTokenValuesFor(leftSubmission);
+        int[] rightValues = this.tokenValueMapper.getTokenValuesFor(rightSubmission);
 
         boolean[] leftMarked = calculateInitiallyMarked(leftSubmission);
         boolean[] rightMarked = calculateInitiallyMarked(rightSubmission);
@@ -219,33 +216,14 @@ public class GreedyStringTiling {
 
     private SubsequenceHashLookupTable subsequenceHashLookupTableForSubmission(Submission submission, boolean[] marked) {
         return cachedHashLookupTables.computeIfAbsent(submission,
-                (key -> new SubsequenceHashLookupTable(minimumMatchLength, tokenValueListFromSubmission(key), marked)));
-    }
-
-    /**
-     * Converts the tokens of the submission to a list of values.
-     * @param submission The submission from which to convert the tokens.
-     */
-    private int[] tokenValueListFromSubmission(Submission submission) {
-        return cachedTokenValueLists.computeIfAbsent(submission, (key -> {
-            List<Token> tokens = key.getTokenList();
-            int[] tokenValueList = new int[tokens.size()];
-            for (int i = 0; i < tokens.size(); i++) {
-                TokenType type = tokens.get(i).getType();
-                synchronized (tokenTypeValues) {
-                    tokenTypeValues.putIfAbsent(type, tokenTypeValues.size());
-                }
-                tokenValueList[i] = tokenTypeValues.get(type);
-            }
-            return tokenValueList;
-        }));
+                (key -> new SubsequenceHashLookupTable(minimumMatchLength, this.tokenValueMapper.getTokenValuesFor(submission), marked)));
     }
 
     private boolean checkMark(boolean[] marks, int index, Submission submission, Submission otherSubmission) {
         if (index >= marks.length) {
             throw new IllegalStateException(String.format(ERROR_INDEX_OUT_OF_BOUNDS, marks.length, index, submission.getTokenList().size(),
                     submission.getTokenList().stream().map(it -> it.getType().getDescription()).collect(Collectors.joining(", ")),
-                    cachedTokenValueLists.get(submission).length, submission.getName(), otherSubmission.getName()));
+                    this.tokenValueMapper.getTokenValuesFor(submission).length, submission.getName(), otherSubmission.getName()));
         }
 
         return marks[index];

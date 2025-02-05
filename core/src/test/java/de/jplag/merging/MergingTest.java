@@ -21,6 +21,7 @@ import de.jplag.SubmissionSet;
 import de.jplag.SubmissionSetBuilder;
 import de.jplag.TestBase;
 import de.jplag.Token;
+import de.jplag.TokenValueMapper;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 import de.jplag.strategy.ComparisonStrategy;
@@ -45,11 +46,11 @@ class MergingTest extends TestBase {
     MergingTest() throws ExitException {
         options = getDefaultOptions("merging").withMergingOptions(new MergingOptions(true, MINIMUM_NEIGHBOR_LENGTH, MAXIMUM_GAP_SIZE));
 
-        GreedyStringTiling coreAlgorithm = new GreedyStringTiling(options);
-        comparisonStrategy = new ParallelComparisonStrategy(options, coreAlgorithm);
-
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         submissionSet = builder.buildSubmissionSet();
+
+        GreedyStringTiling coreAlgorithm = new GreedyStringTiling(options, TokenValueMapper.generateTokenValueMapper(submissionSet));
+        comparisonStrategy = new ParallelComparisonStrategy(options, coreAlgorithm);
     }
 
     @BeforeEach
