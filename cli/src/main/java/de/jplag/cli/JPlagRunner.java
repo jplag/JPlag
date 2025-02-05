@@ -41,7 +41,7 @@ public final class JPlagRunner {
      */
     public static void runInternalServer(File zipFile, int port) throws IOException {
         if (!ReportViewer.hasCompiledViewer()) {
-            logger.info("The report viewer is not available. Check whether you compiled JPlag with the report viewer.");
+            logger.warn("The report viewer is not available. Check whether you compiled JPlag with the report viewer.");
             return;
         }
         ReportViewer reportViewer = new ReportViewer(zipFile, port);
