@@ -22,7 +22,7 @@ import picocli.CommandLine.Parameters;
 public class CliOptions implements Runnable {
     public static final Language defaultLanguage = new JavaLanguage();
 
-    @Parameters(paramLabel = "root-dirs", description = "Root-directory with submissions to check for plagiarism. If mode is set to VIEW, this parameter can be used to specify a file to open. In that case only a single file may be specified.", split = ",")
+    @Parameters(paramLabel = "root-dirs", description = "Root-directory with submissions to check for plagiarism. If mode is set to VIEW, this parameter can be used to specify a report file to open. In that case only a single file may be specified.", split = ",")
     public File[] rootDirectory = new File[0];
 
     @Option(names = {"--new", "-new"}, split = ",", description = "Root-directories with submissions to check for plagiarism (same as root).")
@@ -54,7 +54,7 @@ public class CliOptions implements Runnable {
     public String resultFile = "results";
 
     @Option(names = {"-M",
-            "--mode"}, description = "The mode of JPlag. If VIEW is chosen, you can specify a result file to display. One of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE})")
+            "--mode"}, description = "The mode of JPlag. One of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE}). If VIEW is chosen, you can optionally specify a path to an existing report.")
     public JPlagMode mode = JPlagMode.RUN_AND_VIEW;
 
     @Option(names = {"--normalize"}, description = "Activate the normalization of tokens. Supported for languages: Java, C++.")
