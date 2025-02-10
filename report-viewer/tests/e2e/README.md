@@ -52,7 +52,6 @@ If you want to add new tests we suggest doing the following tests:
      - The test should start like this
        ```typescript
        test('Name of the test', async ({ page }) => {
-         await page.goto('/')
          await uploadFile('YOUR_DATASET_NAME-report.zip', page)
          // Your test code
        });
