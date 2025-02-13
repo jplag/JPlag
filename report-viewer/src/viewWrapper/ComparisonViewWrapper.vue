@@ -25,7 +25,7 @@ import ComparisonView from '@/views/ComparisonView.vue'
 import type { Comparison } from '@/model/Comparison'
 import { ComparisonFactory } from '@/model/factories/ComparisonFactory'
 import LoadingCircle from '@/components/LoadingCircle.vue'
-import { redirectOnError } from '@/router'
+import { redirectOnError, router } from '@/router'
 import type { Language } from '@/model/Language'
 import VersionRepositoryReference from '@/components/VersionRepositoryReference.vue'
 import type { BaseCodeMatch } from '@/model/BaseCodeReport'
@@ -55,8 +55,12 @@ const comparisonPromise = ComparisonFactory.getComparison(props.comparisonFileNa
   })
 
 OverviewFactory.getOverview()
-  .then((overview) => {
-    language.value = overview.language
+  .then((r) => {
+    if (r.result == 'success') {
+      language.value = r.overview.language
+    } else if (r.result == 'oldReport') {
+      router.push({ name: 'OldVersionRedirectView', params: { version: r.version.toString() } })
+    }
   })
   .catch((error) => {
     redirectOnError(error, 'Could not load comparison:\n')

@@ -9,7 +9,6 @@
 [![License](https://img.shields.io/github/license/jplag/jplag.svg)](https://github.com/jplag/jplag/blob/main/LICENSE)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/y/jplag/JPlag)](https://github.com/jplag/JPlag/pulse)
 [![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=jplag_JPlag&metric=coverage)](https://sonarcloud.io/component_measures?metric=Coverage&view=list&id=jplag_JPlag)
-[![Report Viewer](https://img.shields.io/badge/report%20viewer-online-b80025)](https://jplag.github.io/JPlag/)
 [![Java Version](https://img.shields.io/badge/java-SE%2021-yellowgreen)](#download-and-installation)
 
 
@@ -83,22 +82,20 @@ Language-specific arguments can be set when using the subcommand. A list of lang
 ```
 Parameter descriptions: 
       [root-dirs[,root-dirs...]...]
-                        Root-directory with submissions to check for plagiarism.
+                        Root-directory with submissions to check for
+                          plagiarism. If mode is set to VIEW, this parameter
+                          can be used to specify a file to open. In that case
+                          only a single file may be specified.
       -bc, --bc, --base-code=<baseCode>
                         Path to the base code directory (common framework used
                           in all submissions).
       -l, --language=<language>
                         Select the language of the submissions (default: java).
                           See subcommands below.
-      -M, --mode=<{RUN, VIEW, RUN_AND_VIEW, AUTO}>
-                        The mode of JPlag. By default JPlag will automatically
-                          select the mode based on the given input files. If
-                          none are given the report viewer will open on the
-                          file upload page. If a single result zip is given it
-                          will be opened in the report viewer directly.
-                          Otherwise, JPlag will check the given submissions and
-                          show the result in the report viewer. One of: RUN,
-                          VIEW, RUN_AND_VIEW, AUTO (default: null)
+      -M, --mode=<{RUN, VIEW, RUN_AND_VIEW}>
+                        The mode of JPlag. If VIEW is chosen, you can specify a
+                          result file to display. One of: RUN, VIEW,
+                          RUN_AND_VIEW (default: null)
       -n, --shown-comparisons=<shownComparisons>
                         The maximum number of comparisons that will be shown in
                           the generated report, if set to -1 all comparisons
@@ -174,7 +171,6 @@ Languages:
   javascript
   kotlin
   llvmir
-  multi
   python3
   rlang
   rust

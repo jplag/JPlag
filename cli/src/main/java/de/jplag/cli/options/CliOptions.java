@@ -22,7 +22,7 @@ import picocli.CommandLine.Parameters;
 public class CliOptions implements Runnable {
     public static final Language defaultLanguage = new JavaLanguage();
 
-    @Parameters(paramLabel = "root-dirs", description = "Root-directory with submissions to check for plagiarism.", split = ",")
+    @Parameters(paramLabel = "root-dirs", description = "Root-directory with submissions to check for plagiarism. If mode is set to VIEW, this parameter can be used to specify a report file to open. In that case only a single file may be specified.", split = ",")
     public File[] rootDirectory = new File[0];
 
     @Option(names = {"--new", "-new"}, split = ",", description = "Root-directories with submissions to check for plagiarism (same as root).")

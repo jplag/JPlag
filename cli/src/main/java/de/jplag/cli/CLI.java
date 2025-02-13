@@ -61,7 +61,7 @@ public final class CLI {
 
             switch (this.inputHandler.getCliOptions().mode) {
                 case RUN -> runJPlag();
-                case VIEW -> runViewer(null);
+                case VIEW -> runViewer(this.inputHandler.getFileForViewMode());
                 case RUN_AND_VIEW -> runAndView();
                 case AUTO -> selectModeAutomatically();
             }

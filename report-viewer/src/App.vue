@@ -41,7 +41,7 @@ import { computed, ref } from 'vue'
 library.add(faMoon)
 library.add(faSun)
 
-const newestVersion = ref(new Version(-1, -1, -1))
+const newestVersion = ref(Version.ERROR_VERSION)
 const isDemo = import.meta.env.MODE == 'demo'
 const hasShownToast = ref(sessionStorage.getItem('hasShownToast') == 'true')
 
@@ -75,6 +75,6 @@ fetch('https://api.github.com/repos/jplag/JPlag/releases/latest')
     )
   })
   .catch(() => {
-    newestVersion.value = new Version(-1, -1, -1)
+    newestVersion.value = Version.ERROR_VERSION
   })
 </script>

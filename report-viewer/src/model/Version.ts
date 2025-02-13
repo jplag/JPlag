@@ -8,6 +8,8 @@ export class Version {
   private readonly minor: number
   private readonly patch: number
 
+  public static readonly ERROR_VERSION = new Version(-1, -1, -1)
+
   constructor(major: number, minor: number, patch: number) {
     this.major = major
     this.minor = minor
@@ -15,6 +17,9 @@ export class Version {
   }
 
   public toString(): string {
+    if (this.isDevVersion()) {
+      return 'dev'
+    }
     return this.major + '.' + this.minor + '.' + this.patch
   }
 
@@ -40,7 +45,7 @@ export class Version {
     if (versionField) {
       return new Version(versionField.major, versionField.minor, versionField.patch)
     }
-    return new Version(-1, -1, -1)
+    return Version.ERROR_VERSION
   }
 }
 
