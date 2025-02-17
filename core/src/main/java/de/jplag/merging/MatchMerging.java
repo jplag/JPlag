@@ -25,7 +25,6 @@ import de.jplag.options.JPlagOptions;
  */
 public class MatchMerging {
     private final JPlagOptions options;
-    private final static int MINIMUM_REQUIRED_MERGES = 3;
     private int numberOfMerges;
 
     /**
@@ -56,7 +55,7 @@ public class MatchMerging {
             globalMatches.addAll(comparison.ignoredMatches());
             globalMatches = mergeNeighbors(globalMatches, leftSubmission, rightSubmission);
             globalMatches = globalMatches.stream().filter(it -> it.length() >= options.minimumTokenMatch()).toList();
-            if (numberOfMerges >= MINIMUM_REQUIRED_MERGES) {
+            if (numberOfMerges >= options.mergingOptions().minimumRequiredMerges()) {
                 comparisonsMerged.add(new JPlagComparison(leftSubmission, rightSubmission, globalMatches, new ArrayList<>()));
             } else {
                 comparisonsMerged.add(comparison);
