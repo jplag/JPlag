@@ -36,4 +36,9 @@ public record CliArgument<T>(String name, boolean isPositional) {
     public static CliArgument<String> EXCLUDE_FILES = new CliArgument<>("x", false);
 
     public static CliArgument<String> MODE = new CliArgument<>("mode", false);
+
+    public static CliArgument<Boolean> MERGING_ENABLED = new CliArgument<>("match-merging", false);
+    public static CliArgument<Integer> NEIGHBOR_LENGTH = new CliArgument<>("neighbor-length", false);
+    public static CliArgument<Integer> GAP_SIZE = new CliArgument<>("gap-size", false);
+    public static CliArgument<Integer> REQUIRED_MERGES = new CliArgument<>("required-merges", false);
 }
