@@ -37,4 +37,5 @@ export interface CliMergingOptions {
   enabled: boolean
   minNeighborLength: number
   maxGapSize: number
+  minimumRequiredMerges: number
 }
