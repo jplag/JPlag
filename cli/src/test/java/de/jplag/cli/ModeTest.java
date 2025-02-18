@@ -1,6 +1,7 @@
 package de.jplag.cli;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import java.io.File;
@@ -51,6 +52,18 @@ class ModeTest extends CliTest {
             this.runCli(args -> args.with(CliArgument.MODE, "view").with(CliArgument.RESULT_FILE, "result.zip")
                     .with(CliArgument.NEW_SUBMISSION_DIRECTORIES, new String[] {"test.zip"})).inputHandler();
         });
+    }
+
+    @Test
+    void testImplicitView() throws IOException, ExitException {
+        CliInputHandler inputHandler = this.runCli(args -> args.with(CliArgument.RESULT_FILE, "result.zip")).inputHandler();
+        assertEquals(new File("result.zip"), inputHandler.getFileForViewMode());
+    }
+
+    @Test
+    void testImplicitReportViewer() throws IOException, ExitException {
+        CliInputHandler inputHandler = this.runCli().inputHandler();
+        assertNull(inputHandler.getFileForViewMode());
     }
 
     @Override
