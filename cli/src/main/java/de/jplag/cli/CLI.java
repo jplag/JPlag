@@ -34,7 +34,7 @@ public final class CLI {
     private static final String OUTPUT_FILE_EXISTS = "The output file (also with suffixes e.g. results(1).zip) already exists. You can use --overwrite to overwrite the file.";
     private static final String OUTPUT_FILE_NOT_WRITABLE = "The output file (%s) cannot be written to.";
 
-    private static final String ZIP_FILE_ENDING = ".zip";
+    private static final String ZIP_FILE_EXTENSION = ".zip";
 
     private final CliInputHandler inputHandler;
 
@@ -137,7 +137,8 @@ public final class CLI {
             return;
         }
 
-        if (inputs.size() == 1 && inputs.getFirst().getName().endsWith(ZIP_FILE_ENDING)) {
+        // if the selected mode is auto and there is exactly one zip file selected as an input it is opened in the report viewer
+        if (inputs.size() == 1 && inputs.getFirst().getName().endsWith(ZIP_FILE_EXTENSION)) {
             this.runViewer(inputs.getFirst());
             return;
         }
