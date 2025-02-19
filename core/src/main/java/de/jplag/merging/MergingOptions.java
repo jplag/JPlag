@@ -13,7 +13,7 @@ public record MergingOptions(@JsonProperty("enabled") boolean enabled, @JsonProp
     public static final boolean DEFAULT_ENABLED = false;
     public static final int DEFAULT_NEIGHBOR_LENGTH = 2;
     public static final int DEFAULT_GAP_SIZE = 6;
-    public static final int DEFAULT_REQUIRED_MERGES = 3;
+    public static final int DEFAULT_REQUIRED_MERGES = 6;
 
     /**
      * Creates merging options with default parameters.
