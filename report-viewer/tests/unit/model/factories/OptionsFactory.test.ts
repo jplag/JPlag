@@ -46,7 +46,8 @@ describe('Test JSON to Options', async () => {
       mergingOptions: {
         enabled: false,
         minNeighborLength: 0,
-        maxGapSize: 0
+        maxGapSize: 0,
+        minimumRequiredMerges: 3
       }
     })
   })

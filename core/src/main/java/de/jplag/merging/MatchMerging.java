@@ -25,6 +25,7 @@ import de.jplag.options.JPlagOptions;
  */
 public class MatchMerging {
     private final JPlagOptions options;
+    private int numberOfMerges;
 
     /**
      * Instantiates the match merging algorithm for a comparison result and a set of specific options.
@@ -47,13 +48,18 @@ public class MatchMerging {
         List<JPlagComparison> comparisonsMerged = new ArrayList<>();
 
         ProgressBarLogger.iterate(ProgressBarType.MATCH_MERGING, comparisons, comparison -> {
+            numberOfMerges = 0;
             Submission leftSubmission = comparison.firstSubmission().copy();
             Submission rightSubmission = comparison.secondSubmission().copy();
             List<Match> globalMatches = new ArrayList<>(comparison.matches());
             globalMatches.addAll(comparison.ignoredMatches());
             globalMatches = mergeNeighbors(globalMatches, leftSubmission, rightSubmission);
             globalMatches = globalMatches.stream().filter(it -> it.length() >= options.minimumTokenMatch()).toList();
-            comparisonsMerged.add(new JPlagComparison(leftSubmission, rightSubmission, globalMatches, new ArrayList<>()));
+            if (numberOfMerges >= options.mergingOptions().minimumRequiredMerges()) {
+                comparisonsMerged.add(new JPlagComparison(leftSubmission, rightSubmission, globalMatches, new ArrayList<>()));
+            } else {
+                comparisonsMerged.add(comparison);
+            }
         });
 
         long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
@@ -111,6 +117,7 @@ public class MatchMerging {
                 globalMatches = removeToken(globalMatches, leftSubmission, rightSubmission, upperNeighbor, tokenBetweenLeft, tokensBetweenRight);
                 neighbors = computeNeighbors(globalMatches);
                 i = 0;
+                numberOfMerges++;
             } else {
                 i++;
             }

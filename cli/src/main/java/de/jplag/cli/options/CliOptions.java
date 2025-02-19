@@ -139,6 +139,10 @@ public class CliOptions implements Runnable {
                 "--gap-size"}, description = "Maximal gap between neighboring matches to be merged (between 1 and minTokenMatch, default: ${DEFAULT-VALUE}).")
         public int maximumGapSize = MergingOptions.DEFAULT_GAP_SIZE;
 
+        @Option(names = {
+                "--required-merges"}, description = "Minimal required merges for the merging to be applied (between 1 and 50, default: ${DEFAULT-VALUE}).")
+        public int minimumRequiredMerges = MergingOptions.DEFAULT_REQUIRED_MERGES;
+
     }
 
     @Option(names = {"--cluster-spectral-bandwidth"}, hidden = true)

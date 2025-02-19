@@ -48,7 +48,8 @@ export class OptionsFactory extends BaseFactory {
     return {
       enabled: json['enabled'] as boolean,
       minNeighborLength: json['min_neighbour_length'] as number,
-      maxGapSize: json['max_gap_size'] as number
+      maxGapSize: json['max_gap_size'] as number,
+      minimumRequiredMerges: json['min_required_merges'] as number
     }
   }
 
