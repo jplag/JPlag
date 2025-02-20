@@ -178,9 +178,8 @@ public final class CLI {
     private String getOffsetFileName(int offset) {
         if (offset <= 0) {
             return getResultFilePath();
-        } else {
-            return getResultFileBaseName() + "(" + offset + ")" + DEFAULT_FILE_ENDING;
         }
+        return getResultFileBaseName() + "(" + offset + ")" + DEFAULT_FILE_ENDING;
     }
 
     private String getWritableFileName() throws CliException {

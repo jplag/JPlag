@@ -81,7 +81,7 @@ public class MatchMerging {
         sortedByRight.sort(Comparator.comparingInt(Match::startOfSecond));
 
         for (int i = 0; i < sortedByLeft.size() - 1; i++) {
-            if (sortedByRight.indexOf(sortedByLeft.get(i)) == (sortedByRight.indexOf(sortedByLeft.get(i + 1)) - 1)) {
+            if (sortedByRight.indexOf(sortedByLeft.get(i)) == sortedByRight.indexOf(sortedByLeft.get(i + 1)) - 1) {
                 neighbors.add(new Neighbor(sortedByLeft.get(i), sortedByLeft.get(i + 1)));
             }
         }
@@ -159,7 +159,7 @@ public class MatchMerging {
      * @return true if FILE_END is in token
      */
     private boolean containsFileEndToken(List<Token> token) {
-        return token.stream().map(Token::getType).anyMatch(it -> it.equals(SharedTokenType.FILE_END));
+        return token.stream().map(Token::getType).anyMatch(it -> SharedTokenType.FILE_END.equals(it));
     }
 
     /**

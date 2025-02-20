@@ -116,7 +116,7 @@ public class JPlagResult {
      * the same distribution as {@link JPlagResult#getSimilarityDistribution()}
      */
     public int[] getMaxSimilarityDistribution() {
-        return calculateDistributionFor(comparisons, (JPlagComparison::maximalSimilarity));
+        return calculateDistributionFor(comparisons, JPlagComparison::maximalSimilarity);
     }
 
     public List<ClusteringResult<Submission>> getClusteringResult() {

@@ -119,7 +119,7 @@ public class Cluster<T> {
 
     private int connections() {
         int size = members.size();
-        return ((size - 1) * size) / 2;
+        return (size - 1) * size / 2;
     }
 
     /**

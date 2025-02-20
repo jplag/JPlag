@@ -9,6 +9,7 @@ import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
+import org.mockito.ArgumentMatchers;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.slf4j.event.Level;
@@ -143,8 +144,9 @@ public abstract class CliTest {
     protected CliResult runCli(Consumer<CliArgumentBuilder> additionalOptionsBuilder) throws ExitException, IOException {
         try (MockedStatic<JPlagRunner> runnerMock = Mockito.mockStatic(JPlagRunner.class);
                 MockedStatic<OutputFileGenerator> generatorMock = Mockito.mockStatic(OutputFileGenerator.class)) {
-            runnerMock.when(() -> JPlagRunner.runJPlag(Mockito.any())).thenReturn(new JPlagResult(Collections.emptyList(), null, 1, null));
-            generatorMock.when(() -> OutputFileGenerator.generateJPlagResultZip(Mockito.any(), Mockito.any())).then(invocationOnMock -> null);
+            runnerMock.when(() -> JPlagRunner.runJPlag(ArgumentMatchers.any())).thenReturn(new JPlagResult(Collections.emptyList(), null, 1, null));
+            generatorMock.when(() -> OutputFileGenerator.generateJPlagResultZip(ArgumentMatchers.any(), ArgumentMatchers.any()))
+                    .then(invocationOnMock -> null);
 
             CliArgumentBuilder copy = this.defaultArgumentBuilder.copy();
             additionalOptionsBuilder.accept(copy);

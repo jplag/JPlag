@@ -113,7 +113,7 @@ public class ClusteringResult<T> {
             }
         }
         int nMinusOne = cluster.size() - 1;
-        double numberOfComparisons = (nMinusOne * (nMinusOne + 1)) / 2.0;
+        double numberOfComparisons = nMinusOne * (nMinusOne + 1) / 2.0;
         /*
          * Use Gauss sum to calculate number of comparisons in cluster: Given cluster of size n we need Gauss sum of n-1
          * comparisons: compare first element of cluster to all other except itself: n-1 comparisons. compare second element to

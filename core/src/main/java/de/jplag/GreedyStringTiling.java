@@ -212,14 +212,14 @@ public class GreedyStringTiling {
         List<Token> tokens = submission.getTokenList();
         boolean[] result = new boolean[tokens.size()];
         for (int i = 0; i < result.length; i++) {
-            result[i] = tokens.get(i).getType().isExcludedFromMatching() || (baseCodeTokens != null && baseCodeTokens.contains(tokens.get(i)));
+            result[i] = tokens.get(i).getType().isExcludedFromMatching() || baseCodeTokens != null && baseCodeTokens.contains(tokens.get(i));
         }
         return result;
     }
 
     private SubsequenceHashLookupTable subsequenceHashLookupTableForSubmission(Submission submission, boolean[] marked) {
         return cachedHashLookupTables.computeIfAbsent(submission,
-                (key -> new SubsequenceHashLookupTable(minimumMatchLength, tokenValueListFromSubmission(key), marked)));
+                key -> new SubsequenceHashLookupTable(minimumMatchLength, tokenValueListFromSubmission(key), marked));
     }
 
     /**
@@ -227,7 +227,7 @@ public class GreedyStringTiling {
      * @param submission The submission from which to convert the tokens.
      */
     private int[] tokenValueListFromSubmission(Submission submission) {
-        return cachedTokenValueLists.computeIfAbsent(submission, (key -> {
+        return cachedTokenValueLists.computeIfAbsent(submission, key -> {
             List<Token> tokens = key.getTokenList();
             int[] tokenValueList = new int[tokens.size()];
             for (int i = 0; i < tokens.size(); i++) {
@@ -238,7 +238,7 @@ public class GreedyStringTiling {
                 tokenValueList[i] = tokenTypeValues.get(type);
             }
             return tokenValueList;
-        }));
+        });
     }
 
     private boolean checkMark(boolean[] marks, int index, Submission submission, Submission otherSubmission) {

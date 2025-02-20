@@ -13,17 +13,17 @@ public record Match(int startOfFirst, int startOfSecond, int length) {
      */
     public boolean overlaps(Match other) {
         if (startOfFirst < other.startOfFirst) {
-            if ((other.startOfFirst - startOfFirst) < length) {
+            if (other.startOfFirst - startOfFirst < length) {
                 return true;
             }
-        } else if ((startOfFirst - other.startOfFirst) < other.length) {
+        } else if (startOfFirst - other.startOfFirst < other.length) {
             return true;
         }
 
         if (startOfSecond < other.startOfSecond) {
-            return (other.startOfSecond - startOfSecond) < length;
+            return other.startOfSecond - startOfSecond < length;
         }
-        return (startOfSecond - other.startOfSecond) < other.length;
+        return startOfSecond - other.startOfSecond < other.length;
     }
 
     /**

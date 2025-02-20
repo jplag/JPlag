@@ -172,7 +172,7 @@ public class SubmissionSet {
 
         int validSubmissions = submissions.size() - errors;
         logger.debug("{} submissions parsed successfully!", validSubmissions);
-        logger.debug("{} parser error{}!", errors, (errors != 1 ? "s" : ""));
+        logger.debug("{} parser error{}!", errors, errors != 1 ? "s" : "");
     }
 
 }
