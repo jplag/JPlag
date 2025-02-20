@@ -15,7 +15,7 @@ jobs:
       - name: Set maven settings.xml
         uses: whelk-io/maven-settings-xml-action@v22
         with:
-          servers: '[{ "id": "ossrh", "username": "jplag", "password": "${{ secrets.OSSRH_TOKEN }}" }]'
+          servers: '[{ "id": "ossrh", "username": "${{ secrets.OSSRH_USER }}", "password": "${{ secrets.OSSRH_TOKEN }}" }]'
       - name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@v6
         with:
