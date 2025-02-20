@@ -45,7 +45,7 @@ All supported languages and their supported versions are listed below.
 | [EMF Metamodel](https://www.eclipse.org/modeling/emf/) |                                                                                 2.25.0 | emf               |                                beta                                 |    EMF    |
 | [EMF Model](https://www.eclipse.org/modeling/emf/)     |                                                                                 2.25.0 | emf-model         |                                alpha                                |    EMF    |
 | [SCXML](https://www.w3.org/TR/scxml/)                  |                                                                                    1.0 | scxml             |                                alpha                                |    XML    |
-| Text (naive)                                           |                                                                                      - | text              |                               legacy                                |  CoreNLP  |
+| Text (naive, use with caution)                         |                                                                                      - | text              |                               legacy                                |  CoreNLP  |
 
 ## Download and Installation
 You need Java SE 21 to run or build JPlag.
@@ -72,7 +72,7 @@ JPlag is released on [Maven Central](https://search.maven.org/search?q=de.jplag)
 3. You will find the generated JARs in the subdirectory `cli/target`.
 
 ## Usage
-JPlag can either be used via the CLI or directly via its Java API. For more information, see the [usage information in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag). If you are using the CLI, you can display your results via [jplag.github.io](https://jplag.github.io/JPlag/). No data will leave your computer!
+JPlag can either be used via the CLI or directly via its Java API. For more information, see the [usage information in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag). If you are using the CLI, the report viewer UI will launch automatically. No data will leave your computer!
 
 ### CLI
 *Note that the [legacy CLI](https://github.com/jplag/jplag/blob/legacy/README.md) is varying slightly.*
@@ -133,6 +133,8 @@ Subsequence Match Merging
       --match-merging   Enables merging of neighboring matches to counteract obfuscation attempts.
       --neighbor-length=<minimumNeighborLength>
                         Minimal length of neighboring matches to be merged (between 1 and minTokenMatch, default: 2).
+      --required-merges=<minimumRequiredMerges>
+                        Minimal required merges for the merging to be applied (between 1 and 50, default: 6).
 Languages:
   c
   cpp
