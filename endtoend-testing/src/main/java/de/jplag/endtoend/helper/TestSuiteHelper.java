@@ -9,7 +9,7 @@ import de.jplag.Submission;
 /**
  * Helper class to perform all necessary additional functions for the endToEnd tests.
  */
-public class TestSuiteHelper {
+public final class TestSuiteHelper {
 
     /**
      * private constructor to prevent instantiation

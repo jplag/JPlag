@@ -51,7 +51,7 @@ public class ParserAdapter extends AbstractParser {
     private void parseFile(File file) throws ParsingException {
         this.currentFile = file;
         this.currentLine = 1; // lines start at 1
-        this.currentLineBreakIndex = 0;
+        this.currentLineBreakIndex = -1;
         String content = readFile(file);
         int lastTokenEnd = 0;
         CoreDocument coreDocument = pipeline.processToCoreDocument(content);

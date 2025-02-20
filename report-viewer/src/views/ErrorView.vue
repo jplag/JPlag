@@ -3,16 +3,16 @@
     <div class="w-screen">
       <div>
         <img
+          v-if="store().uiState.useDarkMode"
           class="mx-auto mt-32 h-auto w-60"
           src="@/assets/jplag-light-transparent.png"
           alt="JPlag Logo"
-          v-if="store().uiState.useDarkMode"
         />
         <img
+          v-else
           class="mx-auto mt-32 h-auto w-60"
           src="@/assets/jplag-dark-transparent.png"
           alt="JPlag Logo"
-          v-else
         />
       </div>
       <Container class="mx-auto mt-10 w-fit max-w-5xl space-y-5 p-5">
@@ -60,7 +60,7 @@ defineProps({
 onErrorCaptured((error) => {
   console.error(error)
   alert(
-    'An error occured that could not be handeled. Please check the console for more information.'
+    'An error occurred that could not be handled. Please check the console for more information.'
   )
   return false
 })

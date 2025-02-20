@@ -7,7 +7,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import de.jplag.exceptions.ExitException;
-import de.jplag.java.JavaLanguage;
 
 public class NewJavaFeaturesTest extends TestBase {
 
@@ -20,17 +19,17 @@ public class NewJavaFeaturesTest extends TestBase {
     private static final String CHANGE_MESSAGE = "Number of %s changed! If intended, modify the test case!";
     private static final String VERSION_MISMATCH_MESSAGE = "Using Java version %s instead of %s may skew the results.";
     private static final String VERSION_MATCH_MESSAGE = "Java version matches, but results deviate from expected values";
-    private static final String JAVA_VERSION_KEY = "java.version";
     private static final String CI_VARIABLE = "CI";
+
+    public static final int EXPECTED_JAVA_VERSION = 21;
 
     @Test
     @DisplayName("test comparison of Java files with modern language features")
     public void testJavaFeatureDuplicates() throws ExitException {
         // pre-condition
-        String actualJavaVersion = System.getProperty(JAVA_VERSION_KEY);
+        int javaVersion = Runtime.version().feature();
         boolean isCiRun = System.getenv(CI_VARIABLE) != null;
-        boolean isCorrectJavaVersion = actualJavaVersion.startsWith(String.valueOf(JavaLanguage.JAVA_VERSION));
-        assumeTrue(isCorrectJavaVersion || isCiRun, VERSION_MISMATCH_MESSAGE.formatted(actualJavaVersion, JavaLanguage.JAVA_VERSION));
+        assumeTrue(javaVersion == EXPECTED_JAVA_VERSION || isCiRun, VERSION_MISMATCH_MESSAGE.formatted(javaVersion, EXPECTED_JAVA_VERSION));
 
         JPlagResult result = runJPlagWithExclusionFile(ROOT_DIRECTORY, EXCLUSION_FILE_NAME);
 

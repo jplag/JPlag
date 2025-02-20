@@ -7,7 +7,7 @@
       ></canvas>
       <div class="mt-5 text-xs font-bold text-gray-500 dark:text-gray-400 print:hidden">
         <p>Hover over an edge to highlight it in the table.</p>
-        <p class="mt-2" v-if="!allComparisonsPresent">
+        <p v-if="!allComparisonsPresent" class="mt-2">
           Not all comparisons of this cluster are present. These comparisons are indicated by the
           dashed lines. <br />
           To include more comparisons, increase the number of increased comparisons in the CLI.
@@ -83,7 +83,7 @@ const hoverableEdges = computed(() => {
       const firstIndex = keys.value.indexOf(key)
       const secondIndex = keys.value.indexOf(match.matchedWith)
       if (firstIndex == -1 || secondIndex == -1) {
-        console.log(`Could not find index for ${key} or ${match.matchedWith}`)
+        console.warn(`Could not find index for ${key} or ${match.matchedWith}`)
       }
       if (firstIndex < secondIndex) {
         edges.push({
@@ -165,17 +165,20 @@ const maximumSimilarity = computed(() => {
   return maximumSimilarity
 })
 
-function getClampedSimilarityFromKeyIndex(firstIndex: number, secondIndex: number) {
+function getClampedSimilarityFromKeyIndex(
+  firstIndex: number,
+  secondIndex: number,
+  min: number,
+  max: number
+) {
   const similarity = getSimilarityFromKeyIndex(firstIndex, secondIndex)
   if (similarity == 0) {
     return 0
   }
-  if (minimumSimilarity.value == maximumSimilarity.value) {
+  if (min == max) {
     return 1
   }
-  return (
-    (similarity - minimumSimilarity.value) / (maximumSimilarity.value - minimumSimilarity.value)
-  )
+  return (similarity - min) / (max - min)
 }
 
 function getEdgeAlphaFromKeyIndex(firstIndex: number, secondIndex: number) {
@@ -183,7 +186,16 @@ function getEdgeAlphaFromKeyIndex(firstIndex: number, secondIndex: number) {
   if (similarity == 0) {
     return 1
   }
-  return getClampedSimilarityFromKeyIndex(firstIndex, secondIndex) * 0.7 + 0.3
+  return (
+    getClampedSimilarityFromKeyIndex(
+      firstIndex,
+      secondIndex,
+      Math.min(minimumSimilarity.value, 0.5),
+      maximumSimilarity.value
+    ) *
+      0.7 +
+    0.3
+  )
 }
 
 function getEdgeWidth(firstIndex: number, secondIndex: number) {
@@ -191,7 +203,7 @@ function getEdgeWidth(firstIndex: number, secondIndex: number) {
   if (similarity == 0) {
     return 0.5
   }
-  return getClampedSimilarityFromKeyIndex(firstIndex, secondIndex) * 5 + 1
+  return getClampedSimilarityFromKeyIndex(firstIndex, secondIndex, 0, 1) * 5 + 1
 }
 
 function getEdgeDashStyle(firstIndex: number, secondIndex: number) {
@@ -226,8 +238,11 @@ const graphData = computed(() => {
           y: calculateYPosition(index)
         })),
         edges: edges.value,
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in the library
         edgeLineBorderColor: (ctx: any) => getEdgeColor(ctx.raw.source, ctx.raw.target),
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in the library
         edgeLineBorderWidth: (ctx: any) => getEdgeWidth(ctx.raw.source, ctx.raw.target),
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in the library
         edgeLineBorderDash: (ctx: any) => getEdgeDashStyle(ctx.raw.source, ctx.raw.target)
       }
     ]
@@ -256,6 +271,7 @@ const graphOptions = computed(() => {
         right: xPadding.value
       }
     },
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in the library
     onHover: (event: any, elements: any) => {
       if (!event) {
         hoveredEdge.value = null
@@ -294,18 +310,20 @@ const graphOptions = computed(() => {
         })
       }
     },
-    animation: false as false,
+    animation: false as const,
     plugins: {
       legend: { display: false },
       datalabels: {
         display: true,
         font: {
-          weight: 'bold' as 'bold',
+          weight: 'bold' as const,
           size: 12
         },
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in the library
         formatter: (value: any, ctx: any) => {
           return labels.value[ctx.dataIndex]
         },
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in the library
         align: (ctx: any) => degreeAroundCircle(ctx.dataIndex),
         offset: 8,
         color: graphColors.ticksAndFont.value

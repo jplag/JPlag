@@ -56,4 +56,12 @@ export class MatchInSingleFile {
       return this._match.endInSecond.column
     }
   }
+
+  get fileName(): string {
+    if (this._index === 1) {
+      return this._match.firstFile
+    } else {
+      return this._match.secondFile
+    }
+  }
 }

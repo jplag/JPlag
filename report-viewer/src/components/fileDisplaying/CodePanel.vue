@@ -3,9 +3,22 @@
 -->
 <template>
   <Interactable class="mx-2 !shadow print:!mx-0 print:!border-0 print:!p-0">
-    <div @click="collapsed = !collapsed" class="flex px-2 font-bold print:whitespace-pre-wrap">
-      <span class="flex-1">{{ getFileDisplayName(file) }}</span>
-      <ToolTipComponent v-if="file.tokenCount != undefined" direction="left" class="font-normal">
+    <div class="flex px-2 font-bold print:whitespace-pre-wrap" @click="collapsed = !collapsed">
+      <ToolTipComponent v-if="getFileDisplayName(file) != file.fileName" direction="right">
+        <template #default
+          ><span>{{ getFileDisplayName(file) }}</span></template
+        >
+        <template #tooltip
+          ><p class="whitespace max-w-[22rem] text-sm font-normal">
+            {{ file.fileName }}
+          </p></template
+        >
+      </ToolTipComponent>
+      <span v-else>{{ file.fileName }}</span>
+
+      <span class="flex-1"></span>
+
+      <ToolTipComponent direction="left" class="font-normal">
         <template #default
           ><span class="text-gray-600 dark:text-gray-300"
             >{{ Math.round((file.matchedTokenCount / (file.tokenCount - 1)) * 100) }}%</span
@@ -29,8 +42,8 @@
           <div
             v-for="(_, index) in codeLines"
             :key="index"
-            class="col-span-1 col-start-1 row-span-1 text-right"
             ref="lineRefs"
+            class="col-span-1 col-start-1 row-span-1 text-right"
             :style="{
               gridRowStart: index + 1
             }"
@@ -42,9 +55,9 @@
             v-for="(line, index) in codeLines"
             :key="index"
             :line="line.line"
-            :lineNumber="index + 1"
+            :line-number="index + 1"
             :matches="line.matches"
-            @matchSelected="(match) => matchSelected(match)"
+            @match-selected="(match: Match) => matchSelected(match)"
           />
         </div>
 
@@ -66,6 +79,7 @@ import type { Language } from '@/model/Language'
 import ToolTipComponent from '../ToolTipComponent.vue'
 import CodeLine from './CodeLine.vue'
 import type { Match } from '@/model/Match'
+import type { BaseCodeMatch } from '@/model/BaseCodeReport'
 
 const props = defineProps({
   /**
@@ -80,6 +94,10 @@ const props = defineProps({
    */
   matches: {
     type: Array<MatchInSingleFile>,
+    required: true
+  },
+  baseCodeMatches: {
+    type: Array<BaseCodeMatch>,
     required: true
   },
   /**
@@ -98,10 +116,12 @@ const lineRefs = ref<HTMLElement[]>([])
 
 const codeLines: Ref<{ line: string; matches: MatchInSingleFile[] }[]> = computed(() =>
   highlight(props.file.data, props.highlightLanguage).map((line, index) => {
-    return {
-      line,
-      matches: props.matches?.filter((m) => m.start <= index + 1 && index + 1 <= m.end) ?? []
-    }
+    const matches = props.matches.filter((m) => m.start <= index + 1 && index + 1 <= m.end)
+    const baseCodeMatches = props.baseCodeMatches.filter(
+      (m) => m.start <= index + 1 && index + 1 <= m.end
+    )
+    matches.push(...baseCodeMatches)
+    return { line, matches }
   })
 )
 
@@ -117,7 +137,6 @@ function collapse() {
 }
 
 function expand() {
-  console.log('expand')
   collapsed.value = false
 }
 
@@ -137,9 +156,10 @@ defineExpose({
  * @return new path of file
  */
 function getFileDisplayName(file: SubmissionFile): string {
-  const filePathLength = file.fileName.length
+  const fileDisplayName = file.displayFileName ?? file.fileName
+  const filePathLength = fileDisplayName.length
   return filePathLength > 40
-    ? '...' + file.fileName.substring(filePathLength - 40, filePathLength)
-    : file.fileName
+    ? '...' + fileDisplayName.substring(filePathLength - 40, filePathLength)
+    : fileDisplayName
 }
 </script>

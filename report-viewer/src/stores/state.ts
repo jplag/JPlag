@@ -1,6 +1,7 @@
 import type { SubmissionFile } from '@/model/File'
 import type { MetricType } from '@/model/MetricType'
 import type { DistributionChartConfig } from '@/model/ui/DistributionChartConfig'
+import type { FileSortingOptions } from '@/model/ui/FileSortingOptions'
 
 /**
  * Local store. Stores the state of the application.
@@ -27,14 +28,6 @@ export interface State {
    * Indicates whether zip mode is used.
    */
   zipModeUsed: boolean
-  /**
-   * Indicates whether single file mode is used.
-   */
-  singleModeUsed: boolean
-  /**
-   * Files string if single mode is used.
-   */
-  singleFillRawContent: string
 
   fileIdToDisplayName: Map<string, string>
   submissionIdsToComparisonFileName: Map<string, Map<string, string>>
@@ -49,13 +42,5 @@ export interface UIState {
   comparisonTableSortingMetric: MetricType
   comparisonTableClusterSorting: boolean
   distributionChartConfig: DistributionChartConfig
-}
-
-/**
- * Load configuration is used to indicate which mode is used.
- */
-export interface LoadConfiguration {
-  local: boolean
-  zip: boolean
-  single: boolean
+  fileSorting: FileSortingOptions
 }

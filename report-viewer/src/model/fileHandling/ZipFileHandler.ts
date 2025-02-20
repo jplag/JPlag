@@ -8,7 +8,7 @@ import { FileHandler } from './FileHandler'
  */
 export class ZipFileHandler extends FileHandler {
   public async handleFile(file: Blob) {
-    console.log('Start handling zip file and storing necessary data...')
+    console.info('Start handling zip file and storing necessary data...')
     return jszip.loadAsync(file).then(async (zip) => {
       for (const originalFileName of Object.keys(zip.files)) {
         const unixFileName = slash(originalFileName)
@@ -27,7 +27,10 @@ export class ZipFileHandler extends FileHandler {
               submissionId: slash(submissionFileName),
               fileName: slash(fullPathFileName),
               data: data,
-              matchedTokenCount: NaN
+              // These two properties will be determined at a later time (when loading the submission file index)
+              tokenCount: NaN,
+              matchedTokenCount: NaN,
+              displayFileName: slash(fullPathFileName)
             })
           })
         } else {
@@ -83,7 +86,7 @@ export class ZipFileHandler extends FileHandler {
       filesOrSubmissionsIndex_originalFileName +
         (rootName === 'files' ? 'files'.length : 'submissions'.length)
     )
-    if (originalPathWithoutSubmissions.charAt(0) === '\\') {
+    if (originalPathWithoutSubmissions.startsWith('\\')) {
       fullPath = unixSubfolderPathAfterSubmissions + '\\' + fileBase
       while (fullPath.includes('/')) {
         fullPath = fullPath.replace('/', '\\')

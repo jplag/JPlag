@@ -4,35 +4,20 @@ import { computed } from 'vue'
 /**
  * Generates an array of HSL-Colors
  * @param numberOfColors Number of colors to generate
- * @param saturation Saturation of the colors [0,1]
- * @param lightness Lightness of the colors [0,1]
- * @param alpha Alpha value of the colors [0,1]
  */
-function generateColors(
-  numberOfColors: number,
-  saturation: number,
-  lightness: number,
-  alpha: number
-) {
+function generateHues(numberOfColors: number) {
   const numberOfColorsInFirstInterval = Math.round(
     ((80 - 20) / (80 - 20 + (340 - 160))) * numberOfColors
   ) // number of colors from the first interval
   const numberOfColorsInSecondInterval = numberOfColors - numberOfColorsInFirstInterval // number of colors from the second interval
 
-  const colors: Array<string> = generateColorsForInterval(
-    20,
-    80,
-    numberOfColorsInFirstInterval,
-    saturation,
-    lightness,
-    alpha
-  )
-  colors.push(...generateColorsForInterval(160, 340, numberOfColorsInSecondInterval, 0.8, 0.5, 0.3))
+  const colors: Array<number> = generateColorsForInterval(20, 80, numberOfColorsInFirstInterval)
+  colors.push(...generateColorsForInterval(160, 340, numberOfColorsInSecondInterval))
   return colors
 }
 
 /**
- * Genertes an array of HSL-Colors for a given interval
+ * Generates an array of HSL-Colors for a given interval
  * @param intervalStart start of the interval [0,360]
  * @param intervalEnd end of the interval [0,360] and > intervalStart
  * @param numberOfColorsInInterval Number of colors to generate in the interval
@@ -44,22 +29,19 @@ function generateColors(
 function generateColorsForInterval(
   intervalStart: number,
   intervalEnd: number,
-  numberOfColorsInInterval: number,
-  saturation: number,
-  lightness: number,
-  alpha: number
+  numberOfColorsInInterval: number
 ) {
-  const colors: Array<string> = []
+  const hues: Array<number> = []
   const interval = intervalEnd - intervalStart
   const hueDelta = Math.trunc(interval / numberOfColorsInInterval)
   for (let i = 0; i < numberOfColorsInInterval; i++) {
     const hue = intervalStart + i * hueDelta
-    colors.push(`hsla(${hue}, ${saturation * 100}%, ${lightness * 100}%, ${alpha})`)
+    hues.push(hue)
   }
-  return colors
+  return hues
 }
 
-/** This is the list of colors that are used as the background colot of matches in the comparison view */
+/** This is the list of colors that are used as the background color of matches in the comparison view */
 const matchColors: { red: number; green: number; blue: number }[] = [
   { red: 255, green: 122, blue: 0 },
   { red: 0, green: 133, blue: 255 },
@@ -74,11 +56,20 @@ function getMatchColorCount() {
   return matchColors.length
 }
 
-function getMatchColor(alpha: number, index?: number) {
+type MatchColorIndex = number | undefined | 'base'
+
+function getMatchColor(alpha: number, index: MatchColorIndex) {
   if (index == undefined) {
     return 'rgba(0,0,0,0)'
   }
+  if (index == 'base') {
+    return getBaseCodeColor(alpha)
+  }
   return `rgba(${matchColors[index].red}, ${matchColors[index].green}, ${matchColors[index].blue}, ${alpha})`
+}
+
+function getBaseCodeColor(opacity: number) {
+  return `hsla(0, 0%, 75%, ${opacity})`
 }
 
 const graphRGB = {
@@ -104,4 +95,4 @@ const graphColors = {
   }
 }
 
-export { generateColors, graphColors, getMatchColorCount, getMatchColor }
+export { generateHues, graphColors, getMatchColorCount, getMatchColor, type MatchColorIndex }

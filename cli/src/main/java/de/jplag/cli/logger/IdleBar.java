@@ -7,12 +7,10 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
-import de.jplag.logging.ProgressBar;
-
 /**
  * Prints an idle progress bar, that does not count upwards.
  */
-public class IdleBar implements ProgressBar {
+public class IdleBar extends LogDelayingProgressBar {
     private final PrintStream output;
 
     private final Thread runner;
@@ -27,6 +25,7 @@ public class IdleBar implements ProgressBar {
     private boolean running = false;
 
     public IdleBar(String text) {
+        super();
         this.output = System.out;
         this.runner = new Thread(this::run);
         this.length = 50;
@@ -59,7 +58,9 @@ public class IdleBar implements ProgressBar {
         } catch (InterruptedException ignored) {
             Thread.currentThread().interrupt();
         }
-        this.output.println();
+        this.output.print('\r');
+        this.output.println(this.text + ": complete");
+        super.dispose();
     }
 
     private void run() {

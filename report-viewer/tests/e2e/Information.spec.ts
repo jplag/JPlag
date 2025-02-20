@@ -2,7 +2,6 @@ import { expect, test } from '@playwright/test'
 import { uploadFile } from './TestUtils'
 
 test('Test information page', async ({ page }) => {
-  await page.goto('/')
   await uploadFile('progpedia-report.zip', page)
 
   // check displayed information on overview page

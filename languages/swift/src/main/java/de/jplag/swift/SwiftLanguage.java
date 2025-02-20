@@ -1,29 +1,23 @@
 package de.jplag.swift;
 
-import java.io.File;
-import java.util.List;
-import java.util.Set;
-
 import org.kohsuke.MetaInfServices;
 
-import de.jplag.ParsingException;
-import de.jplag.Token;
+import de.jplag.antlr.AbstractAntlrLanguage;
 
 /**
  * This represents the Swift language as a language supported by JPlag.
  */
 @MetaInfServices(de.jplag.Language.class)
-public class SwiftLanguage implements de.jplag.Language {
+public class SwiftLanguage extends AbstractAntlrLanguage {
 
     private static final String IDENTIFIER = "swift";
 
-    private static final String NAME = "Swift Parser";
+    private static final String NAME = "Swift";
     private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
     private static final String[] FILE_EXTENSIONS = {".swift"};
-    private final SwiftParserAdapter parserAdapter;
 
     public SwiftLanguage() {
-        this.parserAdapter = new SwiftParserAdapter();
+        super(new SwiftParserAdapter());
     }
 
     @Override
@@ -44,10 +38,5 @@ public class SwiftLanguage implements de.jplag.Language {
     @Override
     public int minimumTokenMatch() {
         return DEFAULT_MIN_TOKEN_MATCH;
-    }
-
-    @Override
-    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return parserAdapter.parse(files);
     }
 }

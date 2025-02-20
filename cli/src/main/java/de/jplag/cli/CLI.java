@@ -3,6 +3,8 @@ package de.jplag.cli;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
@@ -11,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import de.jplag.JPlag;
 import de.jplag.JPlagResult;
 import de.jplag.cli.logger.CliProgressBarProvider;
+import de.jplag.cli.logger.CollectedLogger;
 import de.jplag.cli.logger.CollectedLoggerFactory;
 import de.jplag.cli.picocli.CliInputHandler;
 import de.jplag.exceptions.ExitException;
@@ -31,6 +34,8 @@ public final class CLI {
     private static final String OUTPUT_FILE_EXISTS = "The output file (also with suffixes e.g. results(1).zip) already exists. You can use --overwrite to overwrite the file.";
     private static final String OUTPUT_FILE_NOT_WRITABLE = "The output file (%s) cannot be written to.";
 
+    private static final String ZIP_FILE_EXTENSION = ".zip";
+
     private final CliInputHandler inputHandler;
 
     /**
@@ -42,20 +47,23 @@ public final class CLI {
     }
 
     /**
-     * Executes the cli
+     * Executes the cli.
      * @throws ExitException If anything on the side of JPlag goes wrong
      * @throws IOException If any files did not work
      */
     public void executeCli() throws ExitException, IOException {
         logger.debug("Your version of JPlag is {}", JPlag.JPLAG_VERSION);
+        JPlagVersionChecker.printVersionNotification();
 
         if (!this.inputHandler.parse()) {
+            CollectedLogger.setLogLevel(this.inputHandler.getCliOptions().advanced.logLevel);
             ProgressBarLogger.setProgressBarProvider(new CliProgressBarProvider());
 
             switch (this.inputHandler.getCliOptions().mode) {
                 case RUN -> runJPlag();
-                case VIEW -> runViewer(null);
-                case RUN_AND_VIEW -> runViewer(runJPlag());
+                case VIEW -> runViewer(this.inputHandler.getFileForViewMode());
+                case RUN_AND_VIEW -> runAndView();
+                case AUTO -> selectModeAutomatically();
             }
         }
     }
@@ -84,7 +92,7 @@ public final class CLI {
     }
 
     /**
-     * Runs JPlag and returns the file the result has been written to
+     * Runs JPlag and returns the file the result has been written to.
      * @return The file containing the result
      * @throws ExitException If JPlag threw an exception
      * @throws FileNotFoundException If the file could not be written
@@ -103,12 +111,47 @@ public final class CLI {
     }
 
     /**
-     * Runs the report viewer using the given file as the default result.zip
+     * Runs JPlag and shows the result in the report viewer
+     * @throws IOException If something went wrong with the internal server
+     * @throws ExitException If JPlag threw an exception
+     */
+    public void runAndView() throws IOException, ExitException {
+        runViewer(runJPlag());
+    }
+
+    /**
+     * Runs the report viewer using the given file as the default result.zip.
      * @param zipFile The zip file to pass to the viewer. Can be null, if no result should be opened by default
      * @throws IOException If something went wrong with the internal server
      */
     public void runViewer(File zipFile) throws IOException {
+        finalizeLogger(); // Prints the errors. The later finalizeLogger will print any errors logged after this point.
         JPlagRunner.runInternalServer(zipFile, this.inputHandler.getCliOptions().advanced.port);
+    }
+
+    private void selectModeAutomatically() throws IOException, ExitException {
+        List<File> inputs = this.getAllInputs();
+
+        if (inputs.isEmpty()) {
+            this.runViewer(null);
+            return;
+        }
+
+        // if the selected mode is auto and there is exactly one zip file selected as an input it is opened in the report viewer
+        if (inputs.size() == 1 && inputs.getFirst().getName().endsWith(ZIP_FILE_EXTENSION)) {
+            this.runViewer(inputs.getFirst());
+            return;
+        }
+
+        this.runAndView();
+    }
+
+    private List<File> getAllInputs() {
+        List<File> inputs = new ArrayList<>();
+        inputs.addAll(List.of(this.inputHandler.getCliOptions().rootDirectory));
+        inputs.addAll(List.of(this.inputHandler.getCliOptions().newDirectories));
+        inputs.addAll(List.of(this.inputHandler.getCliOptions().oldDirectories));
+        return inputs;
     }
 
     private void finalizeLogger() {

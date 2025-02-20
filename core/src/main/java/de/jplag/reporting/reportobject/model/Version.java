@@ -1,5 +1,7 @@
 package de.jplag.reporting.reportobject.model;
 
+import java.util.Comparator;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,14 +14,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @param minor MINOR version when you add functionality in a backwards compatible manner
  * @param patch PATCH version when you make backwards compatible bug fixes
  */
-public record Version(@JsonProperty("major") int major, @JsonProperty("minor") int minor, @JsonProperty("patch") int patch) {
-
-    private static final Logger logger = LoggerFactory.getLogger(Version.class);
+public record Version(@JsonProperty("major") int major, @JsonProperty("minor") int minor, @JsonProperty("patch") int patch)
+        implements Comparable<Version> {
 
     /**
      * The default version for development (0.0.0).
      */
     public static final Version DEVELOPMENT = new Version(0, 0, 0);
+
+    private static final Logger logger = LoggerFactory.getLogger(Version.class);
 
     /**
      * Parse a version string (e.g., {@code v0.0.1} or {@code 0.0.1} or {@code 0.0.1-SNAPSHOT}).
@@ -41,5 +44,10 @@ public record Version(@JsonProperty("major") int major, @JsonProperty("minor") i
     @Override
     public String toString() {
         return String.format("%d.%d.%d", major, minor, patch);
+    }
+
+    @Override
+    public int compareTo(Version other) {
+        return Comparator.comparing(Version::major).thenComparing(Version::minor).thenComparing(Version::patch).compare(this, other);
     }
 }

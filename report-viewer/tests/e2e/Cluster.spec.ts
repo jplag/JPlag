@@ -2,8 +2,6 @@ import { test, expect } from '@playwright/test'
 import { uploadFile } from './TestUtils'
 
 test('Test cluster view', async ({ page }) => {
-  await page.goto('/')
-
   await uploadFile('result_small_cluster.zip', page)
 
   // check for all clusters being shown
@@ -29,7 +27,7 @@ test('Test cluster view', async ({ page }) => {
 
   // Check comparison table
   const comparisonTable = await page.textContent('body')
-  compareTableRow(comparisonTable, 1, 'C', 'A', 99.6, 99.6)
+  compareTableRow(comparisonTable, 1, 'A', 'C', 99.6, 99.6)
   compareTableRow(comparisonTable, 2, 'D', 'C', 76.06, 95.93)
   compareTableRow(comparisonTable, 3, 'D', 'A', 76.06, 95.93)
   compareTableRow(comparisonTable, 4, 'B', 'D', 28.32, 80.85)

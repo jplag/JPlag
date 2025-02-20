@@ -3,14 +3,14 @@
     <div class="flex w-full bg-container-secondary-light dark:bg-container-secondary-dark">
       <div
         v-for="index in Array(props.tabs.length).keys()"
-        class="cursor-pointer border-r border-container-border-light dark:border-container-border-dark"
-        @click="selectedTab = tabNames[index]"
         :key="index"
+        class="cursor-pointer border-r border-container-border-light dark:border-container-border-dark"
         :class="
           tabNames[index] == selectedTab
             ? 'border-b-0 bg-container-light dark:bg-container-dark'
             : 'border-b bg-container-secondary-light dark:bg-container-secondary-dark'
         "
+        @click="selectedTab = tabNames[index]"
       >
         <ToolTipComponent
           v-if="toolTips[index]"

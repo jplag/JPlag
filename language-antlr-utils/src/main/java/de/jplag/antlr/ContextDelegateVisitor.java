@@ -6,7 +6,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 /**
  * Delegates visiting a {@link ParserRuleContext} to a different {@link ContextVisitor} derived by the given mapper
- * function
+ * function.
  * @param <T> The original antlr type visited
  * @param <V> The target {@link ParserRuleContext} to visit instead
  */

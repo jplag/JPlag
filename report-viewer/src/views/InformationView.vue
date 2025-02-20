@@ -6,26 +6,7 @@
       <h2>Run Options:</h2>
 
       <ScrollableComponent class="flex-grow px-4 pt-2">
-        <div v-if="options == undefined">
-          <TextInformation label="Submission Directory" class="pb-1">{{
-            overview.submissionFolderPath.join(', ')
-          }}</TextInformation>
-          <TextInformation label="Basecode Directory" class="pb-1">{{
-            overview.baseCodeFolderPath
-          }}</TextInformation>
-          <TextInformation label="Language" class="pb-1">{{ overview.language }}</TextInformation>
-          <TextInformation label="File Extensions" class="pb-1">{{
-            overview.fileExtensions.join(', ')
-          }}</TextInformation>
-          <TextInformation label="Min Token Match" class="pb-1">{{
-            overview.matchSensitivity
-          }}</TextInformation>
-          <TextInformation label="Result File Name">{{
-            store().state.uploadedFileName
-          }}</TextInformation>
-        </div>
-
-        <div v-else class="space-y-2">
+        <div class="space-y-2">
           <TextInformation label="Language">{{ options.language }}</TextInformation>
           <TextInformation label="Min Token Match">{{ options.minTokenMatch }}</TextInformation>
           <TextInformation label="Submission Directories">{{
@@ -57,7 +38,7 @@
             store().state.uploadedFileName
           }}</TextInformation>
 
-          <div class="!mt-5 space-y-2" v-if="options.clusterOptions.enabled">
+          <div v-if="options.clusterOptions.enabled" class="!mt-5 space-y-2">
             <h3 class="font-bold">Clustering:</h3>
             <TextInformation label="Similarity Metric">{{
               metricToolTips[options.clusterOptions.similarityMetric].longName
@@ -87,7 +68,7 @@
               }}</TextInformation>
             </div>
 
-            <TextInformation v-else label="Agglomerative Treshold">{{
+            <TextInformation v-else label="Agglomerative Threshold">{{
               options.clusterOptions.agglomerativeThreshold
             }}</TextInformation>
 
@@ -105,13 +86,16 @@
             }}</TextInformation>
           </div>
 
-          <div class="mt-5 space-y-2" v-if="options.mergingOptions.enabled">
+          <div v-if="options.mergingOptions.enabled" class="mt-5 space-y-2">
             <h3 class="font-bold">Match Merging:</h3>
             <TextInformation label="Min Neighbor Length">{{
               options.mergingOptions.minNeighborLength
             }}</TextInformation>
             <TextInformation label="Max Gap Size"
               >{{ options.mergingOptions.maxGapSize }} }}</TextInformation
+            >
+            <TextInformation label="Min Required Merges"
+              >{{ options.mergingOptions.minimumRequiredMerges }} }}</TextInformation
             >
           </div>
         </div>
@@ -163,8 +147,7 @@ defineProps({
   },
   options: {
     type: Object as PropType<CliOptions>,
-    // @deprecated since 5.0.0. When pre 5.0.0 format is no longer supported this can be made required
-    required: false
+    required: true
   }
 })
 

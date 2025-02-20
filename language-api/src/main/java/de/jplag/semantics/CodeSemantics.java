@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Contains semantic information about a code snippet, in our case either a token or a statement.
+ * Contains semantic information about a code fragment, in our case either a token or a statement.
  */
 public class CodeSemantics {
 
-    private boolean keep;
+    private boolean critical;
     private PositionSignificance positionSignificance;
     private final int bidirectionalBlockDepthChange;
     private final Set<Variable> reads;
@@ -19,47 +19,47 @@ public class CodeSemantics {
 
     /**
      * Creates new semantics. reads and writes, which each contain the variables which were (potentially) read from/written
-     * to in this code snippet, are created empty.
-     * @param keep Whether the code snippet must be kept or if it may be removed.
-     * @param positionSignificance In which way the position of the code snippet relative to other code snippets of the same
-     * type is significant. For the possible options see {@link PositionSignificance}.
-     * @param bidirectionalBlockDepthChange How the code snippet affects the depth of bidirectional blocks, meaning blocks
+     * to in this code fragment, are created empty.
+     * @param critical Whether the code fragment must be kept as it affects the program behavior or if it may be removed.
+     * @param positionSignificance In which way the position of the code fragment relative to other tokens of the same type
+     * is significant. For the possible options see {@link PositionSignificance}.
+     * @param bidirectionalBlockDepthChange How the code fragment affects the depth of bidirectional blocks, meaning blocks
      * where any statement within it may be executed after any other. This will typically be a loop.
-     * @param reads A set of the variables which were (potentially) read from in the code snippet.
-     * @param writes A set of the variables which were (potentially) written to in the code snippet.
+     * @param reads A set of the variables which were (potentially) read from in the code fragment.
+     * @param writes A set of the variables which were (potentially) written to in the code fragment.
      */
-    private CodeSemantics(boolean keep, PositionSignificance positionSignificance, int bidirectionalBlockDepthChange, Set<Variable> reads,
+    private CodeSemantics(boolean critical, PositionSignificance positionSignificance, int bidirectionalBlockDepthChange, Set<Variable> reads,
             Set<Variable> writes) {
-        this.keep = keep;
+        this.critical = critical;
         this.positionSignificance = positionSignificance;
         this.bidirectionalBlockDepthChange = bidirectionalBlockDepthChange;
         this.reads = reads;
         this.writes = writes;
     }
 
-    private CodeSemantics(boolean keep, PositionSignificance positionSignificance, int bidirectionalBlockDepthChange) {
-        this(keep, positionSignificance, bidirectionalBlockDepthChange, new HashSet<>(), new HashSet<>());
+    private CodeSemantics(boolean critical, PositionSignificance positionSignificance, int bidirectionalBlockDepthChange) {
+        this(critical, positionSignificance, bidirectionalBlockDepthChange, new HashSet<>(), new HashSet<>());
     }
 
     /**
-     * Creates new semantics with the following meaning: The code snippet may be removed, and its position relative to other
-     * code snippets may change. Example: An assignment to a local variable.
+     * Creates new semantics with the following meaning: The code fragment may be removed, and its position relative to
+     * other code fragments may change. Example: An assignment to a local variable.
      */
     public CodeSemantics() {
         this(false, PositionSignificance.NONE, 0);
     }
 
     /**
-     * @return new semantics with the following meaning: The code snippet may not be removed, and its position relative to
-     * other code snippets may change. Example: An attribute declaration.
+     * @return new semantics with the following meaning: The code fragment may not be removed, and its position relative to
+     * other code fragments may change. Example: An attribute declaration.
      */
     public static CodeSemantics createKeep() {
         return new CodeSemantics(true, PositionSignificance.NONE, 0);
     }
 
     /**
-     * @return new semantics with the following meaning: The code snippet may not be removed, and its position must stay
-     * invariant to other code snippets of the same type. Example: A method call which is guaranteed to not result in an
+     * @return new semantics with the following meaning: The code fragment may not be removed, and its position must stay
+     * invariant to other code fragments of the same type. Example: A method call which is guaranteed to not result in an
      * exception.
      */
     public static CodeSemantics createCritical() {
@@ -67,16 +67,16 @@ public class CodeSemantics {
     }
 
     /**
-     * @return new semantics with the following meaning: The code snippet may not be removed, and its position must stay
-     * invariant to all other code snippets. Example: A return statement.
+     * @return new semantics with the following meaning: The code fragment may not be removed, and its position must stay
+     * invariant to all other code fragments. Example: A return statement.
      */
     public static CodeSemantics createControl() {
         return new CodeSemantics(true, PositionSignificance.FULL, 0);
     }
 
     /**
-     * @return new semantics with the following meaning: The code snippet may not be removed, and its position must stay
-     * invariant to all other code snippets, which also begins a bidirectional block. Example: The beginning of a while
+     * @return new semantics with the following meaning: The code fragment may not be removed, and its position must stay
+     * invariant to all other code fragments, which also begins a bidirectional block. Example: The beginning of a while
      * loop.
      */
     public static CodeSemantics createLoopBegin() {
@@ -84,71 +84,71 @@ public class CodeSemantics {
     }
 
     /**
-     * @return new semantics with the following meaning: The code snippet may not be removed, and its position must stay
-     * invariant to all other code snippets, which also ends a bidirectional block. Example: The end of a while loop.
+     * @return new semantics with the following meaning: The code fragment may not be removed, and its position must stay
+     * invariant to all other code fragments, which also ends a bidirectional block. Example: The end of a while loop.
      */
     public static CodeSemantics createLoopEnd() {
         return new CodeSemantics(true, PositionSignificance.FULL, -1);
     }
 
     /**
-     * @return whether this code snippet must be kept.
+     * @return whether this token is critical to the program behavior.
      */
-    public boolean keep() {
-        return keep;
+    public boolean isCritical() {
+        return critical;
     }
 
     /**
-     * Mark this code snippet as having to be kept.
+     * Mark this token as critical to the program behavior.
      */
-    public void markKeep() {
-        keep = true;
+    public void markAsCritical() {
+        critical = true;
     }
 
     /**
-     * @return the change this code snippet causes in the depth of bidirectional loops.
+     * @return the change this code fragment causes in the depth of bidirectional loops.
      */
     public int bidirectionalBlockDepthChange() {
         return bidirectionalBlockDepthChange;
     }
 
     /**
-     * @return whether this code snippet has partial position significance.
+     * @return whether this code fragment has partial position significance.
      */
     public boolean hasPartialPositionSignificance() {
         return positionSignificance == PositionSignificance.PARTIAL;
     }
 
     /**
-     * @return whether this code snippet has full position significance.
+     * @return whether this code fragment has full position significance.
      */
     public boolean hasFullPositionSignificance() {
         return positionSignificance == PositionSignificance.FULL;
     }
 
     /**
-     * Mark this code snippet as having full position significance.
+     * Mark this code fragment as having full position significance.
      */
     public void markFullPositionSignificance() {
         positionSignificance = PositionSignificance.FULL;
     }
 
     /**
-     * @return an unmodifiable set of the variables which were (potentially) read from in this code snippet.
+     * @return an unmodifiable set of the variables which were (potentially) read from in this code fragment.
      */
     public Set<Variable> reads() {
         return Collections.unmodifiableSet(reads);
     }
 
     /**
-     * @return an unmodifiable set of the variables which were (potentially) written to in this code snippet.
+     * @return an unmodifiable set of the variables which were (potentially) written to in this code fragment.
      */
     public Set<Variable> writes() {
         return Collections.unmodifiableSet(writes);
     }
 
     /**
-     * Add a variable to the set of variables which were (potentially) read from in this code snippet.
+     * Add a variable to the set of variables which were (potentially) read from in this code fragment.
      * @param variable The variable which is added.
      */
     public void addRead(Variable variable) {
@@ -156,7 +156,7 @@ public class CodeSemantics {
     }
 
     /**
-     * Add a variable to the set of variables which were (potentially) written to in this code snippet.
+     * Add a variable to the set of variables which were (potentially) written to in this code fragment.
      * @param variable The variable which is added.
      */
     public void addWrite(Variable variable) {
@@ -182,7 +182,7 @@ public class CodeSemantics {
         Set<Variable> reads = new HashSet<>();
         Set<Variable> writes = new HashSet<>();
         for (CodeSemantics semantics : semanticsList) {
-            keep = keep || semantics.keep;
+            keep = keep || semantics.critical;
             if (semantics.positionSignificance.compareTo(positionSignificance) > 0) {
                 positionSignificance = semantics.positionSignificance;
             }
@@ -196,7 +196,7 @@ public class CodeSemantics {
     @Override
     public String toString() {
         List<String> properties = new LinkedList<>();
-        if (keep) {
+        if (critical) {
             properties.add("keep");
         }
         if (positionSignificance != PositionSignificance.NONE) {

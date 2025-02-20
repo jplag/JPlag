@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if ! command -v npm &> /dev/null #checks if npm is installed
+then
+    echo "Npm is not installed. Linter check will be skipped"
+    exit 0
+fi
+
+npx lint-staged

@@ -10,7 +10,7 @@
     >
       <DropDownSelector
         :options="selectedOptions"
-        @selectionChanged="(value) => (idOfShownSubmission = value)"
+        @selection-changed="(value) => (idOfShownSubmission = value)"
       />
       <div class="flex min-h-0 flex-grow justify-center">
         <Radar :data="chartData" :options="radarChartOptions" />
@@ -132,7 +132,7 @@ const radarChartOptions = computed(() => {
   }
 })
 
-const chartData: Ref<ChartData<'radar', (number | null)[], unknown>> = computed(() => {
+const chartData: Ref<ChartData<'radar', (number | null)[]>> = computed(() => {
   return {
     labels: labels.value,
     datasets: [

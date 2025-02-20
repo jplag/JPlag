@@ -1,5 +1,7 @@
 package de.jplag;
 
+import static de.jplag.SubmissionState.VALID;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
+import de.jplag.exceptions.LanguageException;
 import de.jplag.exceptions.SubmissionException;
 import de.jplag.logging.ProgressBar;
 import de.jplag.logging.ProgressBarLogger;
@@ -16,7 +19,9 @@ import de.jplag.logging.ProgressBarType;
 import de.jplag.options.JPlagOptions;
 
 /**
- * Collection of all submissions and their basecode if it exists. Parses all submissions upon creation.
+ * This class represents a collection of submissions to be checked for plagiarism. It manages both valid and invalid
+ * submissions, as well as an optional base code submission. Instances of this class are responsible for parsing
+ * submissions, filtering them based on their validity, and providing access to the valid and invalid submissions.
  */
 public class SubmissionSet {
     private static final Logger logger = LoggerFactory.getLogger(SubmissionSet.class);
@@ -94,16 +99,24 @@ public class SubmissionSet {
         return invalidSubmissions;
     }
 
+    /**
+     * Normalizes the token sequences of all submissions (including basecode). This makes the token sequence invariant to
+     * dead code insertion and independent statement reordering by removing dead tokens and optionally reordering tokens to
+     * a deterministic order.
+     */
     public void normalizeSubmissions() {
+        if (baseCodeSubmission != null) {
+            baseCodeSubmission.normalize();
+        }
         ProgressBarLogger.iterate(ProgressBarType.TOKEN_STRING_NORMALIZATION, submissions, Submission::normalize);
     }
 
     private List<Submission> filterValidSubmissions() {
-        return allSubmissions.stream().filter(submission -> !submission.hasErrors()).collect(Collectors.toCollection(ArrayList::new));
+        return allSubmissions.stream().filter(it -> it.getState() == VALID).collect(Collectors.toCollection(ArrayList::new));
     }
 
     private List<Submission> filterInvalidSubmissions() {
-        return allSubmissions.stream().filter(Submission::hasErrors).toList();
+        return allSubmissions.stream().filter(it -> it.getState() != VALID).toList();
     }
 
     private void parseAllSubmissions() throws ExitException {
@@ -120,82 +133,46 @@ public class SubmissionSet {
     /**
      * Parse the given base code submission.
      */
-    private void parseBaseCodeSubmission(Submission baseCode) throws BasecodeException {
-        long startTime = System.currentTimeMillis();
+    private void parseBaseCodeSubmission(Submission baseCode) throws BasecodeException, LanguageException {
         logger.trace("----- Parsing basecode submission: " + baseCode.getName());
-        if (!baseCode.parse(options.debugParser(), options.normalize())) {
-            throw new BasecodeException("Could not successfully parse basecode submission!");
-        }
-        if (baseCode.getNumberOfTokens() < options.minimumTokenMatch()) {
-            throw new BasecodeException(String.format("Basecode submission contains %d token(s), which is less than the minimum match length (%d)!",
-                    baseCode.getNumberOfTokens(), options.minimumTokenMatch()));
-        }
-        logger.trace("Basecode submission parsed!");
-        long duration = System.currentTimeMillis() - startTime;
-        logger.trace("Time for parsing Basecode: " + TimeUtil.formatDuration(duration));
+        if (!baseCode.parse(options.debugParser(), options.normalize(), options.minimumTokenMatch())) {
+            if (baseCode.getState() == SubmissionState.TOO_SMALL) {
+                throw new BasecodeException("Basecode contains %d token(s), which is below the minimum match length (%d)!"
+                        .formatted(baseCode.getNumberOfTokens(), options.minimumTokenMatch()));
+            }
+            throw new BasecodeException("Error while parsing the basecode submission!");
 
+        }
     }
 
     /**
      * Parse all given submissions.
      * @param submissions The list of submissions
      */
-    private void parseSubmissions(List<Submission> submissions) {
+    private void parseSubmissions(List<Submission> submissions) throws LanguageException {
         if (submissions.isEmpty()) {
-            logger.warn("No submissions to parse!");
+            logger.error("No submissions to parse!");
             return;
         }
 
-        long startTime = System.currentTimeMillis();
-
-        int tooShort = 0;
         ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.PARSING, submissions.size());
         for (Submission submission : submissions) {
-            boolean ok;
 
             logger.trace("------ Parsing submission: " + submission.getName());
             currentSubmissionName = submission.getName();
 
-            if (!(ok = submission.parse(options.debugParser(), options.normalize()))) {
+            boolean successful = submission.parse(options.debugParser(), options.normalize(), options.minimumTokenMatch());
+            if (!successful) {
                 errors++;
-            }
-
-            if (submission.getTokenList() != null && submission.getNumberOfTokens() < options.minimumTokenMatch()) {
-                logger.error("Submission {} contains {} token(s), which is less than the minimum match length ({})!", currentSubmissionName,
-                        submission.getNumberOfTokens(), options.minimumTokenMatch());
-                submission.setTokenList(null);
-                tooShort++;
-                ok = false;
-                submission.markAsErroneous();
-            }
-
-            if (ok) {
-                logger.trace("OK");
-            } else {
-                logger.error("ERROR -> Submission {} removed", currentSubmissionName);
+                logger.debug("ERROR -> Submission {} removed with reason {}", currentSubmissionName, submission.getState());
             }
             progressBar.step();
         }
         progressBar.dispose();
 
-        int validSubmissions = submissions.size() - errors - tooShort;
-        logger.trace(validSubmissions + " submissions parsed successfully!");
-        logger.trace(errors + " parser error" + (errors != 1 ? "s!" : "!"));
-        logger.trace(tooShort + " too short submission" + (tooShort != 1 ? "s!" : "!"));
-        printDetails(submissions, startTime, tooShort);
-    }
-
-    private void printDetails(List<Submission> submissions, long startTime, int tooShort) {
-        if (tooShort == 1) {
-            logger.trace(tooShort + " submission is not valid because it contains fewer tokens than minimum match length allows.");
-        } else if (tooShort > 1) {
-            logger.trace(tooShort + " submissions are not valid because they contain fewer tokens than minimum match length allows.");
-        }
-
-        long duration = System.currentTimeMillis() - startTime;
-        String timePerSubmission = submissions.isEmpty() ? "n/a" : Long.toString(duration / submissions.size());
-        logger.trace("Total time for parsing: " + TimeUtil.formatDuration(duration));
-        logger.trace("Time per parsed submission: " + timePerSubmission + " msec");
+        int validSubmissions = submissions.size() - errors;
+        logger.debug("{} submissions parsed successfully!", validSubmissions);
+        logger.debug("{} parser error{}!", errors, (errors != 1 ? "s" : ""));
     }
 
 }

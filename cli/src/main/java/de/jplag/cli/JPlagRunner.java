@@ -24,7 +24,7 @@ public final class JPlagRunner {
     }
 
     /**
-     * Executes JPlag
+     * Executes JPlag.
      * @param options The options to pass to JPlag
      * @return The result returned by JPlag
      * @throws ExitException If JPlag throws an error
@@ -40,10 +40,18 @@ public final class JPlagRunner {
      * @throws IOException If the internal server throws an exception
      */
     public static void runInternalServer(File zipFile, int port) throws IOException {
+        if (!ReportViewer.hasCompiledViewer()) {
+            logger.warn("The report viewer is not available. Check whether you compiled JPlag with the report viewer.");
+            return;
+        }
         ReportViewer reportViewer = new ReportViewer(zipFile, port);
         int actualPort = reportViewer.start();
         logger.info("ReportViewer started on port http://localhost:{}", actualPort);
-        Desktop.getDesktop().browse(URI.create("http://localhost:" + actualPort + "/"));
+        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+            Desktop.getDesktop().browse(URI.create("http://localhost:" + actualPort + "/"));
+        } else {
+            logger.info("Could not open browser. You can open the Report Viewer here: http://localhost:{}/", actualPort);
+        }
 
         System.out.println("Press Enter key to exit...");
         System.in.read();

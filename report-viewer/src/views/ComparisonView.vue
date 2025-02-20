@@ -28,7 +28,6 @@
             >{{ (comparison.similarities[MetricType.AVERAGE] * 100).toFixed(2) }}%</TextInformation
           >
           <TextInformation
-            v-if="comparison.firstSimilarity"
             :label="`Similarity ${store().getDisplayName(comparison.firstSubmissionId)}`"
             tooltip-side="right"
           >
@@ -48,7 +47,6 @@
             >
           </TextInformation>
           <TextInformation
-            v-if="comparison.secondSimilarity"
             :label="`Similarity ${store().getDisplayName(comparison.secondSubmissionId)}`"
             tooltip-side="right"
             ><template #default>{{ (comparison.secondSimilarity * 100).toFixed(2) }}%</template>
@@ -71,7 +69,17 @@
           :id1="firstId"
           :id2="secondId"
           :matches="comparison.allMatches"
+          :basecode-in-first="firstBaseCodeMatches"
+          :basecode-in-second="secondBaseCodeMatches"
           @match-selected="showMatch"
+        />
+        <OptionsSelectorComponent
+          ref="sortingOptionSelector"
+          class="mt-2"
+          title="File Sorting:"
+          :labels="sortingOptions.map((o) => fileSortingTooltips[o])"
+          :default-selected="sortingOptions.indexOf(store().uiState.fileSorting)"
+          @selection-changed="(index: number) => changeFileSorting(index)"
         />
       </Container>
     </div>
@@ -85,8 +93,10 @@
         :matches="comparison.matchesInFirstSubmission"
         :file-owner-display-name="store().getDisplayName(comparison.firstSubmissionId)"
         :highlight-language="language"
-        @match-selected="showMatchInSecond"
+        :base-code-matches="firstBaseCodeMatches"
         class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
+        @match-selected="showMatchInSecond"
+        @files-moved="filesMoved()"
       />
       <FilesContainer
         ref="panel2"
@@ -94,8 +104,10 @@
         :matches="comparison.matchesInSecondSubmissions"
         :file-owner-display-name="store().getDisplayName(comparison.secondSubmissionId)"
         :highlight-language="language"
-        @match-selected="showMatchInFirst"
+        :base-code-matches="secondBaseCodeMatches"
         class="max-h-0 min-h-full flex-1 overflow-hidden print:max-h-none print:overflow-y-visible"
+        @match-selected="showMatchInFirst"
+        @files-moved="filesMoved()"
       />
     </div>
   </div>
@@ -120,6 +132,9 @@ import { MetricType } from '@/model/MetricType'
 import { Comparison } from '@/model/Comparison'
 import { redirectOnError } from '@/router'
 import ToolTipComponent from '@/components/ToolTipComponent.vue'
+import { FileSortingOptions, fileSortingTooltips } from '@/model/ui/FileSortingOptions'
+import OptionsSelectorComponent from '@/components/optionsSelectors/OptionsSelectorComponent.vue'
+import type { BaseCodeMatch } from '@/model/BaseCodeReport'
 
 library.add(faPrint)
 
@@ -130,6 +145,14 @@ const props = defineProps({
   },
   language: {
     type: String as PropType<Language>,
+    required: true
+  },
+  firstBaseCodeMatches: {
+    type: Array as PropType<BaseCodeMatch[]>,
+    required: true
+  },
+  secondBaseCodeMatches: {
+    type: Array as PropType<BaseCodeMatch[]>,
     required: true
   }
 })
@@ -143,18 +166,16 @@ const panel1: Ref<typeof FilesContainer | null> = ref(null)
 const panel2: Ref<typeof FilesContainer | null> = ref(null)
 
 /**
- * Shows a match in the first files container when clicked on a line in the second files container.
- * @param file (file name)
- * @param line (line number)
+ * Shows a match in the first files container when clicked on a line in the second file container.
+ * @param match The match to scroll to
  */
 function showMatchInFirst(match: Match) {
   panel1.value?.scrollTo(match.firstFile, match.startInFirst.line)
 }
 
 /**
- * Shows a match in the second files container, when clicked on a line in the second files container.
- * @param file (file name)
- * @param line (line number)
+ * Shows a match in the second files container, when clicked on a line in the second file container.
+ * @param match The match to scroll to
  */
 function showMatchInSecond(match: Match) {
   panel2.value?.scrollTo(match.secondFile, match.startInSecond.line)
@@ -162,7 +183,6 @@ function showMatchInSecond(match: Match) {
 
 /**
  * Shows a match in the first and second files container.
- * @param e The click event
  * @param match The match to show
  */
 function showMatch(match: Match) {
@@ -170,12 +190,38 @@ function showMatch(match: Match) {
   showMatchInSecond(match)
 }
 
+const sortingOptions = [
+  FileSortingOptions.ALPHABETICAL,
+  FileSortingOptions.MATCH_COVERAGE,
+  FileSortingOptions.MATCH_COUNT,
+  FileSortingOptions.MATCH_SIZE
+]
+const movedAfterSorting = ref(false)
+const sortingOptionSelector: Ref<typeof OptionsSelectorComponent | null> = ref(null)
+
+function changeFileSorting(index: number) {
+  movedAfterSorting.value = false
+  if (index < 0) {
+    return
+  }
+  store().uiState.fileSorting = sortingOptions[index]
+  panel1.value?.sortFiles(store().uiState.fileSorting)
+  panel2.value?.sortFiles(store().uiState.fileSorting)
+}
+
+function filesMoved() {
+  movedAfterSorting.value = true
+  if (sortingOptionSelector.value) {
+    sortingOptionSelector.value.select(-2)
+  }
+}
+
 function print() {
   window.print()
 }
 
 // This code is responsible for changing the theme of the highlighted code depending on light/dark mode
-// Changing the used style itsself is the desired solution (https://github.com/highlightjs/highlight.js/issues/2115)
+// Changing the used style itself is the desired solution (https://github.com/highlightjs/highlight.js/issues/2115)
 const styleholder: Ref<Node | null> = ref(null)
 
 onMounted(() => {

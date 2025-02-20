@@ -7,6 +7,7 @@ on:
       - "**/pom.xml"
       - "**.java"
       - "**.g4"
+      - "report-viewer/**"
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
