@@ -190,7 +190,7 @@ async function loadQueryFile(url: URL) {
  * Handles click on Continue with local files.
  */
 function continueWithLocal() {
-  store().state.uploadedFileName = exampleFiles.value ? 'progpedia.zip' : BaseFactory.zipFileName
+  store().state.uploadedFileName = BaseFactory.zipFileName
   store().setLoadingType('local')
   navigateToOverview()
 }
@@ -224,6 +224,7 @@ onErrorCaptured((error) => {
 })
 
 if (exampleFiles.value) {
-  continueWithLocal()
+  store().state.uploadedFileName = 'progpedia.zip'
+  navigateToOverview()
 }
 </script>
