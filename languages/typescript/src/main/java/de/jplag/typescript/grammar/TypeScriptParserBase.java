@@ -71,7 +71,7 @@ public abstract class TypeScriptParserBase extends Parser {
 
         // Check if the token resides on the HIDDEN channel and if it's of the
         // provided type.
-        return (ahead.getChannel() == Lexer.HIDDEN) && (ahead.getType() == type);
+        return ahead.getChannel() == Lexer.HIDDEN && ahead.getType() == type;
     }
 
     /**
@@ -107,7 +107,6 @@ public abstract class TypeScriptParserBase extends Parser {
         int type = ahead.getType();
 
         // Check if the token is, or contains a line terminator.
-        return (type == TypeScriptParser.MultiLineComment && (text.contains("\r") || text.contains("\n")))
-                || (type == TypeScriptParser.LineTerminator);
+        return type == TypeScriptParser.MultiLineComment && (text.contains("\r") || text.contains("\n")) || type == TypeScriptParser.LineTerminator;
     }
 }

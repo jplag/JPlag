@@ -262,6 +262,6 @@ public class CSharpListener extends AbstractAntlrListener {
     private boolean isAliasUsageAlsoImport(UsingAliasDirectiveContext context) {
         Namespace_or_type_nameContext namespace = getDescendant(context, Namespace_or_type_nameContext.class);
 
-        return namespace != null && (!namespace.DOT().isEmpty() && getDescendant(namespace, Type_argument_listContext.class) == null);
+        return namespace != null && !namespace.DOT().isEmpty() && getDescendant(namespace, Type_argument_listContext.class) == null;
     }
 }
