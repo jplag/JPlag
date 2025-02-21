@@ -115,7 +115,7 @@ public class GenericEmfTreeView extends AbstractModelView {
                     name = valueListToString(multipleValues);
                 } else {
                     name = value.toString();
-                    name = (name.length() > ABBREVIATION_LIMIT) ? name.substring(0, ABBREVIATION_LIMIT) + ABBREVIATION_SUFFIX : name;
+                    name = name.length() > ABBREVIATION_LIMIT ? name.substring(0, ABBREVIATION_LIMIT) + ABBREVIATION_SUFFIX : name;
                     name = TEXT_AFFIX + name + TEXT_AFFIX;
                 }
             }

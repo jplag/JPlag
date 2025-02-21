@@ -159,7 +159,7 @@ public class MatchMerging {
      * @return true if FILE_END is in token
      */
     private boolean containsFileEndToken(List<Token> token) {
-        return token.stream().map(Token::getType).anyMatch(it -> SharedTokenType.FILE_END.equals(it));
+        return token.stream().map(Token::getType).anyMatch(SharedTokenType.FILE_END::equals);
     }
 
     /**

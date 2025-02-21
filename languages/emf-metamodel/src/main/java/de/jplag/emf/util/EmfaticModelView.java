@@ -89,7 +89,7 @@ public final class EmfaticModelView extends AbstractModelView {
      * Iterates over a model, replacing the names of all named elements by their hashcode. This allows identifying model
      * elements in subsequently generated Emfatic code while avoiding name collisions.
      */
-    private final void replaceElementNamesWithHashes(Resource copiedResource) {
+    private void replaceElementNamesWithHashes(Resource copiedResource) {
         AbstractMetamodelVisitor renamer = new AbstractMetamodelVisitor() {
             @Override
             protected void visitENamedElement(ENamedElement eNamedElement) {
@@ -103,7 +103,7 @@ public final class EmfaticModelView extends AbstractModelView {
      * Generates Emfatic code from a model resource and splits it into lines with a string builder.
      * @throws ParsingException if the Emfatic writer fails.
      */
-    private final List<String> generateEmfaticCode(StringBuilder builder, Resource modelResource) throws ParsingException {
+    private List<String> generateEmfaticCode(StringBuilder builder, Resource modelResource) throws ParsingException {
         Writer writer = new Writer();
         try {
             String code = writer.write(modelResource, null, null);
@@ -117,7 +117,7 @@ public final class EmfaticModelView extends AbstractModelView {
     /**
      * Calculates the index of the root package declaration, as it has unique syntax in Emfatic.
      */
-    private final int findIndexOfRootPackage(List<String> lines) {
+    private int findIndexOfRootPackage(List<String> lines) {
         for (int index = 0; index < lines.size(); index++) {
             if (lines.get(index).matches(PACKAGE_REGEX)) {
                 return index;

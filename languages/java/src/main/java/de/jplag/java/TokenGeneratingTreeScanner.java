@@ -104,7 +104,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
      * @param end is the end position of the token for the calculation of the length.
      */
     private void addToken(JavaTokenType tokenType, long start, long end, CodeSemantics semantics) {
-        addToken(tokenType, file, map.getLineNumber(start), map.getColumnNumber(start), (end - start), semantics);
+        addToken(tokenType, file, map.getLineNumber(start), map.getColumnNumber(start), end - start, semantics);
     }
 
     private boolean isMutable(Tree classTree) {
@@ -149,7 +149,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         } else if (node.getKind() == Tree.Kind.ANNOTATION_TYPE) {
             // The start position for the is calculated that way, because the @ is the final element in the modifier list for
             // annotations
-            addToken(JavaTokenType.J_ANNO_T_BEGIN, start - 2, (start - 2) + 11 + nameLength, semantics);
+            addToken(JavaTokenType.J_ANNO_T_BEGIN, start - 2, start - 2 + 11 + nameLength, semantics);
         } else if (node.getKind() == Tree.Kind.CLASS) {
             addToken(JavaTokenType.J_CLASS_BEGIN, start, 5, semantics);
         }
@@ -565,7 +565,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
 
     @Override
     public Void visitMemberSelect(MemberSelectTree node, Void unused) {
-        if (node.getExpression().toString().equals("this")) {
+        if ("this".equals(node.getExpression().toString())) {
             variableRegistry.registerVariableAccess(node.getIdentifier().toString(), true);
         }
         variableRegistry.setIgnoreNextVariableAccess(false);  // don't ignore the foo in foo.bar()
