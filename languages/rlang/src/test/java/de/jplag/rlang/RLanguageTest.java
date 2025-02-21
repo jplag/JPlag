@@ -54,8 +54,9 @@ class RLanguageTest {
             logger.info(output);
 
             testSourceCoverage(fileName, tokens);
-            if (fileName.equals(COMPLETE_TEST_FILE))
+            if (COMPLETE_TEST_FILE.equals(fileName)) {
                 testTokenCoverage(tokens, fileName);
+            }
         }
     }
 

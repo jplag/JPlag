@@ -153,7 +153,7 @@ public class JPlagRustListener extends RustParserBaseListener implements ParseTr
     @Override
     public void enterSimplePath(RustParser.SimplePathContext context) {
         if (state.getCurrentContext() == RustContext.USE_TREE) {
-            if (context.parent.getChildCount() > 1 && context.parent.getChild(1).getText().equals("::")) {
+            if (context.parent.getChildCount() > 1 && "::".equals(context.parent.getChild(1).getText())) {
                 // Not a leaf
                 return;
             }
@@ -704,8 +704,8 @@ public class JPlagRustListener extends RustParserBaseListener implements ParseTr
     public void enterExpressionStatement(RustParser.ExpressionStatementContext context) {
         // may be return value
         RuleContext maybeFunctionBlock = context.parent.parent;
-        boolean isImplicitReturnValue = maybeFunctionBlock instanceof RustParser.StatementsContext && (maybeFunctionBlock.getChildCount() == 1)
-                && (state.getCurrentContext() == RustContext.FUNCTION_BODY) && !(context.getChild(0) instanceof RustParser.ReturnExpressionContext);
+        boolean isImplicitReturnValue = maybeFunctionBlock instanceof RustParser.StatementsContext && maybeFunctionBlock.getChildCount() == 1
+                && state.getCurrentContext() == RustContext.FUNCTION_BODY && !(context.getChild(0) instanceof RustParser.ReturnExpressionContext);
 
         if (isImplicitReturnValue) {
             transformToken(RETURN, context.getStart());
@@ -867,8 +867,9 @@ public class JPlagRustListener extends RustParserBaseListener implements ParseTr
             } else if (context.parent instanceof RustParser.CallParamsContext) {
                 transformToken(ARGUMENT, expression.getStart(), expression.getStop());
             } else if (context.parent instanceof RustParser.TuplePatternItemsContext || context.parent instanceof RustParser.TupleElementsContext) {
-                if (state.getCurrentContext() == RustContext.REDUNDANT_TUPLE)
+                if (state.getCurrentContext() == RustContext.REDUNDANT_TUPLE) {
                     return;
+                }
                 transformToken(TUPLE_ELEMENT, expression.getStart());
             } else if (context.parent instanceof RustParser.ClosureExpressionContext) {
                 transformToken(CLOSURE_BODY_START, context.getStart());

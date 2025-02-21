@@ -132,13 +132,13 @@ class MergingTest extends TestBase {
             List<Token> tokenRight = new ArrayList<>(comparison.secondSubmission().getTokenList());
 
             for (Token token : tokenLeft) {
-                if (token.getType().equals(SharedTokenType.FILE_END)) {
+                if (SharedTokenType.FILE_END.equals(token.getType())) {
                     amountFileEndBefore++;
                 }
             }
 
             for (Token token : tokenRight) {
-                if (token.getType().equals(SharedTokenType.FILE_END)) {
+                if (SharedTokenType.FILE_END.equals(token.getType())) {
                     amountFileEndBefore++;
                 }
             }
@@ -150,13 +150,13 @@ class MergingTest extends TestBase {
             List<Token> tokenRight = new ArrayList<>(comparison.secondSubmission().getTokenList());
 
             for (Token token : tokenLeft) {
-                if (token.getType().equals(SharedTokenType.FILE_END)) {
+                if (SharedTokenType.FILE_END.equals(token.getType())) {
                     amountFileEndAfter++;
                 }
             }
 
             for (Token token : tokenRight) {
-                if (token.getType().equals(SharedTokenType.FILE_END)) {
+                if (SharedTokenType.FILE_END.equals(token.getType())) {
                     amountFileEndAfter++;
                 }
             }
