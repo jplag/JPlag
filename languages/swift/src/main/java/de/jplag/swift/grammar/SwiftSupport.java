@@ -233,12 +233,8 @@ public class SwiftSupport {
         // System.out.println("isBinaryOp: '"+prevToken+"','"+text+"','"+nextToken+"' is "+result);
         if (prevIsWS) {
             return nextIsWS;
-        }
-        if (currentToken.getType() == Swift5Lexer.BANG || currentToken.getType() == Swift5Lexer.QUESTION) {
-        } else {
-            if (!nextIsWS) {
-                return nextToken.getType() != Swift5Lexer.DOT;
-            }
+        } else if (currentToken.getType() != Swift5Lexer.BANG && currentToken.getType() != Swift5Lexer.QUESTION && !nextIsWS) {
+            return nextToken.getType() != Swift5Lexer.DOT;
         }
         return false;
     }
