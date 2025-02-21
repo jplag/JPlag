@@ -32,7 +32,7 @@
           class="mx-auto mt-10 flex w-96 cursor-pointer flex-col justify-center rounded-md border-1 border-accent-dark bg-accent bg-opacity-25 px-5 py-5"
           @click="uploadFileThroughWindow()"
         >
-          <div>Drag and Drop zip/Json file on this page</div>
+          <div>Drag and Drop zip file on this page</div>
           <div>Or click here to select a file</div>
         </div>
         <div>(No files will be uploaded)</div>
@@ -154,7 +154,7 @@ async function uploadFileOnDrag(e: DragEvent) {
 async function uploadFileThroughWindow() {
   let input = document.createElement('input')
   input.type = 'file'
-  input.accept = '.zip,.json'
+  input.accept = '.zip'
   input.multiple = false
   input.onchange = () => {
     const files = input.files
