@@ -30,10 +30,18 @@
       </ButtonComponent>
     </div>
     <OptionsSelector
-      title="Sort By:"
+      title="Sorting Metric:"
       :default-selected="getSortingMetric()"
       :labels="tableSortingOptions"
       @selection-changed="(index: number) => changeSortingMetric(index)"
+    />
+    <MetricSelector
+      title="Secondary Metric:"
+      :default-selected="store().uiState.comparisonTableSecondaryMetric"
+      :metrics="secondaryMetricOptions"
+      @selection-changed="
+        (metric: MetricJsonIdentifier) => (store().uiState.comparisonTableSecondaryMetric = metric)
+      "
     />
   </div>
 </template>
@@ -45,8 +53,9 @@ import ToolTipComponent from './ToolTipComponent.vue'
 import ButtonComponent from './ButtonComponent.vue'
 import OptionsSelector from './optionsSelectors/OptionsSelectorComponent.vue'
 import { store } from '@/stores/store'
-import { MetricType, metricToolTips } from '@/model/MetricType'
+import { MetricJsonIdentifier, MetricTypes } from '@/model/MetricType'
 import type { ToolTipLabel } from '@/model/ui/ToolTip'
+import MetricSelector from './optionsSelectors/MetricSelector.vue'
 
 const props = defineProps({
   searchString: {
@@ -93,7 +102,9 @@ const searchStringValue = computed({
 
 function changeSortingMetric(index: number) {
   store().uiState.comparisonTableSortingMetric =
-    index < tableSortingMetricOptions.length ? tableSortingMetricOptions[index] : MetricType.AVERAGE
+    index < tableSortingMetricOptions.length
+      ? tableSortingMetricOptions[index].identifier
+      : MetricJsonIdentifier.AVERAGE_SIMILARITY
   store().uiState.comparisonTableClusterSorting = tableSortingOptions.value[index] == 'Cluster'
 }
 
@@ -101,15 +112,17 @@ function getSortingMetric() {
   if (store().uiState.comparisonTableClusterSorting && props.enableClusterSorting) {
     return tableSortingOptions.value.indexOf('Cluster')
   }
-  return tableSortingMetricOptions.indexOf(store().uiState.comparisonTableSortingMetric)
+  return tableSortingMetricOptions.findIndex(
+    (m) => m.identifier == store().uiState.comparisonTableSortingMetric
+  )
 }
 
-const tableSortingMetricOptions = [MetricType.AVERAGE, MetricType.MAXIMUM]
+const tableSortingMetricOptions = MetricTypes.METRIC_LIST
 const tableSortingOptions = computed(() => {
   const options: (ToolTipLabel | string)[] = tableSortingMetricOptions.map((metric) => {
     return {
-      displayValue: metricToolTips[metric].longName,
-      tooltip: metricToolTips[metric].tooltip
+      displayValue: metric.longName,
+      tooltip: metric.tooltip
     }
   })
   if (props.enableClusterSorting) {
@@ -117,6 +130,14 @@ const tableSortingOptions = computed(() => {
   }
   return options
 })
+
+const secondaryMetricOptions = [
+  MetricJsonIdentifier.MAXIMUM_SIMILARITY,
+  MetricJsonIdentifier.MINIMUM_SIMILARITY,
+  MetricJsonIdentifier.INTERSECTION,
+  MetricJsonIdentifier.LONGEST_MATCH,
+  MetricJsonIdentifier.OVERALL
+]
 
 /**
  * Sets the anonymous set to empty if it is full or adds all submission ids to it if it is not full

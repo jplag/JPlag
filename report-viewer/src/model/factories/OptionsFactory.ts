@@ -1,6 +1,6 @@
 import type { CliClusterOptions, CliMergingOptions, CliOptions } from '../CliOptions'
 import { ParserLanguage } from '../Language'
-import { MetricType } from '../MetricType'
+import { MetricJsonIdentifier, MetricTypes } from '../MetricType'
 import { BaseFactory } from './BaseFactory'
 
 export class OptionsFactory extends BaseFactory {
@@ -9,6 +9,7 @@ export class OptionsFactory extends BaseFactory {
   }
 
   private static extractOptions(json: Record<string, unknown>): CliOptions {
+    const similarityMetricIdentifier = json['similarity_metric'] as MetricJsonIdentifier
     return {
       language: json['language'] as ParserLanguage,
       minTokenMatch: json['min_token_match'] as number,
@@ -18,7 +19,10 @@ export class OptionsFactory extends BaseFactory {
       subDirectoryName: (json['subdirectory_name'] as string) ?? '',
       fileSuffixes: json['file_suffixes'] as string[],
       exclusionFileName: (json['exclusion_file_name'] as string) ?? '',
-      similarityMetric: json['similarity_metric'] as MetricType,
+      similarityMetric:
+        MetricTypes.METRIC_LIST.find(
+          (metric) => metric.identifier === similarityMetricIdentifier
+        ) ?? MetricTypes.AVERAGE_SIMILARITY,
       similarityThreshold: json['similarity_threshold'] as number,
       maxNumberComparisons: json['max_comparisons'] as number,
       clusterOptions: this.extractClusterOptions(json['cluster'] as Record<string, unknown>),
@@ -29,7 +33,7 @@ export class OptionsFactory extends BaseFactory {
   private static extractClusterOptions(json: Record<string, unknown>): CliClusterOptions {
     return {
       enabled: json['enabled'] as boolean,
-      similarityMetric: MetricType.AVERAGE,
+      similarityMetric: MetricTypes.AVERAGE_SIMILARITY,
       spectralBandwidth: json['spectral_bandwidth'] as number,
       spectralGaussianProcessVariance: json['spectral_gaussian_variance'] as number,
       spectralMinRuns: json['spectral_min_runs'] as number,
