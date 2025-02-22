@@ -5,6 +5,9 @@ import java.util.Map;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import de.jplag.Language;
+import de.jplag.reporting.jsonfactory.serializer.LanguageSerializer;
 
 public record OverviewReport(
 
@@ -14,7 +17,7 @@ public record OverviewReport(
 
         @JsonProperty("base_code_folder_path") String baseCodeFolderPath,
 
-        @JsonProperty("language") String language,
+        @JsonSerialize(using = LanguageSerializer.class) Language language,
 
         @JsonProperty("file_extensions") List<String> fileExtensions,
 
