@@ -21,7 +21,8 @@ enum ParserLanguage {
   SCXML = 'scxml',
   LLVM = 'llvmir',
   JAVASCRIPT = 'javascript',
-  TYPESCRIPT = 'typescript'
+  TYPESCRIPT = 'typescript',
+  MULTI_LANGUAGE = 'multi'
 }
 
 type Language = ParserLanguage | 'unknown language'
