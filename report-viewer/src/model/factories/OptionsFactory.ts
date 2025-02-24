@@ -1,5 +1,5 @@
 import type { CliClusterOptions, CliMergingOptions, CliOptions } from '../CliOptions'
-import { ParserLanguage } from '../Language'
+import { getLanguageParser } from '../Language'
 import { MetricType } from '../MetricType'
 import { BaseFactory } from './BaseFactory'
 
@@ -10,7 +10,7 @@ export class OptionsFactory extends BaseFactory {
 
   private static extractOptions(json: Record<string, unknown>): CliOptions {
     return {
-      language: json['language'] as ParserLanguage,
+      language: getLanguageParser(json['language'] as string),
       minTokenMatch: json['min_token_match'] as number,
       submissionDirectories: json['submission_directories'] as string[],
       oldDirectories: json['old_directories'] as string[],
