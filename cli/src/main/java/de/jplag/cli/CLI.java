@@ -203,6 +203,10 @@ public final class CLI {
     }
 
     public static void main(String[] args) {
+        // This needs to be executed before any other code, as it changes the default behavior of the JVM for network
+        // connections.
+        System.setProperty("java.net.preferIPv4Stack", "true");
+
         CLI cli = new CLI(args);
         if (cli.executeCliAndHandleErrors()) {
             System.exit(1);
