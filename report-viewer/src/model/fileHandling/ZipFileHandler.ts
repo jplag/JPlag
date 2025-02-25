@@ -49,7 +49,7 @@ export class ZipFileHandler extends FileHandler {
   private extractSubmissionFileName(directoryPath: string) {
     const folders = directoryPath.split('/')
     const rootName = folders[0]
-    let submissionFolderIndex = -1
+    let submissionFolderIndex: number
     if (rootName === 'files') {
       submissionFolderIndex = folders.findIndex((folder) => folder === 'files')
     } else {
@@ -69,7 +69,7 @@ export class ZipFileHandler extends FileHandler {
     fileBase: string,
     originalFileName: string
   ) {
-    let fullPath = ''
+    let fullPath: string
     const rootName = this.extractRootName(directoryPath)
     const filesOrSubmissionsIndex_filePath = directoryPath.indexOf(
       rootName === 'files' ? 'files' : 'submissions'
