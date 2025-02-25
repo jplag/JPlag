@@ -45,30 +45,12 @@ export abstract class MetricType {
 }
 
 class IdentityMetricType extends MetricType {
-  constructor(
-    shortName: string,
-    longName: string,
-    tooltip: string,
-    identifier: MetricJsonIdentifier
-  ) {
-    super(shortName, longName, tooltip, identifier)
-  }
-
   format(value: number): string {
     return value.toString()
   }
 }
 
 class PercentageMetricType extends MetricType {
-  constructor(
-    shortName: string,
-    longName: string,
-    tooltip: string,
-    identifier: MetricJsonIdentifier
-  ) {
-    super(shortName, longName, tooltip, identifier)
-  }
-
   format(value: number): string {
     return `${(value * 100).toFixed(2)}%`
   }
