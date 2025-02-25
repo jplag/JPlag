@@ -32,13 +32,20 @@
           class="mx-auto mt-10 flex w-96 cursor-pointer flex-col justify-center rounded-md border-1 border-accent-dark bg-accent bg-opacity-25 px-5 py-5"
           @click="uploadFileThroughWindow()"
         >
-          <div>Drag and Drop zip/Json file on this page</div>
+          <div>Drag and Drop zip file on this page</div>
           <div>Or click here to select a file</div>
         </div>
         <div>(No files will be uploaded)</div>
         <Button v-if="localFiles" class="mx-auto mt-8 w-fit" @click="continueWithLocal">
           Continue with local files
         </Button>
+        <a
+          href="https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag"
+          target="_blank"
+          class="text-link-dark underline dark:text-link"
+        >
+          How to use JPlag
+        </a>
       </div>
       <LoadingCircle v-else-if="loadingFiles || exampleFiles" class="space-y-5 pt-5" />
       <div v-if="errors.length > 0" class="text-error">
@@ -147,7 +154,7 @@ async function uploadFileOnDrag(e: DragEvent) {
 async function uploadFileThroughWindow() {
   let input = document.createElement('input')
   input.type = 'file'
-  input.accept = '.zip,.json'
+  input.accept = '.zip'
   input.multiple = false
   input.onchange = () => {
     const files = input.files
@@ -183,7 +190,7 @@ async function loadQueryFile(url: URL) {
  * Handles click on Continue with local files.
  */
 function continueWithLocal() {
-  store().state.uploadedFileName = exampleFiles.value ? 'progpedia.zip' : BaseFactory.zipFileName
+  store().state.uploadedFileName = BaseFactory.zipFileName
   store().setLoadingType('local')
   navigateToOverview()
 }
@@ -217,6 +224,7 @@ onErrorCaptured((error) => {
 })
 
 if (exampleFiles.value) {
-  continueWithLocal()
+  store().state.uploadedFileName = 'progpedia.zip'
+  navigateToOverview()
 }
 </script>

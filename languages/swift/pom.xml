@@ -14,6 +14,11 @@
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
         </dependency>
+        <dependency>
+            <groupId>de.jplag</groupId>
+            <artifactId>language-antlr-utils</artifactId>
+            <version>${revision}</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -203,7 +203,7 @@ class CPPListener extends AbstractAntlrListener {
         visit(DeclaratorContext.class, rule -> {
             ParserRuleContext parent = rule.getParent();
             BraceOrEqualInitializerContext desc = getDescendant(parent, BraceOrEqualInitializerContext.class);
-            return (desc != null && desc.Assign() != null && (parent == desc.getParent() || parent == desc.getParent().getParent()));
+            return desc != null && desc.Assign() != null && (parent == desc.getParent() || parent == desc.getParent().getParent());
         }).map(ASSIGN).withSemantics(CodeSemantics::new).onEnter((ctx, varReg) -> varReg.setNextVariableAccessType(VariableAccessType.WRITE));
 
         visit(ParameterDeclarationContext.class).map(VARDEF).withSemantics(CodeSemantics::new).onEnter((ctx, varReg) -> {
@@ -230,7 +230,7 @@ class CPPListener extends AbstractAntlrListener {
             ParserRuleContext parentCtx = ctx.getParent().getParent();
             if (!parentCtx.getParent().getParent().getText().contains("(")) {
                 boolean isClassVariable = parentCtx.getClass() == PostfixExpressionContext.class // after dot
-                        && ((PostfixExpressionContext) parentCtx).postfixExpression().getText().equals("this");
+                        && "this".equals(((PostfixExpressionContext) parentCtx).postfixExpression().getText());
                 varReg.registerVariableAccess(ctx.getText(), isClassVariable);
             }
         });

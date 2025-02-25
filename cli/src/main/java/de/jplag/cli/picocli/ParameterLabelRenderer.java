@@ -30,7 +30,7 @@ public class ParameterLabelRenderer implements CommandLine.Help.IParamLabelRende
             List<CommandLine.Help.Ansi.IStyle> styles) {
         if (argSpec.type().isEnum()) {
             Object[] enumConstants = argSpec.type().getEnumConstants();
-            String enumValueNames = Arrays.stream(enumConstants).map(enumConstant -> (Enum.class.cast(enumConstant)).name())
+            String enumValueNames = Arrays.stream(enumConstants).map(enumConstant -> Enum.class.cast(enumConstant).name())
                     .collect(Collectors.joining(VALUE_SEPARATOR));
             return CommandLine.Help.Ansi.AUTO.text(String.format(PARAM_LABEL_PATTERN, enumValueNames));
         }

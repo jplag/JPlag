@@ -7,6 +7,7 @@ import validNew from './ValidOverview.json'
 import outdated from './OutdatedOverview.json'
 import { setActivePinia, createPinia } from 'pinia'
 import { store } from '@/stores/store'
+import { Version } from '@/model/Version'
 
 describe('Test JSON to Overview', () => {
   beforeAll(() => {
@@ -21,7 +22,10 @@ describe('Test JSON to Overview', () => {
   it('Post 5.0', async () => {
     store().state.files['overview.json'] = JSON.stringify(validNew)
 
-    expect(await OverviewFactory.getOverview()).toEqual({
+    const result = await OverviewFactory.getOverview()
+    expect(result.result).toBe('success')
+
+    expect(result.overview).toEqual({
       _submissionFolderPath: ['files'],
       _baseCodeFolderPath: '',
       _language: ParserLanguage.JAVA,
@@ -156,6 +160,8 @@ describe('Test JSON to Overview', () => {
 describe('Outdated JSON to Overview', () => {
   it('Outdated version', async () => {
     store().state.files['overview.json'] = JSON.stringify(outdated)
-    expect(() => OverviewFactory.getOverview()).rejects.toThrowError()
+    const result = await OverviewFactory.getOverview()
+    expect(result.result).toBe('oldReport')
+    expect(result.version.compareTo(new Version(3,0,0))).toBe(0)
   })
 })

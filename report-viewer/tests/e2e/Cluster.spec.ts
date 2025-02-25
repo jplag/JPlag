@@ -2,8 +2,6 @@ import { test, expect } from '@playwright/test'
 import { uploadFile } from './TestUtils'
 
 test('Test cluster view', async ({ page }) => {
-  await page.goto('/')
-
   await uploadFile('result_small_cluster.zip', page)
 
   // check for all clusters being shown

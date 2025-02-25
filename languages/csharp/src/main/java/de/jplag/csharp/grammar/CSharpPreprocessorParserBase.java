@@ -166,24 +166,24 @@ abstract class CSharpPreprocessorParserBase extends Parser {
     protected void onPreprocessorExpressionConditionalEq() {
         ParserRuleContext ruleContext = this._ctx;
         Preprocessor_expressionContext context = (Preprocessor_expressionContext) ruleContext;
-        context.value = (Objects.equals(context.expr1.value, context.expr2.value) ? TRUE : FALSE);
+        context.value = Objects.equals(context.expr1.value, context.expr2.value) ? TRUE : FALSE;
     }
 
     protected void onPreprocessorExpressionConditionalNe() {
         ParserRuleContext ruleContext = this._ctx;
         Preprocessor_expressionContext context = (Preprocessor_expressionContext) ruleContext;
-        context.value = (!Objects.equals(context.expr1.value, context.expr2.value) ? TRUE : FALSE);
+        context.value = !Objects.equals(context.expr1.value, context.expr2.value) ? TRUE : FALSE;
     }
 
     protected void onPreprocessorExpressionConditionalAnd() {
         ParserRuleContext ruleContext = this._ctx;
         Preprocessor_expressionContext context = (Preprocessor_expressionContext) ruleContext;
-        context.value = (context.expr1.value.equals(TRUE) && context.expr2.value.equals(TRUE) ? TRUE : FALSE);
+        context.value = context.expr1.value.equals(TRUE) && context.expr2.value.equals(TRUE) ? TRUE : FALSE;
     }
 
     protected void onPreprocessorExpressionConditionalOr() {
         ParserRuleContext ruleContext = this._ctx;
         Preprocessor_expressionContext context = (Preprocessor_expressionContext) ruleContext;
-        context.value = (context.expr1.value.equals(TRUE) || context.expr2.value.equals(TRUE) ? TRUE : FALSE);
+        context.value = context.expr1.value.equals(TRUE) || context.expr2.value.equals(TRUE) ? TRUE : FALSE;
     }
 }

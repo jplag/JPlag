@@ -1,5 +1,5 @@
 import type { CliClusterOptions, CliMergingOptions, CliOptions } from '../CliOptions'
-import { ParserLanguage } from '../Language'
+import { getLanguageParser } from '../Language'
 import { MetricJsonIdentifier, MetricTypes } from '../MetricType'
 import { BaseFactory } from './BaseFactory'
 
@@ -11,7 +11,7 @@ export class OptionsFactory extends BaseFactory {
   private static extractOptions(json: Record<string, unknown>): CliOptions {
     const similarityMetricIdentifier = json['similarity_metric'] as MetricJsonIdentifier
     return {
-      language: json['language'] as ParserLanguage,
+      language: getLanguageParser(json['language'] as string),
       minTokenMatch: json['min_token_match'] as number,
       submissionDirectories: json['submission_directories'] as string[],
       oldDirectories: json['old_directories'] as string[],
@@ -52,7 +52,8 @@ export class OptionsFactory extends BaseFactory {
     return {
       enabled: json['enabled'] as boolean,
       minNeighborLength: json['min_neighbour_length'] as number,
-      maxGapSize: json['max_gap_size'] as number
+      maxGapSize: json['max_gap_size'] as number,
+      minimumRequiredMerges: json['min_required_merges'] as number
     }
   }
 

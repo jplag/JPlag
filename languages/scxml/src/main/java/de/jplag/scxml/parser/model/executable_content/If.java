@@ -40,9 +40,9 @@ public record If(String cond, List<ExecutableContent> contents, List<ElseIf> els
     }
 
     private static void addBranch(String branch, List<ExecutableContent> contents, List<ElseIf> elseIfs, List<Else> elses) {
-        if (branch.equals(ELSEIF_ELEMENT)) {
+        if (ELSEIF_ELEMENT.equals(branch)) {
             elseIfs.add(new ElseIf(contents));
-        } else if (branch.equals(ELSE_ELEMENT)) {
+        } else if (ELSE_ELEMENT.equals(branch)) {
             elses.add(new Else(contents));
         }
     }
@@ -84,8 +84,8 @@ public record If(String cond, List<ExecutableContent> contents, List<ElseIf> els
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node childNode = childNodes.item(i);
             String nodeName = childNode.getNodeName();
-            if (nodeName.equals(ELSEIF_ELEMENT) || nodeName.equals(ELSE_ELEMENT)) {
-                if (curBranch.equals(IF_ELEMENT)) {
+            if (ELSEIF_ELEMENT.equals(nodeName) || ELSE_ELEMENT.equals(nodeName)) {
+                if (IF_ELEMENT.equals(curBranch)) {
                     ifContents = new ArrayList<>(curContents);
                 }
 
@@ -97,7 +97,7 @@ public record If(String cond, List<ExecutableContent> contents, List<ElseIf> els
             }
         }
 
-        if (curBranch.equals(IF_ELEMENT)) {
+        if (IF_ELEMENT.equals(curBranch)) {
             ifContents = curContents;
         } else {
             // Close the last branch, if there is any

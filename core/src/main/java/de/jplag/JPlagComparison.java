@@ -89,6 +89,6 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
     }
 
     private double similarity(int divisor) {
-        return (divisor == 0 ? 0.0 : (getNumberOfMatchedTokens() / (double) divisor));
+        return divisor == 0 ? 0.0 : getNumberOfMatchedTokens() / (double) divisor;
     }
 }

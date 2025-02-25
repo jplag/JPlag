@@ -94,6 +94,9 @@
             <TextInformation label="Max Gap Size"
               >{{ options.mergingOptions.maxGapSize }} }}</TextInformation
             >
+            <TextInformation label="Min Required Merges"
+              >{{ options.mergingOptions.minimumRequiredMerges }} }}</TextInformation
+            >
           </div>
         </div>
       </ScrollableComponent>

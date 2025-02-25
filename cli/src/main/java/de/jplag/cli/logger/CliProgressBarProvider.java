@@ -19,17 +19,16 @@ public class CliProgressBarProvider implements ProgressBarProvider {
 
     @Override
     public ProgressBar initProgressBar(ProgressBarType type, int totalSteps) {
-        if (allowedLogLevels.contains(CollectedLogger.getLogLevel())) {
-            if (type.isIdleBar()) {
-                IdleBar idleBar = new IdleBar(type.getDefaultText());
-                idleBar.start();
-                return idleBar;
-            }
-            me.tongfei.progressbar.ProgressBar progressBar = new ProgressBarBuilder().setTaskName(type.getDefaultText()).setInitialMax(totalSteps)
-                    .setStyle(ProgressBarStyle.ASCII).build();
-            return new TongfeiProgressBar(progressBar);
-        } else {
+        if (!allowedLogLevels.contains(CollectedLogger.getLogLevel())) {
             return new VoidProgressBar();
         }
+        if (type.isIdleBar()) {
+            IdleBar idleBar = new IdleBar(type.getDefaultText());
+            idleBar.start();
+            return idleBar;
+        }
+        me.tongfei.progressbar.ProgressBar progressBar = new ProgressBarBuilder().setTaskName(type.getDefaultText()).setInitialMax(totalSteps)
+                .setStyle(ProgressBarStyle.ASCII).build();
+        return new TongfeiProgressBar(progressBar);
     }
 }

@@ -3,8 +3,6 @@ import { uploadFile } from './TestUtils'
 
 test('Test distribution diagram', async ({ page }) => {
   test.slow()
-  await page.goto('/')
-
   await uploadFile('progpedia-report.zip', page)
 
   const options = getTestCombinations()

@@ -70,12 +70,11 @@ public class CliArgumentBuilder {
             } else {
                 return new String[] {SHORT_OPTION_PREFIX + name, valueText};
             }
+        }
+        if (valueText.isEmpty()) {
+            return new String[] {LONG_OPTION_PREFIX + name};
         } else {
-            if (valueText.isEmpty()) {
-                return new String[] {LONG_OPTION_PREFIX + name};
-            } else {
-                return new String[] {LONG_OPTION_PREFIX + name + "=" + formatArgValue(value)};
-            }
+            return new String[] {LONG_OPTION_PREFIX + name + "=" + formatArgValue(value)};
         }
     }
 

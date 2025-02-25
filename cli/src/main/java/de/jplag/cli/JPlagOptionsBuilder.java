@@ -99,6 +99,6 @@ public class JPlagOptionsBuilder {
 
     private MergingOptions getMergingOptions() {
         return new MergingOptions(this.cliOptions.merging.enabled, this.cliOptions.merging.minimumNeighborLength,
-                this.cliOptions.merging.maximumGapSize);
+                this.cliOptions.merging.maximumGapSize, this.cliOptions.merging.minimumRequiredMerges);
     }
 }

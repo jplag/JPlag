@@ -14,16 +14,16 @@ export class BaseFactory {
    * @throws Error if the file could not be found
    */
   protected static async getFile(path: string): Promise<string> {
-    if (import.meta.env.MODE == 'demo') {
-      await new ZipFileHandler().handleFile(await this.getLocalFile('example.zip'))
-      return this.getFileFromStore(path)
-    }
     if (store().state.localModeUsed) {
       return await (await this.getLocalFile(`/files/${path}`)).text()
     } else if (store().state.zipModeUsed) {
       return this.getFileFromStore(path)
     } else if (await this.useLocalZipMode()) {
       await new ZipFileHandler().handleFile(await this.getLocalFile(this.zipFileName))
+      store().setLoadingType('zip')
+      return this.getFileFromStore(path)
+    } else if (import.meta.env.MODE == 'demo') {
+      await new ZipFileHandler().handleFile(await this.getLocalFile('example.zip'))
       store().setLoadingType('zip')
       return this.getFileFromStore(path)
     }

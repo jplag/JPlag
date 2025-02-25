@@ -18,7 +18,7 @@ import { OverviewFactory } from '@/model/factories/OverviewFactory'
 import ClusterView from '@/views/ClusterView.vue'
 import LoadingCircle from '@/components/LoadingCircle.vue'
 import type { Overview } from '@/model/Overview'
-import { redirectOnError } from '@/router'
+import { redirectOnError, router } from '@/router'
 import VersionRepositoryReference from '@/components/VersionRepositoryReference.vue'
 
 const props = defineProps({
@@ -33,8 +33,12 @@ const clusterIndex = computed(() => parseInt(props.clusterIndex))
 const overview: Ref<Overview | null> = ref(null)
 
 OverviewFactory.getOverview()
-  .then((o) => {
-    overview.value = o
+  .then((r) => {
+    if (r.result == 'success') {
+      overview.value = r.overview
+    } else if (r.result == 'oldReport') {
+      router.push({ name: 'OldVersionRedirectView', params: { version: r.version.toString() } })
+    }
   })
   .catch((error) => {
     redirectOnError(error, 'Could not load cluster:\n', 'OverviewView', 'Back to overview')

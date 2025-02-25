@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 import de.jplag.options.JPlagOptions;
 
@@ -29,6 +30,15 @@ public class GreedyStringTiling {
 
     private final Map<Submission, int[]> cachedTokenValueLists = new IdentityHashMap<>();
     private final Map<Submission, SubsequenceHashLookupTable> cachedHashLookupTables = new IdentityHashMap<>();
+
+    private static final String ERROR_INDEX_OUT_OF_BOUNDS = """
+                GST index out of bounds. This is probably a random issue caused by multithreading issues.
+                Length of the list that caused the exception (the list of marks for the relevant submission): %s, Index in that list: %s
+                TokenCount: %s, TokenList: %s
+                CachedTokenCount: %s
+                Submission (cause of error): %s
+                Submission (other): %s
+            """.trim().stripIndent();
 
     public GreedyStringTiling(JPlagOptions options) {
         this.options = options;
@@ -115,14 +125,16 @@ public class GreedyStringTiling {
             List<Match> iterationMatches = new ArrayList<>();
             for (int leftStartIndex = 0; leftStartIndex < leftValues.length - maximumMatchLength; leftStartIndex++) {
                 int leftSubsequenceHash = leftLookupTable.subsequenceHashForStartIndex(leftStartIndex);
-                if (leftMarked[leftStartIndex] || leftSubsequenceHash == SubsequenceHashLookupTable.NO_HASH) {
+                if (checkMark(leftMarked, leftStartIndex, leftSubmission, rightSubmission)
+                        || leftSubsequenceHash == SubsequenceHashLookupTable.NO_HASH) {
                     continue;
                 }
                 List<Integer> possiblyMatchingRightStartIndexes = rightLookupTable
                         .startIndexesOfPossiblyMatchingSubsequencesForSubsequenceHash(leftSubsequenceHash);
                 for (Integer rightStartIndex : possiblyMatchingRightStartIndexes) {
                     // comparison uses >= because it is assumed that the last token is a pivot (FILE_END)
-                    if (rightMarked[rightStartIndex] || maximumMatchLength >= rightValues.length - rightStartIndex) {
+                    if (checkMark(rightMarked, rightStartIndex, rightSubmission, leftSubmission)
+                            || maximumMatchLength >= rightValues.length - rightStartIndex) {
                         continue;
                     }
 
@@ -200,14 +212,14 @@ public class GreedyStringTiling {
         List<Token> tokens = submission.getTokenList();
         boolean[] result = new boolean[tokens.size()];
         for (int i = 0; i < result.length; i++) {
-            result[i] = tokens.get(i).getType().isExcludedFromMatching() || (baseCodeTokens != null && baseCodeTokens.contains(tokens.get(i)));
+            result[i] = tokens.get(i).getType().isExcludedFromMatching() || baseCodeTokens != null && baseCodeTokens.contains(tokens.get(i));
         }
         return result;
     }
 
     private SubsequenceHashLookupTable subsequenceHashLookupTableForSubmission(Submission submission, boolean[] marked) {
         return cachedHashLookupTables.computeIfAbsent(submission,
-                (key -> new SubsequenceHashLookupTable(minimumMatchLength, tokenValueListFromSubmission(key), marked)));
+                key -> new SubsequenceHashLookupTable(minimumMatchLength, tokenValueListFromSubmission(key), marked));
     }
 
     /**
@@ -215,7 +227,7 @@ public class GreedyStringTiling {
      * @param submission The submission from which to convert the tokens.
      */
     private int[] tokenValueListFromSubmission(Submission submission) {
-        return cachedTokenValueLists.computeIfAbsent(submission, (key -> {
+        return cachedTokenValueLists.computeIfAbsent(submission, key -> {
             List<Token> tokens = key.getTokenList();
             int[] tokenValueList = new int[tokens.size()];
             for (int i = 0; i < tokens.size(); i++) {
@@ -226,6 +238,16 @@ public class GreedyStringTiling {
                 tokenValueList[i] = tokenTypeValues.get(type);
             }
             return tokenValueList;
-        }));
+        });
+    }
+
+    private boolean checkMark(boolean[] marks, int index, Submission submission, Submission otherSubmission) {
+        if (index >= marks.length) {
+            throw new IllegalStateException(String.format(ERROR_INDEX_OUT_OF_BOUNDS, marks.length, index, submission.getTokenList().size(),
+                    submission.getTokenList().stream().map(it -> it.getType().getDescription()).collect(Collectors.joining(", ")),
+                    cachedTokenValueLists.get(submission).length, submission.getName(), otherSubmission.getName()));
+        }
+
+        return marks[index];
     }
 }

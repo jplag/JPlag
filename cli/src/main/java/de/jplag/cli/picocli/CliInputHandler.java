@@ -7,6 +7,7 @@ import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_SYNOPSIS;
 
 import java.io.File;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +30,7 @@ import picocli.CommandLine.ParseResult;
 public class CliInputHandler {
     private static final String OPTION_LIST_HEADING = "Parameter descriptions: ";
 
+    private static final String AMBIGUOUS_VIEW_FILE = "There are multiple files specified for '--mode VIEW', please make sure only to specify one.";
     private static final String UNKNOWN_LANGUAGE_EXCEPTION = "Language %s does not exists. Available languages are: %s";
     private static final String IMPOSSIBLE_EXCEPTION = "This should not have happened."
             + " Please create an issue on github (https://github.com/jplag/JPlag/issues) with the entire output.";
@@ -42,6 +44,8 @@ public class CliInputHandler {
 
     private static final String PARAMETER_SHORT_PREFIX = "  -";
     private static final String PARAMETER_SHORT_ADDITIONAL_INDENT = "    ";
+
+    private static final char RESULT_FILE_OPTION_NAME = 'r';
 
     private static final Random RANDOM = new SecureRandom();
 
@@ -107,7 +111,7 @@ public class CliInputHandler {
         try {
             this.parseResult = this.commandLine.parseArgs(args);
             if (this.parseResult.isUsageHelpRequested()
-                    || (this.parseResult.subcommand() != null && this.parseResult.subcommand().isUsageHelpRequested())) {
+                    || this.parseResult.subcommand() != null && this.parseResult.subcommand().isUsageHelpRequested()) {
                 commandLine.getExecutionStrategy().execute(this.parseResult);
                 return true;
             }
@@ -168,5 +172,27 @@ public class CliInputHandler {
     private String generateDescription() {
         var randomDescription = DESCRIPTIONS[RANDOM.nextInt(DESCRIPTIONS.length)];
         return String.format(DESCRIPTION_PATTERN, randomDescription, CREDITS);
+    }
+
+    /**
+     * Returns the file to display when using --move VIEW. The result can be null, if no file was selected
+     * @return The file to show
+     * @throws CliException If multiple options would be valid
+     */
+    public File getFileForViewMode() throws CliException {
+        List<File> validOptions = new ArrayList<>(List.of(this.options.rootDirectory));
+
+        validOptions.addAll(List.of(this.options.newDirectories));
+        validOptions.addAll(List.of(this.options.oldDirectories));
+
+        if (this.parseResult.hasMatchedOption(RESULT_FILE_OPTION_NAME)) {
+            validOptions.add(new File(this.options.resultFile));
+        }
+
+        return switch (validOptions.size()) {
+            case 0 -> null;
+            case 1 -> validOptions.getFirst();
+            default -> throw new CliException(AMBIGUOUS_VIEW_FILE);
+        };
     }
 }

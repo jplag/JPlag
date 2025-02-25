@@ -41,9 +41,11 @@ class MergingTest extends TestBase {
     private final SubmissionSet submissionSet;
     private static final int MINIMUM_NEIGHBOR_LENGTH = 1;
     private static final int MAXIMUM_GAP_SIZE = 10;
+    private static final int MINIMUM_REQUIRED_MERGES = 0;
 
     MergingTest() throws ExitException {
-        options = getDefaultOptions("merging").withMergingOptions(new MergingOptions(true, MINIMUM_NEIGHBOR_LENGTH, MAXIMUM_GAP_SIZE));
+        options = getDefaultOptions("merging")
+                .withMergingOptions(new MergingOptions(true, MINIMUM_NEIGHBOR_LENGTH, MAXIMUM_GAP_SIZE, MINIMUM_REQUIRED_MERGES));
 
         GreedyStringTiling coreAlgorithm = new GreedyStringTiling(options);
         comparisonStrategy = new ParallelComparisonStrategy(options, coreAlgorithm);
@@ -130,13 +132,13 @@ class MergingTest extends TestBase {
             List<Token> tokenRight = new ArrayList<>(comparison.secondSubmission().getTokenList());
 
             for (Token token : tokenLeft) {
-                if (token.getType().equals(SharedTokenType.FILE_END)) {
+                if (SharedTokenType.FILE_END.equals(token.getType())) {
                     amountFileEndBefore++;
                 }
             }
 
             for (Token token : tokenRight) {
-                if (token.getType().equals(SharedTokenType.FILE_END)) {
+                if (SharedTokenType.FILE_END.equals(token.getType())) {
                     amountFileEndBefore++;
                 }
             }
@@ -148,13 +150,13 @@ class MergingTest extends TestBase {
             List<Token> tokenRight = new ArrayList<>(comparison.secondSubmission().getTokenList());
 
             for (Token token : tokenLeft) {
-                if (token.getType().equals(SharedTokenType.FILE_END)) {
+                if (SharedTokenType.FILE_END.equals(token.getType())) {
                     amountFileEndAfter++;
                 }
             }
 
             for (Token token : tokenRight) {
-                if (token.getType().equals(SharedTokenType.FILE_END)) {
+                if (SharedTokenType.FILE_END.equals(token.getType())) {
                     amountFileEndAfter++;
                 }
             }
@@ -201,31 +203,27 @@ class MergingTest extends TestBase {
     @DisplayName("Sanity check for match merging")
     void testSanity() {
 
-        List<Match> matchesBefore = new ArrayList<>();
-        List<Match> matchesAfter = new ArrayList<>();
+        List<Match> matchesBefore = findComparison(comparisonsBefore, "sanityA.java", "sanityB.java").ignoredMatches();
+        List<Match> matchesAfter = findComparison(comparisonsAfter, "sanityA.java", "sanityB.java").matches();
 
-        for (JPlagComparison comparison : comparisonsBefore) {
-            if (comparison.toString().equals("sanityA.java <-> sanityB.java")) {
-                matchesBefore = comparison.ignoredMatches();
-            }
-        }
-        for (JPlagComparison comparison : comparisonsAfter) {
-            if (comparison.toString().equals("sanityA.java <-> sanityB.java")) {
-                matchesAfter = comparison.matches();
-            }
-        }
+        List<Match> expectedBefore = List.of( //
+                new Match(5, 3, 6), //
+                new Match(11, 12, 6), //
+                new Match(0, 0, 3), //
+                new Match(3, 18, 2), //
+                new Match(17, 20, 2) //
+        );
 
-        List<Match> expectedBefore = new ArrayList<>();
-        expectedBefore.add(new Match(5, 3, 6));
-        expectedBefore.add(new Match(11, 12, 6));
-        expectedBefore.add(new Match(0, 0, 3));
-        expectedBefore.add(new Match(3, 18, 2));
-        expectedBefore.add(new Match(17, 20, 2));
-
-        List<Match> expectedAfter = new ArrayList<>();
-        expectedAfter.add(new Match(5, 3, 12));
+        List<Match> expectedAfter = List.of(new Match(5, 3, 12));
 
         assertEquals(expectedBefore, matchesBefore);
+
         assertEquals(expectedAfter, matchesAfter);
+    }
+
+    private static JPlagComparison findComparison(List<JPlagComparison> comparisons, String firstName, String secondName) {
+        return comparisons.stream()
+                .filter(it -> firstName.equals(it.firstSubmission().getName()) && secondName.equals(it.secondSubmission().getName())).findAny()
+                .orElseThrow();
     }
 }
