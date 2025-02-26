@@ -12,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import de.jplag.GreedyStringTiling;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Match;
@@ -21,11 +20,9 @@ import de.jplag.SubmissionSet;
 import de.jplag.SubmissionSetBuilder;
 import de.jplag.TestBase;
 import de.jplag.Token;
-import de.jplag.TokenValueMapper;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 import de.jplag.strategy.ComparisonStrategy;
-import de.jplag.strategy.ParallelComparisonStrategy;
 
 /**
  * This class extends on {@link TestBase} and performs several test on Match Merging, in order to check its
@@ -49,8 +46,7 @@ class MergingTest extends TestBase {
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         submissionSet = builder.buildSubmissionSet();
 
-        GreedyStringTiling coreAlgorithm = new GreedyStringTiling(options, TokenValueMapper.generateTokenValueMapper(submissionSet));
-        comparisonStrategy = new ParallelComparisonStrategy(options, coreAlgorithm);
+        comparisonStrategy = new ComparisonStrategy(options);
     }
 
     @BeforeEach

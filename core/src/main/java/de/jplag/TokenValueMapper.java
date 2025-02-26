@@ -12,18 +12,23 @@ public class TokenValueMapper {
     private final Map<TokenType, Integer> tokenTypeValues;
     private final Map<Submission, int[]> tokenValueMap;
 
-    public TokenValueMapper() {
+    public TokenValueMapper(SubmissionSet submissionSet) {
         this.tokenTypeValues = new HashMap<>();
         this.tokenValueMap = new IdentityHashMap<>();
 
         this.tokenTypeValues.put(SharedTokenType.FILE_END, 0);
+
+        addSubmissions(submissionSet);
+        if (submissionSet.hasBaseCode()) {
+            addSingleSubmission(submissionSet.getBaseCode());
+        }
     }
 
-    public void addSubmissions(SubmissionSet submissionSet) {
+    private void addSubmissions(SubmissionSet submissionSet) {
         ProgressBarLogger.iterate(ProgressBarType.HASH_CREATION, submissionSet.getSubmissions(), this::addSingleSubmission);
     }
 
-    public void addSingleSubmission(Submission submission) {
+    private void addSingleSubmission(Submission submission) {
         List<Token> tokens = submission.getTokenList();
         int[] tokenValues = new int[tokens.size()];
         for (int i = 0; i < tokens.size(); i++) {
@@ -36,14 +41,5 @@ public class TokenValueMapper {
 
     public int[] getTokenValuesFor(Submission submission) {
         return this.tokenValueMap.get(submission);
-    }
-
-    public static TokenValueMapper generateTokenValueMapper(SubmissionSet submissionSet) {
-        TokenValueMapper tokenValueMapper = new TokenValueMapper();
-        tokenValueMapper.addSubmissions(submissionSet);
-        if (submissionSet.hasBaseCode()) {
-            tokenValueMapper.addSingleSubmission(submissionSet.getBaseCode());
-        }
-        return tokenValueMapper;
     }
 }

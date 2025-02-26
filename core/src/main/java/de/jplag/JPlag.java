@@ -18,7 +18,6 @@ import de.jplag.merging.MatchMerging;
 import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.reportobject.model.Version;
 import de.jplag.strategy.ComparisonStrategy;
-import de.jplag.strategy.ParallelComparisonStrategy;
 
 /**
  * This class coordinates the whole errorConsumer flow.
@@ -71,8 +70,7 @@ public class JPlag {
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
 
-        GreedyStringTiling coreAlgorithm = new GreedyStringTiling(options, TokenValueMapper.generateTokenValueMapper(submissionSet));
-        ComparisonStrategy comparisonStrategy = new ParallelComparisonStrategy(options, coreAlgorithm);
+        ComparisonStrategy comparisonStrategy = new ComparisonStrategy(options);
 
         if (options.normalize() && options.language().supportsNormalization() && options.language().requiresCoreNormalization()) {
             submissionSet.normalizeSubmissions();
