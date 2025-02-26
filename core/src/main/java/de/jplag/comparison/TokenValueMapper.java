@@ -16,16 +16,16 @@ import de.jplag.logging.ProgressBarType;
 /**
  * Maps the tokens in a submission to integers so they can be used by {@link GreedyStringTiling}. Each token type will
  * be assigned a unique number. The token lists in that form can be queried by calling
- * {@link TokenValueMapper#getTokenValuesFor(Submission)}
+ * {@link TokenValueMapper#getTokenValuesFor(Submission)}.
  */
 public class TokenValueMapper {
     private final Map<TokenType, Integer> tokenTypeValues;
     private final Map<Submission, int[]> tokenValueMap;
 
     /**
-     * Crates the mapper for a single {@link SubmissionSet}. This will also show the progress to the user using the
-     * {@link ProgressBarLogger}
-     * @param submissionSet The set of submissions to process
+     * Crates the mapping for a single {@link SubmissionSet}. This will also show the progress to the user using the
+     * {@link ProgressBarLogger}.
+     * @param submissionSet The set of submissions to process.
      */
     public TokenValueMapper(SubmissionSet submissionSet) {
         this.tokenTypeValues = new HashMap<>();
@@ -57,8 +57,8 @@ public class TokenValueMapper {
     /**
      * Queries the token list for a single submission. each number in the array corresponds to one token from the
      * submissions. The {@link SharedTokenType#FILE_END} token is guaranteed to be mapped to 0.
-     * @param submission The submission to query
-     * @return The list of tokens
+     * @param submission The submission to query.
+     * @return the list of tokens.
      */
     public int[] getTokenValuesFor(Submission submission) {
         return this.tokenValueMap.get(submission);
