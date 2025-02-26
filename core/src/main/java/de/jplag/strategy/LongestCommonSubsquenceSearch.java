@@ -18,13 +18,21 @@ import de.jplag.logging.ProgressBarLogger;
 import de.jplag.logging.ProgressBarType;
 import de.jplag.options.JPlagOptions;
 
-public class ComparisonStrategy {
+/**
+ * Implements a parallelized token-based longest common subsequence search for all pairs of programs in a given set of
+ * programs.
+ */
+public class LongestCommonSubsquenceSearch {
 
-    private final Logger logger = LoggerFactory.getLogger(ComparisonStrategy.class);
+    private final Logger logger = LoggerFactory.getLogger(LongestCommonSubsquenceSearch.class);
 
     private final JPlagOptions options;
 
-    public ComparisonStrategy(JPlagOptions options) {
+    /**
+     * Creates an instance of the subsequence search algorithm.
+     * @param options specifies relevant parameters for the comparison.
+     */
+    public LongestCommonSubsquenceSearch(JPlagOptions options) {
         this.options = options;
     }
 
@@ -88,7 +96,6 @@ public class ComparisonStrategy {
         long timeBeforeStartInMillis = System.currentTimeMillis();
 
         TokenValueMapper tokenValueMapper = new TokenValueMapper(submissionSet);
-
         GreedyStringTiling coreAlgorithm = new GreedyStringTiling(options, tokenValueMapper);
 
         boolean withBaseCode = submissionSet.hasBaseCode();

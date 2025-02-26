@@ -22,7 +22,7 @@ import de.jplag.TestBase;
 import de.jplag.Token;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
-import de.jplag.strategy.ComparisonStrategy;
+import de.jplag.strategy.LongestCommonSubsquenceSearch;
 
 /**
  * This class extends on {@link TestBase} and performs several test on Match Merging, in order to check its
@@ -35,7 +35,7 @@ class MergingTest extends TestBase {
     private List<Match> matches;
     private List<JPlagComparison> comparisonsBefore;
     private List<JPlagComparison> comparisonsAfter;
-    private final ComparisonStrategy comparisonStrategy;
+    private final LongestCommonSubsquenceSearch comparisonStrategy;
     private final SubmissionSet submissionSet;
     private static final int MINIMUM_NEIGHBOR_LENGTH = 1;
     private static final int MAXIMUM_GAP_SIZE = 10;
@@ -46,7 +46,7 @@ class MergingTest extends TestBase {
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         submissionSet = builder.buildSubmissionSet();
 
-        comparisonStrategy = new ComparisonStrategy(options);
+        comparisonStrategy = new LongestCommonSubsquenceSearch(options);
     }
 
     @BeforeEach

@@ -17,7 +17,7 @@ import de.jplag.exceptions.SubmissionException;
 import de.jplag.merging.MatchMerging;
 import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.reportobject.model.Version;
-import de.jplag.strategy.ComparisonStrategy;
+import de.jplag.strategy.LongestCommonSubsquenceSearch;
 
 /**
  * This class coordinates the whole errorConsumer flow.
@@ -70,7 +70,7 @@ public class JPlag {
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
 
-        ComparisonStrategy comparisonStrategy = new ComparisonStrategy(options);
+        LongestCommonSubsquenceSearch comparisonStrategy = new LongestCommonSubsquenceSearch(options);
 
         if (options.normalize() && options.language().supportsNormalization() && options.language().requiresCoreNormalization()) {
             submissionSet.normalizeSubmissions();
