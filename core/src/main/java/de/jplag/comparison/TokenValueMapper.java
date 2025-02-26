@@ -14,16 +14,16 @@ import de.jplag.logging.ProgressBarLogger;
 import de.jplag.logging.ProgressBarType;
 
 /**
- * Maps the tokens in a submission names to integers so they can be used by {@link GreedyStringTiling}. Each token type
- * will be assigned a unique number. The token lists in that form can be queried by calling
- * {@link this#getTokenValuesFor(Submission)}
+ * Maps the tokens in a submission to integers so they can be used by {@link GreedyStringTiling}. Each token type will
+ * be assigned a unique number. The token lists in that form can be queried by calling
+ * {@link TokenValueMapper#getTokenValuesFor(Submission)}
  */
 public class TokenValueMapper {
     private final Map<TokenType, Integer> tokenTypeValues;
     private final Map<Submission, int[]> tokenValueMap;
 
     /**
-     * Crates the mapper for a single submission. This will also show the progress to the user using the
+     * Crates the mapper for a single {@link SubmissionSet}. This will also show the progress to the user using the
      * {@link ProgressBarLogger}
      * @param submissionSet The set of submissions to process
      */
