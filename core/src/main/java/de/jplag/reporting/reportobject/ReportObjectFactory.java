@@ -144,12 +144,12 @@ public class ReportObjectFactory {
         int totalComparisons = result.getAllComparisons().size();
         int numberOfMaximumComparisons = result.getOptions().maximumNumberOfComparisons();
         int shownComparisons = Math.min(totalComparisons, numberOfMaximumComparisons);
-        int missingComparisons = totalComparisons > numberOfMaximumComparisons ? (totalComparisons - numberOfMaximumComparisons) : 0;
+        int missingComparisons = totalComparisons > numberOfMaximumComparisons ? totalComparisons - numberOfMaximumComparisons : 0;
         logger.info("Total Comparisons: {}. Comparisons in Report: {}. Omitted Comparisons: {}.", totalComparisons, shownComparisons,
                 missingComparisons);
         OverviewReport overviewReport = new OverviewReport(REPORT_VIEWER_VERSION, folders.stream().map(File::getPath).toList(), // submissionFolderPath
                 baseCodePath, // baseCodeFolderPath
-                result.getOptions().language().getIdentifier(), // language
+                result.getOptions().language(), // language
                 result.getOptions().fileSuffixes(), // fileExtensions
                 submissionNameToIdMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey)), // submissionIds
                 submissionNameToNameToComparisonFileName, // result.getOptions().getMinimumTokenMatch(),

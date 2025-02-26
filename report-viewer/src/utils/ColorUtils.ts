@@ -21,9 +21,6 @@ function generateHues(numberOfColors: number) {
  * @param intervalStart start of the interval [0,360]
  * @param intervalEnd end of the interval [0,360] and > intervalStart
  * @param numberOfColorsInInterval Number of colors to generate in the interval
- * @param saturation [0,1]
- * @param lightness [0,1]
- * @param alpha [0,1]
  * @returns Array of strings in format 'hsla(hue, saturation, lightness, alpha)'
  */
 function generateColorsForInterval(

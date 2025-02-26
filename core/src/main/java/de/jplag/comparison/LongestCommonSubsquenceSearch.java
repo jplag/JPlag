@@ -73,9 +73,9 @@ public class LongestCommonSubsquenceSearch {
     private List<SubmissionTuple> buildComparisonTuples(List<Submission> submissions) {
         List<SubmissionTuple> tuples = new ArrayList<>();
 
-        for (int i = 0; i < (submissions.size() - 1); i++) {
+        for (int i = 0; i < submissions.size() - 1; i++) {
             Submission first = submissions.get(i);
-            for (int j = (i + 1); j < submissions.size(); j++) {
+            for (int j = i + 1; j < submissions.size(); j++) {
                 Submission second = submissions.get(j);
                 if (first.isNew() || second.isNew()) {
                     tuples.add(new SubmissionTuple(first, second));

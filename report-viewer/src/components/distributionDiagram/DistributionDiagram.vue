@@ -118,7 +118,7 @@ const options = computed(() => {
             if (graphOptions.value.bucketCount <= 10) {
               return getDataPointLabel(value)
             } else {
-              let labelBreakPoint = 10
+              let labelBreakPoint: number
               if (graphOptions.value.bucketCount <= 25) {
                 labelBreakPoint = 5
               } else {

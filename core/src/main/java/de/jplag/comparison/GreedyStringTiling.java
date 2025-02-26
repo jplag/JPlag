@@ -213,14 +213,14 @@ public class GreedyStringTiling {
         List<Token> tokens = submission.getTokenList();
         boolean[] result = new boolean[tokens.size()];
         for (int i = 0; i < result.length; i++) {
-            result[i] = tokens.get(i).getType().isExcludedFromMatching() || (baseCodeTokens != null && baseCodeTokens.contains(tokens.get(i)));
+            result[i] = tokens.get(i).getType().isExcludedFromMatching() || baseCodeTokens != null && baseCodeTokens.contains(tokens.get(i));
         }
         return result;
     }
 
     private SubsequenceHashLookupTable subsequenceHashLookupTableForSubmission(Submission submission, boolean[] marked) {
         return cachedHashLookupTables.computeIfAbsent(submission,
-                (key -> new SubsequenceHashLookupTable(minimumMatchLength, this.tokenValueMapper.getTokenValuesFor(submission), marked)));
+                key -> new SubsequenceHashLookupTable(minimumMatchLength, this.tokenValueMapper.getTokenValuesFor(submission), marked));
     }
 
     private boolean checkMark(boolean[] marks, int index, Submission submission, Submission otherSubmission) {

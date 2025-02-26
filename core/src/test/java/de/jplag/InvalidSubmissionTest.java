@@ -34,8 +34,9 @@ class InvalidSubmissionTest extends TestBase {
             File errorFolder = new File(Path.of("errors", "java").toString());
             assertTrue(errorFolder.exists());
             String[] errorSubmissions = errorFolder.list();
-            if (errorSubmissions != null)
+            if (errorSubmissions != null) {
                 Arrays.sort(errorSubmissions); // File systems don't promise alphabetical order.
+            }
             deleteDirectory(errorFolder.getParentFile());
             assertArrayEquals(new String[] {"A", "B"}, errorSubmissions);
         }

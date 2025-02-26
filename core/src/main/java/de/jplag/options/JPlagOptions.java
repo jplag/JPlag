@@ -158,7 +158,7 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
     }
 
     private Integer normalizeMinimumTokenMatch(Integer minimumTokenMatch) {
-        return (minimumTokenMatch != null && minimumTokenMatch < 1) ? Integer.valueOf(1) : minimumTokenMatch;
+        return minimumTokenMatch != null && minimumTokenMatch < 1 ? Integer.valueOf(1) : minimumTokenMatch;
     }
 
     /**

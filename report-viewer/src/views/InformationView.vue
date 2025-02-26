@@ -54,7 +54,7 @@
               <TextInformation label="Spectral Bandwidth">{{
                 options.clusterOptions.spectralBandwidth
               }}</TextInformation>
-              <TextInformation label="Spectral Gausssian Process Variance">{{
+              <TextInformation label="Spectral Gaussian Process Variance">{{
                 options.clusterOptions.spectralGaussianProcessVariance
               }}</TextInformation>
               <TextInformation label="Spectral Min Runs">{{
@@ -93,6 +93,9 @@
             }}</TextInformation>
             <TextInformation label="Max Gap Size"
               >{{ options.mergingOptions.maxGapSize }} }}</TextInformation
+            >
+            <TextInformation label="Min Required Merges"
+              >{{ options.mergingOptions.minimumRequiredMerges }} }}</TextInformation
             >
           </div>
         </div>

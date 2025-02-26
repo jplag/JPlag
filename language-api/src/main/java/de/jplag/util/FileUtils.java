@@ -89,7 +89,7 @@ public final class FileUtils {
      * @throws IOException If an IO error occurs
      */
     public static Charset detectCharset(File file) throws IOException {
-        try (InputStream stream = new BufferedInputStream(new FileInputStream((file)))) {
+        try (InputStream stream = new BufferedInputStream(new FileInputStream(file))) {
             return detectCharset(stream);
         }
     }

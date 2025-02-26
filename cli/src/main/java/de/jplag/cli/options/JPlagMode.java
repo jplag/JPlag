@@ -15,5 +15,9 @@ public enum JPlagMode {
     /**
      * Run JPlag and open the result in report viewer
      */
-    RUN_AND_VIEW
+    RUN_AND_VIEW,
+    /**
+     * Choose the mode automatically from the given input files
+     */
+    AUTO,
 }
