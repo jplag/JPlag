@@ -44,7 +44,8 @@ public class GreedyStringTiling {
     public GreedyStringTiling(JPlagOptions options, TokenValueMapper tokenValueMapper) {
         this.options = options;
         // Ensures 1 <= neighborLength <= minimumTokenMatch
-        int minimumNeighborLength = Math.min(Math.max(options.mergingOptions().minimumNeighborLength(), 1), options.minimumTokenMatch());
+        int minimumNeighborLength = Math.clamp(options.mergingOptions().minimumNeighborLength(), 1, options.minimumTokenMatch());
+
         this.minimumMatchLength = options.mergingOptions().enabled() ? minimumNeighborLength : options.minimumTokenMatch();
 
         this.tokenValueMapper = tokenValueMapper;

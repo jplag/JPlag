@@ -40,7 +40,7 @@ class SubsequenceHashLookupTable {
         }
 
         subsequenceHashes = new int[values.length - windowSize];
-        startIndexToSubsequenceHashesMap = new HashMap<>(subsequenceHashes.length);
+        startIndexToSubsequenceHashesMap = HashMap.newHashMap(subsequenceHashes.length);
         computeSubsequenceHashes(marked);
     }
 
