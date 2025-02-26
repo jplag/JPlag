@@ -20,9 +20,9 @@ import de.jplag.SubmissionSet;
 import de.jplag.SubmissionSetBuilder;
 import de.jplag.TestBase;
 import de.jplag.Token;
+import de.jplag.comparison.LongestCommonSubsquenceSearch;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
-import de.jplag.strategy.LongestCommonSubsquenceSearch;
 
 /**
  * This class extends on {@link TestBase} and performs several test on Match Merging, in order to check its

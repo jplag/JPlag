@@ -1,4 +1,4 @@
-package de.jplag;
+package de.jplag.comparison;
 
 import java.util.ArrayList;
 import java.util.HashMap;

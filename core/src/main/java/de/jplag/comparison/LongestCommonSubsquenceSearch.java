@@ -1,4 +1,4 @@
-package de.jplag.strategy;
+package de.jplag.comparison;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,12 +7,10 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.GreedyStringTiling;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Submission;
 import de.jplag.SubmissionSet;
-import de.jplag.TokenValueMapper;
 import de.jplag.logging.ProgressBar;
 import de.jplag.logging.ProgressBarLogger;
 import de.jplag.logging.ProgressBarType;

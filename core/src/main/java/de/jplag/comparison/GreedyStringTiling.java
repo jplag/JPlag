@@ -1,4 +1,4 @@
-package de.jplag;
+package de.jplag.comparison;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -9,6 +9,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import de.jplag.JPlagComparison;
+import de.jplag.Match;
+import de.jplag.Submission;
+import de.jplag.Token;
 import de.jplag.options.JPlagOptions;
 
 /**

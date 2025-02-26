@@ -1,10 +1,15 @@
-package de.jplag;
+package de.jplag.comparison;
 
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.jplag.SharedTokenType;
+import de.jplag.Submission;
+import de.jplag.SubmissionSet;
+import de.jplag.Token;
+import de.jplag.TokenType;
 import de.jplag.logging.ProgressBarLogger;
 import de.jplag.logging.ProgressBarType;
 
