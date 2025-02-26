@@ -1,4 +1,4 @@
-package de.jplag.strategy;
+package de.jplag.comparison;
 
 import de.jplag.Submission;
 

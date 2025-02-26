@@ -1,4 +1,4 @@
-package de.jplag;
+package de.jplag.comparison;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,7 +40,7 @@ class SubsequenceHashLookupTable {
         }
 
         subsequenceHashes = new int[values.length - windowSize];
-        startIndexToSubsequenceHashesMap = new HashMap<>(subsequenceHashes.length);
+        startIndexToSubsequenceHashesMap = HashMap.newHashMap(subsequenceHashes.length);
         computeSubsequenceHashes(marked);
     }
 

@@ -11,14 +11,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.clustering.ClusteringFactory;
+import de.jplag.comparison.LongestCommonSubsquenceSearch;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.RootDirectoryException;
 import de.jplag.exceptions.SubmissionException;
 import de.jplag.merging.MatchMerging;
 import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.reportobject.model.Version;
-import de.jplag.strategy.ComparisonStrategy;
-import de.jplag.strategy.ParallelComparisonStrategy;
 
 /**
  * This class coordinates the whole errorConsumer flow.
@@ -39,8 +38,8 @@ public class JPlag {
 
     /**
      * Creates and initializes a JPlag instance, parameterized by a set of options.
-     * @deprecated in favor of static {@link #run(JPlagOptions)}.
      * @param options determines the parameterization.
+     * @deprecated in favor of static {@link #run(JPlagOptions)}.
      */
     @Deprecated(since = "4.3.0")
     public JPlag(JPlagOptions options) {
@@ -49,9 +48,9 @@ public class JPlag {
 
     /**
      * Main procedure, executes the comparison of source code submissions.
-     * @deprecated in favor of static {@link #run(JPlagOptions)}.
      * @return the results of the comparison, specifically the submissions whose similarity exceeds a set threshold.
      * @throws ExitException if JPlag exits preemptively.
+     * @deprecated in favor of static {@link #run(JPlagOptions)}.
      */
     @Deprecated(since = "4.3.0")
     public JPlagResult run() throws ExitException {
@@ -66,11 +65,13 @@ public class JPlag {
      */
     public static JPlagResult run(JPlagOptions options) throws ExitException {
         checkForConfigurationConsistency(options);
-        GreedyStringTiling coreAlgorithm = new GreedyStringTiling(options);
-        ComparisonStrategy comparisonStrategy = new ParallelComparisonStrategy(options, coreAlgorithm);
+
         // Parse and validate submissions.
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
+
+        LongestCommonSubsquenceSearch comparisonStrategy = new LongestCommonSubsquenceSearch(options);
+
         if (options.normalize() && options.language().supportsNormalization() && options.language().requiresCoreNormalization()) {
             submissionSet.normalizeSubmissions();
         }
@@ -113,7 +114,7 @@ public class JPlag {
         }
 
         List<String> duplicateNames = getDuplicateSubmissionFolderNames(options);
-        if (duplicateNames.size() > 0) {
+        if (!duplicateNames.isEmpty()) {
             throw new RootDirectoryException(String.format("Duplicate root directory names found: %s", String.join(", ", duplicateNames)));
         }
     }

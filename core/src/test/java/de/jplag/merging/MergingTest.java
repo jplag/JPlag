@@ -12,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import de.jplag.GreedyStringTiling;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Match;
@@ -21,10 +20,9 @@ import de.jplag.SubmissionSet;
 import de.jplag.SubmissionSetBuilder;
 import de.jplag.TestBase;
 import de.jplag.Token;
+import de.jplag.comparison.LongestCommonSubsquenceSearch;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
-import de.jplag.strategy.ComparisonStrategy;
-import de.jplag.strategy.ParallelComparisonStrategy;
 
 /**
  * This class extends on {@link TestBase} and performs several test on Match Merging, in order to check its
@@ -37,7 +35,7 @@ class MergingTest extends TestBase {
     private List<Match> matches;
     private List<JPlagComparison> comparisonsBefore;
     private List<JPlagComparison> comparisonsAfter;
-    private final ComparisonStrategy comparisonStrategy;
+    private final LongestCommonSubsquenceSearch comparisonStrategy;
     private final SubmissionSet submissionSet;
     private static final int MINIMUM_NEIGHBOR_LENGTH = 1;
     private static final int MAXIMUM_GAP_SIZE = 10;
@@ -47,11 +45,10 @@ class MergingTest extends TestBase {
         options = getDefaultOptions("merging")
                 .withMergingOptions(new MergingOptions(true, MINIMUM_NEIGHBOR_LENGTH, MAXIMUM_GAP_SIZE, MINIMUM_REQUIRED_MERGES));
 
-        GreedyStringTiling coreAlgorithm = new GreedyStringTiling(options);
-        comparisonStrategy = new ParallelComparisonStrategy(options, coreAlgorithm);
-
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         submissionSet = builder.buildSubmissionSet();
+
+        comparisonStrategy = new LongestCommonSubsquenceSearch(options);
     }
 
     @BeforeEach
