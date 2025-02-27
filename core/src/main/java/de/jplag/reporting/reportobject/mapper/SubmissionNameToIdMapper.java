@@ -14,10 +14,15 @@ import de.jplag.Submission;
  */
 public class SubmissionNameToIdMapper {
 
+    private SubmissionNameToIdMapper() {
+        // private constructor for non-instantiability.
+    }
+
     private static final String FILE_SEPARATOR_REPLACEMENT = "_";
 
     /**
      * Builds a map that associates a Submission by its JPlag Id ({@link Submission#getName()}) to its report viewer id.
+     * @param result is the comparison result that provides the submissions.
      * @return A Map of containing an entry [name of submission -> report viewer id of submission] for each submission of
      * the submission set.
      */

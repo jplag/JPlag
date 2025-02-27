@@ -18,7 +18,7 @@ import de.jplag.reporting.reportobject.model.CodePosition;
 import de.jplag.reporting.reportobject.writer.JPlagResultWriter;
 
 /**
- * Writes the comparisons of each Submission to the basecode in its own file
+ * Writes the comparisons of each Submission to the basecode in its own file.
  */
 public class BaseCodeReportWriter {
 
@@ -27,9 +27,9 @@ public class BaseCodeReportWriter {
     public static final String BASEPATH = "basecode";
 
     /**
-     * Creates a new BaseCodeReportWriter
-     * @param submissionToIdFunction Function for translating a submission to a unique id
-     * @param resultWriter Writer used for writing the result
+     * Creates a new BaseCodeReportWriter.
+     * @param submissionToIdFunction Function for translating a submission to a unique id.
+     * @param resultWriter Writer used for writing the result.
      */
     public BaseCodeReportWriter(Function<Submission, String> submissionToIdFunction, JPlagResultWriter resultWriter) {
         this.submissionToIdFunction = submissionToIdFunction;
@@ -37,8 +37,8 @@ public class BaseCodeReportWriter {
     }
 
     /**
-     * Writes the basecode of each submission in the result into its own file in the result writer
-     * @param jPlagResult The result containing the submissions
+     * Writes the basecode of each submission in the result into its own file in the result writer.
+     * @param jPlagResult The result containing the submissions.
      */
     public void writeBaseCodeReport(JPlagResult jPlagResult) {
         Set<Submission> submissions = new HashSet<>();

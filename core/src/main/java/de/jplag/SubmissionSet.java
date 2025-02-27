@@ -46,6 +46,7 @@ public class SubmissionSet {
      * @param submissions Submissions to check for plagiarism.
      * @param baseCode Base code submission if it exists or {@code null}.
      * @param options The JPlag options
+     * @throws ExitException if the submissions cannot be parsed.
      */
     public SubmissionSet(List<Submission> submissions, Submission baseCode, JPlagOptions options) throws ExitException {
         this.allSubmissions = submissions;
@@ -57,21 +58,21 @@ public class SubmissionSet {
     }
 
     /**
-     * @return Whether a basecode is available for this collection.
+     * @return true if the submission set has a basecode submission.
      */
     public boolean hasBaseCode() {
         return baseCodeSubmission != null;
     }
 
     /**
-     * Retrieve the base code of this collection.<br>
-     * <b>Asking for a non-existing basecode crashes the errorConsumer.</b>
+     * Retrieve the base code of this collection.
      * @return The base code submission.
+     * @throws IllegalStateException if no base code is present.
      * @see #hasBaseCode
      */
     public Submission getBaseCode() {
         if (baseCodeSubmission == null) {
-            throw new AssertionError("Querying a non-existing basecode submission.");
+            throw new IllegalStateException("Querying a non-existing basecode submission.");
         }
         return baseCodeSubmission;
     }
@@ -86,6 +87,7 @@ public class SubmissionSet {
     /**
      * Obtain the valid submissions.<br>
      * <b>Changes in the list are reflected in this instance.</b>
+     * @return the valid submissions.
      */
     public List<Submission> getSubmissions() {
         return submissions;
@@ -94,6 +96,7 @@ public class SubmissionSet {
     /**
      * Obtain the invalid submissions.<br>
      * <b>Changes in the list are reflected in this instance.</b>
+     * @return the invalid submissions.
      */
     public List<Submission> getInvalidSubmissions() {
         return invalidSubmissions;

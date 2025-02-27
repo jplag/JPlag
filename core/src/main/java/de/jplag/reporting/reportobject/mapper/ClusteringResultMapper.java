@@ -10,7 +10,7 @@ import de.jplag.clustering.ClusteringResult;
 import de.jplag.reporting.reportobject.model.Cluster;
 
 /**
- * Extracts and maps the clusters from the JPlagResult to the corresponding JSON DTO
+ * Extracts and maps the clusters from the JPlagResult to the corresponding JSON DTO.
  */
 public class ClusteringResultMapper {
     private final Function<Submission, String> submissionToIdFunction;
