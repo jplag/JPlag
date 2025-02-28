@@ -24,6 +24,7 @@ public record ExpectedResult(@JsonProperty("minimal_similarity") double resultSi
             case MIN -> resultSimilarityMinimum();
             case MAX -> resultSimilarityMaximum();
             case INTERSECTION -> resultMatchedTokenNumber();
+            default -> throw new IllegalArgumentException(String.format("Similarity metric %s not supported for end to end tests", metric.name()));
         };
     }
 

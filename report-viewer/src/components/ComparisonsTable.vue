@@ -21,12 +21,12 @@
               <ToolTipComponent class="flex-1" :direction="displayClusters ? 'top' : 'left'">
                 <template #default>
                   <p class="w-full text-center">
-                    {{ metricToolTips[MetricType.AVERAGE].shortName }}
+                    {{ MetricTypes.AVERAGE_SIMILARITY.shortName }}
                   </p>
                 </template>
                 <template #tooltip>
                   <p class="whitespace-pre text-sm">
-                    {{ metricToolTips[MetricType.AVERAGE].tooltip }}
+                    {{ MetricTypes.AVERAGE_SIMILARITY.tooltip }}
                   </p>
                 </template>
               </ToolTipComponent>
@@ -34,12 +34,17 @@
               <ToolTipComponent class="flex-1" :direction="displayClusters ? 'top' : 'left'">
                 <template #default>
                   <p class="w-full text-center">
-                    {{ metricToolTips[MetricType.MAXIMUM].shortName }}
+                    {{
+                      MetricTypes.METRIC_MAP[store().uiState.comparisonTableSecondaryMetric]
+                        .shortName
+                    }}
                   </p>
                 </template>
                 <template #tooltip>
                   <p class="whitespace-pre text-sm">
-                    {{ metricToolTips[MetricType.MAXIMUM].tooltip }}
+                    {{
+                      MetricTypes.METRIC_MAP[store().uiState.comparisonTableSecondaryMetric].tooltip
+                    }}
                   </p>
                 </template>
               </ToolTipComponent>
@@ -102,10 +107,18 @@
                   <!-- Similarities -->
                   <div class="tableCellSimilarity">
                     <div class="w-1/2">
-                      {{ (item.similarities[MetricType.AVERAGE] * 100).toFixed(2) }}%
+                      {{
+                        MetricTypes.AVERAGE_SIMILARITY.format(
+                          item.similarities[MetricTypes.AVERAGE_SIMILARITY.identifier]
+                        )
+                      }}
                     </div>
                     <div class="w-1/2">
-                      {{ (item.similarities[MetricType.MAXIMUM] * 100).toFixed(2) }}%
+                      {{
+                        MetricTypes.METRIC_MAP[
+                          store().uiState.comparisonTableSecondaryMetric
+                        ].format(item.similarities[store().uiState.comparisonTableSecondaryMetric])
+                      }}
                     </div>
                   </div>
                 </RouterLink>
@@ -175,7 +188,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons'
 import { generateHues } from '@/utils/ColorUtils'
 import ToolTipComponent from './ToolTipComponent.vue'
-import { MetricType, metricToolTips } from '@/model/MetricType'
+import { MetricJsonIdentifier, MetricTypes } from '@/model/MetricType'
 import NameElement from './NameElement.vue'
 import ComparisonTableFilter from './ComparisonTableFilter.vue'
 
@@ -253,28 +266,32 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
     }
 
     // metric search
-    const searchPerMetric: Record<MetricType, string[]> = {
-      [MetricType.AVERAGE]: [],
-      [MetricType.MAXIMUM]: []
-    }
+    const searchPerMetric: Record<MetricJsonIdentifier, string[]> = {} as Record<
+      MetricJsonIdentifier,
+      string[]
+    >
+    MetricTypes.METRIC_JSON_IDENTIFIERS.forEach((m) => {
+      searchPerMetric[m] = []
+    })
     metricSearches.forEach((s) => {
       const regexResult = /^(?:(avg|max):)([<>]=?[0-9]+%?$)/.exec(s)
       if (regexResult) {
         const metricName = regexResult[1]
-        let metric = MetricType.AVERAGE
-        for (const m of [MetricType.AVERAGE, MetricType.MAXIMUM]) {
-          if (metricToolTips[m].shortName.toLowerCase() == metricName) {
+        let metric = MetricTypes.AVERAGE_SIMILARITY
+        for (const m of MetricTypes.METRIC_LIST) {
+          if (m.shortName.toLowerCase() == metricName) {
             metric = m
             break
           }
         }
-        searchPerMetric[metric].push(regexResult[2])
+        searchPerMetric[metric.identifier].push(regexResult[2])
       } else {
-        searchPerMetric[MetricType.AVERAGE].push(s)
-        searchPerMetric[MetricType.MAXIMUM].push(s)
+        MetricTypes.METRIC_JSON_IDENTIFIERS.forEach((m) => {
+          searchPerMetric[m].push(s)
+        })
       }
     })
-    for (const metric of [MetricType.AVERAGE, MetricType.MAXIMUM]) {
+    for (const metric of MetricTypes.METRIC_JSON_IDENTIFIERS) {
       for (const search of searchPerMetric[metric]) {
         const regexResult = /([<>]=?)([0-9]+)%?/.exec(search)!
         const operator = regexResult[1]
