@@ -4,6 +4,8 @@ import de.jplag.Submission;
 
 /**
  * Tuple of source code submissions.
+ * @param left is the first submission of the tuple.
+ * @param right is the second submission of the tuple.
  */
 public record SubmissionTuple(Submission left, Submission right) {
     /**

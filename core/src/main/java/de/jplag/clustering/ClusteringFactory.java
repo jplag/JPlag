@@ -34,6 +34,10 @@ public class ClusteringFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(ClusteringFactory.class);
 
+    private ClusteringFactory() {
+        // private constructor for non-instantiability.
+    }
+
     public static List<ClusteringResult<Submission>> getClusterings(Collection<JPlagComparison> comparisons, ClusteringOptions options) {
         if (comparisons.isEmpty()) {
             return Collections.emptyList();

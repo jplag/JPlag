@@ -62,6 +62,7 @@ public class JPlag {
      * @param options determines the parameterization.
      * @return the results of the comparison, specifically the submissions whose similarity exceeds a set threshold.
      * @throws ExitException if JPlag exits preemptively.
+     * @throws SubmissionException of not enough valid submissions are present.
      */
     public static JPlagResult run(JPlagOptions options) throws ExitException {
         checkForConfigurationConsistency(options);
