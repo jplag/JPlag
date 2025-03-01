@@ -29,7 +29,7 @@
       <h1 class="text-7xl">JPlag Report Viewer</h1>
       <div v-if="!hasQueryFile && !loadingFiles && !exampleFiles">
         <div
-          class="border-accent-dark bg-accent/25 mx-auto mt-10 flex w-96 cursor-pointer flex-col justify-center rounded-md border-1 px-5 py-5"
+          class="border-accent-dark bg-accent/25 mx-auto mt-10 flex w-96 cursor-pointer flex-col justify-center rounded-md border px-5 py-5"
           @click="uploadFileThroughWindow()"
         >
           <div>Drag and Drop zip file on this page</div>
