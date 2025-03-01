@@ -390,7 +390,7 @@ watch(
 )
 </script>
 
-<style scoped lang="postcss">
+<style scoped>
 @reference "../style.css";
 
 .tableCell {

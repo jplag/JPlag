@@ -21,7 +21,7 @@
         </template>
 
         <template #tooltip>
-          <p class="whitespace-pre text-sm">
+          <p class="text-sm whitespace-pre">
             {{ (label as ToolTipLabel).tooltip }}
           </p>
         </template>

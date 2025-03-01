@@ -157,7 +157,7 @@ onErrorCaptured((error) => {
 })
 </script>
 
-<style scoped lang="postcss">
+<style scoped>
 @reference "../style.css";
 
 .infoContainer {
