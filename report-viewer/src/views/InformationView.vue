@@ -1,11 +1,11 @@
 <template>
   <div
-    class="absolute bottom-0 left-0 right-0 top-0 flex flex-row space-x-5 p-5 pb-7 print:flex-col print:space-x-0 print:space-y-2 print:p-0"
+    class="absolute top-0 right-0 bottom-0 left-0 flex flex-row space-x-5 p-5 pb-7 print:flex-col print:space-y-2 print:space-x-0 print:p-0"
   >
-    <Container class="infoContainer print:!border-none">
+    <Container class="infoContainer print:border-none!">
       <h2>Run Options:</h2>
 
-      <ScrollableComponent class="flex-grow px-4 pt-2">
+      <ScrollableComponent class="grow px-4 pt-2">
         <div class="space-y-2">
           <TextInformation label="Language">{{ options.language }}</TextInformation>
           <TextInformation label="Min Token Match">{{ options.minTokenMatch }}</TextInformation>
@@ -38,7 +38,7 @@
             store().state.uploadedFileName
           }}</TextInformation>
 
-          <div v-if="options.clusterOptions.enabled" class="!mt-5 space-y-2">
+          <div v-if="options.clusterOptions.enabled" class="mt-5! space-y-2">
             <h3 class="font-bold">Clustering:</h3>
             <TextInformation label="Similarity Metric">{{
               metricToolTips[options.clusterOptions.similarityMetric].longName
@@ -102,10 +102,10 @@
       </ScrollableComponent>
     </Container>
 
-    <Container class="infoContainer print:!border-none">
+    <Container class="infoContainer print:border-none!">
       <h2>Run Data:</h2>
 
-      <ScrollableComponent class="flex-grow px-4 pt-2">
+      <ScrollableComponent class="grow px-4 pt-2">
         <TextInformation label="Date of Execution" class="pb-1">{{
           overview.dateOfExecution
         }}</TextInformation>
@@ -158,6 +158,8 @@ onErrorCaptured((error) => {
 </script>
 
 <style scoped lang="postcss">
+@reference "../style.css";
+
 .infoContainer {
   @apply flex max-h-0 min-h-full flex-1 flex-col overflow-hidden print:max-h-none print:min-h-0 print:flex-none;
 }

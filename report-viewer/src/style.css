@@ -1,6 +1,18 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@config '../tailwind.config.js';
+
+@utility break-anywhere {
+  overflow-wrap: anywhere;
+}
+
+@utility print-exact {
+  print-color-adjust: exact;
+}
+
+@utility display-initial {
+  display: initial;
+}
 
 @layer base {
   #app {
@@ -17,23 +29,9 @@
     @apply h-[6px] w-[6px] cursor-pointer;
   }
   *::-webkit-scrollbar-track {
-    @apply rounded-full border-2 bg-scrollbar-background-light dark:bg-scrollbar-background-dark;
+    @apply bg-scrollbar-background-light dark:bg-scrollbar-background-dark rounded-full border-2;
   }
   *::-webkit-scrollbar-thumb {
-    @apply rounded-full border-2 bg-scrollbar-thumb-light dark:bg-scrollbar-thumb-dark;
-  }
-}
-
-@layer components {
-  .break-anywhere {
-    overflow-wrap: anywhere;
-  }
-
-  .print-exact {
-    print-color-adjust: exact;
-  }
-
-  .display-initial {
-    display: initial;
+    @apply bg-scrollbar-thumb-light dark:bg-scrollbar-thumb-dark rounded-full border-2;
   }
 }

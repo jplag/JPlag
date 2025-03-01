@@ -1,10 +1,7 @@
 <template>
   <div class="flex max-h-full flex-col overflow-hidden print:max-w-full">
     <div class="flex max-h-full flex-col overflow-hidden print:max-w-full">
-      <canvas
-        ref="graphCanvas"
-        class="min-h-0 flex-grow print:max-h-full print:max-w-full"
-      ></canvas>
+      <canvas ref="graphCanvas" class="min-h-0 grow print:max-h-full print:max-w-full"></canvas>
       <div class="mt-5 text-xs font-bold text-gray-500 dark:text-gray-400 print:hidden">
         <p>Hover over an edge to highlight it in the table.</p>
         <p v-if="!allComparisonsPresent" class="mt-2">

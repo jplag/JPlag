@@ -2,9 +2,9 @@
   Container containing CodePanels for all of the files in a submission.
 -->
 <template>
-  <Container class="flex flex-col print:!px-1">
-    <div class="mb-2 mr-2 flex items-center space-x-5">
-      <h3 class="flex-grow text-left text-lg font-bold">
+  <Container class="flex flex-col print:px-1!">
+    <div class="mr-2 mb-2 flex items-center space-x-5">
+      <h3 class="grow text-left text-lg font-bold">
         Files of
         {{ fileOwnerDisplayName }}:
       </h3>
@@ -15,7 +15,7 @@
       >
     </div>
 
-    <ScrollableComponent ref="scrollContainer" class="flex-grow">
+    <ScrollableComponent ref="scrollContainer" class="grow">
       <VueDraggableNext @update="emitFileMoving()">
         <CodePanel
           v-for="file in sortedFiles"
