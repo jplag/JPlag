@@ -23,7 +23,7 @@ describe('OptionSelectorComponent', () => {
         .findAllComponents(OptionComponent)
         .find((e) => e.text() === 'Option 2')
         ?.classes()
-    ).toContain('!bg-accent')
+    ).toContain('bg-accent/40!')
   })
 
   it('switch selection', async () => {
@@ -40,13 +40,13 @@ describe('OptionSelectorComponent', () => {
         .findAllComponents(OptionComponent)
         .find((e) => e.text() === 'Option 1')
         ?.classes()
-    ).toContain('!bg-accent')
+    ).toContain('bg-accent/40!')
     expect(
       wrapper
         .findAllComponents(OptionComponent)
         .find((e) => e.text() === 'Option 2')
         ?.classes()
-    ).not.toContain('!bg-accent')
+    ).not.toContain('bg-accent/40!')
 
     await wrapper.findAllComponents({ name: 'OptionComponent' })[1].trigger('click')
 
@@ -59,12 +59,12 @@ describe('OptionSelectorComponent', () => {
         .findAllComponents(OptionComponent)
         .find((e) => e.text() === 'Option 1')
         ?.classes()
-    ).not.toContain('!bg-accent')
+    ).not.toContain('bg-accent/40!')
     expect(
       wrapper
         .findAll('.cursor-pointer')
         .find((e) => e.text() === 'Option 2')
         ?.classes()
-    ).toContain('!bg-accent')
+    ).toContain('bg-accent/40!')
   })
 })

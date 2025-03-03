@@ -7,7 +7,7 @@
       <Bar :data="chartData" :options="options" />
     </div>
 
-    <DistributionDiagramOptions class="flex-grow print:grow-0" />
+    <DistributionDiagramOptions class="grow print:grow-0" />
   </div>
 </template>
 

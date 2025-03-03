@@ -21,7 +21,7 @@
       @click="matchSelected(part.match)"
     >
       <pre
-        class="code-font print-exact break-child !bg-transparent print:whitespace-pre-wrap"
+        class="code-font print-exact break-child bg-transparent! print:whitespace-pre-wrap"
         v-html="part.line"
       ></pre>
     </div>

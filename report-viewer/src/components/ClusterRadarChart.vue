@@ -4,15 +4,12 @@
 -->
 <template>
   <div class="flex max-h-full flex-col overflow-hidden">
-    <div
-      v-if="selectedOptions.length > 0"
-      class="flex max-h-full flex-grow flex-col overflow-hidden"
-    >
+    <div v-if="selectedOptions.length > 0" class="flex max-h-full grow flex-col overflow-hidden">
       <DropDownSelector
         :options="selectedOptions"
         @selection-changed="(value) => (idOfShownSubmission = value)"
       />
-      <div class="flex min-h-0 flex-grow justify-center">
+      <div class="flex min-h-0 grow justify-center">
         <Radar :data="chartData" :options="radarChartOptions" />
       </div>
       <div class="text-xs font-bold text-gray-500 dark:text-gray-400 print:hidden">
