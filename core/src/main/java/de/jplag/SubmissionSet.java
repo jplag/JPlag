@@ -111,7 +111,12 @@ public class SubmissionSet {
         if (baseCodeSubmission != null) {
             baseCodeSubmission.normalize();
         }
-        ProgressBarLogger.iterate(ProgressBarType.TOKEN_STRING_NORMALIZATION, submissions, Submission::normalize);
+        ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.TOKEN_STRING_NORMALIZATION, submissions.size());
+        submissions.parallelStream().forEach(submission -> {
+            submission.normalize();
+            progressBar.step();
+        });
+        progressBar.dispose();
     }
 
     private List<Submission> filterValidSubmissions() {
