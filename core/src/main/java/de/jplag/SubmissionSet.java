@@ -111,7 +111,7 @@ public class SubmissionSet {
         if (baseCodeSubmission != null) {
             baseCodeSubmission.normalize();
         }
-        ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.TOKEN_STRING_NORMALIZATION, submissions.size());
+        ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.TOKEN_SEQUENCE_NORMALIZATION, submissions.size());
         submissions.parallelStream().forEach(submission -> {
             submission.normalize();
             progressBar.step();

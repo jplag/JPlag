@@ -9,7 +9,7 @@ public enum ProgressBarType {
     TOKEN_VALUE_CREATION("Preparing Submissions", false),
     COMPARING("Comparing Submissions", false),
     MATCH_MERGING("Merging matched subsequences ", false),
-    TOKEN_STRING_NORMALIZATION("Normalizing Token Sequence", false),
+    TOKEN_SEQUENCE_NORMALIZATION("Normalizing Token Sequence", false),
     CLUSTERING("Finding clusters ", true);
 
     private final String defaultText;
