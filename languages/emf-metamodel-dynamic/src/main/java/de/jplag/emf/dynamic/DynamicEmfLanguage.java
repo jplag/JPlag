@@ -1,8 +1,13 @@
 package de.jplag.emf.dynamic;
 
+import java.io.File;
+import java.util.List;
+import java.util.Set;
+
+import de.jplag.ParsingException;
+import de.jplag.Token;
 import de.jplag.emf.EmfLanguage;
 import de.jplag.emf.dynamic.parser.DynamicEcoreParser;
-import de.jplag.emf.parser.EcoreParser;
 
 /**
  * Language for EMF metamodels from the Eclipse Modeling Framework (EMF). This language is based on a dynamically
@@ -14,20 +19,6 @@ public class DynamicEmfLanguage extends EmfLanguage { // currently not included 
     private static final String IDENTIFIER = "emf-dynamic";
 
     private static final int DEFAULT_MIN_TOKEN_MATCH = 10;
-
-    /**
-     * Creates an EMF language instance with a dynamic token parser.
-     */
-    public DynamicEmfLanguage() {
-        super(new DynamicEcoreParser());
-    }
-
-    /**
-     * Creates an EMF language instance with a custom token parser.
-     */
-    public DynamicEmfLanguage(EcoreParser parser) {
-        super(parser);
-    }
 
     @Override
     public String getName() {
@@ -42,5 +33,10 @@ public class DynamicEmfLanguage extends EmfLanguage { // currently not included 
     @Override
     public int minimumTokenMatch() {
         return DEFAULT_MIN_TOKEN_MATCH;
+    }
+
+    @Override
+    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
+        return new DynamicEcoreParser().parse(files, normalize);
     }
 }

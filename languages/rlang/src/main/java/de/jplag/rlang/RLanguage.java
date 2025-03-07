@@ -1,22 +1,24 @@
 package de.jplag.rlang;
 
+import java.io.File;
+import java.util.List;
+import java.util.Set;
+
 import org.kohsuke.MetaInfServices;
 
-import de.jplag.antlr.AbstractAntlrLanguage;
+import de.jplag.Language;
+import de.jplag.ParsingException;
+import de.jplag.Token;
 
 /**
  * This represents the R language as a language supported by JPlag.
  */
 @MetaInfServices(de.jplag.Language.class)
-public class RLanguage extends AbstractAntlrLanguage {
+public class RLanguage implements Language {
     private static final String NAME = "R";
     private static final String IDENTIFIER = "rlang";
     private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
     private static final String[] FILE_EXTENSION = {".R", ".r"};
-
-    public RLanguage() {
-        super(new RParserAdapter());
-    }
 
     @Override
     public String[] suffixes() {
@@ -36,5 +38,10 @@ public class RLanguage extends AbstractAntlrLanguage {
     @Override
     public int minimumTokenMatch() {
         return DEFAULT_MIN_TOKEN_MATCH;
+    }
+
+    @Override
+    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
+        return new RParserAdapter().parse(files);
     }
 }

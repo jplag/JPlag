@@ -19,11 +19,6 @@ public class NaturalLanguage implements de.jplag.Language {
 
     private static final String IDENTIFIER = "text";
     private static final String NAME = "Text (naive)";
-    private final ParserAdapter parserAdapter;
-
-    public NaturalLanguage() {
-        parserAdapter = new ParserAdapter();
-    }
 
     @Override
     public String[] suffixes() {
@@ -47,6 +42,6 @@ public class NaturalLanguage implements de.jplag.Language {
 
     @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return parserAdapter.parse(files);
+        return new ParserAdapter().parse(files);
     }
 }
