@@ -3,7 +3,15 @@ package de.jplag;
 import static de.jplag.SubmissionState.VALID;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -39,8 +47,9 @@ public class SubmissionSet {
     private final Submission baseCodeSubmission;
 
     private final JPlagOptions options;
-    private int errors = 0;
-    private String currentSubmissionName;
+    private final AtomicInteger errors = new AtomicInteger(0);
+
+    private final List<String> currentSubmissionNames;
 
     /**
      * @param submissions Submissions to check for plagiarism.
@@ -49,6 +58,7 @@ public class SubmissionSet {
      * @throws ExitException if the submissions cannot be parsed.
      */
     public SubmissionSet(List<Submission> submissions, Submission baseCode, JPlagOptions options) throws ExitException {
+        currentSubmissionNames = Collections.synchronizedList(new LinkedList<>());
         this.allSubmissions = submissions;
         this.baseCodeSubmission = baseCode;
         this.options = options;
@@ -134,7 +144,7 @@ public class SubmissionSet {
                 parseBaseCodeSubmission(baseCodeSubmission);
             }
         } catch (OutOfMemoryError exception) {
-            throw new SubmissionException("Out of memory during parsing of submission \"" + currentSubmissionName + "\"", exception);
+            throw new SubmissionException("Out of memory during parsing of submission \"" + currentSubmissionNames + "\"", exception);
         }
     }
 
@@ -157,30 +167,58 @@ public class SubmissionSet {
      * Parse all given submissions.
      * @param submissions The list of submissions
      */
-    private void parseSubmissions(List<Submission> submissions) throws LanguageException {
+    private void parseSubmissions(List<Submission> submissions) throws ExitException {
         if (submissions.isEmpty()) {
             logger.error("No submissions to parse!");
             return;
         }
 
         ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.PARSING, submissions.size());
-        for (Submission submission : submissions) {
 
-            logger.trace("------ Parsing submission: " + submission.getName());
-            currentSubmissionName = submission.getName();
-
-            boolean successful = submission.parse(options.debugParser(), options.normalize(), options.minimumTokenMatch());
-            if (!successful) {
-                errors++;
-                logger.debug("ERROR -> Submission {} removed with reason {}", currentSubmissionName, submission.getState());
+        if (options.language().expectsSubmissionOrder()) {
+            for (Submission submission : submissions) {
+                parseSingleSubmission(progressBar, submission);
             }
-            progressBar.step();
+        } else {
+            parseSubmissionsInParallel(submissions, progressBar);
         }
+
         progressBar.dispose();
 
-        int validSubmissions = submissions.size() - errors;
+        int validSubmissions = submissions.size() - errors.get();
         logger.debug("{} submissions parsed successfully!", validSubmissions);
-        logger.debug("{} parser error{}!", errors, errors != 1 ? "s" : "");
+        logger.debug("{} parser error{}!", errors, errors.get() != 1 ? "s" : "");
+    }
+
+    private void parseSubmissionsInParallel(List<Submission> submissions, ProgressBar progressBar) throws SubmissionException {
+        try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            List<Callable<Void>> tasks = new ArrayList<>();
+            for (Submission submission : submissions) {
+                tasks.add(() -> {
+                    parseSingleSubmission(progressBar, submission);
+                    return null; // Ensure the lambda is a Callable
+                });
+            }
+            for (Future<Void> future : executor.invokeAll(tasks)) {
+                future.get();
+            }
+        } catch (ExecutionException | InterruptedException exception) {
+            throw new SubmissionException("Error while parsing the submissions.", exception);
+        }
+    }
+
+    /**
+     * Parses a single submission (thread safe).
+     */
+    private void parseSingleSubmission(ProgressBar progressBar, Submission submission) throws LanguageException {
+        currentSubmissionNames.add(submission.getName());
+        boolean successful = submission.parse(options.debugParser(), options.normalize(), options.minimumTokenMatch());
+        if (!successful) {
+            errors.incrementAndGet();
+            logger.debug("ERROR -> Submission {} removed with reason {}", submission.getName(), submission.getState());
+        }
+        currentSubmissionNames.remove(submission.getName());
+        progressBar.step();
     }
 
 }
