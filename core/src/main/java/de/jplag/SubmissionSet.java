@@ -3,8 +3,6 @@ package de.jplag;
 import static de.jplag.SubmissionState.VALID;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -48,8 +46,6 @@ public class SubmissionSet {
     private final JPlagOptions options;
     private final AtomicInteger errors = new AtomicInteger(0);
 
-    private final List<String> currentSubmissionNames;
-
     /**
      * @param submissions Submissions to check for plagiarism.
      * @param baseCode Base code submission if it exists or {@code null}.
@@ -57,7 +53,6 @@ public class SubmissionSet {
      * @throws ExitException if the submissions cannot be parsed.
      */
     public SubmissionSet(List<Submission> submissions, Submission baseCode, JPlagOptions options) throws ExitException {
-        currentSubmissionNames = Collections.synchronizedList(new LinkedList<>());
         this.allSubmissions = submissions;
         this.baseCodeSubmission = baseCode;
         this.options = options;
@@ -202,13 +197,11 @@ public class SubmissionSet {
      * Parses a single submission (thread safe).
      */
     private void parseSingleSubmission(ProgressBar progressBar, Submission submission) throws LanguageException {
-        currentSubmissionNames.add(submission.getName());
         boolean successful = submission.parse(options.debugParser(), options.normalize(), options.minimumTokenMatch());
         if (!successful) {
             errors.incrementAndGet();
             logger.debug("ERROR -> Submission {} removed with reason {}", submission.getName(), submission.getState());
         }
-        currentSubmissionNames.remove(submission.getName());
         progressBar.step();
     }
 
