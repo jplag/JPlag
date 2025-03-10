@@ -14,11 +14,6 @@ public class SchemeLanguage implements de.jplag.Language {
 
     private static final String NAME = "Scheme";
     private static final String IDENTIFIER = "scheme";
-    private final de.jplag.scheme.Parser parser;
-
-    public SchemeLanguage() {
-        parser = new Parser();
-    }
 
     @Override
     public String[] suffixes() {
@@ -42,6 +37,6 @@ public class SchemeLanguage implements de.jplag.Language {
 
     @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return this.parser.parse(files);
+        return new Parser().parse(files);
     }
 }

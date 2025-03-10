@@ -17,12 +17,6 @@ public class JavaLanguage implements de.jplag.Language {
     private static final String NAME = "Java";
     private static final String IDENTIFIER = "java";
 
-    private final Parser parser;
-
-    public JavaLanguage() {
-        parser = new Parser();
-    }
-
     @Override
     public String[] suffixes() {
         return new String[] {".java", ".JAVA"};
@@ -45,7 +39,7 @@ public class JavaLanguage implements de.jplag.Language {
 
     @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return this.parser.parse(files);
+        return new Parser().parse(files);
     }
 
     @Override

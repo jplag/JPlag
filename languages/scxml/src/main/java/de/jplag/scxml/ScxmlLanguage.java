@@ -30,18 +30,6 @@ public class ScxmlLanguage implements de.jplag.Language {
     private static final String IDENTIFIER = "scxml";
     private static final int DEFAULT_MIN_TOKEN_MATCH = 6;
 
-    /**
-     * The parser adapter to use for parsing and extracting tokens from statecharts.
-     */
-    protected final ScxmlParserAdapter parser;
-
-    /**
-     * Constructs a new language instance for SCXML statecharts.
-     */
-    public ScxmlLanguage() {
-        this.parser = new ScxmlParserAdapter();
-    }
-
     @Override
     public String[] suffixes() {
         return new String[] {FILE_ENDING};
@@ -64,7 +52,7 @@ public class ScxmlLanguage implements de.jplag.Language {
 
     @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return parser.parse(files);
+        return new ScxmlParserAdapter().parse(files);
     }
 
     @Override

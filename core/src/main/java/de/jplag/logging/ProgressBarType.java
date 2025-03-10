@@ -4,13 +4,13 @@ package de.jplag.logging;
  * The available processes. Used as a hint for the ui, which step JPlag is currently performing.
  */
 public enum ProgressBarType {
-    LOADING("Loading Submissions  ", false),
-    PARSING("Parsing Submissions  ", false),
+    LOADING("Loading Submissions", false),
+    PARSING("Parsing Submissions", false),
     TOKEN_VALUE_CREATION("Preparing Submissions", false),
-    COMPARING("Comparing Submissions", false),
-    MATCH_MERGING("Merging matched subsequences ", false),
-    TOKEN_STRING_NORMALIZATION("Normalizing Token Sequence", false),
-    CLUSTERING("Finding clusters ", true);
+    COMPARING("Comparing Submission Pairs", false),
+    MATCH_MERGING("Merging Matched Subsequences ", false),
+    TOKEN_SEQUENCE_NORMALIZATION("Normalizing Token Sequences", false),
+    CLUSTERING("Finding Clusters ", true);
 
     private final String defaultText;
     private final boolean isIdleBar;
