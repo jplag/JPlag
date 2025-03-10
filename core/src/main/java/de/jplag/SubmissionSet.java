@@ -47,7 +47,8 @@ public class SubmissionSet {
     private final AtomicInteger errors = new AtomicInteger(0);
 
     /**
-     * @param submissions Submissions to check for plagiarism.
+     * Creates a submissions set and parses all submissions.
+     * @param submissions list of submissions to check for plagiarism.
      * @param baseCode Base code submission if it exists or {@code null}.
      * @param options The JPlag options
      * @throws ExitException if the submissions cannot be parsed.
