@@ -7,10 +7,9 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -199,10 +198,10 @@ public class SubmissionSet {
                     return null; // Ensure the lambda is a Callable
                 });
             }
-            for (Future<Void> future : executor.invokeAll(tasks)) {
-                future.get();
-            }
-        } catch (ExecutionException | InterruptedException exception) {
+            executor.invokeAll(tasks);
+            executor.shutdown();
+            executor.awaitTermination(24, TimeUnit.HOURS);
+        } catch (InterruptedException exception) {
             throw new SubmissionException("Error while parsing the submissions.", exception);
         }
     }
