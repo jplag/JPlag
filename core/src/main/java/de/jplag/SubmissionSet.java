@@ -61,7 +61,10 @@ public class SubmissionSet {
         this.allSubmissions = submissions;
         this.baseCodeSubmission = baseCode;
         this.options = options;
-        parseAllSubmissions();
+        parseSubmissions(allSubmissions);
+        if (baseCodeSubmission != null) {
+            parseBaseCodeSubmission(baseCodeSubmission);
+        }
         this.submissions = filterValidSubmissions();
         invalidSubmissions = filterInvalidSubmissions();
     }
@@ -134,17 +137,6 @@ public class SubmissionSet {
 
     private List<Submission> filterInvalidSubmissions() {
         return allSubmissions.stream().filter(it -> it.getState() != VALID).toList();
-    }
-
-    private void parseAllSubmissions() throws ExitException {
-        try {
-            parseSubmissions(allSubmissions);
-            if (baseCodeSubmission != null) {
-                parseBaseCodeSubmission(baseCodeSubmission);
-            }
-        } catch (OutOfMemoryError exception) {
-            throw new SubmissionException("Out of memory during parsing of submission \"" + currentSubmissionNames + "\"", exception);
-        }
     }
 
     /**
