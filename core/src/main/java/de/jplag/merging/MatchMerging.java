@@ -1,7 +1,5 @@
 package de.jplag.merging;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -49,7 +47,7 @@ public class MatchMerging {
         List<JPlagComparison> comparisons = new ArrayList<>(result.getAllComparisons());
 
         ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.MATCH_MERGING, comparisons.size());
-        List<JPlagComparison> comparisonsMerged = comparisons.parallelStream().map(it -> mergeMatchesOf(it, progressBar)).collect(toList());
+        List<JPlagComparison> comparisonsMerged = comparisons.parallelStream().map(it -> mergeMatchesOf(it, progressBar)).toList();
         progressBar.dispose();
 
         long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
