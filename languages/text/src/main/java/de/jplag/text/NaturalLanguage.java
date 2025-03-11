@@ -20,7 +20,8 @@ public class NaturalLanguage implements Language {
 
     @Override
     public String[] suffixes() {
-        return new String[] {".TXT", ".txt", ".ASC", ".asc", ".TEX", ".tex"};
+        return new String[] {".TXT", ".txt", ".ASC", ".asc", ".TEX", ".tex", ".MD", ".md", ".RTF", ".rtf", ".CSV", ".csv", ".WIKI", ".wiki", ".JSON",
+                ".json", ".YAML", ".yaml", ".YML", ".yml", ".XML", ".xml"};
     }
 
     @Override
