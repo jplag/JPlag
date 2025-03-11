@@ -4,7 +4,6 @@ import static de.jplag.SubmissionState.VALID;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -179,16 +178,14 @@ public class SubmissionSet {
 
     private void parseSubmissionsInParallel(List<Submission> submissions, ProgressBar progressBar) throws SubmissionException {
         try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
-            List<Callable<Void>> tasks = new ArrayList<>();
             for (Submission submission : submissions) {
-                tasks.add(() -> {
+                executor.submit(() -> {
                     parseSingleSubmission(progressBar, submission);
-                    return null; // Ensure the lambda is a Callable
+                    return null; // Ensure the lambda is a Callable for exception handling
                 });
             }
-            executor.invokeAll(tasks);
             executor.shutdown();
-            executor.awaitTermination(24, TimeUnit.HOURS);
+            executor.awaitTermination(24, TimeUnit.HOURS); // Maximum time all processing can take.
         } catch (InterruptedException exception) {
             throw new SubmissionException("Error while parsing the submissions.", exception);
         }
