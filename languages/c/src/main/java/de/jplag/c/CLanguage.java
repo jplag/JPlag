@@ -15,7 +15,8 @@ public class CLanguage implements Language {
 
     @Override
     public String[] suffixes() {
-        return new String[] {".cpp", ".CPP", ".cxx", ".CXX", ".c++", ".C++", ".c", ".C", ".cc", ".CC", ".h", ".H", ".hpp", ".HPP", ".hh", ".HH"};
+        return new String[] {".cpp", ".CPP", ".cxx", ".CXX", ".c++", ".C++", ".c", ".C", ".cc", ".CC", ".h", ".H", ".hpp", ".HPP", ".hh", ".HH",
+                ".hxx", ".HXX"};
     }
 
     @Override
