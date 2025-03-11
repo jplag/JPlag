@@ -6,14 +6,12 @@ import java.util.Set;
 
 import org.kohsuke.MetaInfServices;
 
+import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
-@MetaInfServices(de.jplag.Language.class)
-public class SchemeLanguage implements de.jplag.Language {
-
-    private static final String NAME = "Scheme";
-    private static final String IDENTIFIER = "scheme";
+@MetaInfServices(Language.class)
+public class SchemeLanguage implements Language {
 
     @Override
     public String[] suffixes() {
@@ -22,12 +20,12 @@ public class SchemeLanguage implements de.jplag.Language {
 
     @Override
     public String getName() {
-        return NAME;
+        return "Scheme";
     }
 
     @Override
     public String getIdentifier() {
-        return IDENTIFIER;
+        return "scheme";
     }
 
     @Override

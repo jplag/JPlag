@@ -16,29 +16,24 @@ import de.jplag.Token;
 @MetaInfServices(Language.class)
 public class LLVMIRLanguage implements Language {
 
-    private static final String NAME = "LLVM IR";
-    private static final String IDENTIFIER = "llvmir";
-    private static final int DEFAULT_MIN_TOKEN_MATCH = 70;
-    private static final String[] FILE_EXTENSIONS = {".ll"};
-
     @Override
     public String[] suffixes() {
-        return FILE_EXTENSIONS;
+        return new String[] {".ll"};
     }
 
     @Override
     public String getName() {
-        return NAME;
+        return "LLVM IR";
     }
 
     @Override
     public String getIdentifier() {
-        return IDENTIFIER;
+        return "llvmir";
     }
 
     @Override
     public int minimumTokenMatch() {
-        return DEFAULT_MIN_TOKEN_MATCH;
+        return 70;
     }
 
     @Override

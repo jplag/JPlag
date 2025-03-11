@@ -13,11 +13,9 @@ import de.jplag.Token;
 /**
  * This represents the TypeScript language as a language supported by JPlag.
  */
-@MetaInfServices(de.jplag.Language.class)
+@MetaInfServices(Language.class)
 public class TypeScriptLanguage implements Language {
 
-    private static final String IDENTIFIER = "typescript";
-    private static final String NAME = "TypeScript";
     private final TypeScriptLanguageOptions options = new TypeScriptLanguageOptions();
 
     @Override
@@ -27,12 +25,12 @@ public class TypeScriptLanguage implements Language {
 
     @Override
     public String getName() {
-        return NAME;
+        return "TypeScript";
     }
 
     @Override
     public String getIdentifier() {
-        return IDENTIFIER;
+        return "typescript";
     }
 
     @Override

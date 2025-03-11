@@ -7,6 +7,7 @@ import java.util.Set;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.kohsuke.MetaInfServices;
 
+import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.emf.parser.EcoreParser;
@@ -15,14 +16,11 @@ import de.jplag.emf.parser.EcoreParser;
  * Language for EMF metamodels from the Eclipse Modeling Framework (EMF).
  * @author Timur Saglam
  */
-@MetaInfServices(de.jplag.Language.class)
-public class EmfLanguage implements de.jplag.Language {
+@MetaInfServices(Language.class)
+public class EmfLanguage implements Language {
+
     public static final String VIEW_FILE_SUFFIX = ".emfatic";
     public static final String FILE_ENDING = "." + EcorePackage.eNAME;
-
-    private static final String NAME = "EMF metamodel";
-    private static final String IDENTIFIER = "emf";
-    private static final int DEFAULT_MIN_TOKEN_MATCH = 6;
 
     @Override
     public String[] suffixes() {
@@ -31,17 +29,17 @@ public class EmfLanguage implements de.jplag.Language {
 
     @Override
     public String getName() {
-        return NAME;
+        return "EMF metamodel";
     }
 
     @Override
     public String getIdentifier() {
-        return IDENTIFIER;
+        return "emf";
     }
 
     @Override
     public int minimumTokenMatch() {
-        return DEFAULT_MIN_TOKEN_MATCH;
+        return 6;
     }
 
     @Override

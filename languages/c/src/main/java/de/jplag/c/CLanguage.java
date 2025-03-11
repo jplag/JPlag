@@ -10,10 +10,8 @@ import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
-@MetaInfServices(de.jplag.Language.class)
+@MetaInfServices(Language.class)
 public class CLanguage implements Language {
-    private static final String NAME = "C";
-    private static final String IDENTIFIER = "c";
 
     @Override
     public String[] suffixes() {
@@ -22,12 +20,12 @@ public class CLanguage implements Language {
 
     @Override
     public String getName() {
-        return NAME;
+        return "C";
     }
 
     @Override
     public String getIdentifier() {
-        return IDENTIFIER;
+        return "c";
     }
 
     @Override

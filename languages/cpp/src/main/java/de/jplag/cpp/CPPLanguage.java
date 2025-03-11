@@ -15,8 +15,6 @@ import de.jplag.Token;
  */
 @MetaInfServices(Language.class)
 public class CPPLanguage implements Language {
-    private static final String NAME = "C++";
-    private static final String IDENTIFIER = "cpp";
 
     @Override
     public String[] suffixes() {
@@ -25,12 +23,12 @@ public class CPPLanguage implements Language {
 
     @Override
     public String getName() {
-        return NAME;
+        return "C++";
     }
 
     @Override
     public String getIdentifier() {
-        return IDENTIFIER;
+        return "cpp";
     }
 
     @Override
