@@ -1,14 +1,14 @@
 package de.jplag.antlr.testLanguage;
 
-import de.jplag.antlr.AbstractAntlrLanguage;
+import java.io.File;
+import java.util.List;
+import java.util.Set;
 
-public class TestLanguage extends AbstractAntlrLanguage {
-    /**
-     * New instance
-     */
-    public TestLanguage() {
-        super(new TestParserAdapter());
-    }
+import de.jplag.Language;
+import de.jplag.ParsingException;
+import de.jplag.Token;
+
+public class TestLanguage implements Language {
 
     @Override
     public String[] suffixes() {
@@ -28,5 +28,10 @@ public class TestLanguage extends AbstractAntlrLanguage {
     @Override
     public int minimumTokenMatch() {
         return 8;
+    }
+
+    @Override
+    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
+        return new TestParserAdapter().parse(files);
     }
 }

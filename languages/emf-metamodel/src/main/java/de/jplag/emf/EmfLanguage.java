@@ -24,16 +24,6 @@ public class EmfLanguage implements de.jplag.Language {
     private static final String IDENTIFIER = "emf";
     private static final int DEFAULT_MIN_TOKEN_MATCH = 6;
 
-    protected final EcoreParser parser;
-
-    public EmfLanguage() {
-        this(new EcoreParser());
-    }
-
-    protected EmfLanguage(EcoreParser parser) {
-        this.parser = parser;
-    }
-
     @Override
     public String[] suffixes() {
         return new String[] {FILE_ENDING};
@@ -56,7 +46,7 @@ public class EmfLanguage implements de.jplag.Language {
 
     @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return parser.parse(files, normalize);
+        return new EcoreParser().parse(files, normalize);
     }
 
     @Override

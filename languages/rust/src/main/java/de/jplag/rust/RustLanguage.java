@@ -20,12 +20,6 @@ public class RustLanguage implements de.jplag.Language {
     private static final String IDENTIFIER = "rust";
     private static final int MINIMUM_TOKEN_MATCH = 8;
 
-    private final RustParserAdapter parserAdapter;
-
-    public RustLanguage() {
-        this.parserAdapter = new RustParserAdapter();
-    }
-
     @Override
     public String[] suffixes() {
         return FILE_EXTENSIONS;
@@ -48,6 +42,6 @@ public class RustLanguage implements de.jplag.Language {
 
     @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return parserAdapter.parse(files);
+        return new RustParserAdapter().parse(files);
     }
 }
