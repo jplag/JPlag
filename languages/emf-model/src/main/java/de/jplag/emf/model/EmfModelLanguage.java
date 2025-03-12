@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.kohsuke.MetaInfServices;
 
+import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.emf.dynamic.DynamicEmfLanguage;
@@ -17,12 +18,8 @@ import de.jplag.emf.model.parser.DynamicModelParser;
  * created token set.
  * @author Timur Saglam
  */
-@MetaInfServices(de.jplag.Language.class)
+@MetaInfServices(Language.class)
 public class EmfModelLanguage extends DynamicEmfLanguage {
-    private static final String NAME = "EMF models (dynamically created token set)";
-    private static final String IDENTIFIER = "emf-model";
-
-    public static final String VIEW_FILE_SUFFIX = ".treeview";
 
     @Override
     public String[] suffixes() {
@@ -31,17 +28,17 @@ public class EmfModelLanguage extends DynamicEmfLanguage {
 
     @Override
     public String getName() {
-        return NAME;
+        return "EMF models (dynamically created token set)";
     }
 
     @Override
     public String getIdentifier() {
-        return IDENTIFIER;
+        return "emf-model";
     }
 
     @Override
     public String viewFileSuffix() {
-        return VIEW_FILE_SUFFIX;
+        return ".treeview";
     }
 
     @Override

@@ -10,31 +10,27 @@ import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
-@MetaInfServices(de.jplag.Language.class)
+@MetaInfServices(Language.class)
 public class GoLanguage implements Language {
-    private static final String NAME = "Go";
-    private static final String IDENTIFIER = "go";
-    private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
-    private static final String[] FILE_EXTENSIONS = {".go"};
 
     @Override
     public String[] suffixes() {
-        return FILE_EXTENSIONS;
+        return new String[] {".go"};
     }
 
     @Override
     public String getName() {
-        return NAME;
+        return "Go";
     }
 
     @Override
     public String getIdentifier() {
-        return IDENTIFIER;
+        return "go";
     }
 
     @Override
     public int minimumTokenMatch() {
-        return DEFAULT_MIN_TOKEN_MATCH;
+        return 8;
     }
 
     @Override

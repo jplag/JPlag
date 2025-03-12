@@ -13,33 +13,27 @@ import de.jplag.Token;
 /**
  * This represents the Swift language as a language supported by JPlag.
  */
-@MetaInfServices(de.jplag.Language.class)
+@MetaInfServices(Language.class)
 public class SwiftLanguage implements Language {
-
-    private static final String IDENTIFIER = "swift";
-
-    private static final String NAME = "Swift";
-    private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
-    private static final String[] FILE_EXTENSIONS = {".swift"};
 
     @Override
     public String[] suffixes() {
-        return FILE_EXTENSIONS;
+        return new String[] {".swift"};
     }
 
     @Override
     public String getName() {
-        return NAME;
+        return "Swift";
     }
 
     @Override
     public String getIdentifier() {
-        return IDENTIFIER;
+        return "swift";
     }
 
     @Override
     public int minimumTokenMatch() {
-        return DEFAULT_MIN_TOKEN_MATCH;
+        return 8;
     }
 
     @Override

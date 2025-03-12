@@ -10,10 +10,8 @@ import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
-@MetaInfServices(de.jplag.Language.class)
+@MetaInfServices(Language.class)
 public class PythonLanguage implements Language {
-    private static final String NAME = "Python";
-    private static final String IDENTIFIER = "python3";
 
     @Override
     public String[] suffixes() {
@@ -22,12 +20,12 @@ public class PythonLanguage implements Language {
 
     @Override
     public String getName() {
-        return NAME;
+        return "Python";
     }
 
     @Override
     public String getIdentifier() {
-        return IDENTIFIER;
+        return "python3";
     }
 
     @Override

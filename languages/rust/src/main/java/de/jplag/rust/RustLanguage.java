@@ -6,38 +6,34 @@ import java.util.Set;
 
 import org.kohsuke.MetaInfServices;
 
+import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
 /**
  * This represents the Rust language as a language supported by JPlag.
  */
-@MetaInfServices(de.jplag.Language.class)
-public class RustLanguage implements de.jplag.Language {
-
-    protected static final String[] FILE_EXTENSIONS = {".rs"};
-    private static final String NAME = "Rust";
-    private static final String IDENTIFIER = "rust";
-    private static final int MINIMUM_TOKEN_MATCH = 8;
+@MetaInfServices(Language.class)
+public class RustLanguage implements Language {
 
     @Override
     public String[] suffixes() {
-        return FILE_EXTENSIONS;
+        return new String[] {".rs"};
     }
 
     @Override
     public String getName() {
-        return NAME;
+        return "Rust";
     }
 
     @Override
     public String getIdentifier() {
-        return IDENTIFIER;
+        return "rust";
     }
 
     @Override
     public int minimumTokenMatch() {
-        return MINIMUM_TOKEN_MATCH;
+        return 8;
     }
 
     @Override

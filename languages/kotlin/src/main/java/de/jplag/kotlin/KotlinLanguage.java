@@ -13,32 +13,27 @@ import de.jplag.Token;
 /**
  * This represents the Kotlin language as a language supported by JPlag.
  */
-@MetaInfServices(de.jplag.Language.class)
+@MetaInfServices(Language.class)
 public class KotlinLanguage implements Language {
-
-    private static final String NAME = "Kotlin";
-    private static final String IDENTIFIER = "kotlin";
-    private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
-    private static final String[] FILE_EXTENSIONS = {".kt"};
 
     @Override
     public String[] suffixes() {
-        return FILE_EXTENSIONS;
+        return new String[] {".kt"};
     }
 
     @Override
     public String getName() {
-        return NAME;
+        return "Kotlin";
     }
 
     @Override
     public String getIdentifier() {
-        return IDENTIFIER;
+        return "kotlin";
     }
 
     @Override
     public int minimumTokenMatch() {
-        return DEFAULT_MIN_TOKEN_MATCH;
+        return 8;
     }
 
     @Override

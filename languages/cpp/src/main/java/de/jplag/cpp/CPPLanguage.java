@@ -15,22 +15,21 @@ import de.jplag.Token;
  */
 @MetaInfServices(Language.class)
 public class CPPLanguage implements Language {
-    private static final String NAME = "C++";
-    private static final String IDENTIFIER = "cpp";
 
     @Override
     public String[] suffixes() {
-        return new String[] {".cpp", ".CPP", ".cxx", ".CXX", ".c++", ".C++", ".c", ".C", ".cc", ".CC", ".h", ".H", ".hpp", ".HPP", ".hh", ".HH"};
+        return new String[] {".cpp", ".CPP", ".cxx", ".CXX", ".c++", ".C++", ".c", ".C", ".cc", ".CC", ".h", ".H", ".hpp", ".HPP", ".hh", ".HH",
+                ".hxx"};
     }
 
     @Override
     public String getName() {
-        return NAME;
+        return "C++";
     }
 
     @Override
     public String getIdentifier() {
-        return IDENTIFIER;
+        return "cpp";
     }
 
     @Override

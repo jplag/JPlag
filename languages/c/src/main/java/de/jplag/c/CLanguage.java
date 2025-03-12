@@ -10,24 +10,23 @@ import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
-@MetaInfServices(de.jplag.Language.class)
+@MetaInfServices(Language.class)
 public class CLanguage implements Language {
-    private static final String NAME = "C";
-    private static final String IDENTIFIER = "c";
 
     @Override
     public String[] suffixes() {
-        return new String[] {".cpp", ".CPP", ".cxx", ".CXX", ".c++", ".C++", ".c", ".C", ".cc", ".CC", ".h", ".H", ".hpp", ".HPP", ".hh", ".HH"};
+        return new String[] {".cpp", ".CPP", ".cxx", ".CXX", ".c++", ".C++", ".c", ".C", ".cc", ".CC", ".h", ".H", ".hpp", ".HPP", ".hh", ".HH",
+                ".hxx", ".HXX"};
     }
 
     @Override
     public String getName() {
-        return NAME;
+        return "C";
     }
 
     @Override
     public String getIdentifier() {
-        return IDENTIFIER;
+        return "c";
     }
 
     @Override
