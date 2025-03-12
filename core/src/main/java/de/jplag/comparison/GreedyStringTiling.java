@@ -3,10 +3,10 @@ package de.jplag.comparison;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import de.jplag.JPlagComparison;
@@ -26,9 +26,9 @@ import de.jplag.options.JPlagOptions;
 public class GreedyStringTiling {
     private final int minimumMatchLength;
     private final JPlagOptions options;
-    private final Map<Submission, Set<Token>> baseCodeMarkings = new IdentityHashMap<>();
+    private final Map<Submission, Set<Token>> baseCodeMarkings = new ConcurrentHashMap<>();
 
-    private final Map<Submission, SubsequenceHashLookupTable> cachedHashLookupTables = new IdentityHashMap<>();
+    private final Map<Submission, SubsequenceHashLookupTable> cachedHashLookupTables = new ConcurrentHashMap<>();
 
     private final TokenValueMapper tokenValueMapper;
 
