@@ -1,10 +1,10 @@
 <template>
   <div
     v-if="timePassed < timeToLive && visible"
-    class="absolute bottom-5 left-5 max-w-96 rounded-md border-2 border-accent-dark bg-container-light dark:bg-container-dark"
+    class="border-accent-dark bg-container-light dark:bg-container-dark absolute bottom-5 left-5 max-w-96 rounded-md border-2"
   >
     <div class="flex">
-      <div class="flex-grow p-2">
+      <div class="grow p-2">
         <slot></slot>
       </div>
       <div class="cursor-pointer p-1" @click="visible = false">
@@ -12,7 +12,7 @@
       </div>
     </div>
     <div
-      class="h-1 bg-accent"
+      class="bg-accent h-1"
       :style="{ width: `${100 - (timePassed / timeToLive) * 100}%` }"
     ></div>
   </div>

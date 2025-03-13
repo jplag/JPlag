@@ -1,7 +1,7 @@
 <template>
-  <div class="absolute bottom-0 left-0 right-0 top-0 flex flex-col print:space-y-5">
-    <div class="relative left-0 right-0 top-0 flex space-x-5 p-5 pb-0 print:p-0">
-      <Container class="flex-grow overflow-hidden">
+  <div class="absolute top-0 right-0 bottom-0 left-0 flex flex-col print:space-y-5">
+    <div class="relative top-0 right-0 left-0 flex space-x-5 p-5 pb-0 print:p-0">
+      <Container class="grow overflow-hidden">
         <h2>Cluster</h2>
         <div class="flex flex-row items-center space-x-5">
           <TextInformation label="Average Similarity"
@@ -12,7 +12,7 @@
     </div>
 
     <div
-      class="relative bottom-0 left-0 right-0 flex flex-grow justify-between space-x-5 px-5 pb-7 pt-5 print:grow-0 print:flex-col print:space-x-0 print:space-y-5 print:p-0"
+      class="relative right-0 bottom-0 left-0 flex grow justify-between space-x-5 px-5 pt-5 pb-7 print:grow-0 print:flex-col print:space-y-5 print:space-x-0 print:p-0"
     >
       <Container
         v-if="cluster.members.length >= 35 || !canShowRadarChart"
@@ -25,12 +25,12 @@
           <ClusterGraph
             v-if="selectedClusterVisualization == 'Graph'"
             :cluster="clusterListElement"
-            class="flex-grow print:max-h-full print:max-w-full print:flex-grow-0"
+            class="grow print:max-h-full print:max-w-full print:grow-0"
             @line-hovered="(value) => (highlightedElement = value)"
           />
         </div>
         <div v-else class="mx-auto space-y-5">
-          <p class="text-center font-bold text-error">
+          <p class="text-error text-center font-bold">
             The cluster has too many members to be displayed as a graph or radar chart.
           </p>
           <p class="text-center font-bold text-gray-500 dark:text-gray-400">
@@ -46,12 +46,12 @@
         <template #Graph>
           <ClusterGraph
             :cluster="clusterListElement"
-            class="flex-grow print:max-h-full print:max-w-full print:flex-grow-0"
+            class="grow print:max-h-full print:max-w-full print:grow-0"
             @line-hovered="(value) => (highlightedElement = value)"
           />
         </template>
         <template #Radar>
-          <ClusterRadarChart :cluster="clusterListElement" class="flex-grow" />
+          <ClusterRadarChart :cluster="clusterListElement" class="grow" />
         </template>
       </TabbedContainer>
 

@@ -2,9 +2,9 @@
   A view displaying the .json file of a comparison from a JPlag report.
 -->
 <template>
-  <div class="absolute bottom-0 left-0 right-0 top-0 flex flex-col">
-    <div class="relative left-0 right-0 top-0 flex space-x-5 p-5 pb-0 print:p-0">
-      <Container class="flex-grow overflow-hidden print:min-h-fit print:overflow-visible">
+  <div class="absolute top-0 right-0 bottom-0 left-0 flex flex-col">
+    <div class="relative top-0 right-0 left-0 flex space-x-5 p-5 pb-0 print:p-0">
+      <Container class="grow overflow-hidden print:min-h-fit print:overflow-visible">
         <h2>
           Comparison:
           {{ store().getDisplayName(comparison.firstSubmissionId) }}
@@ -12,7 +12,7 @@
           {{ store().getDisplayName(comparison.secondSubmissionId) }}
           <ToolTipComponent direction="left" class="float-right print:hidden">
             <template #tooltip>
-              <p class="whitespace-pre text-sm">
+              <p class="text-sm whitespace-pre">
                 Printing works best in landscape mode on Chromium based browsers
               </p>
             </template>
@@ -35,7 +35,7 @@
           >
             <template #default>{{ (comparison.firstSimilarity * 100).toFixed(2) }}%</template>
             <template #tooltip
-              ><div class="whitespace-pre text-sm">
+              ><div class="text-sm whitespace-pre">
                 <p>
                   Percentage of code from
                   {{ store().getDisplayName(comparison.firstSubmissionId) }} that was found in the
@@ -53,7 +53,7 @@
             tooltip-side="right"
             ><template #default>{{ (comparison.secondSimilarity * 100).toFixed(2) }}%</template>
             <template #tooltip
-              ><div class="whitespace-pre text-sm">
+              ><div class="text-sm whitespace-pre">
                 <p>
                   Percentage of code from
                   {{ store().getDisplayName(comparison.secondSubmissionId) }} that was found in the
@@ -87,7 +87,7 @@
     </div>
     <div ref="styleholder"></div>
     <div
-      class="relative bottom-0 left-0 right-0 flex flex-grow justify-between space-x-5 px-5 pb-7 pt-5 print:space-x-1 print:p-0 print:!pt-2"
+      class="relative right-0 bottom-0 left-0 flex grow justify-between space-x-5 px-5 pt-5 pb-7 print:space-x-1 print:p-0 print:pt-2!"
     >
       <FilesContainer
         ref="panel1"

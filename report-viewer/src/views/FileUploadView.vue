@@ -29,7 +29,7 @@
       <h1 class="text-7xl">JPlag Report Viewer</h1>
       <div v-if="!hasQueryFile && !loadingFiles && !exampleFiles">
         <div
-          class="mx-auto mt-10 flex w-96 cursor-pointer flex-col justify-center rounded-md border-1 border-accent-dark bg-accent bg-opacity-25 px-5 py-5"
+          class="border-accent-dark bg-accent/25 mx-auto mt-10 flex w-96 cursor-pointer flex-col justify-center rounded-md border px-5 py-5"
           @click="uploadFileThroughWindow()"
         >
           <div>Drag and Drop zip file on this page</div>
@@ -42,7 +42,7 @@
         <a
           href="https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag"
           target="_blank"
-          class="text-link-dark underline dark:text-link"
+          class="text-link-dark dark:text-link underline"
         >
           How to use JPlag
         </a>

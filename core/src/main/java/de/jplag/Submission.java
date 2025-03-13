@@ -86,20 +86,23 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * @return base code comparison
+     * Provides access to the comparison of this submission to the basecode.
+     * @return base code comparison.
      */
     public JPlagComparison getBaseCodeComparison() {
         return baseCodeComparison;
     }
 
     /**
-     * @return a list of files this submission consists of.
+     * Provided all source code files.
+     * @return a collection of files this submission consists of.
      */
     public Collection<File> getFiles() {
         return files;
     }
 
     /**
+     * Provides the submission name.
      * @return name of the submission (directory or file name).
      */
     public String getName() {
@@ -141,7 +144,7 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * @return Whether a comparison between the submission and the base code is available.
+     * @return true if a comparison between the submission and the base code is available.
      */
     public boolean hasBaseCodeMatches() {
         return baseCodeComparison != null;
@@ -162,8 +165,8 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * Sets the base code comparison
-     * @param baseCodeComparison is submissions matches with the base code
+     * Sets the base code comparison.
+     * @param baseCodeComparison is submissions matches with the base code.
      */
     public void setBaseCodeComparison(JPlagComparison baseCodeComparison) {
         this.baseCodeComparison = baseCodeComparison;

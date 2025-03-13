@@ -4,6 +4,10 @@ import static de.jplag.SubmissionState.VALID;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -39,39 +43,43 @@ public class SubmissionSet {
     private final Submission baseCodeSubmission;
 
     private final JPlagOptions options;
-    private int errors = 0;
-    private String currentSubmissionName;
+    private final AtomicInteger errors = new AtomicInteger(0);
 
     /**
-     * @param submissions Submissions to check for plagiarism.
+     * Creates a submissions set and parses all submissions.
+     * @param submissions list of submissions to check for plagiarism.
      * @param baseCode Base code submission if it exists or {@code null}.
      * @param options The JPlag options
+     * @throws ExitException if the submissions cannot be parsed.
      */
     public SubmissionSet(List<Submission> submissions, Submission baseCode, JPlagOptions options) throws ExitException {
         this.allSubmissions = submissions;
         this.baseCodeSubmission = baseCode;
         this.options = options;
-        parseAllSubmissions();
+        parseSubmissions(allSubmissions);
+        if (baseCodeSubmission != null) {
+            parseBaseCodeSubmission(baseCodeSubmission);
+        }
         this.submissions = filterValidSubmissions();
         invalidSubmissions = filterInvalidSubmissions();
     }
 
     /**
-     * @return Whether a basecode is available for this collection.
+     * @return true if the submission set has a basecode submission.
      */
     public boolean hasBaseCode() {
         return baseCodeSubmission != null;
     }
 
     /**
-     * Retrieve the base code of this collection.<br>
-     * <b>Asking for a non-existing basecode crashes the errorConsumer.</b>
+     * Retrieve the base code of this collection.
      * @return The base code submission.
+     * @throws IllegalStateException if no base code is present.
      * @see #hasBaseCode
      */
     public Submission getBaseCode() {
         if (baseCodeSubmission == null) {
-            throw new AssertionError("Querying a non-existing basecode submission.");
+            throw new IllegalStateException("Querying a non-existing basecode submission.");
         }
         return baseCodeSubmission;
     }
@@ -86,6 +94,7 @@ public class SubmissionSet {
     /**
      * Obtain the valid submissions.<br>
      * <b>Changes in the list are reflected in this instance.</b>
+     * @return the valid submissions.
      */
     public List<Submission> getSubmissions() {
         return submissions;
@@ -94,6 +103,7 @@ public class SubmissionSet {
     /**
      * Obtain the invalid submissions.<br>
      * <b>Changes in the list are reflected in this instance.</b>
+     * @return the invalid submissions.
      */
     public List<Submission> getInvalidSubmissions() {
         return invalidSubmissions;
@@ -108,7 +118,12 @@ public class SubmissionSet {
         if (baseCodeSubmission != null) {
             baseCodeSubmission.normalize();
         }
-        ProgressBarLogger.iterate(ProgressBarType.TOKEN_STRING_NORMALIZATION, submissions, Submission::normalize);
+        ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.TOKEN_SEQUENCE_NORMALIZATION, submissions.size());
+        submissions.parallelStream().forEach(submission -> {
+            submission.normalize();
+            progressBar.step();
+        });
+        progressBar.dispose();
     }
 
     private List<Submission> filterValidSubmissions() {
@@ -117,17 +132,6 @@ public class SubmissionSet {
 
     private List<Submission> filterInvalidSubmissions() {
         return allSubmissions.stream().filter(it -> it.getState() != VALID).toList();
-    }
-
-    private void parseAllSubmissions() throws ExitException {
-        try {
-            parseSubmissions(allSubmissions);
-            if (baseCodeSubmission != null) {
-                parseBaseCodeSubmission(baseCodeSubmission);
-            }
-        } catch (OutOfMemoryError exception) {
-            throw new SubmissionException("Out of memory during parsing of submission \"" + currentSubmissionName + "\"", exception);
-        }
     }
 
     /**
@@ -149,30 +153,54 @@ public class SubmissionSet {
      * Parse all given submissions.
      * @param submissions The list of submissions
      */
-    private void parseSubmissions(List<Submission> submissions) throws LanguageException {
+    private void parseSubmissions(List<Submission> submissions) throws ExitException {
         if (submissions.isEmpty()) {
             logger.error("No submissions to parse!");
             return;
         }
 
         ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.PARSING, submissions.size());
-        for (Submission submission : submissions) {
 
-            logger.trace("------ Parsing submission: " + submission.getName());
-            currentSubmissionName = submission.getName();
-
-            boolean successful = submission.parse(options.debugParser(), options.normalize(), options.minimumTokenMatch());
-            if (!successful) {
-                errors++;
-                logger.debug("ERROR -> Submission {} removed with reason {}", currentSubmissionName, submission.getState());
+        if (options.language().expectsSubmissionOrder()) {
+            for (Submission submission : submissions) {
+                parseSingleSubmission(progressBar, submission);
             }
-            progressBar.step();
+        } else {
+            parseSubmissionsInParallel(submissions, progressBar);
         }
+
         progressBar.dispose();
 
-        int validSubmissions = submissions.size() - errors;
+        int validSubmissions = submissions.size() - errors.get();
         logger.debug("{} submissions parsed successfully!", validSubmissions);
-        logger.debug("{} parser error{}!", errors, errors != 1 ? "s" : "");
+        logger.debug("{} parser error{}!", errors, errors.get() != 1 ? "s" : "");
+    }
+
+    private void parseSubmissionsInParallel(List<Submission> submissions, ProgressBar progressBar) throws SubmissionException {
+        try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            for (Submission submission : submissions) {
+                executor.submit(() -> {
+                    parseSingleSubmission(progressBar, submission);
+                    return null; // Ensure the lambda is a Callable for exception handling
+                });
+            }
+            executor.shutdown();
+            executor.awaitTermination(24, TimeUnit.HOURS); // Maximum time all processing can take.
+        } catch (InterruptedException exception) {
+            throw new SubmissionException("Error while parsing the submissions.", exception);
+        }
+    }
+
+    /**
+     * Parses a single submission (thread safe).
+     */
+    private void parseSingleSubmission(ProgressBar progressBar, Submission submission) throws LanguageException {
+        boolean successful = submission.parse(options.debugParser(), options.normalize(), options.minimumTokenMatch());
+        if (!successful) {
+            errors.incrementAndGet();
+            logger.debug("ERROR -> Submission {} removed with reason {}", submission.getName(), submission.getState());
+        }
+        progressBar.step();
     }
 
 }

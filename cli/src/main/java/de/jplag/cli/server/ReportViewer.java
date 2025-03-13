@@ -64,8 +64,6 @@ public class ReportViewer implements HttpHandler {
             throw new IllegalStateException("Server already started");
         }
 
-        System.setProperty("java.net.preferIPv4Stack", "true");
-
         int currentPort = this.port;
         int remainingLookups = MAX_PORT_LOOKUPS;
         BindException lastException = new BindException("Could not create server. Probably due to no free port found.");

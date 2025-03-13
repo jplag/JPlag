@@ -67,9 +67,9 @@ describe('ComparisonTableFilter', async () => {
     function expectHighlighting(index: number) {
       for (let i = 0; i < options.length; i++) {
         if (i == index) {
-          expect(options[i].classes()).toContain('!bg-accent')
+          expect(options[i].classes()).toContain('bg-accent/40!')
         } else {
-          expect(options[i].classes()).not.toContain('!bg-accent')
+          expect(options[i].classes()).not.toContain('bg-accent/40!')
         }
       }
     }

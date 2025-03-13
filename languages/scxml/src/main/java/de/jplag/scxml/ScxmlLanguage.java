@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.kohsuke.MetaInfServices;
 
+import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.scxml.parser.ScxmlParserAdapter;
@@ -13,58 +14,34 @@ import de.jplag.scxml.parser.ScxmlParserAdapter;
 /**
  * Language for statecharts in the State Chart XML (SCXML) format.
  */
-@MetaInfServices(de.jplag.Language.class)
-public class ScxmlLanguage implements de.jplag.Language {
+@MetaInfServices(Language.class)
+public class ScxmlLanguage implements Language {
 
-    /**
-     * The file ending of SCXML statechart files.
-     */
-    public static final String FILE_ENDING = ".scxml";
-
-    /**
-     * The file ending of view files.
-     */
     public static final String VIEW_FILE_SUFFIX = ".scxmlview";
-
-    private static final String NAME = "SCXML";
-    private static final String IDENTIFIER = "scxml";
-    private static final int DEFAULT_MIN_TOKEN_MATCH = 6;
-
-    /**
-     * The parser adapter to use for parsing and extracting tokens from statecharts.
-     */
-    protected final ScxmlParserAdapter parser;
-
-    /**
-     * Constructs a new language instance for SCXML statecharts.
-     */
-    public ScxmlLanguage() {
-        this.parser = new ScxmlParserAdapter();
-    }
 
     @Override
     public String[] suffixes() {
-        return new String[] {FILE_ENDING};
+        return new String[] {".scxml"};
     }
 
     @Override
     public String getName() {
-        return NAME;
+        return "SCXML";
     }
 
     @Override
     public String getIdentifier() {
-        return IDENTIFIER;
+        return "scxml";
     }
 
     @Override
     public int minimumTokenMatch() {
-        return DEFAULT_MIN_TOKEN_MATCH;
+        return 6;
     }
 
     @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return parser.parse(files);
+        return new ScxmlParserAdapter().parse(files);
     }
 
     @Override

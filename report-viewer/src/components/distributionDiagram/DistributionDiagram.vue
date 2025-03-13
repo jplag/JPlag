@@ -7,7 +7,7 @@
       <Bar :data="chartData" :options="options" />
     </div>
 
-    <DistributionDiagramOptions class="flex-grow print:grow-0" />
+    <DistributionDiagramOptions class="grow print:grow-0" />
   </div>
 </template>
 
@@ -118,7 +118,7 @@ const options = computed(() => {
             if (graphOptions.value.bucketCount <= 10) {
               return getDataPointLabel(value)
             } else {
-              let labelBreakPoint = 10
+              let labelBreakPoint: number
               if (graphOptions.value.bucketCount <= 25) {
                 labelBreakPoint = 5
               } else {

@@ -10,6 +10,7 @@ import de.jplag.Match;
 import de.jplag.SharedTokenType;
 import de.jplag.Submission;
 import de.jplag.Token;
+import de.jplag.logging.ProgressBar;
 import de.jplag.logging.ProgressBarLogger;
 import de.jplag.logging.ProgressBarType;
 import de.jplag.options.JPlagOptions;
@@ -43,27 +44,29 @@ public class MatchMerging {
      */
     public JPlagResult mergeMatchesOf(JPlagResult result) {
         long timeBeforeStartInMillis = System.currentTimeMillis();
-
         List<JPlagComparison> comparisons = new ArrayList<>(result.getAllComparisons());
-        List<JPlagComparison> comparisonsMerged = new ArrayList<>();
 
-        ProgressBarLogger.iterate(ProgressBarType.MATCH_MERGING, comparisons, comparison -> {
-            numberOfMerges = 0;
-            Submission leftSubmission = comparison.firstSubmission().copy();
-            Submission rightSubmission = comparison.secondSubmission().copy();
-            List<Match> globalMatches = new ArrayList<>(comparison.matches());
-            globalMatches.addAll(comparison.ignoredMatches());
-            globalMatches = mergeNeighbors(globalMatches, leftSubmission, rightSubmission);
-            globalMatches = globalMatches.stream().filter(it -> it.length() >= options.minimumTokenMatch()).toList();
-            if (numberOfMerges >= options.mergingOptions().minimumRequiredMerges()) {
-                comparisonsMerged.add(new JPlagComparison(leftSubmission, rightSubmission, globalMatches, new ArrayList<>()));
-            } else {
-                comparisonsMerged.add(comparison);
-            }
-        });
+        ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.MATCH_MERGING, comparisons.size());
+        List<JPlagComparison> comparisonsMerged = comparisons.parallelStream().map(it -> mergeMatchesOf(it, progressBar)).toList();
+        progressBar.dispose();
 
         long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
         return new JPlagResult(comparisonsMerged, result.getSubmissions(), result.getDuration() + durationInMillis, options);
+    }
+
+    private JPlagComparison mergeMatchesOf(JPlagComparison comparison, ProgressBar progressBar) {
+        numberOfMerges = 0;
+        Submission leftSubmission = comparison.firstSubmission().copy();
+        Submission rightSubmission = comparison.secondSubmission().copy();
+        List<Match> globalMatches = new ArrayList<>(comparison.matches());
+        globalMatches.addAll(comparison.ignoredMatches());
+        globalMatches = mergeNeighbors(globalMatches, leftSubmission, rightSubmission);
+        globalMatches = globalMatches.stream().filter(it -> it.length() >= options.minimumTokenMatch()).toList();
+        progressBar.step();
+        if (numberOfMerges >= options.mergingOptions().minimumRequiredMerges()) {
+            return new JPlagComparison(leftSubmission, rightSubmission, globalMatches, new ArrayList<>());
+        }
+        return comparison;
     }
 
     /**

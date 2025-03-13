@@ -2,10 +2,10 @@
   Base Component for DropDownSelectors 
 -->
 <template>
-  <Interactable class="!cursor-default p-0">
+  <Interactable class="cursor-default! p-0">
     <select
       v-model="selectedOption"
-      class="m-0 w-full cursor-pointer bg-interactable-light dark:bg-interactable-dark"
+      class="bg-interactable-light dark:bg-interactable-dark m-0 w-full cursor-pointer"
       @change="$emit('selectionChanged', selectedOption)"
     >
       <option v-for="option in options" :key="option" :value="option">

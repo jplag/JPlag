@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col space-y-1">
     <h3 class="text-lg underline">Options:</h3>
-    <ScrollableComponent class="h-fit flex-grow">
+    <ScrollableComponent class="h-fit grow">
       <MetricSelector
         class="mt-2"
         title="Metric:"

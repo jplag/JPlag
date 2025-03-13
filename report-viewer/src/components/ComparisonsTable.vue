@@ -13,9 +13,9 @@
       <div class="font-bold">
         <!-- Header -->
         <div class="tableRow">
-          <div class="tableCellNumber"></div>
-          <div class="tableCellName items-center">Submissions in Comparison</div>
-          <div class="tableCellSimilarity !flex-col">
+          <div class="tableCellNumber tableCell"></div>
+          <div class="tableCellName tableCell items-center">Submissions in Comparison</div>
+          <div class="tableCellSimilarity tableCell flex-col!">
             <div>Similarity</div>
             <div class="flex w-full flex-row">
               <ToolTipComponent class="flex-1" :direction="displayClusters ? 'top' : 'left'">
@@ -50,12 +50,12 @@
               </ToolTipComponent>
             </div>
           </div>
-          <div v-if="displayClusters" class="tableCellCluster items-center">Cluster</div>
+          <div v-if="displayClusters" class="tableCellCluster tableCell items-center">Cluster</div>
         </div>
       </div>
 
       <!-- Body -->
-      <div class="flex flex-grow flex-col overflow-hidden">
+      <div class="flex grow flex-col overflow-hidden">
         <DynamicScroller
           v-if="topComparisons.length > 0"
           ref="dynamicScroller"
@@ -78,7 +78,7 @@
                 class="tableRow"
                 :class="{
                   'bg-container-secondary-light dark:bg-container-secondary-dark': item.id % 2 == 1,
-                  '!bg-accent !bg-opacity-30': isHighlightedRow(item)
+                  'bg-accent/30!': isHighlightedRow(item)
                 }"
               >
                 <RouterLink
@@ -91,21 +91,21 @@
                       )
                     }
                   }"
-                  class="flex flex-grow cursor-pointer flex-row"
+                  class="flex grow cursor-pointer flex-row"
                 >
                   <!-- Index in sorted list -->
-                  <div class="tableCellNumber">
+                  <div class="tableCellNumber tableCell">
                     <div class="w-full text-center">{{ item.sortingPlace + 1 }}</div>
                   </div>
 
                   <!-- Names -->
-                  <div class="tableCellName">
+                  <div class="tableCellName tableCell">
                     <NameElement :id="item.firstSubmissionId" class="h-full w-1/2 px-2" />
                     <NameElement :id="item.secondSubmissionId" class="h-full w-1/2 px-2" />
                   </div>
 
                   <!-- Similarities -->
-                  <div class="tableCellSimilarity">
+                  <div class="tableCellSimilarity tableCell">
                     <div class="w-1/2">
                       {{
                         MetricTypes.AVERAGE_SIMILARITY.format(
@@ -124,7 +124,10 @@
                 </RouterLink>
 
                 <!-- Clusters -->
-                <div v-if="displayClusters" class="tableCellCluster flex !flex-col items-center">
+                <div
+                  v-if="displayClusters"
+                  class="tableCellCluster tableCell flex flex-col! items-center"
+                >
                   <RouterLink
                     v-if="item.clusterIndex >= 0"
                     :to="{
@@ -151,7 +154,7 @@
                         }}%
                       </template>
                       <template #tooltip>
-                        <p class="whitespace-nowrap text-sm">
+                        <p class="text-sm whitespace-nowrap">
                           {{ clusters?.[item.clusterIndex].members?.length }} submissions in cluster
                           with average similarity of
                           {{
@@ -404,28 +407,30 @@ watch(
 )
 </script>
 
-<style scoped lang="postcss">
+<style scoped>
+@reference "../style.css";
+
+.tableCell {
+  @apply mx-3 flex flex-row items-center justify-center text-center;
+}
+
 .tableRow {
   @apply flex flex-row text-center;
 }
 
 .tableCellNumber {
-  @apply tableCell w-12 flex-shrink-0;
+  @apply w-12 shrink-0;
 }
 
 .tableCellSimilarity {
-  @apply tableCell w-40 flex-shrink-0;
+  @apply w-40 shrink-0;
 }
 
 .tableCellCluster {
-  @apply tableCell w-32 flex-shrink-0;
+  @apply w-32 shrink-0;
 }
 
 .tableCellName {
-  @apply tableCell flex-grow;
-}
-
-.tableCell {
-  @apply mx-3 flex flex-row items-center justify-center text-center;
+  @apply grow;
 }
 </style>

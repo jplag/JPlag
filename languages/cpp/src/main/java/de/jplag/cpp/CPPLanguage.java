@@ -1,35 +1,35 @@
 package de.jplag.cpp;
 
+import java.io.File;
+import java.util.List;
+import java.util.Set;
+
 import org.kohsuke.MetaInfServices;
 
 import de.jplag.Language;
-import de.jplag.antlr.AbstractAntlrLanguage;
+import de.jplag.ParsingException;
+import de.jplag.Token;
 
 /**
  * The entry point for the ANTLR parser based C++ language module.
  */
 @MetaInfServices(Language.class)
-public class CPPLanguage extends AbstractAntlrLanguage {
-    private static final String NAME = "C++";
-    private static final String IDENTIFIER = "cpp";
-
-    public CPPLanguage() {
-        super(new CPPParserAdapter());
-    }
+public class CPPLanguage implements Language {
 
     @Override
     public String[] suffixes() {
-        return new String[] {".cpp", ".CPP", ".cxx", ".CXX", ".c++", ".C++", ".c", ".C", ".cc", ".CC", ".h", ".H", ".hpp", ".HPP", ".hh", ".HH"};
+        return new String[] {".cpp", ".CPP", ".cxx", ".CXX", ".c++", ".C++", ".c", ".C", ".cc", ".CC", ".h", ".H", ".hpp", ".HPP", ".hh", ".HH",
+                ".hxx"};
     }
 
     @Override
     public String getName() {
-        return NAME;
+        return "C++";
     }
 
     @Override
     public String getIdentifier() {
-        return IDENTIFIER;
+        return "cpp";
     }
 
     @Override
@@ -45,5 +45,10 @@ public class CPPLanguage extends AbstractAntlrLanguage {
     @Override
     public boolean supportsNormalization() {
         return true;
+    }
+
+    @Override
+    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
+        return new CPPParserAdapter().parse(files);
     }
 }
