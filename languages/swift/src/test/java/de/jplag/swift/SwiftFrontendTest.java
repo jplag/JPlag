@@ -53,7 +53,7 @@ class SwiftFrontendTest {
     private static final String DELIMITED_COMMENT_END = ".*\\*/\\s*$";
 
     private final Logger logger = LoggerFactory.getLogger(SwiftFrontendTest.class);
-    private final String[] testFiles = new String[] {COMPLETE_TEST_FILE};
+    private final String[] testFiles = {COMPLETE_TEST_FILE};
     private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "swift").toFile();
     private SwiftLanguage language;
 
@@ -125,7 +125,8 @@ class SwiftFrontendTest {
             if (line.matches(DELIMITED_COMMENT_START)) {
                 state.insideComment = true;
                 return false;
-            } else if (state.insideComment) {
+            }
+            if (state.insideComment) {
                 // This fails if code follows after '*/'. If the code is formatted well, this should not happen.
                 if (line.matches(DELIMITED_COMMENT_END)) {
                     state.insideComment = false;

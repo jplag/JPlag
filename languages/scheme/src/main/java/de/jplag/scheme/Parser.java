@@ -15,13 +15,6 @@ public class Parser extends AbstractParser {
 
     private List<Token> tokens;
 
-    /**
-     * Creates the parser.
-     */
-    public Parser() {
-        super();
-    }
-
     public List<Token> parse(Set<File> files) throws ParsingException {
         tokens = new ArrayList<>();
         for (File file : files) {

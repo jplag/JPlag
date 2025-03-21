@@ -146,9 +146,8 @@ public class SwiftSupport {
         if (Character.charCount(codepoint) != text.length()) {
             // not a single character
             return false;
-        } else {
-            return bitSet.get(codepoint);
         }
+        return bitSet.get(codepoint);
     }
 
     public static boolean isOperatorHead(Token token) {
@@ -233,7 +232,8 @@ public class SwiftSupport {
         // System.out.println("isBinaryOp: '"+prevToken+"','"+text+"','"+nextToken+"' is "+result);
         if (prevIsWS) {
             return nextIsWS;
-        } else if (currentToken.getType() != Swift5Lexer.BANG && currentToken.getType() != Swift5Lexer.QUESTION && !nextIsWS) {
+        }
+        if (currentToken.getType() != Swift5Lexer.BANG && currentToken.getType() != Swift5Lexer.QUESTION && !nextIsWS) {
             return nextToken.getType() != Swift5Lexer.DOT;
         }
         return false;
