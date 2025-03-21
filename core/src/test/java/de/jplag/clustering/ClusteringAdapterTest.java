@@ -22,7 +22,7 @@ import de.jplag.clustering.algorithm.GenericClusteringAlgorithm;
 public class ClusteringAdapterTest {
 
     @Test
-    public void testClustering() {
+    void testClustering() {
         List<Submission> submissions = IntStream.range(0, 4).mapToObj(x -> mock(Submission.class)).toList();
         List<JPlagComparison> comparisons = new ArrayList<>(6);
         for (int i = 0; i < submissions.size(); i++) {
