@@ -22,7 +22,7 @@ import picocli.CommandLine.Parameters;
 public class CliOptions implements Runnable {
     public static final Language defaultLanguage = new JavaLanguage();
 
-    @Parameters(paramLabel = "root-dirs", description = "Root-directory with submissions to check for plagiarism.", split = ",")
+    @Parameters(paramLabel = "root-dirs", description = "Root-directory with submissions to check for plagiarism. If mode is set to VIEW, this parameter can be used to specify a report file to open. In that case only a single file may be specified.", split = ",")
     public File[] rootDirectory = new File[0];
 
     @Option(names = {"--new", "-new"}, split = ",", description = "Root-directories with submissions to check for plagiarism (same as root).")
@@ -53,8 +53,9 @@ public class CliOptions implements Runnable {
             "--result-file"}, description = "Name of the file in which the comparison results will be stored (default: ${DEFAULT-VALUE}). Missing .zip endings will be automatically added.")
     public String resultFile = "results";
 
-    @Option(names = {"-M", "--mode"}, description = "The mode of JPlag. One of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE})")
-    public JPlagMode mode = JPlagMode.RUN;
+    @Option(names = {"-M",
+            "--mode"}, description = "The mode of JPlag. One of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE}). If VIEW is chosen, you can optionally specify a path to an existing report.")
+    public JPlagMode mode = JPlagMode.AUTO;
 
     @Option(names = {"--normalize"}, description = "Activate the normalization of tokens. Supported for languages: Java, C++.")
     public boolean normalize = false;
@@ -137,6 +138,10 @@ public class CliOptions implements Runnable {
         @Option(names = {
                 "--gap-size"}, description = "Maximal gap between neighboring matches to be merged (between 1 and minTokenMatch, default: ${DEFAULT-VALUE}).")
         public int maximumGapSize = MergingOptions.DEFAULT_GAP_SIZE;
+
+        @Option(names = {
+                "--required-merges"}, description = "Minimal required merges for the merging to be applied (between 1 and 50, default: ${DEFAULT-VALUE}).")
+        public int minimumRequiredMerges = MergingOptions.DEFAULT_REQUIRED_MERGES;
 
     }
 

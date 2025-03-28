@@ -70,7 +70,7 @@ class SwiftFrontendTest {
             logger.info(output);
 
             testSourceCoverage(fileName, tokens);
-            if (fileName.equals(COMPLETE_TEST_FILE)) {
+            if (COMPLETE_TEST_FILE.equals(fileName)) {
                 testTokenCoverage(tokens, fileName);
             }
 
@@ -121,7 +121,8 @@ class SwiftFrontendTest {
             String line = lines.get(idx - 1);
             if (line.matches(EMPTY_OR_SINGLE_LINE_COMMENT) || line.contains(NO_TOKEN_ANNOTATION)) {
                 return false;
-            } else if (line.matches(DELIMITED_COMMENT_START)) {
+            }
+            if (line.matches(DELIMITED_COMMENT_START)) {
                 state.insideComment = true;
                 return false;
             } else if (state.insideComment) {

@@ -70,7 +70,7 @@ public class SubmissionSetBuilder {
         // For backward compatibility, don't prefix submission names with their root directory
         // if there is only one root directory.
         int numberOfRootDirectories = submissionDirectories.size() + oldSubmissionDirectories.size();
-        boolean multipleRoots = (numberOfRootDirectories > 1);
+        boolean multipleRoots = numberOfRootDirectories > 1;
 
         List<SubmissionFileData> submissionFiles = new ArrayList<>();
         for (File submissionDirectory : submissionDirectories) {
@@ -225,7 +225,7 @@ public class SubmissionSetBuilder {
         } else if (file.submissionFile().isFile() && !hasValidSuffix(file.submissionFile())) {
             logger.error("Ignore submission with invalid suffix: {}", file.submissionFile().getName());
         } else {
-            String rootDirectoryPrefix = multipleRoots ? (file.root().getName() + File.separator) : "";
+            String rootDirectoryPrefix = multipleRoots ? file.root().getName() + File.separator : "";
             String submissionName = rootDirectoryPrefix + file.submissionFile().getName();
             Submission submission = processSubmission(submissionName, file.submissionFile(), file.isNew());
             foundSubmissions.put(submission.getRoot(), submission);

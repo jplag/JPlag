@@ -19,20 +19,6 @@ describe('VersionInfoComponent', () => {
     )
   })
 
-  it('Render outdated version', async () => {
-    vi.spyOn(versionTsFile, 'reportViewerVersion', 'get').mockReturnValue(mockVersionJSON(4, 3, 0))
-    vi.spyOn(versionTsFile, 'minimalReportVersion', 'get').mockReturnValue(mockVersionJSON(4, 0, 0))
-    global.fetch = vi.fn().mockResolvedValueOnce(mockVersionResponse('v4.4.0'))
-
-    const wrapper = mount(VersionInfoComponent)
-    await flushPromises()
-
-    expect(wrapper.text()).toContain('outdated version')
-    expect(wrapper.text()).toContain(
-      'The minimal version of JPlag that is supported by the viewer is v4.0.0.'
-    )
-  })
-
   it('Render latest version', async () => {
     vi.spyOn(versionTsFile, 'reportViewerVersion', 'get').mockReturnValue(mockVersionJSON(4, 3, 0))
     vi.spyOn(versionTsFile, 'minimalReportVersion', 'get').mockReturnValue(mockVersionJSON(4, 0, 0))

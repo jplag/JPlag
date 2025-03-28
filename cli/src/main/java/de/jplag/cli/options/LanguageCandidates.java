@@ -2,6 +2,8 @@ package de.jplag.cli.options;
 
 import java.util.ArrayList;
 
+import de.jplag.LanguageLoader;
+
 /**
  * Helper class for picocli to find all available languages.
  */

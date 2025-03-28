@@ -2,9 +2,9 @@
   A view displaying the overview file of a JPlag report.
 -->
 <template>
-  <div class="absolute bottom-0 left-0 right-0 top-0 flex flex-col">
-    <div class="relative left-0 right-0 top-0 flex space-x-5 p-5 pb-0">
-      <Container class="flex-grow">
+  <div class="absolute top-0 right-0 bottom-0 left-0 flex flex-col">
+    <div class="relative top-0 right-0 left-0 flex space-x-5 p-5 pb-0">
+      <Container class="grow">
         <h2>JPlag Report</h2>
         <div
           class="flex flex-row items-center space-x-5 print:flex-col print:items-start print:space-x-0"
@@ -24,7 +24,7 @@
               >{{ overview.shownComparisons }} / {{ overview.totalComparisons }}</template
             >
             <template #tooltip>
-              <div class="whitespace-pre text-sm">
+              <div class="text-sm whitespace-pre">
                 <TextInformation label="Shown Comparisons">{{
                   overview.shownComparisons
                 }}</TextInformation>
@@ -49,7 +49,7 @@
               {{ overview.matchSensitivity }}
             </template>
             <template #tooltip>
-              <div class="whitespace-pre text-sm">
+              <div class="text-sm whitespace-pre">
                 <p>
                   Tunes the comparison sensitivity by adjusting the minimum token required to be
                   counted as a matching section.
@@ -59,12 +59,12 @@
             </template>
           </TextInformation>
 
-          <ToolTipComponent direction="left" class="flex-grow-0 print:hidden">
+          <ToolTipComponent direction="left" class="grow-0 print:hidden">
             <template #default>
               <Button @click="router.push({ name: 'InfoView' })"> More </Button>
             </template>
             <template #tooltip>
-              <p class="whitespace-pre text-sm">More information about the CLI run of JPlag</p>
+              <p class="text-sm whitespace-pre">More information about the CLI run of JPlag</p>
             </template>
           </ToolTipComponent>
         </div>
@@ -72,22 +72,22 @@
     </div>
 
     <div
-      class="relative bottom-0 left-0 right-0 flex flex-grow space-x-5 px-5 pb-7 pt-5 print:flex-col print:space-x-0 print:space-y-5"
+      class="relative right-0 bottom-0 left-0 flex grow space-x-5 px-5 pt-5 pb-7 print:flex-col print:space-y-5 print:space-x-0"
     >
       <Container
         class="flex max-h-0 min-h-full flex-1 flex-col print:max-h-none print:min-h-fit print:flex-none"
       >
         <h2>Distribution of Comparisons:</h2>
-        <DistributionDiagram :distributions="overview.distribution" class="flex-grow" />
+        <DistributionDiagram :distributions="overview.distribution" class="grow" />
       </Container>
 
       <Container class="flex max-h-0 min-h-full flex-1 flex-col print:hidden">
         <ComparisonsTable
           :clusters="overview.clusters"
           :top-comparisons="overview.topComparisons"
-          class="min-h-0 flex-1 print:min-h-full print:flex-grow"
+          class="min-h-0 flex-1 print:min-h-full print:grow"
         >
-          <template #footer v-if="overview.topComparisons.length < overview.totalComparisons">
+          <template v-if="overview.topComparisons.length < overview.totalComparisons" #footer>
             <p class="w-full pt-1 text-center font-bold">
               Not all comparisons are shown. To see more, re-run JPlag with a higher maximum number
               argument.

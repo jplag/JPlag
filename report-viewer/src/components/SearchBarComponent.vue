@@ -9,10 +9,10 @@
       @click="emit('searchClicked', inputText)"
     />
     <input
-      type="text"
-      class="flex-auto border-0 bg-transparent outline-none placeholder:text-gray-500"
-      :placeholder="placeholder"
       v-model="inputText"
+      type="text"
+      class="flex-auto border-0 bg-transparent outline-hidden placeholder:text-gray-500"
+      :placeholder="placeholder"
     />
   </Interactable>
 </template>

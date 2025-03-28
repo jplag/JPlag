@@ -12,7 +12,7 @@ import de.jplag.options.LanguageOptions;
 public interface Language {
 
     /**
-     * Suffixes for the files containing code of the language. An empty array means all suffixes are valid.
+     * File extensions for the files containing code of the language. An empty array means all suffixes are valid.
      */
     String[] suffixes();
 

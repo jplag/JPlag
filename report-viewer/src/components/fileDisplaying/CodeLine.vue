@@ -1,27 +1,28 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
   <div
+    ref="lineRef"
     class="col-span-1 col-start-2 row-span-1 flex w-full cursor-default"
     :class="{ 'cursor-pointer': matches.length > 0 }"
     :style="{
       gridRowStart: lineNumber
     }"
-    ref="lineRef"
   >
     <div
       v-for="(part, index) in textParts"
       :key="index"
-      class="print-excact h-full last:flex-1"
-      @click="matchSelected(part.match)"
+      class="print-exact h-full last:flex-1"
       :style="{
         background:
           part.match != undefined
             ? getMatchColor(0.3, part.match.match.colorIndex)
             : 'hsla(0, 0%, 0%, 0)'
       }"
+      @click="matchSelected(part.match)"
     >
       <pre
+        class="code-font print-exact break-child bg-transparent! print:whitespace-pre-wrap"
         v-html="part.line"
-        class="code-font print-excact break-child !bg-transparent print:whitespace-pre-wrap"
       ></pre>
     </div>
   </div>
@@ -56,14 +57,6 @@ function matchSelected(match?: MatchInSingleFile) {
 }
 
 const lineRef = ref<HTMLElement | null>(null)
-
-function scrollTo() {
-  if (lineRef.value) {
-    lineRef.value.scrollIntoView({ block: 'center' })
-  }
-}
-
-defineExpose({ scrollTo })
 
 interface TextPart {
   line: string
@@ -149,6 +142,7 @@ function getNextLinePartTillColumn(endCol: number) {
         part += props.line[lineIndex.value]
         lineIndex.value++
       }
+      part += props.line[lineIndex.value]
       lineIndex.value++
       colIndex.value++
     } else {

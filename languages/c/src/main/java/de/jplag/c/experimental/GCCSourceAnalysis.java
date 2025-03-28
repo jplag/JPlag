@@ -45,7 +45,7 @@ public class GCCSourceAnalysis implements SourceAnalysis {
         for (File file : files) {
             try {
                 Runtime runtime = Runtime.getRuntime();
-                Process gcc = runtime.exec(COMPILE_COMMAND.formatted(file.getAbsolutePath()));
+                Process gcc = runtime.exec(new String[] {COMPILE_COMMAND.formatted(file.getAbsolutePath())});
                 gcc.waitFor();
 
                 // gcc prints compiler warnings to the error stream, not the standard stream

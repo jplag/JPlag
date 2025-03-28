@@ -9,11 +9,17 @@ import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
+import org.mockito.ArgumentMatchers;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.slf4j.event.Level;
 
 import de.jplag.JPlagResult;
-import de.jplag.cli.*;
+import de.jplag.cli.CLI;
+import de.jplag.cli.JPlagOptionsBuilder;
+import de.jplag.cli.JPlagRunner;
+import de.jplag.cli.OutputFileGenerator;
+import de.jplag.cli.logger.CollectedLogger;
 import de.jplag.cli.picocli.CliInputHandler;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
@@ -107,6 +113,29 @@ public abstract class CliTest {
 
     /**
      * Runs the cli
+     * @return The log level set by the cli
+     * @throws ExitException If JPlag throws an exception
+     * @throws IOException If JPlag throws an exception
+     * @see #runCli()
+     */
+    protected Level runCliForLogLevel() throws IOException, ExitException {
+        return runCli().logLevel();
+    }
+
+    /**
+     * Runs the cli using custom options
+     * @param additionalOptionsBuilder May modify the {@link CliArgumentBuilder} object to set custom options for this run.
+     * @return The log level set by the cli
+     * @throws ExitException If JPlag throws an exception
+     * @throws IOException If JPlag throws an exception
+     * @see #runCli()
+     */
+    protected Level runCliForLogLevel(Consumer<CliArgumentBuilder> additionalOptionsBuilder) throws IOException, ExitException {
+        return runCli(additionalOptionsBuilder).logLevel();
+    }
+
+    /**
+     * Runs the cli
      * @return The options returned by the cli
      * @throws ExitException If JPlag throws an exception
      * @throws IOException If JPlag throws an exception
@@ -115,8 +144,9 @@ public abstract class CliTest {
     protected CliResult runCli(Consumer<CliArgumentBuilder> additionalOptionsBuilder) throws ExitException, IOException {
         try (MockedStatic<JPlagRunner> runnerMock = Mockito.mockStatic(JPlagRunner.class);
                 MockedStatic<OutputFileGenerator> generatorMock = Mockito.mockStatic(OutputFileGenerator.class)) {
-            runnerMock.when(() -> JPlagRunner.runJPlag(Mockito.any())).thenReturn(new JPlagResult(Collections.emptyList(), null, 1, null));
-            generatorMock.when(() -> OutputFileGenerator.generateJPlagResultZip(Mockito.any(), Mockito.any())).then(invocationOnMock -> null);
+            runnerMock.when(() -> JPlagRunner.runJPlag(ArgumentMatchers.any())).thenReturn(new JPlagResult(Collections.emptyList(), null, 1, null));
+            generatorMock.when(() -> OutputFileGenerator.generateJPlagResultZip(ArgumentMatchers.any(), ArgumentMatchers.any()))
+                    .then(invocationOnMock -> null);
 
             CliArgumentBuilder copy = this.defaultArgumentBuilder.copy();
             additionalOptionsBuilder.accept(copy);
@@ -129,7 +159,7 @@ public abstract class CliTest {
 
             String targetPath = (String) getWritableFileMethod.invoke(cli);
 
-            return new CliResult(optionsBuilder.buildOptions(), targetPath);
+            return new CliResult(optionsBuilder.buildOptions(), targetPath, CollectedLogger.getLogLevel(), inputHandler);
         } catch (IllegalAccessException | InvocationTargetException e) {
             Assumptions.abort("Could not access private field in CLI for test.");
             return null; // will not be executed

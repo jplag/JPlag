@@ -2,20 +2,20 @@
   <div class="group pointer-events-none inline">
     <div ref="contentRef" class="pointer-events-auto"><slot></slot></div>
     <span
-      class="invisible absolute box-border delay-0 group-hover:visible group-hover:delay-200"
-      ref="tooltipRef"
       v-if="$slots.tooltip"
+      ref="tooltipRef"
+      class="invisible absolute box-border delay-0 group-hover:visible group-hover:delay-200"
     >
       <span
-        class="arrowBase pointer-events-auto relative z-10 block rounded-md bg-tooltip px-1 text-center text-white after:absolute after:border-4 after:border-solid after:border-transparent"
+        class="arrowBase bg-tooltip pointer-events-auto relative z-10 block rounded-md px-1 text-center text-white after:absolute after:border-4 after:border-solid after:border-transparent"
         :style="tooltipPosition"
         :class="{
           'after:top-1/2 after:-mt-1': props.direction == 'left' || props.direction == 'right',
-          'after:!left-1/2 after:-ml-1': props.direction == 'top' || props.direction == 'bottom',
-          'after:top-full after:!border-t-tooltip': props.direction == 'top',
-          'after:bottom-full after:!border-b-tooltip': props.direction == 'bottom',
-          'after:left-full after:!border-l-tooltip': props.direction == 'left',
-          'after:right-full after:!border-r-tooltip': props.direction == 'right'
+          'after:left-1/2! after:-ml-1': props.direction == 'top' || props.direction == 'bottom',
+          'after:border-t-tooltip! after:top-full': props.direction == 'top',
+          'after:border-b-tooltip! after:bottom-full': props.direction == 'bottom',
+          'after:border-l-tooltip! after:left-full': props.direction == 'left',
+          'after:border-r-tooltip! after:right-full': props.direction == 'right'
         }"
       >
         <slot name="tooltip"></slot>
@@ -64,7 +64,7 @@ const tooltipPosition = computed(() => {
   if (!contentDiv || !tooltipDiv) {
     return style
   }
-  // zeros the tooltip on the topleft of the content
+  // zeros the tooltip on the top-left of the content
   let top = -contentDiv.offsetHeight - props.scrollOffsetY
   let left =
     (props.toolTipContainerWillBeCentered ? -contentDiv.offsetWidth / 2 : 0) - props.scrollOffsetX

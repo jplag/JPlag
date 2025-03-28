@@ -15,19 +15,24 @@ export class OverviewFactory extends BaseFactory {
   /**
    * Gets the overview file based on the used mode (zip, local, single).
    */
-  public static async getOverview(): Promise<Overview> {
+  public static async getOverview(): Promise<OverviewExtractionResult> {
     return this.extractOverview(JSON.parse(await this.getFile('overview.json')))
   }
 
   /**
-   * Creates an overview object from a json object created by by JPlag
+   * Creates an overview object from a json object created by JPlag
    * @param json the json object
    */
-  private static extractOverview(json: Record<string, unknown>): Overview {
+  private static extractOverview(json: Record<string, unknown>): OverviewExtractionResult {
     const versionField = json.jplag_version as Record<string, number>
     const jplagVersion = Version.fromJsonField(versionField)
 
-    OverviewFactory.compareVersions(jplagVersion, reportViewerVersion, minimalReportVersion)
+    if (!OverviewFactory.compareVersions(jplagVersion, reportViewerVersion, minimalReportVersion)) {
+      return {
+        result: 'oldReport',
+        version: jplagVersion
+      }
+    }
 
     const submissionFolder = json.submission_folder_path as Array<string>
     const baseCodeFolder = json.base_code_folder_path as string
@@ -42,19 +47,25 @@ export class OverviewFactory extends BaseFactory {
     this.saveIdToDisplayNameMap(json)
     this.saveComparisonFilesLookup(json)
 
-    return new Overview(
-      submissionFolder,
-      baseCodeFolder,
-      language,
-      fileExtensions,
-      matchSensitivity,
-      dateOfExecution,
-      duration,
-      this.extractTopComparisons(json.top_comparisons as Array<Record<string, unknown>>, clusters),
-      this.extractDistributions(json.distributions as Record<string, Array<number>>),
-      clusters,
-      totalComparisons
-    )
+    return {
+      result: 'success',
+      overview: new Overview(
+        submissionFolder,
+        baseCodeFolder,
+        language,
+        fileExtensions,
+        matchSensitivity,
+        dateOfExecution,
+        duration,
+        this.extractTopComparisons(
+          json.top_comparisons as Array<Record<string, unknown>>,
+          clusters
+        ),
+        this.extractDistributions(json.distributions as Record<string, Array<number>>),
+        clusters,
+        totalComparisons
+      )
+    }
   }
 
   private static extractDistributions(
@@ -152,6 +163,8 @@ export class OverviewFactory extends BaseFactory {
    * Compares the two versions and shows an alert if they are not equal and puts out a warning if they are not
    * @param jsonVersion the version of the json file
    * @param reportViewerVersion the version of the report viewer
+   * @param minimalVersion the minimal report version expected
+   * @return true if the version is supported, false if the version is old
    */
   static compareVersions(
     jsonVersion: Version,
@@ -178,15 +191,10 @@ export class OverviewFactory extends BaseFactory {
       }
       sessionStorage.setItem('versionAlert', 'true')
     }
-    if (jsonVersion.compareTo(minimalVersion) < 0) {
-      throw (
-        "The result's version(" +
-        jsonVersion.toString() +
-        ') is older than the minimal support version of the report viewer(' +
-        minimalVersion.toString() +
-        '). ' +
-        'Can not read the report.'
-      )
-    }
+    return jsonVersion.compareTo(minimalVersion) >= 0
   }
 }
+
+export type OverviewExtractionResult =
+  | { result: 'success'; overview: Overview }
+  | { result: 'oldReport'; version: Version }

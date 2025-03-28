@@ -7,7 +7,7 @@
       <Bar :data="chartData" :options="options" />
     </div>
 
-    <DistributionDiagramOptions class="flex-grow print:grow-0" />
+    <DistributionDiagramOptions class="grow print:grow-0" />
   </div>
 </template>
 
@@ -105,7 +105,7 @@ const options = computed(() => {
   return {
     responsive: true,
     maintainAspectRatio: false,
-    indexAxis: 'y' as 'y',
+    indexAxis: 'y' as const,
     elements: {
       line: {
         tension: 0.4
@@ -124,11 +124,12 @@ const options = computed(() => {
             : 10 ** Math.ceil(Math.log10(maxVal.value + 5)),
         type: graphOptions.value.xScale,
         ticks: {
-          // ensures that in log mode tick labels are not overlappein
+          // ensures that in log mode tick labels are not overlapping
           minRotation: graphOptions.value.xScale === 'logarithmic' ? 30 : 0,
           autoSkipPadding: 10,
           color: graphColors.ticksAndFont.value,
-          // ensures that in log mode ticks are placed evenly appart
+          // ensures that in log mode ticks are placed evenly apart
+          /* eslint-disable @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in chart.js
           callback: function (value: any) {
             if (graphOptions.value.xScale === 'logarithmic' && (value + '').match(/1(0)*[^1-9.]/)) {
               return value
@@ -145,12 +146,13 @@ const options = computed(() => {
       y: {
         ticks: {
           color: graphColors.ticksAndFont.value,
+          /* eslint-disable @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in chart.js
           callback: function (reversedValue: any) {
             const value = distributionData.value.length - reversedValue - 1
             if (graphOptions.value.bucketCount <= 10) {
               return getDataPointLabel(value)
             } else {
-              let labelBreakPoint = 10
+              let labelBreakPoint: number
               if (graphOptions.value.bucketCount <= 25) {
                 labelBreakPoint = 5
               } else {
@@ -167,16 +169,16 @@ const options = computed(() => {
         }
       }
     },
-    animation: false as false,
+    animation: false as const,
     plugins: {
       datalabels: {
         color: graphColors.ticksAndFont.value,
         font: {
-          weight: 'bold' as 'bold',
+          weight: 'bold' as const,
           size: getDataLabelFontSize()
         },
-        anchor: 'end' as 'end',
-        align: 'end' as 'end',
+        anchor: 'end' as const,
+        align: 'end' as const,
         clamp: true,
         text: 'test',
         display: (context: any) => {
@@ -185,8 +187,8 @@ const options = computed(() => {
       },
       legend: {
         display: true,
-        position: 'bottom' as 'bottom',
-        align: 'end' as 'end',
+        position: 'bottom' as const,
+        align: 'end' as const,
         onClick: () => {}
       }
     }

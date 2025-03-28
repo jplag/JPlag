@@ -13,9 +13,9 @@
       <div class="font-bold">
         <!-- Header -->
         <div class="tableRow">
-          <div class="tableCellNumber"></div>
-          <div class="tableCellName items-center">Submissions in Comparison</div>
-          <div class="tableCellSimilarity !flex-col">
+          <div class="tableCellNumber tableCell"></div>
+          <div class="tableCellName tableCell items-center">Submissions in Comparison</div>
+          <div class="tableCellSimilarity tableCell flex-col!">
             <div>Similarity</div>
             <div class="flex w-full flex-row">
               <ToolTipComponent class="flex-1" :direction="displayClusters ? 'top' : 'left'">
@@ -25,7 +25,7 @@
                   </p>
                 </template>
                 <template #tooltip>
-                  <p class="whitespace-pre text-sm">
+                  <p class="text-sm whitespace-pre">
                     {{ metricToolTips[MetricType.AVERAGE].tooltip }}
                   </p>
                 </template>
@@ -38,24 +38,24 @@
                   </p>
                 </template>
                 <template #tooltip>
-                  <p class="whitespace-pre text-sm">
+                  <p class="text-sm whitespace-pre">
                     {{ metricToolTips[MetricType.MAXIMUM].tooltip }}
                   </p>
                 </template>
               </ToolTipComponent>
             </div>
           </div>
-          <div class="tableCellCluster items-center" v-if="displayClusters">Cluster</div>
+          <div v-if="displayClusters" class="tableCellCluster tableCell items-center">Cluster</div>
         </div>
       </div>
 
       <!-- Body -->
-      <div class="flex flex-grow flex-col overflow-hidden">
+      <div class="flex grow flex-col overflow-hidden">
         <DynamicScroller
           v-if="topComparisons.length > 0"
+          ref="dynamicScroller"
           :items="displayedComparisons"
           :min-item-size="48"
-          ref="dynamicScroller"
           ><template #default="{ item, index, active }">
             <DynamicScrollerItem
               :item="item"
@@ -73,7 +73,7 @@
                 class="tableRow"
                 :class="{
                   'bg-container-secondary-light dark:bg-container-secondary-dark': item.id % 2 == 1,
-                  '!bg-accent !bg-opacity-30': isHighlightedRow(item)
+                  'bg-accent/30!': isHighlightedRow(item)
                 }"
               >
                 <RouterLink
@@ -86,21 +86,21 @@
                       )
                     }
                   }"
-                  class="flex flex-grow cursor-pointer flex-row"
+                  class="flex grow cursor-pointer flex-row"
                 >
                   <!-- Index in sorted list -->
-                  <div class="tableCellNumber">
+                  <div class="tableCellNumber tableCell">
                     <div class="w-full text-center">{{ item.sortingPlace + 1 }}</div>
                   </div>
 
                   <!-- Names -->
-                  <div class="tableCellName">
+                  <div class="tableCellName tableCell">
                     <NameElement :id="item.firstSubmissionId" class="h-full w-1/2 px-2" />
                     <NameElement :id="item.secondSubmissionId" class="h-full w-1/2 px-2" />
                   </div>
 
                   <!-- Similarities -->
-                  <div class="tableCellSimilarity">
+                  <div class="tableCellSimilarity tableCell">
                     <div class="w-1/2">
                       {{ (item.similarities[MetricType.AVERAGE] * 100).toFixed(2) }}%
                     </div>
@@ -111,7 +111,10 @@
                 </RouterLink>
 
                 <!-- Clusters -->
-                <div class="tableCellCluster flex !flex-col items-center" v-if="displayClusters">
+                <div
+                  v-if="displayClusters"
+                  class="tableCellCluster tableCell flex flex-col! items-center"
+                >
                   <RouterLink
                     v-if="item.clusterIndex >= 0"
                     :to="{
@@ -138,7 +141,7 @@
                         }}%
                       </template>
                       <template #tooltip>
-                        <p class="whitespace-nowrap text-sm">
+                        <p class="text-sm whitespace-nowrap">
                           {{ clusters?.[item.clusterIndex].members?.length }} submissions in cluster
                           with average similarity of
                           {{
@@ -173,7 +176,7 @@ import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faUserGroup } from '@fortawesome/free-solid-svg-icons'
-import { generateColors } from '@/utils/ColorUtils'
+import { generateHues } from '@/utils/ColorUtils'
 import ToolTipComponent from './ToolTipComponent.vue'
 import { MetricType, metricToolTips } from '@/model/MetricType'
 import NameElement from './NameElement.vue'
@@ -188,7 +191,8 @@ const props = defineProps({
   },
   clusters: {
     type: Array<Cluster>,
-    required: false
+    required: false,
+    default: undefined
   },
   header: {
     type: String,
@@ -196,7 +200,8 @@ const props = defineProps({
   },
   highlightedRowIds: {
     type: Object as PropType<{ firstId: string; secondId: string }>,
-    required: false
+    required: false,
+    default: undefined
   }
 })
 
@@ -213,10 +218,9 @@ const searchString = ref('')
 
 /**
  * This function gets called when the search bar for the comparison table has been updated.
- * It updates the displayed comparisons to only show the ones that  have part of any search result in their id. The search is not case sensitive. The parts can be separated by commas or spaces.
- * It also updates the anonymous set to unhide a submission if its name was typed in the search bar at any point in time.
+ * It returns the input list, with the filter given in searchString applied.
  *
- * @param newVal The new value of the search bar
+ * @param comparisons Sorted list of comparisons
  */
 function getFilteredComparisons(comparisons: ComparisonListElement[]) {
   const searches = searchString.value
@@ -228,11 +232,83 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
     return comparisons
   }
 
+  const indexSearches = searches
+    .filter((s) => /index:[0-9]+/.test(s))
+    .map((s) => s.substring(6))
+    .map((s) => parseInt(s))
+
+  const metricSearches = searches.filter((s) => /((avg|max):)?([<>])=?[0-9]+%?/.test(s))
+
   return comparisons.filter((c) => {
-    const id1 = c.firstSubmissionId.toLowerCase()
-    const id2 = c.secondSubmissionId.toLowerCase()
-    return searches.some((s) => id1.includes(s) || id2.includes(s))
+    // name search
+    const name1 = store().submissionDisplayName(c.firstSubmissionId).toLowerCase()
+    const name2 = store().submissionDisplayName(c.secondSubmissionId).toLowerCase()
+    if (searches.some((s) => name1.includes(s) || name2.includes(s))) {
+      return true
+    }
+
+    // index search
+    if (indexSearches.includes(c.sortingPlace + 1)) {
+      return true
+    }
+    if (searches.some((s) => (c.sortingPlace + 1).toString().includes(s))) {
+      return true
+    }
+
+    // metric search
+    const searchPerMetric: Record<MetricType, string[]> = {
+      [MetricType.AVERAGE]: [],
+      [MetricType.MAXIMUM]: []
+    }
+    metricSearches.forEach((s) => {
+      const regexResult = /^(?:(avg|max):)([<>]=?[0-9]+%?$)/.exec(s)
+      if (regexResult) {
+        const metricName = regexResult[1]
+        let metric = MetricType.AVERAGE
+        for (const m of [MetricType.AVERAGE, MetricType.MAXIMUM]) {
+          if (metricToolTips[m].shortName.toLowerCase() == metricName) {
+            metric = m
+            break
+          }
+        }
+        searchPerMetric[metric].push(regexResult[2])
+      } else {
+        searchPerMetric[MetricType.AVERAGE].push(s)
+        searchPerMetric[MetricType.MAXIMUM].push(s)
+      }
+    })
+    for (const metric of [MetricType.AVERAGE, MetricType.MAXIMUM]) {
+      for (const search of searchPerMetric[metric]) {
+        const regexResult = /([<>]=?)([0-9]+)%?/.exec(search)!
+        const operator = regexResult[1]
+        const value = parseInt(regexResult[2])
+        if (evaluateMetricComparison(c.similarities[metric] * 100, operator, value)) {
+          return true
+        }
+      }
+    }
+
+    return false
   })
+
+  function evaluateMetricComparison(
+    comparisonMetric: number,
+    operator: string,
+    checkValue: number
+  ) {
+    switch (operator) {
+      case '>':
+        return comparisonMetric > checkValue
+      case '<':
+        return comparisonMetric < checkValue
+      case '>=':
+        return comparisonMetric >= checkValue
+      case '<=':
+        return comparisonMetric <= checkValue
+      default:
+        return false
+    }
+  }
 }
 
 function getSortedComparisons(comparisons: ComparisonListElement[]) {
@@ -268,10 +344,25 @@ function getClusterFor(clusterIndex: number) {
 
 const displayClusters = props.clusters != undefined
 
-let clusterIconColors = [] as Array<string>
+let clusterIconHues = [] as Array<number>
+const lightmodeSaturation = 80
+const lightmodeLightness = 50
+const lightmodeAlpha = 0.3
+const darkmodeSaturation = 90
+const darkmodeLightness = 65
+const darkmodeAlpha = 0.6
 if (props.clusters != undefined) {
-  clusterIconColors = generateColors(props.clusters.length, 0.8, 0.5, 1)
+  clusterIconHues = generateHues(props.clusters.length)
 }
+const clusterIconColors = computed(() =>
+  clusterIconHues.map((h) => {
+    return `hsla(${h}, ${
+      store().uiState.useDarkMode ? darkmodeSaturation : lightmodeSaturation
+    }%, ${
+      store().uiState.useDarkMode ? darkmodeLightness : lightmodeLightness
+    }%, ${store().uiState.useDarkMode ? darkmodeAlpha : lightmodeAlpha})`
+  })
+)
 
 function isHighlightedRow(item: ComparisonListElement) {
   return (
@@ -283,6 +374,7 @@ function isHighlightedRow(item: ComparisonListElement) {
   )
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const dynamicScroller: Ref<any | null> = ref(null)
 
 watch(
@@ -298,40 +390,30 @@ watch(
 )
 </script>
 
-<style scoped lang="postcss">
-.tableRow {
-  @apply flex flex-row text-center;
-}
-
-.tableCellNumber {
-  @apply tableCell w-12 flex-shrink-0;
-}
-
-.tableCellSimilarity {
-  @apply tableCell w-40 flex-shrink-0;
-}
-
-.tableCellCluster {
-  @apply tableCell w-32 flex-shrink-0;
-}
-
-.tableCellName {
-  @apply tableCell flex-grow;
-}
+<style scoped>
+@reference "../style.css";
 
 .tableCell {
   @apply mx-3 flex flex-row items-center justify-center text-center;
 }
 
-/* Tooltip arrow. Defined down here bacause of the content attribute */
-.tooltipArrow::after {
-  content: ' ';
-  position: absolute;
-  top: 50%;
-  left: 100%;
-  margin-top: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: transparent transparent transparent rgba(0, 0, 0, 0.9);
+.tableRow {
+  @apply flex flex-row text-center;
+}
+
+.tableCellNumber {
+  @apply w-12 shrink-0;
+}
+
+.tableCellSimilarity {
+  @apply w-40 shrink-0;
+}
+
+.tableCellCluster {
+  @apply w-32 shrink-0;
+}
+
+.tableCellName {
+  @apply grow;
 }
 </style>

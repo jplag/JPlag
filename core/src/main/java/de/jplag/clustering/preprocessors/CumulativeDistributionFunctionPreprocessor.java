@@ -20,7 +20,7 @@ public class CumulativeDistributionFunctionPreprocessor implements ClusteringPre
     @Override
     public double[][] preprocessSimilarities(double[][] similarityMatrix) {
         RealMatrix similarity = new Array2DRowRealMatrix(similarityMatrix, true);
-        int connections = (similarity.getColumnDimension() * (similarity.getColumnDimension() - 1)) / 2;
+        int connections = similarity.getColumnDimension() * (similarity.getColumnDimension() - 1) / 2;
         EmpiricalDistribution dist = new EmpiricalDistribution(Math.max(100, connections / 100));
         double[] allWeights = new double[connections];
         similarity.walkInOptimizedOrder(new DefaultRealMatrixPreservingVisitor() {

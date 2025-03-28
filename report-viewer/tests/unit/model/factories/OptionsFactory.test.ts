@@ -1,30 +1,19 @@
-import { beforeAll, describe, it, vi, expect } from 'vitest'
+import { beforeEach, describe, it, expect } from 'vitest'
 import { OptionsFactory } from '@/model/factories/OptionsFactory'
 import { ParserLanguage } from '@/model/Language'
 import { MetricType } from '@/model/MetricType'
 import validOptions from './ValidOptions.json'
-
-const store = {
-  state: {
-    localModeUsed: false,
-    zipModeUsed: true,
-    singleModeUsed: false,
-    files: {
-      'options.json': JSON.stringify(validOptions)
-    }
-  }
-}
+import { setActivePinia, createPinia } from 'pinia'
+import { store } from '@/stores/store'
 
 describe('Test JSON to Options', async () => {
-  beforeAll(() => {
-    vi.mock('@/stores/store', () => ({
-      store: vi.fn(() => {
-        return store
-      })
-    }))
+  beforeEach(() => {
+    setActivePinia(createPinia())
+    store().setLoadingType('zip')
   })
 
   it('Test Valid JSON', async () => {
+    store().state.files['options.json'] = JSON.stringify(validOptions)
     const result = await OptionsFactory.getCliOptions()
 
     expect(result).toEqual({
@@ -57,7 +46,8 @@ describe('Test JSON to Options', async () => {
       mergingOptions: {
         enabled: false,
         minNeighborLength: 0,
-        maxGapSize: 0
+        maxGapSize: 0,
+        minimumRequiredMerges: 3
       }
     })
   })

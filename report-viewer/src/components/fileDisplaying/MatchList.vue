@@ -3,32 +3,61 @@
 -->
 <template>
   <div
-    class="flex h-fit min-w-0 max-w-full flex-row space-x-1 overflow-x-hidden text-xs print:hidden"
+    class="flex h-fit max-w-full min-w-0 flex-row space-x-1 overflow-x-hidden text-xs print:hidden"
   >
+    <ToolTipComponent v-if="hasBaseCode" direction="right" class="pr-3">
+      <template #default>
+        <OptionComponent label="Base Code" :style="{ background: getMatchColor(0.3, 'base') }" />
+      </template>
+      <template #tooltip>
+        <div class="text-sm whitespace-pre">
+          Sections that are likely base code (thus ignored in similarity calculation). <br />
+          <p>
+            {{ store().getDisplayName(id1) }}:
+
+            <span v-if="basecodeInFirst.length > 0">
+              {{ basecodeInFirst.map((b) => b.match.tokens).reduce((a, b) => a + b, 0) }} Tokens,
+              Lines: {{ store().getDisplayName(id1 ?? '') }}: Lines
+              {{ basecodeInFirst.map((b) => `${b.start}-${b.end}`).join(',') }}
+            </span>
+            <span v-else>No Basecode in Submission</span>
+          </p>
+          <p>
+            {{ store().getDisplayName(id2) }}:
+            <span v-if="basecodeInSecond.length > 0">
+              {{ basecodeInSecond.map((b) => b.match.tokens).reduce((a, b) => a + b, 0) }} Tokens,
+              Lines: {{ store().getDisplayName(id2 ?? '') }}: Lines
+              {{ basecodeInSecond.map((b) => `${b.start}-${b.end}`).join(',') }}
+            </span>
+            <span v-else>No Basecode in Submission</span>
+          </p>
+        </div>
+      </template>
+    </ToolTipComponent>
+
     <ToolTipComponent direction="right">
       <template #default>
         <OptionComponent label="Match Files: TokenCount" />
       </template>
       <template #tooltip>
-        <p class="whitespace-pre text-sm">Click on a match to show it in the code view.</p>
+        <p class="text-sm whitespace-pre">Click on a match to show it in the code view.</p>
       </template>
     </ToolTipComponent>
 
     <div
-      class="print-excact flex w-full flex-row space-x-1 overflow-x-auto print:flex-wrap print:space-y-1 print:overflow-x-hidden"
       ref="scrollableList"
+      class="print-exact flex w-full flex-row space-x-1 overflow-x-auto print:flex-wrap print:space-y-1 print:overflow-x-hidden"
       @scroll="updateScrollOffset()"
     >
       <ToolTipComponent
-        :direction="getTooltipDirection(index)"
         v-for="[index, match] in matches?.entries()"
         :key="index"
-        :scrollOffsetX="scrollOffsetX"
+        :direction="getTooltipDirection(index)"
+        :scroll-offset-x="scrollOffsetX"
       >
         <template #default>
           <OptionComponent
             :style="{ background: getMatchColor(0.3, match.colorIndex) }"
-            @click="$emit('matchSelected', match)"
             :label="
               getFileName(match.firstFile) +
               ' - ' +
@@ -36,10 +65,11 @@
               ': ' +
               match.tokens
             "
+            @click="$emit('matchSelected', match)"
           />
         </template>
         <template #tooltip>
-          <p class="whitespace-pre text-sm">
+          <p class="text-sm whitespace-pre">
             Match between {{ getFileName(match.firstFile) }} (Line {{ match.startInFirst.line }}-{{
               match.endInFirst.line
             }}) and {{ getFileName(match.secondFile) }} (Line {{ match.startInSecond.line }}-{{
@@ -47,7 +77,7 @@
             }}) <br />
             Match is {{ match.tokens }} tokens long. <br />
             <span v-if="showTokenRanges(match)">
-              Token indeces of match: {{ match.startInFirst.tokenListIndex }}-{{
+              Token indices of match: {{ match.startInFirst.tokenListIndex }}-{{
                 match.endInFirst.tokenListIndex
               }}
               and {{ match.startInSecond.tokenListIndex }}-{{ match.endInSecond.tokenListIndex }}.
@@ -72,15 +102,22 @@
       </tr>
       <tr
         v-for="[index, match] in matches?.entries()"
-        v-bind:key="index"
+        :key="index"
         :style="{ background: getMatchColor(0.3, match.colorIndex) }"
-        class="print-excact"
+        class="print-exact"
       >
         <td class="px-2">{{ getFileName(match.firstFile) }}</td>
         <td class="px-2">{{ match.startInFirst }} - {{ match.endInFirst }}</td>
         <td class="px-2">{{ getFileName(match.secondFile) }}</td>
         <td class="px-2">{{ match.startInSecond }} - {{ match.endInSecond }}</td>
         <td class="px-2">{{ match.tokens }}</td>
+      </tr>
+      <tr
+        v-if="hasBaseCode"
+        :style="{ background: getMatchColor(0.3, 'base') }"
+        class="print-exact"
+      >
+        <td class="px-2" colspan="5">Basecode in submissions</td>
       </tr>
     </table>
   </div>
@@ -92,7 +129,9 @@ import OptionComponent from '../optionsSelectors/OptionComponent.vue'
 import ToolTipComponent from '@/components/ToolTipComponent.vue'
 import { getMatchColor } from '@/utils/ColorUtils'
 import type { ToolTipDirection } from '@/model/ui/ToolTip'
-import { ref, type Ref } from 'vue'
+import { ref, type Ref, computed } from 'vue'
+import type { BaseCodeMatch } from '@/model/BaseCodeReport'
+import { store } from '@/stores/store'
 
 const props = defineProps({
   /**
@@ -100,19 +139,32 @@ const props = defineProps({
    * type: Array<Match>
    */
   matches: {
-    type: Array<Match>
+    type: Array<Match>,
+    required: true
   },
   /**
    * ID of first submission
    */
   id1: {
-    type: String
+    type: String,
+    required: true
   },
   /**
    * ID of second submission
    */
   id2: {
-    type: String
+    type: String,
+    required: true
+  },
+  basecodeInFirst: {
+    type: Array<BaseCodeMatch>,
+    required: false,
+    default: () => []
+  },
+  basecodeInSecond: {
+    type: Array<BaseCodeMatch>,
+    required: false,
+    default: () => []
   }
 })
 
@@ -147,4 +199,8 @@ function updateScrollOffset() {
     scrollOffsetX.value = scrollableList.value.scrollLeft
   }
 }
+
+const hasBaseCode = computed(() => {
+  return props.basecodeInFirst.length > 0 || props.basecodeInSecond.length > 0
+})
 </script>

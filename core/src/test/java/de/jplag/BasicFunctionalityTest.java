@@ -68,7 +68,7 @@ class BasicFunctionalityTest extends TestBase {
 
         // All comparisons with E shall have no matches
         result.getAllComparisons().stream()
-                .filter(comparison -> comparison.secondSubmission().getName().equals("E") || comparison.firstSubmission().getName().equals("E"))
+                .filter(comparison -> "E".equals(comparison.secondSubmission().getName()) || "E".equals(comparison.firstSubmission().getName()))
                 .forEach(comparison -> assertEquals(0, comparison.similarity(), DELTA));
 
         // Hard coded assertions on selected comparisons

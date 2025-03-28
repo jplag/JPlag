@@ -1,11 +1,11 @@
 <template>
   <div class="flex flex-col space-y-1">
     <h3 class="text-lg underline">Options:</h3>
-    <ScrollableComponent class="h-fit flex-grow">
+    <ScrollableComponent class="h-fit grow">
       <MetricSelector
         class="mt-2"
         title="Metric:"
-        :defaultSelected="store().uiState.distributionChartConfig.metric"
+        :default-selected="store().uiState.distributionChartConfig.metric"
         @selection-changed="
           (metric: MetricType) => (store().uiState.distributionChartConfig.metric = metric)
         "
@@ -14,7 +14,7 @@
         class="mt-2"
         title="Scale x-Axis:"
         :labels="['Linear', 'Logarithmic']"
-        :defaultSelected="store().uiState.distributionChartConfig.xScale == 'linear' ? 0 : 1"
+        :default-selected="store().uiState.distributionChartConfig.xScale == 'linear' ? 0 : 1"
         @selection-changed="
           (i: number) =>
             (store().uiState.distributionChartConfig.xScale = i == 0 ? 'linear' : 'logarithmic')
@@ -24,7 +24,7 @@
         class="mt-2"
         title="Bucket Count:"
         :labels="resolutionOptions.map((div) => div.toString())"
-        :defaultSelected="
+        :default-selected="
           resolutionOptions.indexOf(store().uiState.distributionChartConfig.bucketCount)
         "
         @selection-changed="

@@ -1,5 +1,5 @@
 {
-  "language": "Javac based AST plugin",
+  "language": "java",
   "min_token_match": 9,
   "submission_directories": [
     ".\\files"
@@ -33,6 +33,7 @@
   "merging": {
     "enabled": false,
     "min_neighbour_length": 0,
-    "max_gap_size": 0
+    "max_gap_size": 0,
+    "min_required_merges": 3
   }
 }

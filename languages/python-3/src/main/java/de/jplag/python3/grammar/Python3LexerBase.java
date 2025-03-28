@@ -88,7 +88,7 @@ abstract class Python3LexerBase extends Lexer {
         for (char ch : spaces.toCharArray()) {
             switch (ch) {
                 case '\t':
-                    count += 8 - (count % 8);
+                    count += 8 - count % 8;
                     break;
                 default:
                     // A normal space char.
@@ -119,7 +119,7 @@ abstract class Python3LexerBase extends Lexer {
         // satisfy the final newline needed by the single_put rule used by the REPL.
         int next = _input.LA(1);
         int nextnext = _input.LA(2);
-        if (opened > 0 || (nextnext != -1 && (next == '\r' || next == '\n' || next == '\f' || next == '#'))) {
+        if (opened > 0 || nextnext != -1 && (next == '\r' || next == '\n' || next == '\f' || next == '#')) {
             // If we're inside a list or on a blank line, ignore all indents,
             // dedents and line breaks.
             skip();

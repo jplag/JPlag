@@ -28,4 +28,17 @@ public record CliArgument<T>(String name, boolean isPositional) {
 
     public static CliArgument<String> RESULT_FILE = new CliArgument<>("r", false);
     public static CliArgument<Boolean> OVERWRITE_RESULT_FILE = new CliArgument<>("overwrite", false);
+
+    public static CliArgument<String> LOG_LEVEL = new CliArgument<>("log-level", false);
+    public static CliArgument<Boolean> DEBUG = new CliArgument<>("d", false);
+
+    public static CliArgument<String> SUBDIRECTORY = new CliArgument<>("subdirectory", false);
+    public static CliArgument<String> EXCLUDE_FILES = new CliArgument<>("x", false);
+
+    public static CliArgument<String> MODE = new CliArgument<>("mode", false);
+
+    public static CliArgument<Boolean> MERGING_ENABLED = new CliArgument<>("match-merging", false);
+    public static CliArgument<Integer> NEIGHBOR_LENGTH = new CliArgument<>("neighbor-length", false);
+    public static CliArgument<Integer> GAP_SIZE = new CliArgument<>("gap-size", false);
+    public static CliArgument<Integer> REQUIRED_MERGES = new CliArgument<>("required-merges", false);
 }

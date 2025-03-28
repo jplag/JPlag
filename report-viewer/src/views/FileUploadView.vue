@@ -10,36 +10,44 @@
     <div class="w-screen">
       <div>
         <img
+          v-if="store().uiState.useDarkMode"
           class="mx-auto mt-8 h-auto w-60"
+          height="168"
+          width="240"
           src="@/assets/jplag-light-transparent.png"
           alt="JPlag Logo"
-          v-if="store().uiState.useDarkMode"
         />
         <img
+          v-else
           class="mx-auto mt-8 h-auto w-60"
+          height="168"
+          width="240"
           src="@/assets/jplag-dark-transparent.png"
           alt="JPlag Logo"
-          v-else
         />
       </div>
       <h1 class="text-7xl">JPlag Report Viewer</h1>
       <div v-if="!hasQueryFile && !loadingFiles && !exampleFiles">
         <div
-          class="mx-auto mt-10 flex w-96 cursor-pointer flex-col justify-center rounded-md border-1 border-accent-dark bg-accent bg-opacity-25 px-5 py-5"
+          class="border-accent-dark bg-accent/25 mx-auto mt-10 flex w-96 cursor-pointer flex-col justify-center rounded-md border px-5 py-5"
           @click="uploadFileThroughWindow()"
         >
-          <div>Drag and Drop zip/Json file on this page</div>
+          <div>Drag and Drop zip file on this page</div>
           <div>Or click here to select a file</div>
         </div>
         <div>(No files will be uploaded)</div>
-        <Button class="mx-auto mt-8 w-fit" @click="continueWithLocal" v-if="localFiles">
+        <Button v-if="localFiles" class="mx-auto mt-8 w-fit" @click="continueWithLocal">
           Continue with local files
         </Button>
+        <a
+          href="https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag"
+          target="_blank"
+          class="text-link-dark dark:text-link underline"
+        >
+          How to use JPlag
+        </a>
       </div>
-      <LoadingCircle v-else-if="loadingFiles" class="space-y-5 pt-5" />
-      <div v-else-if="exampleFiles" class="pt-5">
-        <Button class="mx-auto w-fit text-xl" @click="continueWithLocal()"> View Example </Button>
-      </div>
+      <LoadingCircle v-else-if="loadingFiles || exampleFiles" class="space-y-5 pt-5" />
       <div v-if="errors.length > 0" class="text-error">
         <p>{{ getErrorText() }}</p>
         <p>For more details check the console.</p>
@@ -58,7 +66,6 @@ import Button from '@/components/ButtonComponent.vue'
 import VersionInfoComponent from '@/components/VersionInfoComponent.vue'
 import LoadingCircle from '@/components/LoadingCircle.vue'
 import { ZipFileHandler } from '@/model/fileHandling/ZipFileHandler'
-import { JsonFileHandler } from '@/model/fileHandling/JsonFileHandler'
 import { BaseFactory } from '@/model/factories/BaseFactory'
 
 store().clearStore()
@@ -108,21 +115,6 @@ function navigateToOverview() {
 }
 
 /**
- * Handles a json file on drop. It read the file and passes the file string to next window.
- * @param file The json file to handle
- */
-async function handleJsonFile(file: Blob) {
-  try {
-    await new JsonFileHandler().handleFile(file)
-  } catch (e) {
-    registerError(e as Error, 'upload')
-    return
-  }
-  store().setLoadingType('single')
-  navigateToOverview()
-}
-
-/**
  * Handles a file on drop. It determines the file type and passes it to the corresponding handler.
  * @param file File to handle
  */
@@ -136,8 +128,6 @@ async function handleFile(file: Blob) {
       store().setLoadingType('zip')
       await new ZipFileHandler().handleFile(file)
       return navigateToOverview()
-    case 'application/json':
-      return await handleJsonFile(file)
     default:
       throw new Error(`Unknown MIME type '${file.type}'`)
   }
@@ -164,7 +154,7 @@ async function uploadFileOnDrag(e: DragEvent) {
 async function uploadFileThroughWindow() {
   let input = document.createElement('input')
   input.type = 'file'
-  input.accept = '.zip,.json'
+  input.accept = '.zip'
   input.multiple = false
   input.onchange = () => {
     const files = input.files
@@ -200,7 +190,7 @@ async function loadQueryFile(url: URL) {
  * Handles click on Continue with local files.
  */
 function continueWithLocal() {
-  store().state.uploadedFileName = exampleFiles.value ? 'progpedia.zip' : BaseFactory.zipFileName
+  store().state.uploadedFileName = BaseFactory.zipFileName
   store().setLoadingType('local')
   navigateToOverview()
 }
@@ -232,4 +222,9 @@ onErrorCaptured((error) => {
   registerError(error, 'unknown')
   return false
 })
+
+if (exampleFiles.value) {
+  store().state.uploadedFileName = 'progpedia.zip'
+  navigateToOverview()
+}
 </script>

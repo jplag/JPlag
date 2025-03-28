@@ -6,18 +6,12 @@ import java.util.Set;
 
 import org.kohsuke.MetaInfServices;
 
+import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
-@MetaInfServices(de.jplag.Language.class)
-public class SchemeLanguage implements de.jplag.Language {
-
-    private static final String IDENTIFIER = "scheme";
-    private final de.jplag.scheme.Parser parser;
-
-    public SchemeLanguage() {
-        parser = new Parser();
-    }
+@MetaInfServices(Language.class)
+public class SchemeLanguage implements Language {
 
     @Override
     public String[] suffixes() {
@@ -26,12 +20,12 @@ public class SchemeLanguage implements de.jplag.Language {
 
     @Override
     public String getName() {
-        return "SchemeR4RS Parser [basic markup]";
+        return "Scheme";
     }
 
     @Override
     public String getIdentifier() {
-        return IDENTIFIER;
+        return "scheme";
     }
 
     @Override
@@ -41,6 +35,6 @@ public class SchemeLanguage implements de.jplag.Language {
 
     @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return this.parser.parse(files);
+        return new Parser().parse(files);
     }
 }

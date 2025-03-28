@@ -1,47 +1,34 @@
-import { beforeAll, describe, expect, it, vi } from 'vitest'
+import { beforeAll, describe, expect, it, vi, beforeEach } from 'vitest'
 import { OverviewFactory } from '@/model/factories/OverviewFactory'
 import { MetricType } from '@/model/MetricType'
 import { Distribution } from '@/model/Distribution'
+import { ParserLanguage } from '@/model/Language'
 import validNew from './ValidOverview.json'
 import outdated from './OutdatedOverview.json'
-
-const store = {
-  state: {
-    localModeUsed: false,
-    zipModeUsed: true,
-    singleModeUsed: false,
-    files: {}
-  },
-  saveSubmissionNames: (map) => {
-    expect(map.has('A')).toBeTruthy()
-    expect(map.has('B')).toBeTruthy()
-    expect(map.has('C')).toBeTruthy()
-    expect(map.has('D')).toBeTruthy()
-  },
-  saveComparisonFileLookup: (map) => {
-    expect(map.has('A')).toBeTruthy()
-    expect(map.has('B')).toBeTruthy()
-  }
-}
+import { setActivePinia, createPinia } from 'pinia'
+import { store } from '@/stores/store'
+import { Version } from '@/model/Version'
 
 describe('Test JSON to Overview', () => {
   beforeAll(() => {
-    vi.mock('@/stores/store', () => ({
-      store: vi.fn(() => {
-        return store
-      })
-    }))
-
     vi.spyOn(global.window, 'alert').mockImplementation(() => {})
   })
 
-  it('Post 5.0', async () => {
-    store.state.files['overview.json'] = JSON.stringify(validNew)
+  beforeEach(() => {
+    setActivePinia(createPinia())
+    store().setLoadingType('zip')
+  })
 
-    expect(await OverviewFactory.getOverview()).toEqual({
+  it('Post 5.0', async () => {
+    store().state.files['overview.json'] = JSON.stringify(validNew)
+
+    const result = await OverviewFactory.getOverview()
+    expect(result.result).toBe('success')
+
+    expect(result.overview).toEqual({
       _submissionFolderPath: ['files'],
       _baseCodeFolderPath: '',
-      _language: 'Javac based AST plugin',
+      _language: ParserLanguage.JAVA,
       _fileExtensions: ['.java', '.JAVA'],
       _matchSensitivity: 9,
       _dateOfExecution: '12/07/23',
@@ -142,7 +129,9 @@ describe('Test JSON to Overview', () => {
 
 describe('Outdated JSON to Overview', () => {
   it('Outdated version', async () => {
-    store.state.files['overview.json'] = JSON.stringify(outdated)
-    expect(() => OverviewFactory.getOverview()).rejects.toThrowError()
+    store().state.files['overview.json'] = JSON.stringify(outdated)
+    const result = await OverviewFactory.getOverview()
+    expect(result.result).toBe('oldReport')
+    expect(result.version.compareTo(new Version(3,0,0))).toBe(0)
   })
 })

@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import type { State, UIState } from './state'
 import { MetricType } from '@/model/MetricType'
 import type { SubmissionFile, File } from '@/model/File'
+import { FileSortingOptions } from '@/model/ui/FileSortingOptions'
 
 /**
  * The store is a global state management system. It is used to store the state of the application.
@@ -17,9 +18,6 @@ const store = defineStore('store', {
       // Mode that was used to load the files
       localModeUsed: false,
       zipModeUsed: false,
-      singleModeUsed: false,
-      // only used in single mode
-      singleFillRawContent: '',
       fileIdToDisplayName: new Map(),
       uploadedFileName: ''
     },
@@ -32,7 +30,8 @@ const store = defineStore('store', {
         xScale: 'linear',
         bucketCount: 10,
         showBinomialCurve: false
-      }
+      },
+      fileSorting: FileSortingOptions.ALPHABETICAL
     }
   }),
   getters: {
@@ -132,8 +131,6 @@ const store = defineStore('store', {
         submissions: {},
         localModeUsed: false,
         zipModeUsed: false,
-        singleModeUsed: false,
-        singleFillRawContent: '',
         fileIdToDisplayName: new Map(),
         uploadedFileName: ''
       }
@@ -200,17 +197,9 @@ const store = defineStore('store', {
      * Sets the loading type
      * @param payload Type used to input JPlag results
      */
-    setLoadingType(loadingType: 'zip' | 'local' | 'single') {
+    setLoadingType(loadingType: 'zip' | 'local') {
       this.state.localModeUsed = loadingType == 'local'
       this.state.zipModeUsed = loadingType == 'zip'
-      this.state.singleModeUsed = loadingType == 'single'
-    },
-    /**
-     * Sets the raw content of the single file mode
-     * @param payload Raw content of the single file mode
-     */
-    setSingleFileRawContent(payload: string) {
-      this.state.singleFillRawContent = payload
     },
     /**
      * Switches whether darkMode is being used for the UI

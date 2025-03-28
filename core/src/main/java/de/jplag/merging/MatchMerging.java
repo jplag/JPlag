@@ -10,6 +10,7 @@ import de.jplag.Match;
 import de.jplag.SharedTokenType;
 import de.jplag.Submission;
 import de.jplag.Token;
+import de.jplag.logging.ProgressBar;
 import de.jplag.logging.ProgressBarLogger;
 import de.jplag.logging.ProgressBarType;
 import de.jplag.options.JPlagOptions;
@@ -25,6 +26,7 @@ import de.jplag.options.JPlagOptions;
  */
 public class MatchMerging {
     private final JPlagOptions options;
+    private int numberOfMerges;
 
     /**
      * Instantiates the match merging algorithm for a comparison result and a set of specific options.
@@ -42,22 +44,29 @@ public class MatchMerging {
      */
     public JPlagResult mergeMatchesOf(JPlagResult result) {
         long timeBeforeStartInMillis = System.currentTimeMillis();
-
         List<JPlagComparison> comparisons = new ArrayList<>(result.getAllComparisons());
-        List<JPlagComparison> comparisonsMerged = new ArrayList<>();
 
-        ProgressBarLogger.iterate(ProgressBarType.MATCH_MERGING, comparisons, comparison -> {
-            Submission leftSubmission = comparison.firstSubmission().copy();
-            Submission rightSubmission = comparison.secondSubmission().copy();
-            List<Match> globalMatches = new ArrayList<>(comparison.matches());
-            globalMatches.addAll(comparison.ignoredMatches());
-            globalMatches = mergeNeighbors(globalMatches, leftSubmission, rightSubmission);
-            globalMatches = globalMatches.stream().filter(it -> it.length() >= options.minimumTokenMatch()).toList();
-            comparisonsMerged.add(new JPlagComparison(leftSubmission, rightSubmission, globalMatches, new ArrayList<>()));
-        });
+        ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.MATCH_MERGING, comparisons.size());
+        List<JPlagComparison> comparisonsMerged = comparisons.parallelStream().map(it -> mergeMatchesOf(it, progressBar)).toList();
+        progressBar.dispose();
 
         long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
         return new JPlagResult(comparisonsMerged, result.getSubmissions(), result.getDuration() + durationInMillis, options);
+    }
+
+    private JPlagComparison mergeMatchesOf(JPlagComparison comparison, ProgressBar progressBar) {
+        numberOfMerges = 0;
+        Submission leftSubmission = comparison.firstSubmission().copy();
+        Submission rightSubmission = comparison.secondSubmission().copy();
+        List<Match> globalMatches = new ArrayList<>(comparison.matches());
+        globalMatches.addAll(comparison.ignoredMatches());
+        globalMatches = mergeNeighbors(globalMatches, leftSubmission, rightSubmission);
+        globalMatches = globalMatches.stream().filter(it -> it.length() >= options.minimumTokenMatch()).toList();
+        progressBar.step();
+        if (numberOfMerges >= options.mergingOptions().minimumRequiredMerges()) {
+            return new JPlagComparison(leftSubmission, rightSubmission, globalMatches, new ArrayList<>());
+        }
+        return comparison;
     }
 
     /**
@@ -75,7 +84,7 @@ public class MatchMerging {
         sortedByRight.sort(Comparator.comparingInt(Match::startOfSecond));
 
         for (int i = 0; i < sortedByLeft.size() - 1; i++) {
-            if (sortedByRight.indexOf(sortedByLeft.get(i)) == (sortedByRight.indexOf(sortedByLeft.get(i + 1)) - 1)) {
+            if (sortedByRight.indexOf(sortedByLeft.get(i)) == sortedByRight.indexOf(sortedByLeft.get(i + 1)) - 1) {
                 neighbors.add(new Neighbor(sortedByLeft.get(i), sortedByLeft.get(i + 1)));
             }
         }
@@ -111,6 +120,7 @@ public class MatchMerging {
                 globalMatches = removeToken(globalMatches, leftSubmission, rightSubmission, upperNeighbor, tokenBetweenLeft, tokensBetweenRight);
                 neighbors = computeNeighbors(globalMatches);
                 i = 0;
+                numberOfMerges++;
             } else {
                 i++;
             }
@@ -152,7 +162,7 @@ public class MatchMerging {
      * @return true if FILE_END is in token
      */
     private boolean containsFileEndToken(List<Token> token) {
-        return token.stream().map(Token::getType).anyMatch(it -> it.equals(SharedTokenType.FILE_END));
+        return token.stream().map(Token::getType).anyMatch(SharedTokenType.FILE_END::equals);
     }
 
     /**

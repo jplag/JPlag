@@ -1,54 +1,59 @@
-import { vi, it, beforeAll, describe, expect } from 'vitest'
+import { it, beforeEach, describe, expect } from 'vitest'
 import validNew from './ValidComparison.json'
 import { ComparisonFactory } from '@/model/factories/ComparisonFactory'
 import { store } from '@/stores/store'
 import { MetricType } from '@/model/MetricType'
-
-const store = {
-  state: {
-    localModeUsed: false,
-    zipModeUsed: true,
-    singleModeUsed: false,
-    files: {}
-  },
-  getComparisonFileName: (id1: string, id2: string) => {
-    return `${id1}-${id2}.json`
-  },
-  filesOfSubmission: (name: string) => {
-    return [
-      {
-        name: `${name}/Structure.java`,
-        value: ''
-      },
-      {
-        name: `${name}/Submission.java`,
-        value: ''
-      }
-    ]
-  },
-  getSubmissionFile: (id: string, name: string) => {
-    return {
-      fileName: name,
-      submissionId: id,
-      matchedTokenCount: 0
-    }
-  }
-}
+import { setActivePinia, createPinia } from 'pinia'
 
 describe('Test JSON to Comparison', () => {
-  beforeAll(() => {
-    vi.mock('@/stores/store', () => ({
-      store: vi.fn(() => {
-        return store
-      })
-    }))
+  beforeEach(() => {
+    setActivePinia(createPinia())
+    store().setLoadingType('zip')
   })
 
   it('Post 5.0', async () => {
-    store.state.files['root1-root2.json'] = JSON.stringify(validNew)
+    store().state.files['root1-root2.json'] = JSON.stringify(validNew)
+    store().state.submissionIdsToComparisonFileName.set(
+      'root1',
+      new Map([['root2', 'root1-root2.json']])
+    )
+    store().state.submissionIdsToComparisonFileName.set(
+      'root2',
+      new Map([['root1', 'root1-root2.json']])
+    )
+    store().state.submissions['root1'] = new Map()
+    store().state.submissions['root1'].set('root1/Structure.java', {
+      fileName: 'root1/Structure.java',
+      value: '',
+      submissionId: 'root1',
+      matchedTokenCount: 0,
+      displayName: 'Structure.java'
+    })
+    store().state.submissions['root1'].set('root1/Submission.java', {
+      fileName: 'root1/Submission.java',
+      value: '',
+      submissionId: 'root1',
+      matchedTokenCount: 0,
+      displayName: 'Submission.java'
+    })
+    store().state.submissions['root2'] = new Map()
+    store().state.submissions['root2'].set('root2/Structure.java', {
+      fileName: 'root2/Structure.java',
+      value: '',
+      submissionId: 'root2',
+      matchedTokenCount: 0,
+      displayName: 'Structure.java'
+    })
+    store().state.submissions['root2'].set('root2/Submission.java', {
+      fileName: 'root2/Submission.java',
+      value: '',
+      submissionId: 'root2',
+      matchedTokenCount: 0,
+      displayName: 'Submission.java'
+    })
 
     const result = await ComparisonFactory.getComparison(
-      store.getComparisonFileName('root1', 'root2')
+      store().getComparisonFileName('root1', 'root2')
     )
 
     expect(result).toBeDefined()

@@ -23,6 +23,7 @@ public class ReportViewer implements HttpHandler {
     private static final String REPORT_VIEWER_RESOURCE_PREFIX = "report-viewer";
     private static final String INDEX_PATH = "index.html";
     private static final String RESULT_PATH = "results.zip";
+    private static final String[] OLD_VERSION_DIRECTORIES = new String[] {"v5"};
 
     private static final Logger logger = LoggerFactory.getLogger(ReportViewer.class);
     private static final int SUCCESS_RESPONSE = 200;
@@ -45,6 +46,10 @@ public class ReportViewer implements HttpHandler {
 
         this.routingTree.insertRouting("", new RoutingResources(REPORT_VIEWER_RESOURCE_PREFIX).or(new RoutingAlias(INDEX_PATH)));
         this.routingTree.insertRouting(RESULT_PATH, new RoutingStaticFile(zipFile, ContentType.ZIP));
+        for (String version : OLD_VERSION_DIRECTORIES) {
+            this.routingTree.insertRouting(version, new RoutingResources(version).or(new RoutingAlias(version + "/" + INDEX_PATH)));
+        }
+
         this.port = port;
     }
 
@@ -64,7 +69,7 @@ public class ReportViewer implements HttpHandler {
         BindException lastException = new BindException("Could not create server. Probably due to no free port found.");
         while (server == null && remainingLookups-- > 0) {
             try {
-                server = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), currentPort), 0);
+                server = HttpServer.create(new InetSocketAddress(InetAddress.getByAddress(new byte[] {127, 0, 0, 1}), currentPort), 0);
             } catch (BindException e) {
                 logger.info("Port {} is not available. Trying to find a different one.", currentPort);
                 lastException = e;
@@ -130,5 +135,9 @@ public class ReportViewer implements HttpHandler {
 
     RoutingTree getRoutingTree() {
         return routingTree;
+    }
+
+    public static boolean hasCompiledViewer() {
+        return ResponseData.fromResourceUrl("/" + REPORT_VIEWER_RESOURCE_PREFIX + "/index.html") != null;
     }
 }

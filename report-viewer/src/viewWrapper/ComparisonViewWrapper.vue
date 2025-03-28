@@ -1,14 +1,20 @@
 <template>
   <div>
-    <ComparisonView v-if="comparison && language" :comparison="comparison" :language="language" />
+    <ComparisonView
+      v-if="comparison && language && firstBaseCodeMatches && secondBaseCodeMatches"
+      :comparison="comparison"
+      :language="language"
+      :first-base-code-matches="firstBaseCodeMatches"
+      :second-base-code-matches="secondBaseCodeMatches"
+    />
     <div
       v-else
-      class="absolute bottom-0 left-0 right-0 top-0 flex flex-col items-center justify-center"
+      class="absolute top-0 right-0 bottom-0 left-0 flex flex-col items-center justify-center"
     >
       <LoadingCircle class="mx-auto" />
     </div>
 
-    <RepositoryReference />
+    <VersionRepositoryReference />
   </div>
 </template>
 
@@ -19,9 +25,11 @@ import ComparisonView from '@/views/ComparisonView.vue'
 import type { Comparison } from '@/model/Comparison'
 import { ComparisonFactory } from '@/model/factories/ComparisonFactory'
 import LoadingCircle from '@/components/LoadingCircle.vue'
-import { redirectOnError } from '@/router'
+import { redirectOnError, router } from '@/router'
 import type { Language } from '@/model/Language'
-import RepositoryReference from '@/components/RepositoryReference.vue'
+import VersionRepositoryReference from '@/components/VersionRepositoryReference.vue'
+import type { BaseCodeMatch } from '@/model/BaseCodeReport'
+import { BaseCodeReportFactory } from '@/model/factories/BaseCodeReportFactory'
 
 const props = defineProps({
   comparisonFileName: {
@@ -32,22 +40,48 @@ const props = defineProps({
 
 const comparison: Ref<Comparison | null> = ref(null)
 const language: Ref<Language | null> = ref(null)
+const firstBaseCodeMatches: Ref<BaseCodeMatch[] | null> = ref(null)
+const secondBaseCodeMatches: Ref<BaseCodeMatch[] | null> = ref(null)
 
-// This eslint rule is disabled to allow the use of await in the setup function. Disabling this rule is safe, because the props are gathered from the url, so changing them would reload the pafe anyway.
+// This eslint rule is disabled to allow the use of await in the setup function. Disabling this rule is safe, because the props are gathered from the url, so changing them would reload the page anyway.
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
-ComparisonFactory.getComparison(props.comparisonFileName)
+const comparisonPromise = ComparisonFactory.getComparison(props.comparisonFileName)
   .then((comp) => {
     comparison.value = comp
+    return comp
   })
   .catch((error) => {
     redirectOnError(error, 'Could not load comparison:\n', 'OverviewView', 'Back to overview')
   })
 
 OverviewFactory.getOverview()
-  .then((overview) => {
-    language.value = overview.language
+  .then((r) => {
+    if (r.result == 'success') {
+      language.value = r.overview.language
+    } else if (r.result == 'oldReport') {
+      router.push({ name: 'OldVersionRedirectView', params: { version: r.version.toString() } })
+    }
   })
   .catch((error) => {
-    redirectOnError(error, 'Could not load coparison:\n')
+    redirectOnError(error, 'Could not load comparison:\n')
   })
+
+comparisonPromise
+  .then((comp) => {
+    if (!comp) return []
+    return BaseCodeReportFactory.getReport(comp.firstSubmissionId)
+  })
+  .then((report) => {
+    firstBaseCodeMatches.value = report
+  })
+  .catch(() => {})
+comparisonPromise
+  .then((comp) => {
+    if (!comp) return []
+    return BaseCodeReportFactory.getReport(comp.secondSubmissionId)
+  })
+  .then((report) => {
+    secondBaseCodeMatches.value = report
+  })
+  .catch(() => {})
 </script>

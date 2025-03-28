@@ -37,6 +37,12 @@
             <version>${revision}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.soabase.record-builder</groupId>
+            <artifactId>record-builder-processor</artifactId>
+            <version>44</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -46,5 +52,15 @@
                 <directory>src/main/resources</directory>
             </resource>
         </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.11.2</version>
+                <configuration>
+                    <sourcepath>src/main/java;target/generated-sources/annotations</sourcepath>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 </project>

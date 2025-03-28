@@ -1,9 +1,9 @@
-<!-- 
-  Base Component to seperate content into multiple chunks 
+<!--
+  Base Component to separate content into multiple chunks
 -->
 <template>
   <div
-    class="box-border rounded-md border-1 border-container-border-light bg-container-light p-2 shadow dark:border-container-border-dark dark:bg-container-dark dark:shadow-black print:border-2 print:shadow-none"
+    class="border-container-border-light bg-container-light dark:border-container-border-dark dark:bg-container-dark box-border rounded-md border p-2 shadow-sm print:border-2 print:shadow-none"
   >
     <slot></slot>
   </div>

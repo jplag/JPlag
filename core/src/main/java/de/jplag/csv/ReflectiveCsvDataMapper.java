@@ -11,7 +11,7 @@ import java.util.Optional;
 import org.apache.commons.math3.util.Pair;
 
 /**
- * Mapped data automatically based on the exposed fields and methods.
+ * Maps data automatically based on the exposed fields and methods.
  * @param <T> The mapped type. Mark included methods and fields with @{@link CsvValue}
  */
 public class ReflectiveCsvDataMapper<T> implements CsvDataMapper<T> {
@@ -50,8 +50,9 @@ public class ReflectiveCsvDataMapper<T> implements CsvDataMapper<T> {
     }
 
     /**
-     * @param type The mapped type
-     * @param titles The titles for the csv. Must be as many as @{@link CsvValue} annotation in the given type.
+     * @param type is the mapped type.
+     * @param titles are the titles for the csv. Must be as many as @{@link CsvValue} annotation in the given type.
+     * @throws IllegalArgumentException if the csv data is invalid.
      */
     public ReflectiveCsvDataMapper(Class<T> type, String[] titles) {
         this(type);

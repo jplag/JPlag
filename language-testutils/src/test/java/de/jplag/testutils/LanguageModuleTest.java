@@ -12,8 +12,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -32,6 +34,7 @@ import de.jplag.TokenType;
 import de.jplag.testutils.datacollector.TestData;
 import de.jplag.testutils.datacollector.TestDataCollector;
 import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
+import de.jplag.testutils.datacollector.TokenPositionTestData;
 
 /**
  * Base class for language module tests. Automatically adds all common tests types for jplag languages.
@@ -174,7 +177,7 @@ public abstract class LanguageModuleTest {
     final void testTokenSequence(TestDataCollector.TokenListTest test) throws ParsingException, IOException {
         List<TokenType> actual = extractTokenTypes(test.data());
         List<TokenType> expected = new ArrayList<>(test.tokens());
-        if (expected.get(expected.size() - 1) != SharedTokenType.FILE_END) {
+        if (expected.getLast() != SharedTokenType.FILE_END) {
             expected.add(SharedTokenType.FILE_END);
         }
         assertTokensMatch(expected, actual, "Extracted token from " + test.data().describeTestSource() + " does not match expected sequence.");
@@ -197,6 +200,45 @@ public abstract class LanguageModuleTest {
     }
 
     /**
+     * Tests if the tokens specified for the token position tests are present in the sources
+     * @param testData The specifications of the expected tokens and the test source
+     * @throws ParsingException If the parsing fails
+     * @throws IOException If IO operations fail. If this happens, that should be unrelated to the test itself.
+     */
+    @ParameterizedTest
+    @MethodSource("getTokenPositionTestData")
+    @DisplayName("Tests if the extracted tokens contain the tokens specified in the test files.")
+    final void testTokenPositions(TokenPositionTestData testData) throws ParsingException, IOException {
+        List<Token> extractedTokens = parseTokens(testData);
+        List<TokenPositionTestData.TokenData> failedTokens = new ArrayList<>();
+
+        for (TokenPositionTestData.TokenData expectedToken : testData.getExpectedTokens()) {
+            TokenType expectedType = this.languageTokens.stream().filter(type -> type.toString().equals(expectedToken.typeName())).findFirst()
+                    .orElseThrow(() -> new IOException(String.format("The token type %s does not exist.", expectedToken.typeName())));
+
+            if (extractedTokens.stream().noneMatch(token -> token.getType() == expectedType && token.getLine() == expectedToken.lineNumber()
+                    && token.getColumn() == expectedToken.columnNumber() && token.getLength() == expectedToken.length())) {
+                failedTokens.add(expectedToken);
+            }
+        }
+
+        if (!failedTokens.isEmpty()) {
+            String failureDescriptors = String.join(System.lineSeparator(),
+                    failedTokens.stream().map(
+                            token -> token.typeName() + " at (" + token.lineNumber() + ":" + token.columnNumber() + ") with length " + token.length())
+                            .toList());
+            fail("Some tokens weren't extracted with the correct properties:" + System.lineSeparator() + failureDescriptors);
+        }
+    }
+
+    /**
+     * @return All token positions tests that are configured
+     */
+    final List<TokenPositionTestData> getTokenPositionTestData() {
+        return ignoreEmptyTestType(this.collector.getTokenPositionTestData());
+    }
+
+    /**
      * Tests all configured test sources for a monotone order of tokens
      * @param data The test source
      * @throws ParsingException If the parser throws some error
@@ -206,7 +248,7 @@ public abstract class LanguageModuleTest {
     @MethodSource("getAllTestData")
     @DisplayName("Test that the tokens map to ascending line numbers")
     final void testMonotoneTokenOrder(TestData data) throws ParsingException, IOException {
-        List<Token> tokens = parseTokens(data);
+        List<Token> tokens = parseTokens(data).stream().filter(it -> !getIgnoredTokensForMonotoneTokenOrder().contains(it.getType())).toList();
 
         for (int i = 0; i < tokens.size() - 2; i++) {
             Token first = tokens.get(i);
@@ -231,8 +273,7 @@ public abstract class LanguageModuleTest {
     final void testTokenSequencesEndsWithFileEnd(TestData data) throws ParsingException, IOException {
         List<Token> tokens = parseTokens(data);
 
-        assertEquals(SharedTokenType.FILE_END, tokens.get(tokens.size() - 1).getType(),
-                "Last token in " + data.describeTestSource() + " is not file end.");
+        assertEquals(SharedTokenType.FILE_END, tokens.getLast().getType(), "Last token in " + data.describeTestSource() + " is not file end.");
     }
 
     /**
@@ -249,6 +290,11 @@ public abstract class LanguageModuleTest {
     @BeforeAll
     final void collectTestData() {
         collectTestData(this.collector);
+    }
+
+    @AfterAll
+    final void deleteTemporaryFiles() {
+        TemporaryFileHolder.deleteTemporaryFiles();
     }
 
     private List<Token> parseTokens(TestData source) throws ParsingException, IOException {
@@ -292,5 +338,9 @@ public abstract class LanguageModuleTest {
      */
     protected File getTestFileLocation() {
         return new File(DEFAULT_TEST_CODE_PATH_BASE.toFile(), this.language.getIdentifier());
+    }
+
+    protected List<TokenType> getIgnoredTokensForMonotoneTokenOrder() {
+        return Collections.emptyList();
     }
 }
