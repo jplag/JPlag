@@ -1,0 +1,53 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+using namespace std;
+
+int main() {
+    ofstream text("text.txt",ios::app);
+    if (!text) 
+	{
+        cout << "Error creating file." << endl;
+        return 1;
+    }
+    
+    string input;
+    cout << "Enter text: ";
+    while (true) {
+        getline(cin, input);
+        if (input.empty()) 
+            break;
+        text << input << endl;
+    }
+    text.close();
+
+    ifstream readText("text.txt");
+    if (!readText) {
+        cerr << "Error " << endl;
+        return 1;
+    }
+
+    string word, Word;
+    cout << "Enter word to search: ";
+    cin >> word;
+
+    int position = 0;
+    bool found = false;
+    while (readText >> Word) 
+	{
+        position++;
+        if (Word == word) 
+		{
+            cout << "word found at: " << position << endl;
+            found = true;
+        }
+    }
+
+    if (!found) 
+	{
+        cout << "Word not found." << endl;
+    }
+
+    readText.close();
+    return 0;
+}
