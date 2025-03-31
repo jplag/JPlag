@@ -11,11 +11,11 @@ import org.slf4j.LoggerFactory;
  */
 public class AntlrLoggerErrorListener extends BaseErrorListener {
     private static final Logger logger = LoggerFactory.getLogger(AntlrLoggerErrorListener.class);
-    private static final String ERROR_TEMPLATE = "ANTLR error - line {}:{} {}";
+    private static final String ERROR_TEMPLATE = "ANTLR error - in {} line {}:{} {}";
 
     @Override
     public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg,
             RecognitionException e) {
-        logger.error(ERROR_TEMPLATE, line, charPositionInLine, msg);
+        logger.error(ERROR_TEMPLATE, recognizer.getInputStream().getSourceName(), line, charPositionInLine, msg);
     }
 }
