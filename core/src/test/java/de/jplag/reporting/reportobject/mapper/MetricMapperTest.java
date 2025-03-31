@@ -31,7 +31,7 @@ public class MetricMapperTest {
     private final MetricMapper metricMapper = new MetricMapper(Submission::getName);
 
     @Test
-    public void test_getDistributions() {
+    void test_getDistributions() {
         // given
         JPlagResult jPlagResult = createJPlagResult(distribution(EXPECTED_AVG_DISTRIBUTION), distribution(EXPECTED_MAX_DISTRIBUTION),
                 comparison(submission("1"), submission("2"), .7, .8), comparison(submission("3"), submission("4"), .3, .9));
@@ -45,7 +45,7 @@ public class MetricMapperTest {
     }
 
     @Test
-    public void test_getTopComparisons() {
+    void test_getTopComparisons() {
         // given
         JPlagResult jPlagResult = createJPlagResult(distribution(EXPECTED_AVG_DISTRIBUTION), distribution(EXPECTED_MAX_DISTRIBUTION),
                 comparison(submission("1"), submission("2"), .7, .8), comparison(submission("3"), submission("4"), .3, .9));

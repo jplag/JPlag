@@ -14,25 +14,25 @@ public class ClusterTest {
     Cluster<Character> cluster;
 
     @Test
-    public void testCommunityStrengthPerConnectionOneMember() {
+    void testCommunityStrengthPerConnectionOneMember() {
         cluster = new Cluster<>(List.of('a'), 10, 0);
         assertEquals(0.0, cluster.getCommunityStrengthPerConnection(), EPSILON);
     }
 
     @Test
-    public void testCommunityStrengthPerConnectionTwoMembers() {
+    void testCommunityStrengthPerConnectionTwoMembers() {
         cluster = new Cluster<>(List.of('a', 'b'), 10, 0);
         assertEquals(10.0, cluster.getCommunityStrengthPerConnection(), EPSILON);
     }
 
     @Test
-    public void testCommunityStrengthPerConnectionThreeMembers() {
+    void testCommunityStrengthPerConnectionThreeMembers() {
         cluster = new Cluster<>(List.of('a', 'b', 'c'), 10, 0);
         assertEquals(10.0 / 3, cluster.getCommunityStrengthPerConnection(), EPSILON);
     }
 
     @Test
-    public void testNormalizedCommunityStrength() {
+    void testNormalizedCommunityStrength() {
         cluster = new Cluster<>(List.of('a', 'b', 'c'), 10, 0);
         @SuppressWarnings("unchecked")
         ClusteringResult<Character> clusteringResult = mock(ClusteringResult.class);

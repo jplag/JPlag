@@ -17,7 +17,7 @@ public class ComparisonReportWriterTest extends TestBase {
     private final JPlagResultWriter fileWriter = new DummyResultWriter();
 
     @Test
-    public void firsLevelOfLookupMapComplete() throws ExitException {
+    void firsLevelOfLookupMapComplete() throws ExitException {
         JPlagResult result = runJPlagWithDefaultOptions("PartialPlagiarism");
         var mapper = new ComparisonReportWriter(Submission::getName, fileWriter);
 
@@ -27,7 +27,7 @@ public class ComparisonReportWriterTest extends TestBase {
     }
 
     @Test
-    public void secondLevelOfLookupMapComplete() throws ExitException {
+    void secondLevelOfLookupMapComplete() throws ExitException {
         JPlagResult result = runJPlagWithDefaultOptions("PartialPlagiarism");
         var mapper = new ComparisonReportWriter(Submission::getName, fileWriter);
 

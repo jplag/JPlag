@@ -20,8 +20,8 @@ public record ComparisonIdentifier(String firstName, String secondName) {
             return false;
         }
 
-        return (firstName.equals(other.firstName) && secondName.equals(other.secondName))
-                || (secondName.equals(other.firstName) && firstName.equals(other.secondName));
+        return firstName.equals(other.firstName) && secondName.equals(other.secondName)
+                || secondName.equals(other.firstName) && firstName.equals(other.secondName);
     }
 
     @Override

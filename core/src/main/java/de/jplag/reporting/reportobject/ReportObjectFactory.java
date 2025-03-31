@@ -135,8 +135,7 @@ public class ReportObjectFactory {
     }
 
     private void writeOverview(JPlagResult result) {
-        List<File> folders = new ArrayList<>();
-        folders.addAll(result.getOptions().submissionDirectories());
+        List<File> folders = new ArrayList<>(result.getOptions().submissionDirectories());
         folders.addAll(result.getOptions().oldSubmissionDirectories());
 
         String baseCodePath = result.getOptions().hasBaseCode() ? result.getOptions().baseCodeSubmissionDirectory().getName() : "";
