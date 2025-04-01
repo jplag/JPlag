@@ -48,7 +48,8 @@ public class Submission implements Comparable<Submission> {
 
     /**
      * Creates a submission.
-     * @param name Identification of the submission (directory or filename).
+     * @param name is the identifier of the submission (directory or filename). May include parent directory name if JPlag
+     * is executed with multiple root directories.
      * @param submissionRootFile is the submission file, or the root of the submission itself.
      * @param isNew states whether the submission must be checked for plagiarism.
      * @param files are the files of the submissions, if the root is a single file it should just contain one file.
@@ -102,7 +103,9 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * Provides the submission name.
+     * Provides the submission name. If the submission is a single program file, it is the file name. If the submissions
+     * contains multiple program files it is the directory name. If JPlag is executed with multiple root directories the
+     * name starts the root directory identifier, e.g. <code>rootName/submissionName</code>.
      * @return name of the submission (directory or file name).
      */
     public String getName() {
@@ -117,7 +120,7 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * @return the unique file of the submission, which is either in a root folder or a subfolder of root folder when the
+     * @return the unique root of the submission, which is either in a root folder or a subfolder of root folder when the
      * subdirectory option is used.
      */
     public File getRoot() {
