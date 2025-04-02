@@ -28,8 +28,8 @@ import de.jplag.normalization.TokenSequenceNormalizer;
 import de.jplag.options.JPlagOptions;
 
 /**
- * This class represents a single submission, which can either be a single file or a directory containing multiple
- * files. It encapsulates the details and processing logic required to handle the submission files, including parsing,
+ * This class represents a single submission, which is either a single file or a directory containing multiple files. It
+ * encapsulates the details and processing logic required to handle the submission files, including parsing,
  * tokenization, and normalization.
  */
 public class Submission implements Comparable<Submission> {
@@ -50,7 +50,7 @@ public class Submission implements Comparable<Submission> {
      * Creates a submission.
      * @param name is the identifier of the submission (directory or filename). May include parent directory name if JPlag
      * is executed with multiple root directories.
-     * @param submissionRootFile is the submission file, or the root of the submission itself.
+     * @param submissionRootFile is the submission file or the root of the submission itself.
      * @param isNew states whether the submission must be checked for plagiarism.
      * @param files are the files of the submissions, if the root is a single file it should just contain one file.
      * @param language is the language of the submission.
@@ -103,9 +103,9 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * Provides the submission name. If the submission is a single program file, it is the file name. If the submissions
-     * contains multiple program files it is the directory name. If JPlag is executed with multiple root directories the
-     * name starts the root directory identifier, e.g. <code>rootName/submissionName</code>.
+     * Provides the submission name. If the submission is a single program file, it is the file name. If the submission
+     * contains multiple program files, it is the directory name. If JPlag is executed with multiple root directories, the
+     * name starts the root directory identifier, e.g., <code>rootName/submissionName</code>.
      * @return name of the submission (directory or file name).
      */
     public String getName() {
@@ -222,7 +222,7 @@ public class Submission implements Comparable<Submission> {
     /**
      * Parse files of the submission.
      * @param debugParser specifies if the submission should be copied upon parsing errors.
-     * @param normalize specifies if the tokens sequences should be normalized.
+     * @param normalize specifies if the token sequences should be normalized.
      * @param minimalTokens specifies the minimum number of tokens required of a valid submission.
      * @return Whether parsing was successful.
      * @throws LanguageException if the language parser is not able to parse at all.
@@ -290,7 +290,7 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * @return Submission containing shallow copies of its fields.
+     * @return A shallow copy of this submission with the same name, root, files, etc.
      */
     public Submission copy() {
         Submission copy = new Submission(name, submissionRootFile, isNew, files, language);
