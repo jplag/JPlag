@@ -27,7 +27,7 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
 
     /**
      * Get the total number of matched tokens for this comparison, which is the sum of the lengths of all subsequence
-     * matches.
+     * matches. This excludes ignored matches.
      */
     public int getNumberOfMatchedTokens() {
         return matches.stream().mapToInt(Match::length).sum();
@@ -54,8 +54,8 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
     }
 
     /**
-     * Computes the average or symmetric similarity between the two submissions. The similarity is adjusted based on whether
-     * both submissions contain base code matches.
+     * Computes the average (or symmetric) similarity between the two submissions. The similarity is adjusted based on
+     * whether both submissions contain base code matches.
      * @return Average similarity in interval [0, 1]. 0 means zero percent structural similarity, 1 means 100 percent
      * structural similarity.
      */
@@ -66,9 +66,9 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
     }
 
     /**
-     * @return Similarity of the first submission in interval [0, 1]. The similarity is adjusted based on whether both
-     * submissions contain base code matches. 0 means zero percent structural similarity, 1 means 100 percent structural
-     * similarity.
+     * @return Similarity of the first submission to the second in interval [0, 1]. The similarity is adjusted based on
+     * whether both submissions contain base code matches. 0 means zero percent structural similarity, 1 means 100 percent
+     * structural similarity.
      */
     public final double similarityOfFirst() {
         int divisor = firstSubmission.getSimilarityDivisor();
@@ -76,9 +76,9 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
     }
 
     /**
-     * @return Similarity of the second submission in interval [0, 1]. The similarity is adjusted based on whether both
-     * submissions contain base code matches. 0 means zero percent structural similarity, 1 means 100 percent structural
-     * similarity.
+     * @return Similarity of the second submission to the first in interval [0, 1]. The similarity is adjusted based on
+     * whether both submissions contain base code matches. 0 means zero percent structural similarity, 1 means 100 percent
+     * structural similarity.
      */
     public final double similarityOfSecond() {
         int divisor = secondSubmission.getSimilarityDivisor();
