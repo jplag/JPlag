@@ -2,6 +2,7 @@ package de.jplag;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
@@ -55,6 +56,21 @@ public class BaseCodeTest extends TestBase {
     void testBasecodePathComparison() throws ExitException {
         JPlagResult result = runJPlag("basecode", it -> it.withBaseCodeSubmissionDirectory(new File(BASE_PATH, "basecode-base")));
         assertEquals(3, result.getNumberOfSubmissions()); // "basecode/base" is now a user submission.
+    }
+
+    @Test
+    @DisplayName("test case where only one submission in a comparison has basecode matches")
+    void testPartialBasecode() throws ExitException {
+        JPlagResult result = runJPlag("basecode-partial", it -> it.withBaseCodeSubmissionDirectory(new File(BASE_PATH, "basecode-base")));
+        assertEquals(2, result.getNumberOfSubmissions());
+        assertEquals(1, result.getAllComparisons().size());
+        JPlagComparison comparison = result.getAllComparisons().getFirst();
+
+        assertTrue(comparison.firstSubmission().hasBaseCodeMatches());
+        assertTrue(comparison.secondSubmission().hasBaseCodeMatches());
+        assertEquals(0, Math.min(comparison.firstSubmission().getBaseCodeComparison().similarity(),
+                comparison.secondSubmission().getBaseCodeComparison().similarity()));
+        assertEquals(0.742857, comparison.similarity(), DELTA);
     }
 
     @Test
