@@ -153,7 +153,7 @@ public class ReportObjectFactory {
                 result.getOptions().fileSuffixes(), // fileExtensions
                 submissionNameToIdMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey)), // submissionIds
                 submissionNameToNameToComparisonFileName, // result.getOptions().getMinimumTokenMatch(),
-                List.of(), // failedSubmissionNames
+                result.getSubmissions().getInvalidSubmissions().stream().map(Submission::getName).toList(), // failedSubmissionNames
                 result.getOptions().excludedFiles(), // excludedFiles
                 result.getOptions().minimumTokenMatch(), // matchSensitivity
                 getDate(), // dateOfExecution
