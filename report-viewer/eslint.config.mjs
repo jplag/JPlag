@@ -2,6 +2,7 @@ import pluginVue from 'eslint-plugin-vue'
 import js from '@eslint/js'
 import tseslint from 'typescript-eslint'
 import vueParser from 'vue-eslint-parser'
+import globals from "globals";
 import eslintConfigPrettier from 'eslint-config-prettier'
 
 export default [
@@ -20,6 +21,9 @@ export default [
       parser: vueParser,
       parserOptions: {
         parser: tseslint.parser
+      },
+      globals: {
+        ...globals.browser,
       }
     },
     rules: {
