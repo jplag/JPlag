@@ -1,6 +1,10 @@
 <template>
   <div>
-    <ClusterView v-if="overview" :overview="overview" :cluster="overview.clusters[clusterIndex]" />
+    <ClusterView
+      v-if="clusters !== null && topComparisons !== null"
+      :top-comparisons="topComparisons"
+      :cluster="clusters[clusterIndex]"
+    />
     <div
       v-else
       class="absolute top-0 right-0 bottom-0 left-0 flex flex-col items-center justify-center"
@@ -14,12 +18,14 @@
 
 <script setup lang="ts">
 import { type Ref, ref, computed } from 'vue'
-import { OverviewFactory } from '@/model/factories/OverviewFactory'
 import ClusterView from '@/views/ClusterView.vue'
 import LoadingCircle from '@/components/LoadingCircle.vue'
-import type { Overview } from '@/model/Overview'
-import { redirectOnError, router } from '@/router'
+import { redirectOnError } from '@/router'
 import VersionRepositoryReference from '@/components/VersionRepositoryReference.vue'
+import type { ComparisonListElement } from '@/model/ComparisonListElement'
+import { TopComparisonFactory } from '@/model/factories/TopComparisonFactory'
+import type { Cluster } from '@/model/Cluster'
+import { ClusterFactory } from '@/model/factories/ClusterFactory'
 
 const props = defineProps({
   clusterIndex: {
@@ -30,17 +36,19 @@ const props = defineProps({
 
 const clusterIndex = computed(() => parseInt(props.clusterIndex))
 
-const overview: Ref<Overview | null> = ref(null)
+const topComparisons: Ref<ComparisonListElement[] | null> = ref(null)
+const clusters: Ref<Cluster[] | null> = ref(null)
 
-OverviewFactory.getOverview()
-  .then((r) => {
-    if (r.result == 'success') {
-      overview.value = r.overview
-    } else if (r.result == 'oldReport') {
-      router.push({ name: 'OldVersionRedirectView', params: { version: r.version.toString() } })
+ClusterFactory.getClusters()
+  .then((r) => (clusters.value = r))
+  .then(() => {
+    if (clusters.value === null) {
+      throw new Error('No clusters found')
     }
+    return TopComparisonFactory.getTopComparisons(clusters.value)
   })
-  .catch((error) => {
-    redirectOnError(error, 'Could not load cluster:\n', 'OverviewView', 'Back to overview')
-  })
+  .then((r) => (topComparisons.value = r))
+  .catch((error) =>
+    redirectOnError(error, 'Could not load clusters:\n', 'OverviewView', 'Back to overview')
+  )
 </script>

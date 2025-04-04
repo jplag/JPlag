@@ -1,7 +1,9 @@
 <template>
   <div>
     <ComparisonView
-      v-if="comparison && language && firstBaseCodeMatches && secondBaseCodeMatches"
+      v-if="
+        comparison && language && firstBaseCodeMatches !== null && secondBaseCodeMatches !== null
+      "
       :comparison="comparison"
       :language="language"
       :first-base-code-matches="firstBaseCodeMatches"
@@ -20,16 +22,16 @@
 
 <script setup lang="ts">
 import { type Ref, ref } from 'vue'
-import { OverviewFactory } from '@/model/factories/OverviewFactory'
 import ComparisonView from '@/views/ComparisonView.vue'
 import type { Comparison } from '@/model/Comparison'
 import { ComparisonFactory } from '@/model/factories/ComparisonFactory'
 import LoadingCircle from '@/components/LoadingCircle.vue'
-import { redirectOnError, router } from '@/router'
+import { redirectOnError } from '@/router'
 import type { Language } from '@/model/Language'
 import VersionRepositoryReference from '@/components/VersionRepositoryReference.vue'
 import type { BaseCodeMatch } from '@/model/BaseCodeReport'
 import { BaseCodeReportFactory } from '@/model/factories/BaseCodeReportFactory'
+import { OptionsFactory } from '@/model/factories/OptionsFactory'
 
 const props = defineProps({
   comparisonFileName: {
@@ -50,21 +52,15 @@ const comparisonPromise = ComparisonFactory.getComparison(props.comparisonFileNa
     comparison.value = comp
     return comp
   })
-  .catch((error) => {
+  .catch((error) =>
     redirectOnError(error, 'Could not load comparison:\n', 'OverviewView', 'Back to overview')
-  })
+  )
 
-OverviewFactory.getOverview()
+OptionsFactory.getCliOptions()
   .then((r) => {
-    if (r.result == 'success') {
-      language.value = r.overview.language
-    } else if (r.result == 'oldReport') {
-      router.push({ name: 'OldVersionRedirectView', params: { version: r.version.toString() } })
-    }
+    language.value = r.language
   })
-  .catch((error) => {
-    redirectOnError(error, 'Could not load comparison:\n')
-  })
+  .catch((error) => redirectOnError(error, 'Could not load comparison:\n'))
 
 comparisonPromise
   .then((comp) => {

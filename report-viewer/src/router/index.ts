@@ -6,6 +6,7 @@ import ErrorView from '@/views/ErrorView.vue'
 import InformationViewWrapper from '@/viewWrapper/InformationViewWrapper.vue'
 import ClusterViewWrapper from '@/viewWrapper/ClusterViewWrapper.vue'
 import OldVersionRedirectView from '@/views/OldVersionRedirectView.vue'
+import { VersionChecker } from '@/model/factories/VersionChecker'
 
 /**
  * The router is used to navigate between the different views of the application.
@@ -83,6 +84,27 @@ router.onError((error) => {
   }
   hasHadRouterError = true
   redirectOnError(error, 'An error occurred while routing. Please reload the page.\n')
+})
+
+router.beforeEach(async (to, from) => {
+  if (to.name === 'ErrorView') {
+    return true
+  }
+  if (to.name === 'OldVersionRedirectView') {
+    return true
+  }
+  if (from.name === 'FileUploadView') {
+    return true
+  }
+  const versionResult = await VersionChecker.verifyVersion()
+  if (versionResult && !versionResult.valid) {
+    router.push({
+      name: 'OldVersionRedirectView',
+      params: { version: versionResult.version.toString() }
+    })
+    return false
+  }
+  return true
 })
 
 export { router, redirectOnError }

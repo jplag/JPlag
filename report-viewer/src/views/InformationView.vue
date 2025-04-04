@@ -107,22 +107,22 @@
 
       <ScrollableComponent class="grow px-4 pt-2">
         <TextInformation label="Date of Execution" class="pb-1">{{
-          overview.dateOfExecution
+          runInformation.dateOfExecution
         }}</TextInformation>
         <TextInformation label="Execution Duration" class="pb-1"
-          >{{ overview.durationOfExecution }} ms</TextInformation
+          >{{ runInformation.executionTime }} ms</TextInformation
         >
         <TextInformation label="Total Submissions" class="pb-1">{{
           store().getSubmissionIds.length
         }}</TextInformation>
         <TextInformation label="Total Comparisons" class="pb-1">{{
-          overview.totalComparisons
+          runInformation.totalComparisons
         }}</TextInformation>
         <TextInformation label="Shown Comparisons" class="pb-1">{{
-          overview.shownComparisons
+          shownComparisons
         }}</TextInformation>
         <TextInformation label="Missing Comparisons" class="pb-1">{{
-          overview.missingComparisons
+          missingComparisons
         }}</TextInformation>
       </ScrollableComponent>
     </Container>
@@ -134,22 +134,31 @@ import Container from '@/components/ContainerComponent.vue'
 import TextInformation from '@/components/TextInformation.vue'
 import ScrollableComponent from '@/components/ScrollableComponent.vue'
 import { store } from '@/stores/store'
-import { Overview } from '@/model/Overview'
-import { onErrorCaptured, type PropType } from 'vue'
+import { computed, onErrorCaptured, type PropType } from 'vue'
 import { redirectOnError } from '@/router'
 import type { CliOptions } from '@/model/CliOptions'
 import { metricToolTips } from '@/model/MetricType'
+import type { RunInformation } from '@/model/RunInformation'
 
-defineProps({
-  overview: {
-    type: Object as PropType<Overview>,
+const props = defineProps({
+  runInformation: {
+    type: Object as PropType<RunInformation>,
     required: true
   },
   options: {
     type: Object as PropType<CliOptions>,
     required: true
+  },
+  topComparisonsCount: {
+    type: Number,
+    required: true
   }
 })
+
+const shownComparisons = computed(() => props.topComparisonsCount)
+const missingComparisons = computed(
+  () => props.runInformation.totalComparisons - shownComparisons.value
+)
 
 onErrorCaptured((error) => {
   redirectOnError(error, 'Error displaying information:\n', 'OverviewView', 'Back to overview')

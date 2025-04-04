@@ -1,6 +1,11 @@
 <template>
   <div>
-    <InformationView v-if="overview && cliOptions" :overview="overview" :options="cliOptions" />
+    <InformationView
+      v-if="runInformation && cliOptions && topComparisonCount !== null"
+      :run-information="runInformation"
+      :options="cliOptions"
+      :top-comparisons-count="topComparisonCount"
+    />
     <div
       v-else
       class="absolute top-0 right-0 bottom-0 left-0 flex flex-col items-center justify-center"
@@ -14,31 +19,36 @@
 
 <script setup lang="ts">
 import { type Ref, ref } from 'vue'
-import { OverviewFactory } from '@/model/factories/OverviewFactory'
 import InformationView from '@/views/InformationView.vue'
-import type { Overview } from '@/model/Overview'
 import LoadingCircle from '@/components/LoadingCircle.vue'
-import { redirectOnError, router } from '@/router'
+import { redirectOnError } from '@/router'
 import { OptionsFactory } from '@/model/factories/OptionsFactory'
 import type { CliOptions } from '@/model/CliOptions'
 import VersionRepositoryReference from '@/components/VersionRepositoryReference.vue'
+import type { RunInformation } from '@/model/RunInformation'
+import { RunInformationFactory } from '@/model/factories/RunInformationFactory'
+import { TopComparisonFactory } from '@/model/factories/TopComparisonFactory'
 
-const overview: Ref<Overview | null> = ref(null)
+const runInformation: Ref<RunInformation | null> = ref(null)
 const cliOptions: Ref<CliOptions | undefined> = ref(undefined)
+const topComparisonCount: Ref<number | null> = ref(null)
 
-OverviewFactory.getOverview()
-  .then((r) => {
-    if (r.result == 'success') {
-      overview.value = r.overview
-    } else if (r.result == 'oldReport') {
-      router.push({ name: 'OldVersionRedirectView', params: { version: r.version.toString() } })
-    }
-  })
-  .catch((error) => {
-    redirectOnError(error, 'Could not load information:\n', 'OverviewView', 'Back to overview')
-  })
+RunInformationFactory.getRunInformation()
+  .then((r) => (runInformation.value = r))
+  .catch((error) =>
+    redirectOnError(error, 'Could not load run information:\n', 'OverviewView', 'Back to overview')
+  )
 
 OptionsFactory.getCliOptions()
   .then((o) => (cliOptions.value = o))
-  .catch((error) => console.error('Could not load full options.', error))
+  .catch((error) =>
+    redirectOnError(error, 'Could not load run information:\n', 'OverviewView', 'Back to overview')
+  )
+
+// we can provide the clusters as an empty array as we are only interested in the number of the top comparisons
+TopComparisonFactory.getTopComparisons([])
+  .then((r) => (topComparisonCount.value = r.length))
+  .catch((error) =>
+    redirectOnError(error, 'Could not load run information:\n', 'OverviewView', 'Back to overview')
+  )
 </script>
