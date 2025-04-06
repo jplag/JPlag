@@ -1,7 +1,7 @@
 import { test, expect, Page } from '@playwright/test'
 import { uploadFile } from './TestUtils'
 
-test.only('Test comparison table and comparsion view', async ({ page }) => {
+test('Test comparison table and comparsion view', async ({ page }) => {
   await uploadFile('progpedia-report.zip', page)
 
   const comparisonContainer = page.getByText('Hide AllSort By')
