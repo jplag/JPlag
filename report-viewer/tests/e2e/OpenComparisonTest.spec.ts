@@ -60,7 +60,7 @@ for (const testSet of testSets) {
   test(`Can open ${testSet.datasetName}`, async ({ page }) => {
     await uploadFile(testSet.datasetName, page)
 
-    const comparisonTable = await page.getByText('Cluster1').textContent()
+    const comparisonTable = await page.getByText('Cluster 1').textContent()
 
     const lineRegEx = RegExp('1' + testSet.firstSubmissionName + testSet.secondSubmissionName)
     expect(comparisonTable).toMatch(lineRegEx)
