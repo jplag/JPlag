@@ -111,7 +111,7 @@ const props = defineProps({
 
 const emit = defineEmits(['matchSelected'])
 
-const collapsed = ref(true)
+const collapsed = ref(false)
 const lineRefs = ref<HTMLElement[]>([])
 
 const codeLines: Ref<{ line: string; matches: MatchInSingleFile[] }[]> = computed(() =>
