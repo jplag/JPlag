@@ -343,7 +343,7 @@ function getSortedComparisons(comparisons: ComparisonListElement[]) {
   comparisons.sort((a, b) => {
     const numsA = sorting.column.value(a)
     const numsB = sorting.column.value(b)
-    for (let i = numsA.length - 1; i >= 0; i--) {
+    for (let i = 0; i < numsA.length; i++) {
       const comparison = sorting.direction.comparator(numsA[i], numsB[i])
       if (comparison != 0) {
         return comparison
