@@ -5,6 +5,15 @@
   <div
     class="flex h-fit max-w-full min-w-0 flex-row space-x-1 overflow-x-hidden text-xs print:hidden"
   >
+    <ToolTipComponent direction="right">
+      <template #default>
+        <OptionComponent label="Matches:" />
+      </template>
+      <template #tooltip>
+        <p class="text-sm whitespace-pre">Click on a match to show it in the code view.</p>
+      </template>
+    </ToolTipComponent>
+
     <ToolTipComponent v-if="hasBaseCode" direction="right" class="pr-3">
       <template #default>
         <OptionComponent label="Base Code" :style="{ background: getMatchColor(0.3, 'base') }" />
@@ -32,15 +41,6 @@
             <span v-else>No Basecode in Submission</span>
           </p>
         </div>
-      </template>
-    </ToolTipComponent>
-
-    <ToolTipComponent direction="right">
-      <template #default>
-        <OptionComponent label="Match Files: TokenCount" />
-      </template>
-      <template #tooltip>
-        <p class="text-sm whitespace-pre">Click on a match to show it in the code view.</p>
       </template>
     </ToolTipComponent>
 
