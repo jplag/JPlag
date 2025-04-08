@@ -1,0 +1,40 @@
+name: Check that all dependencies are in coverage report
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/verify-help-text.yml"
+      - ".github/workflows/scripts/checkHelpText.py"
+      - "**.java"
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - ".github/workflows/verify-help-text.yml"
+      - ".github/workflows/scripts/checkHelpText.py"
+      - "**.java"
+
+jobs:
+  check_coverage:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        java-version: 21
+        distribution: 'temurin'
+  
+    - name: Build Assembly
+      run: mvn -DskipTests clean package assembly:single
+      
+    - name: Rename and move Jar
+      run: mv cli/target/jplag-*-jar-with-dependencies.jar .github/workflows/scripts/jplag.jar
+    
+    - name: Run script
+      working-directory: .github/workflows/scripts
+      run: |
+        python checkHelpText.py
