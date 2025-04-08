@@ -120,11 +120,13 @@ function navigateToOverview() {
  */
 async function handleFile(file: Blob) {
   loadingFiles.value = true
+  // empty case is for .jplag files
   switch (file.type) {
     case 'application/zip':
     case 'application/zip-compressed':
     case 'application/x-zip-compressed':
     case 'application/x-zip':
+    case '':
       store().setLoadingType('zip')
       await new ZipFileHandler().handleFile(file)
       return navigateToOverview()

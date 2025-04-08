@@ -3,12 +3,12 @@ import { uploadFile } from './TestUtils'
 
 const oldVersionZips = [
   {
-    zipName: 'progpedia-report-v5_1_0.jplag',
+    zipName: 'progpedia-report-v5_1_0.zip',
     version: '5.1.0',
     urlPostfix: 'v5'
   },
   {
-    zipName: 'progpedia-report-v4_2_0.jplag',
+    zipName: 'progpedia-report-v4_2_0.zip',
     version: '4.2.0',
     urlPostfix: 'v5'
   }

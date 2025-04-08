@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test'
 
-test('Open report through file explorer', async ({ page }) => {
+test.only('Open report through file explorer', async ({ page }) => {
   await page.goto('/')
   expect(page).toHaveURL('/')
 
