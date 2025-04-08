@@ -17,7 +17,7 @@ on:
       - "**.java"
 
 jobs:
-  check_coverage:
+  check_help_text:
     runs-on: ubuntu-latest
     
     steps:
