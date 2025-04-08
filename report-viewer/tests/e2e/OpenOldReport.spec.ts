@@ -3,12 +3,12 @@ import { uploadFile } from './TestUtils'
 
 const oldVersionZips = [
   {
-    zipName: 'progpedia-report-v5_1_0.zip',
+    zipName: 'progpedia-report-v5_1_0.jplag',
     version: '5.1.0',
     urlPostfix: 'v5'
   },
   {
-    zipName: 'progpedia-report-v4_2_0.zip',
+    zipName: 'progpedia-report-v4_2_0.jplag',
     version: '4.2.0',
     urlPostfix: 'v5'
   }
@@ -33,7 +33,7 @@ for (const oldVersion of oldVersionZips) {
 }
 
 test('Test unsupported old version', async ({ page }) => {
-  await uploadFile('progpedia-report-v4_0_0.zip', page, getWaitForOldPageFunction('4.0.0'))
+  await uploadFile('progpedia-report-v4_0_0.jplag', page, getWaitForOldPageFunction('4.0.0'))
 
   const bodyContent = await page.locator('body').textContent()
   expect(bodyContent).toContain(

@@ -110,7 +110,7 @@ Parameter descriptions:
                           against.
       -r, --result-file=<resultFile>
                         Name of the file in which the comparison results will
-                          be stored (default: results). Missing .zip endings
+                          be stored (default: results). Missing .jplag endings
                           will be automatically added.
       -t, --min-tokens=<minTokenMatch>
                         Tunes the comparison sensitivity by adjusting the

@@ -154,7 +154,7 @@ async function uploadFileOnDrag(e: DragEvent) {
 async function uploadFileThroughWindow() {
   let input = document.createElement('input')
   input.type = 'file'
-  input.accept = '.zip'
+  input.accept = '.jplag,.zip'
   input.multiple = false
   input.onchange = () => {
     const files = input.files
@@ -224,7 +224,7 @@ onErrorCaptured((error) => {
 })
 
 if (exampleFiles.value) {
-  store().state.uploadedFileName = 'progpedia.zip'
+  store().state.uploadedFileName = 'progpedia.jplag'
   navigateToOverview()
 }
 </script>
