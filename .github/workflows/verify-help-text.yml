@@ -1,4 +1,4 @@
-name: Check that all help texts is up to date
+name: Check that all help texts are up to date
 
 on:
   workflow_dispatch:
