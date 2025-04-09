@@ -13,7 +13,8 @@ import java.util.List;
  */
 public record JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches, List<Match> ignoredMatches) {
     /**
-     * Initializes a new comparison.
+     * Constructs a new comparison between two submissions. The match lists are wrapped as unmodifiable to preserve
+     * immutability.
      * @param firstSubmission is the first of the two submissions.
      * @param secondSubmission is the second of the two submissions.
      * @param matches is the list of all matches between the two submissions.

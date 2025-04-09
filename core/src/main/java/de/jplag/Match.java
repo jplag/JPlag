@@ -1,7 +1,8 @@
 package de.jplag;
 
 /**
- * Represents two sections of two submissions that are similar.
+ * Represents two code fragments in two submissions that are structurally similar. These sections are identical token
+ * subsequences.
  * @param startOfFirst is the index of the first token of the match in the first submission.
  * @param startOfSecond is the index of the first token of the match in the second submission.
  * @param length is the length of these similar sections (number of tokens).
