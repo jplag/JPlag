@@ -58,7 +58,7 @@ public class JPlagResult {
      * clustering algorithms to this result object.
      * @param clustering is the list of clustering results.
      */
-    public void setClusteringResult(List<ClusteringResult<Submission>> clustering) {
+    /* package-private */ void setClusteringResult(List<ClusteringResult<Submission>> clustering) {
         this.clusteringResult = clustering;
     }
 
