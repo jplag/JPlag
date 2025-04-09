@@ -144,9 +144,14 @@ function getLineRect(lineNumber: number): DOMRect {
   return lineRefs.value[lineNumber - 1].getBoundingClientRect()
 }
 
+function isCollapsed(): boolean {
+  return collapsed.value
+}
+
 defineExpose({
   collapse,
   expand,
+  isCollapsed,
   getLineRect
 })
 

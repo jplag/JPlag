@@ -9,11 +9,11 @@
         {{ fileOwnerDisplayName }}:
       </h3>
       <div class="text-gray-600 dark:text-gray-300">{{ tokenCount }} total tokens</div>
-      <Button class="space-x-2 print:hidden" @click="expandAll()"
+      <Button v-if="allCollapsed" class="space-x-2 print:hidden" @click="expandAll()"
         ><FontAwesomeIcon :icon="['fas', 'expand-alt']" />
         <p>Expand All</p></Button
       >
-      <Button class="space-x-2 print:hidden" @click="collapseAll()"
+      <Button v-else class="space-x-2 print:hidden" @click="collapseAll()"
         ><FontAwesomeIcon :icon="['fas', 'compress-alt']" />
         <p>Collapse All</p></Button
       >
@@ -214,6 +214,10 @@ function collapseAll() {
 function expandAll() {
   codePanels.value.forEach((panel) => panel.expand())
 }
+
+const allCollapsed = computed(() => {
+  return codePanels.value.every((panel) => panel.isCollapsed())
+})
 
 defineExpose({
   scrollTo,
