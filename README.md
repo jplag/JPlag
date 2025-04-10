@@ -120,7 +120,7 @@ Parameter descriptions:
 
 Advanced
       --csv-export      Export pairwise similarity values as a CSV file.
-      -b, --debug           Store on-parsable files in error folder.
+      -d, --debug           Store on-parsable files in error folder.
       --log-level=<{ERROR, WARN, INFO, DEBUG, TRACE}>
                         Set the log level for the cli.
       -m, --similarity-threshold=<similarityThreshold>
