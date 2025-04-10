@@ -19,6 +19,7 @@ import de.jplag.cli.picocli.CliInputHandler;
 import de.jplag.exceptions.ExitException;
 import de.jplag.logging.ProgressBarLogger;
 import de.jplag.options.JPlagOptions;
+import de.jplag.pdf.PdfPrinter;
 import de.jplag.util.FileUtils;
 
 /**
@@ -103,6 +104,15 @@ public final class CLI {
         JPlagOptionsBuilder optionsBuilder = new JPlagOptionsBuilder(this.inputHandler);
         JPlagOptions options = optionsBuilder.buildOptions();
         JPlagResult result = JPlagRunner.runJPlag(options);
+
+        PdfPrinter printer = new PdfPrinter(result, new File("/home/alexander/tmp/test.pdf"));
+        printer.printOverview();
+        try {
+            printer.printComparison(result.getAllComparisons().get(303));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        printer.save();
 
         OutputFileGenerator.generateJPlagResultZip(result, target);
         OutputFileGenerator.generateCsvOutput(result, new File(getResultFileBaseName()), this.inputHandler.getCliOptions());

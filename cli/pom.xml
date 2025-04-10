@@ -17,6 +17,12 @@
             <version>${revision}</version>
         </dependency>
 
+        <dependency>
+            <groupId>de.jplag</groupId>
+            <artifactId>pdf-export</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
         <!-- Languages -->
         <dependency>
             <groupId>de.jplag</groupId>
