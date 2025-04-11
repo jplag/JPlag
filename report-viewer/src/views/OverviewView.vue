@@ -7,7 +7,7 @@
   >
     <Container class="col-start-1 row-start-1 md:col-end-3 md:row-end-2">
       <h2>JPlag Report</h2>
-      <div class="flex flex-col gap-5 md:flex-row md:items-center">
+      <div class="flex flex-col gap-x-5 gap-y-2 md:flex-row md:items-center">
         <TextInformation label="Submission Directory" class="flex-auto">{{
           submissionPathValue
         }}</TextInformation>
