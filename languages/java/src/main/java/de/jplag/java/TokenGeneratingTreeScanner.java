@@ -135,8 +135,8 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
                 variableRegistry.registerVariable(name, VariableScope.CLASS, mutable);
             }
         }
-
-        long start = positions.getEndPosition(ast, node.getModifiers()) + 1;
+        boolean hasModifiers = !node.getModifiers().getFlags().isEmpty();
+        long start = hasModifiers ? positions.getEndPosition(ast, node.getModifiers()) + 1 : positions.getStartPosition(ast, node);
         long nameLength = node.getSimpleName().length();
         long end = positions.getEndPosition(ast, node) - 1;
         CodeSemantics semantics = CodeSemantics.createControl();
