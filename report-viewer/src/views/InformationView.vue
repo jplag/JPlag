@@ -26,7 +26,7 @@
             options.exclusionFileName
           }}</TextInformation>
           <TextInformation label="Similarity Metric">{{
-            metricToolTips[options.similarityMetric].longName
+            options.similarityMetric.longName
           }}</TextInformation>
           <TextInformation label="Similarity Threshold">{{
             options.similarityThreshold
@@ -41,7 +41,7 @@
           <div v-if="options.clusterOptions.enabled" class="mt-5! space-y-2">
             <h3 class="font-bold">Clustering:</h3>
             <TextInformation label="Similarity Metric">{{
-              metricToolTips[options.clusterOptions.similarityMetric].longName
+              options.clusterOptions.similarityMetric.longName
             }}</TextInformation>
             <TextInformation label="Algorithm">{{
               options.clusterOptions.algorithm
@@ -138,7 +138,6 @@ import { Overview } from '@/model/Overview'
 import { onErrorCaptured, type PropType } from 'vue'
 import { redirectOnError } from '@/router'
 import type { CliOptions } from '@/model/CliOptions'
-import { metricToolTips } from '@/model/MetricType'
 
 defineProps({
   overview: {

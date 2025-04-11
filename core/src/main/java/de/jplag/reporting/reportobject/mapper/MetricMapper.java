@@ -47,6 +47,10 @@ public class MetricMapper {
     }
 
     private Map<String, Double> getComparisonMetricMap(JPlagComparison comparison) {
-        return Map.of(SimilarityMetric.AVG.name(), comparison.similarity(), SimilarityMetric.MAX.name(), comparison.maximalSimilarity());
+        Map<String, Double> metricMap = new HashMap<>();
+        for (SimilarityMetric metric : SimilarityMetric.values()) {
+            metricMap.put(metric.name(), metric.applyAsDouble(comparison));
+        }
+        return metricMap;
     }
 }
