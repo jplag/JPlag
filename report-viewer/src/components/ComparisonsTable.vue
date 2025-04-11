@@ -3,11 +3,7 @@
 -->
 <template>
   <div class="flex flex-col">
-    <ComparisonTableFilter
-      v-model:search-string="searchString"
-      :enable-cluster-sorting="clusters != undefined"
-      :header="header"
-    />
+    <ComparisonTableFilter v-model:search-string="searchString" :header="header" />
 
     <div class="flex flex-col overflow-hidden">
       <div class="font-bold">
@@ -18,10 +14,22 @@
           <div class="tableCellSimilarity tableCell flex-col!">
             <div>Similarity</div>
             <div class="flex w-full flex-row">
-              <ToolTipComponent class="flex-1" :direction="displayClusters ? 'top' : 'left'">
+              <ToolTipComponent
+                class="flex-1 cursor-pointer"
+                :direction="displayClusters ? 'top' : 'left'"
+                @click="setSorting('averageSimilarity')"
+              >
                 <template #default>
                   <p class="w-full text-center">
                     {{ metricToolTips[MetricType.AVERAGE].shortName }}
+                    <FontAwesomeIcon
+                      :icon="
+                        store().uiState.comparisonTableSorting.column.id == 'averageSimilarity'
+                          ? store().uiState.comparisonTableSorting.direction.icon
+                          : faSort
+                      "
+                      class="ml-1"
+                    />
                   </p>
                 </template>
                 <template #tooltip>
@@ -31,10 +39,22 @@
                 </template>
               </ToolTipComponent>
 
-              <ToolTipComponent class="flex-1" :direction="displayClusters ? 'top' : 'left'">
+              <ToolTipComponent
+                class="flex-1 cursor-pointer"
+                :direction="displayClusters ? 'top' : 'left'"
+                @click="setSorting('maximumSimilarity')"
+              >
                 <template #default>
                   <p class="w-full text-center">
                     {{ metricToolTips[MetricType.MAXIMUM].shortName }}
+                    <FontAwesomeIcon
+                      :icon="
+                        store().uiState.comparisonTableSorting.column.id == 'maximumSimilarity'
+                          ? store().uiState.comparisonTableSorting.direction.icon
+                          : faSort
+                      "
+                      class="ml-1"
+                    />
                   </p>
                 </template>
                 <template #tooltip>
@@ -45,7 +65,21 @@
               </ToolTipComponent>
             </div>
           </div>
-          <div v-if="displayClusters" class="tableCellCluster tableCell items-center">Cluster</div>
+          <div
+            v-if="displayClusters"
+            class="tableCellCluster tableCell cursor-pointer items-center"
+            @click="setSorting('cluster')"
+          >
+            Cluster
+            <FontAwesomeIcon
+              :icon="
+                store().uiState.comparisonTableSorting.column.id == 'cluster'
+                  ? store().uiState.comparisonTableSorting.direction.icon
+                  : faSort
+              "
+              class="ml-1"
+            />
+          </div>
         </div>
       </div>
 
@@ -116,10 +150,10 @@
                   class="tableCellCluster tableCell flex flex-col! items-center"
                 >
                   <RouterLink
-                    v-if="item.clusterIndex >= 0"
+                    v-if="(item as ComparisonListElement).cluster"
                     :to="{
                       name: 'ClusterView',
-                      params: { clusterIndex: item.clusterIndex }
+                      params: { clusterIndex: item.cluster.index }
                     }"
                     class="flex w-full justify-center text-center"
                   >
@@ -129,26 +163,18 @@
                       :tool-tip-container-will-be-centered="true"
                     >
                       <template #default>
-                        {{ clusters?.[item.clusterIndex].members?.length }}
+                        {{ item.cluster.members.length }}
                         <FontAwesomeIcon
                           :icon="['fas', 'user-group']"
-                          :style="{ color: clusterIconColors[item.clusterIndex] }"
+                          :style="{ color: clusterIconColors[item.cluster.index] }"
                         />
-                        {{
-                          (
-                            (clusters?.[item.clusterIndex].averageSimilarity as number) * 100
-                          ).toFixed(2)
-                        }}%
+                        {{ ((item.cluster.averageSimilarity as number) * 100).toFixed(2) }}%
                       </template>
                       <template #tooltip>
                         <p class="text-sm whitespace-nowrap">
-                          {{ clusters?.[item.clusterIndex].members?.length }} submissions in cluster
-                          with average similarity of
-                          {{
-                            (
-                              (clusters?.[item.clusterIndex].averageSimilarity as number) * 100
-                            ).toFixed(2)
-                          }}%
+                          {{ item.cluster.members?.length }} submissions in cluster with average
+                          similarity of
+                          {{ ((item.cluster.averageSimilarity as number) * 100).toFixed(2) }}%
                         </p>
                       </template>
                     </ToolTipComponent>
@@ -175,12 +201,13 @@ import { store } from '@/stores/store'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faUserGroup } from '@fortawesome/free-solid-svg-icons'
+import { faSort, faUserGroup } from '@fortawesome/free-solid-svg-icons'
 import { generateHues } from '@/utils/ColorUtils'
 import ToolTipComponent from './ToolTipComponent.vue'
 import { MetricType, metricToolTips } from '@/model/MetricType'
 import NameElement from './NameElement.vue'
 import ComparisonTableFilter from './ComparisonTableFilter.vue'
+import { Column, Direction, type ColumnId } from '@/model/ui/ComparisonSorting'
 
 library.add(faUserGroup)
 
@@ -312,21 +339,18 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
 }
 
 function getSortedComparisons(comparisons: ComparisonListElement[]) {
-  comparisons.sort(
-    (a, b) =>
-      b.similarities[store().uiState.comparisonTableSortingMetric] -
-      a.similarities[store().uiState.comparisonTableSortingMetric]
-  )
-
-  if (store().uiState.comparisonTableClusterSorting) {
-    comparisons.sort((a, b) => b.clusterIndex - a.clusterIndex)
-
-    comparisons.sort(
-      (a, b) =>
-        getClusterFor(b.clusterIndex).averageSimilarity -
-        getClusterFor(a.clusterIndex).averageSimilarity
-    )
-  }
+  const sorting = store().uiState.comparisonTableSorting
+  comparisons.sort((a, b) => {
+    const numsA = sorting.column.value(a)
+    const numsB = sorting.column.value(b)
+    for (let i = 0; i < numsA.length; i++) {
+      const comparison = sorting.direction.comparator(numsA[i], numsB[i])
+      if (comparison != 0) {
+        return comparison
+      }
+    }
+    return 0
+  })
 
   let index = 0
   comparisons.forEach((c) => {
@@ -335,14 +359,17 @@ function getSortedComparisons(comparisons: ComparisonListElement[]) {
   return comparisons
 }
 
-function getClusterFor(clusterIndex: number) {
-  if (clusterIndex < 0 || !props.clusters) {
-    return { averageSimilarity: 0 }
+function setSorting(column: ColumnId) {
+  if (store().uiState.comparisonTableSorting.column.id == column) {
+    store().uiState.comparisonTableSorting.direction =
+      store().uiState.comparisonTableSorting.direction.next
+  } else {
+    store().uiState.comparisonTableSorting.column = Column.columns[column]
+    store().uiState.comparisonTableSorting.direction = Direction.descending
   }
-  return props.clusters[clusterIndex]
 }
 
-const displayClusters = props.clusters != undefined
+const displayClusters = computed(() => props.clusters != undefined)
 
 let clusterIconHues = [] as Array<number>
 const lightmodeSaturation = 80

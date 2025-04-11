@@ -4,30 +4,28 @@ import { uploadFile } from './TestUtils'
 test('Test comparison table and comparsion view', async ({ page }) => {
   await uploadFile('progpedia-report.zip', page)
 
-  const comparisonContainer = page.getByText('Hide AllSort By')
-
   // check for elements in average similarity table
   await page.getByPlaceholder('Filter/Unhide Comparisons').fill('Purple')
-  const comparisonTableAverageSorted = await page.getByText(/Cluster[0-9]/).textContent()
+  const comparisonTableAverageSorted = await page.getByText(/Cluster [0-9]/).textContent()
   expect(comparisonTableAverageSorted).toContain('100Purple FishBeige Dog')
 
-  await comparisonContainer.getByText('Maximum Similarity', { exact: true }).click()
+  await page.getByText('MAX', { exact: true }).click()
   // check for elements in maximum similarity table
   await page.getByPlaceholder('Filter/Unhide Comparisons').fill('Blue')
-  const comparisonTableMaxSorted = await page.getByText(/Cluster[0-9]/).textContent()
+  const comparisonTableMaxSorted = await page.getByText(/Cluster [0-9]/).textContent()
   expect(comparisonTableMaxSorted).toContain('100Blue AntelopeLime Lynx')
 
   await page.getByPlaceholder('Filter/Unhide Comparisons').fill('')
   await page.getByText('Hide All').click()
   // check for elements being hidden
-  const comparisonTableOverviewHidden = await page.getByText('Cluster1').textContent()
+  const comparisonTableOverviewHidden = await page.getByText('Cluster 1').textContent()
   expect(comparisonTableOverviewHidden).toMatch(/1anon[0-9]+anon[0-9]+/)
   expect(comparisonTableOverviewHidden).toMatch(/3anon[0-9]+anon[0-9]+/)
   expect(comparisonTableOverviewHidden).toMatch(/4anon[0-9]+anon[0-9]+/)
 
   await page.getByPlaceholder('Filter/Unhide Comparisons').fill('Lazy Bobcat')
   // check for elements being unhidden and filtered
-  const comparisonTableOverviewFiltered = await page.getByText(/Cluster[0-9]/).textContent()
+  const comparisonTableOverviewFiltered = await page.getByText(/Cluster [0-9]/).textContent()
   expect(comparisonTableOverviewFiltered).toMatch(/[0-9]+anon[0-9]+Lazy Bobcat/)
   expect(comparisonTableOverviewFiltered).toMatch(/[0-9]+Lazy Bobcatanon[0-9]+/)
 
