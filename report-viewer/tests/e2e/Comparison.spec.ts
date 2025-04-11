@@ -56,13 +56,16 @@ test('Test comparison table and comparsion view', async ({ page }) => {
   expect(bodyComparison).toContain(`${submissionName2}/${fileName2}`)
 
   // check for being able to hide and unhide elements
-  expect(await isCodeVisible(page, content1)).toBe(false)
-  await page.getByText(`${submissionName1}/${fileName1}`).click()
   expect(await isCodeVisible(page, content1)).toBe(true)
   await page.getByText(`${submissionName1}/${fileName1}`).click()
   expect(await isCodeVisible(page, content1)).toBe(false)
+  await page.getByText(`${submissionName1}/${fileName1}`).click()
+  expect(await isCodeVisible(page, content1)).toBe(true)
 
   // unhide elements by clicking match list
+  expect(await isCodeVisible(page, content2)).toBe(true)
+  await page.getByText(`${submissionName1}/${fileName1}`).click()
+  await page.getByText(`${submissionName2}/${fileName2}`).click()
   expect(await isCodeVisible(page, content2)).toBe(false)
   await page.getByText(`${fileName1} - ${fileName2}:`).first().click()
   await page.waitForTimeout(1000)
