@@ -31,12 +31,6 @@
         }}
       </ButtonComponent>
     </div>
-    <OptionsSelector
-      title="Sort By:"
-      :default-selected="getSortingMetric()"
-      :labels="tableSortingOptions"
-      @selection-changed="(index: number) => changeSortingMetric(index)"
-    />
   </div>
 </template>
 
@@ -45,19 +39,12 @@ import { computed } from 'vue'
 import SearchBarComponent from './SearchBarComponent.vue'
 import ToolTipComponent from './ToolTipComponent.vue'
 import ButtonComponent from './ButtonComponent.vue'
-import OptionsSelector from './optionsSelectors/OptionsSelectorComponent.vue'
 import { store } from '@/stores/store'
-import { MetricType, metricToolTips } from '@/model/MetricType'
-import type { ToolTipLabel } from '@/model/ui/ToolTip'
 
 const props = defineProps({
   searchString: {
     type: String,
     default: ''
-  },
-  enableClusterSorting: {
-    type: Boolean,
-    default: true
   },
   header: {
     type: String,
@@ -91,33 +78,6 @@ const searchStringValue = computed({
       }
     }
   }
-})
-
-function changeSortingMetric(index: number) {
-  store().uiState.comparisonTableSortingMetric =
-    index < tableSortingMetricOptions.length ? tableSortingMetricOptions[index] : MetricType.AVERAGE
-  store().uiState.comparisonTableClusterSorting = tableSortingOptions.value[index] == 'Cluster'
-}
-
-function getSortingMetric() {
-  if (store().uiState.comparisonTableClusterSorting && props.enableClusterSorting) {
-    return tableSortingOptions.value.indexOf('Cluster')
-  }
-  return tableSortingMetricOptions.indexOf(store().uiState.comparisonTableSortingMetric)
-}
-
-const tableSortingMetricOptions = [MetricType.AVERAGE, MetricType.MAXIMUM]
-const tableSortingOptions = computed(() => {
-  const options: (ToolTipLabel | string)[] = tableSortingMetricOptions.map((metric) => {
-    return {
-      displayValue: metricToolTips[metric].longName,
-      tooltip: metricToolTips[metric].tooltip
-    }
-  })
-  if (props.enableClusterSorting) {
-    options.push('Cluster')
-  }
-  return options
 })
 
 /**

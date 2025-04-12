@@ -5,7 +5,8 @@
  * @property strength - The strength of the cluster
  * @property members - The ids of the submissions in the cluster
  */
-export type Cluster = {
+export interface Cluster {
+  index: number
   averageSimilarity: number
   strength: number
   members: Array<string>
