@@ -1,10 +1,10 @@
 <template>
   <div :class="{ dark: store().uiState.useDarkMode }">
     <div
-      class="bg-background-light dark:bg-background-dark flex max-h-screen min-h-screen max-w-screen flex-col overflow-scroll text-black dark:text-amber-50"
+      class="bg-background-light dark:bg-background-dark flex max-h-screen min-h-screen max-w-screen flex-col overflow-scroll text-black dark:text-amber-50 print:max-h-none print:w-full print:max-w-full print:overflow-visible"
     >
       <RouterView
-        class="min-h-screen w-screen p-2 pb-0! md:h-screen md:max-h-screen md:p-5 print:overflow-visible"
+        class="print:min-h-none min-h-screen w-screen p-2 pb-0! md:h-screen md:max-h-screen md:p-5 print:max-h-none print:w-full print:overflow-visible print:p-0"
       />
 
       <Button

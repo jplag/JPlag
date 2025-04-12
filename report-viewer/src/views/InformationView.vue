@@ -1,6 +1,6 @@
 <template>
   <div
-    class="grid grid-cols-1 grid-rows-[auto_auto] gap-5 md:grid-cols-2 md:grid-rows-1 md:overflow-hidden"
+    class="grid grid-cols-1 grid-rows-[auto_auto] gap-5 md:grid-cols-2 md:grid-rows-1 md:overflow-hidden print:grid-cols-1 print:grid-rows-[auto_auto]"
   >
     <Container class="infoContainer print:border-none!">
       <h2>Run Options:</h2>
@@ -161,6 +161,6 @@ onErrorCaptured((error) => {
 @reference "../style.css";
 
 .infoContainer {
-  @apply flex flex-col overflow-hidden print:max-h-none print:min-h-0 print:flex-none;
+  @apply flex flex-col overflow-hidden print:min-h-fit print:overflow-visible;
 }
 </style>

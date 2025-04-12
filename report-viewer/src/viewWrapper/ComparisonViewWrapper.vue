@@ -1,12 +1,12 @@
 <template>
-  <div class="flex flex-col gap-1 md:overflow-hidden">
+  <div class="flex flex-col gap-1 md:overflow-hidden print:w-full">
     <ComparisonView
       v-if="comparison && language && firstBaseCodeMatches && secondBaseCodeMatches"
       :comparison="comparison"
       :language="language"
       :first-base-code-matches="firstBaseCodeMatches"
       :second-base-code-matches="secondBaseCodeMatches"
-      class="flex-1"
+      class="flex-1 print:w-full print:flex-none"
     />
     <div v-else class="flex flex-1 flex-col items-center justify-center">
       <LoadingCircle class="mx-auto" />

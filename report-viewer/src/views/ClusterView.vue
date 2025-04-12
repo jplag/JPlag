@@ -1,6 +1,6 @@
 <template>
   <div
-    class="grid grid-cols-1 grid-rows-[auto_600px_90vh] gap-5 md:grid-cols-[2fr_1fr] md:grid-rows-[auto_1fr] md:overflow-hidden"
+    class="grid grid-cols-1 grid-rows-[auto_600px_90vh] gap-5 md:grid-cols-[2fr_1fr] md:grid-rows-[auto_1fr] md:overflow-hidden print:grid-cols-1 print:grid-rows-[auto_1fr]"
   >
     <Container class="col-start-1 row-start-1 md:col-end-3 md:row-end-2">
       <h2>Cluster</h2>
@@ -55,7 +55,7 @@
     </div>
 
     <TabbedContainer
-      class="col-start-1 row-start-3 flex overflow-hidden md:col-start-2 md:row-start-2"
+      class="col-start-1 row-start-3 flex overflow-hidden md:col-start-2 md:row-start-2 print:hidden"
       :tabs="comparisonTableOptions"
       :first-bottom-tooltip-index="1"
     >

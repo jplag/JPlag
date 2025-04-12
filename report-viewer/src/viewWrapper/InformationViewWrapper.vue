@@ -4,7 +4,7 @@
       v-if="overview && cliOptions"
       :overview="overview"
       :options="cliOptions"
-      class="flex-1"
+      class="flex-1 print:flex-none"
     />
     <div v-else class="flex flex-1 flex-col items-center justify-center">
       <LoadingCircle class="mx-auto" />

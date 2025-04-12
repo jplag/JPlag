@@ -74,7 +74,7 @@
       />
       <OptionsSelectorComponent
         ref="sortingOptionSelector"
-        class="mt-2"
+        class="mt-2 print:hidden"
         title="File Sorting:"
         :labels="sortingOptions.map((o) => fileSortingTooltips[o])"
         :default-selected="sortingOptions.indexOf(store().uiState.fileSorting)"

@@ -3,11 +3,13 @@
 -->
 <template>
   <div
-    class="grid grid-cols-1 grid-rows-[auto_800px_90vh] gap-5 md:grid-cols-2 md:grid-rows-[auto_1fr] md:overflow-hidden"
+    class="grid grid-cols-1 grid-rows-[auto_800px_90vh] gap-5 md:grid-cols-2 md:grid-rows-[auto_1fr] md:overflow-hidden print:grid-cols-1 print:grid-rows-[auto_auto]"
   >
     <Container class="col-start-1 row-start-1 md:col-end-3 md:row-end-2">
       <h2>JPlag Report</h2>
-      <div class="flex flex-col gap-x-5 gap-y-2 md:flex-row md:items-center">
+      <div
+        class="flex flex-col gap-x-5 gap-y-2 md:flex-row md:items-center print:flex-col print:items-start"
+      >
         <TextInformation label="Submission Directory" class="flex-auto">{{
           submissionPathValue
         }}</TextInformation>
@@ -69,12 +71,14 @@
       </div>
     </Container>
 
-    <Container class="col-start-1 row-start-2 flex flex-col overflow-hidden">
+    <Container class="col-start-1 row-start-2 flex flex-col overflow-hidden print:overflow-visible">
       <h2>Distribution of Comparisons:</h2>
-      <DistributionDiagram :distributions="overview.distribution" class="grow" />
+      <DistributionDiagram :distributions="overview.distribution" class="grow print:flex-none" />
     </Container>
 
-    <Container class="col-start-1 row-start-3 flex overflow-hidden md:col-start-2 md:row-start-2">
+    <Container
+      class="col-start-1 row-start-3 flex overflow-hidden md:col-start-2 md:row-start-2 print:hidden"
+    >
       <ComparisonsTable
         :clusters="overview.clusters"
         :top-comparisons="overview.topComparisons"
