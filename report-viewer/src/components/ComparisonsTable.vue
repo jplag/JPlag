@@ -42,7 +42,7 @@
                   </ToolTipComponent>
 
                   <ToolTipComponent
-                    class="flex-1cursor-pointer"
+                    class="flex-1 cursor-pointer"
                     :direction="displayClusters ? 'top' : 'left'"
                     @click="setSorting('maximumSimilarity')"
                   >
