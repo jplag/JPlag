@@ -4,7 +4,7 @@
       class="flex flex-col flex-wrap gap-x-8 gap-y-2 overflow-hidden md:flex-row md:items-center"
     >
       <h2>{{ header }}</h2>
-      <ToolTipComponent direction="left" class="max-w-full grow md:min-w-[50%]">
+      <ToolTipComponent direction="left" class="max-w-full grow md:min-w-[40%]">
         <template #default>
           <SearchBarComponent v-model="searchStringValue" placeholder="Filter/Unhide Comparisons" />
         </template>

@@ -3,13 +3,13 @@
 -->
 <template>
   <Container class="flex flex-col print:px-1!">
-    <div class="mr-2 mb-2 flex items-center space-x-5">
+    <div class="mr-2 mb-2 flex flex-col gap-x-5 gap-y-2 md:flex-row md:items-center">
       <h3 class="grow text-left text-lg font-bold">
         Files of
         {{ fileOwnerDisplayName }}:
       </h3>
       <div class="text-gray-600 dark:text-gray-300">{{ tokenCount }} total tokens</div>
-      <Button class="space-x-2 print:hidden" @click="collapseAll()"
+      <Button class="w-fit space-x-2 md:w-full print:hidden" @click="collapseAll()"
         ><FontAwesomeIcon :icon="['fas', 'compress-alt']" />
         <p>Collapse All</p></Button
       >
