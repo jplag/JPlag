@@ -11,15 +11,10 @@ import de.jplag.options.SimilarityMetric;
 
 /**
  * Encapsulates the results of a pairwise comparison of program structure among a set of source code submissions.
- * <p>
- * Provides access to:
- * <ul>
- * <li>Pairwise comparison results sorted by similarity</li>
- * <li>Similarity distribution data</li>
- * <li>Execution duration and configuration options</li>
- * <li>Optional clustering results over submissions</li>
- * </ul>
+ * Provides access to pairwise comparison results sorted by similarity, similarity distribution data, clustering results
+ * over submissions, execution duration, and configuration options.
  */
+
 public class JPlagResult {
 
     private List<JPlagComparison> comparisons; // comparisons whose similarity was about the specified threshold
