@@ -55,4 +55,9 @@ public class EmfModelLanguage extends DynamicEmfLanguage {
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
         return new DynamicModelParser().parse(files, normalize);
     }
+
+    @Override
+    public boolean supportsMultilanguage() {
+        return false;
+    }
 }

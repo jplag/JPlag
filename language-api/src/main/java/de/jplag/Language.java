@@ -122,4 +122,18 @@ public interface Language {
     default boolean requiresCoreNormalization() {
         return true;
     }
+
+    /**
+     * @return True, if the language module can be used by the multi-language module
+     */
+    default boolean supportsMultilanguage() {
+        return true;
+    }
+
+    /**
+     * @return True, if the language module should be used in case of ambiguities
+     */
+    default boolean hasPriority() {
+        return false;
+    }
 }
