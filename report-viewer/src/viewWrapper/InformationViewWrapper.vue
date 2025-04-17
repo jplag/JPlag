@@ -21,33 +21,38 @@
 import { type Ref, ref } from 'vue'
 import InformationView from '@/views/InformationView.vue'
 import LoadingCircle from '@/components/LoadingCircle.vue'
-import { redirectOnError } from '@/router'
-import { OptionsFactory } from '@/model/factories/OptionsFactory'
+import { redirectOnError, redirectToOldVersion } from '@/router'
 import type { CliOptions } from '@/model/CliOptions'
 import VersionRepositoryReference from '@/components/VersionRepositoryReference.vue'
 import type { RunInformation } from '@/model/RunInformation'
-import { RunInformationFactory } from '@/model/factories/RunInformationFactory'
-import { TopComparisonFactory } from '@/model/factories/TopComparisonFactory'
+import { DataGetter, FileContentTypes } from '@/model/factories/DataGetter'
+import type { ComparisonListElement } from '@/model/ComparisonListElement'
 
 const runInformation: Ref<RunInformation | null> = ref(null)
 const cliOptions: Ref<CliOptions | undefined> = ref(undefined)
 const topComparisonCount: Ref<number | null> = ref(null)
 
-RunInformationFactory.getRunInformation()
-  .then((r) => (runInformation.value = r))
-  .catch((error) =>
-    redirectOnError(error, 'Could not load run information:\n', 'OverviewView', 'Back to overview')
-  )
-
-OptionsFactory.getCliOptions()
-  .then((o) => (cliOptions.value = o))
-  .catch((error) =>
-    redirectOnError(error, 'Could not load run information:\n', 'OverviewView', 'Back to overview')
-  )
-
-// we can provide the clusters as an empty array as we are only interested in the number of the top comparisons
-TopComparisonFactory.getTopComparisons([])
-  .then((r) => (topComparisonCount.value = r.length))
+DataGetter.getFiles<{
+  [FileContentTypes.RUN_INFORMATION]: RunInformation
+  [FileContentTypes.OPTIONS]: CliOptions
+  [FileContentTypes.TOP_COMPARISON]: ComparisonListElement[]
+}>([FileContentTypes.RUN_INFORMATION, FileContentTypes.OPTIONS, FileContentTypes.TOP_COMPARISON])
+  .then((r) => {
+    if (r.result == 'valid') {
+      runInformation.value = r.data[FileContentTypes.RUN_INFORMATION]
+      cliOptions.value = r.data[FileContentTypes.OPTIONS]
+      topComparisonCount.value = r.data[FileContentTypes.TOP_COMPARISON].length
+    } else if (r.result == 'versionError') {
+      redirectToOldVersion(r.reportVersion)
+    } else {
+      redirectOnError(
+        r.error,
+        'Could not load run information:\n',
+        'OverviewView',
+        'Back to overview'
+      )
+    }
+  })
   .catch((error) =>
     redirectOnError(error, 'Could not load run information:\n', 'OverviewView', 'Back to overview')
   )

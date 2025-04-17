@@ -20,12 +20,11 @@
 import { type Ref, ref, computed } from 'vue'
 import ClusterView from '@/views/ClusterView.vue'
 import LoadingCircle from '@/components/LoadingCircle.vue'
-import { redirectOnError } from '@/router'
+import { redirectOnError, redirectToOldVersion } from '@/router'
 import VersionRepositoryReference from '@/components/VersionRepositoryReference.vue'
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
-import { TopComparisonFactory } from '@/model/factories/TopComparisonFactory'
 import type { Cluster } from '@/model/Cluster'
-import { ClusterFactory } from '@/model/factories/ClusterFactory'
+import { DataGetter, FileContentTypes } from '@/model/factories/DataGetter'
 
 const props = defineProps({
   clusterIndex: {
@@ -39,15 +38,20 @@ const clusterIndex = computed(() => parseInt(props.clusterIndex))
 const topComparisons: Ref<ComparisonListElement[] | null> = ref(null)
 const clusters: Ref<Cluster[] | null> = ref(null)
 
-ClusterFactory.getClusters()
-  .then((r) => (clusters.value = r))
-  .then(() => {
-    if (clusters.value === null) {
-      throw new Error('No clusters found')
+DataGetter.getFiles<{
+  [FileContentTypes.CLUSTER]: Cluster[]
+  [FileContentTypes.TOP_COMPARISON]: ComparisonListElement[]
+}>([FileContentTypes.CLUSTER, FileContentTypes.TOP_COMPARISON])
+  .then((r) => {
+    if (r.result == 'valid') {
+      clusters.value = r.data[FileContentTypes.CLUSTER]
+      topComparisons.value = r.data[FileContentTypes.TOP_COMPARISON]
+    } else if (r.result == 'versionError') {
+      redirectToOldVersion(r.reportVersion)
+    } else {
+      redirectOnError(r.error, 'Could not load clusters:\n', 'OverviewView', 'Back to overview')
     }
-    return TopComparisonFactory.getTopComparisons(clusters.value)
   })
-  .then((r) => (topComparisons.value = r))
   .catch((error) =>
     redirectOnError(error, 'Could not load clusters:\n', 'OverviewView', 'Back to overview')
   )

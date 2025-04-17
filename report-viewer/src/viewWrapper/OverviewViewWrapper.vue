@@ -25,18 +25,14 @@
 import { type Ref, ref } from 'vue'
 import OverviewView from '@/views/OverviewView.vue'
 import LoadingCircle from '@/components/LoadingCircle.vue'
-import { redirectOnError } from '@/router'
+import { redirectOnError, redirectToOldVersion } from '@/router'
 import VersionRepositoryReference from '@/components/VersionRepositoryReference.vue'
 import type { RunInformation } from '@/model/RunInformation'
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
 import type { DistributionMap } from '@/model/Distribution'
 import type { Cluster } from '@/model/Cluster'
 import type { CliOptions } from '@/model/CliOptions'
-import { RunInformationFactory } from '@/model/factories/RunInformationFactory'
-import { TopComparisonFactory } from '@/model/factories/TopComparisonFactory'
-import { ClusterFactory } from '@/model/factories/ClusterFactory'
-import { OptionsFactory } from '@/model/factories/OptionsFactory'
-import { DistributionFactory } from '@/model/factories/DistributionFactory'
+import { DataGetter, FileContentTypes } from '@/model/factories/DataGetter'
 
 const runInformation: Ref<RunInformation | null> = ref(null)
 const topComparisons: Ref<ComparisonListElement[] | null> = ref(null)
@@ -44,26 +40,33 @@ const options: Ref<CliOptions | null> = ref(null)
 const clusters: Ref<Cluster[] | null> = ref(null)
 const distribution: Ref<DistributionMap | null> = ref(null)
 
-RunInformationFactory.getRunInformation()
-  .then((r) => (runInformation.value = r))
-  .catch((error) => redirectOnError(error, 'Could not load run information:\n'))
-
-ClusterFactory.getClusters()
-  .then((r) => (clusters.value = r))
-  .then(() => {
-    if (clusters.value === null) {
-      throw new Error('No clusters found')
+DataGetter.getFiles<{
+  [FileContentTypes.RUN_INFORMATION]: RunInformation
+  [FileContentTypes.TOP_COMPARISON]: ComparisonListElement[]
+  [FileContentTypes.OPTIONS]: CliOptions
+  [FileContentTypes.CLUSTER]: Cluster[]
+  [FileContentTypes.DISTRIBUTION]: DistributionMap
+}>([
+  FileContentTypes.RUN_INFORMATION,
+  FileContentTypes.TOP_COMPARISON,
+  FileContentTypes.OPTIONS,
+  FileContentTypes.CLUSTER,
+  FileContentTypes.DISTRIBUTION
+])
+  .then((r) => {
+    if (r.result == 'valid') {
+      runInformation.value = r.data[FileContentTypes.RUN_INFORMATION]
+      topComparisons.value = r.data[FileContentTypes.TOP_COMPARISON]
+      options.value = r.data[FileContentTypes.OPTIONS]
+      clusters.value = r.data[FileContentTypes.CLUSTER]
+      distribution.value = r.data[FileContentTypes.DISTRIBUTION]
+    } else if (r.result == 'versionError') {
+      redirectToOldVersion(r.reportVersion)
+    } else {
+      redirectOnError(r.error, 'Could not load overview:\n', 'OverviewView', 'Back to overview')
     }
-    return TopComparisonFactory.getTopComparisons(clusters.value)
   })
-  .then((r) => (topComparisons.value = r))
-  .catch((error) => redirectOnError(error, 'Could not load clusters or top comparisons:\n'))
-
-OptionsFactory.getCliOptions()
-  .then((o) => (options.value = o))
-  .catch((error) => redirectOnError(error, 'Could not load options:\n'))
-
-DistributionFactory.getDistributions()
-  .then((r) => (distribution.value = r))
-  .catch((error) => redirectOnError(error, 'Could not load distribution:\n'))
+  .catch((error) =>
+    redirectOnError(error, 'Could not load overview:\n', 'OverviewView', 'Back to overview')
+  )
 </script>
