@@ -48,6 +48,8 @@ def getCliTextFromFile(file):
     text = getFilesText(file)
     codeSections = getAllCodeSections(text)
     cliTextSection = getCliTextCodeSection(codeSections)
+    if cliTextSection is None:
+        return None
     removedEmptyLines = removeEmptyLinesAtEndOfDocument(cliTextSection)
     lineOffset[file] = text.index(cliTextSection[0]) + 1 if cliTextSection else 0
     return removedEmptyLines
@@ -59,7 +61,8 @@ class Error:
         self.message = message
 
     def __str__(self):
-        return f"{self.fileName.split('/')[-1]}:{self.lineNumber+lineOffset[self.fileName]}: {self.message}"
+        offset = lineOffset[self.fileName] if self.fileName in lineOffset else 0
+        return f"{self.fileName.split('/')[-1]}:{self.lineNumber+offset}: {self.message}"
 
 errors = []
 
@@ -83,7 +86,7 @@ for file in filesToCheck:
     cliText = getCliTextFromFile(file)
 
     if cliText is None:
-        errors.append(Error(fileName, 0, "No CLI text found in the file."))
+        errors.append(Error(file, 0, "No CLI text found in the file."))
     else:
         checkCliTextAgainstHelpText(cliText, file)
 
