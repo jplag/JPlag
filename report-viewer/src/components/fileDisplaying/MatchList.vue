@@ -3,7 +3,7 @@
 -->
 <template>
   <div
-    class="flex h-fit max-w-full min-w-0 flex-row space-x-1 overflow-x-hidden text-xs print:hidden"
+    class="flex h-fit max-w-full min-w-0 flex-row flex-wrap space-x-1 gap-y-1 overflow-x-hidden text-xs md:flex-nowrap print:hidden"
   >
     <ToolTipComponent direction="right">
       <template #default>
