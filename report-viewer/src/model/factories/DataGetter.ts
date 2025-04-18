@@ -31,7 +31,7 @@ export class FileContentTypes extends RawFileContentTypes {
 }
 
 export interface Result {
-  [FileContentTypes.BASE_CODE_REPORT]: BaseCodeMatch[]
+  [FileContentTypes.BASE_CODE_REPORT]: BaseCodeMatch[][]
   [FileContentTypes.CLUSTER]: Cluster[]
   [FileContentTypes.COMPARISON]: Comparison
   [FileContentTypes.DISTRIBUTION]: DistributionMap
@@ -48,8 +48,8 @@ type FileRequest =
   | 'options'
   | 'runInformation'
   | 'topComparison'
-  | { type: 'baseCodeReport'; submissionId: string }
-  | { type: 'comparison'; fileName: string }
+  | { type: 'baseCodeReport'; submissionIds: string[] }
+  | { type: 'comparison'; firstSubmission: string; secondSubmission: string }
 
 type VersionResponse =
   | {
@@ -131,7 +131,7 @@ export class DataGetter extends BaseFactory {
           data[FileContentTypes.RUN_INFORMATION] = await RunInformationFactory.getRunInformation()
         } else if (request === RawFileContentTypes.TOP_COMPARISON) {
           let clusters: Cluster[] = []
-          if (data[FileContentTypes.CLUSTER] === undefined) {
+          if (data[FileContentTypes.CLUSTER] !== undefined) {
             clusters = data[FileContentTypes.CLUSTER]!
           } else {
             clusters = await ClusterFactory.getClusters()
@@ -141,11 +141,24 @@ export class DataGetter extends BaseFactory {
             await TopComparisonFactory.getTopComparisons(clusters)
         }
       } else if (request.type === 'baseCodeReport') {
-        const submissionId = request.submissionId
-        data[FileContentTypes.BASE_CODE_REPORT] =
-          await BaseCodeReportFactory.getReport(submissionId)
+        const submissionIds = request.submissionIds
+        const baseCodeMatches: BaseCodeMatch[][] = []
+        for (const submissionId of submissionIds) {
+          const baseCodeMatch = await BaseCodeReportFactory.getReport(submissionId)
+          baseCodeMatches.push(baseCodeMatch)
+        }
+        data[FileContentTypes.BASE_CODE_REPORT] = baseCodeMatches
       } else if (request.type === 'comparison') {
-        const fileName = request.fileName
+        const fileName = store().getComparisonFileName(
+          request.firstSubmission,
+          request.secondSubmission
+        )
+        if (!fileName) {
+          return {
+            result: 'error',
+            error: new Error('No comparison file found')
+          }
+        }
         data[FileContentTypes.COMPARISON] = await ComparisonFactory.getComparison(fileName)
       }
     }
@@ -156,16 +169,17 @@ export class DataGetter extends BaseFactory {
   }
 
   private static async verifyVersion(): Promise<VersionResponse> {
-    const hasLoadedFiles = store().state.zipModeUsed || store().state.localModeUsed
-    if (!hasLoadedFiles) {
-      return undefined
-    }
     let version = Version.ERROR_VERSION
     try {
       version = this.extractVersion(JSON.parse(await this.getFile('runInformation.json')))
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
-      version = this.extractVersion(JSON.parse(await this.getFile('overview.json')))
+      try {
+        version = this.extractVersion(JSON.parse(await this.getFile('version.json')))
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (e) {
+        return undefined
+      }
     }
     return {
       valid: this.compareVersions(version, reportViewerVersion, minimalReportVersion),

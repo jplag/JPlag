@@ -63,10 +63,8 @@ DataGetter.getFiles<{
     } else if (r.result == 'versionError') {
       redirectToOldVersion(r.reportVersion)
     } else {
-      redirectOnError(r.error, 'Could not load overview:\n', 'OverviewView', 'Back to overview')
+      redirectOnError(r.error, 'Could not load overview:\n')
     }
   })
-  .catch((error) =>
-    redirectOnError(error, 'Could not load overview:\n', 'OverviewView', 'Back to overview')
-  )
+  .catch((error) => redirectOnError(error, 'Could not load overview:\n'))
 </script>

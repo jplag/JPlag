@@ -25,7 +25,7 @@ const router = createRouter({
       component: OverviewViewWrapper
     },
     {
-      path: '/comparison/:comparisonFileName',
+      path: '/comparison/:firstSubmissionId/:secondSubmissionId',
       name: 'ComparisonView',
       component: ComparisonViewWrapper,
       props: true
