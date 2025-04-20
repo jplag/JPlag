@@ -153,7 +153,8 @@ describe('Test JSON to Overview', () => {
           members: ['C', 'A', 'B', 'D']
         }
       ],
-      _totalComparisons: 6
+      _totalComparisons: 6,
+      _failedSubmissionNames: []
     })
   })
 })

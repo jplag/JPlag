@@ -19,6 +19,7 @@ export class Overview {
   private readonly _distributions: Record<MetricType, Distribution>
   private readonly _clusters: Array<Cluster>
   private readonly _totalComparisons: number
+  private readonly _failedSubmissionNames: string[]
 
   constructor(
     submissionFolderPath: Array<string>,
@@ -31,7 +32,8 @@ export class Overview {
     topComparisons: Array<ComparisonListElement>,
     distributions: Record<MetricType, Distribution>,
     clusters: Array<Cluster>,
-    totalComparisons: number
+    totalComparisons: number,
+    failedSubmissionNames: string[]
   ) {
     this._submissionFolderPath = submissionFolderPath
     this._baseCodeFolderPath = baseCodeFolderPath
@@ -44,6 +46,7 @@ export class Overview {
     this._distributions = distributions
     this._clusters = clusters
     this._totalComparisons = totalComparisons
+    this._failedSubmissionNames = failedSubmissionNames
   }
 
   /**
@@ -126,5 +129,9 @@ export class Overview {
 
   get missingComparisons() {
     return this.totalComparisons - this.shownComparisons
+  }
+
+  get failedSubmissionNames() {
+    return this._failedSubmissionNames
   }
 }
