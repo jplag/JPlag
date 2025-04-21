@@ -207,7 +207,10 @@ public final class CLI {
         // connections.
         System.setProperty("java.net.preferIPv4Stack", "true");
 
-        CLI cli = new CLI(args);
+        // Todo: Hier selbst eingefügt Start
+        String[] args2 = {  "-l",  "cpp", "C:\\Data\\test"};
+
+        CLI cli = new CLI(args2); // Todo args to args2
         if (cli.executeCliAndHandleErrors()) {
             System.exit(1);
         }
