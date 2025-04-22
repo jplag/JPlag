@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import de.jplag.clustering.ClusteringFactory;
 import de.jplag.comparison.LongestCommonSubsquenceSearch;
 import de.jplag.exceptions.ExitException;
+import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.RootDirectoryException;
 import de.jplag.exceptions.SubmissionException;
 import de.jplag.merging.MatchMerging;
