@@ -68,7 +68,8 @@ public class JPlag {
     public static JPlagResult run(JPlagOptions options) throws ExitException {
         checkForConfigurationConsistency(options);
 
-        // Hotfix
+        // Hotfix for issue #2268, where the report creation throws an index out of bounds exception due to the incompatibility
+        // of SMM with basecode.
         if (options.mergingOptions().enabled() && options.hasBaseCode()) {
             throw new BasecodeException("Subsequence match merging does currently not work with basecode. We are working on it.");
         }
