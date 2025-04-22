@@ -178,6 +178,7 @@ Languages:
   python3
   rlang
   rust
+  scala
   scheme
   scxml
   swift
