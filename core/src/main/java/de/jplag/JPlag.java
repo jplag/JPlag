@@ -69,7 +69,7 @@ public class JPlag {
         
         //Hotfix
         if (options.mergingOptions().enabled() && options.hasBaseCode()) {
-            throw new ExitException("Subsequence match merging does currently not work with basecode. We are working on it.");
+            throw new BasecodeException("Subsequence match merging does currently not work with basecode. We are working on it.");
         }
 
         // Parse and validate submissions.
