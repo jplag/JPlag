@@ -18,6 +18,9 @@ export default defineConfig((userConfig: UserConfig) => {
     case 'demo':
       base = '/Demo/'
       break
+    case 'dev-demo':
+      base = '/DevDemo/'
+      break
   }
   return {
     plugins: [vue(), tailwindcss()],

@@ -13,6 +13,7 @@
     "build-prod": "run-p type-check && vite build --mode prod",
     "build-dev": "run-p type-check && vite build --mode dev",
     "build-demo": "run-p type-check && vite build --mode demo",
+    "build-dev-demo": "run-p type-check && vite build --mode dev-demo",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "lint": "eslint --max-warnings 0",
     "format": "prettier --write src/",
