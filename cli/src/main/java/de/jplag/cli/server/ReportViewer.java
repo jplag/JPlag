@@ -17,12 +17,12 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 /**
- * Manages the internal report viewer. Serves the static files for the report viewer and the results.zip.
+ * Manages the internal report viewer. Serves the static files for the report viewer and the results.jplag.
  */
 public class ReportViewer implements HttpHandler {
     private static final String REPORT_VIEWER_RESOURCE_PREFIX = "report-viewer";
     private static final String INDEX_PATH = "index.html";
-    private static final String RESULT_PATH = "results.zip";
+    private static final String RESULT_PATH = "results.jplag";
     private static final String[] OLD_VERSION_DIRECTORIES = new String[] {"v5"};
 
     private static final Logger logger = LoggerFactory.getLogger(ReportViewer.class);
@@ -54,7 +54,7 @@ public class ReportViewer implements HttpHandler {
     }
 
     /**
-     * Starts the server and serves the internal report viewer. If available, the result.zip is also exposed. If the given
+     * Starts the server and serves the internal report viewer. If available, the result.jplag is also exposed. If the given
      * port is already in use, the next free port will be used.
      * @return The port the server runs at
      * @throws IOException If the server cannot be started

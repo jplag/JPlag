@@ -2,7 +2,7 @@ import { test, expect, Page } from '@playwright/test'
 import { uploadFile } from './TestUtils'
 
 test('Test comparison table and comparsion view', async ({ page }) => {
-  await uploadFile('progpedia-report.zip', page)
+  await uploadFile('progpedia-report.jplag', page)
 
   // check for elements in average similarity table
   await page.getByPlaceholder('Filter/Unhide Comparisons').fill('Purple')
