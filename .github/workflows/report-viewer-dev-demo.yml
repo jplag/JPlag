@@ -86,7 +86,7 @@ jobs:
         working-directory: report-viewer
         run: |
           npm install
-          npm run build-demo
+          npm run build-dev-demo
         
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.7.3
