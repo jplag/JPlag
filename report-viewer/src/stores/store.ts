@@ -3,6 +3,7 @@ import type { State, UIState } from './state'
 import { MetricType } from '@/model/MetricType'
 import type { SubmissionFile, File } from '@/model/File'
 import { FileSortingOptions } from '@/model/ui/FileSortingOptions'
+import { Column, Direction } from '@/model/ui/ComparisonSorting'
 
 /**
  * The store is a global state management system. It is used to store the state of the application.
@@ -23,8 +24,10 @@ const store = defineStore('store', {
     },
     uiState: {
       useDarkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
-      comparisonTableSortingMetric: MetricType.AVERAGE,
-      comparisonTableClusterSorting: false,
+      comparisonTableSorting: {
+        column: Column.averageSimilarity,
+        direction: Direction.descending
+      },
       distributionChartConfig: {
         metric: MetricType.AVERAGE,
         xScale: 'linear',

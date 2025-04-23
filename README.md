@@ -67,7 +67,7 @@ JPlag is released on [Maven Central](https://search.maven.org/search?q=de.jplag)
 ### Building from sources 
 1. Download or clone the code from this repository.
 2. Run `mvn clean package` from the root of the repository to compile and build all submodules.
-   Run `mvn clean package assembly:single` instead if you need the full jar which includes all dependencies.
+   Run `mvn clean package assembly:single` instead if you need the full jar, which includes all dependencies.
    Run `mvn -P with-report-viewer clean package assembly:single` to build the full jar with the report viewer. In this case, you'll need [Node.js](https://nodejs.org/en/download) installed.
 3. You will find the generated JARs in the subdirectory `cli/target`.
 
@@ -178,6 +178,7 @@ Languages:
   python3
   rlang
   rust
+  scala
   scheme
   scxml
   swift

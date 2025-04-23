@@ -94,7 +94,7 @@ export class OverviewFactory extends BaseFactory {
       }
       comparisons.push({
         ...comparison,
-        clusterIndex: this.getClusterIndex(
+        cluster: this.getCluster(
           clusters,
           comparison.firstSubmissionId,
           comparison.secondSubmissionId
@@ -104,22 +104,21 @@ export class OverviewFactory extends BaseFactory {
     return comparisons
   }
 
-  private static getClusterIndex(
+  private static getCluster(
     clusters: Cluster[],
     firstSubmissionId: string,
     secondSubmissionId: string
-  ) {
-    let clusterIndex = -1
-    clusters?.forEach((c: Cluster, index: number) => {
+  ): Cluster | undefined {
+    return clusters.find((c: Cluster) => {
       if (
         c.members.includes(firstSubmissionId) &&
         c.members.includes(secondSubmissionId) &&
         c.members.length > 2
       ) {
-        clusterIndex = index
+        return true
       }
+      return false
     })
-    return clusterIndex
   }
 
   private static extractClusters(json: Record<string, unknown>): Array<Cluster> {
@@ -128,8 +127,10 @@ export class OverviewFactory extends BaseFactory {
     }
 
     const clusters = [] as Array<Cluster>
-    for (const jsonCluster of json.clusters as Array<Record<string, unknown>>) {
+    const jsonClusters = json.clusters as Array<Record<string, unknown>>
+    for (const [idx, jsonCluster] of jsonClusters.entries()) {
       clusters.push({
+        index: idx,
         averageSimilarity: jsonCluster.average_similarity as number,
         strength: jsonCluster.strength as number,
         members: jsonCluster.members as Array<string>

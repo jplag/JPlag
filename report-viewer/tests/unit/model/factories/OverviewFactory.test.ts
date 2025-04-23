@@ -43,7 +43,12 @@ describe('Test JSON to Overview', () => {
           },
           sortingPlace: 0,
           id: 1,
-          clusterIndex: 0
+          cluster: {
+            averageSimilarity: 94.746956,
+            index: 0,
+            members: ['C', 'A', 'B', 'D'],
+            strength: 0
+          }
         },
         {
           firstSubmissionId: 'D',
@@ -54,7 +59,12 @@ describe('Test JSON to Overview', () => {
           },
           sortingPlace: 1,
           id: 2,
-          clusterIndex: 0
+          cluster: {
+            averageSimilarity: 94.746956,
+            index: 0,
+            members: ['C', 'A', 'B', 'D'],
+            strength: 0
+          }
         },
         {
           firstSubmissionId: 'D',
@@ -65,7 +75,12 @@ describe('Test JSON to Overview', () => {
           },
           sortingPlace: 2,
           id: 3,
-          clusterIndex: 0
+          cluster: {
+            averageSimilarity: 94.746956,
+            index: 0,
+            members: ['C', 'A', 'B', 'D'],
+            strength: 0
+          }
         },
         {
           firstSubmissionId: 'B',
@@ -76,7 +91,12 @@ describe('Test JSON to Overview', () => {
           },
           sortingPlace: 3,
           id: 4,
-          clusterIndex: 0
+          cluster: {
+            averageSimilarity: 94.746956,
+            index: 0,
+            members: ['C', 'A', 'B', 'D'],
+            strength: 0
+          }
         },
         {
           firstSubmissionId: 'B',
@@ -87,7 +107,12 @@ describe('Test JSON to Overview', () => {
           },
           sortingPlace: 4,
           id: 5,
-          clusterIndex: 0
+          cluster: {
+            averageSimilarity: 94.746956,
+            index: 0,
+            members: ['C', 'A', 'B', 'D'],
+            strength: 0
+          }
         },
         {
           firstSubmissionId: 'B',
@@ -98,7 +123,12 @@ describe('Test JSON to Overview', () => {
           },
           sortingPlace: 5,
           id: 6,
-          clusterIndex: 0
+          cluster: {
+            averageSimilarity: 94.746956,
+            index: 0,
+            members: ['C', 'A', 'B', 'D'],
+            strength: 0
+          }
         }
       ],
       _distributions: {
@@ -118,6 +148,7 @@ describe('Test JSON to Overview', () => {
       _clusters: [
         {
           averageSimilarity: 94.746956,
+          index: 0,
           strength: 0.0,
           members: ['C', 'A', 'B', 'D']
         }
@@ -132,6 +163,6 @@ describe('Outdated JSON to Overview', () => {
     store().state.files['overview.json'] = JSON.stringify(outdated)
     const result = await OverviewFactory.getOverview()
     expect(result.result).toBe('oldReport')
-    expect(result.version.compareTo(new Version(3,0,0))).toBe(0)
+    expect(result.version.compareTo(new Version(3, 0, 0))).toBe(0)
   })
 })

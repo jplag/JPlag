@@ -74,9 +74,9 @@
 
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-        <spotless.version>2.44.3</spotless.version>
+        <spotless.version>2.44.4</spotless.version>
         <slf4j.version>2.0.17</slf4j.version>
-        <junit.version>5.12.1</junit.version>
+        <junit.version>5.12.2</junit.version>
 
         <antlr2.version>2.7.7</antlr2.version>
         <antlr4.version>4.13.2</antlr4.version>
@@ -168,7 +168,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>5.16.1</version>
+            <version>5.17.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -245,7 +245,7 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.12</version>
+                    <version>0.8.13</version>
                     <executions>
                         <execution>
                             <id>prepare-agent</id>
