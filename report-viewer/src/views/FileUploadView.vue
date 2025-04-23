@@ -70,7 +70,7 @@ import { BaseFactory } from '@/model/factories/BaseFactory'
 
 store().clearStore()
 
-const exampleFiles = ref(import.meta.env.MODE == 'demo')
+const exampleFiles = ref(import.meta.env.MODE == 'demo' || import.meta.env.MODE == 'dev-demo')
 const localFiles = ref(false)
 // Checks whether local files exist
 BaseFactory.getLocalFile('files/overview.json')
