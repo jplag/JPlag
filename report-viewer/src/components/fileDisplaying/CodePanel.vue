@@ -2,7 +2,7 @@
   Panel which displays a submission files with its line of code.
 -->
 <template>
-  <Interactable class="mx-2 !shadow print:!mx-0 print:!border-0 print:!p-0">
+  <Interactable class="shadow-sm! md:mx-2 print:mx-0! print:border-0! print:p-0!">
     <div class="flex px-2 font-bold print:whitespace-pre-wrap" @click="collapsed = !collapsed">
       <ToolTipComponent v-if="getFileDisplayName(file) != file.fileName" direction="right">
         <template #default
@@ -25,7 +25,7 @@
           ></template
         >
         <template #tooltip
-          ><p class="whitespace-nowrap text-sm">
+          ><p class="text-sm whitespace-nowrap">
             The file has {{ file.tokenCount - 1 }} tokens. {{ file.matchedTokenCount }} are part of
             a match.
           </p></template
@@ -33,8 +33,8 @@
       </ToolTipComponent>
     </div>
 
-    <div class="mx-1 overflow-x-auto print:!mx-0 print:overflow-x-hidden">
-      <div class="print:display-initial w-fit min-w-full !text-xs" :class="{ hidden: collapsed }">
+    <div class="mx-1 overflow-x-auto print:mx-0! print:overflow-x-hidden">
+      <div class="print:display-initial w-fit min-w-full text-xs!" :class="{ hidden: collapsed }">
         <div
           v-if="file.data.trim() !== ''"
           class="grid w-full grid-cols-[auto_1fr] gap-x-2 print:table-auto"
@@ -111,7 +111,7 @@ const props = defineProps({
 
 const emit = defineEmits(['matchSelected'])
 
-const collapsed = ref(true)
+const collapsed = ref(false)
 const lineRefs = ref<HTMLElement[]>([])
 
 const codeLines: Ref<{ line: string; matches: MatchInSingleFile[] }[]> = computed(() =>
@@ -144,9 +144,14 @@ function getLineRect(lineNumber: number): DOMRect {
   return lineRefs.value[lineNumber - 1].getBoundingClientRect()
 }
 
+function isCollapsed(): boolean {
+  return collapsed.value
+}
+
 defineExpose({
   collapse,
   expand,
+  isCollapsed,
   getLineRect
 })
 

@@ -29,10 +29,10 @@
       <h1 class="text-7xl">JPlag Report Viewer</h1>
       <div v-if="!hasQueryFile && !loadingFiles && !exampleFiles">
         <div
-          class="mx-auto mt-10 flex w-96 cursor-pointer flex-col justify-center rounded-md border-1 border-accent-dark bg-accent bg-opacity-25 px-5 py-5"
+          class="border-accent-dark bg-accent/25 mx-auto mt-10 flex w-96 cursor-pointer flex-col justify-center rounded-md border px-5 py-5"
           @click="uploadFileThroughWindow()"
         >
-          <div>Drag and Drop zip/Json file on this page</div>
+          <div>Drag and Drop zip file on this page</div>
           <div>Or click here to select a file</div>
         </div>
         <div>(No files will be uploaded)</div>
@@ -42,7 +42,7 @@
         <a
           href="https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag"
           target="_blank"
-          class="text-link-dark underline dark:text-link"
+          class="text-link-dark dark:text-link underline"
         >
           How to use JPlag
         </a>
@@ -70,7 +70,7 @@ import { BaseFactory } from '@/model/factories/BaseFactory'
 
 store().clearStore()
 
-const exampleFiles = ref(import.meta.env.MODE == 'demo')
+const exampleFiles = ref(import.meta.env.MODE == 'demo' || import.meta.env.MODE == 'dev-demo')
 const localFiles = ref(false)
 // Checks whether local files exist
 BaseFactory.getLocalFile('files/overview.json')
@@ -120,11 +120,13 @@ function navigateToOverview() {
  */
 async function handleFile(file: Blob) {
   loadingFiles.value = true
+  // empty case is for .jplag files
   switch (file.type) {
     case 'application/zip':
     case 'application/zip-compressed':
     case 'application/x-zip-compressed':
     case 'application/x-zip':
+    case '':
       store().setLoadingType('zip')
       await new ZipFileHandler().handleFile(file)
       return navigateToOverview()
@@ -154,7 +156,7 @@ async function uploadFileOnDrag(e: DragEvent) {
 async function uploadFileThroughWindow() {
   let input = document.createElement('input')
   input.type = 'file'
-  input.accept = '.zip,.json'
+  input.accept = '.jplag,.zip'
   input.multiple = false
   input.onchange = () => {
     const files = input.files
@@ -224,7 +226,7 @@ onErrorCaptured((error) => {
 })
 
 if (exampleFiles.value) {
-  store().state.uploadedFileName = 'progpedia.zip'
+  store().state.uploadedFileName = 'progpedia.jplag'
   navigateToOverview()
 }
 </script>

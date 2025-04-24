@@ -1,5 +1,7 @@
 package de.jplag.testutils.datacollector;
 
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -87,6 +89,7 @@ public class TestDataCollector {
      */
     public TestDataContext addTokenPositionTests(String directoryName) {
         File directory = new File(this.testFileLocation, directoryName);
+        assumeTrue(directory.exists() && directory.isDirectory());
         Set<TestData> allTestsInDirectory = new HashSet<>();
         for (File file : Objects.requireNonNull(directory.listFiles())) {
             try {

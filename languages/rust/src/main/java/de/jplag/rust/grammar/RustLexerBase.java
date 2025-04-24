@@ -62,7 +62,7 @@ public abstract class RustLexerBase extends Lexer {
     }
 
     public boolean floatLiteralPossible() {
-        if (this.currentToken == null || this.currentToken.getType() != RustLexer.DOT || (this.previousToken == null)) {
+        if (this.currentToken == null || this.currentToken.getType() != RustLexer.DOT || this.previousToken == null) {
             return true;
         }
 

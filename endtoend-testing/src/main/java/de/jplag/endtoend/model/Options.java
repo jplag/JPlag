@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public record Options(@JsonProperty Integer[] minimumTokenMatches, @JsonProperty String baseCodeDirectory) {
 
-    private static final int[] defaultTokenMatches = new int[] {3, 9};
+    private static final int[] defaultTokenMatches = {3, 9};
 
     /**
      * Initializes a new options object with minimumTokenMatch and baseCodeDirectory both being null
@@ -54,8 +54,7 @@ public record Options(@JsonProperty Integer[] minimumTokenMatches, @JsonProperty
     @Override
     public int hashCode() {
         int result = Objects.hash(baseCodeDirectory);
-        result = 31 * result + Arrays.hashCode(minimumTokenMatches);
-        return result;
+        return 31 * result + Arrays.hashCode(minimumTokenMatches);
     }
 
     @Override

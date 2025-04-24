@@ -33,7 +33,7 @@ class MinTokenMatchTest extends CliTest {
 
     @Test
     void testUpperBound() {
-        String higherThanMax = String.valueOf(((long) Integer.MAX_VALUE) + 1);
+        String higherThanMax = String.valueOf((long) Integer.MAX_VALUE + 1);
 
         Assertions.assertThrowsExactly(CliException.class, () -> {
             runCli(options -> options.withInvalid(CliArgument.MIN_TOKEN_MATCH, higherThanMax));

@@ -16,13 +16,6 @@ public class Parser extends AbstractParser {
     private static final String JDK_ERROR_MESSAGE = "Cannot parse as 'javac' is not available. Ensure a full JDK is installed.";
     private List<Token> tokens;
 
-    /**
-     * Creates the parser.
-     */
-    public Parser() {
-        super();
-    }
-
     public List<Token> parse(Set<File> files) throws ParsingException {
         ensureJavacIsAvailable();
         tokens = new ArrayList<>();

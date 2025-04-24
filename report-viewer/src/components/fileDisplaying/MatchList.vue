@@ -3,14 +3,23 @@
 -->
 <template>
   <div
-    class="flex h-fit min-w-0 max-w-full flex-row space-x-1 overflow-x-hidden text-xs print:hidden"
+    class="flex h-fit max-w-full min-w-0 flex-row flex-wrap space-x-1 gap-y-1 overflow-x-hidden text-xs md:flex-nowrap print:hidden"
   >
+    <ToolTipComponent direction="right">
+      <template #default>
+        <OptionComponent label="Matches:" />
+      </template>
+      <template #tooltip>
+        <p class="text-sm whitespace-pre">Click on a match to show it in the code view.</p>
+      </template>
+    </ToolTipComponent>
+
     <ToolTipComponent v-if="hasBaseCode" direction="right" class="pr-3">
       <template #default>
         <OptionComponent label="Base Code" :style="{ background: getMatchColor(0.3, 'base') }" />
       </template>
       <template #tooltip>
-        <div class="whitespace-pre text-sm">
+        <div class="text-sm whitespace-pre">
           Sections that are likely base code (thus ignored in similarity calculation). <br />
           <p>
             {{ store().getDisplayName(id1) }}:
@@ -32,15 +41,6 @@
             <span v-else>No Basecode in Submission</span>
           </p>
         </div>
-      </template>
-    </ToolTipComponent>
-
-    <ToolTipComponent direction="right">
-      <template #default>
-        <OptionComponent label="Match Files: TokenCount" />
-      </template>
-      <template #tooltip>
-        <p class="whitespace-pre text-sm">Click on a match to show it in the code view.</p>
       </template>
     </ToolTipComponent>
 
@@ -69,7 +69,7 @@
           />
         </template>
         <template #tooltip>
-          <p class="whitespace-pre text-sm">
+          <p class="text-sm whitespace-pre">
             Match between {{ getFileName(match.firstFile) }} (Line {{ match.startInFirst.line }}-{{
               match.endInFirst.line
             }}) and {{ getFileName(match.secondFile) }} (Line {{ match.startInSecond.line }}-{{

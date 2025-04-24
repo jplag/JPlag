@@ -111,7 +111,7 @@ public class CliInputHandler {
         try {
             this.parseResult = this.commandLine.parseArgs(args);
             if (this.parseResult.isUsageHelpRequested()
-                    || (this.parseResult.subcommand() != null && this.parseResult.subcommand().isUsageHelpRequested())) {
+                    || this.parseResult.subcommand() != null && this.parseResult.subcommand().isUsageHelpRequested()) {
                 commandLine.getExecutionStrategy().execute(this.parseResult);
                 return true;
             }

@@ -28,7 +28,7 @@ class ReportObjectFactoryTest extends TestBase {
     @Test
     void testCreateAndSaveReportWithBasecode() throws ExitException, IOException {
         JPlagResult result = runJPlag(BASECODE, it -> it.withBaseCodeSubmissionDirectory(new File(BASE_PATH, BASECODE_BASE)));
-        File testZip = File.createTempFile("result", ".zip");
+        File testZip = File.createTempFile("result", ".jplag");
 
         ReportObjectFactory reportObjectFactory = new ReportObjectFactory(testZip);
         reportObjectFactory.createAndSaveReport(result);

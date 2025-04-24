@@ -1,37 +1,40 @@
 package de.jplag.golang;
 
+import java.io.File;
+import java.util.List;
+import java.util.Set;
+
 import org.kohsuke.MetaInfServices;
 
-import de.jplag.antlr.AbstractAntlrLanguage;
+import de.jplag.Language;
+import de.jplag.ParsingException;
+import de.jplag.Token;
 
-@MetaInfServices(de.jplag.Language.class)
-public class GoLanguage extends AbstractAntlrLanguage {
-    private static final String NAME = "Go";
-    private static final String IDENTIFIER = "go";
-    private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
-    private static final String[] FILE_EXTENSIONS = {".go"};
-
-    public GoLanguage() {
-        super(new GoParserAdapter());
-    }
+@MetaInfServices(Language.class)
+public class GoLanguage implements Language {
 
     @Override
     public String[] suffixes() {
-        return FILE_EXTENSIONS;
+        return new String[] {".go"};
     }
 
     @Override
     public String getName() {
-        return NAME;
+        return "Go";
     }
 
     @Override
     public String getIdentifier() {
-        return IDENTIFIER;
+        return "go";
     }
 
     @Override
     public int minimumTokenMatch() {
-        return DEFAULT_MIN_TOKEN_MATCH;
+        return 8;
+    }
+
+    @Override
+    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
+        return new GoParserAdapter().parse(files);
     }
 }

@@ -37,7 +37,7 @@ class RLanguageTest {
     private static final String COMPLETE_TEST_FILE = "Complete.R";
 
     private final Logger logger = LoggerFactory.getLogger(RLanguageTest.class);
-    private final String[] testFiles = new String[] {"Game.R", COMPLETE_TEST_FILE};
+    private final String[] testFiles = {"Game.R", COMPLETE_TEST_FILE};
     private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "rlang").toFile();
     private RLanguage language;
 
@@ -54,8 +54,9 @@ class RLanguageTest {
             logger.info(output);
 
             testSourceCoverage(fileName, tokens);
-            if (fileName.equals(COMPLETE_TEST_FILE))
+            if (COMPLETE_TEST_FILE.equals(fileName)) {
                 testTokenCoverage(tokens, fileName);
+            }
         }
     }
 

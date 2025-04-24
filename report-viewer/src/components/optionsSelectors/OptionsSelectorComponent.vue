@@ -2,7 +2,9 @@
   Component for selecting one of multiple options.
 -->
 <template>
-  <div class="flex h-fit flex-row items-center text-center text-xs">
+  <div
+    class="flex h-fit flex-row flex-wrap items-center gap-y-1 text-center text-xs md:flex-nowrap"
+  >
     <div v-if="title != ''" class="mr-3 text-base">
       {{ title }}
     </div>
@@ -21,7 +23,7 @@
         </template>
 
         <template #tooltip>
-          <p class="whitespace-pre text-sm">
+          <p class="text-sm whitespace-pre">
             {{ (label as ToolTipLabel).tooltip }}
           </p>
         </template>

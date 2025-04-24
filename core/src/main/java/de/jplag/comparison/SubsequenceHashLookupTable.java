@@ -1,4 +1,4 @@
-package de.jplag;
+package de.jplag.comparison;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,7 +40,7 @@ class SubsequenceHashLookupTable {
         }
 
         subsequenceHashes = new int[values.length - windowSize];
-        startIndexToSubsequenceHashesMap = new HashMap<>(subsequenceHashes.length);
+        startIndexToSubsequenceHashesMap = HashMap.newHashMap(subsequenceHashes.length);
         computeSubsequenceHashes(marked);
     }
 
@@ -74,7 +74,7 @@ class SubsequenceHashLookupTable {
     private void computeSubsequenceHashes(boolean[] marked) {
         int hash = 0;
         int hashedLength = 0;
-        int factor = (windowSize != 1 ? (2 << (windowSize - 2)) : 1);
+        int factor = windowSize != 1 ? 2 << windowSize - 2 : 1;
 
         for (int windowEndIndex = 0; windowEndIndex < values.length; windowEndIndex++) {
             int windowStartIndex = windowEndIndex - windowSize;
@@ -87,7 +87,7 @@ class SubsequenceHashLookupTable {
                 }
                 hash -= factor * hashValueForValue(values[windowStartIndex]);
             }
-            hash = (2 * hash) + hashValueForValue(values[windowEndIndex]);
+            hash = 2 * hash + hashValueForValue(values[windowEndIndex]);
             if (marked[windowEndIndex]) {
                 hashedLength = 0;
             } else {

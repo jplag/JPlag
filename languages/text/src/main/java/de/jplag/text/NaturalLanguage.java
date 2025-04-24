@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.kohsuke.MetaInfServices;
 
+import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
@@ -14,30 +15,23 @@ import de.jplag.Token;
  * individual words are interpreted as token types. Whitespace and special characters are ignored. This approach works,
  * but there are better approaches for text plagiarism out there (based on NLP techniques).
  */
-@MetaInfServices(de.jplag.Language.class)
-public class NaturalLanguage implements de.jplag.Language {
-
-    private static final String IDENTIFIER = "text";
-    private static final String NAME = "Text (naive)";
-    private final ParserAdapter parserAdapter;
-
-    public NaturalLanguage() {
-        parserAdapter = new ParserAdapter();
-    }
+@MetaInfServices(Language.class)
+public class NaturalLanguage implements Language {
 
     @Override
     public String[] suffixes() {
-        return new String[] {".TXT", ".txt", ".ASC", ".asc", ".TEX", ".tex"};
+        return new String[] {".TXT", ".txt", ".ASC", ".asc", ".TEX", ".tex", ".MD", ".md", ".RTF", ".rtf", ".CSV", ".csv", ".WIKI", ".wiki", ".JSON",
+                ".json", ".YAML", ".yaml", ".YML", ".yml", ".XML", ".xml"};
     }
 
     @Override
     public String getName() {
-        return NAME;
+        return "Text (naive)";
     }
 
     @Override
     public String getIdentifier() {
-        return IDENTIFIER;
+        return "text";
     }
 
     @Override
@@ -47,6 +41,6 @@ public class NaturalLanguage implements de.jplag.Language {
 
     @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return parserAdapter.parse(files);
+        return new ParserAdapter().parse(files);
     }
 }

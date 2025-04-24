@@ -13,19 +13,19 @@ public class CumulativeDistributionFunctionPreprocessorTest extends Preprocessin
     CumulativeDistributionFunctionPreprocessor preprocessor;
 
     @BeforeEach
-    public void init() {
+    void init() {
         preprocessor = new CumulativeDistributionFunctionPreprocessor();
     }
 
     @Test
-    public void satisfiesInterface() {
+    void satisfiesInterface() {
         double[][] original = createTestData();
         double[][] result = preprocessor.preprocessSimilarities(original);
         validPreprocessing(original, result, preprocessor::originalIndexOf);
     }
 
     @Test
-    public void mayDecreaseOnly() {
+    void mayDecreaseOnly() {
         double[][] original = createTestData();
         double[][] result = preprocessor.preprocessSimilarities(original);
         withAllValues(preprocessor, original, result, (originalValue, preprocessed) -> {

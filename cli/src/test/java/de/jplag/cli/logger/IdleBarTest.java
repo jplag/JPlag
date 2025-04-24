@@ -64,7 +64,7 @@ class IdleBarTest {
 
         String[] timeParts = time.split(":");
         int seconds = Integer.parseInt(timeParts[0]) * 60 * 60 + Integer.parseInt(timeParts[1]) * 60 + Integer.parseInt(timeParts[2]);
-        int expectedTime = (int) ((IDLE_BAR_ANIMATION_DELAY * frameIndex) / 1000);
+        int expectedTime = (int) (IDLE_BAR_ANIMATION_DELAY * frameIndex / 1000);
         Assertions.assertTrue(Math.abs(seconds - expectedTime) < 1, "Frame time of by more than one second");
     }
 }

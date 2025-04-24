@@ -12,7 +12,7 @@ import de.jplag.options.SimilarityMetric;
 import de.jplag.reporting.reportobject.model.TopComparison;
 
 /**
- * Extracts and maps metrics from the JPlagResult to the corresponding JSON DTO
+ * Extracts and maps metrics from the JPlagResult to the corresponding JSON DTO.
  */
 public class MetricMapper {
     private final Function<Submission, String> submissionToIdFunction;
@@ -22,9 +22,9 @@ public class MetricMapper {
     }
 
     /**
-     * Generates a map of all distributions
-     * @param result Result containing distributions
-     * @return Map with key as name of metric and value as distribution
+     * Generates a map of all distributions.
+     * @param result Result containing distributions.
+     * @return Map with key as name of metric and value as distribution.
      */
     public static Map<String, List<Integer>> getDistributions(JPlagResult result) {
         Map<String, List<Integer>> distributions = new HashMap<>();
@@ -35,9 +35,9 @@ public class MetricMapper {
     }
 
     /**
-     * Generates a List of the top comparisons
-     * @param result Result containing comparisons
-     * @return List of top comparisons with similarities in all metrics
+     * Generates a List of the top comparisons.
+     * @param result Result containing comparisons.
+     * @return List of top comparisons with similarities in all metrics.
      */
     public List<TopComparison> getTopComparisons(JPlagResult result) {
         return result.getComparisons(result.getOptions().maximumNumberOfComparisons()).stream()

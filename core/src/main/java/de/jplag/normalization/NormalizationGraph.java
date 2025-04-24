@@ -33,6 +33,7 @@ public class NormalizationGraph extends SimpleDirectedGraph<Statement, MultipleE
 
     /**
      * Creates a new normalization graph.
+     * @param tokens is the token sequence from which the graph is built.
      */
     public NormalizationGraph(List<Token> tokens) {
         super(MultipleEdge.class);

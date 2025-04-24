@@ -28,10 +28,10 @@ import de.jplag.util.FileUtils;
 public final class CLI {
     private static final Logger logger = LoggerFactory.getLogger(CLI.class);
 
-    private static final String DEFAULT_FILE_ENDING = ".zip";
+    private static final String DEFAULT_FILE_ENDING = ".jplag";
     private static final int NAME_COLLISION_ATTEMPTS = 4;
 
-    private static final String OUTPUT_FILE_EXISTS = "The output file (also with suffixes e.g. results(1).zip) already exists. You can use --overwrite to overwrite the file.";
+    private static final String OUTPUT_FILE_EXISTS = "The output file (also with suffixes e.g. results(1).jplag) already exists. You can use --overwrite to overwrite the file.";
     private static final String OUTPUT_FILE_NOT_WRITABLE = "The output file (%s) cannot be written to.";
 
     private static final String ZIP_FILE_EXTENSION = ".zip";
@@ -120,7 +120,7 @@ public final class CLI {
     }
 
     /**
-     * Runs the report viewer using the given file as the default result.zip.
+     * Runs the report viewer using the given file as the default result.jplag.
      * @param zipFile The zip file to pass to the viewer. Can be null, if no result should be opened by default
      * @throws IOException If something went wrong with the internal server
      */
@@ -138,7 +138,8 @@ public final class CLI {
         }
 
         // if the selected mode is auto and there is exactly one zip file selected as an input it is opened in the report viewer
-        if (inputs.size() == 1 && inputs.getFirst().getName().endsWith(ZIP_FILE_EXTENSION)) {
+        if (inputs.size() == 1
+                && (inputs.getFirst().getName().endsWith(ZIP_FILE_EXTENSION) || inputs.getFirst().getName().endsWith(DEFAULT_FILE_ENDING))) {
             this.runViewer(inputs.getFirst());
             return;
         }
@@ -167,6 +168,10 @@ public final class CLI {
         if (optionValue.endsWith(DEFAULT_FILE_ENDING)) {
             return optionValue;
         }
+        if (optionValue.endsWith(ZIP_FILE_EXTENSION)) {
+            int endIndex = optionValue.length() - ZIP_FILE_EXTENSION.length();
+            return optionValue.substring(0, endIndex) + DEFAULT_FILE_ENDING;
+        }
         return optionValue + DEFAULT_FILE_ENDING;
     }
 
@@ -178,9 +183,8 @@ public final class CLI {
     private String getOffsetFileName(int offset) {
         if (offset <= 0) {
             return getResultFilePath();
-        } else {
-            return getResultFileBaseName() + "(" + offset + ")" + DEFAULT_FILE_ENDING;
         }
+        return getResultFileBaseName() + "(" + offset + ")" + DEFAULT_FILE_ENDING;
     }
 
     private String getWritableFileName() throws CliException {
@@ -204,6 +208,10 @@ public final class CLI {
     }
 
     public static void main(String[] args) {
+        // This needs to be executed before any other code, as it changes the default behavior of the JVM for network
+        // connections.
+        System.setProperty("java.net.preferIPv4Stack", "true");
+
         CLI cli = new CLI(args);
         if (cli.executeCliAndHandleErrors()) {
             System.exit(1);

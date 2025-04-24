@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 public class GaussianProcessTest {
 
     @Test
-    public void noisyLinearFunction() {
+    void noisyLinearFunction() {
         List<RealVector> X = new ArrayList<>();
         double[] Y = new double[20];
         int idx = 0;

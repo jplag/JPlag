@@ -2,20 +2,24 @@
   Container containing CodePanels for all of the files in a submission.
 -->
 <template>
-  <Container class="flex flex-col print:!px-1">
-    <div class="mb-2 mr-2 flex items-center space-x-5">
-      <h3 class="flex-grow text-left text-lg font-bold">
+  <Container class="flex flex-col print:px-1!">
+    <div class="mb-2 flex flex-col gap-x-5 gap-y-2 md:mr-2 md:flex-row md:items-center">
+      <h3 class="grow text-left text-lg font-bold">
         Files of
         {{ fileOwnerDisplayName }}:
       </h3>
       <div class="text-gray-600 dark:text-gray-300">{{ tokenCount }} total tokens</div>
-      <Button class="space-x-2 print:hidden" @click="collapseAll()"
+      <Button v-if="allCollapsed" class="space-x-2 print:hidden" @click="expandAll()"
+        ><FontAwesomeIcon :icon="['fas', 'expand-alt']" />
+        <p>Expand All</p></Button
+      >
+      <Button v-else class="w-full space-x-2 md:w-fit print:hidden" @click="collapseAll()"
         ><FontAwesomeIcon :icon="['fas', 'compress-alt']" />
         <p>Collapse All</p></Button
       >
     </div>
 
-    <ScrollableComponent ref="scrollContainer" class="flex-grow">
+    <ScrollableComponent ref="scrollContainer" class="grow">
       <VueDraggableNext @update="emitFileMoving()">
         <CodePanel
           v-for="file in sortedFiles"
@@ -45,7 +49,7 @@ import { VueDraggableNext } from 'vue-draggable-next'
 import { computed, nextTick, ref, type PropType, type Ref } from 'vue'
 import type { MatchInSingleFile } from '@/model/MatchInSingleFile'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faCompressAlt } from '@fortawesome/free-solid-svg-icons'
+import { faCompressAlt, faExpandAlt } from '@fortawesome/free-solid-svg-icons'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import type { Language } from '@/model/Language'
 import { FileSortingOptions } from '@/model/ui/FileSortingOptions'
@@ -55,6 +59,7 @@ import type { Match } from '@/model/Match'
 import slash from 'slash'
 
 library.add(faCompressAlt)
+library.add(faExpandAlt)
 
 const props = defineProps({
   /**
@@ -202,6 +207,17 @@ function scrollTo(file: string, line: number) {
 function collapseAll() {
   codePanels.value.forEach((panel) => panel.collapse())
 }
+
+/**
+ * Expands all the code panels.
+ */
+function expandAll() {
+  codePanels.value.forEach((panel) => panel.expand())
+}
+
+const allCollapsed = computed(() => {
+  return codePanels.value.every((panel) => panel.isCollapsed())
+})
 
 defineExpose({
   scrollTo,

@@ -92,7 +92,7 @@ abstract class TypeScriptLexerBase extends Lexer {
     protected void processStringLiteral() {
         if (lastToken == null || lastToken.getType() == TypeScriptLexer.OpenBrace) {
             String text = getText();
-            if (text.equals("\"use strict\"") || text.equals("'use strict'")) {
+            if ("\"use strict\"".equals(text) || "'use strict'".equals(text)) {
                 if (!scopeStrictModes.isEmpty()) {
                     scopeStrictModes.pop();
                 }

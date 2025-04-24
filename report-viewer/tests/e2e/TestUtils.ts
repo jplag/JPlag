@@ -12,7 +12,7 @@ export async function uploadFile(
   waitCondition: (page: Page) => Promise<void> = async (page) =>
     await page.locator('text="JPlag Report"').waitFor({ state: 'visible' })
 ) {
-  page.route('**/results.zip', async (route) => {
+  page.route('**/results.jplag', async (route) => {
     await route.fulfill({
       // fullfill with the file
       path: `./tests/e2e/assets/${fileName}`,
