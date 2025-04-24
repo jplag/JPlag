@@ -45,7 +45,7 @@ public class ReportViewer implements HttpHandler {
         this.routingTree = new RoutingTree();
 
         this.routingTree.insertRouting("", new RoutingResources(REPORT_VIEWER_RESOURCE_PREFIX).or(new RoutingAlias(INDEX_PATH)));
-        this.routingTree.insertRouting(RESULT_PATH, new RoutingStaticFile(zipFile, ContentType.ZIP));
+        this.routingTree.insertRouting(RESULT_PATH, new RoutingStaticFile(zipFile, ContentType.RESULT_FILE));
         for (String version : OLD_VERSION_DIRECTORIES) {
             this.routingTree.insertRouting(version, new RoutingResources(version).or(new RoutingAlias(version + "/" + INDEX_PATH)));
         }
