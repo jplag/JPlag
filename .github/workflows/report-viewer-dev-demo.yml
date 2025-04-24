@@ -62,7 +62,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: "Result"
-          path: "example.zip"
+          path: "example.jplag"
             
 
   build-and-deploy:

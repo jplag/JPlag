@@ -50,7 +50,7 @@ jobs:
           name: JPlag
 
       - name: Copy and unzip submissions
-        run: unzip ./.github/workflows/files/progpedia.jplag
+        run: unzip ./.github/workflows/files/progpedia.zip
 
       - name: Rename jar
         run: mv *.jar ./jplag.jar
