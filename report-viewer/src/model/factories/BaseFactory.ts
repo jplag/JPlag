@@ -22,7 +22,7 @@ export class BaseFactory {
       await new ZipFileHandler().handleFile(await this.getLocalFile(this.zipFileName))
       store().setLoadingType('zip')
       return this.getFileFromStore(path)
-    } else if (import.meta.env.MODE == 'demo') {
+    } else if (import.meta.env.MODE == 'demo' || import.meta.env.MODE == 'dev-demo') {
       await new ZipFileHandler().handleFile(await this.getLocalFile('example.jplag'))
       store().setLoadingType('zip')
       return this.getFileFromStore(path)
