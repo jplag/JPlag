@@ -29,7 +29,7 @@ public class JPlagResult {
 
     private List<ClusteringResult<Submission>> clusteringResult;
 
-    private final static int SIMILARITY_DISTRIBUTION_SIZE = 100;
+    private static final int SIMILARITY_DISTRIBUTION_SIZE = 100;
 
     public JPlagResult(List<JPlagComparison> comparisons, SubmissionSet submissions, long durationInMillis, JPlagOptions options) {
         // sort by similarity (descending)
