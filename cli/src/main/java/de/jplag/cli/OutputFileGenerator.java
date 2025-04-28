@@ -45,7 +45,7 @@ public final class OutputFileGenerator {
      * @param outputFile is the target for the result file.
      * @throws FileNotFoundException if the file cannot be written-
      */
-    public static void generateJPlagResult(JPlagResult result, File outputFile) throws FileNotFoundException {
+    public static void generateJPlagResultFile(JPlagResult result, File outputFile) throws FileNotFoundException {
         ReportObjectFactory reportObjectFactory = new ReportObjectFactory(outputFile);
         reportObjectFactory.createAndSaveReport(result);
         logger.info("Successfully written the result: {}", outputFile.getPath());

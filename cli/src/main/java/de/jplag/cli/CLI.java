@@ -104,7 +104,7 @@ public final class CLI {
         JPlagOptions options = optionsBuilder.buildOptions();
         JPlagResult result = JPlagRunner.runJPlag(options);
 
-        OutputFileGenerator.generateJPlagResult(result, target);
+        OutputFileGenerator.generateJPlagResultFile(result, target);
         OutputFileGenerator.generateCsvOutput(result, new File(getResultFileBaseName()), this.inputHandler.getCliOptions());
 
         return target;
