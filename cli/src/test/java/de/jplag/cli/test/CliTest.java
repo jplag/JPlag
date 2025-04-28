@@ -14,10 +14,10 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.slf4j.event.Level;
 
+import de.jplag.JPlag;
 import de.jplag.JPlagResult;
 import de.jplag.cli.CLI;
 import de.jplag.cli.JPlagOptionsBuilder;
-import de.jplag.cli.JPlagRunner;
 import de.jplag.cli.OutputFileGenerator;
 import de.jplag.cli.logger.CollectedLogger;
 import de.jplag.cli.picocli.CliInputHandler;
@@ -142,9 +142,9 @@ public abstract class CliTest {
      * @see #runCli()
      */
     protected CliResult runCli(Consumer<CliArgumentBuilder> additionalOptionsBuilder) throws ExitException, IOException {
-        try (MockedStatic<JPlagRunner> runnerMock = Mockito.mockStatic(JPlagRunner.class);
+        try (MockedStatic<JPlag> runnerMock = Mockito.mockStatic(JPlag.class);
                 MockedStatic<OutputFileGenerator> generatorMock = Mockito.mockStatic(OutputFileGenerator.class)) {
-            runnerMock.when(() -> JPlagRunner.runJPlag(ArgumentMatchers.any())).thenReturn(new JPlagResult(Collections.emptyList(), null, 1, null));
+            runnerMock.when(() -> JPlag.run(ArgumentMatchers.any())).thenReturn(new JPlagResult(Collections.emptyList(), null, 1, null));
             generatorMock.when(() -> OutputFileGenerator.generateJPlagResultZip(ArgumentMatchers.any(), ArgumentMatchers.any()))
                     .then(invocationOnMock -> null);
 

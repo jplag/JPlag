@@ -86,6 +86,10 @@ public class CliInputHandler {
         return cli;
     }
 
+    public boolean hasArguments() {
+        return this.args.length > 0;
+    }
+
     private List<CommandLine.Model.CommandSpec> buildSubcommands() {
         return LanguageLoader.getAllAvailableLanguages().values().stream().map(language -> {
             CommandLine.Model.CommandSpec command = CommandLine.Model.CommandSpec.create().name(language.getIdentifier());

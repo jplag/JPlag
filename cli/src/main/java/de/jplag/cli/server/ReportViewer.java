@@ -19,6 +19,14 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jplag.JPlag;
+import de.jplag.exceptions.ExitException;
+import de.jplag.options.JPlagOptions;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -49,15 +57,27 @@ public class ReportViewer implements HttpHandler {
      * @throws IOException If the zip file cannot be read
      */
     public ReportViewer(File zipFile, int port) throws IOException {
-        this.routingTree = new RoutingTree();
+        this(port);
+        setResultFile(zipFile);
+    }
 
+    /**
+     * Launches a locally hosted report viewer.
+     * @param port The port to use for the server. You can use 0 to use any free port.
+     * @throws IOException If the zip file cannot be read
+     */
+    public ReportViewer(int port) throws IOException {
+        this.port = port;
+
+        this.routingTree = new RoutingTree();
         this.routingTree.insertRouting("", new RoutingResources(REPORT_VIEWER_RESOURCE_PREFIX).or(new RoutingAlias(INDEX_PATH)));
-        this.routingTree.insertRouting(RESULT_PATH, new RoutingStaticFile(zipFile, ContentType.RESULT_FILE));
         for (String version : OLD_VERSION_DIRECTORIES) {
             this.routingTree.insertRouting(version, new RoutingResources(version).or(new RoutingAlias(version + "/" + INDEX_PATH)));
         }
+    }
 
-        this.port = port;
+    public void setResultFile(File resultFile) throws IOException {
+        this.routingTree.insertRouting(RESULT_PATH, new RoutingStaticFile(resultFile, ContentType.RESULT_FILE));
     }
 
     /**
@@ -98,6 +118,11 @@ public class ReportViewer implements HttpHandler {
      */
     public void stop() {
         server.stop(0);
+        server = null;
+    }
+
+    public boolean isRunning() {
+        return this.server != null;
     }
 
     /**
@@ -111,6 +136,11 @@ public class ReportViewer implements HttpHandler {
             openFileChooser(exchange);
             return;
         }
+        if (exchange.getRequestMethod().equals("POST") && exchange.getRequestURI().getPath().equals("/run")) {
+            runJPlag(exchange);
+            return;
+        }
+
         RoutingPath path = new RoutingPath(exchange.getRequestURI().getPath());
         Pair<RoutingPath, Routing> resolved = this.routingTree.resolveRouting(path);
         HttpRequestMethod method = HttpRequestMethod.fromName(exchange.getRequestMethod());
@@ -204,5 +234,38 @@ public class ReportViewer implements HttpHandler {
             exchange.sendResponseHeaders(400, 0);
         }
         exchange.close();
+    }
+
+    private void runJPlag(HttpExchange exchange) throws IOException {
+        // pass body with jackson to JPlagOptions object
+        JPlagOptions options;
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            JsonNode json = mapper.readTree(exchange.getRequestBody());
+            exchange.getRequestBody().close();
+            ObjectReader reader = mapper.readerFor(new TypeReference<JPlagOptions>() {
+            });
+            options = reader.readValue(json);
+        } catch (IOException e) {
+            exchange.sendResponseHeaders(400, 0);
+            exchange.close();
+            return;
+        }
+
+        if (options == null) {
+            exchange.sendResponseHeaders(400, 0);
+            exchange.close();
+            return;
+        }
+        try {
+            JPlag.run(options);
+            exchange.sendResponseHeaders(200, 0);
+            exchange.close();
+        } catch (ExitException e) {
+            exchange.sendResponseHeaders(400, 0);
+            exchange.close();
+        }
+
     }
 }

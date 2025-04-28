@@ -1,8 +1,10 @@
 package de.jplag.cli;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +18,7 @@ import de.jplag.cli.logger.CliProgressBarProvider;
 import de.jplag.cli.logger.CollectedLogger;
 import de.jplag.cli.logger.CollectedLoggerFactory;
 import de.jplag.cli.picocli.CliInputHandler;
+import de.jplag.cli.server.ReportViewer;
 import de.jplag.exceptions.ExitException;
 import de.jplag.logging.ProgressBarLogger;
 import de.jplag.options.JPlagOptions;
@@ -37,6 +40,7 @@ public final class CLI {
     private static final String ZIP_FILE_EXTENSION = ".zip";
 
     private final CliInputHandler inputHandler;
+    private ReportViewer reportViewer;
 
     /**
      * Creates a cli.
@@ -65,6 +69,12 @@ public final class CLI {
                 case RUN_AND_VIEW -> runAndView();
                 case AUTO -> selectModeAutomatically();
             }
+
+            if (this.reportViewer != null && this.reportViewer.isRunning()) {
+                System.out.println("Press Enter key to exit...");
+                System.in.read();
+                reportViewer.stop();
+            }
         }
     }
 
@@ -86,6 +96,7 @@ public final class CLI {
             hadErrors = true;
         } finally {
             finalizeLogger();
+            reportViewer.stop();
         }
 
         return hadErrors;
@@ -102,7 +113,7 @@ public final class CLI {
 
         JPlagOptionsBuilder optionsBuilder = new JPlagOptionsBuilder(this.inputHandler);
         JPlagOptions options = optionsBuilder.buildOptions();
-        JPlagResult result = JPlagRunner.runJPlag(options);
+        JPlagResult result = JPlag.run(options);
 
         OutputFileGenerator.generateJPlagResultZip(result, target);
         OutputFileGenerator.generateCsvOutput(result, new File(getResultFileBaseName()), this.inputHandler.getCliOptions());
@@ -119,21 +130,53 @@ public final class CLI {
         runViewer(runJPlag());
     }
 
-    /**
-     * Runs the report viewer using the given file as the default result.jplag.
-     * @param zipFile The zip file to pass to the viewer. Can be null, if no result should be opened by default
-     * @throws IOException If something went wrong with the internal server
-     */
-    public void runViewer(File zipFile) throws IOException {
-        finalizeLogger(); // Prints the errors. The later finalizeLogger will print any errors logged after this point.
-        JPlagRunner.runInternalServer(zipFile, this.inputHandler.getCliOptions().advanced.port);
+    public void runViewer() throws IOException {
+        this.runViewer(null, "");
+    }
+
+    public void runViewer(String site) throws IOException {
+        this.runViewer(null, site);
+    }
+
+    public void runViewer(File resultFile) throws IOException {
+        this.runViewer(resultFile, "");
+    }
+
+    public void runViewer(File resultFile, String site) throws IOException {
+        finalizeLogger();
+        if (!ReportViewer.hasCompiledViewer()) {
+            logger.warn("The report viewer is not available. Check whether you compiled JPlag with the report viewer.");
+            return;
+        }
+        if (this.reportViewer == null) {
+            this.reportViewer = new ReportViewer(this.inputHandler.getCliOptions().advanced.port);
+        }
+        if (resultFile != null) {
+            this.reportViewer.setResultFile(resultFile);
+        }
+        if (this.reportViewer.isRunning()) {
+            return;
+        }
+
+        int actualPort = reportViewer.start();
+        logger.info("ReportViewer started on port http://localhost:{}/{}", actualPort, site);
+        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+            Desktop.getDesktop().browse(URI.create("http://localhost:" + actualPort + "/" + site));
+        } else {
+            logger.info("Could not open browser. You can open the Report Viewer here: http://localhost:{}/{}", actualPort, site);
+        }
     }
 
     private void selectModeAutomatically() throws IOException, ExitException {
+        if (!this.inputHandler.hasArguments()) {
+            runViewer("cli");
+            return;
+        }
+
         List<File> inputs = this.getAllInputs();
 
         if (inputs.isEmpty()) {
-            this.runViewer(null);
+            this.runViewer();
             return;
         }
 
