@@ -15,7 +15,7 @@ public class IntegerMapping<T> {
     private int size = 0;
 
     public IntegerMapping(int initialCapacity) {
-        mapping = new HashMap<>(initialCapacity);
+        mapping = HashMap.newHashMap(initialCapacity);
         backMapping = new ArrayList<>(initialCapacity);
     }
 
