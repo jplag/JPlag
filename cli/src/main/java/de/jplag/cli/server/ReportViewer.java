@@ -3,9 +3,16 @@ package de.jplag.cli.server;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.BindException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -100,6 +107,10 @@ public class ReportViewer implements HttpHandler {
      */
     @Override
     public void handle(HttpExchange exchange) throws IOException {
+        if (exchange.getRequestMethod().equals("GET") && exchange.getRequestURI().getPath().equals("/folder")) {
+            openFileChooser(exchange);
+            return;
+        }
         RoutingPath path = new RoutingPath(exchange.getRequestURI().getPath());
         Pair<RoutingPath, Routing> resolved = this.routingTree.resolveRouting(path);
         HttpRequestMethod method = HttpRequestMethod.fromName(exchange.getRequestMethod());
@@ -139,5 +150,59 @@ public class ReportViewer implements HttpHandler {
 
     public static boolean hasCompiledViewer() {
         return ResponseData.fromResourceUrl("/" + REPORT_VIEWER_RESOURCE_PREFIX + "/index.html") != null;
+    }
+
+    public static void openFileChooser(HttpExchange exchange) throws IOException {
+        if (java.awt.GraphicsEnvironment.isHeadless()) {
+            logger.warn("Can not open file chooser in headless environment");
+            exchange.sendResponseHeaders(400, 0);
+            exchange.close();
+            return;
+        }
+        try {
+            SwingUtilities.invokeAndWait(() -> {
+                try {
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                } catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException | IllegalAccessException ignored) {
+
+                }
+                // we need to create hidden JFrame to ensure the file chooser actually gets shown on all operating systems
+                JFrame frame = new JFrame();
+                frame.setAlwaysOnTop(true);
+                frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                frame.setUndecorated(true);
+                frame.setSize(0, 0);
+                frame.setLocationRelativeTo(null); // center on screen
+                frame.setVisible(true);
+
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                int choice = fileChooser.showOpenDialog(frame);
+                if (choice == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        exchange.sendResponseHeaders(200, 0);
+                        String path = fileChooser.getSelectedFile().getAbsolutePath();
+                        exchange.getResponseHeaders().set("Content-Type", "text/plain");
+                        exchange.getResponseHeaders().set("Content-Length", String.valueOf(path.length()));
+                        exchange.getResponseBody().write(path.getBytes());
+                        exchange.getResponseBody().flush();
+                        exchange.getResponseBody().close();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    try {
+                        exchange.sendResponseHeaders(400, 0);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                frame.dispose();
+            });
+        } catch (InterruptedException | InvocationTargetException e) {
+            logger.error("Could not open file chooser");
+            exchange.sendResponseHeaders(400, 0);
+        }
+        exchange.close();
     }
 }
