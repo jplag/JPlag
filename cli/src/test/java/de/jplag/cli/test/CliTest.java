@@ -145,7 +145,7 @@ public abstract class CliTest {
         try (MockedStatic<JPlagRunner> runnerMock = Mockito.mockStatic(JPlagRunner.class);
                 MockedStatic<OutputFileGenerator> generatorMock = Mockito.mockStatic(OutputFileGenerator.class)) {
             runnerMock.when(() -> JPlagRunner.runJPlag(ArgumentMatchers.any())).thenReturn(new JPlagResult(Collections.emptyList(), null, 1, null));
-            generatorMock.when(() -> OutputFileGenerator.generateJPlagResultZip(ArgumentMatchers.any(), ArgumentMatchers.any()))
+            generatorMock.when(() -> OutputFileGenerator.generateJPlagResult(ArgumentMatchers.any(), ArgumentMatchers.any()))
                     .then(invocationOnMock -> null);
 
             CliArgumentBuilder copy = this.defaultArgumentBuilder.copy();

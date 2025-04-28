@@ -40,12 +40,12 @@ public final class OutputFileGenerator {
     }
 
     /**
-     * Generates the JPLag result zip.
-     * @param result The JPlag result
-     * @param outputFile The output file
-     * @throws FileNotFoundException If the file cannot be written
+     * Generates the JPLag result file out of a given {@link JPlagResult}.
+     * @param result is the JPlag result to export.
+     * @param outputFile is the target for the result file.
+     * @throws FileNotFoundException if the file cannot be written-
      */
-    public static void generateJPlagResultZip(JPlagResult result, File outputFile) throws FileNotFoundException {
+    public static void generateJPlagResult(JPlagResult result, File outputFile) throws FileNotFoundException {
         ReportObjectFactory reportObjectFactory = new ReportObjectFactory(outputFile);
         reportObjectFactory.createAndSaveReport(result);
         logger.info("Successfully written the result: {}", outputFile.getPath());
