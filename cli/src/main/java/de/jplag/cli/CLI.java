@@ -28,7 +28,7 @@ import de.jplag.util.FileUtils;
 public final class CLI {
     private static final Logger logger = LoggerFactory.getLogger(CLI.class);
 
-    private static final String DEFAULT_FILE_ENDING = ".jplag";
+    private static final String DEFAULT_FILE_EXTENSION = ".jplag";
     private static final int NAME_COLLISION_ATTEMPTS = 4;
 
     private static final String OUTPUT_FILE_EXISTS = "The output file (also with suffixes e.g. results(1).jplag) already exists. You can use --overwrite to overwrite the file.";
@@ -104,7 +104,7 @@ public final class CLI {
         JPlagOptions options = optionsBuilder.buildOptions();
         JPlagResult result = JPlagRunner.runJPlag(options);
 
-        OutputFileGenerator.generateJPlagResultZip(result, target);
+        OutputFileGenerator.generateJPlagResultFile(result, target);
         OutputFileGenerator.generateCsvOutput(result, new File(getResultFileBaseName()), this.inputHandler.getCliOptions());
 
         return target;
@@ -121,12 +121,12 @@ public final class CLI {
 
     /**
      * Runs the report viewer using the given file as the default result.jplag.
-     * @param zipFile The zip file to pass to the viewer. Can be null, if no result should be opened by default
+     * @param resultFile is the result file to pass to the viewer. Can be null, if no result should be opened by default
      * @throws IOException If something went wrong with the internal server
      */
-    public void runViewer(File zipFile) throws IOException {
+    public void runViewer(File resultFile) throws IOException {
         finalizeLogger(); // Prints the errors. The later finalizeLogger will print any errors logged after this point.
-        JPlagRunner.runInternalServer(zipFile, this.inputHandler.getCliOptions().advanced.port);
+        JPlagRunner.runInternalServer(resultFile, this.inputHandler.getCliOptions().advanced.port);
     }
 
     private void selectModeAutomatically() throws IOException, ExitException {
@@ -137,9 +137,9 @@ public final class CLI {
             return;
         }
 
-        // if the selected mode is auto and there is exactly one zip file selected as an input it is opened in the report viewer
+        // if the selected mode is auto and there is exactly one result file specified it is opened in the report viewer
         if (inputs.size() == 1
-                && (inputs.getFirst().getName().endsWith(ZIP_FILE_EXTENSION) || inputs.getFirst().getName().endsWith(DEFAULT_FILE_ENDING))) {
+                && (inputs.getFirst().getName().endsWith(ZIP_FILE_EXTENSION) || inputs.getFirst().getName().endsWith(DEFAULT_FILE_EXTENSION))) {
             this.runViewer(inputs.getFirst());
             return;
         }
@@ -165,26 +165,26 @@ public final class CLI {
 
     private String getResultFilePath() {
         String optionValue = this.inputHandler.getCliOptions().resultFile;
-        if (optionValue.endsWith(DEFAULT_FILE_ENDING)) {
+        if (optionValue.endsWith(DEFAULT_FILE_EXTENSION)) {
             return optionValue;
         }
         if (optionValue.endsWith(ZIP_FILE_EXTENSION)) {
             int endIndex = optionValue.length() - ZIP_FILE_EXTENSION.length();
-            return optionValue.substring(0, endIndex) + DEFAULT_FILE_ENDING;
+            return optionValue.substring(0, endIndex) + DEFAULT_FILE_EXTENSION;
         }
-        return optionValue + DEFAULT_FILE_ENDING;
+        return optionValue + DEFAULT_FILE_EXTENSION;
     }
 
     private String getResultFileBaseName() {
         String defaultOutputFile = getResultFilePath();
-        return defaultOutputFile.substring(0, defaultOutputFile.length() - DEFAULT_FILE_ENDING.length());
+        return defaultOutputFile.substring(0, defaultOutputFile.length() - DEFAULT_FILE_EXTENSION.length());
     }
 
     private String getOffsetFileName(int offset) {
         if (offset <= 0) {
             return getResultFilePath();
         }
-        return getResultFileBaseName() + "(" + offset + ")" + DEFAULT_FILE_ENDING;
+        return getResultFileBaseName() + "(" + offset + ")" + DEFAULT_FILE_EXTENSION;
     }
 
     private String getWritableFileName() throws CliException {
