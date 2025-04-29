@@ -111,7 +111,7 @@ public class SubmissionSetBuilder {
             throw new RootDirectoryException("No root directories specified with submissions to check for plagiarism!");
         }
 
-        Set<File> canonicalRootDirectories = new HashSet<>(rootDirectoryNames.size());
+        Set<File> canonicalRootDirectories = HashSet.newHashSet(rootDirectoryNames.size());
         for (final File rootDirectory : rootDirectoryNames) {
             if (!rootDirectory.exists()) {
                 throw new RootDirectoryException(String.format("Root directory \"%s\" does not exist!", rootDirectory));

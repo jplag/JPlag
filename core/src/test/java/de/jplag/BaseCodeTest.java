@@ -18,7 +18,7 @@ import de.jplag.exceptions.RootDirectoryException;
  * derived. The parts of the submissions that match with the basecode are ignored for the comparison. The basecode
  * feature is tested in combination with different root folders and the subdirectory feature.
  */
-public class BaseCodeTest extends TestBase {
+class BaseCodeTest extends TestBase {
 
     @Test
     @DisplayName("test two submissions with basecode in root folder")
