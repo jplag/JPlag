@@ -47,8 +47,8 @@ watch(
 .switch {
   position: relative;
   display: inline-block;
-  width: 2.2em;
-  height: 1.2em;
+  width: 30px;
+  height: 17px;
 }
 
 /* Hide default HTML checkbox */
@@ -66,26 +66,26 @@ watch(
   left: 0;
   right: 0;
   bottom: 0;
-  -webkit-transition: 0.4s;
-  transition: 0.4s;
-  border-radius: 10em;
+  -webkit-transition: 0.2s;
+  transition: 0.2s;
+  border-radius: 9999px;
 }
 
 .slider:before {
   position: absolute;
   content: '';
-  height: 0.85em;
-  width: 0.85em;
-  left: 0.1em;
-  bottom: 0.1em;
+  height: 13px;
+  width: 13px;
+  left: 1px;
+  bottom: 1px;
   -webkit-transition: 0.2s;
   transition: 0.2s;
   border-radius: 50%;
 }
 
 input:checked + .slider:before {
-  -webkit-transform: translateX(1em);
-  -ms-transform: translateX(1em);
-  transform: translateX(1em);
+  -webkit-transform: translateX(13px);
+  -ms-transform: translateX(13px);
+  transform: translateX(13px);
 }
 </style>

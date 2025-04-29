@@ -1,106 +1,111 @@
 <template>
   <div class="flex flex-col gap-1 md:overflow-hidden">
-    <div class="grid-rows[auto_1fr] grid flex-1 gap-5 md:overflow-hidden print:flex-none">
-      <ContainerComponent class="row-start-1 h-fit">
-        <div class="grid grid-cols-[1fr_auto] grid-rows-[auto_1fr] gap-2">
-          <h1 class="col-start-1 row-start-1 text-2xl">JPlag</h1>
+    <div class="flex-1 md:overflow-hidden print:flex-none">
+      <div class="flex max-h-full flex-col gap-5 md:overflow-hidden">
+        <ContainerComponent class="row-start-1 h-fit">
+          <div class="grid grid-cols-[1fr_auto] grid-rows-[auto_1fr] gap-2">
+            <h1 class="col-start-1 row-start-1 text-2xl">JPlag</h1>
 
-          <InteractableComponent
-            class="col-start-2 row-span-2 row-start-1 h-fit border-green-900! bg-green-700! text-white"
-          >
-            <div class="flex items-center gap-x-2 px-5">
-              <FontAwesomeIcon :icon="faPlay" />
-              Run
-            </div>
-          </InteractableComponent>
-
-          <p class="col-start-1 row-start-2 text-sm">
-            More information on each parameter can be found here:
-            <a
-              href="https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag"
-              class="dark:text-link text-link-dark underline"
-              >Parameter Description</a
+            <InteractableComponent
+              class="col-start-2 row-span-2 row-start-1 h-fit border-green-900! bg-green-700! text-white"
             >
-          </p>
-        </div>
-      </ContainerComponent>
+              <div class="flex items-center gap-x-2 px-5">
+                <FontAwesomeIcon :icon="faPlay" />
+                Run
+              </div>
+            </InteractableComponent>
 
-      <div class="row-start-2 grid grid-cols-1 gap-3 overflow-auto">
-        <ContainerComponent class="h-fit">
-          <h2 class="text-xl">Comparison Options</h2>
-          <div class="mt-3 grid grid-cols-1 gap-2 md:grid-cols-[auto_1fr]">
+            <p class="col-start-1 row-start-2 text-sm">
+              More information on each parameter can be found here:
+              <a
+                href="https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag"
+                class="dark:text-link text-link-dark underline"
+                >Parameter Description</a
+              >
+            </p>
+          </div>
+        </ContainerComponent>
+
+        <div class="grid flex-1 grid-cols-1 gap-3 overflow-auto md:grid-cols-2">
+          <CliViewCategory class="h-full min-h-fit md:col-start-1 md:row-start-1">
+            <template #heading> Comparison Options </template>
+
             <CliUiOption label="Language"></CliUiOption>
             <CliUiOption label="Minimum Token Match"></CliUiOption>
             <CliUiOption label="Normalize"></CliUiOption>
-          </div>
-        </ContainerComponent>
+          </CliViewCategory>
 
-        <ContainerComponent class="h-fit">
-          <h2 class="text-xl">Submission Directories</h2>
+          <CliViewCategory class="h-full min-h-fit md:col-start-2 md:row-start-1">
+            <template #heading> Report Options </template>
 
-          <div class="mt-3 grid grid-cols-1 gap-2 md:grid-cols-[auto_1fr]">
-            <CliUiOption label="Submission Directory"></CliUiOption>
-            <CliUiOption label="Basecode Directory"></CliUiOption>
-            <CliUiOption label="Old Submission Directories"></CliUiOption>
-            <CliUiOption label="CSV File"></CliUiOption>
-          </div>
-        </ContainerComponent>
-
-        <ContainerComponent class="h-fit">
-          <h2 class="text-xl">Report Options</h2>
-
-          <div class="mt-3 grid grid-cols-1 gap-2 md:grid-cols-[auto_1fr]">
             <CliUiOption label="Result File Name"></CliUiOption>
             <CliUiOption label="Shown Comparisons"></CliUiOption>
             <CliUiOption label="Similarity Treshold"></CliUiOption>
             <CliUiOption label="Overwrite Existing"></CliUiOption>
-          </div>
-        </ContainerComponent>
+            <CliUiOption label="CSV File"></CliUiOption>
+          </CliViewCategory>
 
-        <ContainerComponent class="h-fit">
-          <div class="flex items-center gap-2">
-            <SwitchComponent v-model="enableClustering" clas="col-start-1" />
-            <span class="col-start-2">Enable Clustering</span>
-          </div>
+          <CliViewCategory class="h-fit md:col-span-2 md:row-start-2">
+            <template #heading> Submission Files </template>
 
-          <div v-if="enableClustering" class="mt-5 grid grid-cols-1 gap-2 md:grid-cols-[auto_1fr]">
+            <CliUiOption label="Submission Directory"></CliUiOption>
+            <CliUiOption label="Basecode Directory"></CliUiOption>
+            <CliUiOption label="Old Submission Directories"></CliUiOption>
+          </CliViewCategory>
+
+          <CliViewCategory
+            class="min-h-fit md:col-start-1 md:row-start-3"
+            :class="enableClustering ? 'h-full' : 'h-fit'"
+            :show-content="enableClustering"
+          >
+            <template #heading>
+              <span class="flex items-center gap-2">
+                <SwitchComponent v-model="enableClustering" clas="col-start-1" />
+                <span class="col-start-2">Clustering</span>
+              </span>
+            </template>
+
             <CliUiOption label="Algorithm"></CliUiOption>
             <CliUiOption label="Metric"></CliUiOption>
-          </div>
-        </ContainerComponent>
+          </CliViewCategory>
 
-        <ContainerComponent class="h-fit">
-          <div class="flex items-center gap-2">
-            <SwitchComponent v-model="enableMatchMerging" clas="col-start-1" />
-            <span class="col-start-2">Enable Match Merging</span>
-          </div>
-
-          <div
-            v-if="enableMatchMerging"
-            class="mt-3 grid grid-cols-1 gap-2 md:grid-cols-[auto_1fr]"
+          <CliViewCategory
+            class="min-h-fit md:col-start-2 md:row-start-3"
+            :class="enableMatchMerging ? 'h-full' : 'h-fit'"
+            :show-content="enableMatchMerging"
           >
+            <template #heading>
+              <span class="flex items-center gap-2">
+                <SwitchComponent v-model="enableMatchMerging" clas="col-start-1" />
+                <span class="col-start-2">Match Merging</span>
+              </span>
+            </template>
+
             <CliUiOption label="Max Gap Size"></CliUiOption>
             <CliUiOption label="Neighbour Length"></CliUiOption>
             <CliUiOption label="Required Merges"></CliUiOption>
-          </div>
-        </ContainerComponent>
+          </CliViewCategory>
 
-        <ContainerComponent>
-          <h2 class="cursor-pointer text-xl" @click="showAdvancedOptions = !showAdvancedOptions">
-            <div class="flex items-center gap-x-2">
-              <FontAwesomeIcon :icon="showAdvancedOptions ? faCaretDown : faCaretRight" />
-              Advanced Options
-            </div>
-          </h2>
+          <CliViewCategory
+            class="h-fit md:col-span-2 md:row-start-4"
+            :show-content="showAdvancedOptions"
+          >
+            <template #heading>
+              <span class="cursor-pointer" @click="showAdvancedOptions = !showAdvancedOptions">
+                <div class="flex items-center gap-x-2">
+                  <FontAwesomeIcon :icon="showAdvancedOptions ? faCaretDown : faCaretRight" />
+                  Advanced Options
+                </div>
+              </span>
+            </template>
 
-          <div v-if="showAdvancedOptions" class="mt-3 grid grid-cols-[auto_1fr] gap-2">
             <CliUiOption label="Exlcusion File"></CliUiOption>
             <CliUiOption label="File Extensions"></CliUiOption>
             <CliUiOption label="Subdirectory"></CliUiOption>
             <CliUiOption label="Debug"></CliUiOption>
             <CliUiOption label="Log Level"></CliUiOption>
-          </div>
-        </ContainerComponent>
+          </CliViewCategory>
+        </div>
       </div>
     </div>
 
@@ -110,6 +115,7 @@
 
 <script setup lang="ts">
 import CliUiOption from '@/components/CliUiOption.vue'
+import CliViewCategory from '@/components/CliViewCategory.vue'
 import ContainerComponent from '@/components/ContainerComponent.vue'
 import InteractableComponent from '@/components/InteractableComponent.vue'
 import SwitchComponent from '@/components/SwitchComponent.vue'
