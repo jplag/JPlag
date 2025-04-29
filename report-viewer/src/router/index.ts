@@ -6,6 +6,7 @@ import ErrorView from '@/views/ErrorView.vue'
 import InformationViewWrapper from '@/viewWrapper/InformationViewWrapper.vue'
 import ClusterViewWrapper from '@/viewWrapper/ClusterViewWrapper.vue'
 import OldVersionRedirectView from '@/views/OldVersionRedirectView.vue'
+import CliView from '@/views/CliView.vue'
 
 /**
  * The router is used to navigate between the different views of the application.
@@ -51,6 +52,11 @@ const router = createRouter({
       name: 'OldVersionRedirectView',
       component: OldVersionRedirectView,
       props: true
+    },
+    {
+      path: '/cli',
+      name: 'CliView',
+      component: CliView
     },
     {
       path: '/:pathMatch(.*)*',

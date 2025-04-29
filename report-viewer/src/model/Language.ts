@@ -43,4 +43,27 @@ function getLanguageParser(language: string): Language {
   return 'unknown language'
 }
 
-export { ParserLanguage, type Language, getLanguageParser }
+const languageList = [
+  ParserLanguage.JAVA,
+  ParserLanguage.PYTHON,
+  ParserLanguage.C,
+  ParserLanguage.CPP,
+  ParserLanguage.C_SHARP,
+  ParserLanguage.EMF_METAMODEL_DYNAMIC,
+  ParserLanguage.EMF_METAMODEL,
+  ParserLanguage.EMF_MODEL,
+  ParserLanguage.GO,
+  ParserLanguage.KOTLIN,
+  ParserLanguage.R_LANG,
+  ParserLanguage.RUST,
+  ParserLanguage.SWIFT,
+  ParserLanguage.SCHEME,
+  ParserLanguage.TEXT,
+  ParserLanguage.SCXML,
+  ParserLanguage.LLVM,
+  ParserLanguage.JAVASCRIPT,
+  ParserLanguage.TYPESCRIPT,
+  ParserLanguage.MULTI_LANGUAGE
+]
+
+export { ParserLanguage, type Language, getLanguageParser, languageList }
