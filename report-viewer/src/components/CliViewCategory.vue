@@ -2,7 +2,7 @@
   <ContainerComponent>
     <h2 class="text-lg font-bold"><slot name="heading" /></h2>
 
-    <div v-if="showContent" class="mt-3 grid grid-cols-1 gap-2 md:grid-cols-[auto_1fr]">
+    <div v-if="showContent" class="mt-3 grid grid-cols-[auto_auto_1fr] gap-2">
       <slot />
     </div>
   </ContainerComponent>

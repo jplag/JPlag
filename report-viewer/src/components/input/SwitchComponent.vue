@@ -2,7 +2,7 @@
   <label class="switch">
     <input v-model="value" type="checkbox" class="h-0 w-0 opacity-0" />
     <span
-      class="slider bg-interactable-light dark:bg-interactable-dark before:bg-container-light dark:before:bg-container-dark border-interactable-border-light dark:border-interactable-border-dark border"
+      class="slider bg-background-light dark:bg-background-dark before:bg-accent-dark dark:before:bg-interactable-dark border-interactable-border-light dark:border-interactable-border-dark border-1"
       :class="{ 'before:bg-accent!': value }"
     ></span>
   </label>
@@ -69,23 +69,25 @@ watch(
   -webkit-transition: 0.2s;
   transition: 0.2s;
   border-radius: 9999px;
+  box-sizing: border-box;
 }
 
 .slider:before {
   position: absolute;
   content: '';
-  height: 13px;
-  width: 13px;
-  left: 1px;
-  bottom: 1px;
+  height: 12px;
+  width: 12px;
+  left: 2px;
+  bottom: 2px;
   -webkit-transition: 0.2s;
   transition: 0.2s;
   border-radius: 50%;
 }
 
 input:checked + .slider:before {
-  -webkit-transform: translateX(13px);
-  -ms-transform: translateX(13px);
-  transform: translateX(13px);
+  --shift: 13px;
+  -webkit-transform: translateX(var(--shift));
+  -ms-transform: translateX(var(--shift));
+  transform: translateX(var(--shift));
 }
 </style>

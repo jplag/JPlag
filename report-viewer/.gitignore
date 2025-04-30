@@ -34,3 +34,5 @@ tests/e2e/assets/*
 !tests/e2e/assets/progpedia-report-v4_2_0.zip
 !tests/e2e/assets/progpedia-report-v4_0_0.zip
 !tests/e2e/assets/result_small_cluster.jplag
+
+public/folder

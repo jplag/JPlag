@@ -51,7 +51,7 @@ import { computed, ref } from 'vue'
 import { Radar } from 'vue-chartjs'
 import { Chart, registerables } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
-import DropDownSelector from './DropDownSelector.vue'
+import DropDownSelector from './input/DropDownSelector.vue'
 import { graphColors } from '@/utils/ColorUtils'
 import { store } from '@/stores/store'
 

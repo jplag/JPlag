@@ -2,7 +2,7 @@
   Base Component for DropDownSelectors 
 -->
 <template>
-  <Interactable class="cursor-default! p-0">
+  <Interactable class="cursor-default! px-2! py-0!">
     <select
       v-model="selectedOption"
       class="bg-interactable-light dark:bg-interactable-dark m-0 w-full cursor-pointer"
