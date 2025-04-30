@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.clustering.ClusteringFactory;
-import de.jplag.comparison.LongestCommonSubsquenceSearch;
+import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.RootDirectoryException;
@@ -78,7 +78,7 @@ public class JPlag {
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
 
-        LongestCommonSubsquenceSearch comparisonStrategy = new LongestCommonSubsquenceSearch(options);
+        LongestCommonSubsequenceSearch comparisonStrategy = new LongestCommonSubsequenceSearch(options);
 
         if (options.normalize() && options.language().supportsNormalization() && options.language().requiresCoreNormalization()) {
             submissionSet.normalizeSubmissions();
