@@ -66,8 +66,8 @@ public class BaseCodeTest extends TestBase {
         assertEquals(1, result.getAllComparisons().size());
         JPlagComparison comparison = result.getAllComparisons().getFirst();
 
-        assertTrue(comparison.firstSubmission().hasBaseCodeMatches());
-        assertTrue(comparison.secondSubmission().hasBaseCodeMatches());
+        assertTrue(comparison.firstSubmission().hasBaseCodeComparison());
+        assertTrue(comparison.secondSubmission().hasBaseCodeComparison());
         assertEquals(0, Math.min(comparison.firstSubmission().getBaseCodeComparison().similarity(),
                 comparison.secondSubmission().getBaseCodeComparison().similarity()));
         assertEquals(0.742857, comparison.similarity(), DELTA);
