@@ -16,7 +16,7 @@ test('Test comparison table and comparsion view', async ({ page }) => {
   expect(comparisonTableMaxSorted).toContain('100Blue AntelopeLime Lynx')
 
   await page.getByPlaceholder('Filter/Unhide Comparisons').fill('')
-  await page.getByText('Hide All').click()
+  await page.getByText('Anonymize All').click()
   // check for elements being hidden
   const comparisonTableOverviewHidden = await page.getByText('Cluster 1').textContent()
   expect(comparisonTableOverviewHidden).toMatch(/1anon[0-9]+anon[0-9]+/)
@@ -29,7 +29,7 @@ test('Test comparison table and comparsion view', async ({ page }) => {
   expect(comparisonTableOverviewFiltered).toMatch(/[0-9]+anon[0-9]+Lazy Bobcat/)
   expect(comparisonTableOverviewFiltered).toMatch(/[0-9]+Lazy Bobcatanon[0-9]+/)
 
-  await page.getByText('Hide All').click()
+  await page.getByText('Anonymize All').click()
   await page.getByText('Show All').click()
   await page.getByPlaceholder('Filter/Unhide Comparisons').fill('Lazy')
   // go to comparison page
