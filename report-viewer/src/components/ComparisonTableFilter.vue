@@ -25,9 +25,11 @@
         </template>
       </ToolTipComponent>
 
-      <ButtonComponent class="w-24" @click="changeAnonymousForAll()">
+      <ButtonComponent class="w-30 min-w-fit whitespace-nowrap" @click="changeAnonymousForAll()">
         {{
-          store().state.anonymous.size == store().getSubmissionIds.length ? 'Show All' : 'Hide All'
+          store().state.anonymous.size == store().getSubmissionIds.length
+            ? 'Show All'
+            : 'Anonymize All'
         }}
       </ButtonComponent>
     </div>
