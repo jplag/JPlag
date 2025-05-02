@@ -60,9 +60,11 @@
           </template>
         </TextInformation>
 
-        <ToolTipComponent direction="left" class="grow-0 print:hidden">
+        <ToolTipComponent direction="left" class="grow-0 print:hidden" :show-info-symbol="false">
           <template #default>
-            <Button @click="router.push({ name: 'InfoView' })"> More </Button>
+            <Button @click="router.push({ name: 'InfoView' })"
+              ><span class="flex">More <InfoIcon /></span
+            ></Button>
           </template>
           <template #tooltip>
             <p class="text-sm whitespace-pre">More information about the CLI run of JPlag</p>
@@ -106,6 +108,7 @@ import Button from '@/components/ButtonComponent.vue'
 import TextInformation from '@/components/TextInformation.vue'
 import ToolTipComponent from '@/components/ToolTipComponent.vue'
 import { Overview } from '@/model/Overview'
+import InfoIcon from '@/components/InfoIcon.vue'
 
 const props = defineProps({
   overview: {
