@@ -92,8 +92,12 @@ public class LanguageChecker {
                 traverse(child, fileSuffixes);  // Recursively process subdirectories
             }
         } else {
-            String suffix = file.getName().substring(file.getName().lastIndexOf("."));
-            fileSuffixes.add(suffix);
+            String name = file.getName();
+            int dotIndex = name.lastIndexOf(".");
+            if (dotIndex != -1 && dotIndex < name.length() - 1) {
+                String suffix = name.substring(dotIndex);
+                fileSuffixes.add(suffix);
+            }
         }
     }
 }
