@@ -44,7 +44,7 @@ public class MultiLanguageParser {
         List<Language> priorityLanguages = new ArrayList<>();
 
         for (Language language : this.languages) {
-            if (Arrays.stream(language.suffixes()).anyMatch(it -> file.getName().endsWith(it))) {
+            if (Arrays.stream(language.suffixes()).anyMatch(it -> file.getName().toLowerCase().endsWith(it.toLowerCase()))) {
                 if (language.hasPriority()) {
                     priorityLanguages.add(language);
                 } else {
