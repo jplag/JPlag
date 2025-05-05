@@ -5,11 +5,11 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import de.jplag.Language;
-import de.jplag.LanguageLoader;
-import de.jplag.multilang.MultiLanguage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.jplag.Language;
+import de.jplag.LanguageLoader;
 
 /**
  * LanguageChecker detects the set of languages based on the file suffixes in a directory.
