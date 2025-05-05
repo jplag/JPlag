@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import de.jplag.Language;
 import de.jplag.LanguageLoader;
 import de.jplag.cli.CliException;
+import de.jplag.cli.LanguageChecker;
 import de.jplag.cli.options.CliOptions;
 import de.jplag.options.LanguageOption;
 import de.jplag.options.LanguageOptions;
@@ -143,7 +144,8 @@ public class CliInputHandler {
      */
     public Language getSelectedLanguage() throws CliException {
         if (this.parseResult.subcommand() == null) {
-            return this.options.language;
+            // No subcommand provided, use language checker
+            return new LanguageChecker().languageChecker(this.options.rootDirectory, this.options.language);
         }
 
         ParseResult subcommand = this.parseResult.subcommand();
