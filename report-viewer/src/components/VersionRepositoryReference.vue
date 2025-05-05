@@ -1,8 +1,7 @@
 <template>
   <div
     :class="{
-      'absolute bottom-1 left-5 space-x-2 text-xs text-black dark:text-white print:hidden':
-        overrideStyle
+      'space-x-2 pb-1 text-xs text-black dark:text-white print:hidden': overrideStyle
     }"
   >
     <span

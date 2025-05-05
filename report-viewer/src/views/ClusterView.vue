@@ -1,19 +1,17 @@
 <template>
-  <div class="absolute top-0 right-0 bottom-0 left-0 flex flex-col print:space-y-5">
-    <div class="relative top-0 right-0 left-0 flex space-x-5 p-5 pb-0 print:p-0">
-      <Container class="grow overflow-hidden">
-        <h2>Cluster</h2>
-        <div class="flex flex-row items-center space-x-5">
-          <TextInformation label="Average Similarity"
-            >{{ (cluster.averageSimilarity * 100).toFixed(2) }}%</TextInformation
-          >
-        </div>
-      </Container>
-    </div>
+  <div
+    class="grid grid-cols-1 grid-rows-[auto_600px_90vh] gap-5 md:grid-cols-[2fr_1fr] md:grid-rows-[auto_1fr] md:overflow-hidden print:grid-cols-1 print:grid-rows-[auto_1fr]"
+  >
+    <Container class="col-start-1 row-start-1 md:col-end-3 md:row-end-2">
+      <h2>Cluster</h2>
+      <div class="flex flex-row items-center space-x-5">
+        <TextInformation label="Average Similarity"
+          >{{ (cluster.averageSimilarity * 100).toFixed(2) }}%</TextInformation
+        >
+      </div>
+    </Container>
 
-    <div
-      class="relative right-0 bottom-0 left-0 flex grow justify-between space-x-5 px-5 pt-5 pb-7 print:grow-0 print:flex-col print:space-y-5 print:space-x-0 print:p-0"
-    >
+    <div class="col-start-1 row-start-2 flex flex-col overflow-hidden">
       <Container
         v-if="cluster.members.length >= 35 || !canShowRadarChart"
         class="flex max-h-0 min-h-full flex-1 flex-col overflow-hidden print:max-h-none print:min-h-0 print:flex-none"
@@ -54,36 +52,36 @@
           <ClusterRadarChart :cluster="clusterListElement" class="grow" />
         </template>
       </TabbedContainer>
-
-      <TabbedContainer
-        class="flex max-h-0 min-h-full w-1/3 flex-col space-y-2 print:hidden"
-        :tabs="comparisonTableOptions"
-        :first-bottom-tooltip-index="1"
-      >
-        <template #Members>
-          <ComparisonsTable
-            :top-comparisons="comparisons"
-            class="max-h-0 min-h-full flex-1 overflow-hidden"
-            header="Comparisons of Cluster Members:"
-            :highlighted-row-ids="highlightedElement ?? undefined"
-          >
-            <template v-if="comparisons.length < maxAmountOfComparisonsInCluster" #footer>
-              <p class="w-full pt-1 text-center font-bold">
-                Not all comparisons inside the cluster are shown. To see more, re-run JPlag with a
-                higher maximum number argument.
-              </p>
-            </template>
-          </ComparisonsTable>
-        </template>
-        <template #Related-Comparisons>
-          <ComparisonsTable
-            :top-comparisons="relatedComparisons"
-            class="max-h-0 min-h-full flex-1 overflow-hidden"
-            header="Comparisons related to the Cluster:"
-          />
-        </template>
-      </TabbedContainer>
     </div>
+
+    <TabbedContainer
+      class="col-start-1 row-start-3 flex overflow-hidden md:col-start-2 md:row-start-2 print:hidden"
+      :tabs="comparisonTableOptions"
+      :first-bottom-tooltip-index="1"
+    >
+      <template #Members>
+        <ComparisonsTable
+          :top-comparisons="comparisons"
+          class="max-h-0 min-h-full flex-1 overflow-hidden"
+          header="Comparisons of Cluster Members:"
+          :highlighted-row-ids="highlightedElement ?? undefined"
+        >
+          <template v-if="comparisons.length < maxAmountOfComparisonsInCluster" #footer>
+            <p class="w-full pt-1 text-center font-bold">
+              Not all comparisons inside the cluster are shown. To see more, re-run JPlag with a
+              higher maximum number argument.
+            </p>
+          </template>
+        </ComparisonsTable>
+      </template>
+      <template #Related-Comparisons>
+        <ComparisonsTable
+          :top-comparisons="relatedComparisons"
+          class="max-h-0 min-h-full flex-1 overflow-hidden"
+          header="Comparisons related to the Cluster:"
+        />
+      </template>
+    </TabbedContainer>
   </div>
 </template>
 

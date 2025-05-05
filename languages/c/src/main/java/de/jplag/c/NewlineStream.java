@@ -11,7 +11,6 @@ public class NewlineStream extends InputStream {
     private final InputStream stream;
 
     public NewlineStream(InputStream stream) {
-        super();
         this.stream = stream;
     }
 

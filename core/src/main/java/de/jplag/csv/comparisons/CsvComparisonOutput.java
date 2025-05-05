@@ -16,7 +16,7 @@ import de.jplag.options.SimilarityMetric;
  * Frontend for writing the result comparisons as a csv.
  */
 public class CsvComparisonOutput {
-    private static final String[] titles = new String[] {"submissionName1", "submissionName2", "averageSimilarity", "maxSimilarity"};
+    private static final String[] titles = {"submissionName1", "submissionName2", "averageSimilarity", "maxSimilarity"};
 
     private CsvComparisonOutput() {
     }

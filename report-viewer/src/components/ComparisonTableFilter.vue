@@ -1,8 +1,10 @@
 <template>
   <div class="space-y-2">
-    <div class="flex flex-row flex-wrap items-center gap-x-8 gap-y-2">
+    <div
+      class="flex flex-col flex-wrap gap-x-8 gap-y-2 overflow-hidden md:flex-row md:items-center"
+    >
       <h2>{{ header }}</h2>
-      <ToolTipComponent direction="left" class="min-w-[50%] grow">
+      <ToolTipComponent direction="left" class="max-w-full grow md:min-w-[40%]">
         <template #default>
           <SearchBarComponent v-model="searchStringValue" placeholder="Filter/Unhide Comparisons" />
         </template>
@@ -23,18 +25,14 @@
         </template>
       </ToolTipComponent>
 
-      <ButtonComponent class="w-24" @click="changeAnonymousForAll()">
+      <ButtonComponent class="w-30 min-w-fit whitespace-nowrap" @click="changeAnonymousForAll()">
         {{
-          store().state.anonymous.size == store().getSubmissionIds.length ? 'Show All' : 'Hide All'
+          store().state.anonymous.size == store().getSubmissionIds.length
+            ? 'Show All'
+            : 'Anonymize All'
         }}
       </ButtonComponent>
     </div>
-    <OptionsSelector
-      title="Sort By:"
-      :default-selected="getSortingMetric()"
-      :labels="tableSortingOptions"
-      @selection-changed="(index: number) => changeSortingMetric(index)"
-    />
   </div>
 </template>
 
@@ -43,19 +41,12 @@ import { computed } from 'vue'
 import SearchBarComponent from './SearchBarComponent.vue'
 import ToolTipComponent from './ToolTipComponent.vue'
 import ButtonComponent from './ButtonComponent.vue'
-import OptionsSelector from './optionsSelectors/OptionsSelectorComponent.vue'
 import { store } from '@/stores/store'
-import { MetricType, metricToolTips } from '@/model/MetricType'
-import type { ToolTipLabel } from '@/model/ui/ToolTip'
 
 const props = defineProps({
   searchString: {
     type: String,
     default: ''
-  },
-  enableClusterSorting: {
-    type: Boolean,
-    default: true
   },
   header: {
     type: String,
@@ -89,33 +80,6 @@ const searchStringValue = computed({
       }
     }
   }
-})
-
-function changeSortingMetric(index: number) {
-  store().uiState.comparisonTableSortingMetric =
-    index < tableSortingMetricOptions.length ? tableSortingMetricOptions[index] : MetricType.AVERAGE
-  store().uiState.comparisonTableClusterSorting = tableSortingOptions.value[index] == 'Cluster'
-}
-
-function getSortingMetric() {
-  if (store().uiState.comparisonTableClusterSorting && props.enableClusterSorting) {
-    return tableSortingOptions.value.indexOf('Cluster')
-  }
-  return tableSortingMetricOptions.indexOf(store().uiState.comparisonTableSortingMetric)
-}
-
-const tableSortingMetricOptions = [MetricType.AVERAGE, MetricType.MAXIMUM]
-const tableSortingOptions = computed(() => {
-  const options: (ToolTipLabel | string)[] = tableSortingMetricOptions.map((metric) => {
-    return {
-      displayValue: metricToolTips[metric].longName,
-      tooltip: metricToolTips[metric].tooltip
-    }
-  })
-  if (props.enableClusterSorting) {
-    options.push('Cluster')
-  }
-  return options
 })
 
 /**

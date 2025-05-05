@@ -1,5 +1,5 @@
 import type { SubmissionFile } from '@/model/File'
-import type { MetricType } from '@/model/MetricType'
+import type { ComparisonTableSorting } from '@/model/ui/ComparisonSorting'
 import type { DistributionChartConfig } from '@/model/ui/DistributionChartConfig'
 import type { FileSortingOptions } from '@/model/ui/FileSortingOptions'
 
@@ -39,8 +39,7 @@ export interface State {
 
 export interface UIState {
   useDarkMode: boolean
-  comparisonTableSortingMetric: MetricType
-  comparisonTableClusterSorting: boolean
+  comparisonTableSorting: ComparisonTableSorting
   distributionChartConfig: DistributionChartConfig
   fileSorting: FileSortingOptions
 }

@@ -5,7 +5,7 @@ package de.jplag.cli.options;
  */
 public enum JPlagMode {
     /**
-     * Only run JPlag and create a results.zip
+     * Only run JPlag and create a results.jplag
      */
     RUN,
     /**

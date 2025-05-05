@@ -3,163 +3,195 @@
 -->
 <template>
   <div class="flex flex-col">
-    <ComparisonTableFilter
-      v-model:search-string="searchString"
-      :enable-cluster-sorting="clusters != undefined"
-      :header="header"
-    />
+    <ComparisonTableFilter v-model:search-string="searchString" :header="header" />
 
-    <div class="flex flex-col overflow-hidden">
-      <div class="font-bold">
-        <!-- Header -->
-        <div class="tableRow">
-          <div class="tableCellNumber tableCell"></div>
-          <div class="tableCellName tableCell items-center">Submissions in Comparison</div>
-          <div class="tableCellSimilarity tableCell flex-col!">
-            <div>Similarity</div>
-            <div class="flex w-full flex-row">
-              <ToolTipComponent class="flex-1" :direction="displayClusters ? 'top' : 'left'">
-                <template #default>
-                  <p class="w-full text-center">
-                    {{ metricToolTips[MetricType.AVERAGE].shortName }}
-                  </p>
-                </template>
-                <template #tooltip>
-                  <p class="text-sm whitespace-pre">
-                    {{ metricToolTips[MetricType.AVERAGE].tooltip }}
-                  </p>
-                </template>
-              </ToolTipComponent>
-
-              <ToolTipComponent class="flex-1" :direction="displayClusters ? 'top' : 'left'">
-                <template #default>
-                  <p class="w-full text-center">
-                    {{ metricToolTips[MetricType.MAXIMUM].shortName }}
-                  </p>
-                </template>
-                <template #tooltip>
-                  <p class="text-sm whitespace-pre">
-                    {{ metricToolTips[MetricType.MAXIMUM].tooltip }}
-                  </p>
-                </template>
-              </ToolTipComponent>
-            </div>
-          </div>
-          <div v-if="displayClusters" class="tableCellCluster tableCell items-center">Cluster</div>
-        </div>
-      </div>
-
-      <!-- Body -->
-      <div class="flex grow flex-col overflow-hidden">
-        <DynamicScroller
-          v-if="topComparisons.length > 0"
-          ref="dynamicScroller"
-          :items="displayedComparisons"
-          :min-item-size="48"
-          ><template #default="{ item, index, active }">
-            <DynamicScrollerItem
-              :item="item"
-              :active="active"
-              :size-dependencies="[
-                item.firstSubmissionId,
-                item.secondSubmissionId,
-                store().isAnonymous(item.firstSubmissionId),
-                store().isAnonymous(item.secondSubmissionId)
-              ]"
-              :data-index="index"
-            >
-              <!-- Row -->
-              <div
-                class="tableRow"
-                :class="{
-                  'bg-container-secondary-light dark:bg-container-secondary-dark': item.id % 2 == 1,
-                  'bg-accent/30!': isHighlightedRow(item)
-                }"
-              >
-                <RouterLink
-                  :to="{
-                    name: 'ComparisonView',
-                    params: {
-                      firstSubmissionId: item.firstSubmissionId,
-                      secondSubmissionId: item.secondSubmissionId
-                    }
-                  }"
-                  class="flex grow cursor-pointer flex-row"
-                >
-                  <!-- Index in sorted list -->
-                  <div class="tableCellNumber tableCell">
-                    <div class="w-full text-center">{{ item.sortingPlace + 1 }}</div>
-                  </div>
-
-                  <!-- Names -->
-                  <div class="tableCellName tableCell">
-                    <NameElement :id="item.firstSubmissionId" class="h-full w-1/2 px-2" />
-                    <NameElement :id="item.secondSubmissionId" class="h-full w-1/2 px-2" />
-                  </div>
-
-                  <!-- Similarities -->
-                  <div class="tableCellSimilarity tableCell">
-                    <div class="w-1/2">
-                      {{ (item.similarities[MetricType.AVERAGE] * 100).toFixed(2) }}%
-                    </div>
-                    <div class="w-1/2">
-                      {{ (item.similarities[MetricType.MAXIMUM] * 100).toFixed(2) }}%
-                    </div>
-                  </div>
-                </RouterLink>
-
-                <!-- Clusters -->
-                <div
-                  v-if="displayClusters"
-                  class="tableCellCluster tableCell flex flex-col! items-center"
-                >
-                  <RouterLink
-                    v-if="item.clusterIndex >= 0"
-                    :to="{
-                      name: 'ClusterView',
-                      params: { clusterIndex: item.clusterIndex }
-                    }"
-                    class="flex w-full justify-center text-center"
+    <div class="flex flex-1 flex-col overflow-hidden">
+      <div class="flex h-full max-h-full flex-col overflow-x-scroll">
+        <div class="flex h-full max-h-full min-w-fit flex-col overflow-hidden">
+          <div class="min-w-fit font-bold">
+            <!-- Header -->
+            <div class="tableRow">
+              <div class="tableCellNumber tableCell"></div>
+              <div class="tableCellName tableCell items-center">Submissions in Comparison</div>
+              <div class="tableCellSimilarity tableCell flex-col!">
+                <div>Similarity</div>
+                <div class="flex w-full flex-row">
+                  <ToolTipComponent
+                    class="flex-1 cursor-pointer"
+                    :direction="displayClusters ? 'top' : 'left'"
+                    @click="setSorting('averageSimilarity')"
                   >
-                    <ToolTipComponent
-                      class="w-fit"
-                      direction="left"
-                      :tool-tip-container-will-be-centered="true"
-                    >
-                      <template #default>
-                        {{ clusters?.[item.clusterIndex].members?.length }}
+                    <template #default>
+                      <p class="w-full text-center">
+                        {{ metricToolTips[MetricType.AVERAGE].shortName }}
                         <FontAwesomeIcon
-                          :icon="['fas', 'user-group']"
-                          :style="{ color: clusterIconColors[item.clusterIndex] }"
+                          :icon="
+                            store().uiState.comparisonTableSorting.column.id == 'averageSimilarity'
+                              ? store().uiState.comparisonTableSorting.direction.icon
+                              : faSort
+                          "
+                          class="ml-1"
                         />
-                        {{
-                          (
-                            (clusters?.[item.clusterIndex].averageSimilarity as number) * 100
-                          ).toFixed(2)
-                        }}%
-                      </template>
-                      <template #tooltip>
-                        <p class="text-sm whitespace-nowrap">
-                          {{ clusters?.[item.clusterIndex].members?.length }} submissions in cluster
-                          with average similarity of
-                          {{
-                            (
-                              (clusters?.[item.clusterIndex].averageSimilarity as number) * 100
-                            ).toFixed(2)
-                          }}%
-                        </p>
-                      </template>
-                    </ToolTipComponent>
-                  </RouterLink>
+                      </p>
+                    </template>
+                    <template #tooltip>
+                      <p class="text-sm whitespace-pre">
+                        {{ metricToolTips[MetricType.AVERAGE].tooltip }}
+                      </p>
+                    </template>
+                  </ToolTipComponent>
+
+                  <ToolTipComponent
+                    class="flex-1 cursor-pointer"
+                    :direction="displayClusters ? 'top' : 'left'"
+                    @click="setSorting('maximumSimilarity')"
+                  >
+                    <template #default>
+                      <p class="w-full text-center">
+                        {{ metricToolTips[MetricType.MAXIMUM].shortName
+                        }}<FontAwesomeIcon
+                          :icon="
+                            store().uiState.comparisonTableSorting.column.id == 'maximumSimilarity'
+                              ? store().uiState.comparisonTableSorting.direction.icon
+                              : faSort
+                          "
+                          class="ml-1"
+                        />
+                      </p>
+                    </template>
+                    <template #tooltip>
+                      <p class="text-sm whitespace-pre">
+                        {{ metricToolTips[MetricType.MAXIMUM].tooltip }}
+                      </p>
+                    </template>
+                  </ToolTipComponent>
                 </div>
               </div>
-            </DynamicScrollerItem>
-          </template>
+              <div
+                v-if="displayClusters"
+                class="tableCellCluster tableCell cursor-pointer items-center"
+                @click="setSorting('cluster')"
+              >
+                Cluster
+                <FontAwesomeIcon
+                  :icon="
+                    store().uiState.comparisonTableSorting.column.id == 'cluster'
+                      ? store().uiState.comparisonTableSorting.direction.icon
+                      : faSort
+                  "
+                  class="ml-1"
+                />
+              </div>
+            </div>
+          </div>
 
-          <template #after>
-            <slot name="footer"></slot>
-          </template>
-        </DynamicScroller>
+          <!-- Body -->
+          <div class="flex w-full grow flex-col overflow-hidden">
+            <DynamicScroller
+              v-if="topComparisons.length > 0"
+              ref="dynamicScroller"
+              :items="displayedComparisons"
+              :min-item-size="48"
+              ><template #default="{ item, index, active }">
+                <DynamicScrollerItem
+                  :item="item"
+                  :active="active"
+                  :size-dependencies="[
+                    item.firstSubmissionId,
+                    item.secondSubmissionId,
+                    store().isAnonymous(item.firstSubmissionId),
+                    store().isAnonymous(item.secondSubmissionId)
+                  ]"
+                  :data-index="index"
+                  class="min-w-fit"
+                >
+                  <!-- Row -->
+                  <div
+                    class="tableRow min-w-fit"
+                    :class="{
+                      'bg-container-secondary-light dark:bg-container-secondary-dark':
+                        item.id % 2 == 1,
+                      'bg-accent/30!': isHighlightedRow(item)
+                    }"
+                  >
+                    <RouterLink
+                      :to="{
+                        name: 'ComparisonView',
+                        params: {
+                          firstSubmissionId: item.firstSubmissionId,
+                          secondSubmissionId: item.secondSubmissionId
+                        }
+                      }"
+                      class="flex grow cursor-pointer flex-row"
+                    >
+                      <!-- Index in sorted list -->
+                      <div class="tableCellNumber tableCell">
+                        <div class="w-full text-center">{{ item.sortingPlace + 1 }}</div>
+                      </div>
+
+                      <!-- Names -->
+                      <div class="tableCellName tableCell">
+                        <NameElement :id="item.firstSubmissionId" class="h-full w-1/2 px-2" />
+                        <NameElement :id="item.secondSubmissionId" class="h-full w-1/2 px-2" />
+                      </div>
+
+                      <!-- Similarities -->
+                      <div class="tableCellSimilarity tableCell">
+                        <div class="w-1/2">
+                          {{ (item.similarities[MetricType.AVERAGE] * 100).toFixed(2) }}%
+                        </div>
+                        <div class="w-1/2">
+                          {{ (item.similarities[MetricType.MAXIMUM] * 100).toFixed(2) }}%
+                        </div>
+                      </div>
+                    </RouterLink>
+
+                    <!-- Clusters -->
+                    <div
+                      v-if="displayClusters"
+                      class="tableCellCluster tableCell flex flex-col! items-center"
+                    >
+                      <RouterLink
+                        v-if="(item as ComparisonListElement).cluster"
+                        :to="{
+                          name: 'ClusterView',
+                          params: { clusterIndex: item.cluster.index }
+                        }"
+                        class="flex w-full justify-center text-center"
+                      >
+                        <ToolTipComponent
+                          class="w-fit"
+                          direction="left"
+                          :tool-tip-container-will-be-centered="true"
+                        >
+                          <template #default>
+                            {{ item.cluster.members.length }}
+                            <FontAwesomeIcon
+                              :icon="['fas', 'user-group']"
+                              :style="{ color: clusterIconColors[item.cluster.index] }"
+                            />
+                            {{ ((item.cluster.averageSimilarity as number) * 100).toFixed(2) }}%
+                          </template>
+                          <template #tooltip>
+                            <p class="text-sm whitespace-nowrap">
+                              {{ item.cluster.members?.length }} submissions in cluster with average
+                              similarity of
+                              {{ ((item.cluster.averageSimilarity as number) * 100).toFixed(2) }}%
+                            </p>
+                          </template>
+                        </ToolTipComponent>
+                      </RouterLink>
+                    </div>
+                  </div>
+                </DynamicScrollerItem>
+              </template>
+
+              <template #after>
+                <slot name="footer"></slot>
+              </template>
+            </DynamicScroller>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -173,12 +205,13 @@ import { store } from '@/stores/store'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faUserGroup } from '@fortawesome/free-solid-svg-icons'
+import { faSort, faUserGroup } from '@fortawesome/free-solid-svg-icons'
 import { generateHues } from '@/utils/ColorUtils'
 import ToolTipComponent from './ToolTipComponent.vue'
 import { MetricType, metricToolTips } from '@/model/MetricType'
 import NameElement from './NameElement.vue'
 import ComparisonTableFilter from './ComparisonTableFilter.vue'
+import { Column, Direction, type ColumnId } from '@/model/ui/ComparisonSorting'
 
 library.add(faUserGroup)
 
@@ -310,21 +343,18 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
 }
 
 function getSortedComparisons(comparisons: ComparisonListElement[]) {
-  comparisons.sort(
-    (a, b) =>
-      b.similarities[store().uiState.comparisonTableSortingMetric] -
-      a.similarities[store().uiState.comparisonTableSortingMetric]
-  )
-
-  if (store().uiState.comparisonTableClusterSorting) {
-    comparisons.sort((a, b) => b.clusterIndex - a.clusterIndex)
-
-    comparisons.sort(
-      (a, b) =>
-        getClusterFor(b.clusterIndex).averageSimilarity -
-        getClusterFor(a.clusterIndex).averageSimilarity
-    )
-  }
+  const sorting = store().uiState.comparisonTableSorting
+  comparisons.sort((a, b) => {
+    const numsA = sorting.column.value(a)
+    const numsB = sorting.column.value(b)
+    for (let i = 0; i < numsA.length; i++) {
+      const comparison = sorting.direction.comparator(numsA[i], numsB[i])
+      if (comparison != 0) {
+        return comparison
+      }
+    }
+    return 0
+  })
 
   let index = 0
   comparisons.forEach((c) => {
@@ -333,14 +363,17 @@ function getSortedComparisons(comparisons: ComparisonListElement[]) {
   return comparisons
 }
 
-function getClusterFor(clusterIndex: number) {
-  if (clusterIndex < 0 || !props.clusters) {
-    return { averageSimilarity: 0 }
+function setSorting(column: ColumnId) {
+  if (store().uiState.comparisonTableSorting.column.id == column) {
+    store().uiState.comparisonTableSorting.direction =
+      store().uiState.comparisonTableSorting.direction.next
+  } else {
+    store().uiState.comparisonTableSorting.column = Column.columns[column]
+    store().uiState.comparisonTableSorting.direction = Direction.descending
   }
-  return props.clusters[clusterIndex]
 }
 
-const displayClusters = props.clusters != undefined
+const displayClusters = computed(() => props.clusters != undefined)
 
 let clusterIconHues = [] as Array<number>
 const lightmodeSaturation = 80
@@ -400,18 +433,18 @@ watch(
 }
 
 .tableCellNumber {
-  @apply w-12 shrink-0;
+  @apply w-12 min-w-12 shrink-0;
 }
 
 .tableCellSimilarity {
-  @apply w-40 shrink-0;
+  @apply w-40 min-w-40 shrink-0;
 }
 
 .tableCellCluster {
-  @apply w-32 shrink-0;
+  @apply w-32 min-w-32 shrink-0;
 }
 
 .tableCellName {
-  @apply grow;
+  @apply min-w-36 grow;
 }
 </style>

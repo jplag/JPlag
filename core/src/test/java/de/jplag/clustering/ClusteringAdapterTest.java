@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.commons.math3.linear.RealMatrix;
@@ -19,10 +18,10 @@ import de.jplag.JPlagComparison;
 import de.jplag.Submission;
 import de.jplag.clustering.algorithm.GenericClusteringAlgorithm;
 
-public class ClusteringAdapterTest {
+class ClusteringAdapterTest {
 
     @Test
-    public void testClustering() {
+    void testClustering() {
         List<Submission> submissions = IntStream.range(0, 4).mapToObj(x -> mock(Submission.class)).toList();
         List<JPlagComparison> comparisons = new ArrayList<>(6);
         for (int i = 0; i < submissions.size(); i++) {
@@ -38,7 +37,7 @@ public class ClusteringAdapterTest {
         GenericClusteringAlgorithm algorithm = mock(GenericClusteringAlgorithm.class);
         when(algorithm.cluster(any(RealMatrix.class))).then((InvocationOnMock invocation) -> {
             RealMatrix arg = invocation.getArgument(0);
-            return List.of(IntStream.range(0, arg.getRowDimension()).boxed().collect(Collectors.toList()));
+            return List.of(IntStream.range(0, arg.getRowDimension()).boxed().toList());
         });
 
         ClusteringAdapter clustering = new ClusteringAdapter(comparisons, x -> 0.0);
@@ -46,7 +45,7 @@ public class ClusteringAdapterTest {
 
         Collection<Collection<Submission>> expectedResult = List.of(submissions);
 
-        assertEquals(expectedResult, clusteringResult.getClusters().stream().map(Cluster::getMembers).collect(Collectors.toList()));
+        assertEquals(expectedResult, clusteringResult.getClusters().stream().map(Cluster::getMembers).toList());
     }
 
 }

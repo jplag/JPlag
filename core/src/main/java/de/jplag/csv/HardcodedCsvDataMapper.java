@@ -11,7 +11,7 @@ public class HardcodedCsvDataMapper<T> implements CsvDataMapper<T> {
     private final Function<T, Object[]> mappingFunction;
     private final int columnCount;
 
-    private String[] titles;
+    private final String[] titles;
 
     /**
      * @param columnCount The number of columns.
@@ -19,9 +19,7 @@ public class HardcodedCsvDataMapper<T> implements CsvDataMapper<T> {
      * columnCount.
      */
     public HardcodedCsvDataMapper(int columnCount, Function<T, Object[]> mappingFunction) {
-        this.mappingFunction = mappingFunction;
-        this.columnCount = columnCount;
-        this.titles = null;
+        this(columnCount, mappingFunction, null);
     }
 
     /**
@@ -31,7 +29,8 @@ public class HardcodedCsvDataMapper<T> implements CsvDataMapper<T> {
      * @param titles The titles for the csv.
      */
     public HardcodedCsvDataMapper(int columnCount, Function<T, Object[]> mappingFunction, String[] titles) {
-        this(columnCount, mappingFunction);
+        this.mappingFunction = mappingFunction;
+        this.columnCount = columnCount;
         this.titles = titles;
     }
 
