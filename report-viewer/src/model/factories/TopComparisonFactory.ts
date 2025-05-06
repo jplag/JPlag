@@ -27,7 +27,7 @@ export class TopComparisonFactory extends BaseFactory {
       }
       comparisons.push({
         ...comparison,
-        clusterIndex: this.getClusterIndex(
+        cluster: this.getCluster(
           clusters,
           comparison.firstSubmissionId,
           comparison.secondSubmissionId
@@ -37,21 +37,19 @@ export class TopComparisonFactory extends BaseFactory {
     return comparisons
   }
 
-  private static getClusterIndex(
+  private static getCluster(
     clusters: Cluster[],
     firstSubmissionId: string,
     secondSubmissionId: string
   ) {
-    let clusterIndex = -1
-    clusters?.forEach((c: Cluster, index: number) => {
+    return clusters.find((c: Cluster) => {
       if (
         c.members.includes(firstSubmissionId) &&
         c.members.includes(secondSubmissionId) &&
         c.members.length > 2
       ) {
-        clusterIndex = index
+        return true
       }
     })
-    return clusterIndex
   }
 }
