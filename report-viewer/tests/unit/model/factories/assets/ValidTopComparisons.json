@@ -1,0 +1,42 @@
+[
+  {
+    "first_submission": "Sub01",
+    "second_submission": "Sub02",
+    "similarities": {
+      "AVG": 0.41,
+      "MAX": 0.81
+    }
+  },
+  {
+    "first_submission": "Sub02",
+    "second_submission": "Sub03",
+    "similarities": {
+      "AVG": 0.22,
+      "MAX": 0.34
+    }
+  },
+  {
+    "first_submission": "Sub01",
+    "second_submission": "Sub03",
+    "similarities": {
+      "AVG": 0.21,
+      "MAX": 0.25
+    }
+  },
+  {
+    "first_submission": "Sub01",
+    "second_submission": "Sub04",
+    "similarities": {
+      "AVG": 0.02,
+      "MAX": 0.35
+    }
+  },
+  {
+    "first_submission": "Sub04",
+    "second_submission": "Sub03",
+    "similarities": {
+      "AVG": 0.01,
+      "MAX": 0.46
+    }
+  }
+]

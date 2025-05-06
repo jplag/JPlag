@@ -2,7 +2,7 @@ import { beforeEach, describe, it, expect } from 'vitest'
 import { OptionsFactory } from '@/model/factories/OptionsFactory'
 import { ParserLanguage } from '@/model/Language'
 import { MetricType } from '@/model/MetricType'
-import validOptions from './ValidOptions.json'
+import validOptions from './assets/ValidOptions.json'
 import { setActivePinia, createPinia } from 'pinia'
 import { store } from '@/stores/store'
 
