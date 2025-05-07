@@ -175,7 +175,8 @@ export class DataGetter extends BaseFactory {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       try {
-        version = this.extractVersion(JSON.parse(await this.getFile('version.json')))
+        const oldOverview = await this.getFile('overview.json')
+        version = this.extractVersion(JSON.parse(oldOverview))
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (e) {
         return undefined
