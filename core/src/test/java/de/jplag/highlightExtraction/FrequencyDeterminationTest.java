@@ -45,7 +45,7 @@ public class FrequencyDeterminationTest extends TestBase {
     @Test
     @DisplayName("Test token frequency completeMatches")
     void testFrequencyAnalysisStrategiesCompleteMatches() throws Exception {
-        fd.frequencyAnalysisStrategies(result.getAllComparisons(), FrequencyStrategies.completeMatches);
+        fd.frequencyAnalysisStrategies(result.getAllComparisons(), FrequencyStrategies.COMPLETEMATCHES, 1);
         System.out.println(fd);
         Map<String, List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
         printTestResult(tokenFrequencyMap);
@@ -54,7 +54,7 @@ public class FrequencyDeterminationTest extends TestBase {
     @Test
     @DisplayName("Test token frequency with containedMatches")
     void testFrequencyAnalysisStrategiesContainedMatches() throws Exception {
-        fd.frequencyAnalysisStrategies(result.getAllComparisons(), FrequencyStrategies.containedMatches);
+        fd.frequencyAnalysisStrategies(result.getAllComparisons(), FrequencyStrategies.CONTAINEDMATCHES, 300);
         System.out.println(fd);
         Map<String, List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
         printTestResult(tokenFrequencyMap);
@@ -63,7 +63,7 @@ public class FrequencyDeterminationTest extends TestBase {
     @Test
     @DisplayName("Test token frequency with subMatches")
     void testFrequencyAnalysisStrategiesSubMatches() throws Exception {
-        fd.frequencyAnalysisStrategies(result.getAllComparisons(), FrequencyStrategies.subMatches);
+        fd.frequencyAnalysisStrategies(result.getAllComparisons(), FrequencyStrategies.SUBMATCHES, 300);
         System.out.println(fd);
         Map<String, List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
         printTestResult(tokenFrequencyMap);
@@ -72,7 +72,7 @@ public class FrequencyDeterminationTest extends TestBase {
     @Test
     @DisplayName("Test token frequency with windows of Matches")
     void testFrequencyAnalysisStrategiesWindowOfMatches() throws Exception {
-        fd.frequencyAnalysisStrategies(result.getAllComparisons(), FrequencyStrategies.windowOfMatches);
+        fd.frequencyAnalysisStrategies(result.getAllComparisons(), FrequencyStrategies.WINDOWOFMATCHES, 300);
         System.out.println(fd);
         Map<String, List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
         printTestResult(tokenFrequencyMap);

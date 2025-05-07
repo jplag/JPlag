@@ -12,6 +12,7 @@ import de.jplag.java.JavaLanguage;
 import de.jplag.merging.MergingOptions;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.SimilarityMetric;
+import de.jplag.highlightExtraction.FrequencyStrategies;
 
 import picocli.CommandLine;
 import picocli.CommandLine.ArgGroup;
@@ -68,6 +69,10 @@ public class CliOptions implements Runnable {
 
     @ArgGroup(validate = false, heading = "%nSubsequence Match Merging%n")
     public Merging merging = new Merging();
+
+    @ArgGroup(validate = false, heading = "%nFrequency Analysis%n")
+    public FrequencyAnalysis frequencyAnalysis = new FrequencyAnalysis();
+
 
     /**
      * Empty run method, so picocli prints help automatically
@@ -177,4 +182,15 @@ public class CliOptions implements Runnable {
 
     @Option(names = {"--cluster-pp-threshold"}, hidden = true)
     public double clusterPreprocessingThreshold;
+
+
+    public static class FrequencyAnalysis{
+        @Option(names = {"--frequency-strategy"}, description = "strategy for frequency Analysis, Options: completeMatches, containedMatches, subMatches, windowOfMatches")
+        public FrequencyStrategies frequencyStrategy = FrequencyStrategies.COMPLETEMATCHES;
+
+        @Option(names = {"--frequency-min-value"}, description = "max of min match length that will be compared and this value, is min size of considered submatches")
+        public int frequencyStrategyMinValue = 1;
+
+    }
 }
+

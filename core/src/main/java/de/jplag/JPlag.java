@@ -93,7 +93,7 @@ public class JPlag {
         }
         // TODO neu + import
         FrequencyDetermination fd = new FrequencyDetermination();
-        fd.frequencyAnalysisStrategies(result.getAllComparisons(), FrequencyStrategies.subMatches);
+        fd.frequencyAnalysisStrategies(result.getAllComparisons(), options.frequencyStrategy(), Math.max(options.frequencyStrategyMinValue(), options.minimumTokenMatch()));
 
         if (logger.isInfoEnabled()) {
             logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getDuration()));
