@@ -254,7 +254,7 @@ public class SubmissionSetBuilder {
         if (validSuffixes == null || validSuffixes.isEmpty()) {
             return true;
         }
-        return validSuffixes.stream().anyMatch(suffix -> file.getName().endsWith(suffix));
+        return validSuffixes.stream().anyMatch(suffix -> file.getName().toLowerCase().endsWith(suffix.toLowerCase()));
     }
 
     /**

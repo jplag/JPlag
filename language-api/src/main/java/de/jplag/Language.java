@@ -12,7 +12,8 @@ import de.jplag.options.LanguageOptions;
 public interface Language {
 
     /**
-     * File extensions for the files containing code of the language. An empty array means all suffixes are valid.
+     * File extensions for the files containing code of the language. All capitalization variants of extensions are matched.
+     * An empty array means all suffixes are valid.
      */
     String[] suffixes();
 
