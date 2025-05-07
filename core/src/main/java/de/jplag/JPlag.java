@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 import de.jplag.highlightExtraction.FrequencyDetermination;
+import de.jplag.highlightExtraction.FrequencyStrategies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,7 +93,7 @@ public class JPlag {
         }
         // TODO neu + import
         FrequencyDetermination fd = new FrequencyDetermination();
-        fd.frequencyAnalysisStrategies(result.getAllComparisons());
+        fd.frequencyAnalysisStrategies(result.getAllComparisons(), FrequencyStrategies.subMatches);
 
         if (logger.isInfoEnabled()) {
             logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getDuration()));
