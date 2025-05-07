@@ -50,7 +50,8 @@ class ReportTokenPositionTestTest {
             mockedFilePathUtil.when(() -> FilePathUtil.getRelativeSubmissionPath(any(), any(), any())).thenReturn(Path.of("file.java"));
             comparisonReportOutput = new ComparisonReportWriter(Submission::getName, resultWriter).writeComparisonReports(result);
         }
-        ComparisonReport comparisonReport = (ComparisonReport) resultWriter.getJsonEntry(Path.of(comparisonReportOutput.get(firstID).get(secondID)));
+        ComparisonReport comparisonReport = (ComparisonReport) resultWriter
+                .getJsonEntry(Path.of(ComparisonReportWriter.BASEPATH, comparisonReportOutput.get(firstID).get(secondID)));
 
         assertEquals(1, comparisonReport.matches().size());
 

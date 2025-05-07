@@ -29,7 +29,7 @@ public class ComparisonReportWriter {
     private final Function<Submission, String> submissionToIdFunction;
     private final Map<String, Map<String, String>> submissionIdToComparisonFileName = new ConcurrentHashMap<>();
     private final Map<String, AtomicInteger> fileNameCollisions = new ConcurrentHashMap<>();
-    private static final String BASEPATH = "comparisons";
+    public static final String BASEPATH = "comparisons";
 
     public ComparisonReportWriter(Function<Submission, String> submissionToIdFunction, JPlagResultWriter resultWriter) {
         this.submissionToIdFunction = submissionToIdFunction;
