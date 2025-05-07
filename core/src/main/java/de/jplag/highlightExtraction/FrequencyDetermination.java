@@ -15,8 +15,8 @@ public class FrequencyDetermination {
     private FrequencyDeterminationState state;
     private List<JPlagComparison> comparisons;
     private FrequencyStrategies freqencyStrategy;
-    private int magicWindowSize = 5;
-    private int magicMinSubSize = 4;
+    private int magicWindowSize = 180;
+    private int magicMinSubSize = 300;
 
     public Map<String, List<String>> frequencyAnalysisStrategies(List<JPlagComparison> comparisons, FrequencyStrategies freqencyStrategy) {
         this.comparisons = comparisons;
@@ -90,35 +90,38 @@ public class FrequencyDetermination {
     }
 
     private void windowOfMatchesCreateStrategy(int size) {
-        while (myMatchTokens.size() >= size) {
-            List<String> mySubListKey = myMatchTokens.subList(0, size);
+        List<String> myMatchTokenCopy = new ArrayList<>(myMatchTokens);
+        while (myMatchTokenCopy.size() >= size) {
+            List<String> mySubListKey = myMatchTokenCopy.subList(0, size);
             buildFrequencyMap(mySubListKey);
-            myMatchTokens.removeFirst();
+            myMatchTokenCopy.removeFirst();
         }
     }
 
     private void windowOfMatchesCheckStrategy(int size) {
-        while (myMatchTokens.size() >= size) {
-            List<String> mySubListKey = myMatchTokens.subList(0, size);
+        List<String> myMatchTokenCopy = new ArrayList<>(myMatchTokens);
+        while (myMatchTokenCopy.size() >= size) {
+            List<String> mySubListKey = myMatchTokenCopy.subList(0, size);
             checkFrequencyMap(mySubListKey);
-            myMatchTokens.removeFirst();
+            myMatchTokenCopy.removeFirst();
         }
     }
 
-    private void subMatchesCheckStrategy(int size) {
-        if (myMatchTokens.size() >= size) {
-            for (int i = size; i <= myMatchTokens.size(); i++) {
-                windowOfMatchesCheckStrategy(size);
+    private void subMatchesCheckStrategy(int subSize) {
+        if (myMatchTokens.size() >= subSize) {
+            for (int i = subSize; i <= myMatchTokens.size(); i++) {
+                windowOfMatchesCheckStrategy(i);
             }
         }
     }
 
-    private void subMatchesCreateStrategy(int size) {
-        if (myMatchTokens.size() >= size) {
-            for (int i = size; i < myMatchTokens.size(); i++) {
-                windowOfMatchesCreateStrategy(size);
+    private void subMatchesCreateStrategy(int subSize) {
+        if (myMatchTokens.size() >= subSize) {
+            for (int j = subSize; j <= myMatchTokens.size(); j++) {
+                windowOfMatchesCreateStrategy(j);
             }
         }
+        buildFrequencyMap(myMatchTokens);
     }
 
     public void completeMatchesCreateStrategy(){
@@ -141,9 +144,7 @@ public class FrequencyDetermination {
 
     private void checkFrequencyMap(List<String> tokkenList) {
         String myTokenKey = String.join(" ", tokkenList);
-        if (tokenFrequencyMap.containsKey(myTokenKey) && !tokenFrequencyMap.get(myTokenKey).contains(myComparisonIdentifier)) {
-            tokenFrequencyMap.computeIfAbsent(myTokenKey, k -> new ArrayList<>()).add(myComparisonIdentifier);
-        }
+        tokenFrequencyMap.computeIfAbsent(myTokenKey, k -> new ArrayList<>()).add(myComparisonIdentifier);
     }
 
 

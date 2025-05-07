@@ -32,7 +32,7 @@ public class FrequencyDeterminationTest extends TestBase {
     @BeforeEach
     void prepareMatchResult() throws ExitException {
 
-        JPlagOptions options = getDefaultOptions("merging");
+        JPlagOptions options = getDefaultOptions("PartialPlagiarism"); //getDefaultOptions("merging");
         System.out.println(options);
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         submissionSet = builder.buildSubmissionSet();
@@ -44,16 +44,49 @@ public class FrequencyDeterminationTest extends TestBase {
 
     @Test
     @DisplayName("Test token frequency completeMatches")
-    void testFrequencyAnalysisStrategiesTokenFrequencyAndHistogram() throws Exception {
-        fd.frequencyAnalysisStrategies(result.getAllComparisons());
+    void testFrequencyAnalysisStrategiesCompleteMatches() throws Exception {
+        fd.frequencyAnalysisStrategies(result.getAllComparisons(), FrequencyStrategies.completeMatches);
         System.out.println(fd);
         Map<String, List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
+        printTestresult(tokenFrequencyMap);
+        }
+
+    @Test
+    @DisplayName("Test token frequency with containedMatches")
+    void testFrequencyAnalysisStrategiesContainedMatches() throws Exception {
+        fd.frequencyAnalysisStrategies(result.getAllComparisons(), FrequencyStrategies.containedMatches);
+        System.out.println(fd);
+        Map<String, List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
+        printTestresult(tokenFrequencyMap);
+    }
+
+    @Test
+    @DisplayName("Test token frequency with subMatches")
+    void testFrequencyAnalysisStrategiesSubMatches() throws Exception {
+        fd.frequencyAnalysisStrategies(result.getAllComparisons(), FrequencyStrategies.subMatches);
+        System.out.println(fd);
+        Map<String, List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
+        printTestresult(tokenFrequencyMap);
+    }
+
+    @Test
+    @DisplayName("Test token frequency with windows of Matches")
+    void testFrequencyAnalysisStrategiesWindowOfMatches() throws Exception {
+        fd.frequencyAnalysisStrategies(result.getAllComparisons(), FrequencyStrategies.windowOfMatches);
+        System.out.println(fd);
+        Map<String, List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
+        printTestresult(tokenFrequencyMap);
+    }
+
+
+
+    void printTestresult(Map<String, List<String>> tokenFrequencyMap){
         System.out.println("\nToken-Häufigkeitshistogramm:");
         for (Map.Entry<String, List<String>> entry : tokenFrequencyMap.entrySet()) {
             String key = entry.getKey();
             int count = entry.getValue().size();
             System.out.printf("Tokens: [%.30s...] | Häufigkeit: %2d | %s%n",
                     key, count, "*".repeat(Math.min(count, 50)));
-        }
     }
+}
 }

@@ -35,33 +35,10 @@ public class JPlagResult {
     public JPlagResult(List<JPlagComparison> comparisons, SubmissionSet submissions, long durationInMillis, JPlagOptions options) {
         // sort by similarity (descending)
         this.comparisons = comparisons.stream().sorted(Comparator.comparing(JPlagComparison::similarity).reversed()).toList();
-        //TODO test
-        frequencydeterminationMethodA(comparisons);
         this.submissions = submissions;
         this.durationInMillis = durationInMillis;
         this.options = options;
         similarityDistribution = calculateSimilarityDistribution(comparisons);
-    }
-    // Todo new
-    public void frequencydeterminationMethodA(List<JPlagComparison> comparisons) {
-        ConcurrentHashMap<Integer, List<Match>> matchHashMap = new ConcurrentHashMap<>();
-
-             for (JPlagComparison comparison : comparisons) {
-                 for (Match match : comparison.matches()) {
-                     int subsequenceHash = myHashForMatchFrequencyCalculation(match);
-                 }
-             }
-    }
-
-
-    // Todo new
-    public int myHashForMatchFrequencyCalculation(Match match) {
-        System.out.println(match);
-        int startOfFirst = match.startOfFirst();
-        int length = match.length();
-
-        // int myHashKey = calculateHashValue(startOfFirst);
-        return 1;
     }
 
 
