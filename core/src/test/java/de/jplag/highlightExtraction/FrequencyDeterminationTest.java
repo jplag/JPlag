@@ -48,7 +48,7 @@ public class FrequencyDeterminationTest extends TestBase {
         fd.frequencyAnalysisStrategies(result.getAllComparisons(), FrequencyStrategies.completeMatches);
         System.out.println(fd);
         Map<String, List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
-        printTestresult(tokenFrequencyMap);
+        printTestResult(tokenFrequencyMap);
         }
 
     @Test
@@ -57,7 +57,7 @@ public class FrequencyDeterminationTest extends TestBase {
         fd.frequencyAnalysisStrategies(result.getAllComparisons(), FrequencyStrategies.containedMatches);
         System.out.println(fd);
         Map<String, List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
-        printTestresult(tokenFrequencyMap);
+        printTestResult(tokenFrequencyMap);
     }
 
     @Test
@@ -66,7 +66,7 @@ public class FrequencyDeterminationTest extends TestBase {
         fd.frequencyAnalysisStrategies(result.getAllComparisons(), FrequencyStrategies.subMatches);
         System.out.println(fd);
         Map<String, List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
-        printTestresult(tokenFrequencyMap);
+        printTestResult(tokenFrequencyMap);
     }
 
     @Test
@@ -75,18 +75,19 @@ public class FrequencyDeterminationTest extends TestBase {
         fd.frequencyAnalysisStrategies(result.getAllComparisons(), FrequencyStrategies.windowOfMatches);
         System.out.println(fd);
         Map<String, List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
-        printTestresult(tokenFrequencyMap);
+        printTestResult(tokenFrequencyMap);
     }
 
 
 
-    void printTestresult(Map<String, List<String>> tokenFrequencyMap){
-        System.out.println("\nToken-Häufigkeitshistogramm:");
-        for (Map.Entry<String, List<String>> entry : tokenFrequencyMap.entrySet()) {
-            String key = entry.getKey();
-            int count = entry.getValue().size();
-            System.out.printf("Tokens: [%.30s...] | Häufigkeit: %2d | %s%n",
-                    key, count, "*".repeat(Math.min(count, 50)));
+    void printTestResult(Map<String, List<String>> tokenFrequencyMap){
+        System.out.println("\nToken-HäufigkeitsHistogramm:");
+        for (Map.Entry<String, List<String>> myEntry : tokenFrequencyMap.entrySet()) {
+            String key = myEntry.getKey();
+            int count = myEntry.getValue().size();
+            String id = myEntry.getValue().toString();
+            System.out.printf("Tokens: [%.30s...] | Häufigkeit: %2d | %s%n | %s \n",
+                    key, count, "*".repeat(Math.min(count, 50)), id);
     }
 }
 }

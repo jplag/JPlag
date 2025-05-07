@@ -144,7 +144,10 @@ public class FrequencyDetermination {
 
     private void checkFrequencyMap(List<String> tokkenList) {
         String myTokenKey = String.join(" ", tokkenList);
-        tokenFrequencyMap.computeIfAbsent(myTokenKey, k -> new ArrayList<>()).add(myComparisonIdentifier);
+        if (!(tokenFrequencyMap.containsKey(myTokenKey) && tokenFrequencyMap.get(myTokenKey).contains(myComparisonIdentifier))){
+            tokenFrequencyMap.computeIfAbsent(myTokenKey, k -> new ArrayList<>()).add(myComparisonIdentifier);
+        }
+
     }
 
 
