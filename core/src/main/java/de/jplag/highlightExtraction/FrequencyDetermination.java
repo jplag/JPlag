@@ -150,7 +150,6 @@ public class FrequencyDetermination {
 
     }
 
-
     public Map<String, List<String>> getTokenFrequencyMap() {
         return tokenFrequencyMap;
     }
