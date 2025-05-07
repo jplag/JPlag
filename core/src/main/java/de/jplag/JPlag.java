@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import de.jplag.highlightExtraction.FrequencyDetermination;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,10 +85,14 @@ public class JPlag {
         // Compare valid submissions.
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
 
+
         // Use Match Merging against obfuscation
         if (options.mergingOptions().enabled()) {
             result = new MatchMerging(options).mergeMatchesOf(result);
         }
+        // TODO neu + import
+        FrequencyDetermination fd = new FrequencyDetermination();
+        fd.completeMatches(result.getAllComparisons());
 
         if (logger.isInfoEnabled()) {
             logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getDuration()));

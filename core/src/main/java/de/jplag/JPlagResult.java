@@ -3,11 +3,13 @@ package de.jplag;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap; // TODO new
 import java.util.function.ToDoubleFunction;
 
 import de.jplag.clustering.ClusteringResult;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.SimilarityMetric;
+import org.apache.commons.math3.stat.inference.OneWayAnova;
 
 /**
  * Encapsulates the results of a pairwise comparison of program structure among a set of source code submissions.
@@ -33,11 +35,35 @@ public class JPlagResult {
     public JPlagResult(List<JPlagComparison> comparisons, SubmissionSet submissions, long durationInMillis, JPlagOptions options) {
         // sort by similarity (descending)
         this.comparisons = comparisons.stream().sorted(Comparator.comparing(JPlagComparison::similarity).reversed()).toList();
+        //TODO test
+        frequencydeterminationMethodA(comparisons);
         this.submissions = submissions;
         this.durationInMillis = durationInMillis;
         this.options = options;
         similarityDistribution = calculateSimilarityDistribution(comparisons);
     }
+    // Todo new
+    public void frequencydeterminationMethodA(List<JPlagComparison> comparisons) {
+        ConcurrentHashMap<Integer, List<Match>> matchHashMap = new ConcurrentHashMap<>();
+
+             for (JPlagComparison comparison : comparisons) {
+                 for (Match match : comparison.matches()) {
+                     int subsequenceHash = myHashForMatchFrequencyCalculation(match);
+                 }
+             }
+    }
+
+
+    // Todo new
+    public int myHashForMatchFrequencyCalculation(Match match) {
+        System.out.println(match);
+        int startOfFirst = match.startOfFirst();
+        int length = match.length();
+
+        // int myHashKey = calculateHashValue(startOfFirst);
+        return 1;
+    }
+
 
     /**
      * Drops elements from the comparison list to free memory. Note, that this affects the similarity distribution and is
