@@ -7,17 +7,27 @@ import java.util.Map;
 
 import de.jplag.*;
 
+
 public class FrequencyDetermination {
-
-    private List<Pair<String, String>> myKeyValues = new ArrayList<>();
     private Map<String, List<String>> tokenFrequencyMap = new HashMap<>();
+    private String myComparisonIdentifier;
+    private List<String> myMatchTokens;
+    private FrequencyDeterminationState state;
+    private List<JPlagComparison> comparisons;
+    private FrequencyStrategies freqencyStrategy;
 
-    public Map<String, List<String>> completeMatches(List<JPlagComparison> comparisons) {
+    public Map<String, List<String>> frequencyAnalysisStrategies(List<JPlagComparison> comparisons, FrequencyStrategies freqencyStrategy) {
+        this.comparisons = comparisons;
+        this.freqencyStrategy = freqencyStrategy;
+        frequencyAnalysis(FrequencyDeterminationState.CREATE);
+        frequencyAnalysis(FrequencyDeterminationState.CHECK);
 
+        return tokenFrequencyMap;
+    }
 
+    public void frequencyAnalysis(FrequencyDeterminationState state) {
         for (JPlagComparison myComparison : comparisons) {
             Submission left = myComparison.firstSubmission();
-
             List<Token> leftTokens = left.getTokenList();
 
             for (Match match : myComparison.matches()) {
@@ -26,24 +36,82 @@ public class FrequencyDetermination {
 
                 if (start + len > leftTokens.size()) continue;
 
-                List<String> myMatchTokens = new ArrayList<>();
+                myMatchTokens = new ArrayList<>();
                 for (int i = start; i < start + len; i++) {
                     myMatchTokens.add(leftTokens.get(i).toString());
                 }
-                // Build Hashmap
-                String myTokenKey = String.join(" ", myMatchTokens);
 
-                String myComparisonIdentifier = myComparison.toString();
+                myComparisonIdentifier = myComparison.toString();
 
-                tokenFrequencyMap.computeIfAbsent(myTokenKey, k -> new ArrayList<>()).add(myComparisonIdentifier);
-
-                System.out.println(tokenFrequencyMap);
-
-                myKeyValues.add(new Pair<>(myTokenKey, myComparisonIdentifier));
-
+                if (state == FrequencyDeterminationState.CREATE) {
+                    applyCreateStrategy(freqencyStrategy);
+                } else {
+                    applyCheckStrategy(freqencyStrategy);
+                }
             }
         }
-        return tokenFrequencyMap;
+    }
+
+    public void applyCreateStrategy(FrequencyStrategies strategy) {
+        switch (strategy){
+            case completeMatches:
+                completeMatchesBuildStrategy();
+                break;
+            case containedMatches:
+            case subMatches:
+                subMatchesBuildStrategy();
+                break;
+            case windowOfMatches:
+                windowOfMatchesBuildStrategy();
+                break;
+            default:
+                throw new IllegalArgumentException("unknown Strategy: " + strategy);
+
+        }
+    }
+
+    public void applyCheckStrategy(FrequencyStrategies strategy) {
+        switch (strategy){
+            case completeMatches:
+            case containedMatches:
+                completeMatchesCheckStrategy();
+                break;
+            case subMatches:
+                subMatchesCheckStrategy();
+                break;
+            case windowOfMatches:
+                windowOfMatchesCheckStrategy();
+                break;
+            default:
+                throw new IllegalArgumentException("unknown Strategy: " + strategy);
+        }
+    }
+
+    private void windowOfMatchesCheckStrategy() {
+    }
+
+    private void windowOfMatchesBuildStrategy() {
+    }
+
+    private void subMatchesCheckStrategy() {
+    }
+
+    private void subMatchesBuildStrategy() {
+    }
+
+    public void completeMatchesBuildStrategy(){
+        String myTokenKey = String.join(" ", myMatchTokens);
+        if (!tokenFrequencyMap.containsKey(myTokenKey)) {
+            List<String> myComparisonIdentifierList = new ArrayList<>();
+            myComparisonIdentifierList.add(myComparisonIdentifier);
+            tokenFrequencyMap.put(myTokenKey, myComparisonIdentifierList);
+        }
+
+    }
+
+    private void completeMatchesCheckStrategy() {
+        String myTokenKey = String.join(" ", myMatchTokens);
+        tokenFrequencyMap.computeIfAbsent(myTokenKey, k -> new ArrayList<>()).add(myComparisonIdentifier);
     }
 
     public Map<String, List<String>> getTokenFrequencyMap() {
