@@ -33,6 +33,7 @@ hs_err_pid*
 # default result file name, should never be commited
 result/
 result.zip
+result.jplag
 
 # macOS
 *.DS_Store

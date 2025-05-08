@@ -71,16 +71,16 @@ public class ReportObjectFactory {
     }
 
     /**
-     * Creates a new report object factory, that can be used to write a zip report.
-     * @param zipFile The zip file to write the report to
+     * Creates a new report object factory, that can be used to write a report file.
+     * @param targetFile The file to write the report to.
      * @throws FileNotFoundException If the file cannot be opened for writing
      */
-    public ReportObjectFactory(File zipFile) throws FileNotFoundException {
-        this(new ZipWriter(zipFile));
+    public ReportObjectFactory(File targetFile) throws FileNotFoundException {
+        this(new ZipWriter(targetFile));
     }
 
     /**
-     * Creates all necessary report viewer files, writes them to the disk as zip.
+     * Creates all necessary report viewer files, writes them to the disk as ZIP file with a <code>.jplag</code> extension.
      * @param result The JPlagResult to be converted into a report.
      */
     public void createAndSaveReport(JPlagResult result) {
@@ -112,10 +112,10 @@ public class ReportObjectFactory {
         for (Submission submission : submissions) {
             for (File file : submission.getFiles()) {
                 Path filePath = FilePathUtil.getRelativeSubmissionPath(file, submission, submissionToIdFunction);
-                Path zipPath = SUBMISSIONS_ROOT_PATH.resolve(filePath);
+                Path resultPath = SUBMISSIONS_ROOT_PATH.resolve(filePath);
 
                 File fileToCopy = getFileToCopy(language, file);
-                this.resultWriter.addFileContentEntry(zipPath, fileToCopy);
+                this.resultWriter.addFileContentEntry(resultPath, fileToCopy);
             }
         }
     }

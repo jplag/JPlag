@@ -14,7 +14,7 @@ import de.jplag.Submission;
 import de.jplag.clustering.Cluster;
 import de.jplag.clustering.ClusteringResult;
 
-public class ClusteringResultMapperTest {
+class ClusteringResultMapperTest {
     private final ClusteringResultMapper clusteringResultMapper = new ClusteringResultMapper(Submission::getName);
 
     @Test

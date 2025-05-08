@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 import { uploadFile } from './TestUtils'
 
 test('Test information page', async ({ page }) => {
-  await uploadFile('progpedia-report.zip', page)
+  await uploadFile('progpedia-report.jplag', page)
 
   // check displayed information on overview page
   const bodyOverview = await page.locator('body').textContent()

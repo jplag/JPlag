@@ -18,46 +18,46 @@ class ModeTest extends CliTest {
     @Test
     void testViewWithPositionalFile() throws IOException, ExitException {
         CliInputHandler inputHandler = this
-                .runCli(args -> args.with(CliArgument.MODE, "view").with(CliArgument.SUBMISSION_DIRECTORIES, new String[] {"result.zip"}))
+                .runCli(args -> args.with(CliArgument.MODE, "view").with(CliArgument.SUBMISSION_DIRECTORIES, new String[] {"result.jplag"}))
                 .inputHandler();
-        assertEquals(new File("result.zip"), inputHandler.getFileForViewMode());
+        assertEquals(new File("result.jplag"), inputHandler.getFileForViewMode());
     }
 
     @Test
     void testViewWithOldFile() throws IOException, ExitException {
         CliInputHandler inputHandler = this
-                .runCli(args -> args.with(CliArgument.MODE, "view").with(CliArgument.OLD_SUBMISSION_DIRECTORIES, new String[] {"result.zip"}))
+                .runCli(args -> args.with(CliArgument.MODE, "view").with(CliArgument.OLD_SUBMISSION_DIRECTORIES, new String[] {"result.jplag"}))
                 .inputHandler();
-        assertEquals(new File("result.zip"), inputHandler.getFileForViewMode());
+        assertEquals(new File("result.jplag"), inputHandler.getFileForViewMode());
     }
 
     @Test
     void testViewWithNewFile() throws IOException, ExitException {
         CliInputHandler inputHandler = this
-                .runCli(args -> args.with(CliArgument.MODE, "view").with(CliArgument.NEW_SUBMISSION_DIRECTORIES, new String[] {"result.zip"}))
+                .runCli(args -> args.with(CliArgument.MODE, "view").with(CliArgument.NEW_SUBMISSION_DIRECTORIES, new String[] {"result.jplag"}))
                 .inputHandler();
-        assertEquals(new File("result.zip"), inputHandler.getFileForViewMode());
+        assertEquals(new File("result.jplag"), inputHandler.getFileForViewMode());
     }
 
     @Test
     void testViewWithResultFile() throws IOException, ExitException {
-        CliInputHandler inputHandler = this.runCli(args -> args.with(CliArgument.MODE, "view").with(CliArgument.RESULT_FILE, "result.zip"))
+        CliInputHandler inputHandler = this.runCli(args -> args.with(CliArgument.MODE, "view").with(CliArgument.RESULT_FILE, "result.jplag"))
                 .inputHandler();
-        assertEquals(new File("result.zip"), inputHandler.getFileForViewMode());
+        assertEquals(new File("result.jplag"), inputHandler.getFileForViewMode());
     }
 
     @Test
     void testViewWithMultipleFiles() {
         assertThrowsExactly(CliException.class, () -> {
-            this.runCli(args -> args.with(CliArgument.MODE, "view").with(CliArgument.RESULT_FILE, "result.zip")
-                    .with(CliArgument.NEW_SUBMISSION_DIRECTORIES, new String[] {"test.zip"})).inputHandler();
+            this.runCli(args -> args.with(CliArgument.MODE, "view").with(CliArgument.RESULT_FILE, "result.jplag")
+                    .with(CliArgument.NEW_SUBMISSION_DIRECTORIES, new String[] {"test.jplag"})).inputHandler();
         });
     }
 
     @Test
     void testImplicitView() throws IOException, ExitException {
-        CliInputHandler inputHandler = this.runCli(args -> args.with(CliArgument.RESULT_FILE, "result.zip")).inputHandler();
-        assertEquals(new File("result.zip"), inputHandler.getFileForViewMode());
+        CliInputHandler inputHandler = this.runCli(args -> args.with(CliArgument.RESULT_FILE, "result.jplag")).inputHandler();
+        assertEquals(new File("result.jplag"), inputHandler.getFileForViewMode());
     }
 
     @Test

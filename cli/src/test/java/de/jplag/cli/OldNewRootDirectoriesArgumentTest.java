@@ -68,5 +68,6 @@ class OldNewRootDirectoriesArgumentTest extends CliTest {
 
     @Override
     public void initializeParameters(CliArgumentBuilder args) {
+        // Prevent default parameterization
     }
 }

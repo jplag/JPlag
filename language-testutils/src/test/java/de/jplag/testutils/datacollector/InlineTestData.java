@@ -25,7 +25,7 @@ class InlineTestData implements TestData {
     public List<Token> parseTokens(Language language) throws ParsingException, IOException {
         File file = File.createTempFile("testSource", language.suffixes()[0]);
         FileUtils.write(file, this.testData);
-        List<Token> tokens = language.parse(Collections.singleton(file));
+        List<Token> tokens = language.parse(Collections.singleton(file), false);
         TemporaryFileHolder.temporaryFiles.add(file);
         return tokens;
     }

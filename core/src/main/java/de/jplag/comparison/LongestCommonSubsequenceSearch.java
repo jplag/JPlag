@@ -20,9 +20,9 @@ import de.jplag.options.JPlagOptions;
  * Implements a parallelized token-based longest common subsequence search for all pairs of programs in a given set of
  * programs.
  */
-public class LongestCommonSubsquenceSearch {
+public class LongestCommonSubsequenceSearch {
 
-    private final Logger logger = LoggerFactory.getLogger(LongestCommonSubsquenceSearch.class);
+    private final Logger logger = LoggerFactory.getLogger(LongestCommonSubsequenceSearch.class);
 
     private final JPlagOptions options;
 
@@ -30,7 +30,7 @@ public class LongestCommonSubsquenceSearch {
      * Creates an instance of the subsequence search algorithm.
      * @param options specifies relevant parameters for the comparison.
      */
-    public LongestCommonSubsquenceSearch(JPlagOptions options) {
+    public LongestCommonSubsequenceSearch(JPlagOptions options) {
         this.options = options;
     }
 

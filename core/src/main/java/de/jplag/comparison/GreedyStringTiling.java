@@ -1,6 +1,7 @@
 package de.jplag.comparison;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
@@ -28,7 +29,7 @@ public class GreedyStringTiling {
     private final JPlagOptions options;
     private final Map<Submission, Set<Token>> baseCodeMarkings = new IdentityHashMap<>();
 
-    private final Map<Submission, SubsequenceHashLookupTable> cachedHashLookupTables = new IdentityHashMap<>();
+    private final Map<Submission, SubsequenceHashLookupTable> cachedHashLookupTables = Collections.synchronizedMap(new IdentityHashMap<>());
 
     private final TokenValueMapper tokenValueMapper;
 
@@ -54,7 +55,7 @@ public class GreedyStringTiling {
     /**
      * Compares the given submission with the base code submission. Marks the identified base code sections in the
      * submission such that further comparisons do not generate matches for these parts. Must be called before generating a
-     * comparison with a regular submission for the given submission.
+     * comparison with a regular submission for the given submission. THIS METHOD IS NOT THREAD-SAFE.
      * @param submission is the submission to generate base-code markings for.
      * @param baseCodeSubmission is the base code submission.
      * @return the comparison of the submission with the base code submission.
@@ -81,8 +82,8 @@ public class GreedyStringTiling {
     }
 
     /**
-     * Compares the two submissions and generates matches between them. To exclude base code from the result, call
-     * {@link #generateBaseCodeMarking} with each submission beforehand.
+     * Compares the two submissions in a thread-safe manner and generates matches between them. To exclude base code from
+     * the result, call {@link #generateBaseCodeMarking} with each submission beforehand.
      * @param firstSubmission is one of the two submissions.
      * @param secondSubmission is the other of the two submissions.
      * @return the comparison between the two submissions.
