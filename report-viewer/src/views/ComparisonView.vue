@@ -81,7 +81,7 @@
         @selection-changed="(index: number) => changeFileSorting(index)"
       />
     </Container>
-
+    <div ref="styleholder" class="row-span-0 col-span-0"></div>
     <FilesContainer
       ref="panel1"
       :files="filesOfFirst"
@@ -220,6 +220,7 @@ const styleholder: Ref<Node | null> = ref(null)
 
 onMounted(() => {
   if (styleholder.value == null) {
+    console.warn()
     return
   }
   const styleHolderDiv = styleholder.value as Node
