@@ -12,8 +12,8 @@ import type { MatchColorIndex } from '@/utils/ColorUtils'
  * @property colorIndex - Index of the color to use for the match.
  */
 export interface Match {
-  firstFile: string
-  secondFile: string
+  firstFileName: string
+  secondFileName: string
   startInFirst: CodePosition
   endInFirst: CodePosition
   startInSecond: CodePosition
@@ -23,7 +23,10 @@ export interface Match {
 }
 
 export interface CodePosition {
+  // 1-based
   line: number
+  // 0-based
   column: number
+  // 0-based
   tokenListIndex: number
 }

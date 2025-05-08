@@ -50,13 +50,13 @@ import io.soabase.recordbuilder.core.RecordBuilder;
  */
 @RecordBuilder()
 public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Language language,
-        @JsonProperty("min_token_match") Integer minimumTokenMatch, @JsonProperty("submission_directories") Set<File> submissionDirectories,
-        @JsonProperty("old_directories") Set<File> oldSubmissionDirectories, @JsonProperty("base_directory") File baseCodeSubmissionDirectory,
-        @JsonProperty("subdirectory_name") String subdirectoryName, @JsonProperty("file_suffixes") List<String> fileSuffixes,
-        @JsonProperty("exclusion_file_name") String exclusionFileName, @JsonProperty("similarity_metric") SimilarityMetric similarityMetric,
-        @JsonProperty("similarity_threshold") double similarityThreshold, @JsonProperty("max_comparisons") int maximumNumberOfComparisons,
-        @JsonProperty("cluster") ClusteringOptions clusteringOptions, boolean debugParser, @JsonProperty("merging") MergingOptions mergingOptions,
-        @JsonProperty("normalize") boolean normalize) implements JPlagOptionsBuilder.With {
+        Integer minimumTokenMatch, Set<File> submissionDirectories,
+        Set<File> oldSubmissionDirectories, File baseCodeSubmissionDirectory,
+        String subdirectoryName, List<String> fileSuffixes,
+        String exclusionFileName, SimilarityMetric similarityMetric,
+        double similarityThreshold, int maximumNumberOfComparisons,
+        ClusteringOptions clusteringOptions, boolean debugParser, MergingOptions mergingOptions,
+        boolean normalize) implements JPlagOptionsBuilder.With {
 
     public static final double DEFAULT_SIMILARITY_THRESHOLD = 0;
     public static final int DEFAULT_SHOWN_COMPARISONS = 2500;

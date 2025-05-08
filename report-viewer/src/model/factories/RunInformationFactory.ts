@@ -7,16 +7,29 @@ export class RunInformationFactory extends BaseFactory {
     return this.extractRunInformation(JSON.parse(await this.getFile('runInformation.json')))
   }
 
-  private static extractRunInformation(json: Record<string, unknown>): RunInformation {
-    const versionField = json.jplag_version as Record<string, number>
-    const jplagVersion = Version.fromJsonField(versionField)
+  private static extractRunInformation(json: ReportFormatRunInformation): RunInformation {
+    const jplagVersion = Version.fromJsonField(json.version)
 
     return new RunInformation(
       jplagVersion,
-      json.failed_submission_names as string[],
-      json.date_of_execution as string,
-      json.execution_time as number,
-      json.total_comparisons as number
+      json.failedSubmissionNames,
+      json.dateOfExecution,
+      json.executionTime,
+      json.totalComparisons
     )
   }
+}
+
+interface ReportFormatRunInformation {
+  version: ReportFormatVersion
+  failedSubmissionNames: string[]
+  dateOfExecution: string
+  executionTime: number
+  totalComparisons: number
+}
+
+interface ReportFormatVersion {
+  major: number
+  minor: number
+  patch: number
 }

@@ -1,5 +1,4 @@
 import type { Cluster } from '../Cluster'
-import type { MetricType } from '../MetricType'
 import { BaseFactory } from './BaseFactory'
 import type { ComparisonListElement } from '../ComparisonListElement'
 
@@ -12,7 +11,7 @@ export class TopComparisonFactory extends BaseFactory {
   }
 
   private static extractTopComparisons(
-    json: Array<Record<string, unknown>>,
+    json: ReportFormatTopComparison[],
     clusters: Cluster[]
   ): ComparisonListElement[] {
     const comparisons = [] as ComparisonListElement[]
@@ -21,9 +20,9 @@ export class TopComparisonFactory extends BaseFactory {
       const comparison = {
         sortingPlace: counter++,
         id: counter,
-        firstSubmissionId: topComparison.first_submission as string,
-        secondSubmissionId: topComparison.second_submission as string,
-        similarities: topComparison.similarities as Record<MetricType, number>
+        firstSubmissionId: topComparison.firstSubmission,
+        secondSubmissionId: topComparison.secondSubmission,
+        similarities: topComparison.similarities
       }
       comparisons.push({
         ...comparison,
@@ -52,4 +51,10 @@ export class TopComparisonFactory extends BaseFactory {
       }
     })
   }
+}
+
+interface ReportFormatTopComparison {
+  firstSubmission: string
+  secondSubmission: string
+  similarities: Record<string, number>
 }

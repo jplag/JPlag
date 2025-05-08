@@ -6,29 +6,32 @@ export class SubmissionMappingsFactory extends BaseFactory {
     this.extractSubmissionMappings(JSON.parse(await this.getFile('submissionMappings.json')))
   }
 
-  private static extractSubmissionMappings(json: Record<string, string>): void {
-    this.saveIdToDisplayNameMap(json)
-    this.saveComparisonFilesLookup(json)
+  private static extractSubmissionMappings(json: ReportFormatSubmissionMappings): void {
+    this.saveIdToDisplayNameMap(json.submissionIds)
+    this.saveComparisonFilesLookup(json.submissionIdsToComparisonFileName)
   }
 
-  private static saveIdToDisplayNameMap(json: Record<string, unknown>) {
-    const jsonSubmissions = json.submission_id_to_display_name as Map<string, string>
-    const map = new Map<string, string>(Object.entries(jsonSubmissions))
+  private static saveIdToDisplayNameMap(json: SubmissionIdToDisplayName) {
+    const map = new Map<string, string>(Object.entries(json))
 
     store().saveSubmissionNames(map)
   }
 
-  private static saveComparisonFilesLookup(json: Record<string, unknown>) {
-    const submissionIdsToComparisonName = json.submission_ids_to_comparison_file_name as Map<
-      string,
-      Map<string, string>
-    >
-    const test: Array<Array<string | object>> = Object.entries(submissionIdsToComparisonName)
+  private static saveComparisonFilesLookup(json: SubmissionIdsToComparisonFileName) {
+    const entries: Array<Array<string | object>> = Object.entries(json)
     const comparisonMap = new Map<string, Map<string, string>>()
-    for (const [key, value] of test) {
-      comparisonMap.set(key as string, new Map(Object.entries(value as object)))
+    for (const [key, value] of entries) {
+      comparisonMap.set(key as string, new Map(Object.entries(value)))
     }
 
     store().saveComparisonFileLookup(comparisonMap)
   }
 }
+
+interface ReportFormatSubmissionMappings {
+  submissionIds: SubmissionIdToDisplayName
+  submissionIdsToComparisonFileName: SubmissionIdsToComparisonFileName
+}
+
+type SubmissionIdToDisplayName = Record<string, string>
+type SubmissionIdsToComparisonFileName = Record<string, Record<string, string>>

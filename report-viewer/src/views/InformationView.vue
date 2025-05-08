@@ -8,16 +8,18 @@
       <ScrollableComponent class="grow px-4 pt-2">
         <div class="space-y-2">
           <TextInformation label="Language">{{ options.language }}</TextInformation>
-          <TextInformation label="Min Token Match">{{ options.minTokenMatch }}</TextInformation>
+          <TextInformation label="Min Token Match">{{ options.minimumTokenMatch }}</TextInformation>
           <TextInformation label="Submission Directories">{{
             options.submissionDirectories.join(', ')
           }}</TextInformation>
           <TextInformation label="Old Directories">{{
-            options.oldDirectories.join(', ')
+            options.oldSubmissionDirectories.join(', ')
           }}</TextInformation>
-          <TextInformation label="Base Directory">{{ options.baseDirectory }}</TextInformation>
+          <TextInformation label="Base Directory">{{
+            options.baseCodeSubmissionDirectory
+          }}</TextInformation>
           <TextInformation label="Subdirectory Name">{{
-            options.subDirectoryName
+            options.subdirectoryName
           }}</TextInformation>
           <TextInformation label="File Suffixes">{{
             options.fileSuffixes.join(', ')
@@ -32,67 +34,67 @@
             options.similarityThreshold
           }}</TextInformation>
           <TextInformation label="Max Comparison Count">{{
-            options.maxNumberComparisons
+            options.maximumNumberOfComparisons
           }}</TextInformation>
           <TextInformation label="Result File Name">{{
             store().state.uploadedFileName
           }}</TextInformation>
 
-          <div v-if="options.clusterOptions.enabled" class="mt-5! space-y-2">
+          <div v-if="options.clusteringOptions.enabled" class="mt-5! space-y-2">
             <h3 class="font-bold">Clustering:</h3>
             <TextInformation label="Similarity Metric">{{
-              metricToolTips[options.clusterOptions.similarityMetric].longName
+              metricToolTips[options.clusteringOptions.similarityMetric].longName
             }}</TextInformation>
             <TextInformation label="Algorithm">{{
-              options.clusterOptions.algorithm
+              options.clusteringOptions.algorithm
             }}</TextInformation>
 
             <div
-              v-if="options.clusterOptions.algorithm.toLowerCase() == 'spectral'"
+              v-if="options.clusteringOptions.algorithm.toLowerCase() == 'spectral'"
               class="space-y-2"
             >
               <TextInformation label="Spectral Bandwidth">{{
-                options.clusterOptions.spectralBandwidth
+                options.clusteringOptions.spectralKernelBandwidth
               }}</TextInformation>
               <TextInformation label="Spectral Gaussian Process Variance">{{
-                options.clusterOptions.spectralGaussianProcessVariance
+                options.clusteringOptions.spectralGaussianProcessVariance
               }}</TextInformation>
               <TextInformation label="Spectral Min Runs">{{
-                options.clusterOptions.spectralMinRuns
+                options.clusteringOptions.spectralMinRuns
               }}</TextInformation>
               <TextInformation label="Spectral Max Runs">{{
-                options.clusterOptions.spectralMaxRuns
+                options.clusteringOptions.spectralMaxRuns
               }}</TextInformation>
               <TextInformation label="K-Means Iterations">{{
-                options.clusterOptions.spectralMaxKMeansIterations
+                options.clusteringOptions.spectralMaxKMeansIterationPerRun
               }}</TextInformation>
             </div>
 
             <TextInformation v-else label="Agglomerative Threshold">{{
-              options.clusterOptions.agglomerativeThreshold
+              options.clusteringOptions.agglomerativeThreshold
             }}</TextInformation>
 
             <TextInformation label="Preprocessor">{{
-              options.clusterOptions.preprocessor
+              options.clusteringOptions.preprocessor
             }}</TextInformation>
             <TextInformation label="Preprocessor Threshold">{{
-              options.clusterOptions.preprocessorThreshold
+              options.clusteringOptions.preprocessorThreshold
             }}</TextInformation>
             <TextInformation label="Preprocessor Percentile">{{
-              options.clusterOptions.preprocessorPercentile
+              options.clusteringOptions.preprocessorPercentile
             }}</TextInformation>
             <TextInformation label="Inter Cluster Similarity">{{
-              options.clusterOptions.interClusterSimilarity
+              options.clusteringOptions.agglomerativeInterClusterSimilarity
             }}</TextInformation>
           </div>
 
           <div v-if="options.mergingOptions.enabled" class="mt-5 space-y-2">
             <h3 class="font-bold">Match Merging:</h3>
             <TextInformation label="Min Neighbor Length">{{
-              options.mergingOptions.minNeighborLength
+              options.mergingOptions.minimumNeighborLength
             }}</TextInformation>
             <TextInformation label="Max Gap Size"
-              >{{ options.mergingOptions.maxGapSize }} }}</TextInformation
+              >{{ options.mergingOptions.maximumGapSize }} }}</TextInformation
             >
             <TextInformation label="Min Required Merges"
               >{{ options.mergingOptions.minimumRequiredMerges }} }}</TextInformation

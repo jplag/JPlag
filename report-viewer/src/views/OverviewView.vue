@@ -45,7 +45,7 @@
 
         <TextInformation label="Min Token Match" class="flex-auto">
           <template #default>
-            {{ options.minTokenMatch }}
+            {{ options.minimumTokenMatch }}
           </template>
           <template #tooltip>
             <div class="text-sm whitespace-pre">

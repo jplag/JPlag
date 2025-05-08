@@ -7,11 +7,13 @@ export class DistributionFactory extends BaseFactory {
     return this.extractDistributions(JSON.parse(await this.getFile('distribution.json')))
   }
 
-  private static extractDistributions(json: Record<string, Array<number>>): DistributionMap {
+  private static extractDistributions(json: ReportFormatDistributionMap): DistributionMap {
     const distributions = {} as DistributionMap
     for (const [key, value] of Object.entries(json)) {
-      distributions[key as MetricType] = new Distribution(value as Array<number>)
+      distributions[key as MetricType] = new Distribution(value)
     }
     return distributions
   }
 }
+
+type ReportFormatDistributionMap = Record<string, number[]>

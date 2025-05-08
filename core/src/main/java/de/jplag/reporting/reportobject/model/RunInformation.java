@@ -2,15 +2,13 @@ package de.jplag.reporting.reportobject.model;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+public record RunInformation(Version version,
 
-public record RunInformation(@JsonProperty("jplag_version") Version version,
+        List<String> failedSubmissionNames,
 
-        @JsonProperty("failed_submission_names") List<String> failedSubmissionNames,
+        String dateOfExecution,
 
-        @JsonProperty("date_of_execution") String dateOfExecution,
+        long executionTime,
 
-        @JsonProperty("execution_time") long executionTime,
-
-        @JsonProperty("total_comparisons") int totalComparisons) {
+        int totalComparisons) {
 }

@@ -171,12 +171,13 @@ export class DataGetter extends BaseFactory {
   private static async verifyVersion(): Promise<VersionResponse> {
     let version = Version.ERROR_VERSION
     try {
-      version = this.extractVersion(JSON.parse(await this.getFile('runInformation.json')))
+      const runInformation = JSON.parse(await this.getFile('runInformation.json'))
+      version = Version.fromJsonField(runInformation.version)
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       try {
-        const oldOverview = await this.getFile('overview.json')
-        version = this.extractVersion(JSON.parse(oldOverview))
+        const oldOverview = JSON.parse(await this.getFile('overview.json'))
+        version = Version.fromJsonField(oldOverview.jplag_version)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (e) {
         return undefined
@@ -186,12 +187,6 @@ export class DataGetter extends BaseFactory {
       valid: this.compareVersions(version, reportViewerVersion, minimalReportVersion),
       version: version
     }
-  }
-
-  private static extractVersion(json: Record<string, unknown>): Version {
-    const versionField = json.jplag_version as Record<string, number>
-    const jplagVersion = Version.fromJsonField(versionField)
-    return jplagVersion
   }
 
   /**
