@@ -46,6 +46,7 @@ All supported languages and their supported versions are listed below.
 | [EMF Model](https://www.eclipse.org/modeling/emf/)     |                                                                                 2.25.0 | emf-model         |                                alpha                                |    EMF    |
 | [SCXML](https://www.w3.org/TR/scxml/)                  |                                                                                    1.0 | scxml             |                                alpha                                |    XML    |
 | Text (naive, use with caution)                         |                                                                                      - | text              |                               legacy                                |  CoreNLP  |
+| Multi-Language                                         |                                                                                      - | multi             |                                alpha                                |     -     |
 
 ## Download and Installation
 You need Java SE 21 to run or build JPlag.

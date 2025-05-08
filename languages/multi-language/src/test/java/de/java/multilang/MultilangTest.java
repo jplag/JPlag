@@ -53,14 +53,6 @@ class MultilangTest {
     }
 
     @Test
-    void testNoLanguagesConfigured() {
-        MultiLanguage languageModule = new MultiLanguage();
-        Assertions.assertThrowsExactly(IllegalArgumentException.class, () -> {
-            languageModule.parse(Set.of(javaCode, cppCode), false);
-        });
-    }
-
-    @Test
     void testInvalidLanguage() {
         MultiLanguage languageModule = new MultiLanguage();
         ((MultiLanguageOptions) languageModule.getOptions()).getLanguageNames().setValue("thisIsNotALanguage");

@@ -20,13 +20,13 @@ public class MultiLanguageOptions extends LanguageOptions {
     public List<Language> getLanguages() {
         if (this.languages == null) {
             if (languageNames.getValue() == null) {
-                throw new IllegalArgumentException(ERROR_NOT_ENOUGH_LANGUAGES);
+                this.languages = LanguageLoader.getAllAvailableLanguages().values().stream().filter(Language::supportsMultilanguage).toList();
+            } else {
+                this.languages = Arrays.stream(languageNames.getValue().split(","))
+                        .map(name -> LanguageLoader.getLanguage(name)
+                                .orElseThrow(() -> new IllegalArgumentException(String.format(ERROR_LANGUAGE_NOT_FOUND, name))))
+                        .filter(language -> !language.getClass().equals(MultiLanguage.class)).toList();
             }
-
-            this.languages = Arrays.stream(languageNames.getValue().split(","))
-                    .map(name -> LanguageLoader.getLanguage(name)
-                            .orElseThrow(() -> new IllegalArgumentException(String.format(ERROR_LANGUAGE_NOT_FOUND, name))))
-                    .filter(language -> !language.getClass().equals(MultiLanguage.class)).toList();
 
             if (this.languages.isEmpty()) {
                 throw new IllegalArgumentException(ERROR_NOT_ENOUGH_LANGUAGES);
