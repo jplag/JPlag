@@ -61,3 +61,6 @@ Run JPlag in the view-only mode via the `--mode view` option.
 
 ### 7. Are all program comparisons included in a report?
 Only indirectly in the distribution histogram. In the top list and for the code comparison, only the top 2500 pairs are included. This number can be controlled via `-n`.
+
+### 8. How do I include or exclude specific files?
+Use `-p` to define custom file suffixes required for files to be included, use `-x` to provide a file containing paths to exclude, and `-s` to only target a specific subdirectory inside each submission.
