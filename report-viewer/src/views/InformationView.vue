@@ -124,6 +124,9 @@
         <TextInformation label="Missing Comparisons" class="pb-1">{{
           overview.missingComparisons
         }}</TextInformation>
+        <TextInformation label="Failed Submissions" class="pb-1">{{
+          overview.failedSubmissionNames.join(', ')
+        }}</TextInformation>
       </ScrollableComponent>
     </Container>
   </div>
