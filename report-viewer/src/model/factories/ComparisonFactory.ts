@@ -25,26 +25,20 @@ export class ComparisonFactory extends BaseFactory {
     const filesOfFirstSubmission = store().filesOfSubmission(json.firstSubmissionId)
     const filesOfSecondSubmission = store().filesOfSubmission(json.secondSubmissionId)
 
-    const matches = json.matches.map((match) => {
+    const matches: Match[] = json.matches.map((match) => {
       return {
         ...match,
-        firstFile: slash(match.firstFileName),
-        secondFile: slash(match.secondFileName)
+        firstFileName: slash(match.firstFileName),
+        secondFileName: slash(match.secondFileName)
       }
     })
     matches.forEach((match) => {
-      const fileOfFirst = store().getSubmissionFile(
-        json.firstSubmissionId,
-        slash(match.firstFile as string)
-      )
-      const fileOfSecond = store().getSubmissionFile(
-        json.secondSubmissionId,
-        slash(match.secondFile as string)
-      )
+      const fileOfFirst = store().getSubmissionFile(json.firstSubmissionId, match.firstFileName)
+      const fileOfSecond = store().getSubmissionFile(json.secondSubmissionId, match.secondFileName)
 
       if (fileOfFirst == undefined || fileOfSecond == undefined) {
         throw new Error(
-          `The report viewer expected to find the file ${fileOfFirst == undefined ? match.firstFile : match.secondFile} in the submissions, but did not find it.`
+          `The report viewer expected to find the file ${fileOfFirst == undefined ? match.firstFileName : match.secondFileName} in the submissions, but did not find it.`
         )
       }
 

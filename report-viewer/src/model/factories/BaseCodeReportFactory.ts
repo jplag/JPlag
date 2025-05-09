@@ -14,7 +14,7 @@ export class BaseCodeReportFactory extends BaseFactory {
 
   private static async extractReport(json: ReportFormatBaseCodeMatch[]): Promise<BaseCodeMatch[]> {
     return json.map((match) => {
-      return new BaseCodeMatch(match.fileName, match.start, match.end, match.tokens)
+      return new BaseCodeMatch(slash(match.fileName), match.start, match.end, match.tokens)
     })
   }
 }
