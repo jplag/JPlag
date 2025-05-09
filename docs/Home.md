@@ -36,3 +36,42 @@ JPlag is released on [Maven Central](https://search.maven.org/search?q=de.jplag)
 
 ## JPlag legacy version
 In case you depend on the legacy version of JPlag, we refer to the [legacy release v2.12.1](https://github.com/jplag/jplag/releases/tag/v2.12.1-SNAPSHOT) and the [legacy branch](https://github.com/jplag/jplag/tree/legacy). Note that the legacy CLI and report UI are different and provide fewer features.
+
+## Frequently Asked Questions
+The following questions arise frequently. If you have other questions, ask us in the [Q&A discussion section](https://github.com/jplag/JPlag/discussions/categories/q-a).
+
+### 1. How do I exclude template or starter code from plagiarism detection?
+Provide the base code using the `--bc` flag. JPlag will ignore matches that are also present in the base code directory.
+
+### 2. How can I adjust the sensitivity of plagiarism detection?
+Use the `-t` flag to set the minimum match token length (in tokens). Lower values increase sensitivity but may lead to more false positives. Higher values decrease sensitivity, especially when all submission pairs exhibit high similarity values. The default values depend on the language and are shown in the overview of a report.
+
+### 3. How can I compare submissions from different years or cohorts?
+Use the `-new` and `-old` flags to designate root directories containing current and previous submissions. JPlag compares new submissions among themselves and against old submissions but not among old submissions.
+
+### 4. Will sensitive data be uploaded somewhere when using JPlag?
+No, JPlag runs entirely locally. Whether you use the command-line tool or integrate the JPlag library into your system, all analysis is performed on your machine, and no data is sent externally.
+
+### 5. Is it possible to run JPlag on large datasets efficiently?
+Yes, it is, but performance may vary depending on your system and how much memory Java is provided with.
+For example, JPlag can handle ~3600 large submissions (in total, 5 million LoC and 100K files), leading to 6.5 million program comparisons in 15 minutes on an M1 Macbook. If you run into performance issues, consider increasing Java memory (e.g., `java -Xmx16G`) or skip clustering (`--cluster-skip`).
+
+### 6. How do I view existing JPlag reports?
+Run JPlag in the view-only mode via the `--mode view` option. 
+
+### 7. Are all program comparisons included in a report?
+Only indirectly in the distribution histogram. In the top list and for the code comparison, only the top 2500 pairs are included. This number can be controlled via `-n`.
+
+### 8. How do I include or exclude specific files?
+Use `-p` to define custom file suffixes required for files to be included, use `-x` to provide a file containing paths to exclude, and `-s` to only target a specific subdirectory inside each submission.
+
+### 9. How can I improve obfuscation or tampering resilience?
+Use the `--match-merging` option to enable the heuristic merging of neighboring matches, which counteracts obfuscation attempts. For Java and C++, use `--normalize` to ignore dead code and normalize the statement order in programs.
+
+### 10. How do I archive report files?
+You can store the report files. While we strive to achieve backwards compatibility, you can always open them with the version of JPlag they were created with.
+
+### 11. Who is behind JPlag?
+JPlag is an open-source project primarily developed and maintained by researchers at the Karlsruhe Institute of Technology (KIT) in Germany.
+
+
