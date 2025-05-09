@@ -1,6 +1,6 @@
-package de.jplag.cli.logger;
+package de.jplag.logging.progressbar;
 
-import de.jplag.logging.ProgressBar;
+import de.jplag.logging.DelayablePrinter;
 
 /**
  * Superclass for progress bars, that delay the log output until the bar is done

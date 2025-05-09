@@ -11,9 +11,9 @@ import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Submission;
 import de.jplag.SubmissionSet;
-import de.jplag.logging.ProgressBar;
 import de.jplag.logging.ProgressBarLogger;
-import de.jplag.logging.ProgressBarType;
+import de.jplag.logging.progressbar.ProgressBar;
+import de.jplag.logging.progressbar.ProgressBarType;
 import de.jplag.options.JPlagOptions;
 
 /**

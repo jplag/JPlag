@@ -1,4 +1,4 @@
-package de.jplag.logging;
+package de.jplag.logging.progressbar;
 
 /**
  * Provides the capability to create new progress bars, to allow JPlag to access the ui.

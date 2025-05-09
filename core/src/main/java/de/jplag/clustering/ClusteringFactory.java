@@ -13,9 +13,9 @@ import org.slf4j.LoggerFactory;
 import de.jplag.JPlagComparison;
 import de.jplag.Submission;
 import de.jplag.clustering.algorithm.GenericClusteringAlgorithm;
-import de.jplag.logging.ProgressBar;
 import de.jplag.logging.ProgressBarLogger;
-import de.jplag.logging.ProgressBarType;
+import de.jplag.logging.progressbar.ProgressBar;
+import de.jplag.logging.progressbar.ProgressBarType;
 
 /**
  * Runs the clustering according to an options object.

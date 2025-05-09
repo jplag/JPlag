@@ -11,7 +11,7 @@ import de.jplag.SubmissionSet;
 import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.logging.ProgressBarLogger;
-import de.jplag.logging.ProgressBarType;
+import de.jplag.logging.progressbar.ProgressBarType;
 
 /**
  * Maps the tokens in a submission to integer IDs for usage in the {@link GreedyStringTiling} algorithm. Each token type

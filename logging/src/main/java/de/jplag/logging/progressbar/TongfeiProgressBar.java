@@ -1,4 +1,4 @@
-package de.jplag.cli.logger;
+package de.jplag.logging.progressbar;
 
 /**
  * A ProgressBar, that used the tongfei progress bar library underneath, to show progress bars on the cli.

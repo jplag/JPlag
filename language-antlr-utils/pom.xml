@@ -27,6 +27,11 @@
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>de.jplag</groupId>
+            <artifactId>logging</artifactId>
+            <version>${revision}</version>
+        </dependency>
     </dependencies>
 
     <build>

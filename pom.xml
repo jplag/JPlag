@@ -128,9 +128,10 @@
                 <version>${slf4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-simple</artifactId>
-                <version>${slf4j.version}</version>
+                <groupId>de.jplag</groupId>
+                <artifactId>logging</artifactId>
+                <version>${revision}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.kohsuke.metainf-services</groupId>
@@ -174,11 +175,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -412,6 +408,7 @@
                 <module>language-api</module>
                 <module>language-antlr-utils</module>
                 <module>language-testutils</module>
+                <module>logging</module>
             </modules>
         </profile>
         <profile>

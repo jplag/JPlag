@@ -19,9 +19,9 @@ import de.jplag.cli.CLI;
 import de.jplag.cli.JPlagOptionsBuilder;
 import de.jplag.cli.JPlagRunner;
 import de.jplag.cli.OutputFileGenerator;
-import de.jplag.cli.logger.CollectedLogger;
 import de.jplag.cli.picocli.CliInputHandler;
 import de.jplag.exceptions.ExitException;
+import de.jplag.logging.CollectedLogger;
 import de.jplag.options.JPlagOptions;
 
 /**
