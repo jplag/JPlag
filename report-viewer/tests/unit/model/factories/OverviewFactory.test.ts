@@ -16,7 +16,6 @@ describe('Test JSON to Overview', () => {
 
   beforeEach(() => {
     setActivePinia(createPinia())
-    store().setLoadingType('zip')
   })
 
   it('Post 5.0', async () => {
