@@ -21,7 +21,6 @@ import de.jplag.merging.MergingOptions;
 import de.jplag.reporting.jsonfactory.serializer.LanguageSerializer;
 import de.jplag.util.FileUtils;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.soabase.recordbuilder.core.RecordBuilder;
 
@@ -49,14 +48,11 @@ import io.soabase.recordbuilder.core.RecordBuilder;
  * @param debugParser If true, submissions that cannot be parsed will be stored in a separate directory.
  */
 @RecordBuilder()
-public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Language language,
-        Integer minimumTokenMatch, Set<File> submissionDirectories,
-        Set<File> oldSubmissionDirectories, File baseCodeSubmissionDirectory,
-        String subdirectoryName, List<String> fileSuffixes,
-        String exclusionFileName, SimilarityMetric similarityMetric,
-        double similarityThreshold, int maximumNumberOfComparisons,
-        ClusteringOptions clusteringOptions, boolean debugParser, MergingOptions mergingOptions,
-        boolean normalize) implements JPlagOptionsBuilder.With {
+public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Language language, Integer minimumTokenMatch,
+        Set<File> submissionDirectories, Set<File> oldSubmissionDirectories, File baseCodeSubmissionDirectory, String subdirectoryName,
+        List<String> fileSuffixes, String exclusionFileName, SimilarityMetric similarityMetric, double similarityThreshold,
+        int maximumNumberOfComparisons, ClusteringOptions clusteringOptions, boolean debugParser, MergingOptions mergingOptions, boolean normalize)
+        implements JPlagOptionsBuilder.With {
 
     public static final double DEFAULT_SIMILARITY_THRESHOLD = 0;
     public static final int DEFAULT_SHOWN_COMPARISONS = 2500;

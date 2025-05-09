@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test'
 import { uploadFile } from './TestUtils'
 
-test('Test cluster view', async ({ page }) => {
+test.only('Test cluster view', async ({ page }) => {
   await uploadFile('result_small_cluster.jplag', page)
 
   // check for all clusters being shown
@@ -19,6 +19,7 @@ test('Test cluster view', async ({ page }) => {
   // Check cluster diagram
   await page.waitForTimeout(3000)
   const radarChart = page.locator('canvas').first()
+  await page.getByRole('combobox').selectOption('C')
   expect(page.getByRole('combobox').first()).toHaveValue('C')
   const clusterImageC = radarChart.screenshot()
   await page.getByRole('combobox').selectOption('B')

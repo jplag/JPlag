@@ -1,39 +1,39 @@
 {
   "language": "java",
-  "min_token_match": 9,
-  "submission_directories": [
+  "minimumTokenMatch": 9,
+  "submissionDirectories": [
     ".\\files"
   ],
-  "old_directories": ["old"],
-  "base_directory": ".",
-  "subdirectory_name": "src/",
-  "file_suffixes": [
+  "oldSubmissionDirectories": ["old"],
+  "baseCodeSubmissionDirectory": ".",
+  "subdirectoryName": "src/",
+  "fileSuffixes": [
     ".java",
     ".JAVA"
   ],
-  "exclusion_file_name": "ex.txt",
-  "similarity_metric": "AVG",
-  "similarity_threshold": 0.0,
-  "max_comparisons": 500,
-  "cluster": {
+  "exclusionFileName": "ex.txt",
+  "similarityMetric": "AVG",
+  "similarityThreshold": 0.0,
+  "maximumNumberOfComparisons": 500,
+  "clusteringOptions": {
     "enabled": true,
     "metric": "AVG",
-    "spectral_bandwidth": 20.0,
-    "spectral_gaussian_variance": 0.0025000000000000005,
-    "spectral_min_runs": 5,
-    "spectral_max_runs": 50,
-    "spectral_max_kmeans_iterations": 200,
-    "agglomerative_threshold": 0.2,
+    "spectralKernelBandwidth": 20.0,
+    "spectralGaussianProcessVariance": 0.0025000000000000005,
+    "spectralMinRuns": 5,
+    "spectralMaxRuns": 50,
+    "spectralMaxKMeansIterationPerRun": 200,
+    "agglomerativeThreshold": 0.2,
     "preprocessor": "CUMULATIVE_DISTRIBUTION_FUNCTION",
     "algorithm": "SPECTRAL",
-    "inter_similarity": "AVERAGE",
-    "preprocessor_threshold": 0.2,
-    "preprocessor_percentile": 0.5
+    "agglomerativeInterClusterSimilarity": "AVERAGE",
+    "preprocessorThreshold": 0.2,
+    "preprocessorPercentile": 0.5
   },
-  "merging": {
+  "mergingOptions": {
     "enabled": false,
-    "min_neighbour_length": 0,
-    "max_gap_size": 0,
-    "min_required_merges": 3
+    "minimumNeighborLength": 0,
+    "maximumGapSize": 0,
+    "minimumRequiredMerges": 3
   }
 }

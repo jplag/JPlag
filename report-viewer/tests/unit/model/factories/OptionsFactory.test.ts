@@ -18,35 +18,35 @@ describe('Test JSON to Options', async () => {
 
     expect(result).toEqual({
       language: ParserLanguage.JAVA,
-      minTokenMatch: 9,
+      minimumTokenMatch: 9,
       submissionDirectories: ['.\\files'],
-      oldDirectories: ['old'],
-      baseDirectory: '.',
-      subDirectoryName: 'src/',
+      oldSubmissionDirectories: ['old'],
+      baseCodeSubmissionDirectory: '.',
+      subdirectoryName: 'src/',
       fileSuffixes: ['.java', '.JAVA'],
       exclusionFileName: 'ex.txt',
       similarityMetric: MetricType.AVERAGE,
       similarityThreshold: 0.0,
-      maxNumberComparisons: 500,
-      clusterOptions: {
+      maximumNumberOfComparisons: 500,
+      clusteringOptions: {
         enabled: true,
-        similarityMetric: MetricType.AVERAGE,
-        spectralBandwidth: 20.0,
+        metric: MetricType.AVERAGE,
+        spectralKernelBandwidth: 20.0,
         spectralGaussianProcessVariance: 0.0025000000000000005,
         spectralMinRuns: 5,
         spectralMaxRuns: 50,
-        spectralMaxKMeansIterations: 200,
+        spectralMaxKMeansIterationPerRun: 200,
         agglomerativeThreshold: 0.2,
         preprocessor: 'Cumulative Distribution Function',
         algorithm: 'Spectral',
-        interClusterSimilarity: 'Average',
+        agglomerativeInterClusterSimilarity: 'Average',
         preprocessorThreshold: 0.2,
         preprocessorPercentile: 0.5
       },
       mergingOptions: {
         enabled: false,
-        minNeighborLength: 0,
-        maxGapSize: 0,
+        minimumNeighborLength: 0,
+        maximumGapSize: 0,
         minimumRequiredMerges: 3
       }
     })

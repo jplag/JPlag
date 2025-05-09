@@ -6,8 +6,6 @@ import java.util.Objects;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
 import de.jplag.options.SimilarityMetric;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Collection of all possible parameters that describe how a clustering should be performed.
  * @param similarityMetric The similarity metric is used for clustering
@@ -36,14 +34,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @param preprocessorPercentile up to which percentile of similarities the percentile-preprocessor zeroes out the
  * similarities
  */
-public record ClusteringOptions(SimilarityMetric similarityMetric,
-        double spectralKernelBandwidth,
-        double spectralGaussianProcessVariance, int spectralMinRuns,
-        int spectralMaxRuns, int spectralMaxKMeansIterationPerRun,
-        double agglomerativeThreshold, Preprocessing preprocessor,
-        boolean enabled, ClusteringAlgorithm algorithm,
-        InterClusterSimilarity agglomerativeInterClusterSimilarity,
-        double preprocessorThreshold,
+public record ClusteringOptions(SimilarityMetric similarityMetric, double spectralKernelBandwidth, double spectralGaussianProcessVariance,
+        int spectralMinRuns, int spectralMaxRuns, int spectralMaxKMeansIterationPerRun, double agglomerativeThreshold, Preprocessing preprocessor,
+        boolean enabled, ClusteringAlgorithm algorithm, InterClusterSimilarity agglomerativeInterClusterSimilarity, double preprocessorThreshold,
         double preprocessorPercentile) {
 
     public ClusteringOptions(SimilarityMetric similarityMetric, double spectralKernelBandwidth, double spectralGaussianProcessVariance,
