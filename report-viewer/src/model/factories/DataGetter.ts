@@ -17,6 +17,9 @@ import { TopComparisonFactory } from './TopComparisonFactory'
 import type { ComparisonListElement } from '../ComparisonListElement'
 import { BaseFactory } from './BaseFactory'
 
+/**
+ * All the file types that can be requested without further information
+ */
 class RawFileContentTypes {
   public static readonly CLUSTER = 'cluster'
   public static readonly DISTRIBUTION = 'distribution'
@@ -25,12 +28,15 @@ class RawFileContentTypes {
   public static readonly TOP_COMPARISON = 'topComparison'
 }
 
+/**
+ * Names of all file types requestable
+ */
 export class FileContentTypes extends RawFileContentTypes {
   public static readonly BASE_CODE_REPORT = 'baseCodeReport'
   public static readonly COMPARISON = 'comparison'
 }
 
-export interface Result {
+interface Result {
   [FileContentTypes.BASE_CODE_REPORT]: BaseCodeMatch[][]
   [FileContentTypes.CLUSTER]: Cluster[]
   [FileContentTypes.COMPARISON]: Comparison
@@ -40,8 +46,14 @@ export interface Result {
   [FileContentTypes.TOP_COMPARISON]: ComparisonListElement[]
 }
 
+/**
+ * Result the data getter produces
+ */
 type PartialResult = Partial<Result>
 
+/**
+ * All possible requests to the data getter
+ */
 type FileRequest =
   | 'cluster'
   | 'distribution'
@@ -58,6 +70,10 @@ type VersionResponse =
     }
   | undefined
 
+/**
+ * Complete response the data getter gives
+ * @template T can be used to force certain types to not be undefined in the result if they match the fileRequests
+ */
 type Response<T extends PartialResult> =
   | {
       result: 'valid'
@@ -72,11 +88,15 @@ type Response<T extends PartialResult> =
       error: Error
     }
 
+/**
+ * The DataGetter is responsible for addressing the parsers and getting the data from the report
+ * It is also responsible for checking the version of the report and the report viewer
+ */
 export class DataGetter extends BaseFactory {
   /**
    * The parameter T can be used to force certain types to not be undefined in the result if they match the fileRequests
    * @param fileRequests
-   * @returns
+   * @returns The result of the request. The result flag is valid if the request was successful and the data is valid, error if something went wrong and versionError if the version of the report is not supported
    */
   public static async getFiles<T extends PartialResult>(
     fileRequests: FileRequest[]
@@ -95,8 +115,7 @@ export class DataGetter extends BaseFactory {
         reportVersion: versionResult.version
       }
     }
-
-    // First we need to get the mappings for names and comparison files if any are empty
+    // First we need to get the mappings for names and comparison files if any are empty, so the parsers can use them
     if (
       store().state.fileIdToDisplayName.size === 0 ||
       store().state.submissionIdsToComparisonFileName.size === 0
@@ -182,6 +201,11 @@ export class DataGetter extends BaseFactory {
     return TopComparisonFactory.getTopComparisons(clusters)
   }
 
+  /**
+   * Verifies the version of the report compared to the version of the report viewer
+   * If the found version is newer then the report viewers version, it displays a warning
+   * @returns If no information on versions was found, it returns undefined. Otherwise the valid field is true if the version is valid and false if it is not
+   */
   private static async verifyVersion(): Promise<VersionResponse> {
     let version = Version.ERROR_VERSION
     try {
