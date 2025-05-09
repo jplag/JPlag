@@ -64,3 +64,14 @@ Only indirectly in the distribution histogram. In the top list and for the code 
 
 ### 8. How do I include or exclude specific files?
 Use `-p` to define custom file suffixes required for files to be included, use `-x` to provide a file containing paths to exclude, and `-s` to only target a specific subdirectory inside each submission.
+
+### 9. How can I improve obfuscation or tampering resilience?
+Use the `--match-merging` option to enable the heuristic merging of neighboring matches, which counteracts obfuscation attempts. For Java and C++, use `--normalize` to ignore dead code and normalize the statement order in programs.
+
+### 10. How do I archive report files?
+You can store the report files. While we strive to achieve backwards compatibility, you can always open them with the version of JPlag they were created with.
+
+### 11. Who is behind JPlag?
+JPlag is an open-source project primarily developed and maintained by researchers at the Karlsruhe Institute of Technology (KIT) in Germany.
+
+
