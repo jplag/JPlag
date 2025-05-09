@@ -8,7 +8,6 @@ import { setActivePinia, createPinia } from 'pinia'
 describe('Test JSON to Comparison', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
-    store().setLoadingType('zip')
   })
 
   it('Post 5.0', async () => {

@@ -9,7 +9,6 @@ import { store } from '@/stores/store'
 describe('Test JSON to Options', async () => {
   beforeEach(() => {
     setActivePinia(createPinia())
-    store().setLoadingType('zip')
   })
 
   it('Test Valid JSON', async () => {
