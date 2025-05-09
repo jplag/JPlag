@@ -81,19 +81,6 @@ export class DataGetter extends BaseFactory {
   public static async getFiles<T extends PartialResult>(
     fileRequests: FileRequest[]
   ): Promise<Response<T>> {
-    try {
-      return await this._getFiles<T>(fileRequests)
-    } catch (e) {
-      return {
-        result: 'error',
-        error: e as Error
-      }
-    }
-  }
-
-  private static async _getFiles<T extends PartialResult>(
-    fileRequests: FileRequest[]
-  ): Promise<Response<T>> {
     // perform version check to ensure we can even read data
     const versionResult = await this.verifyVersion()
     if (versionResult === undefined) {
@@ -117,55 +104,82 @@ export class DataGetter extends BaseFactory {
       await SubmissionMappingsFactory.getSubmissionMappings()
     }
 
-    // Now we can get the requested data
-    const data: PartialResult = {}
-    for (const request of fileRequests) {
-      if (typeof request === 'string') {
-        if (request === RawFileContentTypes.CLUSTER) {
-          data[FileContentTypes.CLUSTER] = await ClusterFactory.getClusters()
-        } else if (request === RawFileContentTypes.DISTRIBUTION) {
-          data[FileContentTypes.DISTRIBUTION] = await DistributionFactory.getDistributions()
-        } else if (request === RawFileContentTypes.OPTIONS) {
-          data[FileContentTypes.OPTIONS] = await OptionsFactory.getCliOptions()
-        } else if (request === RawFileContentTypes.RUN_INFORMATION) {
-          data[FileContentTypes.RUN_INFORMATION] = await RunInformationFactory.getRunInformation()
-        } else if (request === RawFileContentTypes.TOP_COMPARISON) {
-          let clusters: Cluster[] = []
-          if (data[FileContentTypes.CLUSTER] !== undefined) {
-            clusters = data[FileContentTypes.CLUSTER]!
-          } else {
-            clusters = await ClusterFactory.getClusters()
-          }
+    try {
+      return await this.getData<T>(fileRequests)
+    } catch (e) {
+      return {
+        result: 'error',
+        error: e as Error
+      }
+    }
+  }
 
-          data[FileContentTypes.TOP_COMPARISON] =
-            await TopComparisonFactory.getTopComparisons(clusters)
-        }
-      } else if (request.type === 'baseCodeReport') {
-        const submissionIds = request.submissionIds
-        const baseCodeMatches: BaseCodeMatch[][] = []
-        for (const submissionId of submissionIds) {
-          const baseCodeMatch = await BaseCodeReportFactory.getReport(submissionId)
-          baseCodeMatches.push(baseCodeMatch)
-        }
-        data[FileContentTypes.BASE_CODE_REPORT] = baseCodeMatches
-      } else if (request.type === 'comparison') {
-        const fileName = store().getComparisonFileName(
-          request.firstSubmission,
-          request.secondSubmission
-        )
-        if (!fileName) {
-          return {
-            result: 'error',
-            error: new Error('No comparison file found')
+  private static async getData<T extends PartialResult>(
+    fileRequests: FileRequest[]
+  ): Promise<Response<T>> {
+    const data: PartialResult = {}
+
+    for (const request of fileRequests) {
+      const type = typeof request === 'string' ? request : request.type
+      switch (type) {
+        case RawFileContentTypes.CLUSTER:
+          data[FileContentTypes.CLUSTER] = await ClusterFactory.getClusters()
+          break
+        case RawFileContentTypes.DISTRIBUTION:
+          data[FileContentTypes.DISTRIBUTION] = await DistributionFactory.getDistributions()
+          break
+        case RawFileContentTypes.OPTIONS:
+          data[FileContentTypes.OPTIONS] = await OptionsFactory.getCliOptions()
+          break
+        case RawFileContentTypes.RUN_INFORMATION:
+          data[FileContentTypes.RUN_INFORMATION] = await RunInformationFactory.getRunInformation()
+          break
+        case RawFileContentTypes.TOP_COMPARISON:
+          data[FileContentTypes.TOP_COMPARISON] = await this.getTopComparisons(
+            data[FileContentTypes.CLUSTER]
+          )
+          break
+        case FileContentTypes.BASE_CODE_REPORT:
+          data[FileContentTypes.BASE_CODE_REPORT] = await this.getBaseCodeReport(
+            (request as { submissionIds: string[] }).submissionIds
+          )
+          break
+        case FileContentTypes.COMPARISON: {
+          const fileName = store().getComparisonFileName(
+            (request as { firstSubmission: string }).firstSubmission,
+            (request as { secondSubmission: string }).secondSubmission
+          )
+          if (!fileName) {
+            return {
+              result: 'error',
+              error: new Error('No comparison file found')
+            }
           }
+          data[FileContentTypes.COMPARISON] = await ComparisonFactory.getComparison(fileName)
+          break
         }
-        data[FileContentTypes.COMPARISON] = await ComparisonFactory.getComparison(fileName)
       }
     }
     return {
       result: 'valid',
       data: data as PartialResult & T
     }
+  }
+
+  private static async getBaseCodeReport(submissionIds: string[]): Promise<BaseCodeMatch[][]> {
+    const baseCodeMatches: BaseCodeMatch[][] = []
+    for (const submissionId of submissionIds) {
+      const baseCodeMatch = await BaseCodeReportFactory.getReport(submissionId)
+      baseCodeMatches.push(baseCodeMatch)
+    }
+    return baseCodeMatches
+  }
+
+  private static async getTopComparisons(clusters?: Cluster[]): Promise<ComparisonListElement[]> {
+    if (clusters === undefined) {
+      clusters = await ClusterFactory.getClusters()
+    }
+    return TopComparisonFactory.getTopComparisons(clusters)
   }
 
   private static async verifyVersion(): Promise<VersionResponse> {

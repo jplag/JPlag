@@ -18,8 +18,8 @@ export class OptionsFactory extends BaseFactory {
   private static extractClusterOptions(json: CliClusterOptions): CliClusterOptions {
     return {
       ...json,
-      preprocessor: this.transformWord(json.preprocessor as string),
-      algorithm: this.transformWord(json.algorithm as string),
+      preprocessor: this.transformWord(json.preprocessor),
+      algorithm: this.transformWord(json.algorithm),
       agglomerativeInterClusterSimilarity: this.transformWord(
         json.agglomerativeInterClusterSimilarity
       )

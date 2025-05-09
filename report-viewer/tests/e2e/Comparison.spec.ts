@@ -1,7 +1,7 @@
 import { test, expect, Page } from '@playwright/test'
 import { uploadFile } from './TestUtils'
 
-test.only('Test comparison table and comparsion view', async ({ page }) => {
+test('Test comparison table and comparsion view', async ({ page }) => {
   await uploadFile('progpedia-report.jplag', page)
 
   // check for elements in average similarity table
