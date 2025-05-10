@@ -59,9 +59,9 @@
           <OptionComponent
             :style="{ background: getMatchColor(0.3, match.colorIndex) }"
             :label="
-              getFileName(match.firstFile) +
+              getFileName(match.firstFileName) +
               ' - ' +
-              getFileName(match.secondFile) +
+              getFileName(match.secondFileName) +
               ': ' +
               match.tokens
             "
@@ -70,9 +70,9 @@
         </template>
         <template #tooltip>
           <p class="text-sm whitespace-pre">
-            Match between {{ getFileName(match.firstFile) }} (Line {{ match.startInFirst.line }}-{{
-              match.endInFirst.line
-            }}) and {{ getFileName(match.secondFile) }} (Line {{ match.startInSecond.line }}-{{
+            Match between {{ getFileName(match.firstFileName) }} (Line
+            {{ match.startInFirst.line }}-{{ match.endInFirst.line }}) and
+            {{ getFileName(match.secondFileName) }} (Line {{ match.startInSecond.line }}-{{
               match.endInSecond.line
             }}) <br />
             Match is {{ match.tokens }} tokens long. <br />
@@ -106,9 +106,9 @@
         :style="{ background: getMatchColor(0.3, match.colorIndex) }"
         class="print-exact"
       >
-        <td class="px-2">{{ getFileName(match.firstFile) }}</td>
+        <td class="px-2">{{ getFileName(match.firstFileName) }}</td>
         <td class="px-2">{{ match.startInFirst }} - {{ match.endInFirst }}</td>
-        <td class="px-2">{{ getFileName(match.secondFile) }}</td>
+        <td class="px-2">{{ getFileName(match.secondFileName) }}</td>
         <td class="px-2">{{ match.startInSecond }} - {{ match.endInSecond }}</td>
         <td class="px-2">{{ match.tokens }}</td>
       </tr>

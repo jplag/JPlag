@@ -94,18 +94,18 @@ import TextInformation from '@/components/TextInformation.vue'
 import type { Cluster } from '@/model/Cluster'
 import type { ClusterListElement, ClusterListElementMember } from '@/model/ClusterListElement'
 import { MetricType } from '@/model/MetricType'
-import type { Overview } from '@/model/Overview'
 import { computed, ref, onErrorCaptured, type PropType, type Ref } from 'vue'
 import { redirectOnError } from '@/router'
 import TabbedContainer from '@/components/TabbedContainer.vue'
+import type { ComparisonListElement } from '@/model/ComparisonListElement'
 
 const props = defineProps({
-  overview: {
-    type: Object as PropType<Overview>,
-    required: true
-  },
   cluster: {
     type: Object as PropType<Cluster>,
+    required: true
+  },
+  topComparisons: {
+    type: Array<ComparisonListElement>,
     required: true
   }
 })
@@ -136,7 +136,7 @@ const comparisonTableOptions = [
 const usedMetric = MetricType.AVERAGE
 
 const comparisons = computed(() =>
-  props.overview.topComparisons.filter(
+  props.topComparisons.filter(
     (c) =>
       props.cluster.members.includes(c.firstSubmissionId) &&
       props.cluster.members.includes(c.secondSubmissionId)
@@ -152,7 +152,7 @@ comparisons.value
   })
 
 const relatedComparisons = computed(() =>
-  props.overview.topComparisons.filter(
+  props.topComparisons.filter(
     (c) =>
       (props.cluster.members.includes(c.firstSubmissionId) &&
         !props.cluster.members.includes(c.secondSubmissionId)) ||

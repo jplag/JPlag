@@ -81,6 +81,11 @@ const versionMap: VersionMapEntry[] = [
     minVersion: new Version(4, 2, 0),
     maxVersion: new Version(5, 1, 0),
     pathName: 'v5'
+  },
+  {
+    minVersion: new Version(6, 0, 0),
+    maxVersion: new Version(6, 1, 0),
+    pathName: 'v6_1'
   }
 ]
 

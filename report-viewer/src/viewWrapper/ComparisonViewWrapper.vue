@@ -1,7 +1,9 @@
 <template>
   <div class="flex flex-col gap-1 md:overflow-hidden print:w-full">
     <ComparisonView
-      v-if="comparison && language && firstBaseCodeMatches && secondBaseCodeMatches"
+      v-if="
+        comparison && language && firstBaseCodeMatches !== null && secondBaseCodeMatches !== null
+      "
       :comparison="comparison"
       :language="language"
       :first-base-code-matches="firstBaseCodeMatches"
@@ -18,19 +20,22 @@
 
 <script setup lang="ts">
 import { type Ref, ref } from 'vue'
-import { OverviewFactory } from '@/model/factories/OverviewFactory'
 import ComparisonView from '@/views/ComparisonView.vue'
 import type { Comparison } from '@/model/Comparison'
-import { ComparisonFactory } from '@/model/factories/ComparisonFactory'
 import LoadingCircle from '@/components/LoadingCircle.vue'
-import { redirectOnError, router } from '@/router'
+import { redirectOnError, redirectToOldVersion } from '@/router'
 import type { Language } from '@/model/Language'
 import VersionRepositoryReference from '@/components/VersionRepositoryReference.vue'
 import type { BaseCodeMatch } from '@/model/BaseCodeReport'
-import { BaseCodeReportFactory } from '@/model/factories/BaseCodeReportFactory'
+import { DataGetter, FileContentTypes } from '@/model/factories/DataGetter'
+import type { CliOptions } from '@/model/CliOptions'
 
 const props = defineProps({
-  comparisonFileName: {
+  firstSubmissionId: {
+    type: String,
+    required: true
+  },
+  secondSubmissionId: {
     type: String,
     required: true
   }
@@ -41,45 +46,32 @@ const language: Ref<Language | null> = ref(null)
 const firstBaseCodeMatches: Ref<BaseCodeMatch[] | null> = ref(null)
 const secondBaseCodeMatches: Ref<BaseCodeMatch[] | null> = ref(null)
 
-// This eslint rule is disabled to allow the use of await in the setup function. Disabling this rule is safe, because the props are gathered from the url, so changing them would reload the page anyway.
 // eslint-disable-next-line vue/no-setup-props-reactivity-loss
-const comparisonPromise = ComparisonFactory.getComparison(props.comparisonFileName)
-  .then((comp) => {
-    comparison.value = comp
-    return comp
-  })
-  .catch((error) => {
-    redirectOnError(error, 'Could not load comparison:\n', 'OverviewView', 'Back to overview')
-  })
-
-OverviewFactory.getOverview()
-  .then((r) => {
-    if (r.result == 'success') {
-      language.value = r.overview.language
-    } else if (r.result == 'oldReport') {
-      router.push({ name: 'OldVersionRedirectView', params: { version: r.version.toString() } })
-    }
-  })
-  .catch((error) => {
-    redirectOnError(error, 'Could not load comparison:\n')
-  })
-
-comparisonPromise
-  .then((comp) => {
-    if (!comp) return []
-    return BaseCodeReportFactory.getReport(comp.firstSubmissionId)
-  })
-  .then((report) => {
-    firstBaseCodeMatches.value = report
-  })
-  .catch(() => {})
-comparisonPromise
-  .then((comp) => {
-    if (!comp) return []
-    return BaseCodeReportFactory.getReport(comp.secondSubmissionId)
-  })
-  .then((report) => {
-    secondBaseCodeMatches.value = report
-  })
-  .catch(() => {})
+DataGetter.getFiles<{
+  [FileContentTypes.COMPARISON]: Comparison
+  [FileContentTypes.OPTIONS]: CliOptions
+  [FileContentTypes.BASE_CODE_REPORT]: BaseCodeMatch[][]
+}>([
+  FileContentTypes.OPTIONS,
+  {
+    type: FileContentTypes.COMPARISON,
+    firstSubmission: props.firstSubmissionId,
+    secondSubmission: props.secondSubmissionId
+  },
+  {
+    type: FileContentTypes.BASE_CODE_REPORT,
+    submissionIds: [props.firstSubmissionId, props.secondSubmissionId]
+  }
+]).then((r) => {
+  if (r.result == 'valid') {
+    comparison.value = r.data[FileContentTypes.COMPARISON]
+    language.value = r.data[FileContentTypes.OPTIONS].language
+    firstBaseCodeMatches.value = r.data[FileContentTypes.BASE_CODE_REPORT][0]
+    secondBaseCodeMatches.value = r.data[FileContentTypes.BASE_CODE_REPORT][1]
+  } else if (r.result == 'versionError') {
+    redirectToOldVersion(r.reportVersion)
+  } else {
+    redirectOnError(r.error, 'Could not load comparison:\n', 'ComparisonView', 'Back to overview')
+  }
+})
 </script>

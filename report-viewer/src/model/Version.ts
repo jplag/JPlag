@@ -41,7 +41,12 @@ export class Version {
     return this.major < 0 || this.minor < 0 || this.patch < 0
   }
 
-  public static fromJsonField(versionField: Record<string, number> | undefined): Version {
+  public static fromJsonField(
+    versionField:
+      | Record<string, number>
+      | { major: number; minor: number; patch: number }
+      | undefined
+  ): Version {
     if (versionField) {
       return new Version(versionField.major, versionField.minor, versionField.patch)
     }

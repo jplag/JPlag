@@ -1,5 +1,5 @@
 import { it, beforeEach, describe, expect } from 'vitest'
-import validNew from './ValidComparison.json'
+import validNew from './assets/ValidComparison.json'
 import { ComparisonFactory } from '@/model/factories/ComparisonFactory'
 import { store } from '@/stores/store'
 import { MetricType } from '@/model/MetricType'

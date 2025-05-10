@@ -164,7 +164,7 @@ const panel2: Ref<typeof FilesContainer | null> = ref(null)
  * @param match The match to scroll to
  */
 function showMatchInFirst(match: Match) {
-  panel1.value?.scrollTo(match.firstFile, match.startInFirst.line)
+  panel1.value?.scrollTo(match.firstFileName, match.startInFirst.line)
 }
 
 /**
@@ -172,7 +172,7 @@ function showMatchInFirst(match: Match) {
  * @param match The match to scroll to
  */
 function showMatchInSecond(match: Match) {
-  panel2.value?.scrollTo(match.secondFile, match.startInSecond.line)
+  panel2.value?.scrollTo(match.secondFileName, match.startInSecond.line)
 }
 
 /**

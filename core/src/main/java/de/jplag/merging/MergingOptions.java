@@ -1,14 +1,11 @@
 package de.jplag.merging;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Collection of parameters that describe how a match merging should be performed.
  * @param minimumNeighborLength describes how short a match can be, to be considered (Defaults to 2).
  * @param maximumGapSize describes how many tokens can be between to neighboring matches (Defaults to 6).
  */
-public record MergingOptions(@JsonProperty("enabled") boolean enabled, @JsonProperty("min_neighbour_length") int minimumNeighborLength,
-        @JsonProperty("max_gap_size") int maximumGapSize, @JsonProperty("min_required_merges") int minimumRequiredMerges) {
+public record MergingOptions(boolean enabled, int minimumNeighborLength, int maximumGapSize, int minimumRequiredMerges) {
 
     public static final boolean DEFAULT_ENABLED = false;
     public static final int DEFAULT_NEIGHBOR_LENGTH = 2;

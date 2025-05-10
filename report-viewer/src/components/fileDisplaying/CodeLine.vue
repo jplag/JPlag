@@ -48,6 +48,8 @@ const props = defineProps({
   }
 })
 
+//console.debug(props.matches.map(match => match.match.colorIndex))
+
 const emit = defineEmits(['matchSelected'])
 
 function matchSelected(match?: MatchInSingleFile) {

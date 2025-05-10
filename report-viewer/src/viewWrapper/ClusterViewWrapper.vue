@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-col gap-1 md:overflow-hidden">
     <ClusterView
-      v-if="overview"
-      :overview="overview"
-      :cluster="overview.clusters[clusterIndex]"
+      v-if="clusters !== null && topComparisons !== null"
+      :top-comparisons="topComparisons"
+      :cluster="clusters[clusterIndex]"
       class="flex-1 print:flex-none"
     />
     <div v-else class="flex flex-1 flex-col items-center justify-center">
@@ -16,12 +16,13 @@
 
 <script setup lang="ts">
 import { type Ref, ref, computed } from 'vue'
-import { OverviewFactory } from '@/model/factories/OverviewFactory'
 import ClusterView from '@/views/ClusterView.vue'
 import LoadingCircle from '@/components/LoadingCircle.vue'
-import type { Overview } from '@/model/Overview'
-import { redirectOnError, router } from '@/router'
+import { redirectOnError, redirectToOldVersion } from '@/router'
 import VersionRepositoryReference from '@/components/VersionRepositoryReference.vue'
+import type { ComparisonListElement } from '@/model/ComparisonListElement'
+import type { Cluster } from '@/model/Cluster'
+import { DataGetter, FileContentTypes } from '@/model/factories/DataGetter'
 
 const props = defineProps({
   clusterIndex: {
@@ -32,17 +33,24 @@ const props = defineProps({
 
 const clusterIndex = computed(() => parseInt(props.clusterIndex))
 
-const overview: Ref<Overview | null> = ref(null)
+const topComparisons: Ref<ComparisonListElement[] | null> = ref(null)
+const clusters: Ref<Cluster[] | null> = ref(null)
 
-OverviewFactory.getOverview()
+DataGetter.getFiles<{
+  [FileContentTypes.CLUSTER]: Cluster[]
+  [FileContentTypes.TOP_COMPARISON]: ComparisonListElement[]
+}>([FileContentTypes.CLUSTER, FileContentTypes.TOP_COMPARISON])
   .then((r) => {
-    if (r.result == 'success') {
-      overview.value = r.overview
-    } else if (r.result == 'oldReport') {
-      router.push({ name: 'OldVersionRedirectView', params: { version: r.version.toString() } })
+    if (r.result == 'valid') {
+      clusters.value = r.data[FileContentTypes.CLUSTER]
+      topComparisons.value = r.data[FileContentTypes.TOP_COMPARISON]
+    } else if (r.result == 'versionError') {
+      redirectToOldVersion(r.reportVersion)
+    } else {
+      redirectOnError(r.error, 'Could not load clusters:\n', 'OverviewView', 'Back to overview')
     }
   })
-  .catch((error) => {
-    redirectOnError(error, 'Could not load cluster:\n', 'OverviewView', 'Back to overview')
-  })
+  .catch((error) =>
+    redirectOnError(error, 'Could not load clusters:\n', 'OverviewView', 'Back to overview')
+  )
 </script>

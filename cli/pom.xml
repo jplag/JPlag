@@ -188,6 +188,10 @@
                         <targetPath>v5</targetPath>
                         <directory>src/main/resources/v5</directory>
                     </resource>
+                    <resource>
+                        <targetPath>v6_1</targetPath>
+                        <directory>src/main/resources/v6_1</directory>
+                    </resource>
                 </resources>
                 <plugins>
                     <plugin>
