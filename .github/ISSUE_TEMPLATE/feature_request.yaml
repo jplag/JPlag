@@ -17,7 +17,7 @@ body:
     attributes:
       label: Feature Description
       description: A clear and concise description of the feature you would like to see.
-      placeholder: E.g., aAdd support for CSV export of similarity reports
+      placeholder: E.g., add support for CSV export of similarity reports
     validations:
       required: true
 
