@@ -1,0 +1,49 @@
+name: Feature Request
+description: Suggest an idea for improving JPlag
+title: "[Feature] "
+labels: ["enhancement"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Feature Request
+
+        Thank you for suggesting a feature to improve JPlag! Please complete the following fields to help us understand your request.
+
+  - type: textarea
+    id: feature_description
+    attributes:
+      label: Feature Description
+      description: A clear and concise description of the feature you would like to see.
+      placeholder: E.g., aAdd support for CSV export of similarity reports
+    validations:
+      required: true
+
+  - type: textarea
+    id: use_case
+    attributes:
+      label: Use Case
+      description: Why is this feature needed? How would it be used in the context of plagiarism detection or submission analysis?
+      placeholder: E.g., to enable integration with grading systems, I want to export results in CSV format for bulk processing.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: Proposed Solution
+      description: Describe a possible implementation or direction for the feature.
+      placeholder: E.g., add a `--output-format csv` CLI flag and extend the result writer module.
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Additional Context
+      description: Add any mockups, links to related issues, screenshots, or configuration ideas.
+      placeholder: E.g., similar to how the web UI exports JSON, add CSV as an option.
+    validations:
+      required: false
