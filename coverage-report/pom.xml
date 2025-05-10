@@ -43,6 +43,7 @@
             <groupId>de.jplag</groupId>
             <artifactId>logging</artifactId>
             <version>${revision}</version>
+            <scope>compile</scope>
         </dependency>
 
         <!-- Languages -->
