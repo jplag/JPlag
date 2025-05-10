@@ -1,4 +1,4 @@
-package de.jplag.cli.logger;
+package de.jplag.logging.progressbar;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -9,8 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.event.Level;
 
-import de.jplag.logging.ProgressBar;
-import de.jplag.logging.ProgressBarType;
+import de.jplag.logging.CollectedLogger;
 
 class VoidProgressBarTest {
     @Test

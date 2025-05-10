@@ -1,12 +1,10 @@
-package de.jplag.cli.logger;
+package de.jplag.logging.progressbar;
 
 import java.util.Set;
 
 import org.slf4j.event.Level;
 
-import de.jplag.logging.ProgressBar;
-import de.jplag.logging.ProgressBarProvider;
-import de.jplag.logging.ProgressBarType;
+import de.jplag.logging.CollectedLogger;
 
 import me.tongfei.progressbar.ProgressBarBuilder;
 import me.tongfei.progressbar.ProgressBarStyle;

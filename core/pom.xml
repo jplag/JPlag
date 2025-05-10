@@ -30,6 +30,13 @@
             <artifactId>language-api</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency>
+            <!-- Used at compile-time -->
+            <groupId>de.jplag</groupId>
+            <artifactId>logging</artifactId>
+            <version>${revision}</version>
+            <scope>compile</scope>
+        </dependency>
         <!-- the core project only requires one language module for testing: -->
         <dependency>
             <groupId>de.jplag</groupId>

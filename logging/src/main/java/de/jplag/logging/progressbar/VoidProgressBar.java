@@ -1,6 +1,4 @@
-package de.jplag.cli.logger;
-
-import de.jplag.logging.ProgressBar;
+package de.jplag.logging.progressbar;
 
 /**
  * An empty {@link ProgressBar} implementation, used to hide the progress bar depending on the log level.

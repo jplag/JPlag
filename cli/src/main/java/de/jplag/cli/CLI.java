@@ -12,12 +12,12 @@ import org.slf4j.LoggerFactory;
 
 import de.jplag.JPlag;
 import de.jplag.JPlagResult;
-import de.jplag.cli.logger.CliProgressBarProvider;
-import de.jplag.cli.logger.CollectedLogger;
-import de.jplag.cli.logger.CollectedLoggerFactory;
 import de.jplag.cli.picocli.CliInputHandler;
 import de.jplag.exceptions.ExitException;
+import de.jplag.logging.CollectedLogger;
+import de.jplag.logging.CollectedLoggerFactory;
 import de.jplag.logging.ProgressBarLogger;
+import de.jplag.logging.progressbar.CliProgressBarProvider;
 import de.jplag.options.JPlagOptions;
 import de.jplag.util.FileUtils;
 

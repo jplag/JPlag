@@ -1,4 +1,4 @@
-package de.jplag.logging;
+package de.jplag.logging.progressbar;
 
 /**
  * Exposed interactions for a running progress bar.

@@ -7,23 +7,24 @@
         <artifactId>aggregator</artifactId>
         <version>${revision}</version>
     </parent>
-    <artifactId>language-api</artifactId>
-    <name>JPlag Language API</name>
-    <description>Language API for JPlag language modules</description>
+    <artifactId>logging</artifactId>
+    <name>JPlag Logging API</name>
+    <description>Logging API for JPlag Logging</description>
     <dependencies>
+        <dependency>
+            <groupId>me.tongfei</groupId>
+            <artifactId>progressbar</artifactId>
+            <version>0.10.1</version>
+        </dependency>
         <dependency>
             <groupId>org.kohsuke.metainf-services</groupId>
             <artifactId>metainf-services</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.ibm.icu</groupId>
-            <artifactId>icu4j-charset</artifactId>
-            <version>77.1</version>
-        </dependency>
-        <dependency>
-            <groupId>de.jplag</groupId>
-            <artifactId>logging</artifactId>
-            <version>${revision}</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.3.1</version>
         </dependency>
     </dependencies>
+
 </project>

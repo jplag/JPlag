@@ -1,4 +1,4 @@
-package de.jplag.cli.logger;
+package de.jplag.logging.progressbar;
 
 import java.io.IOException;
 import java.io.PrintStream;

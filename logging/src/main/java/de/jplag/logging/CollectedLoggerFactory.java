@@ -1,4 +1,4 @@
-package de.jplag.cli.logger;
+package de.jplag.logging;
 
 import java.util.ArrayList;
 import java.util.List;

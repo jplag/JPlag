@@ -7,6 +7,10 @@ import java.util.function.Consumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jplag.logging.progressbar.ProgressBar;
+import de.jplag.logging.progressbar.ProgressBarProvider;
+import de.jplag.logging.progressbar.ProgressBarType;
+
 /**
  * Provides static access to the creation of progress bars.
  */

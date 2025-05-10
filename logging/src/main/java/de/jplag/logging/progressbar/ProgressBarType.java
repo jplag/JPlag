@@ -1,4 +1,4 @@
-package de.jplag.logging;
+package de.jplag.logging.progressbar;
 
 /**
  * The available processes. Used as a hint for the ui, which step JPlag is currently performing.

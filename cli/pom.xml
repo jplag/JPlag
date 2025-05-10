@@ -125,21 +125,17 @@
         </dependency>
         <!-- CLI -->
         <dependency>
-            <groupId>org.kohsuke.metainf-services</groupId>
-            <artifactId>metainf-services</artifactId>
+            <groupId>de.jplag</groupId>
+            <artifactId>logging</artifactId>
+            <version>${revision}</version>
+            <scope>compile</scope>
         </dependency>
-
         <dependency>
             <groupId>info.picocli</groupId>
             <artifactId>picocli</artifactId>
             <version>4.7.7</version>
         </dependency>
 
-        <dependency>
-            <groupId>me.tongfei</groupId>
-            <artifactId>progressbar</artifactId>
-            <version>0.10.1</version>
-        </dependency>
     </dependencies>
     <build>
         <plugins>

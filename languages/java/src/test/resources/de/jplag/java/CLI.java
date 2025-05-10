@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import de.jplag.JPlag;
 import de.jplag.JPlagResult;
 import de.jplag.Language;
-import de.jplag.cli.logger.CollectedLoggerFactory;
+import de.jplag.logging.CollectedLoggerFactory;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.Preprocessing;
 import de.jplag.exceptions.ExitException;
