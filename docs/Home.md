@@ -13,7 +13,7 @@ JPlag is typically used to detect and thus discourage the unallowed copying of s
 
 * 🏛️ [JPlag on Helmholtz RSD](https://helmholtz.software/software/jplag)
 
-* 🤩 [Recent Scientific Publications](https://www.jplag.de)
+* 📚 [Recent Scientific Publications](https://www.jplag.de)
 
 ## History
 Originally, JPlag was developed in 1996 by Guido Mahlpohl and others at the chair of Prof. Walter Tichy at Karlsruhe Institute of Technology (KIT). It was first documented in a [Tech Report](https://publikationen.bibliothek.kit.edu/542000) in 2000 and later more formally in the [Journal of Universal Computer Science](http://www.ipd.kit.edu/tichy/uploads/publikationen/16/finding_plagiarisms_among_a_set_of_progr_638847.pdf). Since 2015, JPlag has been hosted here on GitHub. After 30 years since its creation, JPlag is used frequently in hundreds of universities worldwide.
