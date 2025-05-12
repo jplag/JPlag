@@ -59,7 +59,7 @@ Run JPlag in the view-only mode via the `--mode view` option.
 Only indirectly in the distribution histogram. In the top list and for the code comparison, only the top 2500 pairs are included. This number can be controlled via `-n`.
 
 ### 7. How can I improve obfuscation or tampering resilience?
-Use the `--match-merging` option to enable the heuristic merging of neighboring matches, which counteracts obfuscation attempts. For Java and C++, use `--normalize` to ignore dead code and normalize the statement order in programs.
+Use the `--match-merging` option to enable the heuristic merging of neighboring matches, which counteracts obfuscation attempts. For Java and C++, use `--normalize` to ignore dead code and normalize the statement order in programs. You can also use both options at the same time.
 
 ### 8. How do I archive report files?
 You can store the report files. While we strive to achieve backwards compatibility, you can always open them with the version of JPlag they were created with.
