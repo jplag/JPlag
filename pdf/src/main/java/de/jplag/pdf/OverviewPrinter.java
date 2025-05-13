@@ -51,7 +51,7 @@ public class OverviewPrinter {
         UnitValue[] sizes = {new UnitValue(UnitValue.PERCENT, 10), new UnitValue(UnitValue.PERCENT, 80), new UnitValue(UnitValue.PERCENT, 10)};
         Table table = new Table(sizes);
 
-        for (int i = 0; i < biggerBuckets.length; i++) {
+        for (int i = biggerBuckets.length - 1; i >= 0; i--) {
             String label = i * 10 + " - " + (i + 1) * 10;
             table.addCell(new Cell().add(new Paragraph(label)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER)
                     .setBorderRight(new SolidBorder(1f)).setVerticalAlignment(VerticalAlignment.MIDDLE));

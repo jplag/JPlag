@@ -1,17 +1,18 @@
 package de.jplag.pdf;
 
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.layout.Document;
-import de.jplag.JPlagComparison;
-import de.jplag.JPlagResult;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
+import de.jplag.JPlagComparison;
+import de.jplag.JPlagResult;
+
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
 
 public class PdfPrinter {
     private JPlagResult result;

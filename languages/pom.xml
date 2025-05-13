@@ -21,6 +21,7 @@
         <module>python-3</module>
         <module>rlang</module>
         <module>rust</module>
+        <module>scala</module>
         <module>scheme</module>
         <module>scxml</module>
         <module>swift</module>

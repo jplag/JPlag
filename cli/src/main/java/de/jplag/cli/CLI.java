@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.JPlag;
+import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.cli.logger.CliProgressBarProvider;
 import de.jplag.cli.logger.CollectedLogger;
@@ -105,19 +106,33 @@ public final class CLI {
         JPlagOptions options = optionsBuilder.buildOptions();
         JPlagResult result = JPlagRunner.runJPlag(options);
 
-        PdfPrinter printer = new PdfPrinter(result, new File("/home/alexander/tmp/test.pdf"));
-        printer.printOverview();
         try {
-            printer.printComparison(result.getAllComparisons().get(303));
+            this.printPdfForTesting(result);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        printer.save();
 
         OutputFileGenerator.generateJPlagResultZip(result, target);
         OutputFileGenerator.generateCsvOutput(result, new File(getResultFileBaseName()), this.inputHandler.getCliOptions());
 
         return target;
+    }
+
+    private void printPdfForTesting(JPlagResult result) throws IOException, CliException {
+        File directory = new File(new File(getWritableFileName()).getAbsoluteFile().getParentFile(), "pdfs");
+
+        directory.mkdirs();
+
+        PdfPrinter printer = new PdfPrinter(result, new File(directory, "overview.pdf"));
+        printer.printOverview();
+        printer.save();
+
+        for (JPlagComparison comparison : result.getComparisons(10)) {
+            PdfPrinter comparisonPrinter = new PdfPrinter(result,
+                    new File(directory, "comparison_" + comparison.firstSubmission() + "-" + comparison.secondSubmission() + ".pdf"));
+            comparisonPrinter.printComparison(comparison);
+            comparisonPrinter.save();
+        }
     }
 
     /**
