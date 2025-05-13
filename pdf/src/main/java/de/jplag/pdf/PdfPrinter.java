@@ -35,7 +35,7 @@ public class PdfPrinter {
     }
 
     public void printComparison(JPlagComparison comparison) throws IOException {
-        ComparisonPrinter.printComparison(comparison, this.document);
+        new ComparisonPrinter(this.document, comparison, this.result.getOptions().language()).printComparison();
     }
 
     public void save() {

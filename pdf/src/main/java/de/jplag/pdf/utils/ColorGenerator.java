@@ -1,4 +1,4 @@
-package de.jplag.pdf;
+package de.jplag.pdf.utils;
 
 import java.util.HashMap;
 import java.util.Map;

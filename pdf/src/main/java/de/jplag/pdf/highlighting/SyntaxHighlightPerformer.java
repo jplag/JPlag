@@ -1,17 +1,19 @@
-package de.jplag.pdf;
+package de.jplag.pdf.highlighting;
+
+import de.jplag.pdf.TextStyleEditor;
 
 import com.itextpdf.kernel.colors.Color;
 
-public abstract class SyntaxHighlighter {
+public class SyntaxHighlightPerformer {
     private String[] lines;
     private TextStyleEditor textStyleEditor;
 
-    public SyntaxHighlighter(String[] lines, TextStyleEditor textStyleEditor) {
+    public SyntaxHighlightPerformer(String[] lines, TextStyleEditor textStyleEditor) {
         this.lines = lines;
         this.textStyleEditor = textStyleEditor;
     }
 
-    protected void highlightKeyword(String keyword, Color color) {
+    public void highlightKeyword(String keyword, Color color) {
         for (int i = 0; i < this.lines.length; i++) {
             String line = this.lines[i];
 
@@ -23,7 +25,7 @@ public abstract class SyntaxHighlighter {
         }
     }
 
-    protected void highlightRanges(String start, String end, Color color) {
+    public void highlightRanges(String start, String end, Color color) {
         int startCol = 0;
         int startLine = 0;
         boolean foundStart = false;
@@ -48,7 +50,7 @@ public abstract class SyntaxHighlighter {
         }
     }
 
-    protected void highlightToEndOfLine(String start, Color color) {
+    public void highlightToEndOfLine(String start, Color color) {
         for (int i = 0; i < this.lines.length; i++) {
             int index = this.lines[i].indexOf(start);
             if (index != -1) {
@@ -56,6 +58,4 @@ public abstract class SyntaxHighlighter {
             }
         }
     }
-
-    public abstract void performHighlight();
 }

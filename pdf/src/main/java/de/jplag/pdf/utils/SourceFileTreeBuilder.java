@@ -1,4 +1,4 @@
-package de.jplag.pdf;
+package de.jplag.pdf.utils;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -38,7 +38,7 @@ public class SourceFileTreeBuilder {
         return texts;
     }
 
-    private static final class FileEntry {
+    private static final class FileEntry implements Comparable<FileEntry> {
         private String name;
         private Map<String, FileEntry> children;
         private File file;
@@ -95,7 +95,20 @@ public class SourceFileTreeBuilder {
             }
             texts.add(new Text("\n"));
 
-            this.children.values().forEach(child -> child.addTo(texts, depth + 1));
+            this.children.values().stream().sorted().forEach(child -> child.addTo(texts, depth + 1));
+        }
+
+        @Override
+        public int compareTo(FileEntry other) {
+            if (this.file != null && other.file == null) {
+                return 1;
+            }
+
+            if (this.file == null && other.file != null) {
+                return -1;
+            }
+
+            return this.name.compareTo(other.name);
         }
     }
 }
