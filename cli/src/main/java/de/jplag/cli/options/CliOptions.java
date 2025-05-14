@@ -185,7 +185,7 @@ public class CliOptions implements Runnable {
     public static class FrequencyAnalysis {
         @Option(names = {
                 "--frequency-strategy"}, description = "strategy for frequency Analysis, Options: completeMatches, containedMatches, subMatches, windowOfMatches")
-        public FrequencyStrategies frequencyStrategy = FrequencyStrategies.COMPLETEMATCHES;
+        public FrequencyStrategy frequencyStrategy = FrequencyStrategy.COMPLETEMATCHES;
 
         @Option(names = {
                 "--frequency-min-value"}, description = "max of min match length that will be compared and this value, is min size of considered submatches")

@@ -18,9 +18,8 @@ import de.jplag.options.JPlagOptions;
 public class FrequencyDeterminationTest extends TestBase {
 
     private static JPlagOptions options;
-    private static LongestCommonSubsquenceSearch comparisonStrategy;
+    private static LongestCommonSubsquenceSearch strategy;
     private static SubmissionSet submissionSet;
-    private FrequencyDetermination fd = new FrequencyDetermination();
     private static JPlagResult result;
 
     @Test
@@ -31,8 +30,8 @@ public class FrequencyDeterminationTest extends TestBase {
         System.out.println(options);
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         submissionSet = builder.buildSubmissionSet();
-        comparisonStrategy = new LongestCommonSubsquenceSearch(options);
-        result = comparisonStrategy.compareSubmissions(submissionSet);
+        strategy = new LongestCommonSubsquenceSearch(options);
+        result = strategy.compareSubmissions(submissionSet);
         System.out.println("result: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         System.out.println(result);
     }
@@ -40,7 +39,9 @@ public class FrequencyDeterminationTest extends TestBase {
     @Test
     @DisplayName("Test token frequency completeMatches")
     void testFrequencyAnalysisStrategiesCompleteMatches() throws Exception {
-        fd.frequencyAnalysisStrategies(result.getAllComparisons(), FrequencyStrategies.COMPLETEMATCHES, 1);
+        FrequencyStrategy stragtegy = new CompleteMatchesStrategy();
+        FrequencyDetermination fd = new FrequencyDetermination(stragtegy, 1);
+        fd.runAnalysis(result.getAllComparisons());
         System.out.println(fd);
         Map<String, List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
         printTestResult(tokenFrequencyMap);
@@ -49,7 +50,9 @@ public class FrequencyDeterminationTest extends TestBase {
     @Test
     @DisplayName("Test token frequency with containedMatches")
     void testFrequencyAnalysisStrategiesContainedMatches() throws Exception {
-        fd.frequencyAnalysisStrategies(result.getAllComparisons(), FrequencyStrategies.CONTAINEDMATCHES, 300);
+        FrequencyStrategy stragtegy = new ContainedStrategy();
+        FrequencyDetermination fd = new FrequencyDetermination(stragtegy, 300);
+        fd.runAnalysis(result.getAllComparisons());
         System.out.println(fd);
         Map<String, List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
         printTestResult(tokenFrequencyMap);
@@ -58,7 +61,9 @@ public class FrequencyDeterminationTest extends TestBase {
     @Test
     @DisplayName("Test token frequency with subMatches")
     void testFrequencyAnalysisStrategiesSubMatches() throws Exception {
-        fd.frequencyAnalysisStrategies(result.getAllComparisons(), FrequencyStrategies.SUBMATCHES, 300);
+        FrequencyStrategy stragtegy = new SubMatchesStrategy();
+        FrequencyDetermination fd = new FrequencyDetermination(stragtegy, 300);
+        fd.runAnalysis(result.getAllComparisons());
         System.out.println(fd);
         Map<String, List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
         printTestResult(tokenFrequencyMap);
@@ -67,7 +72,9 @@ public class FrequencyDeterminationTest extends TestBase {
     @Test
     @DisplayName("Test token frequency with windows of Matches")
     void testFrequencyAnalysisStrategiesWindowOfMatches() throws Exception {
-        fd.frequencyAnalysisStrategies(result.getAllComparisons(), FrequencyStrategies.WINDOWOFMATCHES, 300);
+        FrequencyStrategy stragtegy = new WindowOfMatchesStrategy();
+        FrequencyDetermination fd = new FrequencyDetermination(stragtegy, 300);
+        fd.runAnalysis(result.getAllComparisons());
         System.out.println(fd);
         Map<String, List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
         printTestResult(tokenFrequencyMap);
