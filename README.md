@@ -29,17 +29,17 @@ All supported languages and their supported versions are listed below.
 |--------------------------------------------------------|---------------------------------------------------------------------------------------:|-------------------|:-------------------------------------------------------------------:|:---------:|
 | [Java](https://www.java.com)                           |                                                                                     21 | java              |                               mature                                |   JavaC   |
 | [C](https://isocpp.org)                                |                                                                                     11 | c                 |                               legacy                                |  JavaCC   |
-| [C++](https://isocpp.org)                              |                                                                                     14 | cpp               |                                beta                                 |  ANTLR 4  |
+| [C++](https://isocpp.org)                              |                                                                                     14 | cpp               |                               mature                                |  ANTLR 4  |
 | [C#](https://docs.microsoft.com/en-us/dotnet/csharp/)  |                                                                                      6 | csharp            |                               mature                                |  ANTLR 4  |
-| [Python](https://www.python.org)                       |                                                                                    3.6 | python3           |                                beta                                 |  ANTLR 4  |
+| [Python](https://www.python.org)                       |                                                                                    3.6 | python3           |                               mature                                |  ANTLR 4  |
 | [JavaScript](https://www.javascript.com/)              |                                                                                    ES6 | javascript        |                                beta                                 |  ANTLR 4  |
 | [TypeScript](https://www.typescriptlang.org/)          | [~5](https://github.com/antlr/grammars-v4/tree/master/javascript/typescript/README.md) | typescript        |                                beta                                 |  ANTLR 4  |
 | [Go](https://go.dev)                                   |                                                                                   1.17 | golang            |                                beta                                 |  ANTLR 4  |
-| [Kotlin](https://kotlinlang.org)                       |                                                                                    1.3 | kotlin            |                                beta                                 |  ANTLR 4  |
-| [R](https://www.r-project.org/)                        |                                                                                  3.5.0 | rlang             |                                beta                                 |  ANTLR 4  |
-| [Rust](https://www.rust-lang.org/)                     |                                                                                 1.60.0 | rust              |                                beta                                 |  ANTLR 4  |
+| [Kotlin](https://kotlinlang.org)                       |                                                                                    1.3 | kotlin            |                               mature                                |  ANTLR 4  |
+| [R](https://www.r-project.org/)                        |                                                                                  3.5.0 | rlang             |                               mature                                |  ANTLR 4  |
+| [Rust](https://www.rust-lang.org/)                     |                                                                                 1.60.0 | rust              |                               mature                                |  ANTLR 4  |
 | [Swift](https://www.swift.org)                         |                                                                                    5.4 | swift             |                                beta                                 |  ANTLR 4  |
-| [Scala](https://www.scala-lang.org)                    |                                                                                 2.13.8 | scala             |                                beta                                 | Scalameta |
+| [Scala](https://www.scala-lang.org)                    |                                                                                 2.13.8 | scala             |                               mature                                | Scalameta |
 | [LLVM IR](https://llvm.org)                            |                                                                                     15 | llvmir            |                                beta                                 |  ANTLR 4  |
 | [Scheme](http://www.scheme-reports.org)                |                                                                                      ? | scheme            |                               legacy                                |  JavaCC   |
 | [EMF Metamodel](https://www.eclipse.org/modeling/emf/) |                                                                                 2.25.0 | emf               |                                beta                                 |    EMF    |
@@ -68,7 +68,7 @@ JPlag is released on [Maven Central](https://search.maven.org/search?q=de.jplag)
 ### Building from sources 
 1. Download or clone the code from this repository.
 2. Run `mvn clean package` from the root of the repository to compile and build all submodules.
-   Run `mvn clean package assembly:single` instead if you need the full jar which includes all dependencies.
+   Run `mvn clean package assembly:single` instead if you need the full jar, which includes all dependencies.
    Run `mvn -P with-report-viewer clean package assembly:single` to build the full jar with the report viewer. In this case, you'll need [Node.js](https://nodejs.org/en/download) installed.
 3. You will find the generated JARs in the subdirectory `cli/target`.
 
@@ -111,7 +111,7 @@ Parameter descriptions:
                           against.
       -r, --result-file=<resultFile>
                         Name of the file in which the comparison results will
-                          be stored (default: results). Missing .zip endings
+                          be stored (default: results). Missing .jplag endings
                           will be automatically added.
       -t, --min-tokens=<minTokenMatch>
                         Tunes the comparison sensitivity by adjusting the
@@ -179,6 +179,7 @@ Languages:
   python3
   rlang
   rust
+  scala
   scheme
   scxml
   swift

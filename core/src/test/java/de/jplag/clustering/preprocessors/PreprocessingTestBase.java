@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.IntUnaryOperator;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
@@ -48,7 +47,7 @@ class PreprocessingTestBase {
         RealMatrix original = new Array2DRowRealMatrix(originalArray, false);
         assertEquals(result.getColumnDimension(), result.getRowDimension(), "not a square matrix");
 
-        List<Integer> usedOriginalIndices = IntStream.range(0, result.getColumnDimension()).map(originalIndex).boxed().collect(Collectors.toList());
+        List<Integer> usedOriginalIndices = IntStream.range(0, result.getColumnDimension()).map(originalIndex).boxed().toList();
 
         assertEquals(usedOriginalIndices.size(), new HashSet<>(usedOriginalIndices).size(), "original indices not unique");
 

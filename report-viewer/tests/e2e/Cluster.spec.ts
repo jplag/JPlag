@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 import { uploadFile } from './TestUtils'
 
 test('Test cluster view', async ({ page }) => {
-  await uploadFile('result_small_cluster.zip', page)
+  await uploadFile('result_small_cluster.jplag', page)
 
   // check for all clusters being shown
   expect(await page.getByText('submissions in cluster').all()).toHaveLength(6)

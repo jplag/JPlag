@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import org.junit.jupiter.api.Test;
 
-public class SpectralClusteringTest {
+class SpectralClusteringTest {
 
     @Test
     void test() {

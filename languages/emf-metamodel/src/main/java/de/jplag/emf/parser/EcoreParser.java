@@ -30,13 +30,6 @@ public class EcoreParser extends AbstractParser {
     protected AbstractMetamodelVisitor visitor;
 
     /**
-     * Creates the parser.
-     */
-    public EcoreParser() {
-        EMFUtil.registerEcoreExtension();
-    }
-
-    /**
      * Parses all tokens from a set of files.
      * @param files is the set of files.
      * @return the list of parsed tokens.

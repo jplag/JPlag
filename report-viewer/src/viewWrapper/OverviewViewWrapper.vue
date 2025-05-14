@@ -1,10 +1,7 @@
 <template>
-  <div>
-    <OverviewView v-if="overview" :overview="overview" />
-    <div
-      v-else
-      class="absolute top-0 right-0 bottom-0 left-0 flex flex-col items-center justify-center"
-    >
+  <div class="flex flex-col gap-1 md:overflow-hidden">
+    <OverviewView v-if="overview" :overview="overview" class="flex-1 print:flex-none" />
+    <div v-else class="flex flex-1 flex-col items-center justify-center">
       <LoadingCircle class="mx-auto" />
     </div>
 
