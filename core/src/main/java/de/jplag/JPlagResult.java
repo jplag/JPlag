@@ -3,13 +3,11 @@ package de.jplag;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap; // TODO new
 import java.util.function.ToDoubleFunction;
 
 import de.jplag.clustering.ClusteringResult;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.SimilarityMetric;
-import org.apache.commons.math3.stat.inference.OneWayAnova;
 
 /**
  * Encapsulates the results of a pairwise comparison of program structure among a set of source code submissions.
@@ -40,7 +38,6 @@ public class JPlagResult {
         this.options = options;
         similarityDistribution = calculateSimilarityDistribution(comparisons);
     }
-
 
     /**
      * Drops elements from the comparison list to free memory. Note, that this affects the similarity distribution and is

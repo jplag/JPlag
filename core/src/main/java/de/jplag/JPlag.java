@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import de.jplag.highlightExtraction.FrequencyDetermination;
-import de.jplag.highlightExtraction.FrequencyStrategies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +15,7 @@ import de.jplag.comparison.LongestCommonSubsquenceSearch;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.RootDirectoryException;
 import de.jplag.exceptions.SubmissionException;
+import de.jplag.highlightExtraction.FrequencyDetermination;
 import de.jplag.merging.MatchMerging;
 import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.reportobject.model.Version;
@@ -86,14 +85,14 @@ public class JPlag {
         // Compare valid submissions.
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
 
-
         // Use Match Merging against obfuscation
         if (options.mergingOptions().enabled()) {
             result = new MatchMerging(options).mergeMatchesOf(result);
         }
         // TODO neu + import
         FrequencyDetermination fd = new FrequencyDetermination();
-        fd.frequencyAnalysisStrategies(result.getAllComparisons(), options.frequencyStrategy(), Math.max(options.frequencyStrategyMinValue(), options.minimumTokenMatch()));
+        fd.frequencyAnalysisStrategies(result.getAllComparisons(), options.frequencyStrategy(),
+                Math.max(options.frequencyStrategyMinValue(), options.minimumTokenMatch()));
 
         if (logger.isInfoEnabled()) {
             logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getDuration()));
