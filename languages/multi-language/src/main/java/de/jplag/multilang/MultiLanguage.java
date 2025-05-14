@@ -52,4 +52,9 @@ public class MultiLanguage implements Language {
     public LanguageOptions getOptions() {
         return this.options;
     }
+
+    @Override
+    public boolean supportsMultilanguage() {
+        return false;
+    }
 }

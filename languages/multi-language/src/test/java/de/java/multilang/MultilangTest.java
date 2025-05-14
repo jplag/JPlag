@@ -28,8 +28,8 @@ class MultilangTest {
     private static File javaCode;
     private static File cppCode;
 
-    private static List<TokenType> expectedTokens = List.of(CPPTokenType.FUNCTION_BEGIN, CPPTokenType.RETURN, CPPTokenType.FUNCTION_END, FILE_END,
-            JavaTokenType.J_CLASS_BEGIN, JavaTokenType.J_CLASS_END, FILE_END);
+    private static final List<TokenType> expectedTokens = List.of(CPPTokenType.FUNCTION_BEGIN, CPPTokenType.RETURN, CPPTokenType.FUNCTION_END,
+            FILE_END, JavaTokenType.J_CLASS_BEGIN, JavaTokenType.J_CLASS_END, FILE_END);
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -44,7 +44,6 @@ class MultilangTest {
     @Test
     void testMultiLanguageParsing() throws ParsingException {
         MultiLanguage languageModule = new MultiLanguage();
-        ((MultiLanguageOptions) languageModule.getOptions()).getLanguageNames().setValue("java,cpp");
 
         Set<File> sources = new TreeSet<>(List.of(javaCode, cppCode)); // Using TreeSet to ensure order of entries
         List<Token> tokens = languageModule.parse(sources, false);
