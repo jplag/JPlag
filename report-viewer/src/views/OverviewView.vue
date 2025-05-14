@@ -71,10 +71,17 @@
       </div>
     </Container>
 
-    <Container class="col-start-1 row-start-2 flex flex-col overflow-hidden print:overflow-visible">
-      <h2>Distribution of Comparisons:</h2>
-      <DistributionDiagram :distributions="overview.distribution" class="grow print:flex-none" />
-    </Container>
+    <TabbedContainer
+      :tabs="['Distribution', 'Boxplot']"
+      class="col-start-1 row-start-2 flex flex-col overflow-hidden print:overflow-visible"
+    >
+      <template #Distribution>
+        <DistributionDiagram :distributions="overview.distribution" class="grow print:flex-none" />
+      </template>
+      <template #Boxplot>
+        <BoxPlot :distributions="overview.distribution" class="grow print:flex-none" />
+      </template>
+    </TabbedContainer>
 
     <Container
       class="col-start-1 row-start-3 flex overflow-hidden md:col-start-2 md:row-start-2 print:hidden"
@@ -106,6 +113,8 @@ import Button from '@/components/ButtonComponent.vue'
 import TextInformation from '@/components/TextInformation.vue'
 import ToolTipComponent from '@/components/ToolTipComponent.vue'
 import { Overview } from '@/model/Overview'
+import BoxPlot from '@/components/distributionDiagram/BoxPlot.vue'
+import TabbedContainer from '@/components/TabbedContainer.vue'
 
 const props = defineProps({
   overview: {

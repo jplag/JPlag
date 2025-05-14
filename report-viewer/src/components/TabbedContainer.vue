@@ -29,7 +29,7 @@
         class="border-container-border-light dark:border-container-border-dark flex-1 border-b"
       ></div>
     </div>
-    <div class="flex-1 flex-col overflow-hidden p-2">
+    <div class="flex flex-1 flex-col overflow-hidden p-2">
       <slot :name="selectedTab.replace(/\s/g, '-')"></slot>
     </div>
   </ContainerComponent>
