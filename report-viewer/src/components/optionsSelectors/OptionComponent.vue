@@ -5,7 +5,7 @@
     @click="$emit('click')"
   >
     {{ label }}
-    <InfoIcon v-if="hasToolTip" class="-top-0.5 text-[0.5rem]" />
+    <InfoIcon v-if="hasToolTip" class="text-[0.5rem]" />
   </Interactable>
 </template>
 

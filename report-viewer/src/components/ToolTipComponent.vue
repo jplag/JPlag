@@ -2,7 +2,7 @@
   <div class="group pointer-events-none inline">
     <div ref="contentRef" class="pointer-events-auto flex items-center gap-x-1">
       <slot></slot>
-      <InfoIcon v-if="showInfoSymbol && $slots.tooltip" class="-top-1 ml-0!" />
+      <InfoIcon v-if="showInfoSymbol && $slots.tooltip" class="ml-0!" />
     </div>
     <span
       v-if="$slots.tooltip"

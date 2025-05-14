@@ -14,7 +14,7 @@
       class="flex-auto border-0 bg-transparent outline-hidden placeholder:text-gray-500"
       :placeholder="placeholder"
     />
-    <InfoIcon class="-top-1 ml-0!" />
+    <InfoIcon class="ml-0!" />
   </Interactable>
 </template>
 
