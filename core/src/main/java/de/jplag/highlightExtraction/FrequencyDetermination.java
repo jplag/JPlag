@@ -22,45 +22,31 @@ public class FrequencyDetermination {
 
 
     public Map<String, List<String>> runAnalysis(List<JPlagComparison> comparisons) {
-        for (JPlagComparison comparison : comparisons) {
-            Submission left = comparison.firstSubmission();
-            List<Token> tokens = left.getTokenList();
-            String comparisonId = comparison.toString();
-
-            for (Match match : comparison.matches()) {
-                int start = match.startOfFirst();
-                int len = match.length();
-                if (start + len > tokens.size()) continue;
-
-                List<String> matchTokens = new ArrayList<>();
-                for (int i = start; i < start + len; i++) {
-                    matchTokens.add(tokens.get(i).toString());
-                }
-
-                freqencyStrategy.create(matchTokens, comparisonId, tokenFrequencyMap, strategyNumber);
-            }
-        }
-
-        for (JPlagComparison comparison : comparisons) {
-            Submission left = comparison.firstSubmission();
-            List<Token> tokens = left.getTokenList();
-            String comparisonId = comparison.toString();
-
-            for (Match match : comparison.matches()) {
-                int start = match.startOfFirst();
-                int len = match.length();
-                if (start + len > tokens.size()) continue;
-
-                List<String> matchTokens = new ArrayList<>();
-                for (int i = start; i < start + len; i++) {
-                    matchTokens.add(tokens.get(i).toString());
-                }
-
-                freqencyStrategy.check(matchTokens, comparisonId, tokenFrequencyMap, strategyNumber);
-            }
-        }
-
+        frequencyBuilder(comparisons, freqencyStrategy::create);
+        frequencyBuilder(comparisons, freqencyStrategy::check);
         return tokenFrequencyMap;
+    }
+
+    private void frequencyBuilder(List<JPlagComparison> comparisons,
+                                  FrequencyBuilder builder) {
+        for (JPlagComparison comparison : comparisons) {
+            Submission left = comparison.firstSubmission();
+            List<Token> tokens = left.getTokenList();
+            String comparisonId = comparison.toString();
+
+            for (Match match : comparison.matches()) {
+                int start = match.startOfFirst();
+                int len = match.length();
+                if (start + len > tokens.size()) continue;
+
+                List<String> matchTokens = new ArrayList<>();
+                for (int i = start; i < start + len; i++) {
+                    matchTokens.add(tokens.get(i).toString());
+                }
+
+                builder.build(matchTokens, comparisonId, tokenFrequencyMap, strategyNumber);
+            }
+        }
     }
 
     public Map<String, List<String>> getTokenFrequencyMap() {
