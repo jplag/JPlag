@@ -132,7 +132,8 @@ public interface Language {
     }
 
     /**
-     * @return True, if the language module should be used in case of ambiguities
+     * @return True if the language module should be prioritized in the multi-language case, if multiple language modules
+     * support the same file extension.
      */
     default boolean hasPriority() {
         return false;

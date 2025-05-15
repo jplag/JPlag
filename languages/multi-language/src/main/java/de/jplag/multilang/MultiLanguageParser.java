@@ -46,22 +46,25 @@ public class MultiLanguageParser {
     private void registerLanguageMaps(List<Language> languages) {
         for (Language language : languages.stream().sorted(Comparator.comparing(it -> it.hasPriority() ? 1 : 0)).toList()) {
             for (String suffix : language.suffixes()) {
-                if (language.hasPriority()) {
-                    if (this.languageMapPriority.containsKey(suffix)) {
-                        throw new IllegalStateException(
-                                String.format(ERROR_MULTIPLE_LANGUAGES, suffix, language.getName(), this.languageMapPriority.get(suffix).getName()));
-                    }
-                    this.languageMapPriority.put(suffix.toLowerCase(), language);
-                } else {
-                    if (this.languageMap.containsKey(suffix) && !this.languageMapPriority.containsKey(suffix)) {
-                        throw new IllegalStateException(
-                                String.format(ERROR_MULTIPLE_LANGUAGES, suffix, language.getName(), this.languageMap.get(suffix).getName()));
-                    }
-                    this.languageMap.put(suffix.toLowerCase(), language);
-                }
+                registerLanguageSuffix(language, suffix);
             }
 
         }
+    }
+
+    private void registerLanguageSuffix(Language language, String suffix) {
+        if (language.hasPriority()) {
+            registerLanguageSuffixTo(this.languageMapPriority, language, suffix, true);
+        } else {
+            registerLanguageSuffixTo(this.languageMap, language, suffix, !this.languageMapPriority.containsKey(suffix));
+        }
+    }
+
+    private void registerLanguageSuffixTo(Map<String, Language> map, Language language, String suffix, boolean additionalConditionForException) {
+        if (map.containsKey(suffix) && additionalConditionForException) {
+            throw new IllegalStateException(String.format(ERROR_MULTIPLE_LANGUAGES, suffix, language.getName(), map.get(suffix).getName()));
+        }
+        map.put(suffix, language);
     }
 
     private Optional<Language> findLanguageForFile(File file) {

@@ -53,6 +53,6 @@ public class CPPLanguage implements Language {
 
     @Override
     public boolean hasPriority() {
-        return true;
+        return true; // Priority over the C language module.
     }
 }
