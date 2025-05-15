@@ -5,8 +5,8 @@ import de.jplag.pdf.TextStyleEditor;
 import com.itextpdf.kernel.colors.Color;
 
 public class SyntaxHighlightPerformer {
-    private String[] lines;
-    private TextStyleEditor textStyleEditor;
+    private final String[] lines;
+    private final TextStyleEditor textStyleEditor;
 
     public SyntaxHighlightPerformer(String[] lines, TextStyleEditor textStyleEditor) {
         this.lines = lines;
@@ -19,7 +19,11 @@ public class SyntaxHighlightPerformer {
 
             int index = line.indexOf(keyword);
             while (index != -1) {
-                this.textStyleEditor.styleRange(i, index, i, index + keyword.length(), null, color);
+                boolean charBefore = index == 0 || !Character.isAlphabetic(line.charAt(index - 1));
+                boolean charAfter = (index + keyword.length() == line.length()) || !Character.isAlphabetic(line.charAt(index + keyword.length()));
+                if (charBefore && charAfter) {
+                    this.textStyleEditor.styleRange(i, index, i, index + keyword.length(), null, color);
+                }
                 index = line.indexOf(keyword, index + 1);
             }
         }
