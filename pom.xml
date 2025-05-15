@@ -85,6 +85,9 @@
         <emf.ecore.xmi.version>2.38.0</emf.ecore.xmi.version>
         <eclipse.core.version>3.22.100</eclipse.core.version>
         <emfatic.version>1.1.0</emfatic.version>
+        <mockito.version>5.17.0</mockito.version>
+        <!-- ensure that this variable is initialized, even if it is empty -->
+        <argLine></argLine>
 
         <!-- The Revision of JPlag -->
         <revision>6.2.0-SNAPSHOT</revision>
@@ -168,7 +171,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>5.17.0</version>
+            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -241,6 +244,9 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.5.3</version>
+                    <configuration>
+                        <argLine>@{argLine} -javaagent:"${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar"</argLine>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
