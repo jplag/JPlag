@@ -1,7 +1,6 @@
 <template>
   <div class="flex flex-col">
     <div class="h-3/4 w-full print:h-fit print:w-fit">
-      <!--Bar :data="chartData" :options="options" /-->
       <canvas ref="graphCanvas" class="min-h-0 grow print:max-h-full print:max-w-full"></canvas>
       <div v-if="!loaded">Could not display boxplot</div>
     </div>
@@ -85,8 +84,8 @@ const maxValueInData = computed(() => {
   }
   return NaN
 })
-const min = computed(() => Math.max(q1.value - 1.5 * iqr.value, minValueInData.value))
-const max = computed(() => Math.min(q3.value + 1.5 * iqr.value, maxValueInData.value))
+const min = computed(() => Math.min(q1.value - 1.5 * iqr.value, minValueInData.value))
+const max = computed(() => Math.max(q3.value + 1.5 * iqr.value, maxValueInData.value))
 const avg = computed(() => {
   let sum = 0
   for (let i = 0; i < distribution.value.length; i++) {
@@ -106,18 +105,16 @@ const outliers = computed(() => {
   return outliers
 })
 
-const dataSetStyle = computed(() => {
-  return {
-    backgroundColor: graphColors.contentFillAlpha(0.4),
-    borderWidth: 1,
-    borderColor: graphColors.contentBorder,
-    meanBorderColor: graphColors.ticksAndFont.value,
-    meanBackgroundColor: graphColors.contentFill,
-    outlierBorderColor: graphColors.ticksAndFont.value
-  }
-})
+const dataSetStyle = computed(() => ({
+  backgroundColor: graphColors.contentFillAlpha(0.4),
+  borderWidth: 1,
+  borderColor: graphColors.contentBorder,
+  meanBorderColor: graphColors.ticksAndFont.value,
+  meanBackgroundColor: graphColors.contentFill,
+  outlierBorderColor: graphColors.ticksAndFont.value
+}))
 
-const graphData = ref({
+const graphData = computed(() => ({
   labels: ['Submissions'],
   datasets: [
     {
@@ -136,8 +133,8 @@ const graphData = ref({
       ]
     }
   ]
-})
-const graphOptions = ref({
+}))
+const graphOptions = computed(() => ({
   responsive: true,
   scales: {
     y: {
@@ -168,7 +165,7 @@ const graphOptions = ref({
       onClick: () => {}
     }
   }
-})
+}))
 
 const chart: Ref<Chart | null> = ref(null)
 const graphCanvas: Ref<HTMLCanvasElement | null> = ref(null)
