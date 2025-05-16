@@ -15,7 +15,6 @@ import SubmissionMappings from './assets/ValidSubmissionMappings.json'
 describe('Test DataGetter', async () => {
   beforeEach(() => {
     setActivePinia(createPinia())
-    store().setLoadingType('zip')
     store().state.files['submissionMappings.json'] = JSON.stringify(SubmissionMappings)
 
     vi.spyOn(DistributionFactory, 'getDistributions').mockReturnValue('mocked distributions')

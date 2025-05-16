@@ -207,24 +207,31 @@ export class DataGetter extends BaseFactory {
    * @returns If no information on versions was found, it returns undefined. Otherwise the valid field is true if the version is valid and false if it is not
    */
   private static async verifyVersion(): Promise<VersionResponse> {
-    let version = Version.ERROR_VERSION
-    try {
-      const runInformation = JSON.parse(await this.getFile('runInformation.json'))
-      version = Version.fromJsonField(runInformation.version)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (e) {
-      try {
-        const oldOverview = JSON.parse(await this.getFile('overview.json'))
-        version = Version.fromJsonField(oldOverview.jplag_version)
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (e) {
+    const version = await this.getVersionFromRunInformation()
+      .catch(() => {
+        return this.getVersionFromOverview()
+      })
+      .catch(() => {
         return undefined
-      }
+      })
+    if (version === undefined) {
+      return undefined
     }
+
     return {
       valid: this.compareVersions(version, reportViewerVersion, minimalReportVersion),
       version: version
     }
+  }
+
+  private static async getVersionFromRunInformation() {
+    const runInformation = JSON.parse(await this.getFile('runInformation.json'))
+    return Version.fromJsonField(runInformation.version)
+  }
+
+  private static async getVersionFromOverview() {
+    const oldOverview = JSON.parse(await this.getFile('overview.json'))
+    return Version.fromJsonField(oldOverview.jplag_version)
   }
 
   /**

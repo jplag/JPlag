@@ -8,7 +8,6 @@ import { store } from '@/stores/store'
 describe('Test JSON to Distribution', async () => {
   beforeEach(() => {
     setActivePinia(createPinia())
-    store().setLoadingType('zip')
   })
 
   it('Test without clusters', async () => {
