@@ -18,7 +18,7 @@
           :show-info-symbol="false"
         >
           <template #default>
-            <span class="flex p-2 px-5">
+            <span class="flex items-center p-2 px-5">
               <p>{{ tabNames[index] }}</p>
               <InfoIcon />
             </span>

@@ -63,7 +63,7 @@
         <ToolTipComponent direction="left" class="grow-0 print:hidden" :show-info-symbol="false">
           <template #default>
             <Button @click="router.push({ name: 'InfoView' })"
-              ><span class="flex">More <InfoIcon /></span
+              ><span class="flex items-center">More <InfoIcon /></span
             ></Button>
           </template>
           <template #tooltip>
