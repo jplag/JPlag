@@ -12,7 +12,8 @@ import de.jplag.options.LanguageOptions;
 public interface Language {
 
     /**
-     * File extensions for the files containing code of the language. An empty array means all suffixes are valid.
+     * File extensions for the files containing code of the language. All capitalization variants of extensions are matched.
+     * An empty array means all suffixes are valid.
      */
     String[] suffixes();
 
@@ -32,7 +33,7 @@ public interface Language {
     int minimumTokenMatch();
 
     /**
-     * Parses a set of files. Override this method, if you don't require normalization.
+     * Parses a set of files. Override this method if you do not require normalization.
      * @param files are the files to parse.
      * @return the list of parsed JPlag tokens.
      * @throws ParsingException if an error during parsing the files occurred.
@@ -44,7 +45,7 @@ public interface Language {
     }
 
     /**
-     * Parses a set of files. Override this method, if you require normalization within the language module.
+     * Parses a set of files. Override this method if you require normalization within the language module.
      * @param files are the files to parse.
      * @param normalize True, if the tokens should be normalized
      * @return the list of parsed JPlag tokens.
@@ -53,7 +54,7 @@ public interface Language {
     List<Token> parse(Set<File> files, boolean normalize) throws ParsingException;
 
     /**
-     * Indicates whether the tokens returned by parse have semantic information added to them, i.e. whether the token
+     * Indicates whether the tokens returned by parse have semantic information added to them, i.e., whether the token
      * attribute semantics is null or not.
      */
     default boolean tokensHaveSemantics() {
@@ -68,8 +69,8 @@ public interface Language {
     }
 
     /**
-     * Indicates whether the input files (code) should be used as representation in the report, or different files that form
-     * a view on the input files.
+     * Indicates whether the input code files should be used as representation in the report, or different files that form a
+     * view on the input files.
      */
     default boolean useViewFiles() {
         return false;
@@ -99,16 +100,16 @@ public interface Language {
     }
 
     /**
-     * Re-orders the provided submission according the requirements of the language.
+     * Reorders the provided submission according the requirements of the language.
      * @param submissions is the list of submissions.
-     * @return the re-ordered list.
+     * @return the reordered list.
      */
     default List<File> customizeSubmissionOrder(List<File> submissions) {
         return submissions;
     }
 
     /**
-     * @return True, if this language supports token sequence normalization. This does not include other normalization
+     * @return True if this language supports token sequence normalization. This does not include other normalization
      * mechanisms that might be part of the language modules.
      */
     default boolean supportsNormalization() {
@@ -116,8 +117,8 @@ public interface Language {
     }
 
     /**
-     * Override this method, if you need normalization within the language module, but not in the core module.
-     * @return True, If the core normalization should be used.
+     * Override this method if you need normalization within the language module, but not in the core module.
+     * @return True if the core normalization should be used.
      */
     default boolean requiresCoreNormalization() {
         return true;

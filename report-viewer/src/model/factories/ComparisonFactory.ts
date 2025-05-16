@@ -95,9 +95,6 @@ export class ComparisonFactory extends BaseFactory {
   }
 
   private static async getSubmissionFileContent(submissionId: string, fileName: string) {
-    if (store().state.localModeUsed && !store().state.zipModeUsed) {
-      return await this.getLocalFile('files/' + fileName).then((file) => file.text())
-    }
     const file = store().getSubmissionFile(submissionId, fileName)
     if (file == undefined) {
       throw new Error(

@@ -18,7 +18,7 @@ public class RLanguage implements Language {
 
     @Override
     public String[] suffixes() {
-        return new String[] {".R", ".r"};
+        return new String[] {".R"};
     }
 
     @Override

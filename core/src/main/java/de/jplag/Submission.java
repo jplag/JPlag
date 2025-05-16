@@ -154,7 +154,7 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * @deprecated Use {@link hasBaseCodeComparison} instead.
+     * @deprecated Use {@link #hasBaseCodeComparison()} instead.
      */
     @Deprecated(since = "6.1.0", forRemoval = true)
     public boolean hasBaseCodeMatches() {
@@ -169,7 +169,7 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * @return whether the submission is new, That is, must be checked for plagiarism.
+     * @return whether the submission is new, that is, must be checked for plagiarism.
      */
     public boolean isNew() {
         return isNew;

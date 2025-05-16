@@ -81,7 +81,7 @@
         @selection-changed="(index: number) => changeFileSorting(index)"
       />
     </Container>
-
+    <div ref="styleholder" class="col-span-0 row-span-0"></div>
     <FilesContainer
       ref="panel1"
       :files="filesOfFirst"
@@ -219,13 +219,7 @@ function print() {
 const styleholder: Ref<Node | null> = ref(null)
 
 onMounted(() => {
-  if (styleholder.value == null) {
-    return
-  }
-  const styleHolderDiv = styleholder.value as Node
-  const styleElement = document.createElement('style')
-  styleElement.innerHTML = store().uiState.useDarkMode ? hljsDarkMode : hljsLightMode
-  styleHolderDiv.appendChild(styleElement)
+  onThemeUpdate(store().uiState.useDarkMode)
 })
 
 const useDarkMode = computed(() => {
@@ -233,15 +227,22 @@ const useDarkMode = computed(() => {
 })
 
 watch(useDarkMode, (newValue) => {
+  onThemeUpdate(newValue)
+})
+
+function onThemeUpdate(useDarkMode: boolean) {
   if (styleholder.value == null) {
+    console.warn('Could not find styleholder. Syntax highlighting will not work.')
     return
   }
   const styleHolderDiv = styleholder.value as Node
-  styleHolderDiv.removeChild(styleHolderDiv.firstChild as Node)
+  while (styleHolderDiv.hasChildNodes()) {
+    styleHolderDiv.removeChild(styleHolderDiv.firstChild as Node)
+  }
   const styleElement = document.createElement('style')
-  styleElement.innerHTML = newValue ? hljsDarkMode : hljsLightMode
+  styleElement.innerHTML = useDarkMode ? hljsDarkMode : hljsLightMode
   styleHolderDiv.appendChild(styleElement)
-})
+}
 
 onErrorCaptured((error) => {
   redirectOnError(error, 'Error displaying comparison:\n', 'OverviewView', 'Back to overview')
