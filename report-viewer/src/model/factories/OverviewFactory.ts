@@ -34,24 +34,6 @@ export class OverviewFactory extends BaseFactory {
       }
     }
 
-    // send a warning the first time the report is opened with the failed submissions
-    const failedSubmissionNames = json.failed_submission_names as string[]
-    if (failedSubmissionNames.length > 0) {
-      const hasSendWarning = sessionStorage.getItem('failedSubmissionWarning')
-      if (hasSendWarning === null) {
-        sessionStorage.setItem('failedSubmissionWarning', 'true')
-        const list = failedSubmissionNames.join(', ')
-        alert(
-          `${failedSubmissionNames.length} submission(s) could not be processed. These submissions were not considered in comparisons:\n${list.length > 200 ? list.substring(0, 100) + '... (Check the console or click more on the overview to see all submissions)' : list}`
-        )
-      }
-      console.warn(
-        'The following submissions could not be processed: ' +
-          failedSubmissionNames.join(', ') +
-          '. Please check the log for more details.'
-      )
-    }
-
     const submissionFolder = json.submission_folder_path as Array<string>
     const baseCodeFolder = json.base_code_folder_path as string
     const language = getLanguageParser(json.language as string)
@@ -61,6 +43,10 @@ export class OverviewFactory extends BaseFactory {
     const duration = json.execution_time as number as number
     const totalComparisons = json.total_comparisons as number
     const clusters = this.extractClusters(json)
+    const failedSubmissionNames = [] as string[] //json.failed_submission_names as string[]
+    for (let i = 0; i < 100; i++) {
+      failedSubmissionNames.push('failed' + Math.random().toString(16).slice(2, 6))
+    }
 
     this.saveIdToDisplayNameMap(json)
     this.saveComparisonFilesLookup(json)

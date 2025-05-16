@@ -6,7 +6,22 @@
     class="grid grid-cols-1 grid-rows-[auto_800px_90vh] gap-5 md:grid-cols-2 md:grid-rows-[auto_1fr] md:overflow-hidden print:grid-cols-1 print:grid-rows-[auto_auto]"
   >
     <Container class="col-start-1 row-start-1 md:col-end-3 md:row-end-2">
-      <h2>JPlag Report</h2>
+      <div class="flex flex-col gap-x-5 md:flex-row md:items-center">
+        <h2>JPlag Report</h2>
+        <ToolTipComponent v-if="overview.failedSubmissionNames.length > 0" direction="bottom">
+          <template #default>
+            <p class="text-error font-bold">
+              {{ overview.failedSubmissionNames.length }} submissions could be parsed. They will not
+              be compared to other submissions. Click more or hover over this text to see a list of
+              names.
+            </p>
+          </template>
+          <template #tooltip>
+            <p class="max-w-[50rem] text-sm whitespace-pre-wrap">{{ failedNamesToolTip }}</p>
+          </template>
+        </ToolTipComponent>
+      </div>
+
       <div
         class="flex flex-col gap-x-5 gap-y-2 md:flex-row md:items-center print:flex-col print:items-start"
       >
@@ -122,6 +137,22 @@ const submissionPathValue = computed(() =>
     ? 'Click More to see all paths'
     : props.overview.submissionFolderPath[0]
 )
+
+const failedNamesToolTip = computed(() => {
+  let names = ''
+  let i = 0
+  while (i < props.overview.failedSubmissionNames.length && names.length < 600) {
+    names += props.overview.failedSubmissionNames[i]
+    i++
+    if (i < props.overview.failedSubmissionNames.length) {
+      names += ', '
+    }
+  }
+  if (i < props.overview.failedSubmissionNames.length) {
+    names += '... (click More to see all names)'
+  }
+  return names
+})
 
 onErrorCaptured((error) => {
   redirectOnError(error, 'Error displaying overview:\n')
