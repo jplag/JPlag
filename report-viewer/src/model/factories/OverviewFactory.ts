@@ -43,10 +43,7 @@ export class OverviewFactory extends BaseFactory {
     const duration = json.execution_time as number as number
     const totalComparisons = json.total_comparisons as number
     const clusters = this.extractClusters(json)
-    const failedSubmissionNames = [] as string[] //json.failed_submission_names as string[]
-    for (let i = 0; i < 100; i++) {
-      failedSubmissionNames.push('failed' + Math.random().toString(16).slice(2, 6))
-    }
+    const failedSubmissionNames = json.failed_submission_names as string[]
 
     this.saveIdToDisplayNameMap(json)
     this.saveComparisonFilesLookup(json)
