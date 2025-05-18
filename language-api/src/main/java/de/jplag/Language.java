@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
+import de.jplag.commentextraction.CommentExtractorSettings;
 import de.jplag.options.LanguageOptions;
 
 /**
@@ -122,5 +123,14 @@ public interface Language {
      */
     default boolean requiresCoreNormalization() {
         return true;
+    }
+
+    /**
+     * Return {@code null} if language does not support comment extraction.
+     * @return Settings for the comment extractor, or null if language does not support comment extraction.
+     */
+    default CommentExtractorSettings getCommentExtractorSettings() {
+        // TODO: Remove default implementation!
+        return null;
     }
 }

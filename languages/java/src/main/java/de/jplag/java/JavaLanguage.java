@@ -9,6 +9,8 @@ import org.kohsuke.MetaInfServices;
 import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
+import de.jplag.commentextraction.CommentExtractorSettings;
+import de.jplag.commentextraction.EnvironmentDelimiter;
 
 /**
  * Language for Java 9 and newer.
@@ -54,5 +56,12 @@ public class JavaLanguage implements Language {
     @Override
     public String toString() {
         return this.getIdentifier();
+    }
+
+    @Override
+    public CommentExtractorSettings getCommentExtractorSettings() {
+        return new CommentExtractorSettings(
+                List.of(new EnvironmentDelimiter("\""), new EnvironmentDelimiter("'"), new EnvironmentDelimiter("\"\"\"")), List.of("//"),
+                List.of(new EnvironmentDelimiter("/*", "*/")), List.of("\\"));
     }
 }
