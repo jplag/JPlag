@@ -5,18 +5,22 @@
   <div
     class="flex h-fit max-w-full min-w-0 flex-row flex-wrap space-x-1 gap-y-1 overflow-x-hidden text-xs md:flex-nowrap print:hidden"
   >
-    <ToolTipComponent direction="right">
+    <ToolTipComponent direction="right" :show-info-symbol="false">
       <template #default>
-        <OptionComponent label="Matches:" />
+        <OptionComponent label="Matches:" :has-tool-tip="true" />
       </template>
       <template #tooltip>
         <p class="text-sm whitespace-pre">Click on a match to show it in the code view.</p>
       </template>
     </ToolTipComponent>
 
-    <ToolTipComponent v-if="hasBaseCode" direction="right" class="pr-3">
+    <ToolTipComponent v-if="hasBaseCode" direction="right" class="pr-3" :show-info-symbol="false">
       <template #default>
-        <OptionComponent label="Base Code" :style="{ background: getMatchColor(0.3, 'base') }" />
+        <OptionComponent
+          label="Base Code"
+          :style="{ background: getMatchColor(0.3, 'base') }"
+          :has-tool-tip="true"
+        />
       </template>
       <template #tooltip>
         <div class="text-sm whitespace-pre">
@@ -54,6 +58,7 @@
         :key="index"
         :direction="getTooltipDirection(index)"
         :scroll-offset-x="scrollOffsetX"
+        :show-info-symbol="false"
       >
         <template #default>
           <OptionComponent
@@ -65,6 +70,7 @@
               ': ' +
               match.tokens
             "
+            :has-tool-tip="true"
             @click="$emit('matchSelected', match)"
           />
         </template>

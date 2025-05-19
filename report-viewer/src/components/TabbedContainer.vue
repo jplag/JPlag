@@ -15,9 +15,13 @@
         <ToolTipComponent
           v-if="toolTips[index]"
           :direction="index < firstBottomTooltipIndex ? 'right' : 'bottom'"
+          :show-info-symbol="false"
         >
           <template #default>
-            <p class="p-2 px-5">{{ tabNames[index] }}</p>
+            <span class="flex items-center p-2 px-5">
+              <p>{{ tabNames[index] }}</p>
+              <InfoIcon />
+            </span>
           </template>
           <template #tooltip>
             <p class="text-sm whitespace-pre">{{ toolTips[index] }}</p>
@@ -40,6 +44,7 @@ import { computed, ref, type Ref } from 'vue'
 import ContainerComponent from './ContainerComponent.vue'
 import type { ToolTipLabel } from '@/model/ui/ToolTip'
 import ToolTipComponent from './ToolTipComponent.vue'
+import InfoIcon from './InfoIcon.vue'
 
 const props = defineProps({
   tabs: {

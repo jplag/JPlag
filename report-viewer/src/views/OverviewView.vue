@@ -58,9 +58,11 @@
           </template>
         </TextInformation>
 
-        <ToolTipComponent direction="left" class="grow-0 print:hidden">
+        <ToolTipComponent direction="left" class="grow-0 print:hidden" :show-info-symbol="false">
           <template #default>
-            <Button @click="router.push({ name: 'InfoView' })"> More </Button>
+            <Button @click="router.push({ name: 'InfoView' })"
+              ><span class="flex items-center">More <InfoIcon /></span
+            ></Button>
           </template>
           <template #tooltip>
             <p class="text-sm whitespace-pre">More information about the CLI run of JPlag</p>
@@ -108,6 +110,7 @@ import type { CliOptions } from '@/model/CliOptions'
 import type { RunInformation } from '@/model/RunInformation'
 import type { DistributionMap } from '@/model/Distribution'
 import type { Cluster } from '@/model/Cluster'
+import InfoIcon from '@/components/InfoIcon.vue'
 
 const props = defineProps({
   topComparisons: {

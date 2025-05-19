@@ -11,7 +11,11 @@
         {{ store().getDisplayName(comparison.firstSubmissionId) }}
         -
         {{ store().getDisplayName(comparison.secondSubmissionId) }}
-        <ToolTipComponent direction="left" class="float-right hidden md:block print:hidden">
+        <ToolTipComponent
+          direction="left"
+          class="float-right hidden md:block print:hidden"
+          :show-info-symbol="false"
+        >
           <template #tooltip>
             <p class="text-sm whitespace-pre">
               Printing works best in landscape mode on Chromium based browsers
