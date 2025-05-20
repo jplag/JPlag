@@ -25,4 +25,9 @@ public class JavaScriptLanguage extends TypeScriptLanguage {
     public String getName() {
         return "JavaScript";
     }
+
+    @Override
+    public boolean hasPriority() {
+        return false;
+    }
 }
