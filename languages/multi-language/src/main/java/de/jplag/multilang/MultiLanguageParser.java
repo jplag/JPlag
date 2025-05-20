@@ -9,18 +9,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
 public class MultiLanguageParser {
-    private static final Logger LOG = LoggerFactory.getLogger(MultiLanguageParser.class);
-    private static final String WARNING = "This module only allows parsing of multiple languages. No comparisons will be made between languages";
     private static final String ERROR_MULTIPLE_LANGUAGES = "The suffix %s appears for multiple languages (%s, %s) with same priority setting. This is not permitted as it causes ambiguities for the multi-language module.";
-    private static boolean hasPrintedWarning = false;
 
     private final Map<String, Language> languageMapPriority;
     private final Map<String, Language> languageMap;
@@ -32,7 +26,6 @@ public class MultiLanguageParser {
     }
 
     public List<Token> parseFiles(Set<File> files, boolean normalize) throws ParsingException {
-        printWarning();
         List<Token> results = new ArrayList<>();
         for (File file : files) {
             Optional<Language> language = findLanguageForFile(file);
@@ -80,12 +73,5 @@ public class MultiLanguageParser {
         }
 
         return Optional.empty();
-    }
-
-    private static void printWarning() {
-        if (!hasPrintedWarning) {
-            hasPrintedWarning = true;
-            LOG.warn(WARNING);
-        }
     }
 }
