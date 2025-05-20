@@ -45,6 +45,8 @@ class MultilangTest {
     void testMultiLanguageParsing() throws ParsingException {
         MultiLanguage languageModule = new MultiLanguage();
 
+        ((MultiLanguageOptions) languageModule.getOptions()).getLanguageNames().setValue("java,cpp");
+
         Set<File> sources = new TreeSet<>(List.of(javaCode, cppCode)); // Using TreeSet to ensure order of entries
         List<Token> tokens = languageModule.parse(sources, false);
 
