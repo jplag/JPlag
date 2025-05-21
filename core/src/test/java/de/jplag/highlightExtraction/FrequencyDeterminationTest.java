@@ -89,4 +89,5 @@ public class FrequencyDeterminationTest extends TestBase {
             System.out.printf("Tokens: [%.30s...] | Häufigkeit: %2d | %s%n | %s \n", key, count, "*".repeat(Math.min(count, 50)), id);
         }
     }
+
 }
