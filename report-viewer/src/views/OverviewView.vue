@@ -8,17 +8,17 @@
     <Container class="col-start-1 row-start-1 md:col-end-3 md:row-end-2">
       <div class="flex flex-col gap-x-5 md:flex-row md:items-center">
         <h2>JPlag Report</h2>
-        <ToolTipComponent v-if="overview.failedSubmissionNames.length > 0" direction="bottom">
+        <ToolTipComponent v-if="runInformation.failedSubmissions.length > 0" direction="bottom">
           <template #default>
             <p class="text-error font-bold">
-              {{ overview.failedSubmissionNames.length }} invalid submissions. They are excluded
+              {{ runInformation.failedSubmissions.length }} invalid submissions. They are excluded
               from the comparison. Click "<i>More</i>" to show all failed submissions.
             </p>
           </template>
           <template #tooltip>
             <p class="max-w-[50rem] text-sm whitespace-pre-wrap">
-              {{ overview.failedSubmissionNames.slice(0, 20).join(', ')
-              }}<span v-if="overview.failedSubmissionNames.length > 20"
+              {{ runInformation.failedSubmissions.slice(0, 20).join(', ')
+              }}<span v-if="runInformation.failedSubmissions.length > 20"
                 >... (click "<i>More</i>" to see the complete list of failed submissions)</span
               >
             </p>
