@@ -43,7 +43,7 @@
     "@pinia/testing": "^1.0.1",
     "@playwright/test": "^1.52.0",
     "@rushstack/eslint-patch": "^1.11.0",
-    "@tailwindcss/vite": "^4.1.6",
+    "@tailwindcss/vite": "^4.1.7",
     "@types/jsdom": "^21.1.7",
     "@types/node": "^22.15.14",
     "@vitejs/plugin-vue": "^5.2.4",
