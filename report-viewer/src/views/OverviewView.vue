@@ -11,13 +11,17 @@
         <ToolTipComponent v-if="overview.failedSubmissionNames.length > 0" direction="bottom">
           <template #default>
             <p class="text-error font-bold">
-              {{ overview.failedSubmissionNames.length }} submissions could be parsed. They will not
-              be compared to other submissions. Click more or hover over this text to see a list of
-              names.
+              {{ overview.failedSubmissionNames.length }} invalid submissions. They are excluded
+              from the comparison. Click "<i>More</i>" to show all failed submissions.
             </p>
           </template>
           <template #tooltip>
-            <p class="max-w-[50rem] text-sm whitespace-pre-wrap">{{ failedNamesToolTip }}</p>
+            <p class="max-w-[50rem] text-sm whitespace-pre-wrap">
+              {{ overview.failedSubmissionNames.slice(0, 20).join(', ')
+              }}<span v-if="overview.failedSubmissionNames.length > 20"
+                >... (click "<i>More</i>" to see the complete list of failed submissions)</span
+              >
+            </p>
           </template>
         </ToolTipComponent>
       </div>
@@ -137,22 +141,6 @@ const submissionPathValue = computed(() =>
     ? 'Click More to see all paths'
     : props.overview.submissionFolderPath[0]
 )
-
-const failedNamesToolTip = computed(() => {
-  let names = ''
-  let i = 0
-  while (i < props.overview.failedSubmissionNames.length && names.length < 600) {
-    names += props.overview.failedSubmissionNames[i]
-    i++
-    if (i < props.overview.failedSubmissionNames.length) {
-      names += ', '
-    }
-  }
-  if (i < props.overview.failedSubmissionNames.length) {
-    names += '... (click More to see all names)'
-  }
-  return names
-})
 
 onErrorCaptured((error) => {
   redirectOnError(error, 'Error displaying overview:\n')
