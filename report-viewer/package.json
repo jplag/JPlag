@@ -39,7 +39,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
-    "@eslint/js": "^9.23.0",
+    "@eslint/js": "^9.27.0",
     "@pinia/testing": "^1.0.1",
     "@playwright/test": "^1.52.0",
     "@rushstack/eslint-patch": "^1.11.0",
