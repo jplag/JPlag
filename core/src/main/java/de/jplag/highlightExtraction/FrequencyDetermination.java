@@ -7,26 +7,44 @@ import java.util.Map;
 
 import de.jplag.*;
 
+/**
+ * Calculates frequencies of match subsequences across all comparisons according to different strategies.
+ */
+
 public class FrequencyDetermination {
     private Map<String, List<String>> tokenFrequencyMap = new HashMap<>();
-    private List<JPlagComparison> comparisons;
     private FrequencyStrategy freqencyStrategy;
     private int strategyNumber;
 
 
-
-    public FrequencyDetermination(FrequencyStrategy freqencyStrategy, int strategyNumber) {
-        this.freqencyStrategy = freqencyStrategy;
+    /**
+     * Constructor.
+     *
+     * @param frequencyStrategy The chosen strategy for frequency calculation.
+     * @param strategyNumber    Parameter used by certain strategies to determine submatch length.
+     */
+    public FrequencyDetermination(FrequencyStrategy frequencyStrategy, int strategyNumber) {
+        this.freqencyStrategy = frequencyStrategy;
         this.strategyNumber = strategyNumber;
     }
 
 
+    /**
+     * Applies the "create" and "check" methods of the frequency strategy.
+     * @param comparisons contains information of matches between two submissions.
+     * @return Map containing (sub-)matches and their frequency according to the strategy.
+     */
     public Map<String, List<String>> runAnalysis(List<JPlagComparison> comparisons) {
         frequencyBuilder(comparisons, freqencyStrategy::create);
         frequencyBuilder(comparisons, freqencyStrategy::check);
         return tokenFrequencyMap;
     }
 
+    /**
+     * Builds the frequency Map.
+     * @param comparisons contains information of matches between two submissions.
+     * @param builder builds and updates the frequency map with submatches according to the implemented strategy.
+     */
     private void frequencyBuilder(List<JPlagComparison> comparisons,
                                   FrequencyBuilder builder) {
         for (JPlagComparison comparison : comparisons) {
@@ -53,6 +71,9 @@ public class FrequencyDetermination {
         }
     }
 
+    /**
+     * @return Map containing (sub-)matches and their frequency according to the strategy.
+     */
     public Map<String, List<String>> getTokenFrequencyMap() {
         return tokenFrequencyMap;
     }

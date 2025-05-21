@@ -1,5 +1,8 @@
 package de.jplag.highlightExtraction;
 
+/**
+ * Enum representing the different strategies for frequency calculation of token subsequences in comparisons.
+ */
 public enum FrequencyStrategies {
     COMPLETE_MATCHES,
     CONTAINED_MATCHES,

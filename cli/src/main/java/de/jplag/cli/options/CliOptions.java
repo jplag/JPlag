@@ -2,6 +2,7 @@ package de.jplag.cli.options;
 
 import java.io.File;
 
+import de.jplag.highlightExtraction.FrequencyStrategy;
 import org.slf4j.event.Level;
 
 import de.jplag.Language;
@@ -185,7 +186,7 @@ public class CliOptions implements Runnable {
     public static class FrequencyAnalysis {
         @Option(names = {
                 "--frequency-strategy"}, description = "strategy for frequency Analysis, Options: completeMatches, containedMatches, subMatches, windowOfMatches")
-        public FrequencyStrategy frequencyStrategy = FrequencyStrategy.COMPLETEMATCHES;
+        public FrequencyStrategies frequencyStrategy = FrequencyStrategies.COMPLETE_MATCHES;
 
         @Option(names = {
                 "--frequency-min-value"}, description = "max of min match length that will be compared and this value, is min size of considered submatches")
