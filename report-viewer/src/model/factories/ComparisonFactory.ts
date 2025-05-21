@@ -19,34 +19,26 @@ export class ComparisonFactory extends BaseFactory {
    * Creates a comparison object from a json object created by JPlag
    * @param json the json object
    */
-  private static async extractComparison(json: Record<string, unknown>): Promise<Comparison> {
-    const firstSubmissionId = json.id1 as string
-    const secondSubmissionId = json.id2 as string
-    await this.getFile(`submissionFileIndex.json`)
-      .then(async () => {
-        await this.loadSubmissionFiles(firstSubmissionId)
-        await this.loadSubmissionFiles(secondSubmissionId)
-      })
-      .catch(() => {})
-    const filesOfFirstSubmission = store().filesOfSubmission(firstSubmissionId)
-    const filesOfSecondSubmission = store().filesOfSubmission(secondSubmissionId)
+  private static async extractComparison(json: ReportFormatComparison): Promise<Comparison> {
+    await this.loadSubmissionFiles(json.firstSubmissionId)
+    await this.loadSubmissionFiles(json.secondSubmissionId)
+    const filesOfFirstSubmission = store().filesOfSubmission(json.firstSubmissionId)
+    const filesOfSecondSubmission = store().filesOfSubmission(json.secondSubmissionId)
 
-    const matches = (json.matches as Array<Match>).map((match) => {
-      return { ...match, firstFile: slash(match.firstFile), secondFile: slash(match.secondFile) }
+    const matches: Match[] = json.matches.map((match) => {
+      return {
+        ...match,
+        firstFileName: slash(match.firstFileName),
+        secondFileName: slash(match.secondFileName)
+      }
     })
     matches.forEach((match) => {
-      const fileOfFirst = store().getSubmissionFile(
-        firstSubmissionId,
-        slash(match.firstFile as string)
-      )
-      const fileOfSecond = store().getSubmissionFile(
-        secondSubmissionId,
-        slash(match.secondFile as string)
-      )
+      const fileOfFirst = store().getSubmissionFile(json.firstSubmissionId, match.firstFileName)
+      const fileOfSecond = store().getSubmissionFile(json.secondSubmissionId, match.secondFileName)
 
       if (fileOfFirst == undefined || fileOfSecond == undefined) {
         throw new Error(
-          `The report viewer expected to find the file ${fileOfFirst == undefined ? match.firstFile : match.secondFile} in the submissions, but did not find it.`
+          `The report viewer expected to find the file ${fileOfFirst == undefined ? match.firstFileName : match.secondFileName} in the submissions, but did not find it.`
         )
       }
 
@@ -55,14 +47,14 @@ export class ComparisonFactory extends BaseFactory {
     })
 
     return new Comparison(
-      firstSubmissionId,
-      secondSubmissionId,
-      this.extractSimilarities(json.similarities as Record<string, number>),
+      json.firstSubmissionId,
+      json.secondSubmissionId,
+      this.extractSimilarities(json.similarities),
       this.getFilesWithDisplayNames(filesOfFirstSubmission),
       this.getFilesWithDisplayNames(filesOfSecondSubmission),
       this.colorMatches(matches),
-      json.first_similarity as number,
-      json.second_similarity as number
+      json.firstSimilarity,
+      json.secondSimilarity
     )
   }
 
@@ -76,10 +68,11 @@ export class ComparisonFactory extends BaseFactory {
 
   private static async getSubmissionFileList(
     submissionId: string
-  ): Promise<Record<string, { token_count: number }>> {
-    return JSON.parse(await this.getFile(`submissionFileIndex.json`)).submission_file_indexes[
-      submissionId
-    ]
+  ): Promise<Record<string, { tokenCount: number }>> {
+    const submissionFileIndex: ReportFormatSubmmisionFileIndex = JSON.parse(
+      await this.getFile(`submissionFileIndex.json`)
+    )
+    return submissionFileIndex.fileIndexes[submissionId]
   }
 
   private static async loadSubmissionFiles(submissionId: string) {
@@ -91,7 +84,7 @@ export class ComparisonFactory extends BaseFactory {
           fileName: slash(filePath),
           submissionId: submissionId,
           data: await this.getSubmissionFileContent(submissionId, slash(filePath)),
-          tokenCount: fileList[filePath].token_count,
+          tokenCount: fileList[filePath].tokenCount,
           matchedTokenCount: 0,
           displayFileName: slash(filePath)
         })
@@ -116,10 +109,10 @@ export class ComparisonFactory extends BaseFactory {
     let currentColorIndex = 0
     const matchesFirst = Array.from(matches)
       .sort((a, b) => a.startInFirst.line - b.startInFirst.line)
-      .sort((a, b) => (a.firstFile > b.firstFile ? 1 : -1))
+      .sort((a, b) => (a.firstFileName > b.firstFileName ? 1 : -1))
     const matchesSecond = Array.from(matches)
       .sort((a, b) => a.startInSecond.line - b.startInSecond.line)
-      .sort((a, b) => (a.secondFile > b.secondFile ? 1 : -1))
+      .sort((a, b) => (a.secondFileName > b.secondFileName ? 1 : -1))
     const sortedSize = Array.from(matches).sort((a, b) => b.tokens - a.tokens)
 
     function isColorAvailable(matchList: Match[], index: number) {
@@ -174,4 +167,25 @@ export class ComparisonFactory extends BaseFactory {
       }
     })
   }
+}
+
+interface ReportFormatComparison {
+  firstSubmissionId: string
+  secondSubmissionId: string
+  similarities: Record<string, number>
+  matches: Match[]
+  firstSimilarity: number
+  secondSimilarity: number
+}
+
+interface ReportFormatSubmmisionFileIndex {
+  fileIndexes: Record<
+    string,
+    Record<
+      string,
+      {
+        tokenCount: number
+      }
+    >
+  >
 }
