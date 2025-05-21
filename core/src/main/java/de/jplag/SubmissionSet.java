@@ -138,7 +138,7 @@ public class SubmissionSet {
      * Parse the given base code submission.
      */
     private void parseBaseCodeSubmission(Submission baseCode) throws BasecodeException, LanguageException {
-        logger.trace("----- Parsing basecode submission: " + baseCode.getName());
+        logger.trace("----- Parsing basecode submission: {}", baseCode.getName());
         if (!baseCode.parse(options.debugParser(), options.normalize(), options.minimumTokenMatch())) {
             if (baseCode.getState() == SubmissionState.TOO_SMALL) {
                 throw new BasecodeException("Basecode contains %d token(s), which is below the minimum match length (%d)!"

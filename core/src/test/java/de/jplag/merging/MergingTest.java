@@ -20,7 +20,7 @@ import de.jplag.SubmissionSet;
 import de.jplag.SubmissionSetBuilder;
 import de.jplag.TestBase;
 import de.jplag.Token;
-import de.jplag.comparison.LongestCommonSubsquenceSearch;
+import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 
@@ -35,7 +35,7 @@ class MergingTest extends TestBase {
     private List<Match> matches;
     private List<JPlagComparison> comparisonsBefore;
     private List<JPlagComparison> comparisonsAfter;
-    private final LongestCommonSubsquenceSearch comparisonStrategy;
+    private final LongestCommonSubsequenceSearch comparisonStrategy;
     private final SubmissionSet submissionSet;
     private static final int MINIMUM_NEIGHBOR_LENGTH = 1;
     private static final int MAXIMUM_GAP_SIZE = 10;
@@ -48,7 +48,7 @@ class MergingTest extends TestBase {
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         submissionSet = builder.buildSubmissionSet();
 
-        comparisonStrategy = new LongestCommonSubsquenceSearch(options);
+        comparisonStrategy = new LongestCommonSubsequenceSearch(options);
     }
 
     @BeforeEach

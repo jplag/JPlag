@@ -1,6 +1,9 @@
 <template>
   <div class="group pointer-events-none inline">
-    <div ref="contentRef" class="pointer-events-auto"><slot></slot></div>
+    <div ref="contentRef" class="pointer-events-auto flex items-center gap-x-1">
+      <slot></slot>
+      <InfoIcon v-if="showInfoSymbol && $slots.tooltip" class="ml-0!" />
+    </div>
     <span
       v-if="$slots.tooltip"
       ref="tooltipRef"
@@ -27,6 +30,7 @@
 <script setup lang="ts">
 import type { ToolTipDirection } from '@/model/ui/ToolTip'
 import { computed, ref, type PropType, type Ref, type StyleValue } from 'vue'
+import InfoIcon from './InfoIcon.vue'
 
 const props = defineProps({
   direction: {
@@ -39,6 +43,11 @@ const props = defineProps({
     type: Boolean,
     required: false,
     default: false
+  },
+  showInfoSymbol: {
+    type: Boolean,
+    required: false,
+    default: true
   },
   /** Can be set if the tooltip is inside a scrollable container */
   scrollOffsetX: {

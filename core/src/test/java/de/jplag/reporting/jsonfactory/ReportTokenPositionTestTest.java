@@ -50,7 +50,8 @@ class ReportTokenPositionTestTest {
             mockedFilePathUtil.when(() -> FilePathUtil.getRelativeSubmissionPath(any(), any(), any())).thenReturn(Path.of("file.java"));
             comparisonReportOutput = new ComparisonReportWriter(Submission::getName, resultWriter).writeComparisonReports(result);
         }
-        ComparisonReport comparisonReport = (ComparisonReport) resultWriter.getJsonEntry(Path.of(comparisonReportOutput.get(firstID).get(secondID)));
+        ComparisonReport comparisonReport = (ComparisonReport) resultWriter
+                .getJsonEntry(Path.of(ComparisonReportWriter.BASEPATH, comparisonReportOutput.get(firstID).get(secondID)));
 
         assertEquals(1, comparisonReport.matches().size());
 
@@ -59,19 +60,19 @@ class ReportTokenPositionTestTest {
         CodePosition startInSecond = comparisonReport.matches().get(0).startInSecond();
         CodePosition endInSecond = comparisonReport.matches().get(0).endInSecond();
 
-        assertEquals(1, startInFirst.lineNumber());
+        assertEquals(1, startInFirst.line());
         assertEquals(0, startInFirst.column());
         assertEquals(0, startInFirst.tokenListIndex());
 
-        assertEquals(2, endInFirst.lineNumber());
+        assertEquals(2, endInFirst.line());
         assertEquals(10, endInFirst.column());
         assertEquals(2, endInFirst.tokenListIndex());
 
-        assertEquals(1, startInSecond.lineNumber());
+        assertEquals(1, startInSecond.line());
         assertEquals(0, startInSecond.column());
         assertEquals(0, startInSecond.tokenListIndex());
 
-        assertEquals(2, endInSecond.lineNumber());
+        assertEquals(2, endInSecond.line());
         assertEquals(10, endInSecond.column());
         assertEquals(1, endInSecond.tokenListIndex());
     }
@@ -107,11 +108,11 @@ class ReportTokenPositionTestTest {
         CodePosition start = baseCodeMatches.get(0).start();
         CodePosition end = baseCodeMatches.get(0).end();
 
-        assertEquals(1, start.lineNumber());
+        assertEquals(1, start.line());
         assertEquals(0, start.column());
         assertEquals(0, start.tokenListIndex());
 
-        assertEquals(2, end.lineNumber());
+        assertEquals(2, end.line());
         assertEquals(10, end.column());
         assertEquals(2, end.tokenListIndex());
     }

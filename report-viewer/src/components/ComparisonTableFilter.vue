@@ -4,7 +4,11 @@
       class="flex flex-col flex-wrap gap-x-8 gap-y-2 overflow-hidden md:flex-row md:items-center"
     >
       <h2>{{ header }}</h2>
-      <ToolTipComponent direction="left" class="max-w-full grow md:min-w-[40%]">
+      <ToolTipComponent
+        direction="left"
+        class="max-w-full grow md:min-w-[40%]"
+        :show-info-symbol="false"
+      >
         <template #default>
           <SearchBarComponent v-model="searchStringValue" placeholder="Filter/Unhide Comparisons" />
         </template>
@@ -25,9 +29,11 @@
         </template>
       </ToolTipComponent>
 
-      <ButtonComponent class="w-24" @click="changeAnonymousForAll()">
+      <ButtonComponent class="w-30 min-w-fit whitespace-nowrap" @click="changeAnonymousForAll()">
         {{
-          store().state.anonymous.size == store().getSubmissionIds.length ? 'Show All' : 'Hide All'
+          store().state.anonymous.size == store().getSubmissionIds.length
+            ? 'Show All'
+            : 'Anonymize All'
         }}
       </ButtonComponent>
     </div>

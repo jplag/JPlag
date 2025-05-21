@@ -18,7 +18,7 @@ public class CSharpLanguage implements Language {
 
     @Override
     public String[] suffixes() {
-        return new String[] {".cs", ".CS"};
+        return new String[] {".cs"};
     }
 
     @Override

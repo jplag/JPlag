@@ -34,7 +34,7 @@ describe('ComparisonTableFilter', async () => {
     setUpStore()
 
     await wrapper.vm.$nextTick()
-    expect(wrapper.text()).toContain('Hide All')
+    expect(wrapper.text()).toContain('Anonymize All')
 
     await wrapper.getComponent(ButtonComponent).trigger('click')
 
@@ -46,7 +46,7 @@ describe('ComparisonTableFilter', async () => {
     // Vue does not actually rerender the component, so this is commented out
     await wrapper.vm.$nextTick()
     expect(wrapper.text()).toContain('Show All')
-    expect(wrapper.text()).not.toContain('Hide All')
+    expect(wrapper.text()).not.toContain('Anonymize All')
 
     await wrapper.getComponent(ButtonComponent).trigger('click')
     expect(store().state.anonymous.size).toBe(0)

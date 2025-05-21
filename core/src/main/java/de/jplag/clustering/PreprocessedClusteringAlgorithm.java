@@ -25,12 +25,11 @@ public class PreprocessedClusteringAlgorithm implements GenericClusteringAlgorit
     @Override
     public Collection<Collection<Integer>> cluster(RealMatrix similarityMatrix) {
         double[][] data = preprocessor.preprocessSimilarities(similarityMatrix.getData());
-        if (data.length > 2) {
-            Collection<Collection<Integer>> preliminaryResult = base.cluster(new Array2DRowRealMatrix(data, false));
-            return preliminaryResult.stream().map(cluster -> cluster.stream().map(preprocessor::originalIndexOf).collect(Collectors.toList()))
-                    .collect(Collectors.toList());
+        if (data.length <= 2) {
+            return Collections.emptyList();
         }
-        return Collections.emptyList();
+        Collection<Collection<Integer>> preliminaryResult = base.cluster(new Array2DRowRealMatrix(data, false));
+        return preliminaryResult.stream().map(cluster -> cluster.stream().map(preprocessor::originalIndexOf).toList()).collect(Collectors.toList());
     }
 
 }

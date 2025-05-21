@@ -11,6 +11,7 @@ import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.emf.parser.EcoreParser;
+import de.jplag.emf.util.EMFUtil;
 
 /**
  * Language for EMF metamodels from the Eclipse Modeling Framework (EMF).
@@ -18,6 +19,10 @@ import de.jplag.emf.parser.EcoreParser;
  */
 @MetaInfServices(Language.class)
 public class EmfLanguage implements Language {
+
+    public EmfLanguage() {
+        EMFUtil.registerEcoreExtension();
+    }
 
     public static final String VIEW_FILE_SUFFIX = ".emfatic";
     public static final String FILE_ENDING = "." + EcorePackage.eNAME;
