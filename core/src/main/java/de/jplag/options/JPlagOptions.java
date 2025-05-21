@@ -81,7 +81,7 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
     public JPlagOptions(Language language, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories) {
         this(language, null, submissionDirectories, oldSubmissionDirectories, null, null, null, null, DEFAULT_SIMILARITY_METRIC,
                 DEFAULT_SIMILARITY_THRESHOLD, DEFAULT_SHOWN_COMPARISONS, new ClusteringOptions(), false, new MergingOptions(), false,
-                FrequencyStrategies.COMPLETEMATCHES, 0);
+                FrequencyStrategies.COMPLETE_MATCHES, 0);
     }
 
     public JPlagOptions(Language language, Integer minimumTokenMatch, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories,
@@ -200,7 +200,7 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
         this(language, minimumTokenMatch, Set.of(submissionDirectory), oldSubmissionDirectories,
                 convertLegacyBaseCodeToFile(baseCodeSubmissionName, submissionDirectory), subdirectoryName, fileSuffixes, exclusionFileName,
                 similarityMetric, similarityThreshold, maximumNumberOfComparisons, clusteringOptions, debugParser, mergingOptions, false,
-                FrequencyStrategies.COMPLETEMATCHES, 1);
+                FrequencyStrategies.COMPLETE_MATCHES, 1);
     }
 
     /**

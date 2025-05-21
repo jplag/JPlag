@@ -1,8 +1,8 @@
 package de.jplag.highlightExtraction;
 
 public enum FrequencyStrategies {
-    COMPLETEMATCHES,
-    CONTAINEDMATCHES,
-    SUBMATCHES,
-    WINDOWOFMATCHES;
+    COMPLETE_MATCHES,
+    CONTAINED_MATCHES,
+    SUB_MATCHES,
+    WINDOW_OF_MATCHES;
 }
