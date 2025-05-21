@@ -412,6 +412,7 @@
                 <module>language-api</module>
                 <module>language-antlr-utils</module>
                 <module>language-testutils</module>
+                <module>language-tree-sitter-utils</module>
             </modules>
         </profile>
         <profile>
@@ -423,8 +424,9 @@
                 <module>core</module>
                 <module>languages</module>
                 <module>language-api</module>
-                <module>language-testutils</module>
                 <module>language-antlr-utils</module>
+                <module>language-testutils</module>
+                <module>language-tree-sitter-utils</module>
             </modules>
             <build>
                 <plugins>
