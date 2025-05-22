@@ -28,6 +28,6 @@ public class JavaScriptLanguage extends TypeScriptLanguage {
 
     @Override
     public boolean hasPriority() {
-        return false;
+        return false; // Since this module extends Typescript, it has no priority.
     }
 }
