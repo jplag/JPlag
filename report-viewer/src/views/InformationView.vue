@@ -127,7 +127,9 @@
           missingComparisons
         }}</TextInformation>
         <TextInformation label="Failed Submissions" class="pb-1">{{
-          runInformation.failedSubmissions.join(', ')
+          runInformation.failedSubmissions.length > 0
+            ? runInformation.failedSubmissions.join(', ')
+            : 'None'
         }}</TextInformation>
       </ScrollableComponent>
     </Container>
