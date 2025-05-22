@@ -28,13 +28,7 @@ import de.jplag.reporting.jsonfactory.BaseCodeReportWriter;
 import de.jplag.reporting.jsonfactory.ComparisonReportWriter;
 import de.jplag.reporting.reportobject.mapper.ClusteringResultMapper;
 import de.jplag.reporting.reportobject.mapper.MetricMapper;
-import de.jplag.reporting.reportobject.model.Cluster;
-import de.jplag.reporting.reportobject.model.RunInformation;
-import de.jplag.reporting.reportobject.model.SubmissionFile;
-import de.jplag.reporting.reportobject.model.SubmissionFileIndex;
-import de.jplag.reporting.reportobject.model.SubmissionMappings;
-import de.jplag.reporting.reportobject.model.TopComparison;
-import de.jplag.reporting.reportobject.model.Version;
+import de.jplag.reporting.reportobject.model.*;
 import de.jplag.reporting.reportobject.writer.JPlagResultWriter;
 import de.jplag.reporting.reportobject.writer.ZipWriter;
 
@@ -146,8 +140,9 @@ public class ReportObjectFactory {
     }
 
     private void writeRunInformation(JPlagResult result) {
-        RunInformation runInformation = new RunInformation(REPORT_VIEWER_VERSION,
-                result.getSubmissions().getInvalidSubmissions().stream().map(Submission::getName).toList(), getDate(), result.getDuration(),
+        List<FailedSubmission> failedSubmissions = result.getSubmissions().getInvalidSubmissions().stream()
+                .map(o -> new FailedSubmission(o.getName(), o.getState())).toList();
+        RunInformation runInformation = new RunInformation(REPORT_VIEWER_VERSION, failedSubmissions, getDate(), result.getDuration(),
                 result.getAllComparisons().size());
         this.resultWriter.addJsonEntry(runInformation, RUN_INFORMATION_FILE_NAME);
     }
