@@ -6,7 +6,26 @@
     class="grid grid-cols-1 grid-rows-[auto_800px_90vh] gap-5 md:grid-cols-2 md:grid-rows-[auto_1fr] md:overflow-hidden print:grid-cols-1 print:grid-rows-[auto_auto]"
   >
     <Container class="col-start-1 row-start-1 md:col-end-3 md:row-end-2">
-      <h2>JPlag Report</h2>
+      <div class="flex flex-col gap-x-5 md:flex-row md:items-center">
+        <h2>JPlag Report</h2>
+        <ToolTipComponent v-if="runInformation.failedSubmissions.length > 0" direction="bottom">
+          <template #default>
+            <p class="text-error font-bold">
+              {{ runInformation.failedSubmissions.length }} invalid submissions. They are excluded
+              from the comparison. Click "<i>More</i>" to show all failed submissions.
+            </p>
+          </template>
+          <template #tooltip>
+            <p class="max-w-[50rem] text-sm whitespace-pre-wrap">
+              {{ runInformation.failedSubmissions.slice(0, 20).join(', ')
+              }}<span v-if="runInformation.failedSubmissions.length > 20"
+                >... (click "<i>More</i>" to see the complete list of failed submissions)</span
+              >
+            </p>
+          </template>
+        </ToolTipComponent>
+      </div>
+
       <div
         class="flex flex-col gap-x-5 gap-y-2 md:flex-row md:items-center print:flex-col print:items-start"
       >
