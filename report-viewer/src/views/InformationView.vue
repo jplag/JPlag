@@ -127,9 +127,11 @@
           missingComparisons
         }}</TextInformation>
         <TextInformation label="Failed Submissions" class="pb-1">{{
-          runInformation.failedSubmissions
-            .map((s) => `${s.submissionId} (${stringifySubmissionState(s.submissionState)})`)
-            .join(', ')
+          runInformation.failedSubmissions.length > 0
+            ? runInformation.failedSubmissions
+                .map((s) => `${s.submissionId} (${stringifySubmissionState(s.submissionState)})`)
+                .join(', ')
+            : 'None'
         }}</TextInformation>
       </ScrollableComponent>
     </Container>
