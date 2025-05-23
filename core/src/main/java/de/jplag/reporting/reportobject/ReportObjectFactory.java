@@ -28,7 +28,14 @@ import de.jplag.reporting.jsonfactory.BaseCodeReportWriter;
 import de.jplag.reporting.jsonfactory.ComparisonReportWriter;
 import de.jplag.reporting.reportobject.mapper.ClusteringResultMapper;
 import de.jplag.reporting.reportobject.mapper.MetricMapper;
-import de.jplag.reporting.reportobject.model.*;
+import de.jplag.reporting.reportobject.model.Cluster;
+import de.jplag.reporting.reportobject.model.RunInformation;
+import de.jplag.reporting.reportobject.model.SubmissionFile;
+import de.jplag.reporting.reportobject.model.SubmissionFileIndex;
+import de.jplag.reporting.reportobject.model.SubmissionMappings;
+import de.jplag.reporting.reportobject.model.TopComparison;
+import de.jplag.reporting.reportobject.model.Version;
+import de.jplag.reporting.reportobject.model.FailedSubmission;
 import de.jplag.reporting.reportobject.writer.JPlagResultWriter;
 import de.jplag.reporting.reportobject.writer.ZipWriter;
 
