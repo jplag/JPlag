@@ -6,8 +6,8 @@ package de.jplag;
  * merging.
  * @param startOfFirst is the index of the first token of the match in the first submission.
  * @param startOfSecond is the index of the first token of the match in the second submission.
- * @param length is the length of these similar sections (number of tokens) in the first submission.
- * @param length is the length of these similar sections (number of tokens) in the second submission.
+ * @param lengthOfFirst is the length of these similar sections (number of tokens) in the first submission.
+ * @param lengthOfSecond is the length of these similar sections (number of tokens) in the second submission.
  */
 public record Match(int startOfFirst, int startOfSecond, int lengthOfFirst, int lengthOfSecond) {
     /**
