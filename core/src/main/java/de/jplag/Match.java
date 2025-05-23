@@ -50,4 +50,15 @@ public record Match(int startOfFirst, int startOfSecond, int lengthOfFirst, int 
     public int minimumLength() {
         return Math.min(lengthOfFirst, lengthOfSecond);
     }
+
+    /**
+     * @return length is the length of these similar sections (number of tokens).
+     * @deprecated matches are no longer required to be symmetrical. Thus, both sides can have different lengths. This
+     * method now returns the minimal length.
+     * @see Match#minimumLength()
+     */
+    @Deprecated(since = "4.6.2", forRemoval = true)
+    public int length() {
+        return minimumLength();
+    }
 }
