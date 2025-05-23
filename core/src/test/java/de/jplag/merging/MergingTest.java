@@ -1,6 +1,7 @@
 package de.jplag.merging;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -87,7 +88,8 @@ class MergingTest extends TestBase {
         for (JPlagComparison comparison : comparisons) {
             matches = matchFunction.apply(comparison);
             for (Match match : matches) {
-                assertTrue(match.length() >= threshold);
+                assertTrue(match.lengthOfFirst() >= threshold);
+                assertTrue(match.lengthOfSecond() >= threshold);
             }
         }
     }
@@ -104,19 +106,25 @@ class MergingTest extends TestBase {
     @DisplayName("Test if amount of matches reduced after Match Merging")
     void testFewerMatches() {
         for (int i = 0; i < comparisonsAfter.size(); i++) {
-            assertTrue(comparisonsAfter.get(i).matches().size() + comparisonsAfter.get(i).ignoredMatches().size() <= comparisonsBefore.get(i)
-                    .matches().size() + comparisonsBefore.get(i).ignoredMatches().size());
+            int totalMatchesAfter = comparisonsAfter.get(i).matches().size() + comparisonsAfter.get(i).ignoredMatches().size();
+            int totalMatchesBefore = comparisonsBefore.get(i).matches().size() + comparisonsBefore.get(i).ignoredMatches().size();
+
+            assertTrue(totalMatchesAfter <= totalMatchesBefore,
+                    "Expected total matches after to be less than or equal to before, but got " + totalMatchesAfter + " > " + totalMatchesBefore);
         }
     }
 
     @Test
-    @DisplayName("Test if amount of token reduced after Match Merging")
-    void testFewerToken() {
+    @DisplayName("Test if amount of token increased after Match Merging")
+    void testMoreToken() {
         for (int i = 0; i < comparisonsAfter.size(); i++) {
-            assertTrue(comparisonsAfter.get(i).firstSubmission().getTokenList().size() <= comparisonsBefore.get(i).firstSubmission().getTokenList()
-                    .size()
-                    && comparisonsAfter.get(i).secondSubmission().getTokenList().size() <= comparisonsBefore.get(i).secondSubmission().getTokenList()
-                            .size());
+            int tokensBeforeFirst = comparisonsBefore.get(i).firstSubmission().getTokenList().size();
+            int tokensBeforeSecond = comparisonsBefore.get(i).secondSubmission().getTokenList().size();
+
+            int tokensAfterFirst = comparisonsAfter.get(i).firstSubmission().getTokenList().size();
+            int tokensAfterSecond = comparisonsAfter.get(i).secondSubmission().getTokenList().size();
+
+            assertTrue(tokensAfterFirst >= tokensBeforeFirst && tokensAfterSecond >= tokensBeforeSecond);
         }
     }
 
@@ -163,40 +171,6 @@ class MergingTest extends TestBase {
     }
 
     @Test
-    @DisplayName("Test if merged matches have counterparts in the original matches")
-    void testCorrectMerges() {
-        boolean correctMerges = true;
-        for (int i = 0; i < comparisonsAfter.size(); i++) {
-            matches = comparisonsAfter.get(i).matches();
-            List<Match> sortedByFirst = new ArrayList<>(comparisonsBefore.get(i).matches());
-            sortedByFirst.addAll(comparisonsBefore.get(i).ignoredMatches());
-            sortedByFirst.sort(Comparator.comparingInt(Match::startOfFirst));
-            for (Match match : matches) {
-                int begin = -1;
-                for (int k = 0; k < sortedByFirst.size(); k++) {
-                    if (sortedByFirst.get(k).startOfFirst() == match.startOfFirst()) {
-                        begin = k;
-                        break;
-                    }
-                }
-                if (begin == -1) {
-                    correctMerges = false;
-                } else {
-                    int foundToken = 0;
-                    while (foundToken < match.length()) {
-                        foundToken += sortedByFirst.get(begin).length();
-                        begin++;
-                        if (foundToken > match.length()) {
-                            correctMerges = false;
-                        }
-                    }
-                }
-            }
-        }
-        assertTrue(correctMerges);
-    }
-
-    @Test
     @DisplayName("Sanity check for match merging")
     void testSanity() {
 
@@ -204,18 +178,18 @@ class MergingTest extends TestBase {
         List<Match> matchesAfter = findComparison(comparisonsAfter, "sanityA.java", "sanityB.java").matches();
 
         List<Match> expectedBefore = List.of( //
-                new Match(5, 3, 6), //
-                new Match(11, 12, 6), //
-                new Match(0, 0, 3), //
-                new Match(3, 18, 2), //
-                new Match(17, 20, 2) //
+                new Match(5, 3, 6, 6), //
+                new Match(11, 12, 6, 6), //
+                new Match(0, 0, 3, 3), //
+                new Match(3, 18, 2, 2), //
+                new Match(17, 20, 2, 2) //
         );
 
-        List<Match> expectedAfter = List.of(new Match(5, 3, 12));
+        List<Match> expectedAfter = List.of(new Match(5, 3, 12, 15));
 
-        assertEquals(expectedBefore, matchesBefore);
+        assertIterableEquals(expectedBefore, matchesBefore);
 
-        assertEquals(expectedAfter, matchesAfter);
+        assertIterableEquals(expectedAfter, matchesAfter);
     }
 
     private static JPlagComparison findComparison(List<JPlagComparison> comparisons, String firstName, String secondName) {
