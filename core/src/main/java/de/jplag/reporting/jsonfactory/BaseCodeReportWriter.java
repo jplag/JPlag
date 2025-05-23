@@ -78,6 +78,6 @@ public class BaseCodeReportWriter {
                 takeLeft ? match.endOfFirst() : match.endOfSecond());
 
         return new BaseCodeMatch(FilePathUtil.getRelativeSubmissionPath(start.getFile(), submission, submissionToIdFunction).toString(),
-                startPosition, endPosition, match.length());
+                startPosition, endPosition, match.minimumLength());
     }
 }

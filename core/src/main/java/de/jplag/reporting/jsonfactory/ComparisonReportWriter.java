@@ -121,7 +121,7 @@ public class ComparisonReportWriter {
         CodePosition endInSecond = new CodePosition(endOfSecond.getLine(), endOfSecond.getColumn() + endOfSecond.getLength() - 1,
                 match.endOfSecond());
 
-        return new Match(firstFileName, secondFileName, startInFirst, endInFirst, startInSecond, endInSecond, match.length());
+        return new Match(firstFileName, secondFileName, startInFirst, endInFirst, startInSecond, endInSecond, match.minimumLength());
     }
 
 }

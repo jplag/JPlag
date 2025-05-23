@@ -61,7 +61,7 @@ public class MatchMerging {
         List<Match> globalMatches = new ArrayList<>(comparison.matches());
         globalMatches.addAll(comparison.ignoredMatches());
         globalMatches = mergeNeighbors(globalMatches, leftSubmission, rightSubmission);
-        globalMatches = globalMatches.stream().filter(it -> it.length() >= options.minimumTokenMatch()).toList();
+        globalMatches = globalMatches.stream().filter(it -> it.minimumLength() >= options.minimumTokenMatch()).toList();
         progressBar.step();
         if (numberOfMerges >= options.mergingOptions().minimumRequiredMerges()) {
             return new JPlagComparison(leftSubmission, rightSubmission, globalMatches, new ArrayList<>());
@@ -106,19 +106,19 @@ public class MatchMerging {
             Match upperNeighbor = neighbors.get(i).upperMatch();
             Match lowerNeighbor = neighbors.get(i).lowerMatch();
 
-            int lengthUpper = upperNeighbor.length();
-            int lengthLower = lowerNeighbor.length();
-            int tokenBetweenLeft = lowerNeighbor.startOfFirst() - upperNeighbor.endOfFirst() - 1;
+            int tokensBetweenLeft = lowerNeighbor.startOfFirst() - upperNeighbor.endOfFirst() - 1;
             int tokensBetweenRight = lowerNeighbor.startOfSecond() - upperNeighbor.endOfSecond() - 1;
-            double averageTokensBetweenMatches = (tokenBetweenLeft + tokensBetweenRight) / 2.0;
+            double averageTokensBetweenMatches = (tokensBetweenLeft + tokensBetweenRight) / 2.0;
             // Checking length is not necessary as GST already checked length while computing matches
             if (averageTokensBetweenMatches <= options.mergingOptions().maximumGapSize()
-                    && !mergeOverlapsFiles(leftSubmission, rightSubmission, upperNeighbor, tokenBetweenLeft, tokensBetweenRight)) {
+                    && !mergeOverlapsFiles(leftSubmission, rightSubmission, upperNeighbor, tokensBetweenLeft, tokensBetweenRight)) {
                 globalMatches.remove(upperNeighbor);
                 globalMatches.remove(lowerNeighbor);
-                globalMatches.add(new Match(upperNeighbor.startOfFirst(), upperNeighbor.startOfSecond(), lengthUpper + lengthLower));
-                globalMatches = removeToken(globalMatches, leftSubmission, rightSubmission, upperNeighbor, tokenBetweenLeft, tokensBetweenRight);
-                neighbors = computeNeighbors(globalMatches);
+                int leftLength = upperNeighbor.lengthOfFirst() + tokensBetweenLeft + lowerNeighbor.lengthOfFirst();
+                int leftRight = upperNeighbor.lengthOfSecond() + tokensBetweenRight + lowerNeighbor.lengthOfSecond();
+                globalMatches.add(new Match(upperNeighbor.startOfFirst(), upperNeighbor.startOfSecond(), leftLength, leftRight));
+                neighbors = computeNeighbors(globalMatches); // TODO could be update neighbors instead, all neighbor pairs where one of the neighbors
+                                                             // was upperNeighbor or lowerNeighbor is now neighboring the new match
                 i = 0;
                 numberOfMerges++;
             } else {
@@ -132,26 +132,24 @@ public class MatchMerging {
      * This function checks if a merge would go over file boundaries.
      * @param leftSubmission is the left submission
      * @param rightSubmission is the right submission
-     * @param upperNeighbor is the upper neighboring match
+     * @param upperMatch is the upper neighboring match
      * @param tokensBetweenLeft amount of token that separate the neighboring matches in the left submission and need to be
      * removed
      * @param tokensBetweenRight amount token that separate the neighboring matches in the send submission and need to be
      * removed
      * @return true if the merge goes over file boundaries.
      */
-    private boolean mergeOverlapsFiles(Submission leftSubmission, Submission rightSubmission, Match upperNeighbor, int tokensBetweenLeft,
+    private boolean mergeOverlapsFiles(Submission leftSubmission, Submission rightSubmission, Match upperMatch, int tokensBetweenLeft,
             int tokensBetweenRight) {
         if (leftSubmission.getFiles().size() == 1 && rightSubmission.getFiles().size() == 1) {
             return false;
         }
-        int startLeft = upperNeighbor.startOfFirst();
-        int startRight = upperNeighbor.startOfSecond();
-        int lengthUpper = upperNeighbor.length();
 
         List<Token> tokenLeft = new ArrayList<>(leftSubmission.getTokenList());
         List<Token> tokenRight = new ArrayList<>(rightSubmission.getTokenList());
-        tokenLeft = tokenLeft.subList(startLeft + lengthUpper, startLeft + lengthUpper + tokensBetweenLeft);
-        tokenRight = tokenRight.subList(startRight + lengthUpper, startRight + lengthUpper + tokensBetweenRight);
+
+        tokenLeft = tokenLeft.subList(upperMatch.endOfFirst(), upperMatch.endOfFirst() + tokensBetweenLeft);
+        tokenRight = tokenRight.subList(upperMatch.endOfSecond(), upperMatch.endOfSecond() + tokensBetweenRight);
 
         return containsFileEndToken(tokenLeft) || containsFileEndToken(tokenRight);
     }
@@ -163,42 +161,5 @@ public class MatchMerging {
      */
     private boolean containsFileEndToken(List<Token> token) {
         return token.stream().map(Token::getType).anyMatch(SharedTokenType.FILE_END::equals);
-    }
-
-    /**
-     * This function removes token from both submissions after a merge has been performed. Additionally it moves the
-     * starting positions from matches, that occur after the merged neighboring matches, by the amount of removed token.
-     * @param globalMatches
-     * @param leftSubmission is the left submission
-     * @param rightSubmission is the right submission
-     * @param upperNeighbor is the upper neighboring match
-     * @param tokensBetweenLeft amount of token that separate the neighboring matches in the left submission and need to be
-     * removed
-     * @param tokensBetweenRight amount token that separate the neighboring matches in the send submission and need to be
-     * removed
-     * @return shiftedMatches with the mentioned changes.
-     */
-    private List<Match> removeToken(List<Match> globalMatches, Submission leftSubmission, Submission rightSubmission, Match upperNeighbor,
-            int tokensBetweenLeft, int tokensBetweenRight) {
-        int startLeft = upperNeighbor.startOfFirst();
-        int startRight = upperNeighbor.startOfSecond();
-        int lengthUpper = upperNeighbor.length();
-
-        List<Token> tokenLeft = new ArrayList<>(leftSubmission.getTokenList());
-        List<Token> tokenRight = new ArrayList<>(rightSubmission.getTokenList());
-        tokenLeft.subList(startLeft + lengthUpper, startLeft + lengthUpper + tokensBetweenLeft).clear();
-        tokenRight.subList(startRight + lengthUpper, startRight + lengthUpper + tokensBetweenRight).clear();
-        leftSubmission.setTokenList(tokenLeft);
-        rightSubmission.setTokenList(tokenRight);
-
-        List<Match> shiftedMatches = new ArrayList<>();
-        for (Match match : globalMatches) {
-            int leftShift = match.startOfFirst() > startLeft ? tokensBetweenLeft : 0;
-            int rightShift = match.startOfSecond() > startRight ? tokensBetweenRight : 0;
-            Match alteredMatch = new Match(match.startOfFirst() - leftShift, match.startOfSecond() - rightShift, match.length());
-            shiftedMatches.add(alteredMatch);
-        }
-
-        return shiftedMatches;
     }
 }

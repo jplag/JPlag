@@ -27,11 +27,11 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
     }
 
     /**
-     * Get the total number of matched tokens for this comparison, which is the sum of the lengths of all subsequence
-     * matches. This excludes ignored matches.
+     * Get the total number of matched tokens for this comparison, which is the sum of the minimum lengths of all
+     * subsequence matches. This excludes ignored matches.
      */
     public int getNumberOfMatchedTokens() {
-        return matches.stream().mapToInt(Match::length).sum();
+        return matches.stream().mapToInt(Match::minimumLength).sum();
     }
 
     /**
