@@ -17,10 +17,10 @@ import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Match;
 import de.jplag.SharedTokenType;
+import de.jplag.Submission;
 import de.jplag.SubmissionSet;
 import de.jplag.SubmissionSetBuilder;
 import de.jplag.TestBase;
-import de.jplag.Token;
 import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
@@ -31,7 +31,7 @@ import de.jplag.options.JPlagOptions;
  * after Match Merging and used for all tests. The samples named "original" and "plag" are from PROGpedia and under the
  * CC BY 4.0 license.
  */
-class MergingTest extends TestBase {
+class SubsequenceMatchMergingTest extends TestBase {
     private final JPlagOptions options;
     private List<Match> matches;
     private List<JPlagComparison> comparisonsBefore;
@@ -42,7 +42,7 @@ class MergingTest extends TestBase {
     private static final int MAXIMUM_GAP_SIZE = 10;
     private static final int MINIMUM_REQUIRED_MERGES = 0;
 
-    MergingTest() throws ExitException {
+    SubsequenceMatchMergingTest() throws ExitException {
         options = getDefaultOptions("merging")
                 .withMergingOptions(new MergingOptions(true, MINIMUM_NEIGHBOR_LENGTH, MAXIMUM_GAP_SIZE, MINIMUM_REQUIRED_MERGES));
 
@@ -124,50 +124,31 @@ class MergingTest extends TestBase {
             int tokensAfterFirst = comparisonsAfter.get(i).firstSubmission().getTokenList().size();
             int tokensAfterSecond = comparisonsAfter.get(i).secondSubmission().getTokenList().size();
 
-            assertTrue(tokensAfterFirst >= tokensBeforeFirst && tokensAfterSecond >= tokensBeforeSecond);
+            assertTrue(tokensAfterFirst >= tokensBeforeFirst);
+            assertTrue(tokensAfterSecond >= tokensBeforeSecond);
         }
     }
 
     @Test
     @DisplayName("Test if amount of FILE_END token stayed the same")
     void testFileEnd() {
-        int amountFileEndBefore = 0;
-        for (JPlagComparison comparison : comparisonsBefore) {
-            List<Token> tokenLeft = new ArrayList<>(comparison.firstSubmission().getTokenList());
-            List<Token> tokenRight = new ArrayList<>(comparison.secondSubmission().getTokenList());
-
-            for (Token token : tokenLeft) {
-                if (SharedTokenType.FILE_END.equals(token.getType())) {
-                    amountFileEndBefore++;
-                }
-            }
-
-            for (Token token : tokenRight) {
-                if (SharedTokenType.FILE_END.equals(token.getType())) {
-                    amountFileEndBefore++;
-                }
-            }
-        }
-
-        int amountFileEndAfter = 0;
-        for (JPlagComparison comparison : comparisonsAfter) {
-            List<Token> tokenLeft = new ArrayList<>(comparison.firstSubmission().getTokenList());
-            List<Token> tokenRight = new ArrayList<>(comparison.secondSubmission().getTokenList());
-
-            for (Token token : tokenLeft) {
-                if (SharedTokenType.FILE_END.equals(token.getType())) {
-                    amountFileEndAfter++;
-                }
-            }
-
-            for (Token token : tokenRight) {
-                if (SharedTokenType.FILE_END.equals(token.getType())) {
-                    amountFileEndAfter++;
-                }
-            }
-        }
+        int amountFileEndBefore = countFileEndTokens(comparisonsBefore);
+        int amountFileEndAfter = countFileEndTokens(comparisonsAfter);
 
         assertEquals(amountFileEndBefore, amountFileEndAfter);
+    }
+
+    private int countFileEndTokens(List<JPlagComparison> comparisons) {
+        int fileEndTokens = 0;
+        for (JPlagComparison comparison : comparisons) {
+            fileEndTokens += countFileEndTokens(comparison.firstSubmission());
+            fileEndTokens += countFileEndTokens(comparison.secondSubmission());
+        }
+        return fileEndTokens;
+    }
+
+    private int countFileEndTokens(Submission submission) {
+        return Math.toIntExact(submission.getTokenList().stream().filter(token -> SharedTokenType.FILE_END.equals(token.getType())).count());
     }
 
     @Test
