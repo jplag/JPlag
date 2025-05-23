@@ -61,7 +61,9 @@ public class JavaLanguage implements Language {
     @Override
     public CommentExtractorSettings getCommentExtractorSettings() {
         return new CommentExtractorSettings(
-                List.of(new EnvironmentDelimiter("\""), new EnvironmentDelimiter("'"), new EnvironmentDelimiter("\"\"\"")), List.of("//"),
-                List.of(new EnvironmentDelimiter("/*", "*/")), List.of("\\"));
+                List.of(new EnvironmentDelimiter("\""), new EnvironmentDelimiter("'"), new EnvironmentDelimiter("\"\"\"")), // No comment environment
+                List.of("//"), // line comments
+                List.of(new EnvironmentDelimiter("/*", "*/")), // block comments
+                List.of("\\")); // escape characters
     }
 }
