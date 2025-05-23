@@ -93,6 +93,29 @@ public class MatchMerging {
     }
 
     /**
+     * Updates the list of neighbors intelligently after merging two matches by updating surrounding neighbors.
+     * @param neighbors the old list of neighbors.
+     * @param previouslyMergedNeighbor the neighboring matches that were merged.
+     * @param newMatch the resulting merged match.
+     * @return the list of new neighbors (updated shallow copy of input).
+     */
+    private List<Neighbor> updateNeighbors(List<Neighbor> neighbors, Neighbor previouslyMergedNeighbor, Match newMatch) {
+        List<Neighbor> newNeighbors = new ArrayList<>();
+        for (Neighbor neighbor : neighbors) {
+            if (previouslyMergedNeighbor == neighbor) {
+                continue; // Do not add merged neighbor.
+            } else if (neighbor.lowerMatch() == previouslyMergedNeighbor.upperMatch()) {
+                newNeighbors.add(new Neighbor(neighbor.upperMatch(), newMatch)); // Update neighbor above new match.
+            } else if (neighbor.upperMatch() == previouslyMergedNeighbor.lowerMatch()) {
+                newNeighbors.add(new Neighbor(newMatch, neighbor.lowerMatch())); // Update neighbor below new match.
+            } else {
+                newNeighbors.add(neighbor); // Do not update neighbor.
+            }
+        }
+        return newNeighbors;
+    }
+
+    /**
      * This function iterates through the neighboring matches and checks which fit the merging criteria. Those who do are
      * merged and the original matches are removed. This is done, until there are either no neighbors left, or none fit the
      * criteria
@@ -103,23 +126,23 @@ public class MatchMerging {
         List<Neighbor> neighbors = computeNeighbors(globalMatches);
 
         while (i < neighbors.size()) {
-            Match upperNeighbor = neighbors.get(i).upperMatch();
-            Match lowerNeighbor = neighbors.get(i).lowerMatch();
+            Match upperMatch = neighbors.get(i).upperMatch();
+            Match lowerMatch = neighbors.get(i).lowerMatch();
 
-            int tokensBetweenLeft = lowerNeighbor.startOfFirst() - upperNeighbor.endOfFirst() - 1;
-            int tokensBetweenRight = lowerNeighbor.startOfSecond() - upperNeighbor.endOfSecond() - 1;
+            int tokensBetweenLeft = lowerMatch.startOfFirst() - upperMatch.endOfFirst() - 1;
+            int tokensBetweenRight = lowerMatch.startOfSecond() - upperMatch.endOfSecond() - 1;
             double averageTokensBetweenMatches = (tokensBetweenLeft + tokensBetweenRight) / 2.0;
             // Checking length is not necessary as GST already checked length while computing matches
             if (averageTokensBetweenMatches <= options.mergingOptions().maximumGapSize()
-                    && !mergeOverlapsFiles(leftSubmission, rightSubmission, upperNeighbor, tokensBetweenLeft, tokensBetweenRight)) {
-                globalMatches.remove(upperNeighbor);
-                globalMatches.remove(lowerNeighbor);
-                int leftLength = upperNeighbor.lengthOfFirst() + tokensBetweenLeft + lowerNeighbor.lengthOfFirst();
-                int leftRight = upperNeighbor.lengthOfSecond() + tokensBetweenRight + lowerNeighbor.lengthOfSecond();
-                globalMatches.add(new Match(upperNeighbor.startOfFirst(), upperNeighbor.startOfSecond(), leftLength, leftRight));
-                neighbors = computeNeighbors(globalMatches); // TODO could be update neighbors instead, all neighbor pairs where one of the neighbors
-                                                             // was upperNeighbor or lowerNeighbor is now neighboring the new match
-                i = 0;
+                    && !mergeOverlapsFiles(leftSubmission, rightSubmission, upperMatch, tokensBetweenLeft, tokensBetweenRight)) {
+                globalMatches.remove(upperMatch);
+                globalMatches.remove(lowerMatch);
+                int leftLength = upperMatch.lengthOfFirst() + tokensBetweenLeft + lowerMatch.lengthOfFirst();
+                int leftRight = upperMatch.lengthOfSecond() + tokensBetweenRight + lowerMatch.lengthOfSecond();
+                Match mergedMatch = new Match(upperMatch.startOfFirst(), upperMatch.startOfSecond(), leftLength, leftRight);
+                globalMatches.add(mergedMatch);
+                neighbors = updateNeighbors(neighbors, neighbors.get(i), mergedMatch);
+                i = 0; // reset loop
                 numberOfMerges++;
             } else {
                 i++;
