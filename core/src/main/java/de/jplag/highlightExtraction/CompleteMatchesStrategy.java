@@ -37,8 +37,6 @@ public class CompleteMatchesStrategy implements FrequencyStrategy {
     @Override
     public void check(List<String> tokens, String comparisonId, Map<String, List<String>> map, int size) {
         String key = String.join(" ", tokens);
-        if (!(map.containsKey(key) && map.get(key).contains(comparisonId))) {
-            map.computeIfAbsent(key, k -> new java.util.ArrayList<>()).add(comparisonId);
-        }
+        map.computeIfAbsent(key, k -> new java.util.ArrayList<>()).add(comparisonId);
     }
 }

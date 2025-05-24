@@ -121,7 +121,7 @@ public class SubMatchesStrategy implements FrequencyStrategy{
                             List<String> tokens) {
         String key = String.join(" ", tokens);
         List<String> existing = map.get(key);
-        if (existing == null || existing.contains(comparisonId)) {
+        if (existing == null ) {
             return;
         }
         existing.add(comparisonId);
