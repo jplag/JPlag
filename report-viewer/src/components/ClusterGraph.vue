@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import type { ClusterListElement } from '@/model/ClusterListElement'
-import { Chart, registerables } from 'chart.js'
+import { Chart, registerables, type ChartEvent } from 'chart.js'
 import { ref, type PropType, type Ref, onMounted, computed, watch } from 'vue'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { EdgeLine, GraphController, GraphChart } from 'chartjs-chart-graph'
@@ -293,8 +293,20 @@ const hoveredEdge: Ref<{ firstId: string; secondId: string } | null> = ref(null)
 
 const EdgeHoverPlugin = {
   id: 'edgeTooltip',
-  afterEvent(chart, args) {
+  afterEvent(
+    chart: Chart,
+    args: {
+      event: ChartEvent
+      replay: boolean
+      changed?: boolean
+      cancelable: false
+      inChartArea: boolean
+    }
+  ) {
     const tooltip = chart.tooltip
+    if (!tooltip) {
+      return
+    }
 
     if (hoveredEdge.value == null) {
       tooltip.setActiveElements([], { x: 0, y: 0 })
@@ -303,13 +315,13 @@ const EdgeHoverPlugin = {
     const e = args.event
     tooltip.setActiveElements(
       [
-        { element: 'test', datasetIndex: 0, index: keys.value.indexOf(hoveredEdge.value.firstId) },
-        { element: 'test', datasetIndex: 0, index: keys.value.indexOf(hoveredEdge.value.secondId) }
+        { datasetIndex: 0, index: keys.value.indexOf(hoveredEdge.value.firstId) },
+        { datasetIndex: 0, index: keys.value.indexOf(hoveredEdge.value.secondId) }
       ],
-      { x: e.x, y: e.y }
+      { x: e.x ?? 0, y: e.y ?? 0 }
     )
-    tooltip.update(true)
-    tooltip.draw(chart.ctx)
+    //tooltip.update(true)
+    //tooltip.draw(chart.ctx)
   }
 }
 
@@ -385,12 +397,18 @@ const graphOptions = computed(() => {
         displayColors: false,
         callbacks: {
           title: () => {
+            if (hoveredEdge.value == null) {
+              return ''
+            }
             return hoveredEdge.value.firstId + ' <> ' + hoveredEdge.value.secondId
           },
           label: () => {
             return ''
           },
           beforeBody: () => {
+            if (hoveredEdge.value == null) {
+              return ''
+            }
             const avgSimilarity =
               getSimilarityFromKeyIndex(
                 keys.value.indexOf(hoveredEdge.value.firstId),
