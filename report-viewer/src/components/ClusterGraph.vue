@@ -291,6 +291,28 @@ const xPadding = computed(() => {
 
 const hoveredEdge: Ref<{ firstId: string; secondId: string } | null> = ref(null)
 
+const EdgeHoverPlugin = {
+  id: 'edgeTooltip',
+  afterEvent(chart, args) {
+    const tooltip = chart.tooltip
+
+    if (hoveredEdge.value == null) {
+      tooltip.setActiveElements([], { x: 0, y: 0 })
+      return
+    }
+    const e = args.event
+    tooltip.setActiveElements(
+      [
+        { element: 'test', datasetIndex: 0, index: keys.value.indexOf(hoveredEdge.value.firstId) },
+        { element: 'test', datasetIndex: 0, index: keys.value.indexOf(hoveredEdge.value.secondId) }
+      ],
+      { x: e.x, y: e.y }
+    )
+    tooltip.update(true)
+    tooltip.draw(chart.ctx)
+  }
+}
+
 const graphOptions = computed(() => {
   return {
     layout: {
@@ -363,7 +385,18 @@ const graphOptions = computed(() => {
         displayColors: false,
         callbacks: {
           title: () => {
+            return hoveredEdge.value.firstId + ' <> ' + hoveredEdge.value.secondId
+          },
+          label: () => {
             return ''
+          },
+          beforeBody: () => {
+            const avgSimilarity =
+              getSimilarityFromKeyIndex(
+                keys.value.indexOf(hoveredEdge.value.firstId),
+                keys.value.indexOf(hoveredEdge.value.secondId)
+              ) * 100
+            return `Average similarity: ${avgSimilarity.toFixed(2)}%`
           }
         }
       }
@@ -391,6 +424,7 @@ function drawGraph() {
     data: graphData.value,
     options: graphOptions.value,
     plugins: [
+      EdgeHoverPlugin,
       {
         id: 'onMouseOut',
         beforeEvent(chart, args) {
