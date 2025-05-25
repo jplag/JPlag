@@ -45,6 +45,7 @@
           <ClusterGraph
             :cluster="clusterListElement"
             class="grow print:max-h-full print:max-w-full print:grow-0"
+            :highlighted-edge="hoveredEdge"
             @line-hovered="(value) => (highlightedElement = value)"
           />
         </template>
@@ -65,6 +66,7 @@
           class="max-h-0 min-h-full flex-1 overflow-hidden"
           header="Comparisons of Cluster Members:"
           :highlighted-row-ids="highlightedElement ?? undefined"
+          @line-hovered="(value) => (hoveredEdge = value)"
         >
           <template v-if="comparisons.length < maxAmountOfComparisonsInCluster" #footer>
             <p class="w-full pt-1 text-center font-bold">
@@ -201,6 +203,7 @@ const maxAmountOfComparisonsInCluster = computed(() => {
 })
 
 const highlightedElement: Ref<{ firstId: string; secondId: string } | null> = ref(null)
+const hoveredEdge: Ref<{ firstId: string; secondId: string } | null> = ref(null)
 
 onErrorCaptured((error) => {
   redirectOnError(error, 'Error displaying cluster:\n', 'OverviewView', 'Back to overview')

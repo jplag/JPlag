@@ -113,6 +113,14 @@
                         item.id % 2 == 1,
                       'bg-accent/30!': isHighlightedRow(item)
                     }"
+                    @mouseover="
+                      () =>
+                        emit('lineHovered', {
+                          firstId: item.firstSubmissionId,
+                          secondId: item.secondSubmissionId
+                        })
+                    "
+                    @mouseleave="() => emit('lineHovered', null)"
                   >
                     <RouterLink
                       :to="{
@@ -235,6 +243,10 @@ const props = defineProps({
     default: undefined
   }
 })
+
+const emit = defineEmits<{
+  (event: 'lineHovered', value: { firstId: string; secondId: string } | null): void
+}>()
 
 const displayedComparisons = computed(() => {
   const comparisons = getFilteredComparisons(getSortedComparisons(Array.from(props.topComparisons)))

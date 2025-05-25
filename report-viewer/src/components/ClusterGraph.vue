@@ -30,6 +30,10 @@ const props = defineProps({
   cluster: {
     type: Object as PropType<ClusterListElement>,
     required: true
+  },
+  highlightedEdge: {
+    type: Object as PropType<{ firstId: string; secondId: string } | null>,
+    default: null
   }
 })
 
@@ -60,6 +64,21 @@ const edges = computed(() => {
     })
   })
   return edges
+})
+
+const highlightedEdgeIndexes = computed(() => {
+  if (props.highlightedEdge == null) {
+    return null
+  }
+  const firstIndex = keys.value.indexOf(props.highlightedEdge.firstId)
+  const secondIndex = keys.value.indexOf(props.highlightedEdge.secondId)
+  if (firstIndex == -1 || secondIndex == -1) {
+    console.warn(
+      `Could not find index for ${props.highlightedEdge.firstId} or ${props.highlightedEdge.secondId}`
+    )
+    return null
+  }
+  return { firstIndex, secondIndex }
 })
 
 type HoverableEdge = {
@@ -212,9 +231,23 @@ function getEdgeDashStyle(firstIndex: number, secondIndex: number) {
 }
 
 function getEdgeColor(firstIndex: number, secondIndex: number) {
+  let isHighlightedRow = false
+  if (highlightedEdgeIndexes.value != null) {
+    if (
+      (highlightedEdgeIndexes.value.firstIndex == firstIndex &&
+        highlightedEdgeIndexes.value.secondIndex == secondIndex) ||
+      (highlightedEdgeIndexes.value.firstIndex == secondIndex &&
+        highlightedEdgeIndexes.value.secondIndex == firstIndex)
+    ) {
+      isHighlightedRow = true
+    }
+  }
   const similarity = getSimilarityFromKeyIndex(firstIndex, secondIndex)
   if (similarity == 0) {
     return graphColors.additionalLine.value
+  }
+  if (isHighlightedRow) {
+    return graphColors.highlightedLine(1)
   }
   return graphColors.contentFillAlpha(getEdgeAlphaFromKeyIndex(firstIndex, secondIndex))
 }
@@ -403,6 +436,13 @@ watch(
       o: graphOptions.value
     }
   }),
+  () => {
+    drawGraph()
+  }
+)
+
+watch(
+  () => props.highlightedEdge,
   () => {
     drawGraph()
   }
