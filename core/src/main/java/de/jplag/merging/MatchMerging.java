@@ -60,7 +60,7 @@ public class MatchMerging {
         Submission rightSubmission = comparison.secondSubmission().copy();
         List<Match> globalMatches = new ArrayList<>(comparison.matches());
         globalMatches.addAll(comparison.ignoredMatches());
-        globalMatches = mergeNeighbors(globalMatches, leftSubmission, rightSubmission);
+        mergeNeighbors(globalMatches, leftSubmission, rightSubmission);
         globalMatches = globalMatches.stream().filter(it -> it.minimumLength() >= options.minimumTokenMatch()).toList();
         progressBar.step();
         if (numberOfMerges >= options.mergingOptions().minimumRequiredMerges()) {
@@ -104,7 +104,8 @@ public class MatchMerging {
         for (Neighbor neighbor : neighbors) {
             if (previouslyMergedNeighbor == neighbor) {
                 continue; // Do not add merged neighbor.
-            } else if (neighbor.lowerMatch() == previouslyMergedNeighbor.upperMatch()) {
+            }
+            if (neighbor.lowerMatch() == previouslyMergedNeighbor.upperMatch()) {
                 newNeighbors.add(new Neighbor(neighbor.upperMatch(), newMatch)); // Update neighbor above new match.
             } else if (neighbor.upperMatch() == previouslyMergedNeighbor.lowerMatch()) {
                 newNeighbors.add(new Neighbor(newMatch, neighbor.lowerMatch())); // Update neighbor below new match.
@@ -121,7 +122,7 @@ public class MatchMerging {
      * criteria
      * @return globalMatches containing merged matches.
      */
-    private List<Match> mergeNeighbors(List<Match> globalMatches, Submission leftSubmission, Submission rightSubmission) {
+    private void mergeNeighbors(List<Match> globalMatches, Submission leftSubmission, Submission rightSubmission) {
         int i = 0;
         List<Neighbor> neighbors = computeNeighbors(globalMatches);
 
@@ -148,7 +149,6 @@ public class MatchMerging {
                 i++;
             }
         }
-        return globalMatches;
     }
 
     /**
