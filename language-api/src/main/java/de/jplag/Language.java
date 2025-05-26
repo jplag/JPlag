@@ -127,7 +127,7 @@ public interface Language {
     /**
      * @return True, if the language module can be used by the multi-language module
      */
-    default boolean supportsMultilanguage() {
+    default boolean supportsMultiLanguage() {
         return true;
     }
 

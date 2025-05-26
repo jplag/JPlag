@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 import de.jplag.multilang.MultiLanguageOptions;
 import de.jplag.multilang.MultiLanguageParser;
 
-public class LanguageSuffixConflictsTest {
+public class FileExtensionConflictsTest {
     @Test
-    void testNoConflictsBetweenLanguageSuffixes() {
+    void testNoConflictsBetweenFileExtensions() {
         assertDoesNotThrow(() -> new MultiLanguageParser(new MultiLanguageOptions()),
-                "There were conflicts between language suffixes. For Details see error message");
+                "There is conflict regarding file extensions between two or more language modules. Ensure exactly one module has priority");
     }
 }

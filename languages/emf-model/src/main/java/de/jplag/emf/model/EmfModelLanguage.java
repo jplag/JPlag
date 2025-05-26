@@ -57,7 +57,7 @@ public class EmfModelLanguage extends DynamicEmfLanguage {
     }
 
     @Override
-    public boolean supportsMultilanguage() {
+    public boolean supportsMultiLanguage() {
         return false;
     }
 }

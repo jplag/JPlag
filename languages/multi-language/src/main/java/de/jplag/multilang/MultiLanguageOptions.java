@@ -21,7 +21,7 @@ public class MultiLanguageOptions extends LanguageOptions {
     public List<Language> getLanguages() {
         if (this.languages == null) {
             if (languageNames.getValue() == null) {
-                this.languages = LanguageLoader.getAllAvailableLanguages().values().stream().filter(Language::supportsMultilanguage).toList();
+                this.languages = LanguageLoader.getAllAvailableLanguages().values().stream().filter(Language::supportsMultiLanguage).toList();
             } else {
                 this.languages = Arrays.stream(languageNames.getValue().split(String.valueOf(LIST_SEPARATOR)))
                         .map(name -> LanguageLoader.getLanguage(name)

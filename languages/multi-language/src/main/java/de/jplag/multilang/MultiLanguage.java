@@ -61,7 +61,7 @@ public class MultiLanguage implements Language {
     }
 
     @Override
-    public boolean supportsMultilanguage() {
+    public boolean supportsMultiLanguage() {
         return false;
     }
 

@@ -1,6 +1,6 @@
 # Multi-Language module
 
-This module allows submissions to be compared with files in multiple programming languages. The parsing will be delegated to a different language module per file extension.
+This module allows to compare submissions that contain code files in multiple programming languages. The parsing will be delegated to the language modules associated with the respective file extensions.
 
 This does not entail comparing implementations of the same functionality in different languages to each other, but allows comparing submissions that use more than one language each.
 
