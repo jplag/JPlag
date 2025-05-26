@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import de.jplag.commentextraction.Comment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +48,7 @@ public class Submission implements Comparable<Submission> {
     private List<Token> tokenList; // list of tokens from all files, used for comparison
     private JPlagComparison baseCodeComparison; // Comparison of thus submission with the base code
     private Map<File, Integer> fileTokenCount;
-    private List<String> comments; // list of comments from all files
+    private List<Comment> comments; // list of comments from all files
 
     /**
      * Creates a submission.
@@ -270,6 +271,9 @@ public class Submission implements Comparable<Submission> {
                     logger.warn("Could not extract comments from {}: {}", file.getAbsolutePath(), e.getMessage());
                 }
             }
+            logger.debug("Found {} comments", comments.size());
+        } else {
+            logger.debug("Language does not support comment extraction");
         }
 
         if (tokenList.size() < minimalTokens) {

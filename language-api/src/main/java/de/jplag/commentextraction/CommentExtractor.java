@@ -11,17 +11,25 @@ import de.jplag.util.FileUtils;
 public class CommentExtractor {
 
     private String remainingContent;
-    private final List<String> comments;
+    private final List<Comment> comments;
     private final CommentExtractorSettings settings;
+    private String lookBehind;
+    private int currentCol;
+    private int currentLine;
+    private final File file;
 
     public CommentExtractor(File file, CommentExtractorSettings settings) throws IOException {
-        this(FileUtils.readFileContent(file), settings);
+        this(file, FileUtils.readFileContent(file), settings);
     }
 
-    public CommentExtractor(String fileContent, CommentExtractorSettings settings) {
+    public CommentExtractor(File file, String fileContent, CommentExtractorSettings settings) {
         this.remainingContent = fileContent;
         this.settings = settings;
         this.comments = new ArrayList<>();
+        this.lookBehind = "";
+        this.file = file;
+        this.currentCol = 1;
+        this.currentLine = 1;
     }
 
     private void match(String expected) {
@@ -35,10 +43,24 @@ public class CommentExtractor {
     private String advance(int length) {
         String advancedBy = remainingContent.substring(0, length);
         remainingContent = remainingContent.substring(length);
+
+        // Checking for line breaks
+        String combined = lookBehind + advancedBy;
+        if (combined.contains(System.lineSeparator())) {
+            String[] lines = combined.split(System.lineSeparator(), -1);
+            this.currentLine += lines.length - 1;
+            String lastLine = lines[lines.length - 1];
+            this.currentCol = lastLine.length() + 1;
+            lookBehind = lastLine.substring(Math.max(0, lastLine.length() - System.lineSeparator().length() + 1));
+        } else {
+            this.currentCol += length;
+            lookBehind = advancedBy.substring(Math.max(0, advancedBy.length() - System.lineSeparator().length() + 1));
+        }
+
         return advancedBy;
     }
 
-    public List<String> extract() {
+    public List<Comment> extract() {
         while (!remainingContent.isEmpty()) {
             this.parseAny();
         }
@@ -60,7 +82,7 @@ public class CommentExtractor {
         for (String lineComment : this.settings.lineCommentDelimiters()) {
             if (remainingContent.startsWith(lineComment)) {
                 this.match(lineComment);
-                this.parseLineComment();
+                this.parseLineComment(lineComment);
                 return;
             }
         }
@@ -88,19 +110,34 @@ public class CommentExtractor {
         this.parseEnvironment(environment);
     }
 
-    private void parseLineComment() {
+    private void parseLineComment(String commentSequence) {
         StringBuilder comment = new StringBuilder();
-        while (!this.remainingContent.startsWith("\n") && !this.remainingContent.isEmpty()) {
-            comment.append(this.remainingContent.charAt(0));
-            this.advance(1);
+        int startLine = this.currentLine;
+        int startCol = this.currentCol - commentSequence.length();
+        while (!this.remainingContent.startsWith(System.lineSeparator()) && !this.remainingContent.isEmpty()) {
+            comment.append(this.advance(1));
         }
-        this.comments.add("LINE COMMENT: " + comment.toString());
+        this.comments.add(new Comment(
+                file,
+                comment.toString(),
+                startLine,
+                startCol,
+                CommentType.LINE
+        ));
     }
 
     private void parseBlockComment(EnvironmentDelimiter blockComment) {
+        int startLine = this.currentLine;
+        int startCol = this.currentCol;
         String comment = this.parseEnvironment(blockComment);
 
-        this.comments.add("BLOCK COMMENT: " + comment);
+        this.comments.add(new Comment(
+                file,
+                comment,
+                startLine,
+                startCol,
+                CommentType.BLOCK
+        ));
     }
 
     private String parseEnvironment(EnvironmentDelimiter environment) {
