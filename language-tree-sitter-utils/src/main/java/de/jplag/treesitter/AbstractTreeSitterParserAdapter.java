@@ -1,4 +1,4 @@
-package de.jplag.tree_sitter;
+package de.jplag.treesitter;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,30 +7,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.treesitter.TSLanguage;
-import org.treesitter.TSNode;
-import org.treesitter.TSParser;
-import org.treesitter.TSTree;
-
 import de.jplag.AbstractParser;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
+import io.github.treesitter.jtreesitter.InputEncoding;
+import io.github.treesitter.jtreesitter.Language;
+import io.github.treesitter.jtreesitter.Node;
+import io.github.treesitter.jtreesitter.Parser;
+import io.github.treesitter.jtreesitter.Tree;
+
 /**
  * Base class for Tree-sitter parser adapters.
- * @param <T> The type of {@link TSLanguage} representing the grammar and parsing rules for the target language.
  */
-public abstract class AbstractTreeSitterParserAdapter<T extends TSLanguage> extends AbstractParser {
-
-    protected final TSParser parser;
+public abstract class AbstractTreeSitterParserAdapter extends AbstractParser {
+    protected final Parser parser;
 
     /**
      * Creates a new {@code AbstractTreeSitterParserAdapter} for the specified {@link TSLanguage}.
-     * @param language The {@link TSLanguage} instance representing the grammar and parsing rules to be used by this adapter
+     * @param language The {@link Language} instance representing the grammar and parsing rules to be used by this adapter
      */
-    public AbstractTreeSitterParserAdapter(T language) {
-        this.parser = new TSParser();
-        this.parser.setLanguage(language);
+    public AbstractTreeSitterParserAdapter(Language language) {
+        this.parser = new Parser(language);
     }
 
     /**
@@ -56,12 +54,10 @@ public abstract class AbstractTreeSitterParserAdapter<T extends TSLanguage> exte
             throw new ParsingException(file, "Failed to read file: " + exception.getMessage(), exception);
         }
 
-        TSTree tree = parser.parseString(null, code);
-        if (tree == null) {
-            throw new ParsingException(file, "Tree-sitter failed to parse file: " + file.getName());
-        }
+        Tree tree = parser.parse(code, InputEncoding.UTF_8)
+                .orElseThrow(() -> new ParsingException(file, "Tree-sitter failed to parse file: " + file.getName()));
 
-        TSNode rootNode = tree.getRootNode();
+        Node rootNode = tree.getRootNode();
         return extractTokens(file, rootNode);
     }
 
@@ -71,5 +67,5 @@ public abstract class AbstractTreeSitterParserAdapter<T extends TSLanguage> exte
      * @param rootNode The root node of the syntax tree
      * @return A list of tokens extracted from the AST of the file
      */
-    protected abstract List<Token> extractTokens(File file, TSNode rootNode);
+    protected abstract List<Token> extractTokens(File file, Node rootNode);
 }
