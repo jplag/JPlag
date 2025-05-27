@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import de.jplag.multilang.MultiLanguageOptions;
 import de.jplag.multilang.MultiLanguageParser;
 
-public class FileExtensionConflictsTest {
+class FileExtensionConflictsTest {
     @Test
     void testNoConflictsBetweenFileExtensions() {
         assertDoesNotThrow(() -> new MultiLanguageParser(new MultiLanguageOptions()),
