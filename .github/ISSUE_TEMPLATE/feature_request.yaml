@@ -18,7 +18,7 @@ body:
     id: use_case
     attributes:
       label: Use Case
-      description: Why is this feature needed? How would it be used in the context of plagiarism detection or submission analysis?
+      description: Why is this feature needed? In which context do you want to use it?
       placeholder: E.g., to enable integration with grading systems, I want to export results in CSV format for bulk processing.
     validations:
       required: true
