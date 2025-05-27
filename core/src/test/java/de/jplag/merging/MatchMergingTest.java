@@ -31,7 +31,7 @@ import de.jplag.options.JPlagOptions;
  * after Match Merging and used for all tests. The samples named "original" and "plag" are from PROGpedia and under the
  * CC BY 4.0 license.
  */
-class SubsequenceMatchMergingTest extends TestBase {
+class MatchMergingTest extends TestBase {
     private final JPlagOptions options;
     private List<Match> matches;
     private List<JPlagComparison> comparisonsBefore;
@@ -42,7 +42,7 @@ class SubsequenceMatchMergingTest extends TestBase {
     private static final int MAXIMUM_GAP_SIZE = 10;
     private static final int MINIMUM_REQUIRED_MERGES = 0;
 
-    SubsequenceMatchMergingTest() throws ExitException {
+    MatchMergingTest() throws ExitException {
         options = getDefaultOptions("merging")
                 .withMergingOptions(new MergingOptions(true, MINIMUM_NEIGHBOR_LENGTH, MAXIMUM_GAP_SIZE, MINIMUM_REQUIRED_MERGES));
 
