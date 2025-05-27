@@ -43,7 +43,7 @@ public class WindowOfMatchesStrategy implements FrequencyStrategy{
         for (int i = 0; i <= tokens.size() - size; i++) {
             List<String> window = tokens.subList(i, i + size);
             String key = String.join(" ", window);
-            map.computeIfAbsent(key, k -> new ArrayList<>()).add(comparisonId);
+            map.computeIfAbsent(key, k -> new ArrayList<>());
         }
     }
 }

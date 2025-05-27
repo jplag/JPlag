@@ -22,7 +22,7 @@ public class CompleteMatchesStrategy implements FrequencyStrategy {
     @Override
     public void create(List<String> tokens, String comparisonId, Map<String, List<String>> map, int size) {
         String key = String.join(" ", tokens);
-        map.computeIfAbsent(key, k -> new java.util.ArrayList<>()).add(comparisonId);
+        map.computeIfAbsent(key, k -> new java.util.ArrayList<>());
     }
 
     /**

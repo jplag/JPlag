@@ -79,7 +79,7 @@ public class ContainedStrategy implements FrequencyStrategy{
                          String comparisonId,
                          List<String> tokens) {
         String key = String.join(" ", tokens);
-        map.computeIfAbsent(key, k -> new ArrayList<>()).add(comparisonId);
+        map.computeIfAbsent(key, k -> new ArrayList<>());
     }
 }
 
