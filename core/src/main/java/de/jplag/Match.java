@@ -57,7 +57,7 @@ public record Match(int startOfFirst, int startOfSecond, int lengthOfFirst, int 
      * method now returns the minimal length.
      * @see Match#minimumLength()
      */
-    @Deprecated(since = "4.6.2", forRemoval = true)
+    @Deprecated(since = "6.2.0", forRemoval = true)
     public int length() {
         return minimumLength();
     }
