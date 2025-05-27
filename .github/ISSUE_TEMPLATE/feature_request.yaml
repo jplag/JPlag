@@ -10,7 +10,7 @@ body:
     attributes:
       label: Feature Description
       description: A clear and concise description of the feature you would like to see.
-      placeholder: E.g., add support for CSV export of similarity reports
+      placeholder: Insert feature description here...
     validations:
       required: true
 
@@ -19,6 +19,6 @@ body:
     attributes:
       label: Use Case
       description: Why is this feature needed? In which context do you want to use it?
-      placeholder: E.g., to enable integration with grading systems, I want to export results in CSV format for bulk processing.
+      placeholder: Insert use case here...
     validations:
       required: true
