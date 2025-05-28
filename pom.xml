@@ -72,8 +72,8 @@
         <!--suppress UnresolvedMavenProperty -->
         <sonar.coverage.jacoco.xmlReportPaths>${maven.multiModuleProjectDirectory}/coverage-report/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>22</maven.compiler.source>
+        <maven.compiler.target>22</maven.compiler.target>
         <spotless.version>2.44.4</spotless.version>
         <slf4j.version>2.0.17</slf4j.version>
         <junit.version>5.12.2</junit.version>
@@ -108,10 +108,12 @@
                 <artifactId>antlr4</artifactId>
                 <version>${antlr4.version}</version>
             </dependency>
+
+            <!-- Tree-sitter -->
             <dependency>
-                <groupId>net.sourceforge.argparse4j</groupId>
-                <artifactId>argparse4j</artifactId>
-                <version>0.9.0</version>
+                <groupId>io.github.tree-sitter</groupId>
+                <artifactId>jtreesitter</artifactId>
+                <version>0.25.1</version>
             </dependency>
 
             <!-- CoreNLP -->
@@ -132,6 +134,13 @@
                 <artifactId>slf4j-simple</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>net.sourceforge.argparse4j</groupId>
+                <artifactId>argparse4j</artifactId>
+                <version>0.9.0</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.kohsuke.metainf-services</groupId>
                 <artifactId>metainf-services</artifactId>
