@@ -36,12 +36,12 @@
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
-            <artifactId>language-tree-sitter-utils</artifactId>
+            <artifactId>language-testutils</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
-            <artifactId>language-testutils</artifactId>
+            <artifactId>language-tree-sitter-utils</artifactId>
             <version>${revision}</version>
         </dependency>
 
