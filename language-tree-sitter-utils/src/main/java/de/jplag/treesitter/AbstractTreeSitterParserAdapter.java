@@ -2,6 +2,7 @@ package de.jplag.treesitter;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.foreign.MemorySegment;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,15 +22,25 @@ import io.github.treesitter.jtreesitter.Tree;
  * Base class for Tree-sitter parser adapters.
  */
 public abstract class AbstractTreeSitterParserAdapter extends AbstractParser {
+
     protected final Parser parser;
 
     /**
      * Creates a new {@code AbstractTreeSitterParserAdapter} for the specified {@link Language}.
-     * @param language The {@link Language} instance representing the grammar and parsing rules to be used by this adapter
      */
-    public AbstractTreeSitterParserAdapter(Language language) {
+    protected AbstractTreeSitterParserAdapter() {
+        Language language = new Language(getLanguageMemorySegment());
         this.parser = new Parser(language);
     }
+
+    /**
+     * Returns the {@link MemorySegment} representing the grammar and parsing rules for this language
+     * <p>
+     * Subclasses must implement this method to provide the {@link MemorySegment} that points to the native Tree-sitter
+     * language instance.
+     * @return the memory segment of the language grammar for this parser adapter
+     */
+    protected abstract MemorySegment getLanguageMemorySegment();
 
     /**
      * Parses the given set of files and extracts tokens from each.
