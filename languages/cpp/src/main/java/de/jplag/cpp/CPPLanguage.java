@@ -50,4 +50,9 @@ public class CPPLanguage implements Language {
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
         return new CPPParserAdapter().parse(files);
     }
+
+    @Override
+    public boolean hasPriority() {
+        return true; // Priority over the C language module.
+    }
 }
