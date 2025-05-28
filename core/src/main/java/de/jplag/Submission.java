@@ -272,8 +272,6 @@ public class Submission implements Comparable<Submission> {
                 }
             }
             logger.debug("Found {} comments", comments.size());
-        } else {
-            logger.debug("Language does not support comment extraction");
         }
 
         if (tokenList.size() < minimalTokens) {
