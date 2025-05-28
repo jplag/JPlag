@@ -6,6 +6,7 @@ import de.jplag.treesitter.TreeSitterLanguage;
 import de.jplag.treesitter.library.NativeLibraryType;
 
 public class TreeSitterPython extends TreeSitterLanguage {
+
     private static final TreeSitterPython INSTANCE = new TreeSitterPython();
 
     private TreeSitterPython() {
