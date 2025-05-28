@@ -24,7 +24,7 @@ public abstract class AbstractTreeSitterParserAdapter extends AbstractParser {
     protected final Parser parser;
 
     /**
-     * Creates a new {@code AbstractTreeSitterParserAdapter} for the specified {@link TSLanguage}.
+     * Creates a new {@code AbstractTreeSitterParserAdapter} for the specified {@link Language}.
      * @param language The {@link Language} instance representing the grammar and parsing rules to be used by this adapter
      */
     public AbstractTreeSitterParserAdapter(Language language) {
