@@ -18,6 +18,7 @@
         <module>golang</module>
         <module>java</module>
         <module>kotlin</module>
+        <module>python</module>
         <module>python-3</module>
         <module>rlang</module>
         <module>rust</module>
