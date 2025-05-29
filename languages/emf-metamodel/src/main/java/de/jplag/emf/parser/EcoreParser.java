@@ -68,7 +68,7 @@ public class EcoreParser extends AbstractParser {
      * @return the correct view file suffix for the model view. Can be overriden in subclasses for alternative views.
      */
     protected String getCorrespondingViewFileSuffix() {
-        return EmfLanguage.VIEW_FILE_SUFFIX;
+        return EmfLanguage.VIEW_FILE_EXTENSION;
     }
 
     /**

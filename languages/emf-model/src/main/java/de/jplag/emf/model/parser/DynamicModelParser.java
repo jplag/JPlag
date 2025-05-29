@@ -39,7 +39,7 @@ public class DynamicModelParser extends DynamicEcoreParser {
         // implicit assumption: Metamodel gets parsed first!
         if (file.getName().endsWith(EmfLanguage.FILE_ENDING)) {
             parseMetamodelFile(file);
-        } else if (file.getName().endsWith(EmfLanguage.VIEW_FILE_SUFFIX)) {
+        } else if (file.getName().endsWith(EmfLanguage.VIEW_FILE_EXTENSION)) {
             logger.warn(VIEW_FILE_WARNING, file.getName());
         } else {
             if (metapackages.isEmpty()) {
@@ -51,7 +51,7 @@ public class DynamicModelParser extends DynamicEcoreParser {
 
     @Override
     protected String getCorrespondingViewFileSuffix() {
-        return EmfLanguage.VIEW_FILE_SUFFIX;
+        return EmfLanguage.VIEW_FILE_EXTENSION;
     }
 
     @Override

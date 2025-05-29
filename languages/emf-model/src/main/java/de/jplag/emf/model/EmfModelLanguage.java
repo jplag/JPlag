@@ -37,7 +37,7 @@ public class EmfModelLanguage extends DynamicEmfLanguage {
     }
 
     @Override
-    public String viewFileSuffix() {
+    public String viewFileExtension() {
         return ".treeview";
     }
 

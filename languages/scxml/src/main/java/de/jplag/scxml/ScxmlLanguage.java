@@ -17,7 +17,7 @@ import de.jplag.scxml.parser.ScxmlParserAdapter;
 @MetaInfServices(Language.class)
 public class ScxmlLanguage implements Language {
 
-    public static final String VIEW_FILE_SUFFIX = ".scxmlview";
+    public static final String VIEW_FILE_EXTENSION = ".scxmlview";
 
     @Override
     public List<String> fileExtensions() {
@@ -50,7 +50,7 @@ public class ScxmlLanguage implements Language {
     }
 
     @Override
-    public String viewFileSuffix() {
-        return VIEW_FILE_SUFFIX;
+    public String viewFileExtension() {
+        return VIEW_FILE_EXTENSION;
     }
 }

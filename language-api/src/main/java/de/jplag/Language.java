@@ -88,8 +88,17 @@ public interface Language {
 
     /**
      * If the language uses representation files, this method returns the suffix used for the representation files.
+     * @deprecated see {@link Language#viewFileExtension()}
      */
+    @Deprecated(since = "7.0.0", forRemoval = true)
     default String viewFileSuffix() {
+        return viewFileExtension();
+    }
+
+    /**
+     * If the language uses representation files, this method returns the file extension used for the representation files.
+     */
+    default String viewFileExtension() {
         return "";
     }
 

@@ -24,7 +24,7 @@ public class EmfLanguage implements Language {
         EMFUtil.registerEcoreExtension();
     }
 
-    public static final String VIEW_FILE_SUFFIX = ".emfatic";
+    public static final String VIEW_FILE_EXTENSION = ".emfatic";
     public static final String FILE_ENDING = "." + EcorePackage.eNAME;
 
     @Override
@@ -58,7 +58,7 @@ public class EmfLanguage implements Language {
     }
 
     @Override
-    public String viewFileSuffix() {
-        return VIEW_FILE_SUFFIX;
+    public String viewFileExtension() {
+        return VIEW_FILE_EXTENSION;
     }
 }
