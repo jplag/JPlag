@@ -2,7 +2,6 @@ package de.jplag.multilang;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -30,7 +29,7 @@ public class MultiLanguageParser {
     }
 
     private Optional<Language> findLanguageForFile(File file) {
-        return this.languages.stream().filter(language -> Arrays.stream(language.suffixes()).anyMatch(suffix -> file.getName().endsWith(suffix)))
+        return this.languages.stream().filter(language -> language.fileExtensions().stream().anyMatch(suffix -> file.getName().endsWith(suffix)))
                 .findFirst();
     }
 }

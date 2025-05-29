@@ -1,7 +1,6 @@
 package de.jplag.multilang;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -22,9 +21,9 @@ public class MultiLanguage implements Language {
     }
 
     @Override
-    public String[] suffixes() {
-        return LanguageLoader.getAllAvailableLanguages().values().stream().filter(it -> it != this).flatMap(it -> Arrays.stream(it.suffixes()))
-                .toArray(String[]::new);
+    public List<String> fileExtensions() {
+        return LanguageLoader.getAllAvailableLanguages().values().stream().filter(it -> it != this).flatMap(it -> it.fileExtensions().stream())
+                .toList();
     }
 
     @Override

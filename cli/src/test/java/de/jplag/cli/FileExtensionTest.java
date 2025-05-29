@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -22,7 +21,7 @@ class FileExtensionTest extends CliTest {
     void testDefaultExtensions() throws IOException, ExitException {
         JPlagOptions options = runCliForOptions();
 
-        List<String> expectedExtensions = Arrays.asList(new JavaLanguage().suffixes());
+        List<String> expectedExtensions = new JavaLanguage().fileExtensions();
         assertIterableEquals(expectedExtensions, options.fileSuffixes());
     }
 

@@ -17,8 +17,8 @@ import de.jplag.Token;
 public class CPPLanguage implements Language {
 
     @Override
-    public String[] suffixes() {
-        return new String[] {".cpp", ".cxx", ".c++", ".c", ".cc", ".h", ".hpp", ".hh", ".hxx"};
+    public List<String> fileExtensions() {
+        return List.of(".cpp", ".cxx", ".c++", ".c", ".cc", ".h", ".hpp", ".hh", ".hxx");
     }
 
     @Override

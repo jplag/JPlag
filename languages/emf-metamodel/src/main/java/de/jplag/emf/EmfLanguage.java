@@ -28,8 +28,8 @@ public class EmfLanguage implements Language {
     public static final String FILE_ENDING = "." + EcorePackage.eNAME;
 
     @Override
-    public String[] suffixes() {
-        return new String[] {FILE_ENDING};
+    public List<String> fileExtensions() {
+        return List.of(FILE_ENDING);
     }
 
     @Override

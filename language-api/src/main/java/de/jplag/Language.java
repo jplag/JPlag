@@ -14,8 +14,18 @@ public interface Language {
     /**
      * File extensions for the files containing code of the language. All capitalization variants of extensions are matched.
      * An empty array means all suffixes are valid.
+     * @deprecated see {@link Language#fileExtensions()}
      */
-    String[] suffixes();
+    @Deprecated(since = "7.0.0", forRemoval = true)
+    default String[] suffixes() {
+        return fileExtensions().toArray(String[]::new);
+    }
+
+    /**
+     * Permitted file extensions for the program files of this language. All capitalization variants of extensions are
+     * matched. An empty array means all extensions are valid.
+     */
+    List<String> fileExtensions();
 
     /**
      * Descriptive name of the language.

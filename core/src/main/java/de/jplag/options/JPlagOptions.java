@@ -3,7 +3,6 @@ package de.jplag.options;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -110,7 +109,7 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
     public List<String> fileSuffixes() {
         var language = language();
         if ((fileSuffixes == null || fileSuffixes.isEmpty()) && language != null) {
-            return Arrays.stream(language.suffixes()).toList();
+            return language.fileExtensions();
         }
         return fileSuffixes == null ? null : Collections.unmodifiableList(fileSuffixes);
     }

@@ -49,7 +49,7 @@ class LanguageTest extends CliTest {
         JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.LANGUAGE, language.getIdentifier()));
 
         assertEquals(language.getIdentifier(), options.language().getIdentifier());
-        assertEquals(Arrays.asList(language.suffixes()), options.fileSuffixes());
+        assertEquals(Arrays.asList(language.fileExtensions()), options.fileSuffixes());
     }
 
     @Test

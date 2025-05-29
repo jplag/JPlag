@@ -20,8 +20,8 @@ public class ScxmlLanguage implements Language {
     public static final String VIEW_FILE_SUFFIX = ".scxmlview";
 
     @Override
-    public String[] suffixes() {
-        return new String[] {".scxml"};
+    public List<String> fileExtensions() {
+        return List.of(".scxml");
     }
 
     @Override

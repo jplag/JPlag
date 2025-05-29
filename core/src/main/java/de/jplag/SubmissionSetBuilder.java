@@ -243,9 +243,9 @@ public class SubmissionSetBuilder {
     }
 
     /**
-     * Checks if a file has a valid suffix for the current language.
+     * Checks if a file has a valid file extension for the current language or ends in a specified suffix.
      * @param file is the file to check.
-     * @return true if the file suffix matches the language.
+     * @return true if the file matches the file extension or suffix.
      */
     private boolean hasValidSuffix(File file) {
         List<String> validSuffixes = options.fileSuffixes();
