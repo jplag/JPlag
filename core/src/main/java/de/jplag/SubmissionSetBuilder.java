@@ -167,7 +167,7 @@ public class SubmissionSetBuilder {
             throw new BasecodeException("Exclude submission: " + baseCodeSubmissionDirectory.getName());
         }
         if (baseCodeSubmissionDirectory.isFile() && !hasValidSuffix(baseCodeSubmissionDirectory)) {
-            throw new BasecodeException("Ignore submission with invalid suffix: " + baseCodeSubmissionDirectory.getName());
+            throw new BasecodeException("Ignore submission with invalid extension or suffix: " + baseCodeSubmissionDirectory.getName());
         }
 
         Submission baseCodeSubmission = processSubmission(baseCodeSubmissionDirectory.getName(), baseCodeSubmissionDirectory, false);
@@ -233,7 +233,7 @@ public class SubmissionSetBuilder {
         if (isFileExcluded(file.submissionFile())) {
             logger.error("Exclude submission: {}", file.submissionFile().getName());
         } else if (file.submissionFile().isFile() && !hasValidSuffix(file.submissionFile())) {
-            logger.error("Ignore submission with invalid suffix: {}", file.submissionFile().getName());
+            logger.error("Ignore submission with invalid extension or suffix: {}", file.submissionFile().getName());
         } else {
             String rootDirectoryPrefix = multipleRoots ? file.rootDirectory().getName() + File.separator : "";
             String submissionName = rootDirectoryPrefix + file.submissionFile().getName();
@@ -265,7 +265,8 @@ public class SubmissionSetBuilder {
     }
 
     /**
-     * Recursively scan the given directory for nested files. Excluded files and files with an invalid suffix are ignored.
+     * Recursively scan the given directory for nested files. Excluded files and files with an invalid extension or suffix
+     * are ignored.
      * <p>
      * If the given file is not a directory, the input will be returned as a singleton list.
      * @param file - File to start the scan from.

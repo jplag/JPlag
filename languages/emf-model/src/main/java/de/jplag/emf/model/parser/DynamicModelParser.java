@@ -50,7 +50,7 @@ public class DynamicModelParser extends DynamicEcoreParser {
     }
 
     @Override
-    protected String getCorrespondingViewFileSuffix() {
+    protected String getCorrespondingViewFileExtension() {
         return EmfLanguage.VIEW_FILE_EXTENSION;
     }
 

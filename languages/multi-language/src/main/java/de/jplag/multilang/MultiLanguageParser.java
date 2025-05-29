@@ -29,7 +29,8 @@ public class MultiLanguageParser {
     }
 
     private Optional<Language> findLanguageForFile(File file) {
-        return this.languages.stream().filter(language -> language.fileExtensions().stream().anyMatch(suffix -> file.getName().endsWith(suffix)))
-                .findFirst();
+        return this.languages.stream().filter(language -> language.fileExtensions().stream() //
+                .anyMatch(extension -> file.getName().endsWith(extension))).findFirst();
+
     }
 }

@@ -13,7 +13,7 @@ public interface Language {
 
     /**
      * File extensions for the files containing code of the language. All capitalization variants of extensions are matched.
-     * An empty array means all suffixes are valid.
+     * An empty array means all extensions are valid.
      * @deprecated see {@link Language#fileExtensions()}
      */
     @Deprecated(since = "7.0.0", forRemoval = true)

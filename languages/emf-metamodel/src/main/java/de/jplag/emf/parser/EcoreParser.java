@@ -61,13 +61,13 @@ public class EcoreParser extends AbstractParser {
             visitor.visit(root);
         }
         tokens.add(Token.fileEnd(currentFile));
-        treeView.writeToFile(getCorrespondingViewFileSuffix());
+        treeView.writeToFile(getCorrespondingViewFileExtension());
     }
 
     /**
-     * @return the correct view file suffix for the model view. Can be overriden in subclasses for alternative views.
+     * @return the correct view file extension for the model view. Can be overriden in subclasses for alternative views.
      */
-    protected String getCorrespondingViewFileSuffix() {
+    protected String getCorrespondingViewFileExtension() {
         return EmfLanguage.VIEW_FILE_EXTENSION;
     }
 
