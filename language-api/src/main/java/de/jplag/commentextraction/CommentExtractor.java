@@ -113,7 +113,7 @@ public class CommentExtractor {
     private void parseLineComment(String commentSequence) {
         StringBuilder comment = new StringBuilder();
         int startLine = this.currentLine;
-        int startCol = this.currentCol - commentSequence.length();
+        int startCol = this.currentCol;
         while (!this.remainingContent.startsWith(System.lineSeparator()) && !this.remainingContent.isEmpty()) {
             comment.append(this.advance(1));
         }
@@ -128,7 +128,7 @@ public class CommentExtractor {
 
     private void parseBlockComment(EnvironmentDelimiter blockComment) {
         int startLine = this.currentLine;
-        int startCol = this.currentCol;
+        int startCol = this.currentCol + blockComment.begin().length();
         String comment = this.parseEnvironment(blockComment);
 
         this.comments.add(new Comment(
