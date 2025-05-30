@@ -21,6 +21,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import de.jplag.commentextraction.Comment;
+import de.jplag.commenthandling.CommentPreprocessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -272,6 +273,15 @@ public class Submission implements Comparable<Submission> {
                 }
             }
             logger.debug("Found {} comments", comments.size());
+            try {
+                CommentPreprocessor preprocessor = new CommentPreprocessor(this.comments, this.name);
+                List<Token> processedComments = preprocessor.processToToken();
+                for (Token comment : processedComments) {
+                    logger.info("{} ({}:{}): {}", comment.getFile(), comment.getLine(), comment.getColumn(), comment.getType().getDescription());
+                }
+            } catch (Exception e) {
+                logger.error("Error while parsing comments: {}", e.getMessage());
+            }
         }
 
         if (tokenList.size() < minimalTokens) {
