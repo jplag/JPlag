@@ -59,10 +59,7 @@ class SubsequenceHashLookupTable {
      * @return a list with possible matching start indexes.
      */
     List<Integer> startIndexesOfPossiblyMatchingSubsequencesForSubsequenceHash(int subsequenceHash) {
-        if (startIndexToSubsequenceHashesMap.containsKey(subsequenceHash)) {
-            return startIndexToSubsequenceHashesMap.get(subsequenceHash);
-        }
-        return List.of();
+        return startIndexToSubsequenceHashesMap.getOrDefault(subsequenceHash, List.of());
     }
 
     /**
@@ -74,7 +71,6 @@ class SubsequenceHashLookupTable {
     private void computeSubsequenceHashes(boolean[] marked) {
         int hash = 0;
         int hashedLength = 0;
-        int factor = windowSize != 1 ? 2 << windowSize - 2 : 1;
 
         for (int windowEndIndex = 0; windowEndIndex < values.length; windowEndIndex++) {
             int windowStartIndex = windowEndIndex - windowSize;
@@ -85,9 +81,9 @@ class SubsequenceHashLookupTable {
                 } else {
                     subsequenceHashes[windowStartIndex] = NO_HASH;
                 }
-                hash -= factor * hashValueForValue(values[windowStartIndex]);
+                hash -= hashValueForValue(values[windowStartIndex]) << (windowSize - 1);
             }
-            hash = 2 * hash + hashValueForValue(values[windowEndIndex]);
+            hash = (hash << 1) + hashValueForValue(values[windowEndIndex]);
             if (marked[windowEndIndex]) {
                 hashedLength = 0;
             } else {
@@ -101,12 +97,6 @@ class SubsequenceHashLookupTable {
     }
 
     private void addToStartIndexesToHashesMap(int startIndex, int subsequenceHash) {
-        if (startIndexToSubsequenceHashesMap.containsKey(subsequenceHash)) {
-            startIndexToSubsequenceHashesMap.get(subsequenceHash).add(startIndex);
-        } else {
-            List<Integer> startIndexes = new ArrayList<>();
-            startIndexes.add(startIndex);
-            startIndexToSubsequenceHashesMap.put(subsequenceHash, startIndexes);
-        }
+        startIndexToSubsequenceHashesMap.computeIfAbsent(subsequenceHash, key -> new ArrayList<>()).add(startIndex);
     }
 }
