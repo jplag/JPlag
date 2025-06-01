@@ -21,6 +21,7 @@ import de.jplag.SubmissionSetBuilder;
 import de.jplag.TestBase;
 import de.jplag.Token;
 import de.jplag.comparison.LongestCommonSubsequenceSearch;
+import de.jplag.exceptions.ComparisonException;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 
@@ -52,7 +53,7 @@ class MergingTest extends TestBase {
     }
 
     @BeforeEach
-    void prepareTestState() {
+    void prepareTestState() throws ComparisonException {
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
         comparisonsBefore = new ArrayList<>(result.getAllComparisons());
 
