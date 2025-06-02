@@ -25,7 +25,7 @@ public class PythonLanguage implements Language {
 
     @Override
     public String getIdentifier() {
-        return "python3";
+        return "python";
     }
 
     @Override
