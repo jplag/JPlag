@@ -13,10 +13,18 @@ body:
       required: true
 
   - type: input
+    id: jplag_version
+    attributes:
+      label: JPlag Version
+      placeholder: E.g., 6.1.0, custom version, or fork of...
+    validations:
+      required: true
+
+  - type: input
     id: environment_os
     attributes:
       label: Operating System
-      placeholder: E.g., Windows 11, macOS 13.4, Ubuntu 22.04
+      placeholder: E.g., Windows 11, macOS 13.4, Ubuntu 22.04,...
     validations:
       required: false
 
@@ -24,14 +32,6 @@ body:
     id: environment_java
     attributes:
       label: Java Version
-      placeholder: E.g., OpenJDK 17, Oracle JDK 21
+      placeholder: E.g., OpenJDK 17, Oracle JDK 21,...
     validations:
       required: false
-
-  - type: input
-    id: jplag_version
-    attributes:
-      label: JPlag Version
-      placeholder: E.g., 6.1.0
-    validations:
-      required: true
