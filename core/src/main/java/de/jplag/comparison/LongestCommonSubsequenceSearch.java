@@ -94,11 +94,11 @@ public class LongestCommonSubsequenceSearch {
     /**
      * Compares submissions from a set of submissions while considering a given base code.
      * @param submissionSet Collection of submissions with optional basecode to compare.
-     * @return the comparison results.
-     * @throws ComparisonException if a problem arisses during comparison.
+     * @return The comparison results.
+     * @throws ComparisonException If a problem arises during comparison.
      */
     public JPlagResult compareSubmissions(SubmissionSet submissionSet) throws ComparisonException {
-        long timeBeforeStartInMillis = System.currentTimeMillis();
+        long startTimeMillis = System.currentTimeMillis();
 
         // Set up data structures:
         TokenValueMapper tokenValueMapper = new TokenValueMapper(submissionSet);
@@ -129,13 +129,14 @@ public class LongestCommonSubsequenceSearch {
                 future.get().ifPresent(comparisons::add);
             }
         } catch (InterruptedException | ExecutionException e) {
-            Thread.currentThread().interrupt(); // Good practice to re-interrupt
+            Thread.currentThread().interrupt();
             throw new ComparisonException("Error during comparison algorithm.", e);
+        } finally {
+            progressBar.dispose();
         }
 
-        // Cleanup and build result:
-        long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
-        progressBar.dispose();
-        return new JPlagResult(comparisons, submissionSet, durationInMillis, options);
+        long durationInMilliseconds = System.currentTimeMillis() - startTimeMillis;
+        return new JPlagResult(comparisons, submissionSet, durationInMilliseconds, options);
     }
+
 }
