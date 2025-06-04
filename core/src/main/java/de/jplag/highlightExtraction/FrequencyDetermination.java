@@ -49,7 +49,7 @@ public class FrequencyDetermination {
                                   FrequencyBuilder builder) {
         for (JPlagComparison comparison : comparisons) {
             Submission left = comparison.firstSubmission();
-            List<Token> tokensNames = left.getTokenList();// TODO als lesbare bezeichner nutzen -> tokentype nutzen,
+            List<Token> tokensNames = left.getTokenList();
             List<TokenType> tokens = new ArrayList<>();
             for (Token token : tokensNames) {
                 tokens.add(token.getType());

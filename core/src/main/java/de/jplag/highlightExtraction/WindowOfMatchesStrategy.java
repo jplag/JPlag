@@ -25,7 +25,7 @@ public class WindowOfMatchesStrategy implements FrequencyStrategy{
         for (int i = 0; i <= tokens.size() - size; i++) {
             List<String> window = tokens.subList(i, i + size);
             String key = String.join(" ", window);
-            map.computeIfAbsent(key, k -> new ArrayList<>()).add(comparisonId);
+            map.computeIfAbsent(key, k -> new ArrayList<>());
         }
     }
 
@@ -39,11 +39,14 @@ public class WindowOfMatchesStrategy implements FrequencyStrategy{
      */
 
     @Override
-    public void check(List<String> tokens, String comparisonId, Map<String, List<String>> map, int size) {
+    public void check(List<String> tokens, String comparisonId, Map<String, List<String>> map, int size) throws IllegalStateException{
         for (int i = 0; i <= tokens.size() - size; i++) {
             List<String> window = tokens.subList(i, i + size);
             String key = String.join(" ", window);
-            map.computeIfAbsent(key, k -> new ArrayList<>());
+            if (!map.containsKey(key)) {
+                throw new IllegalStateException("Unexpected window found in check() : " + key);
+            }
+            map.get(key).add(comparisonId);
         }
     }
 }

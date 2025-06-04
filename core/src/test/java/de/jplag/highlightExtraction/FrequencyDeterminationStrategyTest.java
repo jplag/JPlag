@@ -8,29 +8,28 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FrequencyDeterminationStrategyTest extends TestBase {
-    private static JPlagResult result;
-    private static FrequencyDeterminationTest t = new FrequencyDeterminationTest();
-    private static Match baseMatchA;
-    private static Submission baseAFirst;
-    private static Submission baseASecond;
-    private static List<Match> baseAIgnoredMatches;
-    private static Match baseMatchB;
-    private static Match baseMatchC;
-    private static Match baseMatchD;
-    private static Match baseMatchE;
+    private static final FrequencyDeterminationTest t = new FrequencyDeterminationTest();
 
-    List<Match> testMatches = new LinkedList<Match>();
+    private static Submission testSubmission;
+    private static Match testMatchAOnTimeInComparisons;
+    private static Match testMatchBTwoTimesInOneComparison;
+    private static Match testMatchCTwoTimesInDifferentComparisons;
+    private static Match testMatchDThreeTimesInDifferentComparisons;
+    private static Match testMatchShort;
 
-
-
-    @Test
-    //@BeforeEach
+    List<Match> testMatches1 = new LinkedList<>();
+    List<Match> testMatches2 = new LinkedList<>();
+    List<Match> testMatches3 = new LinkedList<>();
+    List<Match> testMatches4 = new LinkedList<>();
+    List<JPlagComparison> comparisons = new LinkedList<>();
+    //@Test
+    @BeforeEach
     void prepareMatchResult() throws ExitException {
 
         JPlagOptions options = getDefaultOptions("PartialPlagiarism"); // getDefaultOptions("merging");
@@ -38,53 +37,300 @@ public class FrequencyDeterminationStrategyTest extends TestBase {
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
         LongestCommonSubsquenceSearch strategy = new LongestCommonSubsquenceSearch(options);
-        result = strategy.compareSubmissions(submissionSet);
+        JPlagResult result = strategy.compareSubmissions(submissionSet);
         System.out.println("result: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         System.out.println(result);
 
-        for (JPlagComparison comparison : result.getAllComparisons()) {
-            System.out.println(comparison);
-            if (comparison.matches() != null) {
-                baseMatchA = comparison.matches().getFirst();
-                baseAFirst = comparison.firstSubmission();
-                baseASecond = comparison.secondSubmission();
-                baseAIgnoredMatches = comparison.ignoredMatches();
-                break;
-            }
+        //Build test data
+        JPlagComparison comparisonForTestData = result.getAllComparisons().getFirst();
+        testSubmission = comparisonForTestData.firstSubmission();
+        testMatchAOnTimeInComparisons = comparisonForTestData.matches().get(0);
+        testMatchShort = new Match(comparisonForTestData.matches().get(0).startOfFirst(), comparisonForTestData.matches().get(0).startOfSecond(), 12);
+        testMatchBTwoTimesInOneComparison = comparisonForTestData.matches().get(1);
+        testMatchCTwoTimesInDifferentComparisons = comparisonForTestData.matches().get(2);
+        testMatchDThreeTimesInDifferentComparisons = comparisonForTestData.matches().get(3);
+
+        //      Show that the matches are different
+        System.out.println(testMatchAOnTimeInComparisons.equals(testMatchBTwoTimesInOneComparison));
+        System.out.println(testMatchBTwoTimesInOneComparison.equals(testMatchCTwoTimesInDifferentComparisons));
+        System.out.println(testMatchCTwoTimesInDifferentComparisons.equals(testMatchDThreeTimesInDifferentComparisons));
+        System.out.println(testMatchDThreeTimesInDifferentComparisons.equals(testMatchAOnTimeInComparisons));
+
+        //      renameSubmission
+        // A, C
+        Submission testSubmissionW = new Submission("W", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(), options.language());
+        // A, C
+        Submission testSubmissionX = new Submission("X", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(), options.language());
+        // C
+        Submission testSubmissionY = new Submission("Y", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(), options.language());
+        //
+        Submission testSubmissionZ = new Submission("Z", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(), options.language());
+
+        testSubmissionW.setTokenList(testSubmission.getTokenList());
+        testSubmissionX.setTokenList(testSubmission.getTokenList());
+        testSubmissionY.setTokenList(testSubmission.getTokenList());
+        testSubmissionZ.setTokenList(testSubmission.getTokenList());
+
+        //      buildTestComparisons
+        testMatches1.add(testMatchAOnTimeInComparisons);
+        testMatches1.add(testMatchCTwoTimesInDifferentComparisons);
+        JPlagComparison testComparison1 = new JPlagComparison(testSubmissionW, testSubmissionX, testMatches1, comparisonForTestData.ignoredMatches());
+
+        testMatches2.add(testMatchCTwoTimesInDifferentComparisons);
+        testMatches2.add(testMatchDThreeTimesInDifferentComparisons);
+        JPlagComparison testComparison2 = new JPlagComparison(testSubmissionX, testSubmissionY, testMatches2, comparisonForTestData.ignoredMatches());
+
+        testMatches3.add(testMatchDThreeTimesInDifferentComparisons);
+        JPlagComparison testComparison3 = new JPlagComparison(testSubmissionY, testSubmissionZ, testMatches3, comparisonForTestData.ignoredMatches());
+
+        testMatches4.add(testMatchDThreeTimesInDifferentComparisons);
+        testMatches4.add(testMatchBTwoTimesInOneComparison);
+        testMatches4.add(testMatchBTwoTimesInOneComparison);
+        JPlagComparison testComparison4 = new JPlagComparison(testSubmissionZ, testSubmissionW, testMatches4, comparisonForTestData.ignoredMatches());
+
+        comparisons.add(testComparison1);
+        comparisons.add(testComparison2);
+        comparisons.add(testComparison3);
+        comparisons.add(testComparison4);
+
+        System.out.println(comparisons);
+    }
+
+    //Test Compleate match strategy
+    private void assertTokenFrequencyContainsMatch(Match match, int expectedFrequency, Map<String, List<String>> tokenFrequencyMap) {
+        int start = match.startOfFirst();
+        int length = match.length();
+        List<String> tokenNames = new LinkedList<>();
+        List<Token> tokens = testSubmission.getTokenList().subList(start, start + length);
+
+        for (Token t : tokens) {
+            tokenNames.add(t.getType().toString());
         }
-        testMatches.add(baseMatchA);
-        List<Match> testBaseA = new ArrayList<Match>();
-        testBaseA.add(baseMatchA);
-        System.out.println("testMatches: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        System.out.println(testMatches);
-        JPlagComparison comparisonContainingAB = new JPlagComparison(baseAFirst, baseASecond, testBaseA, baseAIgnoredMatches);
-        System.out.println(comparisonContainingAB);
-        System.out.println(comparisonContainingAB.matches());
-        System.out.println(comparisonContainingAB.maximalSimilarity());
-    }
 
-    @Test
-    @DisplayName("Test token frequency with subMatches")
-    void testFrequencyAnalysisStrategiesSubMatches() {
-        FrequencyStrategy strategy = new SubMatchesStrategy();
-        FrequencyDetermination fd = new FrequencyDetermination(strategy, 300);
-        fd.runAnalysis(result.getAllComparisons());
-        System.out.println(fd);
-        Map<String, List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
-        t.printTestResult(tokenFrequencyMap);
+        String key = String.join(" ", tokenNames);
+        List<String> submissionsContainingMatch = tokenFrequencyMap.get(key);
+
+        if (submissionsContainingMatch == null) {
+            throw new AssertionError("Match key [" + key + "] not found in tokenFrequencyMap.");
+        }
+
+        assertEquals(expectedFrequency, submissionsContainingMatch.size(),
+                "Match key [" + key + "] expected in " + expectedFrequency + " comparisons, but was in: " + submissionsContainingMatch);
+
+        System.out.println("✔ Match verified: key matched with frequency " + submissionsContainingMatch.size());
     }
 
 
+
     @Test
-    @DisplayName("Test token frequency completeMatches")
-    void testFrequencyAnalysisStrategiesCompleteMatches() {
+    @DisplayName("Test Complete Matches Strategy")
+    void testCompleteMatchesStrategy() {
         FrequencyStrategy strategy = new CompleteMatchesStrategy();
-        FrequencyDetermination fd = new FrequencyDetermination(strategy, 1);
-        fd.runAnalysis(result.getAllComparisons());
-        System.out.println(fd);
+        FrequencyDetermination fd = new FrequencyDetermination(strategy, 300);
+        fd.runAnalysis(comparisons);
         Map<String, List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
         t.printTestResult(tokenFrequencyMap);
+
+        assertTokenFrequencyContainsMatch(testMatchAOnTimeInComparisons, 1, tokenFrequencyMap);
+        assertTokenFrequencyContainsMatch(testMatchBTwoTimesInOneComparison, 2, tokenFrequencyMap);
+        assertTokenFrequencyContainsMatch(testMatchCTwoTimesInDifferentComparisons, 2, tokenFrequencyMap);
+        assertTokenFrequencyContainsMatch(testMatchDThreeTimesInDifferentComparisons, 3, tokenFrequencyMap);
     }
 
+    // Test Window Strategie
+    @Test
+    @DisplayName("Test WindowOfMatchesStrategy Create")
+    void testWindowOfMatchesStrategyCreateTest() {
+        int windowSize = 10;
+        System.out.println("hi");
+        FrequencyStrategy strategy = new WindowOfMatchesStrategy();
+        Map<String, List<String>> frequencyMap = new HashMap<>();
+        Match match = testMatchAOnTimeInComparisons;
+        List<Token> tokens = testSubmission.getTokenList().subList(match.startOfFirst(), match.startOfFirst() + match.length());
+        List<String> tokenStrings = new ArrayList<>();
 
+        for (Token token : tokens) {
+            tokenStrings.add(token.getType().toString());
+        }
+
+        if (tokenStrings.size() > windowSize + 3) { // => 4 keys should be found
+            tokenStrings = tokenStrings.subList(0, windowSize + 3);
+        }
+
+        strategy.create(tokenStrings, "testComparisonId", frequencyMap, windowSize);
+
+        int expectedWindows = tokenStrings.size() - windowSize + 1;  // => should be 4
+        assertEquals(expectedWindows, frequencyMap.size(), "Number of windows should be as expected");
+
+        List<String> expectedKeyTokens;
+        expectedKeyTokens = tokenStrings.subList(2, tokenStrings.size() - 1);
+        assertEquals(windowSize, expectedKeyTokens.size(), "Build False?");
+
+        String expectedKey = String.join(" ", expectedKeyTokens);
+        assertTrue(frequencyMap.containsKey(expectedKey), "Frequency map should contain the key for the window");
+    }
+
+    @Test
+    @DisplayName("Test check() of window strategy")
+    void testCheckWindowOfMatchesStrategy() {
+        // Build
+        FrequencyStrategy strategy = new WindowOfMatchesStrategy();
+        Map<String, List<String>> windowMap = new HashMap<>();
+        int windowSize = 5;
+
+        List<Token> tokensListInTestMatch = testSubmission.getTokenList().subList(
+                testMatchShort.startOfFirst(),
+                testMatchShort.startOfFirst() + testMatchShort.length()
+        );
+        List<String> tokenListTestMatchReadable = tokensListInTestMatch.stream()
+                .map(token -> token.getType().toString())
+                .toList();
+
+        strategy.create(tokenListTestMatchReadable, "createId1", windowMap, windowSize);
+
+        // Shold be exact the same
+        System.out.println("tokenListTestMatchReadable");
+        System.out.println(tokenListTestMatchReadable);
+        assertDoesNotThrow(() -> strategy.check(tokenListTestMatchReadable, "testId1", windowMap, windowSize));
+
+        System.out.println("windowMap: ");
+        for (String key : windowMap.keySet()) {
+            System.out.println(key + " → " + windowMap.get(key));
+        }
+
+        List<String> fakeTokenList = List.of("Z", "Y", "X", "W", "V", "U");
+        assertThrows(IllegalStateException.class, () -> strategy.check(fakeTokenList, "testFakeTokenId", windowMap, windowSize));
+
+        // all Keys there?
+        List<String> expectedKeys = new ArrayList<>();
+        for (int i = 0; i <= tokenListTestMatchReadable.size() - windowSize; i++) {
+            List<String> expectedKey = tokenListTestMatchReadable.subList(i, i + windowSize);
+            expectedKeys.add(String.join(" ", expectedKey));
+        }
+        for (String key : expectedKeys) {
+            assertTrue(windowMap.containsKey(key),
+                    "key missing: " + key);
+        }
+
+        // every key added once
+        assertEquals(expectedKeys.size(), windowMap.size(),
+                "More keys than windows????");
+
+        // every window is added, and example value is correct
+        for (String win : expectedKeys) {
+            List<String> keyVales = windowMap.get(win);
+            assertNotNull(keyVales, "value should be min 1: " + win);
+            assertEquals(1, keyVales.size(),
+                    "value not 1 for '" + win + "' with " + keyVales.size() + " size.");
+            assertEquals("testId1", keyVales.getFirst(),
+                    "expected 'testId1' but got: " + keyVales);
+        }
+
+        //add entries
+        int startIndex = 2;
+        List<String> tokenStringsNew = tokenListTestMatchReadable.subList(startIndex, startIndex + windowSize + 1);
+        List<String> newWindow1 = tokenStringsNew.subList(0, windowSize);
+        List<String> newWindow2 = tokenStringsNew.subList(1, windowSize + 1);
+        String keyNew1 = String.join(" ", newWindow1);
+        String keyNew2 = String.join(" ", newWindow2);
+
+
+        assertTrue(windowMap.containsKey(keyNew1),
+                "new key1 exists: " + keyNew1);
+        assertTrue(windowMap.containsKey(keyNew2),
+                "new key2 exists: " + keyNew2);
+
+        assertDoesNotThrow(() -> strategy.check(tokenStringsNew, "testId2", windowMap, windowSize));
+
+        List<String> list1 = windowMap.get(keyNew1);
+        List<String> list2 = windowMap.get(keyNew2);
+
+        assertEquals(2, list1.size(),
+                "does not contain 2 IDs: " + list1);
+        assertTrue(list1.contains("testId1") && list1.contains("testId2"),
+                "not contains testID1 nd testID2: " + list1);
+
+        assertEquals(2, list2.size(),
+                "does not contain 2 IDs: " + list2);
+        assertTrue(list2.contains("testId1") && list2.contains("testId2"),
+                "not contains testID1 nd testID2: " + list2);
+
+    }
+
+    // Tets Submatch strategy
+    @Test
+    void testSubmatchesStrategy( ) {
+
+        //Create
+        SubMatchesStrategy strategy = new SubMatchesStrategy();
+        Map<String,List<String>> frequencyMap = new HashMap<>();
+        String testId = "testId1";
+        String testId2 = "testId2";
+
+        List<Token> tokensListInTestMatch = testSubmission.getTokenList().subList(
+                testMatchShort.startOfFirst(),
+                testMatchShort.startOfFirst() + 5
+        );
+        System.out.println(tokensListInTestMatch);
+        List<String> tokenListTestMatchReadable = tokensListInTestMatch.stream()
+                .map(token -> token.getType().toString())
+                .toList();
+        int minSize = 3;
+
+        strategy.create(tokenListTestMatchReadable, testId, frequencyMap, minSize);
+
+        Set<String> expectedKeys = new HashSet<>(List.of(
+                String.join(" ", tokenListTestMatchReadable),
+                String.join(" ", tokenListTestMatchReadable.subList(0, 4)),
+                String.join(" ", tokenListTestMatchReadable.subList(1, 5)),
+                String.join(" ", tokenListTestMatchReadable.subList(0, 3)),
+                String.join(" ", tokenListTestMatchReadable.subList(1, 4)),
+                String.join(" ", tokenListTestMatchReadable.subList(2, 5))
+        ));
+
+        for (String k : frequencyMap.keySet()) {
+            System.out.println(k);
+        }
+
+        for (String key : expectedKeys) {
+            assertTrue(frequencyMap.containsKey(key), "Map should contain key: " + key);
+            assertTrue(frequencyMap.get(key).isEmpty(), "Value list should be empty for key: " + key);
+        }
+        //Check
+        strategy.check(tokenListTestMatchReadable, testId, frequencyMap, minSize);
+
+        for (String key : frequencyMap.keySet()) {
+            List<String> id = frequencyMap.get(key);
+            assertTrue(id.contains(testId), "Id should be: " + testId);
+            assertEquals(1, id.size(), "Should Contain only: " + testId);
+            System.out.println("key: " + key + " id: " + id);
+        }
+
+        List<String> fakeTokens = List.of("X", "Y", "Z");
+        assertDoesNotThrow(( ) -> strategy.check(fakeTokens, "noId", frequencyMap, minSize));
+
+        List<String> subTokenList = tokenListTestMatchReadable.subList(1, 5);
+        System.out.println(subTokenList);
+        strategy.check(subTokenList, testId2, frequencyMap, minSize);
+
+        Set<String> expectedUsedKeys = new HashSet<>(List.of(
+                String.join(" ", tokenListTestMatchReadable.subList(1, 5)),
+                String.join(" ", tokenListTestMatchReadable.subList(1, 4)),
+                String.join(" ", tokenListTestMatchReadable.subList(2, 5))
+        ));
+
+        for (String key : expectedUsedKeys) {
+            assertEquals(2, frequencyMap.get(key).size(), "Map should contain two keys: " + key);
+            assertTrue(frequencyMap.get(key).contains(testId2), "new Id should be added: " + key);
+            expectedKeys.remove(key);
+        }
+        for (String key : expectedKeys) {
+            assertEquals(1, frequencyMap.get(key).size(), "Map should only contain key: " + key);
+            assertTrue(frequencyMap.get(key).contains(testId), "Value list should be: " + testId);
+        }
+    }
 }
+
+
+
+
