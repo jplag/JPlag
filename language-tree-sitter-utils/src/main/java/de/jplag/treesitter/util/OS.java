@@ -6,17 +6,21 @@ public final class OS {
     private static final String UNKNOWN_OS = "UNKNOWN";
     private static final String UNKNOWN_ARCHITECTURE = "UNKNOWN";
 
+    private static final String OS_MAC = "mac";
+    private static final String OS_LINUX = "linux";
+    private static final String OS_WINDOWS = "windows";
+
     private OS() {
     }
 
     public static String name() {
         String os = osNameProperty();
         if (os.contains("mac os x") || os.contains("darwin") || os.contains("osx")) {
-            return "mac";
-        } else if (os.contains("linux")) {
-            return "linux";
-        } else if (os.contains("windows")) {
-            return "windows";
+            return OS_MAC;
+        } else if (os.contains(OS_LINUX)) {
+            return OS_LINUX;
+        } else if (os.contains(OS_WINDOWS)) {
+            return OS_WINDOWS;
         } else {
             throw new RuntimeException("OS " + os + " is not supported");
         }
