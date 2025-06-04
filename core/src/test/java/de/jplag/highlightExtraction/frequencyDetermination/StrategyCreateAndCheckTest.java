@@ -1,8 +1,9 @@
-package de.jplag.highlightExtraction;
+package de.jplag.highlightExtraction.frequencyDetermination;
 
 import de.jplag.*;
 import de.jplag.comparison.LongestCommonSubsquenceSearch;
 import de.jplag.exceptions.ExitException;
+import de.jplag.highlightExtraction.*;
 import de.jplag.options.JPlagOptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,9 +14,8 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FrequencyDeterminationStrategyTest extends TestBase {
-    private static final FrequencyDeterminationTest t = new FrequencyDeterminationTest();
-
+public class StrategyCreateAndCheckTest extends TestBase {
+    private static final StrategyIntegrationTest t = new StrategyIntegrationTest();
     private static Submission testSubmission;
     private static Match testMatchAOnTimeInComparisons;
     private static Match testMatchBTwoTimesInOneComparison;
@@ -28,17 +28,17 @@ public class FrequencyDeterminationStrategyTest extends TestBase {
     List<Match> testMatches3 = new LinkedList<>();
     List<Match> testMatches4 = new LinkedList<>();
     List<JPlagComparison> comparisons = new LinkedList<>();
+
     //@Test
     @BeforeEach
-    void prepareMatchResult() throws ExitException {
-
+    void prepareMatchResult( ) throws ExitException {
         JPlagOptions options = getDefaultOptions("PartialPlagiarism"); // getDefaultOptions("merging");
         System.out.println(options);
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
         LongestCommonSubsquenceSearch strategy = new LongestCommonSubsquenceSearch(options);
         JPlagResult result = strategy.compareSubmissions(submissionSet);
-        System.out.println("result: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        System.out.println("result: ");
         System.out.println(result);
 
         //Build test data
@@ -57,13 +57,9 @@ public class FrequencyDeterminationStrategyTest extends TestBase {
         System.out.println(testMatchDThreeTimesInDifferentComparisons.equals(testMatchAOnTimeInComparisons));
 
         //      renameSubmission
-        // A, C
         Submission testSubmissionW = new Submission("W", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(), options.language());
-        // A, C
         Submission testSubmissionX = new Submission("X", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(), options.language());
-        // C
         Submission testSubmissionY = new Submission("Y", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(), options.language());
-        //
         Submission testSubmissionZ = new Submission("Z", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(), options.language());
 
         testSubmissionW.setTokenList(testSubmission.getTokenList());
@@ -97,7 +93,7 @@ public class FrequencyDeterminationStrategyTest extends TestBase {
     }
 
     //Test Compleate match strategy
-    private void assertTokenFrequencyContainsMatch(Match match, int expectedFrequency, Map<String, List<String>> tokenFrequencyMap) {
+    private void assertTokenFrequencyContainsMatch(Match match, int expectedFrequency, Map<String,List<String>> tokenFrequencyMap) {
         int start = match.startOfFirst();
         int length = match.length();
         List<String> tokenNames = new LinkedList<>();
@@ -117,18 +113,17 @@ public class FrequencyDeterminationStrategyTest extends TestBase {
         assertEquals(expectedFrequency, submissionsContainingMatch.size(),
                 "Match key [" + key + "] expected in " + expectedFrequency + " comparisons, but was in: " + submissionsContainingMatch);
 
-        System.out.println("✔ Match verified: key matched with frequency " + submissionsContainingMatch.size());
+        System.out.println("key matched with frequency " + submissionsContainingMatch.size());
     }
-
 
 
     @Test
     @DisplayName("Test Complete Matches Strategy")
-    void testCompleteMatchesStrategy() {
+    void testCompleteMatchesStrategy( ) {
         FrequencyStrategy strategy = new CompleteMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 300);
         fd.runAnalysis(comparisons);
-        Map<String, List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
+        Map<String,List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
         t.printTestResult(tokenFrequencyMap);
 
         assertTokenFrequencyContainsMatch(testMatchAOnTimeInComparisons, 1, tokenFrequencyMap);
@@ -140,11 +135,11 @@ public class FrequencyDeterminationStrategyTest extends TestBase {
     // Test Window Strategie
     @Test
     @DisplayName("Test WindowOfMatchesStrategy Create")
-    void testWindowOfMatchesStrategyCreateTest() {
+    void testWindowOfMatchesStrategyCreateTest( ) {
         int windowSize = 10;
         System.out.println("hi");
         FrequencyStrategy strategy = new WindowOfMatchesStrategy();
-        Map<String, List<String>> frequencyMap = new HashMap<>();
+        Map<String,List<String>> frequencyMap = new HashMap<>();
         Match match = testMatchAOnTimeInComparisons;
         List<Token> tokens = testSubmission.getTokenList().subList(match.startOfFirst(), match.startOfFirst() + match.length());
         List<String> tokenStrings = new ArrayList<>();
@@ -172,10 +167,10 @@ public class FrequencyDeterminationStrategyTest extends TestBase {
 
     @Test
     @DisplayName("Test check() of window strategy")
-    void testCheckWindowOfMatchesStrategy() {
+    void testCheckWindowOfMatchesStrategy( ) {
         // Build
         FrequencyStrategy strategy = new WindowOfMatchesStrategy();
-        Map<String, List<String>> windowMap = new HashMap<>();
+        Map<String,List<String>> windowMap = new HashMap<>();
         int windowSize = 5;
 
         List<Token> tokensListInTestMatch = testSubmission.getTokenList().subList(
@@ -191,7 +186,7 @@ public class FrequencyDeterminationStrategyTest extends TestBase {
         // Shold be exact the same
         System.out.println("tokenListTestMatchReadable");
         System.out.println(tokenListTestMatchReadable);
-        assertDoesNotThrow(() -> strategy.check(tokenListTestMatchReadable, "testId1", windowMap, windowSize));
+        assertDoesNotThrow(( ) -> strategy.check(tokenListTestMatchReadable, "testId1", windowMap, windowSize));
 
         System.out.println("windowMap: ");
         for (String key : windowMap.keySet()) {
@@ -199,7 +194,7 @@ public class FrequencyDeterminationStrategyTest extends TestBase {
         }
 
         List<String> fakeTokenList = List.of("Z", "Y", "X", "W", "V", "U");
-        assertThrows(IllegalStateException.class, () -> strategy.check(fakeTokenList, "testFakeTokenId", windowMap, windowSize));
+        assertThrows(IllegalStateException.class, ( ) -> strategy.check(fakeTokenList, "testFakeTokenId", windowMap, windowSize));
 
         // all Keys there?
         List<String> expectedKeys = new ArrayList<>();
@@ -240,7 +235,7 @@ public class FrequencyDeterminationStrategyTest extends TestBase {
         assertTrue(windowMap.containsKey(keyNew2),
                 "new key2 exists: " + keyNew2);
 
-        assertDoesNotThrow(() -> strategy.check(tokenStringsNew, "testId2", windowMap, windowSize));
+        assertDoesNotThrow(( ) -> strategy.check(tokenStringsNew, "testId2", windowMap, windowSize));
 
         List<String> list1 = windowMap.get(keyNew1);
         List<String> list2 = windowMap.get(keyNew2);
@@ -327,6 +322,49 @@ public class FrequencyDeterminationStrategyTest extends TestBase {
         for (String key : expectedKeys) {
             assertEquals(1, frequencyMap.get(key).size(), "Map should only contain key: " + key);
             assertTrue(frequencyMap.get(key).contains(testId), "Value list should be: " + testId);
+        }
+    }
+
+    @Test
+    void testCompleteMatchesIncludedInContainedStrategy( ) {
+        FrequencyStrategy strategy = new ContainedStrategy();
+        FrequencyDetermination fd = new FrequencyDetermination(strategy, 79);
+        fd.runAnalysis(comparisons);
+        Map<String,List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
+
+        List<String> expectedKeysWithValues = new LinkedList<>();
+        List<String> keysWithFrequency = new ArrayList<>();
+        List<Integer> frequencyOfKeys = new ArrayList<>();
+        for (JPlagComparison comparison : comparisons) {
+            for (Match match : comparison.matches()) {
+                List<Token> keyToken = testSubmission.getTokenList();
+                List<String> keyNames = keyToken.stream()
+                        .map(token -> token.getType().toString())
+                        .toList();
+                keyNames = keyNames.subList(match.startOfFirst(), match.startOfFirst() + match.length());
+                String key = String.join(" ", keyNames);
+                if (keysWithFrequency.contains(key)) {
+                    int index = keysWithFrequency.indexOf(key);
+                    frequencyOfKeys.set(index, frequencyOfKeys.get(index) + 1);
+                } else {
+                    keysWithFrequency.add(key);
+                    frequencyOfKeys.add(1);
+                }
+                expectedKeysWithValues.add(key);
+                assertTrue(tokenFrequencyMap.containsKey(key), "Should contain key: " + key);
+                assertTrue(tokenFrequencyMap.get(key).contains(comparison.toString()), "Should containComparison Id: " + comparison);
+            }
+        }
+
+        for (int i = 0; i < keysWithFrequency.size(); i++) {
+            assertEquals(frequencyOfKeys.get(i), tokenFrequencyMap.get(keysWithFrequency.get(i)).size(), "there should be as much Ids as appearance: " + frequencyOfKeys.get(i));
+        }
+
+        for (String key : tokenFrequencyMap.keySet()) {
+            if (expectedKeysWithValues.contains(key)) {
+                break;
+            }
+            assertTrue(tokenFrequencyMap.get(key).isEmpty(), "Should not have an Id: " + key);
         }
     }
 }

@@ -23,12 +23,14 @@ public class ContainedStrategy implements FrequencyStrategy{
 
     @Override
     public void create(List<String> tokens, String comparisonId, Map<String, List<String>> map, int size) {
-        if (tokens.size() >= size) {
-            for (int j = size; j <= tokens.size(); j++) {
-                applyWindowCreate(map, comparisonId, tokens, j);
-            }
-        }
-        addToMap(map, comparisonId, tokens);
+        SubMatchesStrategy s = new SubMatchesStrategy();
+        s.create(tokens, comparisonId, map, size);
+//        if (tokens.size() >= size) {
+//            for (int j = size; j <= tokens.size(); j++) {
+//                applyWindowCreate(map, comparisonId, tokens, j);
+//            }
+//        }
+//        addToMap(map, comparisonId, tokens);
     }
 
     /**
@@ -42,8 +44,10 @@ public class ContainedStrategy implements FrequencyStrategy{
 
     @Override
     public void check(List<String> tokens, String comparisonId, Map<String, List<String>> map, int size) {
-        String key = String.join(" ", tokens);
-        map.computeIfAbsent(key, k -> new java.util.ArrayList<>()).add(comparisonId);
+//        String key = String.join(" ", tokens);
+//        map.computeIfAbsent(key, k -> new java.util.ArrayList<>()).add(comparisonId);
+        CompleteMatchesStrategy c = new CompleteMatchesStrategy();
+        c.check(tokens, comparisonId, map,size);
     }
 
     /**

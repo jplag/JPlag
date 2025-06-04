@@ -1,8 +1,9 @@
-package de.jplag.highlightExtraction;
+package de.jplag.highlightExtraction.frequencyDetermination;
 
 import java.util.List;
 import java.util.Map;
 
+import de.jplag.highlightExtraction.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,7 @@ import de.jplag.comparison.LongestCommonSubsquenceSearch;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 
-public class FrequencyDeterminationTest extends TestBase {
+public class StrategyIntegrationTest extends TestBase {
 
     private static JPlagResult result;
 
