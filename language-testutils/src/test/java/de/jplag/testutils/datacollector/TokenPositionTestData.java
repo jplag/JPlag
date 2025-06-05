@@ -19,7 +19,7 @@ import de.jplag.util.FileUtils;
  * information for tests. The sources can be used as regular test sources.
  */
 public class TokenPositionTestData implements TestData {
-    private final static String TOKEN_DEFINITION_LINE_REGEX = "$[\\s]*\\| [a-zA-Z0-9_]+ [0-9]+[\\s]*";
+    private final static String TOKEN_DEFINITION_LINE_REGEX = "\\$[\\s]*\\| [a-zA-Z0-9_]+ [0-9]+[\\s]*";
 
     private final List<String> sourceLines;
     private final List<TokenData> expectedTokens;
