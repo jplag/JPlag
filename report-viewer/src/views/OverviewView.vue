@@ -213,7 +213,7 @@ function onBarClicked(upperPercentile: number) {
 
   // we scroll in the next tick so the table can adjust its sorting to the new metric
   nextTick(() => {
-    comparisonTable.value?.scrollToItem(index)
+    comparisonTable.value?.scrollToItem(value < 0 ? undefined : index)
   })
 }
 </script>

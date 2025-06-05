@@ -405,7 +405,10 @@ function isHighlightedRow(item: ComparisonListElement) {
   )
 }
 
-function scrollToItem(itemIndex: number) {
+function scrollToItem(itemIndex?: number) {
+  if (!itemIndex) {
+    dynamicScroller.value?.scrollToBottom()
+  }
   dynamicScroller.value?.scrollToItem(itemIndex)
 }
 defineExpose({
