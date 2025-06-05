@@ -29,8 +29,10 @@
             {{ store().getDisplayName(id1) }}:
 
             <span v-if="basecodeInFirst.length > 0">
-              {{ basecodeInFirst.map((b) => b.match.tokens).reduce((a, b) => a + b, 0) }} Tokens,
-              Lines: {{ store().getDisplayName(id1 ?? '') }}: Lines
+              {{
+                basecodeInFirst.map((b) => getMatchLength(b.match)).reduce((a, b) => a + b, 0)
+              }}
+              Tokens, Lines: {{ store().getDisplayName(id1 ?? '') }}: Lines
               {{ basecodeInFirst.map((b) => `${b.start}-${b.end}`).join(',') }}
             </span>
             <span v-else>No Basecode in Submission</span>
@@ -38,8 +40,10 @@
           <p>
             {{ store().getDisplayName(id2) }}:
             <span v-if="basecodeInSecond.length > 0">
-              {{ basecodeInSecond.map((b) => b.match.tokens).reduce((a, b) => a + b, 0) }} Tokens,
-              Lines: {{ store().getDisplayName(id2 ?? '') }}: Lines
+              {{
+                basecodeInSecond.map((b) => getMatchLength(b.match)).reduce((a, b) => a + b, 0)
+              }}
+              Tokens, Lines: {{ store().getDisplayName(id2 ?? '') }}: Lines
               {{ basecodeInSecond.map((b) => `${b.start}-${b.end}`).join(',') }}
             </span>
             <span v-else>No Basecode in Submission</span>
@@ -68,7 +72,7 @@
               ' - ' +
               getFileName(match.secondFileName) +
               ': ' +
-              match.tokens
+              getMatchLength(match)
             "
             :has-tool-tip="true"
             @click="$emit('matchSelected', match)"
@@ -81,7 +85,10 @@
             {{ getFileName(match.secondFileName) }} (Line {{ match.startInSecond.line }}-{{
               match.endInSecond.line
             }}) <br />
-            Match is {{ match.tokens }} tokens long. <br />
+            Match is {{ match.lengthOfFirst }} tokens long in {{ store().getDisplayName(id1) }}.
+            <br />
+            Match is {{ match.lengthOfSecond }} tokens long in {{ store().getDisplayName(id2) }}.
+            <br />
             <span v-if="showTokenRanges(match)">
               Token indices of match: {{ match.startInFirst.tokenListIndex }}-{{
                 match.endInFirst.tokenListIndex
@@ -102,9 +109,10 @@
       <tr>
         <th class="px-2 text-left">File of {{ id1 }}</th>
         <th class="px-2 text-left">Starting Line - End Line</th>
+        <th class="px-2 text-left">Length in {{ id1 }}</th>
         <th class="px-2 text-left">File of {{ id2 }}</th>
         <th class="px-2 text-left">Starting Line - End Line</th>
-        <th class="px-2 text-left">Token Count</th>
+        <th class="px-2 text-left">Length in {{ id2 }}</th>
       </tr>
       <tr
         v-for="[index, match] in matches?.entries()"
@@ -114,9 +122,10 @@
       >
         <td class="px-2">{{ getFileName(match.firstFileName) }}</td>
         <td class="px-2">{{ match.startInFirst }} - {{ match.endInFirst }}</td>
+        <td class="px-2">{{ match.lengthOfFirst }}</td>
         <td class="px-2">{{ getFileName(match.secondFileName) }}</td>
         <td class="px-2">{{ match.startInSecond }} - {{ match.endInSecond }}</td>
-        <td class="px-2">{{ match.tokens }}</td>
+        <td class="px-2">{{ match.lengthOfSecond }}</td>
       </tr>
       <tr
         v-if="hasBaseCode"
@@ -130,7 +139,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Match } from '@/model/Match'
+import { getMatchLength, type Match } from '@/model/Match'
 import OptionComponent from '../optionsSelectors/OptionComponent.vue'
 import ToolTipComponent from '@/components/ToolTipComponent.vue'
 import { getMatchColor } from '@/utils/ColorUtils'
