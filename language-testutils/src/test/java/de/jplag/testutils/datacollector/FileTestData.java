@@ -23,7 +23,7 @@ class FileTestData implements TestData {
 
     @Override
     public List<Token> parseTokens(Language language) throws ParsingException {
-        return language.parse(Set.of(file));
+        return language.parse(Set.of(file), false);
     }
 
     @Override

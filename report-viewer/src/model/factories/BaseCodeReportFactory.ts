@@ -12,14 +12,16 @@ export class BaseCodeReportFactory extends BaseFactory {
     )
   }
 
-  private static async extractReport(json: Record<string, unknown>[]): Promise<BaseCodeMatch[]> {
-    return json.map((match: Record<string, unknown>) => {
-      return new BaseCodeMatch(
-        match['file_name'] as string,
-        match['start'] as CodePosition,
-        match['end'] as CodePosition,
-        match['tokens'] as number
-      )
+  private static async extractReport(json: ReportFormatBaseCodeMatch[]): Promise<BaseCodeMatch[]> {
+    return json.map((match) => {
+      return new BaseCodeMatch(slash(match.fileName), match.start, match.end, match.tokens)
     })
   }
+}
+
+interface ReportFormatBaseCodeMatch {
+  fileName: string
+  start: CodePosition
+  end: CodePosition
+  tokens: number
 }

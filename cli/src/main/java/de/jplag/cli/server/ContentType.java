@@ -9,7 +9,8 @@ public enum ContentType {
     CSS("text/css; charset=utf-8", ".css"),
     PNG("image/png", ".png"),
     PLAIN("text/plain; charset=utf-8", null),
-    ZIP("application/zip", ".zip");
+    ZIP("application/zip", ".zip"),
+    RESULT_FILE("application/zip", ".jplag");
 
     private final String value;
 

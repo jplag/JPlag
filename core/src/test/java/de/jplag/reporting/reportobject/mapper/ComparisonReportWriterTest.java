@@ -13,7 +13,7 @@ import de.jplag.reporting.jsonfactory.ComparisonReportWriter;
 import de.jplag.reporting.reportobject.writer.DummyResultWriter;
 import de.jplag.reporting.reportobject.writer.JPlagResultWriter;
 
-public class ComparisonReportWriterTest extends TestBase {
+class ComparisonReportWriterTest extends TestBase {
     private final JPlagResultWriter fileWriter = new DummyResultWriter();
 
     @Test

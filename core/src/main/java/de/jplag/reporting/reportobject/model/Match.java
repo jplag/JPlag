@@ -1,9 +1,5 @@
 package de.jplag.reporting.reportobject.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-public record Match(@JsonProperty("firstFile") String firstFileName, @JsonProperty("secondFile") String secondFileName,
-        @JsonProperty("startInFirst") CodePosition startInFirst, @JsonProperty("endInFirst") CodePosition endInFirst,
-        @JsonProperty("startInSecond") CodePosition startInSecond, @JsonProperty("endInSecond") CodePosition endInSecond,
-        @JsonProperty("tokens") int tokens) {
+public record Match(String firstFileName, String secondFileName, CodePosition startInFirst, CodePosition endInFirst, CodePosition startInSecond,
+        CodePosition endInSecond, int tokens) {
 }

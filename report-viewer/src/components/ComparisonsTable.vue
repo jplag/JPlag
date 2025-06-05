@@ -118,10 +118,8 @@
                       :to="{
                         name: 'ComparisonView',
                         params: {
-                          comparisonFileName: store().getComparisonFileName(
-                            item.firstSubmissionId,
-                            item.secondSubmissionId
-                          )
+                          firstSubmissionId: item.firstSubmissionId,
+                          secondSubmissionId: item.secondSubmissionId
                         }
                       }"
                       class="flex grow cursor-pointer flex-row"

@@ -18,7 +18,7 @@ public class JavaLanguage implements Language {
 
     @Override
     public String[] suffixes() {
-        return new String[] {".java", ".JAVA"};
+        return new String[] {".java"};
     }
 
     @Override
