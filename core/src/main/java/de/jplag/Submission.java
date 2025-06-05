@@ -49,7 +49,7 @@ public class Submission implements Comparable<Submission> {
     private List<Token> tokenList; // list of tokens from all files, used for comparison
     private JPlagComparison baseCodeComparison; // Comparison of thus submission with the base code
     private Map<File, Integer> fileTokenCount;
-    private List<Comment> comments; // list of comments from all files
+    private List<Token> comments; // list of comments from all files
 
     /**
      * Creates a submission.
@@ -149,6 +149,10 @@ public class Submission implements Comparable<Submission> {
      */
     public List<Token> getTokenList() {
         return tokenList;
+    }
+
+    public List<Token> getComments() {
+        return new ArrayList<>(comments);
     }
 
     /**
@@ -264,21 +268,20 @@ public class Submission implements Comparable<Submission> {
 
         CommentExtractorSettings commentExtractorSettings = language.getCommentExtractorSettings();
         if (commentExtractorSettings != null) {
+            List<Comment> rawComments = new ArrayList<>();
             for (File file : files) {
                 try {
                     CommentExtractor extractor = new CommentExtractor(file, commentExtractorSettings);
-                    comments.addAll(extractor.extract());
+                    rawComments.addAll(extractor.extract());
                 } catch (IOException e) {
                     logger.warn("Could not extract comments from {}: {}", file.getAbsolutePath(), e.getMessage());
                 }
             }
             logger.debug("Found {} comments", comments.size());
             try {
-                CommentPreprocessor preprocessor = new CommentPreprocessor(this.comments, this.name);
-                List<Token> processedComments = preprocessor.processToToken();
-                for (Token comment : processedComments) {
-                    logger.info("{} ({}:{}): {}", comment.getFile(), comment.getLine(), comment.getColumn(), comment.getType().getDescription());
-                }
+                CommentPreprocessor preprocessor = new CommentPreprocessor(rawComments, this.name);
+                this.comments = preprocessor.processToToken();
+                this.comments.add(Token.fileEnd(null));
             } catch (Exception e) {
                 logger.error("Error while parsing comments: {}", e.getMessage());
             }
