@@ -8,13 +8,11 @@ import java.util.Map;
  */
 public interface FrequencyBuilder {
     /**
-     *  Builds or updates the frequency map with submatches according to the implemented strategy.
-     *
-     * @param tokens         List of tokens representing the match.
-     * @param comparisonId   Identifier for the comparison.
-     * @param frequencyMap   Map that contains token subsequences and how often they occur across comparisons.
-     * @param strategyParam  Parameter defining strategy-dependent submatch lengths.
+     * Builds or updates the frequency map with submatches according to the implemented strategy.
+     * @param tokens List of tokens representing the match.
+     * @param comparisonId Identifier for the comparison.
+     * @param frequencyMap Map that contains token subsequences and how often they occur across comparisons.
+     * @param strategyParam Parameter defining strategy-dependent submatch lengths.
      */
-    void build(List<String> tokens, String comparisonId,
-               Map<String, List<String>> frequencyMap, int strategyParam);
+    void build(List<String> tokens, String comparisonId, Map<String, List<String>> frequencyMap, int strategyParam);
 }

@@ -16,18 +16,15 @@ public class FrequencyDetermination {
     private FrequencyStrategy freqencyStrategy;
     private int strategyNumber;
 
-
     /**
      * Constructor.
-     *
      * @param frequencyStrategy The chosen strategy for frequency calculation.
-     * @param strategyNumber    Parameter used by certain strategies to determine submatch length.
+     * @param strategyNumber Parameter used by certain strategies to determine submatch length.
      */
     public FrequencyDetermination(FrequencyStrategy frequencyStrategy, int strategyNumber) {
         this.freqencyStrategy = frequencyStrategy;
         this.strategyNumber = strategyNumber;
     }
-
 
     /**
      * Applies the "create" and "check" methods of the frequency strategy.
@@ -45,8 +42,7 @@ public class FrequencyDetermination {
      * @param comparisons contains information of matches between two submissions.
      * @param builder builds and updates the frequency map with submatches according to the implemented strategy.
      */
-    private void frequencyBuilder(List<JPlagComparison> comparisons,
-                                  FrequencyBuilder builder) {
+    private void frequencyBuilder(List<JPlagComparison> comparisons, FrequencyBuilder builder) {
         for (JPlagComparison comparison : comparisons) {
             Submission left = comparison.firstSubmission();
             List<Token> tokensNames = left.getTokenList();
@@ -59,7 +55,8 @@ public class FrequencyDetermination {
             for (Match match : comparison.matches()) {
                 int start = match.startOfFirst();
                 int len = match.length();
-                if (start + len > tokens.size()) continue;
+                if (start + len > tokens.size())
+                    continue;
 
                 List<String> matchTokens = new ArrayList<>();
                 for (int i = start; i < start + len; i++) {

@@ -52,10 +52,8 @@ import io.soabase.recordbuilder.core.RecordBuilder;
 public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Language language, Integer minimumTokenMatch,
         Set<File> submissionDirectories, Set<File> oldSubmissionDirectories, File baseCodeSubmissionDirectory, String subdirectoryName,
         List<String> fileSuffixes, String exclusionFileName, SimilarityMetric similarityMetric, double similarityThreshold,
-        int maximumNumberOfComparisons, ClusteringOptions clusteringOptions, boolean debugParser, MergingOptions mergingOptions, 
-        boolean normalize, FrequencyStrategies frequencyStrategy, Integer frequencyStrategyMinValue)
-        implements JPlagOptionsBuilder.With {
-
+        int maximumNumberOfComparisons, ClusteringOptions clusteringOptions, boolean debugParser, MergingOptions mergingOptions, boolean normalize,
+        FrequencyStrategies frequencyStrategy, Integer frequencyStrategyMinValue) implements JPlagOptionsBuilder.With {
 
     public static final double DEFAULT_SIMILARITY_THRESHOLD = 0;
     public static final int DEFAULT_SHOWN_COMPARISONS = 2500;

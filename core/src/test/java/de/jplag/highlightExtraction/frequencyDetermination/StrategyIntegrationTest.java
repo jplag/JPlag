@@ -3,7 +3,6 @@ package de.jplag.highlightExtraction.frequencyDetermination;
 import java.util.List;
 import java.util.Map;
 
-import de.jplag.highlightExtraction.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,8 +11,9 @@ import de.jplag.JPlagResult;
 import de.jplag.SubmissionSet;
 import de.jplag.SubmissionSetBuilder;
 import de.jplag.TestBase;
-import de.jplag.comparison.LongestCommonSubsquenceSearch;
+import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
+import de.jplag.highlightExtraction.*;
 import de.jplag.options.JPlagOptions;
 
 public class StrategyIntegrationTest extends TestBase {
@@ -28,7 +28,7 @@ public class StrategyIntegrationTest extends TestBase {
         System.out.println(options);
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
-        LongestCommonSubsquenceSearch strategy = new LongestCommonSubsquenceSearch(options);
+        LongestCommonSubsequenceSearch strategy = new LongestCommonSubsequenceSearch(options);
         result = strategy.compareSubmissions(submissionSet);
         System.out.println("result: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         System.out.println(result);

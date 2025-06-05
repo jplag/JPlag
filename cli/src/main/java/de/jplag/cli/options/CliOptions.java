@@ -2,7 +2,6 @@ package de.jplag.cli.options;
 
 import java.io.File;
 
-import de.jplag.highlightExtraction.FrequencyStrategy;
 import org.slf4j.event.Level;
 
 import de.jplag.Language;
