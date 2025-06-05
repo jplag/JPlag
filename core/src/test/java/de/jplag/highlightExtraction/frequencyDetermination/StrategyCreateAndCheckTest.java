@@ -326,11 +326,18 @@ public class StrategyCreateAndCheckTest extends TestBase {
     }
 
     @Test
-    void testCompleteMatchesIncludedInContainedStrategy( ) {
+    void testCompleteMatchesIncludedInContainedStrategyForMatchesLongerMin( ) {
+        int strategynumber = 100;
         FrequencyStrategy strategy = new ContainedStrategy();
-        FrequencyDetermination fd = new FrequencyDetermination(strategy, 79);
+        FrequencyDetermination fd = new FrequencyDetermination(strategy, strategynumber);
         fd.runAnalysis(comparisons);
         Map<String,List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
+
+        List<String> numberOfToken;
+        for (String k  : tokenFrequencyMap.keySet()) {
+            numberOfToken = List.of(k.split(" "));
+            assertTrue(numberOfToken.size() >= strategynumber, "!should not exist: " + numberOfToken.size());
+        }
 
         List<String> expectedKeysWithValues = new LinkedList<>();
         List<String> keysWithFrequency = new ArrayList<>();
@@ -351,20 +358,32 @@ public class StrategyCreateAndCheckTest extends TestBase {
                     frequencyOfKeys.add(1);
                 }
                 expectedKeysWithValues.add(key);
-                assertTrue(tokenFrequencyMap.containsKey(key), "Should contain key: " + key);
-                assertTrue(tokenFrequencyMap.get(key).contains(comparison.toString()), "Should containComparison Id: " + comparison);
+                int size = List.of(key.split(" ")).size();
+                if (size >= strategynumber) {
+                    assertTrue(tokenFrequencyMap.containsKey(key), "Should contain key: " + key);
+                    assertTrue(tokenFrequencyMap.get(key).contains(comparison.toString()), "Should containComparison Id: " + comparison);
+                }
+
             }
         }
 
         for (int i = 0; i < keysWithFrequency.size(); i++) {
-            assertEquals(frequencyOfKeys.get(i), tokenFrequencyMap.get(keysWithFrequency.get(i)).size(), "there should be as much Ids as appearance: " + frequencyOfKeys.get(i));
+            int size = List.of(keysWithFrequency.get(i).split(" ")).size();
+            if (size >= strategynumber) {
+                assertEquals(frequencyOfKeys.get(i), tokenFrequencyMap.get(keysWithFrequency.get(i)).size(), "there should be as much Ids as appearance: " + frequencyOfKeys.get(i));
+
+            }
         }
 
         for (String key : tokenFrequencyMap.keySet()) {
-            if (expectedKeysWithValues.contains(key)) {
-                break;
+            int size = List.of(key.split(" ")).size();
+            if (size >= strategynumber) {
+                if (expectedKeysWithValues.contains(key)) {
+                    break;
+                }
+                assertTrue(tokenFrequencyMap.get(key).isEmpty(), "Should not have an Id: " + key);
             }
-            assertTrue(tokenFrequencyMap.get(key).isEmpty(), "Should not have an Id: " + key);
+
         }
     }
 }

@@ -1,7 +1,5 @@
 package de.jplag.highlightExtraction;
 
-import de.jplag.JPlagComparison;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,8 +27,9 @@ public class SubMatchesStrategy implements FrequencyStrategy{
             for (int j = size; j <= tokens.size(); j++) {
                 applyWindowCreate(map, comparisonId, tokens, j);
             }
+            addToMap(map, comparisonId, tokens);
         }
-        addToMap(map, comparisonId, tokens);
+
     }
 
     /**

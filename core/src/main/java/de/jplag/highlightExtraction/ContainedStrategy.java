@@ -23,14 +23,13 @@ public class ContainedStrategy implements FrequencyStrategy{
 
     @Override
     public void create(List<String> tokens, String comparisonId, Map<String, List<String>> map, int size) {
-        SubMatchesStrategy s = new SubMatchesStrategy();
-        s.create(tokens, comparisonId, map, size);
-//        if (tokens.size() >= size) {
-//            for (int j = size; j <= tokens.size(); j++) {
-//                applyWindowCreate(map, comparisonId, tokens, j);
-//            }
-//        }
-//        addToMap(map, comparisonId, tokens);
+        if (tokens.size() >= size) {
+            for (int j = size; j <= tokens.size(); j++) {
+                applyWindowCreate(map, comparisonId, tokens, j);
+            }
+            addToMap(map, tokens);
+        }
+
     }
 
     /**
@@ -44,10 +43,15 @@ public class ContainedStrategy implements FrequencyStrategy{
 
     @Override
     public void check(List<String> tokens, String comparisonId, Map<String, List<String>> map, int size) {
-//        String key = String.join(" ", tokens);
-//        map.computeIfAbsent(key, k -> new java.util.ArrayList<>()).add(comparisonId);
-        CompleteMatchesStrategy c = new CompleteMatchesStrategy();
-        c.check(tokens, comparisonId, map,size);
+        if (tokens.size() >= size) {
+            String key = String.join(" ", tokens);
+            List<String> idList = map.get(key);
+            if (idList == null) {
+                throw new IllegalStateException("Key not found in map: " + key);
+            }
+            idList.add(comparisonId);
+        }
+
     }
 
     /**
@@ -66,7 +70,7 @@ public class ContainedStrategy implements FrequencyStrategy{
         LinkedList<String> copy = new LinkedList<>(tokens);
         while (copy.size() >= size) {
             List<String> subList = copy.subList(0, size);
-            addToMap(map, comparisonId, subList);
+            addToMap(map, subList);
             copy.removeFirst();
         }
     }
@@ -75,13 +79,11 @@ public class ContainedStrategy implements FrequencyStrategy{
      * Builds the map by adding token subsequences from a match.
      *
      * @param map          Map that contains token subsequences and how often they occur across comparisons.
-     * @param comparisonId Identifier for the comparison.
      * @param tokens       Token list of the match.
      */
 
     private void addToMap(Map<String, List<String>> map,
-                         String comparisonId,
-                         List<String> tokens) {
+                          List<String> tokens) {
         String key = String.join(" ", tokens);
         map.computeIfAbsent(key, k -> new ArrayList<>());
     }
