@@ -117,13 +117,7 @@ public class CommentExtractor {
         while (!this.remainingContent.startsWith(System.lineSeparator()) && !this.remainingContent.isEmpty()) {
             comment.append(this.advance(1));
         }
-        this.comments.add(new Comment(
-                file,
-                comment.toString(),
-                startLine,
-                startCol,
-                CommentType.LINE
-        ));
+        this.comments.add(new Comment(file, comment.toString(), startLine, startCol, CommentType.LINE));
     }
 
     private void parseBlockComment(EnvironmentDelimiter blockComment) {
@@ -131,13 +125,7 @@ public class CommentExtractor {
         int startCol = this.currentCol + blockComment.begin().length();
         String comment = this.parseEnvironment(blockComment);
 
-        this.comments.add(new Comment(
-                file,
-                comment,
-                startLine,
-                startCol,
-                CommentType.BLOCK
-        ));
+        this.comments.add(new Comment(file, comment, startLine, startCol, CommentType.BLOCK));
     }
 
     private String parseEnvironment(EnvironmentDelimiter environment) {

@@ -1,7 +1,6 @@
 package de.jplag;
 
-import de.jplag.commentextraction.*;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +8,13 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.StringJoiner;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+
+import de.jplag.commentextraction.Comment;
+import de.jplag.commentextraction.CommentExtractor;
+import de.jplag.commentextraction.CommentExtractorSettings;
+import de.jplag.commentextraction.CommentType;
+import de.jplag.commentextraction.EnvironmentDelimiter;
 
 class CommentExtractorTest {
 
@@ -18,8 +23,7 @@ class CommentExtractorTest {
 
     @Test
     void testCommentExtractor() throws IOException {
-        CommentExtractorSettings settings = new CommentExtractorSettings(
-                List.of(new EnvironmentDelimiter("\"")), // No comment environments
+        CommentExtractorSettings settings = new CommentExtractorSettings(List.of(new EnvironmentDelimiter("\"")), // No comment environments
                 List.of("//"), // Line comments
                 List.of(new EnvironmentDelimiter("/*", "*/")), // Block comments
                 List.of("\\") // Escape characters
@@ -32,13 +36,7 @@ class CommentExtractorTest {
         List<Comment> comments = extractor.extract();
 
         assertEquals(2, comments.size());
-        assertEquals(new Comment(
-                input,
-                " This is a line comment.",
-                2,
-                3,
-                CommentType.LINE
-        ), comments.get(0));
+        assertEquals(new Comment(input, " This is a line comment.", 2, 3, CommentType.LINE), comments.get(0));
 
         StringJoiner multilineComment = new StringJoiner(System.lineSeparator());
         multilineComment.add(" This is");
@@ -47,13 +45,7 @@ class CommentExtractorTest {
         multilineComment.add("comment");
         multilineComment.add("");
 
-        assertEquals(new Comment(
-                input,
-                multilineComment.toString(),
-                4,
-                3,
-                CommentType.BLOCK
-        ), comments.get(1));
+        assertEquals(new Comment(input, multilineComment.toString(), 4, 3, CommentType.BLOCK), comments.get(1));
     }
 
 }
