@@ -40,7 +40,7 @@
         <dependency>
             <groupId>io.soabase.record-builder</groupId>
             <artifactId>record-builder-processor</artifactId>
-            <version>45</version>
+            <version>47</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

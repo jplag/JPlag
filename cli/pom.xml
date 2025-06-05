@@ -188,12 +188,16 @@
                         <targetPath>v5</targetPath>
                         <directory>src/main/resources/v5</directory>
                     </resource>
+                    <resource>
+                        <targetPath>v6_1</targetPath>
+                        <directory>src/main/resources/v6_1</directory>
+                    </resource>
                 </resources>
                 <plugins>
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
-                        <version>3.5.0</version>
+                        <version>3.5.1</version>
                         <executions>
                             <execution>
                                 <id>npm install</id>

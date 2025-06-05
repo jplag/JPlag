@@ -17,8 +17,7 @@ import { Bar } from 'vue-chartjs'
 import { Chart, registerables } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { graphColors } from '@/utils/ColorUtils'
-import type { Distribution } from '@/model/Distribution'
-import { MetricType } from '@/model/MetricType'
+import type { DistributionMap } from '@/model/Distribution'
 import { store } from '@/stores/store'
 import DistributionDiagramOptions from './DistributionDiagramOptions.vue'
 
@@ -27,7 +26,7 @@ Chart.register(ChartDataLabels)
 
 const props = defineProps({
   distributions: {
-    type: Object as PropType<Record<MetricType, Distribution>>,
+    type: Object as PropType<DistributionMap>,
     required: true
   },
   xScale: {

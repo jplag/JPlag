@@ -11,7 +11,11 @@
         {{ store().getDisplayName(comparison.firstSubmissionId) }}
         -
         {{ store().getDisplayName(comparison.secondSubmissionId) }}
-        <ToolTipComponent direction="left" class="float-right hidden md:block print:hidden">
+        <ToolTipComponent
+          direction="left"
+          class="float-right hidden md:block print:hidden"
+          :show-info-symbol="false"
+        >
           <template #tooltip>
             <p class="text-sm whitespace-pre">
               Printing works best in landscape mode on Chromium based browsers
@@ -81,7 +85,7 @@
         @selection-changed="(index: number) => changeFileSorting(index)"
       />
     </Container>
-
+    <div ref="styleholder" class="col-span-0 row-span-0"></div>
     <FilesContainer
       ref="panel1"
       :files="filesOfFirst"
@@ -164,7 +168,7 @@ const panel2: Ref<typeof FilesContainer | null> = ref(null)
  * @param match The match to scroll to
  */
 function showMatchInFirst(match: Match) {
-  panel1.value?.scrollTo(match.firstFile, match.startInFirst.line)
+  panel1.value?.scrollTo(match.firstFileName, match.startInFirst.line)
 }
 
 /**
@@ -172,7 +176,7 @@ function showMatchInFirst(match: Match) {
  * @param match The match to scroll to
  */
 function showMatchInSecond(match: Match) {
-  panel2.value?.scrollTo(match.secondFile, match.startInSecond.line)
+  panel2.value?.scrollTo(match.secondFileName, match.startInSecond.line)
 }
 
 /**
@@ -219,13 +223,7 @@ function print() {
 const styleholder: Ref<Node | null> = ref(null)
 
 onMounted(() => {
-  if (styleholder.value == null) {
-    return
-  }
-  const styleHolderDiv = styleholder.value as Node
-  const styleElement = document.createElement('style')
-  styleElement.innerHTML = store().uiState.useDarkMode ? hljsDarkMode : hljsLightMode
-  styleHolderDiv.appendChild(styleElement)
+  onThemeUpdate(store().uiState.useDarkMode)
 })
 
 const useDarkMode = computed(() => {
@@ -233,15 +231,22 @@ const useDarkMode = computed(() => {
 })
 
 watch(useDarkMode, (newValue) => {
+  onThemeUpdate(newValue)
+})
+
+function onThemeUpdate(useDarkMode: boolean) {
   if (styleholder.value == null) {
+    console.warn('Could not find styleholder. Syntax highlighting will not work.')
     return
   }
   const styleHolderDiv = styleholder.value as Node
-  styleHolderDiv.removeChild(styleHolderDiv.firstChild as Node)
+  while (styleHolderDiv.hasChildNodes()) {
+    styleHolderDiv.removeChild(styleHolderDiv.firstChild as Node)
+  }
   const styleElement = document.createElement('style')
-  styleElement.innerHTML = newValue ? hljsDarkMode : hljsLightMode
+  styleElement.innerHTML = useDarkMode ? hljsDarkMode : hljsLightMode
   styleHolderDiv.appendChild(styleElement)
-})
+}
 
 onErrorCaptured((error) => {
   redirectOnError(error, 'Error displaying comparison:\n', 'OverviewView', 'Back to overview')
