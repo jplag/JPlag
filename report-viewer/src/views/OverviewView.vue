@@ -193,8 +193,7 @@ function onBarClicked(upperPercentile: number) {
 
   // determine largest similarity value that is still in the bucket
   let value = -1
-  for (let i = 0; i < props.topComparisons.length; i++) {
-    const comparison = props.topComparisons[i]
+  for (const comparison of props.topComparisons) {
     if (
       comparison.similarities[metric] <= adjustedPercentile &&
       comparison.similarities[metric] > value
@@ -204,8 +203,7 @@ function onBarClicked(upperPercentile: number) {
   }
   // the number of elements in this metric that are larger than that value equal the index in the list sorted by that metric
   let index = 0
-  for (let i = 0; i < props.topComparisons.length; i++) {
-    const comparison = props.topComparisons[i]
+  for (const comparison of props.topComparisons) {
     if (comparison.similarities[metric] > value) {
       index++
     }
