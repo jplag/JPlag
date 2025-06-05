@@ -405,6 +405,13 @@ function isHighlightedRow(item: ComparisonListElement) {
   )
 }
 
+function scrollToItem(itemIndex: number) {
+  dynamicScroller.value?.scrollToItem(itemIndex)
+}
+defineExpose({
+  scrollToItem
+})
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const dynamicScroller: Ref<any | null> = ref(null)
 
