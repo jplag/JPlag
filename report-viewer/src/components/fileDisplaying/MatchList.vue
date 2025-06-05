@@ -29,9 +29,7 @@
             {{ store().getDisplayName(id1) }}:
 
             <span v-if="basecodeInFirst.length > 0">
-              {{
-                basecodeInFirst.map((b) => getMatchLength(b.match)).reduce((a, b) => a + b, 0)
-              }}
+              {{ basecodeInFirst.map((b) => b.length).reduce((a, b) => a + b, 0) }}
               Tokens, Lines: {{ store().getDisplayName(id1 ?? '') }}: Lines
               {{ basecodeInFirst.map((b) => `${b.start}-${b.end}`).join(',') }}
             </span>
@@ -40,9 +38,7 @@
           <p>
             {{ store().getDisplayName(id2) }}:
             <span v-if="basecodeInSecond.length > 0">
-              {{
-                basecodeInSecond.map((b) => getMatchLength(b.match)).reduce((a, b) => a + b, 0)
-              }}
+              {{ basecodeInSecond.map((b) => b.length).reduce((a, b) => a + b, 0) }}
               Tokens, Lines: {{ store().getDisplayName(id2 ?? '') }}: Lines
               {{ basecodeInSecond.map((b) => `${b.start}-${b.end}`).join(',') }}
             </span>
