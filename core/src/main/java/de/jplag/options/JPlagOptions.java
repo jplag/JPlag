@@ -21,7 +21,6 @@ import de.jplag.merging.MergingOptions;
 import de.jplag.reporting.jsonfactory.serializer.LanguageSerializer;
 import de.jplag.util.FileUtils;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.soabase.recordbuilder.core.RecordBuilder;
 
@@ -49,14 +48,11 @@ import io.soabase.recordbuilder.core.RecordBuilder;
  * @param debugParser If true, submissions that cannot be parsed will be stored in a separate directory.
  */
 @RecordBuilder()
-public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Language language,
-        @JsonProperty("min_token_match") Integer minimumTokenMatch, @JsonProperty("submission_directories") Set<File> submissionDirectories,
-        @JsonProperty("old_directories") Set<File> oldSubmissionDirectories, @JsonProperty("base_directory") File baseCodeSubmissionDirectory,
-        @JsonProperty("subdirectory_name") String subdirectoryName, @JsonProperty("file_suffixes") List<String> fileSuffixes,
-        @JsonProperty("exclusion_file_name") String exclusionFileName, @JsonProperty("similarity_metric") SimilarityMetric similarityMetric,
-        @JsonProperty("similarity_threshold") double similarityThreshold, @JsonProperty("max_comparisons") int maximumNumberOfComparisons,
-        @JsonProperty("cluster") ClusteringOptions clusteringOptions, boolean debugParser, @JsonProperty("merging") MergingOptions mergingOptions,
-        @JsonProperty("normalize") boolean normalize) implements JPlagOptionsBuilder.With {
+public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Language language, Integer minimumTokenMatch,
+        Set<File> submissionDirectories, Set<File> oldSubmissionDirectories, File baseCodeSubmissionDirectory, String subdirectoryName,
+        List<String> fileSuffixes, String exclusionFileName, SimilarityMetric similarityMetric, double similarityThreshold,
+        int maximumNumberOfComparisons, ClusteringOptions clusteringOptions, boolean debugParser, MergingOptions mergingOptions, boolean normalize)
+        implements JPlagOptionsBuilder.With {
 
     public static final double DEFAULT_SIMILARITY_THRESHOLD = 0;
     public static final int DEFAULT_SHOWN_COMPARISONS = 2500;

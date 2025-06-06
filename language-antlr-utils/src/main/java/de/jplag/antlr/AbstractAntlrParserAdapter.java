@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CodePointCharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
@@ -59,7 +60,8 @@ public abstract class AbstractAntlrParserAdapter<T extends Parser> extends Abstr
     private void parseFile(File file, TokenCollector collector) throws ParsingException {
         collector.enterFile(file);
         try (Reader reader = FileUtils.openFileReader(file)) {
-            Lexer lexer = this.createLexer(CharStreams.fromReader(reader));
+            CodePointCharStream stream = CharStreams.fromReader(reader, file.getAbsolutePath());  // Specify source to retain file in ANTLR errors.
+            Lexer lexer = this.createLexer(stream);
             CommonTokenStream tokenStream = new CommonTokenStream(lexer);
             T parser = this.createParser(tokenStream);
             parser.removeErrorListeners();

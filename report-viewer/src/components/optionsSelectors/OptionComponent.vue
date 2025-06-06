@@ -5,10 +5,12 @@
     @click="$emit('click')"
   >
     {{ label }}
+    <InfoIcon v-if="hasToolTip" class="text-[0.5rem]" />
   </Interactable>
 </template>
 
 <script setup lang="ts">
+import InfoIcon from '../InfoIcon.vue'
 import Interactable from '../InteractableComponent.vue'
 
 defineProps({
@@ -17,6 +19,11 @@ defineProps({
     required: true
   },
   selected: {
+    type: Boolean,
+    required: false,
+    default: false
+  },
+  hasToolTip: {
     type: Boolean,
     required: false,
     default: false

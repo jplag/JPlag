@@ -20,7 +20,7 @@ import de.jplag.options.JPlagOptions;
 import de.jplag.options.SimilarityMetric;
 import de.jplag.reporting.reportobject.model.TopComparison;
 
-public class MetricMapperTest {
+class MetricMapperTest {
     private static final List<Integer> EXPECTED_AVG_DISTRIBUTION = List.of(1, 0, 0, 2, 3, 15, 5, 2, 16, 5, 2, 18, 3, 21, 2, 1, 5, 0, 14, 32, 25, 4, 2,
             12, 3, 2, 5, 5, 0, 5, 1, 5, 2, 5, 4, 5, 3, 5, 18, 21, 30, 4, 3, 10, 2, 3, 17, 28, 4, 10, 2, 4, 3, 0, 2, 20, 4, 0, 19, 5, 25, 9, 4, 18, 1,
             1, 1, 0, 31, 15, 35, 38, 40, 43, 45, 49, 50, 50, 50, 53, 60, 71, 73, 74, 80, 83, 87, 93, 95, 99, 102, 105, 106, 110, 113, 113, 117, 117,
@@ -32,7 +32,7 @@ public class MetricMapperTest {
     private final MetricMapper metricMapper = new MetricMapper(Submission::getName);
 
     @Test
-    public void test_getDistributions() {
+    void test_getDistributions() {
         // given
         JPlagResult jPlagResult = createJPlagResult(distribution(EXPECTED_AVG_DISTRIBUTION), distribution(EXPECTED_MAX_DISTRIBUTION),
                 comparison(submission("1"), submission("2"), .7, .8), comparison(submission("3"), submission("4"), .3, .9));
@@ -46,7 +46,7 @@ public class MetricMapperTest {
     }
 
     @Test
-    public void test_getTopComparisons() {
+    void test_getTopComparisons() {
         // given
         JPlagResult jPlagResult = createJPlagResult(distribution(EXPECTED_AVG_DISTRIBUTION), distribution(EXPECTED_MAX_DISTRIBUTION),
                 comparison(submission("1", 22), submission("2", 30), .7, .8, .5, .5, new int[] {9, 3, 1}),

@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.ParsingException;
 import de.jplag.SharedTokenType;
 import de.jplag.Token;
 import de.jplag.TokenPrinter;
@@ -48,7 +47,7 @@ class ScalaLanguageTest {
     private static final double EPSILON = 1E-6;
 
     private final Logger logger = LoggerFactory.getLogger(ScalaLanguageTest.class);
-    private final String[] testFiles = new String[] {"Parser.scala", COMPLETE_TEST_FILE};
+    private final String[] testFiles = {"Parser.scala", COMPLETE_TEST_FILE};
     private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "scala").toFile();
     private ScalaLanguage language;
 
@@ -58,13 +57,13 @@ class ScalaLanguageTest {
     }
 
     @Test
-    void parseTestFiles() throws ParsingException {
+    void parseTestFiles() {
         for (String fileName : testFiles) {
-            List<Token> tokens = language.parse(Set.of(new File(testFileLocation, fileName)));
+            List<Token> tokens = language.parse(Set.of(new File(testFileLocation, fileName)), false);
             String output = TokenPrinter.printTokens(tokens, testFileLocation);
             logger.info(output);
 
-            if (fileName.equals(COMPLETE_TEST_FILE)) {
+            if (COMPLETE_TEST_FILE.equals(fileName)) {
                 testTokenCoverage(tokens, fileName);
             }
             testSourceCoverage(fileName, tokens);
@@ -91,7 +90,7 @@ class ScalaLanguageTest {
             // Keep only lines that have no tokens
             codeLines.removeAll(tokenLines);
 
-            var coverage = 1.d - (codeLines.size() * 1.d / (codeLines.size() + tokenLines.size()));
+            var coverage = 1.d - codeLines.size() * 1.d / (codeLines.size() + tokenLines.size());
             if (coverage == 1) {
                 logger.info("All lines covered.");
             } else {
@@ -123,7 +122,8 @@ class ScalaLanguageTest {
             String line = lines.get(idx - 1);
             if (line.matches(EMPTY_OR_SINGLE_LINE_COMMENT)) {
                 return false;
-            } else if (line.matches(DELIMITED_COMMENT_START)) {
+            }
+            if (line.matches(DELIMITED_COMMENT_START)) {
                 state.insideComment = true;
                 return false;
             } else if (state.insideComment) {

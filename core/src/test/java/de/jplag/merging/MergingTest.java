@@ -1,6 +1,7 @@
 package de.jplag.merging;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ import de.jplag.SubmissionSet;
 import de.jplag.SubmissionSetBuilder;
 import de.jplag.TestBase;
 import de.jplag.Token;
-import de.jplag.comparison.LongestCommonSubsquenceSearch;
+import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 
@@ -35,7 +36,7 @@ class MergingTest extends TestBase {
     private List<Match> matches;
     private List<JPlagComparison> comparisonsBefore;
     private List<JPlagComparison> comparisonsAfter;
-    private final LongestCommonSubsquenceSearch comparisonStrategy;
+    private final LongestCommonSubsequenceSearch comparisonStrategy;
     private final SubmissionSet submissionSet;
     private static final int MINIMUM_NEIGHBOR_LENGTH = 1;
     private static final int MAXIMUM_GAP_SIZE = 10;
@@ -48,7 +49,7 @@ class MergingTest extends TestBase {
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         submissionSet = builder.buildSubmissionSet();
 
-        comparisonStrategy = new LongestCommonSubsquenceSearch(options);
+        comparisonStrategy = new LongestCommonSubsequenceSearch(options);
     }
 
     @BeforeEach
@@ -216,6 +217,24 @@ class MergingTest extends TestBase {
         assertEquals(expectedBefore, matchesBefore);
 
         assertEquals(expectedAfter, matchesAfter);
+    }
+
+    @Test
+    @DisplayName("Test minimal requires merges with default parameters.")
+    void testMinimalRequiredMerges() throws ExitException {
+        JPlagResult result = runJPlag("merging", it -> it.withMergingOptions(new MergingOptions().withEnabled(true)));
+        List<Integer> matchedTokens = result.getAllComparisons().stream().map(JPlagComparison::getNumberOfMatchedTokens).toList();
+        List<Double> similarities = result.getAllComparisons().stream().map(JPlagComparison::similarity).toList();
+
+        // Test matched tokens:
+        List<Integer> expectedMatchedTokens = List.of(26, 70, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        assertIterableEquals(expectedMatchedTokens, matchedTokens);
+
+        // Test similarity values:
+        List<Double> expectedSimilarities = List.of(0.8966, 0.5205, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        for (int i = 0; i < expectedSimilarities.size(); i++) {
+            assertEquals(expectedSimilarities.get(i), similarities.get(i), DELTA, "Mismatch at index " + i);
+        }
     }
 
     private static JPlagComparison findComparison(List<JPlagComparison> comparisons, String firstName, String secondName) {

@@ -1,8 +1,14 @@
 <template>
   <div class="space-y-2">
-    <div class="flex flex-row flex-wrap items-center gap-x-8 gap-y-2">
+    <div
+      class="flex flex-col flex-wrap gap-x-8 gap-y-2 overflow-hidden md:flex-row md:items-center"
+    >
       <h2>{{ header }}</h2>
-      <ToolTipComponent direction="left" class="min-w-[50%] grow">
+      <ToolTipComponent
+        direction="left"
+        class="max-w-full grow md:min-w-[40%]"
+        :show-info-symbol="false"
+      >
         <template #default>
           <SearchBarComponent v-model="searchStringValue" placeholder="Filter/Unhide Comparisons" />
         </template>
@@ -23,26 +29,14 @@
         </template>
       </ToolTipComponent>
 
-      <ButtonComponent class="w-24" @click="changeAnonymousForAll()">
+      <ButtonComponent class="w-30 min-w-fit whitespace-nowrap" @click="changeAnonymousForAll()">
         {{
-          store().state.anonymous.size == store().getSubmissionIds.length ? 'Show All' : 'Hide All'
+          store().state.anonymous.size == store().getSubmissionIds.length
+            ? 'Show All'
+            : 'Anonymize All'
         }}
       </ButtonComponent>
     </div>
-    <OptionsSelector
-      title="Sorting Metric:"
-      :default-selected="getSortingMetric()"
-      :labels="tableSortingOptions"
-      @selection-changed="(index: number) => changeSortingMetric(index)"
-    />
-    <MetricSelector
-      title="Secondary Metric:"
-      :default-selected="store().uiState.comparisonTableSecondaryMetric"
-      :metrics="secondaryMetricOptions"
-      @selection-changed="
-        (metric: MetricJsonIdentifier) => (store().uiState.comparisonTableSecondaryMetric = metric)
-      "
-    />
   </div>
 </template>
 
@@ -51,20 +45,12 @@ import { computed } from 'vue'
 import SearchBarComponent from './SearchBarComponent.vue'
 import ToolTipComponent from './ToolTipComponent.vue'
 import ButtonComponent from './ButtonComponent.vue'
-import OptionsSelector from './optionsSelectors/OptionsSelectorComponent.vue'
 import { store } from '@/stores/store'
-import { MetricJsonIdentifier, MetricTypes } from '@/model/MetricType'
-import type { ToolTipLabel } from '@/model/ui/ToolTip'
-import MetricSelector from './optionsSelectors/MetricSelector.vue'
 
 const props = defineProps({
   searchString: {
     type: String,
     default: ''
-  },
-  enableClusterSorting: {
-    type: Boolean,
-    default: true
   },
   header: {
     type: String,
@@ -99,45 +85,6 @@ const searchStringValue = computed({
     }
   }
 })
-
-function changeSortingMetric(index: number) {
-  store().uiState.comparisonTableSortingMetric =
-    index < tableSortingMetricOptions.length
-      ? tableSortingMetricOptions[index].identifier
-      : MetricJsonIdentifier.AVERAGE_SIMILARITY
-  store().uiState.comparisonTableClusterSorting = tableSortingOptions.value[index] == 'Cluster'
-}
-
-function getSortingMetric() {
-  if (store().uiState.comparisonTableClusterSorting && props.enableClusterSorting) {
-    return tableSortingOptions.value.indexOf('Cluster')
-  }
-  return tableSortingMetricOptions.findIndex(
-    (m) => m.identifier == store().uiState.comparisonTableSortingMetric
-  )
-}
-
-const tableSortingMetricOptions = MetricTypes.METRIC_LIST
-const tableSortingOptions = computed(() => {
-  const options: (ToolTipLabel | string)[] = tableSortingMetricOptions.map((metric) => {
-    return {
-      displayValue: metric.longName,
-      tooltip: metric.tooltip
-    }
-  })
-  if (props.enableClusterSorting) {
-    options.push('Cluster')
-  }
-  return options
-})
-
-const secondaryMetricOptions = [
-  MetricJsonIdentifier.MAXIMUM_SIMILARITY,
-  MetricJsonIdentifier.MINIMUM_SIMILARITY,
-  MetricJsonIdentifier.INTERSECTION,
-  MetricJsonIdentifier.LONGEST_MATCH,
-  MetricJsonIdentifier.OVERALL
-]
 
 /**
  * Sets the anonymous set to empty if it is full or adds all submission ids to it if it is not full

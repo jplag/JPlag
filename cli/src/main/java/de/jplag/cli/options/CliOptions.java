@@ -50,7 +50,7 @@ public class CliOptions implements Runnable {
     public int shownComparisons = JPlagOptions.DEFAULT_SHOWN_COMPARISONS;
 
     @Option(names = {"-r",
-            "--result-file"}, description = "Name of the file in which the comparison results will be stored (default: ${DEFAULT-VALUE}). Missing .zip endings will be automatically added.")
+            "--result-file"}, description = "Name of the file in which the comparison results will be stored (default: ${DEFAULT-VALUE}). Missing .jplag endings will be automatically added.")
     public String resultFile = "results";
 
     @Option(names = {"-M",

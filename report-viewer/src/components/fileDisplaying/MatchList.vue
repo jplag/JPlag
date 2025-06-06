@@ -3,11 +3,24 @@
 -->
 <template>
   <div
-    class="flex h-fit max-w-full min-w-0 flex-row space-x-1 overflow-x-hidden text-xs print:hidden"
+    class="flex h-fit max-w-full min-w-0 flex-row flex-wrap space-x-1 gap-y-1 overflow-x-hidden text-xs md:flex-nowrap print:hidden"
   >
-    <ToolTipComponent v-if="hasBaseCode" direction="right" class="pr-3">
+    <ToolTipComponent direction="right" :show-info-symbol="false">
       <template #default>
-        <OptionComponent label="Base Code" :style="{ background: getMatchColor(0.3, 'base') }" />
+        <OptionComponent label="Matches:" :has-tool-tip="true" />
+      </template>
+      <template #tooltip>
+        <p class="text-sm whitespace-pre">Click on a match to show it in the code view.</p>
+      </template>
+    </ToolTipComponent>
+
+    <ToolTipComponent v-if="hasBaseCode" direction="right" class="pr-3" :show-info-symbol="false">
+      <template #default>
+        <OptionComponent
+          label="Base Code"
+          :style="{ background: getMatchColor(0.3, 'base') }"
+          :has-tool-tip="true"
+        />
       </template>
       <template #tooltip>
         <div class="text-sm whitespace-pre">
@@ -35,15 +48,6 @@
       </template>
     </ToolTipComponent>
 
-    <ToolTipComponent direction="right">
-      <template #default>
-        <OptionComponent label="Match Files: TokenCount" />
-      </template>
-      <template #tooltip>
-        <p class="text-sm whitespace-pre">Click on a match to show it in the code view.</p>
-      </template>
-    </ToolTipComponent>
-
     <div
       ref="scrollableList"
       class="print-exact flex w-full flex-row space-x-1 overflow-x-auto print:flex-wrap print:space-y-1 print:overflow-x-hidden"
@@ -54,25 +58,27 @@
         :key="index"
         :direction="getTooltipDirection(index)"
         :scroll-offset-x="scrollOffsetX"
+        :show-info-symbol="false"
       >
         <template #default>
           <OptionComponent
             :style="{ background: getMatchColor(0.3, match.colorIndex) }"
             :label="
-              getFileName(match.firstFile) +
+              getFileName(match.firstFileName) +
               ' - ' +
-              getFileName(match.secondFile) +
+              getFileName(match.secondFileName) +
               ': ' +
               match.tokens
             "
+            :has-tool-tip="true"
             @click="$emit('matchSelected', match)"
           />
         </template>
         <template #tooltip>
           <p class="text-sm whitespace-pre">
-            Match between {{ getFileName(match.firstFile) }} (Line {{ match.startInFirst.line }}-{{
-              match.endInFirst.line
-            }}) and {{ getFileName(match.secondFile) }} (Line {{ match.startInSecond.line }}-{{
+            Match between {{ getFileName(match.firstFileName) }} (Line
+            {{ match.startInFirst.line }}-{{ match.endInFirst.line }}) and
+            {{ getFileName(match.secondFileName) }} (Line {{ match.startInSecond.line }}-{{
               match.endInSecond.line
             }}) <br />
             Match is {{ match.tokens }} tokens long. <br />
@@ -106,9 +112,9 @@
         :style="{ background: getMatchColor(0.3, match.colorIndex) }"
         class="print-exact"
       >
-        <td class="px-2">{{ getFileName(match.firstFile) }}</td>
+        <td class="px-2">{{ getFileName(match.firstFileName) }}</td>
         <td class="px-2">{{ match.startInFirst }} - {{ match.endInFirst }}</td>
-        <td class="px-2">{{ getFileName(match.secondFile) }}</td>
+        <td class="px-2">{{ getFileName(match.secondFileName) }}</td>
         <td class="px-2">{{ match.startInSecond }} - {{ match.endInSecond }}</td>
         <td class="px-2">{{ match.tokens }}</td>
       </tr>

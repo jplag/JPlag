@@ -214,10 +214,9 @@ class EndToEndSuiteTest {
                             "expected non plagiarism comparisons have deviating similarities"));
 
             return DynamicContainer.dynamicContainer("expected plagiarism test", List.of(goldStandardMatch, goldStandardNonMatch));
-        } else {
-            return DynamicTest.dynamicTest("expected plagiarisms skipped",
-                    () -> Assumptions.abort("The expected plagiarisms test is skipped, because no expected plagiarisms are defined."));
         }
+        return DynamicTest.dynamicTest("expected plagiarisms skipped",
+                () -> Assumptions.abort("The expected plagiarisms test is skipped, because no expected plagiarisms are defined."));
     }
 
     /**
@@ -263,9 +262,8 @@ class EndToEndSuiteTest {
         return submission.getTokenList().stream().map(it -> {
             if (Enum.class.isAssignableFrom(it.getType().getClass())) {
                 return ((Enum<?>) it.getType()).name();
-            } else {
-                return it.getType().getDescription();
             }
+            return it.getType().getDescription();
         }).toList();
     }
 }

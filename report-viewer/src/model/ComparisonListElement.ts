@@ -1,3 +1,4 @@
+import type { Cluster } from './Cluster'
 import type { MetricJsonIdentifier } from './MetricType'
 
 /**
@@ -17,5 +18,5 @@ export type ComparisonListElement = {
   firstSubmissionId: string
   secondSubmissionId: string
   similarities: Record<MetricJsonIdentifier, number>
-  clusterIndex: number
+  cluster?: Cluster
 }

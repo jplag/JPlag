@@ -1,6 +1,6 @@
 <template>
   <div
-    class="absolute top-0 right-0 bottom-0 left-0 flex flex-row space-x-5 p-5 pb-7 print:flex-col print:space-y-2 print:space-x-0 print:p-0"
+    class="grid grid-cols-1 grid-rows-[auto_auto] gap-5 md:grid-cols-2 md:grid-rows-1 md:overflow-hidden print:grid-cols-1 print:grid-rows-[auto_auto]"
   >
     <Container class="infoContainer print:border-none!">
       <h2>Run Options:</h2>
@@ -8,16 +8,18 @@
       <ScrollableComponent class="grow px-4 pt-2">
         <div class="space-y-2">
           <TextInformation label="Language">{{ options.language }}</TextInformation>
-          <TextInformation label="Min Token Match">{{ options.minTokenMatch }}</TextInformation>
+          <TextInformation label="Min Token Match">{{ options.minimumTokenMatch }}</TextInformation>
           <TextInformation label="Submission Directories">{{
             options.submissionDirectories.join(', ')
           }}</TextInformation>
           <TextInformation label="Old Directories">{{
-            options.oldDirectories.join(', ')
+            options.oldSubmissionDirectories.join(', ')
           }}</TextInformation>
-          <TextInformation label="Base Directory">{{ options.baseDirectory }}</TextInformation>
+          <TextInformation label="Base Directory">{{
+            options.baseCodeSubmissionDirectory
+          }}</TextInformation>
           <TextInformation label="Subdirectory Name">{{
-            options.subDirectoryName
+            options.subdirectoryName
           }}</TextInformation>
           <TextInformation label="File Suffixes">{{
             options.fileSuffixes.join(', ')
@@ -32,67 +34,67 @@
             options.similarityThreshold
           }}</TextInformation>
           <TextInformation label="Max Comparison Count">{{
-            options.maxNumberComparisons
+            options.maximumNumberOfComparisons
           }}</TextInformation>
           <TextInformation label="Result File Name">{{
             store().state.uploadedFileName
           }}</TextInformation>
 
-          <div v-if="options.clusterOptions.enabled" class="mt-5! space-y-2">
+          <div v-if="options.clusteringOptions.enabled" class="mt-5! space-y-2">
             <h3 class="font-bold">Clustering:</h3>
             <TextInformation label="Similarity Metric">{{
-              options.clusterOptions.similarityMetric.longName
+              options.clusteringOptions.similarityMetric.longName
             }}</TextInformation>
             <TextInformation label="Algorithm">{{
-              options.clusterOptions.algorithm
+              options.clusteringOptions.algorithm
             }}</TextInformation>
 
             <div
-              v-if="options.clusterOptions.algorithm.toLowerCase() == 'spectral'"
+              v-if="options.clusteringOptions.algorithm.toLowerCase() == 'spectral'"
               class="space-y-2"
             >
               <TextInformation label="Spectral Bandwidth">{{
-                options.clusterOptions.spectralBandwidth
+                options.clusteringOptions.spectralKernelBandwidth
               }}</TextInformation>
               <TextInformation label="Spectral Gaussian Process Variance">{{
-                options.clusterOptions.spectralGaussianProcessVariance
+                options.clusteringOptions.spectralGaussianProcessVariance
               }}</TextInformation>
               <TextInformation label="Spectral Min Runs">{{
-                options.clusterOptions.spectralMinRuns
+                options.clusteringOptions.spectralMinRuns
               }}</TextInformation>
               <TextInformation label="Spectral Max Runs">{{
-                options.clusterOptions.spectralMaxRuns
+                options.clusteringOptions.spectralMaxRuns
               }}</TextInformation>
               <TextInformation label="K-Means Iterations">{{
-                options.clusterOptions.spectralMaxKMeansIterations
+                options.clusteringOptions.spectralMaxKMeansIterationPerRun
               }}</TextInformation>
             </div>
 
             <TextInformation v-else label="Agglomerative Threshold">{{
-              options.clusterOptions.agglomerativeThreshold
+              options.clusteringOptions.agglomerativeThreshold
             }}</TextInformation>
 
             <TextInformation label="Preprocessor">{{
-              options.clusterOptions.preprocessor
+              options.clusteringOptions.preprocessor
             }}</TextInformation>
             <TextInformation label="Preprocessor Threshold">{{
-              options.clusterOptions.preprocessorThreshold
+              options.clusteringOptions.preprocessorThreshold
             }}</TextInformation>
             <TextInformation label="Preprocessor Percentile">{{
-              options.clusterOptions.preprocessorPercentile
+              options.clusteringOptions.preprocessorPercentile
             }}</TextInformation>
             <TextInformation label="Inter Cluster Similarity">{{
-              options.clusterOptions.interClusterSimilarity
+              options.clusteringOptions.agglomerativeInterClusterSimilarity
             }}</TextInformation>
           </div>
 
           <div v-if="options.mergingOptions.enabled" class="mt-5 space-y-2">
             <h3 class="font-bold">Match Merging:</h3>
             <TextInformation label="Min Neighbor Length">{{
-              options.mergingOptions.minNeighborLength
+              options.mergingOptions.minimumNeighborLength
             }}</TextInformation>
             <TextInformation label="Max Gap Size"
-              >{{ options.mergingOptions.maxGapSize }} }}</TextInformation
+              >{{ options.mergingOptions.maximumGapSize }} }}</TextInformation
             >
             <TextInformation label="Min Required Merges"
               >{{ options.mergingOptions.minimumRequiredMerges }} }}</TextInformation
@@ -107,22 +109,29 @@
 
       <ScrollableComponent class="grow px-4 pt-2">
         <TextInformation label="Date of Execution" class="pb-1">{{
-          overview.dateOfExecution
+          runInformation.dateOfExecution
         }}</TextInformation>
         <TextInformation label="Execution Duration" class="pb-1"
-          >{{ overview.durationOfExecution }} ms</TextInformation
+          >{{ runInformation.executionTime }} ms</TextInformation
         >
         <TextInformation label="Total Submissions" class="pb-1">{{
           store().getSubmissionIds.length
         }}</TextInformation>
         <TextInformation label="Total Comparisons" class="pb-1">{{
-          overview.totalComparisons
+          runInformation.totalComparisons
         }}</TextInformation>
         <TextInformation label="Shown Comparisons" class="pb-1">{{
-          overview.shownComparisons
+          shownComparisons
         }}</TextInformation>
         <TextInformation label="Missing Comparisons" class="pb-1">{{
-          overview.missingComparisons
+          missingComparisons
+        }}</TextInformation>
+        <TextInformation label="Failed Submissions" class="pb-1">{{
+          runInformation.failedSubmissions.length > 0
+            ? runInformation.failedSubmissions
+                .map((s) => `${s.submissionId} (${stringifySubmissionState(s.submissionState)})`)
+                .join(', ')
+            : 'None'
         }}</TextInformation>
       </ScrollableComponent>
     </Container>
@@ -134,21 +143,35 @@ import Container from '@/components/ContainerComponent.vue'
 import TextInformation from '@/components/TextInformation.vue'
 import ScrollableComponent from '@/components/ScrollableComponent.vue'
 import { store } from '@/stores/store'
-import { Overview } from '@/model/Overview'
-import { onErrorCaptured, type PropType } from 'vue'
+import { computed, onErrorCaptured, type PropType } from 'vue'
 import { redirectOnError } from '@/router'
 import type { CliOptions } from '@/model/CliOptions'
+import { metricToolTips } from '@/model/MetricType'
+import type { RunInformation, SubmissionState } from '@/model/RunInformation'
 
-defineProps({
-  overview: {
-    type: Object as PropType<Overview>,
+const props = defineProps({
+  runInformation: {
+    type: Object as PropType<RunInformation>,
     required: true
   },
   options: {
     type: Object as PropType<CliOptions>,
     required: true
+  },
+  topComparisonsCount: {
+    type: Number,
+    required: true
   }
 })
+
+const shownComparisons = computed(() => props.topComparisonsCount)
+const missingComparisons = computed(
+  () => props.runInformation.totalComparisons - shownComparisons.value
+)
+
+function stringifySubmissionState(reason: SubmissionState) {
+  return reason.toString().replace(/_/g, ' ').toLowerCase()
+}
 
 onErrorCaptured((error) => {
   redirectOnError(error, 'Error displaying information:\n', 'OverviewView', 'Back to overview')
@@ -160,6 +183,6 @@ onErrorCaptured((error) => {
 @reference "../style.css";
 
 .infoContainer {
-  @apply flex max-h-0 min-h-full flex-1 flex-col overflow-hidden print:max-h-none print:min-h-0 print:flex-none;
+  @apply flex flex-col overflow-hidden print:min-h-fit print:overflow-visible;
 }
 </style>

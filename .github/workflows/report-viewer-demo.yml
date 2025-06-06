@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - main
-      
+
 jobs:
   build-jar:
     runs-on: ubuntu-latest
@@ -19,10 +19,10 @@ jobs:
         with:
           java-version: 21
           distribution: 'temurin'
-        
+
       - name: Build Assembly
         run: mvn clean package assembly:single
-        
+
       - name: Upload Assembly
         uses: actions/upload-artifact@v4
         with:
@@ -43,27 +43,27 @@ jobs:
         with:
           java-version: 21
           distribution: 'temurin'
-      
+
       - name: Get JAR
         uses: actions/download-artifact@v4
         with:
           name: JPlag
-      
+
       - name: Copy and unzip submissions
         run: unzip ./.github/workflows/files/progpedia.zip
-        
+
       - name: Rename jar
         run: mv *.jar ./jplag.jar
-  
+
       - name: Run JPlag
         run: java -jar jplag.jar ACCEPTED -bc base -r example
-      
+
       - name: Upload Result
         uses: actions/upload-artifact@v4
         with:
           name: "Result"
-          path: "example.zip"
-            
+          path: "example.jplag"
+
 
   build-and-deploy:
     needs: run-example
@@ -71,11 +71,11 @@ jobs:
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v4
-              
+
       - uses: actions/setup-node@v4
         with:
           node-version: "18"
-        
+
       - name: Set version of Report Viewer
         shell: bash
         run: |
@@ -88,7 +88,7 @@ jobs:
           echo "$json" >  report-viewer/src/version.json
           echo "Version of Report Viewer:"
           cat report-viewer/src/version.json
-      
+
       - name: Download Results
         uses: actions/download-artifact@v4
         with:
@@ -100,7 +100,7 @@ jobs:
         run: |
           npm install
           npm run build-demo
-        
+
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.7.3
         with:
@@ -110,4 +110,4 @@ jobs:
           token: ${{ secrets.SDQ_DEV_DEPLOY_TOKEN }}
           clean: true
           single-commit: true
-  
+

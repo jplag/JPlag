@@ -15,7 +15,7 @@ public class SchemeLanguage implements Language {
 
     @Override
     public String[] suffixes() {
-        return new String[] {".scm", ".SCM", ".ss", ".SS"};
+        return new String[] {".scm", ".ss"};
     }
 
     @Override

@@ -1,41 +1,46 @@
 import type { Language } from './Language'
 import type { MetricType } from './MetricType'
 
-export interface CliOptions {
-  language: Language
-  minTokenMatch: number
+export type CliOptions = AbstractOptions<Language>
+export type ReportFormatCliOptions = AbstractOptions<string>
+
+interface AbstractOptions<L> {
+  language: L
+  minimumTokenMatch: number
   submissionDirectories: string[]
-  oldDirectories: string[]
-  baseDirectory: string
-  subDirectoryName: string
+  oldSubmissionDirectories: string[]
+  baseCodeSubmissionDirectory: File
+  subdirectoryName: string
   fileSuffixes: string[]
   exclusionFileName: string
   similarityMetric: MetricType
   similarityThreshold: number
-  maxNumberComparisons: number
-  clusterOptions: CliClusterOptions
+  maximumNumberOfComparisons: number
+  clusteringOptions: CliClusterOptions
+  debugParser: boolean
   mergingOptions: CliMergingOptions
+  normalize: boolean
 }
 
 export interface CliClusterOptions {
-  enabled: boolean
   similarityMetric: MetricType
-  spectralBandwidth: number
+  spectralKernelBandwidth: number
   spectralGaussianProcessVariance: number
   spectralMinRuns: number
   spectralMaxRuns: number
-  spectralMaxKMeansIterations: number
+  spectralMaxKMeansIterationPerRun: number
   agglomerativeThreshold: number
   preprocessor: string
+  enabled: boolean
   algorithm: string
-  interClusterSimilarity: string
+  agglomerativeInterClusterSimilarity: string
   preprocessorThreshold: number
   preprocessorPercentile: number
 }
 
-export interface CliMergingOptions {
+interface CliMergingOptions {
   enabled: boolean
-  minNeighborLength: number
-  maxGapSize: number
+  minimumNeighborLength: number
+  maximumGapSize: number
   minimumRequiredMerges: number
 }

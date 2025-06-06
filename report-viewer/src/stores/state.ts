@@ -1,5 +1,6 @@
 import type { SubmissionFile } from '@/model/File'
 import type { MetricJsonIdentifier } from '@/model/MetricType'
+import type { ComparisonTableSorting } from '@/model/ui/ComparisonSorting'
 import type { DistributionChartConfig } from '@/model/ui/DistributionChartConfig'
 import type { FileSortingOptions } from '@/model/ui/FileSortingOptions'
 
@@ -20,14 +21,6 @@ export interface State {
    */
   files: Record<string, string>
   submissions: Record<string, Map<string, SubmissionFile>>
-  /**
-   * Indicates whether local mode is used.
-   */
-  localModeUsed: boolean
-  /**
-   * Indicates whether zip mode is used.
-   */
-  zipModeUsed: boolean
 
   fileIdToDisplayName: Map<string, string>
   submissionIdsToComparisonFileName: Map<string, Map<string, string>>
@@ -42,6 +35,7 @@ export interface UIState {
   comparisonTableSortingMetric: MetricJsonIdentifier
   comparisonTableSecondaryMetric: MetricJsonIdentifier
   comparisonTableClusterSorting: boolean
+  comparisonTableSorting: ComparisonTableSorting
   distributionChartConfig: DistributionChartConfig
   fileSorting: FileSortingOptions
 }

@@ -25,7 +25,7 @@ public class NewJavaFeaturesTest extends TestBase {
 
     @Test
     @DisplayName("test comparison of Java files with modern language features")
-    public void testJavaFeatureDuplicates() throws ExitException {
+    void testJavaFeatureDuplicates() throws ExitException {
         // pre-condition
         int javaVersion = Runtime.version().feature();
         boolean isCiRun = System.getenv(CI_VARIABLE) != null;

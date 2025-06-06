@@ -14,13 +14,6 @@ public class Scanner extends AbstractParser {
 
     private List<Token> tokens;
 
-    /**
-     * Creates the parser.
-     */
-    public Scanner() {
-        super();
-    }
-
     public List<Token> scan(Set<File> files) throws ParsingException {
         tokens = new ArrayList<>();
         for (File file : files) {

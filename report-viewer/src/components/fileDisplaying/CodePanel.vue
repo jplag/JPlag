@@ -2,7 +2,7 @@
   Panel which displays a submission files with its line of code.
 -->
 <template>
-  <Interactable class="mx-2 shadow-sm! print:mx-0! print:border-0! print:p-0!">
+  <Interactable class="shadow-sm! md:mx-2 print:mx-0! print:border-0! print:p-0!">
     <div class="flex px-2 font-bold print:whitespace-pre-wrap" @click="collapsed = !collapsed">
       <ToolTipComponent v-if="getFileDisplayName(file) != file.fileName" direction="right">
         <template #default
@@ -111,7 +111,7 @@ const props = defineProps({
 
 const emit = defineEmits(['matchSelected'])
 
-const collapsed = ref(true)
+const collapsed = ref(false)
 const lineRefs = ref<HTMLElement[]>([])
 
 const codeLines: Ref<{ line: string; matches: MatchInSingleFile[] }[]> = computed(() =>
@@ -144,9 +144,14 @@ function getLineRect(lineNumber: number): DOMRect {
   return lineRefs.value[lineNumber - 1].getBoundingClientRect()
 }
 
+function isCollapsed(): boolean {
+  return collapsed.value
+}
+
 defineExpose({
   collapse,
   expand,
+  isCollapsed,
   getLineRect
 })
 

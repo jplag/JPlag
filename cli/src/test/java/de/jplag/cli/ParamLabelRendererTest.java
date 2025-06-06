@@ -22,7 +22,7 @@ class ParamLabelRendererTest {
     private CommandLine.Help.Ansi ansi;
     private List<CommandLine.Help.Ansi.IStyle> styles;
 
-    private static final String expectedEnumLabel = "=<{FIRST, SECOND, THIRD}>";
+    private static final String EXPECTED_ENUM_LABEL = "=<{FIRST, SECOND, THIRD}>";
 
     /**
      * Creates the parameterLabelRenderer, the base renderer and formatting information for picocli.
@@ -47,7 +47,7 @@ class ParamLabelRendererTest {
         CommandLine.Model.ArgSpec argument = CommandLine.Model.OptionSpec.builder("enum").type(TestEnum.class).build();
 
         String label = this.paramLabelRenderer.renderParameterLabel(argument, this.ansi, this.styles).plainString();
-        Assertions.assertEquals(expectedEnumLabel, label);
+        Assertions.assertEquals(EXPECTED_ENUM_LABEL, label);
     }
 
     /**

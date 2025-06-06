@@ -1,5 +1,5 @@
 import { it, beforeEach, describe, expect } from 'vitest'
-import validNew from './ValidComparison.json'
+import validNew from './assets/ValidComparison.json'
 import { ComparisonFactory } from '@/model/factories/ComparisonFactory'
 import { store } from '@/stores/store'
 import { MetricJsonIdentifier } from '@/model/MetricType'
@@ -8,7 +8,6 @@ import { setActivePinia, createPinia } from 'pinia'
 describe('Test JSON to Comparison', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
-    store().setLoadingType('zip')
   })
 
   it('Post 5.0', async () => {

@@ -5,8 +5,6 @@ import { createTestingPinia } from '@pinia/testing'
 import { store } from '@/stores/store'
 import { MetricJsonIdentifier } from '@/model/MetricType.ts'
 import { router } from '@/router'
-import OptionsSelector from '@/components/optionsSelectors/OptionsSelectorComponent.vue'
-import OptionComponent from '@/components/optionsSelectors/OptionComponent.vue'
 
 describe('ComparisonTable', async () => {
   it('Test search string filtering', async () => {
@@ -133,7 +131,7 @@ describe('ComparisonTable', async () => {
     expect(displayedComparisonsIndex3.length).toBe(1)
     expect(displayedComparisonsIndex3[0].firstSubmissionId).toBe('H')
 
-    const metricOptions = wrapper.getComponent(OptionsSelector).findAllComponents(OptionComponent)
+    const metricOptions = wrapper.get('.font-bold').findAll('.cursor-pointer')
     await metricOptions[1].trigger('click')
     wrapper.find('input').setValue('index:2')
     await flushPromises()
@@ -252,7 +250,12 @@ describe('ComparisonTable', async () => {
               [MetricJsonIdentifier.AVERAGE_SIMILARITY]: 0.3,
               [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: 0.5
             },
-            clusterIndex: 0
+            cluster: {
+              index: 0,
+              averageSimilarity: 0.5,
+              strength: 0.5,
+              members: ['A', 'B']
+            }
           },
           {
             sortingPlace: 1,
@@ -263,7 +266,12 @@ describe('ComparisonTable', async () => {
               [MetricJsonIdentifier.AVERAGE_SIMILARITY]: 0.5,
               [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: 1
             },
-            clusterIndex: 1
+            cluster: {
+              index: 1,
+              averageSimilarity: 0.6,
+              strength: 0.5,
+              members: ['C', 'D']
+            }
           },
           {
             sortingPlace: 1,
@@ -274,7 +282,12 @@ describe('ComparisonTable', async () => {
               [MetricJsonIdentifier.AVERAGE_SIMILARITY]: 0.3,
               [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: 0.1
             },
-            clusterIndex: 2
+            cluster: {
+              index: 2,
+              averageSimilarity: 0.9,
+              strength: 0.5,
+              members: ['E', 'F']
+            }
           },
           {
             sortingPlace: 1,
@@ -285,21 +298,24 @@ describe('ComparisonTable', async () => {
               [MetricJsonIdentifier.AVERAGE_SIMILARITY]: 0.9,
               [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: 0.2
             },
-            clusterIndex: -1
+            cluster: undefined
           }
         ],
         clusters: [
           {
+            index: 0,
             averageSimilarity: 0.5,
             strength: 0.5,
             members: ['A', 'B']
           },
           {
+            index: 1,
             averageSimilarity: 0.6,
             strength: 0.5,
             members: ['C', 'D']
           },
           {
+            index: 2,
             averageSimilarity: 0.9,
             strength: 0.5,
             members: ['E', 'F']
@@ -318,7 +334,7 @@ describe('ComparisonTable', async () => {
     expect(displayedComparisonsAverageSorted[2].firstSubmissionId).toBe('A')
     expect(displayedComparisonsAverageSorted[3].firstSubmissionId).toBe('E')
 
-    const metricOptions = wrapper.getComponent(OptionsSelector).findAllComponents(OptionComponent)
+    const metricOptions = wrapper.get('.font-bold').findAll('.cursor-pointer')
     await metricOptions[1].trigger('click')
     await flushPromises()
 
