@@ -81,9 +81,9 @@ class SubsequenceHashLookupTable {
                 } else {
                     subsequenceHashes[windowStartIndex] = NO_HASH;
                 }
-                hash -= hashValueForValue(values[windowStartIndex]) << (windowSize - 1);
+                hash -= hashValueForValue(values[windowStartIndex]) << (windowSize - 1); // is [...] * 2^(windowSize - 1)
             }
-            hash = (hash << 1) + hashValueForValue(values[windowEndIndex]);
+            hash = (hash << 1) + hashValueForValue(values[windowEndIndex]); // is 2 * hash + [...]
             if (marked[windowEndIndex]) {
                 hashedLength = 0;
             } else {
