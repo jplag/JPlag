@@ -10,7 +10,8 @@
 <script setup lang="ts">
 import { computed, type PropType, type Ref } from 'vue'
 import OptionsSelectorComponent from './OptionsSelectorComponent.vue'
-import { MetricJsonIdentifier, MetricTypes } from '@/model/MetricType'
+import { MetricTypes } from '@/model/MetricType'
+import { MetricJsonIdentifier } from '@/model/MetricJsonIdentifier'
 
 const props = defineProps({
   metrics: {

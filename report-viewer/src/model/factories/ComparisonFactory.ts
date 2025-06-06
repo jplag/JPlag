@@ -4,7 +4,7 @@ import { store } from '@/stores/store'
 import { getMatchColorCount } from '@/utils/ColorUtils'
 import slash from 'slash'
 import { BaseFactory } from './BaseFactory'
-import { MetricJsonIdentifier } from '../MetricType'
+import { MetricJsonIdentifier } from '../MetricJsonIdentifier'
 import type { SubmissionFile } from '../File'
 
 /**

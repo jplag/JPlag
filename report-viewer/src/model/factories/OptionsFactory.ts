@@ -1,6 +1,5 @@
 import type { CliClusterOptions, CliOptions, ReportFormatCliOptions } from '../CliOptions'
 import { getLanguageParser } from '../Language'
-import { MetricJsonIdentifier, MetricTypes } from '../MetricType'
 import { BaseFactory } from './BaseFactory'
 
 export class OptionsFactory extends BaseFactory {
@@ -9,7 +8,6 @@ export class OptionsFactory extends BaseFactory {
   }
 
   private static extractOptions(json: ReportFormatCliOptions): CliOptions {
-    const similarityMetricIdentifier = json['similarity_metric'] as MetricJsonIdentifier
     return {
       ...json,
       language: getLanguageParser(json.language),

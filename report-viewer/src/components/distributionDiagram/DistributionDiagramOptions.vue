@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { MetricJsonIdentifier } from '@/model/MetricType'
+import { MetricJsonIdentifier } from '@/model/MetricJsonIdentifier'
 import { store } from '@/stores/store'
 import MetricSelector from '@/components/optionsSelectors/MetricSelector.vue'
 import OptionsSelector from '@/components/optionsSelectors/OptionsSelectorComponent.vue'

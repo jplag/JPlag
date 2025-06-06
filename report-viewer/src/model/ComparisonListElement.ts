@@ -1,5 +1,5 @@
 import type { Cluster } from './Cluster'
-import type { MetricJsonIdentifier } from './MetricType'
+import type { MetricJsonIdentifier } from './MetricJsonIdentifier'
 
 /**
  * Comparison model used by the Comparison Table in Overview. Only the needed attributes to display are included.

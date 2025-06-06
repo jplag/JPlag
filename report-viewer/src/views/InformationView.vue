@@ -146,7 +146,6 @@ import { store } from '@/stores/store'
 import { computed, onErrorCaptured, type PropType } from 'vue'
 import { redirectOnError } from '@/router'
 import type { CliOptions } from '@/model/CliOptions'
-import { metricToolTips } from '@/model/MetricType'
 import type { RunInformation, SubmissionState } from '@/model/RunInformation'
 
 const props = defineProps({

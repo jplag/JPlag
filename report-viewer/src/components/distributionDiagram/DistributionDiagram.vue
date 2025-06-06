@@ -20,14 +20,13 @@ import { graphColors } from '@/utils/ColorUtils'
 import type { DistributionMap } from '@/model/Distribution'
 import { store } from '@/stores/store'
 import DistributionDiagramOptions from './DistributionDiagramOptions.vue'
-import type { MetricJsonIdentifier } from '@/model/MetricType'
 
 Chart.register(...registerables)
 Chart.register(ChartDataLabels)
 
 const props = defineProps({
   distributions: {
-    type: Object as PropType<Record<MetricJsonIdentifier, DistributionMap>>,
+    type: Object as PropType<DistributionMap>,
     required: true
   },
   xScale: {

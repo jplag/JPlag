@@ -1,28 +1,25 @@
-export enum MetricJsonIdentifier {
-  AVERAGE_SIMILARITY = 'AVG',
-  MAXIMUM_SIMILARITY = 'MAX',
-  MINIMUM_SIMILARITY = 'MIN',
-  INTERSECTION = 'INTERSECTION',
-  LONGEST_MATCH = 'LONGEST_MATCH',
-  OVERALL = 'OVERALL'
-}
+import { MetricJsonIdentifier } from './MetricJsonIdentifier'
+import { Column, type ColumnSorting } from './ui/ComparisonSorting'
 
 export abstract class MetricType {
   private readonly _shortName: string
   private readonly _longName: string
   private readonly _tooltip: string
   private readonly _identifier: MetricJsonIdentifier
+  private readonly _sorting: ColumnSorting
 
   constructor(
     shortName: string,
     longName: string,
     tooltip: string,
-    identifier: MetricJsonIdentifier
+    identifier: MetricJsonIdentifier,
+    sorting: ColumnSorting
   ) {
     this._shortName = shortName
     this._longName = longName
     this._tooltip = tooltip
     this._identifier = identifier
+    this._sorting = sorting
   }
 
   get shortName() {
@@ -39,6 +36,10 @@ export abstract class MetricType {
 
   get identifier() {
     return this._identifier
+  }
+
+  get sorting() {
+    return this._sorting
   }
 
   abstract format(value: number): string
@@ -62,37 +63,43 @@ export namespace MetricTypes {
     'AVG',
     'Average',
     'The average similarity of the two files.\nA high similarity indicates that the programs work in a similar way.',
-    MetricJsonIdentifier.AVERAGE_SIMILARITY
+    MetricJsonIdentifier.AVERAGE_SIMILARITY,
+    Column.averageSimilarity
   )
   export const MAXIMUM_SIMILARITY = new PercentageMetricType(
     'MAX',
     'Maximum',
     'The maximum similarity of the two files.\nUseful if programs are very different in size.',
-    MetricJsonIdentifier.MAXIMUM_SIMILARITY
+    MetricJsonIdentifier.MAXIMUM_SIMILARITY,
+    Column.maximumSimilarity
   )
   export const MINIMUM_SIMILARITY = new PercentageMetricType(
     'MIN',
     'Minimum',
     'The minimum similarity of the two files.',
-    MetricJsonIdentifier.MINIMUM_SIMILARITY
+    MetricJsonIdentifier.MINIMUM_SIMILARITY,
+    Column.minimumSimilarity
   )
   export const INTERSECTION = new IdentityMetricType(
     'COUNT',
     'Matched Tokens',
     'The number of tokens that are matched between the two files.',
-    MetricJsonIdentifier.INTERSECTION
+    MetricJsonIdentifier.INTERSECTION,
+    Column.intersection
   )
   export const LONGEST_MATCH = new IdentityMetricType(
     'LONG',
     'Longest Match',
     'The number of tokens in the longest match.',
-    MetricJsonIdentifier.LONGEST_MATCH
+    MetricJsonIdentifier.LONGEST_MATCH,
+    Column.longestMatch
   )
   export const OVERALL = new IdentityMetricType(
     'LEN',
     'Overall Length',
     'Sum of both submission lengths.',
-    MetricJsonIdentifier.OVERALL
+    MetricJsonIdentifier.OVERALL,
+    Column.overall
   )
 
   export const METRIC_LIST: MetricType[] = [

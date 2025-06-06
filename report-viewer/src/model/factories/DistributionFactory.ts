@@ -1,5 +1,5 @@
 import { Distribution, type DistributionMap } from '../Distribution'
-import type { MetricType } from '../MetricType'
+import type { MetricJsonIdentifier } from '../MetricJsonIdentifier'
 import { BaseFactory } from './BaseFactory'
 
 export class DistributionFactory extends BaseFactory {
@@ -10,7 +10,7 @@ export class DistributionFactory extends BaseFactory {
   private static extractDistributions(json: ReportFormatDistributionMap): DistributionMap {
     const distributions = {} as DistributionMap
     for (const [key, value] of Object.entries(json)) {
-      distributions[key as MetricType] = new Distribution(value)
+      distributions[key as MetricJsonIdentifier] = new Distribution(value)
     }
     return distributions
   }

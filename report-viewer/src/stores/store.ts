@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import type { State, UIState } from './state'
-import { MetricJsonIdentifier } from '@/model/MetricType'
+import { MetricJsonIdentifier } from '@/model/MetricJsonIdentifier'
 import type { SubmissionFile, File } from '@/model/File'
 import { FileSortingOptions } from '@/model/ui/FileSortingOptions'
 import { Column, Direction } from '@/model/ui/ComparisonSorting'
@@ -30,7 +30,8 @@ const store = defineStore('store', {
         xScale: 'linear',
         bucketCount: 10
       },
-      fileSorting: FileSortingOptions.ALPHABETICAL
+      fileSorting: FileSortingOptions.ALPHABETICAL,
+      comparisonTableSecondaryMetric: MetricJsonIdentifier.MAXIMUM_SIMILARITY
     }
   }),
   getters: {

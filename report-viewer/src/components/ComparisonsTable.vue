@@ -41,15 +41,28 @@
                     </template>
                   </ToolTipComponent>
 
-                  <ToolTipComponent class="flex-1" :direction="displayClusters ? 'top' : 'left'">
+                  <ToolTipComponent
+                    class="flex-1 cursor-pointer"
+                    :direction="displayClusters ? 'top' : 'left'"
+                    @click="setSorting(secondaryMetric.sorting.id)"
+                  >
                     <template #default>
                       <p class="w-full text-center">
-                        {{ metricToolTips[MetricType.MAXIMUM].shortName }}
+                        {{ secondaryMetric.shortName }}
                       </p>
+                      <FontAwesomeIcon
+                        :icon="
+                          store().uiState.comparisonTableSorting.column.id ==
+                          secondaryMetric.sorting.id
+                            ? store().uiState.comparisonTableSorting.direction.icon
+                            : faSort
+                        "
+                        class="ml-1 cursor-pointer"
+                      />
                     </template>
                     <template #tooltip>
                       <p class="text-sm whitespace-pre">
-                        {{ metricToolTips[MetricType.MAXIMUM].tooltip }}
+                        {{ secondaryMetric.tooltip }}
                       </p>
                     </template>
                   </ToolTipComponent>
@@ -122,9 +135,7 @@
                         </div>
                         <div class="w-1/2">
                           {{
-                            MetricTypes.METRIC_MAP[
-                              store().uiState.comparisonTableSecondaryMetric
-                            ].format(
+                            secondaryMetric.format(
                               item.similarities[store().uiState.comparisonTableSecondaryMetric]
                             )
                           }}
@@ -194,7 +205,8 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faSort, faUserGroup } from '@fortawesome/free-solid-svg-icons'
 import { generateHues } from '@/utils/ColorUtils'
 import ToolTipComponent from './ToolTipComponent.vue'
-import { MetricJsonIdentifier, MetricTypes } from '@/model/MetricType'
+import { MetricTypes } from '@/model/MetricType'
+import { MetricJsonIdentifier } from '@/model/MetricJsonIdentifier'
 import NameElement from './NameElement.vue'
 import ComparisonTableFilter from './ComparisonTableFilter.vue'
 import { Column, Direction, type ColumnId } from '@/model/ui/ComparisonSorting'
@@ -221,6 +233,10 @@ const props = defineProps({
     default: undefined
   }
 })
+
+const secondaryMetric = computed(
+  () => MetricTypes.METRIC_MAP[store().uiState.comparisonTableSecondaryMetric]
+)
 
 const displayedComparisons = computed(() => {
   const comparisons = getFilteredComparisons(getSortedComparisons(Array.from(props.topComparisons)))
