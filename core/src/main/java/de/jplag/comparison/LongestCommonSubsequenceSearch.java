@@ -114,7 +114,7 @@ public class LongestCommonSubsequenceSearch {
         List<JPlagComparison> comparisons = new ArrayList<>();
         ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.COMPARING, tuples.size());
         try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
-            var futures = tuples.stream().map(tuple -> executor.submit(() -> {
+            List<Future<Optional<JPlagComparison>>> futures = tuples.stream().map(tuple -> executor.submit(() -> {
                 Optional<JPlagComparison> result = compareSubmissions(coreAlgorithm, tuple.left(), tuple.right());
                 progressBar.step();
                 return result;
