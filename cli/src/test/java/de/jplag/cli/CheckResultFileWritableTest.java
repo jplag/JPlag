@@ -27,6 +27,7 @@ class CheckResultFileWritableTest extends CliTest {
     void testNonExistingNotWritableFile() throws IOException {
         File directory = Files.createTempDirectory("JPlagTest").toFile();
         Assumptions.assumeTrue(directory.setWritable(false));
+        Assumptions.assumeFalse(directory.canWrite());
         File targetFile = new File(directory, "results.jplag");
 
         Assertions.assertThrows(CliException.class, () -> {
@@ -60,6 +61,7 @@ class CheckResultFileWritableTest extends CliTest {
         File targetFile = new File(directory, "results.jplag");
         Assumptions.assumeTrue(targetFile.createNewFile());
         Assumptions.assumeTrue(targetFile.setWritable(false));
+        Assumptions.assumeFalse(targetFile.canWrite());
 
         Assertions.assertThrows(CliException.class, () -> {
             runCli(args -> args.with(OVERWRITE_RESULT_FILE).with(RESULT_FILE, targetFile.getAbsolutePath()));
