@@ -24,7 +24,7 @@ public class ContainedStrategy implements FrequencyStrategy {
     public void create(List<String> tokens, String comparisonId, Map<String, List<String>> map, int size) {
         if (tokens.size() >= size) {
             for (int j = size; j <= tokens.size(); j++) {
-                applyWindowCreate(map, comparisonId, tokens, j);
+                applyWindowCreate(map, tokens, j);
             }
             addToMap(map, tokens);
         }
@@ -55,12 +55,11 @@ public class ContainedStrategy implements FrequencyStrategy {
     /**
      * Creates the submatches to build the keys.
      * @param map Map that contains token subsequences and how often they occur across comparisons.
-     * @param comparisonId Identifier for the comparison.
      * @param tokens Token list of the match.
      * @param size Minimum length of the considered submatches.
      */
 
-    private void applyWindowCreate(Map<String, List<String>> map, String comparisonId, List<String> tokens, int size) {
+    private void applyWindowCreate(Map<String, List<String>> map, List<String> tokens, int size) {
         LinkedList<String> copy = new LinkedList<>(tokens);
         while (copy.size() >= size) {
             List<String> subList = copy.subList(0, size);
