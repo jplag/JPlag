@@ -1,4 +1,4 @@
-package de.jplag.highlightExtraction;
+package de.jplag.highlight_extraction;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

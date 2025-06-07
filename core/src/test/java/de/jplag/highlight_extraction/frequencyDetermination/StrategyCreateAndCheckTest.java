@@ -1,4 +1,4 @@
-package de.jplag.highlightExtraction.frequencyDetermination;
+package de.jplag.highlight_extraction.frequencyDetermination;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import de.jplag.*;
 import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
-import de.jplag.highlightExtraction.*;
+import de.jplag.highlight_extraction.*;
 import de.jplag.options.JPlagOptions;
 
 public class StrategyCreateAndCheckTest extends TestBase {

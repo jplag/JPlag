@@ -1,4 +1,4 @@
-package de.jplag.highlightExtraction;
+package de.jplag.highlight_extraction;
 
 import java.util.List;
 import java.util.Map;

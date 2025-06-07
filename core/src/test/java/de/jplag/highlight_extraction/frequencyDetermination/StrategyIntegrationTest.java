@@ -1,4 +1,4 @@
-package de.jplag.highlightExtraction.frequencyDetermination;
+package de.jplag.highlight_extraction.frequencyDetermination;
 
 import java.util.List;
 import java.util.Map;
@@ -13,7 +13,7 @@ import de.jplag.SubmissionSetBuilder;
 import de.jplag.TestBase;
 import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
-import de.jplag.highlightExtraction.*;
+import de.jplag.highlight_extraction.*;
 import de.jplag.options.JPlagOptions;
 
 public class StrategyIntegrationTest extends TestBase {

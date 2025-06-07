@@ -1,4 +1,4 @@
-package de.jplag.highlightExtraction;
+package de.jplag.highlight_extraction;
 
 /**
  * Factory class to create instances of FrequencyStrategy based on the specified FrequencyStrategies enum.
