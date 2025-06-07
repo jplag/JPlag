@@ -5,6 +5,7 @@ package de.jplag.highlight_extraction;
  */
 
 public class FrequencyStrategyFactory {
+
     /**
      * Creates an instance of a FrequencyStrategy based on the chosen FrequencyStrategies enum.
      * @param strategy the applied frequency-strategy from the input
