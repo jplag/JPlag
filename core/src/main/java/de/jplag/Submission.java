@@ -20,11 +20,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import de.jplag.commentextraction.Comment;
 import de.jplag.commenthandling.CommentPreprocessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jplag.commentextraction.Comment;
 import de.jplag.commentextraction.CommentExtractor;
 import de.jplag.commentextraction.CommentExtractorSettings;
 import de.jplag.exceptions.LanguageException;

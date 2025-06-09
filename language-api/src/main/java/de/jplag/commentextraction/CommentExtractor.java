@@ -8,6 +8,10 @@ import java.util.Optional;
 
 import de.jplag.util.FileUtils;
 
+/**
+ * Extracts comments from submitted files, by reading and parsing the file content manually.
+ * @author Moritz Rimpf
+ */
 public class CommentExtractor {
 
     private String remainingContent;
@@ -18,10 +22,22 @@ public class CommentExtractor {
     private int currentLine;
     private final File file;
 
+    /**
+     * Creates a new CommentExtractor, reading the contents from the specified file.
+     * @param file File to read
+     * @param settings Settings for the comment extractor
+     * @throws IOException If an IO error during the file read occurred
+     */
     public CommentExtractor(File file, CommentExtractorSettings settings) throws IOException {
         this(file, FileUtils.readFileContent(file), settings);
     }
 
+    /**
+     * Creates a new CommentExtractor, using the supplied file and content.
+     * @param file File to associate comments with
+     * @param fileContent Textual content of the file
+     * @param settings Settings for the comment extractor
+     */
     public CommentExtractor(File file, String fileContent, CommentExtractorSettings settings) {
         this.remainingContent = fileContent;
         this.settings = settings;
@@ -60,6 +76,10 @@ public class CommentExtractor {
         return advancedBy;
     }
 
+    /**
+     * Extracts all comments from the input file and returns them in a list.
+     * @return All extracted comments from the input file
+     */
     public List<Comment> extract() {
         while (!remainingContent.isEmpty()) {
             this.parseAny();
@@ -82,7 +102,7 @@ public class CommentExtractor {
         for (String lineComment : this.settings.lineCommentDelimiters()) {
             if (remainingContent.startsWith(lineComment)) {
                 this.match(lineComment);
-                this.parseLineComment(lineComment);
+                this.parseLineComment();
                 return;
             }
         }
@@ -110,20 +130,14 @@ public class CommentExtractor {
         this.parseEnvironment(environment);
     }
 
-    private void parseLineComment(String commentSequence) {
+    private void parseLineComment() {
         StringBuilder comment = new StringBuilder();
         int startLine = this.currentLine;
         int startCol = this.currentCol;
         while (!this.remainingContent.startsWith(System.lineSeparator()) && !this.remainingContent.isEmpty()) {
             comment.append(this.advance(1));
         }
-        this.comments.add(new Comment(
-                file,
-                comment.toString(),
-                startLine,
-                startCol,
-                CommentType.LINE
-        ));
+        this.comments.add(new Comment(file, comment.toString(), startLine, startCol, CommentType.LINE));
     }
 
     private void parseBlockComment(EnvironmentDelimiter blockComment) {
@@ -131,13 +145,7 @@ public class CommentExtractor {
         int startCol = this.currentCol + blockComment.begin().length();
         String comment = this.parseEnvironment(blockComment);
 
-        this.comments.add(new Comment(
-                file,
-                comment,
-                startLine,
-                startCol,
-                CommentType.BLOCK
-        ));
+        this.comments.add(new Comment(file, comment, startLine, startCol, CommentType.BLOCK));
     }
 
     private String parseEnvironment(EnvironmentDelimiter environment) {

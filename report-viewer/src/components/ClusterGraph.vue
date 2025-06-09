@@ -103,10 +103,24 @@ function distanceToEdge(edge: HoverableEdge, p: { x: number; y: number }) {
   return Math.abs(numerator / denominator)
 }
 
+/**
+ * Checks that the hover is actually on the edge and not on any point of the extension beyond the nodes
+ */
+function isHoverOnLine(edge: HoverableEdge, p: { x: number; y: number }) {
+  const minX = Math.min(edge.x1, edge.x2)
+  const maxX = Math.max(edge.x1, edge.x2)
+  const minY = Math.min(edge.y1, edge.y2)
+  const maxY = Math.max(edge.y1, edge.y2)
+  return p.x >= minX && p.x <= maxX && p.y >= minY && p.y <= maxY
+}
+
 function getClosestEdge(p: { x: number; y: number }) {
   let closestEdge = { sourceId: '', targetId: '', x1: -1, y1: -1, x2: -1, y2: -1 }
   let closestDistance = Infinity
   hoverableEdges.value.forEach((edge) => {
+    if (!isHoverOnLine(edge, p)) {
+      return
+    }
     const distance = distanceToEdge(edge, p)
     if (distance < closestDistance) {
       closestDistance = distance

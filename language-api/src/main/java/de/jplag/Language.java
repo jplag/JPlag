@@ -126,6 +126,21 @@ public interface Language {
     }
 
     /**
+     * @return True, if the language module can be used by the multi-language module
+     */
+    default boolean supportsMultiLanguage() {
+        return true;
+    }
+
+    /**
+     * @return True if the language module should be prioritized in the multi-language case, if multiple language modules
+     * support the same file extension.
+     */
+    default boolean hasPriority() {
+        return false;
+    }
+
+    /**
      * Return {@code null} if language does not support comment extraction.
      * @return Settings for the comment extractor, or null if language does not support comment extraction.
      */
