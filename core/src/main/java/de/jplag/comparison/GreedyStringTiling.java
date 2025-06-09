@@ -28,6 +28,7 @@ public class GreedyStringTiling {
     private final int minimumMatchLength;
     private final JPlagOptions options;
     private final Map<Submission, Set<Token>> baseCodeMarkings = new IdentityHashMap<>();
+    private final TokenListSupplier tokenSupplier;
 
     private final Map<Submission, SubsequenceHashLookupTable> cachedHashLookupTables = Collections.synchronizedMap(new IdentityHashMap<>());
 
@@ -43,7 +44,12 @@ public class GreedyStringTiling {
             """.trim().stripIndent();
 
     public GreedyStringTiling(JPlagOptions options, TokenValueMapper tokenValueMapper) {
+        this(options, tokenValueMapper, Submission::getTokenList);
+    }
+
+    public GreedyStringTiling(JPlagOptions options, TokenValueMapper tokenValueMapper, TokenListSupplier tokenSupplier) {
         this.options = options;
+        this.tokenSupplier = tokenSupplier;
         // Ensures 1 <= neighborLength <= minimumTokenMatch
         int minimumNeighborLength = Math.clamp(options.mergingOptions().minimumNeighborLength(), 1, options.minimumTokenMatch());
 
@@ -63,7 +69,7 @@ public class GreedyStringTiling {
     public final JPlagComparison generateBaseCodeMarking(Submission submission, Submission baseCodeSubmission) {
         JPlagComparison comparison = compare(submission, baseCodeSubmission);
 
-        List<Token> submissionTokenList = submission.getTokenList();
+        List<Token> submissionTokenList = this.tokenSupplier.getTokenList(submission);
         Set<Token> baseCodeMarking = new HashSet<>();
         for (Match match : comparison.matches()) {
             int startIndex = comparison.firstSubmission() == submission ? match.startOfFirst() : match.startOfSecond();
@@ -91,7 +97,7 @@ public class GreedyStringTiling {
     public final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission) {
         Submission smallerSubmission;
         Submission largerSubmission;
-        Comparator<Submission> submissionComparator = Comparator.comparing((Submission it) -> it.getTokenList().size())
+        Comparator<Submission> submissionComparator = Comparator.comparing((Submission it) -> this.tokenSupplier.getTokenList(it).size())
                 .thenComparing(Submission::getName);
 
         if (submissionComparator.compare(firstSubmission, secondSubmission) <= 0) {
@@ -212,7 +218,7 @@ public class GreedyStringTiling {
 
     private boolean[] calculateInitiallyMarked(Submission submission) {
         Set<Token> baseCodeTokens = baseCodeMarkings.get(submission);
-        List<Token> tokens = submission.getTokenList();
+        List<Token> tokens = this.tokenSupplier.getTokenList(submission);
         boolean[] result = new boolean[tokens.size()];
         for (int i = 0; i < result.length; i++) {
             result[i] = tokens.get(i).getType().isExcludedFromMatching() || baseCodeTokens != null && baseCodeTokens.contains(tokens.get(i));
@@ -227,9 +233,11 @@ public class GreedyStringTiling {
 
     private boolean checkMark(boolean[] marks, int index, Submission submission, Submission otherSubmission) {
         if (index >= marks.length) {
-            throw new IllegalStateException(String.format(ERROR_INDEX_OUT_OF_BOUNDS, marks.length, index, submission.getTokenList().size(),
-                    submission.getTokenList().stream().map(it -> it.getType().getDescription()).collect(Collectors.joining(", ")),
-                    this.tokenValueMapper.getTokenValuesFor(submission).length, submission.getName(), otherSubmission.getName()));
+            throw new IllegalStateException(
+                    String.format(ERROR_INDEX_OUT_OF_BOUNDS, marks.length, index, this.tokenSupplier.getTokenList(submission).size(),
+                            this.tokenSupplier.getTokenList(submission).stream().map(it -> it.getType().getDescription())
+                                    .collect(Collectors.joining(", ")),
+                            this.tokenValueMapper.getTokenValuesFor(submission).length, submission.getName(), otherSubmission.getName()));
         }
 
         return marks[index];
