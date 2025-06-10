@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import de.jplag.commenthandling.CommentComparer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.clustering.ClusteringFactory;
+import de.jplag.commenthandling.CommentComparer;
 import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
@@ -99,7 +99,7 @@ public class JPlag {
 
         // Compare comments
         CommentComparer commentComparer = new CommentComparer(options);
-        commentComparer.compareCommentsOfSubmissions(submissionSet);
+        result = commentComparer.compareCommentsAndMergeMatches(result);
 
         if (logger.isInfoEnabled()) {
             logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getDuration()));

@@ -20,13 +20,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import de.jplag.commenthandling.CommentPreprocessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.commentextraction.Comment;
 import de.jplag.commentextraction.CommentExtractor;
 import de.jplag.commentextraction.CommentExtractorSettings;
+import de.jplag.commenthandling.CommentPreprocessor;
 import de.jplag.exceptions.LanguageException;
 import de.jplag.normalization.TokenSequenceNormalizer;
 import de.jplag.options.JPlagOptions;
@@ -279,7 +279,7 @@ public class Submission implements Comparable<Submission> {
             }
             logger.debug("Found {} comments", comments.size());
             try {
-                CommentPreprocessor preprocessor = new CommentPreprocessor(rawComments, this.name);
+                CommentPreprocessor preprocessor = new CommentPreprocessor(rawComments);
                 this.comments = preprocessor.processToToken();
                 this.comments.add(Token.fileEnd(null));
             } catch (Exception e) {

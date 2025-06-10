@@ -1,15 +1,14 @@
 package de.jplag.commenthandling;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.JPlagComparison;
+import de.jplag.JPlagResult;
 import de.jplag.Submission;
-import de.jplag.SubmissionSet;
 import de.jplag.comparison.GreedyStringTiling;
 import de.jplag.comparison.SubmissionTuple;
 import de.jplag.comparison.TokenValueMapper;
@@ -29,51 +28,44 @@ public class CommentComparer {
         return Optional.of(comp);
     }
 
-    private List<SubmissionTuple> buildComparisonTuples(List<Submission> submissions) {
+    private List<SubmissionTuple> extractComparisonTuples(List<JPlagComparison> comparisons) {
         List<SubmissionTuple> tuples = new ArrayList<>();
 
-        for (int i = 0; i < submissions.size() - 1; i++) {
-            Submission first = submissions.get(i);
-            for (int j = i + 1; j < submissions.size(); j++) {
-                Submission second = submissions.get(j);
-                if (first.isNew() || second.isNew()) {
-                    tuples.add(new SubmissionTuple(first, second));
-                }
-            }
+        for (JPlagComparison comparison : comparisons) {
+            tuples.add(new SubmissionTuple(comparison.firstSubmission(), comparison.secondSubmission()));
         }
 
         return tuples;
     }
 
-    private List<CommentComparison> transformComparisons(List<JPlagComparison> originalComparisons) {
-        List<CommentComparison> comparisons = new ArrayList<>();
-        for (JPlagComparison originalComparison : originalComparisons) {
-            comparisons.add(new CommentComparison(originalComparison));
-        }
-        return comparisons;
-    }
-
-    public void compareCommentsOfSubmissions(SubmissionSet submissionSet) {
+    public JPlagResult compareCommentsAndMergeMatches(JPlagResult result) {
         long timeBeforeStartInMillis = System.currentTimeMillis();
 
         // TODO: Base code?
 
-        TokenValueMapper tokenValueMapper = new TokenValueMapper(submissionSet, Submission::getComments);
+        TokenValueMapper tokenValueMapper = new TokenValueMapper(result.getSubmissions(), Submission::getComments);
         GreedyStringTiling algorithm = new GreedyStringTiling(options, tokenValueMapper, Submission::getComments);
 
-        List<SubmissionTuple> tuples = this.buildComparisonTuples(submissionSet.getSubmissions());
+        List<SubmissionTuple> tuples = this.extractComparisonTuples(result.getAllComparisons());
 
-        List<JPlagComparison> comparisons = tuples.stream().parallel().flatMap(tuple -> {
-            return this.compareSubmissions(algorithm, tuple).stream();
-        }).toList();
+        Map<SubmissionTuple, JPlagComparison> commentComparisons = tuples.stream().parallel().flatMap(tuple -> {
+            return this.compareSubmissions(algorithm, tuple).stream().map(comparison -> new AbstractMap.SimpleEntry<>(tuple, comparison));
+        }).collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
-        List<CommentComparison> comparisonList = transformComparisons(comparisons);
+        for (JPlagComparison oldComparison : result.getAllComparisons()) {
+            JPlagComparison commentComparison = commentComparisons
+                    .get(new SubmissionTuple(oldComparison.firstSubmission(), oldComparison.secondSubmission()));
+            if (commentComparison == null) {
+                logger.warn("No comment comparison found for: {}", oldComparison);
+                continue;
+            }
+
+            // TODO
+        }
 
         long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
 
-        logger.info("Comment comparisons in {} ms", durationInMillis);
-        for (CommentComparison comparison : comparisonList) {
-            logger.info("{}: {}", comparison.toString(), comparison.similarity());
-        }
+        return new JPlagResult(result.getAllComparisons(), // TODO
+                result.getSubmissions(), result.getDuration() + durationInMillis, result.getOptions());
     }
 }
