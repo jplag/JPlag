@@ -71,11 +71,15 @@ public class CommentPreprocessor {
             }
             lastFile = originalComment.file();
             int line = originalComment.line();
-            // Incrementing line for line breaks within the comment (e.g. multiline comments)
-            line += originalComment.content().substring(0, token.getColumn() - 1).split(System.lineSeparator(), -1).length - 1;
+            int column = originalComment.column() + token.getColumn() - 1;
+            // Incrementing line and decrementing column for line breaks within the comment (e.g. multiline comments)
+            String[] previousLines = originalComment.content().substring(0, token.getColumn()).split(System.lineSeparator(), -1);
+            if (previousLines.length > 0) {
+                line += previousLines.length - 1;
+                column = previousLines[previousLines.length - 1].length() + 1;
+            }
 
-            Token newToken = new Token(token.getType(), originalComment.file(), line, token.getColumn() + originalComment.column() - 1,
-                    token.getLength(), token.getSemantics());
+            Token newToken = new Token(token.getType(), originalComment.file(), line, column, token.getLength(), token.getSemantics());
             fixedTokens.add(newToken);
         }
         return fixedTokens;
