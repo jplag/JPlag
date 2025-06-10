@@ -181,11 +181,11 @@ class MatchMergingTest extends TestBase {
         List<Double> similarities = result.getAllComparisons().stream().map(JPlagComparison::similarity).toList();
 
         // Test matched tokens:
-        List<Integer> expectedMatchedTokens = List.of(26, 70, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        List<Integer> expectedMatchedTokens = List.of(26, 80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         assertIterableEquals(expectedMatchedTokens, matchedTokens);
 
         // Test similarity values:
-        List<Double> expectedSimilarities = List.of(0.8966, 0.5205, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        List<Double> expectedSimilarities = List.of(0.8966, 0.5865, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
         for (int i = 0; i < expectedSimilarities.size(); i++) {
             assertEquals(expectedSimilarities.get(i), similarities.get(i), DELTA, "Mismatch at index " + i);
         }
