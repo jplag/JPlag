@@ -145,7 +145,6 @@ public interface Language {
      * @return Settings for the comment extractor, or null if language does not support comment extraction.
      */
     default CommentExtractorSettings getCommentExtractorSettings() {
-        // TODO: Remove default implementation!
         return null;
     }
 }
