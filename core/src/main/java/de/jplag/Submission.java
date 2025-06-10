@@ -281,7 +281,6 @@ public class Submission implements Comparable<Submission> {
             try {
                 CommentPreprocessor preprocessor = new CommentPreprocessor(rawComments);
                 this.comments = preprocessor.processToToken();
-                this.comments.add(Token.fileEnd(null));
             } catch (Exception e) {
                 logger.error("Error while parsing comments: {}", e.getMessage());
             }

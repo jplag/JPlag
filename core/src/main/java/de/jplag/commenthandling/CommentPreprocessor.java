@@ -1,5 +1,6 @@
 package de.jplag.commenthandling;
 
+import java.io.File;
 import java.util.*;
 
 import org.slf4j.Logger;
@@ -52,8 +53,10 @@ public class CommentPreprocessor {
 
     private List<Token> fixTokenPositions(List<Token> tokens) {
         List<Token> fixedTokens = new ArrayList<>();
+        File lastFile = null;
         for (Token token : tokens) {
             if (token.getType() == SharedTokenType.FILE_END) {
+                fixedTokens.add(Token.fileEnd(lastFile));
                 continue;
             }
             Comment originalComment = this.comments.get(token.getLine() - 1);
@@ -63,6 +66,10 @@ public class CommentPreprocessor {
                 continue;
             }
 
+            if (lastFile != null && !lastFile.equals(originalComment.file())) {
+                fixedTokens.add(Token.fileEnd(lastFile));
+            }
+            lastFile = originalComment.file();
             int line = originalComment.line();
             // Incrementing line for line breaks within the comment (e.g. multiline comments)
             line += originalComment.content().substring(0, token.getColumn() - 1).split(System.lineSeparator(), -1).length - 1;
