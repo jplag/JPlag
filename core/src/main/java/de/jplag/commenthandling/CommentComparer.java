@@ -52,20 +52,23 @@ public class CommentComparer {
             return this.compareSubmissions(algorithm, tuple).stream().map(comparison -> new AbstractMap.SimpleEntry<>(tuple, comparison));
         }).collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
 
+        List<JPlagComparison> fixedComparisons = new ArrayList<>();
+
         for (JPlagComparison oldComparison : result.getAllComparisons()) {
             JPlagComparison commentComparison = commentComparisons
                     .get(new SubmissionTuple(oldComparison.firstSubmission(), oldComparison.secondSubmission()));
             if (commentComparison == null) {
                 logger.warn("No comment comparison found for: {}", oldComparison);
+                fixedComparisons.add(oldComparison);
                 continue;
             }
 
-            // TODO
+            fixedComparisons.add(new JPlagComparison(oldComparison.firstSubmission(), oldComparison.secondSubmission(), oldComparison.matches(),
+                    oldComparison.ignoredMatches(), commentComparison.matches()));
         }
 
         long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
 
-        return new JPlagResult(result.getAllComparisons(), // TODO
-                result.getSubmissions(), result.getDuration() + durationInMillis, result.getOptions());
+        return new JPlagResult(fixedComparisons, result.getSubmissions(), result.getDuration() + durationInMillis, result.getOptions());
     }
 }

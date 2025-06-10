@@ -11,7 +11,8 @@ import java.util.List;
  * @param ignoredMatches is the unmodifiable list of ignored matches whose length is below the minimum token match
  * threshold.
  */
-public record JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches, List<Match> ignoredMatches) {
+public record JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches, List<Match> ignoredMatches,
+        List<Match> commentMatches) {
     /**
      * Constructs a new comparison between two submissions. The match lists are wrapped as unmodifiable to preserve
      * immutability.
@@ -19,11 +20,17 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
      * @param secondSubmission is the second of the two submissions.
      * @param matches is the list of all matches between the two submissions.
      */
-    public JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches, List<Match> ignoredMatches) {
+    public JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches, List<Match> ignoredMatches,
+            List<Match> commentMatches) {
         this.firstSubmission = firstSubmission;
         this.secondSubmission = secondSubmission;
         this.matches = Collections.unmodifiableList(matches);
         this.ignoredMatches = Collections.unmodifiableList(ignoredMatches);
+        this.commentMatches = Collections.unmodifiableList(commentMatches);
+    }
+
+    public JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches, List<Match> ignoredMatches) {
+        this(firstSubmission, secondSubmission, matches, ignoredMatches, Collections.emptyList());
     }
 
     /**
@@ -32,6 +39,10 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
      */
     public int getNumberOfMatchedTokens() {
         return matches.stream().mapToInt(Match::length).sum();
+    }
+
+    public int getNumberOfMatchedCommentTokens() {
+        return commentMatches.stream().mapToInt(Match::length).sum();
     }
 
     /**
@@ -61,8 +72,8 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
      * structural similarity.
      */
     public final double similarity() {
-        int divisorA = firstSubmission.getSimilarityDivisor();
-        int divisorB = secondSubmission.getSimilarityDivisor();
+        int divisorA = this.getSimilarityDivisor(firstSubmission);
+        int divisorB = this.getSimilarityDivisor(secondSubmission);
         return 2 * similarity(divisorA + divisorB);
     }
 
@@ -72,7 +83,7 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
      * structural similarity.
      */
     public final double similarityOfFirst() {
-        int divisor = firstSubmission.getSimilarityDivisor();
+        int divisor = this.getSimilarityDivisor(firstSubmission);
         return similarity(divisor);
     }
 
@@ -82,7 +93,7 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
      * structural similarity.
      */
     public final double similarityOfSecond() {
-        int divisor = secondSubmission.getSimilarityDivisor();
+        int divisor = this.getSimilarityDivisor(secondSubmission);
         return similarity(divisor);
     }
 
@@ -92,6 +103,10 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
     }
 
     private double similarity(int divisor) {
-        return divisor == 0 ? 0.0 : getNumberOfMatchedTokens() / (double) divisor;
+        return divisor == 0 ? 0.0 : (getNumberOfMatchedTokens() + getNumberOfMatchedCommentTokens()) / (double) divisor;
+    }
+
+    private int getSimilarityDivisor(Submission submission) {
+        return submission.getSimilarityDivisor() + this.getNumberOfMatchedCommentTokens();
     }
 }
