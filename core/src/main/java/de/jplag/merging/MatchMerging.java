@@ -26,7 +26,6 @@ import de.jplag.options.JPlagOptions;
  */
 public class MatchMerging {
     private final JPlagOptions options;
-    private int numberOfMerges;
 
     /**
      * Instantiates the match merging algorithm for a comparison result and a set of specific options.
@@ -55,15 +54,18 @@ public class MatchMerging {
     }
 
     private JPlagComparison mergeMatchesOf(JPlagComparison comparison, ProgressBar progressBar) {
-        numberOfMerges = 0;
         Submission leftSubmission = comparison.firstSubmission().copy();
         Submission rightSubmission = comparison.secondSubmission().copy();
         List<Match> globalMatches = new ArrayList<>(comparison.matches());
         globalMatches.addAll(comparison.ignoredMatches());
+
+        int matchesBeforeMerging = globalMatches.size();
         mergeNeighbors(globalMatches, leftSubmission, rightSubmission);
+        int matchesAfterMerging = globalMatches.size();
         globalMatches = globalMatches.stream().filter(it -> it.minimumLength() >= options.minimumTokenMatch()).toList();
         progressBar.step();
-        if (numberOfMerges >= options.mergingOptions().minimumRequiredMerges()) {
+
+        if (matchesBeforeMerging - matchesAfterMerging >= options.mergingOptions().minimumRequiredMerges()) {
             return new JPlagComparison(leftSubmission, rightSubmission, globalMatches, new ArrayList<>());
         }
         return comparison;
@@ -144,7 +146,6 @@ public class MatchMerging {
                 globalMatches.add(mergedMatch);
                 neighbors = updateNeighbors(neighbors, neighbors.get(i), mergedMatch);
                 i = 0; // reset loop
-                numberOfMerges++;
             } else {
                 i++;
             }

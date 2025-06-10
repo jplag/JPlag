@@ -1,4 +1,4 @@
-import { RunInformation } from '../RunInformation'
+import { RunInformation, type FailedSubmission } from '../RunInformation'
 import { Version } from '../Version'
 import { BaseFactory } from './BaseFactory'
 
@@ -9,10 +9,9 @@ export class RunInformationFactory extends BaseFactory {
 
   private static extractRunInformation(json: ReportFormatRunInformation): RunInformation {
     const jplagVersion = Version.fromJsonField(json.version)
-
     return new RunInformation(
       jplagVersion,
-      json.failedSubmissionNames,
+      json.failedSubmissions,
       json.dateOfExecution,
       json.executionTime,
       json.totalComparisons
@@ -22,7 +21,7 @@ export class RunInformationFactory extends BaseFactory {
 
 interface ReportFormatRunInformation {
   version: ReportFormatVersion
-  failedSubmissionNames: string[]
+  failedSubmissions: FailedSubmission[]
   dateOfExecution: string
   executionTime: number
   totalComparisons: number

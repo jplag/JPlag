@@ -1,15 +1,28 @@
 import type { Version } from './Version'
 
+export enum SubmissionState {
+  VALID = 'VALID',
+  NOTHING_TO_PARSE = 'NOTHING_TO_PARSE',
+  CANNOT_PARSE = 'CANNOT_PARSE',
+  TOO_SMALL = 'TOO_SMALL',
+  UNPARSED = 'UNPARSED'
+}
+
+export interface FailedSubmission {
+  submissionId: string
+  submissionState: SubmissionState
+}
+
 export class RunInformation {
   _version: Version
-  _failedSubmissions: string[]
+  _failedSubmissions: FailedSubmission[]
   _dateOfExecution: string
   _executionTime: number
   _totalComparisons: number
 
   constructor(
     version: Version,
-    failedSubmissions: string[],
+    failedSubmissions: FailedSubmission[],
     dateOfExecution: string,
     executionTime: number,
     totalComparisons: number
@@ -24,7 +37,7 @@ export class RunInformation {
   get version(): Version {
     return this._version
   }
-  get failedSubmissions(): string[] {
+  get failedSubmissions(): FailedSubmission[] {
     return this._failedSubmissions
   }
   get dateOfExecution(): string {
