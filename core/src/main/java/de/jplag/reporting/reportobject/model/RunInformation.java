@@ -4,7 +4,7 @@ import java.util.List;
 
 public record RunInformation(Version version,
 
-        List<String> failedSubmissionNames,
+        List<FailedSubmission> failedSubmissions,
 
         String dateOfExecution,
 

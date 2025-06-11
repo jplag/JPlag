@@ -29,6 +29,7 @@ import de.jplag.reporting.jsonfactory.ComparisonReportWriter;
 import de.jplag.reporting.reportobject.mapper.ClusteringResultMapper;
 import de.jplag.reporting.reportobject.mapper.MetricMapper;
 import de.jplag.reporting.reportobject.model.Cluster;
+import de.jplag.reporting.reportobject.model.FailedSubmission;
 import de.jplag.reporting.reportobject.model.RunInformation;
 import de.jplag.reporting.reportobject.model.SubmissionFile;
 import de.jplag.reporting.reportobject.model.SubmissionFileIndex;
@@ -146,8 +147,9 @@ public class ReportObjectFactory {
     }
 
     private void writeRunInformation(JPlagResult result) {
-        RunInformation runInformation = new RunInformation(REPORT_VIEWER_VERSION,
-                result.getSubmissions().getInvalidSubmissions().stream().map(Submission::getName).toList(), getDate(), result.getDuration(),
+        List<FailedSubmission> failedSubmissions = result.getSubmissions().getInvalidSubmissions().stream()
+                .map(submission -> new FailedSubmission(submission.getName(), submission.getState())).toList();
+        RunInformation runInformation = new RunInformation(REPORT_VIEWER_VERSION, failedSubmissions, getDate(), result.getDuration(),
                 result.getAllComparisons().size());
         this.resultWriter.addJsonEntry(runInformation, RUN_INFORMATION_FILE_NAME);
     }

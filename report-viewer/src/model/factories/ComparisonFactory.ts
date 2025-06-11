@@ -1,5 +1,5 @@
 import { Comparison } from '../Comparison'
-import type { Match } from '../Match'
+import { getMatchLength, type Match } from '../Match'
 import { store } from '@/stores/store'
 import { getMatchColorCount } from '@/utils/ColorUtils'
 import slash from 'slash'
@@ -42,8 +42,8 @@ export class ComparisonFactory extends BaseFactory {
         )
       }
 
-      fileOfFirst.matchedTokenCount += match.tokens
-      fileOfSecond.matchedTokenCount += match.tokens
+      fileOfFirst.matchedTokenCount += match.lengthOfFirst
+      fileOfSecond.matchedTokenCount += match.lengthOfSecond
     })
 
     return new Comparison(
@@ -113,7 +113,7 @@ export class ComparisonFactory extends BaseFactory {
     const matchesSecond = Array.from(matches)
       .sort((a, b) => a.startInSecond.line - b.startInSecond.line)
       .sort((a, b) => (a.secondFileName > b.secondFileName ? 1 : -1))
-    const sortedSize = Array.from(matches).sort((a, b) => b.tokens - a.tokens)
+    const sortedSize = Array.from(matches).sort((a, b) => getMatchLength(b) - getMatchLength(a))
 
     function isColorAvailable(matchList: Match[], index: number) {
       return (

@@ -123,4 +123,19 @@ public interface Language {
     default boolean requiresCoreNormalization() {
         return true;
     }
+
+    /**
+     * @return True, if the language module can be used by the multi-language module
+     */
+    default boolean supportsMultiLanguage() {
+        return true;
+    }
+
+    /**
+     * @return True if the language module should be prioritized in the multi-language case, if multiple language modules
+     * support the same file extension.
+     */
+    default boolean hasPriority() {
+        return false;
+    }
 }

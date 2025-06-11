@@ -128,7 +128,9 @@
         }}</TextInformation>
         <TextInformation label="Failed Submissions" class="pb-1">{{
           runInformation.failedSubmissions.length > 0
-            ? runInformation.failedSubmissions.join(', ')
+            ? runInformation.failedSubmissions
+                .map((s) => `${s.submissionId} (${stringifySubmissionState(s.submissionState)})`)
+                .join(', ')
             : 'None'
         }}</TextInformation>
       </ScrollableComponent>
@@ -145,7 +147,7 @@ import { computed, onErrorCaptured, type PropType } from 'vue'
 import { redirectOnError } from '@/router'
 import type { CliOptions } from '@/model/CliOptions'
 import { metricToolTips } from '@/model/MetricType'
-import type { RunInformation } from '@/model/RunInformation'
+import type { RunInformation, SubmissionState } from '@/model/RunInformation'
 
 const props = defineProps({
   runInformation: {
@@ -166,6 +168,10 @@ const shownComparisons = computed(() => props.topComparisonsCount)
 const missingComparisons = computed(
   () => props.runInformation.totalComparisons - shownComparisons.value
 )
+
+function stringifySubmissionState(reason: SubmissionState) {
+  return reason.toString().replace(/_/g, ' ').toLowerCase()
+}
 
 onErrorCaptured((error) => {
   redirectOnError(error, 'Error displaying information:\n', 'OverviewView', 'Back to overview')

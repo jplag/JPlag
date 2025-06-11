@@ -104,7 +104,8 @@ class BasicFunctionalityTest extends TestBase {
         for (int i = 0; i < matches.size(); i++) {
             assertEquals(expectedMatches.get(i).startOfFirst(), matches.get(i).startOfFirst());
             assertEquals(expectedMatches.get(i).startOfSecond(), matches.get(i).startOfSecond());
-            assertEquals(expectedMatches.get(i).length(), matches.get(i).length());
+            assertEquals(expectedMatches.get(i).lengthOfFirst(), matches.get(i).lengthOfFirst());
+            assertEquals(expectedMatches.get(i).lengthOfSecond(), matches.get(i).lengthOfSecond());
         }
 
     }

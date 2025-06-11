@@ -31,7 +31,7 @@ public enum Python3TokenType implements TokenType {
     ASSERT("ASSERT"),
     YIELD("YIELD"),
     DEL("DEL"),
-    WITH_BEGIN("WITH}"),
+    WITH_BEGIN("WITH{"),
     WITH_END("}WITH"),
     ASYNC("ASYNC"),
     AWAIT("AWAIT");
