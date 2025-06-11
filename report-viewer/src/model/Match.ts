@@ -18,7 +18,8 @@ export interface Match {
   endInFirst: CodePosition
   startInSecond: CodePosition
   endInSecond: CodePosition
-  tokens: number
+  lengthOfFirst: number
+  lengthOfSecond: number
   colorIndex: MatchColorIndex
 }
 
@@ -29,4 +30,8 @@ export interface CodePosition {
   column: number
   // 0-based
   tokenListIndex: number
+}
+
+export function getMatchLength(match: Match) {
+  return Math.min(match.lengthOfFirst, match.lengthOfSecond)
 }
