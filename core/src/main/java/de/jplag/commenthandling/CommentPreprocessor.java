@@ -16,9 +16,13 @@ public class CommentPreprocessor {
     private static final Logger logger = LoggerFactory.getLogger(CommentPreprocessor.class);
 
     private final List<Comment> comments;
+    private final Map<Integer, Comment> lineToComment;
+    private final Map<Comment, Integer> commentStartingLines;
 
     public CommentPreprocessor(List<Comment> comments) {
         this.comments = comments;
+        this.lineToComment = new HashMap<>();
+        this.commentStartingLines = new HashMap<>();
     }
 
     public List<Token> processToToken() {
@@ -59,7 +63,8 @@ public class CommentPreprocessor {
                 fixedTokens.add(Token.fileEnd(lastFile));
                 continue;
             }
-            Comment originalComment = this.comments.get(token.getLine() - 1);
+
+            Comment originalComment = this.lineToComment.get(token.getLine());
             if (originalComment == null) {
                 logger.warn("Original comment not found for token {}!", token);
                 fixedTokens.add(token);
@@ -70,13 +75,11 @@ public class CommentPreprocessor {
                 fixedTokens.add(Token.fileEnd(lastFile));
             }
             lastFile = originalComment.file();
-            int line = originalComment.line();
-            int column = originalComment.column() + token.getColumn() - 1;
-            // Incrementing line and decrementing column for line breaks within the comment (e.g. multiline comments)
-            String[] previousLines = originalComment.content().substring(0, token.getColumn()).split(System.lineSeparator(), -1);
-            if (previousLines.length > 0) {
-                line += previousLines.length - 1;
-                column = previousLines[previousLines.length - 1].length() + 1;
+            int line = originalComment.line() + token.getLine() - commentStartingLines.get(originalComment);
+            int column = token.getColumn();
+
+            if (commentStartingLines.get(originalComment) == token.getLine()) {
+                column += originalComment.column() - 1;
             }
 
             Token newToken = new Token(token.getType(), originalComment.file(), line, column, token.getLength(), token.getSemantics());
@@ -86,10 +89,18 @@ public class CommentPreprocessor {
     }
 
     private String buildCommentString() {
+        this.commentStartingLines.clear();
+        this.lineToComment.clear();
         StringJoiner joiner = new StringJoiner(System.lineSeparator());
+        int line = 1;
         for (Comment comment : comments) {
-            String singleLineComment = comment.content().replaceAll("\\R", " ");
-            joiner.add(singleLineComment);
+            int lines = comment.content().split(System.lineSeparator()).length;
+            commentStartingLines.put(comment, line);
+            for (int i = 0; i < lines; i++) {
+                lineToComment.put(line + i, comment);
+            }
+            joiner.add(comment.content());
+            line += lines;
         }
         return joiner.toString();
     }
