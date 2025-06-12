@@ -16,9 +16,6 @@ import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.RootDirectoryException;
 import de.jplag.exceptions.SubmissionException;
-import de.jplag.highlight_extraction.FrequencyDetermination;
-import de.jplag.highlight_extraction.FrequencyStrategy;
-import de.jplag.highlight_extraction.FrequencyStrategyFactory;
 import de.jplag.merging.MatchMerging;
 import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.reportobject.model.Version;
@@ -98,11 +95,6 @@ public class JPlag {
         if (options.mergingOptions().enabled()) {
             result = new MatchMerging(options).mergeMatchesOf(result);
         }
-
-        FrequencyStrategy strategy = FrequencyStrategyFactory.create(options.frequencyStrategy());
-        FrequencyDetermination frequencyDetermination = new FrequencyDetermination(strategy,
-                Math.max(options.frequencyStrategyMinValue(), options.minimumTokenMatch()));
-        frequencyDetermination.runAnalysis(result.getAllComparisons());
 
         if (logger.isInfoEnabled()) {
             logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getDuration()));

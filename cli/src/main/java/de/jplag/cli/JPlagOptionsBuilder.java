@@ -63,8 +63,7 @@ public class JPlagOptionsBuilder {
         return new JPlagOptions(this.cliInputHandler.getSelectedLanguage(), this.cliOptions.minTokenMatch, submissionDirectories,
                 oldSubmissionDirectories, null, this.cliOptions.advanced.subdirectory, suffixes, this.cliOptions.advanced.exclusionFileName,
                 JPlagOptions.DEFAULT_SIMILARITY_METRIC, this.cliOptions.advanced.similarityThreshold, this.cliOptions.shownComparisons,
-                clusteringOptions, this.cliOptions.advanced.debug, mergingOptions, this.cliOptions.normalize,
-                this.cliOptions.frequencyAnalysis.frequencyStrategy, this.cliOptions.frequencyAnalysis.frequencyStrategyMinValue);
+                clusteringOptions, this.cliOptions.advanced.debug, mergingOptions, this.cliOptions.normalize);
     }
 
     private ClusteringOptions getClusteringOptions() {

@@ -17,7 +17,6 @@ import de.jplag.JPlag;
 import de.jplag.Language;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.exceptions.BasecodeException;
-import de.jplag.highlight_extraction.FrequencyStrategies;
 import de.jplag.merging.MergingOptions;
 import de.jplag.reporting.jsonfactory.serializer.LanguageSerializer;
 import de.jplag.util.FileUtils;
@@ -52,8 +51,8 @@ import io.soabase.recordbuilder.core.RecordBuilder;
 public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Language language, Integer minimumTokenMatch,
         Set<File> submissionDirectories, Set<File> oldSubmissionDirectories, File baseCodeSubmissionDirectory, String subdirectoryName,
         List<String> fileSuffixes, String exclusionFileName, SimilarityMetric similarityMetric, double similarityThreshold,
-        int maximumNumberOfComparisons, ClusteringOptions clusteringOptions, boolean debugParser, MergingOptions mergingOptions, boolean normalize,
-        FrequencyStrategies frequencyStrategy, Integer frequencyStrategyMinValue) implements JPlagOptionsBuilder.With {
+        int maximumNumberOfComparisons, ClusteringOptions clusteringOptions, boolean debugParser, MergingOptions mergingOptions, boolean normalize)
+        implements JPlagOptionsBuilder.With {
 
     public static final double DEFAULT_SIMILARITY_THRESHOLD = 0;
     public static final int DEFAULT_SHOWN_COMPARISONS = 2500;
@@ -75,15 +74,13 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
 
     public JPlagOptions(Language language, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories) {
         this(language, null, submissionDirectories, oldSubmissionDirectories, null, null, null, null, DEFAULT_SIMILARITY_METRIC,
-                DEFAULT_SIMILARITY_THRESHOLD, DEFAULT_SHOWN_COMPARISONS, new ClusteringOptions(), false, new MergingOptions(), false,
-                FrequencyStrategies.COMPLETE_MATCHES, 0);
+                DEFAULT_SIMILARITY_THRESHOLD, DEFAULT_SHOWN_COMPARISONS, new ClusteringOptions(), false, new MergingOptions(), false);
     }
 
     public JPlagOptions(Language language, Integer minimumTokenMatch, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories,
             File baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
             SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
-            boolean debugParser, MergingOptions mergingOptions, boolean normalize, FrequencyStrategies frequencyStrategy,
-            Integer frequencyStrategyMinValue) {
+            boolean debugParser, MergingOptions mergingOptions, boolean normalize) {
         this.language = language;
         this.debugParser = debugParser;
         this.fileSuffixes = fileSuffixes == null || fileSuffixes.isEmpty() ? null : Collections.unmodifiableList(fileSuffixes);
@@ -99,8 +96,6 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
         this.clusteringOptions = clusteringOptions;
         this.mergingOptions = mergingOptions;
         this.normalize = normalize;
-        this.frequencyStrategy = frequencyStrategy;
-        this.frequencyStrategyMinValue = frequencyStrategyMinValue;
     }
 
     public boolean hasBaseCode() {
@@ -194,8 +189,7 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
             boolean debugParser, MergingOptions mergingOptions) throws BasecodeException {
         this(language, minimumTokenMatch, Set.of(submissionDirectory), oldSubmissionDirectories,
                 convertLegacyBaseCodeToFile(baseCodeSubmissionName, submissionDirectory), subdirectoryName, fileSuffixes, exclusionFileName,
-                similarityMetric, similarityThreshold, maximumNumberOfComparisons, clusteringOptions, debugParser, mergingOptions, false,
-                FrequencyStrategies.COMPLETE_MATCHES, 1);
+                similarityMetric, similarityThreshold, maximumNumberOfComparisons, clusteringOptions, debugParser, mergingOptions, false);
     }
 
     /**
