@@ -19,7 +19,12 @@ import de.jplag.util.FileUtils;
  * information for tests. The sources can be used as regular test sources.
  */
 public class TokenPositionTestData implements TestData {
-    private final static String TOKEN_DEFINITION_LINE_REGEX = "\\$[\\s]*\\| [a-zA-Z0-9_]+ [0-9]+[\\s]*";
+    private static final String INVALID_LINE_ERROR_MESSAGE = "Invalid line for token position test %s at line: %s";
+    private static final String TOKEN_DEFINITION_LINE_REGEX = "\\$[\\s]*\\| [a-zA-Z0-9_]+ [0-9]+[\\s]*";
+    private static final char SOURCE_FILE_LINE_PREFIX = '>';
+    private static final char TOKEN_LINE_PREFIX = '$';
+    private static final char COMMENT_LINE_PREFIX = '#';
+    private static final char TOKEN_COLUMN_MARKER = '|';
 
     private final List<String> sourceLines;
     private final List<TokenData> expectedTokens;
@@ -46,14 +51,14 @@ public class TokenPositionTestData implements TestData {
         for (String sourceLine : testFileLines) {
             if (!sourceLine.isBlank()) {
                 switch (sourceLine.charAt(0)) {
-                    case '>' -> {
+                    case SOURCE_FILE_LINE_PREFIX -> {
                         this.sourceLines.add(sourceLine.substring(1));
                         currentLine++;
                     }
 
-                    case '$' -> {
+                    case TOKEN_LINE_PREFIX -> {
                         this.extractTokenData(sourceLine, currentLine);
-                        int column = sourceLine.indexOf('|');
+                        int column = sourceLine.indexOf(TOKEN_COLUMN_MARKER);
                         String[] tokenDescriptionParts = sourceLine.split(" ", 0);
 
                         String typeName = tokenDescriptionParts[tokenDescriptionParts.length - 2];
@@ -61,11 +66,11 @@ public class TokenPositionTestData implements TestData {
                         this.expectedTokens.add(new TokenData(typeName, currentLine, column, length));
                     }
 
-                    case '#' -> {
+                    case COMMENT_LINE_PREFIX -> {
                         // Line is considered a comment
                     }
 
-                    default -> Assertions.fail("Invalid line for token position test " + this.descriptor + " at line: " + sourceLine);
+                    default -> Assertions.fail(String.format(INVALID_LINE_ERROR_MESSAGE, this.descriptor, sourceLine));
                 }
             }
         }
