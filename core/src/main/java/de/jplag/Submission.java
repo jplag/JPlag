@@ -261,6 +261,21 @@ public class Submission implements Comparable<Submission> {
             return false;
         }
 
+        if (tokenList.size() < minimalTokens) {
+            // print the number of tokens without the file-end token to help users choose the right parameters:
+            logger.error("Submission {} contains {} tokens, which is below the minimum match length {}!", name, tokenList.size() - 1, minimalTokens);
+            state = TOO_SMALL;
+            return false;
+        }
+
+        this.extractAndParseComments();
+
+        tokenList = Collections.unmodifiableList(tokenList);
+        state = VALID;
+        return true;
+    }
+
+    private void extractAndParseComments() {
         CommentExtractorSettings commentExtractorSettings = language.getCommentExtractorSettings();
         if (commentExtractorSettings != null) {
             for (File file : files) {
@@ -273,17 +288,6 @@ public class Submission implements Comparable<Submission> {
             }
             logger.debug("Found {} comments", comments.size());
         }
-
-        if (tokenList.size() < minimalTokens) {
-            // print the number of tokens without the file-end token to help users choose the right parameters:
-            logger.error("Submission {} contains {} tokens, which is below the minimum match length {}!", name, tokenList.size() - 1, minimalTokens);
-            state = TOO_SMALL;
-            return false;
-        }
-
-        tokenList = Collections.unmodifiableList(tokenList);
-        state = VALID;
-        return true;
     }
 
     /**
