@@ -10,8 +10,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import de.jplag.*;
-import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.Match;
+import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
 import de.jplag.highlight_extraction.*;
 import de.jplag.options.JPlagOptions;
