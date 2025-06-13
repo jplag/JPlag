@@ -18,7 +18,7 @@ import de.jplag.exceptions.ExitException;
 import de.jplag.highlight_extraction.*;
 import de.jplag.options.JPlagOptions;
 
-public class StrategyIntegrationTest extends TestBase {
+class StrategyIntegrationTest extends TestBase {
 
     private static JPlagResult result;
 
