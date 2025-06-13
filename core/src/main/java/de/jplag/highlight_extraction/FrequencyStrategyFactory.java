@@ -6,6 +6,10 @@ package de.jplag.highlight_extraction;
 
 public class FrequencyStrategyFactory {
 
+    private FrequencyStrategyFactory() {
+        throw new IllegalStateException("Utility class");
+    }
+
     /**
      * Creates an instance of a FrequencyStrategy based on the chosen FrequencyStrategies enum.
      * @param strategy the applied frequency-strategy from the input
