@@ -47,7 +47,8 @@ public class StrategyCreateAndCheckTest extends TestBase {
         JPlagComparison comparisonForTestData = result.getAllComparisons().getFirst();
         testSubmission = comparisonForTestData.firstSubmission();
         testMatchAOnTimeInComparisons = comparisonForTestData.matches().get(0);
-        testMatchShort = new Match(comparisonForTestData.matches().get(0).startOfFirst(), comparisonForTestData.matches().get(0).startOfSecond(), 12);
+        testMatchShort = new Match(comparisonForTestData.matches().get(0).startOfFirst(), comparisonForTestData.matches().get(0).startOfSecond(), 12,
+                12);
         testMatchBTwoTimesInOneComparison = comparisonForTestData.matches().get(1);
         testMatchCTwoTimesInDifferentComparisons = comparisonForTestData.matches().get(2);
         testMatchDThreeTimesInDifferentComparisons = comparisonForTestData.matches().get(3);
@@ -101,7 +102,7 @@ public class StrategyCreateAndCheckTest extends TestBase {
     // Test Compleate match strategy
     private void assertTokenFrequencyContainsMatch(Match match, int expectedFrequency, Map<String, List<String>> tokenFrequencyMap) {
         int start = match.startOfFirst();
-        int length = match.length();
+        int length = match.lengthOfFirst();
         List<String> tokenNames = new LinkedList<>();
         List<Token> tokens = testSubmission.getTokenList().subList(start, start + length);
 
@@ -146,7 +147,7 @@ public class StrategyCreateAndCheckTest extends TestBase {
         FrequencyStrategy strategy = new WindowOfMatchesStrategy();
         Map<String, List<String>> frequencyMap = new HashMap<>();
         Match match = testMatchAOnTimeInComparisons;
-        List<Token> tokens = testSubmission.getTokenList().subList(match.startOfFirst(), match.startOfFirst() + match.length());
+        List<Token> tokens = testSubmission.getTokenList().subList(match.startOfFirst(), match.startOfFirst() + match.lengthOfFirst());
         List<String> tokenStrings = new ArrayList<>();
 
         for (Token token : tokens) {
@@ -179,7 +180,7 @@ public class StrategyCreateAndCheckTest extends TestBase {
         int windowSize = 5;
 
         List<Token> tokensListInTestMatch = testSubmission.getTokenList().subList(testMatchShort.startOfFirst(),
-                testMatchShort.startOfFirst() + testMatchShort.length());
+                testMatchShort.startOfFirst() + testMatchShort.lengthOfFirst());
         List<String> tokenListTestMatchReadable = tokensListInTestMatch.stream().map(token -> token.getType().toString()).toList();
 
         strategy.create(tokenListTestMatchReadable, "createId1", windowMap, windowSize);
@@ -324,7 +325,7 @@ public class StrategyCreateAndCheckTest extends TestBase {
             for (Match match : comparison.matches()) {
                 List<Token> keyToken = testSubmission.getTokenList();
                 List<String> keyNames = keyToken.stream().map(token -> token.getType().toString()).toList();
-                keyNames = keyNames.subList(match.startOfFirst(), match.startOfFirst() + match.length());
+                keyNames = keyNames.subList(match.startOfFirst(), match.startOfFirst() + match.lengthOfFirst());
                 String key = String.join(" ", keyNames);
                 if (keysWithFrequency.contains(key)) {
                     int index = keysWithFrequency.indexOf(key);

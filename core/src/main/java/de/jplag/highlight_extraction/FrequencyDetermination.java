@@ -54,7 +54,7 @@ public class FrequencyDetermination {
 
             for (Match match : comparison.matches()) {
                 int start = match.startOfFirst();
-                int len = match.length();
+                int len = match.lengthOfFirst();
                 if (start + len > tokens.size())
                     continue;
 
