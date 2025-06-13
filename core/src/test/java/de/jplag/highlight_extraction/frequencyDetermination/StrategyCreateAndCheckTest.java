@@ -16,7 +16,7 @@ import de.jplag.exceptions.ExitException;
 import de.jplag.highlight_extraction.*;
 import de.jplag.options.JPlagOptions;
 
-public class StrategyCreateAndCheckTest extends TestBase {
+class StrategyCreateAndCheckTest extends TestBase {
     private static final StrategyIntegrationTest t = new StrategyIntegrationTest();
     private static Submission testSubmission;
     private static Match testMatchAOnTimeInComparisons;
@@ -34,7 +34,7 @@ public class StrategyCreateAndCheckTest extends TestBase {
     // @Test
     @BeforeEach
     void prepareMatchResult() throws ExitException {
-        JPlagOptions options = getDefaultOptions("PartialPlagiarism"); // getDefaultOptions("merging");
+        JPlagOptions options = getDefaultOptions("PartialPlagiarism");
         System.out.println(options);
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
@@ -106,8 +106,8 @@ public class StrategyCreateAndCheckTest extends TestBase {
         List<String> tokenNames = new LinkedList<>();
         List<Token> tokens = testSubmission.getTokenList().subList(start, start + length);
 
-        for (Token t : tokens) {
-            tokenNames.add(t.getType().toString());
+        for (Token token : tokens) {
+            tokenNames.add(token.getType().toString());
         }
 
         String key = String.join(" ", tokenNames);
