@@ -71,7 +71,8 @@ public class RustParserAdapter extends AbstractParser {
      * @param length the length of the Token
      */
     /* package-private */ void addToken(RustTokenType type, int line, int start, int length) {
-        tokens.add(new Token(type, currentFile, line, start, length));
+        // TODO: adaümt
+        tokens.add(new Token(type, currentFile, line, start, line, start + length, length));
 
     }
 }

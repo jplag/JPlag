@@ -20,7 +20,7 @@ public class ScxmlToken extends Token {
      * @param element the corresponding StatechartElement this token was extracted from
      */
     public ScxmlToken(TokenType type, File file, StatechartElement element) {
-        super(type, file, NO_VALUE, NO_VALUE, NO_VALUE);
+        super(type, file, NO_VALUE, NO_VALUE, NO_VALUE, NO_VALUE, NO_VALUE);
         this.element = element;
     }
 
@@ -34,7 +34,8 @@ public class ScxmlToken extends Token {
      * @param element the corresponding StatechartElement this token was extracted from
      */
     public ScxmlToken(TokenType type, File file, int line, int column, int length, StatechartElement element) {
-        super(type, file, line, column, length);
+        // TODO: adapt
+        super(type, file, line, column, line, column + length, length);
         this.element = element;
     }
 

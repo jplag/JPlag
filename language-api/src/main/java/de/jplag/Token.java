@@ -17,9 +17,12 @@ public class Token {
     public static final int NO_VALUE = -1;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private final int line;
-    private final int column;
+    private final int startLine;
+    private final int startColumn;
+    @Deprecated(since = "6.2.0", forRemoval = true)
     private final int length;
+    private final int endLine;
+    private final int endColumn;
     private final File file;
     private final TokenType type;
     private CodeSemantics semantics; // value null if no semantics
@@ -32,6 +35,7 @@ public class Token {
      * @param column is the column index, meaning where the token starts in the line. Index is 1-based.
      * @param length is the length of the token in the source code.
      */
+    @Deprecated(since = "6.2.0", forRemoval = true)
     public Token(TokenType type, File file, int line, int column, int length) {
         if (line == 0) {
             logger.warn("Creating a token with line index 0 while index is 1-based");
@@ -41,8 +45,29 @@ public class Token {
         }
         this.type = type;
         this.file = file;
-        this.line = line;
-        this.column = column;
+        this.startLine = line;
+        this.startColumn = column;
+        this.endLine = line;
+        this.endColumn = column + length;
+        this.length = length;
+    }
+
+    public Token(TokenType type, File file, int startLine, int startColumn, int endLine, int endColumn, int length) {
+        if (startLine == 0 || endLine == 0) {
+            logger.warn("Creating a token with line index 0 while index is 1-based");
+        }
+        if (startColumn == 0 || endColumn == 0) {
+            logger.warn("Creating a token with column index 0 while index is 1-based");
+        }
+        if (startLine < endLine || startLine == endLine && startColumn < endColumn) {
+            logger.warn("Creating a token that ends earlier than it start");
+        }
+        this.type = type;
+        this.file = file;
+        this.startLine = startLine;
+        this.startColumn = startColumn;
+        this.endLine = endLine;
+        this.endColumn = endColumn;
         this.length = length;
     }
 
@@ -53,20 +78,23 @@ public class Token {
      * @param trace is the tracing information of the token, meaning line, column, and length.
      */
     public Token(TokenType type, File file, TokenTrace trace) {
-        this(type, file, trace.line(), trace.column(), trace.length());
+        // TODO: adapt
+        this(type, file, trace.line(), trace.column(), trace.line(), trace.column() + trace.length(), trace.length());
     }
 
     /**
      * Creates a token with column, length and semantic information.
      * @param type is the token type.
      * @param file is the name of the source code file.
-     * @param line is the line index in the source code where the token resides. Index is 1-based.
-     * @param column is the column index, meaning where the token starts in the line. Index is 1-based.
+     * @param startLine is the line index in the source code where the token starts. Index is 1-based.
+     * @param startColumn is the column index, meaning where the token starts in the line. Index is 1-based.
+     * @param endLine is the line index in the source code where the token ends. Index is 1-based.
+     * @param endColumn is the column index, meaning where the token ends in the line. Index is 1-based.
      * @param length is the length of the token in the source code.
      * @param semantics is a record containing semantic information about the token.
      */
-    public Token(TokenType type, File file, int line, int column, int length, CodeSemantics semantics) {
-        this(type, file, line, column, length);
+    public Token(TokenType type, File file, int startLine, int startColumn, int endLine, int endColumn, int length, CodeSemantics semantics) {
+        this(type, file, startLine, startColumn, endLine, endColumn, length);
         this.semantics = semantics;
     }
 
@@ -75,7 +103,7 @@ public class Token {
      * @param file is the name of the source code file.
      */
     public static Token fileEnd(File file) {
-        return new Token(SharedTokenType.FILE_END, file, NO_VALUE, NO_VALUE, NO_VALUE);
+        return new Token(SharedTokenType.FILE_END, file, NO_VALUE, NO_VALUE, NO_VALUE, NO_VALUE, NO_VALUE);
     }
 
     /**
@@ -85,15 +113,48 @@ public class Token {
      */
     public static Token semanticFileEnd(File file) {
         CodeSemantics semantics = CodeSemantics.createControl();
-        return new Token(SharedTokenType.FILE_END, file, NO_VALUE, NO_VALUE, NO_VALUE, semantics);
+        return new Token(SharedTokenType.FILE_END, file, NO_VALUE, NO_VALUE, NO_VALUE, NO_VALUE, NO_VALUE, semantics);
+    }
+
+    /**
+     * Gives the line index denoting in which line the code sections represented by this token starts.
+     * @return the line index.
+     */
+    public int getStartLine() {
+        return startLine;
     }
 
     /**
      * Returns the character index which denotes where the code sections represented by this token starts in the line.
      * @return the character index in the line.
      */
+    public int getStartColumn() {
+        return startColumn;
+    }
+
+    /**
+     * Gives the line index denoting in which line the code sections represented by this token ends.
+     * @return the line index.
+     */
+    public int getEndLine() {
+        return endLine;
+    }
+
+    /**
+     * Returns the character index which denotes where the code sections represented by this token ends in the line.
+     * @return the character index in the line.
+     */
+    public int getEndColumn() {
+        return endColumn;
+    }
+
+    /**
+     * Returns the character index which denotes where the code sections represented by this token starts in the line.
+     * @return the character index in the line.
+     */
+    @Deprecated(since = "6.2.0", forRemoval = true)
     public int getColumn() {
-        return column;
+        return getStartColumn();
     }
 
     /**
@@ -107,6 +168,7 @@ public class Token {
      * Gives the length if the code sections represented by this token.
      * @return the length in characters.
      */
+    @Deprecated(since = "6.2.0", forRemoval = true)
     public int getLength() {
         return length;
     }
@@ -115,8 +177,9 @@ public class Token {
      * Gives the line index denoting in which line the code sections represented by this token starts.
      * @return the line index.
      */
+    @Deprecated(since = "6.2.0", forRemoval = true)
     public int getLine() {
-        return line;
+        return getStartLine();
     }
 
     /**

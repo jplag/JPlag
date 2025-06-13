@@ -28,7 +28,7 @@ public class Parser extends AbstractParser {
 
     public void add(TokenType type, de.jplag.scheme.Token token) {
         int length = token.endColumn - token.beginColumn + 1;
-        tokens.add(new Token(type, currentFile, token.beginLine, token.endLine, length));
+        tokens.add(new Token(type, currentFile, token.beginLine, token.endLine, token.endLine, token.endColumn, length));
     }
 
 }

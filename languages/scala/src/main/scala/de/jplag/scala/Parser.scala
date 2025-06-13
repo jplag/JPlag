@@ -374,7 +374,8 @@ class Parser extends AbstractParser {
      * @param length    length of the occurrence in the file
      */
     private def add(tokenType: ScalaTokenType, line: Int, column: Int, length: Int): Unit = {
-        tokens += new Token(tokenType, currentFile, line, column, length)
+        // TODO: adapt
+        tokens += new Token(tokenType, currentFile, line, column, line, column + length, length)
     }
 
 
@@ -388,11 +389,12 @@ class Parser extends AbstractParser {
     private def add(tokenType: ScalaTokenType, node: Tree, fromEnd: Boolean): Unit = {
         if (node.pos.text.nonEmpty) {
             // SELF type tokens with no text content mess up the sequence
+            // TODO: adapt
             if (fromEnd) {
-                tokens += new Token(tokenType, currentFile, node.pos.endLine + 1, node.pos.endColumn + 1, 0)
+                tokens += new Token(tokenType, currentFile, node.pos.endLine + 1, node.pos.endColumn + 1, node.pos.endLine + 1, node.pos.endColumn + 1, 0)
             }
             else {
-                tokens += new Token(tokenType, currentFile, node.pos.startLine + 1, node.pos.endColumn + 1, node.pos.text.length)
+                tokens += new Token(tokenType, currentFile, node.pos.startLine + 1, node.pos.endColumn + 1, node.pos.startLine + 1, node.pos.endColumn + 1, node.pos.text.length)
             }
         }
     }
