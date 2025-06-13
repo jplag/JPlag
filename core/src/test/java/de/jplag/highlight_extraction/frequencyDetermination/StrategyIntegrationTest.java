@@ -89,7 +89,7 @@ class StrategyIntegrationTest extends TestBase {
             String key = myEntry.getKey();
             int count = myEntry.getValue().size();
             String id = myEntry.getValue().toString();
-            System.out.printf("Tokens: [%.30s...] | Frequency: %2d | %s\n | %s \n", key, count, "*".repeat(Math.min(count, 50)), id);
+            System.out.printf("Tokens: [%.30s...] | Frequency: %2d | %s%n | %s %n", key, count, "*".repeat(Math.min(count, 50)), id);
         }
     }
 
