@@ -127,7 +127,7 @@ function sortFiles(fileSorting: FileSortingOptions) {
       const largestMatch: Record<string, number> = {}
       for (const file of props.files) {
         largestMatch[file.fileName] = Math.max(
-          ...matchesPerFile.value[file.fileName].map((match) => match.match.tokens)
+          ...matchesPerFile.value[file.fileName].map((match) => match.length)
         )
       }
       sortedFiles.value = Array.from(props.files).sort(
@@ -151,7 +151,7 @@ function sortFiles(fileSorting: FileSortingOptions) {
       const matchCoverage: Record<string, number> = {}
       for (const file of props.files) {
         const matches = matchesPerFile.value[file.fileName]
-        const totalTokens = matches.reduce((acc, match) => acc + match.match.tokens, 0)
+        const totalTokens = matches.reduce((acc, match) => acc + match.length, 0)
         matchCoverage[file.fileName] =
           totalTokens / (file.tokenCount > 0 ? file.tokenCount : Infinity)
       }

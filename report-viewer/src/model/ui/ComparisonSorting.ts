@@ -71,6 +71,17 @@ export namespace Column {
     maximumSimilarity,
     cluster
   }
+
+  export function getSortingFromMetric(metric: MetricType) {
+    switch (metric) {
+      case MetricType.AVERAGE:
+        return averageSimilarity
+      case MetricType.MAXIMUM:
+        return maximumSimilarity
+      default:
+        return averageSimilarity
+    }
+  }
 }
 
 export interface ComparisonTableSorting {
