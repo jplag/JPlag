@@ -1,5 +1,7 @@
 package de.jplag.highlight_extraction.frequencyDetermination;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 import java.util.List;
 import java.util.Map;
 
@@ -20,11 +22,10 @@ public class StrategyIntegrationTest extends TestBase {
 
     private static JPlagResult result;
 
-    @Test
     @BeforeEach
     void prepareMatchResult() throws ExitException {
 
-        JPlagOptions options = getDefaultOptions("PartialPlagiarism"); // getDefaultOptions("merging");
+        JPlagOptions options = getDefaultOptions("PartialPlagiarism");
         System.out.println(options);
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
@@ -42,6 +43,7 @@ public class StrategyIntegrationTest extends TestBase {
         fd.runAnalysis(result.getAllComparisons());
         System.out.println(fd);
         Map<String, List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
+        assertFalse(tokenFrequencyMap.isEmpty(), "Map should not be empty");
         printTestResult(tokenFrequencyMap);
     }
 
@@ -53,6 +55,7 @@ public class StrategyIntegrationTest extends TestBase {
         fd.runAnalysis(result.getAllComparisons());
         System.out.println(fd);
         Map<String, List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
+        assertFalse(tokenFrequencyMap.isEmpty(), "Map should not be empty");
         printTestResult(tokenFrequencyMap);
     }
 
@@ -64,6 +67,7 @@ public class StrategyIntegrationTest extends TestBase {
         fd.runAnalysis(result.getAllComparisons());
         System.out.println(fd);
         Map<String, List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
+        assertFalse(tokenFrequencyMap.isEmpty(), "Map should not be empty");
         printTestResult(tokenFrequencyMap);
     }
 
@@ -75,6 +79,7 @@ public class StrategyIntegrationTest extends TestBase {
         fd.runAnalysis(result.getAllComparisons());
         System.out.println(fd);
         Map<String, List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
+        assertFalse(tokenFrequencyMap.isEmpty(), "Map should not be empty");
         printTestResult(tokenFrequencyMap);
     }
 
@@ -84,7 +89,7 @@ public class StrategyIntegrationTest extends TestBase {
             String key = myEntry.getKey();
             int count = myEntry.getValue().size();
             String id = myEntry.getValue().toString();
-            System.out.printf("Tokens: [%.30s...] | Frequency: %2d | %s%n | %s \n", key, count, "*".repeat(Math.min(count, 50)), id);
+            System.out.printf("Tokens: [%.30s...] | Frequency: %2d | %s\n | %s \n", key, count, "*".repeat(Math.min(count, 50)), id);
         }
     }
 
