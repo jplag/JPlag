@@ -400,7 +400,7 @@ const graphOptions = computed(() => {
             if (hoveredEdge.value == null) {
               return ''
             }
-            return hoveredEdge.value.firstId + ' <> ' + hoveredEdge.value.secondId
+            return hoveredEdge.value.firstId + ' — ' + hoveredEdge.value.secondId
           },
           label: () => {
             return ''
