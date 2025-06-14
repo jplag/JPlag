@@ -10,6 +10,10 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
+/**
+ * This class serializes Files for the JSON export using Jackson.
+ * It serializes files as paths relative to the execution location.
+ */
 public class FileSerializer extends StdSerializer<File> {
 
     @Serial
@@ -22,7 +26,10 @@ public class FileSerializer extends StdSerializer<File> {
         this(null);
     }
 
-    public FileSerializer(Class<File> fileClass) {
+    /**
+     * Constructor needed to allow call with null, as super(null) is ambiguous.
+     */
+    private FileSerializer(Class<File> fileClass) {
         super(fileClass);
     }
 
