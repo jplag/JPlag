@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assumptions;
@@ -95,7 +96,7 @@ public abstract class LanguageModuleTest {
         this.configureIgnoredLines(ignoredLines);
         List<Integer> relevantLines = new ArrayList<>(ignoredLines.getRelevantLines());
 
-        tokens.stream().map(Token::getLine).forEach(relevantLines::remove);
+        tokens.stream().flatMap(t -> IntStream.rangeClosed(t.getStartLine(), t.getEndLine()).boxed()).forEach(relevantLines::remove);
 
         assertTrue(relevantLines.isEmpty(),
                 "Test test source " + data.describeTestSource() + " contained uncovered lines:" + System.lineSeparator() + relevantLines);
@@ -216,17 +217,17 @@ public abstract class LanguageModuleTest {
             TokenType expectedType = this.languageTokens.stream().filter(type -> type.toString().equals(expectedToken.typeName())).findFirst()
                     .orElseThrow(() -> new IOException(String.format("The token type %s does not exist.", expectedToken.typeName())));
 
-            if (extractedTokens.stream().noneMatch(token -> token.getType() == expectedType && token.getLine() == expectedToken.lineNumber()
-                    && token.getColumn() == expectedToken.columnNumber() && token.getLength() == expectedToken.length())) {
+            if (extractedTokens.stream()
+                    .noneMatch(token -> token.getType() == expectedType && token.getStartLine() == expectedToken.startLine()
+                            && token.getStartColumn() == expectedToken.startColumn() && token.getEndLine() == expectedToken.endLine()
+                            && token.getEndColumn() == expectedToken.endColumn())) {
                 failedTokens.add(expectedToken);
             }
         }
 
         if (!failedTokens.isEmpty()) {
-            String failureDescriptors = String.join(System.lineSeparator(),
-                    failedTokens.stream().map(
-                            token -> token.typeName() + " at (" + token.lineNumber() + ":" + token.columnNumber() + ") with length " + token.length())
-                            .toList());
+            String failureDescriptors = String.join(System.lineSeparator(), failedTokens.stream().map(token -> token.typeName() + " at ("
+                    + token.startLine() + ":" + token.startColumn() + ") to (" + token.endLine() + ":" + token.endColumn() + ")").toList());
             fail("Some tokens weren't extracted with the correct properties:" + System.lineSeparator() + failureDescriptors);
         }
     }
@@ -254,9 +255,11 @@ public abstract class LanguageModuleTest {
             Token first = tokens.get(i);
             Token second = tokens.get(i + 1);
 
-            if (first.getLine() > second.getLine()) {
-                fail(String.format("Invalid token order. Token %s has a higher line number (%s) than token %s (%s).", first.getType(),
-                        first.getLine(), second.getType(), second.getLine()));
+            // TODO: check whether we should check for coulumn
+            if (first.getStartLine() > second
+                    .getStartLine() /* || first.getStartLine() == second.getStartLine() && first.getStartColumn() > second.getStartColumn() */) {
+                fail(String.format("Invalid token order. Token %s (%s:%s) comes after %s (%s:%s)", first.getType(), first.getStartLine(),
+                        first.getStartColumn(), second.getType(), second.getStartLine(), second.getStartColumn()));
             }
         }
     }

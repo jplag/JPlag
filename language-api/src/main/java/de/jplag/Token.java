@@ -59,8 +59,8 @@ public class Token {
         if (startColumn == 0 || endColumn == 0) {
             logger.warn("Creating a token with column index 0 while index is 1-based");
         }
-        if (startLine < endLine || startLine == endLine && startColumn < endColumn) {
-            logger.warn("Creating a token that ends earlier than it start");
+        if (startLine > endLine || startLine == endLine && startColumn > endColumn) {
+            logger.warn("Creating a token that ends earlier than it start. Start: {}:{}; End: {}:{}", startLine, startColumn, endLine, endColumn);
         }
         this.type = type;
         this.file = file;

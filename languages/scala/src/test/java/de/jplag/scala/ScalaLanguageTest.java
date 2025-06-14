@@ -85,7 +85,7 @@ class ScalaLanguageTest {
             // All lines that contain code
             var codeLines = new ArrayList<>(getCodeLines(lines));
             // All lines that contain token
-            var tokenLines = tokens.stream().map(Token::getLine).distinct().toList();
+            var tokenLines = tokens.stream().map(Token::getStartLine).distinct().toList();
 
             // Keep only lines that have no tokens
             codeLines.removeAll(tokenLines);
