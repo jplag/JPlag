@@ -11,8 +11,8 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 /**
- * This class serializes Files for the JSON export using Jackson.
- * It serializes files as paths relative to the execution location.
+ * This class serializes Files for the JSON export using Jackson. It serializes files as paths relative to the execution
+ * location.
  */
 public class FileSerializer extends StdSerializer<File> {
 
