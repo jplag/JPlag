@@ -47,8 +47,8 @@ class StrategyCreateAndCheckTest extends TestBase {
         JPlagComparison comparisonForTestData = result.getAllComparisons().getFirst();
         testSubmission = comparisonForTestData.firstSubmission();
         testMatchAOnTimeInComparisons = comparisonForTestData.matches().get(0);
-        testMatchShort = new Match(comparisonForTestData.matches().get(0).startOfFirst(), comparisonForTestData.matches().get(0).startOfSecond(), 12,
-                12);
+        testMatchShort = new Match(comparisonForTestData.matches().get(0).getStartOfFirst(),
+                comparisonForTestData.matches().get(0).getStartOfSecond(), 12, 12);
         testMatchBTwoTimesInOneComparison = comparisonForTestData.matches().get(1);
         testMatchCTwoTimesInDifferentComparisons = comparisonForTestData.matches().get(2);
         testMatchDThreeTimesInDifferentComparisons = comparisonForTestData.matches().get(3);
@@ -101,8 +101,8 @@ class StrategyCreateAndCheckTest extends TestBase {
 
     // Test Compleate match strategy
     private void assertTokenFrequencyContainsMatch(Match match, int expectedFrequency, Map<String, List<String>> tokenFrequencyMap) {
-        int start = match.startOfFirst();
-        int length = match.lengthOfFirst();
+        int start = match.getStartOfFirst();
+        int length = match.getLengthOfFirst();
         List<String> tokenNames = new LinkedList<>();
         List<Token> tokens = testSubmission.getTokenList().subList(start, start + length);
 
@@ -147,7 +147,7 @@ class StrategyCreateAndCheckTest extends TestBase {
         FrequencyStrategy strategy = new WindowOfMatchesStrategy();
         Map<String, List<String>> frequencyMap = new HashMap<>();
         Match match = testMatchAOnTimeInComparisons;
-        List<Token> tokens = testSubmission.getTokenList().subList(match.startOfFirst(), match.startOfFirst() + match.lengthOfFirst());
+        List<Token> tokens = testSubmission.getTokenList().subList(match.getStartOfFirst(), match.getStartOfFirst() + match.getLengthOfFirst());
         List<String> tokenStrings = new ArrayList<>();
 
         for (Token token : tokens) {
@@ -179,8 +179,8 @@ class StrategyCreateAndCheckTest extends TestBase {
         Map<String, List<String>> windowMap = new HashMap<>();
         int windowSize = 5;
 
-        List<Token> tokensListInTestMatch = testSubmission.getTokenList().subList(testMatchShort.startOfFirst(),
-                testMatchShort.startOfFirst() + testMatchShort.lengthOfFirst());
+        List<Token> tokensListInTestMatch = testSubmission.getTokenList().subList(testMatchShort.getStartOfFirst(),
+                testMatchShort.getStartOfFirst() + testMatchShort.getLengthOfFirst());
         List<String> tokenListTestMatchReadable = tokensListInTestMatch.stream().map(token -> token.getType().toString()).toList();
 
         strategy.create(tokenListTestMatchReadable, "createId1", windowMap, windowSize);
@@ -253,7 +253,8 @@ class StrategyCreateAndCheckTest extends TestBase {
         String testId = "testId1";
         String testId2 = "testId2";
 
-        List<Token> tokensListInTestMatch = testSubmission.getTokenList().subList(testMatchShort.startOfFirst(), testMatchShort.startOfFirst() + 5);
+        List<Token> tokensListInTestMatch = testSubmission.getTokenList().subList(testMatchShort.getStartOfFirst(),
+                testMatchShort.getStartOfFirst() + 5);
         System.out.println(tokensListInTestMatch);
         List<String> tokenListTestMatchReadable = tokensListInTestMatch.stream().map(token -> token.getType().toString()).toList();
         int minSize = 3;
@@ -325,7 +326,7 @@ class StrategyCreateAndCheckTest extends TestBase {
             for (Match match : comparison.matches()) {
                 List<Token> keyToken = testSubmission.getTokenList();
                 List<String> keyNames = keyToken.stream().map(token -> token.getType().toString()).toList();
-                keyNames = keyNames.subList(match.startOfFirst(), match.startOfFirst() + match.lengthOfFirst());
+                keyNames = keyNames.subList(match.getStartOfFirst(), match.getStartOfFirst() + match.getLengthOfFirst());
                 String key = String.join(" ", keyNames);
                 if (keysWithFrequency.contains(key)) {
                     int index = keysWithFrequency.indexOf(key);

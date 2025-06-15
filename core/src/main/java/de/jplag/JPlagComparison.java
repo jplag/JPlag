@@ -66,8 +66,8 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
         if (divisor == 0) {
             return 0;
         }
-        int matchedTokensOfFirst = matches.stream().mapToInt(Match::lengthOfFirst).sum();
-        int matchedTokensOfSecond = matches.stream().mapToInt(Match::lengthOfSecond).sum();
+        int matchedTokensOfFirst = matches.stream().mapToInt(Match::getLengthOfFirst).sum();
+        int matchedTokensOfSecond = matches.stream().mapToInt(Match::getLengthOfSecond).sum();
         return (matchedTokensOfFirst + matchedTokensOfSecond) / (double) divisor;
     }
 
@@ -78,7 +78,7 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
      */
     public final double similarityOfFirst() {
         int divisor = firstSubmission.getSimilarityDivisor();
-        int matchedTokens = matches.stream().mapToInt(Match::lengthOfFirst).sum();
+        int matchedTokens = matches.stream().mapToInt(Match::getLengthOfFirst).sum();
         return divisor == 0 ? 0.0 : matchedTokens / (double) divisor;
     }
 
@@ -89,7 +89,7 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
      */
     public final double similarityOfSecond() {
         int divisor = secondSubmission.getSimilarityDivisor();
-        int matchedTokens = matches.stream().mapToInt(Match::lengthOfSecond).sum();
+        int matchedTokens = matches.stream().mapToInt(Match::getLengthOfSecond).sum();
         return divisor == 0 ? 0.0 : matchedTokens / (double) divisor;
     }
 

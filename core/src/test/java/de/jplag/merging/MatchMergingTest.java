@@ -88,8 +88,8 @@ class MatchMergingTest extends TestBase {
         for (JPlagComparison comparison : comparisons) {
             matches = matchFunction.apply(comparison);
             for (Match match : matches) {
-                assertTrue(match.lengthOfFirst() >= threshold);
-                assertTrue(match.lengthOfSecond() >= threshold);
+                assertTrue(match.getLengthOfFirst() >= threshold);
+                assertTrue(match.getLengthOfSecond() >= threshold);
             }
         }
     }

@@ -53,8 +53,8 @@ public class FrequencyDetermination {
             String comparisonId = comparison.toString();
 
             for (Match match : comparison.matches()) {
-                int start = match.startOfFirst();
-                int len = match.lengthOfFirst();
+                int start = match.getStartOfFirst();
+                int len = match.getLengthOfFirst();
                 if (start + len > tokens.size())
                     continue;
 

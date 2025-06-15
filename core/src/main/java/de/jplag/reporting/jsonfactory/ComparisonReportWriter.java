@@ -97,8 +97,8 @@ public class ComparisonReportWriter {
     }
 
     private Match convertMatchToReportMatch(JPlagComparison comparison, de.jplag.Match match) {
-        List<Token> tokensFirst = comparison.firstSubmission().getTokenList().subList(match.startOfFirst(), match.endOfFirst() + 1);
-        List<Token> tokensSecond = comparison.secondSubmission().getTokenList().subList(match.startOfSecond(), match.endOfSecond() + 1);
+        List<Token> tokensFirst = comparison.firstSubmission().getTokenList().subList(match.getStartOfFirst(), match.endOfFirst() + 1);
+        List<Token> tokensSecond = comparison.secondSubmission().getTokenList().subList(match.getStartOfSecond(), match.endOfSecond() + 1);
 
         Comparator<? super Token> lineStartComparator = Comparator.comparingInt(Token::getLine).thenComparingInt(Token::getColumn);
         Comparator<? super Token> lineEndComparator = Comparator.comparingInt(Token::getLine)
@@ -114,15 +114,15 @@ public class ComparisonReportWriter {
         String secondFileName = FilePathUtil.getRelativeSubmissionPath(startOfSecond.getFile(), comparison.secondSubmission(), submissionToIdFunction)
                 .toString();
 
-        CodePosition startInFirst = new CodePosition(startOfFirst.getLine(), startOfFirst.getColumn() - 1, match.startOfFirst());
+        CodePosition startInFirst = new CodePosition(startOfFirst.getLine(), startOfFirst.getColumn() - 1, match.getStartOfFirst());
         CodePosition endInFirst = new CodePosition(endOfFirst.getLine(), endOfFirst.getColumn() + endOfFirst.getLength() - 1, match.endOfFirst());
 
-        CodePosition startInSecond = new CodePosition(startOfSecond.getLine(), startOfSecond.getColumn() - 1, match.startOfSecond());
+        CodePosition startInSecond = new CodePosition(startOfSecond.getLine(), startOfSecond.getColumn() - 1, match.getStartOfSecond());
         CodePosition endInSecond = new CodePosition(endOfSecond.getLine(), endOfSecond.getColumn() + endOfSecond.getLength() - 1,
                 match.endOfSecond());
 
-        return new Match(firstFileName, secondFileName, startInFirst, endInFirst, startInSecond, endInSecond, match.lengthOfFirst(),
-                match.lengthOfSecond());
+        return new Match(firstFileName, secondFileName, startInFirst, endInFirst, startInSecond, endInSecond, match.getLengthOfFirst(),
+                match.getLengthOfSecond());
     }
 
 }

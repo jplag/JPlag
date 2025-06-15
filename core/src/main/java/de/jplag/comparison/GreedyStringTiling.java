@@ -66,7 +66,7 @@ public class GreedyStringTiling {
         List<Token> submissionTokenList = submission.getTokenList();
         Set<Token> baseCodeMarking = new HashSet<>();
         for (Match match : comparison.matches()) {
-            int startIndex = comparison.firstSubmission() == submission ? match.startOfFirst() : match.startOfSecond();
+            int startIndex = comparison.firstSubmission() == submission ? match.getStartOfFirst() : match.getStartOfSecond();
             baseCodeMarking.addAll(submissionTokenList.subList(startIndex, startIndex + match.minimumLength()));
         }
         baseCodeMarkings.put(submission, baseCodeMarking);
@@ -159,8 +159,8 @@ public class GreedyStringTiling {
                 } else {
                     addMatchIfNotOverlapping(globalMatches, match);
                 }
-                int leftStartIndex = match.startOfFirst();
-                int rightStartIndex = match.startOfSecond();
+                int leftStartIndex = match.getStartOfFirst();
+                int rightStartIndex = match.getStartOfSecond();
                 for (int offset = 0; offset < match.minimumLength(); offset++) {
                     leftMarked[leftStartIndex + offset] = true;
                     rightMarked[rightStartIndex + offset] = true;
