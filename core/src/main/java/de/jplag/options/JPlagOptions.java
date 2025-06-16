@@ -18,6 +18,7 @@ import de.jplag.Language;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.exceptions.BasecodeException;
 import de.jplag.merging.MergingOptions;
+import de.jplag.reporting.jsonfactory.serializer.FileSerializer;
 import de.jplag.reporting.jsonfactory.serializer.LanguageSerializer;
 import de.jplag.util.FileUtils;
 
@@ -50,10 +51,12 @@ import io.soabase.recordbuilder.core.RecordBuilder;
  */
 @RecordBuilder()
 public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Language language, Integer minimumTokenMatch,
-        Set<File> submissionDirectories, Set<File> oldSubmissionDirectories, File baseCodeSubmissionDirectory, String subdirectoryName,
-        List<String> fileSuffixes, String exclusionFileName, SimilarityMetric similarityMetric, double similarityThreshold,
-        int maximumNumberOfComparisons, ClusteringOptions clusteringOptions, boolean debugParser, MergingOptions mergingOptions, boolean normalize,
-        boolean includeComments) implements JPlagOptionsBuilder.With {
+        @JsonSerialize(contentUsing = FileSerializer.class) Set<File> submissionDirectories,
+        @JsonSerialize(contentUsing = FileSerializer.class) Set<File> oldSubmissionDirectories,
+        @JsonSerialize(using = FileSerializer.class) File baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes,
+        String exclusionFileName, SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons,
+        ClusteringOptions clusteringOptions, boolean debugParser, MergingOptions mergingOptions, boolean normalize, boolean includeComments)
+        implements JPlagOptionsBuilder.With {
 
     public static final double DEFAULT_SIMILARITY_THRESHOLD = 0;
     public static final int DEFAULT_SHOWN_COMPARISONS = 2500;
