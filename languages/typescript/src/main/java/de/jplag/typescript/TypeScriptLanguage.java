@@ -47,4 +47,9 @@ public class TypeScriptLanguage implements Language {
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
         return new TypeScriptParserAdapter(options.useStrictDefault()).parse(files);
     }
+
+    @Override
+    public boolean hasPriority() {
+        return true;
+    }
 }

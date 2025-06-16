@@ -42,4 +42,9 @@ public class NaturalLanguage implements Language {
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
         return new ParserAdapter().parse(files);
     }
+
+    @Override
+    public boolean supportsMultiLanguage() {
+        return false;
+    }
 }
