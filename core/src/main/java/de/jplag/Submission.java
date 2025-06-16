@@ -280,7 +280,7 @@ public class Submission implements Comparable<Submission> {
 
     private void extractAndParseComments() {
         CommentExtractorSettings commentExtractorSettings = language.getCommentExtractorSettings();
-        if (commentExtractorSettings != null) {
+        if (commentExtractorSettings.hasComments()) {
             for (File file : files) {
                 try {
                     CommentExtractor extractor = new CommentExtractor(file, commentExtractorSettings);

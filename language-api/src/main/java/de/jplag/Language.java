@@ -141,10 +141,10 @@ public interface Language {
     }
 
     /**
-     * Return {@code null} if language does not support comment extraction.
-     * @return Settings for the comment extractor, or null if language does not support comment extraction.
+     * Returns the settings for the comment extractor for this language.
+     * @return Settings for the comment extractor.
      */
     default CommentExtractorSettings getCommentExtractorSettings() {
-        return null;
+        return CommentExtractorSettings.noComments();
     }
 }
