@@ -3,7 +3,6 @@ package de.jplag.cli;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -49,7 +48,7 @@ class LanguageTest extends CliTest {
         JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.LANGUAGE, language.getIdentifier()));
 
         assertEquals(language.getIdentifier(), options.language().getIdentifier());
-        assertEquals(Arrays.asList(language.fileExtensions()), options.fileSuffixes());
+        assertEquals(language.fileExtensions(), options.fileSuffixes());
     }
 
     @Test
