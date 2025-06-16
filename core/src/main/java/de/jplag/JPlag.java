@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import de.jplag.clustering.ClusteringFactory;
 import de.jplag.commenthandling.CommentComparer;
 import de.jplag.comparison.LongestCommonSubsequenceSearch;
-import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.RootDirectoryException;
 import de.jplag.exceptions.SubmissionException;
@@ -68,12 +67,6 @@ public class JPlag {
      */
     public static JPlagResult run(JPlagOptions options) throws ExitException {
         checkForConfigurationConsistency(options);
-
-        // Hotfix for issue #2268, where the report creation throws an index out of bounds exception due to the incompatibility
-        // of SMM with basecode.
-        if (options.mergingOptions().enabled() && options.hasBaseCode()) {
-            throw new BasecodeException("Subsequence match merging does currently not work with basecode. We are working on it.");
-        }
 
         // Parse and validate submissions.
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);

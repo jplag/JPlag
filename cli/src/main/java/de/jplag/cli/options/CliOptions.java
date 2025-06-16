@@ -107,6 +107,9 @@ public class CliOptions implements Runnable {
 
         @Option(names = "--log-level", description = "Set the log level for the cli.")
         public Level logLevel = Level.INFO;
+
+        @Option(names = "--include-comments", description = "Enables comment extraction.")
+        public boolean includeComments = false;
     }
 
     public static class Clustering {

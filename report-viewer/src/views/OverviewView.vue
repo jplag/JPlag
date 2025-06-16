@@ -92,13 +92,18 @@
 
     <Container class="col-start-1 row-start-2 flex flex-col overflow-hidden print:overflow-visible">
       <h2>Distribution of Comparisons:</h2>
-      <DistributionDiagram :distributions="distributions" class="grow print:flex-none" />
+      <DistributionDiagram
+        :distributions="distributions"
+        class="grow print:flex-none"
+        @click:upper-percentile="onBarClicked"
+      />
     </Container>
 
     <Container
       class="col-start-1 row-start-3 flex overflow-hidden md:col-start-2 md:row-start-2 print:hidden"
     >
       <ComparisonsTable
+        ref="comparisonTable"
         :clusters="clusters"
         :top-comparisons="topComparisons"
         class="min-h-0 max-w-full flex-1 print:min-h-full print:grow"
@@ -115,7 +120,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, type PropType, onErrorCaptured } from 'vue'
+import { computed, type PropType, onErrorCaptured, type Ref, ref, nextTick } from 'vue'
 import { redirectOnError, router } from '@/router'
 import DistributionDiagram from '@/components/distributionDiagram/DistributionDiagram.vue'
 import ComparisonsTable from '@/components/ComparisonsTable.vue'
@@ -130,6 +135,7 @@ import type { RunInformation } from '@/model/RunInformation'
 import type { DistributionMap } from '@/model/Distribution'
 import type { Cluster } from '@/model/Cluster'
 import InfoIcon from '@/components/InfoIcon.vue'
+import { Column, Direction } from '@/model/ui/ComparisonSorting'
 
 const props = defineProps({
   topComparisons: {
@@ -172,4 +178,40 @@ onErrorCaptured((error) => {
   redirectOnError(error, 'Error displaying overview:\n')
   return false
 })
+
+const comparisonTable: Ref<typeof ComparisonsTable | null> = ref(null)
+function onBarClicked(upperPercentile: number) {
+  const adjustedPercentile = upperPercentile / 100
+  if (!comparisonTable.value) {
+    return
+  }
+  const metric = store().uiState.distributionChartConfig.metric
+  store().uiState.comparisonTableSorting = {
+    column: Column.getSortingFromMetric(metric),
+    direction: Direction.descending
+  }
+
+  // determine largest similarity value that is still in the bucket
+  let value = -1
+  for (const comparison of props.topComparisons) {
+    if (
+      comparison.similarities[metric] <= adjustedPercentile &&
+      comparison.similarities[metric] > value
+    ) {
+      value = comparison.similarities[metric]
+    }
+  }
+  // the number of elements in this metric that are larger than that value equal the index in the list sorted by that metric
+  let index = 0
+  for (const comparison of props.topComparisons) {
+    if (comparison.similarities[metric] > value) {
+      index++
+    }
+  }
+
+  // we scroll in the next tick so the table can adjust its sorting to the new metric
+  nextTick(() => {
+    comparisonTable.value?.scrollToItem(value < 0 ? undefined : index)
+  })
+}
 </script>

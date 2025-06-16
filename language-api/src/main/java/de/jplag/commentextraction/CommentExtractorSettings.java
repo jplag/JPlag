@@ -1,5 +1,6 @@
 package de.jplag.commentextraction;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -11,4 +12,13 @@ import java.util.List;
  */
 public record CommentExtractorSettings(List<EnvironmentDelimiter> noCommentEnvironments, List<String> lineCommentDelimiters,
         List<EnvironmentDelimiter> blockCommentDelimiters, List<String> escapeSequences) {
+
+    public boolean hasComments() {
+        return !this.lineCommentDelimiters.isEmpty() || !this.blockCommentDelimiters.isEmpty();
+    }
+
+    public static CommentExtractorSettings noComments() {
+        return new CommentExtractorSettings(Collections.emptyList(), Collections.emptyList(), Collections.emptyList(), Collections.emptyList());
+    }
+
 }

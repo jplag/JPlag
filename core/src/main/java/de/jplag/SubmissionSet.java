@@ -139,7 +139,7 @@ public class SubmissionSet {
      */
     private void parseBaseCodeSubmission(Submission baseCode) throws BasecodeException, LanguageException {
         logger.trace("----- Parsing basecode submission: {}", baseCode.getName());
-        if (!baseCode.parse(options.debugParser(), options.normalize(), options.minimumTokenMatch())) {
+        if (!baseCode.parse(options.debugParser(), options.normalize(), options.minimumTokenMatch(), options.includeComments())) {
             if (baseCode.getState() == SubmissionState.TOO_SMALL) {
                 throw new BasecodeException("Basecode contains %d token(s), which is below the minimum match length (%d)!"
                         .formatted(baseCode.getNumberOfTokens(), options.minimumTokenMatch()));
@@ -195,7 +195,7 @@ public class SubmissionSet {
      * Parses a single submission (thread safe).
      */
     private void parseSingleSubmission(ProgressBar progressBar, Submission submission) throws LanguageException {
-        boolean successful = submission.parse(options.debugParser(), options.normalize(), options.minimumTokenMatch());
+        boolean successful = submission.parse(options.debugParser(), options.normalize(), options.minimumTokenMatch(), options.includeComments());
         if (!successful) {
             errors.incrementAndGet();
             logger.debug("ERROR -> Submission {} removed with reason {}", submission.getName(), submission.getState());

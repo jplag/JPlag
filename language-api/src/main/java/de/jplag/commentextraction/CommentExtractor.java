@@ -52,7 +52,8 @@ public class CommentExtractor {
         if (remainingContent.startsWith(expected)) {
             this.advance(expected.length());
         } else {
-            throw new RuntimeException("Matched incorrectly");
+            throw new MatchException("Matched incorrectly, expected: " + expected + ", received: " + remainingContent.substring(0, expected.length()),
+                    null);
         }
     }
 
@@ -156,15 +157,14 @@ public class CommentExtractor {
             Optional<String> escaped = parseEscapedCharacter();
             if (escaped.isPresent()) {
                 environmentContent.append(escaped.get());
-                continue;
-            }
+            } else {
+                if (this.remainingContent.startsWith(environment.end())) {
+                    this.match(environment.end());
+                    break;
+                }
 
-            if (this.remainingContent.startsWith(environment.end())) {
-                this.match(environment.end());
-                break;
+                environmentContent.append(this.advance(1));
             }
-
-            environmentContent.append(this.advance(1));
         }
 
         return environmentContent.toString();

@@ -242,10 +242,11 @@ public class Submission implements Comparable<Submission> {
      * @param debugParser specifies if the submission should be copied upon parsing errors.
      * @param normalize specifies if the token sequences should be normalized.
      * @param minimalTokens specifies the minimum number of tokens required of a valid submission.
+     * @param includeComments specifies if comments should be extracted.
      * @return Whether parsing was successful.
      * @throws LanguageException if the language parser is not able to parse at all.
      */
-    /* package-private */ boolean parse(boolean debugParser, boolean normalize, int minimalTokens) throws LanguageException {
+    /* package-private */ boolean parse(boolean debugParser, boolean normalize, int minimalTokens, boolean includeComments) throws LanguageException {
         if (files == null || files.isEmpty()) {
             logger.error("Nothing to parse for submission \"{}\"", name);
             state = NOTHING_TO_PARSE;
@@ -266,8 +267,25 @@ public class Submission implements Comparable<Submission> {
             return false;
         }
 
+        if (tokenList.size() < minimalTokens) {
+            // print the number of tokens without the file-end token to help users choose the right parameters:
+            logger.error("Submission {} contains {} tokens, which is below the minimum match length {}!", name, tokenList.size() - 1, minimalTokens);
+            state = TOO_SMALL;
+            return false;
+        }
+
+        if (includeComments) {
+            this.extractAndParseComments();
+        }
+
+        tokenList = Collections.unmodifiableList(tokenList);
+        state = VALID;
+        return true;
+    }
+
+    private void extractAndParseComments() {
         CommentExtractorSettings commentExtractorSettings = language.getCommentExtractorSettings();
-        if (commentExtractorSettings != null) {
+        if (commentExtractorSettings.hasComments()) {
             List<Comment> rawComments = new ArrayList<>();
             for (File file : files) {
                 try {
@@ -285,17 +303,6 @@ public class Submission implements Comparable<Submission> {
                 logger.error("Error while parsing comments: {}", e.getMessage());
             }
         }
-
-        if (tokenList.size() < minimalTokens) {
-            // print the number of tokens without the file-end token to help users choose the right parameters:
-            logger.error("Submission {} contains {} tokens, which is below the minimum match length {}!", name, tokenList.size() - 1, minimalTokens);
-            state = TOO_SMALL;
-            return false;
-        }
-
-        tokenList = Collections.unmodifiableList(tokenList);
-        state = VALID;
-        return true;
     }
 
     /**

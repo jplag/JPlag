@@ -73,7 +73,7 @@ public class GreedyStringTiling {
         Set<Token> baseCodeMarking = new HashSet<>();
         for (Match match : comparison.matches()) {
             int startIndex = comparison.firstSubmission() == submission ? match.startOfFirst() : match.startOfSecond();
-            baseCodeMarking.addAll(submissionTokenList.subList(startIndex, startIndex + match.length()));
+            baseCodeMarking.addAll(submissionTokenList.subList(startIndex, startIndex + match.minimumLength()));
         }
         baseCodeMarkings.put(submission, baseCodeMarking);
 
@@ -154,20 +154,20 @@ public class GreedyStringTiling {
                             iterationMatches.clear();
                             maximumMatchLength = subsequenceMatchLength;
                         }
-                        Match match = new Match(leftStartIndex, rightStartIndex, subsequenceMatchLength);
+                        Match match = new Match(leftStartIndex, rightStartIndex, subsequenceMatchLength, subsequenceMatchLength);
                         addMatchIfNotOverlapping(iterationMatches, match);
                     }
                 }
             }
             for (Match match : iterationMatches) {
-                if (match.length() < options.minimumTokenMatch()) {
+                if (match.minimumLength() < options.minimumTokenMatch()) {
                     addMatchIfNotOverlapping(ignoredMatches, match);
                 } else {
                     addMatchIfNotOverlapping(globalMatches, match);
                 }
                 int leftStartIndex = match.startOfFirst();
                 int rightStartIndex = match.startOfSecond();
-                for (int offset = 0; offset < match.length(); offset++) {
+                for (int offset = 0; offset < match.minimumLength(); offset++) {
                     leftMarked[leftStartIndex + offset] = true;
                     rightMarked[rightStartIndex + offset] = true;
                 }

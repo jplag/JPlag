@@ -12,7 +12,8 @@ export class BaseCodeMatch extends MatchInSingleFile {
         startInSecond: start,
         endInSecond: end,
         colorIndex: 'base',
-        tokens
+        lengthOfFirst: tokens,
+        lengthOfSecond: tokens
       },
       1
     )
