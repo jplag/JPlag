@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.StringJoiner;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import de.jplag.commentextraction.Comment;
@@ -16,12 +17,16 @@ import de.jplag.commentextraction.CommentExtractorSettings;
 import de.jplag.commentextraction.CommentType;
 import de.jplag.commentextraction.EnvironmentDelimiter;
 
+/**
+ * Tests the comment extraction on arbitrary files.
+ */
 class CommentExtractorTest {
 
     private static final Path TEST_FILE_LOCATION = Path.of("src", "test", "resources", "de", "jplag", "samples");
     private static final String TEST_FILE_NAME = "CommentExtractorTest.txt";
 
     @Test
+    @DisplayName("Tests the comment extractor on a text file with line and multiline comments")
     void testCommentExtractor() throws IOException {
         CommentExtractorSettings settings = new CommentExtractorSettings(List.of(new EnvironmentDelimiter("\"")), // No comment environments
                 List.of("//"), // Line comments
