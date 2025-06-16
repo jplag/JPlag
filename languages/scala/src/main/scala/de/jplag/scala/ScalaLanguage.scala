@@ -1,17 +1,18 @@
 package de.jplag.scala
 
 import de.jplag.Token
-
-import java.io.File
 import org.kohsuke.MetaInfServices
 
+import java.io.File
 import java.util
-import scala.jdk.CollectionConverters.{SeqHasAsJava, SetHasAsScala}
+import scala.jdk.CollectionConverters._
 
 class ScalaLanguage extends de.jplag.Language {
-  private final val fileExtensions = Array(".scala", ".sc")
 
-  override def suffixes: Array[String] = fileExtensions
+private final val fileExtensionsList = List(".scala", ".sc")
+
+override def fileExtensions: java.util.List[String] = fileExtensionsList.asJava
+
 
   override def getName = "Scala"
 
