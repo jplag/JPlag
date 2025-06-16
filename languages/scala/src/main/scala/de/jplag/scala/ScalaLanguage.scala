@@ -7,18 +7,20 @@ import java.io.File
 import java.util
 import scala.jdk.CollectionConverters._
 
+@MetaInfServices
 class ScalaLanguage extends de.jplag.Language {
 
-private final val fileExtensionsList = List(".scala", ".sc")
+  private final val fileExtensionsList = List(".scala", ".sc")
 
-override def fileExtensions: java.util.List[String] = fileExtensionsList.asJava
+  override def fileExtensions: util.List[String] =
+    fileExtensionsList.asJava
 
+  override def getName: String = "Scala"
 
-  override def getName = "Scala"
+  override def getIdentifier: String = "scala"
 
-  override def getIdentifier = "scala"
+  override def minimumTokenMatch: Int = 8
 
-  override def minimumTokenMatch = 8
-
-  override def parse(files: util.Set[File], normalize: Boolean): java.util.List[Token] = new Parser().parse(files.asScala.toSet).asJava
+  override def parse(files: util.Set[File], normalize: Boolean): util.List[Token] =
+    new Parser().parse(files.asScala.toSet).asJava
 }
