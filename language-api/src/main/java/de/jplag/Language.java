@@ -16,7 +16,7 @@ public interface Language {
      * An empty array means all extensions are valid.
      * @deprecated see {@link Language#fileExtensions()}
      */
-    @Deprecated(since = "7.0.0", forRemoval = true)
+    @Deprecated(since = "6.2.0", forRemoval = true)
     default String[] suffixes() {
         return fileExtensions().toArray(String[]::new);
     }
@@ -90,7 +90,7 @@ public interface Language {
      * If the language uses representation files, this method returns the suffix used for the representation files.
      * @deprecated see {@link Language#viewFileExtension()}
      */
-    @Deprecated(since = "7.0.0", forRemoval = true)
+    @Deprecated(since = "6.2.0", forRemoval = true)
     default String viewFileSuffix() {
         return viewFileExtension();
     }
