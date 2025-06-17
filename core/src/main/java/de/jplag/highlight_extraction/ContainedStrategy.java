@@ -1,9 +1,13 @@
 package de.jplag.highlight_extraction;
 
+import de.jplag.Match;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import static de.jplag.highlight_extraction.StrategyMethods.*;
 
 /**
  * Strategy that uses submatches from the comparisons and calculates the frequency of their appearance in matches across
@@ -11,7 +15,7 @@ import java.util.Map;
  */
 
 public class ContainedStrategy implements FrequencyStrategy {
-
+    int size;
     /**
      * Adds all submatches with min size length of the matches to a map using the token sequence as the key.
      * @param tokens Token list of the match.
@@ -22,11 +26,12 @@ public class ContainedStrategy implements FrequencyStrategy {
 
     @Override
     public void create(List<String> tokens, String comparisonId, Map<String, List<String>> map, int size) {
+        this.size = size;
         if (tokens.size() >= size) {
             for (int j = size; j <= tokens.size(); j++) {
                 applyWindowCreate(map, tokens, j);
             }
-            addToMap(map, tokens);
+            addToMap(map, createKey(tokens));
         }
 
     }
@@ -42,7 +47,7 @@ public class ContainedStrategy implements FrequencyStrategy {
     @Override
     public void check(List<String> tokens, String comparisonId, Map<String, List<String>> map, int size) {
         if (tokens.size() >= size) {
-            String key = String.join(" ", tokens);
+            String key = createKey(tokens);
             List<String> idList = map.get(key);
             if (idList == null) {
                 throw new IllegalStateException("Key not found in map: " + key);
@@ -52,30 +57,22 @@ public class ContainedStrategy implements FrequencyStrategy {
 
     }
 
-    /**
-     * Creates the submatches to build the keys.
-     * @param map Map that contains token subsequences and how often they occur across comparisons.
-     * @param tokens Token list of the match.
-     * @param size Minimum length of the considered submatches.
-     */
-
-    private void applyWindowCreate(Map<String, List<String>> map, List<String> tokens, int size) {
-        LinkedList<String> copy = new LinkedList<>(tokens);
-        while (copy.size() >= size) {
-            List<String> subList = copy.subList(0, size);
-            addToMap(map, subList);
-            copy.removeFirst();
+    @Override
+    public double calculateWeight(Match match, Map<String, List<String>> frequencyMap, List<String> matchToken) {
+        List<String> keys = generateAllSubKeys(matchToken, size);
+        List<Integer> frequencies = new ArrayList<>();
+        for (String key : keys) {
+            frequencies.add(frequencyMap.get(key).size());
         }
-    }
+//TODO all:
+//        return frequencies.stream().mapToInt(Integer::intValue)
+//                .average()
+//                .orElse(0.0);
 
-    /**
-     * Builds the map by adding token subsequences from a match.
-     * @param map Map that contains token subsequences and how often they occur across comparisons.
-     * @param tokens Token list of the match.
-     */
-
-    private void addToMap(Map<String, List<String>> map, List<String> tokens) {
-        String key = String.join(" ", tokens);
-        map.computeIfAbsent(key, k -> new ArrayList<>());
+        return frequencies.stream()
+                .filter(freq -> freq > 0)
+                .mapToInt(Integer::intValue)
+                .average()
+                .orElse(0.0);
     }
 }

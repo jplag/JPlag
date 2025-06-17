@@ -1,7 +1,9 @@
 package de.jplag.highlight_extraction;
 
+import de.jplag.Match;
 import java.util.List;
 import java.util.Map;
+import static de.jplag.highlight_extraction.StrategyMethods.createKey;
 
 /**
  * Strategy that calculates the frequencies of matches over all submissions.
@@ -19,7 +21,7 @@ public class CompleteMatchesStrategy implements FrequencyStrategy {
 
     @Override
     public void create(List<String> tokens, String comparisonId, Map<String, List<String>> map, int size) {
-        String key = String.join(" ", tokens);
+        String key = createKey(tokens);
         map.computeIfAbsent(key, k -> new java.util.ArrayList<>());
     }
 
@@ -33,7 +35,14 @@ public class CompleteMatchesStrategy implements FrequencyStrategy {
 
     @Override
     public void check(List<String> tokens, String comparisonId, Map<String, List<String>> map, int size) {
-        String key = String.join(" ", tokens);
+        String key = createKey(tokens);
         map.computeIfAbsent(key, k -> new java.util.ArrayList<>()).add(comparisonId);
     }
+
+    @Override
+    public double calculateWeight(Match match, Map<String,List<String>> frequencyMap, List<String> matchToken) {
+        List<String> values = frequencyMap.get(createKey(matchToken));
+        return values != null ? values.size() : 0.0;
+    }
+
 }

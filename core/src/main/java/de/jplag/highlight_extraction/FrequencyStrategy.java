@@ -1,5 +1,8 @@
 package de.jplag.highlight_extraction;
 
+import de.jplag.Match;
+import de.jplag.Token;
+
 import java.util.List;
 import java.util.Map;
 
@@ -26,4 +29,6 @@ public interface FrequencyStrategy {
      * @param size The minimum length of token subsequences to consider.
      */
     void check(List<String> tokens, String comparisonId, Map<String, List<String>> map, int size);
+
+    double calculateWeight(Match match, Map<String,List<String>> frequencyMap, List<String> matchToken);
 }

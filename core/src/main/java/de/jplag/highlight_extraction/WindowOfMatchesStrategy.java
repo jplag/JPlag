@@ -1,8 +1,14 @@
 package de.jplag.highlight_extraction;
 
+import de.jplag.Match;
+
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import static de.jplag.highlight_extraction.StrategyMethods.createKey;
+import static de.jplag.highlight_extraction.StrategyMethods.generateAllSubKeys;
 
 /**
  * Strategy that uses a fixed window size to create submatches of a match sequence in a comparison and calculates the
@@ -10,7 +16,7 @@ import java.util.Map;
  */
 
 public class WindowOfMatchesStrategy implements FrequencyStrategy {
-
+     static int size;
     /**
      * Adds all submatches with window length of the matches to a map using the token sequence as the key.
      * @param tokens Token list of the match.
@@ -21,6 +27,7 @@ public class WindowOfMatchesStrategy implements FrequencyStrategy {
 
     @Override
     public void create(List<String> tokens, String comparisonId, Map<String, List<String>> map, int size) {
+        this.size = size;
         for (int i = 0; i <= tokens.size() - size; i++) {
             List<String> window = tokens.subList(i, i + size);
             String key = String.join(" ", window);
@@ -46,5 +53,29 @@ public class WindowOfMatchesStrategy implements FrequencyStrategy {
             }
             map.get(key).add(comparisonId);
         }
+    }
+
+    public static List<String> generateAllWindowKeys(List<String> tokens) {
+        List<String> keys = new ArrayList<>();
+        LinkedList<String> copy = new LinkedList<>(tokens);
+            while (copy.size() >= size) {
+                List<String> subList = copy.subList(0, size);
+                keys.add(createKey(subList));
+                copy.removeFirst();
+            }
+        return keys;
+    }
+
+    @Override
+    public double calculateWeight(Match match, Map<String,List<String>> frequencyMap, List<String> matchToken) {
+        List<String> keys = generateAllWindowKeys(matchToken);
+        List<Integer> frequencies = new ArrayList<>();
+        for (String key : keys) {
+            frequencies.add(frequencyMap.get(key).size());
+        }
+
+        return frequencies.stream().mapToInt(Integer::intValue)
+                .average()
+                .orElse(0.0);
     }
 }
