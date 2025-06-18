@@ -28,10 +28,10 @@ public class TokenValueMapper {
      * @param submissionSet is the set of submissions to process.
      */
     public TokenValueMapper(SubmissionSet submissionSet) {
-        this.tokenTypeValues = new HashMap<>();
-        this.tokenValueMap = new IdentityHashMap<>();
+        tokenTypeValues = new HashMap<>();
+        tokenValueMap = new IdentityHashMap<>();
 
-        this.tokenTypeValues.put(SharedTokenType.FILE_END, 0);
+        tokenTypeValues.put(SharedTokenType.FILE_END, 0);
 
         addSubmissions(submissionSet);
         if (submissionSet.hasBaseCode()) {
@@ -51,7 +51,7 @@ public class TokenValueMapper {
             tokenTypeValues.putIfAbsent(type, tokenTypeValues.size());
             tokenValues[i] = tokenTypeValues.get(type);
         }
-        this.tokenValueMap.put(submission, tokenValues);
+        tokenValueMap.put(submission, tokenValues);
     }
 
     /**
@@ -61,6 +61,6 @@ public class TokenValueMapper {
      * @return the list of tokens.
      */
     public int[] getTokenValuesFor(Submission submission) {
-        return this.tokenValueMap.get(submission);
+        return tokenValueMap.get(submission);
     }
 }
