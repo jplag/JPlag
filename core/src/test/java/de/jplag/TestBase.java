@@ -27,11 +27,11 @@ public abstract class TestBase {
      * Delta for similarity comparison.
      */
     protected static final double DELTA = 0.001;
-
+//TODO nicht static
     /**
      * @return the base path where the test samples reside concatenated with any number of subdirectories.
      */
-    protected String getBasePath(String... subdirectories) {
+    protected static String getBasePath(String... subdirectories) {
         StringJoiner path = new StringJoiner(File.separator);
         path.add(BASE_PATH);
         for (String directory : subdirectories) {
@@ -82,7 +82,7 @@ public abstract class TestBase {
     /**
      * Get default options.
      */
-    protected JPlagOptions getDefaultOptions(String testSampleName) {
+    protected static JPlagOptions getDefaultOptions(String testSampleName) {
         return getOptions(List.of(getBasePath(testSampleName)), List.of(), options -> options);
     }
 
@@ -99,11 +99,11 @@ public abstract class TestBase {
     protected JPlagOptions getOptions(List<String> newPaths, Function<JPlagOptions, JPlagOptions> customization) {
         return getOptions(newPaths, List.of(), customization);
     }
-
+// TODO nicht statisch lasse
     /**
      * Get customized options for JPlag run with multiple root folders (old and new).
      */
-    protected JPlagOptions getOptions(List<String> newPaths, List<String> oldPaths, Function<JPlagOptions, JPlagOptions> customization) {
+    protected static JPlagOptions getOptions(List<String> newPaths, List<String> oldPaths, Function<JPlagOptions, JPlagOptions> customization) {
         var newFiles = newPaths.stream().map(File::new).collect(Collectors.toSet());
         var oldFiles = oldPaths.stream().map(File::new).collect(Collectors.toSet());
         JPlagOptions options = new JPlagOptions(new JavaLanguage(), newFiles, oldFiles)
