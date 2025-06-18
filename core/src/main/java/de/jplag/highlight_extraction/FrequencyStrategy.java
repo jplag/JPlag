@@ -1,10 +1,9 @@
 package de.jplag.highlight_extraction;
 
-import de.jplag.Match;
-import de.jplag.Token;
-
 import java.util.List;
 import java.util.Map;
+
+import de.jplag.Match;
 
 /**
  * Interface for different frequency calculation strategies. Implementations define how submatches are considered in the
@@ -30,5 +29,5 @@ public interface FrequencyStrategy {
      */
     void check(List<String> tokens, String comparisonId, Map<String, List<String>> map, int size);
 
-    double calculateWeight(Match match, Map<String,List<String>> frequencyMap, List<String> matchToken);
+    double calculateWeight(Match match, Map<String, List<String>> frequencyMap, List<String> matchToken);
 }

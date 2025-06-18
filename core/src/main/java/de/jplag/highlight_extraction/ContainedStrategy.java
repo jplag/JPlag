@@ -1,13 +1,12 @@
 package de.jplag.highlight_extraction;
 
-import de.jplag.Match;
+import static de.jplag.highlight_extraction.StrategyMethods.*;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static de.jplag.highlight_extraction.StrategyMethods.*;
+import de.jplag.Match;
 
 /**
  * Strategy that uses submatches from the comparisons and calculates the frequency of their appearance in matches across
@@ -16,6 +15,7 @@ import static de.jplag.highlight_extraction.StrategyMethods.*;
 
 public class ContainedStrategy implements FrequencyStrategy {
     int size;
+
     /**
      * Adds all submatches with min size length of the matches to a map using the token sequence as the key.
      * @param tokens Token list of the match.
@@ -64,15 +64,11 @@ public class ContainedStrategy implements FrequencyStrategy {
         for (String key : keys) {
             frequencies.add(frequencyMap.get(key).size());
         }
-//TODO all:
-//        return frequencies.stream().mapToInt(Integer::intValue)
-//                .average()
-//                .orElse(0.0);
+        // TODO all:
+        // return frequencies.stream().mapToInt(Integer::intValue)
+        // .average()
+        // .orElse(0.0);
 
-        return frequencies.stream()
-                .filter(freq -> freq > 0)
-                .mapToInt(Integer::intValue)
-                .average()
-                .orElse(0.0);
+        return frequencies.stream().filter(freq -> freq > 0).mapToInt(Integer::intValue).average().orElse(0.0);
     }
 }

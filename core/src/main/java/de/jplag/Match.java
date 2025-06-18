@@ -46,7 +46,7 @@ public class Match {
         return lengthOfSecond;
     }
 
-    public double getFreuencyWeight( ) {
+    public double getFreuencyWeight() {
         return freuencyWeight;
     }
 

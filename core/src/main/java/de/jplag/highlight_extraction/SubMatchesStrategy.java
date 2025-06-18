@@ -1,13 +1,13 @@
 package de.jplag.highlight_extraction;
 
-import de.jplag.Match;
+import static de.jplag.highlight_extraction.StrategyMethods.*;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static de.jplag.highlight_extraction.StrategyMethods.*;
+import de.jplag.Match;
 
 /**
  * Strategy that uses submatches of matches from the comparisons and calculates their frequency in the matches across
@@ -16,6 +16,7 @@ import static de.jplag.highlight_extraction.StrategyMethods.*;
 
 public class SubMatchesStrategy implements FrequencyStrategy {
     int size;
+
     /**
      * Adds all submatches with min size length of the matches to a map using the token sequence as the key.
      * @param tokens Token list of the match.
@@ -87,20 +88,15 @@ public class SubMatchesStrategy implements FrequencyStrategy {
     }
 
     @Override
-    public double calculateWeight(Match match, Map<String,List<String>> frequencyMap, List<String> matchToken) {
+    public double calculateWeight(Match match, Map<String, List<String>> frequencyMap, List<String> matchToken) {
         List<String> keys = generateAllSubKeys(matchToken, size);
         List<Integer> frequencies = new ArrayList<>();
         for (String key : keys) {
             frequencies.add(frequencyMap.get(key).size());
         }
 
-        return frequencies.stream().mapToInt(Integer::intValue)
-                .average()
-                .orElse(0.0);
-
+        return frequencies.stream().mapToInt(Integer::intValue).average().orElse(0.0);
 
     }
-
-
 
 }
