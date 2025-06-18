@@ -130,7 +130,7 @@ public class Submission implements Comparable<Submission> {
     /**
      * @return Similarity divisor for the submission.
      */
-    int getSimilarityDivisor() {
+    public int getSimilarityDivisor() {
         int divisor = getNumberOfTokens() - getFiles().size();
         if (baseCodeComparison != null) {
             divisor -= baseCodeComparison.getNumberOfMatchedTokens();
