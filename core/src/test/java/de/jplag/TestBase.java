@@ -82,7 +82,7 @@ public abstract class TestBase {
     /**
      * Get default options.
      */
-    protected static JPlagOptions getDefaultOptions(String testSampleName) {
+    protected JPlagOptions getDefaultOptions(String testSampleName) {
         return getOptions(List.of(getBasePath(testSampleName)), List.of(), options -> options);
     }
 
@@ -103,7 +103,7 @@ public abstract class TestBase {
     /**
      * Get customized options for JPlag run with multiple root folders (old and new).
      */
-    protected static JPlagOptions getOptions(List<String> newPaths, List<String> oldPaths, Function<JPlagOptions, JPlagOptions> customization) {
+    protected JPlagOptions getOptions(List<String> newPaths, List<String> oldPaths, Function<JPlagOptions, JPlagOptions> customization) {
         var newFiles = newPaths.stream().map(File::new).collect(Collectors.toSet());
         var oldFiles = oldPaths.stream().map(File::new).collect(Collectors.toSet());
         JPlagOptions options = new JPlagOptions(new JavaLanguage(), newFiles, oldFiles)

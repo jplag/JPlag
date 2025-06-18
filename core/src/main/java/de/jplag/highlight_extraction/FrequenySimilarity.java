@@ -51,9 +51,9 @@ public class FrequenySimilarity {
         return comparison.matches().stream().mapToDouble(match -> {
             double freq = match.getFreuencyWeight();
             double normalized = 1.0 - Math.min(freq / maxFrequency, 1.0);
-            double adjustment = 1 + weight * (normalized - 0.5);
-            adjustment = Math.max(0.01, adjustment);
-            return match.getLengthOfFirst() * adjustment;
+            double myWeight = 1 + weight * (normalized - 0.5);
+            myWeight = Math.max(0.01, myWeight);
+            return match.getLengthOfFirst() * myWeight;
         }).mapToInt(d -> (int) Math.round(d)).sum();
     }
 
@@ -62,9 +62,9 @@ public class FrequenySimilarity {
         return comparison.matches().stream().mapToDouble(match -> {
             double freq = match.getFreuencyWeight();
             double normalized = 1.0 - Math.min(freq / maxFrequency, 1.0);
-            double adjustment = 1 + weight * (normalized - 0.5);
-            adjustment = Math.max(0.01, adjustment);
-            return match.getLengthOfSecond() * adjustment;
+            double myWeight = 1 + weight * (normalized - 0.5);
+            myWeight = Math.max(0.01, myWeight);
+            return match.getLengthOfSecond() * myWeight;
         }).mapToInt(d -> (int) Math.round(d)).sum();
     }
 

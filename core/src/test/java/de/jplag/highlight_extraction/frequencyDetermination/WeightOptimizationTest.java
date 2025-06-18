@@ -23,9 +23,9 @@ public class WeightOptimizationTest extends TestBase {
     public static JPlagOptions options;
 
     private static final String[] datasetPaths = {
-            "FrequencyDetermination\\00000019\\Java",
-            "FrequencyDetermination\\00000056\\Java",
-            "FrequencyDetermination\\Sheet3TaskA"
+            "C:\\Users\\Elisa\\Projekte\\JPlag\\core\\src\\test\\resources\\de\\jplag\\samples\\FrequencyDetermination\\00000019\\Java",
+            "C:\\Users\\Elisa\\Projekte\\JPlag\\core\\src\\test\\resources\\de\\jplag\\samples\\FrequencyDetermination\\00000056\\Java",
+            "C:\\Users\\Elisa\\Projekte\\JPlag\\core\\src\\test\\resources\\de\\jplag\\samples\\FrequencyDetermination\\Sheet3TaskA"
     };
 
     private static final FrequencyStrategy[] freqStrategies = {
@@ -42,14 +42,14 @@ public class WeightOptimizationTest extends TestBase {
         try {
             Files.createDirectories(baseOutputDir);
         } catch (IOException e) {
-            throw new RuntimeException("Kann Output-Verzeichnis nicht anlegen: " + baseOutputDir, e);
+            throw new RuntimeException("output probleme: " + baseOutputDir, e);
         }
     }
 
     @Test
     void runWeightOptimizationAllDatasetsAndStrategies() throws Exception {
         for (String datasetPath : datasetPaths) {
-            System.out.println("=== Verarbeite Datensatz: " + datasetPath + " ===");
+            System.out.println("=== Datensatz: " + datasetPath + " ===");
             options = getOptions(List.of(datasetPath), List.of(), o -> o); //getDefaultOptions(datasetPath);//getDefaultOptions(datasetPath);
 
             if (datasetPath.equals("FrequencyDetermination\\00000019\\Java")) {
@@ -58,7 +58,7 @@ public class WeightOptimizationTest extends TestBase {
                 options = options.withBaseCodeSubmissionName(baseCodeDir);
             }
 
-            SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
+                SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
             submissionSet = builder.buildSubmissionSet();
             strategy = new LongestCommonSubsequenceSearch(options);
             result = strategy.compareSubmissions(submissionSet);
@@ -70,38 +70,37 @@ public class WeightOptimizationTest extends TestBase {
     }
 
     private void runWeightOptimizationForDatasetAndStrategy(String datasetPath, FrequencyStrategy freqStrategy) throws IOException {
-        int strategyNumber = 8;
+                int strategyNumber = 8;
 
         System.out.println("Starte WeightOptimization mit Strategie: " + freqStrategy.getClass().getSimpleName() + " für Datensatz: " + datasetPath);
 
         FrequencyDetermination fd = new FrequencyDetermination(freqStrategy, strategyNumber);
         fd.runAnalysis(result.getAllComparisons());
 
-        MatchWeighting weighting = new MatchWeighting(freqStrategy, fd.getTokenFrequencyMap());
-        for (var comparison : result.getAllComparisons()) {
-            weighting.weightAllMatches(
-                    comparison.matches(),
-                    comparison.firstSubmission().getTokenList().stream().map(t -> t.getType().toString()).toList()
-            );
-        }
+            MatchWeighting weighting = new MatchWeighting(freqStrategy, fd.getTokenFrequencyMap());
+            for (var comparison : result.getAllComparisons()) {
+                weighting.weightAllMatches(
+                        comparison.matches(),
+                        comparison.firstSubmission().getTokenList().stream().map(t -> t.getType().toString()).toList()
+                );
+            }
 
-        FrequenySimilarity freqSim = new FrequenySimilarity(result.getAllComparisons());
+        FrequenySimilarity myFrequencySimilarity = new FrequenySimilarity(result.getAllComparisons());
 
-        // Output-Ordner: output/weight_optimization_TIMESTAMP/<DatasetName>/<StrategyName>/
         String datasetName = Paths.get(datasetPath).getFileName().toString();
         String strategyName = freqStrategy.getClass().getSimpleName();
         Path outputDir = baseOutputDir.resolve(datasetName).resolve(strategyName);
         Files.createDirectories(outputDir);
 
         for (double weight = 0.0; weight <= 1.0; weight += 0.1) {
-            List<JPlagComparison> sorted = freqSim.calculateFrequencySimilarity(result.getAllComparisons(), weight);
-            saveSimilarityCsv(sorted, weight, freqSim, outputDir);
+            List<JPlagComparison> sorted = myFrequencySimilarity.calculateFrequencySimilarity(result.getAllComparisons(), weight);
+            saveSimilarityCsv(sorted, weight, myFrequencySimilarity, outputDir);
         }
     }
 
     private void saveSimilarityCsv(List<JPlagComparison> comparisons, double weight, FrequenySimilarity freqSim, Path outputDir) throws IOException {
         String fileName = String.format("similarity_weight_%.2f.csv", weight).replace(",", ".");
-        Path csvFile = outputDir.resolve(fileName);
+            Path csvFile = outputDir.resolve(fileName);
 
         try (var writer = Files.newBufferedWriter(csvFile)) {
             writer.write("ComparisonID,Submission1,Submission2,Similarity\n");
