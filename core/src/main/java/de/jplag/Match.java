@@ -12,7 +12,7 @@ public class Match {
     private final int startOfSecond;
     private final int lengthOfFirst;
     private final int lengthOfSecond;
-    private double freuencyWeight;
+    private double frequencyWeight;
 
     /**
      * Represents two code fragments in two submissions that are structurally similar. These sections are usually identical
@@ -46,12 +46,12 @@ public class Match {
         return lengthOfSecond;
     }
 
-    public double getFreuencyWeight() {
-        return freuencyWeight;
+    public double getFrequencyWeight() {
+        return frequencyWeight;
     }
 
     public void setFrequencyWeight(double freuencyWeight) {
-        this.freuencyWeight = freuencyWeight;
+        this.frequencyWeight = freuencyWeight;
     }
 
     /**

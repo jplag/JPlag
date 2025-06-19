@@ -6,10 +6,10 @@ import java.util.List;
 import de.jplag.JPlagComparison;
 import de.jplag.Match;
 
-public class FrequenySimilarity {
+public class FrequencySimilarity {
     List<JPlagComparison> comparisons;
 
-    public FrequenySimilarity(List<JPlagComparison> comparisons) {
+    public FrequencySimilarity(List<JPlagComparison> comparisons) {
         this.comparisons = comparisons;
     }
 
@@ -47,9 +47,9 @@ public class FrequenySimilarity {
     // }
 
     public int getLinearWeightedMatchLengthOfFirst(JPlagComparison comparison, double weight) {
-        double maxFrequency = comparison.matches().stream().mapToDouble(Match::getFreuencyWeight).max().orElse(1.0);
+        double maxFrequency = comparison.matches().stream().mapToDouble(Match::getFrequencyWeight).max().orElse(1.0);
         return comparison.matches().stream().mapToDouble(match -> {
-            double freq = match.getFreuencyWeight();
+            double freq = match.getFrequencyWeight();
             double normalized = 1.0 - Math.min(freq / maxFrequency, 1.0);
             double myWeight = 1 + weight * (normalized - 0.5);
             myWeight = Math.max(0.01, myWeight);
@@ -58,9 +58,9 @@ public class FrequenySimilarity {
     }
 
     public int getLinearWeightedMatchLengthOfSecond(JPlagComparison comparison, double weight) {
-        double maxFrequency = comparison.matches().stream().mapToDouble(Match::getFreuencyWeight).max().orElse(1.0);
+        double maxFrequency = comparison.matches().stream().mapToDouble(Match::getFrequencyWeight).max().orElse(1.0);
         return comparison.matches().stream().mapToDouble(match -> {
-            double freq = match.getFreuencyWeight();
+            double freq = match.getFrequencyWeight();
             double normalized = 1.0 - Math.min(freq / maxFrequency, 1.0);
             double myWeight = 1 + weight * (normalized - 0.5);
             myWeight = Math.max(0.01, myWeight);
@@ -69,19 +69,11 @@ public class FrequenySimilarity {
     }
 
     public double getMinFrequency(JPlagComparison comparison) {
-        return comparison.matches().stream()
-                .mapToDouble(Match::getFreuencyWeight)
-                .min()
-                .orElse(0.0);
+        return comparison.matches().stream().mapToDouble(Match::getFrequencyWeight).min().orElse(0.0);
     }
 
     public double getMaxFrequency(JPlagComparison comparison) {
-        return comparison.matches().stream()
-                .mapToDouble(Match::getFreuencyWeight)
-                .max()
-                .orElse(1.0);
+        return comparison.matches().stream().mapToDouble(Match::getFrequencyWeight).max().orElse(1.0);
     }
-
-
 
 }

@@ -15,7 +15,6 @@ public class StrategyMethods {
      * @param map Map that contains token subsequences and how often they occur across comparisons.
      * @param tokens Token list of the match.
      * @param size Minimum length of the considered submatches.
-     * @param keys
      */
 
     static void applyWindowCreate(Map<String, List<String>> map, List<String> tokens, int size) {

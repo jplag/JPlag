@@ -27,7 +27,8 @@ public abstract class TestBase {
      * Delta for similarity comparison.
      */
     protected static final double DELTA = 0.001;
-//TODO nicht static
+
+    // TODO nicht static
     /**
      * @return the base path where the test samples reside concatenated with any number of subdirectories.
      */
@@ -99,7 +100,8 @@ public abstract class TestBase {
     protected JPlagOptions getOptions(List<String> newPaths, Function<JPlagOptions, JPlagOptions> customization) {
         return getOptions(newPaths, List.of(), customization);
     }
-// TODO nicht statisch lasse
+
+    // TODO nicht statisch lasse
     /**
      * Get customized options for JPlag run with multiple root folders (old and new).
      */

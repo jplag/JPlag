@@ -23,7 +23,7 @@ public class ContainedStrategy implements FrequencyStrategy {
      * @param map Map that contains token subsequences and how often they occur across comparisons.
      * @param size Minimum length of the considered submatches.
      */
-
+    // TODO liste von Tokentyps
     @Override
     public void create(List<String> tokens, String comparisonId, Map<String, List<String>> map, int size) {
         this.size = size;
