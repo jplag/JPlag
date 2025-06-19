@@ -8,6 +8,8 @@ import java.util.Map;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jplag.JPlagResult;
 import de.jplag.SubmissionSet;
@@ -21,18 +23,16 @@ import de.jplag.options.JPlagOptions;
 class StrategyIntegrationTest extends TestBase {
 
     private static JPlagResult result;
+    private static final Logger logger = LoggerFactory.getLogger(StrategyIntegrationTest.class);
 
     @BeforeEach
     void prepareMatchResult() throws ExitException {
 
         JPlagOptions options = getDefaultOptions("PartialPlagiarism");
-        System.out.println(options);
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
         LongestCommonSubsequenceSearch strategy = new LongestCommonSubsequenceSearch(options);
         result = strategy.compareSubmissions(submissionSet);
-        System.out.println("result: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        System.out.println(result);
     }
 
     @Test
@@ -41,7 +41,6 @@ class StrategyIntegrationTest extends TestBase {
         FrequencyStrategy strategy = new CompleteMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 1);
         fd.runAnalysis(result.getAllComparisons());
-        System.out.println(fd);
         Map<String, List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
         assertFalse(tokenFrequencyMap.isEmpty(), "Map should not be empty");
         printTestResult(tokenFrequencyMap);
@@ -53,7 +52,6 @@ class StrategyIntegrationTest extends TestBase {
         FrequencyStrategy strategy = new ContainedStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 300);
         fd.runAnalysis(result.getAllComparisons());
-        System.out.println(fd);
         Map<String, List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
         assertFalse(tokenFrequencyMap.isEmpty(), "Map should not be empty");
         printTestResult(tokenFrequencyMap);
@@ -65,7 +63,6 @@ class StrategyIntegrationTest extends TestBase {
         FrequencyStrategy strategy = new SubMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 300);
         fd.runAnalysis(result.getAllComparisons());
-        System.out.println(fd);
         Map<String, List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
         assertFalse(tokenFrequencyMap.isEmpty(), "Map should not be empty");
         printTestResult(tokenFrequencyMap);
@@ -77,20 +74,24 @@ class StrategyIntegrationTest extends TestBase {
         FrequencyStrategy strategy = new WindowOfMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 300);
         fd.runAnalysis(result.getAllComparisons());
-        System.out.println(fd);
         Map<String, List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
         assertFalse(tokenFrequencyMap.isEmpty(), "Map should not be empty");
         printTestResult(tokenFrequencyMap);
     }
 
     void printTestResult(Map<String, List<String>> tokenFrequencyMap) {
-        System.out.println("\nToken-Frequency:");
-        for (Map.Entry<String, List<String>> myEntry : tokenFrequencyMap.entrySet()) {
-            String key = myEntry.getKey();
-            int count = myEntry.getValue().size();
-            String id = myEntry.getValue().toString();
-            System.out.printf("Tokens: [%.30s...] | Frequency: %2d | %s%n | %s %n", key, count, "*".repeat(Math.min(count, 50)), id);
-        }
-    }
+        StringBuilder logBuilder = new StringBuilder();
+        logBuilder.append("\nToken-String                       | Len | Frequency | Histogram\n");
+        logBuilder.append("---------------------------------------------------------------\n");
 
+        for (Map.Entry<String, List<String>> entry : tokenFrequencyMap.entrySet()) {
+            String key = entry.getKey();
+            int count = entry.getValue().size();
+            int length = key.trim().isEmpty() ? 0 : key.trim().split("\\s+").length;
+            String id = entry.getValue().toString();
+
+            logBuilder.append(String.format("%-32.30s | %3d | %9d | %s\n    ↳ %s\n", key, length, count, "*".repeat(Math.min(count, 50)), id));
+        }
+        logger.info(logBuilder.toString());
+    }
 }
