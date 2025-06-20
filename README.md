@@ -12,9 +12,11 @@
 [![Java Version](https://img.shields.io/badge/java-SE%2021-yellowgreen)](#download-and-installation)
 
 
-JPlag finds pairwise similarities among a set of multiple programs. It can reliably detect software plagiarism and collusion in software development, even when obfuscated. All similarities are calculated locally; no source code or plagiarism results are ever uploaded online. JPlag supports a large number of programming and modeling languages.
+JPlag finds pairwise similarities among a set of multiple programs. It can reliably detect software plagiarism and collusion in software development, even when obfuscated. All similarities are calculated locally; no source code or plagiarism results are ever uploaded online. JPlag supports a large number of languages.
 
 * 📈 [JPlag Demo](https://jplag.github.io/Demo/)
+
+* 📖 [JPlag Wiki](https://github.com/jplag/JPlag/wiki)
 
 * 🏛️ [JPlag on Helmholtz RSD](https://helmholtz.software/software/jplag)
 
@@ -46,6 +48,7 @@ All supported languages and their supported versions are listed below.
 | [EMF Model](https://www.eclipse.org/modeling/emf/)     |                                                                                 2.25.0 | emf-model         |                                alpha                                |    EMF    |
 | [SCXML](https://www.w3.org/TR/scxml/)                  |                                                                                    1.0 | scxml             |                                alpha                                |    XML    |
 | Text (naive, use with caution)                         |                                                                                      - | text              |                               legacy                                |  CoreNLP  |
+| Multi-Language                                         |                                                                                      - | multi             |                                alpha                                |     -     |
 
 ## Download and Installation
 You need Java SE 21 to run or build JPlag.
@@ -66,7 +69,7 @@ JPlag is released on [Maven Central](https://search.maven.org/search?q=de.jplag)
 
 ### Building from sources 
 1. Download or clone the code from this repository.
-2. Run `mvn clean package` from the root of the repository to compile and build all submodules.
+2. Run `mvn clean package` from the repository root to compile and build all submodules.
    Run `mvn clean package assembly:single` instead if you need the full jar, which includes all dependencies.
    Run `mvn -P with-report-viewer clean package assembly:single` to build the full jar with the report viewer. In this case, you'll need [Node.js](https://nodejs.org/en/download) installed.
 3. You will find the generated JARs in the subdirectory `cli/target`.
@@ -219,5 +222,3 @@ Please consider our [guidelines for contributions](https://github.com/jplag/JPla
 If you encounter bugs or other issues, please report them [here](https://github.com/jplag/jplag/issues).
 For other purposes, you can contact us at jplag@ipd.kit.edu.
 We would love to hear about your research related to JPlag. Feel free to contact us!
-
-### More information can be found in our [Wiki](https://github.com/jplag/JPlag/wiki)!

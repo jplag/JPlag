@@ -49,6 +49,6 @@ public final class OutputFileGenerator {
         ReportObjectFactory reportObjectFactory = new ReportObjectFactory(outputFile);
         reportObjectFactory.createAndSaveReport(result);
         logger.info("Successfully written the result: {}", outputFile.getPath());
-        logger.info("View the result using --mode or at: https://jplag.github.io/JPlag/");
+        logger.info("View the result using --mode");
     }
 }

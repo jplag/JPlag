@@ -8,14 +8,13 @@
 </template>
 
 <script setup lang="ts">
-import type { Distribution } from '@/model/Distribution'
-import type { MetricType } from '@/model/MetricType'
 import { Chart, registerables } from 'chart.js'
 import { computed, onMounted, ref, watch, type PropType, type Ref } from 'vue'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { BoxAndWiskers, BoxPlotChart, BoxPlotController } from '@sgratzl/chartjs-chart-boxplot'
 import { store } from '@/stores/store'
 import { graphColors } from '@/utils/ColorUtils'
+import type { DistributionMap } from '@/model/Distribution'
 
 Chart.register(...registerables)
 Chart.register(ChartDataLabels)
@@ -25,7 +24,7 @@ Chart.register(BoxPlotChart)
 
 const props = defineProps({
   distributions: {
-    type: Object as PropType<Record<MetricType, Distribution>>,
+    type: Object as PropType<DistributionMap>,
     required: true
   }
 })

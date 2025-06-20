@@ -113,15 +113,21 @@
                         item.id % 2 == 1,
                       'bg-accent/30!': isHighlightedRow(item)
                     }"
+                    @mouseover="
+                      () =>
+                        emit('lineHovered', {
+                          firstId: item.firstSubmissionId,
+                          secondId: item.secondSubmissionId
+                        })
+                    "
+                    @mouseleave="() => emit('lineHovered', null)"
                   >
                     <RouterLink
                       :to="{
                         name: 'ComparisonView',
                         params: {
-                          comparisonFileName: store().getComparisonFileName(
-                            item.firstSubmissionId,
-                            item.secondSubmissionId
-                          )
+                          firstSubmissionId: item.firstSubmissionId,
+                          secondSubmissionId: item.secondSubmissionId
                         }
                       }"
                       class="flex grow cursor-pointer flex-row"
@@ -237,6 +243,10 @@ const props = defineProps({
     default: undefined
   }
 })
+
+const emit = defineEmits<{
+  (event: 'lineHovered', value: { firstId: string; secondId: string } | null): void
+}>()
 
 const displayedComparisons = computed(() => {
   const comparisons = getFilteredComparisons(getSortedComparisons(Array.from(props.topComparisons)))
@@ -406,6 +416,16 @@ function isHighlightedRow(item: ComparisonListElement) {
         item.secondSubmissionId == props.highlightedRowIds.firstId))
   )
 }
+
+function scrollToItem(itemIndex?: number) {
+  if (!itemIndex) {
+    dynamicScroller.value?.scrollToBottom()
+  }
+  dynamicScroller.value?.scrollToItem(itemIndex)
+}
+defineExpose({
+  scrollToItem
+})
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const dynamicScroller: Ref<any | null> = ref(null)

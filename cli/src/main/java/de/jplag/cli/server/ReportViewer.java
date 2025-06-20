@@ -23,7 +23,7 @@ public class ReportViewer implements HttpHandler {
     private static final String REPORT_VIEWER_RESOURCE_PREFIX = "report-viewer";
     private static final String INDEX_PATH = "index.html";
     private static final String RESULT_PATH = "results.jplag";
-    private static final String[] OLD_VERSION_DIRECTORIES = new String[] {"v5"};
+    private static final String[] OLD_VERSION_DIRECTORIES = new String[] {"v5", "v6_1"};
 
     private static final Logger logger = LoggerFactory.getLogger(ReportViewer.class);
     private static final int SUCCESS_RESPONSE = 200;
