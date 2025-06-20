@@ -20,6 +20,7 @@ interface AbstractOptions<L> {
   debugParser: boolean
   mergingOptions: CliMergingOptions
   normalize: boolean
+  analyzeComments: boolean
 }
 
 export interface CliClusterOptions {

@@ -237,11 +237,11 @@ public class Submission implements Comparable<Submission> {
      * @param debugParser specifies if the submission should be copied upon parsing errors.
      * @param normalize specifies if the token sequences should be normalized.
      * @param minimalTokens specifies the minimum number of tokens required of a valid submission.
-     * @param includeComments specifies if comments should be extracted.
+     * @param analyzeComments specifies if comments should be extracted and analyzed.
      * @return Whether parsing was successful.
      * @throws LanguageException if the language parser is not able to parse at all.
      */
-    /* package-private */ boolean parse(boolean debugParser, boolean normalize, int minimalTokens, boolean includeComments) throws LanguageException {
+    /* package-private */ boolean parse(boolean debugParser, boolean normalize, int minimalTokens, boolean analyzeComments) throws LanguageException {
         if (files == null || files.isEmpty()) {
             logger.error("Nothing to parse for submission \"{}\"", name);
             state = NOTHING_TO_PARSE;
@@ -269,7 +269,7 @@ public class Submission implements Comparable<Submission> {
             return false;
         }
 
-        if (includeComments) {
+        if (analyzeComments) {
             this.extractAndParseComments();
         }
 
