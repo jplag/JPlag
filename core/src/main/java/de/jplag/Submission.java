@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -282,12 +283,8 @@ public class Submission implements Comparable<Submission> {
         Optional<CommentExtractorSettings> commentExtractorSettings = language.getCommentExtractorSettings();
         if (commentExtractorSettings.isPresent()) {
             for (File file : files) {
-                try {
-                    CommentExtractor extractor = new CommentExtractor(file, commentExtractorSettings);
-                    comments.addAll(extractor.extract());
-                } catch (IOException e) {
-                    logger.warn("Could not extract comments from {}: {}", file.getAbsolutePath(), e.getMessage());
-                }
+                CommentExtractor extractor = new CommentExtractor(file, commentExtractorSettings.get());
+                comments.addAll(extractor.extract());
             }
             logger.debug("Found {} comments", comments.size());
         }

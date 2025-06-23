@@ -28,29 +28,27 @@ public class CommentExtractor {
      * Creates a new CommentExtractor, reading the contents from the specified file.
      * @param file File to read
      * @param settings Settings for the comment extractor
-     * @throws IOException If an IO error during the file read occurred
      */
-    public CommentExtractor(File file, CommentExtractorSettings settings) throws IOException {
-        this(file, FileUtils.readFileContent(file), settings);
-    }
-
-    /**
-     * Creates a new CommentExtractor, using the supplied file and content.
-     * @param file File to associate comments with
-     * @param fileContent Textual content of the file
-     * @param settings Settings for the comment extractor
-     */
-    public CommentExtractor(File file, String fileContent, CommentExtractorSettings settings) {
-        this.remainingContent = fileContent;
+    public CommentExtractor(File file, CommentExtractorSettings settings) {
         this.settings = settings;
         this.comments = new ArrayList<>();
         this.lookBehind = "";
         this.file = file;
         this.currentCol = 1;
         this.currentLine = 1;
+        this.readFile();
     }
 
-    private void match(String expected) {
+    private void readFile() {
+        try {
+            this.remainingContent = FileUtils.readFileContent(file);
+        } catch (IOException e) {
+            logger.warn("Could not extract comments from {}: {}", file.getAbsolutePath(), e.getMessage());
+            this.remainingContent = "";
+        }
+    }
+
+    private void match(String expected) throws UnexpectedStringException {
         if (remainingContent.startsWith(expected)) {
             this.advance(expected.length());
         } else {
