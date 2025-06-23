@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col">
     <div class="h-3/4 w-full print:h-fit print:w-fit">
-      <canvas ref="graphCanvas" class="min-h-0 grow print:max-h-full print:max-w-full"></canvas>
+      <canvas ref="graphCanvas"></canvas>
       <div v-if="!loaded">Could not display boxplot</div>
     </div>
 
@@ -110,7 +110,7 @@ const outliers = computed(() => {
 const dataSetStyle = computed(() => ({
   backgroundColor: graphColors.contentFillAlpha(0.4),
   borderWidth: 1,
-  borderColor: graphColors.contentBorder,
+  borderColor: graphColors.ticksAndFont.value,
   meanBorderColor: graphColors.ticksAndFont.value,
   meanBackgroundColor: graphColors.contentFill,
   outlierBorderColor: graphColors.ticksAndFont.value
@@ -138,6 +138,7 @@ const graphData = computed(() => ({
 }))
 const graphOptions = computed(() => ({
   responsive: true,
+  maintainAspectRatio: false,
   scales: {
     y: {
       suggestedMin: 0,
@@ -175,7 +176,7 @@ const graphOptions = computed(() => ({
           // This type is only a partial definition of e but everything needed here
           const hoverItem = e as unknown as { formattedValue: { hoveredOutlierIndex: number } }
           if (hoverItem.formattedValue.hoveredOutlierIndex < 0) {
-            return undefined
+            return `min: ${min.value}, Q1: ${q1.value}, median: ${median.value}, Q3: ${q3.value}, max: ${max.value}, mean: ${avg.value.toFixed(2)}, IQR: ${iqr.value}`
           }
           const outlier = outliers.value[hoverItem.formattedValue.hoveredOutlierIndex]
           return `${distribution.value[outlier]} submissions with value between ${outlier}% and ${outlier + 1}%`
