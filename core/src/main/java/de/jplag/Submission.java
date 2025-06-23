@@ -279,8 +279,8 @@ public class Submission implements Comparable<Submission> {
     }
 
     private void extractAndParseComments() {
-        CommentExtractorSettings commentExtractorSettings = language.getCommentExtractorSettings();
-        if (commentExtractorSettings.hasComments()) {
+        Optional<CommentExtractorSettings> commentExtractorSettings = language.getCommentExtractorSettings();
+        if (commentExtractorSettings.isPresent()) {
             for (File file : files) {
                 try {
                     CommentExtractor extractor = new CommentExtractor(file, commentExtractorSettings);
