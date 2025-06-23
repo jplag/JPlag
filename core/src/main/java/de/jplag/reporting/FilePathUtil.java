@@ -34,7 +34,7 @@ public final class FilePathUtil {
      */
     public static Path forceRelativePath(Path path) {
         if (path.isAbsolute()) {
-            return Path.of("/").relativize(path);
+            return Path.of("./").toAbsolutePath().relativize(path);
         }
         return path;
     }
