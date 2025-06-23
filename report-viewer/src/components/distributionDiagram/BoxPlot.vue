@@ -4,6 +4,8 @@
       <canvas ref="graphCanvas" class="min-h-0 grow print:max-h-full print:max-w-full"></canvas>
       <div v-if="!loaded">Could not display boxplot</div>
     </div>
+
+    <BoxPlotDiagramOptions class="grow print:grow-0" />
   </div>
 </template>
 
@@ -15,6 +17,7 @@ import { BoxAndWiskers, BoxPlotChart, BoxPlotController } from '@sgratzl/chartjs
 import { store } from '@/stores/store'
 import { graphColors } from '@/utils/ColorUtils'
 import type { DistributionMap } from '@/model/Distribution'
+import BoxPlotDiagramOptions from './BoxPlotDiagramOptions.vue'
 
 Chart.register(...registerables)
 Chart.register(ChartDataLabels)
@@ -83,8 +86,8 @@ const maxValueInData = computed(() => {
   }
   return NaN
 })
-const min = computed(() => Math.min(q1.value - 1.5 * iqr.value, minValueInData.value))
-const max = computed(() => Math.max(q3.value + 1.5 * iqr.value, maxValueInData.value))
+const min = computed(() => Math.max(q1.value - 1.5 * iqr.value, minValueInData.value))
+const max = computed(() => Math.min(q3.value + 1.5 * iqr.value, maxValueInData.value))
 const avg = computed(() => {
   let sum = 0
   for (let i = 0; i < distribution.value.length; i++) {
@@ -162,6 +165,22 @@ const graphOptions = computed(() => ({
       position: 'bottom' as const,
       align: 'end' as const,
       onClick: () => {}
+    },
+    tooltip: {
+      enabled: true,
+      displayColors: false,
+      callbacks: {
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in the library
+        label: (e: any) => {
+          // This type is only a partial definition of e but everything needed here
+          const hoverItem = e as unknown as { formattedValue: { hoveredOutlierIndex: number } }
+          if (hoverItem.formattedValue.hoveredOutlierIndex < 0) {
+            return undefined
+          }
+          const outlier = outliers.value[hoverItem.formattedValue.hoveredOutlierIndex]
+          return `${distribution.value[outlier]} submissions with value between ${outlier}% and ${outlier + 1}%`
+        }
+      }
     }
   }
 }))
