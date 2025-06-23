@@ -6,13 +6,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.jplag.util.FileUtils;
 
 /**
  * Extracts comments from submitted files, by reading and parsing the file content manually.
  */
 public class CommentExtractor {
-
+    private static final Logger logger = LoggerFactory.getLogger(CommentExtractor.class);
     private String remainingContent;
     private final List<Comment> comments;
     private final CommentExtractorSettings settings;
@@ -51,8 +54,8 @@ public class CommentExtractor {
         if (remainingContent.startsWith(expected)) {
             this.advance(expected.length());
         } else {
-            throw new MatchException("Matched incorrectly, expected: " + expected + ", received: " + remainingContent.substring(0, expected.length()),
-                    null);
+            throw new UnexpectedStringException(
+                    "Matched incorrectly, expected: " + expected + ", received: " + remainingContent.substring(0, expected.length()));
         }
     }
 
@@ -82,12 +85,17 @@ public class CommentExtractor {
      */
     public List<Comment> extract() {
         while (!remainingContent.isEmpty()) {
-            this.parseAny();
+            try {
+                this.parseAny();
+            } catch (UnexpectedStringException e) {
+                logger.warn("Comment extraction failed, due to unexpected string: {}", e.getMessage());
+                this.comments.clear();
+            }
         }
         return comments;
     }
 
-    private void parseAny() {
+    private void parseAny() throws UnexpectedStringException {
         if (this.parseEscapedCharacter().isPresent()) {
             return;
         }
@@ -126,7 +134,7 @@ public class CommentExtractor {
         return Optional.empty();
     }
 
-    private void parseNoCommentEnvironment(EnvironmentDelimiter environment) {
+    private void parseNoCommentEnvironment(EnvironmentDelimiter environment) throws UnexpectedStringException {
         this.parseEnvironment(environment);
     }
 
@@ -140,7 +148,7 @@ public class CommentExtractor {
         this.comments.add(new Comment(file, comment.toString(), startLine, startCol, CommentType.LINE));
     }
 
-    private void parseBlockComment(EnvironmentDelimiter blockComment) {
+    private void parseBlockComment(EnvironmentDelimiter blockComment) throws UnexpectedStringException {
         int startLine = this.currentLine;
         int startCol = this.currentCol + blockComment.begin().length();
         String comment = this.parseEnvironment(blockComment);
@@ -148,7 +156,7 @@ public class CommentExtractor {
         this.comments.add(new Comment(file, comment, startLine, startCol, CommentType.BLOCK));
     }
 
-    private String parseEnvironment(EnvironmentDelimiter environment) {
+    private String parseEnvironment(EnvironmentDelimiter environment) throws UnexpectedStringException {
         this.match(environment.begin());
         StringBuilder environmentContent = new StringBuilder();
 
