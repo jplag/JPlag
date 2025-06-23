@@ -15,7 +15,7 @@ const testData: TestData[] = [
 ]
 
 for (const data of testData) {
-  test.only(`Test ${data.name}`, async ({ page }) => {
+  test(`Test ${data.name}`, async ({ page }) => {
     test.slow()
     await uploadFile('progpedia-report.jplag', page)
 
@@ -34,22 +34,6 @@ for (const data of testData) {
     }
   })
 }
-
-test('Test distribution diagram', async ({ page }) => {
-  test.slow()
-  await uploadFile('progpedia-report.jplag', page)
-
-  const options = getDistributionDiagramTestCombinations()
-  await selectOptions(page, options[0])
-  const canvas = page.locator('canvas').first()
-  let lastImage = await canvas.screenshot()
-  for (const option of options.slice(1)) {
-    await selectOptions(page, option)
-    const newImage = await canvas.screenshot()
-    expect(newImage).not.toEqual(lastImage)
-    lastImage = newImage
-  }
-})
 
 /**
  * Checks if the distribution diagram is correct for the given options
