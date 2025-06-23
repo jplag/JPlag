@@ -63,20 +63,29 @@ public class CommentExtractor {
         String advancedBy = remainingContent.substring(0, length);
         remainingContent = remainingContent.substring(length);
 
-        // Checking for line breaks
-        String combined = lookBehind + advancedBy;
-        if (combined.contains(System.lineSeparator())) {
-            String[] lines = combined.split(System.lineSeparator(), -1);
-            this.currentLine += lines.length - 1;
-            String lastLine = lines[lines.length - 1];
-            this.currentCol = lastLine.length() + 1;
-            lookBehind = lastLine.substring(Math.max(0, lastLine.length() - System.lineSeparator().length() + 1));
-        } else {
+        if (!this.checkForLineBreaks(advancedBy)) {
             this.currentCol += length;
-            lookBehind = advancedBy.substring(Math.max(0, advancedBy.length() - System.lineSeparator().length() + 1));
         }
 
         return advancedBy;
+    }
+
+    private boolean checkForLineBreaks(String advancedBy) {
+        String combined = lookBehind + advancedBy;
+        if (combined.contains(System.lineSeparator())) {
+            String[] lines = combined.split(System.lineSeparator(), -1);
+
+            // Fixing line & column positions
+            this.currentLine += lines.length - 1;
+            String lastLine = lines[lines.length - 1];
+            this.currentCol = lastLine.length() + 1;
+
+            lookBehind = lastLine.substring(Math.max(0, lastLine.length() - System.lineSeparator().length() + 1));
+            return true;
+        } else {
+            lookBehind = advancedBy.substring(Math.max(0, advancedBy.length() - System.lineSeparator().length() + 1));
+            return false;
+        }
     }
 
     /**
