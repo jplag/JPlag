@@ -10,7 +10,6 @@ import de.jplag.util.FileUtils;
 
 /**
  * Extracts comments from submitted files, by reading and parsing the file content manually.
- * @author Moritz Rimpf
  */
 public class CommentExtractor {
 
