@@ -113,7 +113,8 @@ const dataSetStyle = computed(() => ({
   borderColor: graphColors.ticksAndFont.value,
   meanBorderColor: graphColors.ticksAndFont.value,
   meanBackgroundColor: graphColors.contentFill,
-  outlierBorderColor: graphColors.ticksAndFont.value
+  outlierBorderColor: graphColors.ticksAndFont.value,
+  barThickness: 150
 }))
 
 const graphData = computed(() => ({
