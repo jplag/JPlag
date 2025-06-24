@@ -1,8 +1,11 @@
 package de.jplag.highlight_extraction;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import de.jplag.TokenType;
 
 /**
  * Strategy that uses a fixed window size to create submatches of a match sequence in a comparison and calculates the
@@ -11,40 +14,35 @@ import java.util.Map;
 
 public class WindowOfMatchesStrategy implements FrequencyStrategy {
 
-    /**
+     /**
      * Adds all submatches with window length of the matches to a map using the token sequence as the key.
      * @param tokens Token list of the match.
-     * @param comparisonId Identifier for the comparison.
      * @param map Map that contains token subsequences and how often they occur across comparisons.
      * @param size The length of the considered token window.
      */
-
     @Override
-    public void create(List<String> tokens, String comparisonId, Map<String, List<String>> map, int size) {
-        for (int i = 0; i <= tokens.size() - size; i++) {
-            List<String> window = tokens.subList(i, i + size);
-            String key = String.join(" ", window);
-            map.computeIfAbsent(key, k -> new ArrayList<>());
+    public void createFrequencymap(List<TokenType> tokens, Map<List<TokenType>, Integer> map, int size) {
+        List<List<TokenType>> newKeys = createWindowKeys(tokens, size);
+        for (List<TokenType> subKey : newKeys) {
+            map.put(subKey, map.getOrDefault(subKey, 0) + 1);
         }
+
     }
 
     /**
-     * Calculates the frequency of all submatches and adds them to the map.
-     * @param tokens Token list of the match.
-     * @param comparisonId Identifier for the comparison.
-     * @param map Map that contains token subsequences and how often they occur across comparisons.
-     * @param size The length of the considered token window.
+     * Calculates all possible Sublists with length of size
+     * @param tokens tokens Of the Match
+     * @param size considered size of the Sublists
+     * @return List of all as considered Sublists
      */
-
-    @Override
-    public void check(List<String> tokens, String comparisonId, Map<String, List<String>> map, int size) throws IllegalStateException {
-        for (int i = 0; i <= tokens.size() - size; i++) {
-            List<String> window = tokens.subList(i, i + size);
-            String key = String.join(" ", window);
-            if (!map.containsKey(key)) {
-                throw new IllegalStateException("Unexpected window found in check() : " + key);
+    public static List<List<TokenType>> createWindowKeys(List<TokenType> tokens, int size) {
+        List<List<TokenType>> newKeys = new LinkedList<>();
+        if(tokens.size() >= size) {
+            for(int i = 0; i <= tokens.size() - size; i++) {
+                List<TokenType> windowList = new ArrayList<>(tokens.subList(i, i + size));
+                newKeys.add(windowList);
             }
-            map.get(key).add(comparisonId);
         }
+        return newKeys;
     }
 }

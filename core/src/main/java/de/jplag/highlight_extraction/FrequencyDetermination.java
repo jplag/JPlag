@@ -10,11 +10,10 @@ import de.jplag.*;
 /**
  * Calculates frequencies of match subsequences across all comparisons according to different strategies.
  */
-
 public class FrequencyDetermination {
-    private Map<String, List<String>> tokenFrequencyMap = new HashMap<>();
-    private FrequencyStrategy freqencyStrategy;
-    private int strategyNumber;
+    private Map<List<TokenType>, Integer> tokenFrequencyMap = new HashMap<>();
+    private final FrequencyStrategy frequencyStrategy;
+    private final int strategyNumber;
 
     /**
      * Constructor.
@@ -22,7 +21,7 @@ public class FrequencyDetermination {
      * @param strategyNumber Parameter used by certain strategies to determine submatch length.
      */
     public FrequencyDetermination(FrequencyStrategy frequencyStrategy, int strategyNumber) {
-        this.freqencyStrategy = frequencyStrategy;
+        this.frequencyStrategy = frequencyStrategy;
         this.strategyNumber = strategyNumber;
     }
 
@@ -31,18 +30,7 @@ public class FrequencyDetermination {
      * @param comparisons contains information of matches between two submissions.
      * @return Map containing (sub-)matches and their frequency according to the strategy.
      */
-    public Map<String, List<String>> runAnalysis(List<JPlagComparison> comparisons) {
-        frequencyBuilder(comparisons, freqencyStrategy::create);
-        frequencyBuilder(comparisons, freqencyStrategy::check);
-        return tokenFrequencyMap;
-    }
-
-    /**
-     * Builds the frequency Map.
-     * @param comparisons contains information of matches between two submissions.
-     * @param builder builds and updates the frequency map with submatches according to the implemented strategy.
-     */
-    private void frequencyBuilder(List<JPlagComparison> comparisons, FrequencyBuilder builder) {
+    public Map<List<TokenType>, Integer> runAnalysis(List<JPlagComparison> comparisons) {
         for (JPlagComparison comparison : comparisons) {
             Submission left = comparison.firstSubmission();
             List<Token> tokensNames = left.getTokenList();
@@ -50,7 +38,6 @@ public class FrequencyDetermination {
             for (Token token : tokensNames) {
                 tokens.add(token.getType());
             }
-            String comparisonId = comparison.toString();
 
             for (Match match : comparison.matches()) {
                 int start = match.startOfFirst();
@@ -58,20 +45,20 @@ public class FrequencyDetermination {
                 if (start + len > tokens.size())
                     continue;
 
-                List<String> matchTokens = new ArrayList<>();
+                List<TokenType> matchTokens = new ArrayList<>();
                 for (int i = start; i < start + len; i++) {
-                    matchTokens.add(tokens.get(i).toString());
+                    matchTokens.add(tokens.get(i));
                 }
-
-                builder.build(matchTokens, comparisonId, tokenFrequencyMap, strategyNumber);
+                frequencyStrategy.createFrequencymap(matchTokens, tokenFrequencyMap, strategyNumber);
             }
         }
+        return tokenFrequencyMap;
     }
 
     /**
      * @return Map containing (sub-)matches and their frequency according to the strategy.
      */
-    public Map<String, List<String>> getTokenFrequencyMap() {
+    public Map<List<TokenType>, Integer> getTokenFrequencyMap() {
         return tokenFrequencyMap;
     }
 }
