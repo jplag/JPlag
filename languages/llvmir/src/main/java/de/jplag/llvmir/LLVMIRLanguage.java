@@ -17,8 +17,8 @@ import de.jplag.Token;
 public class LLVMIRLanguage implements Language {
 
     @Override
-    public String[] suffixes() {
-        return new String[] {".ll"};
+    public List<String> fileExtensions() {
+        return List.of(".ll");
     }
 
     @Override

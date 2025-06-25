@@ -3,7 +3,6 @@ package de.jplag.options;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +34,7 @@ import io.soabase.recordbuilder.core.RecordBuilder;
  * @param baseCodeSubmissionDirectory Directory containing the base code.
  * @param subdirectoryName Example: If the subdirectoryName is 'src', only the code inside submissionDir/src of each
  * submission will be used for comparison.
- * @param fileSuffixes List of file suffixes that should be included.
+ * @param fileSuffixes List of file extensions or custom suffixes that should be included.
  * @param exclusionFileName Name of the file that contains the names of files to exclude from comparison.
  * @param similarityMetric The similarity metric determines how the minimum similarity threshold required for a
  * comparison (of two submissions) is calculated. This affects which comparisons are stored and thus make it into the
@@ -113,7 +112,7 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
     public List<String> fileSuffixes() {
         var language = language();
         if ((fileSuffixes == null || fileSuffixes.isEmpty()) && language != null) {
-            return Arrays.stream(language.suffixes()).toList();
+            return language.fileExtensions();
         }
         return fileSuffixes == null ? null : Collections.unmodifiableList(fileSuffixes);
     }

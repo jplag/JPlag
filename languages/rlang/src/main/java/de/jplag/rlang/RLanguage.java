@@ -17,8 +17,8 @@ import de.jplag.Token;
 public class RLanguage implements Language {
 
     @Override
-    public String[] suffixes() {
-        return new String[] {".R"};
+    public List<String> fileExtensions() {
+        return List.of(".R");
     }
 
     @Override
