@@ -44,6 +44,10 @@ public class CompleteMatchesStrategy implements FrequencyStrategy {
     @Override
     public double calculateWeight(Match match, Map<String, List<String>> frequencyMap, List<String> matchToken) {
         List<String> values = frequencyMap.get(createKey(matchToken));
+//        if (values != null) {
+//            System.out.println("key  gefunden");
+//            System.out.println("frequency: " + values.size());
+//        }
         return values != null ? values.size() : 0.0;
     }
 

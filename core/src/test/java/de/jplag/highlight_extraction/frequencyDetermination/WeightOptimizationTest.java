@@ -109,4 +109,57 @@ public class WeightOptimizationTest extends TestBase {
 
         System.out.println("CSV gespeichert: " + csvFile);
     }
+
+//    @Test
+//    void runClassificationForAllDatasets() throws Exception {
+//        for (String datasetPath : datasetPaths) {
+//            System.out.println("=== Klassifiziere Datensatz: " + datasetPath + " ===");
+//
+//            options = getOptions(List.of(datasetPath), List.of(), o -> o);
+//
+//            if (datasetPath.equals("FrequencyDetermination\\00000019\\Java")) {
+//                String baseCodeDir = "C:\\Data\\progpedia\\base\\main.java";
+//                options = options.withBaseCodeSubmissionName(baseCodeDir);
+//            }
+//
+//            SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
+//            submissionSet = builder.buildSubmissionSet();
+//            strategy = new LongestCommonSubsequenceSearch(options);
+//            result = strategy.compareSubmissions(submissionSet);
+//
+//            FrequencySimilarity similarity = new FrequencySimilarity(result.getAllComparisons());
+//            LabelledWeighting lw = new LabelledWeighting();
+//            lw.classifyComparisons(result.getAllComparisons(), similarity);
+//
+//            String datasetName = Paths.get(datasetPath).getFileName().toString();
+//            Path outputDir = baseOutputDir.resolve("classification").resolve(datasetName);
+//            Files.createDirectories(outputDir);
+//
+//            saveComparisonListAsCsv(lw.getPlagiatComparisons(), "plagiat", similarity, outputDir);
+//            saveComparisonListAsCsv(lw.getAuffaelligComparisons(), "auffaellig", similarity, outputDir);
+//            saveComparisonListAsCsv(lw.getUnauffaelligComparisons(), "unauffaellig", similarity, outputDir);
+//            saveComparisonListAsCsv(lw.getZwischenGruppenComparisons(), "zwischengruppen", similarity, outputDir);
+//
+//            System.out.printf("→ %s: %d Plagiat, %d Auffällig, %d Unauffällig, %d Zwischen-Gruppen%n",
+//                    datasetName,
+//                    lw.getPlagiatComparisons().size(),
+//                    lw.getAuffaelligComparisons().size(),
+//                    lw.getUnauffaelligComparisons().size(),
+//                    lw.getZwischenGruppenComparisons().size());
+//        }
+//    }
+//    private void saveComparisonListAsCsv(List<JPlagComparison> comparisons, String label, FrequencySimilarity freqSim, Path outputDir) throws IOException {
+//        Path file = outputDir.resolve(label + "_comparisons.csv");
+//        try (var writer = Files.newBufferedWriter(file)) {
+//            writer.write("ComparisonID,Submission1,Submission2,Similarity\n");
+//            for (JPlagComparison comp : comparisons) {
+//                String id = comp.toString();
+//                String s1 = comp.firstSubmission().getName();
+//                String s2 = comp.secondSubmission().getName();
+//                double sim = freqSim.frequencySimilarity(comp, 0.0);
+//                writer.write(String.format("\"%s\",\"%s\",\"%s\",%.5f\n", id, s1, s2, sim));
+//            }
+//        }
+//        System.out.println("Klassifizierte Comparisons gespeichert: " + file);
+//    }
 }
