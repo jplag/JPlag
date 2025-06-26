@@ -35,11 +35,11 @@ class SubsequenceHashLookupTable {
         this.windowSize = Math.clamp(windowSize, 1, MAX_HASH_LENGTH);
         this.values = values;
 
-        if (values.length < windowSize) {
+        if (values.length < this.windowSize) {
             return;
         }
 
-        subsequenceHashes = new int[values.length - windowSize];
+        subsequenceHashes = new int[values.length - this.windowSize];
         startIndexToSubsequenceHashesMap = HashMap.newHashMap(subsequenceHashes.length);
         computeSubsequenceHashes(marked);
     }
