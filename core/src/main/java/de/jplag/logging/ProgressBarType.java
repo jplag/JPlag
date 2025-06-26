@@ -6,7 +6,7 @@ package de.jplag.logging;
 public enum ProgressBarType {
     LOADING("Loading Submissions", false),
     PARSING("Parsing Submissions", false),
-    TOKEN_VALUE_CREATION("Preparing Submissions", false),
+    TOKEN_SEQUENCE_CREATION("Preparing Submissions", false),
     COMPARING("Comparing Submission Pairs", false),
     MATCH_MERGING("Merging Matched Subsequences ", false),
     TOKEN_SEQUENCE_NORMALIZATION("Normalizing Token Sequences", false),
