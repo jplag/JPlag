@@ -90,9 +90,9 @@ class BasicFunctionalityTest extends TestBase {
     @DisplayName("test basic functionality for varying minimum token match values.")
     void testHighMinimumTokenMatch() throws ExitException {
         for (int i = 10; i < 50; i++) {
-            int mtm = i;
-            JPlagResult result = runJPlag("PartialPlagiarism", it -> it.withMinimumTokenMatch(mtm));
-            if (i <= 12) {
+            int minimumTokenMatch = i;
+            JPlagResult result = runJPlag("PartialPlagiarism", it -> it.withMinimumTokenMatch(minimumTokenMatch));
+            if (minimumTokenMatch <= 12) {
                 assertEquals(5, result.getNumberOfSubmissions());
                 assertEquals(10, result.getAllComparisons().size());
             } else {
