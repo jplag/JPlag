@@ -109,7 +109,7 @@ const outliers = computed(() => {
 
 const dataSetStyle = computed(() => ({
   backgroundColor: graphColors.contentFillAlpha(0.4),
-  borderWidth: 1,
+  borderWidth: 2,
   borderColor: graphColors.ticksAndFont.value,
   meanBorderColor: graphColors.ticksAndFont.value,
   meanBackgroundColor: graphColors.contentFill,
