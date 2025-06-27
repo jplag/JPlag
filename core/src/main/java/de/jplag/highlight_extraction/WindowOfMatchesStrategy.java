@@ -14,35 +14,34 @@ import de.jplag.TokenType;
 
 public class WindowOfMatchesStrategy implements FrequencyStrategy {
 
-     /**
+    /**
      * Adds all submatches with window length of the matches to a map using the token sequence as the key.
-     * @param tokens Token list of the match.
-     * @param map Map that contains token subsequences and how often they occur across comparisons.
-     * @param size The length of the considered token window.
+     * @param matchTokenTypes Token list of the match.
+     * @param frequencyMap Map that contains token subsequences and how often they occur across comparisons.
+     * @param strategyNumber The length of the considered token window.
      */
     @Override
-    public void createFrequencymap(List<TokenType> tokens, Map<List<TokenType>, Integer> map, int size) {
-        List<List<TokenType>> newKeys = createWindowKeys(tokens, size);
-        for (List<TokenType> subKey : newKeys) {
-            map.put(subKey, map.getOrDefault(subKey, 0) + 1);
+    public void addMatchToFrequencyMap(List<TokenType> matchTokenTypes, Map<List<TokenType>, Integer> frequencyMap, int strategyNumber) {
+        List<List<TokenType>> windowSequences = getWindowSequences(matchTokenTypes, strategyNumber);
+        for (List<TokenType> windowSequence : windowSequences) {
+            frequencyMap.put(windowSequence, frequencyMap.getOrDefault(windowSequence, 0) + 1);
         }
-
     }
 
     /**
-     * Calculates all possible Sublists with length of size
-     * @param tokens tokens Of the Match
-     * @param size considered size of the Sublists
+     * Calculates all possible Sublists with length of windowSize
+     * @param matchTokenTypes tokens Of the Match
+     * @param windowSize considered windowSize of the Sublists
      * @return List of all as considered Sublists
      */
-    public static List<List<TokenType>> createWindowKeys(List<TokenType> tokens, int size) {
-        List<List<TokenType>> newKeys = new LinkedList<>();
-        if(tokens.size() >= size) {
-            for(int i = 0; i <= tokens.size() - size; i++) {
-                List<TokenType> windowList = new ArrayList<>(tokens.subList(i, i + size));
-                newKeys.add(windowList);
+    public static List<List<TokenType>> getWindowSequences(List<TokenType> matchTokenTypes, int windowSize) {
+        List<List<TokenType>> windowSequences = new LinkedList<>();
+        if (matchTokenTypes.size() >= windowSize) {
+            for (int windowStartIndex = 0; windowStartIndex <= matchTokenTypes.size() - windowSize; windowStartIndex++) {
+                List<TokenType> windowSequence = new ArrayList<>(matchTokenTypes.subList(windowStartIndex, windowStartIndex + windowSize));
+                windowSequences.add(windowSequence);
             }
         }
-        return newKeys;
+        return windowSequences;
     }
 }

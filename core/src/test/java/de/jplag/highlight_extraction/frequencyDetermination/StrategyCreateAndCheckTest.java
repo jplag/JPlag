@@ -115,8 +115,8 @@ class StrategyCreateAndCheckTest extends TestBase {
     void testCompleteMatchesStrategy() {
         FrequencyStrategy strategy = new CompleteMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 9);
-        fd.runAnalysis(comparisons);
-        Map<List<TokenType>, Integer> tokenFrequencyMap = fd.getTokenFrequencyMap();
+        fd.buildFrequencyMap(comparisons);
+        Map<List<TokenType>, Integer> tokenFrequencyMap = fd.getMatchFrequencyMap();
         t.printTestResult(tokenFrequencyMap);
 
         assertTokenFrequencyContainsMatch(testMatchAOnTimeInComparisons, 1, tokenFrequencyMap);
@@ -144,7 +144,7 @@ class StrategyCreateAndCheckTest extends TestBase {
             tokenStrings = tokenStrings.subList(0, windowSize + 3);
         }
 
-        strategy.createFrequencymap(tokenStrings, frequencyMap, windowSize);
+        strategy.addMatchToFrequencyMap(tokenStrings, frequencyMap, windowSize);
 
         int expectedWindows = tokenStrings.size() - windowSize + 1;  // => should be 4
         assertEquals(expectedWindows, frequencyMap.size(), "Number of windows should be as expected");
@@ -167,7 +167,7 @@ class StrategyCreateAndCheckTest extends TestBase {
                 testMatchShort.startOfFirst() + testMatchShort.lengthOfFirst());
         List<TokenType> tokenListTestMatchReadable = tokensListInTestMatch.stream().map(token -> token.getType()).toList();
 
-        strategy.createFrequencymap(tokenListTestMatchReadable, windowMap, windowSize);
+        strategy.addMatchToFrequencyMap(tokenListTestMatchReadable, windowMap, windowSize);
 
         StringBuilder logBuilder = new StringBuilder("windowMap:\n");
         windowMap.forEach((key, value) -> logBuilder.append(String.format("  %s → %s%n", key, value)));
@@ -202,12 +202,11 @@ class StrategyCreateAndCheckTest extends TestBase {
         assertTrue(windowMap.containsKey(keyNew1), "new key1 exists: " + keyNew1);
         assertTrue(windowMap.containsKey(keyNew2), "new key2 exists: " + keyNew2);
 
-        strategy.createFrequencymap(keyNew1, windowMap, windowSize);
-        strategy.createFrequencymap(keyNew2, windowMap, windowSize);
+        strategy.addMatchToFrequencyMap(keyNew1, windowMap, windowSize);
+        strategy.addMatchToFrequencyMap(keyNew2, windowMap, windowSize);
 
         Integer list1 = windowMap.get(keyNew1);
         Integer list2 = windowMap.get(keyNew2);
-
 
         assertEquals(2, list1, "does not contain 2 IDs: " + list1);
         assertEquals(2, list2, "does not contain 2 IDs: " + list2);
@@ -224,7 +223,7 @@ class StrategyCreateAndCheckTest extends TestBase {
         List<TokenType> tokenListTestMatchReadable = tokensListInTestMatch.stream().map(Token::getType).toList();
         int minSize = 3;
 
-        strategy.createFrequencymap(tokenListTestMatchReadable, frequencyMap, minSize);
+        strategy.addMatchToFrequencyMap(tokenListTestMatchReadable, frequencyMap, minSize);
 
         Set<List<TokenType>> expectedKeys = new HashSet<>(List.of(tokenListTestMatchReadable, tokenListTestMatchReadable.subList(0, 4),
                 tokenListTestMatchReadable.subList(1, 5), tokenListTestMatchReadable.subList(0, 3), tokenListTestMatchReadable.subList(1, 4),
@@ -244,7 +243,7 @@ class StrategyCreateAndCheckTest extends TestBase {
         logger.info(logBuilder.toString());
 
         List<TokenType> subTokenList = tokenListTestMatchReadable.subList(1, 5);
-        strategy.createFrequencymap(subTokenList, frequencyMap, minSize);
+        strategy.addMatchToFrequencyMap(subTokenList, frequencyMap, minSize);
         Set<List<TokenType>> expectedUsedKeys = new HashSet<>(List.of(tokenListTestMatchReadable.subList(1, 5),
                 tokenListTestMatchReadable.subList(1, 4), tokenListTestMatchReadable.subList(2, 5)));
 
@@ -260,10 +259,10 @@ class StrategyCreateAndCheckTest extends TestBase {
     @Test
     void testCompleteMatchesIncludedInContainedStrategyForMatchesLongerMin() {
         int strategynumber = 100;
-        FrequencyStrategy strategy = new ContainedStrategy();
+        FrequencyStrategy strategy = new ContainedMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, strategynumber);
-        fd.runAnalysis(comparisons);
-        Map<List<TokenType>, Integer> tokenFrequencyMap = fd.getTokenFrequencyMap();
+        fd.buildFrequencyMap(comparisons);
+        Map<List<TokenType>, Integer> tokenFrequencyMap = fd.getMatchFrequencyMap();
 
         for (List<TokenType> key : tokenFrequencyMap.keySet()) {
             assertTrue(key.size() >= strategynumber, "!should not exist: " + key.size());

@@ -8,23 +8,26 @@ import java.util.Map;
 import de.jplag.TokenType;
 
 /**
- * Strategy that uses submatches of matches from the comparisons and calculates their frequency in the matches across
+ * Strategy that uses submatches from the comparisons and calculates the frequency of their appearance in matches across
  * all submissions.
  */
-public class SubMatchesStrategy implements FrequencyStrategy {
 
+public class ContainedMatchesStrategy implements FrequencyStrategy {
     /**
-     * Creates submatches to build the keys and adds their frequencies to the frequencyMap.
+     * Adds all submatches with min size length of the matches to a map using the token sequence as the key.
+     * @param matchTokenTypes Token list of the match.
      * @param frequencyMap Map that contains token subsequences and how often they occur across comparisons.
-     * @param matchTokenTypes List of matchTokenTypes representing the match.
      * @param strategyNumber Minimum length of the considered submatches.
      */
     @Override
     public void addMatchToFrequencyMap(List<TokenType> matchTokenTypes, Map<List<TokenType>, Integer> frequencyMap, int strategyNumber) {
         List<List<TokenType>> subSequences = getSubSequences(matchTokenTypes, strategyNumber);
         for (List<TokenType> subSequence : subSequences) {
-            frequencyMap.put(subSequence, frequencyMap.getOrDefault(subSequence, 0) + 1);
+            frequencyMap.putIfAbsent(subSequence, 0);
         }
-
+        if (matchTokenTypes.size() >= strategyNumber) {
+            frequencyMap.put(matchTokenTypes, frequencyMap.getOrDefault(matchTokenTypes, 0) + 1);
+        }
     }
+
 }

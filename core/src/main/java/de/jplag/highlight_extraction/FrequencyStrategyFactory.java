@@ -20,7 +20,7 @@ public class FrequencyStrategyFactory {
             case COMPLETE_MATCHES -> new CompleteMatchesStrategy();
             case SUB_MATCHES -> new SubMatchesStrategy();
             case WINDOW_OF_MATCHES -> new WindowOfMatchesStrategy();
-            case CONTAINED_MATCHES -> new ContainedStrategy();
+            case CONTAINED_MATCHES -> new ContainedMatchesStrategy();
             default -> throw new IllegalArgumentException("Unknown strategy: " + strategy);
         };
     }

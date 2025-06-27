@@ -11,7 +11,7 @@ import de.jplag.*;
  * Calculates frequencies of match subsequences across all comparisons according to different strategies.
  */
 public class FrequencyDetermination {
-    private Map<List<TokenType>, Integer> tokenFrequencyMap = new HashMap<>();
+    private final Map<List<TokenType>, Integer> matchFrequencyMap = new HashMap<>();
     private final FrequencyStrategy frequencyStrategy;
     private final int strategyNumber;
 
@@ -30,35 +30,35 @@ public class FrequencyDetermination {
      * @param comparisons contains information of matches between two submissions.
      * @return Map containing (sub-)matches and their frequency according to the strategy.
      */
-    public Map<List<TokenType>, Integer> runAnalysis(List<JPlagComparison> comparisons) {
+    public Map<List<TokenType>, Integer> buildFrequencyMap(List<JPlagComparison> comparisons) {
         for (JPlagComparison comparison : comparisons) {
-            Submission left = comparison.firstSubmission();
-            List<Token> tokensNames = left.getTokenList();
-            List<TokenType> tokens = new ArrayList<>();
-            for (Token token : tokensNames) {
-                tokens.add(token.getType());
+            Submission leftSubmission = comparison.firstSubmission();
+            List<Token> submissionTokens = leftSubmission.getTokenList();
+            List<TokenType> submissionTokenTypes = new ArrayList<>();
+            for (Token token : submissionTokens) {
+                submissionTokenTypes.add(token.getType());
             }
 
             for (Match match : comparison.matches()) {
                 int start = match.startOfFirst();
                 int len = match.lengthOfFirst();
-                if (start + len > tokens.size())
+                if (start + len > submissionTokenTypes.size())
                     continue;
 
-                List<TokenType> matchTokens = new ArrayList<>();
+                List<TokenType> matchTokenTypes = new ArrayList<>();
                 for (int i = start; i < start + len; i++) {
-                    matchTokens.add(tokens.get(i));
+                    matchTokenTypes.add(submissionTokenTypes.get(i));
                 }
-                frequencyStrategy.createFrequencymap(matchTokens, tokenFrequencyMap, strategyNumber);
+                frequencyStrategy.addMatchToFrequencyMap(matchTokenTypes, matchFrequencyMap, strategyNumber);
             }
         }
-        return tokenFrequencyMap;
+        return matchFrequencyMap;
     }
 
     /**
      * @return Map containing (sub-)matches and their frequency according to the strategy.
      */
-    public Map<List<TokenType>, Integer> getTokenFrequencyMap() {
-        return tokenFrequencyMap;
+    public Map<List<TokenType>, Integer> getMatchFrequencyMap() {
+        return matchFrequencyMap;
     }
 }
