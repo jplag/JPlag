@@ -1,4 +1,4 @@
-package de.jplag.highlight_extraction.frequencyDetermination;
+package de.jplag.highlightextraction.frequencydetermination;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import de.jplag.*;
 import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
-import de.jplag.highlight_extraction.*;
+import de.jplag.highlightextraction.*;
 import de.jplag.options.JPlagOptions;
 
 class StrategyIntegrationTest extends TestBase {

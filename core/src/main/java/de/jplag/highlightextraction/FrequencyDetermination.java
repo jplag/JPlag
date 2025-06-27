@@ -1,4 +1,4 @@
-package de.jplag.highlight_extraction;
+package de.jplag.highlightextraction;
 
 import java.util.ArrayList;
 import java.util.HashMap;

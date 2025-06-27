@@ -1,6 +1,6 @@
-package de.jplag.highlight_extraction;
+package de.jplag.highlightextraction;
 
-import static de.jplag.highlight_extraction.SubSequenceUtil.getSubSequences;
+import static de.jplag.highlightextraction.SubSequenceUtil.getSubSequences;
 
 import java.util.List;
 import java.util.Map;

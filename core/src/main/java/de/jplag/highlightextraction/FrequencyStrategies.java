@@ -1,4 +1,4 @@
-package de.jplag.highlight_extraction;
+package de.jplag.highlightextraction;
 
 /**
  * Enum representing the different strategies for frequency calculation of token subsequences in comparisons.
