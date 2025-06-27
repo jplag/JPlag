@@ -68,8 +68,20 @@
                   </ToolTipComponent>
                 </div>
               </div>
-              <div v-if="displayClusters" class="tableCellCluster tableCell items-center">
+              <div
+                v-if="displayClusters"
+                class="tableCellCluster tableCell cursor-pointer items-center"
+                @click="setSorting('cluster')"
+              >
                 Cluster
+                <FontAwesomeIcon
+                  :icon="
+                    store().uiState.comparisonTableSorting.column.id == 'cluster'
+                      ? store().uiState.comparisonTableSorting.direction.icon
+                      : faSort
+                  "
+                  class="ml-1"
+                />
               </div>
             </div>
           </div>
