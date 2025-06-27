@@ -19,7 +19,7 @@ export default defineConfig((userConfig: UserConfig) => {
       base = '/Demo/'
       break
     case 'dev-demo':
-      base = '/DevDemo/'
+      base = '/'
       break
   }
   return {
