@@ -19,6 +19,9 @@ public class Token {
 
     private final int startLine;
     private final int startColumn;
+    /**
+     * @deprecated The length does not include line breaks and should not be used to calculate the end position of a token
+     */
     @Deprecated(since = "6.2.0", forRemoval = true)
     private final int length;
     private final int endLine;
