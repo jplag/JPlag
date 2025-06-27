@@ -106,6 +106,21 @@ export namespace Column {
     }
     return list
   }
+
+  export function getSortingFromMetric(metric: MetricJsonIdentifier) {
+    switch (metric) {
+      case MetricJsonIdentifier.AVERAGE_SIMILARITY:
+        return averageSimilarity
+      case MetricJsonIdentifier.MAXIMUM_SIMILARITY:
+        return maximumSimilarity
+      case MetricJsonIdentifier.LONGEST_MATCH:
+        return longestMatch
+      case MetricJsonIdentifier.MAXIMUM_LENGTH:
+        return maximumLength
+      default:
+        return averageSimilarity
+    }
+  }
 }
 
 export interface ComparisonTableSorting {
