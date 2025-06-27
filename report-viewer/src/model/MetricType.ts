@@ -90,7 +90,7 @@ export namespace MetricTypes {
   export const LONGEST_MATCH = new IdentityMetricType(
     'LONG',
     'Longest Match',
-    'The number of tokens in the longest match.',
+    'The longest matching fragment between two programs measured in tokens.',
     MetricJsonIdentifier.LONGEST_MATCH,
     Column.longestMatch
   )
