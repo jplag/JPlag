@@ -60,11 +60,11 @@ public class TestDataCollector {
     /**
      * Adds all files matching a certain type. Returns a {@link TestDataContext}, that can be used to configure various
      * tests on the given files.
-     * @param fileSuffix is the suffix of the files to be added.
+     * @param fileExtension is the extension of the files to be added.
      * @return The {@link TestDataContext}
      */
-    public TestDataContext testAllOfType(String fileSuffix) {
-        Set<TestData> data = Arrays.stream(testFileLocation.list()).filter(it -> it.endsWith(fileSuffix))
+    public TestDataContext testAllOfType(String fileExtension) {
+        Set<TestData> data = Arrays.stream(testFileLocation.list()).filter(it -> it.endsWith(fileExtension))
                 .map(it -> new File(this.testFileLocation, it)).map(FileTestData::new).collect(Collectors.toSet());
         return new TestDataContext(data);
     }

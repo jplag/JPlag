@@ -3,6 +3,11 @@ package de.jplag.comparison;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +16,7 @@ import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Submission;
 import de.jplag.SubmissionSet;
+import de.jplag.exceptions.ComparisonException;
 import de.jplag.logging.ProgressBar;
 import de.jplag.logging.ProgressBarLogger;
 import de.jplag.logging.ProgressBarType;
@@ -88,30 +94,49 @@ public class LongestCommonSubsequenceSearch {
     /**
      * Compares submissions from a set of submissions while considering a given base code.
      * @param submissionSet Collection of submissions with optional basecode to compare.
-     * @return the comparison results.
+     * @return The comparison results.
+     * @throws ComparisonException If a problem arises during comparison.
      */
-    public JPlagResult compareSubmissions(SubmissionSet submissionSet) {
-        long timeBeforeStartInMillis = System.currentTimeMillis();
+    public JPlagResult compareSubmissions(SubmissionSet submissionSet) throws ComparisonException {
+        long startTimeMillis = System.currentTimeMillis();
 
+        // Set up data structures:
         TokenValueMapper tokenValueMapper = new TokenValueMapper(submissionSet);
         GreedyStringTiling coreAlgorithm = new GreedyStringTiling(options, tokenValueMapper);
 
-        boolean withBaseCode = submissionSet.hasBaseCode();
-        if (withBaseCode) {
+        // Prepare base code comparisons:
+        if (submissionSet.hasBaseCode()) {
             compareSubmissionsToBaseCode(coreAlgorithm, submissionSet);
         }
 
+        // Compare all submission pairs in parallel:
         List<SubmissionTuple> tuples = buildComparisonTuples(submissionSet.getSubmissions());
+        List<JPlagComparison> comparisons = new ArrayList<>();
         ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.COMPARING, tuples.size());
-        List<JPlagComparison> comparisons = tuples.stream().parallel().flatMap(tuple -> {
-            Optional<JPlagComparison> result = compareSubmissions(coreAlgorithm, tuple.left(), tuple.right());
-            progressBar.step();
-            return result.stream();
-        }).toList();
-        progressBar.dispose();
+        try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            List<Future<Optional<JPlagComparison>>> futures = tuples.stream().map(tuple -> executor.submit(() -> {
+                Optional<JPlagComparison> result = compareSubmissions(coreAlgorithm, tuple.left(), tuple.right());
+                progressBar.step();
+                return result;
+            })).toList();
 
-        long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
+            executor.shutdown();
+            if (!executor.awaitTermination(24, TimeUnit.HOURS)) {
+                throw new ComparisonException("Comparison timed out.");
+            }
 
-        return new JPlagResult(comparisons, submissionSet, durationInMillis, options);
+            for (Future<Optional<JPlagComparison>> future : futures) {
+                future.get().ifPresent(comparisons::add);
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            Thread.currentThread().interrupt();
+            throw new ComparisonException("Error during comparison algorithm.", e);
+        } finally {
+            progressBar.dispose();
+        }
+
+        long durationInMilliseconds = System.currentTimeMillis() - startTimeMillis;
+        return new JPlagResult(comparisons, submissionSet, durationInMilliseconds, options);
     }
+
 }

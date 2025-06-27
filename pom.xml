@@ -76,7 +76,7 @@
         <maven.compiler.target>21</maven.compiler.target>
         <spotless.version>2.44.5</spotless.version>
         <slf4j.version>2.0.17</slf4j.version>
-        <junit.version>5.13.1</junit.version>
+        <junit.version>5.13.2</junit.version>
 
         <antlr2.version>2.7.7</antlr2.version>
         <antlr4.version>4.13.2</antlr4.version>
@@ -144,7 +144,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.19.0</version>
+                <version>2.19.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -288,7 +288,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.7.0</version>
+                <version>1.7.1</version>
                 <configuration>
                     <updatePomFile>true</updatePomFile>
                     <flattenMode>resolveCiFriendliesOnly</flattenMode>
@@ -363,7 +363,7 @@
             <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.7.0</version>
+                <version>0.8.0</version>
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>central</publishingServerId>

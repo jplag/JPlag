@@ -91,7 +91,7 @@ public class TokenPositionTestData implements TestData {
 
     @Override
     public List<Token> parseTokens(Language language) throws ParsingException, IOException {
-        File file = File.createTempFile("testSource", language.suffixes()[0]);
+        File file = File.createTempFile("testSource", language.fileExtensions().getFirst());
         FileUtils.write(file, String.join(System.lineSeparator(), sourceLines));
         List<Token> tokens = language.parse(Collections.singleton(file), false);
         TemporaryFileHolder.temporaryFiles.add(file);

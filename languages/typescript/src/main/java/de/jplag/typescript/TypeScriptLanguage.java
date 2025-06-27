@@ -19,8 +19,8 @@ public class TypeScriptLanguage implements Language {
     private final TypeScriptLanguageOptions options = new TypeScriptLanguageOptions();
 
     @Override
-    public String[] suffixes() {
-        return new String[] {".ts", ".js"};
+    public List<String> fileExtensions() {
+        return List.of(".ts", ".js");
     }
 
     @Override

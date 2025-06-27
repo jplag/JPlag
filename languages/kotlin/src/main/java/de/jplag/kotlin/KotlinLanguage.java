@@ -17,8 +17,8 @@ import de.jplag.Token;
 public class KotlinLanguage implements Language {
 
     @Override
-    public String[] suffixes() {
-        return new String[] {".kt"};
+    public List<String> fileExtensions() {
+        return List.of(".kt");
     }
 
     @Override

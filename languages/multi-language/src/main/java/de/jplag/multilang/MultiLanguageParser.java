@@ -38,7 +38,7 @@ public class MultiLanguageParser {
 
     private void registerLanguageMaps(List<Language> languages) {
         for (Language language : languages.stream().sorted(Comparator.comparing(it -> it.hasPriority() ? 1 : 0)).toList()) {
-            for (String suffix : language.suffixes()) {
+            for (String suffix : language.fileExtensions()) {
                 registerLanguageSuffix(language, suffix);
             }
 
@@ -62,14 +62,14 @@ public class MultiLanguageParser {
 
     private Optional<Language> findLanguageForFile(File file) {
         String name = file.getName();
-        String suffix = name.substring(name.lastIndexOf('.')).toLowerCase();
+        String extension = name.substring(name.lastIndexOf('.')).toLowerCase();
 
-        if (this.languageMapPriority.containsKey(suffix)) {
-            return Optional.of(this.languageMapPriority.get(suffix));
+        if (this.languageMapPriority.containsKey(extension)) {
+            return Optional.of(this.languageMapPriority.get(extension));
         }
 
-        if (this.languageMap.containsKey(suffix)) {
-            return Optional.of(this.languageMap.get(suffix));
+        if (this.languageMap.containsKey(extension)) {
+            return Optional.of(this.languageMap.get(extension));
         }
 
         return Optional.empty();

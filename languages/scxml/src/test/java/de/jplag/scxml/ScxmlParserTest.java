@@ -120,6 +120,6 @@ class ScxmlParserTest {
 
     @AfterEach
     void tearDown() {
-        FileUtil.clearFiles(new File(BASE_PATH.toString()), ScxmlLanguage.VIEW_FILE_SUFFIX);
+        FileUtil.clearFiles(new File(BASE_PATH.toString()), ScxmlLanguage.VIEW_FILE_EXTENSION);
     }
 }

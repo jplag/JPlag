@@ -17,8 +17,8 @@ import de.jplag.Token;
 public class JavaLanguage implements Language {
 
     @Override
-    public String[] suffixes() {
-        return new String[] {".java"};
+    public List<String> fileExtensions() {
+        return List.of(".java");
     }
 
     @Override

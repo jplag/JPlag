@@ -1,23 +1,26 @@
 package de.jplag.scala
 
 import de.jplag.Token
-
-import java.io.File
 import org.kohsuke.MetaInfServices
 
+import java.io.File
 import java.util
-import scala.jdk.CollectionConverters.{SeqHasAsJava, SetHasAsScala}
+import scala.jdk.CollectionConverters._
 
+@MetaInfServices
 class ScalaLanguage extends de.jplag.Language {
-  private final val fileExtensions = Array(".scala", ".sc")
 
-  override def suffixes: Array[String] = fileExtensions
+  private final val fileExtensionsList = List(".scala", ".sc")
 
-  override def getName = "Scala"
+  override def fileExtensions: util.List[String] =
+    fileExtensionsList.asJava
 
-  override def getIdentifier = "scala"
+  override def getName: String = "Scala"
 
-  override def minimumTokenMatch = 8
+  override def getIdentifier: String = "scala"
 
-  override def parse(files: util.Set[File], normalize: Boolean): java.util.List[Token] = new Parser().parse(files.asScala.toSet).asJava
+  override def minimumTokenMatch: Int = 8
+
+  override def parse(files: util.Set[File], normalize: Boolean): util.List[Token] =
+    new Parser().parse(files.asScala.toSet).asJava
 }

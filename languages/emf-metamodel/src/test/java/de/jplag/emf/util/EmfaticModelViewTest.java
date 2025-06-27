@@ -31,9 +31,9 @@ class EmfaticModelViewTest extends AbstractEmfTest {
 
         // Generate emfatic view:
         EmfaticModelView view = new EmfaticModelView(modelFile, modelResource);
-        view.writeToFile(EmfLanguage.VIEW_FILE_SUFFIX);
+        view.writeToFile(EmfLanguage.VIEW_FILE_EXTENSION);
 
         // Compare expected vs. actual view file:
-        assertViewFilesMatch(modelFile, EmfLanguage.VIEW_FILE_SUFFIX, EXPECTED_VIEW_FOLDER);
+        assertViewFilesMatch(modelFile, EmfLanguage.VIEW_FILE_EXTENSION, EXPECTED_VIEW_FOLDER);
     }
 }

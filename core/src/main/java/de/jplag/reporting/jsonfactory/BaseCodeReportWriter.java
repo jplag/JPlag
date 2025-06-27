@@ -75,7 +75,9 @@ public class BaseCodeReportWriter {
                 takeLeft ? match.startOfFirst() : match.startOfSecond());
         CodePosition endPosition = new CodePosition(end.getEndLine(), end.getEndColumn() - 1, takeLeft ? match.endOfFirst() : match.endOfSecond());
 
+        int length = takeLeft ? match.lengthOfFirst() : match.lengthOfSecond();
+
         return new BaseCodeMatch(FilePathUtil.getRelativeSubmissionPath(start.getFile(), submission, submissionToIdFunction).toString(),
-                startPosition, endPosition, match.length());
+                startPosition, endPosition, length);
     }
 }
