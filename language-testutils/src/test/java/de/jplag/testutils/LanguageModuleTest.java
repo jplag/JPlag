@@ -255,9 +255,7 @@ public abstract class LanguageModuleTest {
             Token first = tokens.get(i);
             Token second = tokens.get(i + 1);
 
-            // TODO: check whether we should check for coulumn
-            if (first.getStartLine() > second
-                    .getStartLine() /* || first.getStartLine() == second.getStartLine() && first.getStartColumn() > second.getStartColumn() */) {
+            if (first.getStartLine() > second.getStartLine()) {
                 fail(String.format("Invalid token order. Token %s (%s:%s) comes after %s (%s:%s)", first.getType(), first.getStartLine(),
                         first.getStartColumn(), second.getType(), second.getStartLine(), second.getStartColumn()));
             }
