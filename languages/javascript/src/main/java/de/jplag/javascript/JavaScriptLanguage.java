@@ -1,5 +1,7 @@
 package de.jplag.javascript;
 
+import java.util.List;
+
 import org.kohsuke.MetaInfServices;
 
 import de.jplag.Language;
@@ -17,8 +19,8 @@ public class JavaScriptLanguage extends TypeScriptLanguage {
     }
 
     @Override
-    public String[] suffixes() {
-        return new String[] {".js"};
+    public List<String> fileExtensions() {
+        return List.of(".js");
     }
 
     @Override

@@ -89,6 +89,17 @@ const graphColors = {
   }),
   contentFillAlpha(alpha: number) {
     return `rgba(${graphRGB.red}, ${graphRGB.green}, ${graphRGB.blue}, ${alpha})`
+  },
+  highlightedLineRGB: computed(() => {
+    const isDarkMode = store().uiState.useDarkMode
+    return {
+      red: isDarkMode ? 100 : 20,
+      green: isDarkMode ? 200 : 50,
+      blue: 255
+    }
+  }),
+  highlightedLine(alpha: number) {
+    return `rgba(${this.highlightedLineRGB.value.red}, ${this.highlightedLineRGB.value.green}, ${this.highlightedLineRGB.value.blue}, ${alpha})`
   }
 }
 

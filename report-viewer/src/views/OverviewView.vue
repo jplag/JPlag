@@ -3,9 +3,10 @@
 -->
 <template>
   <div
-    class="grid grid-cols-1 grid-rows-[auto_800px_90vh] gap-5 md:grid-cols-2 md:grid-rows-[auto_1fr] md:overflow-hidden print:grid-cols-1 print:grid-rows-[auto_auto]"
+    ref="container"
+    class="grid grid-cols-1 grid-rows-[auto_800px_90vh] gap-y-5 md:grid-cols-[1fr_20px_1fr] md:grid-rows-[auto_1fr] md:overflow-hidden print:grid-cols-1 print:grid-rows-[auto_auto]"
   >
-    <Container class="col-start-1 row-start-1 md:col-end-3 md:row-end-2">
+    <Container class="col-start-1 row-start-1 md:col-end-4 md:row-end-2">
       <div class="flex flex-col gap-x-5 md:flex-row md:items-center">
         <h2>JPlag Report</h2>
         <ToolTipComponent v-if="runInformation.failedSubmissions.length > 0" direction="bottom">
@@ -90,15 +91,31 @@
       </div>
     </Container>
 
-    <Container class="col-start-1 row-start-2 flex flex-col overflow-hidden print:overflow-visible">
-      <h2>Distribution of Comparisons:</h2>
-      <DistributionDiagram :distributions="distributions" class="grow print:flex-none" />
-    </Container>
+    <TabbedContainer
+      :tabs="['Distribution', 'Boxplot']"
+      class="col-start-1 row-start-2 flex flex-col overflow-hidden print:overflow-visible"
+    >
+      <template #Distribution>
+        <DistributionDiagram
+          :distributions="distributions"
+          class="grow print:flex-none"
+          @click:upper-percentile="onBarClicked"
+        />
+      </template>
+      <template #Boxplot>
+        <BoxPlot :distributions="distributions" class="grow print:flex-none" />
+      </template>
+    </TabbedContainer>
+
+    <div ref="resizer" class="hidden w-5 cursor-col-resize md:col-start-2 md:row-start-2 md:flex">
+      <!-- Resizer -->
+    </div>
 
     <Container
-      class="col-start-1 row-start-3 flex overflow-hidden md:col-start-2 md:row-start-2 print:hidden"
+      class="col-start-1 row-start-3 flex overflow-hidden md:col-start-3 md:row-start-2 print:hidden"
     >
       <ComparisonsTable
+        ref="comparisonTable"
         :clusters="clusters"
         :top-comparisons="topComparisons"
         class="min-h-0 max-w-full flex-1 print:min-h-full print:grow"
@@ -115,7 +132,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, type PropType, onErrorCaptured } from 'vue'
+import { computed, type PropType, onErrorCaptured, type Ref, ref, nextTick, onMounted } from 'vue'
 import { redirectOnError, router } from '@/router'
 import DistributionDiagram from '@/components/distributionDiagram/DistributionDiagram.vue'
 import ComparisonsTable from '@/components/ComparisonsTable.vue'
@@ -130,6 +147,9 @@ import type { RunInformation } from '@/model/RunInformation'
 import type { DistributionMap } from '@/model/Distribution'
 import type { Cluster } from '@/model/Cluster'
 import InfoIcon from '@/components/InfoIcon.vue'
+import { Column, Direction } from '@/model/ui/ComparisonSorting'
+import BoxPlot from '@/components/distributionDiagram/BoxPlot.vue'
+import TabbedContainer from '@/components/TabbedContainer.vue'
 
 const props = defineProps({
   topComparisons: {
@@ -171,5 +191,81 @@ const missingComparisons = computed(
 onErrorCaptured((error) => {
   redirectOnError(error, 'Error displaying overview:\n')
   return false
+})
+
+const comparisonTable: Ref<typeof ComparisonsTable | null> = ref(null)
+function onBarClicked(upperPercentile: number) {
+  const adjustedPercentile = upperPercentile / 100
+  if (!comparisonTable.value) {
+    return
+  }
+  const metric = store().uiState.distributionChartConfig.metric
+  store().uiState.comparisonTableSorting = {
+    column: Column.getSortingFromMetric(metric),
+    direction: Direction.descending
+  }
+
+  // determine largest similarity value that is still in the bucket
+  let value = -1
+  for (const comparison of props.topComparisons) {
+    if (
+      comparison.similarities[metric] <= adjustedPercentile &&
+      comparison.similarities[metric] > value
+    ) {
+      value = comparison.similarities[metric]
+    }
+  }
+  // the number of elements in this metric that are larger than that value equal the index in the list sorted by that metric
+  let index = 0
+  for (const comparison of props.topComparisons) {
+    if (comparison.similarities[metric] > value) {
+      index++
+    }
+  }
+
+  // we scroll in the next tick so the table can adjust its sorting to the new metric
+  nextTick(() => {
+    comparisonTable.value?.scrollToItem(value < 0 ? undefined : index)
+  })
+}
+
+const isResizing = ref(false)
+const resizer = ref<HTMLDivElement | null>(null)
+const container = ref<HTMLDivElement | null>(null)
+onMounted(() => {
+  if (resizer.value) {
+    resizer.value.addEventListener('mousedown', (event) => {
+      isResizing.value = true
+      document.body.style.cursor = 'col-resize'
+      event.preventDefault()
+    })
+  }
+})
+document.addEventListener('mouseup', () => {
+  if (isResizing.value) {
+    isResizing.value = false
+    document.body.style.cursor = 'default'
+  }
+})
+const minWidthPercentage = 33 // Minimum width percentage for each column
+document.addEventListener('mousemove', (event) => {
+  if (isResizing.value && resizer.value && container.value) {
+    const containerRect = container.value.getBoundingClientRect()
+    const containerWidth = containerRect.width
+    const leftWidth = event.clientX - containerRect.left
+    const rightWidth = containerWidth - leftWidth - resizer.value.offsetWidth
+    let leftPercentage = (leftWidth / containerWidth) * 100
+    let rightPercentage = (rightWidth / containerWidth) * 100
+    if (leftPercentage < minWidthPercentage) {
+      leftPercentage = minWidthPercentage // Minimum width for left column
+      rightPercentage = 100 - leftPercentage
+    }
+    if (rightPercentage < minWidthPercentage) {
+      rightPercentage = minWidthPercentage // Minimum width for right column
+      leftPercentage = 100 - rightPercentage
+    }
+
+    container.value.style.gridTemplateColumns = `${leftPercentage}fr ${resizer.value.offsetWidth}px ${rightPercentage}fr`
+  }
 })
 </script>

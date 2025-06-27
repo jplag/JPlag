@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import type { ClusterListElement } from '@/model/ClusterListElement'
-import { Chart, registerables } from 'chart.js'
+import { Chart, registerables, type ChartEvent } from 'chart.js'
 import { ref, type PropType, type Ref, onMounted, computed, watch } from 'vue'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { EdgeLine, GraphController, GraphChart } from 'chartjs-chart-graph'
@@ -30,6 +30,10 @@ const props = defineProps({
   cluster: {
     type: Object as PropType<ClusterListElement>,
     required: true
+  },
+  highlightedEdge: {
+    type: Object as PropType<{ firstId: string; secondId: string } | null>,
+    default: null
   }
 })
 
@@ -60,6 +64,21 @@ const edges = computed(() => {
     })
   })
   return edges
+})
+
+const highlightedEdgeIndexes = computed(() => {
+  if (props.highlightedEdge == null) {
+    return null
+  }
+  const firstIndex = keys.value.indexOf(props.highlightedEdge.firstId)
+  const secondIndex = keys.value.indexOf(props.highlightedEdge.secondId)
+  if (firstIndex == -1 || secondIndex == -1) {
+    console.warn(
+      `Could not find index for ${props.highlightedEdge.firstId} or ${props.highlightedEdge.secondId}`
+    )
+    return null
+  }
+  return { firstIndex, secondIndex }
 })
 
 type HoverableEdge = {
@@ -226,9 +245,23 @@ function getEdgeDashStyle(firstIndex: number, secondIndex: number) {
 }
 
 function getEdgeColor(firstIndex: number, secondIndex: number) {
+  let isHighlightedRow = false
+  if (highlightedEdgeIndexes.value != null) {
+    if (
+      (highlightedEdgeIndexes.value.firstIndex == firstIndex &&
+        highlightedEdgeIndexes.value.secondIndex == secondIndex) ||
+      (highlightedEdgeIndexes.value.firstIndex == secondIndex &&
+        highlightedEdgeIndexes.value.secondIndex == firstIndex)
+    ) {
+      isHighlightedRow = true
+    }
+  }
   const similarity = getSimilarityFromKeyIndex(firstIndex, secondIndex)
   if (similarity == 0) {
     return graphColors.additionalLine.value
+  }
+  if (isHighlightedRow) {
+    return graphColors.highlightedLine(1)
   }
   return graphColors.contentFillAlpha(getEdgeAlphaFromKeyIndex(firstIndex, secondIndex))
 }
@@ -271,6 +304,40 @@ const xPadding = computed(() => {
 })
 
 const hoveredEdge: Ref<{ firstId: string; secondId: string } | null> = ref(null)
+
+const EdgeHoverPlugin = {
+  id: 'edgeTooltip',
+  afterEvent(
+    chart: Chart,
+    args: {
+      event: ChartEvent
+      replay: boolean
+      changed?: boolean
+      cancelable: false
+      inChartArea: boolean
+    }
+  ) {
+    const tooltip = chart.tooltip
+    if (!tooltip) {
+      return
+    }
+
+    if (hoveredEdge.value == null) {
+      tooltip.setActiveElements([], { x: 0, y: 0 })
+      return
+    }
+    const e = args.event
+    tooltip.setActiveElements(
+      [
+        { datasetIndex: 0, index: keys.value.indexOf(hoveredEdge.value.firstId) },
+        { datasetIndex: 0, index: keys.value.indexOf(hoveredEdge.value.secondId) }
+      ],
+      { x: e.x ?? 0, y: e.y ?? 0 }
+    )
+    //tooltip.update(true)
+    //tooltip.draw(chart.ctx)
+  }
+}
 
 const graphOptions = computed(() => {
   return {
@@ -344,7 +411,24 @@ const graphOptions = computed(() => {
         displayColors: false,
         callbacks: {
           title: () => {
+            if (hoveredEdge.value == null) {
+              return ''
+            }
+            return hoveredEdge.value.firstId + ' — ' + hoveredEdge.value.secondId
+          },
+          label: () => {
             return ''
+          },
+          beforeBody: () => {
+            if (hoveredEdge.value == null) {
+              return ''
+            }
+            const avgSimilarity =
+              getSimilarityFromKeyIndex(
+                keys.value.indexOf(hoveredEdge.value.firstId),
+                keys.value.indexOf(hoveredEdge.value.secondId)
+              ) * 100
+            return `Average similarity: ${avgSimilarity.toFixed(2)}%`
           }
         }
       }
@@ -372,6 +456,7 @@ function drawGraph() {
     data: graphData.value,
     options: graphOptions.value,
     plugins: [
+      EdgeHoverPlugin,
       {
         id: 'onMouseOut',
         beforeEvent(chart, args) {
@@ -417,6 +502,13 @@ watch(
       o: graphOptions.value
     }
   }),
+  () => {
+    drawGraph()
+  }
+)
+
+watch(
+  () => props.highlightedEdge,
   () => {
     drawGraph()
   }

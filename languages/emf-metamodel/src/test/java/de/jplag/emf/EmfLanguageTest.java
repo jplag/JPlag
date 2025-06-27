@@ -36,7 +36,7 @@ public class EmfLanguageTest extends LanguageModuleTest {
 
     @AfterEach
     protected void tearDown() {
-        FileUtil.clearFiles(getTestFileLocation(), EmfLanguage.VIEW_FILE_SUFFIX); // clean up the view files.
+        FileUtil.clearFiles(getTestFileLocation(), EmfLanguage.VIEW_FILE_EXTENSION); // clean up the view files.
     }
 
 }
