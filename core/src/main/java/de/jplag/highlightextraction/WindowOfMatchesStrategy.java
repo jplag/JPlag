@@ -21,10 +21,10 @@ public class WindowOfMatchesStrategy implements FrequencyStrategy {
      * @param strategyNumber The length of the considered token window.
      */
     @Override
-    public void addMatchToFrequencyMap(List<TokenType> matchTokenTypes, Map<List<TokenType>, Integer> frequencyMap, int strategyNumber) {
+    public void addMatchToFrequencyMap(List<TokenType> matchTokenTypes, Map<Integer, Integer> frequencyMap, int strategyNumber) {
         List<List<TokenType>> windowSequences = getWindowSequences(matchTokenTypes, strategyNumber);
         for (List<TokenType> windowSequence : windowSequences) {
-            frequencyMap.put(windowSequence, frequencyMap.getOrDefault(windowSequence, 0) + 1);
+            frequencyMap.put(windowSequence.hashCode(), frequencyMap.getOrDefault(windowSequence.hashCode(), 0) + 1);
         }
     }
 

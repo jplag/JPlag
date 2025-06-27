@@ -38,7 +38,7 @@ class StrategyIntegrationTest extends TestBase {
         FrequencyStrategy strategy = new CompleteMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 1);
         fd.buildFrequencyMap(result.getAllComparisons());
-        Map<List<TokenType>, Integer> tokenFrequencyMap = fd.getMatchFrequencyMap();
+        Map<Integer,Integer> tokenFrequencyMap = fd.getMatchFrequencyMap();
         assertFalse(tokenFrequencyMap.isEmpty(), "Map should not be empty");
         printTestResult(tokenFrequencyMap);
     }
@@ -49,7 +49,7 @@ class StrategyIntegrationTest extends TestBase {
         FrequencyStrategy strategy = new ContainedMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 300);
         fd.buildFrequencyMap(result.getAllComparisons());
-        Map<List<TokenType>, Integer> tokenFrequencyMap = fd.getMatchFrequencyMap();
+        Map<Integer,Integer> tokenFrequencyMap = fd.getMatchFrequencyMap();
         assertFalse(tokenFrequencyMap.isEmpty(), "Map should not be empty");
         printTestResult(tokenFrequencyMap);
     }
@@ -60,7 +60,7 @@ class StrategyIntegrationTest extends TestBase {
         FrequencyStrategy strategy = new SubMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 300);
         fd.buildFrequencyMap(result.getAllComparisons());
-        Map<List<TokenType>, Integer> tokenFrequencyMap = fd.getMatchFrequencyMap();
+        Map<Integer,Integer> tokenFrequencyMap = fd.getMatchFrequencyMap();
         assertFalse(tokenFrequencyMap.isEmpty(), "Map should not be empty");
         printTestResult(tokenFrequencyMap);
     }
@@ -71,17 +71,17 @@ class StrategyIntegrationTest extends TestBase {
         FrequencyStrategy strategy = new WindowOfMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 300);
         fd.buildFrequencyMap(result.getAllComparisons());
-        Map<List<TokenType>, Integer> tokenFrequencyMap = fd.getMatchFrequencyMap();
+        Map<Integer,Integer> tokenFrequencyMap = fd.getMatchFrequencyMap();
         assertFalse(tokenFrequencyMap.isEmpty(), "Map should not be empty");
         printTestResult(tokenFrequencyMap);
     }
 
-    void printTestResult(Map<List<TokenType>, Integer> tokenFrequencyMap) {
+    void printTestResult(Map<Integer,Integer> tokenFrequencyMap) {
         StringBuilder logBuilder = new StringBuilder();
         logBuilder.append("\nToken-String                       | Len | Frequency | Histogram\n");
         logBuilder.append("---------------------------------------------------------------\n");
 
-        for (Map.Entry<List<TokenType>, Integer> entry : tokenFrequencyMap.entrySet()) {
+        for (Map.Entry<Integer, Integer> entry : tokenFrequencyMap.entrySet()) {
             String key = entry.getKey().toString();
             int count = entry.getValue();
             int length = key.trim().isEmpty() ? 0 : key.trim().split("\\s+").length;

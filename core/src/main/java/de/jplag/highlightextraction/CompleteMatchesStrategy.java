@@ -11,13 +11,13 @@ import de.jplag.TokenType;
 
 public class CompleteMatchesStrategy implements FrequencyStrategy {
     /**
-     * Calculates the frequency of all matches and adds them to the map.
-     * @param matchTokenTypes List of tokens representing the match.
+     * Adds the frequency of the Match to the map.
+     * @param matchTokenTypes List of tokensTypes representing the match.
      * @param frequencyMap Map that associates token subsequences with how often they occur across comparisons.
      * @param strategyNumber The minimum sub length considered in other strategies.
      */
     @Override
-    public void addMatchToFrequencyMap(List<TokenType> matchTokenTypes, Map<List<TokenType>, Integer> frequencyMap, int strategyNumber) {
-        frequencyMap.put(matchTokenTypes, frequencyMap.getOrDefault(matchTokenTypes, 0) + 1);
+    public void addMatchToFrequencyMap(List<TokenType> matchTokenTypes, Map<Integer, Integer> frequencyMap, int strategyNumber) {
+        frequencyMap.put(matchTokenTypes.hashCode(), frequencyMap.getOrDefault(matchTokenTypes.hashCode(), 0) + 1);
     }
 }

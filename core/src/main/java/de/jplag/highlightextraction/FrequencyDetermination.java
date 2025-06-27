@@ -11,7 +11,7 @@ import de.jplag.*;
  * Calculates frequencies of match subsequences across all comparisons according to different strategies.
  */
 public class FrequencyDetermination {
-    private final Map<List<TokenType>, Integer> matchFrequencyMap = new HashMap<>();
+    private final Map<Integer, Integer> matchFrequencyMap = new HashMap<>();
     private final FrequencyStrategy frequencyStrategy;
     private final int strategyNumber;
 
@@ -30,7 +30,7 @@ public class FrequencyDetermination {
      * @param comparisons contains information of matches between two submissions.
      * @return Map containing (sub-)matches and their frequency according to the strategy.
      */
-    public Map<List<TokenType>, Integer> buildFrequencyMap(List<JPlagComparison> comparisons) {
+    public Map<Integer, Integer> buildFrequencyMap(List<JPlagComparison> comparisons) {
         for (JPlagComparison comparison : comparisons) {
             Submission leftSubmission = comparison.firstSubmission();
             List<Token> submissionTokens = leftSubmission.getTokenList();
@@ -58,7 +58,7 @@ public class FrequencyDetermination {
     /**
      * @return Map containing (sub-)matches and their frequency according to the strategy.
      */
-    public Map<List<TokenType>, Integer> getMatchFrequencyMap() {
+    public Map<Integer, Integer> getMatchFrequencyMap() {
         return matchFrequencyMap;
     }
 }

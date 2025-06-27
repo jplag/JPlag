@@ -20,10 +20,10 @@ public class SubMatchesStrategy implements FrequencyStrategy {
      * @param strategyNumber Minimum length of the considered submatches.
      */
     @Override
-    public void addMatchToFrequencyMap(List<TokenType> matchTokenTypes, Map<List<TokenType>, Integer> frequencyMap, int strategyNumber) {
+    public void addMatchToFrequencyMap(List<TokenType> matchTokenTypes, Map<Integer, Integer> frequencyMap, int strategyNumber) {
         List<List<TokenType>> subSequences = getSubSequences(matchTokenTypes, strategyNumber);
         for (List<TokenType> subSequence : subSequences) {
-            frequencyMap.put(subSequence, frequencyMap.getOrDefault(subSequence, 0) + 1);
+            frequencyMap.put(subSequence.hashCode(), frequencyMap.getOrDefault(subSequence.hashCode(), 0) + 1);
         }
 
     }

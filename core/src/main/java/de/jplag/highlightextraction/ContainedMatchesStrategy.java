@@ -20,13 +20,13 @@ public class ContainedMatchesStrategy implements FrequencyStrategy {
      * @param strategyNumber Minimum length of the considered submatches.
      */
     @Override
-    public void addMatchToFrequencyMap(List<TokenType> matchTokenTypes, Map<List<TokenType>, Integer> frequencyMap, int strategyNumber) {
+    public void addMatchToFrequencyMap(List<TokenType> matchTokenTypes, Map<Integer, Integer> frequencyMap, int strategyNumber) {
         List<List<TokenType>> subSequences = getSubSequences(matchTokenTypes, strategyNumber);
         for (List<TokenType> subSequence : subSequences) {
-            frequencyMap.putIfAbsent(subSequence, 0);
+            frequencyMap.putIfAbsent(subSequence.hashCode(), 0);
         }
         if (matchTokenTypes.size() >= strategyNumber) {
-            frequencyMap.put(matchTokenTypes, frequencyMap.getOrDefault(matchTokenTypes, 0) + 1);
+            frequencyMap.put(matchTokenTypes.hashCode(), frequencyMap.getOrDefault(matchTokenTypes.hashCode(), 0) + 1);
         }
     }
 
