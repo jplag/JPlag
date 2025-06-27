@@ -3,6 +3,7 @@
     :title="title"
     :labels="labels"
     :default-selected="metrics.indexOf(defaultSelected)"
+    :max-tool-tip-width="maxToolTipWidth"
     @selection-changed="(i) => $emit('selectionChanged', metrics[i])"
   />
 </template>
@@ -28,6 +29,11 @@ const props = defineProps({
     type: String as PropType<MetricJsonIdentifier>,
     required: false,
     default: MetricTypes.AVERAGE_SIMILARITY
+  },
+  maxToolTipWidth: {
+    type: Number,
+    required: false,
+    default: -1
   }
 })
 

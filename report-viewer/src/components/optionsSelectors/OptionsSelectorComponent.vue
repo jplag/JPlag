@@ -25,7 +25,7 @@
         </template>
 
         <template #tooltip>
-          <p class="text-sm whitespace-pre">
+          <p class="text-sm whitespace-pre-wrap" :style="tooltipStyle">
             {{ (label as ToolTipLabel).tooltip }}
           </p>
         </template>
@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import ToolTipComponent from '../ToolTipComponent.vue'
 import OptionComponent from './OptionComponent.vue'
 import { type ToolTipLabel } from '@/model/ui/ToolTip'
@@ -60,6 +60,11 @@ const props = defineProps({
     type: Number,
     required: false,
     default: 0
+  },
+  maxToolTipWidth: {
+    type: Number,
+    required: false,
+    default: -1
   }
 })
 
@@ -77,6 +82,10 @@ function select(index: number) {
   emit('selectionChanged', index)
   selected.value = index
 }
+
+const tooltipStyle = computed(() => {
+  return props.maxToolTipWidth > 0 ? { maxWidth: `${props.maxToolTipWidth}px` } : {}
+})
 
 defineExpose({
   select
