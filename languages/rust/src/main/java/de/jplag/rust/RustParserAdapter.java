@@ -71,7 +71,7 @@ public class RustParserAdapter extends AbstractParser {
      * @param length the length of the Token
      */
     /* package-private */ void addToken(RustTokenType type, int line, int start, int length) {
-        // TODO: adaümt
+        // This does not cover multiline tokens. That will be solved when moving this module to the antlr wrapper
         tokens.add(new Token(type, currentFile, line, start, line, start + length, length));
 
     }

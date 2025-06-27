@@ -34,6 +34,7 @@ public class Token {
      * @param line is the line index in the source code where the token resides. Index is 1-based.
      * @param column is the column index, meaning where the token starts in the line. Index is 1-based.
      * @param length is the length of the token in the source code.
+     * @deprecated Replaced by constructor that takes explicit end position
      */
     @Deprecated(since = "6.2.0", forRemoval = true)
     public Token(TokenType type, File file, int line, int column, int length) {
@@ -52,6 +53,16 @@ public class Token {
         this.length = length;
     }
 
+    /**
+     * Creates a token with a start and end position.
+     * @param type is the token type.
+     * @param file is the name of the source code file.
+     * @param startLine is the line index in the source code where the token starts. Index is 1-based.
+     * @param startColumn is the column index, meaning where the token starts in the line. Index is 1-based.
+     * @param endLine is the line index in the source code where the token ends. Index is 1-based.
+     * @param endColumn is the column index, meaning where the token ends in the line. Index is 1-based.
+     * @param length is the length of the token in the source code.
+     */
     public Token(TokenType type, File file, int startLine, int startColumn, int endLine, int endColumn, int length) {
         if (startLine == 0 || endLine == 0) {
             logger.warn("Creating a token with line index 0 while index is 1-based");
@@ -72,18 +83,17 @@ public class Token {
     }
 
     /**
-     * Creates a token with column and length information.
+     * Creates a token from column and length information.
      * @param type is the token type.
      * @param file is the name of the source code file.
      * @param trace is the tracing information of the token, meaning line, column, and length.
      */
     public Token(TokenType type, File file, TokenTrace trace) {
-        // TODO: adapt
         this(type, file, trace.line(), trace.column(), trace.line(), trace.column() + trace.length(), trace.length());
     }
 
     /**
-     * Creates a token with column, length and semantic information.
+     * Creates a token with a start and end position and semantic information.
      * @param type is the token type.
      * @param file is the name of the source code file.
      * @param startLine is the line index in the source code where the token starts. Index is 1-based.
@@ -151,6 +161,7 @@ public class Token {
     /**
      * Returns the character index which denotes where the code sections represented by this token starts in the line.
      * @return the character index in the line.
+     * @deprecated see {@link Token#startColumn}
      */
     @Deprecated(since = "6.2.0", forRemoval = true)
     public int getColumn() {
@@ -167,6 +178,7 @@ public class Token {
     /**
      * Gives the length if the code sections represented by this token.
      * @return the length in characters.
+     * @deprecated The length does not include line breaks and should not be used to calculate the end position of a token
      */
     @Deprecated(since = "6.2.0", forRemoval = true)
     public int getLength() {
@@ -176,6 +188,7 @@ public class Token {
     /**
      * Gives the line index denoting in which line the code sections represented by this token starts.
      * @return the line index.
+     * @deprecated see {@link Token#startLine}
      */
     @Deprecated(since = "6.2.0", forRemoval = true)
     public int getLine() {

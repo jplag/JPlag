@@ -34,7 +34,6 @@ public class ScxmlToken extends Token {
      * @param element the corresponding StatechartElement this token was extracted from
      */
     public ScxmlToken(TokenType type, File file, int line, int column, int length, StatechartElement element) {
-        // TODO: adapt
         super(type, file, line, column, line, column + length, length);
         this.element = element;
     }
