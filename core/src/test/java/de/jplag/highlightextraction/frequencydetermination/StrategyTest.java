@@ -18,41 +18,81 @@ import de.jplag.exceptions.ExitException;
 import de.jplag.highlightextraction.*;
 import de.jplag.options.JPlagOptions;
 
-class StrategyCreateAndCheckTest extends TestBase {
-    private static final Logger logger = LoggerFactory.getLogger(StrategyCreateAndCheckTest.class);
-    private static final StrategyIntegrationTest t = new StrategyIntegrationTest();
+/**
+ * Test class to validate the FrequencyStrategies and their usage. As the examples use testCode from "PartialPlagiarism"
+ * sample-folder and some fictional data.
+ */
+class StrategyTest extends TestBase {
+    private static final Logger logger = LoggerFactory.getLogger(StrategyTest.class);
+    private static final StrategyIntegrationTest strategyIntegrationTest = new StrategyIntegrationTest();
     private static Submission testSubmission;
     private static Match testMatchAOnTimeInComparisons;
     private static Match testMatchBTwoTimesInOneComparison;
     private static Match testMatchCTwoTimesInDifferentComparisons;
     private static Match testMatchDThreeTimesInDifferentComparisons;
     private static Match testMatchShort;
-
     List<Match> testMatches1 = new LinkedList<>();
     List<Match> testMatches2 = new LinkedList<>();
     List<Match> testMatches3 = new LinkedList<>();
     List<Match> testMatches4 = new LinkedList<>();
-    List<JPlagComparison> comparisons = new LinkedList<>();
+    static List<Match> ignoredMatches = new LinkedList<>();
+    List<JPlagComparison> testComparisons = new LinkedList<>();
 
+    /**
+     * @throws ExitException getJPlagResult can throw such an Exception
+     */
     @BeforeEach
-    void prepareMatchResult() throws ExitException {
+    public void prepareMatchResult() throws ExitException {
         JPlagOptions options = getDefaultOptions("PartialPlagiarism");
+        JPlagResult result = getJPlagResult(options);
+
+        JPlagComparison testComparison = result.getAllComparisons().getFirst();
+        buildTestMatches(testComparison);
+        buildTestComparisons(getTestSubmissions(options));
+
+        logger.info("Comparisons: {}", testComparisons);
+    }
+
+    /**
+     * @param options JPlag options used in this test
+     * @return JPlag result
+     * @throws ExitException submission set builder can throw this exception
+     */
+    private JPlagResult getJPlagResult(JPlagOptions options) throws ExitException {
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
-        LongestCommonSubsequenceSearch strategy = new LongestCommonSubsequenceSearch(options);
-        JPlagResult result = strategy.compareSubmissions(submissionSet);
+        LongestCommonSubsequenceSearch subsequenceSearch = new LongestCommonSubsequenceSearch(options);
+        return subsequenceSearch.compareSubmissions(submissionSet);
+    }
 
-        // Build test data
-        JPlagComparison comparisonForTestData = result.getAllComparisons().getFirst();
-        testSubmission = comparisonForTestData.firstSubmission();
-        testMatchAOnTimeInComparisons = comparisonForTestData.matches().get(0);
-        testMatchShort = new Match(comparisonForTestData.matches().get(0).startOfFirst(), comparisonForTestData.matches().get(0).startOfSecond(), 12,
-                12);
-        testMatchBTwoTimesInOneComparison = comparisonForTestData.matches().get(1);
-        testMatchCTwoTimesInDifferentComparisons = comparisonForTestData.matches().get(2);
-        testMatchDThreeTimesInDifferentComparisons = comparisonForTestData.matches().get(3);
+    /**
+     * @param testComparison first Comparison from the Test classes here used to get test matches
+     */
+    private static void buildTestMatches(JPlagComparison testComparison) {
+        testSubmission = testComparison.firstSubmission();
+        testMatchAOnTimeInComparisons = testComparison.matches().get(0);
+        testMatchBTwoTimesInOneComparison = testComparison.matches().get(1);
+        testMatchCTwoTimesInDifferentComparisons = testComparison.matches().get(2);
+        testMatchDThreeTimesInDifferentComparisons = testComparison.matches().get(3);
+        testMatchShort = new Match(testComparison.matches().get(0).startOfFirst(), testComparison.matches().get(0).startOfSecond(), 12, 12);
+        ignoredMatches = testComparison.ignoredMatches();
+    }
 
-        // renameSubmission
+    /**
+     * @param testSubmissionW name of a new Submission to Identify the testSubmissions
+     * @param testSubmissionX name of a new Submission to Identify the testSubmissions
+     * @param testSubmissionY name of a new Submission to Identify the testSubmissions
+     * @param testSubmissionZ name of a new Submission to Identify the testSubmissions
+     */
+    private record getTestSubmissions(Submission testSubmissionW, Submission testSubmissionX, Submission testSubmissionY,
+            Submission testSubmissionZ) {
+    }
+
+    /**
+     * @param options the JPlag options for the test, to get the language
+     * @return multiple submissions with the same data but different names for testing
+     */
+    private static getTestSubmissions getTestSubmissions(JPlagOptions options) {
         Submission testSubmissionW = new Submission("W", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(),
                 options.language());
         Submission testSubmissionX = new Submission("X", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(),
@@ -66,34 +106,56 @@ class StrategyCreateAndCheckTest extends TestBase {
         testSubmissionX.setTokenList(testSubmission.getTokenList());
         testSubmissionY.setTokenList(testSubmission.getTokenList());
         testSubmissionZ.setTokenList(testSubmission.getTokenList());
+        return new getTestSubmissions(testSubmissionW, testSubmissionX, testSubmissionY, testSubmissionZ);
+    }
 
-        // buildTestComparisons
+    /**
+     * @param testSubmissions multiple submissions with the same data but different names for testing
+     */
+    private void buildTestComparisons(getTestSubmissions testSubmissions) {
         testMatches1.add(testMatchAOnTimeInComparisons);
         testMatches1.add(testMatchCTwoTimesInDifferentComparisons);
-        JPlagComparison testComparison1 = new JPlagComparison(testSubmissionW, testSubmissionX, testMatches1, comparisonForTestData.ignoredMatches());
+        JPlagComparison testComparison1 = new JPlagComparison(testSubmissions.testSubmissionW(), testSubmissions.testSubmissionX(), testMatches1,
+                ignoredMatches);
 
         testMatches2.add(testMatchCTwoTimesInDifferentComparisons);
         testMatches2.add(testMatchDThreeTimesInDifferentComparisons);
-        JPlagComparison testComparison2 = new JPlagComparison(testSubmissionX, testSubmissionY, testMatches2, comparisonForTestData.ignoredMatches());
+        JPlagComparison testComparison2 = new JPlagComparison(testSubmissions.testSubmissionX(), testSubmissions.testSubmissionY(), testMatches2,
+                ignoredMatches);
 
         testMatches3.add(testMatchDThreeTimesInDifferentComparisons);
-        JPlagComparison testComparison3 = new JPlagComparison(testSubmissionY, testSubmissionZ, testMatches3, comparisonForTestData.ignoredMatches());
+        JPlagComparison testComparison3 = new JPlagComparison(testSubmissions.testSubmissionY(), testSubmissions.testSubmissionZ(), testMatches3,
+                ignoredMatches);
 
         testMatches4.add(testMatchDThreeTimesInDifferentComparisons);
         testMatches4.add(testMatchBTwoTimesInOneComparison);
         testMatches4.add(testMatchBTwoTimesInOneComparison);
-        JPlagComparison testComparison4 = new JPlagComparison(testSubmissionZ, testSubmissionW, testMatches4, comparisonForTestData.ignoredMatches());
+        JPlagComparison testComparison4 = new JPlagComparison(testSubmissions.testSubmissionZ(), testSubmissions.testSubmissionW(), testMatches4,
+                ignoredMatches);
 
-        comparisons.add(testComparison1);
-        comparisons.add(testComparison2);
-        comparisons.add(testComparison3);
-        comparisons.add(testComparison4);
-
-        logger.info("Comparisons: {}", comparisons);
+        testComparisons.add(testComparison1);
+        testComparisons.add(testComparison2);
+        testComparisons.add(testComparison3);
+        testComparisons.add(testComparison4);
     }
 
-    // Test Compleate match strategy
-    private void assertTokenFrequencyContainsMatch(Match match, int expectedFrequency, Map<Integer,Integer> tokenFrequencyMap) {
+    @Test
+    @DisplayName("Test Complete Matches Strategy")
+    void testCompleteMatchesStrategy() {
+        FrequencyStrategy strategy = new CompleteMatchesStrategy();
+        FrequencyDetermination frequencyDetermination = new FrequencyDetermination(strategy, 9);
+        frequencyDetermination.buildFrequencyMap(testComparisons);
+        Map<Integer, Integer> tokenFrequencyMap = frequencyDetermination.getMatchFrequencyMap();
+        strategyIntegrationTest.printTestResult(tokenFrequencyMap);
+
+        assertTokenFrequencyContainsMatch(testMatchAOnTimeInComparisons, 1, tokenFrequencyMap);
+        assertTokenFrequencyContainsMatch(testMatchBTwoTimesInOneComparison, 2, tokenFrequencyMap);
+        assertTokenFrequencyContainsMatch(testMatchCTwoTimesInDifferentComparisons, 2, tokenFrequencyMap);
+        assertTokenFrequencyContainsMatch(testMatchDThreeTimesInDifferentComparisons, 3, tokenFrequencyMap);
+    }
+
+    // Test Complete match strategy
+    private void assertTokenFrequencyContainsMatch(Match match, int expectedFrequency, Map<Integer, Integer> tokenFrequencyMap) {
         int start = match.startOfFirst();
         int length = match.lengthOfFirst();
         List<TokenType> tokenNames = new LinkedList<>();
@@ -110,28 +172,13 @@ class StrategyCreateAndCheckTest extends TestBase {
                 "Match key [" + tokenNames + "] expected in " + expectedFrequency + " comparisons, but was in: " + submissionsContainingMatch);
     }
 
-    @Test
-    @DisplayName("Test Complete Matches Strategy")
-    void testCompleteMatchesStrategy() {
-        FrequencyStrategy strategy = new CompleteMatchesStrategy();
-        FrequencyDetermination fd = new FrequencyDetermination(strategy, 9);
-        fd.buildFrequencyMap(comparisons);
-        Map<Integer,Integer> tokenFrequencyMap = fd.getMatchFrequencyMap();
-        t.printTestResult(tokenFrequencyMap);
-
-        assertTokenFrequencyContainsMatch(testMatchAOnTimeInComparisons, 1, tokenFrequencyMap);
-        assertTokenFrequencyContainsMatch(testMatchBTwoTimesInOneComparison, 2, tokenFrequencyMap);
-        assertTokenFrequencyContainsMatch(testMatchCTwoTimesInDifferentComparisons, 2, tokenFrequencyMap);
-        assertTokenFrequencyContainsMatch(testMatchDThreeTimesInDifferentComparisons, 3, tokenFrequencyMap);
-    }
-
     // Test Window Strategie
     @Test
     @DisplayName("Test WindowOfMatchesStrategy Create")
     void testWindowOfMatchesStrategyCreateTest() {
         int windowSize = 10;
         FrequencyStrategy strategy = new WindowOfMatchesStrategy();
-        Map<Integer,Integer> frequencyMap = new HashMap<>();
+        Map<Integer, Integer> frequencyMap = new HashMap<>();
         Match match = testMatchAOnTimeInComparisons;
         List<Token> tokens = testSubmission.getTokenList().subList(match.startOfFirst(), match.startOfFirst() + match.lengthOfFirst());
         List<TokenType> tokenStrings = new ArrayList<>();
@@ -160,7 +207,7 @@ class StrategyCreateAndCheckTest extends TestBase {
     void testCheckWindowOfMatchesStrategy() {
         // Build
         FrequencyStrategy strategy = new WindowOfMatchesStrategy();
-        Map<Integer,Integer> windowMap = new HashMap<>();
+        Map<Integer, Integer> windowMap = new HashMap<>();
         int windowSize = 5;
 
         List<Token> tokensListInTestMatch = testSubmission.getTokenList().subList(testMatchShort.startOfFirst(),
@@ -217,7 +264,7 @@ class StrategyCreateAndCheckTest extends TestBase {
     void testSubmatchesStrategy() {
         // Create
         SubMatchesStrategy strategy = new SubMatchesStrategy();
-        Map<Integer,Integer> frequencyMap = new HashMap<>();
+        Map<Integer, Integer> frequencyMap = new HashMap<>();
 
         List<Token> tokensListInTestMatch = testSubmission.getTokenList().subList(testMatchShort.startOfFirst(), testMatchShort.startOfFirst() + 5);
         List<TokenType> tokenListTestMatchReadable = tokensListInTestMatch.stream().map(Token::getType).toList();
@@ -261,17 +308,17 @@ class StrategyCreateAndCheckTest extends TestBase {
         int strategynumber = 100;
         FrequencyStrategy strategy = new ContainedMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, strategynumber);
-        fd.buildFrequencyMap(comparisons);
-        Map<Integer,Integer> tokenFrequencyMap = fd.getMatchFrequencyMap();
+        fd.buildFrequencyMap(testComparisons);
+        Map<Integer, Integer> tokenFrequencyMap = fd.getMatchFrequencyMap();
 
-//        for (Integer key : tokenFrequencyMap.keySet()) {
-//            assertTrue(key..size() >= strategynumber, "!should not exist: " + key.size());
-//        }
+        // for (Integer key : tokenFrequencyMap.keySet()) {
+        // assertTrue(key..size() >= strategynumber, "!should not exist: " + key.size());
+        // }
 
         List<List<TokenType>> expectedKeysWithValues = new LinkedList<>();
         List<List<TokenType>> keysWithFrequency = new ArrayList<>();
         List<Integer> frequencyOfKeys = new ArrayList<>();
-        for (JPlagComparison comparison : comparisons) {
+        for (JPlagComparison comparison : testComparisons) {
             for (Match match : comparison.matches()) {
                 List<Token> keyToken = testSubmission.getTokenList();
                 List<TokenType> keyNames = keyToken.stream().map(Token::getType).toList();
@@ -302,15 +349,15 @@ class StrategyCreateAndCheckTest extends TestBase {
             }
         }
 
-//        for (Integer key : tokenFrequencyMap.keySet()) {
-//            int size = key.toStrisize();
-//            if (size >= strategynumber) {
-//                if (expectedKeysWithValues.contains(key)) {
-//                    break;
-//                }
-//                assertTrue(tokenFrequencyMap.get(key) == 0, "Should have count 0 " + key);
-//            }
+        // for (Integer key : tokenFrequencyMap.keySet()) {
+        // int size = key.toStrisize();
+        // if (size >= strategynumber) {
+        // if (expectedKeysWithValues.contains(key)) {
+        // break;
+        // }
+        // assertTrue(tokenFrequencyMap.get(key) == 0, "Should have count 0 " + key);
+        // }
 
-        //   }
+        // }
     }
 }

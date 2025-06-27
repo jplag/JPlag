@@ -6,16 +6,20 @@ import java.util.List;
 
 import de.jplag.TokenType;
 
+/**
+ * Utility class that contains the methods that are used by more than one Strategy.
+ */
 public final class SubSequenceUtil {
     private SubSequenceUtil() {
         // private constructor to prevent instantiation
     }
 
     /**
-     * Calculates all possible Sublists with min minSubSequenceSize length of the Match matchTokenTypes
-     * @param matchTokenTypes matchTokenTypes Of the Match
-     * @param minSubSequenceSize minimum considered minSubSequenceSize of the Sublist
-     * @return List of all as considered Sublists
+     * Calculates all possible sublists with min minSubSequenceSize length of the match matchTokenTypes.
+     * @param matchTokenTypes is a List of the match TokenTypes to create the SubSequences used for the SubSequenceStrategy
+     * and ContainedStrategy.
+     * @param minSubSequenceSize is the minimum considered size of the sub-Sequence-List.
+     * @return List of all as considered subSequences.
      */
     public static List<List<TokenType>> getSubSequences(List<TokenType> matchTokenTypes, int minSubSequenceSize) {
         List<List<TokenType>> subSequences = new LinkedList<>();

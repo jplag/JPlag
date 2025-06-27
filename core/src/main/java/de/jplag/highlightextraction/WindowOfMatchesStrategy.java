@@ -11,7 +11,6 @@ import de.jplag.TokenType;
  * Strategy that uses a fixed window size to create submatches of a match sequence in a comparison and calculates the
  * frequencies over all submissions.
  */
-
 public class WindowOfMatchesStrategy implements FrequencyStrategy {
 
     /**
@@ -29,10 +28,10 @@ public class WindowOfMatchesStrategy implements FrequencyStrategy {
     }
 
     /**
-     * Calculates all possible Sublists with length of windowSize
-     * @param matchTokenTypes tokens Of the Match
-     * @param windowSize considered windowSize of the Sublists
-     * @return List of all as considered Sublists
+     * Calculates all possible Sublists with length of windowSize.
+     * @param matchTokenTypes tokens of the Match.
+     * @param windowSize considered size of the sublists.
+     * @return List of all as considered sublists.
      */
     public static List<List<TokenType>> getWindowSequences(List<TokenType> matchTokenTypes, int windowSize) {
         List<List<TokenType>> windowSequences = new LinkedList<>();

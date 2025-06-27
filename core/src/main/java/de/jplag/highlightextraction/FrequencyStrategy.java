@@ -9,7 +9,6 @@ import de.jplag.TokenType;
  * Interface for different frequency calculation strategies. Implementations define how submatches are considered in the
  * frequency calculation of matches.
  */
-
 public interface FrequencyStrategy {
     /**
      * Fills the frequencyMap with token subsequences and their frequencies according to the implemented strategy.

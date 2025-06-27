@@ -28,9 +28,8 @@ public class FrequencyDetermination {
     /**
      * Applies the "create" and "check" methods of the frequency strategy.
      * @param comparisons contains information of matches between two submissions.
-     * @return Map containing (sub-)matches and their frequency according to the strategy.
      */
-    public Map<Integer, Integer> buildFrequencyMap(List<JPlagComparison> comparisons) {
+    public void buildFrequencyMap(List<JPlagComparison> comparisons) {
         for (JPlagComparison comparison : comparisons) {
             Submission leftSubmission = comparison.firstSubmission();
             List<Token> submissionTokens = leftSubmission.getTokenList();
@@ -40,19 +39,15 @@ public class FrequencyDetermination {
             }
 
             for (Match match : comparison.matches()) {
-                int start = match.startOfFirst();
-                int len = match.lengthOfFirst();
-                if (start + len > submissionTokenTypes.size())
+                int startIndexOfMatch = match.startOfFirst();
+                int lengthOfMatch = match.lengthOfFirst();
+                if (startIndexOfMatch + lengthOfMatch > submissionTokenTypes.size()) {
                     continue;
-
-                List<TokenType> matchTokenTypes = new ArrayList<>();
-                for (int i = start; i < start + len; i++) {
-                    matchTokenTypes.add(submissionTokenTypes.get(i));
                 }
+                List<TokenType> matchTokenTypes = submissionTokenTypes.subList(startIndexOfMatch, startIndexOfMatch + lengthOfMatch);
                 frequencyStrategy.addMatchToFrequencyMap(matchTokenTypes, matchFrequencyMap, strategyNumber);
             }
         }
-        return matchFrequencyMap;
     }
 
     /**

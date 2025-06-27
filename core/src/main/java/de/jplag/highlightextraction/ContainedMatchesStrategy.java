@@ -11,7 +11,6 @@ import de.jplag.TokenType;
  * Strategy that uses submatches from the comparisons and calculates the frequency of their appearance in matches across
  * all submissions.
  */
-
 public class ContainedMatchesStrategy implements FrequencyStrategy {
     /**
      * Adds all submatches with min size length of the matches to a map using the token sequence as the key.

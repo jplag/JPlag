@@ -8,7 +8,6 @@ import de.jplag.TokenType;
 /**
  * Strategy that calculates the frequencies of matches over all submissions.
  */
-
 public class CompleteMatchesStrategy implements FrequencyStrategy {
     /**
      * Adds the frequency of the Match to the map.
