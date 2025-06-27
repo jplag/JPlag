@@ -111,7 +111,8 @@
                     :class="{
                       'bg-container-secondary-light dark:bg-container-secondary-dark':
                         item.id % 2 == 1,
-                      'bg-accent/30!': isHighlightedRow(item)
+                      'bg-accent/30': isHighlightedRow(item) && item.id % 2 == 0,
+                      'bg-accent-dark/30!': isHighlightedRow(item) && item.id % 2 == 1
                     }"
                     @mouseover="
                       () =>

@@ -37,6 +37,7 @@ const props = defineProps({
 
 const emit = defineEmits<{
   (e: 'click:upperPercentile', UpperPercentile: number): void
+  (e: 'hoverRow', upperPercentile?: number, lowerPercentile?: number): void
 }>()
 
 const graphOptions = computed(() => store().uiState.distributionChartConfig)
@@ -82,6 +83,18 @@ const options = computed(() => {
     responsive: true,
     maintainAspectRatio: false,
     indexAxis: 'y' as const,
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in the library
+    onHover: (event: any, elements: any) => {
+      if (elements.length == 0) {
+        emit('hoverRow')
+        return
+      }
+      const index = elements[0].index
+      const percentagePerBucket = 100 / graphOptions.value.bucketCount
+      const upperPercentile = (graphOptions.value.bucketCount - index) * percentagePerBucket
+      const lowerPercentile = upperPercentile - percentagePerBucket
+      emit('hoverRow', upperPercentile, lowerPercentile)
+    },
     scales: {
       x: {
         //Highest count of submissions in a percentage range. We set the diagrams maximum shown value to maxVal + 5,

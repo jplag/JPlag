@@ -100,6 +100,7 @@
           :distributions="distributions"
           class="grow print:flex-none"
           @click:upper-percentile="onBarClicked"
+          @hover-row="distributionDiagramRowHover"
         />
       </template>
       <template #Boxplot>
@@ -118,6 +119,7 @@
         ref="comparisonTable"
         :clusters="clusters"
         :top-comparisons="topComparisons"
+        :highlighted-row-ids="highlightedRows"
         class="min-h-0 max-w-full flex-1 print:min-h-full print:grow"
       >
         <template v-if="topComparisons.length < runInformation.totalComparisons" #footer>
@@ -227,6 +229,33 @@ function onBarClicked(upperPercentile: number) {
   nextTick(() => {
     comparisonTable.value?.scrollToItem(value < 0 ? undefined : index)
   })
+}
+
+const highlightedRows: Ref<{ scroll: boolean; ids: { firstId: string; secondId: string }[] }> = ref(
+  { scroll: false, ids: [] }
+)
+function distributionDiagramRowHover(upperPercentile?: number, lowerPercentile?: number) {
+  if (upperPercentile === undefined || lowerPercentile === undefined) {
+    highlightedRows.value = { scroll: false, ids: [] }
+    return
+  }
+
+  const metric = store().uiState.distributionChartConfig.metric
+  const comparisonsInBucket = props.topComparisons
+    .filter((comparison) => {
+      return (
+        ((upperPercentile < 100 && comparison.similarities[metric] < upperPercentile / 100) ||
+          (upperPercentile == 100 && comparison.similarities[metric] <= 1)) &&
+        comparison.similarities[metric] >= lowerPercentile / 100
+      )
+    })
+    .map((comparison) => {
+      return { firstId: comparison.firstSubmissionId, secondId: comparison.secondSubmissionId }
+    })
+  highlightedRows.value = {
+    ids: comparisonsInBucket,
+    scroll: false
+  }
 }
 
 const isResizing = ref(false)
