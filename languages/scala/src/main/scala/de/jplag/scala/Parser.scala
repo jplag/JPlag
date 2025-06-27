@@ -121,9 +121,9 @@ class Parser extends AbstractParser {
                             val end = catchExpression.last.pos
                             val length = end.endLine - start.startLine
 
-                            add(CATCH_BEGIN, start.startLine, start.startColumn, length)
+                            add(CATCH_BEGIN, start.startLine, start.startColumn, start.endLine, start.endColumn, length)
                             processCases(catchExpression)
-                            add(CATCH_END, end.endLine, end.endColumn, length)
+                            add(CATCH_END, end.startLine, end.startColumn, end.endLine, end.endColumn, length)
                         }
 
                         maybeAddAndApply(finallyExpression, FINALLY)
@@ -185,7 +185,7 @@ class Parser extends AbstractParser {
                         case _ =>
                             val elseStart = tree.pos.text.indexOf("else", thenExpression.pos.end - tree.pos.start)
                             val elsePosition = Position.Range(tree.pos.input, tree.pos.start + elseStart, tree.pos.start + elseStart + 4)
-                            add(ELSE, elsePosition.startLine + 1, elsePosition.startColumn + 1, elsePosition.text.length)
+                            add(ELSE, elsePosition.startLine + 1, elsePosition.startColumn + 1, elsePosition.endLine + 1, elsePosition.endColumn + 1, elsePosition.text.length)
                             encloseAndApply(elseExpression, TR(Some(ELSE_BEGIN), Some(ELSE_END)))
                     }
                 })
@@ -368,14 +368,15 @@ class Parser extends AbstractParser {
     /**
      * Adds a token to the token list.
      *
-     * @param tokenType the type of the token
-     * @param line      line of the occurrence in the file
-     * @param column    column of the occurrence in the file
-     * @param length    length of the occurrence in the file
+     * @param tokenType   the type of the token
+     * @param startLine   start line of the occurrence in the file
+     * @param startColumn start column of the occurrence in the file
+     * @param endLine     end line of the occurrence in the file
+     * @param endColumn   end column of the occurrence in the file
+     * @param length      length of the occurrence in the file
      */
-    private def add(tokenType: ScalaTokenType, line: Int, column: Int, length: Int): Unit = {
-        // TODO: adapt
-        tokens += new Token(tokenType, currentFile, line, column, line, column + length, length)
+    private def add(tokenType: ScalaTokenType, startLine: Int, startColumn: Int, endLine: Int, endColumn: Int, length: Int): Unit = {
+        tokens += new Token(tokenType, currentFile, startLine, startColumn, endLine, endColumn, length)
     }
 
 
@@ -389,12 +390,11 @@ class Parser extends AbstractParser {
     private def add(tokenType: ScalaTokenType, node: Tree, fromEnd: Boolean): Unit = {
         if (node.pos.text.nonEmpty) {
             // SELF type tokens with no text content mess up the sequence
-            // TODO: adapt
             if (fromEnd) {
                 tokens += new Token(tokenType, currentFile, node.pos.endLine + 1, node.pos.endColumn + 1, node.pos.endLine + 1, node.pos.endColumn + 1, 0)
             }
             else {
-                tokens += new Token(tokenType, currentFile, node.pos.startLine + 1, node.pos.endColumn + 1, node.pos.startLine + 1, node.pos.endColumn + 1, node.pos.text.length)
+                tokens += new Token(tokenType, currentFile, node.pos.startLine + 1, node.pos.startColumn + 1, node.pos.endLine + 1, node.pos.endColumn + 1, node.pos.text.length)
             }
         }
     }

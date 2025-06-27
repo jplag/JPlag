@@ -95,8 +95,8 @@ public class ParserAdapter extends AbstractParser {
         String text = label.originalText();
         int column = label.beginPosition() - currentLineBreakIndex;
         int length = label.endPosition() - label.beginPosition();
-        // TODO: adapt
-        tokens.add(new Token(new TextTokenType(text), currentFile, currentLine, column, currentLine, column + length, length));
+        // As a token can not stretch multiple lines, the startLine is equal to the end line
+        tokens.add(new Token(new TextTokenType(text), currentFile, currentLine, column, currentLine, label.endPosition(), length));
     }
 
     private String readFile(File file) throws ParsingException {
