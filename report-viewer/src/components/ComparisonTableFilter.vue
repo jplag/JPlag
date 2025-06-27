@@ -115,9 +115,7 @@ function changeAnonymousForAll() {
 
 const secondaryMetricOptions = [
   MetricJsonIdentifier.MAXIMUM_SIMILARITY,
-  MetricJsonIdentifier.MINIMUM_SIMILARITY,
-  MetricJsonIdentifier.INTERSECTION,
   MetricJsonIdentifier.LONGEST_MATCH,
-  MetricJsonIdentifier.OVERALL
+  MetricJsonIdentifier.MAXIMUM_LENGTH
 ]
 </script>

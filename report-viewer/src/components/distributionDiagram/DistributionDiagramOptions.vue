@@ -50,7 +50,6 @@ const resolutionOptions = [10, 20, 25, 50, 100] as BucketOptions[]
 
 const metricOptions = [
   MetricJsonIdentifier.AVERAGE_SIMILARITY,
-  MetricJsonIdentifier.MAXIMUM_SIMILARITY,
-  MetricJsonIdentifier.MINIMUM_SIMILARITY
+  MetricJsonIdentifier.MAXIMUM_SIMILARITY
 ]
 </script>

@@ -13,10 +13,8 @@ export type ColumnId =
   | 'averageSimilarity'
   | 'maximumSimilarity'
   | 'cluster'
-  | 'minimumSimilarity'
-  | 'intersection'
   | 'longestMatch'
-  | 'overall'
+  | 'maximumLength'
 
 export interface ColumnSorting {
   id: ColumnId
@@ -55,23 +53,15 @@ export namespace Column {
     value: (c: ComparisonListElement) =>
       buildComparisonValues(c, MetricJsonIdentifier.MAXIMUM_SIMILARITY)
   }
-  export const minimumSimilarity: ColumnSorting = {
-    id: 'minimumSimilarity',
-    value: (c: ComparisonListElement) =>
-      buildComparisonValues(c, MetricJsonIdentifier.MINIMUM_SIMILARITY)
-  }
-  export const intersection: ColumnSorting = {
-    id: 'intersection',
-    value: (c: ComparisonListElement) => buildComparisonValues(c, MetricJsonIdentifier.INTERSECTION)
-  }
   export const longestMatch: ColumnSorting = {
     id: 'longestMatch',
     value: (c: ComparisonListElement) =>
       buildComparisonValues(c, MetricJsonIdentifier.LONGEST_MATCH)
   }
-  export const overall: ColumnSorting = {
-    id: 'overall',
-    value: (c: ComparisonListElement) => buildComparisonValues(c, MetricJsonIdentifier.OVERALL)
+  export const maximumLength: ColumnSorting = {
+    id: 'maximumLength',
+    value: (c: ComparisonListElement) =>
+      buildComparisonValues(c, MetricJsonIdentifier.MAXIMUM_LENGTH)
   }
 
   export const cluster: ColumnSorting = {
@@ -90,20 +80,16 @@ export namespace Column {
   export const columns: Record<ColumnId, ColumnSorting> = {
     averageSimilarity,
     maximumSimilarity,
-    minimumSimilarity,
-    intersection,
     longestMatch,
-    overall,
+    maximumLength,
     cluster
   }
 
   const defaultMetricOrder = [
     MetricJsonIdentifier.AVERAGE_SIMILARITY,
     MetricJsonIdentifier.MAXIMUM_SIMILARITY,
-    MetricJsonIdentifier.MINIMUM_SIMILARITY,
-    MetricJsonIdentifier.INTERSECTION,
     MetricJsonIdentifier.LONGEST_MATCH,
-    MetricJsonIdentifier.OVERALL
+    MetricJsonIdentifier.MAXIMUM_LENGTH
   ]
 
   function buildComparisonValues(c: ComparisonListElement, metric: MetricJsonIdentifier): number[] {

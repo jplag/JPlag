@@ -61,31 +61,17 @@ class PercentageMetricType extends MetricType {
 export namespace MetricTypes {
   export const AVERAGE_SIMILARITY = new PercentageMetricType(
     'AVG',
-    'Average',
+    'Average Similarity',
     'The average similarity of the two files.\nA high similarity indicates that the programs work in a similar way.',
     MetricJsonIdentifier.AVERAGE_SIMILARITY,
     Column.averageSimilarity
   )
   export const MAXIMUM_SIMILARITY = new PercentageMetricType(
     'MAX',
-    'Maximum',
+    'Maximum Similarity',
     'The maximum similarity of the two files.\nUseful if programs are very different in size.',
     MetricJsonIdentifier.MAXIMUM_SIMILARITY,
     Column.maximumSimilarity
-  )
-  export const MINIMUM_SIMILARITY = new PercentageMetricType(
-    'MIN',
-    'Minimum',
-    'The minimum similarity of the two files.',
-    MetricJsonIdentifier.MINIMUM_SIMILARITY,
-    Column.minimumSimilarity
-  )
-  export const INTERSECTION = new IdentityMetricType(
-    'COUNT',
-    'Matched Tokens',
-    'The number of tokens that are matched between the two files.',
-    MetricJsonIdentifier.INTERSECTION,
-    Column.intersection
   )
   export const LONGEST_MATCH = new IdentityMetricType(
     'LONG',
@@ -94,21 +80,19 @@ export namespace MetricTypes {
     MetricJsonIdentifier.LONGEST_MATCH,
     Column.longestMatch
   )
-  export const OVERALL = new IdentityMetricType(
+  export const MAXIMUM_LENGTH = new IdentityMetricType(
     'LEN',
-    'Overall Length',
-    'Sum of both submission lengths.',
-    MetricJsonIdentifier.OVERALL,
-    Column.overall
+    'Maximum Length',
+    'The length of the longer programm in tokens.',
+    MetricJsonIdentifier.MAXIMUM_LENGTH,
+    Column.maximumLength
   )
 
   export const METRIC_LIST: MetricType[] = [
     AVERAGE_SIMILARITY,
     MAXIMUM_SIMILARITY,
-    MINIMUM_SIMILARITY,
-    INTERSECTION,
     LONGEST_MATCH,
-    OVERALL
+    MAXIMUM_LENGTH
   ]
 
   export const METRIC_MAP: Record<MetricJsonIdentifier, MetricType> = {} as Record<
@@ -121,9 +105,7 @@ export namespace MetricTypes {
   export const METRIC_JSON_IDENTIFIERS = [
     MetricJsonIdentifier.AVERAGE_SIMILARITY,
     MetricJsonIdentifier.MAXIMUM_SIMILARITY,
-    MetricJsonIdentifier.MINIMUM_SIMILARITY,
-    MetricJsonIdentifier.INTERSECTION,
     MetricJsonIdentifier.LONGEST_MATCH,
-    MetricJsonIdentifier.OVERALL
+    MetricJsonIdentifier.MAXIMUM_LENGTH
   ]
 }
