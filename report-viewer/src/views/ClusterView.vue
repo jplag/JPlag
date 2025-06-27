@@ -65,7 +65,7 @@
           :top-comparisons="comparisons"
           class="max-h-0 min-h-full flex-1 overflow-hidden"
           header="Comparisons of Cluster Members:"
-          :highlighted-row-ids="highlightedElement ?? undefined"
+          :highlighted-row-ids="highlightedElementProp"
           @line-hovered="(value) => (hoveredEdge = value)"
         >
           <template v-if="comparisons.length < maxAmountOfComparisonsInCluster" #footer>
@@ -204,6 +204,18 @@ const maxAmountOfComparisonsInCluster = computed(() => {
 
 const highlightedElement: Ref<{ firstId: string; secondId: string } | null> = ref(null)
 const hoveredEdge: Ref<{ firstId: string; secondId: string } | null> = ref(null)
+const highlightedElementProp = computed(() => {
+  if (highlightedElement.value) {
+    return {
+      scroll: true,
+      ids: [highlightedElement.value]
+    }
+  }
+  return {
+    scroll: false,
+    ids: []
+  }
+})
 
 onErrorCaptured((error) => {
   redirectOnError(error, 'Error displaying cluster:\n', 'OverviewView', 'Back to overview')

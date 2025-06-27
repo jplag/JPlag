@@ -208,7 +208,7 @@
 <script setup lang="ts">
 import type { Cluster } from '@/model/Cluster'
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
-import { type PropType, watch, computed, ref, type Ref } from 'vue'
+import { watch, computed, ref, type Ref, type PropType } from 'vue'
 import { store } from '@/stores/store'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -238,9 +238,11 @@ const props = defineProps({
     default: 'Top Comparisons:'
   },
   highlightedRowIds: {
-    type: Object as PropType<{ firstId: string; secondId: string }>,
+    type: Object as PropType<{ ids: { firstId: string; secondId: string }[]; scroll: boolean }>,
     required: false,
-    default: undefined
+    default: () => {
+      return { ids: [], scroll: false }
+    }
   }
 })
 
@@ -408,12 +410,10 @@ const clusterIconColors = computed(() =>
 )
 
 function isHighlightedRow(item: ComparisonListElement) {
-  return (
-    props.highlightedRowIds != undefined &&
-    ((item.firstSubmissionId == props.highlightedRowIds.firstId &&
-      item.secondSubmissionId == props.highlightedRowIds.secondId) ||
-      (item.firstSubmissionId == props.highlightedRowIds.secondId &&
-        item.secondSubmissionId == props.highlightedRowIds.firstId))
+  return props.highlightedRowIds.ids.some(
+    (row) =>
+      (item.firstSubmissionId == row.firstId && item.secondSubmissionId == row.secondId) ||
+      (item.firstSubmissionId == row.secondId && item.secondSubmissionId == row.firstId)
   )
 }
 
@@ -432,11 +432,8 @@ const dynamicScroller: Ref<any | null> = ref(null)
 
 watch(
   computed(() => props.highlightedRowIds),
-  (newValue, oldValue) => {
-    if (
-      newValue != undefined &&
-      (newValue?.firstId != oldValue?.firstId || newValue?.secondId != oldValue?.secondId)
-    ) {
+  (newValue) => {
+    if (newValue.scroll && newValue.ids.length > 0) {
       dynamicScroller.value?.scrollToItem(props.topComparisons.findIndex(isHighlightedRow))
     }
   }
