@@ -285,8 +285,17 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
   return comparisons.filter((c) => {
     // name search
     const name1 = store().submissionDisplayName(c.firstSubmissionId).toLowerCase()
+    const anonName1 = store().isAnonymous(c.firstSubmissionId)
+      ? store().getAnonymousName(c.firstSubmissionId).toLowerCase()
+      : ''
     const name2 = store().submissionDisplayName(c.secondSubmissionId).toLowerCase()
-    if (searches.some((s) => name1.includes(s) || name2.includes(s))) {
+    const anonName2 = store().isAnonymous(c.secondSubmissionId)
+      ? store().getAnonymousName(c.secondSubmissionId).toLowerCase()
+      : ''
+    if (
+      searches.some((s) => name1.includes(s) || name2.includes(s)) ||
+      searches.some((s) => anonName1.includes(s) || anonName2.includes(s))
+    ) {
       return true
     }
 
