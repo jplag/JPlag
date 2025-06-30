@@ -84,8 +84,7 @@ class StrategyTest extends TestBase {
      * @param testSubmissionY name of a new Submission to Identify the testSubmissions
      * @param testSubmissionZ name of a new Submission to Identify the testSubmissions
      */
-    private record TestSubmissions(Submission testSubmissionW, Submission testSubmissionX, Submission testSubmissionY,
-                                   Submission testSubmissionZ) {
+    private record TestSubmissions(Submission testSubmissionW, Submission testSubmissionX, Submission testSubmissionY, Submission testSubmissionZ) {
     }
 
     /**
@@ -319,8 +318,7 @@ class StrategyTest extends TestBase {
         Map<List<TokenType>, Integer> frequencyCount = new HashMap<>();
         for (JPlagComparison comparison : testComparisons) {
             for (Match match : comparison.matches()) {
-                List<TokenType> key = testSubmission.getTokenList().subList(match.startOfFirst(),
-                                match.startOfFirst() + match.lengthOfFirst())
+                List<TokenType> key = testSubmission.getTokenList().subList(match.startOfFirst(), match.startOfFirst() + match.lengthOfFirst())
                         .stream().map(Token::getType).toList();
                 frequencyCount.put(key, frequencyCount.getOrDefault(key, 0) + 1);
                 if (key.size() >= strategynumber) {
@@ -332,8 +330,7 @@ class StrategyTest extends TestBase {
             List<TokenType> key = entry.getKey();
             int freq = entry.getValue();
             if (key.size() >= strategynumber) {
-                assertEquals(freq, tokenFrequencyMap.get(key.hashCode()),
-                        "there should be as much Ids as appearance: " + freq);
+                assertEquals(freq, tokenFrequencyMap.get(key.hashCode()), "there should be as much Ids as appearance: " + freq);
             }
         }
     }
