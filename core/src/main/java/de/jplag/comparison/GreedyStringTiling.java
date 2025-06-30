@@ -133,7 +133,7 @@ public class GreedyStringTiling {
                     continue;
                 }
                 List<Integer> rightStartIndices = rightLookupTable.getStartIndicesForHash(leftSubsequenceHash);
-                for (Integer rightStartIndex : rightStartIndices) { // possible matches
+                for (int rightStartIndex : rightStartIndices) { // possible matches
                     // comparison uses >= because it is assumed that the last token is a pivot (FILE_END)
                     if (isTokenExcludedAt(rightExcludedTokens, rightStartIndex, rightSubmission, leftSubmission)
                             || maximumMatchLength >= rightTokens.length - rightStartIndex) {
