@@ -122,9 +122,6 @@ Parameter descriptions:
                           but might lead to more false-positives.
 
 Advanced
-      --comments        Analyze similarity of comments. Increases the
-                          similarity of submissions if similar comments are
-                          found, but never decreases it.
       --csv-export      Export pairwise similarity values as a CSV file.
       -d, --debug           Store on-parsable files in error folder.
       --log-level=<{ERROR, WARN, INFO, DEBUG, TRACE}>
