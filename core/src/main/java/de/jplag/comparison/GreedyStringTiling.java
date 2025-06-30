@@ -31,7 +31,7 @@ public class GreedyStringTiling {
 
     private final Map<Submission, RollingTokenHashTable> cachedHashLookupTables = Collections.synchronizedMap(new IdentityHashMap<>());
 
-    private final TokenSequenceMapper tokenValueMapper;
+    private final TokenSequenceMapper tokenSequenceMapper;
 
     private static final String ERROR_INDEX_OUT_OF_BOUNDS = """
                 GST index out of bounds. This is probably a random issue caused by multithreading issues.
@@ -49,7 +49,7 @@ public class GreedyStringTiling {
 
         this.minimumMatchLength = options.mergingOptions().enabled() ? minimumNeighborLength : options.minimumTokenMatch();
 
-        this.tokenValueMapper = tokenValueMapper;
+        this.tokenSequenceMapper = tokenValueMapper;
     }
 
     /**
@@ -111,8 +111,8 @@ public class GreedyStringTiling {
      */
     private JPlagComparison compareOrdered(Submission leftSubmission, Submission rightSubmission) {
         assert leftSubmission.getNumberOfTokens() <= rightSubmission.getNumberOfTokens();
-        int[] leftTokens = this.tokenValueMapper.getTokenSequenceFor(leftSubmission);
-        int[] rightTokens = this.tokenValueMapper.getTokenSequenceFor(rightSubmission);
+        int[] leftTokens = this.tokenSequenceMapper.getTokenSequenceFor(leftSubmission);
+        int[] rightTokens = this.tokenSequenceMapper.getTokenSequenceFor(rightSubmission);
 
         boolean[] leftExcludedTokens = calculateExcludedTokens(leftSubmission);
         boolean[] rightExcludedTokens = calculateExcludedTokens(rightSubmission);
@@ -223,9 +223,9 @@ public class GreedyStringTiling {
         return exclusionFlags;
     }
 
-    private RollingTokenHashTable getSubsequenceHashTableFor(Submission submission, boolean[] marked) {
+    private RollingTokenHashTable getSubsequenceHashTableFor(Submission submission, boolean[] excludedTokens) {
         return cachedHashLookupTables.computeIfAbsent(submission,
-                key -> new RollingTokenHashTable(minimumMatchLength, this.tokenValueMapper.getTokenSequenceFor(submission), marked));
+                key -> new RollingTokenHashTable(minimumMatchLength, this.tokenSequenceMapper.getTokenSequenceFor(submission), excludedTokens));
     }
 
     private boolean isTokenExcludedAt(boolean[] exclusionFlags, int tokenIndex, Submission submission, Submission otherSubmission) {
@@ -233,7 +233,7 @@ public class GreedyStringTiling {
             throw new IllegalStateException(
                     String.format(ERROR_INDEX_OUT_OF_BOUNDS, exclusionFlags.length, tokenIndex, submission.getNumberOfTokens(),
                             submission.getTokenList().stream().map(it -> it.getType().getDescription()).collect(Collectors.joining(", ")),
-                            this.tokenValueMapper.getTokenSequenceFor(submission).length, submission.getName(), otherSubmission.getName()));
+                            this.tokenSequenceMapper.getTokenSequenceFor(submission).length, submission.getName(), otherSubmission.getName()));
         }
 
         return exclusionFlags[tokenIndex];
