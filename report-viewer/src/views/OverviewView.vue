@@ -18,7 +18,11 @@
           </template>
           <template #tooltip>
             <p class="max-w-[50rem] text-sm whitespace-pre-wrap">
-              {{ runInformation.failedSubmissions.slice(0, 20).join(', ')
+              {{
+                runInformation.failedSubmissions
+                  .slice(0, 20)
+                  .map((f) => f.submissionId)
+                  .join(', ')
               }}<span v-if="runInformation.failedSubmissions.length > 20"
                 >... (click "<i>More</i>" to see the complete list of failed submissions)</span
               >
@@ -91,14 +95,21 @@
       </div>
     </Container>
 
-    <Container class="col-start-1 row-start-2 flex flex-col overflow-hidden print:overflow-visible">
-      <h2>Distribution of Comparisons:</h2>
-      <DistributionDiagram
-        :distributions="distributions"
-        class="grow print:flex-none"
-        @click:upper-percentile="onBarClicked"
-      />
-    </Container>
+    <TabbedContainer
+      :tabs="['Distribution', 'Boxplot']"
+      class="col-start-1 row-start-2 flex flex-col overflow-hidden print:overflow-visible"
+    >
+      <template #Distribution>
+        <DistributionDiagram
+          :distributions="distributions"
+          class="grow print:flex-none"
+          @click:upper-percentile="onBarClicked"
+        />
+      </template>
+      <template #Boxplot>
+        <BoxPlot :distributions="distributions" class="grow print:flex-none" />
+      </template>
+    </TabbedContainer>
 
     <div ref="resizer" class="hidden w-5 cursor-col-resize md:col-start-2 md:row-start-2 md:flex">
       <!-- Resizer -->
@@ -141,6 +152,8 @@ import type { DistributionMap } from '@/model/Distribution'
 import type { Cluster } from '@/model/Cluster'
 import InfoIcon from '@/components/InfoIcon.vue'
 import { Column, Direction } from '@/model/ui/ComparisonSorting'
+import BoxPlot from '@/components/distributionDiagram/BoxPlot.vue'
+import TabbedContainer from '@/components/TabbedContainer.vue'
 
 const props = defineProps({
   topComparisons: {

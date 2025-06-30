@@ -40,7 +40,7 @@ class RollingTokenHashTable {
             return;
         }
 
-        subsequenceHashes = new int[tokenSequence.length - this.windowSize];
+        subsequenceHashes = new int[tokenSequence.length - this.windowSize + 1];
         startIndexToSubsequenceHashesMap = HashMap.newHashMap(subsequenceHashes.length);
         computeSubsequenceHashes(markedTokens);
     }

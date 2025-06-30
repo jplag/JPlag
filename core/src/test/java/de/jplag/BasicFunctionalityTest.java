@@ -87,6 +87,22 @@ class BasicFunctionalityTest extends TestBase {
     }
 
     @Test
+    @DisplayName("test basic functionality for varying minimum token match values.")
+    void testHighMinimumTokenMatch() throws ExitException {
+        for (int i = 10; i < 50; i++) {
+            int minimumTokenMatch = i;
+            JPlagResult result = runJPlag("PartialPlagiarism", it -> it.withMinimumTokenMatch(minimumTokenMatch));
+            if (minimumTokenMatch <= 12) {
+                assertEquals(5, result.getNumberOfSubmissions());
+                assertEquals(10, result.getAllComparisons().size());
+            } else {
+                assertEquals(4, result.getNumberOfSubmissions());
+                assertEquals(6, result.getAllComparisons().size());
+            }
+        }
+    }
+
+    @Test
     @DisplayName("test single-files as submissions (no folders)")
     void testSingleFileSubmisssions() throws ExitException {
         JPlagResult result = runJPlagWithDefaultOptions("SimpleSingleFile");
