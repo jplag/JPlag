@@ -90,7 +90,7 @@ class StrategyIntegrationTest extends TestBase {
             int length = key.trim().isEmpty() ? 0 : key.trim().split("\\s+").length;
             String id = entry.getValue().toString();
 
-            logBuilder.append(String.format("%-32.30s | %3d | %9d | %s\n    ↳ %s\n", key, length, count, "*".repeat(Math.min(count, 50)), id));
+            logBuilder.append(String.format("%-32.30s | %3d | %9d | %s%n    ↳ %s%n", key, length, count, "*".repeat(Math.min(count, 50)), id));
         }
         logger.info(logBuilder.toString());
     }

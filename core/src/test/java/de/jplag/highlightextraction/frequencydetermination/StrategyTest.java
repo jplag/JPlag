@@ -42,7 +42,7 @@ class StrategyTest extends TestBase {
      * @throws ExitException getJPlagResult can throw such an Exception
      */
     @BeforeEach
-    public void prepareMatchResult() throws ExitException {
+    void prepareMatchResult() throws ExitException {
         JPlagOptions options = getDefaultOptions("PartialPlagiarism");
         JPlagResult result = getJPlagResult(options);
 
