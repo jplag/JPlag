@@ -91,8 +91,7 @@ public class GreedyStringTiling {
     public final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission) {
         Submission smallerSubmission;
         Submission largerSubmission;
-        Comparator<Submission> submissionComparator = Comparator.comparing((Submission it) -> it.getTokenList().size())
-                .thenComparing(Submission::getName);
+        Comparator<Submission> submissionComparator = Comparator.comparing(Submission::getNumberOfTokens).thenComparing(Submission::getName);
 
         if (submissionComparator.compare(firstSubmission, secondSubmission) <= 0) {
             smallerSubmission = firstSubmission;
@@ -111,6 +110,7 @@ public class GreedyStringTiling {
      * @return the comparison results.
      */
     private JPlagComparison compareOrdered(Submission leftSubmission, Submission rightSubmission) {
+        assert leftSubmission.getNumberOfTokens() <= rightSubmission.getNumberOfTokens();
         int[] leftTokens = this.tokenValueMapper.getTokenSequenceFor(leftSubmission);
         int[] rightTokens = this.tokenValueMapper.getTokenSequenceFor(rightSubmission);
 
@@ -231,7 +231,7 @@ public class GreedyStringTiling {
     private boolean isTokenExcludedAt(boolean[] exclusionFlags, int tokenIndex, Submission submission, Submission otherSubmission) {
         if (tokenIndex >= exclusionFlags.length) {
             throw new IllegalStateException(
-                    String.format(ERROR_INDEX_OUT_OF_BOUNDS, exclusionFlags.length, tokenIndex, submission.getTokenList().size(),
+                    String.format(ERROR_INDEX_OUT_OF_BOUNDS, exclusionFlags.length, tokenIndex, submission.getNumberOfTokens(),
                             submission.getTokenList().stream().map(it -> it.getType().getDescription()).collect(Collectors.joining(", ")),
                             this.tokenValueMapper.getTokenSequenceFor(submission).length, submission.getName(), otherSubmission.getName()));
         }
