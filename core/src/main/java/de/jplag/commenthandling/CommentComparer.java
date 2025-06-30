@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Submission;
+import de.jplag.SubmissionSet;
 import de.jplag.comparison.GreedyStringTiling;
 import de.jplag.comparison.SubmissionTuple;
 import de.jplag.comparison.TokenValueMapper;
@@ -21,6 +22,25 @@ public class CommentComparer {
 
     public CommentComparer(JPlagOptions options) {
         this.options = options;
+    }
+
+    private void compareSubmissionsToBaseCode(SubmissionSet submissions, GreedyStringTiling comparisonAlgorithm) {
+        Submission baseCodeSubmission = submissions.getBaseCode();
+        for (Submission currentSubmission : submissions.getSubmissions()) {
+            JPlagComparison baseCodeCommentComparison = comparisonAlgorithm.generateBaseCodeMarking(currentSubmission, baseCodeSubmission);
+            if (currentSubmission.hasBaseCodeComparison()) {
+                JPlagComparison oldBaseCodeComparison = currentSubmission.getBaseCodeComparison();
+                JPlagComparison newBaseCodeComparison = new JPlagComparison(oldBaseCodeComparison.firstSubmission(),
+                        oldBaseCodeComparison.secondSubmission(), oldBaseCodeComparison.matches(), oldBaseCodeComparison.ignoredMatches(),
+                        baseCodeCommentComparison.matches());
+                currentSubmission.setBaseCodeComparison(newBaseCodeComparison);
+            } else {
+                JPlagComparison newBaseCodeComparison = new JPlagComparison(baseCodeCommentComparison.firstSubmission(),
+                        baseCodeCommentComparison.secondSubmission(), Collections.emptyList(), Collections.emptyList(),
+                        baseCodeCommentComparison.matches());
+                currentSubmission.setBaseCodeComparison(newBaseCodeComparison);
+            }
+        }
     }
 
     private Optional<JPlagComparison> compareSubmissions(GreedyStringTiling algorithm, SubmissionTuple tuple) {
@@ -41,10 +61,13 @@ public class CommentComparer {
     public JPlagResult compareCommentsAndMergeMatches(JPlagResult result) {
         long timeBeforeStartInMillis = System.currentTimeMillis();
 
-        // TODO: Base code?
-
         TokenValueMapper tokenValueMapper = new TokenValueMapper(result.getSubmissions(), Submission::getComments);
         GreedyStringTiling algorithm = new GreedyStringTiling(options, tokenValueMapper, Submission::getComments);
+
+        boolean withBaseCode = result.getSubmissions().hasBaseCode();
+        if (withBaseCode) {
+            compareSubmissionsToBaseCode(result.getSubmissions(), algorithm);
+        }
 
         List<SubmissionTuple> tuples = this.extractComparisonTuples(result.getAllComparisons());
 
