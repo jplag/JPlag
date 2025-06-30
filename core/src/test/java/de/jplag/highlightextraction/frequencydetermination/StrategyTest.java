@@ -212,7 +212,7 @@ class StrategyTest extends TestBase {
 
         List<Token> tokensListInTestMatch = testSubmission.getTokenList().subList(testMatchShort.startOfFirst(),
                 testMatchShort.startOfFirst() + testMatchShort.lengthOfFirst());
-        List<TokenType> tokenListTestMatchReadable = tokensListInTestMatch.stream().map(token -> token.getType()).toList();
+        List<TokenType> tokenListTestMatchReadable = tokensListInTestMatch.stream().map(Token::getType).toList();
 
         strategy.addMatchToFrequencyMap(tokenListTestMatchReadable, windowMap, windowSize);
 
@@ -237,7 +237,7 @@ class StrategyTest extends TestBase {
         for (List<TokenType> win : expectedKeys) {
             Integer keyVales = windowMap.get(win.hashCode());
             assertNotNull(keyVales, "value should be min 1: " + win);
-            assertTrue(keyVales != 0, "value should be min 1: " + keyVales);
+            assertNotEquals(0, keyVales, "value should be min 1: " + keyVales);
         }
 
         // add entries
@@ -355,7 +355,7 @@ class StrategyTest extends TestBase {
         // if (expectedKeysWithValues.contains(key)) {
         // break;
         // }
-        // assertTrue(tokenFrequencyMap.get(key) == 0, "Should have count 0 " + key);
+        // assertEquals(0, tokenFrequencyMap.get(key), "Should have count 0 " + key);
         // }
 
         // }
