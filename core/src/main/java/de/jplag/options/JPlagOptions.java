@@ -47,7 +47,7 @@ import io.soabase.recordbuilder.core.RecordBuilder;
  * set to {@link #SHOW_ALL_COMPARISONS} all comparisons will be shown.
  * @param clusteringOptions Clustering options
  * @param debugParser If true, submissions that cannot be parsed will be stored in a separate directory.
- * @param includeComments If true, comments will be extracted from the submissions.
+ * @param analyzeComments If true, comments will be extracted from the submissions.
  */
 @RecordBuilder()
 public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Language language, Integer minimumTokenMatch,
@@ -55,7 +55,7 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
         @JsonSerialize(contentUsing = FileSerializer.class) Set<File> oldSubmissionDirectories,
         @JsonSerialize(using = FileSerializer.class) File baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes,
         String exclusionFileName, SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons,
-        ClusteringOptions clusteringOptions, boolean debugParser, MergingOptions mergingOptions, boolean normalize, boolean includeComments)
+        ClusteringOptions clusteringOptions, boolean debugParser, MergingOptions mergingOptions, boolean normalize, boolean analyzeComments)
         implements JPlagOptionsBuilder.With {
 
     public static final double DEFAULT_SIMILARITY_THRESHOLD = 0;
@@ -84,7 +84,7 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
     public JPlagOptions(Language language, Integer minimumTokenMatch, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories,
             File baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
             SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
-            boolean debugParser, MergingOptions mergingOptions, boolean normalize, boolean includeComments) {
+            boolean debugParser, MergingOptions mergingOptions, boolean normalize, boolean analyzeComments) {
         this.language = language;
         this.debugParser = debugParser;
         this.fileSuffixes = fileSuffixes == null || fileSuffixes.isEmpty() ? null : Collections.unmodifiableList(fileSuffixes);
@@ -100,7 +100,7 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
         this.clusteringOptions = clusteringOptions;
         this.mergingOptions = mergingOptions;
         this.normalize = normalize;
-        this.includeComments = includeComments;
+        this.analyzeComments = analyzeComments;
     }
 
     public boolean hasBaseCode() {

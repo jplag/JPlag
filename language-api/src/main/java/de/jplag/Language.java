@@ -2,6 +2,7 @@ package de.jplag;
 
 import java.io.File;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import de.jplag.commentextraction.CommentExtractorSettings;
@@ -144,7 +145,7 @@ public interface Language {
      * Returns the settings for the comment extractor for this language.
      * @return Settings for the comment extractor.
      */
-    default CommentExtractorSettings getCommentExtractorSettings() {
-        return CommentExtractorSettings.noComments();
+    default Optional<CommentExtractorSettings> getCommentExtractorSettings() {
+        return Optional.empty();
     }
 }

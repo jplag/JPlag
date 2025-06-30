@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -242,11 +243,11 @@ public class Submission implements Comparable<Submission> {
      * @param debugParser specifies if the submission should be copied upon parsing errors.
      * @param normalize specifies if the token sequences should be normalized.
      * @param minimalTokens specifies the minimum number of tokens required of a valid submission.
-     * @param includeComments specifies if comments should be extracted.
+     * @param analyzeComments specifies if comments should be extracted and analyzed.
      * @return Whether parsing was successful.
      * @throws LanguageException if the language parser is not able to parse at all.
      */
-    /* package-private */ boolean parse(boolean debugParser, boolean normalize, int minimalTokens, boolean includeComments) throws LanguageException {
+    /* package-private */ boolean parse(boolean debugParser, boolean normalize, int minimalTokens, boolean analyzeComments) throws LanguageException {
         if (files == null || files.isEmpty()) {
             logger.error("Nothing to parse for submission \"{}\"", name);
             state = NOTHING_TO_PARSE;
@@ -274,7 +275,7 @@ public class Submission implements Comparable<Submission> {
             return false;
         }
 
-        if (includeComments) {
+        if (analyzeComments) {
             this.extractAndParseComments();
         }
 
@@ -284,16 +285,12 @@ public class Submission implements Comparable<Submission> {
     }
 
     private void extractAndParseComments() {
-        CommentExtractorSettings commentExtractorSettings = language.getCommentExtractorSettings();
-        if (commentExtractorSettings.hasComments()) {
+        Optional<CommentExtractorSettings> commentExtractorSettings = language.getCommentExtractorSettings();
+        if (commentExtractorSettings.isPresent()) {
             List<Comment> rawComments = new ArrayList<>();
             for (File file : files) {
-                try {
-                    CommentExtractor extractor = new CommentExtractor(file, commentExtractorSettings);
-                    rawComments.addAll(extractor.extract());
-                } catch (IOException e) {
-                    logger.warn("Could not extract comments from {}: {}", file.getAbsolutePath(), e.getMessage());
-                }
+                CommentExtractor extractor = new CommentExtractor(file, commentExtractorSettings.get());
+                rawComments.addAll(extractor.extract());
             }
             logger.debug("Found {} comments", comments.size());
             try {

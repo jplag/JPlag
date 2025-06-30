@@ -6,14 +6,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.jplag.util.FileUtils;
 
 /**
  * Extracts comments from submitted files, by reading and parsing the file content manually.
- * @author Moritz Rimpf
  */
 public class CommentExtractor {
-
+    private static final Logger logger = LoggerFactory.getLogger(CommentExtractor.class);
     private String remainingContent;
     private final List<Comment> comments;
     private final CommentExtractorSettings settings;
@@ -26,34 +28,32 @@ public class CommentExtractor {
      * Creates a new CommentExtractor, reading the contents from the specified file.
      * @param file File to read
      * @param settings Settings for the comment extractor
-     * @throws IOException If an IO error during the file read occurred
      */
-    public CommentExtractor(File file, CommentExtractorSettings settings) throws IOException {
-        this(file, FileUtils.readFileContent(file), settings);
-    }
-
-    /**
-     * Creates a new CommentExtractor, using the supplied file and content.
-     * @param file File to associate comments with
-     * @param fileContent Textual content of the file
-     * @param settings Settings for the comment extractor
-     */
-    public CommentExtractor(File file, String fileContent, CommentExtractorSettings settings) {
-        this.remainingContent = fileContent;
+    public CommentExtractor(File file, CommentExtractorSettings settings) {
         this.settings = settings;
         this.comments = new ArrayList<>();
         this.lookBehind = "";
         this.file = file;
         this.currentCol = 1;
         this.currentLine = 1;
+        this.readFile();
     }
 
-    private void match(String expected) {
+    private void readFile() {
+        try {
+            this.remainingContent = FileUtils.readFileContent(file);
+        } catch (IOException e) {
+            logger.warn("Could not extract comments from {}: {}", file.getAbsolutePath(), e.getMessage());
+            this.remainingContent = "";
+        }
+    }
+
+    private void match(String expected) throws UnexpectedStringException {
         if (remainingContent.startsWith(expected)) {
             this.advance(expected.length());
         } else {
-            throw new MatchException("Matched incorrectly, expected: " + expected + ", received: " + remainingContent.substring(0, expected.length()),
-                    null);
+            throw new UnexpectedStringException(
+                    "Matched incorrectly, expected: " + expected + ", received: " + remainingContent.substring(0, expected.length()));
         }
     }
 
@@ -61,20 +61,29 @@ public class CommentExtractor {
         String advancedBy = remainingContent.substring(0, length);
         remainingContent = remainingContent.substring(length);
 
-        // Checking for line breaks
-        String combined = lookBehind + advancedBy;
-        if (combined.contains(System.lineSeparator())) {
-            String[] lines = combined.split(System.lineSeparator(), -1);
-            this.currentLine += lines.length - 1;
-            String lastLine = lines[lines.length - 1];
-            this.currentCol = lastLine.length() + 1;
-            lookBehind = lastLine.substring(Math.max(0, lastLine.length() - System.lineSeparator().length() + 1));
-        } else {
+        if (!this.checkForLineBreaks(advancedBy)) {
             this.currentCol += length;
-            lookBehind = advancedBy.substring(Math.max(0, advancedBy.length() - System.lineSeparator().length() + 1));
         }
 
         return advancedBy;
+    }
+
+    private boolean checkForLineBreaks(String advancedBy) {
+        String combined = lookBehind + advancedBy;
+        if (combined.contains(System.lineSeparator())) {
+            String[] lines = combined.split(System.lineSeparator(), -1);
+
+            // Fixing line & column positions
+            this.currentLine += lines.length - 1;
+            String lastLine = lines[lines.length - 1];
+            this.currentCol = lastLine.length() + 1;
+
+            lookBehind = lastLine.substring(Math.max(0, lastLine.length() - System.lineSeparator().length() + 1));
+            return true;
+        } else {
+            lookBehind = advancedBy.substring(Math.max(0, advancedBy.length() - System.lineSeparator().length() + 1));
+            return false;
+        }
     }
 
     /**
@@ -83,12 +92,17 @@ public class CommentExtractor {
      */
     public List<Comment> extract() {
         while (!remainingContent.isEmpty()) {
-            this.parseAny();
+            try {
+                this.parseAny();
+            } catch (UnexpectedStringException e) {
+                logger.warn("Comment extraction failed, due to unexpected string: {}", e.getMessage());
+                this.comments.clear();
+            }
         }
         return comments;
     }
 
-    private void parseAny() {
+    private void parseAny() throws UnexpectedStringException {
         if (this.parseEscapedCharacter().isPresent()) {
             return;
         }
@@ -127,7 +141,7 @@ public class CommentExtractor {
         return Optional.empty();
     }
 
-    private void parseNoCommentEnvironment(EnvironmentDelimiter environment) {
+    private void parseNoCommentEnvironment(EnvironmentDelimiter environment) throws UnexpectedStringException {
         this.parseEnvironment(environment);
     }
 
@@ -141,7 +155,7 @@ public class CommentExtractor {
         this.comments.add(new Comment(file, comment.toString(), startLine, startCol, CommentType.LINE));
     }
 
-    private void parseBlockComment(EnvironmentDelimiter blockComment) {
+    private void parseBlockComment(EnvironmentDelimiter blockComment) throws UnexpectedStringException {
         int startLine = this.currentLine;
         int startCol = this.currentCol + blockComment.begin().length();
         String comment = this.parseEnvironment(blockComment);
@@ -149,7 +163,7 @@ public class CommentExtractor {
         this.comments.add(new Comment(file, comment, startLine, startCol, CommentType.BLOCK));
     }
 
-    private String parseEnvironment(EnvironmentDelimiter environment) {
+    private String parseEnvironment(EnvironmentDelimiter environment) throws UnexpectedStringException {
         this.match(environment.begin());
         StringBuilder environmentContent = new StringBuilder();
 

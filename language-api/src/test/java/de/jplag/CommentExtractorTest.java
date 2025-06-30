@@ -3,10 +3,8 @@ package de.jplag;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.StringJoiner;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,7 +25,7 @@ class CommentExtractorTest {
 
     @Test
     @DisplayName("Tests the comment extractor on a text file with line and multiline comments")
-    void testCommentExtractor() throws IOException {
+    void testCommentExtractor() {
         CommentExtractorSettings settings = new CommentExtractorSettings(List.of(new EnvironmentDelimiter("\"")), // No comment environments
                 List.of("//"), // Line comments
                 List.of(new EnvironmentDelimiter("/*", "*/")), // Block comments
@@ -43,14 +41,9 @@ class CommentExtractorTest {
         assertEquals(2, comments.size());
         assertEquals(new Comment(input, " This is a line comment.", 2, 3, CommentType.LINE), comments.get(0));
 
-        StringJoiner multilineComment = new StringJoiner(System.lineSeparator());
-        multilineComment.add(" This is");
-        multilineComment.add("a");
-        multilineComment.add("multiline");
-        multilineComment.add("comment");
-        multilineComment.add("");
+        String multilineComment = String.join(System.lineSeparator(), " This is", "a", "multiline", "comment", "");
 
-        assertEquals(new Comment(input, multilineComment.toString(), 4, 3, CommentType.BLOCK), comments.get(1));
+        assertEquals(new Comment(input, multilineComment, 4, 3, CommentType.BLOCK), comments.get(1));
     }
 
 }
