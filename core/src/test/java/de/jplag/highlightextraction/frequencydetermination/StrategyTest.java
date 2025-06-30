@@ -84,15 +84,15 @@ class StrategyTest extends TestBase {
      * @param testSubmissionY name of a new Submission to Identify the testSubmissions
      * @param testSubmissionZ name of a new Submission to Identify the testSubmissions
      */
-    private record getTestSubmissions(Submission testSubmissionW, Submission testSubmissionX, Submission testSubmissionY,
-            Submission testSubmissionZ) {
+    private record TestSubmissions(Submission testSubmissionW, Submission testSubmissionX, Submission testSubmissionY,
+                                   Submission testSubmissionZ) {
     }
 
     /**
      * @param options the JPlag options for the test, to get the language
      * @return multiple submissions with the same data but different names for testing
      */
-    private static getTestSubmissions getTestSubmissions(JPlagOptions options) {
+    private static TestSubmissions getTestSubmissions(JPlagOptions options) {
         Submission testSubmissionW = new Submission("W", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(),
                 options.language());
         Submission testSubmissionX = new Submission("X", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(),
@@ -106,13 +106,19 @@ class StrategyTest extends TestBase {
         testSubmissionX.setTokenList(testSubmission.getTokenList());
         testSubmissionY.setTokenList(testSubmission.getTokenList());
         testSubmissionZ.setTokenList(testSubmission.getTokenList());
-        return new getTestSubmissions(testSubmissionW, testSubmissionX, testSubmissionY, testSubmissionZ);
+        return new TestSubmissions(testSubmissionW, testSubmissionX, testSubmissionY, testSubmissionZ);
     }
 
     /**
      * @param testSubmissions multiple submissions with the same data but different names for testing
      */
-    private void buildTestComparisons(getTestSubmissions testSubmissions) {
+    private void buildTestComparisons(TestSubmissions testSubmissions) {
+        testMatches1.clear();
+        testMatches2.clear();
+        testMatches3.clear();
+        testMatches4.clear();
+        testComparisons.clear();
+
         testMatches1.add(testMatchAOnTimeInComparisons);
         testMatches1.add(testMatchCTwoTimesInDifferentComparisons);
         JPlagComparison testComparison1 = new JPlagComparison(testSubmissions.testSubmissionW(), testSubmissions.testSubmissionX(), testMatches1,
@@ -310,54 +316,25 @@ class StrategyTest extends TestBase {
         FrequencyDetermination fd = new FrequencyDetermination(strategy, strategynumber);
         fd.buildFrequencyMap(testComparisons);
         Map<Integer, Integer> tokenFrequencyMap = fd.getMatchFrequencyMap();
-
-        // for (Integer key : tokenFrequencyMap.keySet()) {
-        // assertTrue(key..size() >= strategynumber, "!should not exist: " + key.size());
-        // }
-
-        List<List<TokenType>> expectedKeysWithValues = new LinkedList<>();
-        List<List<TokenType>> keysWithFrequency = new ArrayList<>();
-        List<Integer> frequencyOfKeys = new ArrayList<>();
+        Map<List<TokenType>, Integer> frequencyCount = new HashMap<>();
         for (JPlagComparison comparison : testComparisons) {
             for (Match match : comparison.matches()) {
-                List<Token> keyToken = testSubmission.getTokenList();
-                List<TokenType> keyNames = keyToken.stream().map(Token::getType).toList();
-                keyNames = keyNames.subList(match.startOfFirst(), match.startOfFirst() + match.lengthOfFirst());
-                List<TokenType> key = keyNames;
-                if (keysWithFrequency.contains(key)) {
-                    int index = keysWithFrequency.indexOf(key);
-                    frequencyOfKeys.set(index, frequencyOfKeys.get(index) + 1);
-                } else {
-                    keysWithFrequency.add(key);
-                    frequencyOfKeys.add(1);
-                }
-                expectedKeysWithValues.add(key);
-                int size = key.size();
-                if (size >= strategynumber) {
+                List<TokenType> key = testSubmission.getTokenList().subList(match.startOfFirst(),
+                                match.startOfFirst() + match.lengthOfFirst())
+                        .stream().map(Token::getType).toList();
+                frequencyCount.put(key, frequencyCount.getOrDefault(key, 0) + 1);
+                if (key.size() >= strategynumber) {
                     assertTrue(tokenFrequencyMap.containsKey(key.hashCode()), "Should contain key: " + key);
                 }
-
             }
         }
-
-        for (int i = 0; i < keysWithFrequency.size(); i++) {
-            int size = keysWithFrequency.get(i).size();
-            if (size >= strategynumber) {
-                assertEquals(frequencyOfKeys.get(i), tokenFrequencyMap.get(keysWithFrequency.get(i).hashCode()),
-                        "there should be as much Ids as appearance: " + frequencyOfKeys.get(i));
-
+        for (Map.Entry<List<TokenType>, Integer> entry : frequencyCount.entrySet()) {
+            List<TokenType> key = entry.getKey();
+            int freq = entry.getValue();
+            if (key.size() >= strategynumber) {
+                assertEquals(freq, tokenFrequencyMap.get(key.hashCode()),
+                        "there should be as much Ids as appearance: " + freq);
             }
         }
-
-        // for (Integer key : tokenFrequencyMap.keySet()) {
-        // int size = key.toStrisize();
-        // if (size >= strategynumber) {
-        // if (expectedKeysWithValues.contains(key)) {
-        // break;
-        // }
-        // assertEquals(0, tokenFrequencyMap.get(key), "Should have count 0 " + key);
-        // }
-
-        // }
     }
 }
