@@ -51,8 +51,6 @@ class StrategyTest extends TestBase {
         JPlagComparison testComparison = result.getAllComparisons().getFirst();
         buildTestMatches(testComparison);
         buildTestComparisons(getTestSubmissions(options));
-
-        logger.info("Comparisons: {}", testComparisons);
     }
 
     /**
@@ -206,17 +204,13 @@ class StrategyTest extends TestBase {
      */
     @Test
     @DisplayName("Test check() of window strategy")
-    void testCheckWindowOfMatchesStrategy() {
+    void testWindowOfMatchesStrategy() {
         FrequencyStrategy strategy = new WindowOfMatchesStrategy();
         Map<Integer, Integer> windowMap = new HashMap<>();
         int windowSize = 5;
 
         List<TokenType> matchTokenTypes = getMatchTokenTypes(matchShort);
         strategy.addMatchToFrequencyMap(matchTokenTypes, windowMap, windowSize);
-
-        StringBuilder logBuilder = new StringBuilder("windowMap:\n");
-        windowMap.forEach((key, value) -> logBuilder.append(String.format("  %s → %s%n", key, value)));
-        logger.info(logBuilder.toString());
 
         // all Keys there?
         List<List<TokenType>> expectedKeys = new ArrayList<>();
@@ -229,32 +223,31 @@ class StrategyTest extends TestBase {
         }
 
         // every key added once
-        assertEquals(expectedKeys.size(), windowMap.size(), "More keys than windows????");
+        assertEquals(expectedKeys.size(), windowMap.size(), "A Key is more than one time used, please check for the rest of the test");
 
         // every window is added, and example value is correct
-        for (List<TokenType> win : expectedKeys) {
-            Integer keyVales = windowMap.get(win.hashCode());
-            assertNotNull(keyVales, "value should be min 1: " + win);
-            assertNotEquals(0, keyVales, "value should be min 1: " + keyVales);
+        for (List<TokenType> window : expectedKeys) {
+            Integer value = windowMap.get(window.hashCode());
+            assertNotNull(value, "value should be min 1: " + window);
         }
 
-        // add entries
+        // add new entries
         int startIndex = 2;
-        List<TokenType> tokenStringsNew = matchTokenTypes.subList(startIndex, startIndex + windowSize + 1);
-        List<TokenType> keyNew1 = tokenStringsNew.subList(0, windowSize);
-        List<TokenType> keyNew2 = tokenStringsNew.subList(1, windowSize + 1);
+        List<TokenType> newSequenceForWindows = matchTokenTypes.subList(startIndex, startIndex + windowSize + 1);
+        List<TokenType> firstWindow = newSequenceForWindows.subList(0, windowSize);
+        List<TokenType> secondWindow = newSequenceForWindows.subList(1, windowSize + 1);
 
-        assertTrue(windowMap.containsKey(keyNew1.hashCode()), "new key1 exists: " + keyNew1);
-        assertTrue(windowMap.containsKey(keyNew2.hashCode()), "new key2 exists: " + keyNew2);
+        assertTrue(windowMap.containsKey(firstWindow.hashCode()), "new firstWindow was not added: " + firstWindow);
+        assertTrue(windowMap.containsKey(secondWindow.hashCode()), "new secondWindow was not added: " + secondWindow);
 
-        strategy.addMatchToFrequencyMap(keyNew1, windowMap, windowSize);
-        strategy.addMatchToFrequencyMap(keyNew2, windowMap, windowSize);
+        strategy.addMatchToFrequencyMap(firstWindow, windowMap, windowSize);
+        strategy.addMatchToFrequencyMap(secondWindow, windowMap, windowSize);
 
-        Integer list1 = windowMap.get(keyNew1.hashCode());
-        Integer list2 = windowMap.get(keyNew2.hashCode());
+        Integer valueFirstWindow = windowMap.get(firstWindow.hashCode());
+        Integer valueSecondWindow = windowMap.get(secondWindow.hashCode());
 
-        assertEquals(2, list1, "does not contain 2 IDs: " + list1);
-        assertEquals(2, list2, "does not contain 2 IDs: " + list2);
+        assertEquals(2, valueFirstWindow, "FirstWindow does not contain two values: " + valueFirstWindow);
+        assertEquals(2, valueSecondWindow, "SecondWindow does not contain two values: " + valueSecondWindow);
     }
 
     // Tets Submatch strategy
