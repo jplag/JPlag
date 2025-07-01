@@ -11,7 +11,7 @@ code_position = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/
 basecode_match = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/BaseCodeMatch.java', 'record_name': 'BaseCodeMatch' }, { 'file_path': '../../../report-viewer/src/model/factories/BaseCodeReportFactory.ts', 'interface_name': 'ReportFormatBaseCodeMatch' })
 
 submission_file_index = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/SubmissionFileIndex.java', 'record_name': 'SubmissionFileIndex' }, { 'file_path': '../../../report-viewer/src/model/factories/ComparisonFactory.ts', 'interface_name': 'ReportFormatSubmmisionFileIndex' })
-submission_file = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/SubmissionFile.java', 'record_name': '' }, { 'file_path': '../../../report-viewer/src/model/factories/ComparisonFactory.ts', 'interface_name': 'ReportFormatSubmissionFile' })
+submission_file = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/SubmissionFile.java', 'record_name': 'SubmissionFile' }, { 'file_path': '../../../report-viewer/src/model/factories/ComparisonFactory.ts', 'interface_name': 'ReportFormatSubmissionFile' })
 
 run_information = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/RunInformation.java', 'record_name': 'RunInformation' }, { 'file_path': '../../../report-viewer/src/model/factories/RunInformationFactory.ts', 'interface_name': 'ReportFormatRunInformation' })
 failed_submission = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/FailedSubmission.java', 'record_name': 'FailedSubmission' }, { 'file_path': '../../../report-viewer/src/model/RunInformation.ts', 'interface_name': 'FailedSubmission' })
@@ -25,25 +25,29 @@ cluster = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/report
 
 # we do not check the distribution as it has own record and is just a map directly written to a json file
 
-file_list = [cli_options, merging_options, clustering_options, comparison, match, code_position, basecode_match, submission_file_index, run_information, failed_submission, version, submission_mappings, top_comparison, cluster]
+file_list = [cli_options, merging_options, clustering_options, comparison, match, code_position, basecode_match, submission_file_index, submission_file, run_information, failed_submission, version, submission_mappings, top_comparison, cluster]
 
 typeMatches = {
     # Basic map from Java types to TypeScript types
     'int': 'number',
     'Integer': 'number',
     'double': 'number',
+    'Double': 'number',
     'long': 'number',
     'String': 'string',
     'boolean': 'boolean',
     'File': 'string',
-    'SubmissionState': 'SubmissionState'
+    'SubmissionState': 'SubmissionState',
+    'SimilarityMetric': 'MetricType',
+    'Preprocessing': 'string',
+    'ClusteringAlgorithm': 'string',
+    'InterClusterSimilarity': 'string',
 }
 # add all record interface matches to the typeMatches list
 for java_file, typescript_file in file_list:
     record_name = java_file['record_name']
     interface_name = typescript_file['interface_name']
     typeMatches[record_name] = interface_name
-
 
 
 def readFileContents(file_path):
@@ -97,9 +101,21 @@ def transformJavaVariable(variable):
     parts = variable.rsplit(' ', 1)
     if len(parts) < 2:
         return None
-    type_name = parts[-2].strip()
+    type_name_and_prior = parts[-2].strip()
+    type_name = extractTypeFromLong(type_name_and_prior)
     variable_name = parts[-1].replace(';', '').strip()
     return (type_name, variable_name)
+
+def extractTypeFromLong(type_name_and_prior):
+    open_brackets = 0
+    for i in range(len(type_name_and_prior) - 1, -1, -1):
+        if type_name_and_prior[i] == ')' or type_name_and_prior[i] == ')' or type_name_and_prior[i] == '>':
+            open_brackets += 1
+        elif type_name_and_prior[i] == '(' or type_name_and_prior[i] == '[' or type_name_and_prior[i] == '<':
+            open_brackets -= 1
+        elif type_name_and_prior[i] == ' ' and open_brackets == 0:
+            return type_name_and_prior[i + 1:]
+    return type_name_and_prior
 
 # Extracts variables from a Java file with a record
 def getJavaRecordVariables(text, record_name):
@@ -167,9 +183,9 @@ def checkTypeMatch(java_type, ts_type):
             return False
         
     # check map types
-    java_map_check = re.search(r"^Map<(.*),(.*)>$", java_type)
+    java_map_check = re.search(r"^Map<([^,]*),(.*)>$", java_type)
     if java_map_check:
-        ts_record_check = re.search(r"^Record<(.*),(.*)>$", ts_type)
+        ts_record_check = re.search(r"^Record<([^,]*),(.*)>$", ts_type)
         if ts_record_check:
             # check types of key and value
             key_check = checkTypeMatch(java_map_check.group(1).strip(), ts_record_check.group(1).strip())
