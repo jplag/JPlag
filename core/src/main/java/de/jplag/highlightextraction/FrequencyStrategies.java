@@ -15,6 +15,9 @@ public enum FrequencyStrategies {
         this.strategy = strategy;
     }
 
+    /**
+     * @return the frequency strategy of the enum value.
+     */
     public FrequencyStrategy getStrategy() {
         return strategy;
     }

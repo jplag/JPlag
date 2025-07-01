@@ -186,6 +186,7 @@ class StrategyTest extends TestBase {
     /**
      * Creates a list of the TokenTypes from the Match.
      * @param match for which the TokenType Sequence is wanted.
+     * @return A list of TokenTypes representing the matched sequence.
      */
     private static List<TokenType> getMatchTokenTypes(Match match) {
         List<Token> tokens = testSubmission.getTokenList().subList(match.startOfFirst(), match.startOfFirst() + match.lengthOfFirst());
