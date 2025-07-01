@@ -21,10 +21,19 @@ import de.jplag.options.JPlagOptions;
  * "PartialPlagiarism" sample-folder.
  */
 class StrategyIntegrationTest extends TestBase {
-
+    /**
+     * Stores the result of the pairwise comparison of submissions, used in all test methods.
+     */
     private static JPlagResult result;
+    /**
+     * Logger for outputting test information.
+     */
     private static final Logger logger = LoggerFactory.getLogger(StrategyIntegrationTest.class);
 
+    /**
+     * Prepares the comparison result before each test.
+     * @throws ExitException if building the submissionSet or the comparisons fails.
+     */
     @BeforeEach
     void prepareMatchResult() throws ExitException {
 
@@ -35,6 +44,9 @@ class StrategyIntegrationTest extends TestBase {
         result = strategy.compareSubmissions(submissionSet);
     }
 
+    /**
+     * Tests frequency determination using the CompleteMatchesStrategy.
+     */
     @Test
     @DisplayName("Test token frequency completeMatches")
     void testFrequencyAnalysisStrategiesCompleteMatches() {
@@ -46,6 +58,9 @@ class StrategyIntegrationTest extends TestBase {
         printTestResult(tokenFrequencyMap);
     }
 
+    /**
+     * Tests frequency determination using the ContainedMatchesStrategy.
+     */
     @Test
     @DisplayName("Test token frequency with containedMatches")
     void testFrequencyAnalysisStrategiesContainedMatches() {
@@ -57,6 +72,9 @@ class StrategyIntegrationTest extends TestBase {
         printTestResult(tokenFrequencyMap);
     }
 
+    /**
+     * Tests frequency determination using the SubMatchesStrategy.
+     */
     @Test
     @DisplayName("Test token frequency with subMatches")
     void testFrequencyAnalysisStrategiesSubMatches() {
@@ -68,6 +86,9 @@ class StrategyIntegrationTest extends TestBase {
         printTestResult(tokenFrequencyMap);
     }
 
+    /**
+     * Tests frequency determination using the WindowOfMatchesStrategy.
+     */
     @Test
     @DisplayName("Test token frequency with windows of Matches")
     void testFrequencyAnalysisStrategiesWindowOfMatches() {
@@ -79,6 +100,10 @@ class StrategyIntegrationTest extends TestBase {
         printTestResult(tokenFrequencyMap);
     }
 
+    /**
+     * Logs the frequency map with visualization.
+     * @param tokenFrequencyMap a map where keys are TokenType hash values and values are their frequencies.
+     */
     void printTestResult(Map<Integer, Integer> tokenFrequencyMap) {
         StringBuilder logBuilder = new StringBuilder();
         logBuilder.append("\nHashValue                       | Frequency | Histogram\n");
