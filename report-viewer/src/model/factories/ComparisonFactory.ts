@@ -1,5 +1,5 @@
 import { Comparison } from '../Comparison'
-import { getMatchLength, type Match } from '../Match'
+import { getMatchLength, type Match, type ReportFormatMatch } from '../Match'
 import { store } from '@/stores/store'
 import { getMatchColorCount } from '@/utils/ColorUtils'
 import slash from 'slash'
@@ -29,7 +29,8 @@ export class ComparisonFactory extends BaseFactory {
       return {
         ...match,
         firstFileName: slash(match.firstFileName),
-        secondFileName: slash(match.secondFileName)
+        secondFileName: slash(match.secondFileName),
+        colorIndex: -1 // Will be set later
       }
     })
     matches.forEach((match) => {
@@ -173,19 +174,15 @@ interface ReportFormatComparison {
   firstSubmissionId: string
   secondSubmissionId: string
   similarities: Record<string, number>
-  matches: Match[]
+  matches: ReportFormatMatch[]
   firstSimilarity: number
   secondSimilarity: number
 }
 
 interface ReportFormatSubmmisionFileIndex {
-  fileIndexes: Record<
-    string,
-    Record<
-      string,
-      {
-        tokenCount: number
-      }
-    >
-  >
+  fileIndexes: Record<string, Record<string, ReportFormatSubmissionFile>>
+}
+
+interface ReportFormatSubmissionFile {
+  tokenCount: number
 }
