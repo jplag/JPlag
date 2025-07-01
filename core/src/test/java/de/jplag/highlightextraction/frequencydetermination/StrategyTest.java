@@ -210,7 +210,7 @@ class StrategyTest extends TestBase {
         List<TokenType> matchTokenTypes = getMatchTokenTypes(matchShort);
         strategy.addMatchToFrequencyMap(matchTokenTypes, windowMap, windowSize);
 
-        // all Keys there?
+        // Checks if all expected windows are added.
         List<List<TokenType>> expectedKeys = new ArrayList<>();
         for (int i = 0; i <= matchTokenTypes.size() - windowSize; i++) {
             List<TokenType> expectedKey = matchTokenTypes.subList(i, i + windowSize);
@@ -220,16 +220,16 @@ class StrategyTest extends TestBase {
             assertTrue(windowMap.containsKey(key.hashCode()), "key missing: " + key);
         }
 
-        // every key added once
+        // Checks if every window is added once.
         assertEquals(expectedKeys.size(), windowMap.size(), "A Key is more than one time used, please check for the rest of the test");
 
-        // every window is added, and example value is correct
+        // Checks if every window is added, and example value is correct.
         for (List<TokenType> window : expectedKeys) {
             Integer value = windowMap.get(window.hashCode());
             assertNotNull(value, "value should be min 1: " + window);
         }
 
-        // add new entries
+        // Adds new windows to the Map.
         int startIndex = 2;
         List<TokenType> newSequenceForWindows = matchTokenTypes.subList(startIndex, startIndex + windowSize + 1);
         List<TokenType> firstWindow = newSequenceForWindows.subList(0, windowSize);
@@ -254,7 +254,6 @@ class StrategyTest extends TestBase {
     @Test
     void testSubmatchesStrategy() {
         int wantedMatchLength = 5;
-        // Create
         SubMatchesStrategy strategy = new SubMatchesStrategy();
         Map<Integer, Integer> frequencyMap = new HashMap<>();
         List<Token> matchToken = testSubmission.getTokenList().subList(matchShort.startOfFirst(), matchShort.startOfFirst() + wantedMatchLength);
