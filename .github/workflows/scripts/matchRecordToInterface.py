@@ -210,6 +210,8 @@ def checkVariableMatch(java_file, typescript_file):
         for ts_var in typescript_variables:
             ts_type, ts_name = ts_var
             if java_name == ts_name:
+                if java_type not in typeMatches:
+                    continue
                 if typeMatches.get(java_type) != ts_type:
                     annotations.append(Warning(
                         java_variable=java_var,
