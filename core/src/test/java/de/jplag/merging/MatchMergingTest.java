@@ -114,11 +114,11 @@ class MatchMergingTest extends TestBase {
     @DisplayName("Test if the number of matches tokens increases.")
     void testMoreToken() {
         for (int i = 0; i < comparisonsAfter.size(); i++) {
-            int tokensBeforeFirst = comparisonsBefore.get(i).firstSubmission().getTokenList().size();
-            int tokensBeforeSecond = comparisonsBefore.get(i).secondSubmission().getTokenList().size();
+            int tokensBeforeFirst = comparisonsBefore.get(i).firstSubmission().getNumberOfTokens();
+            int tokensBeforeSecond = comparisonsBefore.get(i).secondSubmission().getNumberOfTokens();
 
-            int tokensAfterFirst = comparisonsAfter.get(i).firstSubmission().getTokenList().size();
-            int tokensAfterSecond = comparisonsAfter.get(i).secondSubmission().getTokenList().size();
+            int tokensAfterFirst = comparisonsAfter.get(i).firstSubmission().getNumberOfTokens();
+            int tokensAfterSecond = comparisonsAfter.get(i).secondSubmission().getNumberOfTokens();
 
             assertTrue(tokensAfterFirst >= tokensBeforeFirst);
             assertTrue(tokensAfterSecond >= tokensBeforeSecond);

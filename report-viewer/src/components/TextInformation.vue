@@ -5,8 +5,10 @@
   <div class="print:flex-none">
     <ToolTipComponent :direction="tooltipSide">
       <template #default>
-        {{ label }}:
-        <i><slot name="default"></slot></i>
+        <div class="flex items-start gap-x-1">
+          <span>{{ label }}:</span>
+          <i><slot name="default"></slot></i>
+        </div>
       </template>
       <template v-if="$slots.tooltip" #tooltip>
         <slot name="tooltip"></slot>
