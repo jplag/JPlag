@@ -23,7 +23,7 @@ def getTextAfterKeyword(text, keyword):
     return text[start:].strip()
 
 # Gets all variables from within the record body
-# seperates variables that are in the same line into multiple strings
+# separates variables that are in the same line into multiple strings
 # used to filter blank lines and comments
 def extractRecordVariables(text):
     variables = []
@@ -53,9 +53,12 @@ def transformJavaVariable(variable):
     variable_name = parts[-1].replace(';', '').strip()
     return (type_name, variable_name)
 
-# Extracts variables from a Java file with an record
+# Extracts variables from a Java file with a record
 def getJavaRecordVariables(text, record_name):
-    record = getTextAfterKeyword(text, 'record ' + record_name)
+    complete_name = 'record ' + record_name
+    if not complete_name in text:
+        raise Exception(f"Could not find {complete_name}")
+    record = getTextAfterKeyword(text, complete_name)
     content_between_brackets = getContentBetweenBrackets(record, '(', ')')
     variables = extractRecordVariables(content_between_brackets)
     return [transformJavaVariable(var) for var in variables if transformJavaVariable(var) is not None]
@@ -77,7 +80,10 @@ def transformTypescriptVariable(variable):
 
 # Extracts variables from a TypeScript file with an interface
 def getTypescriptInterfaceVariables(text, interface_name):
-    interface_text = getTextAfterKeyword(text, 'interface ' + interface_name)
+    complete_name = 'interface ' + interface_name
+    if not complete_name in text: 
+        raise Exception(f"Could not find {complete_name}")
+    interface_text = getTextAfterKeyword(text, complete_name)
     content_between_brackets = getContentBetweenBrackets(interface_text, '{', '}')
     variables = extractInterfaceVariables(content_between_brackets)
     return [transformTypescriptVariable(var) for var in variables if transformTypescriptVariable(var) is not None]
@@ -186,7 +192,7 @@ def checkVariableMatch(java_file, typescript_file):
                 other_line_number=findLineNumber(typescript_lines, f"interface {typescript_file['interface_name']}")
             ))
 
-    # Check if all TypeScipt variables are in record
+    # Check if all TypeScript variables are in record
     for ts_var in typescript_variables:
         ts_type, ts_name = ts_var
         matched = False
@@ -224,7 +230,7 @@ def checkVariableMatch(java_file, typescript_file):
                 break
     return annotations
 
-# Runs the comparison for the files and printes all errors and warnings
+# Runs the comparison for the files and prints all errors and warnings
 def runForPair(java_file, typescript_file):
     print(f"Checking variables in {getPrettyFilePath(java_file['file_path'])} and {getPrettyFilePath(typescript_file['file_path'])}")
     annotations = checkVariableMatch(java_file, typescript_file)
@@ -249,7 +255,7 @@ def runForPair(java_file, typescript_file):
     
     return len(errors) > 0
 
-# Interativly run comparison for all files
+# Iteratively run comparison for all files
 def runForAllPairs(pairs):
     found_errors = False
     for java_file, typescript_file in pairs:
@@ -260,5 +266,30 @@ def runForAllPairs(pairs):
         exit(1)
 
 cli_options = ({ 'file_path': '../../../core/src/main/java/de/jplag/options/JPlagOptions.java', 'record_name': 'JPlagOptions' }, { 'file_path': '../../../report-viewer/src/model/CliOptions.ts', 'interface_name': 'AbstractOptions' })
+merging_options = ({ 'file_path': '../../../core/src/main/java/de/jplag/merging/MergingOptions.java', 'record_name': 'MergingOptions' }, { 'file_path': '../../../report-viewer/src/model/CliOptions.ts', 'interface_name': 'CliMergingOptions' })
+clustering_options = ({ 'file_path': '../../../core/src/main/java/de/jplag/clustering/ClusteringOptions.java', 'record_name': 'ClusteringOptions' }, { 'file_path': '../../../report-viewer/src/model/CliOptions.ts', 'interface_name': 'CliClusterOptions' })
 
-runForAllPairs([cli_options])
+comparison = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/ComparisonReport.java', 'record_name': 'ComparisonReport' }, { 'file_path': '../../../report-viewer/src/model/factories/ComparisonFactory.ts', 'interface_name': 'ReportFormatComparison' })
+match = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/Match.java', 'record_name': 'Match' }, { 'file_path': '../../../report-viewer/src/model/Match.ts', 'interface_name': 'Match' })
+code_position = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/CodePosition.java', 'record_name': 'CodePosition' }, { 'file_path': '../../../report-viewer/src/model/Match.ts', 'interface_name': 'CodePosition' })
+
+basecode_match = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/BaseCodeMatch.java', 'record_name': 'BaseCodeMatch' }, { 'file_path': '../../../report-viewer/src/model/factories/BaseCodeReportFactory.ts', 'interface_name': 'ReportFormatBaseCodeMatch' })
+
+submission_file_index = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/SubmissionFileIndex.java', 'record_name': 'SubmissionFileIndex' }, { 'file_path': '../../../report-viewer/src/model/factories/ComparisonFactory.ts', 'interface_name': 'ReportFormatSubmmisionFileIndex' })
+
+run_information = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/RunInformation.java', 'record_name': 'RunInformation' }, { 'file_path': '../../../report-viewer/src/model/factories/RunInformationFactory.ts', 'interface_name': 'ReportFormatRunInformation' })
+failed_submission = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/FailedSubmission.java', 'record_name': 'FailedSubmission' }, { 'file_path': '../../../report-viewer/src/model/RunInformation.ts', 'interface_name': 'FailedSubmission' })
+version = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/Version.java', 'record_name': 'Version' }, { 'file_path': '../../../report-viewer/src/model/factories/RunInformationFactory.ts', 'interface_name': 'ReportFormatVersion' })
+
+submission_mappings = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/SubmissionMappings.java', 'record_name': 'SubmissionMappings' }, { 'file_path': '../../../report-viewer/src/model/factories/SubmissionMappingsFactory.ts', 'interface_name': 'ReportFormatSubmissionMappings' })
+
+top_comparisons = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/TopComparison.java', 'record_name': 'TopComparison' }, { 'file_path': '../../../report-viewer/src/model/factories/TopComparisonFactory.ts', 'interface_name': 'ReportFormatTopComparison' })
+
+cluster = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/Cluster.java', 'record_name': 'Cluster' }, { 'file_path': '../../../report-viewer/src/model/Cluster.ts', 'interface_name': 'ReportFormatCluster' })
+
+# ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/', 'record_name': '' }, { 'file_path': '../../../report-viewer/src/model/factories/', 'interface_name': '' })
+
+# we do not check the distribution as it has own record and is just a map directly written to a json file
+
+
+runForAllPairs([cli_options,merging_options, clustering_options, comparison, match, code_position, basecode_match, submission_file_index, run_information, failed_submission, version, submission_mappings, top_comparisons, cluster])
