@@ -19,26 +19,28 @@ import de.jplag.highlightextraction.*;
 import de.jplag.options.JPlagOptions;
 
 /**
- * Test class to validate the FrequencyStrategies and their usage. As the examples use testCode from "PartialPlagiarism"
- * sample-folder and some fictional data.
+ * Test class to validate the FrequencyStrategies which determine how frequency certain token sequences appear in
+ * matches of the comparisons. As the examples use testCode from "PartialPlagiarism" sample-folder and some fictional
+ * data.
  */
 class StrategyTest extends TestBase {
     private static final Logger logger = LoggerFactory.getLogger(StrategyTest.class);
     private static final StrategyIntegrationTest strategyIntegrationTest = new StrategyIntegrationTest();
     private static Submission testSubmission;
-    private static Match testMatchAOnTimeInComparisons;
-    private static Match testMatchBTwoTimesInOneComparison;
-    private static Match testMatchCTwoTimesInDifferentComparisons;
-    private static Match testMatchDThreeTimesInDifferentComparisons;
-    private static Match testMatchShort;
-    List<Match> testMatches1 = new LinkedList<>();
-    List<Match> testMatches2 = new LinkedList<>();
-    List<Match> testMatches3 = new LinkedList<>();
-    List<Match> testMatches4 = new LinkedList<>();
+    private static Match matchAppearsOnce;
+    private static Match matchOccursTwiceInSameComparison;
+    private static Match matchOccursTwiceAcrossComparisons;
+    private static Match matchOccursThreeTimesAcrossComparisons;
+    private static Match matchShort;
+    List<Match> matchesAppearingOnceAndTwice = new LinkedList<>();
+    List<Match> matchesAppearingTwiceAndThrice = new LinkedList<>();
+    List<Match> matchesAppearingThrice = new LinkedList<>();
+    List<Match> matchesDuplicateAndThrice = new LinkedList<>();
     static List<Match> ignoredMatches = new LinkedList<>();
     List<JPlagComparison> testComparisons = new LinkedList<>();
 
     /**
+     * Creates Tets data to test different Match-Frequency Combinations in created combinations
      * @throws ExitException getJPlagResult can throw such an Exception
      */
     @BeforeEach
@@ -54,8 +56,10 @@ class StrategyTest extends TestBase {
     }
 
     /**
+     * Creates Test data by running JPlag Methods to get JPlag result, to create Objects that will be used for the Build of
+     * test data.
      * @param options JPlag options used in this test
-     * @return JPlag result
+     * @return JPlag result for test input
      * @throws ExitException submission set builder can throw this exception
      */
     private JPlagResult getJPlagResult(JPlagOptions options) throws ExitException {
@@ -66,19 +70,23 @@ class StrategyTest extends TestBase {
     }
 
     /**
-     * @param testComparison first Comparison from the Test classes here used to get test matches
+     * Gets sample matches from the given test comparison to use in test scenarios. These matches will be used to create
+     * different combinations of Match-Frequency.
+     * @param testComparison first Comparison from the Test classes here used to get test matches.
      */
     private static void buildTestMatches(JPlagComparison testComparison) {
         testSubmission = testComparison.firstSubmission();
-        testMatchAOnTimeInComparisons = testComparison.matches().get(0);
-        testMatchBTwoTimesInOneComparison = testComparison.matches().get(1);
-        testMatchCTwoTimesInDifferentComparisons = testComparison.matches().get(2);
-        testMatchDThreeTimesInDifferentComparisons = testComparison.matches().get(3);
-        testMatchShort = new Match(testComparison.matches().get(0).startOfFirst(), testComparison.matches().get(0).startOfSecond(), 12, 12);
+        matchAppearsOnce = testComparison.matches().get(0);
+        matchOccursTwiceInSameComparison = testComparison.matches().get(1);
+        matchOccursTwiceAcrossComparisons = testComparison.matches().get(2);
+        matchOccursThreeTimesAcrossComparisons = testComparison.matches().get(3);
+        matchShort = new Match(testComparison.matches().get(0).startOfFirst(), testComparison.matches().get(0).startOfSecond(), 12, 12);
         ignoredMatches = testComparison.ignoredMatches();
     }
 
     /**
+     * Represents four created submissions with identical code but different names, used to simulate various
+     * match-comparison combinations for frequency testing.
      * @param testSubmissionW name of a new Submission to Identify the testSubmissions
      * @param testSubmissionX name of a new Submission to Identify the testSubmissions
      * @param testSubmissionY name of a new Submission to Identify the testSubmissions
@@ -109,41 +117,46 @@ class StrategyTest extends TestBase {
     }
 
     /**
+     * Constructs comparisons using predefined matches and test submissions, creating different combinations of
+     * Match-Frequency's between Comparisons.
      * @param testSubmissions multiple submissions with the same data but different names for testing
      */
     private void buildTestComparisons(TestSubmissions testSubmissions) {
-        testMatches1.clear();
-        testMatches2.clear();
-        testMatches3.clear();
-        testMatches4.clear();
+        matchesAppearingOnceAndTwice.clear();
+        matchesAppearingTwiceAndThrice.clear();
+        matchesAppearingThrice.clear();
+        matchesDuplicateAndThrice.clear();
         testComparisons.clear();
 
-        testMatches1.add(testMatchAOnTimeInComparisons);
-        testMatches1.add(testMatchCTwoTimesInDifferentComparisons);
-        JPlagComparison testComparison1 = new JPlagComparison(testSubmissions.testSubmissionW(), testSubmissions.testSubmissionX(), testMatches1,
-                ignoredMatches);
+        matchesAppearingOnceAndTwice.add(matchAppearsOnce);
+        matchesAppearingOnceAndTwice.add(matchOccursTwiceAcrossComparisons);
+        JPlagComparison comparisonOneAndTwoTimes = new JPlagComparison(testSubmissions.testSubmissionW(), testSubmissions.testSubmissionX(),
+                matchesAppearingOnceAndTwice, ignoredMatches);
 
-        testMatches2.add(testMatchCTwoTimesInDifferentComparisons);
-        testMatches2.add(testMatchDThreeTimesInDifferentComparisons);
-        JPlagComparison testComparison2 = new JPlagComparison(testSubmissions.testSubmissionX(), testSubmissions.testSubmissionY(), testMatches2,
-                ignoredMatches);
+        matchesAppearingTwiceAndThrice.add(matchOccursTwiceAcrossComparisons);
+        matchesAppearingTwiceAndThrice.add(matchOccursThreeTimesAcrossComparisons);
+        JPlagComparison comparisonTwoAndThreeTimes = new JPlagComparison(testSubmissions.testSubmissionX(), testSubmissions.testSubmissionY(),
+                matchesAppearingTwiceAndThrice, ignoredMatches);
 
-        testMatches3.add(testMatchDThreeTimesInDifferentComparisons);
-        JPlagComparison testComparison3 = new JPlagComparison(testSubmissions.testSubmissionY(), testSubmissions.testSubmissionZ(), testMatches3,
-                ignoredMatches);
+        matchesAppearingThrice.add(matchOccursThreeTimesAcrossComparisons);
+        JPlagComparison comparisonThreeTimes = new JPlagComparison(testSubmissions.testSubmissionY(), testSubmissions.testSubmissionZ(),
+                matchesAppearingThrice, ignoredMatches);
 
-        testMatches4.add(testMatchDThreeTimesInDifferentComparisons);
-        testMatches4.add(testMatchBTwoTimesInOneComparison);
-        testMatches4.add(testMatchBTwoTimesInOneComparison);
-        JPlagComparison testComparison4 = new JPlagComparison(testSubmissions.testSubmissionZ(), testSubmissions.testSubmissionW(), testMatches4,
-                ignoredMatches);
+        matchesDuplicateAndThrice.add(matchOccursThreeTimesAcrossComparisons);
+        matchesDuplicateAndThrice.add(matchOccursTwiceInSameComparison);
+        matchesDuplicateAndThrice.add(matchOccursTwiceInSameComparison);
+        JPlagComparison comparisonDuplicateAndThreeTimes = new JPlagComparison(testSubmissions.testSubmissionZ(), testSubmissions.testSubmissionW(),
+                matchesDuplicateAndThrice, ignoredMatches);
 
-        testComparisons.add(testComparison1);
-        testComparisons.add(testComparison2);
-        testComparisons.add(testComparison3);
-        testComparisons.add(testComparison4);
+        testComparisons.add(comparisonOneAndTwoTimes);
+        testComparisons.add(comparisonTwoAndThreeTimes);
+        testComparisons.add(comparisonThreeTimes);
+        testComparisons.add(comparisonDuplicateAndThreeTimes);
     }
 
+    /**
+     * Tests if the Complete Match strategy adds the Match-Frequency's to the Hashmap according to the expected Frequency.
+     */
     @Test
     @DisplayName("Test Complete Matches Strategy")
     void testCompleteMatchesStrategy() {
@@ -153,58 +166,63 @@ class StrategyTest extends TestBase {
         Map<Integer, Integer> tokenFrequencyMap = frequencyDetermination.getMatchFrequencyMap();
         strategyIntegrationTest.printTestResult(tokenFrequencyMap);
 
-        assertTokenFrequencyContainsMatch(testMatchAOnTimeInComparisons, 1, tokenFrequencyMap);
-        assertTokenFrequencyContainsMatch(testMatchBTwoTimesInOneComparison, 2, tokenFrequencyMap);
-        assertTokenFrequencyContainsMatch(testMatchCTwoTimesInDifferentComparisons, 2, tokenFrequencyMap);
-        assertTokenFrequencyContainsMatch(testMatchDThreeTimesInDifferentComparisons, 3, tokenFrequencyMap);
+        assertTokenFrequencyAndContainsMatch(matchAppearsOnce, 1, tokenFrequencyMap);
+        assertTokenFrequencyAndContainsMatch(matchOccursTwiceInSameComparison, 2, tokenFrequencyMap);
+        assertTokenFrequencyAndContainsMatch(matchOccursTwiceAcrossComparisons, 2, tokenFrequencyMap);
+        assertTokenFrequencyAndContainsMatch(matchOccursThreeTimesAcrossComparisons, 3, tokenFrequencyMap);
     }
 
-    // Test Complete match strategy
-    private void assertTokenFrequencyContainsMatch(Match match, int expectedFrequency, Map<Integer, Integer> tokenFrequencyMap) {
-        int start = match.startOfFirst();
-        int length = match.lengthOfFirst();
-        List<TokenType> tokenNames = new LinkedList<>();
-        List<Token> tokens = testSubmission.getTokenList().subList(start, start + length);
-
-        for (Token token : tokens) {
-            tokenNames.add(token.getType());
+    /**
+     * Asserts that a match is contained in the frequency map and that its frequency is as expected.
+     * @param match The match to verify
+     * @param expectedFrequency How many times the match is expected to appear
+     * @param tokenFrequencyMap Map of token sequence hashes for frequency count
+     */
+    private void assertTokenFrequencyAndContainsMatch(Match match, int expectedFrequency, Map<Integer, Integer> tokenFrequencyMap) {
+        List<TokenType> matchTokenTypes = getMatchTokenTypes(match);
+        Integer matchFrequency = tokenFrequencyMap.get(matchTokenTypes.hashCode());
+        if (matchFrequency == null) {
+            throw new AssertionError("Match key [" + matchTokenTypes + "] not found in tokenFrequencyMap.");
         }
-        Integer submissionsContainingMatch = tokenFrequencyMap.get(tokenNames.hashCode());
-        if (submissionsContainingMatch == null) {
-            throw new AssertionError("Match key [" + tokenNames + "] not found in tokenFrequencyMap.");
-        }
-        assertEquals(expectedFrequency, submissionsContainingMatch,
-                "Match key [" + tokenNames + "] expected in " + expectedFrequency + " comparisons, but was in: " + submissionsContainingMatch);
+        assertEquals(expectedFrequency, matchFrequency,
+                "Match key [" + matchTokenTypes + "] expected " + expectedFrequency + " times in comparisons, but was " + matchFrequency + " times.");
     }
 
-    // Test Window Strategie
+    /**
+     * Tests if the Window strategy adds the expected windows to the Hashmap.
+     */
     @Test
     @DisplayName("Test WindowOfMatchesStrategy Create")
-    void testWindowOfMatchesStrategyCreateTest() {
+    void testWindowOfMatchesStrategyAddingTheExpectedWindows() {
         int windowSize = 10;
         FrequencyStrategy strategy = new WindowOfMatchesStrategy();
         Map<Integer, Integer> frequencyMap = new HashMap<>();
-        Match match = testMatchAOnTimeInComparisons;
+        Match match = matchAppearsOnce;
+        List<TokenType> matchTokenTypes = getMatchTokenTypes(match);
+
+        if (matchTokenTypes.size() > windowSize + 3) { // => to create 4 windows
+            matchTokenTypes = matchTokenTypes.subList(0, windowSize + 3);
+        }
+
+        strategy.addMatchToFrequencyMap(matchTokenTypes, frequencyMap, windowSize);
+
+        int expectedWindows = matchTokenTypes.size() - windowSize + 1;  // => should be 4
+        assertEquals(expectedWindows, frequencyMap.size(), "Number of windows should be as expected");
+
+        List<TokenType> expectedKeyTokens;
+        expectedKeyTokens = matchTokenTypes.subList(2, matchTokenTypes.size() - 1);
+        assertEquals(windowSize, expectedKeyTokens.size(), "Build False?");
+        assertTrue(frequencyMap.containsKey(expectedKeyTokens.hashCode()), "Frequency map should contain the key for the window");
+    }
+
+    private static List<TokenType> getMatchTokenTypes(Match match) {
         List<Token> tokens = testSubmission.getTokenList().subList(match.startOfFirst(), match.startOfFirst() + match.lengthOfFirst());
         List<TokenType> tokenStrings = new ArrayList<>();
 
         for (Token token : tokens) {
             tokenStrings.add(token.getType());
         }
-
-        if (tokenStrings.size() > windowSize + 3) { // => 4 keys should be found
-            tokenStrings = tokenStrings.subList(0, windowSize + 3);
-        }
-
-        strategy.addMatchToFrequencyMap(tokenStrings, frequencyMap, windowSize);
-
-        int expectedWindows = tokenStrings.size() - windowSize + 1;  // => should be 4
-        assertEquals(expectedWindows, frequencyMap.size(), "Number of windows should be as expected");
-
-        List<TokenType> expectedKeyTokens;
-        expectedKeyTokens = tokenStrings.subList(2, tokenStrings.size() - 1);
-        assertEquals(windowSize, expectedKeyTokens.size(), "Build False?");
-        assertTrue(frequencyMap.containsKey(expectedKeyTokens.hashCode()), "Frequency map should contain the key for the window");
+        return tokenStrings;
     }
 
     @Test
@@ -215,8 +233,8 @@ class StrategyTest extends TestBase {
         Map<Integer, Integer> windowMap = new HashMap<>();
         int windowSize = 5;
 
-        List<Token> tokensListInTestMatch = testSubmission.getTokenList().subList(testMatchShort.startOfFirst(),
-                testMatchShort.startOfFirst() + testMatchShort.lengthOfFirst());
+        List<Token> tokensListInTestMatch = testSubmission.getTokenList().subList(matchShort.startOfFirst(),
+                matchShort.startOfFirst() + matchShort.lengthOfFirst());
         List<TokenType> tokenListTestMatchReadable = tokensListInTestMatch.stream().map(Token::getType).toList();
 
         strategy.addMatchToFrequencyMap(tokenListTestMatchReadable, windowMap, windowSize);
@@ -271,7 +289,7 @@ class StrategyTest extends TestBase {
         SubMatchesStrategy strategy = new SubMatchesStrategy();
         Map<Integer, Integer> frequencyMap = new HashMap<>();
 
-        List<Token> tokensListInTestMatch = testSubmission.getTokenList().subList(testMatchShort.startOfFirst(), testMatchShort.startOfFirst() + 5);
+        List<Token> tokensListInTestMatch = testSubmission.getTokenList().subList(matchShort.startOfFirst(), matchShort.startOfFirst() + 5);
         List<TokenType> tokenListTestMatchReadable = tokensListInTestMatch.stream().map(Token::getType).toList();
         int minSize = 3;
 
