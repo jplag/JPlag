@@ -189,55 +189,30 @@ class StrategyTest extends TestBase {
     }
 
     /**
-     * Tests if the Window strategy adds the expected windows to the Hashmap.
+     * Creates a list of the TokenTypes from the Match.
+     * @param match for which the TokenType Sequence is wanted.
      */
-    @Test
-    @DisplayName("Test WindowOfMatchesStrategy Create")
-    void testWindowOfMatchesStrategyAddingTheExpectedWindows() {
-        int windowSize = 10;
-        FrequencyStrategy strategy = new WindowOfMatchesStrategy();
-        Map<Integer, Integer> frequencyMap = new HashMap<>();
-        Match match = matchAppearsOnce;
-        List<TokenType> matchTokenTypes = getMatchTokenTypes(match);
-
-        if (matchTokenTypes.size() > windowSize + 3) { // => to create 4 windows
-            matchTokenTypes = matchTokenTypes.subList(0, windowSize + 3);
-        }
-
-        strategy.addMatchToFrequencyMap(matchTokenTypes, frequencyMap, windowSize);
-
-        int expectedWindows = matchTokenTypes.size() - windowSize + 1;  // => should be 4
-        assertEquals(expectedWindows, frequencyMap.size(), "Number of windows should be as expected");
-
-        List<TokenType> expectedKeyTokens;
-        expectedKeyTokens = matchTokenTypes.subList(2, matchTokenTypes.size() - 1);
-        assertEquals(windowSize, expectedKeyTokens.size(), "Build False?");
-        assertTrue(frequencyMap.containsKey(expectedKeyTokens.hashCode()), "Frequency map should contain the key for the window");
-    }
-
     private static List<TokenType> getMatchTokenTypes(Match match) {
         List<Token> tokens = testSubmission.getTokenList().subList(match.startOfFirst(), match.startOfFirst() + match.lengthOfFirst());
         List<TokenType> tokenStrings = new ArrayList<>();
-
         for (Token token : tokens) {
             tokenStrings.add(token.getType());
         }
         return tokenStrings;
     }
 
+    /**
+     * Tests if the Window strategy adds the expected windows to the Hashmap.
+     */
     @Test
     @DisplayName("Test check() of window strategy")
     void testCheckWindowOfMatchesStrategy() {
-        // Build
         FrequencyStrategy strategy = new WindowOfMatchesStrategy();
         Map<Integer, Integer> windowMap = new HashMap<>();
         int windowSize = 5;
 
-        List<Token> tokensListInTestMatch = testSubmission.getTokenList().subList(matchShort.startOfFirst(),
-                matchShort.startOfFirst() + matchShort.lengthOfFirst());
-        List<TokenType> tokenListTestMatchReadable = tokensListInTestMatch.stream().map(Token::getType).toList();
-
-        strategy.addMatchToFrequencyMap(tokenListTestMatchReadable, windowMap, windowSize);
+        List<TokenType> matchTokenTypes = getMatchTokenTypes(matchShort);
+        strategy.addMatchToFrequencyMap(matchTokenTypes, windowMap, windowSize);
 
         StringBuilder logBuilder = new StringBuilder("windowMap:\n");
         windowMap.forEach((key, value) -> logBuilder.append(String.format("  %s → %s%n", key, value)));
@@ -245,8 +220,8 @@ class StrategyTest extends TestBase {
 
         // all Keys there?
         List<List<TokenType>> expectedKeys = new ArrayList<>();
-        for (int i = 0; i <= tokenListTestMatchReadable.size() - windowSize; i++) {
-            List<TokenType> expectedKey = tokenListTestMatchReadable.subList(i, i + windowSize);
+        for (int i = 0; i <= matchTokenTypes.size() - windowSize; i++) {
+            List<TokenType> expectedKey = matchTokenTypes.subList(i, i + windowSize);
             expectedKeys.add(expectedKey);
         }
         for (List<TokenType> key : expectedKeys) {
@@ -265,7 +240,7 @@ class StrategyTest extends TestBase {
 
         // add entries
         int startIndex = 2;
-        List<TokenType> tokenStringsNew = tokenListTestMatchReadable.subList(startIndex, startIndex + windowSize + 1);
+        List<TokenType> tokenStringsNew = matchTokenTypes.subList(startIndex, startIndex + windowSize + 1);
         List<TokenType> keyNew1 = tokenStringsNew.subList(0, windowSize);
         List<TokenType> keyNew2 = tokenStringsNew.subList(1, windowSize + 1);
 
