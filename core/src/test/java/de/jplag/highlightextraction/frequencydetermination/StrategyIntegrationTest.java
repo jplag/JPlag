@@ -81,16 +81,13 @@ class StrategyIntegrationTest extends TestBase {
 
     void printTestResult(Map<Integer, Integer> tokenFrequencyMap) {
         StringBuilder logBuilder = new StringBuilder();
-        logBuilder.append("\nToken-String                       | Len | Frequency | Histogram\n");
+        logBuilder.append("\nHashValue                       | Frequency | Histogram\n");
         logBuilder.append("---------------------------------------------------------------\n");
 
         for (Map.Entry<Integer, Integer> entry : tokenFrequencyMap.entrySet()) {
             String key = entry.getKey().toString();
             int count = entry.getValue();
-            int length = key.trim().isEmpty() ? 0 : key.trim().split("\\s+").length;
-            String id = entry.getValue().toString();
-
-            logBuilder.append(String.format("%-32.30s | %3d | %9d | %s%n    ↳ %s%n", key, length, count, "*".repeat(Math.min(count, 50)), id));
+            logBuilder.append(String.format("%-32.30s | %9d | %s%n", key, count, "*".repeat(Math.min(count, 50))));
         }
         logger.info(logBuilder.toString());
     }
