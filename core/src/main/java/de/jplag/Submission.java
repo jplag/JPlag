@@ -28,8 +28,8 @@ import de.jplag.normalization.TokenSequenceNormalizer;
 import de.jplag.options.JPlagOptions;
 
 /**
- * This class represents a single submission, which can either be a single file or a directory containing multiple
- * files. It encapsulates the details and processing logic required to handle the submission files, including parsing,
+ * This class represents a single submission, which is either a single file or a directory containing multiple files. It
+ * encapsulates the details and processing logic required to handle the submission files, including parsing,
  * tokenization, and normalization.
  */
 public class Submission implements Comparable<Submission> {
@@ -48,8 +48,9 @@ public class Submission implements Comparable<Submission> {
 
     /**
      * Creates a submission.
-     * @param name Identification of the submission (directory or filename).
-     * @param submissionRootFile is the submission file, or the root of the submission itself.
+     * @param name is the identifier of the submission (directory or filename). May include parent directory name if JPlag
+     * is executed with multiple root directories.
+     * @param submissionRootFile is the submission file or the root of the submission itself.
      * @param isNew states whether the submission must be checked for plagiarism.
      * @param files are the files of the submissions, if the root is a single file it should just contain one file.
      * @param language is the language of the submission.
@@ -86,20 +87,25 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * @return base code comparison
+     * Provides access to the comparison of this submission to the basecode.
+     * @return base code comparison.
      */
     public JPlagComparison getBaseCodeComparison() {
         return baseCodeComparison;
     }
 
     /**
-     * @return a list of files this submission consists of.
+     * Provided all source code files.
+     * @return a collection of files this submission consists of.
      */
     public Collection<File> getFiles() {
         return files;
     }
 
     /**
+     * Provides the submission name. If the submission is a single program file, it is the file name. If the submission
+     * contains multiple program files, it is the directory name. If JPlag is executed with multiple root directories, the
+     * name starts the root directory identifier, e.g., <code>rootName/submissionName</code>.
      * @return name of the submission (directory or file name).
      */
     public String getName() {
@@ -114,7 +120,7 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * @return the unique file of the submission, which is either in a root folder or a subfolder of root folder when the
+     * @return the unique root of the submission, which is either in a root folder or a subfolder of root folder when the
      * subdirectory option is used.
      */
     public File getRoot() {
@@ -122,12 +128,11 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * @param subtractBaseCode If true subtract basecode matches if possible.
      * @return Similarity divisor for the submission.
      */
-    int getSimilarityDivisor(boolean subtractBaseCode) {
+    int getSimilarityDivisor() {
         int divisor = getNumberOfTokens() - getFiles().size();
-        if (subtractBaseCode && baseCodeComparison != null) {
+        if (baseCodeComparison != null) {
             divisor -= baseCodeComparison.getNumberOfMatchedTokens();
         }
         return divisor;
@@ -141,8 +146,17 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * @return Whether a comparison between the submission and the base code is available.
+     * @return true if a comparison between the submission and the base code is available. Does not imply if there are
+     * matches to the base code.
      */
+    public boolean hasBaseCodeComparison() {
+        return baseCodeComparison != null;
+    }
+
+    /**
+     * @deprecated Use {@link #hasBaseCodeComparison()} instead.
+     */
+    @Deprecated(since = "6.1.0", forRemoval = true)
     public boolean hasBaseCodeMatches() {
         return baseCodeComparison != null;
     }
@@ -155,15 +169,15 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * @return whether the submission is new, That is, must be checked for plagiarism.
+     * @return whether the submission is new, that is, must be checked for plagiarism.
      */
     public boolean isNew() {
         return isNew;
     }
 
     /**
-     * Sets the base code comparison
-     * @param baseCodeComparison is submissions matches with the base code
+     * Sets the base code comparison.
+     * @param baseCodeComparison is submissions matches with the base code.
      */
     public void setBaseCodeComparison(JPlagComparison baseCodeComparison) {
         this.baseCodeComparison = baseCodeComparison;
@@ -216,7 +230,7 @@ public class Submission implements Comparable<Submission> {
     /**
      * Parse files of the submission.
      * @param debugParser specifies if the submission should be copied upon parsing errors.
-     * @param normalize specifies if the tokens sequences should be normalized.
+     * @param normalize specifies if the token sequences should be normalized.
      * @param minimalTokens specifies the minimum number of tokens required of a valid submission.
      * @return Whether parsing was successful.
      * @throws LanguageException if the language parser is not able to parse at all.
@@ -243,7 +257,8 @@ public class Submission implements Comparable<Submission> {
         }
 
         if (tokenList.size() < minimalTokens) {
-            logger.error("Submission {} contains {} tokens, which below the minimum match length {}!", name, tokenList.size(), minimalTokens);
+            // print the number of tokens without the file-end token to help users choose the right parameters:
+            logger.error("Submission {} contains {} tokens, which is below the minimum match length {}!", name, tokenList.size() - 1, minimalTokens);
             state = TOO_SMALL;
             return false;
         }
@@ -283,7 +298,7 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * @return Submission containing shallow copies of its fields.
+     * @return A shallow copy of this submission with the same name, root, files, etc.
      */
     public Submission copy() {
         Submission copy = new Submission(name, submissionRootFile, isNew, files, language);

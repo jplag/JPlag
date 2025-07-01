@@ -4,14 +4,18 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * This record represents the whole result of a comparison between two submissions.
+ * This record represents results of a structural comparison between two submissions.
  * @param firstSubmission is the first of the two submissions.
  * @param secondSubmission is the second of the two submissions.
- * @param matches is the unmodifiable list of all matches between the two submissions.
+ * @param matches is the unmodifiable list of all subsequence matches between the two submissions.
+ * @param ignoredMatches is the unmodifiable list of ignored matches whose length is below the minimum token match
+ * threshold.
  */
 public record JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches, List<Match> ignoredMatches) {
+
     /**
-     * Initializes a new comparison.
+     * Constructs a new comparison between two submissions. The match lists are wrapped as unmodifiable to preserve
+     * immutability.
      * @param firstSubmission is the first of the two submissions.
      * @param secondSubmission is the second of the two submissions.
      * @param matches is the list of all matches between the two submissions.
@@ -24,50 +28,69 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
     }
 
     /**
-     * Get the total number of matched tokens for this comparison.
+     * Get the total number of matched tokens for this comparison, which is the sum of the minimum lengths of all
+     * subsequence matches. This excludes ignored matches.
      */
     public int getNumberOfMatchedTokens() {
-        return matches.stream().mapToInt(Match::length).sum();
+        return matches.stream().mapToInt(Match::minimumLength).sum();
     }
 
     /**
-     * @return Maximum similarity in interval [0, 1]. O means no similarity, 1 means maximum similarity.
+     * Returns the maximum similarity score, which is either the similarity of the first submission to the second or vice
+     * versa. The similarity is adjusted based on whether both submissions contain base code matches.
+     * @return Maximum similarity in interval [0, 1]. 0 means zero percent structural similarity, 1 means 100 percent
+     * structural similarity.
      */
     public final double maximalSimilarity() {
         return Math.max(similarityOfFirst(), similarityOfSecond());
     }
 
     /**
-     * @return Minimum similarity in interval [0, 1]. O means no similarity, 1 means maximum similarity.
+     * Returns the minimum similarity score, which is either the similarity of the first submission to the second or vice
+     * versa.
+     * @return Minimum similarity in interval [0, 1]. 0 means zero percent structural similarity, 1 means 100 percent
+     * structural similarity.
      */
     public final double minimalSimilarity() {
         return Math.min(similarityOfFirst(), similarityOfSecond());
     }
 
     /**
-     * @return Average similarity in interval [0, 1]. O means no similarity, 1 means maximum similarity.
+     * Computes the average (or symmetric) similarity between the two submissions. The similarity is adjusted based on
+     * whether both submissions contain base code matches.
+     * @return Average similarity in interval [0, 1]. 0 means zero percent structural similarity, 1 means 100 percent
+     * structural similarity.
      */
     public final double similarity() {
-        boolean subtractBaseCode = firstSubmission.hasBaseCodeMatches() && secondSubmission.hasBaseCodeMatches();
-        int divisorA = firstSubmission.getSimilarityDivisor(subtractBaseCode);
-        int divisorB = secondSubmission.getSimilarityDivisor(subtractBaseCode);
-        return 2 * similarity(divisorA + divisorB);
+        int divisor = firstSubmission.getSimilarityDivisor() + secondSubmission.getSimilarityDivisor();
+        if (divisor == 0) {
+            return 0;
+        }
+        int matchedTokensOfFirst = matches.stream().mapToInt(Match::lengthOfFirst).sum();
+        int matchedTokensOfSecond = matches.stream().mapToInt(Match::lengthOfSecond).sum();
+        return (matchedTokensOfFirst + matchedTokensOfSecond) / (double) divisor;
     }
 
     /**
-     * @return Similarity of the first submission in interval [0, 1]. O means no similarity, 1 means maximum similarity.
+     * @return Similarity of the first submission to the second in interval [0, 1]. The similarity is adjusted based on
+     * whether both submissions contain base code matches. 0 means zero percent structural similarity, 1 means 100 percent
+     * structural similarity.
      */
     public final double similarityOfFirst() {
-        int divisor = firstSubmission.getSimilarityDivisor(true);
-        return similarity(divisor);
+        int divisor = firstSubmission.getSimilarityDivisor();
+        int matchedTokens = matches.stream().mapToInt(Match::lengthOfFirst).sum();
+        return divisor == 0 ? 0.0 : matchedTokens / (double) divisor;
     }
 
     /**
-     * @return Similarity of the second submission in interval [0, 1]. O means no similarity, 1 means maximum similarity.
+     * @return Similarity of the second submission to the first in interval [0, 1]. The similarity is adjusted based on
+     * whether both submissions contain base code matches. 0 means zero percent structural similarity, 1 means 100 percent
+     * structural similarity.
      */
     public final double similarityOfSecond() {
-        int divisor = secondSubmission.getSimilarityDivisor(true);
-        return similarity(divisor);
+        int divisor = secondSubmission.getSimilarityDivisor();
+        int matchedTokens = matches.stream().mapToInt(Match::lengthOfSecond).sum();
+        return divisor == 0 ? 0.0 : matchedTokens / (double) divisor;
     }
 
     @Override
@@ -75,7 +98,4 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
         return firstSubmission.getName() + " <-> " + secondSubmission.getName();
     }
 
-    private double similarity(int divisor) {
-        return (divisor == 0 ? 0.0 : (getNumberOfMatchedTokens() / (double) divisor));
-    }
 }

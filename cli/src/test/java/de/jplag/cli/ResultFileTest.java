@@ -13,10 +13,11 @@ import de.jplag.cli.test.CliTest;
 import de.jplag.exceptions.ExitException;
 
 class ResultFileTest extends CliTest {
-    private static final String DEFAULT_RESULT_FILE = "results.zip";
-    private static final String TEST_RESULT_FILE = "customResults.zip";
-    private static final String TEST_RESULT_FILE_WITH_AVOIDANCE = "customResults(1).zip";
-    private static final String TEST_RESULT_FILE_WITHOUT_ZIP = "customResults";
+    private static final String DEFAULT_RESULT_FILE = "results.jplag";
+    private static final String TEST_RESULT_FILE = "customResults.jplag";
+    private static final String TEST_RESULT_FILE_WITH_AVOIDANCE = "customResults(1).jplag";
+    private static final String TEST_RESULT_FILE_WITHOUT_EXTENSION = "customResults";
+    private static final String ZIP_ENDING_RESULT_NAME = "results.zip";
 
     @Test
     void testDefaultResultFolder() throws IOException, ExitException {
@@ -31,8 +32,8 @@ class ResultFileTest extends CliTest {
     }
 
     @Test
-    void testSetResultFolderWithoutZip() throws IOException, ExitException {
-        String targetPath = runCliForTargetPath(args -> args.with(CliArgument.RESULT_FILE, TEST_RESULT_FILE_WITHOUT_ZIP));
+    void testSetResultFolderWithoutFileExtension() throws IOException, ExitException {
+        String targetPath = runCliForTargetPath(args -> args.with(CliArgument.RESULT_FILE, TEST_RESULT_FILE_WITHOUT_EXTENSION));
         assertEquals(TEST_RESULT_FILE, targetPath);
     }
 
@@ -64,5 +65,11 @@ class ResultFileTest extends CliTest {
         testDir.delete();
 
         assertEquals(targetFile.getAbsolutePath(), actualTargetPath);
+    }
+
+    @Test
+    void testZipEnding() throws IOException, ExitException {
+        String targetPath = runCliForTargetPath(args -> args.with(CliArgument.RESULT_FILE, ZIP_ENDING_RESULT_NAME));
+        assertEquals(DEFAULT_RESULT_FILE, targetPath);
     }
 }

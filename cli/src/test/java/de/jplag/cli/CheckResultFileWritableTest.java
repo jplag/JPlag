@@ -17,7 +17,7 @@ class CheckResultFileWritableTest extends CliTest {
     @Test
     void testNonExistingWritableFile() throws Throwable {
         File directory = Files.createTempDirectory("JPlagTest").toFile();
-        File targetFile = new File(directory, "results.zip");
+        File targetFile = new File(directory, "results.jplag");
 
         String path = runCliForTargetPath(args -> args.with(RESULT_FILE, targetFile.getAbsolutePath()));
         Assertions.assertEquals(targetFile.getAbsolutePath(), path);
@@ -27,7 +27,8 @@ class CheckResultFileWritableTest extends CliTest {
     void testNonExistingNotWritableFile() throws IOException {
         File directory = Files.createTempDirectory("JPlagTest").toFile();
         Assumptions.assumeTrue(directory.setWritable(false));
-        File targetFile = new File(directory, "results.zip");
+        Assumptions.assumeFalse(directory.canWrite());
+        File targetFile = new File(directory, "results.jplag");
 
         Assertions.assertThrows(CliException.class, () -> {
             runCli(args -> args.with(RESULT_FILE, targetFile.getAbsolutePath()));
@@ -37,17 +38,17 @@ class CheckResultFileWritableTest extends CliTest {
     @Test
     void testExistingFile() throws Throwable {
         File directory = Files.createTempDirectory("JPlagTest").toFile();
-        File targetFile = new File(directory, "results.zip");
+        File targetFile = new File(directory, "results.jplag");
         Assumptions.assumeTrue(targetFile.createNewFile());
 
         String path = runCliForTargetPath(args -> args.with(RESULT_FILE, targetFile.getAbsolutePath()));
-        Assertions.assertEquals(new File(directory, "results(1).zip").getAbsolutePath(), path);
+        Assertions.assertEquals(new File(directory, "results(1).jplag").getAbsolutePath(), path);
     }
 
     @Test
     void testExistingFileOverwrite() throws Throwable {
         File directory = Files.createTempDirectory("JPlagTest").toFile();
-        File targetFile = new File(directory, "results.zip");
+        File targetFile = new File(directory, "results.jplag");
         Assumptions.assumeTrue(targetFile.createNewFile());
 
         String path = runCliForTargetPath(args -> args.with(RESULT_FILE, targetFile.getAbsolutePath()).with(OVERWRITE_RESULT_FILE));
@@ -57,9 +58,10 @@ class CheckResultFileWritableTest extends CliTest {
     @Test
     void testExistingNotWritableFile() throws IOException {
         File directory = Files.createTempDirectory("JPlagTest").toFile();
-        File targetFile = new File(directory, "results.zip");
+        File targetFile = new File(directory, "results.jplag");
         Assumptions.assumeTrue(targetFile.createNewFile());
         Assumptions.assumeTrue(targetFile.setWritable(false));
+        Assumptions.assumeFalse(targetFile.canWrite());
 
         Assertions.assertThrows(CliException.class, () -> {
             runCli(args -> args.with(OVERWRITE_RESULT_FILE).with(RESULT_FILE, targetFile.getAbsolutePath()));

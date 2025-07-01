@@ -3,21 +3,34 @@
 -->
 <template>
   <div
-    class="flex h-fit min-w-0 max-w-full flex-row space-x-1 overflow-x-hidden text-xs print:hidden"
+    class="flex h-fit max-w-full min-w-0 flex-row flex-wrap space-x-1 gap-y-1 overflow-x-hidden text-xs md:flex-nowrap print:hidden"
   >
-    <ToolTipComponent direction="right" v-if="hasBaseCode" class="pr-3">
+    <ToolTipComponent direction="right" :show-info-symbol="false">
       <template #default>
-        <OptionComponent label="Base Code" :style="{ background: getMatchColor(0.3, 'base') }" />
+        <OptionComponent label="Matches:" :has-tool-tip="true" />
       </template>
       <template #tooltip>
-        <div class="whitespace-pre text-sm">
+        <p class="text-sm whitespace-pre">Click on a match to show it in the code view.</p>
+      </template>
+    </ToolTipComponent>
+
+    <ToolTipComponent v-if="hasBaseCode" direction="right" class="pr-3" :show-info-symbol="false">
+      <template #default>
+        <OptionComponent
+          label="Base Code"
+          :style="{ background: getMatchColor(0.3, 'base') }"
+          :has-tool-tip="true"
+        />
+      </template>
+      <template #tooltip>
+        <div class="text-sm whitespace-pre">
           Sections that are likely base code (thus ignored in similarity calculation). <br />
           <p>
             {{ store().getDisplayName(id1) }}:
 
             <span v-if="basecodeInFirst.length > 0">
-              {{ basecodeInFirst.map((b) => b.match.tokens).reduce((a, b) => a + b, 0) }} Tokens,
-              Lines: {{ store().getDisplayName(id1 ?? '') }}: Lines
+              {{ basecodeInFirst.map((b) => b.length).reduce((a, b) => a + b, 0) }}
+              Tokens, Lines: {{ store().getDisplayName(id1 ?? '') }}: Lines
               {{ basecodeInFirst.map((b) => `${b.start}-${b.end}`).join(',') }}
             </span>
             <span v-else>No Basecode in Submission</span>
@@ -25,8 +38,8 @@
           <p>
             {{ store().getDisplayName(id2) }}:
             <span v-if="basecodeInSecond.length > 0">
-              {{ basecodeInSecond.map((b) => b.match.tokens).reduce((a, b) => a + b, 0) }} Tokens,
-              Lines: {{ store().getDisplayName(id2 ?? '') }}: Lines
+              {{ basecodeInSecond.map((b) => b.length).reduce((a, b) => a + b, 0) }}
+              Tokens, Lines: {{ store().getDisplayName(id2 ?? '') }}: Lines
               {{ basecodeInSecond.map((b) => `${b.start}-${b.end}`).join(',') }}
             </span>
             <span v-else>No Basecode in Submission</span>
@@ -35,47 +48,43 @@
       </template>
     </ToolTipComponent>
 
-    <ToolTipComponent direction="right">
-      <template #default>
-        <OptionComponent label="Match Files: TokenCount" />
-      </template>
-      <template #tooltip>
-        <p class="whitespace-pre text-sm">Click on a match to show it in the code view.</p>
-      </template>
-    </ToolTipComponent>
-
     <div
-      class="print-exact flex w-full flex-row space-x-1 overflow-x-auto print:flex-wrap print:space-y-1 print:overflow-x-hidden"
       ref="scrollableList"
+      class="print-exact flex w-full flex-row space-x-1 overflow-x-auto print:flex-wrap print:space-y-1 print:overflow-x-hidden"
       @scroll="updateScrollOffset()"
     >
       <ToolTipComponent
-        :direction="getTooltipDirection(index)"
         v-for="[index, match] in matches?.entries()"
         :key="index"
-        :scrollOffsetX="scrollOffsetX"
+        :direction="getTooltipDirection(index)"
+        :scroll-offset-x="scrollOffsetX"
+        :show-info-symbol="false"
       >
         <template #default>
           <OptionComponent
             :style="{ background: getMatchColor(0.3, match.colorIndex) }"
-            @click="$emit('matchSelected', match)"
             :label="
-              getFileName(match.firstFile) +
+              getFileName(match.firstFileName) +
               ' - ' +
-              getFileName(match.secondFile) +
+              getFileName(match.secondFileName) +
               ': ' +
-              match.tokens
+              getMatchLength(match)
             "
+            :has-tool-tip="true"
+            @click="$emit('matchSelected', match)"
           />
         </template>
         <template #tooltip>
-          <p class="whitespace-pre text-sm">
-            Match between {{ getFileName(match.firstFile) }} (Line {{ match.startInFirst.line }}-{{
-              match.endInFirst.line
-            }}) and {{ getFileName(match.secondFile) }} (Line {{ match.startInSecond.line }}-{{
+          <p class="text-sm whitespace-pre">
+            Match between {{ getFileName(match.firstFileName) }} (Line
+            {{ match.startInFirst.line }}-{{ match.endInFirst.line }}) and
+            {{ getFileName(match.secondFileName) }} (Line {{ match.startInSecond.line }}-{{
               match.endInSecond.line
             }}) <br />
-            Match is {{ match.tokens }} tokens long. <br />
+            Match is {{ match.lengthOfFirst }} tokens long in {{ store().getDisplayName(id1) }}.
+            <br />
+            Match is {{ match.lengthOfSecond }} tokens long in {{ store().getDisplayName(id2) }}.
+            <br />
             <span v-if="showTokenRanges(match)">
               Token indices of match: {{ match.startInFirst.tokenListIndex }}-{{
                 match.endInFirst.tokenListIndex
@@ -96,21 +105,23 @@
       <tr>
         <th class="px-2 text-left">File of {{ id1 }}</th>
         <th class="px-2 text-left">Starting Line - End Line</th>
+        <th class="px-2 text-left">Length in {{ id1 }}</th>
         <th class="px-2 text-left">File of {{ id2 }}</th>
         <th class="px-2 text-left">Starting Line - End Line</th>
-        <th class="px-2 text-left">Token Count</th>
+        <th class="px-2 text-left">Length in {{ id2 }}</th>
       </tr>
       <tr
         v-for="[index, match] in matches?.entries()"
-        v-bind:key="index"
+        :key="index"
         :style="{ background: getMatchColor(0.3, match.colorIndex) }"
         class="print-exact"
       >
-        <td class="px-2">{{ getFileName(match.firstFile) }}</td>
+        <td class="px-2">{{ getFileName(match.firstFileName) }}</td>
         <td class="px-2">{{ match.startInFirst }} - {{ match.endInFirst }}</td>
-        <td class="px-2">{{ getFileName(match.secondFile) }}</td>
+        <td class="px-2">{{ match.lengthOfFirst }}</td>
+        <td class="px-2">{{ getFileName(match.secondFileName) }}</td>
         <td class="px-2">{{ match.startInSecond }} - {{ match.endInSecond }}</td>
-        <td class="px-2">{{ match.tokens }}</td>
+        <td class="px-2">{{ match.lengthOfSecond }}</td>
       </tr>
       <tr
         v-if="hasBaseCode"
@@ -124,7 +135,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Match } from '@/model/Match'
+import { getMatchLength, type Match } from '@/model/Match'
 import OptionComponent from '../optionsSelectors/OptionComponent.vue'
 import ToolTipComponent from '@/components/ToolTipComponent.vue'
 import { getMatchColor } from '@/utils/ColorUtils'

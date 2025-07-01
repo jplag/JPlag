@@ -10,47 +10,47 @@ interface DataSet {
 
 const testSets: DataSet[] = [
   {
-    datasetName: 'fileSingleRoot-report.zip',
+    datasetName: 'fileSingleRoot-report.jplag',
     firstSubmissionName: '0.java',
     secondSubmissionName: '1.java'
   },
   {
-    datasetName: 'folderSingleRoot-report.zip',
+    datasetName: 'folderSingleRoot-report.jplag',
     firstSubmissionName: '0',
     secondSubmissionName: '1'
   },
   {
-    datasetName: 'fileMultiRoot-report.zip',
+    datasetName: 'fileMultiRoot-report.jplag',
     firstSubmissionName: 'f0\\\\|/0.java',
     secondSubmissionName: 'f1\\\\|/1.java'
   },
   {
-    datasetName: 'mixedBaseFile-report.zip',
+    datasetName: 'mixedBaseFile-report.jplag',
     firstSubmissionName: 'f0\\\\|/0.java',
     secondSubmissionName: 'f1\\\\|/1'
   },
   {
-    datasetName: 'mixedBaseFolder-report.zip',
+    datasetName: 'mixedBaseFolder-report.jplag',
     firstSubmissionName: 'f0\\\\|/0.java',
     secondSubmissionName: 'f1\\\\|/1'
   },
   {
-    datasetName: 'folderMultiRoot-report.zip',
+    datasetName: 'folderMultiRoot-report.jplag',
     firstSubmissionName: 'f0\\\\|/0',
     secondSubmissionName: 'f1\\\\|/1'
   },
   {
-    datasetName: 'python-report.zip',
+    datasetName: 'python-report.jplag',
     firstSubmissionName: '01.py',
     secondSubmissionName: '02.py'
   },
   {
-    datasetName: 'cpp-report.zip',
+    datasetName: 'cpp-report.jplag',
     firstSubmissionName: '01.cpp',
     secondSubmissionName: '02.cpp'
   },
   {
-    datasetName: 'csharp-report.zip',
+    datasetName: 'csharp-report.jplag',
     firstSubmissionName: '01.cs',
     secondSubmissionName: '02.cs'
   }
@@ -58,11 +58,9 @@ const testSets: DataSet[] = [
 
 for (const testSet of testSets) {
   test(`Can open ${testSet.datasetName}`, async ({ page }) => {
-    await page.goto('/')
-
     await uploadFile(testSet.datasetName, page)
 
-    const comparisonTable = await page.getByText('Cluster1').textContent()
+    const comparisonTable = await page.getByText('Cluster 1').textContent()
 
     const lineRegEx = RegExp('1' + testSet.firstSubmissionName + testSet.secondSubmissionName)
     expect(comparisonTable).toMatch(lineRegEx)

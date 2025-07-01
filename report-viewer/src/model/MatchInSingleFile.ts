@@ -56,4 +56,20 @@ export class MatchInSingleFile {
       return this._match.endInSecond.column
     }
   }
+
+  get fileName(): string {
+    if (this._index === 1) {
+      return this._match.firstFileName
+    } else {
+      return this._match.secondFileName
+    }
+  }
+
+  get length(): number {
+    if (this._index === 1) {
+      return this._match.lengthOfFirst
+    } else {
+      return this._match.lengthOfSecond
+    }
+  }
 }

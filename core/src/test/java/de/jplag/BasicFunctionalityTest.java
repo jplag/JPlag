@@ -14,7 +14,7 @@ import de.jplag.exceptions.ExitException;
  */
 class BasicFunctionalityTest extends TestBase {
 
-    private static int DISTRIBUTION_INDEX = 66;
+    private static final int DISTRIBUTION_INDEX = 66;
 
     @Test
     @DisplayName("test submissions that contain obvious plagiarism")
@@ -68,7 +68,7 @@ class BasicFunctionalityTest extends TestBase {
 
         // All comparisons with E shall have no matches
         result.getAllComparisons().stream()
-                .filter(comparison -> comparison.secondSubmission().getName().equals("E") || comparison.firstSubmission().getName().equals("E"))
+                .filter(comparison -> "E".equals(comparison.secondSubmission().getName()) || "E".equals(comparison.firstSubmission().getName()))
                 .forEach(comparison -> assertEquals(0, comparison.similarity(), DELTA));
 
         // Hard coded assertions on selected comparisons
@@ -104,7 +104,8 @@ class BasicFunctionalityTest extends TestBase {
         for (int i = 0; i < matches.size(); i++) {
             assertEquals(expectedMatches.get(i).startOfFirst(), matches.get(i).startOfFirst());
             assertEquals(expectedMatches.get(i).startOfSecond(), matches.get(i).startOfSecond());
-            assertEquals(expectedMatches.get(i).length(), matches.get(i).length());
+            assertEquals(expectedMatches.get(i).lengthOfFirst(), matches.get(i).lengthOfFirst());
+            assertEquals(expectedMatches.get(i).lengthOfSecond(), matches.get(i).lengthOfSecond());
         }
 
     }

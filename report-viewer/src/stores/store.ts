@@ -3,6 +3,7 @@ import type { State, UIState } from './state'
 import { MetricType } from '@/model/MetricType'
 import type { SubmissionFile, File } from '@/model/File'
 import { FileSortingOptions } from '@/model/ui/FileSortingOptions'
+import { Column, Direction } from '@/model/ui/ComparisonSorting'
 
 /**
  * The store is a global state management system. It is used to store the state of the application.
@@ -15,16 +16,15 @@ const store = defineStore('store', {
       anonymousIds: {},
       files: {},
       submissions: {},
-      // Mode that was used to load the files
-      localModeUsed: false,
-      zipModeUsed: false,
       fileIdToDisplayName: new Map(),
       uploadedFileName: ''
     },
     uiState: {
       useDarkMode: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
-      comparisonTableSortingMetric: MetricType.AVERAGE,
-      comparisonTableClusterSorting: false,
+      comparisonTableSorting: {
+        column: Column.averageSimilarity,
+        direction: Direction.descending
+      },
       distributionChartConfig: {
         metric: MetricType.AVERAGE,
         xScale: 'linear',
@@ -128,8 +128,6 @@ const store = defineStore('store', {
         anonymousIds: {},
         files: {},
         submissions: {},
-        localModeUsed: false,
-        zipModeUsed: false,
         fileIdToDisplayName: new Map(),
         uploadedFileName: ''
       }
@@ -191,14 +189,6 @@ const store = defineStore('store', {
         submissionFile.fileName,
         submissionFile
       )
-    },
-    /**
-     * Sets the loading type
-     * @param payload Type used to input JPlag results
-     */
-    setLoadingType(loadingType: 'zip' | 'local') {
-      this.state.localModeUsed = loadingType == 'local'
-      this.state.zipModeUsed = loadingType == 'zip'
     },
     /**
      * Switches whether darkMode is being used for the UI

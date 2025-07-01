@@ -35,12 +35,16 @@ public final class JPlagRunner {
 
     /**
      * Runs the internal server. Blocks until the server has stopped.
-     * @param zipFile The zip file to pass to the server. May be null.
-     * @param port The port to open the server on
-     * @throws IOException If the internal server throws an exception
+     * @param resultFile is the result file to pass to the server. May be null.
+     * @param port is the port to open the server on.
+     * @throws IOException if the internal server throws an exception
      */
-    public static void runInternalServer(File zipFile, int port) throws IOException {
-        ReportViewer reportViewer = new ReportViewer(zipFile, port);
+    public static void runInternalServer(File resultFile, int port) throws IOException {
+        if (!ReportViewer.hasCompiledViewer()) {
+            logger.warn("The report viewer is not available. Check whether you compiled JPlag with the report viewer.");
+            return;
+        }
+        ReportViewer reportViewer = new ReportViewer(resultFile, port);
         int actualPort = reportViewer.start();
         logger.info("ReportViewer started on port http://localhost:{}", actualPort);
         if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {

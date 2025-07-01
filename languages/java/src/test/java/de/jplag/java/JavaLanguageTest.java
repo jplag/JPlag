@@ -29,6 +29,9 @@ import static de.jplag.java.JavaTokenType.J_TRY_BEGIN;
 import static de.jplag.java.JavaTokenType.J_TRY_END;
 import static de.jplag.java.JavaTokenType.J_VARDEF;
 
+import java.util.List;
+
+import de.jplag.TokenType;
 import de.jplag.testutils.LanguageModuleTest;
 import de.jplag.testutils.datacollector.TestDataCollector;
 import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
@@ -74,6 +77,9 @@ public class JavaLanguageTest extends LanguageModuleTest {
         collector.testFile("AnonymousVariables.java").testTokenSequence(J_CLASS_BEGIN, J_METHOD_BEGIN, J_VARDEF, J_IF_BEGIN, J_IF_END, J_METHOD_END,
                 J_CLASS_END);
 
+        collector.testFile("ClassWithoutModifier.java").testSourceCoverage().testTokenSequence(J_PACKAGE, J_IMPORT, J_IMPORT, J_IMPORT, J_CLASS_BEGIN,
+                J_CLASS_END, J_CLASS_BEGIN, J_CLASS_END);
+
         collector.addTokenPositionTests("tokenPositions");
     }
 
@@ -83,5 +89,10 @@ public class JavaLanguageTest extends LanguageModuleTest {
         collector.ignoreMultipleLines("/*", "*/");
         collector.ignoreLinesByPrefix("})");
         collector.ignoreByCondition(line -> line.contains("else") && !line.contains("if"));
+    }
+
+    @Override
+    protected List<TokenType> getIgnoredTokensForMonotoneTokenOrder() {
+        return List.of(JavaTokenType.J_ANNO);
     }
 }

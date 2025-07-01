@@ -52,7 +52,7 @@ public class JPlagOptionsBuilder {
             return jPlagOptions.withBaseCodeSubmissionDirectory(baseCodeDirectory);
         }
         logger.error("Using legacy partial base code API. Please migrate to new full path base code API.");
-        return jPlagOptions.withBaseCodeSubmissionName(baseCodePath);
+        return jPlagOptions.withBaseCodeSubmissionDirectory(baseCodeDirectory);
     }
 
     private JPlagOptions initializeJPlagOptions(Set<File> submissionDirectories, Set<File> oldSubmissionDirectories, List<String> suffixes)
@@ -99,6 +99,6 @@ public class JPlagOptionsBuilder {
 
     private MergingOptions getMergingOptions() {
         return new MergingOptions(this.cliOptions.merging.enabled, this.cliOptions.merging.minimumNeighborLength,
-                this.cliOptions.merging.maximumGapSize);
+                this.cliOptions.merging.maximumGapSize, this.cliOptions.merging.minimumRequiredMerges);
     }
 }

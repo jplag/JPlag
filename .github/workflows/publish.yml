@@ -15,16 +15,13 @@ jobs:
       - name: Set maven settings.xml
         uses: whelk-io/maven-settings-xml-action@v22
         with:
-          servers: '[{ "id": "ossrh", "username": "jplag", "password": "${{ secrets.OSSRH_TOKEN }}" }]'
+          servers: '[{ "id": "central", "username": "${{ secrets.CENTRAL_USER }}", "password": "${{ secrets.CENTRAL_TOKEN }}" }]'
       - name: Import GPG key
         uses: crazy-max/ghaction-import-gpg@v6
         with:
-          gpg_private_key: ${{ secrets.PGP_SECRET }}
-          passphrase: ${{ secrets.PGP_PW }}
+          gpg_private_key: ${{ secrets.GPG_KEY }}
       - name: Publish package
         run: mvn -P deployment -U -B deploy
-        env:
-          GPG_PASSPHRASE: ${{ secrets.PGP_PW }}
 
   publish-release-artifact:
     runs-on: ubuntu-latest

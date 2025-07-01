@@ -76,7 +76,7 @@ public class ScxmlParserAdapter extends AbstractParser {
 
         visitor.visit(statechart);
         tokens.add(Token.fileEnd(currentStatechartFile));
-        view.writeToFile(ScxmlLanguage.VIEW_FILE_SUFFIX);
+        view.writeToFile(ScxmlLanguage.VIEW_FILE_EXTENSION);
     }
 
     /**

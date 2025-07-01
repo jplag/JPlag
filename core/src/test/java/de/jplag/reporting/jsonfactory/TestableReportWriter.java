@@ -6,7 +6,7 @@ import java.util.Map;
 
 import de.jplag.reporting.reportobject.writer.DummyResultWriter;
 
-public class TestableReportWriter extends DummyResultWriter {
+class TestableReportWriter extends DummyResultWriter {
 
     public final Map<Path, Object> jsonEntries;
 

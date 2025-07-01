@@ -1,13 +1,10 @@
 <template>
   <div class="flex max-h-full flex-col overflow-hidden print:max-w-full">
     <div class="flex max-h-full flex-col overflow-hidden print:max-w-full">
-      <canvas
-        ref="graphCanvas"
-        class="min-h-0 flex-grow print:max-h-full print:max-w-full"
-      ></canvas>
+      <canvas ref="graphCanvas" class="min-h-0 grow print:max-h-full print:max-w-full"></canvas>
       <div class="mt-5 text-xs font-bold text-gray-500 dark:text-gray-400 print:hidden">
         <p>Hover over an edge to highlight it in the table.</p>
-        <p class="mt-2" v-if="!allComparisonsPresent">
+        <p v-if="!allComparisonsPresent" class="mt-2">
           Not all comparisons of this cluster are present. These comparisons are indicated by the
           dashed lines. <br />
           To include more comparisons, increase the number of increased comparisons in the CLI.
@@ -21,7 +18,7 @@
 
 <script setup lang="ts">
 import type { ClusterListElement } from '@/model/ClusterListElement'
-import { Chart, registerables } from 'chart.js'
+import { Chart, registerables, type ChartEvent } from 'chart.js'
 import { ref, type PropType, type Ref, onMounted, computed, watch } from 'vue'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { EdgeLine, GraphController, GraphChart } from 'chartjs-chart-graph'
@@ -33,6 +30,10 @@ const props = defineProps({
   cluster: {
     type: Object as PropType<ClusterListElement>,
     required: true
+  },
+  highlightedEdge: {
+    type: Object as PropType<{ firstId: string; secondId: string } | null>,
+    default: null
   }
 })
 
@@ -63,6 +64,21 @@ const edges = computed(() => {
     })
   })
   return edges
+})
+
+const highlightedEdgeIndexes = computed(() => {
+  if (props.highlightedEdge == null) {
+    return null
+  }
+  const firstIndex = keys.value.indexOf(props.highlightedEdge.firstId)
+  const secondIndex = keys.value.indexOf(props.highlightedEdge.secondId)
+  if (firstIndex == -1 || secondIndex == -1) {
+    console.warn(
+      `Could not find index for ${props.highlightedEdge.firstId} or ${props.highlightedEdge.secondId}`
+    )
+    return null
+  }
+  return { firstIndex, secondIndex }
 })
 
 type HoverableEdge = {
@@ -106,10 +122,24 @@ function distanceToEdge(edge: HoverableEdge, p: { x: number; y: number }) {
   return Math.abs(numerator / denominator)
 }
 
+/**
+ * Checks that the hover is actually on the edge and not on any point of the extension beyond the nodes
+ */
+function isHoverOnLine(edge: HoverableEdge, p: { x: number; y: number }) {
+  const minX = Math.min(edge.x1, edge.x2)
+  const maxX = Math.max(edge.x1, edge.x2)
+  const minY = Math.min(edge.y1, edge.y2)
+  const maxY = Math.max(edge.y1, edge.y2)
+  return p.x >= minX && p.x <= maxX && p.y >= minY && p.y <= maxY
+}
+
 function getClosestEdge(p: { x: number; y: number }) {
   let closestEdge = { sourceId: '', targetId: '', x1: -1, y1: -1, x2: -1, y2: -1 }
   let closestDistance = Infinity
   hoverableEdges.value.forEach((edge) => {
+    if (!isHoverOnLine(edge, p)) {
+      return
+    }
     const distance = distanceToEdge(edge, p)
     if (distance < closestDistance) {
       closestDistance = distance
@@ -165,17 +195,20 @@ const maximumSimilarity = computed(() => {
   return maximumSimilarity
 })
 
-function getClampedSimilarityFromKeyIndex(firstIndex: number, secondIndex: number) {
+function getClampedSimilarityFromKeyIndex(
+  firstIndex: number,
+  secondIndex: number,
+  min: number,
+  max: number
+) {
   const similarity = getSimilarityFromKeyIndex(firstIndex, secondIndex)
   if (similarity == 0) {
     return 0
   }
-  if (minimumSimilarity.value == maximumSimilarity.value) {
+  if (min == max) {
     return 1
   }
-  return (
-    (similarity - minimumSimilarity.value) / (maximumSimilarity.value - minimumSimilarity.value)
-  )
+  return (similarity - min) / (max - min)
 }
 
 function getEdgeAlphaFromKeyIndex(firstIndex: number, secondIndex: number) {
@@ -183,7 +216,16 @@ function getEdgeAlphaFromKeyIndex(firstIndex: number, secondIndex: number) {
   if (similarity == 0) {
     return 1
   }
-  return getClampedSimilarityFromKeyIndex(firstIndex, secondIndex) * 0.7 + 0.3
+  return (
+    getClampedSimilarityFromKeyIndex(
+      firstIndex,
+      secondIndex,
+      Math.min(minimumSimilarity.value, 0.5),
+      maximumSimilarity.value
+    ) *
+      0.7 +
+    0.3
+  )
 }
 
 function getEdgeWidth(firstIndex: number, secondIndex: number) {
@@ -191,7 +233,7 @@ function getEdgeWidth(firstIndex: number, secondIndex: number) {
   if (similarity == 0) {
     return 0.5
   }
-  return getClampedSimilarityFromKeyIndex(firstIndex, secondIndex) * 5 + 1
+  return getClampedSimilarityFromKeyIndex(firstIndex, secondIndex, 0, 1) * 5 + 1
 }
 
 function getEdgeDashStyle(firstIndex: number, secondIndex: number) {
@@ -203,9 +245,23 @@ function getEdgeDashStyle(firstIndex: number, secondIndex: number) {
 }
 
 function getEdgeColor(firstIndex: number, secondIndex: number) {
+  let isHighlightedRow = false
+  if (highlightedEdgeIndexes.value != null) {
+    if (
+      (highlightedEdgeIndexes.value.firstIndex == firstIndex &&
+        highlightedEdgeIndexes.value.secondIndex == secondIndex) ||
+      (highlightedEdgeIndexes.value.firstIndex == secondIndex &&
+        highlightedEdgeIndexes.value.secondIndex == firstIndex)
+    ) {
+      isHighlightedRow = true
+    }
+  }
   const similarity = getSimilarityFromKeyIndex(firstIndex, secondIndex)
   if (similarity == 0) {
     return graphColors.additionalLine.value
+  }
+  if (isHighlightedRow) {
+    return graphColors.highlightedLine(1)
   }
   return graphColors.contentFillAlpha(getEdgeAlphaFromKeyIndex(firstIndex, secondIndex))
 }
@@ -226,8 +282,11 @@ const graphData = computed(() => {
           y: calculateYPosition(index)
         })),
         edges: edges.value,
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in the library
         edgeLineBorderColor: (ctx: any) => getEdgeColor(ctx.raw.source, ctx.raw.target),
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in the library
         edgeLineBorderWidth: (ctx: any) => getEdgeWidth(ctx.raw.source, ctx.raw.target),
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in the library
         edgeLineBorderDash: (ctx: any) => getEdgeDashStyle(ctx.raw.source, ctx.raw.target)
       }
     ]
@@ -246,6 +305,40 @@ const xPadding = computed(() => {
 
 const hoveredEdge: Ref<{ firstId: string; secondId: string } | null> = ref(null)
 
+const EdgeHoverPlugin = {
+  id: 'edgeTooltip',
+  afterEvent(
+    chart: Chart,
+    args: {
+      event: ChartEvent
+      replay: boolean
+      changed?: boolean
+      cancelable: false
+      inChartArea: boolean
+    }
+  ) {
+    const tooltip = chart.tooltip
+    if (!tooltip) {
+      return
+    }
+
+    if (hoveredEdge.value == null) {
+      tooltip.setActiveElements([], { x: 0, y: 0 })
+      return
+    }
+    const e = args.event
+    tooltip.setActiveElements(
+      [
+        { datasetIndex: 0, index: keys.value.indexOf(hoveredEdge.value.firstId) },
+        { datasetIndex: 0, index: keys.value.indexOf(hoveredEdge.value.secondId) }
+      ],
+      { x: e.x ?? 0, y: e.y ?? 0 }
+    )
+    //tooltip.update(true)
+    //tooltip.draw(chart.ctx)
+  }
+}
+
 const graphOptions = computed(() => {
   return {
     layout: {
@@ -256,6 +349,7 @@ const graphOptions = computed(() => {
         right: xPadding.value
       }
     },
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in the library
     onHover: (event: any, elements: any) => {
       if (!event) {
         hoveredEdge.value = null
@@ -294,18 +388,20 @@ const graphOptions = computed(() => {
         })
       }
     },
-    animation: false as false,
+    animation: false as const,
     plugins: {
       legend: { display: false },
       datalabels: {
         display: true,
         font: {
-          weight: 'bold' as 'bold',
+          weight: 'bold' as const,
           size: 12
         },
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in the library
         formatter: (value: any, ctx: any) => {
           return labels.value[ctx.dataIndex]
         },
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in the library
         align: (ctx: any) => degreeAroundCircle(ctx.dataIndex),
         offset: 8,
         color: graphColors.ticksAndFont.value
@@ -315,7 +411,24 @@ const graphOptions = computed(() => {
         displayColors: false,
         callbacks: {
           title: () => {
+            if (hoveredEdge.value == null) {
+              return ''
+            }
+            return hoveredEdge.value.firstId + ' — ' + hoveredEdge.value.secondId
+          },
+          label: () => {
             return ''
+          },
+          beforeBody: () => {
+            if (hoveredEdge.value == null) {
+              return ''
+            }
+            const avgSimilarity =
+              getSimilarityFromKeyIndex(
+                keys.value.indexOf(hoveredEdge.value.firstId),
+                keys.value.indexOf(hoveredEdge.value.secondId)
+              ) * 100
+            return `Average similarity: ${avgSimilarity.toFixed(2)}%`
           }
         }
       }
@@ -343,6 +456,7 @@ function drawGraph() {
     data: graphData.value,
     options: graphOptions.value,
     plugins: [
+      EdgeHoverPlugin,
       {
         id: 'onMouseOut',
         beforeEvent(chart, args) {
@@ -388,6 +502,13 @@ watch(
       o: graphOptions.value
     }
   }),
+  () => {
+    drawGraph()
+  }
+)
+
+watch(
+  () => props.highlightedEdge,
   () => {
     drawGraph()
   }

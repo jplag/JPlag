@@ -2,8 +2,8 @@
   Offers a un-styled scrollable container
 -->
 <template>
-  <div class="overflow-y-auto print:overflow-y-visible" ref="root">
-    <div class="max-h-0 min-h-full print:max-h-none">
+  <div ref="root" class="overflow-y-visible md:overflow-y-auto print:overflow-y-visible">
+    <div class="md:max-h-0 md:min-h-full print:max-h-none print:min-h-fit">
       <slot></slot>
     </div>
   </div>

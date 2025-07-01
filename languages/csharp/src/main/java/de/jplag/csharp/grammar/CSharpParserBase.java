@@ -24,6 +24,6 @@ public abstract class CSharpParserBase extends Parser {
         if (localVariableType == null) {
             return true;
         }
-        return !localVariableType.getText().equals("var");
+        return !"var".equals(localVariableType.getText());
     }
 }

@@ -1,4 +1,4 @@
-import { Page, expect } from '@playwright/test'
+import { Page } from '@playwright/test'
 
 /**
  * Selects a file in the file chooser and uploads it.
@@ -6,14 +6,23 @@ import { Page, expect } from '@playwright/test'
  * Expects to be on the file upload page.
  * @param fileName
  */
-export async function uploadFile(fileName: string, page: Page) {
-  expect(page).toHaveURL('/')
+export async function uploadFile(
+  fileName: string,
+  page: Page,
+  waitCondition: (page: Page) => Promise<void> = async (page) =>
+    await page.locator('text="JPlag Report"').waitFor({ state: 'visible' })
+) {
+  page.route('**/results.jplag', async (route) => {
+    await route.fulfill({
+      // fullfill with the file
+      path: `./tests/e2e/assets/${fileName}`,
+      headers: {
+        'Content-Type': 'application/zip'
+      }
+    })
+  })
 
-  // upload file through file chooser
-  const fileChooserPromise = page.waitForEvent('filechooser')
-  await page.getByText('Drag and Drop zip/Json file on this page').click()
-  const fileChooser = await fileChooserPromise
-  await fileChooser.setFiles(`tests/e2e/assets/${fileName}`)
+  await page.goto('/')
 
-  await page.waitForURL('/overview')
+  await waitCondition(page)
 }

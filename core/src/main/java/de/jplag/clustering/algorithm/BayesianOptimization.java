@@ -36,6 +36,7 @@ public class BayesianOptimization {
     private final RealVector lengthScale;
 
     /**
+     * Sets up a bayesian optimization.
      * @param minima of the explored parameters
      * @param maxima of the explored parameters
      * @param initPoints points that are initially sampled for exploration

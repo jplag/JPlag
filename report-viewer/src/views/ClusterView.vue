@@ -1,36 +1,34 @@
 <template>
-  <div class="absolute bottom-0 left-0 right-0 top-0 flex flex-col print:space-y-5">
-    <div class="relative left-0 right-0 top-0 flex space-x-5 p-5 pb-0 print:p-0">
-      <Container class="flex-grow overflow-hidden">
-        <h2>Cluster</h2>
-        <div class="flex flex-row items-center space-x-5">
-          <TextInformation label="Average Similarity"
-            >{{ (cluster.averageSimilarity * 100).toFixed(2) }}%</TextInformation
-          >
-        </div>
-      </Container>
-    </div>
+  <div
+    class="grid grid-cols-1 grid-rows-[auto_600px_90vh] gap-5 md:grid-cols-[2fr_1fr] md:grid-rows-[auto_1fr] md:overflow-hidden print:grid-cols-1 print:grid-rows-[auto_1fr]"
+  >
+    <Container class="col-start-1 row-start-1 md:col-end-3 md:row-end-2">
+      <h2>Cluster</h2>
+      <div class="flex flex-row items-center space-x-5">
+        <TextInformation label="Average Similarity"
+          >{{ (cluster.averageSimilarity * 100).toFixed(2) }}%</TextInformation
+        >
+      </div>
+    </Container>
 
-    <div
-      class="relative bottom-0 left-0 right-0 flex flex-grow justify-between space-x-5 px-5 pb-7 pt-5 print:grow-0 print:flex-col print:space-x-0 print:space-y-5 print:p-0"
-    >
+    <div class="col-start-1 row-start-2 flex flex-col overflow-hidden">
       <Container
-        class="flex max-h-0 min-h-full flex-1 flex-col overflow-hidden print:max-h-none print:min-h-0 print:flex-none"
         v-if="cluster.members.length >= 35 || !canShowRadarChart"
+        class="flex max-h-0 min-h-full flex-1 flex-col overflow-hidden print:max-h-none print:min-h-0 print:flex-none"
       >
         <div
-          class="flex max-h-full flex-col overflow-hidden print:flex-none"
           v-if="cluster.members.length < 35"
+          class="flex max-h-full flex-col overflow-hidden print:flex-none"
         >
           <ClusterGraph
             v-if="selectedClusterVisualization == 'Graph'"
             :cluster="clusterListElement"
-            class="flex-grow print:max-h-full print:max-w-full print:flex-grow-0"
+            class="grow print:max-h-full print:max-w-full print:grow-0"
             @line-hovered="(value) => (highlightedElement = value)"
           />
         </div>
         <div v-else class="mx-auto space-y-5">
-          <p class="text-center font-bold text-error">
+          <p class="text-error text-center font-bold">
             The cluster has too many members to be displayed as a graph or radar chart.
           </p>
           <p class="text-center font-bold text-gray-500 dark:text-gray-400">
@@ -39,51 +37,53 @@
         </div>
       </Container>
       <TabbedContainer
+        v-else
         class="flex max-h-0 min-h-full flex-1 flex-col overflow-hidden print:max-h-none print:min-h-0 print:flex-none"
         :tabs="clusterVisualizationOptions"
-        v-else
       >
         <template #Graph>
           <ClusterGraph
             :cluster="clusterListElement"
-            class="flex-grow print:max-h-full print:max-w-full print:flex-grow-0"
+            class="grow print:max-h-full print:max-w-full print:grow-0"
+            :highlighted-edge="hoveredEdge"
             @line-hovered="(value) => (highlightedElement = value)"
           />
         </template>
         <template #Radar>
-          <ClusterRadarChart :cluster="clusterListElement" class="flex-grow" />
-        </template>
-      </TabbedContainer>
-
-      <TabbedContainer
-        class="flex max-h-0 min-h-full w-1/3 flex-col space-y-2 print:hidden"
-        :tabs="comparisonTableOptions"
-        :first-bottom-tooltip-index="1"
-      >
-        <template #Members>
-          <ComparisonsTable
-            :topComparisons="comparisons"
-            class="max-h-0 min-h-full flex-1 overflow-hidden"
-            header="Comparisons of Cluster Members:"
-            :highlighted-row-ids="highlightedElement ?? undefined"
-          >
-            <template #footer v-if="comparisons.length < maxAmountOfComparisonsInCluster">
-              <p class="w-full pt-1 text-center font-bold">
-                Not all comparisons inside the cluster are shown. To see more, re-run JPlag with a
-                higher maximum number argument.
-              </p>
-            </template>
-          </ComparisonsTable>
-        </template>
-        <template #Related-Comparisons>
-          <ComparisonsTable
-            :topComparisons="relatedComparisons"
-            class="max-h-0 min-h-full flex-1 overflow-hidden"
-            header="Comparisons related to the Cluster:"
-          />
+          <ClusterRadarChart :cluster="clusterListElement" class="grow" />
         </template>
       </TabbedContainer>
     </div>
+
+    <TabbedContainer
+      class="col-start-1 row-start-3 flex overflow-hidden md:col-start-2 md:row-start-2 print:hidden"
+      :tabs="comparisonTableOptions"
+      :first-bottom-tooltip-index="1"
+    >
+      <template #Members>
+        <ComparisonsTable
+          :top-comparisons="comparisons"
+          class="max-h-0 min-h-full flex-1 overflow-hidden"
+          header="Comparisons of Cluster Members:"
+          :highlighted-row-ids="highlightedElement ?? undefined"
+          @line-hovered="(value) => (hoveredEdge = value)"
+        >
+          <template v-if="comparisons.length < maxAmountOfComparisonsInCluster" #footer>
+            <p class="w-full pt-1 text-center font-bold">
+              Not all comparisons inside the cluster are shown. To see more, re-run JPlag with a
+              higher maximum number argument.
+            </p>
+          </template>
+        </ComparisonsTable>
+      </template>
+      <template #Related-Comparisons>
+        <ComparisonsTable
+          :top-comparisons="relatedComparisons"
+          class="max-h-0 min-h-full flex-1 overflow-hidden"
+          header="Comparisons related to the Cluster:"
+        />
+      </template>
+    </TabbedContainer>
   </div>
 </template>
 
@@ -96,18 +96,18 @@ import TextInformation from '@/components/TextInformation.vue'
 import type { Cluster } from '@/model/Cluster'
 import type { ClusterListElement, ClusterListElementMember } from '@/model/ClusterListElement'
 import { MetricType } from '@/model/MetricType'
-import type { Overview } from '@/model/Overview'
 import { computed, ref, onErrorCaptured, type PropType, type Ref } from 'vue'
 import { redirectOnError } from '@/router'
 import TabbedContainer from '@/components/TabbedContainer.vue'
+import type { ComparisonListElement } from '@/model/ComparisonListElement'
 
 const props = defineProps({
-  overview: {
-    type: Object as PropType<Overview>,
-    required: true
-  },
   cluster: {
     type: Object as PropType<Cluster>,
+    required: true
+  },
+  topComparisons: {
+    type: Array<ComparisonListElement>,
     required: true
   }
 })
@@ -138,7 +138,7 @@ const comparisonTableOptions = [
 const usedMetric = MetricType.AVERAGE
 
 const comparisons = computed(() =>
-  props.overview.topComparisons.filter(
+  props.topComparisons.filter(
     (c) =>
       props.cluster.members.includes(c.firstSubmissionId) &&
       props.cluster.members.includes(c.secondSubmissionId)
@@ -154,7 +154,7 @@ comparisons.value
   })
 
 const relatedComparisons = computed(() =>
-  props.overview.topComparisons.filter(
+  props.topComparisons.filter(
     (c) =>
       (props.cluster.members.includes(c.firstSubmissionId) &&
         !props.cluster.members.includes(c.secondSubmissionId)) ||
@@ -203,6 +203,7 @@ const maxAmountOfComparisonsInCluster = computed(() => {
 })
 
 const highlightedElement: Ref<{ firstId: string; secondId: string } | null> = ref(null)
+const hoveredEdge: Ref<{ firstId: string; secondId: string } | null> = ref(null)
 
 onErrorCaptured((error) => {
   redirectOnError(error, 'Error displaying cluster:\n', 'OverviewView', 'Back to overview')

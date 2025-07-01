@@ -1,32 +1,36 @@
 <template>
-  <ContainerComponent class="flex flex-col overflow-hidden !p-0">
-    <div class="flex w-full bg-container-secondary-light dark:bg-container-secondary-dark">
+  <ContainerComponent class="flex flex-col overflow-hidden p-0!">
+    <div class="bg-container-secondary-light dark:bg-container-secondary-dark flex w-full">
       <div
         v-for="index in Array(props.tabs.length).keys()"
-        class="cursor-pointer border-r border-container-border-light dark:border-container-border-dark"
-        @click="selectedTab = tabNames[index]"
         :key="index"
+        class="border-container-border-light dark:border-container-border-dark cursor-pointer border-r"
         :class="
           tabNames[index] == selectedTab
-            ? 'border-b-0 bg-container-light dark:bg-container-dark'
-            : 'border-b bg-container-secondary-light dark:bg-container-secondary-dark'
+            ? 'bg-container-light dark:bg-container-dark border-b-0'
+            : 'bg-container-secondary-light dark:bg-container-secondary-dark border-b'
         "
+        @click="selectedTab = tabNames[index]"
       >
         <ToolTipComponent
           v-if="toolTips[index]"
           :direction="index < firstBottomTooltipIndex ? 'right' : 'bottom'"
+          :show-info-symbol="false"
         >
           <template #default>
-            <p class="p-2 px-5">{{ tabNames[index] }}</p>
+            <span class="flex items-center p-2 px-5">
+              <p>{{ tabNames[index] }}</p>
+              <InfoIcon />
+            </span>
           </template>
           <template #tooltip>
-            <p class="whitespace-pre text-sm">{{ toolTips[index] }}</p>
+            <p class="text-sm whitespace-pre">{{ toolTips[index] }}</p>
           </template>
         </ToolTipComponent>
         <p v-else class="p-2 px-5">{{ tabNames[index] }}</p>
       </div>
       <div
-        class="flex-1 border-b border-container-border-light dark:border-container-border-dark"
+        class="border-container-border-light dark:border-container-border-dark flex-1 border-b"
       ></div>
     </div>
     <div class="flex-1 flex-col overflow-hidden p-2">
@@ -40,6 +44,7 @@ import { computed, ref, type Ref } from 'vue'
 import ContainerComponent from './ContainerComponent.vue'
 import type { ToolTipLabel } from '@/model/ui/ToolTip'
 import ToolTipComponent from './ToolTipComponent.vue'
+import InfoIcon from './InfoIcon.vue'
 
 const props = defineProps({
   tabs: {

@@ -5,8 +5,12 @@
  * @property strength - The strength of the cluster
  * @property members - The ids of the submissions in the cluster
  */
-export type Cluster = {
+export interface Cluster extends ReportFormatCluster {
+  index: number
+}
+
+export interface ReportFormatCluster {
   averageSimilarity: number
   strength: number
-  members: Array<string>
+  members: string[]
 }

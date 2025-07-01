@@ -5,7 +5,7 @@ package de.jplag.cli.options;
  */
 public enum JPlagMode {
     /**
-     * Only run JPlag and create a results.zip
+     * Only run JPlag and create a results.jplag
      */
     RUN,
     /**
@@ -15,5 +15,9 @@ public enum JPlagMode {
     /**
      * Run JPlag and open the result in report viewer
      */
-    RUN_AND_VIEW
+    RUN_AND_VIEW,
+    /**
+     * Choose the mode automatically from the given input files
+     */
+    AUTO,
 }

@@ -12,18 +12,26 @@ import type { MatchColorIndex } from '@/utils/ColorUtils'
  * @property colorIndex - Index of the color to use for the match.
  */
 export interface Match {
-  firstFile: string
-  secondFile: string
+  firstFileName: string
+  secondFileName: string
   startInFirst: CodePosition
   endInFirst: CodePosition
   startInSecond: CodePosition
   endInSecond: CodePosition
-  tokens: number
+  lengthOfFirst: number
+  lengthOfSecond: number
   colorIndex: MatchColorIndex
 }
 
 export interface CodePosition {
+  // 1-based
   line: number
+  // 0-based
   column: number
+  // 0-based
   tokenListIndex: number
+}
+
+export function getMatchLength(match: Match) {
+  return Math.min(match.lengthOfFirst, match.lengthOfSecond)
 }

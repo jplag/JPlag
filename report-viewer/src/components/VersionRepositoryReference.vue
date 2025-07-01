@@ -1,8 +1,7 @@
 <template>
   <div
     :class="{
-      'absolute bottom-1 left-5 space-x-2 text-xs text-black dark:text-white print:hidden':
-        overrideStyle
+      'space-x-2 pb-1 text-xs text-black dark:text-white print:hidden': overrideStyle
     }"
   >
     <span
@@ -13,7 +12,7 @@
       JPlag is open source. Bug reports and feature requests can be submitted on
       <a
         href="https://github.com/jplag/JPlag/issues"
-        class="text-link-dark underline dark:text-link"
+        class="text-link-dark dark:text-link underline"
         ><FontAwesomeIcon :icon="faGithub" /> GitHub</a
       >
     </span>

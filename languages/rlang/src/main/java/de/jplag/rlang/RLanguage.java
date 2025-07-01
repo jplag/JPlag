@@ -6,47 +6,38 @@ import java.util.Set;
 
 import org.kohsuke.MetaInfServices;
 
+import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
 /**
  * This represents the R language as a language supported by JPlag.
  */
-@MetaInfServices(de.jplag.Language.class)
-public class RLanguage implements de.jplag.Language {
-
-    private static final String NAME = "R";
-    private static final String IDENTIFIER = "rlang";
-    private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
-    private static final String[] FILE_EXTENSION = {".R", ".r"};
-    private final RParserAdapter parserAdapter;
-
-    public RLanguage() {
-        this.parserAdapter = new RParserAdapter();
-    }
+@MetaInfServices(Language.class)
+public class RLanguage implements Language {
 
     @Override
-    public String[] suffixes() {
-        return FILE_EXTENSION;
+    public List<String> fileExtensions() {
+        return List.of(".R");
     }
 
     @Override
     public String getName() {
-        return NAME;
+        return "R";
     }
 
     @Override
     public String getIdentifier() {
-        return IDENTIFIER;
+        return "rlang";
     }
 
     @Override
     public int minimumTokenMatch() {
-        return DEFAULT_MIN_TOKEN_MATCH;
+        return 8;
     }
 
     @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return parserAdapter.parse(files);
+        return new RParserAdapter().parse(files);
     }
 }

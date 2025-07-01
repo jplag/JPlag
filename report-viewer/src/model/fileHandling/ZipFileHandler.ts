@@ -7,7 +7,7 @@ import { FileHandler } from './FileHandler'
  * Class for handling zip files.
  */
 export class ZipFileHandler extends FileHandler {
-  public async handleFile(file: Blob) {
+  protected async extractContent(file: Blob) {
     console.info('Start handling zip file and storing necessary data...')
     return jszip.loadAsync(file).then(async (zip) => {
       for (const originalFileName of Object.keys(zip.files)) {
@@ -49,7 +49,7 @@ export class ZipFileHandler extends FileHandler {
   private extractSubmissionFileName(directoryPath: string) {
     const folders = directoryPath.split('/')
     const rootName = folders[0]
-    let submissionFolderIndex = -1
+    let submissionFolderIndex: number
     if (rootName === 'files') {
       submissionFolderIndex = folders.findIndex((folder) => folder === 'files')
     } else {
@@ -69,7 +69,7 @@ export class ZipFileHandler extends FileHandler {
     fileBase: string,
     originalFileName: string
   ) {
-    let fullPath = ''
+    let fullPath: string
     const rootName = this.extractRootName(directoryPath)
     const filesOrSubmissionsIndex_filePath = directoryPath.indexOf(
       rootName === 'files' ? 'files' : 'submissions'
