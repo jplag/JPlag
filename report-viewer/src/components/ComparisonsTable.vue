@@ -293,8 +293,10 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
       ? store().getAnonymousName(c.secondSubmissionId).toLowerCase()
       : ''
     if (
-      searches.some((s) => name1.includes(s) || name2.includes(s)) ||
-      searches.some((s) => anonName1.includes(s) || anonName2.includes(s))
+      searches.some(
+        (s) =>
+          name1.includes(s) || name2.includes(s) || anonName1.includes(s) || anonName2.includes(s)
+      )
     ) {
       return true
     }
