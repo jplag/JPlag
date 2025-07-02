@@ -224,7 +224,7 @@ class Warning:
     def actions_print(self):
         return [
             f"::warning file={getAbsoluteFilePath(self.java_file_path)},line={self.java_line_number},title=Variable types do not match::Type of Java variable '{self.java_variable[1]}' ({self.java_variable[0]}) does not match TypeScript variable '{self.typescript_variable[1]}' ({self.typescript_variable[0]}) in {getAbsoluteFilePath(self.typescript_file_path)} at line {self.typescript_line_number}.",
-            f"::warning file={getAbsoluteFilePath(self.typescript_file_path)},line={self.typescript_line_number},tile=Variable types do not match::Type of TypeScript variable '{self.typescript_variable[1]}' ({self.typescript_variable[0]}) does not match Java variable '{self.java_variable[1]}' ({self.java_variable[0]}) in {getAbsoluteFilePath(self.java_file_path)} at line {self.java_line_number}."
+            f"::warning file={getAbsoluteFilePath(self.typescript_file_path)},line={self.typescript_line_number},title=Variable types do not match::Type of TypeScript variable '{self.typescript_variable[1]}' ({self.typescript_variable[0]}) does not match Java variable '{self.java_variable[1]}' ({self.java_variable[0]}) in {getAbsoluteFilePath(self.java_file_path)} at line {self.java_line_number}."
         ]
 
 # Base Error
