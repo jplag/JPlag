@@ -21,6 +21,7 @@ export interface Match {
   lengthOfFirst: number
   lengthOfSecond: number
   colorIndex: MatchColorIndex
+  isComment?: boolean
 }
 
 export interface CodePosition {
