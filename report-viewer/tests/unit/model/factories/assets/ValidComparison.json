@@ -4,10 +4,8 @@
   "similarities": {
     "AVG": 0.45,
     "MAX": 0.5,
-    "MIN": 0.4,
     "LONGEST_MATCH": 139,
-    "INTERSECTION": 229,
-    "OVERALL": 916
+    "MAXIMUM_LENGTH": 462
 
   },
   "matches": [

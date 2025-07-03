@@ -1,7 +1,7 @@
 import { beforeEach, describe, it, expect } from 'vitest'
 import { OptionsFactory } from '@/model/factories/OptionsFactory'
 import { ParserLanguage } from '@/model/Language'
-import { MetricTypes } from '@/model/MetricType'
+import { MetricJsonIdentifier } from '@/model/MetricJsonIdentifier'
 import validOptions from './assets/ValidOptions.json'
 import { setActivePinia, createPinia } from 'pinia'
 import { store } from '@/stores/store'
@@ -24,12 +24,12 @@ describe('Test JSON to Options', async () => {
       subdirectoryName: 'src/',
       fileSuffixes: ['.java', '.JAVA'],
       exclusionFileName: 'ex.txt',
-      similarityMetric: MetricTypes.AVERAGE_SIMILARITY,
+      similarityMetric: MetricJsonIdentifier.AVERAGE_SIMILARITY,
       similarityThreshold: 0.0,
       maximumNumberOfComparisons: 500,
       clusteringOptions: {
         enabled: true,
-        metric: MetricTypes.AVERAGE_SIMILARITY,
+        metric: MetricJsonIdentifier.AVERAGE_SIMILARITY,
         spectralKernelBandwidth: 20.0,
         spectralGaussianProcessVariance: 0.0025000000000000005,
         spectralMinRuns: 5,
