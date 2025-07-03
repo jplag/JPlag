@@ -7,10 +7,18 @@ import de.jplag.Match;
 
 public enum SimilarityMetric implements ToDoubleFunction<JPlagComparison> {
     AVG("average similarity", JPlagComparison::similarity),
+    /**
+     * @deprecated Unused metric
+     */
+    @Deprecated(since = "6.2.0", forRemoval = true)
     MIN("minimum similarity", JPlagComparison::minimalSimilarity),
     MAX("maximal similarity", JPlagComparison::maximalSimilarity),
+    /**
+     * @deprecated Unused metric
+     */
+    @Deprecated(since = "6.2.0", forRemoval = true)
     INTERSECTION("matched tokens", it -> (double) it.getNumberOfMatchedTokens()),
-    LONGEST_MATCH("number of tokens in the longest match", it -> it.matches().stream().mapToInt(Match::length).max().orElse(0)),
+    LONGEST_MATCH("number of tokens in the longest match", it -> it.matches().stream().mapToInt(Match::minimumLength).max().orElse(0)),
     MAXIMUM_LENGTH(
             "Length og the longer submission",
             it -> Math.max(it.firstSubmission().getNumberOfTokens(), it.secondSubmission().getNumberOfTokens()));

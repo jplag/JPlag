@@ -49,17 +49,15 @@ class MetricMapperTest {
     void test_getTopComparisons() {
         // given
         JPlagResult jPlagResult = createJPlagResult(distribution(EXPECTED_AVG_DISTRIBUTION), distribution(EXPECTED_MAX_DISTRIBUTION),
-                comparison(submission("1", 22), submission("2", 30), .7, .8, .5, .5, new int[] {9, 3, 1}),
-                comparison(submission("3", 202), submission("4", 134), .3, .9, .01, .25, new int[] {1, 15, 23, 3}));
+                comparison(submission("1", 22), submission("2", 30), .7, .8, new int[] {9, 3, 1}),
+                comparison(submission("3", 202), submission("4", 134), .3, .9, new int[] {1, 15, 23, 3}));
 
         // when
         List<TopComparison> result = metricMapper.getTopComparisons(jPlagResult);
 
         // then
-        Assertions.assertEquals(List.of(
-                new TopComparison("1", "2", Map.of("AVG", .7, "MAX", .8, "MIN", .5, "LONGEST_MATCH", 9.0, "INTERSECTION", 13.0, "OVERALL", 52.0)),
-                new TopComparison("3", "4", Map.of("AVG", .3, "MAX", .9, "MIN", .01, "LONGEST_MATCH", 23.0, "INTERSECTION", 42.0, "OVERALL", 336.0))),
-                result);
+        Assertions.assertEquals(List.of(new TopComparison("1", "2", Map.of("AVG", .7, "MAX", .8, "LONGEST_MATCH", 9.0, "MAXIMUM_LENGTH", 30.0)),
+                new TopComparison("3", "4", Map.of("AVG", .3, "MAX", .9, "LONGEST_MATCH", 23.0, "MAXIMUM_LENGTH", 202.0))), result);
     }
 
     private int[] distribution(List<Integer> expectedDistribution) {
@@ -76,12 +74,12 @@ class MetricMapperTest {
     }
 
     private Comparison comparison(CreateSubmission submission1, CreateSubmission submission2, double similarity, double maxSimilarity,
-            double minSimilarity, double symSimilarity, int[] matchLengths) {
-        return new Comparison(submission1, submission2, similarity, maxSimilarity, minSimilarity, symSimilarity, matchLengths);
+            int[] matchLengths) {
+        return new Comparison(submission1, submission2, similarity, maxSimilarity, matchLengths);
     }
 
     private Comparison comparison(CreateSubmission submission1, CreateSubmission submission2, double similarity, double maxSimilarity) {
-        return comparison(submission1, submission2, similarity, maxSimilarity, 0, 0, new int[0]);
+        return comparison(submission1, submission2, similarity, maxSimilarity, new int[0]);
     }
 
     private JPlagResult createJPlagResult(int[] avgDistribution, int[] maxDistribution, Comparison... createComparisonsDto) {
@@ -107,11 +105,9 @@ class MetricMapperTest {
             doReturn(submission2).when(mockedComparison).secondSubmission();
             doReturn(comparisonDto.similarity).when(mockedComparison).similarity();
             doReturn(comparisonDto.maxSimilarity).when(mockedComparison).maximalSimilarity();
-            doReturn(comparisonDto.minSimilarity).when(mockedComparison).minimalSimilarity();
-            doReturn(comparisonDto.symSimilarity).when(mockedComparison).symmetricSimilarity();
             List<Match> matches = createMockMatchList(comparisonDto.matchLengths);
             doReturn(matches).when(mockedComparison).matches();
-            doReturn(matches.stream().mapToInt(Match::length).sum()).when(mockedComparison).getNumberOfMatchedTokens();
+            doReturn(matches.stream().mapToInt(Match::minimumLength).sum()).when(mockedComparison).getNumberOfMatchedTokens();
             comparisonList.add(mockedComparison);
         }
 
@@ -123,14 +119,14 @@ class MetricMapperTest {
         List<Match> matches = new ArrayList<>();
         for (int l : matchLengths) {
             Match m = mock(Match.class);
-            doReturn(l).when(m).length();
+            doReturn(l).when(m).minimumLength();
             matches.add(m);
         }
         return matches;
     }
 
     private record Comparison(CreateSubmission submission1, CreateSubmission submission2, double similarity, double maxSimilarity,
-            double minSimilarity, double symSimilarity, int[] matchLengths) {
+            int[] matchLengths) {
     }
 
     private record CreateSubmission(String name, int tokenCount) {
