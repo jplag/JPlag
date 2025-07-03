@@ -190,7 +190,7 @@ def checkTypeMatch(java_type, ts_type):
             # check types of key and value
             key_check = checkTypeMatch(java_map_check.group(1).strip(), ts_record_check.group(1).strip())
             value_check = checkTypeMatch(java_map_check.group(2).strip(), ts_record_check.group(2).strip())
-            return key_check or value_check
+            return key_check and value_check
         else:
             # is not a record in ts
             return False
