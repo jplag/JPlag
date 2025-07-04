@@ -109,9 +109,9 @@ def transformJavaVariable(variable):
 def extractTypeFromLong(type_name_and_prior):
     open_brackets = 0
     for i in range(len(type_name_and_prior) - 1, -1, -1):
-        if type_name_and_prior[i] == ')' or type_name_and_prior[i] == ')' or type_name_and_prior[i] == '>':
+        if type_name_and_prior[i] == ')' or type_name_and_prior[i] == ']' or type_name_and_prior[i] == '>' or type_name_and_prior[i] == '}':
             open_brackets += 1
-        elif type_name_and_prior[i] == '(' or type_name_and_prior[i] == '[' or type_name_and_prior[i] == '<':
+        elif type_name_and_prior[i] == '(' or type_name_and_prior[i] == '[' or type_name_and_prior[i] == '<' or type_name_and_prior[i] == '{':
             open_brackets -= 1
         elif type_name_and_prior[i] == ' ' and open_brackets == 0:
             return type_name_and_prior[i + 1:]
