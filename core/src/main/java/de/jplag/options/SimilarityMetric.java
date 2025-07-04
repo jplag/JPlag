@@ -20,7 +20,7 @@ public enum SimilarityMetric implements ToDoubleFunction<JPlagComparison> {
     INTERSECTION("matched tokens", it -> (double) it.getNumberOfMatchedTokens()),
     LONGEST_MATCH("number of tokens in the longest match", it -> it.matches().stream().mapToInt(Match::minimumLength).max().orElse(0)),
     MAXIMUM_LENGTH(
-            "Length og the longer submission",
+            "length of the longer submission",
             it -> Math.max(it.firstSubmission().getNumberOfTokens(), it.secondSubmission().getNumberOfTokens()));
 
     private final ToDoubleFunction<JPlagComparison> similarityFunction;
