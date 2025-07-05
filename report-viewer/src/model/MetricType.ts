@@ -1,6 +1,9 @@
 import { MetricJsonIdentifier } from './MetricJsonIdentifier'
 import { Column, type ColumnSorting } from './ui/ComparisonSorting'
 
+/**
+ * Contains information about a metric that JPlag computes.
+ */
 export abstract class MetricType {
   private readonly _shortName: string
   private readonly _longName: string
@@ -22,35 +25,61 @@ export abstract class MetricType {
     this._sorting = sorting
   }
 
+  /**
+   * Shorter abbreviated name of the metric.
+   */
   get shortName() {
     return this._shortName
   }
 
+  /**
+   * Longer name of the metric
+   */
   get longName() {
     return this._longName
   }
 
+  /**
+   * Tooltip text that is shown when hovering over the metric.
+   */
   get tooltip() {
     return this._tooltip
   }
 
+  /**
+   * Identifier of the metric as used in the JSON output.
+   */
   get identifier() {
     return this._identifier
   }
 
+  /**
+   * Sorting information for the metric.
+   */
   get sorting() {
     return this._sorting
   }
 
+  /**
+   * Formats the value of the metric for display.
+   * @param value The value to format.
+   * @returns The formatted string representation of the value.
+   */
   abstract format(value: number): string
 }
 
+/**
+ * Metric types where the value is displayed as-is, without any formatting.
+ */
 class IdentityMetricType extends MetricType {
   format(value: number): string {
     return value.toString()
   }
 }
 
+/**
+ * Metric types where the value is displayed as a percentage.
+ */
 class PercentageMetricType extends MetricType {
   format(value: number): string {
     return `${(value * 100).toFixed(2)}%`
