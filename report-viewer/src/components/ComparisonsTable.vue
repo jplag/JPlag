@@ -294,7 +294,7 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
     .map((s) => s.substring(6))
     .map((s) => parseInt(s))
 
-  const metricSearches = searches.filter((s) => /((avg|max):)?([<>])=?[0-9]+%?/.test(s))
+  const metricSearches = searches.filter((s) => /((avg|max|long|len):)?([<>])=?[0-9]+%?/.test(s))
 
   return comparisons.filter((c) => {
     // name search
@@ -321,7 +321,7 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
       searchPerMetric[m] = []
     })
     metricSearches.forEach((s) => {
-      const regexResult = /^(?:(avg|max):)([<>]=?[0-9]+%?$)/.exec(s)
+      const regexResult = /^(?:(avg|max|long|len):)([<>]=?[0-9]+%?$)/.exec(s)
       if (regexResult) {
         const metricName = regexResult[1]
         let metric = MetricTypes.AVERAGE_SIMILARITY
@@ -343,8 +343,17 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
         const regexResult = /([<>]=?)([0-9]+)%?/.exec(search)!
         const operator = regexResult[1]
         const value = parseInt(regexResult[2])
-        if (evaluateMetricComparison(c.similarities[metric] * 100, operator, value)) {
-          return true
+        if (
+          metric == MetricJsonIdentifier.AVERAGE_SIMILARITY ||
+          metric == MetricJsonIdentifier.MAXIMUM_SIMILARITY
+        ) {
+          if (evaluateMetricComparison(c.similarities[metric] * 100, operator, value)) {
+            return true
+          }
+        } else {
+          if (evaluateMetricComparison(c.similarities[metric] as number, operator, value)) {
+            return true
+          }
         }
       }
     }

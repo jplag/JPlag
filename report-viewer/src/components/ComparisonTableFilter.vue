@@ -26,8 +26,8 @@
         <p class="text-sm whitespace-pre">
           You can filter for specific similarity thresholds via &lt;/&gt;/&lt;=/&gt;= followed by
           the percentage. <br />
-          You can filter for a specific metric by prefacing the percentage with the three-letter
-          metric name (e.g. <i>avg:>80</i>)
+          You can filter for a specific metric by prefacing the percentage with the short metric
+          name (e.g. <i>avg:>80</i>)
         </p>
       </template>
     </ToolTipComponent>
