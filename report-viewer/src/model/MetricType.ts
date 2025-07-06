@@ -66,6 +66,14 @@ export abstract class MetricType {
    * @returns The formatted string representation of the value.
    */
   abstract format(value: number): string
+
+  /**
+   * Returns the value to use for filtering in the table.
+   * This is used to determine if a row should be displayed based on the filter settings.
+   * @param value The value to filter by.
+   * @returns The value to use for filtering.
+   */
+  abstract getTableFilterValue(value: number): number
 }
 
 /**
@@ -75,6 +83,9 @@ class IdentityMetricType extends MetricType {
   format(value: number): string {
     return value.toString()
   }
+  getTableFilterValue(value: number): number {
+    return value
+  }
 }
 
 /**
@@ -83,6 +94,9 @@ class IdentityMetricType extends MetricType {
 class PercentageMetricType extends MetricType {
   format(value: number): string {
     return `${(value * 100).toFixed(2)}%`
+  }
+  getTableFilterValue(value: number): number {
+    return value * 100
   }
 }
 

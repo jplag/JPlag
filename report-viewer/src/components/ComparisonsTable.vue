@@ -343,17 +343,15 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
         const regexResult = /([<>]=?)([0-9]+)%?/.exec(search)!
         const operator = regexResult[1]
         const value = parseInt(regexResult[2])
+        const metricObject = MetricTypes.METRIC_MAP[metric]
         if (
-          metric == MetricJsonIdentifier.AVERAGE_SIMILARITY ||
-          metric == MetricJsonIdentifier.MAXIMUM_SIMILARITY
+          evaluateMetricComparison(
+            metricObject.getTableFilterValue(c.similarities[metric]),
+            operator,
+            value
+          )
         ) {
-          if (evaluateMetricComparison(c.similarities[metric] * 100, operator, value)) {
-            return true
-          }
-        } else {
-          if (evaluateMetricComparison(c.similarities[metric] as number, operator, value)) {
-            return true
-          }
+          return true
         }
       }
     }
