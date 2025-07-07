@@ -14,8 +14,8 @@ import de.jplag.Token;
 public class PythonLanguage implements Language {
 
     @Override
-    public String[] suffixes() {
-        return new String[] {".py"};
+    public List<String> fileExtensions() {
+        return List.of(".py");
     }
 
     @Override

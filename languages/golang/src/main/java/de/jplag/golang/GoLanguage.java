@@ -14,8 +14,8 @@ import de.jplag.Token;
 public class GoLanguage implements Language {
 
     @Override
-    public String[] suffixes() {
-        return new String[] {".go"};
+    public List<String> fileExtensions() {
+        return List.of(".go");
     }
 
     @Override

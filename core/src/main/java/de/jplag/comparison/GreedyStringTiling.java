@@ -30,9 +30,9 @@ public class GreedyStringTiling {
     private final Map<Submission, Set<Token>> baseCodeMarkings = new IdentityHashMap<>();
     private final TokenListSupplier tokenSupplier;
 
-    private final Map<Submission, SubsequenceHashLookupTable> cachedHashLookupTables = Collections.synchronizedMap(new IdentityHashMap<>());
+    private final Map<Submission, RollingTokenHashTable> cachedHashLookupTables = Collections.synchronizedMap(new IdentityHashMap<>());
 
-    private final TokenValueMapper tokenValueMapper;
+    private final TokenSequenceMapper tokenSequenceMapper;
 
     private static final String ERROR_INDEX_OUT_OF_BOUNDS = """
                 GST index out of bounds. This is probably a random issue caused by multithreading issues.
@@ -43,11 +43,11 @@ public class GreedyStringTiling {
                 Submission (other): %s
             """.trim().stripIndent();
 
-    public GreedyStringTiling(JPlagOptions options, TokenValueMapper tokenValueMapper) {
+    public GreedyStringTiling(JPlagOptions options, TokenSequenceMapper tokenValueMapper) {
         this(options, tokenValueMapper, Submission::getTokenList);
     }
 
-    public GreedyStringTiling(JPlagOptions options, TokenValueMapper tokenValueMapper, TokenListSupplier tokenSupplier) {
+    public GreedyStringTiling(JPlagOptions options, TokenSequenceMapper tokenValueMapper, TokenListSupplier tokenSupplier) {
         this.options = options;
         this.tokenSupplier = tokenSupplier;
         // Ensures 1 <= neighborLength <= minimumTokenMatch
@@ -55,7 +55,7 @@ public class GreedyStringTiling {
 
         this.minimumMatchLength = options.mergingOptions().enabled() ? minimumNeighborLength : options.minimumTokenMatch();
 
-        this.tokenValueMapper = tokenValueMapper;
+        this.tokenSequenceMapper = tokenValueMapper;
     }
 
     /**
@@ -107,7 +107,7 @@ public class GreedyStringTiling {
             smallerSubmission = secondSubmission;
             largerSubmission = firstSubmission;
         }
-        return compareInternal(smallerSubmission, largerSubmission);
+        return compareOrdered(smallerSubmission, largerSubmission);
     }
 
     /**
@@ -116,15 +116,16 @@ public class GreedyStringTiling {
      * @param rightSubmission is the submission with the larger sequence.
      * @return the comparison results.
      */
-    private JPlagComparison compareInternal(Submission leftSubmission, Submission rightSubmission) {
-        int[] leftValues = this.tokenValueMapper.getTokenValuesFor(leftSubmission);
-        int[] rightValues = this.tokenValueMapper.getTokenValuesFor(rightSubmission);
+    private JPlagComparison compareOrdered(Submission leftSubmission, Submission rightSubmission) {
+        assert leftSubmission.getNumberOfTokens() <= rightSubmission.getNumberOfTokens();
+        int[] leftTokens = this.tokenSequenceMapper.getTokenSequenceFor(leftSubmission);
+        int[] rightTokens = this.tokenSequenceMapper.getTokenSequenceFor(rightSubmission);
 
-        boolean[] leftMarked = calculateInitiallyMarked(leftSubmission);
-        boolean[] rightMarked = calculateInitiallyMarked(rightSubmission);
+        boolean[] leftExcludedTokens = calculateExcludedTokens(leftSubmission);
+        boolean[] rightExcludedTokens = calculateExcludedTokens(rightSubmission);
 
-        SubsequenceHashLookupTable leftLookupTable = subsequenceHashLookupTableForSubmission(leftSubmission, leftMarked);
-        SubsequenceHashLookupTable rightLookupTable = subsequenceHashLookupTableForSubmission(rightSubmission, rightMarked);
+        RollingTokenHashTable leftLookupTable = getSubsequenceHashTableFor(leftSubmission, leftExcludedTokens);
+        RollingTokenHashTable rightLookupTable = getSubsequenceHashTableFor(rightSubmission, rightExcludedTokens);
 
         int maximumMatchLength;
         List<Match> globalMatches = new ArrayList<>();
@@ -132,23 +133,22 @@ public class GreedyStringTiling {
         do {
             maximumMatchLength = minimumMatchLength;
             List<Match> iterationMatches = new ArrayList<>();
-            for (int leftStartIndex = 0; leftStartIndex < leftValues.length - maximumMatchLength; leftStartIndex++) {
-                int leftSubsequenceHash = leftLookupTable.subsequenceHashForStartIndex(leftStartIndex);
-                if (checkMark(leftMarked, leftStartIndex, leftSubmission, rightSubmission)
-                        || leftSubsequenceHash == SubsequenceHashLookupTable.NO_HASH) {
+            for (int leftStartIndex = 0; leftStartIndex < leftTokens.length - maximumMatchLength; leftStartIndex++) {
+                int leftSubsequenceHash = leftLookupTable.getHashAt(leftStartIndex);
+                if (isTokenExcludedAt(leftExcludedTokens, leftStartIndex, leftSubmission, rightSubmission)
+                        || leftSubsequenceHash == RollingTokenHashTable.NO_HASH) {
                     continue;
                 }
-                List<Integer> possiblyMatchingRightStartIndexes = rightLookupTable
-                        .startIndexesOfPossiblyMatchingSubsequencesForSubsequenceHash(leftSubsequenceHash);
-                for (Integer rightStartIndex : possiblyMatchingRightStartIndexes) {
+                List<Integer> rightStartIndices = rightLookupTable.getStartIndicesForHash(leftSubsequenceHash);
+                for (int rightStartIndex : rightStartIndices) { // possible matches
                     // comparison uses >= because it is assumed that the last token is a pivot (FILE_END)
-                    if (checkMark(rightMarked, rightStartIndex, rightSubmission, leftSubmission)
-                            || maximumMatchLength >= rightValues.length - rightStartIndex) {
+                    if (isTokenExcludedAt(rightExcludedTokens, rightStartIndex, rightSubmission, leftSubmission)
+                            || maximumMatchLength >= rightTokens.length - rightStartIndex) {
                         continue;
                     }
 
-                    int subsequenceMatchLength = maximalMatchingSubsequenceLengthNotMarked(leftValues, leftStartIndex, leftMarked, rightValues,
-                            rightStartIndex, rightMarked, maximumMatchLength);
+                    int subsequenceMatchLength = findLongestUnmarkedMatch(leftTokens, leftStartIndex, leftExcludedTokens, rightTokens,
+                            rightStartIndex, rightExcludedTokens, maximumMatchLength);
                     if (subsequenceMatchLength >= maximumMatchLength) {
                         if (subsequenceMatchLength > maximumMatchLength) {
                             iterationMatches.clear();
@@ -168,8 +168,8 @@ public class GreedyStringTiling {
                 int leftStartIndex = match.startOfFirst();
                 int rightStartIndex = match.startOfSecond();
                 for (int offset = 0; offset < match.minimumLength(); offset++) {
-                    leftMarked[leftStartIndex + offset] = true;
-                    rightMarked[rightStartIndex + offset] = true;
+                    leftExcludedTokens[leftStartIndex + offset] = true;
+                    rightExcludedTokens[rightStartIndex + offset] = true;
                 }
             }
         } while (maximumMatchLength != minimumMatchLength);
@@ -190,8 +190,8 @@ public class GreedyStringTiling {
      * @return the maximal matching subsequence length, or 0 if there is no subsequence of at least the minimum sequence
      * length.
      */
-    private int maximalMatchingSubsequenceLengthNotMarked(int[] leftValues, int leftStartIndex, boolean[] leftMarked, int[] rightValues,
-            int rightStartIndex, boolean[] rightMarked, int minimumSequenceLength) {
+    private int findLongestUnmarkedMatch(int[] leftValues, int leftStartIndex, boolean[] leftMarked, int[] rightValues, int rightStartIndex,
+            boolean[] rightMarked, int minimumSequenceLength) {
         for (int offset = minimumSequenceLength - 1; offset >= 0; offset--) {
             int leftIndex = leftStartIndex + offset;
             int rightIndex = rightStartIndex + offset;
@@ -216,30 +216,33 @@ public class GreedyStringTiling {
         matches.add(match);
     }
 
-    private boolean[] calculateInitiallyMarked(Submission submission) {
+    /**
+     * Calculates an array of exclusion flags for a token sequence based on the basecode.
+     */
+    private boolean[] calculateExcludedTokens(Submission submission) {
         Set<Token> baseCodeTokens = baseCodeMarkings.get(submission);
         List<Token> tokens = this.tokenSupplier.getTokenList(submission);
-        boolean[] result = new boolean[tokens.size()];
-        for (int i = 0; i < result.length; i++) {
-            result[i] = tokens.get(i).getType().isExcludedFromMatching() || baseCodeTokens != null && baseCodeTokens.contains(tokens.get(i));
+        boolean[] exclusionFlags = new boolean[tokens.size()];
+        for (int tokenIndex = 0; tokenIndex < exclusionFlags.length; tokenIndex++) {
+            exclusionFlags[tokenIndex] = tokens.get(tokenIndex).getType().isExcludedFromMatching()
+                    || baseCodeTokens != null && baseCodeTokens.contains(tokens.get(tokenIndex));
         }
-        return result;
+        return exclusionFlags;
     }
 
-    private SubsequenceHashLookupTable subsequenceHashLookupTableForSubmission(Submission submission, boolean[] marked) {
+    private RollingTokenHashTable getSubsequenceHashTableFor(Submission submission, boolean[] excludedTokens) {
         return cachedHashLookupTables.computeIfAbsent(submission,
-                key -> new SubsequenceHashLookupTable(minimumMatchLength, this.tokenValueMapper.getTokenValuesFor(submission), marked));
+                key -> new RollingTokenHashTable(minimumMatchLength, this.tokenSequenceMapper.getTokenSequenceFor(submission), excludedTokens));
     }
 
-    private boolean checkMark(boolean[] marks, int index, Submission submission, Submission otherSubmission) {
-        if (index >= marks.length) {
+    private boolean isTokenExcludedAt(boolean[] exclusionFlags, int tokenIndex, Submission submission, Submission otherSubmission) {
+        if (tokenIndex >= exclusionFlags.length) {
             throw new IllegalStateException(
-                    String.format(ERROR_INDEX_OUT_OF_BOUNDS, marks.length, index, this.tokenSupplier.getTokenList(submission).size(),
-                            this.tokenSupplier.getTokenList(submission).stream().map(it -> it.getType().getDescription())
-                                    .collect(Collectors.joining(", ")),
-                            this.tokenValueMapper.getTokenValuesFor(submission).length, submission.getName(), otherSubmission.getName()));
+                    String.format(ERROR_INDEX_OUT_OF_BOUNDS, exclusionFlags.length, tokenIndex, this.tokenSupplier.getTokenList(submission).size(),
+                            this.tokenSupplier.getTokenList(submission).stream().map(it -> it.getType().getDescription()).collect(Collectors.joining(", ")),
+                            this.tokenSequenceMapper.getTokenSequenceFor(submission).length, submission.getName(), otherSubmission.getName()));
         }
 
-        return marks[index];
+        return exclusionFlags[tokenIndex];
     }
 }

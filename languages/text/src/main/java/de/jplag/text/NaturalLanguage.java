@@ -19,8 +19,8 @@ import de.jplag.Token;
 public class NaturalLanguage implements Language {
 
     @Override
-    public String[] suffixes() {
-        return new String[] {".txt", ".asc", ".tex", ".md", ".rtf", ".csv", ".wiki", ".json", ".yaml", ".yml", ".xml"};
+    public List<String> fileExtensions() {
+        return List.of(".txt", ".asc", ".tex", ".md", ".rtf", ".csv", ".wiki", ".json", ".yaml", ".yml", ".xml");
     }
 
     @Override

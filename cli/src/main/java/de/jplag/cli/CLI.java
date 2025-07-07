@@ -31,7 +31,7 @@ public final class CLI {
     private static final String DEFAULT_FILE_EXTENSION = ".jplag";
     private static final int NAME_COLLISION_ATTEMPTS = 4;
 
-    private static final String OUTPUT_FILE_EXISTS = "The output file (also with suffixes e.g. results(1).jplag) already exists. You can use --overwrite to overwrite the file.";
+    private static final String OUTPUT_FILE_EXISTS = "The output file already exists. You can use --overwrite to overwrite the file.";
     private static final String OUTPUT_FILE_NOT_WRITABLE = "The output file (%s) cannot be written to.";
 
     private static final String ZIP_FILE_EXTENSION = ".zip";

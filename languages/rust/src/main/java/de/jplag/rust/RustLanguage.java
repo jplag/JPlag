@@ -17,8 +17,8 @@ import de.jplag.Token;
 public class RustLanguage implements Language {
 
     @Override
-    public String[] suffixes() {
-        return new String[] {".rs"};
+    public List<String> fileExtensions() {
+        return List.of(".rs");
     }
 
     @Override

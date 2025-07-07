@@ -45,9 +45,9 @@ test('Test comparison table and comparsion view', async ({ page }) => {
   const content2 = 'class Node'
 
   const bodyComparison = await page.locator('body').textContent()
-  expect(bodyComparison).toMatch(/Average Similarity: [0-9]{2}.[0-9]{2}%/)
-  expect(bodyComparison).toMatch(new RegExp(`Similarity ${submissionName1}: [0-9]{2}.[0-9]{2}%`))
-  expect(bodyComparison).toMatch(new RegExp(`Similarity ${submissionName2}: [0-9]{2}.[0-9]{2}%`))
+  expect(bodyComparison).toMatch(/Average Similarity:[0-9]{2}.[0-9]{2}%/)
+  expect(bodyComparison).toMatch(new RegExp(`Similarity ${submissionName1}:[0-9]{2}.[0-9]{2}%`))
+  expect(bodyComparison).toMatch(new RegExp(`Similarity ${submissionName2}:[0-9]{2}.[0-9]{2}%`))
 
   expect(bodyComparison).toMatch(new RegExp(`${fileName1} - ${fileName2}: [0-9]+`))
   expect(bodyComparison).toContain(`${submissionName1}/${fileName1}`)

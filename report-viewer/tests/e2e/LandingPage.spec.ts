@@ -5,7 +5,7 @@ test('Open report through file explorer', async ({ page }) => {
   expect(page).toHaveURL('/')
 
   const fileChooserPromise = page.waitForEvent('filechooser')
-  await page.getByText('Drag and Drop zip file on this page').click()
+  await page.getByText('Drag and Drop report file on this page').click()
   const fileChooser = await fileChooserPromise
   await fileChooser.setFiles(`tests/e2e/assets/progpedia-report.jplag`)
 

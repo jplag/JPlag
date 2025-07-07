@@ -17,8 +17,8 @@ import de.jplag.Token;
 public class SwiftLanguage implements Language {
 
     @Override
-    public String[] suffixes() {
-        return new String[] {".swift"};
+    public List<String> fileExtensions() {
+        return List.of(".swift");
     }
 
     @Override

@@ -16,11 +16,11 @@ import de.jplag.logging.ProgressBarType;
 /**
  * Maps the tokens in a submission to integer IDs for usage in the {@link GreedyStringTiling} algorithm. Each token type
  * will be assigned a unique number. The token lists in that form can be queried by calling
- * {@link TokenValueMapper#getTokenValuesFor(Submission)}.
+ * {@link TokenSequenceMapper#getTokenSequenceFor(Submission)}.
  */
-public class TokenValueMapper {
-    private final Map<TokenType, Integer> tokenTypeValues;
-    private final Map<Submission, int[]> tokenValueMap;
+public class TokenSequenceMapper {
+    private final Map<TokenType, Integer> tokenTypeToId;
+    private final Map<Submission, int[]> submissionToTokenSequence;
     private final TokenListSupplier tokenSupplier;
 
     /**
@@ -28,7 +28,7 @@ public class TokenValueMapper {
      * using the {@link ProgressBarLogger}. This uses the default {@code Submission::getTokenList()} method as the supplier.
      * @param submissionSet is the set of submissions to process.
      */
-    public TokenValueMapper(SubmissionSet submissionSet) {
+    public TokenSequenceMapper(SubmissionSet submissionSet) {
         this(submissionSet, Submission::getTokenList);
     }
 
@@ -38,12 +38,12 @@ public class TokenValueMapper {
      * @param submissionSet is the set of submissions to process.
      * @param tokenSupplier supplier returning the token list of a single submission.
      */
-    public TokenValueMapper(SubmissionSet submissionSet, TokenListSupplier tokenSupplier) {
+    public TokenSequenceMapper(SubmissionSet submissionSet, TokenListSupplier tokenSupplier) {
         this.tokenSupplier = tokenSupplier;
-        this.tokenTypeValues = new HashMap<>();
-        this.tokenValueMap = new IdentityHashMap<>();
+        tokenTypeToId = new HashMap<>();
+        submissionToTokenSequence = new IdentityHashMap<>();
 
-        this.tokenTypeValues.put(SharedTokenType.FILE_END, 0);
+        tokenTypeToId.put(SharedTokenType.FILE_END, 0);
 
         addSubmissions(submissionSet);
         if (submissionSet.hasBaseCode()) {
@@ -52,27 +52,27 @@ public class TokenValueMapper {
     }
 
     private void addSubmissions(SubmissionSet submissionSet) {
-        ProgressBarLogger.iterate(ProgressBarType.TOKEN_VALUE_CREATION, submissionSet.getSubmissions(), this::addSingleSubmission);
+        ProgressBarLogger.iterate(ProgressBarType.TOKEN_SEQUENCE_CREATION, submissionSet.getSubmissions(), this::addSingleSubmission);
     }
 
     private void addSingleSubmission(Submission submission) {
         List<Token> tokens = this.tokenSupplier.getTokenList(submission);
-        int[] tokenValues = new int[tokens.size()];
+        int[] tokenSequence = new int[tokens.size()];
         for (int i = 0; i < tokens.size(); i++) {
             TokenType type = tokens.get(i).getType();
-            tokenTypeValues.putIfAbsent(type, tokenTypeValues.size());
-            tokenValues[i] = tokenTypeValues.get(type);
+            tokenTypeToId.putIfAbsent(type, tokenTypeToId.size());
+            tokenSequence[i] = tokenTypeToId.get(type);
         }
-        this.tokenValueMap.put(submission, tokenValues);
+        submissionToTokenSequence.put(submission, tokenSequence);
     }
 
     /**
      * Queries the token IDs for a single submission. Each number in the array corresponds to one token from the submission.
      * The {@link SharedTokenType#FILE_END} token is guaranteed to be mapped to 0.
      * @param submission The submission to query.
-     * @return the list of tokens.
+     * @return the integer-based token-sequence.
      */
-    public int[] getTokenValuesFor(Submission submission) {
-        return this.tokenValueMap.get(submission);
+    public int[] getTokenSequenceFor(Submission submission) {
+        return submissionToTokenSequence.get(submission);
     }
 }
