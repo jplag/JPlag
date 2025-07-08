@@ -180,9 +180,9 @@ interface ReportFormatComparison {
 }
 
 interface ReportFormatSubmissionFileIndex {
-  fileIndexes: Record<string, Record<string, ReportFormatSubmissionFile>>
+  fileIndexes: Record<string, Record<string, ReportSubmissionFile>>
 }
 
-interface ReportFormatSubmissionFile {
+interface ReportSubmissionFile {
   tokenCount: number
 }

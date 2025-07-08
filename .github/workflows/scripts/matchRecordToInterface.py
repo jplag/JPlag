@@ -1,27 +1,32 @@
 import re
 
-cli_options = ({ 'file_path': '../../../core/src/main/java/de/jplag/options/JPlagOptions.java', 'record_name': 'JPlagOptions' }, { 'file_path': '../../../report-viewer/src/model/CliOptions.ts', 'interface_name': 'AbstractOptions' })
-merging_options = ({ 'file_path': '../../../core/src/main/java/de/jplag/merging/MergingOptions.java', 'record_name': 'MergingOptions' }, { 'file_path': '../../../report-viewer/src/model/CliOptions.ts', 'interface_name': 'CliMergingOptions' })
-clustering_options = ({ 'file_path': '../../../core/src/main/java/de/jplag/clustering/ClusteringOptions.java', 'record_name': 'ClusteringOptions' }, { 'file_path': '../../../report-viewer/src/model/CliOptions.ts', 'interface_name': 'CliClusterOptions' })
+CORE_PACKAGE = '../../../core/src/main/java/de/jplag'
+REPORTING_PACKAGE = f"{CORE_PACKAGE}/reporting/reportobject/model"
+REPORT_VIEWER_MODELS = f"../../../report-viewer/src/model"
+REPORT_VIEWER_FACTORIES = f"{REPORT_VIEWER_MODELS}/factories"
 
-comparison = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/ComparisonReport.java', 'record_name': 'ComparisonReport' }, { 'file_path': '../../../report-viewer/src/model/factories/ComparisonFactory.ts', 'interface_name': 'ReportFormatComparison' })
-match = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/Match.java', 'record_name': 'Match' }, { 'file_path': '../../../report-viewer/src/model/Match.ts', 'interface_name': 'ReportFormatMatch' })
-code_position = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/CodePosition.java', 'record_name': 'CodePosition' }, { 'file_path': '../../../report-viewer/src/model/Match.ts', 'interface_name': 'CodePosition' })
+cli_options = ({ 'file_path': f"{CORE_PACKAGE}/options/JPlagOptions.java", 'record_name': 'JPlagOptions' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/CliOptions.ts", 'interface_name': 'AbstractOptions' })
+merging_options = ({ 'file_path': f"{CORE_PACKAGE}/merging/MergingOptions.java", 'record_name': 'MergingOptions' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/CliOptions.ts", 'interface_name': 'CliMergingOptions' })
+clustering_options = ({ 'file_path': f"{CORE_PACKAGE}/clustering/ClusteringOptions.java", 'record_name': 'ClusteringOptions' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/CliOptions.ts", 'interface_name': 'CliClusterOptions' })
 
-basecode_match = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/BaseCodeMatch.java', 'record_name': 'BaseCodeMatch' }, { 'file_path': '../../../report-viewer/src/model/factories/BaseCodeReportFactory.ts', 'interface_name': 'ReportFormatBaseCodeMatch' })
+comparison = ({ 'file_path': f"{REPORTING_PACKAGE}/ComparisonReport.java", 'record_name': 'ComparisonReport' }, { 'file_path': f"{REPORT_VIEWER_FACTORIES}/ComparisonFactory.ts", 'interface_name': 'ReportFormatComparison' })
+match = ({ 'file_path': f"{REPORTING_PACKAGE}/Match.java", 'record_name': 'Match' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/Match.ts", 'interface_name': 'ReportFormatMatch' })
+code_position = ({ 'file_path': f"{REPORTING_PACKAGE}/CodePosition.java", 'record_name': 'CodePosition' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/Match.ts", 'interface_name': 'CodePosition' })
 
-submission_file_index = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/SubmissionFileIndex.java', 'record_name': 'SubmissionFileIndex' }, { 'file_path': '../../../report-viewer/src/model/factories/ComparisonFactory.ts', 'interface_name': 'ReportFormatSubmmisionFileIndex' })
-submission_file = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/SubmissionFile.java', 'record_name': 'SubmissionFile' }, { 'file_path': '../../../report-viewer/src/model/factories/ComparisonFactory.ts', 'interface_name': 'ReportFormatSubmissionFile' })
+basecode_match = ({ 'file_path': f"{REPORTING_PACKAGE}/BaseCodeMatch.java", 'record_name': 'BaseCodeMatch' }, { 'file_path': f"{REPORT_VIEWER_FACTORIES}/BaseCodeReportFactory.ts", 'interface_name': 'ReportFormatBaseCodeMatch' })
 
-run_information = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/RunInformation.java', 'record_name': 'RunInformation' }, { 'file_path': '../../../report-viewer/src/model/factories/RunInformationFactory.ts', 'interface_name': 'ReportFormatRunInformation' })
-failed_submission = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/FailedSubmission.java', 'record_name': 'FailedSubmission' }, { 'file_path': '../../../report-viewer/src/model/RunInformation.ts', 'interface_name': 'FailedSubmission' })
-version = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/Version.java', 'record_name': 'Version' }, { 'file_path': '../../../report-viewer/src/model/factories/RunInformationFactory.ts', 'interface_name': 'ReportFormatVersion' })
+submission_file_index = ({ 'file_path': f"{REPORTING_PACKAGE}/SubmissionFileIndex.java", 'record_name': 'SubmissionFileIndex' }, { 'file_path': f"{REPORT_VIEWER_FACTORIES}/ComparisonFactory.ts", 'interface_name': 'ReportFormatSubmissionFileIndex' })
+submission_file = ({ 'file_path': f"{REPORTING_PACKAGE}/SubmissionFile.java", 'record_name': 'SubmissionFile' }, { 'file_path': f"{REPORT_VIEWER_FACTORIES}/ComparisonFactory.ts", 'interface_name': 'ReportSubmissionFile' })
 
-submission_mappings = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/SubmissionMappings.java', 'record_name': 'SubmissionMappings' }, { 'file_path': '../../../report-viewer/src/model/factories/SubmissionMappingsFactory.ts', 'interface_name': 'ReportFormatSubmissionMappings' })
+run_information = ({ 'file_path': f"{REPORTING_PACKAGE}/RunInformation.java", 'record_name': 'RunInformation' }, { 'file_path': f"{REPORT_VIEWER_FACTORIES}/RunInformationFactory.ts", 'interface_name': 'ReportFormatRunInformation' })
+failed_submission = ({ 'file_path': f"{REPORTING_PACKAGE}/FailedSubmission.java", 'record_name': 'FailedSubmission' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/RunInformation.ts", 'interface_name': 'FailedSubmission' })
+version = ({ 'file_path': f"{REPORTING_PACKAGE}/Version.java", 'record_name': 'Version' }, { 'file_path': f"{REPORT_VIEWER_FACTORIES}/RunInformationFactory.ts", 'interface_name': 'ReportFormatVersion' })
 
-top_comparison = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/TopComparison.java', 'record_name': 'TopComparison' }, { 'file_path': '../../../report-viewer/src/model/factories/TopComparisonFactory.ts', 'interface_name': 'ReportFormatTopComparison' })
+submission_mappings = ({ 'file_path': f"{REPORTING_PACKAGE}/SubmissionMappings.java", 'record_name': 'SubmissionMappings' }, { 'file_path': f"{REPORT_VIEWER_FACTORIES}/SubmissionMappingsFactory.ts", 'interface_name': 'ReportFormatSubmissionMappings' })
 
-cluster = ({ 'file_path': '../../../core/src/main/java/de/jplag/reporting/reportobject/model/Cluster.java', 'record_name': 'Cluster' }, { 'file_path': '../../../report-viewer/src/model/Cluster.ts', 'interface_name': 'ReportFormatCluster' })
+top_comparison = ({ 'file_path': f"{REPORTING_PACKAGE}/TopComparison.java", 'record_name': 'TopComparison' }, { 'file_path': f"{REPORT_VIEWER_FACTORIES}/TopComparisonFactory.ts", 'interface_name': 'ReportFormatTopComparison' })
+
+cluster = ({ 'file_path': f"{REPORTING_PACKAGE}/Cluster.java", 'record_name': 'Cluster' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/Cluster.ts", 'interface_name': 'ReportFormatCluster' })
 
 # we do not check the distribution as it has own record and is just a map directly written to a json file
 
