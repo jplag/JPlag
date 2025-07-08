@@ -117,6 +117,8 @@ export namespace Column {
         return Column.longestMatch
       case MetricJsonIdentifier.MAXIMUM_LENGTH:
         return Column.maximumLength
+      default:
+        throw new Error(`Unknown metric: ${metric}`)
     }
   }
 }

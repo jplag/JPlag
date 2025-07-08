@@ -49,16 +49,16 @@
                     <template #default>
                       <p class="w-full text-center">
                         {{ secondaryMetric.shortName }}
+                        <FontAwesomeIcon
+                          :icon="
+                            store().uiState.comparisonTableSorting.column.id ==
+                            secondaryMetric.sorting.id
+                              ? store().uiState.comparisonTableSorting.direction.icon
+                              : faSort
+                          "
+                          class="ml-1 cursor-pointer"
+                        />
                       </p>
-                      <FontAwesomeIcon
-                        :icon="
-                          store().uiState.comparisonTableSorting.column.id ==
-                          secondaryMetric.sorting.id
-                            ? store().uiState.comparisonTableSorting.direction.icon
-                            : faSort
-                        "
-                        class="ml-1 cursor-pointer"
-                      />
                     </template>
                     <template #tooltip>
                       <p class="text-sm whitespace-pre">
