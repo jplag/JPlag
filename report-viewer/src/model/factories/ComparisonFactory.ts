@@ -70,7 +70,7 @@ export class ComparisonFactory extends BaseFactory {
   private static async getSubmissionFileList(
     submissionId: string
   ): Promise<Record<string, { tokenCount: number }>> {
-    const submissionFileIndex: ReportFormatSubmmisionFileIndex = JSON.parse(
+    const submissionFileIndex: ReportFormatSubmissionFileIndex = JSON.parse(
       await this.getFile(`submissionFileIndex.json`)
     )
     return submissionFileIndex.fileIndexes[submissionId]
@@ -179,7 +179,7 @@ interface ReportFormatComparison {
   secondSimilarity: number
 }
 
-interface ReportFormatSubmmisionFileIndex {
+interface ReportFormatSubmissionFileIndex {
   fileIndexes: Record<string, Record<string, ReportFormatSubmissionFile>>
 }
 
