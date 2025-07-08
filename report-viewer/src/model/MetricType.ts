@@ -126,7 +126,7 @@ export namespace MetricTypes {
   export const MAXIMUM_LENGTH = new IdentityMetricType(
     'LEN',
     'Maximum Length',
-    'The length of the longer programm in tokens.',
+    'The length of the longer program in tokens.',
     MetricJsonIdentifier.MAXIMUM_LENGTH,
     Column.maximumLength
   )
