@@ -5,6 +5,7 @@ import java.nio.file.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import de.jplag.options.JPlagOptions;
 import org.junit.jupiter.api.BeforeAll;
@@ -14,6 +15,11 @@ import de.jplag.*;
 import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.highlight_extraction.*;
 
+//todo aktuell 74% 19 plagiat, 60 % aufällig
+// 1. sortirung auf comparisons
+// 0.1 intervalle zwichen 0 und 0.5
+// nur noch stärker gewichten window und complete
+// 56 plagiat 76%, auffällig 60 %  =>solanged der großteil der gruppe stimmt argumentieren
 public class WeightTwoPointComparisonTest extends TestBase {
 
     private static JPlagResult result;
@@ -71,7 +77,7 @@ public class WeightTwoPointComparisonTest extends TestBase {
                 System.out.println("→ Strategie: " + freqStrategy.getClass().getSimpleName());
 
                 //strategie
-                FrequencyDetermination fd = new FrequencyDetermination(freqStrategy, 8);
+                FrequencyDetermination fd = new FrequencyDetermination(freqStrategy, 35);
                 fd.runAnalysis(result.getAllComparisons());
 
                 //Matching
@@ -86,14 +92,15 @@ public class WeightTwoPointComparisonTest extends TestBase {
                 FrequencySimilarity similarity = new FrequencySimilarity(result.getAllComparisons());
                 LabelledWeighting lw = new LabelledWeighting();
                 lw.classifyComparisons0(result.getAllComparisons(), similarity);
+                //System.out.println(lw);
 
                 String strategyName = freqStrategy.getClass().getSimpleName();
                 Path outputDir = outputRoot.resolve(datasetName).resolve(strategyName);
                 Files.createDirectories(outputDir);
 
-                System.out.println("\nplagiat: " + lw.getPlagiatComparisons().size());
-                System.out.println("auffaellig: " + lw.getAuffaelligComparisons().size());
-                System.out.println("unauffaellig: " + lw.getUnauffaelligComparisons().size());
+                System.out.println("\nplagiat: " + lw.getPlagiatComparisons().size() + "\n");
+                System.out.println("auffaellig: " + lw.getAuffaelligComparisons().size()+ "\n");
+                System.out.println("unauffaellig: " + lw.getUnauffaelligComparisons().size() + "\n");
                 runAndSaveTwoWeightSimilarity(lw.getPlagiatComparisons(), "plagiat", similarity, outputDir);
                 runAndSaveTwoWeightSimilarity(lw.getAuffaelligComparisons(), "auffaellig", similarity, outputDir);
                 runAndSaveTwoWeightSimilarity(lw.getUnauffaelligComparisons(), "unauffaellig", similarity, outputDir);
@@ -104,7 +111,7 @@ public class WeightTwoPointComparisonTest extends TestBase {
     private void runAndSaveTwoWeightSimilarity(List<JPlagComparison> comparisons, String label,
                                                FrequencySimilarity similarity, Path outputDir) throws IOException {
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        Path file = outputDir.resolve(label + "_two_weight_" + timestamp + ".csv");
+        Path file = outputDir.resolve(label + "_three_rare_Matches_weight_" + timestamp + ".csv");
 
         try (var writer = Files.newBufferedWriter(file)) {
             writer.write("ComparisonID,Submission1,Submission2,Weight_0.0,Weight_0.5,Weight_1.0\n");
@@ -113,12 +120,19 @@ public class WeightTwoPointComparisonTest extends TestBase {
                 String s1 = comp.firstSubmission().getName();
                 String s2 = comp.secondSubmission().getName();
                 double sim0 = comp.similarity();
-                double sim1 = similarity.frequencySimilarity(comp, 1.0);
-                double sim2 = similarity.frequencySimilarity(comp, 0.5);
-                writer.write(String.format("\"%s\",\"%s\",\"%s\",%.5f,%.5f,%.5f\n", id, s1, s2, sim0, sim2,  sim1));
+                double sim1 = similarity.frequencySimilarity(comp, 0.5);
+                double sim2 = similarity.frequencySimilarity(comp, 1.0);
+                sim1 = clampSimilarity(sim1);
+                sim2 = clampSimilarity(sim2);
+                writer.write(String.format(Locale.US,"\"%s\",\"%s\",\"%s\",%.5f,%.5f,%.5f\n", id, s1, s2, sim0,  sim1, sim2));
             }
         }
 
         System.out.println("Vergleich mit zwei Gewichtungen gespeichert: " + file);
+    }
+    private double clampSimilarity(double sim) {
+        if (sim > 1.0) return 1.0;
+        if (sim < 0.0) return 0.0;
+        return sim;
     }
 }

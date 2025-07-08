@@ -20,93 +20,24 @@ public class FrequencySimilarity {
     }
 
     public double frequencySimilarity(JPlagComparison comparison, double weight) {
+        if (weight == 0.0) {
+            return comparison.similarity(); // exakt das Original-Ergebnis verwenden
+        }
+
         int divisor = comparison.firstSubmission().getSimilarityDivisor() + comparison.secondSubmission().getSimilarityDivisor();
-//        System.out.printf("Divisor = %d (%d + %d) für %s <-> %s\n",
-//                divisor,
-//                comparison.firstSubmission().getSimilarityDivisor(),
-//                comparison.secondSubmission().getSimilarityDivisor(),
-//                comparison.firstSubmission().getName(),
-//                comparison.secondSubmission().getName());
+
         if (divisor == 0) {
-            System.out.println("⚠️ Divisor ist 0 für: " + comparison);
             return 0;
         }
-        int matchedFrequencyTokensOfFirst = getLinearWeightedMatchLengthOfFirst(comparison, weight);
-        int matchedFrequencyTokensOfSecond = getLinearWeightedMatchLengthOfSecond(comparison, weight);
+        int matchedFrequencyTokensOfFirst = getRareTokensWeightedMatchLengthOfFirst(comparison, weight);//todo hier anpassen
+        int matchedFrequencyTokensOfSecond = getRareTokensWeightedMatchLengthOfSecond(comparison, weight);
 
-//        System.out.printf("→ [%s] w=%.2f | matchedFirst=%d, matchedSecond=%d, divisor=%d\n",
-//                comparison.toString(), weight, matchedFrequencyTokensOfFirst, matchedFrequencyTokensOfSecond, divisor);
-        System.out.println(comparison.matches().stream().mapToInt(Match::getLengthOfFirst).sum());
-//        System.out.printf("→ MatchCount: %d | matchedFirst: %d, matchedSecond: %d, divisor: %d → freqSim: %.5f\n",
-//                comparison.matches().size(),
-//                matchedFrequencyTokensOfFirst,
-//                matchedFrequencyTokensOfSecond,
-//                divisor,
-//                (matchedFrequencyTokensOfFirst + matchedFrequencyTokensOfSecond) / (double) divisor);
-//
+         //System.out.println(comparison.matches().stream().mapToInt(Match::getLengthOfFirst).sum());
 
         return (matchedFrequencyTokensOfFirst + matchedFrequencyTokensOfSecond) / (double) divisor;
 
     }
-    // TODO getSimilarityDivisor() public ggf. wieder wegmachen
 
-    // public double similarityWithoutFrequency(JPlagComparison comparison) {
-    // int divisor = comparison.firstSubmission().getSimilarityDivisor() +
-    // comparison.secondSubmission().getSimilarityDivisor();
-    // if (divisor == 0) {
-    // return 0;
-    // }
-    //
-    // int matchedTokensOfFirst = comparison.matches().stream().mapToInt(Match::getLengthOfFirst).sum();
-    // int matchedTokensOfSecond = comparison.matches().stream().mapToInt(Match::getLengthOfSecond).sum();
-    //
-    // return (matchedTokensOfFirst + matchedTokensOfSecond) / (double) divisor;
-    //
-    // }
-//todo old
-//    public int getLinearWeightedMatchLengthOfFirst(JPlagComparison comparison, double weight) {
-//        double maxFrequency = comparison.matches().stream().mapToDouble(Match::getFrequencyWeight).max().orElse(1.0);
-//        System.out.println("maxFrequency = " + maxFrequency);
-//
-////        return comparison.matches().stream().mapToDouble(match -> {
-////            double freq = match.getFrequencyWeight();
-////            double normalized = 1.0 - Math.min(freq / maxFrequency, 1.0);
-////            double myWeight = 1 + weight * (normalized - 0.5);
-////            myWeight = Math.max(0.01, myWeight);
-////            return match.getLengthOfFirst() * myWeight;
-////        }).mapToInt(d -> (int) Math.round(d)).sum();
-//        /*
-//        return (int) Math.round(
-//                comparison.matches().stream()
-//                        .mapToDouble(match -> {
-//                            double freq = match.getFrequencyWeight();
-//                            double normalized = 1.0 - Math.min(freq / maxFrequency, 1.0);
-//                            double myWeight = 1 + weight * (normalized - 0.5);
-//                            myWeight = Math.max(0.01, myWeight);
-//                            return match.getLengthOfFirst() * myWeight;
-//                        })
-//                        .sum()); */
-//
-//        double weightedSum = comparison.matches().stream()
-//                .mapToDouble(match -> {
-//                    double freq = match.getFrequencyWeight();
-//                    double normalized = 1.0 - Math.min(freq / maxFrequency, 1.0);
-//                    double myWeight = 1 + weight * (normalized - 0.5);
-//                    myWeight = Math.max(0.01, myWeight);
-//
-//                    int length = match.getLengthOfFirst();
-//                    double weightedLength = length * myWeight;
-//
-//                    System.out.printf("freq=%.3f, normalized=%.3f, myWeight=%.3f, length=%d, weightedLength=%.3f%n",
-//                            freq, normalized, myWeight, length, weightedLength);
-//
-//                    return weightedLength;
-//                })
-//                .sum();
-//
-//        System.out.println("weightedSum = " + weightedSum);
-//        return (int) Math.round(weightedSum);
-//    }
 public int getLinearWeightedMatchLengthOfFirst(JPlagComparison comparison, double weight) {
     double maxFrequency = comparison.matches().stream()
             .mapToDouble(Match::getFrequencyWeight)
@@ -140,7 +71,7 @@ public int getLinearWeightedMatchLengthOfFirst(JPlagComparison comparison, doubl
                 return weightedLength;
             })
             .sum();
-    System.out.println("weightedSum = " + weightedSum);
+   // System.out.println("weightedSum = " + weightedSum);
     return (int) Math.round(weightedSum);
 }
 
@@ -177,37 +108,183 @@ public int getLinearWeightedMatchLengthOfFirst(JPlagComparison comparison, doubl
                     return weightedLength;
                 })
                 .sum();
-        System.out.println("weightedSum = " + weightedSum);
+        //System.out.println("weightedSum = " + weightedSum);
         return (int) Math.round(weightedSum);
     }
-//todo davor
-//    public int getLinearWeightedMatchLengthOfSecond(JPlagComparison comparison, double weight) {
-//        double maxFrequency = comparison.matches().stream().mapToDouble(Match::getFrequencyWeight).max().orElse(1.0);
-////        return comparison.matches().stream().mapToDouble(match -> {
-////            double freq = match.getFrequencyWeight();
-////            double normalized = 1.0 - Math.min(freq / maxFrequency, 1.0);
-////            double myWeight = 1 + weight * (normalized - 0.5);
-////            myWeight = Math.max(0.01, myWeight);
-////            return match.getLengthOfSecond() * myWeight;
-////        }).mapToInt(d -> (int) Math.round(d)).sum();
-//        return (int) Math.round(
-//                comparison.matches().stream()
-//                        .mapToDouble(match -> {
-//                            double freq = match.getFrequencyWeight();
-//                            double normalized = 1.0 - Math.min(freq / maxFrequency, 1.0);
-//                            double myWeight = 1 + weight * (normalized - 0.5);
-//                            myWeight = Math.max(0.01, myWeight);
-//                            return match.getLengthOfSecond() * myWeight;
-//                        })
-//                        .sum());
-//    }
 
-    public double getMinFrequency(JPlagComparison comparison) {
-        return comparison.matches().stream().mapToDouble(Match::getFrequencyWeight).min().orElse(0.0);
+    public int getRareTokensWeightedMatchLengthOfFirst(JPlagComparison comparison, double weight) {
+        double maxFrequency = comparison.matches().stream()
+                .mapToDouble(Match::getFrequencyWeight)
+                .max()
+                .orElse(1.0);
+        if (maxFrequency == 0.0) maxFrequency = 1.0;
+
+        double minWeight = 1.0;     // Minimumgewicht jetzt 1.0
+        double maxWeight = 3.0;     // Seltene stärker gewichtet
+
+        double finalMaxFrequency = maxFrequency;
+        double weightedSum = comparison.matches().stream()
+                .mapToDouble(match -> {
+                    double freq = match.getFrequencyWeight();
+                    if (Double.isNaN(freq) || freq < 0.0) freq = 0.0;
+
+                    double weightForFreq = 0.0;
+                    if (freq > 0) {
+                        double normFreq = freq / finalMaxFrequency;
+                        weightForFreq = minWeight + (maxWeight - minWeight) * Math.pow(1.0 - normFreq, 2);
+                    }
+
+                    double myWeight = (1 - weight) * 1.0 + weight * weightForFreq;
+
+                    double length = match.getLengthOfFirst();
+                    double weightedLength = length * myWeight;
+
+                    if (Double.isNaN(weightedLength)) {
+                        System.err.printf("NaN detected! freq=%.3f, maxFreq=%.3f, weightForFreq=%.3f, myWeight=%.3f, length=%.3f%n",
+                                freq, finalMaxFrequency, weightForFreq, myWeight, length);
+                        return 0.0;
+                    }
+
+                    return weightedLength;
+                })
+                .sum();
+
+        int weightedResult = (int) Math.round(weightedSum);
+        int defaultResult = (int) Math.round(
+                comparison.matches().stream()
+                        .mapToDouble(Match::getLengthOfFirst)
+                        .sum()
+        );
+
+        return Math.max(weightedResult, defaultResult);
     }
 
-    public double getMaxFrequency(JPlagComparison comparison) {
-        return comparison.matches().stream().mapToDouble(Match::getFrequencyWeight).max().orElse(1.0);
+    public int getRareTokensWeightedMatchLengthOfSecond(JPlagComparison comparison, double weight) {
+        double maxFrequency = comparison.matches().stream()
+                .mapToDouble(Match::getFrequencyWeight)
+                .max()
+                .orElse(1.0);
+        if (maxFrequency == 0.0) maxFrequency = 1.0;
+
+        double minWeight = 1.0;
+        double maxWeight = 3.0;
+
+        double finalMaxFrequency = maxFrequency;
+        double weightedSum = comparison.matches().stream()
+                .mapToDouble(match -> {
+                    double freq = match.getFrequencyWeight();
+                    if (Double.isNaN(freq) || freq < 0.0) freq = 0.0;
+
+                    double weightForFreq = 0.0;
+                    if (freq > 0) {
+                        double normFreq = freq / finalMaxFrequency;
+                        weightForFreq = minWeight + (maxWeight - minWeight) * Math.pow(1.0 - normFreq, 2);
+                    }
+
+                    double myWeight = (1 - weight) * 1.0 + weight * weightForFreq;
+
+                    double length = match.getLengthOfSecond();
+                    double weightedLength = length * myWeight;
+
+                    if (Double.isNaN(weightedLength)) {
+                        System.err.printf("NaN detected! freq=%.3f, maxFreq=%.3f, weightForFreq=%.3f, myWeight=%.3f, length=%.3f%n",
+                                freq, finalMaxFrequency, weightForFreq, myWeight, length);
+                        return 0.0;
+                    }
+
+                    return weightedLength;
+                })
+                .sum();
+
+        int weightedResult = (int) Math.round(weightedSum);
+        int defaultResult = (int) Math.round(
+                comparison.matches().stream()
+                        .mapToDouble(Match::getLengthOfSecond)
+                        .sum()
+        );
+
+        return Math.max(weightedResult, defaultResult);
     }
+
+    public int getLogWeightedMatchLengthOfFirst(JPlagComparison comparison, double weight) {
+        double maxFrequency = comparison.matches().stream()
+                .mapToDouble(Match::getFrequencyWeight)
+                .max()
+                .orElse(1.0);
+        if (maxFrequency < 1.0) maxFrequency = 1.0;
+
+        double finalMaxFrequency = maxFrequency;
+        double weightedSum = comparison.matches().stream()
+                .mapToDouble(match -> {
+                    double freq = match.getFrequencyWeight();
+                    if (Double.isNaN(freq) || freq < 0.0) freq = 0.0;
+
+                    double w;
+                    if (freq <= 0.0) {
+                        w = 1.0;
+                    } else if (freq == 1.0) {
+                        w = 1.0;
+                    } else {
+                        double logFreq = Math.log(freq);
+                        double logMax = Math.log(finalMaxFrequency);
+                        double w_min = 1.0 - 0.5 * (logFreq / logMax);
+                        w = 1.0 - weight * (1.0 - w_min);
+                    }
+
+                    double length = match.getLengthOfFirst();
+                    return length * w;
+                })
+                .sum();
+
+        int weightedResult = (int) Math.round(weightedSum);
+        int defaultResult = (int) Math.round(
+                comparison.matches().stream()
+                        .mapToDouble(Match::getLengthOfFirst)
+                        .sum()
+        );
+
+        return Math.max(weightedResult, defaultResult);
+    }
+
+    public int getLogWeightedMatchLengthOfSecond(JPlagComparison comparison, double weight) {
+        double maxFrequency = comparison.matches().stream()
+                .mapToDouble(Match::getFrequencyWeight)
+                .max()
+                .orElse(1.0);
+        if (maxFrequency < 1.0) maxFrequency = 1.0;
+
+        double finalMaxFrequency = maxFrequency;
+        double weightedSum = comparison.matches().stream()
+                .mapToDouble(match -> {
+                    double freq = match.getFrequencyWeight();
+                    if (Double.isNaN(freq) || freq < 0.0) freq = 0.0;
+
+                    double w;
+                    if (freq <= 0.0) {
+                        w = 1.0;
+                    } else if (freq == 1.0) {
+                        w = 1.0;
+                    } else {
+                        double logFreq = Math.log(freq);
+                        double logMax = Math.log(finalMaxFrequency);
+                        double w_min = 1.0 - 0.5 * (logFreq / logMax);
+                        w = 1.0 - weight * (1.0 - w_min);
+                    }
+
+                    double length = match.getLengthOfSecond();
+                    return length * w;
+                })
+                .sum();
+
+        int weightedResult = (int) Math.round(weightedSum);
+        int defaultResult = (int) Math.round(
+                comparison.matches().stream()
+                        .mapToDouble(Match::getLengthOfSecond)
+                        .sum()
+        );
+
+        return Math.max(weightedResult, defaultResult);
+    }
+
 
 }

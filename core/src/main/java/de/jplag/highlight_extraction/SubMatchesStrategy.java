@@ -90,9 +90,12 @@ public class SubMatchesStrategy implements FrequencyStrategy {
     @Override
     public double calculateWeight(Match match, Map<String, List<String>> frequencyMap, List<String> matchToken) {
         List<String> keys = generateAllSubKeys(matchToken, size);
+        System.out.println("Generated keys: " + keys);
         List<Integer> frequencies = new ArrayList<>();
         for (String key : keys) {
-            frequencies.add(frequencyMap.get(key).size());
+            int freq = frequencyMap.getOrDefault(key, List.of()).size();
+            System.out.println("Key: '" + key + "', freq: " + freq);
+            frequencies.add(freq);
         }
 
         return frequencies.stream().mapToInt(Integer::intValue).average().orElse(0.0);

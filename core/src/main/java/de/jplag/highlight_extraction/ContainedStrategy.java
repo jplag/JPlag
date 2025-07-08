@@ -62,7 +62,7 @@ public class ContainedStrategy implements FrequencyStrategy {
         List<String> keys = generateAllSubKeys(matchToken, size);
         List<Integer> frequencies = new ArrayList<>();
         for (String key : keys) {
-            frequencies.add(frequencyMap.get(key).size());
+            frequencies.add(frequencyMap.getOrDefault(key, List.of()).size());
         }
         // TODO all:
         // return frequencies.stream().mapToInt(Integer::intValue)

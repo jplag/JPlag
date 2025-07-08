@@ -19,8 +19,8 @@ public class MatchWeighting {
         double matchWeight = strategy.calculateWeight(match, frequencyMap, matchToken);
         if (matchWeight == 0) {
             System.out.println("Achtung null");
-            match.setFrequencyWeight(matchWeight);
         }
+        match.setFrequencyWeight(matchWeight);
     }
 
     public void weightAllMatches(List<Match> matches, List<String> comparisonToken) {

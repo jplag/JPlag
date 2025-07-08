@@ -15,7 +15,7 @@ import de.jplag.Match;
  */
 
 public class WindowOfMatchesStrategy implements FrequencyStrategy {
-    static int size;
+    public static int size;
 
     /**
      * Adds all submatches with window length of the matches to a map using the token sequence as the key.

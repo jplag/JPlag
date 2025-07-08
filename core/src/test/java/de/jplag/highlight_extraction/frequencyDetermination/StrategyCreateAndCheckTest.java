@@ -17,7 +17,7 @@ import de.jplag.highlight_extraction.*;
 import de.jplag.options.JPlagOptions;
 
 class StrategyCreateAndCheckTest extends TestBase {
-    private static final StrategyIntegrationTest t = new StrategyIntegrationTest();
+   // private static final StrategyIntegrationTest t = new StrategyIntegrationTest();
     private static Submission testSubmission;
     private static Match testMatchAOnTimeInComparisons;
     private static Match testMatchBTwoTimesInOneComparison;
@@ -130,7 +130,7 @@ class StrategyCreateAndCheckTest extends TestBase {
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 300);
         fd.runAnalysis(comparisons);
         Map<String, List<String>> tokenFrequencyMap = fd.getTokenFrequencyMap();
-        t.printTestResult(tokenFrequencyMap);
+       // t.printTestResult(tokenFrequencyMap);
 
         assertTokenFrequencyContainsMatch(testMatchAOnTimeInComparisons, 1, tokenFrequencyMap);
         assertTokenFrequencyContainsMatch(testMatchBTwoTimesInOneComparison, 2, tokenFrequencyMap);
