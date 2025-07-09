@@ -123,11 +123,11 @@ public final class FileUtils {
     /**
      * Detects the most probable charset over the whole set of files.
      * @param files The files to check
-     * @param isSubmission If true and a charset is set for submissions, that charset will be used always
+     * @param isSubmissionFile If true and a charset is set for submissions, that charset will be used always
      * @return The most probable charset
      */
-    public static Charset detectCharsetFromMultiple(Collection<File> files, boolean isSubmission) throws ParsingException {
-        if (isSubmission && overrideSubmissionCharset != null) {
+    public static Charset detectCharsetFromMultiple(Collection<File> files, boolean isSubmissionFile) throws ParsingException {
+        if (isSubmissionFile && overrideSubmissionCharset != null) {
             return overrideSubmissionCharset;
         } else {
             return detectCharsetFromMultiple(files);
