@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import de.jplag.TokenType;
+
+import static de.jplag.highlightextraction.SubSequenceUtil.addSequence;
 
 /**
  * Strategy that uses a fixed window size to create submatches of a match sequence in a comparison and calculates the
@@ -20,10 +23,11 @@ public class WindowOfMatchesStrategy implements FrequencyStrategy {
      * @param strategyNumber The length of the considered token window.
      */
     @Override
-    public void addMatchToFrequencyMap(List<TokenType> matchTokenTypes, Map<Integer, Integer> frequencyMap, int strategyNumber) {
+    public void processMatchTokenTypes(List<TokenType> matchTokenTypes, Map<Integer, Integer> frequencyMap, int strategyNumber) {
+        Consumer<List<TokenType>> sequenceConsumer = seq -> addSequence(frequencyMap, seq);
         List<List<TokenType>> windowSequences = getWindowSequences(matchTokenTypes, strategyNumber);
         for (List<TokenType> windowSequence : windowSequences) {
-            frequencyMap.put(windowSequence.hashCode(), frequencyMap.getOrDefault(windowSequence.hashCode(), 0) + 1);
+            sequenceConsumer.accept(windowSequence);
         }
     }
 
@@ -35,12 +39,11 @@ public class WindowOfMatchesStrategy implements FrequencyStrategy {
      */
     public static List<List<TokenType>> getWindowSequences(List<TokenType> matchTokenTypes, int windowSize) {
         List<List<TokenType>> windowSequences = new LinkedList<>();
-        if (matchTokenTypes.size() >= windowSize) {
+
             for (int windowStartIndex = 0; windowStartIndex <= matchTokenTypes.size() - windowSize; windowStartIndex++) {
                 List<TokenType> windowSequence = new ArrayList<>(matchTokenTypes.subList(windowStartIndex, windowStartIndex + windowSize));
                 windowSequences.add(windowSequence);
             }
-        }
         return windowSequences;
     }
 }

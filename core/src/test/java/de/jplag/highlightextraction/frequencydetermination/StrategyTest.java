@@ -208,28 +208,12 @@ class StrategyTest extends TestBase {
         int windowSize = 5;
 
         List<TokenType> matchTokenTypes = getMatchTokenTypes(matchShort);
-        strategy.addMatchToFrequencyMap(matchTokenTypes, windowMap, windowSize);
+        strategy.processMatchTokenTypes(matchTokenTypes, windowMap, windowSize);
 
-        // Checks if all expected windows are added.
-        List<List<TokenType>> expectedKeys = new ArrayList<>();
-        for (int i = 0; i <= matchTokenTypes.size() - windowSize; i++) {
-            List<TokenType> expectedKey = matchTokenTypes.subList(i, i + windowSize);
-            expectedKeys.add(expectedKey);
-        }
-        for (List<TokenType> key : expectedKeys) {
-            assertTrue(windowMap.containsKey(key.hashCode()), "key missing: " + key);
-        }
-
-        // Checks if every window is added once.
+        List<List<TokenType>> expectedKeys = checkIfAllExpectedWindowsAreAdded(matchTokenTypes, windowSize, windowMap);
         assertEquals(expectedKeys.size(), windowMap.size(), "A Key is more than one time used, please check for the rest of the test");
+        checkIfAllWindowsAreAddedWithCorrectValue(expectedKeys, windowMap);
 
-        // Checks if every window is added, and example value is correct.
-        for (List<TokenType> window : expectedKeys) {
-            Integer value = windowMap.get(window.hashCode());
-            assertNotNull(value, "value should be min 1: " + window);
-        }
-
-        // Adds new windows to the Map.
         int startIndex = 2;
         List<TokenType> newSequenceForWindows = matchTokenTypes.subList(startIndex, startIndex + windowSize + 1);
         List<TokenType> firstWindow = newSequenceForWindows.subList(0, windowSize);
@@ -238,14 +222,33 @@ class StrategyTest extends TestBase {
         assertTrue(windowMap.containsKey(firstWindow.hashCode()), "new firstWindow was not added: " + firstWindow);
         assertTrue(windowMap.containsKey(secondWindow.hashCode()), "new secondWindow was not added: " + secondWindow);
 
-        strategy.addMatchToFrequencyMap(firstWindow, windowMap, windowSize);
-        strategy.addMatchToFrequencyMap(secondWindow, windowMap, windowSize);
+        strategy.processMatchTokenTypes(firstWindow, windowMap, windowSize);
+        strategy.processMatchTokenTypes(secondWindow, windowMap, windowSize);
 
         Integer valueFirstWindow = windowMap.get(firstWindow.hashCode());
         Integer valueSecondWindow = windowMap.get(secondWindow.hashCode());
 
         assertEquals(2, valueFirstWindow, "FirstWindow does not contain two values: " + valueFirstWindow);
         assertEquals(2, valueSecondWindow, "SecondWindow does not contain two values: " + valueSecondWindow);
+    }
+
+    private static void checkIfAllWindowsAreAddedWithCorrectValue(List<List<TokenType>> expectedKeys, Map<Integer,Integer> windowMap) {
+        for (List<TokenType> window : expectedKeys) {
+            Integer value = windowMap.get(window.hashCode());
+            assertNotNull(value, "value should be min 1: " + window);
+        }
+    }
+
+    private static List<List<TokenType>> checkIfAllExpectedWindowsAreAdded(List<TokenType> matchTokenTypes, int windowSize, Map<Integer,Integer> windowMap) {
+        List<List<TokenType>> expectedKeys = new ArrayList<>();
+        for (int i = 0; i <= matchTokenTypes.size() - windowSize; i++) {
+            List<TokenType> expectedKey = matchTokenTypes.subList(i, i + windowSize);
+            expectedKeys.add(expectedKey);
+        }
+        for (List<TokenType> key : expectedKeys) {
+            assertTrue(windowMap.containsKey(key.hashCode()), "key missing: " + key);
+        }
+        return expectedKeys;
     }
 
     /**
@@ -260,7 +263,7 @@ class StrategyTest extends TestBase {
         List<TokenType> matchTokenTypes = matchToken.stream().map(Token::getType).toList();
         int minSubSequenceSize = 3;
 
-        strategy.addMatchToFrequencyMap(matchTokenTypes, frequencyMap, minSubSequenceSize);
+        strategy.processMatchTokenTypes(matchTokenTypes, frequencyMap, minSubSequenceSize);
 
         Set<List<TokenType>> expectedSubSequences = new HashSet<>(List.of(matchTokenTypes, matchTokenTypes.subList(0, 4),
                 matchTokenTypes.subList(1, 5), matchTokenTypes.subList(0, 3), matchTokenTypes.subList(1, 4), matchTokenTypes.subList(2, 5)));
@@ -271,7 +274,7 @@ class StrategyTest extends TestBase {
         }
 
         List<TokenType> newSequence = matchTokenTypes.subList(1, 5);
-        strategy.addMatchToFrequencyMap(newSequence, frequencyMap, minSubSequenceSize);
+        strategy.processMatchTokenTypes(newSequence, frequencyMap, minSubSequenceSize);
         Set<List<TokenType>> expectedReUsedKeys = new HashSet<>(
                 List.of(matchTokenTypes.subList(1, 5), matchTokenTypes.subList(1, 4), matchTokenTypes.subList(2, 5)));
 

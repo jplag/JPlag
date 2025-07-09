@@ -1,6 +1,5 @@
 package de.jplag.highlightextraction;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +10,7 @@ import de.jplag.*;
  * Calculates frequencies of match subsequences across all comparisons according to different strategies.
  */
 public class FrequencyDetermination {
-    private final Map<Integer, Integer> matchFrequencyMap = new HashMap<>();
+    private final Map<Integer, Integer> matchFrequencyMap;
     private final FrequencyStrategy frequencyStrategy;
     private final int strategyNumber;
 
@@ -21,6 +20,7 @@ public class FrequencyDetermination {
      * @param strategyNumber Parameter used by certain strategies to determine submatch length.
      */
     public FrequencyDetermination(FrequencyStrategy frequencyStrategy, int strategyNumber) {
+        this.matchFrequencyMap = new HashMap<>();
         this.frequencyStrategy = frequencyStrategy;
         this.strategyNumber = strategyNumber;
     }
@@ -33,19 +33,16 @@ public class FrequencyDetermination {
         for (JPlagComparison comparison : comparisons) {
             Submission leftSubmission = comparison.firstSubmission();
             List<Token> submissionTokens = leftSubmission.getTokenList();
-            List<TokenType> submissionTokenTypes = new ArrayList<>();
-            for (Token token : submissionTokens) {
-                submissionTokenTypes.add(token.getType());
-            }
+            List<TokenType> submissionTokenTypes = submissionTokens.stream().map(Token::getType).toList();
 
             for (Match match : comparison.matches()) {
                 int startIndexOfMatch = match.startOfFirst();
                 int lengthOfMatch = match.lengthOfFirst();
                 if (startIndexOfMatch + lengthOfMatch > submissionTokenTypes.size()) {
-                    continue;
+                    throw new RuntimeException("startIndexOfMatch + lengthOfMatch <= submissionTokenTypes.size()");
                 }
                 List<TokenType> matchTokenTypes = submissionTokenTypes.subList(startIndexOfMatch, startIndexOfMatch + lengthOfMatch);
-                frequencyStrategy.addMatchToFrequencyMap(matchTokenTypes, matchFrequencyMap, strategyNumber);
+                frequencyStrategy.processMatchTokenTypes(matchTokenTypes, matchFrequencyMap, strategyNumber);
             }
         }
     }

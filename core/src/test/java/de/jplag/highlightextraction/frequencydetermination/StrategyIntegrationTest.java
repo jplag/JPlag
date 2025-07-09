@@ -20,6 +20,7 @@ import de.jplag.options.JPlagOptions;
  * Test class to validate the integration of the FrequencyStrategies. As the examples use testCode from
  * "PartialPlagiarism" sample-folder.
  */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class StrategyIntegrationTest extends TestBase {
     /**
      * Stores the result of the pairwise comparison of submissions, used in all test methods.
@@ -34,9 +35,8 @@ class StrategyIntegrationTest extends TestBase {
      * Prepares the comparison result before each test.
      * @throws ExitException if building the submissionSet or the comparisons fails.
      */
-    @BeforeEach
+    @BeforeAll
     void prepareMatchResult() throws ExitException {
-
         JPlagOptions options = getDefaultOptions("PartialPlagiarism");
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         SubmissionSet submissionSet = builder.buildSubmissionSet();

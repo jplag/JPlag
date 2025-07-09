@@ -2,8 +2,11 @@ package de.jplag.highlightextraction;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import de.jplag.TokenType;
+
+import static de.jplag.highlightextraction.SubSequenceUtil.addSequence;
 
 /**
  * Strategy that calculates the frequencies of matches over all submissions.
@@ -16,7 +19,8 @@ public class CompleteMatchesStrategy implements FrequencyStrategy {
      * @param strategyNumber The minimum sub length considered in other strategies.
      */
     @Override
-    public void addMatchToFrequencyMap(List<TokenType> matchTokenTypes, Map<Integer, Integer> frequencyMap, int strategyNumber) {
-        frequencyMap.put(matchTokenTypes.hashCode(), frequencyMap.getOrDefault(matchTokenTypes.hashCode(), 0) + 1);
+    public void processMatchTokenTypes(List<TokenType> matchTokenTypes, Map<Integer, Integer> frequencyMap, int strategyNumber) {
+        Consumer<List<TokenType>> sequenceConsumer = seq -> addSequence(frequencyMap, seq);
+        sequenceConsumer.accept(matchTokenTypes);
     }
 }
