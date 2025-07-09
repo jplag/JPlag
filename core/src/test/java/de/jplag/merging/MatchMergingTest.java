@@ -3,7 +3,6 @@ package de.jplag.merging;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -193,22 +192,21 @@ class MatchMergingTest extends TestBase {
     @Test
     @DisplayName("Test for the absence of cross file matches.")
     void testFileBoundaries() throws ExitException {
-
         MergingOptions mergingOptions = new MergingOptions(true, MINIMUM_NEIGHBOR_LENGTH, MAXIMUM_GAP_SIZE, MINIMUM_REQUIRED_MERGES);
-        JPlagOptions options = getDefaultOptions("crossFile").withMergingOptions(mergingOptions);
-        SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
-        SubmissionSet submissionSet = builder.buildSubmissionSet();
-        LongestCommonSubsequenceSearch comparisonStrategy = new LongestCommonSubsequenceSearch(options);
-        JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
+        JPlagOptions customOptions = getDefaultOptions("crossFile").withMergingOptions(mergingOptions);
+        SubmissionSetBuilder builder = new SubmissionSetBuilder(customOptions);
+        SubmissionSet submissions = builder.buildSubmissionSet();
+        LongestCommonSubsequenceSearch search = new LongestCommonSubsequenceSearch(customOptions);
+        JPlagResult result = search.compareSubmissions(submissions);
 
-        assumeTrue(2 == result.getNumberOfSubmissions());
-        assumeTrue(1 == result.getAllComparisons().size());
+        assumeEquals(2, result.getNumberOfSubmissions());
+        assumeEquals(1, result.getAllComparisons().size());
         JPlagComparison comparison = result.getAllComparisons().getFirst();
-        assumeTrue(2 == comparison.matches().size());
+        assumeEquals(2, comparison.matches().size());
 
         checkForCrossFileMatches(comparison, comparison.matches());
 
-        JPlagResult mergedResult = new MatchMerging(options).mergeMatchesOf(result);
+        JPlagResult mergedResult = new MatchMerging(customOptions).mergeMatchesOf(result);
         JPlagComparison mergedComparison = mergedResult.getAllComparisons().getFirst();
 
         assertEquals(2, mergedResult.getNumberOfSubmissions());
@@ -216,7 +214,6 @@ class MatchMergingTest extends TestBase {
         assertEquals(2, mergedComparison.matches().size());
 
         checkForCrossFileMatches(mergedComparison, mergedComparison.matches());
-
     }
 
     private void checkForCrossFileMatches(JPlagComparison comparison, List<Match> matches) {
