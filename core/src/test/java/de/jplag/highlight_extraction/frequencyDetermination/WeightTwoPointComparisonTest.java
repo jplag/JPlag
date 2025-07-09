@@ -1,12 +1,15 @@
 package de.jplag.highlight_extraction.frequencyDetermination;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -27,6 +30,8 @@ public class WeightTwoPointComparisonTest extends TestBase {
     private static SubmissionSet submissionSet;
     private static LongestCommonSubsequenceSearch strategy;
     public static JPlagOptions options;
+    private static final List<String[]> timingResults = new ArrayList<>();
+
 
     private static final String[] datasetPaths = {
             "C:\\Users\\Elisa\\Projekte\\JPlag\\core\\src\\test\\resources\\de\\jplag\\samples\\FrequencyDetermination\\00000019\\Java",
@@ -49,9 +54,10 @@ public class WeightTwoPointComparisonTest extends TestBase {
     }
 
     @Test
-    void runTwoWeightComparisonExport() throws Exception {
+    void runTwoWeightComparisonExport() throws IOException, ExitException {
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         Path outputRoot = baseOutputDir.resolve("two_weight_similarity_" + timestamp);
+        timingResults.add(new String[]{"Dataset", "Strategy", "DurationMillis"});
 
         for (String datasetPath : datasetPaths) {
             System.out.println("=== Zwei-Gewicht-Vergleich für Datensatz: " + datasetPath + " ===");
@@ -73,9 +79,15 @@ public class WeightTwoPointComparisonTest extends TestBase {
             String languageName = datasetPathObj.getFileName().toString();
             String datasetName = "progpedia_" + parentName + "_" + languageName;
 
+            LabelledWeighting.DatasetType datasetType = switch (parentName) { //fixme neu
+                case "00000019" -> LabelledWeighting.DatasetType.DS19;
+                case "00000056" -> LabelledWeighting.DatasetType.DS56;
+                default -> LabelledWeighting.DatasetType.A3;
+            };
+
             for (FrequencyStrategy freqStrategy : freqStrategies) {
                 System.out.println("→ Strategie: " + freqStrategy.getClass().getSimpleName());
-
+                long start = System.nanoTime();
                 //strategie
                 FrequencyDetermination fd = new FrequencyDetermination(freqStrategy, 35);
                 fd.runAnalysis(result.getAllComparisons());
@@ -91,7 +103,7 @@ public class WeightTwoPointComparisonTest extends TestBase {
 
                 FrequencySimilarity similarity = new FrequencySimilarity(result.getAllComparisons());
                 LabelledWeighting lw = new LabelledWeighting();
-                lw.classifyComparisons0(result.getAllComparisons(), similarity);
+                lw.classifyComparisons(result.getAllComparisons(), datasetType);
                 //System.out.println(lw);
 
                 String strategyName = freqStrategy.getClass().getSimpleName();
@@ -104,7 +116,18 @@ public class WeightTwoPointComparisonTest extends TestBase {
                 runAndSaveTwoWeightSimilarity(lw.getPlagiatComparisons(), "plagiat", similarity, outputDir);
                 runAndSaveTwoWeightSimilarity(lw.getAuffaelligComparisons(), "auffaellig", similarity, outputDir);
                 runAndSaveTwoWeightSimilarity(lw.getUnauffaelligComparisons(), "unauffaellig", similarity, outputDir);
+                long end = System.nanoTime();
+                long durationMillis = (end - start) / 1_000_000;
+                timingResults.add(new String[]{datasetName, strategyName, String.valueOf(durationMillis)});
             }
+        }
+        Path timingFile = baseOutputDir.resolve("strategy_timings.csv");
+        try (BufferedWriter writer = Files.newBufferedWriter(timingFile)) {
+            for (String[] row : timingResults) {
+                writer.write(String.join(",", row));
+                writer.newLine();
+            }
+            System.out.println("✅ Zeitmessung gespeichert in: " + timingFile);
         }
     }
 
@@ -114,17 +137,27 @@ public class WeightTwoPointComparisonTest extends TestBase {
         Path file = outputDir.resolve(label + "_three_rare_Matches_weight_" + timestamp + ".csv");
 
         try (var writer = Files.newBufferedWriter(file)) {
-            writer.write("ComparisonID,Submission1,Submission2,Weight_0.0,Weight_0.5,Weight_1.0\n");
+            writer.write("ComparisonID,Submission1,Submission2,Weight_0.0,Weight_0.1,Weight_0.2,Weight_0.3,Weight_0.4,Weight_0.5,Weight_1.0\n");
             for (JPlagComparison comp : comparisons) {
                 String id = comp.toString();
                 String s1 = comp.firstSubmission().getName();
                 String s2 = comp.secondSubmission().getName();
                 double sim0 = comp.similarity();
-                double sim1 = similarity.frequencySimilarity(comp, 0.5);
-                double sim2 = similarity.frequencySimilarity(comp, 1.0);
+                double sim1 = similarity.frequencySimilarity(comp, 0.1);
+                double sim2 = similarity.frequencySimilarity(comp, 0.2);
+                double sim3 = similarity.frequencySimilarity(comp, 0.3);
+                double sim4 = similarity.frequencySimilarity(comp, 0.4);
+                double sim5 = similarity.frequencySimilarity(comp, 0.5);
+                double sim6 = similarity.frequencySimilarity(comp, 1.0);
                 sim1 = clampSimilarity(sim1);
                 sim2 = clampSimilarity(sim2);
-                writer.write(String.format(Locale.US,"\"%s\",\"%s\",\"%s\",%.5f,%.5f,%.5f\n", id, s1, s2, sim0,  sim1, sim2));
+                sim3 = clampSimilarity(sim3);
+                sim4 = clampSimilarity(sim4);
+                sim5 = clampSimilarity(sim5);
+                sim6 = clampSimilarity(sim6);
+
+                writer.write(String.format(Locale.US,"\"%s\",\"%s\",\"%s\",%.5f,%.5f,%.5f,%.5f,%.5f,%.5f,%.5f\n", id, s1, s2, sim0,  sim1, sim2, sim3, sim4, sim5, sim6));
+                //writer.write(String.format(Locale.US,"\"%s\",\"%s\",\"%s\",%.5f,%.5f,%.5f\n", id, s1, s2, sim0, sim5, sim6));
             }
         }
 

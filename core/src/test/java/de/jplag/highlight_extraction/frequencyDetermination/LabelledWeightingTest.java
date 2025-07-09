@@ -50,7 +50,7 @@ public class LabelledWeightingTest {
         List<JPlagComparison> comparisons = List.of(c1, c2, c3);
 
         LabelledWeighting lw = new LabelledWeighting();
-        lw.classifyComparisons0(comparisons, null);
+        lw.classifyComparisons(comparisons, LabelledWeighting.DatasetType.A3);
 
         assertTrue(lw.getPlagiatComparisons().contains(c1));
 
