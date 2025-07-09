@@ -105,28 +105,28 @@ export namespace MetricTypes {
   export const AVERAGE_SIMILARITY = new PercentageMetricType(
     'AVG',
     'Average Similarity',
-    'The average similarity of the two files.\nA high similarity indicates that the programs work in a similar way.',
+    'The average similarity (or symmetric similarity) of the two files.\nIt measures the proportion of matched program elements to the length of the two programs (in tokens).\nA high similarity indicates that programs have a similar structure.',
     MetricJsonIdentifier.AVERAGE_SIMILARITY,
     Column.averageSimilarity
   )
   export const MAXIMUM_SIMILARITY = new PercentageMetricType(
     'MAX',
     'Maximum Similarity',
-    'The maximum similarity of the two files.\nUseful if programs are very different in size.',
+    'The maximum similarity of the two files.\nIt measures the proportion of matched program elements to the longest of the two programs (in tokens).\nUseful if programs are very different in size.',
     MetricJsonIdentifier.MAXIMUM_SIMILARITY,
     Column.maximumSimilarity
   )
   export const LONGEST_MATCH = new IdentityMetricType(
     'LONG',
     'Longest Match',
-    'The longest matching fragment between two programs measured in tokens.',
+    'The longest matching fragment between two programs in tokens.\nUseful if the similarity distribution shows no suspicious outliers.',
     MetricJsonIdentifier.LONGEST_MATCH,
     Column.longestMatch
   )
   export const MAXIMUM_LENGTH = new IdentityMetricType(
     'LEN',
     'Maximum Length',
-    'The length of the longer program in tokens.',
+    'The length of the longer program in tokens.\nUseful to check for signs of excessive obfuscation, e.g., via code insertion.',
     MetricJsonIdentifier.MAXIMUM_LENGTH,
     Column.maximumLength
   )

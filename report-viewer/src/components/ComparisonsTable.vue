@@ -35,7 +35,7 @@
                       </p>
                     </template>
                     <template #tooltip>
-                      <p class="text-sm whitespace-pre">
+                      <p class="max-w-80 text-sm whitespace-pre-wrap">
                         {{ MetricTypes.AVERAGE_SIMILARITY.tooltip }}
                       </p>
                     </template>
@@ -61,7 +61,7 @@
                       </p>
                     </template>
                     <template #tooltip>
-                      <p class="text-sm whitespace-pre">
+                      <p class="max-w-80 text-sm whitespace-pre-wrap">
                         {{ secondaryMetric.tooltip }}
                       </p>
                     </template>
