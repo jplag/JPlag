@@ -87,7 +87,7 @@
         <emfatic.version>1.1.0</emfatic.version>
         <mockito.version>5.18.0</mockito.version>
         <!-- ensure that this variable is initialized, even if it is empty -->
-        <argLine></argLine>
+        <argLine/>
 
         <!-- The Revision of JPlag -->
         <revision>6.2.0-SNAPSHOT</revision>
@@ -386,7 +386,7 @@
                         <importOrder>
                             <file>spotless.importorder</file>
                         </importOrder>
-                        <removeUnusedImports></removeUnusedImports>
+                        <removeUnusedImports/>
                         <removeWildcardImports/>
                     </java>
                     <pom>

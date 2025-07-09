@@ -59,7 +59,6 @@ import static de.jplag.llvmir.LLVMIRTokenType.VECTOR;
 import static de.jplag.llvmir.LLVMIRTokenType.XOR;
 
 import de.jplag.antlr.AbstractAntlrListener;
-import de.jplag.llvmir.grammar.LLVMIRParser.*;
 
 /**
  * Extracts tokens from the ANTLR parse tree. The token abstraction includes nesting tokens for functions and basic
