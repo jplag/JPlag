@@ -117,10 +117,10 @@ class MetricMapperTest {
 
     private List<Match> createMockMatchList(int[] matchLengths) {
         List<Match> matches = new ArrayList<>();
-        for (int l : matchLengths) {
-            Match m = mock(Match.class);
-            doReturn(l).when(m).minimumLength();
-            matches.add(m);
+        for (int matchLength : matchLengths) {
+            Match mockMatch = mock(Match.class);
+            doReturn(matchLength).when(mockMatch).minimumLength();
+            matches.add(mockMatch);
         }
         return matches;
     }
