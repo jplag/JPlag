@@ -39,7 +39,7 @@ public class FrequencyDetermination {
                 int startIndexOfMatch = match.startOfFirst();
                 int lengthOfMatch = match.lengthOfFirst();
                 if (startIndexOfMatch + lengthOfMatch > submissionTokenTypes.size()) {
-                    throw new RuntimeException("startIndexOfMatch + lengthOfMatch <= submissionTokenTypes.size()");
+                    throw new IllegalArgumentException("startIndexOfMatch + lengthOfMatch <= submissionTokenTypes.size()");
                 }
                 List<TokenType> matchTokenTypes = submissionTokenTypes.subList(startIndexOfMatch, startIndexOfMatch + lengthOfMatch);
                 frequencyStrategy.processMatchTokenTypes(matchTokenTypes, matchFrequencyMap, strategyNumber);
