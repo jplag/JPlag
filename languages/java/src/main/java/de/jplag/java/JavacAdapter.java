@@ -39,8 +39,8 @@ public class JavacAdapter {
         var listener = new DiagnosticCollector<>();
 
         List<ParsingException> parsingExceptions = new ArrayList<>();
-        final Charset guessedCharset = FileUtils.detectCharsetFromMultiple(files);
-        try (final StandardJavaFileManager fileManager = compiler.getStandardFileManager(listener, null, guessedCharset)) {
+        final Charset charset = FileUtils.detectCharsetFromMultiple(files, true);
+        try (final StandardJavaFileManager fileManager = compiler.getStandardFileManager(listener, null, charset)) {
             var javaFiles = fileManager.getJavaFileObjectsFromFiles(files);
 
             // We need to disable annotation processing, see https://stackoverflow.com/q/72737445

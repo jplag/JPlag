@@ -40,7 +40,7 @@ public class RustParserAdapter extends AbstractParser {
     }
 
     private void parseFile(File file) throws ParsingException {
-        try (BufferedReader reader = FileUtils.openFileReader(file)) {
+        try (BufferedReader reader = FileUtils.openFileReader(file, true)) {
             currentFile = file;
 
             // create a lexer, a parser and a buffer between them.
