@@ -1,5 +1,7 @@
 package de.jplag.highlightextraction;
 
+import static de.jplag.highlightextraction.SubSequenceUtil.addSequence;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -7,8 +9,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import de.jplag.TokenType;
-
-import static de.jplag.highlightextraction.SubSequenceUtil.addSequence;
 
 /**
  * Strategy that uses a fixed window size to create submatches of a match sequence in a comparison and calculates the
@@ -40,10 +40,10 @@ public class WindowOfMatchesStrategy implements FrequencyStrategy {
     public static List<List<TokenType>> getWindowSequences(List<TokenType> matchTokenTypes, int windowSize) {
         List<List<TokenType>> windowSequences = new LinkedList<>();
 
-            for (int windowStartIndex = 0; windowStartIndex <= matchTokenTypes.size() - windowSize; windowStartIndex++) {
-                List<TokenType> windowSequence = new ArrayList<>(matchTokenTypes.subList(windowStartIndex, windowStartIndex + windowSize));
-                windowSequences.add(windowSequence);
-            }
+        for (int windowStartIndex = 0; windowStartIndex <= matchTokenTypes.size() - windowSize; windowStartIndex++) {
+            List<TokenType> windowSequence = new ArrayList<>(matchTokenTypes.subList(windowStartIndex, windowStartIndex + windowSize));
+            windowSequences.add(windowSequence);
+        }
         return windowSequences;
     }
 }

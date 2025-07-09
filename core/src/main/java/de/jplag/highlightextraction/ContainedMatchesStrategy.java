@@ -10,8 +10,8 @@ import java.util.function.Consumer;
 import de.jplag.TokenType;
 
 /**
- * Strategy that uses matches and their submatches, that are longer than  minSubSequenceLength from the comparisons and calculates the frequency of their appearance in full matches across
- * all submissions.
+ * Strategy that uses matches and their submatches, that are longer than minSubSequenceLength from the comparisons and
+ * calculates the frequency of their appearance in full matches across all submissions.
  */
 public class ContainedMatchesStrategy implements FrequencyStrategy {
     /**
@@ -31,7 +31,5 @@ public class ContainedMatchesStrategy implements FrequencyStrategy {
             sequenceConsumer.accept(matchTokenTypes);
         }
     }
-
-
 
 }

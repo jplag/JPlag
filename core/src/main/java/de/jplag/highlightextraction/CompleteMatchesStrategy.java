@@ -1,12 +1,12 @@
 package de.jplag.highlightextraction;
 
+import static de.jplag.highlightextraction.SubSequenceUtil.addSequence;
+
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
 import de.jplag.TokenType;
-
-import static de.jplag.highlightextraction.SubSequenceUtil.addSequence;
 
 /**
  * Strategy that calculates the frequencies of matches over all submissions.

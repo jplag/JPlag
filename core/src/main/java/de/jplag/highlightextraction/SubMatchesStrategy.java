@@ -10,9 +10,9 @@ import java.util.function.Consumer;
 import de.jplag.TokenType;
 
 /**
- * Strategy that uses submatches of matches from the comparisons
- * and calculates the frequency of all submatches in the matches across
- * all submissions. The full Match is also considered a submatch when it ist longer or equals minSubSequenceSize.
+ * Strategy that uses submatches of matches from the comparisons and calculates the frequency of all submatches in the
+ * matches across all submissions. The full Match is also considered a submatch when it ist longer or equals
+ * minSubSequenceSize.
  */
 public class SubMatchesStrategy implements FrequencyStrategy {
 

@@ -232,14 +232,15 @@ class StrategyTest extends TestBase {
         assertEquals(2, valueSecondWindow, "SecondWindow does not contain two values: " + valueSecondWindow);
     }
 
-    private static void checkIfAllWindowsAreAddedWithCorrectValue(List<List<TokenType>> expectedKeys, Map<Integer,Integer> windowMap) {
+    private static void checkIfAllWindowsAreAddedWithCorrectValue(List<List<TokenType>> expectedKeys, Map<Integer, Integer> windowMap) {
         for (List<TokenType> window : expectedKeys) {
             Integer value = windowMap.get(window.hashCode());
             assertNotNull(value, "value should be min 1: " + window);
         }
     }
 
-    private static List<List<TokenType>> checkIfAllExpectedWindowsAreAdded(List<TokenType> matchTokenTypes, int windowSize, Map<Integer,Integer> windowMap) {
+    private static List<List<TokenType>> checkIfAllExpectedWindowsAreAdded(List<TokenType> matchTokenTypes, int windowSize,
+            Map<Integer, Integer> windowMap) {
         List<List<TokenType>> expectedKeys = new ArrayList<>();
         for (int i = 0; i <= matchTokenTypes.size() - windowSize; i++) {
             List<TokenType> expectedKey = matchTokenTypes.subList(i, i + windowSize);

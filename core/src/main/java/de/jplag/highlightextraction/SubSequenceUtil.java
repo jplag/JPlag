@@ -1,7 +1,6 @@
 package de.jplag.highlightextraction;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,8 +17,8 @@ public final class SubSequenceUtil {
     /**
      * Calculates all possible sublists with min minSubSequenceSize length of the match matchTokenTypes.
      * @param matchTokenTypes is a List of the match TokenTypes to create the SubSequences used for the SubSequenceStrategy
-     * and ContainedStrategy. The original list is also included. All contiguous (Sub-)lists,
-     * that can be taken from the matchTokenTypes list that have length greater or equal minSubSequenceSize.
+     * and ContainedStrategy. The original list is also included. All contiguous (Sub-)lists, that can be taken from the
+     * matchTokenTypes list that have length greater or equal minSubSequenceSize.
      * @param minSubSequenceSize is the minimum considered size of the sub-Sequence-List.
      * @return List of all as considered subSequences.
      */
@@ -38,7 +37,7 @@ public final class SubSequenceUtil {
         return subSequences;
     }
 
-    static void addSequence(Map<Integer,Integer> frequencyMap, List<TokenType> sequence) {
+    static void addSequence(Map<Integer, Integer> frequencyMap, List<TokenType> sequence) {
         frequencyMap.put(sequence.hashCode(), frequencyMap.getOrDefault(sequence.hashCode(), 0) + 1);
     }
 }
