@@ -387,6 +387,7 @@
                             <file>spotless.importorder</file>
                         </importOrder>
                         <removeUnusedImports></removeUnusedImports>
+                        <removeWildcardImports/>
                     </java>
                     <pom>
                         <sortPom>
