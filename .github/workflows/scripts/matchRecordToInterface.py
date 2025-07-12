@@ -32,7 +32,7 @@ cluster = ({ 'file_path': f"{REPORTING_PACKAGE}/Cluster.java", 'record_name': 'C
 
 file_list = [cli_options, merging_options, clustering_options, comparison, match, code_position, basecode_match, submission_file_index, submission_file, run_information, failed_submission, version, submission_mappings, top_comparison, cluster]
 
-typeMatches = {
+type_matches = {
     # Basic map from Java types to TypeScript types
     'int': 'number',
     'Integer': 'number',
@@ -52,15 +52,15 @@ typeMatches = {
 for java_file, typescript_file in file_list:
     record_name = java_file['record_name']
     interface_name = typescript_file['interface_name']
-    typeMatches[record_name] = interface_name
+    type_matches[record_name] = interface_name
 
 
-def readFileContents(file_path):
+def read_file_contents(file_path):
     with open(file_path, 'r') as file:
         return file.read()
 
 
-def getContentBetweenBrackets(text, open_bracket='{', close_bracket='}'):
+def get_content_between_brackets(text, open_bracket='{', close_bracket='}'):
     start = text.find(open_bracket)
     end = start + 1
     bracket_count = 1
@@ -72,7 +72,7 @@ def getContentBetweenBrackets(text, open_bracket='{', close_bracket='}'):
         end += 1
     return text[start + 1:end - 1].strip() if bracket_count == 0 else ''
 
-def getTextAfterKeyword(text, keyword):
+def get_text_after_keyword(text, keyword):
     start = text.find(keyword)
     if start == -1:
         return ''
@@ -82,7 +82,7 @@ def getTextAfterKeyword(text, keyword):
 # Gets all variables from within the record body
 # separates variables that are in the same line into multiple strings
 # used to filter blank lines and comments
-def extractRecordVariables(text):
+def extract_record_variables(text):
     variables = []
     current_variable = ''
     open_brackets = 0
@@ -102,16 +102,16 @@ def extractRecordVariables(text):
     return variables
 
 # Transforms the text of a Java variable definition to the internal representation
-def transformJavaVariable(variable): 
+def transform_java_variable(variable): 
     parts = variable.rsplit(' ', 1)
     if len(parts) < 2:
         return None
     type_name_and_prior = parts[-2].strip()
-    type_name = extractTypeFromLong(type_name_and_prior)
+    type_name = extract_type_from_long(type_name_and_prior)
     variable_name = parts[-1].replace(';', '').strip()
     return (type_name, variable_name)
 
-def extractTypeFromLong(type_name_and_prior):
+def extract_type_from_long(type_name_and_prior):
     open_brackets = 0
     for i in range(len(type_name_and_prior) - 1, -1, -1):
         if type_name_and_prior[i] == ')' or type_name_and_prior[i] == ']' or type_name_and_prior[i] == '>' or type_name_and_prior[i] == '}':
@@ -123,23 +123,23 @@ def extractTypeFromLong(type_name_and_prior):
     return type_name_and_prior
 
 # Extracts variables from a Java file with a record
-def getJavaRecordVariables(text, record_name):
+def get_java_record_variables(text, record_name):
     complete_name = 'record ' + record_name
     if not complete_name in text:
         raise Exception(f"Could not find {complete_name}")
-    record = getTextAfterKeyword(text, complete_name)
-    content_between_brackets = getContentBetweenBrackets(record, '(', ')')
-    variables = extractRecordVariables(content_between_brackets)
-    return [transformJavaVariable(var) for var in variables if transformJavaVariable(var) is not None]
+    record = get_text_after_keyword(text, complete_name)
+    content_between_brackets = get_content_between_brackets(record, '(', ')')
+    variables = extract_record_variables(content_between_brackets)
+    return [transform_java_variable(var) for var in variables if transform_java_variable(var) is not None]
 
 # Gets all lines from within the interface body that are variable declarations
 # used to filter blank lines and comments
-def extractInterfaceVariables(text):
+def extract_interface_variables(text):
     lines = text.splitlines()
     return [line.strip() for line in lines if not line.strip().startswith('/') and ':' in line]
 
 # Transforms the text of a TypeScript variable definition to the internal representation
-def transformTypescriptVariable(variable):
+def transform_typescript_variable(variable):
     parts = variable.split(':')
     if len(parts) < 2:
         return None
@@ -148,22 +148,22 @@ def transformTypescriptVariable(variable):
     return (type_name, variable_name)
 
 # Extracts variables from a TypeScript file with an interface
-def getTypescriptInterfaceVariables(text, interface_name):
+def get_typescript_interface_variables(text, interface_name):
     complete_name = 'interface ' + interface_name
     if not complete_name in text: 
         raise Exception(f"Could not find {complete_name}")
-    interface_text = getTextAfterKeyword(text, complete_name)
-    content_between_brackets = getContentBetweenBrackets(interface_text, '{', '}')
-    variables = extractInterfaceVariables(content_between_brackets)
-    return [transformTypescriptVariable(var) for var in variables if transformTypescriptVariable(var) is not None]
+    interface_text = get_text_after_keyword(text, complete_name)
+    content_between_brackets = get_content_between_brackets(interface_text, '{', '}')
+    variables = extract_interface_variables(content_between_brackets)
+    return [transform_typescript_variable(var) for var in variables if transform_typescript_variable(var) is not None]
 
 
 # Verifies that the java and ts type match
 # if no data for check is found, it is reported as matching
-def checkTypeMatch(java_type, ts_type):
+def check_type_match(java_type, ts_type):
     # check simple types
-    if java_type in typeMatches:
-        return ts_type == typeMatches[java_type]
+    if java_type in type_matches:
+        return ts_type == type_matches[java_type]
     
     # check list types
     java_list_check = re.search(r"^List<(.*)>$", java_type)
@@ -171,7 +171,7 @@ def checkTypeMatch(java_type, ts_type):
         ts_list_check = re.search(r"^(.*)\[]$", ts_type)
         if ts_list_check:
             # check types of objects in list
-            return checkTypeMatch(java_list_check.group(1).strip(), ts_list_check.group(1).strip())
+            return check_type_match(java_list_check.group(1).strip(), ts_list_check.group(1).strip())
         else:
             # No list type is ts code
             return False
@@ -182,7 +182,7 @@ def checkTypeMatch(java_type, ts_type):
         ts_set_check = re.search(r"^(.*)\[]$", ts_type)
         if ts_set_check:
             # check types of objects in set
-            return checkTypeMatch(java_set_check.group(1).strip(), ts_set_check.group(1).strip())
+            return check_type_match(java_set_check.group(1).strip(), ts_set_check.group(1).strip())
         else:
             # No set type is ts code
             return False
@@ -193,8 +193,8 @@ def checkTypeMatch(java_type, ts_type):
         ts_record_check = re.search(r"^Record<([^,]*),(.*)>$", ts_type)
         if ts_record_check:
             # check types of key and value
-            key_check = checkTypeMatch(java_map_check.group(1).strip(), ts_record_check.group(1).strip())
-            value_check = checkTypeMatch(java_map_check.group(2).strip(), ts_record_check.group(2).strip())
+            key_check = check_type_match(java_map_check.group(1).strip(), ts_record_check.group(1).strip())
+            value_check = check_type_match(java_map_check.group(2).strip(), ts_record_check.group(2).strip())
             return key_check and value_check
         else:
             # is not a record in ts
@@ -204,11 +204,11 @@ def checkTypeMatch(java_type, ts_type):
     return True
 
 # Strips a file path for pretty printing
-def getPrettyFilePath(file_path):
+def get_pretty_file_path(file_path):
     return file_path.split('/')[-1] if '/' in file_path else file_path
 
 # transforms a file path to be based on the project root
-def getAbsoluteFilePath(file_path):
+def get_absolute_file_path(file_path):
     parts = file_path.split('/')
     return '/'.join(filter(lambda x: x != '.' and x != '..' and x != '', parts))
 
@@ -228,8 +228,8 @@ class Warning:
         return True
     def actions_print(self):
         return [
-            f"::warning file={getAbsoluteFilePath(self.java_file_path)},line={self.java_line_number},title=Variable types do not match::Type of Java variable '{self.java_variable[1]}' ({self.java_variable[0]}) does not match TypeScript variable '{self.typescript_variable[1]}' ({self.typescript_variable[0]}) in {getAbsoluteFilePath(self.typescript_file_path)} at line {self.typescript_line_number}.",
-            f"::warning file={getAbsoluteFilePath(self.typescript_file_path)},line={self.typescript_line_number},title=Variable types do not match::Type of TypeScript variable '{self.typescript_variable[1]}' ({self.typescript_variable[0]}) does not match Java variable '{self.java_variable[1]}' ({self.java_variable[0]}) in {getAbsoluteFilePath(self.java_file_path)} at line {self.java_line_number}."
+            f"::warning file={get_absolute_file_path(self.java_file_path)},line={self.java_line_number},title=Variable types do not match::Type of Java variable '{self.java_variable[1]}' ({self.java_variable[0]}) does not match TypeScript variable '{self.typescript_variable[1]}' ({self.typescript_variable[0]}) in {get_absolute_file_path(self.typescript_file_path)} at line {self.typescript_line_number}.",
+            f"::warning file={get_absolute_file_path(self.typescript_file_path)},line={self.typescript_line_number},title=Variable types do not match::Type of TypeScript variable '{self.typescript_variable[1]}' ({self.typescript_variable[0]}) does not match Java variable '{self.java_variable[1]}' ({self.java_variable[0]}) in {get_absolute_file_path(self.java_file_path)} at line {self.java_line_number}."
         ]
 
 # Base Error
@@ -248,32 +248,32 @@ class Error:
 class TsError(Error):
     def actions_print(self):
         return [
-            f"::error file={getAbsoluteFilePath(self.file_path)},line={self.line_number},title=Variable not found in Java equivalent::TypeScript variable '{self.variable[1]}' ({self.variable[0]}) does not match any Java variable in {getAbsoluteFilePath(self.other_file_path)}.",
-            f"::error file={getAbsoluteFilePath(self.other_file_path)},line={self.other_line_number},title=Missing variable from TypeScript equivalent::Java record should have a variable equivalent to '{self.variable[1]}' ({self.variable[0]}) from {getAbsoluteFilePath(self.file_path)} at line {self.line_number}."
+            f"::error file={get_absolute_file_path(self.file_path)},line={self.line_number},title=Variable not found in Java equivalent::TypeScript variable '{self.variable[1]}' ({self.variable[0]}) does not match any Java variable in {get_absolute_file_path(self.other_file_path)}.",
+            f"::error file={get_absolute_file_path(self.other_file_path)},line={self.other_line_number},title=Missing variable from TypeScript equivalent::Java record should have a variable equivalent to '{self.variable[1]}' ({self.variable[0]}) from {get_absolute_file_path(self.file_path)} at line {self.line_number}."
         ]
 # Error for: Variable from Java record not found in TypeScript interface
 class JavaError(Error):
     def actions_print(self):
         return [
-            f"::error file={getAbsoluteFilePath(self.file_path)},line={self.line_number},title=Variable not found in TypeScript equivalent::Java variable '{self.variable[1]}' ({self.variable[0]}) does not match any TypeScript variable in {getAbsoluteFilePath(self.other_file_path)}.",
-            f"::error file={getAbsoluteFilePath(self.other_file_path)},line={self.other_line_number},title=Missing variable from Java equivalent::TypeScript interface should have a variable equivalent to '{self.variable[1]}' ({self.variable[0]}) from {getAbsoluteFilePath(self.file_path)} at line {self.line_number}."
+            f"::error file={get_absolute_file_path(self.file_path)},line={self.line_number},title=Variable not found in TypeScript equivalent::Java variable '{self.variable[1]}' ({self.variable[0]}) does not match any TypeScript variable in {get_absolute_file_path(self.other_file_path)}.",
+            f"::error file={get_absolute_file_path(self.other_file_path)},line={self.other_line_number},title=Missing variable from Java equivalent::TypeScript interface should have a variable equivalent to '{self.variable[1]}' ({self.variable[0]}) from {get_absolute_file_path(self.file_path)} at line {self.line_number}."
         ]
 
 # Finds the line number of subtext
-def findLineNumber(lines, subtext):
+def find_line_number(lines, subtext):
     for i, line in enumerate(lines):
         if subtext in line:
             return i + 1  # Return 1-based line number
     return -1  # Not found
 
 # Reads files and compares the variables
-def checkVariableMatch(java_file, typescript_file):
-    java_text = readFileContents(java_file['file_path'])
-    java_variables = getJavaRecordVariables(java_text, java_file['record_name'])
+def check_variable_match(java_file, typescript_file):
+    java_text = read_file_contents(java_file['file_path'])
+    java_variables = get_java_record_variables(java_text, java_file['record_name'])
     java_lines = java_text.splitlines()
 
-    typescript_text = readFileContents(typescript_file['file_path'])
-    typescript_variables = getTypescriptInterfaceVariables(typescript_text, typescript_file['interface_name'])
+    typescript_text = read_file_contents(typescript_file['file_path'])
+    typescript_variables = get_typescript_interface_variables(typescript_text, typescript_file['interface_name'])
     typescript_lines = typescript_text.splitlines()
 
     annotations = []
@@ -291,9 +291,9 @@ def checkVariableMatch(java_file, typescript_file):
             annotations.append(JavaError(
                 variable=java_var,
                 file_path=java_file['file_path'],
-                line_number=findLineNumber(java_lines, f"{java_type} {java_name}"),
+                line_number=find_line_number(java_lines, f"{java_type} {java_name}"),
                 other_file_path=typescript_file['file_path'],
-                other_line_number=findLineNumber(typescript_lines, f"interface {typescript_file['interface_name']}")
+                other_line_number=find_line_number(typescript_lines, f"interface {typescript_file['interface_name']}")
             ))
 
     # Check if all TypeScript variables are in record
@@ -309,9 +309,9 @@ def checkVariableMatch(java_file, typescript_file):
             annotations.append(TsError(
                 variable=ts_var,
                 file_path=typescript_file['file_path'],
-                line_number=findLineNumber(typescript_lines, f"{ts_name}: {ts_type}"),
+                line_number=find_line_number(typescript_lines, f"{ts_name}: {ts_type}"),
                 other_file_path=java_file['file_path'],
-                other_line_number=findLineNumber(java_lines, f"record {java_file['record_name']}")
+                other_line_number=find_line_number(java_lines, f"record {java_file['record_name']}")
             ))
 
     # check for all Java variables that the type matches the TypeScript type if it is comparable
@@ -320,22 +320,22 @@ def checkVariableMatch(java_file, typescript_file):
         for ts_var in typescript_variables:
             ts_type, ts_name = ts_var
             if java_name == ts_name:
-                if not checkTypeMatch(java_type, ts_type):
+                if not check_type_match(java_type, ts_type):
                     annotations.append(Warning(
                         java_variable=java_var,
                         java_file_path=java_file['file_path'],
-                        java_line_number=findLineNumber(java_lines, f"{java_type} {java_name}"),
+                        java_line_number=find_line_number(java_lines, f"{java_type} {java_name}"),
                         typescript_variable=ts_var,
                         typescript_file_path=typescript_file['file_path'],
-                        typescript_line_number=findLineNumber(typescript_lines, f"{ts_name}: {ts_type}")
+                        typescript_line_number=find_line_number(typescript_lines, f"{ts_name}: {ts_type}")
                     ))
                 break
     return annotations
 
 # Runs the comparison for the files and prints all errors and warnings
-def runForPair(java_file, typescript_file):
-    print(f"Checking variables in {getPrettyFilePath(java_file['file_path'])} and {getPrettyFilePath(typescript_file['file_path'])}")
-    annotations = checkVariableMatch(java_file, typescript_file)
+def run_for_pair(java_file, typescript_file):
+    print(f"Checking variables in {get_pretty_file_path(java_file['file_path'])} and {get_pretty_file_path(typescript_file['file_path'])}")
+    annotations = check_variable_match(java_file, typescript_file)
     if not annotations:
         print("No mismatches found.")
         print("")
@@ -360,10 +360,10 @@ def runForPair(java_file, typescript_file):
     return len(errors) > 0
 
 # Iteratively run comparison for all files
-def runForAllPairs(pairs):
+def run_for_all_pairs(pairs):
     found_errors = False
     for java_file, typescript_file in pairs:
-        found_errors |= runForPair(java_file, typescript_file)
+        found_errors |= run_for_pair(java_file, typescript_file)
     if not found_errors:
         exit(0)
     else:
@@ -372,4 +372,4 @@ def runForAllPairs(pairs):
 
 
 
-runForAllPairs(file_list)
+run_for_all_pairs(file_list)
