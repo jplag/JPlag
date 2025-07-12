@@ -17,6 +17,9 @@ test('Test comparison table and comparsion view', async ({ page }) => {
   expect(comparisonTableMaxSorted).toContain('100Blue AntelopeLime Lynx')
 
   await page.getByPlaceholder('Filter/Unhide Comparisons').fill('')
+  // move mouse to avoid hover effects
+  await page.mouse.move(0, 0)
+  await page.waitForTimeout(200)
   await page.getByText('Anonymize All').click()
   // check for elements being hidden
   const comparisonTableOverviewHidden = await page.getByText('Cluster 1').textContent()
