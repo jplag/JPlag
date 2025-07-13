@@ -239,7 +239,8 @@ public class GreedyStringTiling {
         if (tokenIndex >= exclusionFlags.length) {
             throw new IllegalStateException(
                     String.format(ERROR_INDEX_OUT_OF_BOUNDS, exclusionFlags.length, tokenIndex, this.tokenSupplier.getTokenList(submission).size(),
-                            this.tokenSupplier.getTokenList(submission).stream().map(it -> it.getType().getDescription()).collect(Collectors.joining(", ")),
+                            this.tokenSupplier.getTokenList(submission).stream().map(it -> it.getType().getDescription())
+                                    .collect(Collectors.joining(", ")),
                             this.tokenSequenceMapper.getTokenSequenceFor(submission).length, submission.getName(), otherSubmission.getName()));
         }
 

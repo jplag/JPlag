@@ -5,7 +5,7 @@ import java.util.List;
 
 import de.jplag.*;
 import de.jplag.comparison.GreedyStringTiling;
-import de.jplag.comparison.TokenValueMapper;
+import de.jplag.comparison.TokenSequenceMapper;
 import de.jplag.options.JPlagOptions;
 
 public class CommentComparer {
@@ -47,7 +47,7 @@ public class CommentComparer {
     public JPlagResult compareCommentsAndMergeMatches(JPlagResult result) {
         long timeBeforeStartInMillis = System.currentTimeMillis();
 
-        TokenValueMapper tokenValueMapper = new TokenValueMapper(result.getSubmissions(), Submission::getComments);
+        TokenSequenceMapper tokenValueMapper = new TokenSequenceMapper(result.getSubmissions(), Submission::getComments);
         GreedyStringTiling algorithm = new GreedyStringTiling(options, tokenValueMapper, Submission::getComments);
 
         boolean withBaseCode = result.getSubmissions().hasBaseCode();
