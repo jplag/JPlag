@@ -1,4 +1,4 @@
-name: Check that Java records match TypeScript interfaces
+name: Match Report Schema
 
 on:
   workflow_dispatch:
