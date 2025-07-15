@@ -222,16 +222,4 @@ public class GreedyStringTiling {
         return cachedHashLookupTables.computeIfAbsent(submission,
                 key -> new RollingTokenHashTable(minimumMatchLength, this.tokenSequenceMapper.getTokenSequenceFor(submission), excludedTokens));
     }
-
-    private boolean isTokenExcludedAt(boolean[] exclusionFlags, int tokenIndex, Submission submission, Submission otherSubmission) {
-        if (tokenIndex >= exclusionFlags.length) {
-            throw new IllegalStateException(
-                    String.format(ERROR_INDEX_OUT_OF_BOUNDS, exclusionFlags.length, tokenIndex, this.tokenSupplier.getTokenList(submission).size(),
-                            this.tokenSupplier.getTokenList(submission).stream().map(it -> it.getType().getDescription())
-                                    .collect(Collectors.joining(", ")),
-                            this.tokenSequenceMapper.getTokenSequenceFor(submission).length, submission.getName(), otherSubmission.getName()));
-        }
-
-        return exclusionFlags[tokenIndex];
-    }
 }
