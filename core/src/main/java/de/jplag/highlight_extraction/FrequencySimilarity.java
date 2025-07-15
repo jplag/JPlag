@@ -29,8 +29,8 @@ public class FrequencySimilarity {
         if (divisor == 0) {
             return 0;
         }
-        int matchedFrequencyTokensOfFirst = getRareTokensWeightedMatchLengthOfFirst(comparison, weight);//todo hier anpassen
-        int matchedFrequencyTokensOfSecond = getRareTokensWeightedMatchLengthOfSecond(comparison, weight);
+        int matchedFrequencyTokensOfFirst = getRareLogTokensWeightedMatchLengthOfFirst(comparison, weight);//todo hier anpassen
+        int matchedFrequencyTokensOfSecond = getRareLogTokensWeightedMatchLengthOfSecond(comparison, weight);
 
          //System.out.println(comparison.matches().stream().mapToInt(Match::getLengthOfFirst).sum());
 
@@ -111,7 +111,16 @@ public int getLinearWeightedMatchLengthOfFirst(JPlagComparison comparison, doubl
         //System.out.println("weightedSum = " + weightedSum);
         return (int) Math.round(weightedSum);
     }
-
+    /*
+    maxWeight       =   2
+    minWeight       =   1
+    fiMaxFrcy       =   0.9      0.9       0.9
+    weight          =   0,5      0,5       0,5
+    freq            =   0.2      0.8       0.15
+    rarity          =   0.7778  0.111      0.8333
+    rarityWeight    =   1.7778  1.1111
+    myWeight        =   1.3889  1.0556     1.4167
+     */
     public int getRareTokensWeightedMatchLengthOfFirst(JPlagComparison comparison, double weight) {
         double maxFrequency = comparison.matches().stream()
                 .mapToDouble(Match::getFrequencyWeight)
@@ -119,8 +128,8 @@ public int getLinearWeightedMatchLengthOfFirst(JPlagComparison comparison, doubl
                 .orElse(1.0);
         if (maxFrequency == 0.0) maxFrequency = 1.0;
 
-        double minWeight = 1.0;     // Minimumgewicht jetzt 1.0
-        double maxWeight = 2.0;     // Seltene stärker gewichtet
+        double minWeight = 1.0;
+        double maxWeight = 2.0;
 
         double finalMaxFrequency = maxFrequency;
         double weightedSum = comparison.matches().stream()
@@ -134,7 +143,8 @@ public int getLinearWeightedMatchLengthOfFirst(JPlagComparison comparison, doubl
                     // Gewichtung nur erhöhen
                     double rarityWeight = minWeight + (maxWeight - minWeight) * rarity;
 
-                    // linearisierung
+                    // linearisierung: Lineare Interpolation zwischen (x0, f0) und (x1, f1):
+                    //f(x) = f0 + (x - x0) * (f1 - f0) / (x1 - x0)
                     double myWeight = (1 - weight) * 1.0 + weight * rarityWeight;
 
                     return match.getLengthOfFirst() * myWeight;
@@ -170,6 +180,97 @@ public int getLinearWeightedMatchLengthOfFirst(JPlagComparison comparison, doubl
                     double myWeight = (1 - weight) * 1.0 + weight * rarityWeight;
 
                     return match.getLengthOfFirst() * myWeight;
+                })
+                .sum();
+
+        return (int) Math.round(weightedSum);
+    }
+    public int getRareLogTokensWeightedMatchLengthOfFirst(JPlagComparison comparison, double weight) {
+        double maxFrequency = comparison.matches().stream()
+                .mapToDouble(Match::getFrequencyWeight)
+                .max()
+                .orElse(1.0);
+        if (maxFrequency == 0.0) maxFrequency = 1.0;
+
+        double minWeight = 1.0;
+        double maxWeight = 2.0;
+
+        double finalMaxFrequency = maxFrequency;
+        double weightedSum = comparison.matches().stream()
+                .mapToDouble(match -> {
+                    double freq = match.getFrequencyWeight();
+                    if (Double.isNaN(freq) || freq < 0.0) freq = 0.0; //solle nicht eintreten
+/*
+maxWeight       =   2
+minWeight       =   1
+finalMaxFrequency=  0.9
+weight          =   0,5
+freq            =   0.2      0.8       0.15
+rarity          =   0.7778  0.111      0.8333
+rarityWeight    =   1.7778  1.1111     1.8333
+myWeight        =   1.3889  1.0556     1.4167
+ */
+                    // Normieren -> rellative häufigkeit zum maximalwert
+                    double rarity = 1.0 - Math.min(freq / finalMaxFrequency, 1.0);
+
+                    // Gewichtung nur erhöhen
+                    double logMin = Math.log(minWeight);
+                    double logMax = Math.log(maxWeight);
+                    double rarityWeight = Math.exp(logMin + (logMax - logMin) * rarity);
+
+
+                    // linearisierung: Lineare Interpolation zwischen (x0, f0) und (x1, f1):
+                    //f(x) = f0 + (x - x0) * (f1 - f0) / (x1 - x0) = (1−α)⋅a+⋅b 𝑎
+                    //a: Startwert (hier: 1.0)
+                    //b: Zielwert (hier: rarityWeight)
+                    //𝛼: (x - x0)/(x1 - x0) Gewichtungsfaktor (hier: weight, zwischen 0 und 1)
+                    //Logarithmische Interpolation zwischen (x0, f0) und (x1, f1):
+                    //f(x) = f0 * exp( ((x - x0) * (ln(f1) - ln(f0))) / (x1 - x0) )
+                    // lineare interpolation zwischen der gewichtungsfunktion zwischen 0 und 1
+                    double myWeight = (1 - weight) * 1.0 + weight * rarityWeight;
+
+                    return match.getLengthOfFirst()   * myWeight;
+                })
+                .sum();
+
+        return (int) Math.round(weightedSum);
+    }
+
+    public int getRareLogTokensWeightedMatchLengthOfSecond(JPlagComparison comparison, double weight) {
+        double maxFrequency = comparison.matches().stream()
+                .mapToDouble(Match::getFrequencyWeight)
+                .max()
+                .orElse(1.0);
+        if (maxFrequency == 0.0) maxFrequency = 1.0;
+
+        double minWeight = 1.0;
+        double maxWeight = 2.0;
+
+        double finalMaxFrequency = maxFrequency;
+        double weightedSum = comparison.matches().stream()
+                .mapToDouble(match -> {
+                    double freq = match.getFrequencyWeight();
+                    if (Double.isNaN(freq) || freq < 0.0) freq = 0.0; //solle nicht eintreten
+
+                    // Normieren -> rellative häufigkeit zum maximalwert
+                    double rarity = 1.0 - Math.min(freq / finalMaxFrequency, 1.0);
+
+                    double logMin = Math.log(minWeight);
+                    double logMax = Math.log(maxWeight);
+                    double rarityWeight = Math.exp(logMin + (logMax - logMin) * rarity);
+
+
+                    // linearisierung: Lineare Interpolation zwischen (x0, f0) und (x1, f1):
+                    //f(x) = f0 + (x - x0) * (f1 - f0) / (x1 - x0) = (1−α)⋅a+⋅b 𝑎
+                    //a: Startwert (hier: 1.0)
+                    //b: Zielwert (hier: rarityWeight)
+                    //𝛼: (x - x0)/(x1 - x0) Gewichtungsfaktor (hier: weight, zwischen 0 und 1)
+                    //Logarithmische Interpolation zwischen (x0, f0) und (x1, f1):
+                    //f(x) = f0 * exp( ((x - x0) * (ln(f1) - ln(f0))) / (x1 - x0) )
+                    // lineare interpolation zwischen der gewichtungsfunktion zwischen 0 und 1
+                    double myWeight = (1 - weight) * 1.0 + weight * rarityWeight;
+
+                    return match.getLengthOfSecond()   * myWeight;
                 })
                 .sum();
 

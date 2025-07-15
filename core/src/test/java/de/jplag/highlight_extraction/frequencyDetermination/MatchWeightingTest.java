@@ -68,7 +68,7 @@ class MatchWeightingTest extends TestBase {
     }
 
     @Test
-    @DisplayName("Match das nicht gefunden wird wirft keinen fehler")
+    @DisplayName("Match das nicht gefunden wird wirft      keinen fehler")
     void testWeightAllMatches_skipsOutOfBoundsMatch() {
         FrequencyStrategy strategy = new DummyStrategy();
         Map<String, List<String>> frequencyMap = new HashMap<>();
