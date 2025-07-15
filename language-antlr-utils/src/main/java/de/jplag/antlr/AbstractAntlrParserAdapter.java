@@ -59,7 +59,7 @@ public abstract class AbstractAntlrParserAdapter<T extends Parser> extends Abstr
 
     private void parseFile(File file, TokenCollector collector) throws ParsingException {
         collector.enterFile(file);
-        try (Reader reader = FileUtils.openFileReader(file)) {
+        try (Reader reader = FileUtils.openFileReader(file, true)) {
             CodePointCharStream stream = CharStreams.fromReader(reader, file.getAbsolutePath());  // Specify source to retain file in ANTLR errors.
             Lexer lexer = this.createLexer(stream);
             CommonTokenStream tokenStream = new CommonTokenStream(lexer);

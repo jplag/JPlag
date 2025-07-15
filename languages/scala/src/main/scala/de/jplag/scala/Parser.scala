@@ -352,7 +352,7 @@ class Parser extends AbstractParser {
         currentFile = file
 
         try {
-            val text = FileUtils.readFileContent(file)
+            val text = FileUtils.readFileContent(file, true)
             val input = Input.VirtualFile(file.getPath, text)
             val ast = input.parse[Source].get
             traverser(ast)

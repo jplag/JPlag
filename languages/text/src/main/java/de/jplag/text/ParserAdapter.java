@@ -111,7 +111,7 @@ public class ParserAdapter extends AbstractParser {
 
     private String readFile(File file) throws ParsingException {
         try {
-            return FileUtils.readFileContent(file);
+            return FileUtils.readFileContent(file, true);
         } catch (IOException e) {
             throw new ParsingException(file, e.getMessage(), e);
         }
