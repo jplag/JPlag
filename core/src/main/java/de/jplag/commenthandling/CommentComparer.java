@@ -35,7 +35,7 @@ public class CommentComparer {
     }
 
     public List<Match> flipMatches(List<Match> matches) {
-        return matches.stream().map(match -> new Match(match.startOfSecond(), match.startOfFirst(), match.endOfSecond(), match.endOfFirst()))
+        return matches.stream().map(match -> new Match(match.startOfSecond(), match.startOfFirst(), match.lengthOfFirst(), match.lengthOfSecond()))
                 .toList();
     }
 
