@@ -20,7 +20,7 @@ test('Test information page', async ({ page }) => {
   expect(runOptions).toContain('Submission Directories:')
   expect(runOptions).toContain('Base Directory:')
   expect(runOptions).toContain('Language:')
-  expect(runOptions).toContain('File Suffixes:')
+  expect(runOptions).toContain('File Extensions:')
   expect(runOptions).toMatch(/Min Token Match:[0-9]+/)
 
   const runData = await page.getByText('Run Data:Date of Execution:').textContent()
