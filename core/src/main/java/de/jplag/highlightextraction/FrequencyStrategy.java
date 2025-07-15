@@ -16,5 +16,5 @@ public interface FrequencyStrategy {
      * @param frequencyMap Map that associates token subsequences with the comparisons they appear in.
      * @param strategyNumber The minimum length of token subsequences to consider.
      */
-    void processMatchTokenTypes(List<TokenType> matchTokenTypes, Map<Integer, Integer> frequencyMap, int strategyNumber);
+    void processMatchTokenTypes(List<TokenType> matchTokenTypes, Map<List<TokenType>, Integer> frequencyMap, int strategyNumber);
 }

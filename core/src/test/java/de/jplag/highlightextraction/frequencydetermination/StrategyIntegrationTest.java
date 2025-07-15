@@ -2,6 +2,7 @@ package de.jplag.highlightextraction.frequencydetermination;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.*;
@@ -53,7 +54,7 @@ class StrategyIntegrationTest extends TestBase {
         FrequencyStrategy strategy = new CompleteMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 1);
         fd.buildFrequencyMap(result.getAllComparisons());
-        Map<Integer, Integer> tokenFrequencyMap = fd.getMatchFrequencyMap();
+        Map<List<TokenType>, Integer> tokenFrequencyMap = fd.getMatchFrequencyMap();
         assertFalse(tokenFrequencyMap.isEmpty(), "Map should not be empty");
         printTestResult(tokenFrequencyMap);
     }
@@ -67,7 +68,7 @@ class StrategyIntegrationTest extends TestBase {
         FrequencyStrategy strategy = new ContainedMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 300);
         fd.buildFrequencyMap(result.getAllComparisons());
-        Map<Integer, Integer> tokenFrequencyMap = fd.getMatchFrequencyMap();
+        Map<List<TokenType>, Integer> tokenFrequencyMap = fd.getMatchFrequencyMap();
         assertFalse(tokenFrequencyMap.isEmpty(), "Map should not be empty");
         printTestResult(tokenFrequencyMap);
     }
@@ -81,7 +82,7 @@ class StrategyIntegrationTest extends TestBase {
         FrequencyStrategy strategy = new SubMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 300);
         fd.buildFrequencyMap(result.getAllComparisons());
-        Map<Integer, Integer> tokenFrequencyMap = fd.getMatchFrequencyMap();
+        Map<List<TokenType>, Integer> tokenFrequencyMap = fd.getMatchFrequencyMap();
         assertFalse(tokenFrequencyMap.isEmpty(), "Map should not be empty");
         printTestResult(tokenFrequencyMap);
     }
@@ -95,7 +96,7 @@ class StrategyIntegrationTest extends TestBase {
         FrequencyStrategy strategy = new WindowOfMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 300);
         fd.buildFrequencyMap(result.getAllComparisons());
-        Map<Integer, Integer> tokenFrequencyMap = fd.getMatchFrequencyMap();
+        Map<List<TokenType>, Integer> tokenFrequencyMap = fd.getMatchFrequencyMap();
         assertFalse(tokenFrequencyMap.isEmpty(), "Map should not be empty");
         printTestResult(tokenFrequencyMap);
     }
@@ -104,12 +105,12 @@ class StrategyIntegrationTest extends TestBase {
      * Logs the frequency map with visualization.
      * @param tokenFrequencyMap a map where keys are TokenType hash values and values are their frequencies.
      */
-    void printTestResult(Map<Integer, Integer> tokenFrequencyMap) {
+    void printTestResult(Map<List<TokenType>, Integer> tokenFrequencyMap) {
         StringBuilder logBuilder = new StringBuilder();
         logBuilder.append("\nHashValue                       | Frequency | Histogram\n");
         logBuilder.append("---------------------------------------------------------------\n");
 
-        for (Map.Entry<Integer, Integer> entry : tokenFrequencyMap.entrySet()) {
+        for (Map.Entry<List<TokenType>, Integer> entry : tokenFrequencyMap.entrySet()) {
             String key = entry.getKey().toString();
             int count = entry.getValue();
             logBuilder.append(String.format("%-32.30s | %9d | %s%n", key, count, "*".repeat(Math.min(count, 50))));

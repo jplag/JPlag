@@ -158,7 +158,7 @@ class StrategyTest extends TestBase {
         FrequencyStrategy strategy = new CompleteMatchesStrategy();
         FrequencyDetermination frequencyDetermination = new FrequencyDetermination(strategy, strategyNumber);
         frequencyDetermination.buildFrequencyMap(testComparisons);
-        Map<Integer, Integer> tokenFrequencyMap = frequencyDetermination.getMatchFrequencyMap();
+        Map<List<TokenType>, Integer> tokenFrequencyMap = frequencyDetermination.getMatchFrequencyMap();
         strategyIntegrationTest.printTestResult(tokenFrequencyMap);
 
         assertTokenFrequencyAndContainsMatch(matchAppearsOnce, 1, tokenFrequencyMap);
@@ -173,9 +173,9 @@ class StrategyTest extends TestBase {
      * @param expectedFrequency How many times the match is expected to appear
      * @param tokenFrequencyMap Map of token sequence hashes for frequency count
      */
-    private void assertTokenFrequencyAndContainsMatch(Match match, int expectedFrequency, Map<Integer, Integer> tokenFrequencyMap) {
+    private void assertTokenFrequencyAndContainsMatch(Match match, int expectedFrequency, Map<List<TokenType>, Integer> tokenFrequencyMap) {
         List<TokenType> matchTokenTypes = getMatchTokenTypes(match);
-        Integer matchFrequency = tokenFrequencyMap.get(matchTokenTypes.hashCode());
+        Integer matchFrequency = tokenFrequencyMap.get(matchTokenTypes);
         if (matchFrequency == null) {
             throw new AssertionError("Match key [" + matchTokenTypes + "] not found in tokenFrequencyMap.");
         }
@@ -204,7 +204,7 @@ class StrategyTest extends TestBase {
     @DisplayName("Test check() of window strategy")
     void testWindowOfMatchesStrategy() {
         FrequencyStrategy strategy = new WindowOfMatchesStrategy();
-        Map<Integer, Integer> windowMap = new HashMap<>();
+        Map<List<TokenType>, Integer> windowMap = new HashMap<>();
         int windowSize = 5;
 
         List<TokenType> matchTokenTypes = getMatchTokenTypes(matchShort);
@@ -219,35 +219,35 @@ class StrategyTest extends TestBase {
         List<TokenType> firstWindow = newSequenceForWindows.subList(0, windowSize);
         List<TokenType> secondWindow = newSequenceForWindows.subList(1, windowSize + 1);
 
-        assertTrue(windowMap.containsKey(firstWindow.hashCode()), "new firstWindow was not added: " + firstWindow);
-        assertTrue(windowMap.containsKey(secondWindow.hashCode()), "new secondWindow was not added: " + secondWindow);
+        assertTrue(windowMap.containsKey(firstWindow), "new firstWindow was not added: " + firstWindow);
+        assertTrue(windowMap.containsKey(secondWindow), "new secondWindow was not added: " + secondWindow);
 
         strategy.processMatchTokenTypes(firstWindow, windowMap, windowSize);
         strategy.processMatchTokenTypes(secondWindow, windowMap, windowSize);
 
-        Integer valueFirstWindow = windowMap.get(firstWindow.hashCode());
-        Integer valueSecondWindow = windowMap.get(secondWindow.hashCode());
+        Integer valueFirstWindow = windowMap.get(firstWindow);
+        Integer valueSecondWindow = windowMap.get(secondWindow);
 
         assertEquals(2, valueFirstWindow, "FirstWindow does not contain two values: " + valueFirstWindow);
         assertEquals(2, valueSecondWindow, "SecondWindow does not contain two values: " + valueSecondWindow);
     }
 
-    private static void checkIfAllWindowsAreAddedWithCorrectValue(List<List<TokenType>> expectedKeys, Map<Integer, Integer> windowMap) {
+    private static void checkIfAllWindowsAreAddedWithCorrectValue(List<List<TokenType>> expectedKeys, Map<List<TokenType>, Integer> windowMap) {
         for (List<TokenType> window : expectedKeys) {
-            Integer value = windowMap.get(window.hashCode());
+            Integer value = windowMap.get(window);
             assertNotNull(value, "value should be min 1: " + window);
         }
     }
 
     private static List<List<TokenType>> checkIfAllExpectedWindowsAreAdded(List<TokenType> matchTokenTypes, int windowSize,
-            Map<Integer, Integer> windowMap) {
+            Map<List<TokenType>, Integer> windowMap) {
         List<List<TokenType>> expectedKeys = new ArrayList<>();
         for (int i = 0; i <= matchTokenTypes.size() - windowSize; i++) {
             List<TokenType> expectedKey = matchTokenTypes.subList(i, i + windowSize);
             expectedKeys.add(expectedKey);
         }
         for (List<TokenType> key : expectedKeys) {
-            assertTrue(windowMap.containsKey(key.hashCode()), "key missing: " + key);
+            assertTrue(windowMap.containsKey(key), "key missing: " + key);
         }
         return expectedKeys;
     }
@@ -259,7 +259,7 @@ class StrategyTest extends TestBase {
     void testSubmatchesStrategy() {
         int wantedMatchLength = 5;
         SubMatchesStrategy strategy = new SubMatchesStrategy();
-        Map<Integer, Integer> frequencyMap = new HashMap<>();
+        Map<List<TokenType>, Integer> frequencyMap = new HashMap<>();
         List<Token> matchToken = testSubmission.getTokenList().subList(matchShort.startOfFirst(), matchShort.startOfFirst() + wantedMatchLength);
         List<TokenType> matchTokenTypes = matchToken.stream().map(Token::getType).toList();
         int minSubSequenceSize = 3;
@@ -270,8 +270,8 @@ class StrategyTest extends TestBase {
                 matchTokenTypes.subList(1, 5), matchTokenTypes.subList(0, 3), matchTokenTypes.subList(1, 4), matchTokenTypes.subList(2, 5)));
 
         for (List<TokenType> subSequence : expectedSubSequences) {
-            assertTrue(frequencyMap.containsKey(subSequence.hashCode()), "Map should contain subSequence: " + subSequence);
-            assertTrue(frequencyMap.get(subSequence.hashCode()) > 0, "Value should be min one for subSequence: " + subSequence);
+            assertTrue(frequencyMap.containsKey(subSequence), "Map should contain subSequence: " + subSequence);
+            assertTrue(frequencyMap.get(subSequence) > 0, "Value should be min one for subSequence: " + subSequence);
         }
 
         List<TokenType> newSequence = matchTokenTypes.subList(1, 5);
@@ -280,11 +280,11 @@ class StrategyTest extends TestBase {
                 List.of(matchTokenTypes.subList(1, 5), matchTokenTypes.subList(1, 4), matchTokenTypes.subList(2, 5)));
 
         for (List<TokenType> key : expectedReUsedKeys) {
-            assertEquals(2, frequencyMap.get(key.hashCode()), "Map should contain two keys: " + key);
+            assertEquals(2, frequencyMap.get(key), "Map should contain two keys: " + key);
             expectedSubSequences.remove(key);
         }
         for (List<TokenType> key : expectedSubSequences) {
-            assertEquals(1, frequencyMap.get(key.hashCode()), "Map should only contain key: " + key);
+            assertEquals(1, frequencyMap.get(key), "Map should only contain key: " + key);
         }
     }
 
@@ -298,14 +298,14 @@ class StrategyTest extends TestBase {
         FrequencyStrategy strategy = new ContainedMatchesStrategy();
         FrequencyDetermination frequencyDetermination = new FrequencyDetermination(strategy, strategyNumber);
         frequencyDetermination.buildFrequencyMap(testComparisons);
-        Map<Integer, Integer> matchFrequencyMap = frequencyDetermination.getMatchFrequencyMap();
+        Map<List<TokenType>, Integer> matchFrequencyMap = frequencyDetermination.getMatchFrequencyMap();
         Map<List<TokenType>, Integer> frequencyCount = new HashMap<>();
         for (JPlagComparison comparison : testComparisons) {
             for (Match match : comparison.matches()) {
                 List<TokenType> subSequence = getMatchTokenTypes(match);
                 frequencyCount.put(subSequence, frequencyCount.getOrDefault(subSequence, 0) + 1);
                 if (subSequence.size() >= strategyNumber) {
-                    assertTrue(matchFrequencyMap.containsKey(subSequence.hashCode()), "Should contain subSequence: " + subSequence);
+                    assertTrue(matchFrequencyMap.containsKey(subSequence), "Should contain subSequence: " + subSequence);
                 }
             }
         }
@@ -313,8 +313,7 @@ class StrategyTest extends TestBase {
             List<TokenType> key = entry.getKey();
             int frequency = entry.getValue();
             if (key.size() >= strategyNumber) {
-                assertEquals(frequency, matchFrequencyMap.get(key.hashCode()),
-                        "The frequency is different than the expected frequency: " + frequency);
+                assertEquals(frequency, matchFrequencyMap.get(key), "The frequency is different than the expected frequency: " + frequency);
             }
         }
     }

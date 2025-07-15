@@ -37,7 +37,7 @@ public final class SubSequenceUtil {
         return subSequences;
     }
 
-    static void addSequence(Map<Integer, Integer> frequencyMap, List<TokenType> sequence) {
-        frequencyMap.put(sequence.hashCode(), frequencyMap.getOrDefault(sequence.hashCode(), 0) + 1);
+    static void addSequence(Map<List<TokenType>, Integer> frequencyMap, List<TokenType> sequence) {
+        frequencyMap.put(sequence, frequencyMap.getOrDefault(sequence, 0) + 1);
     }
 }

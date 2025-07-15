@@ -19,7 +19,7 @@ public class CompleteMatchesStrategy implements FrequencyStrategy {
      * @param strategyNumber The minimum sub length considered in other strategies.
      */
     @Override
-    public void processMatchTokenTypes(List<TokenType> matchTokenTypes, Map<Integer, Integer> frequencyMap, int strategyNumber) {
+    public void processMatchTokenTypes(List<TokenType> matchTokenTypes, Map<List<TokenType>, Integer> frequencyMap, int strategyNumber) {
         Consumer<List<TokenType>> sequenceConsumer = seq -> addSequence(frequencyMap, seq);
         sequenceConsumer.accept(matchTokenTypes);
     }

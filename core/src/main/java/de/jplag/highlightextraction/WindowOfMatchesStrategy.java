@@ -23,7 +23,7 @@ public class WindowOfMatchesStrategy implements FrequencyStrategy {
      * @param strategyNumber The length of the considered token window.
      */
     @Override
-    public void processMatchTokenTypes(List<TokenType> matchTokenTypes, Map<Integer, Integer> frequencyMap, int strategyNumber) {
+    public void processMatchTokenTypes(List<TokenType> matchTokenTypes, Map<List<TokenType>, Integer> frequencyMap, int strategyNumber) {
         Consumer<List<TokenType>> sequenceConsumer = seq -> addSequence(frequencyMap, seq);
         List<List<TokenType>> windowSequences = getWindowSequences(matchTokenTypes, strategyNumber);
         for (List<TokenType> windowSequence : windowSequences) {
