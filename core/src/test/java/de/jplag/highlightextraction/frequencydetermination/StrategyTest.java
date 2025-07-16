@@ -37,8 +37,8 @@ class StrategyTest extends TestBase {
     private static final List<JPlagComparison> testComparisons = new LinkedList<>();
 
     /**
-     * Creates Test data to test different Match-Frequency Combinations in created combinations
-     * @throws ExitException getJPlagResult may throw such an Exception
+     * Creates Test data to validate different match-frequency combinations.
+     * @throws ExitException if getJPlagResult fails to create the comparison result.
      */
     @BeforeEach
     void prepareMatchResult() throws ExitException {
@@ -51,7 +51,7 @@ class StrategyTest extends TestBase {
     }
 
     /**
-     * Creates Test data by running JPlag Methods to get JPlag result, to create objects used to build test data.
+     * Creates Test data by running JPlag Methods to get JPlag result for building test data.
      * @param options JPlag options used in this test
      * @return JPlag result for test input
      * @throws ExitException submission set builder can throw this exception
@@ -64,7 +64,7 @@ class StrategyTest extends TestBase {
     }
 
     /**
-     * Gets sample matches from the given test comparison to use in test scenarios. These matches will be used to create
+     * Gets sample matches from the given test comparison to use in test cases. These matches will be used to create
      * different combinations of Match-Frequency.
      * @param testComparison first Comparison from the Test classes here used to get test matches.
      */
@@ -81,10 +81,10 @@ class StrategyTest extends TestBase {
     /**
      * Represents four created submissions with identical code but different names, used to simulate various
      * match-comparison combinations for frequency testing.
-     * @param testSubmissionW name of a new Submission to Identify the testSubmissions
-     * @param testSubmissionX name of a new Submission to Identify the testSubmissions
-     * @param testSubmissionY name of a new Submission to Identify the testSubmissions
-     * @param testSubmissionZ name of a new Submission to Identify the testSubmissions
+     * @param testSubmissionW name of a test submission to Identify the testSubmissions
+     * @param testSubmissionX name of a test submission to Identify the testSubmissions
+     * @param testSubmissionY name of a test submission to Identify the testSubmissions
+     * @param testSubmissionZ name of a test submission to Identify the testSubmissions
      */
     private record TestSubmissions(Submission testSubmissionW, Submission testSubmissionX, Submission testSubmissionY, Submission testSubmissionZ) {
     }
@@ -112,7 +112,7 @@ class StrategyTest extends TestBase {
 
     /**
      * Constructs comparisons using predefined matches and test submissions, creating different combinations of
-     * Match-Frequency's between Comparisons.
+     * Match-Frequencies between Comparisons.
      * @param testSubmissions multiple submissions with the same data but different names for testing
      */
     private void buildTestComparisons(TestSubmissions testSubmissions) {
@@ -149,7 +149,8 @@ class StrategyTest extends TestBase {
     }
 
     /**
-     * Tests if the Complete Match strategy adds the Match-Frequency's to the Hashmap according to the expected Frequency.
+     * Tests whether the Complete Match strategy adds the Match-Frequencies to the Hashmap according to the expected
+     * Frequency.
      */
     @Test
     @DisplayName("Test Complete Matches Strategy")
@@ -184,7 +185,7 @@ class StrategyTest extends TestBase {
     }
 
     /**
-     * Creates a list of the TokenTypes from the Match.
+     * Creates a list of the TokenTypes from the given Match.
      * @param match for which the TokenType Sequence is wanted.
      * @return A list of TokenTypes representing the matched sequence.
      */
@@ -235,7 +236,7 @@ class StrategyTest extends TestBase {
     private static void checkIfAllWindowsAreAddedWithCorrectValue(List<List<TokenType>> expectedKeys, Map<List<TokenType>, Integer> windowMap) {
         for (List<TokenType> window : expectedKeys) {
             Integer value = windowMap.get(window);
-            assertNotNull(value, "value should be min 1: " + window);
+            assertNotNull(value, "value should be at least 1: " + window);
         }
     }
 

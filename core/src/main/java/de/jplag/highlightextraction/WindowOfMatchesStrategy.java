@@ -1,7 +1,5 @@
 package de.jplag.highlightextraction;
 
-import static de.jplag.highlightextraction.SubSequenceUtil.addSequence;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,7 +22,7 @@ public class WindowOfMatchesStrategy implements FrequencyStrategy {
      */
     @Override
     public void processMatchTokenTypes(List<TokenType> matchTokenTypes, Map<List<TokenType>, Integer> frequencyMap, int strategyNumber) {
-        Consumer<List<TokenType>> sequenceConsumer = seq -> addSequence(frequencyMap, seq);
+        Consumer<List<TokenType>> sequenceConsumer = seq -> SubSequenceUtil.addSequence(frequencyMap, seq);
         List<List<TokenType>> windowSequences = getWindowSequences(matchTokenTypes, strategyNumber);
         for (List<TokenType> windowSequence : windowSequences) {
             sequenceConsumer.accept(windowSequence);
@@ -32,7 +30,7 @@ public class WindowOfMatchesStrategy implements FrequencyStrategy {
     }
 
     /**
-     * Calculates all possible Sublists with length of windowSize.
+     * Calculates all possible contiguous Sublists with length of windowSize.
      * @param matchTokenTypes tokens of the Match.
      * @param windowSize considered size of the sublists.
      * @return List of all as considered sublists.

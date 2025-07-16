@@ -15,10 +15,10 @@ public final class SubSequenceUtil {
     }
 
     /**
-     * Calculates all possible sublists with min minSubSequenceSize length of the match matchTokenTypes.
-     * @param matchTokenTypes is a List of the match TokenTypes to create the SubSequences used for the SubSequenceStrategy
-     * and ContainedStrategy. The original list is also included. All contiguous (Sub-)lists, that can be taken from the
-     * matchTokenTypes list that have length greater or equal minSubSequenceSize.
+     * Calculates all possible sublists with min minSubSequenceSize length of the matchTokenTypes.
+     * @param matchTokenTypes is a List of the match, in TokenTypes, to create the SubSequences used for the
+     * SubSequenceStrategy and ContainedStrategy. The original list is also included. All contiguous (Sub-)lists, that can
+     * be taken from the matchTokenTypes list that have length greater or equal minSubSequenceSize.
      * @param minSubSequenceSize is the minimum considered size of the sub-Sequence-List.
      * @return List of all as considered subSequences.
      */
@@ -37,6 +37,11 @@ public final class SubSequenceUtil {
         return subSequences;
     }
 
+    /**
+     * Updates the frequency of the given sequence in the frequency map.
+     * @param frequencyMap Map of sequences to their frequency counts.
+     * @param sequence The token sequence whose frequency will be updated.
+     */
     static void addSequence(Map<List<TokenType>, Integer> frequencyMap, List<TokenType> sequence) {
         frequencyMap.put(sequence, frequencyMap.getOrDefault(sequence, 0) + 1);
     }

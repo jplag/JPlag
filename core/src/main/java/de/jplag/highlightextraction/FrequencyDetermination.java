@@ -26,8 +26,9 @@ public class FrequencyDetermination {
     }
 
     /**
-     * Applies the "create" and "check" methods of the frequency strategy.
+     * Builds the frequency map by applying the strategy method on all matches found in the given list of comparisons.
      * @param comparisons contains information of matches between two submissions.
+     * @throws IllegalArgumentException if match indices are out of range.
      */
     public void buildFrequencyMap(List<JPlagComparison> comparisons) {
         for (JPlagComparison comparison : comparisons) {

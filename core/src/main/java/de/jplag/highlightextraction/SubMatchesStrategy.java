@@ -1,8 +1,5 @@
 package de.jplag.highlightextraction;
 
-import static de.jplag.highlightextraction.SubSequenceUtil.addSequence;
-import static de.jplag.highlightextraction.SubSequenceUtil.getSubSequences;
-
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -11,7 +8,7 @@ import de.jplag.TokenType;
 
 /**
  * Strategy that uses submatches of matches from the comparisons and calculates the frequency of all submatches in the
- * matches across all submissions. The full Match is also considered a submatch when it ist longer or equals
+ * matches across all submissions. The full Match is also considered a submatch if it is longer or equals to
  * minSubSequenceSize.
  */
 public class SubMatchesStrategy implements FrequencyStrategy {
@@ -24,8 +21,8 @@ public class SubMatchesStrategy implements FrequencyStrategy {
      */
     @Override
     public void processMatchTokenTypes(List<TokenType> matchTokenTypes, Map<List<TokenType>, Integer> frequencyMap, int minSubSequenceSize) {
-        Consumer<List<TokenType>> sequenceConsumer = sequence -> addSequence(frequencyMap, sequence);
-        List<List<TokenType>> subSequences = getSubSequences(matchTokenTypes, minSubSequenceSize);
+        Consumer<List<TokenType>> sequenceConsumer = sequence -> SubSequenceUtil.addSequence(frequencyMap, sequence);
+        List<List<TokenType>> subSequences = SubSequenceUtil.getSubSequences(matchTokenTypes, minSubSequenceSize);
         for (List<TokenType> subSequence : subSequences) {
             sequenceConsumer.accept(subSequence);
         }

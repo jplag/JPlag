@@ -11,9 +11,9 @@ import de.jplag.TokenType;
  */
 public interface FrequencyStrategy {
     /**
-     * Fills the frequencyMap with token subsequences and their frequencies according to the implemented strategy.
+     * Updates the frequencyMap with token subsequences and their frequencies according to the implemented strategy.
      * @param matchTokenTypes List of matchTokenTypes representing the match.
-     * @param frequencyMap Map that associates token subsequences with the comparisons they appear in.
+     * @param frequencyMap Map that associates token subsequences with their frequency.
      * @param strategyNumber The minimum length of token subsequences to consider.
      */
     void processMatchTokenTypes(List<TokenType> matchTokenTypes, Map<List<TokenType>, Integer> frequencyMap, int strategyNumber);

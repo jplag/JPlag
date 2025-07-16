@@ -16,7 +16,7 @@ public enum FrequencyStrategies {
     }
 
     /**
-     * @return the frequency strategy of the enum value.
+     * @return the frequency strategy of the enum constant.
      */
     public FrequencyStrategy getStrategy() {
         return strategy;
