@@ -134,7 +134,7 @@ public class WeightTwoPointComparisonTest extends TestBase {
     private void runAndSaveTwoWeightSimilarity(List<JPlagComparison> comparisons, String label,
                                                FrequencySimilarity similarity, Path outputDir) throws IOException {
         String timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        Path file = outputDir.resolve(label + "_three_rare_Matches_weight_" + timestamp + ".csv");
+        Path file = outputDir.resolve(label + "_three_rare_log_square_Matches_weight_" + timestamp + ".csv");
 
         try (var writer = Files.newBufferedWriter(file)) {
             writer.write("ComparisonID,Submission1,Submission2,Weight_0.0,Weight_0.1,Weight_0.2,Weight_0.3,Weight_0.4,Weight_0.5,Weight_1.0\n");
