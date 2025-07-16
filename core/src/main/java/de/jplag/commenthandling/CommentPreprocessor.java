@@ -94,7 +94,7 @@ public class CommentPreprocessor {
         StringJoiner joiner = new StringJoiner(System.lineSeparator());
         int line = 1;
         for (Comment comment : comments) {
-            int lines = comment.content().split(System.lineSeparator()).length;
+            int lines = comment.content().split(System.lineSeparator(), -1).length;
             commentStartingLines.put(comment, line);
             for (int i = 0; i < lines; i++) {
                 lineToComment.put(line + i, comment);
