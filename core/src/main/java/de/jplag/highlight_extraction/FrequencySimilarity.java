@@ -265,7 +265,8 @@ myWeight        =   1.3889  1.0556     1.4167
         return (int) Math.round(weightedSum);
     }
 
-    //(log(x))²
+    //git branch
+    
     public int getRareLogSquareTokensWeightedMatchLengthOfFirst(JPlagComparison comparison, double weight) {
         double maxFrequency = comparison.matches().stream()
                 .mapToDouble(Match::getFrequencyWeight)
