@@ -15,7 +15,7 @@ import picocli.CommandLine;
 /**
  * Tests for the custom {@link ParameterLabelRenderer}
  */
-class ParamLabelRendererTest {
+class ParameterLabelRendererTest {
     private CommandLine.Help.IParamLabelRenderer paramLabelRenderer;
     private CommandLine.Help.IParamLabelRenderer baseLabelRenderer;
 

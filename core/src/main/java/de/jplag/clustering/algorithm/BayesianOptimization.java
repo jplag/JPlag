@@ -24,9 +24,9 @@ public class BayesianOptimization {
 
     private static final Logger logger = LoggerFactory.getLogger(BayesianOptimization.class);
 
-    private static final int STOP_AFTER_CONSECUTIVE_RANDOM_PICKS = 3;
-    private static final int MAX_NON_ZERO_ACQ_FN_EVALS_PER_ITERATION = 50;
-    private static final int MAXIMUM_ACQ_FN_EVALS_PER_ITERATION = 1000;
+    private static final int MAXIMUM_CONSECUTIVE_RANDOM_PICKS = 3;
+    private static final int MAXIMUM_VALID_ACQUISITIONS_PER_ITERATION = 50;
+    private static final int MAXIMUM_ACQUISITION_ATTEMPTS_PER_ITERATION = 1000;
 
     private final RealVector minima;
     private final RealVector maxima;
@@ -105,7 +105,10 @@ public class BayesianOptimization {
         double[] max = maxima.toArray();
 
         int nonZeroAcquisitions = 0;
-        for (int i = 0; i < MAXIMUM_ACQ_FN_EVALS_PER_ITERATION && nonZeroAcquisitions < MAX_NON_ZERO_ACQ_FN_EVALS_PER_ITERATION; i++) {
+        for (int i = 0; i < MAXIMUM_ACQUISITION_ATTEMPTS_PER_ITERATION; i++) {
+            if (nonZeroAcquisitions >= MAXIMUM_VALID_ACQUISITIONS_PER_ITERATION) {
+                break;
+            }
             double[] location = getNext(samples).orElseThrow().toArray();
             if (acquisitionFunction(gaussianProcess, location, yMax) == 0) {
                 continue;
@@ -148,7 +151,7 @@ public class BayesianOptimization {
         Spliterator<RealVector> poiSampler = sampleSolutionSpace().spliterator();
         double[] zeroAcquisitionsCounter = new double[1];
 
-        while (observations.size() < maxEvaluations && zeroAcquisitionsCounter[0] < STOP_AFTER_CONSECUTIVE_RANDOM_PICKS) {
+        while (observations.size() < maxEvaluations && zeroAcquisitionsCounter[0] < MAXIMUM_CONSECUTIVE_RANDOM_PICKS) {
             int idx = observations.size();
             RealVector coordinates;
             if (idx < testedCoordinates.size()) {
