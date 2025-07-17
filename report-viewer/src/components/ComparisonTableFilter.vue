@@ -48,6 +48,7 @@
       :default-selected="store().uiState.comparisonTableSecondaryMetric"
       :metrics="secondaryMetricOptions"
       :max-tool-tip-width="200"
+      tooltip-direction="bottom"
       @selection-changed="
         (metric: MetricJsonIdentifier) => (store().uiState.comparisonTableSecondaryMetric = metric)
       "

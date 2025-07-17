@@ -11,7 +11,7 @@
     <div v-for="[index, label] in labels.entries()" :key="index">
       <ToolTipComponent
         v-if="(label as ToolTipLabel).displayValue !== undefined"
-        direction="right"
+        :direction="tooltipDirection"
         :tool-tip-container-will-be-centered="true"
         :show-info-symbol="false"
       >
@@ -41,10 +41,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, type PropType } from 'vue'
 import ToolTipComponent from '../ToolTipComponent.vue'
 import OptionComponent from './OptionComponent.vue'
-import { type ToolTipLabel } from '@/model/ui/ToolTip'
+import { type ToolTipDirection, type ToolTipLabel } from '@/model/ui/ToolTip'
 
 const props = defineProps({
   title: {
@@ -65,6 +65,11 @@ const props = defineProps({
     type: Number,
     required: false,
     default: -1
+  },
+  tooltipDirection: {
+    type: String as PropType<ToolTipDirection>,
+    required: false,
+    default: 'right'
   }
 })
 

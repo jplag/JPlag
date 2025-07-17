@@ -4,6 +4,7 @@
     :labels="labels"
     :default-selected="metrics.indexOf(defaultSelected)"
     :max-tool-tip-width="maxToolTipWidth"
+    :tooltip-direction="tooltipDirection"
     @selection-changed="(i) => $emit('selectionChanged', metrics[i])"
   />
 </template>
@@ -13,6 +14,7 @@ import { computed, type PropType, type Ref } from 'vue'
 import OptionsSelectorComponent from './OptionsSelectorComponent.vue'
 import { MetricTypes } from '@/model/MetricType'
 import { MetricJsonIdentifier } from '@/model/MetricJsonIdentifier'
+import type { ToolTipDirection } from '@/model/ui/ToolTip'
 
 const props = defineProps({
   metrics: {
@@ -34,6 +36,11 @@ const props = defineProps({
     type: Number,
     required: false,
     default: -1
+  },
+  tooltipDirection: {
+    type: String as PropType<ToolTipDirection>,
+    required: false,
+    default: 'right'
   }
 })
 
