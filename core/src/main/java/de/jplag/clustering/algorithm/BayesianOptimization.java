@@ -110,22 +110,22 @@ public class BayesianOptimization {
                 break;
             }
             double[] location = getNext(samples).orElseThrow().toArray();
-            if (acquisitionFunction(gaussianProcess, location, yMax) == 0) {
-                continue;
-            }
-            nonZeroAcquisitions++;
-            double acquisition = -BFGS.minimize(coordinates -> -acquisitionFunction(gaussianProcess, coordinates, yMax), 5, location, min, max,
-                    0.00001, 1000);
-            // Sometimes result is out of bounds (might be due to numerical errors?)
-            for (int j = 0; j < location.length; j++) {
-                location[j] = Math.min(max[j], location[j]);
-                location[j] = Math.max(min[j], location[j]);
-            }
-            if (acquisition > bestScore) {
-                bestSolution = location;
-                bestScore = acquisition;
+            if (acquisitionFunction(gaussianProcess, location, yMax) != 0) {
+                nonZeroAcquisitions++;
+                double acquisition = -BFGS.minimize(coordinates -> -acquisitionFunction(gaussianProcess, coordinates, yMax), 5, location, min, max,
+                        0.00001, 1000);
+                // Sometimes result is out of bounds (might be due to numerical errors?)
+                for (int j = 0; j < location.length; j++) {
+                    location[j] = Math.min(max[j], location[j]);
+                    location[j] = Math.max(min[j], location[j]);
+                }
+                if (acquisition > bestScore) {
+                    bestSolution = location;
+                    bestScore = acquisition;
+                }
             }
         }
+
         if (nonZeroAcquisitions == 0) {
             randomPicks[0]++;
         } else {
