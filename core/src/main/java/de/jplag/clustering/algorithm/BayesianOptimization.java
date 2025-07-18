@@ -35,6 +35,8 @@ public class BayesianOptimization {
     private final double noise;
     private final RealVector lengthScale;
 
+    private double consecutiveRandomPicks; // consecutive rounds where the acquisition function yielded no useful improvement
+
     /**
      * Sets up a bayesian optimization.
      * @param minima of the explored parameters
@@ -69,8 +71,8 @@ public class BayesianOptimization {
 
     }
 
-    private GaussianProcess fit(List<RealVector> listOfCoordinates, List<Double> observations) {
-        return GaussianProcess.fit(listOfCoordinates, observations.stream().mapToDouble(Double::doubleValue).toArray(), noise, true,
+    private GaussianProcess fit(List<RealVector> inputVectors, List<Double> observations) {
+        return GaussianProcess.fit(inputVectors, observations.stream().mapToDouble(Double::doubleValue).toArray(), noise, true,
                 lengthScale.toArray());
     }
 
@@ -98,7 +100,7 @@ public class BayesianOptimization {
     /**
      * Numerically optimize acquisition function
      */
-    private RealVector maxAcq(GaussianProcess gaussianProcess, double yMax, Spliterator<RealVector> samples, double[] randomPicks) {
+    private RealVector maximizeAcquisitionFunction(GaussianProcess gaussianProcess, double yMax, Spliterator<RealVector> samples) {
         double bestScore = Double.NEGATIVE_INFINITY;
         double[] bestSolution = getNext(samples).orElseThrow().toArray();
         double[] min = minima.toArray();
@@ -112,24 +114,24 @@ public class BayesianOptimization {
             double[] location = getNext(samples).orElseThrow().toArray();
             if (acquisitionFunction(gaussianProcess, location, yMax) != 0) {
                 nonZeroAcquisitions++;
-                double acquisition = -BFGS.minimize(coordinates -> -acquisitionFunction(gaussianProcess, coordinates, yMax), 5, location, min, max,
-                        0.00001, 1000);
+                double acquisitionScore = -BFGS.minimize(coordinates -> -acquisitionFunction(gaussianProcess, coordinates, yMax), 5, location, min,
+                        max, 0.00001, 1000);
                 // Sometimes result is out of bounds (might be due to numerical errors?)
                 for (int j = 0; j < location.length; j++) {
                     location[j] = Math.min(max[j], location[j]);
                     location[j] = Math.max(min[j], location[j]);
                 }
-                if (acquisition > bestScore) {
+                if (acquisitionScore > bestScore) {
                     bestSolution = location;
-                    bestScore = acquisition;
+                    bestScore = acquisitionScore;
                 }
             }
         }
 
         if (nonZeroAcquisitions == 0) {
-            randomPicks[0]++;
+            consecutiveRandomPicks++;
         } else {
-            randomPicks[0] = 0;
+            consecutiveRandomPicks = 0;
         }
         return new ArrayRealVector(bestSolution);
     }
@@ -142,29 +144,29 @@ public class BayesianOptimization {
      */
     public <T> OptimizationResult<T> maximize(Function<RealVector, OptimizationResult<T>> objectiveFunction) {
         List<Double> observations = new ArrayList<>(maxEvaluations);
-        List<RealVector> testedCoordinates = new ArrayList<>(maxEvaluations);
+        List<RealVector> evaluatedPoints = new ArrayList<>(maxEvaluations);
         OptimizationResult<T> best = null;
 
         // the first couple of executions are reserved for exploration
-        sampleSolutionSpace().limit(initialPoints).forEach(testedCoordinates::add);
+        sampleSolutionSpace().limit(initialPoints).forEach(evaluatedPoints::add);
 
-        Spliterator<RealVector> poiSampler = sampleSolutionSpace().spliterator();
-        double[] zeroAcquisitionsCounter = new double[1];
+        Spliterator<RealVector> candidatePointSampler = sampleSolutionSpace().spliterator();
+        consecutiveRandomPicks = 0;
 
-        while (observations.size() < maxEvaluations && zeroAcquisitionsCounter[0] < MAXIMUM_CONSECUTIVE_RANDOM_PICKS) {
+        while (observations.size() < maxEvaluations && consecutiveRandomPicks < MAXIMUM_CONSECUTIVE_RANDOM_PICKS) {
             int idx = observations.size();
             RealVector coordinates;
-            if (idx < testedCoordinates.size()) {
+            if (idx < evaluatedPoints.size()) {
                 // hard coded exploration
-                coordinates = testedCoordinates.get(idx);
+                coordinates = evaluatedPoints.get(idx);
             } else {
                 // GPR
-                GaussianProcess gpr = fit(testedCoordinates, observations);
+                GaussianProcess gaussianProcess = fit(evaluatedPoints, observations);
                 if (logger.isDebugEnabled()) {
-                    logger.debug(gpr.toString(minima, maxima, 100, 25, 0));
+                    logger.debug(gaussianProcess.toString(minima, maxima, 100, 25, 0));
                 }
-                coordinates = maxAcq(gpr, best.score, poiSampler, zeroAcquisitionsCounter);
-                testedCoordinates.add(coordinates);
+                coordinates = maximizeAcquisitionFunction(gaussianProcess, best.score, candidatePointSampler);
+                evaluatedPoints.add(coordinates);
             }
             OptimizationResult<T> result = objectiveFunction.apply(coordinates);
             result.params = coordinates;
