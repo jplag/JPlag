@@ -2,7 +2,7 @@
    viewBox="0 0 135.46666 135.46667"
    version="1.1"
    id="svg1"
-   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
    sodipodi:docname="MAX.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -19,18 +19,19 @@
      inkscape:deskcolor="#505050"
      inkscape:document-units="mm"
      inkscape:zoom="0.5"
-     inkscape:cx="188"
-     inkscape:cy="187"
+     inkscape:cx="187"
+     inkscape:cy="189"
      inkscape:window-width="1704"
-     inkscape:window-height="1351"
+     inkscape:window-height="1033"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
-     inkscape:current-layer="layer5" />
+     inkscape:current-layer="layer5"
+     showgrid="false" />
   <defs
      id="defs1" />
   <g
-     inkscape:label="Ebene 1"
+     inkscape:label="Base"
      inkscape:groupmode="layer"
      id="layer1">
     <rect
@@ -41,40 +42,8 @@
        x="23.947857"
        y="118.467"
        rx="4.64926"
-       ry="9" />
-  </g>
-  <g
-     inkscape:groupmode="layer"
-     id="layer4"
-     inkscape:label="avg"
-     style="display:none">
-    <rect
-       style="fill:currentColor;fill-opacity:1;stroke:none;stroke-width:17.4236;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
-       id="rect2"
-       width="135.46709"
-       height="17"
-       x="0.00033426954"
-       y="36.450001"
-       rx="10.234488"
-       ry="9" />
-    <rect
-       style="display:inline;fill:none;fill-opacity:1;stroke:currentColor;stroke-width:17;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
-       id="rect2-61-7"
-       width="42"
-       height="60"
-       x="8.5009899"
-       y="66.967323"
-       rx="9"
-       ry="9" />
-    <rect
-       style="display:inline;fill:none;fill-opacity:1;stroke:currentColor;stroke-width:17;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
-       id="rect2-6-8-8"
-       width="42"
-       height="116.77486"
-       x="84.962563"
-       y="10.189955"
-       rx="9"
-       ry="9" />
+       ry="9"
+       inkscape:label="Line" />
   </g>
   <g
      inkscape:groupmode="layer"
@@ -89,7 +58,8 @@
        x="8.5037556"
        y="66.967697"
        rx="9"
-       ry="9" />
+       ry="9"
+       inkscape:label="Left" />
     <rect
        style="fill:currentColor;fill-opacity:1;stroke:currentColor;stroke-width:17;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
        id="rect2-6-8"
@@ -98,6 +68,7 @@
        x="84.96608"
        y="10.190601"
        rx="9"
-       ry="9" />
+       ry="9"
+       inkscape:label="Right" />
   </g>
 </svg>
