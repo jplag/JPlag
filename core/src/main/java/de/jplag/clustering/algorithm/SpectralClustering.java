@@ -89,15 +89,15 @@ public class SpectralClustering implements GenericClusteringAlgorithm {
 
         // Find number of clusters using bayesian optimization
         RealVector lengthScale = new ArrayRealVector(1, options.spectralKernelBandwidth());
-        BayesianOptimization optimizer = new BayesianOptimization(new ArrayRealVector(1, minClusters), new ArrayRealVector(1, maxClusters),
+        BayesianOptimizer optimizer = new BayesianOptimizer(new ArrayRealVector(1, minClusters), new ArrayRealVector(1, maxClusters),
                 options.spectralMinRuns(), options.spectralMaxRuns(), options.spectralGaussianProcessVariance(), lengthScale);
-        BayesianOptimization.OptimizationResult<Collection<Collection<Integer>>> bayesianOptimizationResult = optimizer.maximize(r -> {
+        BayesianOptimizer.OptimizationResult<Collection<Collection<Integer>>> bayesianOptimizationResult = optimizer.maximize(r -> {
             int clusters = (int) Math.round(r.getEntry(0));
             clusters = Math.max(minClusters, clusters);
             clusters = Math.min(maxClusters, clusters);
             Collection<Collection<Integer>> clustering = cluster(clusters, dimension, eigenValueIds, eigenDecomposition);
             ClusteringResult<Integer> modularityRes = ClusteringResult.fromIntegerCollections(new ArrayList<>(clustering), similarityMatrix);
-            return new BayesianOptimization.OptimizationResult<>(modularityRes.getWorth(similarityMatrix::getEntry), clustering);
+            return new BayesianOptimizer.OptimizationResult<>(modularityRes.getWorth(similarityMatrix::getEntry), clustering);
         });
 
         return bayesianOptimizationResult.getValue();

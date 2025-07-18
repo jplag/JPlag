@@ -20,9 +20,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Maximizes a function using bayesian optimization.
  */
-public class BayesianOptimization {
+public class BayesianOptimizer {
 
-    private static final Logger logger = LoggerFactory.getLogger(BayesianOptimization.class);
+    private static final Logger logger = LoggerFactory.getLogger(BayesianOptimizer.class);
 
     private static final int MAXIMUM_CONSECUTIVE_RANDOM_PICKS = 3;
     private static final int MAXIMUM_VALID_ACQUISITIONS_PER_ITERATION = 50;
@@ -46,7 +46,7 @@ public class BayesianOptimization {
      * @param noise of the explored function
      * @param lengthScale width parameter for the matern kernel
      */
-    public BayesianOptimization(RealVector minima, RealVector maxima, int initPoints, int maxEvaluations, double noise, RealVector lengthScale) {
+    public BayesianOptimizer(RealVector minima, RealVector maxima, int initPoints, int maxEvaluations, double noise, RealVector lengthScale) {
         if (minima.getDimension() == 0) {
             throw new IllegalArgumentException("explored parameters must at least have one dimension");
         }
