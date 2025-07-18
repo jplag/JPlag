@@ -17,11 +17,15 @@
       >
         <template #default>
           <OptionComponent
-            :label="(label as ToolTipLabel).displayValue"
             :selected="index == getSelected()"
             :has-tool-tip="true"
             @click="select(index)"
-          />
+          >
+            <span class="flex items-center gap-x-1 align-middle">
+              <slot :name="(label as ToolTipLabel).displayValue.replace(' ', '-').toLowerCase()" />
+              <span>{{ (label as ToolTipLabel).displayValue }}</span>
+            </span>
+          </OptionComponent>
         </template>
 
         <template #tooltip>
@@ -30,12 +34,9 @@
           </p>
         </template>
       </ToolTipComponent>
-      <OptionComponent
-        v-else
-        :label="label as string"
-        :selected="index == getSelected()"
-        @click="select(index)"
-      />
+      <OptionComponent v-else :selected="index == getSelected()" @click="select(index)">{{
+        label
+      }}</OptionComponent>
     </div>
   </div>
 </template>

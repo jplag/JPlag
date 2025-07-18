@@ -5,7 +5,20 @@
     :default-selected="metrics.indexOf(defaultSelected)"
     :max-tool-tip-width="maxToolTipWidth"
     @selection-changed="(i) => $emit('selectionChanged', metrics[i])"
-  />
+  >
+    <template #average-similarity>
+      <MetricIcon class="h-4 pr-1" :metric="MetricJsonIdentifier.AVERAGE_SIMILARITY" />
+    </template>
+    <template #maximum-similarity>
+      <MetricIcon class="h-4 pr-1" :metric="MetricJsonIdentifier.MAXIMUM_SIMILARITY" />
+    </template>
+    <template #longest-match>
+      <MetricIcon class="h-4 pr-1" :metric="MetricJsonIdentifier.LONGEST_MATCH" />
+    </template>
+    <template #maximum-length>
+      <MetricIcon class="h-4 pr-1" :metric="MetricJsonIdentifier.MAXIMUM_LENGTH" />
+    </template>
+  </OptionsSelectorComponent>
 </template>
 
 <script setup lang="ts">
@@ -13,6 +26,7 @@ import { computed, type PropType, type Ref } from 'vue'
 import OptionsSelectorComponent from './OptionsSelectorComponent.vue'
 import { MetricTypes } from '@/model/MetricType'
 import { MetricJsonIdentifier } from '@/model/MetricJsonIdentifier'
+import MetricIcon from '../MetricIcon.vue'
 
 const props = defineProps({
   metrics: {

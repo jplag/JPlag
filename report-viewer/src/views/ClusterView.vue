@@ -5,9 +5,12 @@
     <Container class="col-start-1 row-start-1 md:col-end-3 md:row-end-2">
       <h2>Cluster</h2>
       <div class="flex flex-row items-center space-x-5">
-        <TextInformation label="Average Similarity"
-          >{{ (cluster.averageSimilarity * 100).toFixed(2) }}%</TextInformation
-        >
+        <span class="flex items-center gap-x-1">
+          <MetricIcon class="h-3" :metric="MetricJsonIdentifier.AVERAGE_SIMILARITY" />
+          <TextInformation label="Average Similarity" class="font-bold">{{
+            MetricTypes.AVERAGE_SIMILARITY.format(cluster.averageSimilarity)
+          }}</TextInformation>
+        </span>
       </div>
     </Container>
 
@@ -100,6 +103,8 @@ import { computed, ref, onErrorCaptured, type PropType, type Ref } from 'vue'
 import { redirectOnError } from '@/router'
 import TabbedContainer from '@/components/TabbedContainer.vue'
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
+import MetricIcon from '@/components/MetricIcon.vue'
+import { MetricJsonIdentifier } from '@/model/MetricJsonIdentifier'
 
 const props = defineProps({
   cluster: {

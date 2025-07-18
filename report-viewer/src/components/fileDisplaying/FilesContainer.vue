@@ -8,7 +8,11 @@
         Files of
         {{ fileOwnerDisplayName }}:
       </h3>
-      <div class="text-gray-600 dark:text-gray-300">{{ tokenCount }} total tokens</div>
+      <div class="flex items-center gap-x-1 text-gray-600 dark:text-gray-300">
+        <MetricIcon class="h-4" :metric="MetricJsonIdentifier.MAXIMUM_LENGTH" /><span
+          >{{ tokenCount }} total tokens</span
+        >
+      </div>
       <Button v-if="allCollapsed" class="space-x-2 print:hidden" @click="expandAll()"
         ><FontAwesomeIcon :icon="['fas', 'expand-alt']" />
         <p>Expand All</p></Button
@@ -57,6 +61,8 @@ import { store } from '@/stores/store'
 import type { BaseCodeMatch } from '@/model/BaseCodeReport'
 import type { Match } from '@/model/Match'
 import slash from 'slash'
+import MetricIcon from '../MetricIcon.vue'
+import { MetricJsonIdentifier } from '@/model/MetricJsonIdentifier'
 
 library.add(faCompressAlt)
 library.add(faExpandAlt)

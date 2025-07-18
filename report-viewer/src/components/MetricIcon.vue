@@ -28,7 +28,7 @@ const svgMap: Record<MetricJsonIdentifier, string> = {
 
 <style scoped>
 span {
-  display: inline-block;
+  display: flex;
   overflow: hidden;
 }
 
