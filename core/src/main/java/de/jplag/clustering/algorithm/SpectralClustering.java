@@ -38,7 +38,7 @@ public class SpectralClustering implements GenericClusteringAlgorithm {
     }
 
     /**
-     * Calculate points to cluster based n "On spectral clustering: analysis and an algorithm" by Ng, Jordan & Weiss 2001
+     * Calculate points to cluster based n "On spectral clustering: analysis and an algorithm" by Ng, Jordan and Weiss 2001.
      */
     @Override
     public Collection<Collection<Integer>> cluster(RealMatrix similarityMatrix) {
