@@ -14,12 +14,12 @@ class BayesianOptimizationTest {
         RealVector maxima = new ArrayRealVector(new double[] {10});
         RealVector lengthScale = new ArrayRealVector(new double[] {5});
         double maximumAt = 1;
-        BayesianOptimization bo = new BayesianOptimization(minima, maxima, 3, 15, 1.0 / 12.0, lengthScale);
-        double maximumPoint = bo.maximize(v -> {
+        BayesianOptimizer optimizer = new BayesianOptimizer(minima, maxima, 3, 15, 1.0 / 12.0, lengthScale);
+        double maximumPoint = optimizer.maximize(v -> {
             double val = v.getEntry(0);
             double result = -(val - maximumAt) * (val - maximumAt);
             result += 0.2 * (Math.random() - 0.5);
-            return new BayesianOptimization.OptimizationResult<>(result, result);
+            return new BayesianOptimizer.OptimizationResult<>(result, result);
         }).getParams().getEntry(0);
         assertEquals(maximumAt, maximumPoint, 1);
     }
