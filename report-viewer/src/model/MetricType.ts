@@ -1,22 +1,11 @@
-import type { FontAwesomeIconProps } from '@fortawesome/vue-fontawesome'
 import { MetricJsonIdentifier } from './MetricJsonIdentifier'
 import { Column, type ColumnSorting } from './ui/ComparisonSorting'
-import {
-  faArrowUpRightDots,
-  faFileLines,
-  faRulerHorizontal
-} from '@fortawesome/free-solid-svg-icons'
-
-export type MetricIcon =
-  | { type: 'FontAwesome'; icon: FontAwesomeIconProps }
-  | { type: 'manual'; name: string }
 
 export abstract class MetricType {
   private readonly _shortName: string
   private readonly _longName: string
   private readonly _tooltip: string
   private readonly _identifier: MetricJsonIdentifier
-  private readonly _icon: MetricIcon
   private readonly _sorting: ColumnSorting
 
   constructor(
@@ -24,14 +13,12 @@ export abstract class MetricType {
     longName: string,
     tooltip: string,
     identifier: MetricJsonIdentifier,
-    icon: MetricIcon,
     sorting: ColumnSorting
   ) {
     this._shortName = shortName
     this._longName = longName
     this._tooltip = tooltip
     this._identifier = identifier
-    this._icon = icon
     this._sorting = sorting
   }
 
@@ -49,10 +36,6 @@ export abstract class MetricType {
 
   get identifier() {
     return this._identifier
-  }
-
-  get icon() {
-    return this._icon
   }
 
   get sorting() {
@@ -81,7 +64,6 @@ export namespace MetricTypes {
     'Average Similarity',
     'The average similarity of the two files.\nA high similarity indicates that the programs work in a similar way.',
     MetricJsonIdentifier.AVERAGE_SIMILARITY,
-    { type: 'manual', name: 'average' },
     Column.averageSimilarity
   )
   export const MAXIMUM_SIMILARITY = new PercentageMetricType(
@@ -89,7 +71,6 @@ export namespace MetricTypes {
     'Maximum Similarity',
     'The maximum similarity of the two files.\nUseful if programs are very different in size.',
     MetricJsonIdentifier.MAXIMUM_SIMILARITY,
-    { type: 'FontAwesome', icon: faArrowUpRightDots },
     Column.maximumSimilarity
   )
   export const LONGEST_MATCH = new IdentityMetricType(
@@ -97,7 +78,6 @@ export namespace MetricTypes {
     'Longest Match',
     'The longest matching fragment between two programs measured in tokens.',
     MetricJsonIdentifier.LONGEST_MATCH,
-    { type: 'FontAwesome', icon: faRulerHorizontal },
     Column.longestMatch
   )
   export const MAXIMUM_LENGTH = new IdentityMetricType(
@@ -105,7 +85,6 @@ export namespace MetricTypes {
     'Maximum Length',
     'The length of the longer programm in tokens.',
     MetricJsonIdentifier.MAXIMUM_LENGTH,
-    { type: 'FontAwesome', icon: faFileLines },
     Column.maximumLength
   )
 
