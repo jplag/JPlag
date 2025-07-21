@@ -9,13 +9,17 @@ test('Test comparison table and comparsion view', async ({ page }) => {
   const comparisonTableAverageSorted = await page.getByText(/Cluster [0-9]/).textContent()
   expect(comparisonTableAverageSorted).toContain('100Purple FishBeige Dog')
 
-  await page.getByText('MAX', { exact: true }).click()
+  const tableHeader = page.getByText('Submissions in ComparisonSimilarity')
+  await tableHeader.getByText('MAX', { exact: true }).click()
   // check for elements in maximum similarity table
   await page.getByPlaceholder('Filter/Unhide Comparisons').fill('Blue')
   const comparisonTableMaxSorted = await page.getByText(/Cluster [0-9]/).textContent()
   expect(comparisonTableMaxSorted).toContain('100Blue AntelopeLime Lynx')
 
   await page.getByPlaceholder('Filter/Unhide Comparisons').fill('')
+  // move mouse to avoid hover effects
+  await page.mouse.move(0, 0)
+  await page.waitForTimeout(200)
   await page.getByText('Anonymize All').click()
   // check for elements being hidden
   const comparisonTableOverviewHidden = await page.getByText('Cluster 1').textContent()

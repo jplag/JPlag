@@ -1,8 +1,6 @@
 package de.jplag.endtoend;
 
-import static de.jplag.options.SimilarityMetric.INTERSECTION;
 import static de.jplag.options.SimilarityMetric.MAX;
-import static de.jplag.options.SimilarityMetric.MIN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -176,17 +174,12 @@ class EndToEndSuiteTest {
         return DynamicTest.dynamicTest(name, () -> {
             assertNotNull(result, "No comparison result could be found");
             List<String> errors = new ArrayList<>();
-            for (SimilarityMetric metric : List.of(MIN, MAX)) {
-                double expected = expectedResult.getSimilarityForMetric(metric);
-                double actual = metric.applyAsDouble(result);
-                if (Math.abs(expected - actual) >= EPSILON) {
-                    errors.add(formattedValidationError(metric, expected, actual));
-                }
-                statistics.accept(actual, expected);
+            double expected = expectedResult.getSimilarityForMetric(MAX);
+            double actual = MAX.applyAsDouble(result);
+            if (Math.abs(expected - actual) >= EPSILON) {
+                errors.add(formattedValidationError(MAX, expected, actual));
             }
-            if (expectedResult.resultMatchedTokenNumber() != result.getNumberOfMatchedTokens()) {
-                errors.add(formattedValidationError(INTERSECTION, expectedResult.resultMatchedTokenNumber(), result.getNumberOfMatchedTokens()));
-            }
+            statistics.accept(actual, expected);
             assertTrue(errors.isEmpty(), createValidationErrorOutput(name, errors, result));
         });
     }

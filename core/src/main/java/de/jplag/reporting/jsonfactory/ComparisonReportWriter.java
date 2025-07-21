@@ -2,6 +2,7 @@ package de.jplag.reporting.jsonfactory;
 
 import java.nio.file.Path;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,6 +31,8 @@ public class ComparisonReportWriter {
     private final Map<String, Map<String, String>> submissionIdToComparisonFileName = new ConcurrentHashMap<>();
     private final Map<String, AtomicInteger> fileNameCollisions = new ConcurrentHashMap<>();
     public static final String BASEPATH = "comparisons";
+    private static final SimilarityMetric[] EXPORTED_SIMILARITY_METRICS = new SimilarityMetric[] {SimilarityMetric.AVG, SimilarityMetric.MAX,
+            SimilarityMetric.LONGEST_MATCH, SimilarityMetric.MAXIMUM_LENGTH};
 
     public ComparisonReportWriter(Function<Submission, String> submissionToIdFunction, JPlagResultWriter resultWriter) {
         this.submissionToIdFunction = submissionToIdFunction;
@@ -58,11 +61,18 @@ public class ComparisonReportWriter {
             String secondSubmissionId = submissionToIdFunction.apply(comparison.secondSubmission());
             String fileName = generateComparisonName(firstSubmissionId, secondSubmissionId);
             addToLookUp(firstSubmissionId, secondSubmissionId, fileName);
-            var comparisonReport = new ComparisonReport(firstSubmissionId, secondSubmissionId,
-                    Map.of(SimilarityMetric.AVG.name(), comparison.similarity(), SimilarityMetric.MAX.name(), comparison.maximalSimilarity()),
+            var comparisonReport = new ComparisonReport(firstSubmissionId, secondSubmissionId, createSimilarityMap(comparison),
                     convertMatchesToReportMatches(comparison), comparison.similarityOfFirst(), comparison.similarityOfSecond());
             resultWriter.addJsonEntry(comparisonReport, Path.of(BASEPATH, fileName));
         }
+    }
+
+    private Map<String, Double> createSimilarityMap(JPlagComparison comparison) {
+        Map<String, Double> result = new HashMap<>();
+        for (SimilarityMetric metric : EXPORTED_SIMILARITY_METRICS) {
+            result.put(metric.name(), metric.applyAsDouble(comparison));
+        }
+        return result;
     }
 
     private void addToLookUp(String firstSubmissionId, String secondSubmissionId, String fileName) {

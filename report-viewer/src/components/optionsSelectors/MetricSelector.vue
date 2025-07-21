@@ -3,6 +3,8 @@
     :title="title"
     :labels="labels"
     :default-selected="metrics.indexOf(defaultSelected)"
+    :max-tool-tip-width="maxToolTipWidth"
+    :tooltip-direction="tooltipDirection"
     @selection-changed="(i) => $emit('selectionChanged', metrics[i])"
   />
 </template>
@@ -10,13 +12,15 @@
 <script setup lang="ts">
 import { computed, type PropType, type Ref } from 'vue'
 import OptionsSelectorComponent from './OptionsSelectorComponent.vue'
-import { MetricType, metricToolTips } from '@/model/MetricType'
+import { MetricTypes } from '@/model/MetricType'
+import { MetricJsonIdentifier } from '@/model/MetricJsonIdentifier'
+import type { ToolTipDirection } from '@/model/ui/ToolTip'
 
 const props = defineProps({
   metrics: {
-    type: Array<MetricType>,
+    type: Array<MetricJsonIdentifier>,
     required: false,
-    default: [MetricType.AVERAGE, MetricType.MAXIMUM]
+    default: MetricTypes.METRIC_JSON_IDENTIFIERS
   },
   title: {
     type: String,
@@ -24,9 +28,19 @@ const props = defineProps({
     default: ''
   },
   defaultSelected: {
-    type: String as PropType<MetricType>,
+    type: String as PropType<MetricJsonIdentifier>,
     required: false,
-    default: MetricType.AVERAGE
+    default: MetricTypes.AVERAGE_SIMILARITY
+  },
+  maxToolTipWidth: {
+    type: Number,
+    required: false,
+    default: -1
+  },
+  tooltipDirection: {
+    type: String as PropType<ToolTipDirection>,
+    required: false,
+    default: 'right'
   }
 })
 
@@ -34,8 +48,8 @@ defineEmits(['selectionChanged'])
 
 const labels: Ref<{ displayValue: string; tooltip: string }[]> = computed(() =>
   props.metrics.map((metric) => ({
-    displayValue: metricToolTips[metric].longName,
-    tooltip: metricToolTips[metric].tooltip
+    displayValue: MetricTypes.METRIC_MAP[metric].longName,
+    tooltip: MetricTypes.METRIC_MAP[metric].tooltip
   }))
 )
 </script>

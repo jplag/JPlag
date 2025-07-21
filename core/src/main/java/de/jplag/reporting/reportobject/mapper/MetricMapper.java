@@ -16,6 +16,9 @@ import de.jplag.reporting.reportobject.model.TopComparison;
  */
 public class MetricMapper {
     private final Function<Submission, String> submissionToIdFunction;
+    private static final SimilarityMetric[] EXPORTED_COMPARISON_METRICS = new SimilarityMetric[] {SimilarityMetric.AVG, SimilarityMetric.MAX,
+            SimilarityMetric.LONGEST_MATCH, SimilarityMetric.MAXIMUM_LENGTH};
+    private static final SimilarityMetric[] EXPORTED_DISTRIBUTION_METRICS = new SimilarityMetric[] {SimilarityMetric.AVG, SimilarityMetric.MAX};
 
     public MetricMapper(Function<Submission, String> submissionToIdFunction) {
         this.submissionToIdFunction = submissionToIdFunction;
@@ -28,7 +31,7 @@ public class MetricMapper {
      */
     public static Map<String, List<Integer>> getDistributions(JPlagResult result) {
         Map<String, List<Integer>> distributions = new HashMap<>();
-        for (SimilarityMetric metric : SimilarityMetric.values()) {
+        for (SimilarityMetric metric : EXPORTED_DISTRIBUTION_METRICS) {
             distributions.put(metric.name(), result.calculateDistributionFor(metric));
         }
         return distributions;
@@ -47,6 +50,10 @@ public class MetricMapper {
     }
 
     private Map<String, Double> getComparisonMetricMap(JPlagComparison comparison) {
-        return Map.of(SimilarityMetric.AVG.name(), comparison.similarity(), SimilarityMetric.MAX.name(), comparison.maximalSimilarity());
+        Map<String, Double> metricMap = new HashMap<>();
+        for (SimilarityMetric metric : EXPORTED_COMPARISON_METRICS) {
+            metricMap.put(metric.name(), metric.applyAsDouble(comparison));
+        }
+        return metricMap;
     }
 }
