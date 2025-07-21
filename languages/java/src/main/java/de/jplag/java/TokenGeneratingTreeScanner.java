@@ -478,6 +478,10 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
             // manually add variable to semantics since identifier isn't visited
             variableRegistry.setNextVariableAccessType(VariableAccessType.WRITE);
             variableRegistry.registerVariableAccess(name, !inLocalScope);
+            if (node.getInitializer() != null) {
+                long initializerStart = start + node.toString().indexOf('=');
+                addToken(JavaTokenType.J_ASSIGN, initializerStart, initializerStart + 1, new CodeSemantics());
+            }
         }
         return super.visitVariable(node, null);
     }
