@@ -95,7 +95,7 @@ import Container from '@/components/ContainerComponent.vue'
 import TextInformation from '@/components/TextInformation.vue'
 import type { Cluster } from '@/model/Cluster'
 import type { ClusterListElement, ClusterListElementMember } from '@/model/ClusterListElement'
-import { MetricType } from '@/model/MetricType'
+import { MetricType, MetricTypes } from '@/model/MetricType'
 import { computed, ref, onErrorCaptured, type PropType, type Ref } from 'vue'
 import { redirectOnError } from '@/router'
 import TabbedContainer from '@/components/TabbedContainer.vue'
@@ -135,7 +135,7 @@ const comparisonTableOptions = [
     tooltip: 'Comparisons between the cluster members\nand other submissions.'
   }
 ]
-const usedMetric = MetricType.AVERAGE
+const usedMetric: MetricType = MetricTypes.AVERAGE_SIMILARITY
 
 const comparisons = computed(() =>
   props.topComparisons.filter(
@@ -147,7 +147,7 @@ const comparisons = computed(() =>
 
 let counter = 0
 comparisons.value
-  .sort((a, b) => b.similarities[usedMetric] - a.similarities[usedMetric])
+  .sort((a, b) => b.similarities[usedMetric.identifier] - a.similarities[usedMetric.identifier])
   .forEach((c) => {
     c.sortingPlace = counter++
     c.id = counter
@@ -164,7 +164,7 @@ const relatedComparisons = computed(() =>
 )
 counter = 0
 relatedComparisons.value
-  .sort((a, b) => b.similarities[usedMetric] - a.similarities[usedMetric])
+  .sort((a, b) => b.similarities[usedMetric.identifier] - a.similarities[usedMetric.identifier])
   .forEach((c) => {
     c.sortingPlace = counter++
     c.id = counter
@@ -177,7 +177,7 @@ for (const member of props.cluster.members) {
     .forEach((c) => {
       membersComparisons.push({
         matchedWith: c.firstSubmissionId === member ? c.secondSubmissionId : c.firstSubmissionId,
-        similarity: c.similarities[usedMetric]
+        similarity: c.similarities[usedMetric.identifier]
       })
     })
   clusterMemberList.set(member, membersComparisons)
