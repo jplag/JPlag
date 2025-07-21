@@ -21,7 +21,7 @@
           <TextInformation label="Subdirectory Name">{{
             options.subdirectoryName
           }}</TextInformation>
-          <TextInformation label="File Suffixes">{{
+          <TextInformation label="File Extensions">{{
             options.fileSuffixes.join(', ')
           }}</TextInformation>
           <TextInformation label="Exclusion File Name">{{

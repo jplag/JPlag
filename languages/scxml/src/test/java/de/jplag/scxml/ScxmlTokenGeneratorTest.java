@@ -103,7 +103,7 @@ class ScxmlTokenGeneratorTest {
         ScxmlParserAdapter adapter = new ScxmlParserAdapter();
         adapter.parse(Set.of(testFile));
 
-        File viewFile = new File(testFile.getPath() + ScxmlLanguage.VIEW_FILE_SUFFIX);
+        File viewFile = new File(testFile.getPath() + ScxmlLanguage.VIEW_FILE_EXTENSION);
         File expectedViewFile = new File(baseDirectory, TestSubjects.COMPLEX_VIEW_FILE.fileName);
         assertTrue(viewFile.exists());
         assertEquals(Files.readAllLines(expectedViewFile.toPath()), Files.readAllLines(viewFile.toPath()));
@@ -111,6 +111,6 @@ class ScxmlTokenGeneratorTest {
 
     @AfterEach
     void tearDown() {
-        FileUtil.clearFiles(new File(BASE_PATH.toString()), ScxmlLanguage.VIEW_FILE_SUFFIX);
+        FileUtil.clearFiles(new File(BASE_PATH.toString()), ScxmlLanguage.VIEW_FILE_EXTENSION);
     }
 }

@@ -1,11 +1,11 @@
 import { store } from '@/stores/store'
-import { ZipFileHandler } from '@/model/fileHandling/ZipFileHandler'
+import { ReportFileHandler } from '@/model/fileHandling/ReportFileHandler'
 
 /**
  * This class provides some basic functionality for the factories.
  */
 export class BaseFactory {
-  public static readonly zipFileName = 'results.jplag'
+  public static readonly reportFileName = 'results.jplag'
 
   /**
    * Returns the content of a file through the stored loading type.
@@ -19,10 +19,10 @@ export class BaseFactory {
       return storeFile
     }
 
-    if (await this.useLocalZipMode()) {
-      await new ZipFileHandler().handleFile(await this.getLocalFile(this.zipFileName))
+    if (await this.useLocalReportFileMode()) {
+      await new ReportFileHandler().handleFile(await this.getLocalFile(this.reportFileName))
     } else if (import.meta.env.MODE == 'demo' || import.meta.env.MODE == 'dev-demo') {
-      await new ZipFileHandler().handleFile(await this.getLocalFile('example.jplag'))
+      await new ReportFileHandler().handleFile(await this.getLocalFile('example.jplag'))
     }
 
     storeFile = this.getFileFromStore(path)
@@ -64,9 +64,9 @@ export class BaseFactory {
     }
   }
 
-  public static async useLocalZipMode() {
+  public static async useLocalReportFileMode() {
     try {
-      await this.getLocalFile(this.zipFileName)
+      await this.getLocalFile(this.reportFileName)
       return true
       /* eslint-disable @typescript-eslint/no-unused-vars */
     } catch (e) {

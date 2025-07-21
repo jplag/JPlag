@@ -26,14 +26,14 @@ public enum ContentType {
     }
 
     /**
-     * Guesses the type from the given path using the suffix after the last '.'.
+     * Guesses the type from the given path using the extension after the last dot.
      * @param path The path to guess from
      * @return The guessed type
      */
     public static ContentType fromPath(String path) {
-        String suffix = path.substring(path.lastIndexOf('.'));
+        String extension = path.substring(path.lastIndexOf('.'));
         for (ContentType value : ContentType.values()) {
-            if (suffix.equals(value.nameSuffix)) {
+            if (extension.equals(value.nameSuffix)) {
                 return value;
             }
         }

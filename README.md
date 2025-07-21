@@ -113,8 +113,8 @@ Parameter descriptions:
                           against.
       -r, --result-file=<resultFile>
                         Name of the file in which the comparison results will
-                          be stored (default: results). Missing .jplag endings
-                          will be automatically added.
+                          be stored (default: results). Missing .jplag
+                          extension will be automatically added.
       -t, --min-tokens=<minTokenMatch>
                         Tunes the comparison sensitivity by adjusting the
                           minimum token required to be counted as a matching
@@ -124,6 +124,9 @@ Parameter descriptions:
 Advanced
       --csv-export      Export pairwise similarity values as a CSV file.
       -d, --debug           Store on-parsable files in error folder.
+      --encoding=<submissionCharsetOverride>
+                        Specifies the charset of the submissions. This disables
+                          the automatic charset detection
       --log-level=<{ERROR, WARN, INFO, DEBUG, TRACE}>
                         Set the log level for the cli.
       -m, --similarity-threshold=<similarityThreshold>

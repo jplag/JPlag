@@ -7,9 +7,9 @@ import java.util.List;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Match;
-import de.jplag.SharedTokenType;
 import de.jplag.Submission;
 import de.jplag.Token;
+import de.jplag.TokenType;
 import de.jplag.logging.ProgressBar;
 import de.jplag.logging.ProgressBarLogger;
 import de.jplag.logging.ProgressBarType;
@@ -77,7 +77,7 @@ public class MatchMerging {
      * @param globalMatches
      * @return neighbors containing a list of pairs of neighboring matches
      */
-    private List<Neighbor> computeNeighbors(List<Match> globalMatches) {
+    private static List<Neighbor> computeNeighbors(List<Match> globalMatches) {
         List<Neighbor> neighbors = new ArrayList<>();
         List<Match> sortedByLeft = new ArrayList<>(globalMatches);
         List<Match> sortedByRight = new ArrayList<>(globalMatches);
@@ -86,6 +86,7 @@ public class MatchMerging {
         sortedByRight.sort(Comparator.comparingInt(Match::startOfSecond));
 
         for (int i = 0; i < sortedByLeft.size() - 1; i++) {
+
             if (sortedByRight.indexOf(sortedByLeft.get(i)) == sortedByRight.indexOf(sortedByLeft.get(i + 1)) - 1) {
                 neighbors.add(new Neighbor(sortedByLeft.get(i), sortedByLeft.get(i + 1)));
             }
@@ -101,7 +102,7 @@ public class MatchMerging {
      * @param newMatch the resulting merged match.
      * @return the list of new neighbors (updated shallow copy of input).
      */
-    private List<Neighbor> updateNeighbors(List<Neighbor> neighbors, Neighbor previouslyMergedNeighbor, Match newMatch) {
+    private static List<Neighbor> updateNeighbors(List<Neighbor> neighbors, Neighbor previouslyMergedNeighbor, Match newMatch) {
         List<Neighbor> newNeighbors = new ArrayList<>();
         for (Neighbor neighbor : neighbors) {
             if (previouslyMergedNeighbor == neighbor) {
@@ -143,6 +144,7 @@ public class MatchMerging {
                 int leftLength = upperMatch.lengthOfFirst() + tokensBetweenLeft + lowerMatch.lengthOfFirst();
                 int leftRight = upperMatch.lengthOfSecond() + tokensBetweenRight + lowerMatch.lengthOfSecond();
                 Match mergedMatch = new Match(upperMatch.startOfFirst(), upperMatch.startOfSecond(), leftLength, leftRight);
+
                 globalMatches.add(mergedMatch);
                 neighbors = updateNeighbors(neighbors, neighbors.get(i), mergedMatch);
                 i = 0; // reset loop
@@ -163,7 +165,7 @@ public class MatchMerging {
      * removed
      * @return true if the merge goes over file boundaries.
      */
-    private boolean mergeOverlapsFiles(Submission leftSubmission, Submission rightSubmission, Match upperMatch, int tokensBetweenLeft,
+    private static boolean mergeOverlapsFiles(Submission leftSubmission, Submission rightSubmission, Match upperMatch, int tokensBetweenLeft,
             int tokensBetweenRight) {
         if (leftSubmission.getFiles().size() == 1 && rightSubmission.getFiles().size() == 1) {
             return false;
@@ -172,8 +174,8 @@ public class MatchMerging {
         List<Token> tokenLeft = new ArrayList<>(leftSubmission.getTokenList());
         List<Token> tokenRight = new ArrayList<>(rightSubmission.getTokenList());
 
-        tokenLeft = tokenLeft.subList(upperMatch.endOfFirst(), upperMatch.endOfFirst() + tokensBetweenLeft);
-        tokenRight = tokenRight.subList(upperMatch.endOfSecond(), upperMatch.endOfSecond() + tokensBetweenRight);
+        tokenLeft = tokenLeft.subList(upperMatch.endOfFirst() + 1, upperMatch.endOfFirst() + tokensBetweenLeft + 1);
+        tokenRight = tokenRight.subList(upperMatch.endOfSecond() + 1, upperMatch.endOfSecond() + tokensBetweenRight + 1);
 
         return containsFileEndToken(tokenLeft) || containsFileEndToken(tokenRight);
     }
@@ -183,7 +185,7 @@ public class MatchMerging {
      * @param token is the list of token
      * @return true if FILE_END is in token
      */
-    private boolean containsFileEndToken(List<Token> token) {
-        return token.stream().map(Token::getType).anyMatch(SharedTokenType.FILE_END::equals);
+    private static boolean containsFileEndToken(List<Token> token) {
+        return token.stream().map(Token::getType).anyMatch(TokenType::isExcludedFromMatching);
     }
 }

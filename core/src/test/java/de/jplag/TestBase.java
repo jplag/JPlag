@@ -1,5 +1,7 @@
 package de.jplag;
 
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
@@ -7,6 +9,9 @@ import java.util.Optional;
 import java.util.StringJoiner;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import org.junit.jupiter.api.Assumptions;
+import org.opentest4j.TestAbortedException;
 
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.exceptions.ExitException;
@@ -151,5 +156,15 @@ public abstract class TestBase {
             }
         }
         directory.delete();
+    }
+
+    /**
+     * Validate a given assumption for object equality based on {@link Assumptions#assumeTrue(boolean)}.
+     * @param expected the expected value.
+     * @param actual the actual value.
+     * @throws TestAbortedException if the assumption is not {@code true}.
+     */
+    protected static void assumeEquals(Object expected, Object actual) {
+        assumeTrue(expected.equals(actual), "Expected: " + expected + ", Actual: " + actual);
     }
 }
