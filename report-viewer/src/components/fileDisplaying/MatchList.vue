@@ -68,8 +68,7 @@
               <span
                 >{{ getFileName(match.firstFileName) }} -
                 {{ getFileName(match.secondFileName) }}:</span
-              >
-              <MetricIcon class="h-3" :metric="MetricJsonIdentifier.LONGEST_MATCH" /><span>{{
+              ><MetricIcon class="h-3" :metric="MetricJsonIdentifier.LONGEST_MATCH" /><span>{{
                 getMatchLength(match)
               }}</span>
             </span>
