@@ -84,7 +84,8 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
 
     public void addToken(TokenType type, File file, long startLine, long startColumn, long endLine, long endColumn, long length,
             CodeSemantics semantics) {
-        parser.add(new Token(type, file, (int) startLine, (int) startColumn, (int) endLine, (int) endColumn, (int) length, semantics));
+        parser.add(new Token(type, file, Math.toIntExact(startLine), Math.toIntExact(startColumn), Math.toIntExact(endLine),
+                Math.toIntExact(endColumn), Math.toIntExact(length), semantics));
         variableRegistry.updateSemantics(semantics);
     }
 
