@@ -4,12 +4,14 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.scxml.ScxmlToken;
 import de.jplag.scxml.ScxmlTokenType;
+import de.jplag.scxml.parser.model.StatechartElement;
 
 /**
  * A utility for generating a textual representation of SCXML statecharts. The contents of the view file are assembled
@@ -52,18 +54,18 @@ public class ScxmlView {
     }
 
     /**
-     * Enhances the given token by adding information about the line and column numbers in the view file. At the same time,
-     * the contents of the file are constructed.
-     * @param token the token to enhance and add to the view file
-     * @param depth current depth in the statechart to determine the indent in the view file
-     * @return the input token enhanced with view-related information
+     * Generates a SCXML token while simultaneously building up the textual SCXML model view.
+     * @param tokenType is the type of token to be produced.
+     * @param file is the corresponding SCXML file.
+     * @param statechartElement is the model element represented by the token.
+     * @param depth current tree depth in the statechart to determine the indent in the view file.
+     * @return the input token enhanced with view-related information.
      */
-    public ScxmlToken enhanceToken(ScxmlToken token, int depth) {
+    public ScxmlToken createTokenAndAppendToView(ScxmlTokenType tokenType, File file, StatechartElement statechartElement, int depth) {
         String prefix = "  ".repeat(depth);
-        ScxmlTokenType type = (ScxmlTokenType) token.getType();
-        String element = token.getStatechartElement() == null ? "" : token.getStatechartElement().toString();
-        String content = type.isEndToken() ? "}" : element;
-        builder.append(prefix).append(content).append("\n");
-        return new ScxmlToken(token.getType(), token.getFile(), line++, prefix.length() + 1, content.length(), token.getStatechartElement());
+        ScxmlTokenType type = (ScxmlTokenType) tokenType;
+        String textualRepresentation = type.isEndToken() ? "}" : Objects.toString(statechartElement, "");
+        builder.append(prefix).append(textualRepresentation).append(System.lineSeparator());
+        return new ScxmlToken(tokenType, file, line++, prefix.length() + 1, textualRepresentation.length(), statechartElement);
     }
 }
