@@ -57,12 +57,12 @@ public class ScxmlView {
 
     /**
      * Appends a SCXML model element to the view and returns the corresponding tracing information.
-     * @param tokenType is the type of token to be produced.
-     * @param statechartElement is the model element represented by the token.
+     * @param tokenType is the type of token corresponding to the model element.
+     * @param statechartElement is the model element to be added.
      * @param depth current tree depth in the statechart to determine the indent in the view file.
      * @return the view-related information regarding line and column indices.
      */
-    public TokenTrace appendElementToView(ScxmlTokenType tokenType, StatechartElement statechartElement, int depth) {
+    public TokenTrace appendElement(ScxmlTokenType tokenType, StatechartElement statechartElement, int depth) {
         String prefix = VIEW_INDENTATION.repeat(depth);
         String textualRepresentation = tokenType.isEndToken() ? END_TOKEN_SYMBOL : Objects.toString(statechartElement, "");
         builder.append(prefix).append(textualRepresentation).append(System.lineSeparator());

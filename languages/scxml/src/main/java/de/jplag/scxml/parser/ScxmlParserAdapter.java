@@ -87,7 +87,7 @@ public class ScxmlParserAdapter extends AbstractParser {
      * @param source the statechart element associated with the token
      */
     public void addToken(ScxmlTokenType type, StatechartElement source) {
-        TokenTrace trace = view.appendElementToView(type, source, visitor.getCurrentStatechartDepth());
+        TokenTrace trace = view.appendElement(type, source, visitor.getCurrentStatechartDepth());
         tokens.add(new ScxmlToken(type, currentStatechartFile, trace, source));
     }
 
