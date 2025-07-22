@@ -3,7 +3,7 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { describe, it, vi, expect } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
 import { store } from '@/stores/store'
-import { MetricJsonIdentifier } from '@/model/MetricType.ts'
+import { MetricJsonIdentifier } from '@/model/MetricJsonIdentifier.ts'
 import { router } from '@/router'
 
 describe('ComparisonTable', async () => {
@@ -345,7 +345,7 @@ describe('ComparisonTable', async () => {
     expect(displayedComparisonsMaxSorted[2].firstSubmissionId).toBe('H')
     expect(displayedComparisonsMaxSorted[3].firstSubmissionId).toBe('E')
 
-    await metricOptions[6].trigger('click')
+    await metricOptions[3].trigger('click')
     await flushPromises()
 
     // Test sorting by cluster

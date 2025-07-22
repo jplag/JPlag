@@ -1,0 +1,18 @@
+{
+  "name": "jplag-website",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "bibtex": "^0.9.0",
+    "vitepress": "^1.6.3"
+  }
+}

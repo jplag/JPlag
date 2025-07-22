@@ -1,0 +1,10 @@
+this is irrelevant text.
+// This is a line comment.
+"// This is a comment inside a string, so it should not be detected."
+/* This is
+a
+multiline
+comment
+*/
+
+"This is an escaped \" end of string, therefore // this is no comment"

@@ -11,13 +11,13 @@ export class SubmissionMappingsFactory extends BaseFactory {
     this.saveComparisonFilesLookup(json.submissionIdsToComparisonFileName)
   }
 
-  private static saveIdToDisplayNameMap(json: SubmissionIdToDisplayName) {
+  private static saveIdToDisplayNameMap(json: Record<string, string>) {
     const map = new Map<string, string>(Object.entries(json))
 
     store().saveSubmissionNames(map)
   }
 
-  private static saveComparisonFilesLookup(json: SubmissionIdsToComparisonFileName) {
+  private static saveComparisonFilesLookup(json: Record<string, Record<string, string>>) {
     const entries: Array<Array<string | object>> = Object.entries(json)
     const comparisonMap = new Map<string, Map<string, string>>()
     for (const [key, value] of entries) {
@@ -29,9 +29,6 @@ export class SubmissionMappingsFactory extends BaseFactory {
 }
 
 interface ReportFormatSubmissionMappings {
-  submissionIds: SubmissionIdToDisplayName
-  submissionIdsToComparisonFileName: SubmissionIdsToComparisonFileName
+  submissionIds: Record<string, string>
+  submissionIdsToComparisonFileName: Record<string, Record<string, string>>
 }
-
-type SubmissionIdToDisplayName = Record<string, string>
-type SubmissionIdsToComparisonFileName = Record<string, Record<string, string>>

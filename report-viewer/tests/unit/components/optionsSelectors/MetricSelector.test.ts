@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
 import MetricSelector from '@/components/optionsSelectors/MetricSelector.vue'
-import { MetricJsonIdentifier, MetricTypes } from '@/model/MetricType'
+import { MetricTypes } from '@/model/MetricType'
+import { MetricJsonIdentifier } from '@/model/MetricJsonIdentifier'
 
 describe('OptionSelectorComponent', () => {
   it('renders all options', async () => {
@@ -21,14 +22,14 @@ describe('OptionSelectorComponent', () => {
     const wrapper = mount(MetricSelector, {
       props: {
         title: 'Test:',
-        metrics: [MetricJsonIdentifier.AVERAGE_SIMILARITY, MetricJsonIdentifier.MINIMUM_SIMILARITY]
+        metrics: [MetricJsonIdentifier.AVERAGE_SIMILARITY, MetricJsonIdentifier.LONGEST_MATCH]
       }
     })
 
     expect(wrapper.text()).toContain('Test:')
-    expect(wrapper.text()).toContain('Average')
-    expect(wrapper.text()).toContain('Minimum')
-    expect(wrapper.text()).not.toContain('Maximum')
+    expect(wrapper.text()).toContain('Average Similarity')
+    expect(wrapper.text()).toContain('Longest Match')
+    expect(wrapper.text()).not.toContain('Maximum Similarity')
   })
 
   it('switch selection', async () => {

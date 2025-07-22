@@ -1,5 +1,8 @@
 package de.jplag.endtoend;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,6 +11,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +35,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 /**
- * Test class for automatically generating the json file describing the expected results. To generate a result json,
+ * Test class for automatically generating the JSON file describing the expected results. To generate a result JSON,
  * adapt the DATA_SET constant.
  */
 class EndToEndGeneratorTest {
@@ -41,6 +45,7 @@ class EndToEndGeneratorTest {
 
     @Disabled("only enable to generate result json file")
     @Test
+    @DisplayName("Generator test to produce new expected E2E results if behavior of JPlag changes.")
     void generateResultJson() throws ExitException, IOException {
         DataSet dataSet = new ObjectMapper()
                 .readValue(new File(TestDirectoryConstants.BASE_PATH_TO_DATA_SET_DESCRIPTORS.toFile(), DATA_SET + ".json"), DataSet.class);
@@ -64,6 +69,9 @@ class EndToEndGeneratorTest {
 
         File outputFile = writeJsonModelsToJsonFile(resultDescriptions, dataSet);
         logger.info("result JSON written to file '{}'", outputFile);
+
+        assertTrue(outputFile.exists(), "Output JSON file was not created");
+        assertFalse(resultDescriptions.isEmpty(), "No result descriptions generated");
     }
 
     /**

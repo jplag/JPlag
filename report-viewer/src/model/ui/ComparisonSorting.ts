@@ -107,18 +107,18 @@ export namespace Column {
     return list
   }
 
-  export function getSortingFromMetric(metric: MetricJsonIdentifier) {
+  export function getSortingFromMetric(metric: MetricJsonIdentifier): ColumnSorting {
     switch (metric) {
       case MetricJsonIdentifier.AVERAGE_SIMILARITY:
-        return averageSimilarity
+        return Column.averageSimilarity
       case MetricJsonIdentifier.MAXIMUM_SIMILARITY:
-        return maximumSimilarity
+        return Column.maximumSimilarity
       case MetricJsonIdentifier.LONGEST_MATCH:
-        return longestMatch
+        return Column.longestMatch
       case MetricJsonIdentifier.MAXIMUM_LENGTH:
-        return maximumLength
+        return Column.maximumLength
       default:
-        return averageSimilarity
+        throw new Error(`Unknown metric: ${metric}`)
     }
   }
 }

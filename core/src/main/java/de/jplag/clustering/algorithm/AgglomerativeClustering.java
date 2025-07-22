@@ -27,7 +27,7 @@ public class AgglomerativeClustering implements GenericClusteringAlgorithm {
     public Collection<Collection<Integer>> cluster(RealMatrix similarityMatrix) {
         int size = similarityMatrix.getRowDimension();
         // all clusters that do not have a parent yet
-        Set<Cluster> clusters = new HashSet<>(size);
+        Set<Cluster> clusters = HashSet.newHashSet(size);
         // calculated similarities. Might contain connections to already visited
         // clusters, those need to be ignored.
         PriorityQueue<ClusterConnection> similarities;

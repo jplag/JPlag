@@ -18,7 +18,11 @@
           </template>
           <template #tooltip>
             <p class="max-w-[50rem] text-sm whitespace-pre-wrap">
-              {{ runInformation.failedSubmissions.slice(0, 20).join(', ')
+              {{
+                runInformation.failedSubmissions
+                  .slice(0, 20)
+                  .map((f) => f.submissionId)
+                  .join(', ')
               }}<span v-if="runInformation.failedSubmissions.length > 20"
                 >... (click "<i>More</i>" to see the complete list of failed submissions)</span
               >

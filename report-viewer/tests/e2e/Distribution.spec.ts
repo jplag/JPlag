@@ -51,7 +51,7 @@ async function selectOptions(page: Page, options: string[]) {
 
 function getDistributionDiagramTestCombinations() {
   const options = [
-    ['Average', 'Maximum'],
+    ['Average Similarity', 'Maximum Similarity'],
     ['Linear', 'Logarithmic'],
     ['10', '20', '25', '50', '100']
   ]

@@ -1,8 +1,9 @@
 import { it, beforeEach, describe, expect } from 'vitest'
 import validNew from './assets/ValidComparison.json'
+import SubmissionFileIndex from './assets/ValidSubmissionFileIndex.json'
 import { ComparisonFactory } from '@/model/factories/ComparisonFactory'
 import { store } from '@/stores/store'
-import { MetricJsonIdentifier } from '@/model/MetricType'
+import { MetricJsonIdentifier } from '@/model/MetricJsonIdentifier'
 import { setActivePinia, createPinia } from 'pinia'
 
 describe('Test JSON to Comparison', () => {
@@ -51,6 +52,8 @@ describe('Test JSON to Comparison', () => {
       displayName: 'Submission.java'
     })
 
+    store().state.files['submissionFileIndex.json'] = JSON.stringify(SubmissionFileIndex)
+
     const result = await ComparisonFactory.getComparison(
       store().getComparisonFileName('root1', 'root2')
     )
@@ -60,10 +63,8 @@ describe('Test JSON to Comparison', () => {
     expect(result.secondSubmissionId).toBe('root2')
     expect(result.similarities[MetricJsonIdentifier.AVERAGE_SIMILARITY]).toBe(0.45)
     expect(result.similarities[MetricJsonIdentifier.MAXIMUM_SIMILARITY]).toBe(0.5)
-    expect(result.similarities[MetricJsonIdentifier.MINIMUM_SIMILARITY]).toBe(0.4)
-    expect(result.similarities[MetricJsonIdentifier.INTERSECTION]).toBe(229)
     expect(result.similarities[MetricJsonIdentifier.LONGEST_MATCH]).toBe(139)
-    expect(result.similarities[MetricJsonIdentifier.OVERALL]).toBe(916)
+    expect(result.similarities[MetricJsonIdentifier.MAXIMUM_LENGTH]).toBe(462)
 
     expect(result.filesOfFirstSubmission).toBeDefined()
     expect(result.filesOfSecondSubmission).toBeDefined()

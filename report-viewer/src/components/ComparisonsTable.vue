@@ -35,7 +35,7 @@
                       </p>
                     </template>
                     <template #tooltip>
-                      <p class="text-sm whitespace-pre">
+                      <p class="max-w-80 text-sm whitespace-pre-wrap">
                         {{ MetricTypes.AVERAGE_SIMILARITY.tooltip }}
                       </p>
                     </template>
@@ -49,19 +49,19 @@
                     <template #default>
                       <p class="w-full text-center">
                         {{ secondaryMetric.shortName }}
+                        <FontAwesomeIcon
+                          :icon="
+                            store().uiState.comparisonTableSorting.column.id ==
+                            secondaryMetric.sorting.id
+                              ? store().uiState.comparisonTableSorting.direction.icon
+                              : faSort
+                          "
+                          class="ml-1 cursor-pointer"
+                        />
                       </p>
-                      <FontAwesomeIcon
-                        :icon="
-                          store().uiState.comparisonTableSorting.column.id ==
-                          secondaryMetric.sorting.id
-                            ? store().uiState.comparisonTableSorting.direction.icon
-                            : faSort
-                        "
-                        class="ml-1 cursor-pointer"
-                      />
                     </template>
                     <template #tooltip>
-                      <p class="text-sm whitespace-pre">
+                      <p class="max-w-80 text-sm whitespace-pre-wrap">
                         {{ secondaryMetric.tooltip }}
                       </p>
                     </template>
@@ -294,13 +294,24 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
     .map((s) => s.substring(6))
     .map((s) => parseInt(s))
 
-  const metricSearches = searches.filter((s) => /((avg|max):)?([<>])=?[0-9]+%?/.test(s))
+  const metricSearches = searches.filter((s) => /((avg|max|long|len):)?([<>])=?[0-9]+%?/.test(s))
 
   return comparisons.filter((c) => {
     // name search
     const name1 = store().submissionDisplayName(c.firstSubmissionId).toLowerCase()
+    const anonName1 = store().isAnonymous(c.firstSubmissionId)
+      ? store().getAnonymousName(c.firstSubmissionId).toLowerCase()
+      : ''
     const name2 = store().submissionDisplayName(c.secondSubmissionId).toLowerCase()
-    if (searches.some((s) => name1.includes(s) || name2.includes(s))) {
+    const anonName2 = store().isAnonymous(c.secondSubmissionId)
+      ? store().getAnonymousName(c.secondSubmissionId).toLowerCase()
+      : ''
+    if (
+      searches.some(
+        (s) =>
+          name1.includes(s) || name2.includes(s) || anonName1.includes(s) || anonName2.includes(s)
+      )
+    ) {
       return true
     }
 
@@ -321,7 +332,7 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
       searchPerMetric[m] = []
     })
     metricSearches.forEach((s) => {
-      const regexResult = /^(?:(avg|max):)([<>]=?[0-9]+%?$)/.exec(s)
+      const regexResult = /^(?:(avg|max|long|len):)([<>]=?[0-9]+%?$)/.exec(s)
       if (regexResult) {
         const metricName = regexResult[1]
         let metric = MetricTypes.AVERAGE_SIMILARITY
@@ -343,7 +354,14 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
         const regexResult = /([<>]=?)([0-9]+)%?/.exec(search)!
         const operator = regexResult[1]
         const value = parseInt(regexResult[2])
-        if (evaluateMetricComparison(c.similarities[metric] * 100, operator, value)) {
+        const metricObject = MetricTypes.METRIC_MAP[metric]
+        if (
+          evaluateMetricComparison(
+            metricObject.getTableFilterValue(c.similarities[metric]),
+            operator,
+            value
+          )
+        ) {
           return true
         }
       }

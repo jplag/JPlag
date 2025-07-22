@@ -58,6 +58,9 @@ public final class CLI {
         if (!this.inputHandler.parse()) {
             CollectedLogger.setLogLevel(this.inputHandler.getCliOptions().advanced.logLevel);
             ProgressBarLogger.setProgressBarProvider(new CliProgressBarProvider());
+            if (this.inputHandler.getCliOptions().advanced.submissionCharsetOverride != null) {
+                FileUtils.setOverrideSubmissionCharset(this.inputHandler.getCliOptions().advanced.submissionCharsetOverride);
+            }
 
             switch (this.inputHandler.getCliOptions().mode) {
                 case RUN -> runJPlag();
