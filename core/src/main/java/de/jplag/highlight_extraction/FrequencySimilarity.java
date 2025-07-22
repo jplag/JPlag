@@ -227,7 +227,7 @@ myWeight        =   1.3889  1.0556     1.4167
                     //Logarithmische Interpolation zwischen (x0, f0) und (x1, f1):
                     //f(x) = f0 * exp( ((x - x0) * (ln(f1) - ln(f0))) / (x1 - x0) )
                     // lineare interpolation zwischen der gewichtungsfunktion zwischen 0 und 1
-                    double myWeight = (1 - weight) * 1.0 + weight * rarityWeight;
+                    double myWeight = (1.0 - weight) + weight * rarityWeight;
 
                     return match.getLengthOfFirst()   * myWeight;
                 })
