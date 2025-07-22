@@ -20,6 +20,8 @@ import de.jplag.scxml.parser.model.StatechartElement;
  */
 public class ScxmlView {
 
+    private static final String VIEW_INDENTATION = "  ";
+    private static final String END_TOKEN_SYMBOL = "}";
     private final File file;
     private final StringBuilder builder;
     private final Logger logger;
@@ -61,8 +63,8 @@ public class ScxmlView {
      * @return the view-related information regarding line and column indices.
      */
     public TokenTrace appendElementToView(ScxmlTokenType tokenType, StatechartElement statechartElement, int depth) {
-        String prefix = "  ".repeat(depth);
-        String textualRepresentation = tokenType.isEndToken() ? "}" : Objects.toString(statechartElement, "");
+        String prefix = VIEW_INDENTATION.repeat(depth);
+        String textualRepresentation = tokenType.isEndToken() ? END_TOKEN_SYMBOL : Objects.toString(statechartElement, "");
         builder.append(prefix).append(textualRepresentation).append(System.lineSeparator());
         return new TokenTrace(line++, prefix.length() + 1, textualRepresentation.length());
     }
