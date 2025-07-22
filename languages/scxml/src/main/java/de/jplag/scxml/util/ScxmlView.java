@@ -9,7 +9,7 @@ import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.scxml.ScxmlToken;
+import de.jplag.TokenTrace;
 import de.jplag.scxml.ScxmlTokenType;
 import de.jplag.scxml.parser.model.StatechartElement;
 
@@ -54,18 +54,16 @@ public class ScxmlView {
     }
 
     /**
-     * Generates a SCXML token while simultaneously building up the textual SCXML model view.
+     * Appends a SCXML model element to the view and returns the corresponding tracing information.
      * @param tokenType is the type of token to be produced.
-     * @param file is the corresponding SCXML file.
      * @param statechartElement is the model element represented by the token.
      * @param depth current tree depth in the statechart to determine the indent in the view file.
-     * @return the input token enhanced with view-related information.
+     * @return the view-related information regarding line and column indices.
      */
-    public ScxmlToken createTokenAndAppendToView(ScxmlTokenType tokenType, File file, StatechartElement statechartElement, int depth) {
+    public TokenTrace appendElementToView(ScxmlTokenType tokenType, StatechartElement statechartElement, int depth) {
         String prefix = "  ".repeat(depth);
-        ScxmlTokenType type = (ScxmlTokenType) tokenType;
-        String textualRepresentation = type.isEndToken() ? "}" : Objects.toString(statechartElement, "");
+        String textualRepresentation = tokenType.isEndToken() ? "}" : Objects.toString(statechartElement, "");
         builder.append(prefix).append(textualRepresentation).append(System.lineSeparator());
-        return new ScxmlToken(tokenType, file, line++, prefix.length() + 1, textualRepresentation.length(), statechartElement);
+        return new TokenTrace(line++, prefix.length() + 1, textualRepresentation.length());
     }
 }
