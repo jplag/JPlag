@@ -17,7 +17,7 @@ public class ScxmlToken extends Token {
      * Creates an SCXML token that corresponds to a StatechartElement including file information.
      * @param type the type of the token
      * @param file the source statechart file
-     * @param line the line index in the source code where the token resides, 1-based
+     * @param line the line index in the source code where the token resides, 1-based (SCXML has no multi line tokens).
      * @param column the column index, meaning where the token starts in the line, 1-based
      * @param length the length of the token in the view file
      * @param element the corresponding StatechartElement this token was extracted from
