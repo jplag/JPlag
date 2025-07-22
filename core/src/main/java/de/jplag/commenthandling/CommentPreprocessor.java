@@ -12,6 +12,9 @@ import de.jplag.Token;
 import de.jplag.commentextraction.Comment;
 import de.jplag.text.ParserAdapter;
 
+/**
+ * Preprocesses comments into tokens by running them through the JPlag text module.
+ */
 public class CommentPreprocessor {
     private static final Logger logger = LoggerFactory.getLogger(CommentPreprocessor.class);
 
@@ -19,12 +22,20 @@ public class CommentPreprocessor {
     private final Map<Integer, Comment> lineToComment;
     private final Map<Comment, Integer> commentStartingLines;
 
+    /**
+     * Creates a new preprocessor for the supplied list of comments.
+     * @param comments Comments to prcess
+     */
     public CommentPreprocessor(List<Comment> comments) {
         this.comments = comments;
         this.lineToComment = new HashMap<>();
         this.commentStartingLines = new HashMap<>();
     }
 
+    /**
+     * Processes all input comments into a list of tokens.
+     * @return List of tokens containing all comments
+     */
     public List<Token> processToToken() {
         ParserAdapter textParser = new ParserAdapter();
         try {
@@ -33,26 +44,6 @@ public class CommentPreprocessor {
             logger.error("Could not parse comments: {}", e.getMessage());
             return List.of();
         }
-    }
-
-    public List<String> processToStrings() {
-        List<Token> tokens = this.processToToken();
-        HashMap<Integer, String> commentsPerLine = new HashMap<>();
-
-        for (Token token : tokens) {
-            if (token.getType() == SharedTokenType.FILE_END) {
-                continue;
-            }
-            int line = token.getLine();
-            String tokenContent = token.getType().getDescription();
-            if (commentsPerLine.containsKey(line)) {
-                commentsPerLine.put(line, commentsPerLine.get(line) + " " + tokenContent);
-            } else {
-                commentsPerLine.put(line, tokenContent);
-            }
-        }
-
-        return new ArrayList<>(commentsPerLine.values());
     }
 
     private List<Token> fixTokenPositions(List<Token> tokens) {

@@ -10,6 +10,7 @@ import java.util.List;
  * @param matches is the unmodifiable list of all subsequence matches between the two submissions.
  * @param ignoredMatches is the unmodifiable list of ignored matches whose length is below the minimum token match
  * threshold.
+ * @param commentMatches is the list of comment matches between the two submissions.
  */
 public record JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches, List<Match> ignoredMatches,
         List<Match> commentMatches) {
@@ -19,6 +20,9 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
      * @param firstSubmission is the first of the two submissions.
      * @param secondSubmission is the second of the two submissions.
      * @param matches is the list of all matches between the two submissions.
+     * @param ignoredMatches is the unmodifiable list of ignored matches whose length is below the minimum token match
+     * threshold.
+     * @param commentMatches is the list of comment matches between the two submissions.
      */
     public JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches, List<Match> ignoredMatches,
             List<Match> commentMatches) {
@@ -29,6 +33,15 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
         this.commentMatches = Collections.unmodifiableList(commentMatches);
     }
 
+    /**
+     * Constructs a new comparison between two submissions. The match lists are wrapped as unmodifiable to preseve
+     * immutability.
+     * @param firstSubmission is the first of the two submissions.
+     * @param secondSubmission is the second of the two submissions.
+     * @param matches is the list of all matches between the two submissions.
+     * @param ignoredMatches is the unmodifiable list of ignored matches whose length is below the minimum token match
+     * threshold.
+     */
     public JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches, List<Match> ignoredMatches) {
         this(firstSubmission, secondSubmission, matches, ignoredMatches, Collections.emptyList());
     }
@@ -41,6 +54,10 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
         return matches.stream().mapToInt(Match::minimumLength).sum();
     }
 
+    /**
+     * Get the total number of matched comment tokens for this comparison.
+     * @return
+     */
     public int getNumberOfMatchedCommentTokens() {
         return commentMatches.stream().mapToInt(Match::length).sum();
     }
