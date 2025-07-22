@@ -13,6 +13,7 @@ import de.jplag.semantics.VariableScope;
 import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.AssertTree;
 import com.sun.source.tree.AssignmentTree;
+import com.sun.source.tree.BindingPatternTree;
 import com.sun.source.tree.BlockTree;
 import com.sun.source.tree.BreakTree;
 import com.sun.source.tree.CaseTree;
@@ -455,6 +456,16 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         long start = positions.getStartPosition(ast, node);
         addToken(JavaTokenType.J_ASSERT, start, 6, CodeSemantics.createControl());
         return super.visitAssert(node, null);
+    }
+
+    @Override
+    public Void visitBindingPattern(BindingPatternTree node, Void unused) {
+        super.visitBindingPattern(node, unused);
+        if (!node.getVariable().getName().toString().equals(ANONYMOUS_VARIABLE_NAME)) {
+            long end = positions.getEndPosition(ast, node);
+            addToken(JavaTokenType.J_ASSIGN, end, end, new CodeSemantics());
+        }
+        return null;
     }
 
     @Override
