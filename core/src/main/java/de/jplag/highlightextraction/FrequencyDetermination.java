@@ -43,7 +43,7 @@ public class FrequencyDetermination {
                     throw new IllegalArgumentException("startIndexOfMatch + lengthOfMatch <= submissionTokenTypes.size()");
                 }
                 List<TokenType> matchTokenTypes = submissionTokenTypes.subList(startIndexOfMatch, startIndexOfMatch + lengthOfMatch);
-                frequencyStrategy.processMatchTokenTypes(matchTokenTypes, matchFrequencyMap, strategyNumber);
+                frequencyStrategy.processMatchTokenTypes(matchTokenTypes, this::addSequence, strategyNumber);
             }
         }
     }
