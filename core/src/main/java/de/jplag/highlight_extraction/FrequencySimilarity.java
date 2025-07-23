@@ -29,8 +29,8 @@ public class FrequencySimilarity {
         if (divisor == 0) {
             return 0;
         }
-        int matchedFrequencyTokensOfFirst = getRareLogSquareTokensWeightedMatchLengthOfFirst(comparison, weight);//todo hier anpassen
-        int matchedFrequencyTokensOfSecond = getRareLogSquareTokensWeightedMatchLengthOfSecond(comparison, weight);
+        int matchedFrequencyTokensOfFirst = getRareSquareTokensWeightedMatchLengthOfFirst(comparison, weight);//todo hier anpassen
+        int matchedFrequencyTokensOfSecond = getRareSquareTokensWeightedMatchLengthOfSecond(comparison, weight);
 
          //System.out.println(comparison.matches().stream().mapToInt(Match::getLengthOfFirst).sum());
 
@@ -328,6 +328,65 @@ myWeight        =   1.3889  1.0556     1.4167
                     double logMaxSq = logMax * logMax;
                     double interpolatedLogSq = logMinSq + (logMaxSq - logMinSq) * rarity;
                     double rarityWeight = Math.exp(Math.sqrt(interpolatedLogSq));
+
+                    double myWeight = (1 - weight) * 1.0 + weight * rarityWeight;
+
+                    return match.getLengthOfSecond()   * myWeight;
+                })
+                .sum();
+
+        return (int) Math.round(weightedSum);
+    }
+
+    public int getRareSquareTokensWeightedMatchLengthOfFirst(JPlagComparison comparison, double weight) {
+        double maxFrequency = comparison.matches().stream()
+                .mapToDouble(Match::getFrequencyWeight)
+                .max()
+                .orElse(1.0);
+        if (maxFrequency == 0.0) maxFrequency = 1.0;
+
+        double minWeight = 1.0;
+        double maxWeight = 2.0;
+
+        double finalMaxFrequency = maxFrequency;
+        double weightedSum = comparison.matches().stream()
+                .mapToDouble(match -> {
+                    double freq = match.getFrequencyWeight();
+                    if (Double.isNaN(freq) || freq < 0.0) freq = 0.0; //solle nicht eintreten
+                    // Normieren -> rellative häufigkeit zum maximalwert
+                    double rarity = 1.0 - Math.min(freq / finalMaxFrequency, 1.0);
+
+                    // Gewichtung nur erhöhen
+                    double rarityWeight = minWeight + (maxWeight - minWeight) * (rarity * rarity);
+
+                    double myWeight = (1 - weight) * 1.0 + weight * rarityWeight;
+
+                    return match.getLengthOfFirst()   * myWeight;
+                })
+                .sum();
+
+        return (int) Math.round(weightedSum);
+    }
+    public int getRareSquareTokensWeightedMatchLengthOfSecond(JPlagComparison comparison, double weight) {
+        double maxFrequency = comparison.matches().stream()
+                .mapToDouble(Match::getFrequencyWeight)
+                .max()
+                .orElse(1.0);
+        if (maxFrequency == 0.0) maxFrequency = 1.0;
+
+        double minWeight = 1.0;
+        double maxWeight = 2.0;
+
+        double finalMaxFrequency = maxFrequency;
+        double weightedSum = comparison.matches().stream()
+                .mapToDouble(match -> {
+                    double freq = match.getFrequencyWeight();
+                    if (Double.isNaN(freq) || freq < 0.0) freq = 0.0; //solle nicht eintreten
+
+                    // Normieren -> rellative häufigkeit zum maximalwert
+                    double rarity = 1.0 - Math.min(freq / finalMaxFrequency, 1.0);
+
+                    double rarityWeight = minWeight + (maxWeight - minWeight) * (rarity * rarity);
 
                     double myWeight = (1 - weight) * 1.0 + weight * rarityWeight;
 
