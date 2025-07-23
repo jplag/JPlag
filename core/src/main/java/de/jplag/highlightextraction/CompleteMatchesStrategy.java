@@ -20,6 +20,7 @@ public class CompleteMatchesStrategy implements FrequencyStrategy {
     @Override
     public void processMatchTokenTypes(List<TokenType> matchTokenTypes, Map<List<TokenType>, Integer> frequencyMap, int strategyNumber) {
         Consumer<List<TokenType>> sequenceConsumer = seq -> SubSequenceUtil.addSequence(frequencyMap, seq);
+    public void processMatchTokenTypes(List<TokenType> matchTokenTypes, Consumer<List<TokenType>> sequenceConsumer, int strategyNumber) {
         sequenceConsumer.accept(matchTokenTypes);
     }
 }
