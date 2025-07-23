@@ -43,9 +43,17 @@ public class FrequencyDetermination {
                     throw new IllegalArgumentException("startIndexOfMatch + lengthOfMatch <= submissionTokenTypes.size()");
                 }
                 List<TokenType> matchTokenTypes = submissionTokenTypes.subList(startIndexOfMatch, startIndexOfMatch + lengthOfMatch);
-                frequencyStrategy.processMatchTokenTypes(matchTokenTypes, this::addSequence, strategyNumber);
+                frequencyStrategy.processMatchTokenTypes(matchTokenTypes, this::addSequenceKey, this::addSequence, strategyNumber);
             }
         }
+    }
+
+    /**
+     * Adds the Sequence to the Frequency map.
+     * @param sequence The token sequence whose frequency will be updated.
+     */
+    private void addSequenceKey(List<TokenType> sequence) {
+        matchFrequencyMap.putIfAbsent(sequence, 0);
     }
 
     /**
@@ -53,5 +61,13 @@ public class FrequencyDetermination {
      */
     public Map<List<TokenType>, Integer> getMatchFrequencyMap() {
         return matchFrequencyMap;
+    }
+
+    /**
+     * Updates the frequency of the given sequence in the frequency map.
+     * @param sequence The token sequence whose frequency will be updated.
+     */
+    private void addSequence(List<TokenType> sequence) {
+        matchFrequencyMap.put(sequence, matchFrequencyMap.getOrDefault(sequence, 0) + 1);
     }
 }

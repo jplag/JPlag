@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -207,9 +208,11 @@ class StrategyTest extends TestBase {
         FrequencyStrategy strategy = new WindowOfMatchesStrategy();
         Map<List<TokenType>, Integer> windowMap = new HashMap<>();
         int windowSize = 5;
+        Consumer<List<TokenType>> addSequenceKey = seq -> windowMap.putIfAbsent(seq, 0);
+        Consumer<List<TokenType>> addSequence = seq -> windowMap.put(seq, windowMap.getOrDefault(seq, 0) + 1);
 
         List<TokenType> matchTokenTypes = getMatchTokenTypes(matchShort);
-        strategy.processMatchTokenTypes(matchTokenTypes, windowMap, windowSize);
+        strategy.processMatchTokenTypes(matchTokenTypes, addSequenceKey, addSequence, windowSize);
 
         List<List<TokenType>> expectedKeys = checkIfAllExpectedWindowsAreAdded(matchTokenTypes, windowSize, windowMap);
         assertEquals(expectedKeys.size(), windowMap.size(), "A Key is more than one time used, please check for the rest of the test");
@@ -223,8 +226,8 @@ class StrategyTest extends TestBase {
         assertTrue(windowMap.containsKey(firstWindow), "new firstWindow was not added: " + firstWindow);
         assertTrue(windowMap.containsKey(secondWindow), "new secondWindow was not added: " + secondWindow);
 
-        strategy.processMatchTokenTypes(firstWindow, windowMap, windowSize);
-        strategy.processMatchTokenTypes(secondWindow, windowMap, windowSize);
+        strategy.processMatchTokenTypes(firstWindow, addSequenceKey, addSequence, windowSize);
+        strategy.processMatchTokenTypes(secondWindow, addSequenceKey, addSequence, windowSize);
 
         Integer valueFirstWindow = windowMap.get(firstWindow);
         Integer valueSecondWindow = windowMap.get(secondWindow);
@@ -264,8 +267,10 @@ class StrategyTest extends TestBase {
         List<Token> matchToken = testSubmission.getTokenList().subList(matchShort.startOfFirst(), matchShort.startOfFirst() + wantedMatchLength);
         List<TokenType> matchTokenTypes = matchToken.stream().map(Token::getType).toList();
         int minSubSequenceSize = 3;
+        Consumer<List<TokenType>> addSequenceKey = seq -> frequencyMap.putIfAbsent(seq, 0);
+        Consumer<List<TokenType>> addSequence = seq -> frequencyMap.put(seq, frequencyMap.getOrDefault(seq, 0) + 1);
 
-        strategy.processMatchTokenTypes(matchTokenTypes, frequencyMap, minSubSequenceSize);
+        strategy.processMatchTokenTypes(matchTokenTypes, addSequenceKey, addSequence, minSubSequenceSize);
 
         Set<List<TokenType>> expectedSubSequences = new HashSet<>(List.of(matchTokenTypes, matchTokenTypes.subList(0, 4),
                 matchTokenTypes.subList(1, 5), matchTokenTypes.subList(0, 3), matchTokenTypes.subList(1, 4), matchTokenTypes.subList(2, 5)));
@@ -276,7 +281,7 @@ class StrategyTest extends TestBase {
         }
 
         List<TokenType> newSequence = matchTokenTypes.subList(1, 5);
-        strategy.processMatchTokenTypes(newSequence, frequencyMap, minSubSequenceSize);
+        strategy.processMatchTokenTypes(newSequence, addSequenceKey, addSequence, minSubSequenceSize);
         Set<List<TokenType>> expectedReUsedKeys = new HashSet<>(
                 List.of(matchTokenTypes.subList(1, 5), matchTokenTypes.subList(1, 4), matchTokenTypes.subList(2, 5)));
 
