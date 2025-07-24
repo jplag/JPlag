@@ -7,6 +7,8 @@ import java.util.List;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jplag.ParsingException;
 import de.jplag.emf.EmfLanguage;
@@ -19,6 +21,8 @@ import de.jplag.emf.util.GenericEmfTreeView;
  * Parser for EMF metamodels based on dynamically created tokens.
  */
 public class DynamicModelParser extends DynamicEcoreParser {
+    private static final Logger logger = LoggerFactory.getLogger(DynamicModelParser.class);
+
     private static final String VIEW_FILE_WARNING = "Skipping view file {} as submission!";
     private static final String METAPACKAGE_WARNING = "Loading model instance {} without any metamodel!";
     private static final String METAPACKAGE_ERROR = "Error, not a metapackage: ";

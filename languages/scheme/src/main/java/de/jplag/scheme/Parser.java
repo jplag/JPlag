@@ -5,14 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import de.jplag.AbstractParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.TokenType;
 
-public class Parser extends AbstractParser {
-    private File currentFile;
+public class Parser {
+    static final Logger logger = LoggerFactory.getLogger(Parser.class);
 
+    private File currentFile;
     private List<Token> tokens;
 
     public List<Token> parse(Set<File> files) throws ParsingException {

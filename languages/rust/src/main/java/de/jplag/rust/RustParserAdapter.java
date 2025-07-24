@@ -13,14 +13,13 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
-import de.jplag.AbstractParser;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.rust.grammar.RustLexer;
 import de.jplag.rust.grammar.RustParser;
 import de.jplag.util.FileUtils;
 
-public class RustParserAdapter extends AbstractParser {
+public class RustParserAdapter {
 
     private File currentFile;
     private List<Token> tokens;
