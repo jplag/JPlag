@@ -2,7 +2,7 @@ package de.jplag.scala
 
 import de.jplag.scala.ScalaTokenType._
 import de.jplag.util.FileUtils
-import de.jplag.{AbstractParser, ParsingException, Token}
+import de.jplag.{ParsingException, Token}
 
 import java.io.File
 import java.util.stream.Collectors
@@ -11,7 +11,7 @@ import scala.meta.Member.ParamClauseGroup
 import scala.meta._
 
 
-class Parser extends AbstractParser {
+class Parser {
     private var currentFile: File = _
 
     private var tokens: ListBuffer[Token] = _
