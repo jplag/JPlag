@@ -11,7 +11,7 @@ import de.jplag.cpp.grammar.CPP14Lexer;
 import de.jplag.cpp.grammar.CPP14Parser;
 
 /**
- * The adapter between for the ANTLR based parser of this language module.
+ * The adapter for the ANTLR-based parser of this language module.
  */
 public class CPPParserAdapter extends AbstractAntlrParserAdapter<CPP14Parser> {
     private static final CPPListener listener = new CPPListener();
