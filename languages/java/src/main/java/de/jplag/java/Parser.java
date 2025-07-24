@@ -14,11 +14,20 @@ import de.jplag.CriticalParsingException;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
+/**
+ * Parser implementation for Java programs.
+ */
 public class Parser {
     private static final Logger logger = LoggerFactory.getLogger(Parser.class);
     private static final String JDK_ERROR_MESSAGE = "Cannot parse as 'javac' is not available. Ensure a full JDK is installed.";
     private List<Token> tokens;
 
+    /**
+     * Parses a set of source files and creates a token sequence.
+     * @param files is the set of Java source files.
+     * @return the tokens sequence for the files.
+     * @throws ParsingException if parsing fails.
+     */
     public List<Token> parse(Set<File> files) throws ParsingException {
         ensureJavacIsAvailable();
         tokens = new ArrayList<>();
@@ -36,7 +45,7 @@ public class Parser {
         }
     }
 
-    public void add(Token token) {
+    /* package-private */ void add(Token token) {
         tokens.add(token);
     }
 }
