@@ -23,6 +23,7 @@
     </module>
     <module name="JavadocVariable">
       <property name="accessModifiers" value="public, protected, package"/>
+      <property name="tokens" value="VARIABLE_DEF"/>
     </module>
     <module name="MissingJavadocMethod">
       <property name="tokens" value="METHOD_DEF, CTOR_DEF, ANNOTATION_FIELD_DEF, COMPACT_CTOR_DEF"/>
@@ -35,7 +36,6 @@
       <property name="javadocTokens" value="PARAM_LITERAL, RETURN_LITERAL, THROWS_LITERAL, EXCEPTION_LITERAL, DEPRECATED_LITERAL"/>
     </module>
     <module name="SingleLineJavadoc"/>
-    <module name="SummaryJavadoc"/>
     <module name="AvoidStarImport"/>
   </module>
 </module>
