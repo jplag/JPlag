@@ -15,7 +15,6 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
-import de.jplag.AbstractParser;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.util.FileUtils;
@@ -24,7 +23,7 @@ import de.jplag.util.FileUtils;
  * Base class for Antlr parser adapters
  * @param <T> The type of the antlr parser
  */
-public abstract class AbstractAntlrParserAdapter<T extends Parser> extends AbstractParser {
+public abstract class AbstractAntlrParserAdapter<T extends Parser> {
 
     private final boolean extractsSemantics;
 
