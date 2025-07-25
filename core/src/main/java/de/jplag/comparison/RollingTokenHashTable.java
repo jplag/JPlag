@@ -17,7 +17,7 @@ class RollingTokenHashTable {
     private static final int MAX_HASH_LENGTH = 25;
     private static final int HASH_MODULO = 64;
 
-    /** Indicator that the subsequence should not be considered for comparison matching */
+    /** Indicator that the subsequence should not be considered for comparison matching. */
     public static final int NO_HASH = -1;
 
     private final int windowSize;

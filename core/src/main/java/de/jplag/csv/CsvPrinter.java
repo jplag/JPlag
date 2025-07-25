@@ -18,7 +18,7 @@ import de.jplag.util.FileUtils;
  * Prints a csv according to the specification in
  * <a href="https://datatracker.ietf.org/doc/html/rfc4180#section-2">...</a>. If you need to deviate from this
  * definition slightly you can modify the line end and separator characters.
- * @param <T>
+ * @param <T> is the type of the values stored in the CSV.
  */
 public class CsvPrinter<T> {
     private static final char DEFAULT_SEPARATOR = ',';
@@ -43,41 +43,41 @@ public class CsvPrinter<T> {
     }
 
     /**
-     * Adds a new row to this csv
-     * @param value the value to add
+     * Adds a new row to this csv.
+     * @param value the value to add.
      */
     public void addRow(T value) {
         this.data.add(this.dataSource.provideData(value));
     }
 
     /**
-     * Adds multiple rows to this csv
-     * @param values The values to add
+     * Adds multiple rows to this csv.
+     * @param values The values to add.
      */
     public void addRows(Collection<T> values) {
         values.forEach(this::addRow);
     }
 
     /**
-     * Changes the separator between cells
-     * @param separator The new separator
+     * Changes the separator between cells.
+     * @param separator The new separator.
      */
     public void setSeparator(char separator) {
         this.separator = separator;
     }
 
     /**
-     * Sets the string to separate lines with
-     * @param lineEnd the new line end
+     * Sets the string to separate lines with.
+     * @param lineEnd the new line end.
      */
     public void setLineEnd(String lineEnd) {
         this.lineEnd = lineEnd;
     }
 
     /**
-     * Prints this csv with all current data to a file
-     * @param file The file to write
-     * @throws IOException on io errors
+     * Prints this csv with all current data to a file.
+     * @param file The file to write.
+     * @throws IOException on io errors.
      */
     public void printToFile(File file) throws IOException {
         try (Writer writer = FileUtils.openFileWriter(file)) {
@@ -85,6 +85,11 @@ public class CsvPrinter<T> {
         }
     }
 
+    /**
+     * Provides a string-based representation of the table.
+     * @return the representation.
+     * @throws IOException if an errors occurs during conversion.
+     */
     public String printToString() throws IOException {
         String csv;
 

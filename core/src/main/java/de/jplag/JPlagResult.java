@@ -31,6 +31,13 @@ public class JPlagResult {
 
     private static final int SIMILARITY_DISTRIBUTION_SIZE = 100;
 
+    /**
+     * Creates a new JPlag analysis result.
+     * @param comparisons are the analyzed comparisons for all pairs of submissions.
+     * @param submissions are the source code submissions analyzed.
+     * @param durationInMillis is the duration of the comparison.
+     * @param options are the corresponding options for the result.
+     */
     public JPlagResult(List<JPlagComparison> comparisons, SubmissionSet submissions, long durationInMillis, JPlagOptions options) {
         // sort by similarity (descending)
         this.comparisons = comparisons.stream().sorted(Comparator.comparing(JPlagComparison::similarity).reversed()).toList();

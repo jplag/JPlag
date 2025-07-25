@@ -199,7 +199,7 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
     }
 
     /**
-     * Creates a new options instance with the provided base code submission name
+     * Creates a new options instance with the provided base code submission name.
      * @param baseCodeSubmissionName the path or name of the base code submission
      * @return a new options instance with the provided base code submission name
      * @deprecated Use @{{@link #withBaseCodeSubmissionDirectory} instead.

@@ -160,6 +160,8 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
+     * @return true if a comparison between the submission and the base code is available. Does not imply if there are
+     * matches to the base code.
      * @deprecated Use {@link #hasBaseCodeComparison()} instead.
      */
     @Deprecated(since = "6.1.0", forRemoval = true)

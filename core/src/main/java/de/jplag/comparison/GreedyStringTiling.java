@@ -32,6 +32,11 @@ public class GreedyStringTiling {
 
     private final TokenSequenceMapper tokenSequenceMapper;
 
+    /**
+     * Creates a instance of the Greedy String Tiling algorithm.
+     * @param options are the options, controlling algorithm parameters like minimum token match.
+     * @param tokenValueMapper provides integer mappings for token sequences.
+     */
     public GreedyStringTiling(JPlagOptions options, TokenSequenceMapper tokenValueMapper) {
         this.options = options;
         // Ensures 1 <= neighborLength <= minimumTokenMatch
