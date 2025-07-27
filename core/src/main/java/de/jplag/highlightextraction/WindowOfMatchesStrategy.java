@@ -9,8 +9,8 @@ import de.jplag.TokenType;
 
 /**
  * Strategy that uses a fixed window size to create submatches of a match sequence in a comparison and calculates their
- * frequencies over all submissions.
- * So the Strategy counts all occurrences of the contiguous windows inside all the contiguous windows of the matches from the comparisons.
+ * frequencies over all submissions. So the Strategy counts all occurrences of the contiguous windows inside all the
+ * contiguous windows of the matches from the comparisons.
  */
 public class WindowOfMatchesStrategy implements FrequencyStrategy {
 
