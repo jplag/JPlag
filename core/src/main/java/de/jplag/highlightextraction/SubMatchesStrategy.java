@@ -14,6 +14,8 @@ public class SubMatchesStrategy implements FrequencyStrategy {
     /**
      * Creates submatches to build the keys and adds their frequencies to the frequencyMap.
      * @param matchTokenTypes List of matchTokenTypes representing the match.
+     * @param addSequenceKey<TokenType>> addSequenceKey adds the Sequence to the list, without counting the frequency
+     * @param addSequence<TokenType>> addSequence adds the Sequence to the list, and updates the frequency
      * @param minSubSequenceSize Minimum length of the considered submatches.
      */
     @Override

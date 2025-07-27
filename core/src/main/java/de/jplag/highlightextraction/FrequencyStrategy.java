@@ -13,6 +13,8 @@ public interface FrequencyStrategy {
     /**
      * Updates the frequencyMap with token subsequences and their frequencies according to the implemented strategy.
      * @param matchTokenTypes List of matchTokenTypes representing the match.
+     * @param addSequenceKey<TokenType>> addSequenceKey adds the Sequence to the list, without counting the frequency
+     * @param addSequence<TokenType>> addSequence adds the Sequence to the list, and updates the frequency
      * @param strategyNumber The minimum length of token subsequences to consider.
      */
     void processMatchTokenTypes(List<TokenType> matchTokenTypes, Consumer<List<TokenType>> addSequenceKey, Consumer<List<TokenType>> addSequence,

@@ -8,16 +8,19 @@ import de.jplag.TokenType;
 /**
  * Strategy that calculates the frequencies of matches across all submissions. For each match, the full token sequence
  * is added to the frequency map without modification.
+ * So the Strategy counts all occurrences of complete matches inside all the complete matches of the comparisons.
  */
 public class CompleteMatchesStrategy implements FrequencyStrategy {
     /**
      * Adds the given token sequence to the map and updates its frequency.
      * @param matchTokenTypes List of tokensTypes representing the match.
-     * @param strategyNumber Ignored in this strategy. The minimum sub length considered in other strategies.
+     * @param addSequenceKey<TokenType>> addSequenceKey adds the Sequence to the list, without counting the frequency
+     * @param addSequence<TokenType>> addSequence adds the Sequence to the list, and updates the frequency
+     * @param minSubSequenceSize Ignored in this strategy. The minimum sub length considered in other strategies.
      */
     @Override
     public void processMatchTokenTypes(List<TokenType> matchTokenTypes, Consumer<List<TokenType>> addSequenceKey,
-            Consumer<List<TokenType>> addSequence, int strategyNumber) {
+            Consumer<List<TokenType>> addSequence, int minSubSequenceSize) {
         addSequence.accept(matchTokenTypes);
     }
 }
