@@ -10,15 +10,15 @@ import de.jplag.TokenType;
 /**
  * Strategy that uses a fixed window size to create submatches of a match sequence in a comparison and calculates their
  * frequencies over all submissions.
- * So the Strategy counts all occurrences of the continuous windows inside all the continuous windows of the matches from the comparisons.
+ * So the Strategy counts all occurrences of the contiguous windows inside all the contiguous windows of the matches from the comparisons.
  */
 public class WindowOfMatchesStrategy implements FrequencyStrategy {
 
     /**
      * Adds all submatches with window length of the matches to a map using the token sequence as the key.
      * @param matchTokenTypes Token list of the match.
-     * @param addSequenceKey<TokenType>> addSequenceKey adds the Sequence to the list, without counting the frequency
-     * @param addSequence<TokenType>> addSequence adds the Sequence to the list, and updates the frequency
+     * @param addSequenceKey Consumer that adds the sequence to the list, without counting the frequency.
+     * @param addSequence Consumer that adds the sequence to the list, and updates the frequency.
      * @param strategyNumber The length of the considered token window.
      */
     @Override
