@@ -58,6 +58,7 @@ public class ReportViewer implements HttpHandler {
      * port is already in use, the next free port will be used.
      * @return The port the server runs at
      * @throws IOException If the server cannot be started
+     * @throws IllegalArgumentException if the server is already started.
      */
     public int start() throws IOException {
         if (server != null) {
@@ -87,7 +88,7 @@ public class ReportViewer implements HttpHandler {
     }
 
     /**
-     * Stops the server
+     * Stops the server.
      */
     public void stop() {
         server.stop(0);
@@ -136,6 +137,11 @@ public class ReportViewer implements HttpHandler {
     RoutingTree getRoutingTree() {
         return routingTree;
     }
+
+    /**
+     * Checks if the compiled report viewer resource is available.
+     * @return true if the compiled viewer resource exists, false otherwise
+     */
 
     public static boolean hasCompiledViewer() {
         return ResponseData.fromResourceUrl("/" + REPORT_VIEWER_RESOURCE_PREFIX + "/index.html") != null;

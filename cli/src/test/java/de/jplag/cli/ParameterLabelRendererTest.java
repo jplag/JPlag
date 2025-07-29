@@ -13,7 +13,7 @@ import de.jplag.cli.picocli.ParameterLabelRenderer;
 import picocli.CommandLine;
 
 /**
- * Tests for the custom {@link ParameterLabelRenderer}
+ * Tests for the custom {@link ParameterLabelRenderer}.
  */
 class ParameterLabelRendererTest {
     private CommandLine.Help.IParamLabelRenderer paramLabelRenderer;
@@ -51,7 +51,7 @@ class ParameterLabelRendererTest {
     }
 
     /**
-     * Tests, that a bunch of parameter types produces the same label as the default renderer from picocli
+     * Tests, that a bunch of parameter types produces the same label as the default renderer from picocli.
      * @param parameterType The type for the option
      */
     @ParameterizedTest
@@ -65,7 +65,7 @@ class ParameterLabelRendererTest {
     }
 
     /**
-     * Tests that both the custom and the base label renderer return the same separator
+     * Tests that both the custom and the base label renderer return the same separator.
      */
     @Test
     void testSameSeparator() {
@@ -73,7 +73,7 @@ class ParameterLabelRendererTest {
     }
 
     /**
-     * Enum used as for testing the label
+     * Enum used as for testing the label.
      */
     @SuppressWarnings("unused")
     enum TestEnum {
