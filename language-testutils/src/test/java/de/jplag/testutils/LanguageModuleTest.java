@@ -217,10 +217,7 @@ public abstract class LanguageModuleTest {
             TokenType expectedType = this.languageTokens.stream().filter(type -> type.toString().equals(expectedToken.typeName())).findFirst()
                     .orElseThrow(() -> new IOException(String.format("The token type %s does not exist.", expectedToken.typeName())));
 
-            if (extractedTokens.stream()
-                    .noneMatch(token -> token.getType() == expectedType && token.getStartLine() == expectedToken.startLine()
-                            && token.getStartColumn() == expectedToken.startColumn() && token.getEndLine() == expectedToken.endLine()
-                            && token.getEndColumn() == expectedToken.endColumn())) {
+            if (extractedTokens.stream().noneMatch(token -> testTokenMatch(token, expectedType, expectedToken))) {
                 failedTokens.add(expectedToken);
             }
         }
@@ -230,6 +227,13 @@ public abstract class LanguageModuleTest {
                     + token.startLine() + ":" + token.startColumn() + ") to (" + token.endLine() + ":" + token.endColumn() + ")").toList());
             fail("Some tokens weren't extracted with the correct properties:" + System.lineSeparator() + failureDescriptors);
         }
+    }
+
+    private boolean testTokenMatch(Token token, TokenType expectedType, TokenPositionTestData.TokenData expectedToken) {
+        boolean typeMatch = token.getType() == expectedType;
+        boolean startPositionMatch = token.getStartLine() == expectedToken.startLine() && token.getStartColumn() == expectedToken.startColumn();
+        boolean endPositionMatch = token.getEndLine() == expectedToken.endLine() && token.getEndColumn() == expectedToken.endColumn();
+        return typeMatch && startPositionMatch && endPositionMatch;
     }
 
     /**
