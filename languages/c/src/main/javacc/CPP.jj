@@ -30,7 +30,7 @@ public class CPPScanner {
 
     public static void scanFile(File file, Scanner delegatingScanner) throws ParsingException {
         CPPScanner scanner;
-        try(InputStream input = new NewlineStream(new FileInputStream(file))) {
+        try (InputStream input = new NewlineStream(new FileInputStream(file))) {
             scanner = new CPPScanner(input, "UTF-8");
             scanner.delegatingScanner = delegatingScanner;
         } catch (IOException e) {

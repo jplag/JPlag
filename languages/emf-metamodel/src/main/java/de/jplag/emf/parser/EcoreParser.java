@@ -8,7 +8,6 @@ import java.util.Set;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 
-import de.jplag.AbstractParser;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.TokenType;
@@ -23,7 +22,7 @@ import de.jplag.emf.util.EmfaticModelView;
 /**
  * Parser for EMF metamodels.
  */
-public class EcoreParser extends AbstractParser {
+public class EcoreParser {
     protected List<Token> tokens;
     protected File currentFile;
     protected AbstractModelView treeView;
