@@ -7,17 +7,17 @@ import scala.collection.immutable.List;
 import scala.meta.Tree;
 
 /**
- * A token record, that contains information about the tokens to be added for a specific ast node. The name is kept
+ * A traverser record, that contains information about the tokens to be added for a specific ast node. The name is kept
  * short to make the code more readable. Also contains information about how to traverse the node
  * @param before Token before the node
- * @param after Token after the ode
+ * @param after Token after the node
  * @param traverse The traverse function
  */
-public record TR(Optional<ScalaTokenType> before, Optional<ScalaTokenType> after, BiConsumer<Tree, ScalaParser> traverse) {
+public record TraverserRecord(Optional<ScalaTokenType> before, Optional<ScalaTokenType> after, BiConsumer<Tree, ScalaParser> traverse) {
     /**
      * Initializes the token record with no tokens and a traverse function that visits all children
      */
-    public TR() {
+    public TraverserRecord() {
         this(Optional.empty(), Optional.empty(), (tree, parser) -> {
             List<Tree> children = tree.children();
             for (int i = 0; i < children.size(); i++) {
@@ -27,11 +27,11 @@ public record TR(Optional<ScalaTokenType> before, Optional<ScalaTokenType> after
     }
 
     /**
-     * Same as {@link #TR()}, but with tokens
+     * Same as {@link #TraverserRecord()}, but with tokens
      * @param before Token before the node
      * @param after Token after the node
      */
-    public TR(ScalaTokenType before, ScalaTokenType after) {
+    public TraverserRecord(ScalaTokenType before, ScalaTokenType after) {
         this(Optional.of(before), Optional.of(after), (tree, parser) -> {
             List<Tree> children = tree.children();
             for (int i = 0; i < children.size(); i++) {
@@ -41,10 +41,10 @@ public record TR(Optional<ScalaTokenType> before, Optional<ScalaTokenType> after
     }
 
     /**
-     * Same as {@link #TR()}, but with a token before
+     * Same as {@link #TraverserRecord()}, but with a token before
      * @param before Token before the node
      */
-    public TR(ScalaTokenType before) {
+    public TraverserRecord(ScalaTokenType before) {
         this(Optional.of(before), Optional.empty(), (tree, parser) -> {
             List<Tree> children = tree.children();
             for (int i = 0; i < children.size(); i++) {
@@ -58,8 +58,8 @@ public record TR(Optional<ScalaTokenType> before, Optional<ScalaTokenType> after
      * @param tokenType Token before the node
      * @return The copy
      */
-    public TR before(ScalaTokenType tokenType) {
-        return new TR(Optional.of(tokenType), after, traverse);
+    public TraverserRecord before(ScalaTokenType tokenType) {
+        return new TraverserRecord(Optional.of(tokenType), after, traverse);
     }
 
     /**
@@ -67,8 +67,8 @@ public record TR(Optional<ScalaTokenType> before, Optional<ScalaTokenType> after
      * @param tokenType Token after the node
      * @return The copy
      */
-    public TR after(ScalaTokenType tokenType) {
-        return new TR(before, Optional.of(tokenType), traverse);
+    public TraverserRecord after(ScalaTokenType tokenType) {
+        return new TraverserRecord(before, Optional.of(tokenType), traverse);
     }
 
     /**
@@ -76,7 +76,7 @@ public record TR(Optional<ScalaTokenType> before, Optional<ScalaTokenType> after
      * @param traverse The new traverse function
      * @return The copy
      */
-    public TR traverse(Runnable traverse) {
-        return new TR(before, after, (tree, parser) -> traverse.run());
+    public TraverserRecord traverse(Runnable traverse) {
+        return new TraverserRecord(before, after, (tree, parser) -> traverse.run());
     }
 }

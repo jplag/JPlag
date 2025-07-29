@@ -148,33 +148,33 @@ public class ScalaParser {
      * @param tree The ast node to parse
      * @return The token record
      */
-    private TR parse(Tree tree) {
+    private TraverserRecord parse(Tree tree) {
         return switch (tree) {
-            case Term.Do doBlock -> new TR(DO_WHILE, DO_WHILE_END).traverse(() -> {
-                encloseAndAppy(doBlock.body(), new TR(DO_BODY_BEGIN, DO_BODY_END));
+            case Term.Do doBlock -> new TraverserRecord(DO_WHILE, DO_WHILE_END).traverse(() -> {
+                encloseAndAppy(doBlock.body(), new TraverserRecord(DO_BODY_BEGIN, DO_BODY_END));
                 visit(doBlock.cond());
             });
-            case Term.Assign ignored -> new TR(ASSIGN);
-            case Term.While whileBlock -> new TR(WHILE).traverse(() -> {
+            case Term.Assign ignored -> new TraverserRecord(ASSIGN);
+            case Term.While whileBlock -> new TraverserRecord(WHILE).traverse(() -> {
                 visit(whileBlock.cond());
-                encloseAndAppy(whileBlock.body(), new TR(WHILE_BODY_BEGIN, WHILE_BODY_END));
+                encloseAndAppy(whileBlock.body(), new TraverserRecord(WHILE_BODY_BEGIN, WHILE_BODY_END));
             });
-            case Term.For forBlock -> new TR(FOR).traverse(() -> {
+            case Term.For forBlock -> new TraverserRecord(FOR).traverse(() -> {
                 visit(forBlock.enumsBlock());
-                encloseAndAppy(forBlock.body(), new TR(FOR_BODY_BEGIN, FOR_BODY_END));
+                encloseAndAppy(forBlock.body(), new TraverserRecord(FOR_BODY_BEGIN, FOR_BODY_END));
             });
-            case Term.Try tryBlock -> new TR(TRY_BEGIN).traverse(() -> {
+            case Term.Try tryBlock -> new TraverserRecord(TRY_BEGIN).traverse(() -> {
                 visit(tryBlock.expr());
-                encloseAndAppy(tryBlock.catchClause().get(), new TR(CATCH_BEGIN, CATCH_END));
+                encloseAndAppy(tryBlock.catchClause().get(), new TraverserRecord(CATCH_BEGIN, CATCH_END));
                 addTokenAndVisitIfPresent(tryBlock.finallyp(), FINALLY);
             });
-            case Term.TryWithHandler tryWithHandler -> new TR(TRY_BEGIN).traverse(() -> {
+            case Term.TryWithHandler tryWithHandler -> new TraverserRecord(TRY_BEGIN).traverse(() -> {
                 visit(tryWithHandler.expr());
-                encloseAndAppy(tryWithHandler.catchClause().get(), new TR(CATCH_BEGIN, CATCH_END));
+                encloseAndAppy(tryWithHandler.catchClause().get(), new TraverserRecord(CATCH_BEGIN, CATCH_END));
                 addTokenAndVisitIfPresent(tryWithHandler.finallyp(), FINALLY);
             });
-            case Term.Apply call when !isStandardOperator(getMethodIdentifier(call.fun())) -> new TR().traverse(() -> {
-                encloseAndAppy(call.fun(), new TR(APPLY));
+            case Term.Apply call when !isStandardOperator(getMethodIdentifier(call.fun())) -> new TraverserRecord().traverse(() -> {
+                encloseAndAppy(call.fun(), new TraverserRecord(APPLY));
                 call.argClause().values().foreach(argument -> {
                     addToken(ARGUMENT, argument, false);
                     if (argument instanceof Term.Assign assignment) {
@@ -186,24 +186,24 @@ public class ScalaParser {
                     return null;
                 });
             });
-            case Term.NewAnonymous ignored -> new TR(NEW_CREATION_BEGIN, NEW_CREATION_END);
-            case Term.Return ignored -> new TR(RETURN);
-            case Term.Match match -> new TR(MATCH_BEGIN, MATCH_END).traverse(() -> {
+            case Term.NewAnonymous ignored -> new TraverserRecord(NEW_CREATION_BEGIN, NEW_CREATION_END);
+            case Term.Return ignored -> new TraverserRecord(RETURN);
+            case Term.Match match -> new TraverserRecord(MATCH_BEGIN, MATCH_END).traverse(() -> {
                 visit(match.expr());
                 visit(match.casesBlock());
             });
-            case Term.Throw ignored -> new TR(THROW);
-            case Term.Function ignored -> new TR(FUNCTION_BEGIN, FUNCTION_END);
-            case Term.PartialFunction ignored -> new TR(PARTIAL_FUNCTION_BEGIN, PARTIAL_FUNCTION_END);
-            case Term.ForYield forYield -> new TR().traverse(() -> {
+            case Term.Throw ignored -> new TraverserRecord(THROW);
+            case Term.Function ignored -> new TraverserRecord(FUNCTION_BEGIN, FUNCTION_END);
+            case Term.PartialFunction ignored -> new TraverserRecord(PARTIAL_FUNCTION_BEGIN, PARTIAL_FUNCTION_END);
+            case Term.ForYield forYield -> new TraverserRecord().traverse(() -> {
                 visit(forYield.enumsBlock());
                 addToken(FOR_BODY_BEGIN, forYield.body(), false);
-                encloseAndAppy(forYield.body(), new TR(YIELD, FOR_BODY_END));
+                encloseAndAppy(forYield.body(), new TraverserRecord(YIELD, FOR_BODY_END));
             });
-            case Term.If ifTerm -> new TR().traverse(() -> {
+            case Term.If ifTerm -> new TraverserRecord().traverse(() -> {
                 addToken(IF, ifTerm, false);
                 visit(ifTerm.cond());
-                encloseAndAppy(ifTerm.thenp(), new TR(IF_BEGIN, IF_END));
+                encloseAndAppy(ifTerm.thenp(), new TraverserRecord(IF_BEGIN, IF_END));
 
                 if (ifTerm.elsep() instanceof Lit.Unit) {
                     visit(ifTerm.elsep());
@@ -212,32 +212,32 @@ public class ScalaParser {
                     Position.Range elsePosition = new Position.Range(ifTerm.pos().input(), ifTerm.pos().start() + elseStart,
                             ifTerm.pos().start() + elseStart + 4);
                     addToken(ELSE, elsePosition.startLine() + 1, elsePosition.startColumn() + 1, elsePosition.text().length());
-                    encloseAndAppy(ifTerm.elsep(), new TR(ELSE_BEGIN, ELSE_END));
+                    encloseAndAppy(ifTerm.elsep(), new TraverserRecord(ELSE_BEGIN, ELSE_END));
                 }
             });
 
-            case Pkg ignored -> new TR(PACKAGE);
-            case Import ignored -> new TR(IMPORT);
+            case Pkg ignored -> new TraverserRecord(PACKAGE);
+            case Import ignored -> new TraverserRecord(IMPORT);
 
-            case Defn.Def definition -> new TR().traverse(() -> {
+            case Defn.Def definition -> new TraverserRecord().traverse(() -> {
                 visitAll(definition.mods());
                 addToken(METHOD_DEF, definition.name(), false);
                 addTokenForAll(getTParams(definition.paramClauseGroups()), TYPE_PARAMETER, false);
                 addTokenForAll(getPParamsLists(definition.paramClauseGroups()), PARAMETER, false);
 
-                encloseAndAppy(definition.body(), new TR(METHOD_BEGIN, METHOD_END));
+                encloseAndAppy(definition.body(), new TraverserRecord(METHOD_BEGIN, METHOD_END));
             });
-            case Defn.Macro macroDef -> new TR(MACRO).traverse(() -> {
+            case Defn.Macro macroDef -> new TraverserRecord(MACRO).traverse(() -> {
                 visitAll(macroDef.mods());
                 visitAll(getTParams(macroDef.paramClauseGroups()));
                 visitAll(getPParamsLists(macroDef.paramClauseGroups()));
-                encloseAndAppy(macroDef.body(), new TR(MACRO_BEGIN, MACRO_END));
+                encloseAndAppy(macroDef.body(), new TraverserRecord(MACRO_BEGIN, MACRO_END));
             });
-            case Defn.Class ignored -> new TR(CLASS_BEGIN, CLASS_END);
-            case Defn.Object ignored -> new TR(OBJECT_BEGIN, OBJECT_END);
-            case Defn.Trait ignored -> new TR(TRAIT_BEGIN, TRAIT_END);
-            case Defn.Type ignored -> new TR(TYPE);
-            case Defn.Var varDef -> new TR().traverse(() -> {
+            case Defn.Class ignored -> new TraverserRecord(CLASS_BEGIN, CLASS_END);
+            case Defn.Object ignored -> new TraverserRecord(OBJECT_BEGIN, OBJECT_END);
+            case Defn.Trait ignored -> new TraverserRecord(TRAIT_BEGIN, TRAIT_END);
+            case Defn.Type ignored -> new TraverserRecord(TYPE);
+            case Defn.Var varDef -> new TraverserRecord().traverse(() -> {
                 visitAll(varDef.mods());
                 varDef.pats().foreach(pattern -> {
                     handleDefinitionPattern(pattern, new Some<>(varDef.body()));
@@ -247,7 +247,7 @@ public class ScalaParser {
                     visit(varDef.decltpe().get());
                 }
             });
-            case Defn.Val definition -> new TR().traverse(() -> {
+            case Defn.Val definition -> new TraverserRecord().traverse(() -> {
                 visitAll(definition.mods());
                 definition.pats().foreach(pattern -> {
                     handleDefinitionPattern(pattern, new Some<>(definition.rhs()));
@@ -255,57 +255,58 @@ public class ScalaParser {
                 });
             });
 
-            case Decl.Var ignored -> new TR(VARIABLE_DEFINITION);
-            case Decl.Val ignored -> new TR(VARIABLE_DEFINITION);
-            case Decl.Def ignored -> new TR(METHOD_BEGIN, METHOD_END);
-            case Decl.Type ignored -> new TR(TYPE);
+            case Decl.Var ignored -> new TraverserRecord(VARIABLE_DEFINITION);
+            case Decl.Val ignored -> new TraverserRecord(VARIABLE_DEFINITION);
+            case Decl.Def ignored -> new TraverserRecord(METHOD_BEGIN, METHOD_END);
+            case Decl.Type ignored -> new TraverserRecord(TYPE);
 
-            case Ctor.Secondary ignored -> new TR(CONSTRUCTOR_BEGIN, CONSTRUCTOR_END);
+            case Ctor.Secondary ignored -> new TraverserRecord(CONSTRUCTOR_BEGIN, CONSTRUCTOR_END);
 
-            case Init init -> new TR().traverse(() -> {
+            case Init init -> new TraverserRecord().traverse(() -> {
                 addTokenForAll(getArgList(init.argClauses()), ARGUMENT, true);
             });
-            case Enumerator.Guard ignored -> new TR(GUARD);
+            case Enumerator.Guard ignored -> new TraverserRecord(GUARD);
 
-            case Term.Param ignored -> new TR().traverse(() -> addToken(PARAMETER, tree, false));
-            case Term.ApplyInfix term when term.op().value().contains("=") && !List.of("==", "!=").contains(term.op().value()) -> new TR(ASSIGN);
-            case Term.ApplyInfix term when !isStandardOperator(term.op().value()) -> new TR().traverse(() -> {
+            case Term.Param ignored -> new TraverserRecord().traverse(() -> addToken(PARAMETER, tree, false));
+            case Term.ApplyInfix term when term.op().value().contains("=") && !List.of("==", "!=").contains(term.op().value()) -> new TraverserRecord(
+                    ASSIGN);
+            case Term.ApplyInfix term when !isStandardOperator(term.op().value()) -> new TraverserRecord().traverse(() -> {
                 addToken(APPLY, tree, false);
                 visit(term.lhs());
                 addTokenForAll(term.targClause().values(), TYPE_ARGUMENT, true);
                 addTokenForAll(term.argClause().values(), ARGUMENT, true);
             });
-            case Term.Select select -> new TR().traverse(() -> {
+            case Term.Select select -> new TraverserRecord().traverse(() -> {
                 visit(select.qual());
                 if (!isStandardOperator(select.name().value())) {
                     addToken(MEMBER, select.name(), false);
                 }
                 visit(select.name());
             });
-            case Term.ApplyType term -> new TR().traverse(() -> {
+            case Term.ApplyType term -> new TraverserRecord().traverse(() -> {
                 addToken(APPLY, term, false);
                 addTokenForAll(term.targClause().values(), TYPE_ARGUMENT, false);
             });
-            case Term.New ignored -> new TR(NEW_OBJECT);
-            case Self ignored -> new TR(SELF_TYPE);
+            case Term.New ignored -> new TraverserRecord(NEW_OBJECT);
+            case Self ignored -> new TraverserRecord(SELF_TYPE);
             case Term.Block block -> {
                 if (block.parent().get().parent() instanceof Some<?> && ((Some<?>) block.parent().get().parent()).get() instanceof Term.Apply) {
-                    yield new TR(BLOCK_START, BLOCK_END);
+                    yield new TraverserRecord(BLOCK_START, BLOCK_END);
                 } else {
-                    yield new TR();
+                    yield new TraverserRecord();
                 }
             }
-            case Enumerator.Generator ignored -> new TR(ENUM_GENERATOR);
-            case Type.Param ignored -> new TR(TYPE_PARAMETER);
+            case Enumerator.Generator ignored -> new TraverserRecord(ENUM_GENERATOR);
+            case Type.Param ignored -> new TraverserRecord(TYPE_PARAMETER);
 
-            case Case caseBlock -> new TR(CASE_STATEMENT).traverse(() -> {
+            case Case caseBlock -> new TraverserRecord(CASE_STATEMENT).traverse(() -> {
                 visit(caseBlock.pat());
                 if (caseBlock.cond().isDefined()) {
                     visit(caseBlock.cond().get());
                 }
-                encloseAndAppy(caseBlock.body(), new TR(CASE_BEGIN, CASE_END));
+                encloseAndAppy(caseBlock.body(), new TraverserRecord(CASE_BEGIN, CASE_END));
             });
-            default -> new TR();
+            default -> new TraverserRecord();
         };
     }
 
@@ -316,7 +317,7 @@ public class ScalaParser {
      */
     private void addTokenAndVisitIfPresent(Option<? extends Tree> tree, ScalaTokenType tokenType) {
         if (tree.isDefined()) {
-            encloseAndAppy(tree.get(), new TR(tokenType));
+            encloseAndAppy(tree.get(), new TraverserRecord(tokenType));
         }
     }
 
@@ -325,10 +326,10 @@ public class ScalaParser {
      * @param tree The node
      */
     public void visit(Tree tree) {
-        TR tokenRecord = parse(tree);
-        tokenRecord.before().ifPresent(token -> addToken(token, tree, false));
-        tokenRecord.traverse().accept(tree, this);
-        tokenRecord.after().ifPresent(token -> addToken(token, tree, true));
+        TraverserRecord traverserRecord = parse(tree);
+        traverserRecord.before().ifPresent(token -> addToken(token, tree, false));
+        traverserRecord.traverse().accept(tree, this);
+        traverserRecord.after().ifPresent(token -> addToken(token, tree, true));
     }
 
     /**
@@ -349,15 +350,15 @@ public class ScalaParser {
      * @param traverse Decides if the nodes are visited
      */
     public void addTokenForAll(scala.collection.immutable.List<?> items, ScalaTokenType tokenType, boolean traverse) {
-        items.foreach(tree -> {
-            if (tree instanceof Tree) {
-                addToken(tokenType, (Tree) tree, false);
+        items.foreach(element -> {
+            if (element instanceof Tree tree) {
+                addToken(tokenType, tree, false);
                 if (traverse) {
-                    visit((Tree) tree);
+                    visit(tree);
                 }
             }
-            if (tree instanceof scala.collection.immutable.List) {
-                addTokenForAll((scala.collection.immutable.List<?>) tree, tokenType, traverse);
+            if (element instanceof scala.collection.immutable.List<?> list) {
+                addTokenForAll(list, tokenType, traverse);
             }
             return null;
         });
@@ -366,12 +367,12 @@ public class ScalaParser {
     /**
      * Adds the given tokens around the node and visits it
      * @param tree The ast node
-     * @param tokenRecord The tokens to add
+     * @param traverserRecord The tokens to add
      */
-    private void encloseAndAppy(Tree tree, TR tokenRecord) {
-        tokenRecord.before().ifPresent(token -> addToken(token, tree, false));
+    private void encloseAndAppy(Tree tree, TraverserRecord traverserRecord) {
+        traverserRecord.before().ifPresent(token -> addToken(token, tree, false));
         visit(tree);
-        tokenRecord.after().ifPresent(token -> addToken(token, tree, true));
+        traverserRecord.after().ifPresent(token -> addToken(token, tree, true));
     }
 
     /**
