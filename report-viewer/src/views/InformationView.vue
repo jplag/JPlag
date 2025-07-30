@@ -27,6 +27,9 @@
           <TextInformation label="Exclusion File Name">{{
             options.exclusionFileName
           }}</TextInformation>
+          <TextInformation label="Analyze comments">{{
+            options.analyzeComments ? 'yes' : 'no'
+          }}</TextInformation>
           <TextInformation label="Similarity Metric">{{
             options.similarityMetric.longName
           }}</TextInformation>
