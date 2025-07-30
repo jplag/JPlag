@@ -262,9 +262,7 @@ public class ScalaParser {
 
             case Ctor.Secondary ignored -> new TraverserRecord(CONSTRUCTOR_BEGIN, CONSTRUCTOR_END);
 
-            case Init init -> new TraverserRecord().traverse(() -> {
-                addTokenForAll(getArgList(init.argClauses()), ARGUMENT, true);
-            });
+            case Init init -> new TraverserRecord().traverse(() -> addTokenForAll(getArgList(init.argClauses()), ARGUMENT, true));
             case Enumerator.Guard ignored -> new TraverserRecord(GUARD);
 
             case Term.Param ignored -> new TraverserRecord().traverse(() -> addToken(PARAMETER, tree, false));
@@ -443,7 +441,7 @@ public class ScalaParser {
             // All the casts are necessary to make the java compiler accept this line. There is no way to make this more concise, as
             // it is a scala method
             return new XtensionParseInputLike<>(virtualFile)
-                    .parse((Convert<Input.VirtualFile, Input>) (Object) Convert.trivial(), Parse.parseSource(), (Dialect) Dialect.current()).get();
+                    .parse((Convert<Input.VirtualFile, Input>) (Object) Convert.trivial(), Parse.parseSource(), Dialect.current()).get();
         }
     }
 
