@@ -58,7 +58,7 @@ public class ReportViewer implements HttpHandler {
      * port is already in use, the next free port will be used.
      * @return The port the server runs at
      * @throws IOException If the server cannot be started
-     * @throws IllegalArgumentException if the server is already started.
+     * @throws IllegalStateException if the server is already started.
      */
     public int start() throws IOException {
         if (server != null) {
