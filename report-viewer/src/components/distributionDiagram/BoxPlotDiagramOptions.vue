@@ -6,8 +6,10 @@
         class="mt-2"
         title="Metric:"
         :default-selected="store().uiState.distributionChartConfig.metric"
+        :metrics="metricOptions"
         @selection-changed="
-          (metric: MetricType) => (store().uiState.distributionChartConfig.metric = metric)
+          (metric: MetricJsonIdentifier) =>
+            (store().uiState.distributionChartConfig.metric = metric)
         "
       />
     </ScrollableComponent>
@@ -15,8 +17,13 @@
 </template>
 
 <script setup lang="ts">
-import type { MetricType } from '@/model/MetricType'
 import { store } from '@/stores/store'
 import MetricSelector from '@/components/optionsSelectors/MetricSelector.vue'
 import ScrollableComponent from '../ScrollableComponent.vue'
+import { MetricJsonIdentifier } from '@/model/MetricJsonIdentifier'
+
+const metricOptions = [
+  MetricJsonIdentifier.AVERAGE_SIMILARITY,
+  MetricJsonIdentifier.MAXIMUM_SIMILARITY
+]
 </script>

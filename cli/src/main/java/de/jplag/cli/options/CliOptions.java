@@ -109,11 +109,11 @@ public class CliOptions implements Runnable {
         @Option(names = "--log-level", description = "Set the log level for the cli.")
         public Level logLevel = Level.INFO;
 
-        @Option(names = "--encoding", description = "Specifies the charset of the submissions. This disables the automatic charset detection", completionCandidates = CharsetCandidates.class, converter = CharsetConverter.class)
-        public Charset submissionCharsetOverride;
-
         @Option(names = "--comments", description = "Analyze similarity of comments. Increases the similarity of submissions if similar comments are found, but never decreases it.", hidden = true)
         public boolean analyzeComments = false;
+
+        @Option(names = "--encoding", description = "Specifies the charset of the submissions. This disables the automatic charset detection", completionCandidates = CharsetCandidates.class, converter = CharsetConverter.class)
+        public Charset submissionCharsetOverride;
     }
 
     public static class Clustering {

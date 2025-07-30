@@ -46,6 +46,8 @@ import io.soabase.recordbuilder.core.RecordBuilder;
  * set to {@link #SHOW_ALL_COMPARISONS} all comparisons will be shown.
  * @param clusteringOptions Clustering options
  * @param debugParser If true, submissions that cannot be parsed will be stored in a separate directory.
+ * @param mergingOptions are the options related to the subsequence match merging mechanism that opposed obfuscation.
+ * @param normalize enables additional normalization mechanisms. Only supported by some language modules.
  * @param analyzeComments If true, comments will be extracted from the submissions.
  */
 @RecordBuilder()

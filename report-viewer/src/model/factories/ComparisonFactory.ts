@@ -4,7 +4,7 @@ import { store } from '@/stores/store'
 import { getMatchColorCount } from '@/utils/ColorUtils'
 import slash from 'slash'
 import { BaseFactory } from './BaseFactory'
-import { MetricType } from '../MetricType'
+import { MetricJsonIdentifier } from '../MetricJsonIdentifier'
 import type { SubmissionFile } from '../File'
 
 /**
@@ -64,10 +64,12 @@ export class ComparisonFactory extends BaseFactory {
     )
   }
 
-  private static extractSimilarities(json: Record<string, number>): Record<MetricType, number> {
-    const similarities = {} as Record<MetricType, number>
+  private static extractSimilarities(
+    json: Record<string, number>
+  ): Record<MetricJsonIdentifier, number> {
+    const similarities = {} as Record<MetricJsonIdentifier, number>
     for (const [key, value] of Object.entries(json)) {
-      similarities[key as MetricType] = value
+      similarities[key as MetricJsonIdentifier] = value
     }
     return similarities
   }

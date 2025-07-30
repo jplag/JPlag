@@ -97,6 +97,7 @@ public class CommentExtractor {
             } catch (UnexpectedStringException e) {
                 logger.warn("Comment extraction failed, due to unexpected string: {}", e.getMessage());
                 this.comments.clear();
+                break;
             }
         }
         return comments;

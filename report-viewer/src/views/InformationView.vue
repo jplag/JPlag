@@ -27,11 +27,8 @@
           <TextInformation label="Exclusion File Name">{{
             options.exclusionFileName
           }}</TextInformation>
-          <TextInformation label="Analyze comments">{{
-            options.analyzeComments ? 'yes' : 'no'
-          }}</TextInformation>
           <TextInformation label="Similarity Metric">{{
-            metricToolTips[options.similarityMetric].longName
+            options.similarityMetric.longName
           }}</TextInformation>
           <TextInformation label="Similarity Threshold">{{
             options.similarityThreshold
@@ -46,7 +43,7 @@
           <div v-if="options.clusteringOptions.enabled" class="mt-5! space-y-2">
             <h3 class="font-bold">Clustering:</h3>
             <TextInformation label="Similarity Metric">{{
-              metricToolTips[options.clusteringOptions.similarityMetric].longName
+              options.clusteringOptions.similarityMetric.longName
             }}</TextInformation>
             <TextInformation label="Algorithm">{{
               options.clusteringOptions.algorithm
@@ -149,7 +146,6 @@ import { store } from '@/stores/store'
 import { computed, onErrorCaptured, type PropType } from 'vue'
 import { redirectOnError } from '@/router'
 import type { CliOptions } from '@/model/CliOptions'
-import { metricToolTips } from '@/model/MetricType'
 import type { RunInformation, SubmissionState } from '@/model/RunInformation'
 
 const props = defineProps({
