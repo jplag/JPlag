@@ -80,7 +80,7 @@ public class CommentComparer {
         List<JPlagComparison> fixedComparisons = new ArrayList<>();
 
         // Comparing comments from pairwise submissions
-        ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.COMPARING, result.getAllComparisons().size());
+        ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.COMPARING_COMMENTS, result.getAllComparisons().size());
         try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
             List<Future<JPlagComparison>> futures = result.getAllComparisons().stream().map(oldComparison -> executor.submit(() -> {
                 JPlagComparison commentComparison = algorithm.compare(oldComparison.firstSubmission(), oldComparison.secondSubmission());
