@@ -7,7 +7,6 @@ import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import de.jplag.AbstractParser;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.TokenTrace;
@@ -23,7 +22,7 @@ import de.jplag.scxml.util.ScxmlView;
  * Parser adapter for SCXML statecharts that uses a Statechart object obtained from an instance of ScxmlParser to
  * extract tokens.
  */
-public class ScxmlParserAdapter extends AbstractParser {
+public class ScxmlParserAdapter {
 
     /**
      * The list of extracted tokens for the current file.

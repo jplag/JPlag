@@ -1,6 +1,6 @@
 import { beforeEach, describe, it, expect } from 'vitest'
 import { TopComparisonFactory } from '@/model/factories/TopComparisonFactory'
-import { MetricType } from '@/model/MetricType'
+import { MetricJsonIdentifier } from '@/model/MetricJsonIdentifier'
 import validTopComparisons from './assets/ValidTopComparisons.json'
 import { setActivePinia, createPinia } from 'pinia'
 import { store } from '@/stores/store'
@@ -20,7 +20,12 @@ describe('Test JSON to Distribution', async () => {
       id: 1,
       firstSubmissionId: 'Sub01',
       secondSubmissionId: 'Sub02',
-      similarities: { [MetricType.AVERAGE]: 0.41, [MetricType.MAXIMUM]: 0.81 },
+      similarities: {
+        [MetricJsonIdentifier.AVERAGE_SIMILARITY]: 0.41,
+        [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: 0.81,
+        [MetricJsonIdentifier.LONGEST_MATCH]: 29,
+        [MetricJsonIdentifier.MAXIMUM_LENGTH]: 35
+      },
       cluster: undefined
     })
     expect(result[1]).toEqual({
@@ -28,7 +33,12 @@ describe('Test JSON to Distribution', async () => {
       id: 2,
       firstSubmissionId: 'Sub02',
       secondSubmissionId: 'Sub03',
-      similarities: { [MetricType.AVERAGE]: 0.22, [MetricType.MAXIMUM]: 0.34 },
+      similarities: {
+        [MetricJsonIdentifier.AVERAGE_SIMILARITY]: 0.22,
+        [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: 0.34,
+        [MetricJsonIdentifier.LONGEST_MATCH]: 15,
+        [MetricJsonIdentifier.MAXIMUM_LENGTH]: 40
+      },
       cluster: undefined
     })
     expect(result[4]).toEqual({
@@ -36,7 +46,12 @@ describe('Test JSON to Distribution', async () => {
       id: 5,
       firstSubmissionId: 'Sub04',
       secondSubmissionId: 'Sub03',
-      similarities: { [MetricType.AVERAGE]: 0.01, [MetricType.MAXIMUM]: 0.46 },
+      similarities: {
+        [MetricJsonIdentifier.AVERAGE_SIMILARITY]: 0.01,
+        [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: 0.46,
+        [MetricJsonIdentifier.LONGEST_MATCH]: 3,
+        [MetricJsonIdentifier.MAXIMUM_LENGTH]: 47
+      },
       cluster: undefined
     })
   })

@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import de.jplag.AbstractParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.util.FileUtils;
@@ -16,7 +18,8 @@ import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.CoreDocument;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 
-public class ParserAdapter extends AbstractParser {
+public class ParserAdapter {
+    private static final Logger logger = LoggerFactory.getLogger(ParserAdapter.class);
 
     private static final char LF = '\n';
     private static final char CR = '\r';
@@ -102,7 +105,7 @@ public class ParserAdapter extends AbstractParser {
 
     private String readFile(File file) throws ParsingException {
         try {
-            return FileUtils.readFileContent(file);
+            return FileUtils.readFileContent(file, true);
         } catch (IOException e) {
             throw new ParsingException(file, e.getMessage(), e);
         }

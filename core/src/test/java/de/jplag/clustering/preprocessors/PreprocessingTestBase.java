@@ -42,7 +42,7 @@ class PreprocessingTestBase {
         return similarity.getData();
     }
 
-    void validPreprocessing(double[][] originalArray, double[][] resultArray, IntUnaryOperator originalIndex) {
+    void isValidPreprocessing(double[][] originalArray, double[][] resultArray, IntUnaryOperator originalIndex) {
         RealMatrix result = new Array2DRowRealMatrix(resultArray, false);
         RealMatrix original = new Array2DRowRealMatrix(originalArray, false);
         assertEquals(result.getColumnDimension(), result.getRowDimension(), "not a square matrix");

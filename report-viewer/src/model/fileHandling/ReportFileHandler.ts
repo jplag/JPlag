@@ -4,11 +4,11 @@ import slash from 'slash'
 import { FileHandler } from './FileHandler'
 
 /**
- * Class for handling zip files.
+ * Class for handling report files.
  */
-export class ZipFileHandler extends FileHandler {
+export class ReportFileHandler extends FileHandler {
   protected async extractContent(file: Blob) {
-    console.info('Start handling zip file and storing necessary data...')
+    console.info('Start handling report file and storing necessary data...')
     return jszip.loadAsync(file).then(async (zip) => {
       for (const originalFileName of Object.keys(zip.files)) {
         const unixFileName = slash(originalFileName)

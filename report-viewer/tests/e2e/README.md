@@ -22,7 +22,7 @@ The other tests are testing the functionality of the report viewer. Each of them
 
 ## Running the tests locally
 
-1) To run the tests locally get the zips of the datasets from the [GitHub](../../../.github/workflows/files/) and execute JPlag on its contents.
+1) To run the tests locally get the report files of the datasets from the [GitHub](../../../.github/workflows/files/) and execute JPlag on its contents.
 2) Build the report viewer using `npm run build`
 3) Run the e2e tests using `npm run test:e2e`
 
@@ -44,7 +44,7 @@ If you want to add new tests we suggest doing the following tests:
 3) Add the test to the playwright e2e tests.
    - Adding a test to `OpenComparisonTest`:
      - Add the dataset name to the `datasets` array
-     - Specify the name of the zip that should be opened. They follow the pattern `DATASET_NAME-report.jplag`
+     - Specify the name of the report that should be opened. They follow the pattern `DATASET_NAME-report.jplag`
      - Specify the names of the submissions of the top comparisons. These are given as regexes
    - Adding a completely new Test:
      - Create a new file in this folder with the file ending `.spec.ts`

@@ -4,7 +4,7 @@
     :class="{ 'border-accent-dark! bg-accent/40!': selected }"
     @click="$emit('click')"
   >
-    {{ label }}
+    <slot />
     <InfoIcon v-if="hasToolTip" class="text-[0.5rem]" />
   </Interactable>
 </template>
@@ -14,10 +14,6 @@ import InfoIcon from '../InfoIcon.vue'
 import Interactable from '../InteractableComponent.vue'
 
 defineProps({
-  label: {
-    type: String,
-    required: true
-  },
   selected: {
     type: Boolean,
     required: false,

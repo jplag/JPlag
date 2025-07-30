@@ -9,7 +9,7 @@ interface AbstractOptions<L> {
   minimumTokenMatch: number
   submissionDirectories: string[]
   oldSubmissionDirectories: string[]
-  baseCodeSubmissionDirectory: File
+  baseCodeSubmissionDirectory: string
   subdirectoryName: string
   fileSuffixes: string[]
   exclusionFileName: string
@@ -20,6 +20,7 @@ interface AbstractOptions<L> {
   debugParser: boolean
   mergingOptions: CliMergingOptions
   normalize: boolean
+  analyzeComments: boolean
 }
 
 export interface CliClusterOptions {
