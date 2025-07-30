@@ -82,8 +82,10 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         this.variableRegistry = new VariableRegistry();
     }
 
-    public void addToken(TokenType type, File file, long line, long column, long length, CodeSemantics semantics) {
-        parser.add(new Token(type, file, (int) line, (int) column, (int) length, semantics));
+    public void addToken(TokenType type, File file, long startLine, long startColumn, long endLine, long endColumn, long length,
+            CodeSemantics semantics) {
+        parser.add(new Token(type, file, Math.toIntExact(startLine), Math.toIntExact(startColumn), Math.toIntExact(endLine),
+                Math.toIntExact(endColumn), Math.toIntExact(length), semantics));
         variableRegistry.updateSemantics(semantics);
     }
 
@@ -94,7 +96,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
      * @param length is the length of the token.
      */
     private void addToken(JavaTokenType tokenType, long position, int length, CodeSemantics semantics) {
-        addToken(tokenType, file, map.getLineNumber(position), map.getColumnNumber(position), length, semantics);
+        addToken(tokenType, position, position + length, semantics);
     }
 
     /**
@@ -104,7 +106,8 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
      * @param end is the end position of the token for the calculation of the length.
      */
     private void addToken(JavaTokenType tokenType, long start, long end, CodeSemantics semantics) {
-        addToken(tokenType, file, map.getLineNumber(start), map.getColumnNumber(start), end - start, semantics);
+        addToken(tokenType, file, map.getLineNumber(start), map.getColumnNumber(start), map.getLineNumber(end), map.getColumnNumber(end), end - start,
+                semantics);
     }
 
     private boolean isMutable(Tree classTree) {

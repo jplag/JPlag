@@ -110,9 +110,8 @@ public class ComparisonReportWriter {
         List<Token> tokensFirst = comparison.firstSubmission().getTokenList().subList(match.startOfFirst(), match.endOfFirst() + 1);
         List<Token> tokensSecond = comparison.secondSubmission().getTokenList().subList(match.startOfSecond(), match.endOfSecond() + 1);
 
-        Comparator<? super Token> lineStartComparator = Comparator.comparingInt(Token::getLine).thenComparingInt(Token::getColumn);
-        Comparator<? super Token> lineEndComparator = Comparator.comparingInt(Token::getLine)
-                .thenComparingInt((Token t) -> t.getColumn() + t.getLength());
+        Comparator<? super Token> lineStartComparator = Comparator.comparingInt(Token::getStartLine).thenComparingInt(Token::getStartColumn);
+        Comparator<? super Token> lineEndComparator = Comparator.comparingInt(Token::getEndLine).thenComparingInt(Token::getEndColumn);
 
         Token startOfFirst = tokensFirst.stream().min(lineStartComparator).orElseThrow();
         Token endOfFirst = tokensFirst.stream().max(lineEndComparator).orElseThrow();
@@ -124,12 +123,11 @@ public class ComparisonReportWriter {
         String secondFileName = FilePathUtil.getRelativeSubmissionPath(startOfSecond.getFile(), comparison.secondSubmission(), submissionToIdFunction)
                 .toString();
 
-        CodePosition startInFirst = new CodePosition(startOfFirst.getLine(), startOfFirst.getColumn() - 1, match.startOfFirst());
-        CodePosition endInFirst = new CodePosition(endOfFirst.getLine(), endOfFirst.getColumn() + endOfFirst.getLength() - 1, match.endOfFirst());
+        CodePosition startInFirst = new CodePosition(startOfFirst.getStartLine(), startOfFirst.getStartColumn() - 1, match.startOfFirst());
+        CodePosition endInFirst = new CodePosition(endOfFirst.getEndLine(), endOfFirst.getEndColumn() - 1, match.endOfFirst());
 
-        CodePosition startInSecond = new CodePosition(startOfSecond.getLine(), startOfSecond.getColumn() - 1, match.startOfSecond());
-        CodePosition endInSecond = new CodePosition(endOfSecond.getLine(), endOfSecond.getColumn() + endOfSecond.getLength() - 1,
-                match.endOfSecond());
+        CodePosition startInSecond = new CodePosition(startOfSecond.getStartLine(), startOfSecond.getStartColumn() - 1, match.startOfSecond());
+        CodePosition endInSecond = new CodePosition(endOfSecond.getEndLine(), endOfSecond.getEndColumn() - 1, match.endOfSecond());
 
         return new Match(firstFileName, secondFileName, startInFirst, endInFirst, startInSecond, endInSecond, match.lengthOfFirst(),
                 match.lengthOfSecond());

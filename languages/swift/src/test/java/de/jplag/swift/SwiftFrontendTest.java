@@ -91,7 +91,7 @@ class SwiftFrontendTest {
             // All lines that contain code
             var codeLines = getCodeLines(lines);
             // All lines that contain token
-            var tokenLines = tokens.stream().mapToInt(Token::getLine).filter(line -> line != Token.NO_VALUE).distinct().toArray();
+            var tokenLines = tokens.stream().mapToInt(Token::getStartLine).filter(line -> line != Token.NO_VALUE).distinct().toArray();
 
             if (codeLines.length > tokenLines.length) {
                 var diffLine = IntStream.range(0, codeLines.length)

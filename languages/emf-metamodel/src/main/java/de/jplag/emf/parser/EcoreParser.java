@@ -10,6 +10,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 
 import de.jplag.ParsingException;
 import de.jplag.Token;
+import de.jplag.TokenTrace;
 import de.jplag.TokenType;
 import de.jplag.emf.EmfLanguage;
 import de.jplag.emf.MetamodelToken;
@@ -102,7 +103,7 @@ public class EcoreParser {
      * @param source is the corresponding {@link EObject} for which the token is added.
      */
     protected void addToken(TokenType type, EObject source) {
-        MetamodelToken token = new MetamodelToken(type, currentFile, source);
-        tokens.add(treeView.convertToMetadataEnrichedToken(token));
+        TokenTrace trace = treeView.getTokenTrace(source, type);
+        tokens.add(new MetamodelToken(type, currentFile, trace, source));
     }
 }

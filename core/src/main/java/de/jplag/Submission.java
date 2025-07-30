@@ -308,11 +308,11 @@ public class Submission implements Comparable<Submission> {
 
     private List<Integer> getOrder(List<Token> tokenList) {
         List<Integer> order = new ArrayList<>(tokenList.size());  // a little too big
-        int currentLineNumber = tokenList.get(0).getLine();
+        int currentLineNumber = tokenList.get(0).getStartLine();
         order.add(currentLineNumber);
         for (Token token : tokenList) {
-            if (token.getLine() != currentLineNumber) {
-                currentLineNumber = token.getLine();
+            if (token.getStartLine() != currentLineNumber) {
+                currentLineNumber = token.getStartLine();
                 order.add(currentLineNumber);
             }
         }
