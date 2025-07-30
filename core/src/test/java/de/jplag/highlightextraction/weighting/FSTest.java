@@ -1,9 +1,9 @@
-package de.jplag.highlight_extraction.frequencyDetermination;
+package de.jplag.highlightextraction.weighting;
 
 import de.jplag.JPlagComparison;
 import de.jplag.Match;
 import de.jplag.Submission;
-import de.jplag.highlight_extraction.FrequencySimilarity;
+import de.jplag.highlightextraction.FrequencySimilarity;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

@@ -1,14 +1,13 @@
-package de.jplag.highlight_extraction.frequencyDetermination;
+package de.jplag.highlightextraction.weighting;
 
-import static de.jplag.highlight_extraction.StrategyMethods.createKey;
+import static de.jplag.highlightextraction.StrategyMethods.createKey;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.*;
 
 import de.jplag.Match;
 import de.jplag.TestBase;
-import de.jplag.highlight_extraction.MatchWeighting;
-import de.jplag.highlight_extraction.FrequencyStrategy;
+import de.jplag.highlightextraction.MatchWeighting;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
