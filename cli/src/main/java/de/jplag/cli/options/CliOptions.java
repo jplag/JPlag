@@ -103,7 +103,7 @@ public class CliOptions implements Runnable {
         @Option(names = {"-d", "--debug"}, description = "Store on-parsable files in error folder.")
         public boolean debug;
 
-        /** Look in <root-dir>/<subdirectory> for programs. */
+        /** Look in root-dir/subdirectory for programs. */
         @Option(names = {"-s", "--subdirectory"}, description = "Look in directories <root-dir>/*/<dir> for programs.")
         public String subdirectory;
 
