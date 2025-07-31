@@ -22,7 +22,7 @@
       <property name="tokens" value="INTERFACE_DEF, CLASS_DEF, ENUM_DEF, ANNOTATION_DEF, RECORD_DEF"/>
     </module>
     <module name="JavadocVariable">
-      <property name="accessModifiers" value="public, protected, package"/>
+      <property name="accessModifiers" value="public, package"/>
       <property name="tokens" value="VARIABLE_DEF"/>
     </module>
     <module name="MissingJavadocMethod">
@@ -39,6 +39,6 @@
     <module name="AvoidStarImport"/>
   </module>
   <module name="SuppressionFilter">
- 	<property name="file" value="config/checkstyle/suppressions.xml"/>
+    <property name="file" value="config/checkstyle/suppressions.xml"/>
   </module>
 </module>
