@@ -100,7 +100,7 @@ class TokenPrinterTest {
 
     private enum TestTokenType implements TokenType {
         /**
-         * 
+         * Represents a token of type STRING, used for testing purposes.
          */
         STRING("STRING");
 

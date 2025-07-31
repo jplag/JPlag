@@ -243,7 +243,7 @@ public final class FileUtils {
     }
 
     /**
-     * Overrides the charset detection with a specifies charset.
+     * Overrides the charset detection with a specified charset.
      * @param userSpecifiedCharset is the overriding charset.
      */
     public static void setOverrideSubmissionCharset(Charset userSpecifiedCharset) {

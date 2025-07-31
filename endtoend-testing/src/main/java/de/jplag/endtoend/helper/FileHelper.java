@@ -34,7 +34,7 @@ public final class FileHelper {
     }
 
     /**
-     * Creates directory if it dose not exist.
+     * Creates directory if it does not exist.
      * @param directory to be created
      * @throws IOException if the directory could not be created
      */
@@ -45,7 +45,7 @@ public final class FileHelper {
     }
 
     /**
-     * Creates file if it dose not exist.
+     * Creates file if it does not exist.
      * @param file to be created
      * @throws IOException if the file could not be created
      */

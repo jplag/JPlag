@@ -12,7 +12,7 @@ public class NameMapperIncrementalIds implements NameMapper {
     private int nextId;
 
     /**
-     * Created a new instance.
+     * Creates a new instance.
      */
     public NameMapperIncrementalIds() {
         this.map = new HashMap<>();
