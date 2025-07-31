@@ -8,7 +8,7 @@
         <version>${revision}</version>
     </parent>
     <artifactId>language-api</artifactId>
-    <name>JPlag Language API</name>
+    <name>JPlag: API for Language Modules</name>
     <description>Language API for JPlag language modules</description>
     <dependencies>
         <dependency>
