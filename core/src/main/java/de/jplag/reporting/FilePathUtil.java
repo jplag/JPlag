@@ -6,6 +6,10 @@ import java.util.function.Function;
 
 import de.jplag.Submission;
 
+/**
+ * Utility class for handling file paths related to submissions, including generating relative paths, enforcing relative
+ * paths, and formatting paths for ZIP archives.
+ */
 public final class FilePathUtil {
     private static final String ZIP_PATH_SEPARATOR = "/"; // Paths in zip files are always separated by a slash
 

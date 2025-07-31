@@ -35,8 +35,16 @@ public enum ClusteringAlgorithm {
         return this.constructor.create(options);
     }
 
+    /**
+     * Functional interface for supplying clustering algorithm instances.
+     */
     @FunctionalInterface
     public interface ClusteringAlgorithmSupplier {
+        /**
+         * Creates a new clustering algorithm instance with the given options.
+         * @param options clustering options to configure the algorithm
+         * @return a configured GenericClusteringAlgorithm instance
+         */
         GenericClusteringAlgorithm create(ClusteringOptions options);
     }
 

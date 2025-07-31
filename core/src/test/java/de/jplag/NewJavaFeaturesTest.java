@@ -8,6 +8,11 @@ import org.junit.jupiter.api.Test;
 
 import de.jplag.exceptions.ExitException;
 
+/**
+ * Unit test for verifying plagiarism detection on Java files that use modern language features. This test ensures that
+ * the plagiarism detection works correctly for Java version 21 features, checking the number of matches, files, and
+ * similarity scores. It also allows running in CI environments even if the Java version differs.
+ */
 public class NewJavaFeaturesTest extends TestBase {
 
     private static final int EXPECTED_MATCHES = 8; // might change if you add files to the submissions
@@ -21,7 +26,7 @@ public class NewJavaFeaturesTest extends TestBase {
     private static final String VERSION_MATCH_MESSAGE = "Java version matches, but results deviate from expected values";
     private static final String CI_VARIABLE = "CI";
 
-    public static final int EXPECTED_JAVA_VERSION = 21;
+    private static final int EXPECTED_JAVA_VERSION = 21;
 
     @Test
     @DisplayName("test comparison of Java files with modern language features")

@@ -25,6 +25,11 @@ public enum Preprocessing {
         this.constructor = constructor;
     }
 
+    /**
+     * Constructs an optional {@link ClusteringPreprocessor} instance using the provided {@link ClusteringOptions}.
+     * @param options Clustering options to configure the preprocessor
+     * @return An {@link Optional} containing the constructed preprocessor, or empty if none was constructed
+     */
     public Optional<ClusteringPreprocessor> constructPreprocessor(ClusteringOptions options) {
         return Optional.ofNullable(constructor.apply(options));
     }

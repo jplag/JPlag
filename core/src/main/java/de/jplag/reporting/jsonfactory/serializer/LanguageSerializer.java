@@ -9,6 +9,11 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
+/**
+ * Custom Jackson serializer for the {@link Language} class. Serializes a Language object by writing its identifier as a
+ * JSON string.
+ */
+
 public class LanguageSerializer extends StdSerializer<Language> {
 
     @Serial
@@ -21,6 +26,10 @@ public class LanguageSerializer extends StdSerializer<Language> {
         this(null);
     }
 
+    /**
+     * Constructor that passes the class type to the superclass.
+     * @param languageClass The Language class type (can be null)
+     */
     public LanguageSerializer(Class<Language> languageClass) {
         super(languageClass);
     }
