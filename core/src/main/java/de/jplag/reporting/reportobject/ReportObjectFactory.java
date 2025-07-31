@@ -58,8 +58,8 @@ public class ReportObjectFactory {
             "Start the jar using 'java -jar jarname'. This opens a locally hosted website where you can drag this report onto the page."};
 
     private static final Path SUBMISSION_FILE_INDEX_FILE_NAME = Path.of("submissionFileIndex.json");
-    private static final Version REPORT_VIEWER_VERSION = JPlag.JPLAG_VERSION;
-
+    /** Version of the report viewer. **/
+    public static final Version REPORT_VIEWER_VERSION = JPlag.JPLAG_VERSION;
     private static final Path SUBMISSIONS_ROOT_PATH = Path.of("files");
 
     private Map<String, String> submissionNameToIdMap;
