@@ -90,7 +90,7 @@
         <argLine/>
 
         <!-- The Revision of JPlag -->
-        <revision>6.2.0</revision>
+        <revision>6.3.0-SNAPSHOT</revision>
     </properties>
 
     <dependencyManagement>
