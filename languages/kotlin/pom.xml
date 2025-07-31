@@ -8,6 +8,7 @@
         <version>${revision}</version>
     </parent>
     <artifactId>kotlin</artifactId>
+    <name>JPlag: Kotlin Language Module</name>
 
     <dependencies>
         <dependency>
