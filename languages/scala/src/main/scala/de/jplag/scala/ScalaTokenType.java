@@ -2,6 +2,9 @@ package de.jplag.scala;
 
 import de.jplag.TokenType;
 
+/**
+ * Token types for Scala.
+ */
 public enum ScalaTokenType implements TokenType {
     PACKAGE("PACKAGE"),
     IMPORT("IMPORT"),

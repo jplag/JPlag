@@ -143,6 +143,9 @@ import de.jplag.csharp.grammar.CSharpParser.WhileStatementContext;
  * Extracts tokens for the {@link CSharpLanguage}.
  */
 public class CSharpListener extends AbstractAntlrListener {
+    /**
+     * Creates the listener.
+     */
     public CSharpListener() {
         visit(UsingNamespaceDirectiveContext.class).map(USING_DIRECTIVE);
         visit(UsingAliasDirectiveContext.class, this::isAliasUsageAlsoImport).map(USING_DIRECTIVE);

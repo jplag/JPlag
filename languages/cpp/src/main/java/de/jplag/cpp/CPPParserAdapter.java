@@ -16,6 +16,9 @@ import de.jplag.cpp.grammar.CPP14Parser;
 public class CPPParserAdapter extends AbstractAntlrParserAdapter<CPP14Parser> {
     private static final CPPListener listener = new CPPListener();
 
+    /**
+     * Creates the parser adapter.
+     */
     public CPPParserAdapter() {
         super(true);
     }

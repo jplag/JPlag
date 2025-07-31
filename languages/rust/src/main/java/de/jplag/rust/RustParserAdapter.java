@@ -19,6 +19,9 @@ import de.jplag.rust.grammar.RustLexer;
 import de.jplag.rust.grammar.RustParser;
 import de.jplag.util.FileUtils;
 
+/**
+ * ANTLR-based parser adapter for rust.
+ */
 public class RustParserAdapter {
 
     private File currentFile;
@@ -28,6 +31,7 @@ public class RustParserAdapter {
      * Parsers a set of files into a single list of {@link Token}s.
      * @param files the set of files.
      * @return a list containing all tokens of all files.
+     * @throws ParsingException if parsing fails.
      */
     public List<Token> parse(Set<File> files) throws ParsingException {
         tokens = new ArrayList<>();

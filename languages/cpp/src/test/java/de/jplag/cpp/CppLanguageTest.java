@@ -32,6 +32,9 @@ public class CppLanguageTest extends LanguageModuleTest {
             }
             """;
 
+    /**
+     * Creates the test suite.
+     */
     public CppLanguageTest() {
         super(new CPPLanguage(), CPPTokenType.class);
     }

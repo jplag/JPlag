@@ -10,6 +10,9 @@ import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
+/**
+ * Facade for the ANTLR-based Go language module.
+ */
 @MetaInfServices(Language.class)
 public class GoLanguage implements Language {
 

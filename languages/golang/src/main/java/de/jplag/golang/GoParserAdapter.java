@@ -10,6 +10,9 @@ import de.jplag.antlr.AbstractAntlrParserAdapter;
 import de.jplag.golang.grammar.GoLexer;
 import de.jplag.golang.grammar.GoParser;
 
+/**
+ * ANTLR-based parser adapter for the Go language.
+ */
 public class GoParserAdapter extends AbstractAntlrParserAdapter<GoParser> {
     @Override
     protected Lexer createLexer(CharStream input) {

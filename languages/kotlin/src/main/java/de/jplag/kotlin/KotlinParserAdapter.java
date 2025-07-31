@@ -10,6 +10,9 @@ import de.jplag.antlr.AbstractAntlrParserAdapter;
 import de.jplag.kotlin.grammar.KotlinLexer;
 import de.jplag.kotlin.grammar.KotlinParser;
 
+/**
+ * ANTLR-based parser adapter for Kotlin.
+ */
 public class KotlinParserAdapter extends AbstractAntlrParserAdapter<KotlinParser> {
     private static final KotlinListener listener = new KotlinListener();
 

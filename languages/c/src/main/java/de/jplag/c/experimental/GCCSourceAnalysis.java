@@ -19,11 +19,14 @@ import org.slf4j.LoggerFactory;
  */
 public class GCCSourceAnalysis implements SourceAnalysis {
 
-    public static final String COMPILE_COMMAND = "gcc -Wall -fsyntax-only %s";
+    private static final String COMPILE_COMMAND = "gcc -Wall -fsyntax-only %s";
     private Map<String, List<Integer>> linesToDelete = new HashMap<>();
 
     private final Logger logger;
 
+    /**
+     * Creates an instance of the analysis.
+     */
     public GCCSourceAnalysis() {
         this.logger = LoggerFactory.getLogger(this.getClass());
     }
