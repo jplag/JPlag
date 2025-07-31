@@ -13,7 +13,6 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
  * Custom Jackson serializer for the {@link Language} class. Serializes a Language object by writing its identifier as a
  * JSON string.
  */
-
 public class LanguageSerializer extends StdSerializer<Language> {
 
     @Serial

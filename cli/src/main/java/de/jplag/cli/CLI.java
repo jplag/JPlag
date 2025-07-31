@@ -214,7 +214,6 @@ public final class CLI {
      * Entry point for the JPlag CLI application. Initializes the CLI and handles execution and errors.
      * @param args command-line arguments passed to the application
      */
-
     public static void main(String[] args) {
         // This needs to be executed before any other code, as it changes the default behavior of the JVM for network
         // connections.

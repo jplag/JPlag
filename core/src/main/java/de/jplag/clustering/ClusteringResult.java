@@ -27,7 +27,6 @@ public class ClusteringResult<T> {
      * @param clusters the collection of clusters in this result
      * @param communityStrength the overall strength of the community
      */
-
     public ClusteringResult(Collection<Cluster<T>> clusters, double communityStrength) {
         this.clusters = List.copyOf(clusters);
         this.communityStrength = communityStrength;

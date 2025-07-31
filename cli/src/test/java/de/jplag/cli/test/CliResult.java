@@ -12,6 +12,5 @@ import de.jplag.options.JPlagOptions;
  * @param logLevel selected logging level
  * @param inputHandler handler for user input during execution
  */
-
 public record CliResult(JPlagOptions jPlagOptions, String targetPath, Level logLevel, CliInputHandler inputHandler) {
 }

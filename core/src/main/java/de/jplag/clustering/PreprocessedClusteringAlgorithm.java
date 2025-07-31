@@ -23,7 +23,6 @@ public class PreprocessedClusteringAlgorithm implements GenericClusteringAlgorit
      * @param base The base clustering algorithm to delegate to
      * @param preprocessor The preprocessor to apply to the similarity matrix before clustering
      */
-
     public PreprocessedClusteringAlgorithm(GenericClusteringAlgorithm base, ClusteringPreprocessor preprocessor) {
         this.base = base;
         this.preprocessor = preprocessor;

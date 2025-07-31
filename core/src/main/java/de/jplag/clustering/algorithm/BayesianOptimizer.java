@@ -49,7 +49,6 @@ public class BayesianOptimizer {
      * @throws DimensionMismatchException if minima and maxima dimensions differ
      * @throws OutOfRangeException if initPoints is less than 1 or greater than maxEvaluations
      */
-
     public BayesianOptimizer(RealVector minima, RealVector maxima, int initPoints, int maxEvaluations, double noise, RealVector lengthScale) {
         if (minima.getDimension() == 0) {
             throw new IllegalArgumentException("explored parameters must at least have one dimension");

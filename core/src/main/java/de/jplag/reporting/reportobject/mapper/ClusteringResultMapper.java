@@ -28,7 +28,6 @@ public class ClusteringResultMapper {
      * @param result the JPlagResult containing clustering data
      * @return a list of mapped Cluster objects
      */
-
     public List<Cluster> map(JPlagResult result) {
         var clusteringResult = result.getClusteringResult();
         return clusteringResult.stream().map(ClusteringResult::getClusters).flatMap(Collection::stream).map(this::convertCluster).toList();

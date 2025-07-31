@@ -34,7 +34,6 @@ public class RoutingPath {
      * @return the tail RoutingPath
      * @throws IllegalStateException if there is no tail (path is complete)
      */
-
     public RoutingPath tail() {
         if (!hasTail()) {
             throw new IllegalStateException("Routing path is done.");

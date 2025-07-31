@@ -55,7 +55,6 @@ public record ClusteringOptions(SimilarityMetric similarityMetric, double spectr
      * @param preprocessorThreshold threshold used by the preprocessor
      * @param preprocessorPercentile percentile used by the preprocessor
      */
-
     public ClusteringOptions(SimilarityMetric similarityMetric, double spectralKernelBandwidth, double spectralGaussianProcessVariance,
             int spectralMinRuns, int spectralMaxRuns, int spectralMaxKMeansIterationPerRun, double agglomerativeThreshold, Preprocessing preprocessor,
             boolean enabled, ClusteringAlgorithm algorithm, InterClusterSimilarity agglomerativeInterClusterSimilarity, double preprocessorThreshold,
@@ -88,7 +87,6 @@ public record ClusteringOptions(SimilarityMetric similarityMetric, double spectr
      * @param similarityMetric the new similarity metric
      * @return a new ClusteringOptions instance with the updated metric
      */
-
     public ClusteringOptions withSimilarityMetric(SimilarityMetric similarityMetric) {
         return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
                 spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
@@ -100,7 +98,6 @@ public record ClusteringOptions(SimilarityMetric similarityMetric, double spectr
      * @param spectralKernelBandwidth the new kernel bandwidth value
      * @return a new ClusteringOptions instance with the updated bandwidth
      */
-
     public ClusteringOptions withSpectralKernelBandwidth(double spectralKernelBandwidth) {
         return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
                 spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
@@ -222,7 +219,6 @@ public record ClusteringOptions(SimilarityMetric similarityMetric, double spectr
      * @param preprocessorPercentile new percentile value
      * @return new ClusteringOptions with the updated percentile
      */
-
     public ClusteringOptions withPreprocessorPercentile(double preprocessorPercentile) {
         return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
                 spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,

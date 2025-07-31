@@ -5,6 +5,5 @@ package de.jplag.reporting.reportobject.model;
  * @param tokenCount The number of tokens contained in the file. This indicates the file's size or complexity in terms
  * of tokenized elements.
  */
-
 public record SubmissionFile(int tokenCount) {
 }

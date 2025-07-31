@@ -14,7 +14,6 @@ import de.jplag.options.SimilarityMetric;
  * Provides access to pairwise comparison results sorted by similarity, similarity distribution data, clustering results
  * over submissions, execution duration, and configuration options.
  */
-
 public class JPlagResult {
 
     private List<JPlagComparison> comparisons; // comparisons whose similarity was about the specified threshold

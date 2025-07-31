@@ -7,6 +7,5 @@ package de.jplag.reporting.reportobject.model;
  * @param end the end position of the match
  * @param tokens the number of matching tokens
  */
-
 public record BaseCodeMatch(String fileName, CodePosition start, CodePosition end, int tokens) {
 }

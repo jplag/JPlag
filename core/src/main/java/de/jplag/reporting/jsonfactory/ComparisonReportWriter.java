@@ -43,7 +43,6 @@ public class ComparisonReportWriter {
      * @param submissionToIdFunction function to convert Submission objects to their unique string IDs
      * @param resultWriter the writer responsible for producing the JPlag result output
      */
-
     public ComparisonReportWriter(Function<Submission, String> submissionToIdFunction, JPlagResultWriter resultWriter) {
         this.submissionToIdFunction = submissionToIdFunction;
         this.resultWriter = resultWriter;

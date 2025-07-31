@@ -142,7 +142,6 @@ public class ReportViewer implements HttpHandler {
      * Checks if the compiled report viewer resource is available.
      * @return true if the compiled viewer resource exists, false otherwise
      */
-
     public static boolean hasCompiledViewer() {
         return ResponseData.fromResourceUrl("/" + REPORT_VIEWER_RESOURCE_PREFIX + "/index.html") != null;
     }

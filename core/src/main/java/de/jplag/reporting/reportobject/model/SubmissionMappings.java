@@ -8,6 +8,5 @@ import java.util.Map;
  * @param submissionIdsToComparisonFileName A nested map where each key is a submission ID, and the value is another map
  * that associates comparison file names with their normalized or processed names.
  */
-
 public record SubmissionMappings(Map<String, String> submissionIds, Map<String, Map<String, String>> submissionIdsToComparisonFileName) {
 }

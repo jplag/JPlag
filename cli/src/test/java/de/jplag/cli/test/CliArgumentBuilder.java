@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Assumptions;
  * Utility for building CLI argument arrays for testing. Supports named and positional arguments, including invalid
  * input cases.
  */
-
 public class CliArgumentBuilder {
     private static final String LONG_OPTION_PREFIX = "--";
     private static final String SHORT_OPTION_PREFIX = "-";
@@ -69,7 +68,6 @@ public class CliArgumentBuilder {
      * @param argument the CLI argument
      * @return the updated builder
      */
-
     public CliArgumentBuilder with(CliArgument<Boolean> argument) {
         with(argument, true);
         return this;

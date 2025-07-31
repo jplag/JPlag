@@ -91,7 +91,6 @@ public class Cluster<T> {
      * @param similarity function to compute similarity between two members
      * @return the computed worth score
      */
-
     public double getWorth(BiFunction<T, T, Double> similarity) {
         double communityStrength = getCommunityStrength();
         if (members.size() > 1) {
