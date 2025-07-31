@@ -52,7 +52,7 @@ public class JPlagOptionsBuilder {
             return jPlagOptions.withBaseCodeSubmissionDirectory(baseCodeDirectory);
         }
         logger.error("Using legacy partial base code API. Please migrate to new full path base code API.");
-        return jPlagOptions.withBaseCodeSubmissionName(baseCodePath);
+        return jPlagOptions.withBaseCodeSubmissionDirectory(baseCodeDirectory);
     }
 
     private JPlagOptions initializeJPlagOptions(Set<File> submissionDirectories, Set<File> oldSubmissionDirectories, List<String> suffixes)
@@ -63,7 +63,8 @@ public class JPlagOptionsBuilder {
         return new JPlagOptions(this.cliInputHandler.getSelectedLanguage(), this.cliOptions.minTokenMatch, submissionDirectories,
                 oldSubmissionDirectories, null, this.cliOptions.advanced.subdirectory, suffixes, this.cliOptions.advanced.exclusionFileName,
                 JPlagOptions.DEFAULT_SIMILARITY_METRIC, this.cliOptions.advanced.similarityThreshold, this.cliOptions.shownComparisons,
-                clusteringOptions, this.cliOptions.advanced.debug, mergingOptions, this.cliOptions.normalize);
+                clusteringOptions, this.cliOptions.advanced.debug, mergingOptions, this.cliOptions.normalize,
+                this.cliOptions.advanced.analyzeComments);
     }
 
     private ClusteringOptions getClusteringOptions() {

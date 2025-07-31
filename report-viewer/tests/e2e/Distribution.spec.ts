@@ -1,21 +1,39 @@
 import { test, expect, Page } from '@playwright/test'
 import { uploadFile } from './TestUtils'
 
-test('Test distribution diagram', async ({ page }) => {
-  test.slow()
-  await uploadFile('progpedia-report.jplag', page)
-
-  const options = getTestCombinations()
-  await selectOptions(page, options[0])
-  const canvas = page.locator('canvas').first()
-  let lastImage = await canvas.screenshot()
-  for (const option of options.slice(1)) {
-    await selectOptions(page, option)
-    const newImage = await canvas.screenshot()
-    expect(newImage).not.toEqual(lastImage)
-    lastImage = newImage
+const testData: TestData[] = [
+  {
+    name: 'Distribution Diagram',
+    tabName: 'Distribution',
+    options: getDistributionDiagramTestCombinations()
+  },
+  {
+    name: 'Boxplot',
+    tabName: 'Boxplot',
+    options: [['Maximum Similarity'], ['Average Similarity']]
   }
-})
+]
+
+for (const data of testData) {
+  test(`Test ${data.name}`, async ({ page }) => {
+    test.slow()
+    await uploadFile('progpedia-report.jplag', page)
+
+    const tabBar = page.getByText('DistributionBoxplot')
+    await tabBar.getByText(data.tabName).click()
+
+    const options = data.options
+    await selectOptions(page, options[0])
+    const canvas = page.locator('canvas').first()
+    let lastImage = await canvas.screenshot()
+    for (const option of options.slice(1)) {
+      await selectOptions(page, option)
+      const newImage = await canvas.screenshot()
+      expect(newImage).not.toEqual(lastImage)
+      lastImage = newImage
+    }
+  })
+}
 
 /**
  * Checks if the distribution diagram is correct for the given options
@@ -23,7 +41,7 @@ test('Test distribution diagram', async ({ page }) => {
  * @param options Options to be selected
  */
 async function selectOptions(page: Page, options: string[]) {
-  const distributionDiagramContainer = page.getByText('Distribution of Comparisons:Options:')
+  const distributionDiagramContainer = page.getByText('DistributionBoxplotOptions:')
   for (const option of options) {
     await distributionDiagramContainer.getByText(option, { exact: true }).click()
   }
@@ -31,7 +49,7 @@ async function selectOptions(page: Page, options: string[]) {
   await page.waitForTimeout(100)
 }
 
-function getTestCombinations() {
+function getDistributionDiagramTestCombinations() {
   const options = [
     ['Average Similarity', 'Maximum Similarity'],
     ['Linear', 'Logarithmic'],
@@ -49,4 +67,10 @@ function getTestCombinations() {
     }
   }
   return combinations
+}
+
+interface TestData {
+  name: string
+  tabName: string
+  options: string[][]
 }

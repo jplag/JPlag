@@ -5,9 +5,12 @@
     <Container class="col-start-1 row-start-1 md:col-end-3 md:row-end-2">
       <h2>Cluster</h2>
       <div class="flex flex-row items-center space-x-5">
-        <TextInformation label="Average Similarity"
-          >{{ (cluster.averageSimilarity * 100).toFixed(2) }}%</TextInformation
-        >
+        <span class="flex items-center gap-x-1">
+          <MetricIcon class="h-3" :metric="MetricJsonIdentifier.AVERAGE_SIMILARITY" />
+          <TextInformation label="Average Similarity" class="font-bold">{{
+            MetricTypes.AVERAGE_SIMILARITY.format(cluster.averageSimilarity)
+          }}</TextInformation>
+        </span>
       </div>
     </Container>
 
@@ -45,6 +48,7 @@
           <ClusterGraph
             :cluster="clusterListElement"
             class="grow print:max-h-full print:max-w-full print:grow-0"
+            :highlighted-edge="hoveredEdge"
             @line-hovered="(value) => (highlightedElement = value)"
           />
         </template>
@@ -65,6 +69,7 @@
           class="max-h-0 min-h-full flex-1 overflow-hidden"
           header="Comparisons of Cluster Members:"
           :highlighted-row-ids="highlightedElement ?? undefined"
+          @line-hovered="(value) => (hoveredEdge = value)"
         >
           <template v-if="comparisons.length < maxAmountOfComparisonsInCluster" #footer>
             <p class="w-full pt-1 text-center font-bold">
@@ -93,19 +98,21 @@ import Container from '@/components/ContainerComponent.vue'
 import TextInformation from '@/components/TextInformation.vue'
 import type { Cluster } from '@/model/Cluster'
 import type { ClusterListElement, ClusterListElementMember } from '@/model/ClusterListElement'
-import { MetricType } from '@/model/MetricType'
-import type { Overview } from '@/model/Overview'
+import { MetricType, MetricTypes } from '@/model/MetricType'
 import { computed, ref, onErrorCaptured, type PropType, type Ref } from 'vue'
 import { redirectOnError } from '@/router'
 import TabbedContainer from '@/components/TabbedContainer.vue'
+import type { ComparisonListElement } from '@/model/ComparisonListElement'
+import MetricIcon from '@/components/MetricIcon.vue'
+import { MetricJsonIdentifier } from '@/model/MetricJsonIdentifier'
 
 const props = defineProps({
-  overview: {
-    type: Object as PropType<Overview>,
-    required: true
-  },
   cluster: {
     type: Object as PropType<Cluster>,
+    required: true
+  },
+  topComparisons: {
+    type: Array<ComparisonListElement>,
     required: true
   }
 })
@@ -133,10 +140,10 @@ const comparisonTableOptions = [
     tooltip: 'Comparisons between the cluster members\nand other submissions.'
   }
 ]
-const usedMetric = MetricType.AVERAGE
+const usedMetric: MetricType = MetricTypes.AVERAGE_SIMILARITY
 
 const comparisons = computed(() =>
-  props.overview.topComparisons.filter(
+  props.topComparisons.filter(
     (c) =>
       props.cluster.members.includes(c.firstSubmissionId) &&
       props.cluster.members.includes(c.secondSubmissionId)
@@ -145,14 +152,14 @@ const comparisons = computed(() =>
 
 let counter = 0
 comparisons.value
-  .sort((a, b) => b.similarities[usedMetric] - a.similarities[usedMetric])
+  .sort((a, b) => b.similarities[usedMetric.identifier] - a.similarities[usedMetric.identifier])
   .forEach((c) => {
     c.sortingPlace = counter++
     c.id = counter
   })
 
 const relatedComparisons = computed(() =>
-  props.overview.topComparisons.filter(
+  props.topComparisons.filter(
     (c) =>
       (props.cluster.members.includes(c.firstSubmissionId) &&
         !props.cluster.members.includes(c.secondSubmissionId)) ||
@@ -162,7 +169,7 @@ const relatedComparisons = computed(() =>
 )
 counter = 0
 relatedComparisons.value
-  .sort((a, b) => b.similarities[usedMetric] - a.similarities[usedMetric])
+  .sort((a, b) => b.similarities[usedMetric.identifier] - a.similarities[usedMetric.identifier])
   .forEach((c) => {
     c.sortingPlace = counter++
     c.id = counter
@@ -175,7 +182,7 @@ for (const member of props.cluster.members) {
     .forEach((c) => {
       membersComparisons.push({
         matchedWith: c.firstSubmissionId === member ? c.secondSubmissionId : c.firstSubmissionId,
-        similarity: c.similarities[usedMetric]
+        similarity: c.similarities[usedMetric.identifier]
       })
     })
   clusterMemberList.set(member, membersComparisons)
@@ -201,6 +208,7 @@ const maxAmountOfComparisonsInCluster = computed(() => {
 })
 
 const highlightedElement: Ref<{ firstId: string; secondId: string } | null> = ref(null)
+const hoveredEdge: Ref<{ firstId: string; secondId: string } | null> = ref(null)
 
 onErrorCaptured((error) => {
   redirectOnError(error, 'Error displaying cluster:\n', 'OverviewView', 'Back to overview')

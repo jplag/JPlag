@@ -11,8 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.clustering.ClusteringFactory;
-import de.jplag.comparison.LongestCommonSubsquenceSearch;
-import de.jplag.exceptions.BasecodeException;
+import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.RootDirectoryException;
 import de.jplag.exceptions.SubmissionException;
@@ -68,17 +67,11 @@ public class JPlag {
     public static JPlagResult run(JPlagOptions options) throws ExitException {
         checkForConfigurationConsistency(options);
 
-        // Hotfix for issue #2268, where the report creation throws an index out of bounds exception due to the incompatibility
-        // of SMM with basecode.
-        if (options.mergingOptions().enabled() && options.hasBaseCode()) {
-            throw new BasecodeException("Subsequence match merging does currently not work with basecode. We are working on it.");
-        }
-
         // Parse and validate submissions.
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
 
-        LongestCommonSubsquenceSearch comparisonStrategy = new LongestCommonSubsquenceSearch(options);
+        LongestCommonSubsequenceSearch comparisonStrategy = new LongestCommonSubsequenceSearch(options);
 
         if (options.normalize() && options.language().supportsNormalization() && options.language().requiresCoreNormalization()) {
             submissionSet.normalizeSubmissions();
@@ -118,7 +111,7 @@ public class JPlag {
 
     private static void checkForConfigurationConsistency(JPlagOptions options) throws RootDirectoryException {
         if (options.normalize() && !options.language().supportsNormalization()) {
-            logger.error(String.format("The language %s cannot be used with normalization.", options.language().getName()));
+            logger.error("The language {} cannot be used with normalization.", options.language().getName());
         }
 
         List<String> duplicateNames = getDuplicateSubmissionFolderNames(options);

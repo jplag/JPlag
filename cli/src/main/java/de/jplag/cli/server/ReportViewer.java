@@ -23,7 +23,7 @@ public class ReportViewer implements HttpHandler {
     private static final String REPORT_VIEWER_RESOURCE_PREFIX = "report-viewer";
     private static final String INDEX_PATH = "index.html";
     private static final String RESULT_PATH = "results.jplag";
-    private static final String[] OLD_VERSION_DIRECTORIES = new String[] {"v5"};
+    private static final String[] OLD_VERSION_DIRECTORIES = new String[] {"v5", "v6_1"};
 
     private static final Logger logger = LoggerFactory.getLogger(ReportViewer.class);
     private static final int SUCCESS_RESPONSE = 200;
@@ -37,15 +37,15 @@ public class ReportViewer implements HttpHandler {
 
     /**
      * Launches a locally hosted report viewer.
-     * @param zipFile The zip file to use for the report viewer
+     * @param resultFile The result file to use for the report viewer
      * @param port The port to use for the server. You can use 0 to use any free port.
-     * @throws IOException If the zip file cannot be read
+     * @throws IOException If the result file cannot be read
      */
-    public ReportViewer(File zipFile, int port) throws IOException {
+    public ReportViewer(File resultFile, int port) throws IOException {
         this.routingTree = new RoutingTree();
 
         this.routingTree.insertRouting("", new RoutingResources(REPORT_VIEWER_RESOURCE_PREFIX).or(new RoutingAlias(INDEX_PATH)));
-        this.routingTree.insertRouting(RESULT_PATH, new RoutingStaticFile(zipFile, ContentType.RESULT_FILE));
+        this.routingTree.insertRouting(RESULT_PATH, new RoutingStaticFile(resultFile, ContentType.RESULT_FILE));
         for (String version : OLD_VERSION_DIRECTORIES) {
             this.routingTree.insertRouting(version, new RoutingResources(version).or(new RoutingAlias(version + "/" + INDEX_PATH)));
         }

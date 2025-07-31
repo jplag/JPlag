@@ -1,9 +1,10 @@
 <template>
   <div class="flex flex-col gap-1 md:overflow-hidden">
     <InformationView
-      v-if="overview && cliOptions"
-      :overview="overview"
+      v-if="runInformation && cliOptions && topComparisonCount !== null"
+      :run-information="runInformation"
       :options="cliOptions"
+      :top-comparisons-count="topComparisonCount"
       class="flex-1 print:flex-none"
     />
     <div v-else class="flex flex-1 flex-col items-center justify-center">
@@ -16,31 +17,41 @@
 
 <script setup lang="ts">
 import { type Ref, ref } from 'vue'
-import { OverviewFactory } from '@/model/factories/OverviewFactory'
 import InformationView from '@/views/InformationView.vue'
-import type { Overview } from '@/model/Overview'
 import LoadingCircle from '@/components/LoadingCircle.vue'
-import { redirectOnError, router } from '@/router'
-import { OptionsFactory } from '@/model/factories/OptionsFactory'
+import { redirectOnError, redirectToOldVersion } from '@/router'
 import type { CliOptions } from '@/model/CliOptions'
 import VersionRepositoryReference from '@/components/VersionRepositoryReference.vue'
+import type { RunInformation } from '@/model/RunInformation'
+import { DataGetter, FileContentTypes } from '@/model/factories/DataGetter'
+import type { ComparisonListElement } from '@/model/ComparisonListElement'
 
-const overview: Ref<Overview | null> = ref(null)
+const runInformation: Ref<RunInformation | null> = ref(null)
 const cliOptions: Ref<CliOptions | undefined> = ref(undefined)
+const topComparisonCount: Ref<number | null> = ref(null)
 
-OverviewFactory.getOverview()
+DataGetter.getFiles<{
+  [FileContentTypes.RUN_INFORMATION]: RunInformation
+  [FileContentTypes.OPTIONS]: CliOptions
+  [FileContentTypes.TOP_COMPARISON]: ComparisonListElement[]
+}>([FileContentTypes.RUN_INFORMATION, FileContentTypes.OPTIONS, FileContentTypes.TOP_COMPARISON])
   .then((r) => {
-    if (r.result == 'success') {
-      overview.value = r.overview
-    } else if (r.result == 'oldReport') {
-      router.push({ name: 'OldVersionRedirectView', params: { version: r.version.toString() } })
+    if (r.result == 'valid') {
+      runInformation.value = r.data[FileContentTypes.RUN_INFORMATION]
+      cliOptions.value = r.data[FileContentTypes.OPTIONS]
+      topComparisonCount.value = r.data[FileContentTypes.TOP_COMPARISON].length
+    } else if (r.result == 'versionError') {
+      redirectToOldVersion(r.reportVersion)
+    } else {
+      redirectOnError(
+        r.error,
+        'Could not load run information:\n',
+        'OverviewView',
+        'Back to overview'
+      )
     }
   })
-  .catch((error) => {
-    redirectOnError(error, 'Could not load information:\n', 'OverviewView', 'Back to overview')
-  })
-
-OptionsFactory.getCliOptions()
-  .then((o) => (cliOptions.value = o))
-  .catch((error) => console.error('Could not load full options.', error))
+  .catch((error) =>
+    redirectOnError(error, 'Could not load run information:\n', 'OverviewView', 'Back to overview')
+  )
 </script>

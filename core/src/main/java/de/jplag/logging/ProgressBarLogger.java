@@ -65,10 +65,12 @@ public class ProgressBarLogger {
 
     private static class DummyBar implements ProgressBar {
         private static final Logger logger = LoggerFactory.getLogger(DummyBar.class);
+        private final ProgressBarType type;
         private int currentStep;
 
         public DummyBar(ProgressBarType type, int totalSteps) {
-            this.currentStep = 0;
+            this.type = type;
+            currentStep = 0;
             if (type.isIdleBar()) {
                 logger.info("{} - started", type.getDefaultText());
             } else {
@@ -78,7 +80,7 @@ public class ProgressBarLogger {
 
         @Override
         public void step() {
-            logger.info("Now at step {}", this.currentStep++);
+            logger.info("{} - step {}", type.getDefaultText(), this.currentStep++);
         }
 
         @Override

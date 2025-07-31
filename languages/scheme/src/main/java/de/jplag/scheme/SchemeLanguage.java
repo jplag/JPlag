@@ -14,8 +14,8 @@ import de.jplag.Token;
 public class SchemeLanguage implements Language {
 
     @Override
-    public String[] suffixes() {
-        return new String[] {".scm", ".SCM", ".ss", ".SS"};
+    public List<String> fileExtensions() {
+        return List.of(".scm", ".ss");
     }
 
     @Override

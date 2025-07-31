@@ -2,8 +2,10 @@ package de.jplag;
 
 import java.io.File;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
+import de.jplag.commentextraction.CommentExtractorSettings;
 import de.jplag.options.LanguageOptions;
 
 /**
@@ -12,9 +14,20 @@ import de.jplag.options.LanguageOptions;
 public interface Language {
 
     /**
-     * File extensions for the files containing code of the language. An empty array means all suffixes are valid.
+     * File extensions for the files containing code of the language. All capitalization variants of extensions are matched.
+     * An empty array means all extensions are valid.
+     * @deprecated see {@link Language#fileExtensions()}
      */
-    String[] suffixes();
+    @Deprecated(since = "6.2.0", forRemoval = true)
+    default String[] suffixes() {
+        return fileExtensions().toArray(String[]::new);
+    }
+
+    /**
+     * Permitted file extensions for the program files of this language. All capitalization variants of extensions are
+     * matched. An empty array means all extensions are valid.
+     */
+    List<String> fileExtensions();
 
     /**
      * Descriptive name of the language.
@@ -32,7 +45,7 @@ public interface Language {
     int minimumTokenMatch();
 
     /**
-     * Parses a set of files. Override this method, if you don't require normalization.
+     * Parses a set of files. Override this method if you do not require normalization.
      * @param files are the files to parse.
      * @return the list of parsed JPlag tokens.
      * @throws ParsingException if an error during parsing the files occurred.
@@ -44,7 +57,7 @@ public interface Language {
     }
 
     /**
-     * Parses a set of files. Override this method, if you require normalization within the language module.
+     * Parses a set of files. Override this method if you require normalization within the language module.
      * @param files are the files to parse.
      * @param normalize True, if the tokens should be normalized
      * @return the list of parsed JPlag tokens.
@@ -53,7 +66,7 @@ public interface Language {
     List<Token> parse(Set<File> files, boolean normalize) throws ParsingException;
 
     /**
-     * Indicates whether the tokens returned by parse have semantic information added to them, i.e. whether the token
+     * Indicates whether the tokens returned by parse have semantic information added to them, i.e., whether the token
      * attribute semantics is null or not.
      */
     default boolean tokensHaveSemantics() {
@@ -68,8 +81,8 @@ public interface Language {
     }
 
     /**
-     * Indicates whether the input files (code) should be used as representation in the report, or different files that form
-     * a view on the input files.
+     * Indicates whether the input code files should be used as representation in the report, or different files that form a
+     * view on the input files.
      */
     default boolean useViewFiles() {
         return false;
@@ -77,8 +90,17 @@ public interface Language {
 
     /**
      * If the language uses representation files, this method returns the suffix used for the representation files.
+     * @deprecated see {@link Language#viewFileExtension()}
      */
+    @Deprecated(since = "6.2.0", forRemoval = true)
     default String viewFileSuffix() {
+        return viewFileExtension();
+    }
+
+    /**
+     * If the language uses representation files, this method returns the file extension used for the representation files.
+     */
+    default String viewFileExtension() {
         return "";
     }
 
@@ -99,16 +121,16 @@ public interface Language {
     }
 
     /**
-     * Re-orders the provided submission according the requirements of the language.
+     * Reorders the provided submission according the requirements of the language.
      * @param submissions is the list of submissions.
-     * @return the re-ordered list.
+     * @return the reordered list.
      */
     default List<File> customizeSubmissionOrder(List<File> submissions) {
         return submissions;
     }
 
     /**
-     * @return True, if this language supports token sequence normalization. This does not include other normalization
+     * @return True if this language supports token sequence normalization. This does not include other normalization
      * mechanisms that might be part of the language modules.
      */
     default boolean supportsNormalization() {
@@ -116,10 +138,33 @@ public interface Language {
     }
 
     /**
-     * Override this method, if you need normalization within the language module, but not in the core module.
-     * @return True, If the core normalization should be used.
+     * Override this method if you need normalization within the language module, but not in the core module.
+     * @return True if the core normalization should be used.
      */
     default boolean requiresCoreNormalization() {
         return true;
+    }
+
+    /**
+     * @return True, if the language module can be used by the multi-language module
+     */
+    default boolean supportsMultiLanguage() {
+        return true;
+    }
+
+    /**
+     * @return True if the language module should be prioritized in the multi-language case, if multiple language modules
+     * support the same file extension.
+     */
+    default boolean hasPriority() {
+        return false;
+    }
+
+    /**
+     * Returns the settings for the comment extractor for this language.
+     * @return Settings for the comment extractor.
+     */
+    default Optional<CommentExtractorSettings> getCommentExtractorSettings() {
+        return Optional.empty();
     }
 }

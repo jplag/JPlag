@@ -17,8 +17,8 @@ import de.jplag.Token;
 public class CSharpLanguage implements Language {
 
     @Override
-    public String[] suffixes() {
-        return new String[] {".cs", ".CS"};
+    public List<String> fileExtensions() {
+        return List.of(".cs");
     }
 
     @Override

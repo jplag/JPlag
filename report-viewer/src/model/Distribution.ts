@@ -1,3 +1,5 @@
+import type { MetricJsonIdentifier } from './MetricJsonIdentifier'
+
 export class Distribution {
   protected readonly _distribution: number[]
 
@@ -20,4 +22,5 @@ export class Distribution {
 }
 
 type BucketOptions = 10 | 20 | 25 | 50 | 100
-export type { BucketOptions }
+type DistributionMap = Record<MetricJsonIdentifier, Distribution>
+export type { BucketOptions, DistributionMap }

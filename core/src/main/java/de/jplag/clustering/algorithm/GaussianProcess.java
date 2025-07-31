@@ -61,8 +61,6 @@ public class GaussianProcess {
         return out;
     }
 
-    private static final double SQRT_5 = Math.sqrt(5);
-
     /**
      * Fit Gaussian Process using a matern kernel.
      * @param observedCoordinates TODO DOCUMENTATION MISSING
@@ -143,7 +141,7 @@ public class GaussianProcess {
 
     private static double maternKernel(RealVector left, RealVector right, RealVector lengthScale) {
         double dist = left.ebeDivide(lengthScale).getDistance(right.ebeDivide(lengthScale));
-        dist *= SQRT_5;
+        dist *= Math.sqrt(5);
         return (1 + dist) * Math.exp(-dist);
     }
 
@@ -192,7 +190,7 @@ public class GaussianProcess {
         for (int i = 0; i < height; i++) {
             stringBuilder.append(out[i]);
             if (i < 98) {
-                stringBuilder.append('\n');
+                stringBuilder.append(System.lineSeparator());
             }
         }
         return stringBuilder.toString();

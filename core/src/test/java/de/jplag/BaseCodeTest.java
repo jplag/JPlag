@@ -18,7 +18,7 @@ import de.jplag.exceptions.RootDirectoryException;
  * derived. The parts of the submissions that match with the basecode are ignored for the comparison. The basecode
  * feature is tested in combination with different root folders and the subdirectory feature.
  */
-public class BaseCodeTest extends TestBase {
+class BaseCodeTest extends TestBase {
 
     @Test
     @DisplayName("test two submissions with basecode in root folder")
@@ -66,8 +66,8 @@ public class BaseCodeTest extends TestBase {
         assertEquals(1, result.getAllComparisons().size());
         JPlagComparison comparison = result.getAllComparisons().getFirst();
 
-        assertTrue(comparison.firstSubmission().hasBaseCodeMatches());
-        assertTrue(comparison.secondSubmission().hasBaseCodeMatches());
+        assertTrue(comparison.firstSubmission().hasBaseCodeComparison());
+        assertTrue(comparison.secondSubmission().hasBaseCodeComparison());
         assertEquals(0, Math.min(comparison.firstSubmission().getBaseCodeComparison().similarity(),
                 comparison.secondSubmission().getBaseCodeComparison().similarity()));
         assertEquals(0.742857, comparison.similarity(), DELTA);

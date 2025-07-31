@@ -16,6 +16,7 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jplag.ParsingException;
 import de.jplag.Token;
@@ -29,6 +30,8 @@ import com.sun.source.util.Trees;
 
 public class JavacAdapter {
 
+    private static final Logger logger = LoggerFactory.getLogger(JavacAdapter.class);
+
     private static final String NO_ANNOTATION_PROCESSING = "-proc:none";
     private static final String PREVIEW_FLAG = "--enable-preview";
     private static final String RELEASE_VERSION_OPTION = "--release=";
@@ -39,8 +42,8 @@ public class JavacAdapter {
         var listener = new DiagnosticCollector<>();
 
         List<ParsingException> parsingExceptions = new ArrayList<>();
-        final Charset guessedCharset = FileUtils.detectCharsetFromMultiple(files);
-        try (final StandardJavaFileManager fileManager = compiler.getStandardFileManager(listener, null, guessedCharset)) {
+        final Charset charset = FileUtils.detectCharsetFromMultiple(files, true);
+        try (final StandardJavaFileManager fileManager = compiler.getStandardFileManager(listener, null, charset)) {
             var javaFiles = fileManager.getJavaFileObjectsFromFiles(files);
 
             // We need to disable annotation processing, see https://stackoverflow.com/q/72737445
@@ -49,7 +52,7 @@ public class JavacAdapter {
             final CompilationTask task = compiler.getTask(null, fileManager, listener, options, null, javaFiles);
             final Trees trees = Trees.instance(task);
             final SourcePositions positions = new FixedSourcePositions(trees.getSourcePositions());
-            for (final CompilationUnitTree ast : executeCompilationTask(task, parser.logger)) {
+            for (final CompilationUnitTree ast : executeCompilationTask(task)) {
                 File file = new File(ast.getSourceFile().toUri());
                 final LineMap map = ast.getLineMap();
                 var scanner = new TokenGeneratingTreeScanner(file, parser, map, positions, ast);
@@ -65,7 +68,7 @@ public class JavacAdapter {
         }
     }
 
-    private Iterable<? extends CompilationUnitTree> executeCompilationTask(final CompilationTask task, Logger logger) {
+    private Iterable<? extends CompilationUnitTree> executeCompilationTask(final CompilationTask task) {
         Iterable<? extends CompilationUnitTree> abstractSyntaxTrees = Collections.emptyList();
         try {
             abstractSyntaxTrees = ((JavacTask) task).parse();

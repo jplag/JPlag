@@ -12,6 +12,7 @@ import java.util.List;
  * threshold.
  */
 public record JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches, List<Match> ignoredMatches) {
+
     /**
      * Constructs a new comparison between two submissions. The match lists are wrapped as unmodifiable to preserve
      * immutability.
@@ -27,11 +28,11 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
     }
 
     /**
-     * Get the total number of matched tokens for this comparison, which is the sum of the lengths of all subsequence
-     * matches. This excludes ignored matches.
+     * Get the total number of matched tokens for this comparison, which is the sum of the minimum lengths of all
+     * subsequence matches. This excludes ignored matches.
      */
     public int getNumberOfMatchedTokens() {
-        return matches.stream().mapToInt(Match::length).sum();
+        return matches.stream().mapToInt(Match::minimumLength).sum();
     }
 
     /**
@@ -49,7 +50,9 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
      * versa.
      * @return Minimum similarity in interval [0, 1]. 0 means zero percent structural similarity, 1 means 100 percent
      * structural similarity.
+     * @deprecated Metric was not used in JPlag
      */
+    @Deprecated(since = "6.2.0", forRemoval = true)
     public final double minimalSimilarity() {
         return Math.min(similarityOfFirst(), similarityOfSecond());
     }
@@ -61,9 +64,13 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
      * structural similarity.
      */
     public final double similarity() {
-        int divisorA = firstSubmission.getSimilarityDivisor();
-        int divisorB = secondSubmission.getSimilarityDivisor();
-        return 2 * similarity(divisorA + divisorB);
+        int divisor = firstSubmission.getSimilarityDivisor() + secondSubmission.getSimilarityDivisor();
+        if (divisor == 0) {
+            return 0;
+        }
+        int matchedTokensOfFirst = matches.stream().mapToInt(Match::lengthOfFirst).sum();
+        int matchedTokensOfSecond = matches.stream().mapToInt(Match::lengthOfSecond).sum();
+        return (matchedTokensOfFirst + matchedTokensOfSecond) / (double) divisor;
     }
 
     /**
@@ -73,7 +80,8 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
      */
     public final double similarityOfFirst() {
         int divisor = firstSubmission.getSimilarityDivisor();
-        return similarity(divisor);
+        int matchedTokens = matches.stream().mapToInt(Match::lengthOfFirst).sum();
+        return divisor == 0 ? 0.0 : matchedTokens / (double) divisor;
     }
 
     /**
@@ -83,7 +91,8 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
      */
     public final double similarityOfSecond() {
         int divisor = secondSubmission.getSimilarityDivisor();
-        return similarity(divisor);
+        int matchedTokens = matches.stream().mapToInt(Match::lengthOfSecond).sum();
+        return divisor == 0 ? 0.0 : matchedTokens / (double) divisor;
     }
 
     @Override
@@ -91,7 +100,4 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
         return firstSubmission.getName() + " <-> " + secondSubmission.getName();
     }
 
-    private double similarity(int divisor) {
-        return divisor == 0 ? 0.0 : getNumberOfMatchedTokens() / (double) divisor;
-    }
 }

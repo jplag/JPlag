@@ -5,13 +5,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import de.jplag.AbstractParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
-public class Scanner extends AbstractParser {
-    private File currentFile;
+public class Scanner {
+    static final Logger logger = LoggerFactory.getLogger(Scanner.class);
 
+    private File currentFile;
     private List<Token> tokens;
 
     public List<Token> scan(Set<File> files) throws ParsingException {
@@ -33,6 +36,6 @@ public class Scanner extends AbstractParser {
 
     public void add(CTokenType type, de.jplag.c.Token token) {
         int length = token.endColumn - token.beginColumn + 1;
-        tokens.add(new Token(type, currentFile, token.beginLine, token.beginColumn, length));
+        tokens.add(new Token(type, currentFile, token.beginLine, token.beginColumn, token.endLine, token.endColumn, length));
     }
 }

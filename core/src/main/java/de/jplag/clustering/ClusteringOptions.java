@@ -6,8 +6,6 @@ import java.util.Objects;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
 import de.jplag.options.SimilarityMetric;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
  * Collection of all possible parameters that describe how a clustering should be performed.
  * @param similarityMetric The similarity metric is used for clustering
@@ -36,15 +34,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @param preprocessorPercentile up to which percentile of similarities the percentile-preprocessor zeroes out the
  * similarities
  */
-public record ClusteringOptions(@JsonProperty("metric") SimilarityMetric similarityMetric,
-        @JsonProperty("spectral_bandwidth") double spectralKernelBandwidth,
-        @JsonProperty("spectral_gaussian_variance") double spectralGaussianProcessVariance, @JsonProperty("spectral_min_runs") int spectralMinRuns,
-        @JsonProperty("spectral_max_runs") int spectralMaxRuns, @JsonProperty("spectral_max_kmeans_iterations") int spectralMaxKMeansIterationPerRun,
-        @JsonProperty("agglomerative_threshold") double agglomerativeThreshold, @JsonProperty("preprocessor") Preprocessing preprocessor,
-        @JsonProperty("enabled") boolean enabled, @JsonProperty("algorithm") ClusteringAlgorithm algorithm,
-        @JsonProperty("inter_similarity") InterClusterSimilarity agglomerativeInterClusterSimilarity,
-        @JsonProperty("preprocessor_threshold") double preprocessorThreshold,
-        @JsonProperty("preprocessor_percentile") double preprocessorPercentile) {
+public record ClusteringOptions(SimilarityMetric similarityMetric, double spectralKernelBandwidth, double spectralGaussianProcessVariance,
+        int spectralMinRuns, int spectralMaxRuns, int spectralMaxKMeansIterationPerRun, double agglomerativeThreshold, Preprocessing preprocessor,
+        boolean enabled, ClusteringAlgorithm algorithm, InterClusterSimilarity agglomerativeInterClusterSimilarity, double preprocessorThreshold,
+        double preprocessorPercentile) {
 
     public ClusteringOptions(SimilarityMetric similarityMetric, double spectralKernelBandwidth, double spectralGaussianProcessVariance,
             int spectralMinRuns, int spectralMaxRuns, int spectralMaxKMeansIterationPerRun, double agglomerativeThreshold, Preprocessing preprocessor,

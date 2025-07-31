@@ -13,14 +13,13 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
-import de.jplag.AbstractParser;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.rust.grammar.RustLexer;
 import de.jplag.rust.grammar.RustParser;
 import de.jplag.util.FileUtils;
 
-public class RustParserAdapter extends AbstractParser {
+public class RustParserAdapter {
 
     private File currentFile;
     private List<Token> tokens;
@@ -40,7 +39,7 @@ public class RustParserAdapter extends AbstractParser {
     }
 
     private void parseFile(File file) throws ParsingException {
-        try (BufferedReader reader = FileUtils.openFileReader(file)) {
+        try (BufferedReader reader = FileUtils.openFileReader(file, true)) {
             currentFile = file;
 
             // create a lexer, a parser and a buffer between them.
@@ -71,6 +70,7 @@ public class RustParserAdapter extends AbstractParser {
      * @param length the length of the Token
      */
     /* package-private */ void addToken(RustTokenType type, int line, int start, int length) {
+        // This does not cover multiline tokens. That will be solved when moving this module to the antlr wrapper
         tokens.add(new Token(type, currentFile, line, start, length));
 
     }

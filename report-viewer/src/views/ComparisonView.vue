@@ -11,7 +11,11 @@
         {{ store().getDisplayName(comparison.firstSubmissionId) }}
         -
         {{ store().getDisplayName(comparison.secondSubmissionId) }}
-        <ToolTipComponent direction="left" class="float-right hidden md:block print:hidden">
+        <ToolTipComponent
+          direction="left"
+          class="float-right hidden md:block print:hidden"
+          :show-info-symbol="false"
+        >
           <template #tooltip>
             <p class="text-sm whitespace-pre">
               Printing works best in landscape mode on Chromium based browsers
@@ -25,9 +29,15 @@
         </ToolTipComponent>
       </h2>
       <div class="flex flex-col gap-x-10 gap-y-2 md:flex-row">
-        <TextInformation label="Average Similarity" class="font-bold"
-          >{{ (comparison.similarities[MetricType.AVERAGE] * 100).toFixed(2) }}%</TextInformation
-        >
+        <span class="flex items-center gap-x-1">
+          <MetricIcon class="h-3" :metric="MetricJsonIdentifier.AVERAGE_SIMILARITY" />
+          <TextInformation label="Average Similarity" class="font-bold">{{
+            MetricTypes.AVERAGE_SIMILARITY.format(
+              comparison.similarities[MetricTypes.AVERAGE_SIMILARITY.identifier]
+            )
+          }}</TextInformation>
+        </span>
+
         <TextInformation
           :label="`Similarity ${store().getDisplayName(comparison.firstSubmissionId)}`"
           tooltip-side="right"
@@ -81,7 +91,7 @@
         @selection-changed="(index: number) => changeFileSorting(index)"
       />
     </Container>
-
+    <div ref="styleholder" class="col-span-0 row-span-0"></div>
     <FilesContainer
       ref="panel1"
       :files="filesOfFirst"
@@ -122,13 +132,15 @@ import Container from '@/components/ContainerComponent.vue'
 import type { Language } from '@/model/Language'
 import hljsLightMode from 'highlight.js/styles/vs.css?raw'
 import hljsDarkMode from 'highlight.js/styles/vs2015.css?raw'
-import { MetricType } from '@/model/MetricType'
+import { MetricTypes } from '@/model/MetricType'
 import { Comparison } from '@/model/Comparison'
 import { redirectOnError } from '@/router'
 import ToolTipComponent from '@/components/ToolTipComponent.vue'
 import { FileSortingOptions, fileSortingTooltips } from '@/model/ui/FileSortingOptions'
 import OptionsSelectorComponent from '@/components/optionsSelectors/OptionsSelectorComponent.vue'
 import type { BaseCodeMatch } from '@/model/BaseCodeReport'
+import { MetricJsonIdentifier } from '@/model/MetricJsonIdentifier'
+import MetricIcon from '@/components/MetricIcon.vue'
 
 library.add(faPrint)
 
@@ -164,7 +176,7 @@ const panel2: Ref<typeof FilesContainer | null> = ref(null)
  * @param match The match to scroll to
  */
 function showMatchInFirst(match: Match) {
-  panel1.value?.scrollTo(match.firstFile, match.startInFirst.line)
+  panel1.value?.scrollTo(match.firstFileName, match.startInFirst.line)
 }
 
 /**
@@ -172,7 +184,7 @@ function showMatchInFirst(match: Match) {
  * @param match The match to scroll to
  */
 function showMatchInSecond(match: Match) {
-  panel2.value?.scrollTo(match.secondFile, match.startInSecond.line)
+  panel2.value?.scrollTo(match.secondFileName, match.startInSecond.line)
 }
 
 /**
@@ -219,13 +231,7 @@ function print() {
 const styleholder: Ref<Node | null> = ref(null)
 
 onMounted(() => {
-  if (styleholder.value == null) {
-    return
-  }
-  const styleHolderDiv = styleholder.value as Node
-  const styleElement = document.createElement('style')
-  styleElement.innerHTML = store().uiState.useDarkMode ? hljsDarkMode : hljsLightMode
-  styleHolderDiv.appendChild(styleElement)
+  onThemeUpdate(store().uiState.useDarkMode)
 })
 
 const useDarkMode = computed(() => {
@@ -233,15 +239,22 @@ const useDarkMode = computed(() => {
 })
 
 watch(useDarkMode, (newValue) => {
+  onThemeUpdate(newValue)
+})
+
+function onThemeUpdate(useDarkMode: boolean) {
   if (styleholder.value == null) {
+    console.warn('Could not find styleholder. Syntax highlighting will not work.')
     return
   }
   const styleHolderDiv = styleholder.value as Node
-  styleHolderDiv.removeChild(styleHolderDiv.firstChild as Node)
+  while (styleHolderDiv.hasChildNodes()) {
+    styleHolderDiv.removeChild(styleHolderDiv.firstChild as Node)
+  }
   const styleElement = document.createElement('style')
-  styleElement.innerHTML = newValue ? hljsDarkMode : hljsLightMode
+  styleElement.innerHTML = useDarkMode ? hljsDarkMode : hljsLightMode
   styleHolderDiv.appendChild(styleElement)
-})
+}
 
 onErrorCaptured((error) => {
   redirectOnError(error, 'Error displaying comparison:\n', 'OverviewView', 'Back to overview')

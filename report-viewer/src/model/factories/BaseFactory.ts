@@ -1,11 +1,11 @@
 import { store } from '@/stores/store'
-import { ZipFileHandler } from '@/model/fileHandling/ZipFileHandler'
+import { ReportFileHandler } from '@/model/fileHandling/ReportFileHandler'
 
 /**
  * This class provides some basic functionality for the factories.
  */
 export class BaseFactory {
-  public static readonly zipFileName = 'results.jplag'
+  public static readonly reportFileName = 'results.jplag'
 
   /**
    * Returns the content of a file through the stored loading type.
@@ -14,30 +14,32 @@ export class BaseFactory {
    * @throws Error if the file could not be found
    */
   protected static async getFile(path: string): Promise<string> {
-    if (store().state.localModeUsed) {
-      return await (await this.getLocalFile(`/files/${path}`)).text()
-    } else if (store().state.zipModeUsed) {
-      return this.getFileFromStore(path)
-    } else if (await this.useLocalZipMode()) {
-      await new ZipFileHandler().handleFile(await this.getLocalFile(this.zipFileName))
-      store().setLoadingType('zip')
-      return this.getFileFromStore(path)
-    } else if (import.meta.env.MODE == 'demo' || import.meta.env.MODE == 'dev-demo') {
-      await new ZipFileHandler().handleFile(await this.getLocalFile('example.jplag'))
-      store().setLoadingType('zip')
-      return this.getFileFromStore(path)
+    let storeFile = this.getFileFromStore(path)
+    if (storeFile != undefined) {
+      return storeFile
     }
-    throw new Error('No loading type specified')
+
+    if (await this.useLocalReportFileMode()) {
+      await new ReportFileHandler().handleFile(await this.getLocalFile(this.reportFileName))
+    } else if (import.meta.env.MODE == 'demo' || import.meta.env.MODE == 'dev-demo') {
+      await new ReportFileHandler().handleFile(await this.getLocalFile('example.jplag'))
+    }
+
+    storeFile = this.getFileFromStore(path)
+    if (storeFile != undefined) {
+      return storeFile
+    }
+    throw new Error(`Could not find ${path} report files.`)
   }
 
-  private static getFileFromStore(path: string): string {
+  private static getFileFromStore(path: string): string | undefined {
     const index = Object.keys(store().state.files).find((name) => name.endsWith(path))
     if (index == undefined) {
-      throw new Error(`Could not find ${path} in zip file.`)
+      return undefined
     }
     const file = store().state.files[index]
     if (file == undefined) {
-      throw new Error(`Could not load ${path}.`)
+      return undefined
     }
     return file
   }
@@ -62,9 +64,9 @@ export class BaseFactory {
     }
   }
 
-  public static async useLocalZipMode() {
+  public static async useLocalReportFileMode() {
     try {
-      await this.getLocalFile(this.zipFileName)
+      await this.getLocalFile(this.reportFileName)
       return true
       /* eslint-disable @typescript-eslint/no-unused-vars */
     } catch (e) {

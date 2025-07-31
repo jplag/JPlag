@@ -17,9 +17,8 @@ import de.jplag.Token;
 public class CPPLanguage implements Language {
 
     @Override
-    public String[] suffixes() {
-        return new String[] {".cpp", ".CPP", ".cxx", ".CXX", ".c++", ".C++", ".c", ".C", ".cc", ".CC", ".h", ".H", ".hpp", ".HPP", ".hh", ".HH",
-                ".hxx"};
+    public List<String> fileExtensions() {
+        return List.of(".cpp", ".cxx", ".c++", ".c", ".cc", ".h", ".hpp", ".hh", ".hxx");
     }
 
     @Override
@@ -50,5 +49,10 @@ public class CPPLanguage implements Language {
     @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
         return new CPPParserAdapter().parse(files);
+    }
+
+    @Override
+    public boolean hasPriority() {
+        return true; // Priority over the C language module.
     }
 }

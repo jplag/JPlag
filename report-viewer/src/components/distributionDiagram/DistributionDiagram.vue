@@ -4,7 +4,7 @@
 <template>
   <div class="flex flex-col">
     <div class="h-3/4 w-full print:h-fit print:w-fit">
-      <Bar :data="chartData" :options="options" />
+      <canvas ref="graphCanvas"></canvas>
     </div>
 
     <DistributionDiagramOptions class="grow print:grow-0" />
@@ -12,13 +12,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, type PropType } from 'vue'
-import { Bar } from 'vue-chartjs'
+import { computed, onMounted, ref, watch, type PropType, type Ref } from 'vue'
 import { Chart, registerables } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { graphColors } from '@/utils/ColorUtils'
-import type { Distribution } from '@/model/Distribution'
-import { MetricType } from '@/model/MetricType'
+import type { DistributionMap } from '@/model/Distribution'
 import { store } from '@/stores/store'
 import DistributionDiagramOptions from './DistributionDiagramOptions.vue'
 
@@ -27,7 +25,7 @@ Chart.register(ChartDataLabels)
 
 const props = defineProps({
   distributions: {
-    type: Object as PropType<Record<MetricType, Distribution>>,
+    type: Object as PropType<DistributionMap>,
     required: true
   },
   xScale: {
@@ -36,6 +34,10 @@ const props = defineProps({
     default: 'linear'
   }
 })
+
+const emit = defineEmits<{
+  (e: 'click:upperPercentile', UpperPercentile: number): void
+}>()
 
 const graphOptions = computed(() => store().uiState.distributionChartConfig)
 const distribution = computed(() => props.distributions[graphOptions.value.metric])
@@ -154,6 +156,21 @@ const options = computed(() => {
         align: 'end' as const,
         onClick: () => {}
       }
+    },
+    // @ts-expect-error As there is not type to satisfy both the getElementsAtEventForMode function and Chart creations we leave the type out
+    onClick: (e) => {
+      if (!chart.value) {
+        return
+      }
+
+      const points = chart.value.getElementsAtEventForMode(e, 'nearest', { intersect: true }, true)
+      if (points.length <= 0 || points.length > 1) {
+        return
+      }
+      const index = points[0].index
+      const clickedBucket = distributionData.value.length - index
+      const clickedUpperPercentile = clickedBucket * (100 / graphOptions.value.bucketCount)
+      emit('click:upperPercentile', clickedUpperPercentile)
     }
   }
 })
@@ -172,4 +189,44 @@ function getDataLabelFontSize() {
   }
   return 12
 }
+
+const chart: Ref<Chart | null> = ref(null)
+const loaded: Ref<boolean> = ref(false)
+const graphCanvas: Ref<HTMLCanvasElement | null> = ref(null)
+
+function drawGraph() {
+  if (chart.value != null) {
+    chart.value.destroy()
+  }
+  if (graphCanvas.value == null) {
+    loaded.value = false
+    return
+  }
+  const ctx = graphCanvas.value.getContext('2d')
+  if (ctx == null) {
+    loaded.value = false
+    return
+  }
+  chart.value = new Chart(ctx, {
+    type: 'bar',
+    data: chartData.value,
+    options: options.value
+  })
+  loaded.value = true
+}
+
+onMounted(() => {
+  drawGraph()
+})
+watch(
+  computed(() => {
+    return {
+      d: chartData.value,
+      o: options.value
+    }
+  }),
+  () => {
+    drawGraph()
+  }
+)
 </script>
