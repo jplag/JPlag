@@ -115,7 +115,7 @@ public class GaussianProcess {
     }
 
     /**
-     * Matern kernel for nu=2.5 (we get a twice differentiable gp)
+     * Matern kernel for nu=2.5 (we get a twice differentiable gp).
      */
     private static RealMatrix maternKernel(List<RealVector> observedCoordinates, RealVector lengthScale) {
         RealMatrix k = new Array2DRowRealMatrix(observedCoordinates.size(), observedCoordinates.size());
@@ -146,7 +146,7 @@ public class GaussianProcess {
     }
 
     /**
-     * ascii graph for debugging
+     * ascii graph for debugging.
      */
     public String toString(RealVector min, RealVector max, int width, int height, double minY) {
         char[][] out = new char[height][width];

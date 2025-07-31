@@ -887,7 +887,7 @@ public class JPlagRustListener extends RustParserBaseListener implements ParseTr
     }
 
     /**
-     * Implementation of Context for the Rust language
+     * Implementation of Context for the Rust language.
      */
     enum RustContext implements ParserState.Context {
 

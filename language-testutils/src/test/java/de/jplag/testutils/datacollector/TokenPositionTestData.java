@@ -116,7 +116,7 @@ public class TokenPositionTestData implements TestData {
     }
 
     /**
-     * Information about a single token
+     * Information about a single token.
      * @param typeName The name of the token type
      * @param lineNumber The line the token is in (1 based)
      * @param columnNumber The column the token is in (1 based)

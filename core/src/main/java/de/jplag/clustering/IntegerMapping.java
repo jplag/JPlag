@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Creates a mapping of any set to integers
+ * Creates a mapping of any set to integers.
  */
 public class IntegerMapping<T> {
 

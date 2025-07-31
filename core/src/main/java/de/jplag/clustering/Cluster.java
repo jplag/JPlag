@@ -42,7 +42,7 @@ public class Cluster<T> {
     }
 
     /**
-     * See {@link ClusteringResult#getCommunityStrength}
+     * See {@link ClusteringResult#getCommunityStrength}.
      * @return community strength of the cluster
      */
     public double getCommunityStrength() {

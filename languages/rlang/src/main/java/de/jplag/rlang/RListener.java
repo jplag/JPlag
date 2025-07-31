@@ -51,7 +51,7 @@ import de.jplag.rlang.grammar.RParser.TrueContext;
 import de.jplag.rlang.grammar.RParser.WhileContext;
 
 /**
- * Contains mapping for RLang to create JPlag tokens from ANTLR tokens
+ * Contains mapping for RLang to create JPlag tokens from ANTLR tokens.
  */
 public class RListener extends AbstractAntlrListener {
     public RListener() {

@@ -27,7 +27,7 @@ public record ExpectedResult(@JsonProperty("minimal_similarity") double resultSi
     }
 
     /**
-     * Creates an expected result from a comparison
+     * Creates an expected result from a comparison.
      * @param comparison The comparison
      * @return The expected result
      */

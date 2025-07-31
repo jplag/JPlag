@@ -122,7 +122,7 @@ public class MatchMerging {
     /**
      * This function iterates through the neighboring matches and checks which fit the merging criteria. Those who do are
      * merged and the original matches are removed. This is done, until there are either no neighbors left, or none fit the
-     * criteria
+     * criteria.
      * @return globalMatches containing merged matches.
      */
     private void mergeNeighbors(List<Match> globalMatches, Submission leftSubmission, Submission rightSubmission) {

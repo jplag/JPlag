@@ -91,7 +91,7 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
     /**
      * Delegates calls to this visitor to a derived visitor. The mapper function is used to determine the delegated token.
      * This invalidated all mapping happening inside this visitor. You need to configure the new visitor to do so. Visits
-     * the terminal upon exiting this context
+     * the terminal upon exiting this context.
      * @param mapper The mapper function
      */
     public TerminalVisitor delegateTerminalExit(Function<T, TerminalNode> mapper) {

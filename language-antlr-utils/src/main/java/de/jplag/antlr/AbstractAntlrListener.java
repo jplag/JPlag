@@ -20,7 +20,7 @@ public abstract class AbstractAntlrListener {
     private final List<TerminalVisitor> terminalVisitors;
 
     /**
-     * New instance
+     * New instance.
      */
     protected AbstractAntlrListener() {
         contextVisitors = new ArrayList<>();
@@ -124,7 +124,7 @@ public abstract class AbstractAntlrListener {
     }
 
     /**
-     * {@return true if an ancestor of the specified type exists}
+     * {@return true if an ancestor of the specified type exists}.
      * @param context the current element to start the search from.
      * @param parent the class representing the type to search for.
      * @param stops the types of elements to stop the upward search at.

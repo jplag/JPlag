@@ -7,15 +7,15 @@ import de.jplag.clustering.algorithm.GenericClusteringAlgorithm;
 import de.jplag.clustering.algorithm.SpectralClustering;
 
 /**
- * Choosable clustering algorithms
+ * Choosable clustering algorithms.
  */
 public enum ClusteringAlgorithm {
     /**
-     * {@link AgglomerativeClustering}
+     * {@link AgglomerativeClustering}.
      */
     AGGLOMERATIVE(AgglomerativeClustering::new),
     /**
-     * {@link SpectralClustering}
+     * {@link SpectralClustering}.
      */
     SPECTRAL(SpectralClustering::new);
 

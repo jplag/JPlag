@@ -13,7 +13,7 @@ public record Options(@JsonProperty Integer[] minimumTokenMatches, @JsonProperty
     private static final int[] defaultTokenMatches = {3, 9};
 
     /**
-     * Initializes a new options object with minimumTokenMatch and baseCodeDirectory both being null
+     * Initializes a new options object with minimumTokenMatch and baseCodeDirectory both being null.
      */
     public Options() {
         this(null, null);
@@ -21,7 +21,7 @@ public record Options(@JsonProperty Integer[] minimumTokenMatches, @JsonProperty
 
     /**
      * Builds the list of all token matches that should be checked. That means all values from minimumTokenMatches and the
-     * default values (3 and 9)
+     * default values (3 and 9).
      * @return The values
      */
     public int[] getMinimumTokenMatches() {

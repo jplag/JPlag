@@ -11,7 +11,7 @@ import java.util.Set;
 @SuppressWarnings("unused") // The formats only referred to from the data set configuration
 public enum DataSetFormat {
     /**
-     * The progpedia format
+     * The progpedia format.
      */
     PROGPEDIA {
         @Override
@@ -40,14 +40,14 @@ public enum DataSetFormat {
     };
 
     /**
-     * Resolved the source directories for jplag
+     * Resolved the source directories for jplag.
      * @param dataSet The data set
      * @return The source directories
      */
     public abstract Set<File> getSourceDirectories(DataSet dataSet) throws IOException;
 
     /**
-     * Resolves the base code directory
+     * Resolves the base code directory.
      * @param dataSet The data set
      * @param directoryName The name of the base code directory
      * @return The base code directory

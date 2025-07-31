@@ -94,7 +94,7 @@ public final class FileUtils {
 
     /**
      * Removes the byte order mark from the beginning of the stream, if it exists and the charset is a UTF* charset. For
-     * details see: <a href="https://en.wikipedia.org/wiki/Byte_order_mark">Wikipedia</a>
+     * details see: <a href="https://en.wikipedia.org/wiki/Byte_order_mark">Wikipedia</a>.
      * @param reader The reader to remove the bom from
      * @throws IOException If an IO error occurs.
      */

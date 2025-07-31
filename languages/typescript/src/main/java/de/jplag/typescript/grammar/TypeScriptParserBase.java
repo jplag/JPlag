@@ -8,7 +8,7 @@ import org.antlr.v4.runtime.TokenStream;
 /**
  * All parser methods that used in grammar (p, prev, notLineTerminator, etc.) should start with lower case char similar
  * to parser rules. Copied from https://github.com/antlr/grammars-v4/tree/master/javascript/typescript/Java. Slightly
- * modified to fit JPlag code style
+ * modified to fit JPlag code style.
  */
 public abstract class TypeScriptParserBase extends Parser {
     protected TypeScriptParserBase(TokenStream input) {
@@ -16,28 +16,28 @@ public abstract class TypeScriptParserBase extends Parser {
     }
 
     /**
-     * Short form for prev(String str)
+     * Short form for prev(String str).
      */
     protected boolean p(String str) {
         return prev(str);
     }
 
     /**
-     * Whether the previous token value equals to @param str
+     * Whether the previous token value equals to @param str.
      */
     protected boolean prev(String str) {
         return _input.LT(-1).getText().equals(str);
     }
 
     /**
-     * Short form for next(String str)
+     * Short form for next(String str).
      */
     protected boolean n(String str) {
         return next(str);
     }
 
     /**
-     * Whether the next token value equals to @param str
+     * Whether the next token value equals to @param str.
      */
     protected boolean next(String str) {
         return _input.LT(1).getText().equals(str);

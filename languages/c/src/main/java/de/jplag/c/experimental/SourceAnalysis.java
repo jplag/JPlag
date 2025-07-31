@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.Set;
 
 /**
- * Strategy for analyzing source code for unused variables querying the corresponding lines
+ * Strategy for analyzing source code for unused variables querying the corresponding lines.
  */
 public interface SourceAnalysis {
 

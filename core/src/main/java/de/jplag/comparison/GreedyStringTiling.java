@@ -99,7 +99,7 @@ public class GreedyStringTiling {
     }
 
     /**
-     * Compares two submissions. FILE_END is used as pivot
+     * Compares two submissions. FILE_END is used as pivot.
      * @param leftSubmission is the submission with the smaller sequence.
      * @param rightSubmission is the submission with the larger sequence.
      * @return the comparison results.

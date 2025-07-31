@@ -140,7 +140,7 @@ import de.jplag.csharp.grammar.CSharpParser.UsingStaticDirectiveContext;
 import de.jplag.csharp.grammar.CSharpParser.WhileStatementContext;
 
 /**
- * Extracts tokens for the {@link CSharpLanguage}
+ * Extracts tokens for the {@link CSharpLanguage}.
  */
 public class CSharpListener extends AbstractAntlrListener {
     public CSharpListener() {

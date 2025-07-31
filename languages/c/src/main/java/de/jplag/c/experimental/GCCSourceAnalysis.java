@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Uses GCC to find unused variables and saves their location. The scanner can then check if a token belongs to an
- * unused variable
+ * unused variable.
  */
 public class GCCSourceAnalysis implements SourceAnalysis {
 

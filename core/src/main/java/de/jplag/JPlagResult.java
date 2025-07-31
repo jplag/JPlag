@@ -119,7 +119,7 @@ public class JPlagResult {
     /**
      * For the {@link SimilarityMetric} JPlag was run with, this returns the similarity distribution of detected matches in
      * a 100-element array. Each entry represents the absolute frequency of matches whose similarity lies within the
-     * respective interval. Intervals: 0: [0% - 1%), 1: [1% - 2%), 2: [2% - 3%), ..., 99: [99% - 100%]
+     * respective interval. Intervals: 0: [0% - 1%), 1: [1% - 2%), 2: [2% - 3%), ..., 99: [99% - 100%].
      * @return the similarity distribution array.
      */
     public int[] getSimilarityDistribution() {

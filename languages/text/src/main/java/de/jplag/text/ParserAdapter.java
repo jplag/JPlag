@@ -31,7 +31,7 @@ public class ParserAdapter {
     private File currentFile;
     private int currentLine;
     /**
-     * The position of the current line break in the content string
+     * The position of the current line break in the content string.
      */
     private int currentLineBreakIndex;
 

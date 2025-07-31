@@ -15,7 +15,7 @@ public class LanguageSerializer extends StdSerializer<Language> {
     private static final long serialVersionUID = 5944655736767387268L; // generated
 
     /**
-     * Constructor used by the fasterxml.jackson
+     * Constructor used by the fasterxml.jackson.
      */
     public LanguageSerializer() {
         this(null);

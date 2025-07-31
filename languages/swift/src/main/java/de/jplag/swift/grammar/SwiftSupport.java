@@ -213,7 +213,7 @@ public class SwiftSupport {
 
     /**
      * "If an operator has whitespace around both sides or around neither side, it is treated as a binary operator. As an
-     * example, the + operator in a+b and a + b is treated as a binary operator."
+     * example, the + operator in a+b and a + b is treated as a binary operator.".
      */
     public static boolean isBinaryOp(TokenStream tokens) {
         SwiftSupport.fillUp(tokens);
@@ -241,7 +241,7 @@ public class SwiftSupport {
 
     /**
      * "If an operator has whitespace on the left side only, it is treated as a prefix unary operator. As an example, the ++
-     * operator in a ++b is treated as a prefix unary operator."
+     * operator in a ++b is treated as a prefix unary operator.".
      */
     public static boolean isPrefixOp(TokenStream tokens) {
         SwiftSupport.fillUp(tokens);
@@ -266,7 +266,7 @@ public class SwiftSupport {
      * <p>
      * "If an operator has no whitespace on the left but is followed immediately by a dot (.), it is treated as a postfix
      * unary operator. As an example, the ++ operator in a++.b is treated as a postfix unary operator (a++ .b rather than a
-     * ++ .b)."
+     * ++ .b).".
      */
     public static boolean isPostfixOp(TokenStream tokens) {
         SwiftSupport.fillUp(tokens);
