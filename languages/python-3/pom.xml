@@ -7,6 +7,7 @@
         <version>${revision}</version>
     </parent>
     <artifactId>python-3</artifactId>
+    <name>JPlag: Python3 Language Module</name>
 
     <dependencies>
         <dependency>

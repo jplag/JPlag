@@ -430,7 +430,6 @@
                 <module>core</module>
                 <module>languages</module>
                 <module>language-api</module>
-                <module>language-testutils</module>
                 <module>language-antlr-utils</module>
             </modules>
             <build>

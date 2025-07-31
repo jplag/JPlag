@@ -7,10 +7,10 @@
         <version>${revision}</version>
     </parent>
     <artifactId>scheme</artifactId>
+    <name>JPlag: Scheme Language Module</name>
 
     <build>
         <plugins>
-
             <plugin>
                 <groupId>com.helger.maven</groupId>
                 <artifactId>ph-javacc-maven-plugin</artifactId>

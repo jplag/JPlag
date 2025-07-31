@@ -7,6 +7,7 @@
         <version>${revision}</version>
     </parent>
     <artifactId>cli</artifactId>
+    <name>JPlag: Command Line Interface</name>
 
     <dependencies>
         <!-- IMPORTANT: For Coverage testing, you have to add dependencies to the coverage-report project ! -->
