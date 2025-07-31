@@ -7,8 +7,8 @@
         <version>${revision}</version>
     </parent>
     <artifactId>languages</artifactId>
-    <name>JPlag: Language Modules (Parent)</name>
     <packaging>pom</packaging>
+    <name>JPlag: Language Modules (Parent)</name>
     <modules>
         <module>c</module>
         <module>cpp</module>
