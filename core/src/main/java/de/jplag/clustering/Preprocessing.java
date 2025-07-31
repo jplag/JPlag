@@ -12,11 +12,11 @@ import de.jplag.clustering.preprocessors.ThresholdPreprocessor;
  */
 public enum Preprocessing {
     NONE(options -> null),
-    /** {@link CumulativeDistributionFunctionPreprocessor} */
+    /** {@link CumulativeDistributionFunctionPreprocessor}. */
     CUMULATIVE_DISTRIBUTION_FUNCTION(options -> new CumulativeDistributionFunctionPreprocessor()),
-    /** {@link ThresholdPreprocessor} */
+    /** {@link ThresholdPreprocessor}. */
     THRESHOLD(options -> new ThresholdPreprocessor(options.preprocessorThreshold())),
-    /** {@link PercentileThresholdProcessor} */
+    /** {@link PercentileThresholdProcessor}. */
     PERCENTILE(options -> new PercentileThresholdProcessor(options.preprocessorPercentile()));
 
     private final Function<ClusteringOptions, ClusteringPreprocessor> constructor;

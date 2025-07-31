@@ -98,7 +98,7 @@ public class BayesianOptimizer {
     }
 
     /**
-     * Numerically optimize acquisition function
+     * Numerically optimize acquisition function.
      */
     private RealVector maximizeAcquisitionFunction(GaussianProcess gaussianProcess, double yMax, Spliterator<RealVector> samples) {
         double bestScore = Double.NEGATIVE_INFINITY;
