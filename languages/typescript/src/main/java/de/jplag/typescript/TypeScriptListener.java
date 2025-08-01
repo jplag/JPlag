@@ -83,6 +83,9 @@ import de.jplag.typescript.grammar.TypeScriptParser.WhileStatementContext;
  */
 public class TypeScriptListener extends AbstractAntlrListener {
 
+    /**
+     * Creates the listener.
+     */
     public TypeScriptListener() {
         visit(ImportStatementContext.class).map(IMPORT);
         visit(Export).map(EXPORT);

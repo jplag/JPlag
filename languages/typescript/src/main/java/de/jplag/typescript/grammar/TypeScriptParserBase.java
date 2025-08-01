@@ -16,31 +16,41 @@ public abstract class TypeScriptParserBase extends Parser {
     }
 
     /**
-     * Short form for prev(String str).
+     * Short form for {@link TypeScriptParserBase#prev(String)}. Checks whether the previous token's text matches the given
+     * string.
+     * @param text the token text to compare with the previous token's text
+     * @return {@code true} if the previous token's text matches {@code str}, otherwise {@code false}
      */
-    protected boolean p(String str) {
-        return prev(str);
+    protected boolean p(String text) {
+        return prev(text);
     }
 
     /**
-     * Whether the previous token value equals to @param str.
+     * Checks whether the previous token's text matches the given string.
+     * @param text the token text to compare with the previous token's text
+     * @return {@code true} if the previous token's text equals {@code str}, otherwise {@code false}
      */
-    protected boolean prev(String str) {
-        return _input.LT(-1).getText().equals(str);
+    protected boolean prev(String text) {
+        return _input.LT(-1).getText().equals(text);
     }
 
     /**
-     * Short form for next(String str).
+     * Short form for {@link TypeScriptParserBase#next(String)}. Checks whether the next token's text matches the given
+     * string.
+     * @param text the token text to compare with the next token's text
+     * @return {@code true} if the next token's text matches {@code str}, otherwise {@code false}
      */
-    protected boolean n(String str) {
-        return next(str);
+    protected boolean n(String text) {
+        return next(text);
     }
 
     /**
-     * Whether the next token value equals to @param str.
+     * Checks whether the next token's text matches the given string.
+     * @param text the token text to compare with the next token's text
+     * @return {@code true} if the next token's text equals {@code str}, otherwise {@code false}
      */
-    protected boolean next(String str) {
-        return _input.LT(1).getText().equals(str);
+    protected boolean next(String text) {
+        return _input.LT(1).getText().equals(text);
     }
 
     protected boolean notLineTerminator() {

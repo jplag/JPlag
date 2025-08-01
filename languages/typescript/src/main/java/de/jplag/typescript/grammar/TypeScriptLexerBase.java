@@ -111,7 +111,7 @@ abstract class TypeScriptLexerBase extends Lexer {
     }
 
     /**
-     * Returns {@code true} if the lexer can match a regex literal.
+     * @return {@code true} if the lexer can match a regex literal.
      */
     protected boolean isRegexPossible() {
 

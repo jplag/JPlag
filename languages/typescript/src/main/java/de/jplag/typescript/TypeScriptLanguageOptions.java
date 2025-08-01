@@ -15,6 +15,10 @@ public class TypeScriptLanguageOptions extends LanguageOptions {
     private final LanguageOption<Boolean> useStrictDefault = createDefaultOption(OptionType.bool(), "useStrictMode",
             "If set JPlag parses files with the JavaScript strict syntax", false);
 
+    /**
+     * Returns whether strict mode parsing is enabled.
+     * @return {@code true} if strict mode is used; {@code false} otherwise.
+     */
     public boolean useStrictDefault() {
         return this.useStrictDefault.getValue();
     }
