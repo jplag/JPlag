@@ -4,7 +4,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.jplag.*;
+import de.jplag.JPlagComparison;
+import de.jplag.Match;
+import de.jplag.Submission;
+import de.jplag.Token;
+import de.jplag.TokenType;
 
 /**
  * Calculates frequencies of match subsequences across all comparisons according to different strategies.
