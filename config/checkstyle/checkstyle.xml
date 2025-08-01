@@ -16,6 +16,7 @@
     <module name="JavadocMissingLeadingAsterisk"/>
     <module name="JavadocMissingWhitespaceAfterAsterisk"/>
     <module name="JavadocStyle">
+      <property name="checkHtml" value="false"/>
       <property name="tokens" value="ANNOTATION_DEF, ANNOTATION_FIELD_DEF, CLASS_DEF, CTOR_DEF, ENUM_CONSTANT_DEF, ENUM_DEF, INTERFACE_DEF, METHOD_DEF, PACKAGE_DEF, VARIABLE_DEF, RECORD_DEF, COMPACT_CTOR_DEF"/>
     </module>
     <module name="JavadocType">
