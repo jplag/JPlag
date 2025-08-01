@@ -1,0 +1,8 @@
+{
+  "name": "@jplag/ui-components",
+  "type": "module",
+  "peerDependencies": {
+    "tailwindcss": "^4.1.11",
+    "vue": "^3.4.0"
+  }
+}
