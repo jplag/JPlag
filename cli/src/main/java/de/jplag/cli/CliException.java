@@ -7,7 +7,7 @@ import de.jplag.exceptions.ExitException;
  */
 public class CliException extends ExitException {
     /**
-     * Constructs a new language-related exception with the specified detail message.
+     * Constructs a new CLI-related exception with the specified detail message.
      * @param message the detail message.
      */
     public CliException(String message) {
@@ -15,7 +15,7 @@ public class CliException extends ExitException {
     }
 
     /**
-     * Constructs a new language-related exception with the specified detail message and cause.
+     * Constructs a new CLI-related exception with the specified detail message and cause.
      * @param message the detail message.
      * @param cause is the cause of the exception.
      */
