@@ -17,7 +17,7 @@ import de.jplag.ParsingException;
 /**
  * Unit tests for {@link FileUtils}.
  */
-public class FileUtilTest {
+class FileUtilTest {
     private static final Path TEST_FILE_LOCATION = Path.of("src", "test", "resources", "de", "jplag", "fileReaderTests");
     private static final Path TEST_FILE_SET_LOCATION = Path.of("src", "test", "resources", "de", "jplag", "fileSetEncoding");
 

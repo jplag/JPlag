@@ -13,7 +13,7 @@ import de.jplag.exceptions.ExitException;
  * the plagiarism detection works correctly for Java version 21 features, checking the number of matches, files, and
  * similarity scores. It also allows running in CI environments even if the Java version differs.
  */
-public class NewJavaFeaturesTest extends TestBase {
+class NewJavaFeaturesTest extends TestBase {
 
     private static final int EXPECTED_MATCHES = 8; // might change if you add files to the submissions
     private static final int NUMBER_OF_TEST_FILES = 8;
