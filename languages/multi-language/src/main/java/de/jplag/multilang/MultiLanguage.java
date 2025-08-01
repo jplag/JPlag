@@ -14,6 +14,10 @@ import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.options.LanguageOptions;
 
+/**
+ * Multi-language facade. Delegates all source code files of known languages to the corresponding concrete language
+ * modules.
+ */
 @MetaInfServices(Language.class)
 public class MultiLanguage implements Language {
     private static final Logger LOG = LoggerFactory.getLogger(MultiLanguage.class);
@@ -21,6 +25,9 @@ public class MultiLanguage implements Language {
     private final MultiLanguageOptions options;
     private boolean printedWarning;
 
+    /**
+     * Creates the multi-language facade.
+     */
     public MultiLanguage() {
         this.options = new MultiLanguageOptions();
         this.printedWarning = false;

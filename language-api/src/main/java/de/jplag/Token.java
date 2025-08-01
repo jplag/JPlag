@@ -114,6 +114,7 @@ public class Token {
     /**
      * Creates a token of type {@link SharedTokenType#FILE_END FILE_END} without information about line, column, and length.
      * @param file is the name of the source code file.
+     * @return the file end token.
      */
     public static Token fileEnd(File file) {
         return new Token(SharedTokenType.FILE_END, file, NO_VALUE, NO_VALUE, NO_VALUE, NO_VALUE, NO_VALUE);
@@ -123,6 +124,7 @@ public class Token {
      * Creates a token of type {@link SharedTokenType#FILE_END FILE_END} without information about line, column, and length,
      * but with semantic information.
      * @param file is the name of the source code file.
+     * @return the file end token.
      */
     public static Token semanticFileEnd(File file) {
         CodeSemantics semantics = CodeSemantics.createControl();

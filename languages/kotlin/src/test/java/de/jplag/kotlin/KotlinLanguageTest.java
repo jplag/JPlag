@@ -5,7 +5,7 @@ import de.jplag.testutils.datacollector.TestDataCollector;
 import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
 
 /**
- * Provides tests for the kotlin language module
+ * Provides tests for the kotlin language module.
  */
 public class KotlinLanguageTest extends LanguageModuleTest {
     public KotlinLanguageTest() {

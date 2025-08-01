@@ -130,6 +130,10 @@ import de.jplag.golang.grammar.GoParser.VarDeclContext;
  * JPlagGoListener.java in the history.
  */
 public class GoListener extends AbstractAntlrListener {
+
+    /**
+     * Creates the listener.
+     */
     public GoListener() {
         metaDeclarations();
 

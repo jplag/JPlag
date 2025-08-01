@@ -10,6 +10,9 @@ import de.jplag.antlr.AbstractAntlrParserAdapter;
 import de.jplag.swift.grammar.Swift5Lexer;
 import de.jplag.swift.grammar.Swift5Parser;
 
+/**
+ * ANTLR-based parser adapter for Swift.
+ */
 public class SwiftParserAdapter extends AbstractAntlrParserAdapter<Swift5Parser> {
     @Override
     protected Lexer createLexer(CharStream input) {

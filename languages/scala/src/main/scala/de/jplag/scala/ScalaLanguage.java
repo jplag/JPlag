@@ -9,7 +9,7 @@ import de.jplag.ParsingException;
 import de.jplag.Token;
 
 /**
- * Scala language module
+ * Scala language module.
  */
 public class ScalaLanguage implements Language {
     @Override

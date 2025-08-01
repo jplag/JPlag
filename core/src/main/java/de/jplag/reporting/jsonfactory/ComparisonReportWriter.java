@@ -30,10 +30,19 @@ public class ComparisonReportWriter {
     private final Function<Submission, String> submissionToIdFunction;
     private final Map<String, Map<String, String>> submissionIdToComparisonFileName = new ConcurrentHashMap<>();
     private final Map<String, AtomicInteger> fileNameCollisions = new ConcurrentHashMap<>();
+    /**
+     * The base path used for storing comparison data.
+     */
     public static final String BASEPATH = "comparisons";
     private static final SimilarityMetric[] EXPORTED_SIMILARITY_METRICS = new SimilarityMetric[] {SimilarityMetric.AVG, SimilarityMetric.MAX,
             SimilarityMetric.LONGEST_MATCH, SimilarityMetric.MAXIMUM_LENGTH};
 
+    /**
+     * Constructs a ComparisonReportWriter with the specified submission ID mapping function and a result writer to handle
+     * the output.
+     * @param submissionToIdFunction function to convert Submission objects to their unique string IDs
+     * @param resultWriter the writer responsible for producing the JPlag result output
+     */
     public ComparisonReportWriter(Function<Submission, String> submissionToIdFunction, JPlagResultWriter resultWriter) {
         this.submissionToIdFunction = submissionToIdFunction;
         this.resultWriter = resultWriter;

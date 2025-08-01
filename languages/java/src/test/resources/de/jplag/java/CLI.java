@@ -79,7 +79,7 @@ public final class CLI {
     }
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
      */
     public CLI() {
         this.options = new CliOptions();

@@ -2,6 +2,9 @@ package de.jplag.swift;
 
 import de.jplag.TokenType;
 
+/**
+ * Swift token types.
+ */
 public enum SwiftTokenType implements TokenType {
     IMPORT("IMPORT"),
     CLASS_DECLARATION("CLASS"),

@@ -36,7 +36,14 @@ import de.jplag.testutils.LanguageModuleTest;
 import de.jplag.testutils.datacollector.TestDataCollector;
 import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
 
+/**
+ * Unit tests for the Java language module.
+ */
 public class JavaLanguageTest extends LanguageModuleTest {
+
+    /**
+     * Creates an instance of the language test.
+     */
     public JavaLanguageTest() {
         super(new JavaLanguage(), JavaTokenType.class);
     }

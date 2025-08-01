@@ -12,7 +12,7 @@ import de.jplag.testutils.TemporaryFileHolder;
 import de.jplag.util.FileUtils;
 
 /**
- * Provides test source from a string
+ * Provides test source from a string.
  */
 class InlineTestData implements TestData {
     private final String testData;

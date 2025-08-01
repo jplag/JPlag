@@ -15,7 +15,7 @@ public abstract class GoParserBase extends Parser {
     }
 
     /**
-     * Returns true if the current Token is a closing bracket (")" or "}")
+     * @return true if the current Token is a closing bracket (")" or "}").
      */
     protected boolean closingBracket() {
         BufferedTokenStream stream = (BufferedTokenStream) _input;
