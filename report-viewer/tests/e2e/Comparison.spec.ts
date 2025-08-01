@@ -53,7 +53,7 @@ test('Test comparison table and comparsion view', async ({ page }) => {
   expect(bodyComparison).toMatch(new RegExp(`Similarity ${submissionName1}:[0-9]{2}.[0-9]{2}%`))
   expect(bodyComparison).toMatch(new RegExp(`Similarity ${submissionName2}:[0-9]{2}.[0-9]{2}%`))
 
-  expect(bodyComparison).toMatch(new RegExp(`${fileName1} - ${fileName2}: [0-9]+`))
+  expect(bodyComparison).toMatch(new RegExp(`${fileName1} - ${fileName2}:[0-9]+`))
   expect(bodyComparison).toContain(`${submissionName1}/${fileName1}`)
   expect(bodyComparison).toContain(`${submissionName2}/${fileName2}`)
 

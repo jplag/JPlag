@@ -7,7 +7,7 @@
   >
     <ToolTipComponent direction="right" :show-info-symbol="false">
       <template #default>
-        <OptionComponent label="Matches:" :has-tool-tip="true" />
+        <OptionComponent :has-tool-tip="true">Matches:</OptionComponent>
       </template>
       <template #tooltip>
         <p class="text-sm whitespace-pre">Click on a match to show it in the code view.</p>
@@ -16,11 +16,9 @@
 
     <ToolTipComponent v-if="hasBaseCode" direction="right" class="pr-3" :show-info-symbol="false">
       <template #default>
-        <OptionComponent
-          label="Base Code"
-          :style="{ background: getMatchColor(0.3, 'base') }"
-          :has-tool-tip="true"
-        />
+        <OptionComponent :style="{ background: getMatchColor(0.3, 'base') }" :has-tool-tip="true"
+          >Base Code</OptionComponent
+        >
       </template>
       <template #tooltip>
         <div class="text-sm whitespace-pre">
@@ -63,16 +61,18 @@
         <template #default>
           <OptionComponent
             :style="{ background: getMatchColor(0.3, match.colorIndex) }"
-            :label="
-              getFileName(match.firstFileName) +
-              ' - ' +
-              getFileName(match.secondFileName) +
-              ': ' +
-              getMatchLength(match)
-            "
             :has-tool-tip="true"
             @click="$emit('matchSelected', match)"
-          />
+          >
+            <span class="flex items-center gap-x-1">
+              <span
+                >{{ getFileName(match.firstFileName) }} -
+                {{ getFileName(match.secondFileName) }}:</span
+              ><MetricIcon class="h-3" :metric="MetricJsonIdentifier.LONGEST_MATCH" /><span>{{
+                getMatchLength(match)
+              }}</span>
+            </span>
+          </OptionComponent>
         </template>
         <template #tooltip>
           <p class="text-sm whitespace-pre">
@@ -143,6 +143,8 @@ import type { ToolTipDirection } from '@/model/ui/ToolTip'
 import { ref, type Ref, computed } from 'vue'
 import type { BaseCodeMatch } from '@/model/BaseCodeReport'
 import { store } from '@/stores/store'
+import { MetricJsonIdentifier } from '@/model/MetricJsonIdentifier'
+import MetricIcon from '../MetricIcon.vue'
 
 const props = defineProps({
   /**

@@ -51,6 +51,6 @@ public class Scanner {
      */
     public void add(CTokenType type, de.jplag.c.Token token) {
         int length = token.endColumn - token.beginColumn + 1;
-        tokens.add(new Token(type, currentFile, token.beginLine, token.beginColumn, length));
+        tokens.add(new Token(type, currentFile, token.beginLine, token.beginColumn, token.endLine, token.endColumn, length));
     }
 }

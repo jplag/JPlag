@@ -34,7 +34,7 @@ public class Parser {
         new JavacAdapter().parseFiles(files, this);
         logger.debug("--- token semantics ---");
         for (Token token : tokens) {
-            logger.debug("{} | {} | {}", token.getLine(), token.getType().getDescription(), token.getSemantics());
+            logger.debug("{} | {} | {}", token.getStartLine(), token.getType().getDescription(), token.getSemantics());
         }
         return tokens;
     }

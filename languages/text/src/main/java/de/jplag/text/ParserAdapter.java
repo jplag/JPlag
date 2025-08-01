@@ -108,9 +108,11 @@ public class ParserAdapter {
 
     private void addToken(CoreLabel label) {
         String text = label.originalText();
-        int column = label.beginPosition() - currentLineBreakIndex;
+        int startColumn = label.beginPosition() - currentLineBreakIndex;
+        int endColumn = label.endPosition() - currentLineBreakIndex;
         int length = label.endPosition() - label.beginPosition();
-        tokens.add(new Token(new TextTokenType(text), currentFile, currentLine, column, length));
+        // As a token can not stretch multiple lines, the startLine is equal to the end line
+        tokens.add(new Token(new TextTokenType(text), currentFile, currentLine, startColumn, currentLine, endColumn, length));
     }
 
     private String readFile(File file) throws ParsingException {

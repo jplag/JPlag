@@ -91,7 +91,7 @@
         <argLine/>
 
         <!-- The Revision of JPlag -->
-        <revision>6.2.0-SNAPSHOT</revision>
+        <revision>6.3.0-SNAPSHOT</revision>
     </properties>
 
     <dependencyManagement>
@@ -289,7 +289,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.7.1</version>
+                <version>1.7.2</version>
                 <configuration>
                     <updatePomFile>true</updatePomFile>
                     <flattenMode>resolveCiFriendliesOnly</flattenMode>
@@ -458,8 +458,8 @@
                 <module>core</module>
                 <module>languages</module>
                 <module>language-api</module>
-                <module>language-testutils</module>
                 <module>language-antlr-utils</module>
+                <module>language-testutils</module>
             </modules>
             <build>
                 <plugins>
