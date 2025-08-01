@@ -17,13 +17,15 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * Represents a data set for the end-to-end test suite.
- * @param name The name of the data set
- * @param language The language
- * @param format The format
+ * @param name the dataset name (required)
+ * @param language the programming language of the dataset (required)
+ * @param format the format of the dataset (required)
  * @param sourceLocation The source directory, may be null
  * @param resultFile The result file name, may be null
  * @param goldStandardFile The gold standard file, may be null
- * @param options The options for the jplag runs, may be null
+ * @param goldStandardDelimiter optional delimiter used in the gold standard file
+ * @param storageFormat optional storage format
+ * @param options The options for the JPlag runs, may be null
  */
 public record DataSet(@JsonProperty(required = true) String name,
         @JsonDeserialize(using = LanguageDeserializer.class) @JsonProperty(required = true) Language language,

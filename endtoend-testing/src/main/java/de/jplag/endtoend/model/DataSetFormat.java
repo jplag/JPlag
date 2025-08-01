@@ -43,6 +43,7 @@ public enum DataSetFormat {
      * Resolved the source directories for jplag.
      * @param dataSet The data set
      * @return The source directories
+     * @throws IOException if retrieving the sources fails.
      */
     public abstract Set<File> getSourceDirectories(DataSet dataSet) throws IOException;
 
@@ -51,6 +52,7 @@ public enum DataSetFormat {
      * @param dataSet The data set
      * @param directoryName The name of the base code directory
      * @return The base code directory
+     * @throws IOException if retrieving the base code fails.
      */
     public abstract File getBaseCodeDirectory(DataSet dataSet, String directoryName) throws IOException;
 }

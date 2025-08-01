@@ -7,6 +7,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * The object contains required options for the endToEnd tests which are important for the test suite.
+ * @param minimumTokenMatches an array of minimum token match thresholds
+ * @param baseCodeDirectory the base directory path for code files
  */
 public record Options(@JsonProperty Integer[] minimumTokenMatches, @JsonProperty String baseCodeDirectory) {
 

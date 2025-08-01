@@ -68,6 +68,7 @@ public final class FileHelper {
      * @param zip The zip file to extract
      * @param targetDirectory The target directory
      * @throws IOException If io operations go wrong
+     * @throws IllegalStateException if the ZIP archive exceeds size or entry count thresholds.
      */
     public static void unzip(File zip, File targetDirectory) throws IOException {
         try (ZipFile zipFile = new ZipFile(zip)) {

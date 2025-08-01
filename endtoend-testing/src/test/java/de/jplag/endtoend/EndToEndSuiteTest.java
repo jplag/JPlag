@@ -59,6 +59,7 @@ class EndToEndSuiteTest {
      * Creates the test cases over all language options for which data is available and the current test options.
      * @return dynamic test cases across all test data and languages
      * @throws ExitException If JPlag throws an error
+     * @throws IOException If loading test resources fails
      */
     @TestFactory
     Collection<DynamicContainer> endToEndTestFactory() throws ExitException, IOException {
