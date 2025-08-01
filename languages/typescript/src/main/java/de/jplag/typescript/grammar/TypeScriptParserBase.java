@@ -19,7 +19,7 @@ public abstract class TypeScriptParserBase extends Parser {
      * Short form for {@link TypeScriptParserBase#prev(String)}. Checks whether the previous token's text matches the given
      * string.
      * @param text the token text to compare with the previous token's text
-     * @return {@code true} if the previous token's text matches {@code str}, otherwise {@code false}
+     * @return {@code true} if the previous token's text matches the specified text, otherwise {@code false}
      */
     protected boolean p(String text) {
         return prev(text);
@@ -28,7 +28,7 @@ public abstract class TypeScriptParserBase extends Parser {
     /**
      * Checks whether the previous token's text matches the given string.
      * @param text the token text to compare with the previous token's text
-     * @return {@code true} if the previous token's text equals {@code str}, otherwise {@code false}
+     * @return {@code true} if the previous token's text equals the specified text, otherwise {@code false}
      */
     protected boolean prev(String text) {
         return _input.LT(-1).getText().equals(text);
@@ -38,7 +38,7 @@ public abstract class TypeScriptParserBase extends Parser {
      * Short form for {@link TypeScriptParserBase#next(String)}. Checks whether the next token's text matches the given
      * string.
      * @param text the token text to compare with the next token's text
-     * @return {@code true} if the next token's text matches {@code str}, otherwise {@code false}
+     * @return {@code true} if the next token's text matches the specified text, otherwise {@code false}
      */
     protected boolean n(String text) {
         return next(text);
@@ -47,7 +47,7 @@ public abstract class TypeScriptParserBase extends Parser {
     /**
      * Checks whether the next token's text matches the given string.
      * @param text the token text to compare with the next token's text
-     * @return {@code true} if the next token's text equals {@code str}, otherwise {@code false}
+     * @return {@code true} if the next token's text equals the specified text, otherwise {@code false}
      */
     protected boolean next(String text) {
         return _input.LT(1).getText().equals(text);
