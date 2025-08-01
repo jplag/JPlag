@@ -341,6 +341,10 @@
                 <version>3.6.0</version>
                 <configuration>
                     <configLocation>config/checkstyle/checkstyle.xml</configLocation>
+                    <sourceDirectories>
+                        <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
+                        <!-- <sourceDirectory>${project.build.testSourceDirectory}</sourceDirectory> -->
+                    </sourceDirectories>
                     <consoleOutput>true</consoleOutput>
                     <failsOnError>true</failsOnError>
                     <linkXRef>false</linkXRef>
