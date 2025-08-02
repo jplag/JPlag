@@ -15,7 +15,6 @@ public class TreeSitterPythonTest {
         try (Parser parser = new Parser(language)) {
             try (Tree tree = parser.parse("def main():", InputEncoding.UTF_8).orElseThrow()) {
                 Node rootNode = tree.getRootNode();
-                System.out.println("Root Node: " + rootNode.getType());
                 assert rootNode.getType().equals("module");
                 assert rootNode.getStartPoint().column() == 0;
                 assert rootNode.getEndPoint().column() == 11;
