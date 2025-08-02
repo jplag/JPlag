@@ -6,9 +6,8 @@ import de.jplag.treesitter.TreeSitterLanguage;
 import de.jplag.treesitter.library.NativeLibraryType;
 
 public class TreeSitterPython extends TreeSitterLanguage {
-
-    private static final String PYTHON_SYMBOL_NAME = "tree_sitter_python";
     private static final TreeSitterPython INSTANCE = new TreeSitterPython();
+    private static final String SYMBOL_NAME = "tree_sitter_python";
 
     private TreeSitterPython() {
     }
@@ -24,6 +23,6 @@ public class TreeSitterPython extends TreeSitterLanguage {
 
     @Override
     protected String symbolName() {
-        return PYTHON_SYMBOL_NAME;
+        return SYMBOL_NAME;
     }
 }
