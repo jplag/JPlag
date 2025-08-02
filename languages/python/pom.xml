@@ -19,5 +19,11 @@
             <artifactId>language-tree-sitter-utils</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency>
+            <groupId>de.jplag</groupId>
+            <artifactId>python-3</artifactId>
+            <version>${revision}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
