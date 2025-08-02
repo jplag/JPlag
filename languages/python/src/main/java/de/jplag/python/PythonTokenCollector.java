@@ -68,6 +68,9 @@ public class PythonTokenCollector implements TreeSitterVisitor {
         enterHandlers.put("type_alias_statement", node -> addToken(PythonTokenType.TYPE_ALIAS, node));
         enterHandlers.put("async", node -> addToken(PythonTokenType.ASYNC, node));
         enterHandlers.put("await", node -> addToken(PythonTokenType.AWAIT, node));
+        enterHandlers.put("list", node -> addToken(PythonTokenType.LIST, node));
+        enterHandlers.put("set", node -> addToken(PythonTokenType.SET, node));
+        enterHandlers.put("dictionary", node -> addToken(PythonTokenType.DICTIONARY, node));
 
         exitHandlers.put("class_definition", node -> addToken(PythonTokenType.CLASS_END, node));
         exitHandlers.put("function_definition", node -> addToken(PythonTokenType.METHOD_END, node));
