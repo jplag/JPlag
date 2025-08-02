@@ -40,6 +40,9 @@ public enum PythonTokenType implements TokenType {
     PASS("PASS"),
     GLOBAL("GLOBAL"),
     NONLOCAL("NONLOCAL"),
+    LIST("LIST"),
+    SET("SET"),
+    DICTIONARY("DICTIONARY"),
 
     // Python 3.8
     NAMED_EXPR("NAMED"), // ":=" named expression (PEP 572)
