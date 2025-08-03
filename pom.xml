@@ -86,6 +86,10 @@
         <eclipse.core.version>3.22.100</eclipse.core.version>
         <emfatic.version>1.1.0</emfatic.version>
 
+        <!-- Tree-sitter native library versions -->
+        <tree-sitter.version>0.25.1</tree-sitter.version>
+        <tree-sitter-python.version>0.23.6</tree-sitter-python.version>
+
         <!-- The Revision of JPlag -->
         <revision>6.1.0</revision>
     </properties>
@@ -453,6 +457,55 @@
                                     <keyname>0xC6E9DAC2</keyname>
                                     <!--suppress UnresolvedMavenProperty -->
                                     <passphrase>${env.GPG_PASSPHRASE}</passphrase>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>build-native-libraries</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.2.0</version>
+                        <executions>
+                            <execution>
+                                <id>build-tree-sitter-core</id>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                                <configuration>
+                                    <executable>bash</executable>
+                                    <arguments>
+                                        <argument>${project.basedir}/scripts/build-native-libraries.sh</argument>
+                                        <argument>tree-sitter</argument>
+                                        <argument>${tree-sitter.version}</argument>
+                                    </arguments>
+                                    <workingDirectory>${project.basedir}</workingDirectory>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>build-tree-sitter-python</id>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                                <configuration>
+                                    <executable>bash</executable>
+                                    <arguments>
+                                        <argument>${project.basedir}/scripts/build-native-libraries.sh</argument>
+                                        <argument>tree-sitter-python</argument>
+                                        <argument>${tree-sitter-python.version}</argument>
+                                    </arguments>
+                                    <workingDirectory>${project.basedir}</workingDirectory>
                                 </configuration>
                             </execution>
                         </executions>
