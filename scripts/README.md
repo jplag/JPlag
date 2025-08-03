@@ -103,7 +103,7 @@ Library versions are managed in the main `pom.xml` file:
 
 - **Linux**: Requires `build-essential` package
 - **macOS**: Requires Xcode command line tools (`xcode-select --install`)
-- **Windows**: Requires Visual Studio Build Tools or MinGW
+- **Windows**: Requires MinGW-w64 and make
 
 ## Adding New Libraries
 
