@@ -13,7 +13,6 @@ import de.jplag.treesitter.TreeSitterTraversal;
 import io.github.treesitter.jtreesitter.Node;
 
 public class PythonParserAdapter extends AbstractTreeSitterParserAdapter {
-
     @Override
     protected MemorySegment getLanguageMemorySegment() {
         return TreeSitterPython.language();

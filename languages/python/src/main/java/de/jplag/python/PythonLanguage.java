@@ -12,7 +12,6 @@ import de.jplag.Token;
 
 @MetaInfServices(Language.class)
 public class PythonLanguage implements Language {
-
     @Override
     public String[] suffixes() {
         return new String[] {".py"};

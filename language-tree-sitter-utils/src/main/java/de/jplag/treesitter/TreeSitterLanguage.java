@@ -11,6 +11,18 @@ import java.lang.invoke.MethodHandle;
 
 import de.jplag.treesitter.library.NativeLibraryType;
 
+/**
+ * Abstract base class for Tree-sitter language implementations.
+ * <p>
+ * This class provides the foundation for implementing Tree-sitter language parsers in JPlag. It handles the native
+ * library loading and symbol resolution required to interact with Tree-sitter language grammars. Subclasses must
+ * implement the specific language type and symbol name to enable parsing of their target language.
+ * </p>
+ * <p>
+ * The class uses Java's Foreign Function & Memory API to safely interact with native Tree-sitter libraries and manages
+ * memory allocation through an auto-managed arena.
+ * </p>
+ */
 public abstract class TreeSitterLanguage {
     protected static final ValueLayout VOID_POINTER = ValueLayout.ADDRESS
             .withTargetLayout(MemoryLayout.sequenceLayout(Long.MAX_VALUE, ValueLayout.JAVA_BYTE));
@@ -19,14 +31,37 @@ public abstract class TreeSitterLanguage {
 
     protected final Arena arena = Arena.ofAuto();
 
+    /**
+     * Creates an {@link UnsatisfiedLinkError} for unresolved native symbols.
+     * @param name The name of the unresolved symbol
+     * @return A new UnsatisfiedLinkError with a descriptive message
+     */
     protected static UnsatisfiedLinkError unresolved(String name) {
         return new UnsatisfiedLinkError("Unresolved symbol: " + name);
     }
 
+    /**
+     * Returns the native library type for this language implementation.
+     * @return The native library type containing the language grammar
+     */
     protected abstract NativeLibraryType libraryType();
 
+    /**
+     * Returns the symbol name for the language grammar function.
+     * @return The symbol name to look up in the native library
+     */
     protected abstract String symbolName();
 
+    /**
+     * Calls the native language grammar function and returns the resulting memory segment.
+     * <p>
+     * This method loads the native library, looks up the language grammar symbol, and invokes it to obtain the memory
+     * segment containing the language grammar. The returned segment is read-only to prevent accidental modification.
+     * </p>
+     * @return A read-only memory segment containing the language grammar
+     * @throws RuntimeException If the native function call fails
+     * @throws UnsatisfiedLinkError If the symbol cannot be found in the library
+     */
     protected MemorySegment call() {
         SymbolLookup symbols = SymbolLookup.libraryLookup(libraryType().create().getLibraryPath().toString(), arena);
         MemorySegment address = symbols.find(symbolName()).orElseThrow(() -> unresolved(symbolName()));

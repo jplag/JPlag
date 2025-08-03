@@ -20,13 +20,23 @@ import io.github.treesitter.jtreesitter.Tree;
 
 /**
  * Base class for Tree-sitter parser adapters.
+ * <p>
+ * This abstract class provides the foundation for implementing language-specific Tree-sitter parsers. It handles the
+ * common parsing workflow including file reading, Tree-sitter parsing, and token extraction. Subclasses must implement
+ * the language-specific grammar loading and token extraction logic.
+ * </p>
+ * <p>
+ * The class manages a Tree-sitter {@link Parser} instance and provides a unified interface for parsing multiple files
+ * and extracting tokens.
+ * </p>
  */
 public abstract class AbstractTreeSitterParserAdapter extends AbstractParser {
-
     protected final Parser parser;
 
     /**
-     * Creates a new {@code AbstractTreeSitterParserAdapter} for the specified {@link Language}.
+     * Creates a new Tree-sitter parser adapter with the language grammar. Initializes the Tree-sitter parser with the
+     * language grammar obtained from the subclass implementation.
+     * </p>
      */
     protected AbstractTreeSitterParserAdapter() {
         Language language = new Language(getLanguageMemorySegment());
@@ -34,16 +44,21 @@ public abstract class AbstractTreeSitterParserAdapter extends AbstractParser {
     }
 
     /**
-     * Returns the {@link MemorySegment} representing the grammar and parsing rules for this language
+     * Returns the memory segment containing the Tree-sitter language grammar.
      * <p>
-     * Subclasses must implement this method to provide the {@link MemorySegment} that points to the native Tree-sitter
-     * language instance.
-     * @return the memory segment of the language grammar for this parser adapter
+     * Subclasses must implement this method to provide the native memory segment that contains the Tree-sitter language
+     * grammar. This is typically obtained from a {@link TreeSitterLanguage} implementation.
+     * </p>
+     * @return The memory segment containing the language grammar
      */
     protected abstract MemorySegment getLanguageMemorySegment();
 
     /**
-     * Parses the given set of files and extracts tokens from each.
+     * Parses multiple files and extracts tokens from each.
+     * <p>
+     * This method processes each file in the provided set, parsing it with Tree-sitter and extracting language-specific
+     * tokens. The tokens are collected into a single list that represents all the parsed content for plagiarism detection.
+     * </p>
      * @param files The set of files to parse
      * @return A list of tokens extracted from all files
      * @throws ParsingException If any file cannot be read or parsed
@@ -56,6 +71,16 @@ public abstract class AbstractTreeSitterParserAdapter extends AbstractParser {
         return tokens;
     }
 
+    /**
+     * Parses a single file and extracts tokens from its syntax tree.
+     * <p>
+     * Reads the file content, parses it with Tree-sitter to create an AST, and delegates token extraction to the subclass
+     * implementation.
+     * </p>
+     * @param file The file to parse
+     * @return A list of tokens extracted from the file's AST
+     * @throws ParsingException If the file cannot be read or parsed
+     */
     private List<Token> parseFile(File file) throws ParsingException {
         String code;
 
@@ -73,10 +98,15 @@ public abstract class AbstractTreeSitterParserAdapter extends AbstractParser {
     }
 
     /**
-     * Traverses the syntax tree (AST) for the given file and collects all relevant tokens.
-     * @param file The file being parsed
+     * Extracts tokens from a Tree-sitter syntax tree.
+     * <p>
+     * Subclasses must implement this method to traverse the AST and extract language-specific tokens that are relevant for
+     * plagiarism detection. The implementation should visit nodes in the tree and create appropriate {@link Token}
+     * instances based on the node types and content.
+     * </p>
+     * @param file The source file being parsed
      * @param rootNode The root node of the syntax tree
-     * @return A list of tokens extracted from the AST of the file
+     * @return A list of tokens extracted from the AST
      */
     protected abstract List<Token> extractTokens(File file, Node rootNode);
 }

@@ -57,7 +57,7 @@ public enum PythonTokenType implements TokenType {
     EXCEPT_GROUP_END("}EXCEPT*"),
 
     // Python 3.12
-    TYPE_ALIAS("TYPE"); // type_alias_statement (PEP 695)
+    TYPE_ALIAS("TYPE"); // type alias statement (PEP 695)
 
     private final String description;
 

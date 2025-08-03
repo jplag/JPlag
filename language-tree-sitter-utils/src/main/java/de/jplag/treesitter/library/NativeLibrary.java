@@ -8,6 +8,18 @@ import java.nio.file.StandardCopyOption;
 
 import de.jplag.treesitter.util.OS;
 
+/**
+ * Manages native library loading and caching for Tree-sitter language parsers.
+ * <p>
+ * This class handles the extraction, caching, and path resolution of native Tree-sitter libraries. It supports both
+ * bundled libraries (extracted from JAR resources) and pre-installed libraries. Libraries are cached in the user's home
+ * directory under {@code .jplag/libs} to avoid repeated extraction.
+ * </p>
+ * <p>
+ * The class automatically detects the current platform and loads the appropriate native library version for the
+ * specified language and version combination.
+ * </p>
+ */
 public final class NativeLibrary {
     private static final String HOME_DIR = "user.home";
     private static final Path NATIVE_LIBRARY_DIR = Path.of(System.getProperty(HOME_DIR), ".jplag", "libs");
@@ -16,12 +28,22 @@ public final class NativeLibrary {
     private final String version;
     private final String systemLibraryName;
 
+    /**
+     * Creates a new native library instance for the specified library.
+     * @param name The base name of the native library
+     * @param version The version of the library
+     */
     public NativeLibrary(String name, String version) {
         this.name = name;
         this.version = version;
         this.systemLibraryName = System.mapLibraryName(name);
     }
 
+    /**
+     * Gets the resource path for the native library based on the current platform.
+     * @return The URL pointing to the bundled native library resource
+     * @throws IllegalStateException If the resource is not found for the current platform
+     */
     private URL getResourcePath() {
         String path = String.format("/native/%s/%s", OS.name(), systemLibraryName);
         URL url = NativeLibrary.class.getResource(path);
@@ -31,10 +53,24 @@ public final class NativeLibrary {
         return url;
     }
 
+    /**
+     * Gets the path where the native library should be stored on disk.
+     * @return The path in the user's home directory for caching the library
+     */
     private Path getStoredLibraryPath() {
         return NATIVE_LIBRARY_DIR.resolve(systemLibraryName);
     }
 
+    /**
+     * Resolves the path to the native library, extracting it if necessary.
+     * <p>
+     * This method first checks if the library is already available as a file resource (for development). If not, it checks
+     * if the library has been previously extracted to the cache directory. If neither exists, it extracts the library from
+     * the bundled resources to the cache directory.
+     * </p>
+     * @return The path to the native library file
+     * @throws RuntimeException If the library cannot be extracted or accessed
+     */
     public Path getLibraryPath() {
         try {
             URL resourcePath = getResourcePath();

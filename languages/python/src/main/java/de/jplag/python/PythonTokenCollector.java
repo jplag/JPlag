@@ -13,7 +13,17 @@ import de.jplag.treesitter.TreeSitterVisitor;
 import io.github.treesitter.jtreesitter.Node;
 
 /**
- * A token collector for Python using Tree-sitter that implements a map-based visitor pattern.
+ * Token collector for Python source code using Tree-sitter.
+ * <p>
+ * This class implements the {@link TreeSitterVisitor} interface to traverse Python syntax trees and extract tokens. It
+ * uses a map-based visitor pattern to efficiently handle different node types by mapping them to appropriate token
+ * creation handlers.
+ * </p>
+ * <p>
+ * The collector recognizes Python-specific constructs such as imports, class and function definitions, control flow
+ * statements, and other language elements. It creates tokens with accurate line and column positions based on the
+ * source code structure.
+ * </p>
  */
 public class PythonTokenCollector implements TreeSitterVisitor {
     private final List<Token> tokens;
@@ -23,6 +33,11 @@ public class PythonTokenCollector implements TreeSitterVisitor {
     private final Map<String, Consumer<Node>> enterHandlers = new HashMap<>();
     private final Map<String, Consumer<Node>> exitHandlers = new HashMap<>();
 
+    /**
+     * Creates a new Python token collector for the specified file.
+     * @param file The source file being parsed
+     * @param code The source code content as a string
+     */
     public PythonTokenCollector(File file, String code) {
         tokens = new ArrayList<>();
         this.file = file;
@@ -31,7 +46,7 @@ public class PythonTokenCollector implements TreeSitterVisitor {
     }
 
     /**
-     * Initialize the handler maps for different node types.
+     * Initializes the handler maps for different Python node types.
      */
     private void initializeHandlers() {
         enterHandlers.put("import_statement", node -> addToken(PythonTokenType.IMPORT, node));
@@ -106,7 +121,7 @@ public class PythonTokenCollector implements TreeSitterVisitor {
     }
 
     /**
-     * Add a token of the specified type for the given node.
+     * Adds a token of the specified type for the given node.
      * @param tokenType The type of token to create
      * @param node The Tree-sitter node
      */
@@ -115,7 +130,11 @@ public class PythonTokenCollector implements TreeSitterVisitor {
     }
 
     /**
-     * Add a token of the specified type for the given node with a specific length.
+     * Adds a token of the specified type for the given node with a specific length.
+     * <p>
+     * Creates a token with the specified length and calculates the appropriate line and column positions. For end tokens,
+     * the line position is based on the node's end position while the column uses the start position for visual alignment.
+     * </p>
      * @param tokenType The type of token to create
      * @param node The Tree-sitter node
      * @param length The length of the token
@@ -136,7 +155,14 @@ public class PythonTokenCollector implements TreeSitterVisitor {
     }
 
     /**
-     * Get the hardcoded length for Python keywords and statements.
+     * Gets the hardcoded length for Python keywords and statements.
+     * <p>
+     * Returns predefined lengths for Python keywords and operators, or calculates the length from the node span for
+     * variable-length constructs like function calls and control flow statements.
+     * </p>
+     * @param tokenType The type of token
+     * @param node The Tree-sitter node
+     * @return The length of the token
      */
     private int getTokenLength(PythonTokenType tokenType, Node node) {
         return switch (tokenType) {
@@ -175,14 +201,19 @@ public class PythonTokenCollector implements TreeSitterVisitor {
     }
 
     /**
-     * Check if character at given position is a newline.
+     * Checks if the character at the given position is a newline.
+     * @param position The position in the source code
+     * @return True if the character is a newline
      */
     private boolean isNewline(int position) {
         return code.charAt(position) == '\n';
     }
 
     /**
-     * Convert byte offset to line number (1-based).
+     * Converts a byte offset to a line number (1-based). Counts newline characters from the beginning of the source code up
+     * to the specified offset.
+     * @param byteOffset The byte offset in the source code
+     * @return The line number
      */
     private int getLineNumber(int byteOffset) {
         int line = 1;
@@ -195,7 +226,10 @@ public class PythonTokenCollector implements TreeSitterVisitor {
     }
 
     /**
-     * Convert byte offset to column number (1-based).
+     * Converts a byte offset to a column number (1-based). Finds the last newline before the specified offset and
+     * calculates the column position relative to that line.
+     * @param byteOffset The byte offset in the source code
+     * @return The 1-based column number
      */
     private int getColumnNumber(int byteOffset) {
         int lastNewlinePosition = -1;
@@ -208,7 +242,13 @@ public class PythonTokenCollector implements TreeSitterVisitor {
     }
 
     /**
-     * Check if a token type represents an "end" token that should use the end position of the node.
+     * Checks if a token type represents an end token that should use the end position of the node.
+     * <p>
+     * End tokens are positioned at the end of their corresponding constructs (classes, functions, loops, etc.) to properly
+     * represent the nesting structure in the token stream.
+     * </p>
+     * @param tokenType The token type to check
+     * @return True if the token type is an end token
      */
     private boolean isEndToken(PythonTokenType tokenType) {
         return switch (tokenType) {
@@ -218,8 +258,8 @@ public class PythonTokenCollector implements TreeSitterVisitor {
     }
 
     /**
-     * Get the collected tokens.
-     * @return List of extracted tokens
+     * Gets the collected tokens.
+     * @return A copy of the list of extracted tokens
      */
     public List<Token> getTokens() {
         return new ArrayList<>(tokens);
