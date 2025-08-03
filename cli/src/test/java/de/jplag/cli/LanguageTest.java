@@ -23,6 +23,7 @@ import de.jplag.options.JPlagOptions;
 
 class LanguageTest extends CliTest {
     private static final List<Class<? extends Language>> ignoredLanguages = List.of(MultiLanguage.class);
+    private static final int AVAILABLE_LANGUAGES = 21;
 
     @Test
     void testDefaultLanguage() throws ExitException, IOException {
@@ -40,7 +41,7 @@ class LanguageTest extends CliTest {
     @Test
     void testLoading() {
         var languages = LanguageLoader.getAllAvailableLanguages();
-        assertEquals(20, languages.size(), "Loaded Languages: " + languages.keySet());
+        assertEquals(AVAILABLE_LANGUAGES, languages.size(), "Loaded Languages: " + languages.keySet());
     }
 
     @ParameterizedTest
