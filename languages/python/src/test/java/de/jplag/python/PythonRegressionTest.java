@@ -31,6 +31,8 @@ import de.jplag.python3.Python3TokenType;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PythonRegressionTest {
 
+    private static final String REGRESSION_TEST_FILE = "RegressionTest.py";
+
     private Language oldPythonLanguage;
     private Language newPythonLanguage;
     private Path testResourcesPath;
@@ -43,14 +45,14 @@ public class PythonRegressionTest {
     }
 
     /**
-     * Tree-sitter-based module provides more correct tokenization than the old ANTLR module. The old module incorrectly
-     * generates ARRAY tokens for attribute access and method calls. This represents an improvement in tokenization quality
-     * rather than a regression.
+     * TODO: Tree-sitter-based module provides more correct tokenization than the old ANTLR module. The old module
+     * incorrectly generates ARRAY tokens for attribute access and method calls. This represents an improvement in
+     * tokenization quality rather than a regression.
      */
     @Disabled
     @Test
     void testRegressionCompatibility() throws ParsingException, IOException {
-        testFileCompatibility("RegressionTest.py");
+        testFileCompatibility(REGRESSION_TEST_FILE);
     }
 
     private void testFileCompatibility(String fileName) throws ParsingException, IOException {
@@ -68,6 +70,7 @@ public class PythonRegressionTest {
         // Apply token type mapping for comparison
         List<TokenType> mappedNewTokenTypes = mapTokenTypes(newTokenTypes);
 
+        // TODO: Remove this once the test is enabled
         System.out.println("Old token order: " + oldTokenTypes);
         System.out.println("New token order: " + mappedNewTokenTypes);
 
@@ -108,9 +111,12 @@ public class PythonRegressionTest {
     }
 
     /**
-     * Maps individual token types from new module to old module. Returns null for tokens that should be filtered out.
+     * Maps individual token types from new module to old module
+     * @param newType The token type to map
+     * @return The mapped token type or {@code null} if the token should be filtered out
      */
     private TokenType mapTokenType(TokenType newType) {
+        // Check if token type is from ANTLR module
         if (!(newType instanceof PythonTokenType)) {
             return newType;
         }
