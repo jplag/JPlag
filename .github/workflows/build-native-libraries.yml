@@ -1,0 +1,121 @@
+name: Build Native Libraries
+
+on:
+  push:
+    paths:
+      - "scripts/build-native-libraries.sh"
+      - "language-tree-sitter-utils/**"
+      - ".github/workflows/build-native-libraries.yml"
+  pull_request:
+    paths:
+      - "scripts/build-native-libraries.sh"
+      - "language-tree-sitter-utils/**"
+      - ".github/workflows/build-native-libraries.yml"
+  workflow_dispatch:
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 22
+          distribution: 'temurin'
+      
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git
+      
+      - name: Build native libraries
+        run: |
+          chmod +x scripts/build-native-libraries.sh
+          mvn -Pbuild-native-libraries generate-resources
+      
+      - name: Upload Linux libraries
+        uses: actions/upload-artifact@v4
+        with:
+          name: "native-libraries-linux"
+          path: |
+            language-tree-sitter-utils/src/main/resources/native/linux/
+            languages/python/src/main/resources/native/linux/
+            build/native/
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 22
+          distribution: 'temurin'
+      
+      - name: Install build dependencies
+        run: |
+          xcode-select --install || true
+      
+      - name: Build native libraries
+        run: |
+          chmod +x scripts/build-native-libraries.sh
+          mvn -Pbuild-native-libraries generate-resources
+      
+      - name: Upload macOS libraries
+        uses: actions/upload-artifact@v4
+        with:
+          name: "native-libraries-macos"
+          path: |
+            language-tree-sitter-utils/src/main/resources/native/mac/
+            languages/python/src/main/resources/native/mac/
+            build/native/
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 22
+          distribution: 'temurin'
+      
+      - name: Install build dependencies
+        run: |
+          # Windows typically has build tools available
+          echo "Build tools should be available"
+      
+      - name: Build native libraries
+        run: |
+          # Convert line endings for Windows
+          git config --global core.autocrlf false
+          mvn -Pbuild-native-libraries generate-resources
+      
+      - name: Upload Windows libraries
+        uses: actions/upload-artifact@v4
+        with:
+          name: "native-libraries-windows"
+          path: |
+            language-tree-sitter-utils/src/main/resources/native/windows/
+            languages/python/src/main/resources/native/windows/
+            build/native/
+
+  combine-artifacts:
+    needs: [build-linux, build-macos, build-windows]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      
+      - name: Combine and commit libraries
+        run: |
+          # This step would combine the artifacts and commit them to the repository
+          # For now, we'll just list what we have
+          find artifacts -name "*.so" -o -name "*.dylib" -o -name "*.dll" | sort
