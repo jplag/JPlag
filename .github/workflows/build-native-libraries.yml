@@ -115,7 +115,7 @@ jobs:
   combine-artifacts:
     needs: [build-linux, build-macos, build-windows]
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # if: github.event_name == 'push' && github.ref == 'refs/heads/main' TODO: Enable condition when finished 
     steps:
       - name: Download all artifacts
         uses: actions/download-artifact@v4
@@ -124,6 +124,6 @@ jobs:
       
       - name: Combine and commit libraries
         run: |
-          # This step would combine the artifacts and commit them to the repository
+          # This step combines the artifacts and commit them to the repository
           # For now, we'll just list what we have
           find artifacts -name "*.so" -o -name "*.dylib" -o -name "*.dll" | sort
