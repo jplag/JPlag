@@ -86,8 +86,20 @@ jobs:
       
       - name: Install build dependencies
         run: |
-          # Windows typically has build tools available
-          echo "Build tools should be available"
+          # Install Chocolatey if not available
+          if (!(Get-Command choco -ErrorAction SilentlyContinue)) {
+            Set-ExecutionPolicy Bypass -Scope Process -Force
+            [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+            iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+          }
+          
+          # Install MinGW-w64 and make
+          choco install mingw -y
+          choco install make -y
+          
+          # Add MinGW to PATH
+          $env:PATH += ";C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin"
+          echo "MinGW and make installed"
       
       - name: Build native libraries
         run: |
