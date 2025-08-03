@@ -37,3 +37,6 @@ result.jplag
 
 # macOS
 *.DS_Store
+
+# Build directories
+build/
