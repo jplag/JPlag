@@ -155,9 +155,24 @@ build_library() {
     
     print_success "Built $library_name for $PLATFORM-$ARCH"
     
-    # Clean up
-    cd ../..
-    rm -rf "$build_dir"
+    # Return to project root
+    cd ../../../..
+}
+
+# Clean up build directories
+cleanup_build_directories() {
+    print_info "Cleaning up build directories..."
+    if [ -d "build/native" ]; then
+        print_info "Found build directory, removing..."
+        rm -rf build/native/
+        if [ -d "build/native" ]; then
+            print_error "Failed to remove build directory"
+        else
+            print_success "Build directories cleaned up"
+        fi
+    else
+        print_info "No build directories to clean up"
+    fi
 }
 
 # Main execution
@@ -174,6 +189,9 @@ main() {
     print_info "Starting native library build process"
     print_info "Library: $library_name"
     print_info "Version: $version"
+    
+    # Set up trap to ensure cleanup on exit
+    trap cleanup_build_directories EXIT
     
     # Check dependencies
     check_dependencies
