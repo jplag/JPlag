@@ -30,6 +30,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential git
       
+      - name: Verify make installation
+        run: |
+          make -v
+      
       - name: Build native libraries
         run: |
           chmod +x scripts/build-native-libraries.sh
@@ -59,6 +63,10 @@ jobs:
         run: |
           xcode-select --install || true
       
+      - name: Verify make installation
+        run: |
+          make -v
+      
       - name: Build native libraries
         run: |
           chmod +x scripts/build-native-libraries.sh
@@ -84,26 +92,9 @@ jobs:
           java-version: 22
           distribution: 'temurin'
       
-      - name: Install build dependencies
+      - name: Verify make installation
         run: |
-          # Install Chocolatey if not available
-          if (!(Get-Command choco -ErrorAction SilentlyContinue)) {
-            Set-ExecutionPolicy Bypass -Scope Process -Force
-            [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
-            iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-          }
-          
-          # Install Cygwin with required packages
-          choco install cygwin -y
-          
-          # Add Cygwin to PATH
-          $env:PATH += ";C:\tools\Cygwin\bin"
-          
-          # Verify Cygwin tools are available
-          echo "Available tools:"
-          echo "PATH: $env:PATH"
-          Get-Command make -ErrorAction SilentlyContinue | Select-Object Source
-          Get-Command gcc -ErrorAction SilentlyContinue | Select-Object Source
+          make -v
       
       - name: Build native libraries
         run: |
