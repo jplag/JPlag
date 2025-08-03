@@ -15,6 +15,12 @@ import io.github.treesitter.jtreesitter.NativeLibraryLookup;
  */
 public class LibraryLookup implements NativeLibraryLookup {
     /**
+     * Creates a new library lookup instance.
+     */
+    public LibraryLookup() {
+    }
+
+    /**
      * Creates a symbol lookup for the Tree-sitter native library.
      * @param arena The memory arena for managing native library resources
      * @return A symbol lookup that can resolve Tree-sitter library symbols

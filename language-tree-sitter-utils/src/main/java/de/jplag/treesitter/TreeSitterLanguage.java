@@ -19,17 +19,27 @@ import de.jplag.treesitter.library.NativeLibraryType;
  * implement the specific language type and symbol name to enable parsing of their target language.
  * </p>
  * <p>
- * The class uses Java's Foreign Function & Memory API to safely interact with native Tree-sitter libraries and manages
- * memory allocation through an auto-managed arena.
+ * The class uses Java's Foreign Function and Memory API to safely interact with native Tree-sitter libraries and
+ * manages memory allocation through an auto-managed arena.
  * </p>
  */
 public abstract class TreeSitterLanguage {
+    /** Value layout for void pointers in native memory. */
     protected static final ValueLayout VOID_POINTER = ValueLayout.ADDRESS
             .withTargetLayout(MemoryLayout.sequenceLayout(Long.MAX_VALUE, ValueLayout.JAVA_BYTE));
+    /** Function descriptor for language grammar functions. */
     protected static final FunctionDescriptor FUNCTION_DESCRIPTOR = FunctionDescriptor.of(VOID_POINTER);
+    /** Native linker for function calls. */
     protected static final Linker LINKER = Linker.nativeLinker();
 
+    /** Auto-managed arena for native memory allocation. */
     protected final Arena arena = Arena.ofAuto();
+
+    /**
+     * Creates a new Tree-sitter language instance.
+     */
+    protected TreeSitterLanguage() {
+    }
 
     /**
      * Creates an {@link UnsatisfiedLinkError} for unresolved native symbols.

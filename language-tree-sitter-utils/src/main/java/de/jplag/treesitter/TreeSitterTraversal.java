@@ -11,6 +11,12 @@ import io.github.treesitter.jtreesitter.Node;
  */
 public final class TreeSitterTraversal {
     /**
+     * Utility class constructor.
+     */
+    private TreeSitterTraversal() {
+    }
+
+    /**
      * Traverses a Tree-sitter syntax tree using depth-first traversal.
      * <p>
      * This method recursively visits all nodes in the syntax tree, calling the visitor's

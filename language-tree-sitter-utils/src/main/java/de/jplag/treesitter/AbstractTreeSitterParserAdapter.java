@@ -31,12 +31,12 @@ import io.github.treesitter.jtreesitter.Tree;
  * </p>
  */
 public abstract class AbstractTreeSitterParserAdapter extends AbstractParser {
+    /** Tree-sitter parser instance for this language. */
     protected final Parser parser;
 
     /**
      * Creates a new Tree-sitter parser adapter with the language grammar. Initializes the Tree-sitter parser with the
      * language grammar obtained from the subclass implementation.
-     * </p>
      */
     protected AbstractTreeSitterParserAdapter() {
         Language language = new Language(getLanguageMemorySegment());
