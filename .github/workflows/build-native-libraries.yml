@@ -97,8 +97,15 @@ jobs:
           choco install cygwin -y
           
           # Add Cygwin to PATH
-          $env:PATH += ";C:\tools\cygwin\bin"
-          echo "Cygwin installed"
+          $env:PATH += ";C:\tools\Cygwin\bin"
+          
+          # Refresh environment to see PATH changes
+          refreshenv
+          
+          # Verify Cygwin tools are available
+          echo "Available tools:"
+          where make
+          where gcc
       
       - name: Build native libraries
         run: |
