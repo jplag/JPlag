@@ -115,7 +115,7 @@ def test_with_statements():
 
 
 def test_async_await():
-    """Test async/await syntax (Python 3.5+)."""
+    """Test async/await syntax."""
     import asyncio
     
     async def async_function():
@@ -217,7 +217,6 @@ def main():
     # Test generators
     fib_sequence, count_sequence = test_generators()
     
-    # Return all results
     return {
         "calculator": calc,
         "results": [result1, result2],
@@ -246,5 +245,3 @@ def main():
 
 if __name__ == "__main__":
     results = main()
-    print("All tests completed successfully!")
-    print(f"Results: {results}") 
