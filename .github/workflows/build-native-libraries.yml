@@ -93,13 +93,12 @@ jobs:
             iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
           }
           
-          # Install MinGW-w64 and make
-          choco install mingw -y
-          choco install make -y
+          # Install Cygwin with required packages
+          choco install cygwin -y
           
-          # Add MinGW to PATH
-          $env:PATH += ";C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin"
-          echo "MinGW and make installed"
+          # Add Cygwin to PATH
+          $env:PATH += ";C:\tools\cygwin\bin"
+          echo "Cygwin installed"
       
       - name: Build native libraries
         run: |
