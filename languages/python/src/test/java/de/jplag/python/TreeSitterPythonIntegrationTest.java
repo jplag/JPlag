@@ -8,7 +8,11 @@ import io.github.treesitter.jtreesitter.Node;
 import io.github.treesitter.jtreesitter.Parser;
 import io.github.treesitter.jtreesitter.Tree;
 
-public class TreeSitterPythonTest {
+/**
+ * Integration test to verify that the Tree-sitter Python parser is properly configured and can successfully parse basic
+ * Python code constructs.
+ */
+public class TreeSitterPythonIntegrationTest {
     @Test
     public void testTreeSitterPythonIntegration() {
         Language language = new Language(TreeSitterPython.language());
