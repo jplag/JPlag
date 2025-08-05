@@ -107,7 +107,7 @@ public class GreedyStringTiling {
      * @return the comparison results.
      */
     private JPlagComparison compareOrdered(Submission leftSubmission, Submission rightSubmission) {
-        assert leftSubmission.getNumberOfTokens() <= rightSubmission.getNumberOfTokens();
+        assert tokenSupplier.getTokenList(leftSubmission).size() <= tokenSupplier.getTokenList(rightSubmission).size();
         int[] leftTokens = this.tokenSequenceMapper.getTokenSequenceFor(leftSubmission);
         int[] rightTokens = this.tokenSequenceMapper.getTokenSequenceFor(rightSubmission);
 
