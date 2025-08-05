@@ -10,14 +10,30 @@ package de.jplag.reporting.reportobject.model;
  * @param endInSecond End position of the match in the second file
  * @param lengthOfFirst Length of the matched segment in the first file
  * @param lengthOfSecond Length of the matched segment in the second file
+ * @param isComment true if the match is inside the comments, false otherwise
  */
 public record Match(String firstFileName, String secondFileName, CodePosition startInFirst, CodePosition endInFirst, CodePosition startInSecond,
         CodePosition endInSecond, int lengthOfFirst, int lengthOfSecond, boolean isComment) {
+    /**
+     * Creates a new code match.
+     * @param firstFileName Name of the first file involved in the match
+     * @param secondFileName Name of the second file involved in the match
+     * @param startInFirst Start position of the match in the first file
+     * @param endInFirst End position of the match in the first file
+     * @param startInSecond Start position of the match in the second file
+     * @param endInSecond End position of the match in the second file
+     * @param lengthOfFirst Length of the matched segment in the first file
+     * @param lengthOfSecond Length of the matched segment in the second file
+     */
     public Match(String firstFileName, String secondFileName, CodePosition startInFirst, CodePosition endInFirst, CodePosition startInSecond,
             CodePosition endInSecond, int lengthOfFirst, int lengthOfSecond) {
         this(firstFileName, secondFileName, startInFirst, endInFirst, startInSecond, endInSecond, lengthOfFirst, lengthOfSecond, false);
     }
 
+    /**
+     * Transforms this match into a comment match.
+     * @return Copy of the match representing a comment match.
+     */
     public Match asComment() {
         return new Match(this.firstFileName, this.secondFileName, this.startInFirst, this.endInFirst, this.startInSecond, this.endInSecond,
                 this.lengthOfFirst, this.lengthOfSecond, true);

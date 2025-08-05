@@ -34,7 +34,8 @@ public class GreedyStringTiling {
     private final TokenSequenceMapper tokenSequenceMapper;
 
     /**
-     * Creates a instance of the Greedy String Tiling algorithm.
+     * Creates a instance of the Greedy String Tiling algorithm. This uses the default {@code Submission::getTokenList()}
+     * method as the supplier.
      * @param options are the options, controlling algorithm parameters like minimum token match.
      * @param tokenValueMapper provides integer mappings for token sequences.
      */
@@ -42,6 +43,12 @@ public class GreedyStringTiling {
         this(options, tokenValueMapper, Submission::getTokenList);
     }
 
+    /**
+     * Creates a instance of the Greedy String Tiling algorithm.
+     * @param options are the options, controlling algorithm parameters like minimum token match.
+     * @param tokenValueMapper provides integer mappings for token sequences.
+     * @param tokenSupplier supplier returning the token list of a single submission.
+     */
     public GreedyStringTiling(JPlagOptions options, TokenSequenceMapper tokenValueMapper, TokenListSupplier tokenSupplier) {
         this.options = options;
         this.tokenSupplier = tokenSupplier;

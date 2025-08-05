@@ -1,12 +1,25 @@
 package de.jplag.commenthandling;
 
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.*;
+import de.jplag.JPlagComparison;
+import de.jplag.JPlagResult;
+import de.jplag.Match;
+import de.jplag.Submission;
+import de.jplag.SubmissionSet;
 import de.jplag.comparison.GreedyStringTiling;
 import de.jplag.comparison.SubmissionTuple;
 import de.jplag.comparison.TokenSequenceMapper;
@@ -73,6 +86,7 @@ public class CommentComparer {
      * comparisons. If basecode is supplied in the result, basecode will also be respected by this function.
      * @param result Result object to add comment matches to
      * @return New result object with all comment matches added
+     * @throws ComparisonException if the comparison fails
      */
     public JPlagResult compareCommentsAndMergeMatches(JPlagResult result) throws ComparisonException {
         long timeBeforeStartInMillis = System.currentTimeMillis();
