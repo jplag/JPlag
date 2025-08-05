@@ -53,7 +53,7 @@ public class ParserAdapter {
         return tokens;
     }
 
-    public List<Token> parseStrings(Set<String> fileContents) throws ParsingException {
+    public List<Token> parseStrings(Set<String> fileContents) {
         tokens = new ArrayList<>();
         for (String fileContent : fileContents) {
             logger.trace("Parsing next string file content");

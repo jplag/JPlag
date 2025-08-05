@@ -3,10 +3,6 @@ package de.jplag.commenthandling;
 import java.io.File;
 import java.util.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import de.jplag.ParsingException;
 import de.jplag.SharedTokenType;
 import de.jplag.Token;
 import de.jplag.commentextraction.Comment;
@@ -16,14 +12,12 @@ import de.jplag.text.ParserAdapter;
  * Preprocesses comments into tokens by running them through the JPlag text module.
  */
 public class CommentPreprocessor {
-    private static final Logger logger = LoggerFactory.getLogger(CommentPreprocessor.class);
-
     private final List<Comment> comments;
     private final ParserAdapter textParser;
 
     /**
      * Creates a new preprocessor for the supplied list of comments.
-     * @param comments Comments to prcess
+     * @param comments Comments to process
      */
     public CommentPreprocessor(List<Comment> comments) {
         this.comments = comments;
@@ -52,12 +46,7 @@ public class CommentPreprocessor {
     }
 
     private List<Token> processSingleCommentToToken(Comment comment) {
-        try {
-            return fixTokenPositions(textParser.parseStrings(Set.of(comment.content())), comment);
-        } catch (ParsingException e) {
-            logger.error("Could not parse comment: {}", e.getMessage());
-            return List.of();
-        }
+        return fixTokenPositions(textParser.parseStrings(Set.of(comment.content())), comment);
     }
 
     private List<Token> fixTokenPositions(List<Token> tokens, Comment comment) {

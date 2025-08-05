@@ -296,12 +296,8 @@ public class Submission implements Comparable<Submission> {
                 rawComments.addAll(extractor.extract());
             }
             logger.debug("Found {} comments", comments.size());
-            try {
-                CommentPreprocessor preprocessor = new CommentPreprocessor(rawComments);
-                this.comments = preprocessor.processToToken();
-            } catch (Exception e) {
-                logger.error("Error while parsing comments: {}", e.getMessage());
-            }
+            CommentPreprocessor preprocessor = new CommentPreprocessor(rawComments);
+            this.comments = preprocessor.processToToken();
         }
     }
 
