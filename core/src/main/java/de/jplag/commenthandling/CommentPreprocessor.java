@@ -33,13 +33,13 @@ public class CommentPreprocessor {
         List<Token> result = new ArrayList<>();
         File lastFile = null;
         for (Comment comment : comments) {
-            result.addAll(processSingleCommentToToken(comment));
             if (comment.file() != lastFile) {
                 if (lastFile != null) {
                     result.add(Token.fileEnd(lastFile));
                 }
                 lastFile = comment.file();
             }
+            result.addAll(processSingleCommentToToken(comment));
         }
         result.add(Token.fileEnd(lastFile));
         return result;
