@@ -35,6 +35,13 @@ public class CommentComparer {
             JPlagComparison baseCodeCommentComparison = comparisonAlgorithm.generateBaseCodeMarking(currentSubmission, baseCodeSubmission);
             if (currentSubmission.hasBaseCodeComparison()) {
                 JPlagComparison oldBaseCodeComparison = currentSubmission.getBaseCodeComparison();
+
+                if (baseCodeCommentComparison.firstSubmission().equals(oldBaseCodeComparison.secondSubmission())) {
+                    // Due to internals of the comparison algorithm, the submissions are flipped between code & comment comparisons
+                    // To ensure that matches are assigned to the correct submission, we're flipping the comment comparison
+                    baseCodeCommentComparison = this.flipComparison(baseCodeCommentComparison);
+                }
+
                 JPlagComparison newBaseCodeComparison = new JPlagComparison(oldBaseCodeComparison.firstSubmission(),
                         oldBaseCodeComparison.secondSubmission(), oldBaseCodeComparison.matches(), oldBaseCodeComparison.ignoredMatches(),
                         baseCodeCommentComparison.matches());
