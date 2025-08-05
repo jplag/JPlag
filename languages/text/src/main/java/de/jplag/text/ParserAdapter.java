@@ -65,6 +65,11 @@ public class ParserAdapter {
         return tokens;
     }
 
+    /**
+     * Parses a set of strings.
+     * @param fileContents strings to parse.
+     * @return the token sequence.
+     */
     public List<Token> parseStrings(Set<String> fileContents) {
         tokens = new ArrayList<>();
         for (String fileContent : fileContents) {
