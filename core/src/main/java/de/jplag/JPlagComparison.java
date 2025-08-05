@@ -56,10 +56,9 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
 
     /**
      * Get the total number of matched comment tokens for this comparison.
-     * @return
      */
     public int getNumberOfMatchedCommentTokens() {
-        return commentMatches.stream().mapToInt(Match::length).sum();
+        return commentMatches.stream().mapToInt(Match::minimumLength).sum();
     }
 
     /**
@@ -106,8 +105,9 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
      * structural similarity.
      */
     public final double similarityOfFirst() {
-        int divisor = firstSubmission.getSimilarityDivisor() + this.getNumberOfMatchedCommentTokens();
-        int matchedTokens = matches.stream().mapToInt(Match::lengthOfFirst).sum() + this.getNumberOfMatchedCommentTokens();
+        int matchedCommentTokens = commentMatches.stream().mapToInt(Match::lengthOfFirst).sum();
+        int divisor = firstSubmission.getSimilarityDivisor() + matchedCommentTokens;
+        int matchedTokens = matches.stream().mapToInt(Match::lengthOfFirst).sum() + matchedCommentTokens;
         return divisor == 0 ? 0.0 : matchedTokens / (double) divisor;
     }
 
@@ -117,8 +117,9 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
      * structural similarity.
      */
     public final double similarityOfSecond() {
-        int divisor = secondSubmission.getSimilarityDivisor() + this.getNumberOfMatchedCommentTokens();
-        int matchedTokens = matches.stream().mapToInt(Match::lengthOfSecond).sum() + this.getNumberOfMatchedCommentTokens();
+        int matchedCommentTokens = commentMatches.stream().mapToInt(Match::lengthOfSecond).sum();
+        int divisor = secondSubmission.getSimilarityDivisor() + matchedCommentTokens;
+        int matchedTokens = matches.stream().mapToInt(Match::lengthOfSecond).sum() + matchedCommentTokens;
         return divisor == 0 ? 0.0 : matchedTokens / (double) divisor;
     }
 
