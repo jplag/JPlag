@@ -59,10 +59,15 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
         ClusteringOptions clusteringOptions, boolean debugParser, MergingOptions mergingOptions, boolean normalize, boolean analyzeComments)
         implements JPlagOptionsBuilder.With {
 
+    /** Default value for the similarity threshold. **/
     public static final double DEFAULT_SIMILARITY_THRESHOLD = 0;
+    /** Default value for the shown comparisons in the report. **/
     public static final int DEFAULT_SHOWN_COMPARISONS = 2500;
+    /** Constant that denotes that all comparisons are shown in the report viewer. **/
     public static final int SHOW_ALL_COMPARISONS = 0;
+    /** Default value for the similarity metric. **/
     public static final SimilarityMetric DEFAULT_SIMILARITY_METRIC = SimilarityMetric.AVG;
+    /** Default value for the error directory name. **/
     public static final String ERROR_FOLDER = "errors";
 
     /**
@@ -77,11 +82,36 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
 
     private static final Logger logger = LoggerFactory.getLogger(JPlagOptions.class);
 
+    /**
+     * Constructs a {@link JPlagOptions} instance with minimal required parameters.
+     * @param language The programming language for parsing submissions
+     * @param submissionDirectories Directories containing new submissions to check
+     * @param oldSubmissionDirectories Directories containing old submissions to check against
+     */
     public JPlagOptions(Language language, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories) {
         this(language, null, submissionDirectories, oldSubmissionDirectories, null, null, null, null, DEFAULT_SIMILARITY_METRIC,
                 DEFAULT_SIMILARITY_THRESHOLD, DEFAULT_SHOWN_COMPARISONS, new ClusteringOptions(), false, new MergingOptions(), false, false);
     }
 
+    /**
+     * Constructs a fully specified {@link JPlagOptions} instance.
+     * @param language Language used for parsing submissions
+     * @param minimumTokenMatch Minimum number of matching tokens to consider a match
+     * @param submissionDirectories Directories of new submissions to check
+     * @param oldSubmissionDirectories Directories of old submissions to compare against
+     * @param baseCodeSubmissionDirectory Directory containing the base code submissions
+     * @param subdirectoryName Subdirectory within submissions to restrict scanning
+     * @param fileSuffixes List of file suffixes to include in the comparison
+     * @param exclusionFileName File name containing list of files to exclude
+     * @param similarityMetric Metric to compute similarity threshold for comparisons
+     * @param similarityThreshold Threshold below which comparisons are ignored
+     * @param maximumNumberOfComparisons Maximum number of comparisons to show in the report
+     * @param clusteringOptions Options for clustering algorithm
+     * @param debugParser If true, stores unparsed submissions separately
+     * @param mergingOptions Options related to subsequence merging to oppose obfuscation
+     * @param normalize Enables additional normalization mechanisms (language-dependent)
+     * @param analyzeComments Whether to extract comments from submissions
+     */
     public JPlagOptions(Language language, Integer minimumTokenMatch, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories,
             File baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
             SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
@@ -104,10 +134,18 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
         this.analyzeComments = analyzeComments;
     }
 
+    /**
+     * Checks if a base code submission directory is set.
+     * @return true if base code directory is present; false otherwise
+     */
     public boolean hasBaseCode() {
         return baseCodeSubmissionDirectory != null;
     }
 
+    /**
+     * Returns a set of file names to exclude from the comparison, read from the exclusion file if provided.
+     * @return Set of excluded file names; empty set if no exclusion file is set or readable
+     */
     public Set<String> excludedFiles() {
         return Optional.ofNullable(exclusionFileName()).map(this::readExclusionFile).orElse(Collections.emptySet());
     }
@@ -199,7 +237,7 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
     }
 
     /**
-     * Creates a new options instance with the provided base code submission name
+     * Creates a new options instance with the provided base code submission name.
      * @param baseCodeSubmissionName the path or name of the base code submission
      * @return a new options instance with the provided base code submission name
      * @deprecated Use @{{@link #withBaseCodeSubmissionDirectory} instead.

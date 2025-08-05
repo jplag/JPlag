@@ -42,11 +42,11 @@ public class NormalizationGraph extends SimpleDirectedGraph<Statement, MultipleE
         variableReads = new HashMap<>();
         variableWrites = new HashMap<>();
         inCurrentBidirectionalBlock = new HashSet<>();
-        StatementBuilder builderForCurrent = new StatementBuilder(tokens.get(0).getLine());
+        StatementBuilder builderForCurrent = new StatementBuilder(tokens.get(0).getStartLine());
         for (Token token : tokens) {
-            if (token.getLine() != builderForCurrent.lineNumber()) {
+            if (token.getStartLine() != builderForCurrent.lineNumber()) {
                 addStatement(builderForCurrent.build());
-                builderForCurrent = new StatementBuilder(token.getLine());
+                builderForCurrent = new StatementBuilder(token.getStartLine());
             }
             builderForCurrent.addToken(token);
         }

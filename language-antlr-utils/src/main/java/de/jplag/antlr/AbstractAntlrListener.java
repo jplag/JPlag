@@ -20,7 +20,7 @@ public abstract class AbstractAntlrListener {
     private final List<TerminalVisitor> terminalVisitors;
 
     /**
-     * New instance
+     * New instance.
      */
     protected AbstractAntlrListener() {
         contextVisitors = new ArrayList<>();
@@ -29,10 +29,10 @@ public abstract class AbstractAntlrListener {
 
     /**
      * Visit the given node.
+     * @param <T> The class of the node.
      * @param antlrType The antlr type of the node.
      * @param condition An additional condition for the visit.
      * @return A visitor for the node.
-     * @param <T> The class of the node.
      */
     @SuppressWarnings("unchecked")
     public <T extends ParserRuleContext> ContextVisitor<T> visit(Class<T> antlrType, Predicate<T> condition) {
@@ -44,9 +44,9 @@ public abstract class AbstractAntlrListener {
 
     /**
      * Visit the given node.
+     * @param <T> The class of the node.
      * @param antlrType The antlr type of the node.
      * @return A visitor for the node.
-     * @param <T> The class of the node.
      */
     public <T extends ParserRuleContext> ContextVisitor<T> visit(Class<T> antlrType) {
         return visit(antlrType, ignore -> true);
@@ -76,6 +76,7 @@ public abstract class AbstractAntlrListener {
 
     /**
      * Called by {@link InternalListener#visitTerminal(TerminalNode)} as part of antlr framework.
+     * @param data is the data passed to the listeners.
      */
     void visitTerminal(HandlerData<Token> data) {
         this.terminalVisitors.stream().filter(visitor -> visitor.matches(data.entity())).forEach(visitor -> visitor.enter(data));
@@ -83,6 +84,7 @@ public abstract class AbstractAntlrListener {
 
     /**
      * Called by {@link InternalListener#enterEveryRule(ParserRuleContext)} as part of antlr framework.
+     * @param data is the data passed to the listeners.
      */
     void enterEveryRule(HandlerData<ParserRuleContext> data) {
         this.contextVisitors.stream().filter(visitor -> visitor.matches(data.entity())).forEach(visitor -> visitor.enter(data));
@@ -90,6 +92,7 @@ public abstract class AbstractAntlrListener {
 
     /**
      * Called by {@link InternalListener#exitEveryRule(ParserRuleContext)} as part of antlr framework.
+     * @param data is the data passed to the listeners.
      */
     void exitEveryRule(HandlerData<ParserRuleContext> data) {
         this.contextVisitors.stream().filter(visitor -> visitor.matches(data.entity())).forEach(visitor -> visitor.exit(data));
@@ -124,10 +127,10 @@ public abstract class AbstractAntlrListener {
     }
 
     /**
-     * {@return true if an ancestor of the specified type exists}
      * @param context the current element to start the search from.
      * @param parent the class representing the type to search for.
      * @param stops the types of elements to stop the upward search at.
+     * @return true if an ancestor of the specified type exists.
      * @see #getAncestor(ParserRuleContext, Class, Class[])
      */
     @SafeVarargs

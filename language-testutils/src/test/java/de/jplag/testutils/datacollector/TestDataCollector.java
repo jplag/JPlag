@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 import de.jplag.TokenType;
 
 /**
- * Collects data for tests. Used by {@link de.jplag.testutils.LanguageModuleTest}s
+ * Collects data for tests. Used by {@link de.jplag.testutils.LanguageModuleTest}s.
  */
 public class TestDataCollector {
     private final List<TestData> sourceCoverageData;
@@ -30,7 +30,7 @@ public class TestDataCollector {
     private final File testFileLocation;
 
     /**
-     * Creates a new collector. Should only be called by {@link de.jplag.testutils.LanguageModuleTest}
+     * Creates a new collector. Should only be called by {@link de.jplag.testutils.LanguageModuleTest}.
      * @param testFileLocation The location containing the test source files.
      */
     public TestDataCollector(File testFileLocation) {
@@ -82,7 +82,7 @@ public class TestDataCollector {
 
     /**
      * Adds all files from the given directory for token position tests. The sources can still be used for other tests,
-     * using the returned {@link TestDataContext}
+     * using the returned {@link TestDataContext}.
      * @param directoryName The name of the directory containing the token position tests.
      * @return The context containing the added sources
      * @throws IOException If the files cannot be read

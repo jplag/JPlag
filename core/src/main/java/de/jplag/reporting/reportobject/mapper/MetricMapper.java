@@ -20,6 +20,11 @@ public class MetricMapper {
             SimilarityMetric.LONGEST_MATCH, SimilarityMetric.MAXIMUM_LENGTH};
     private static final SimilarityMetric[] EXPORTED_DISTRIBUTION_METRICS = new SimilarityMetric[] {SimilarityMetric.AVG, SimilarityMetric.MAX};
 
+    /**
+     * Constructs a new {@code MetricMapper} using the given function to map {@link Submission} objects to their string
+     * identifiers.
+     * @param submissionToIdFunction Function that provides a unique string ID for each submission
+     */
     public MetricMapper(Function<Submission, String> submissionToIdFunction) {
         this.submissionToIdFunction = submissionToIdFunction;
     }

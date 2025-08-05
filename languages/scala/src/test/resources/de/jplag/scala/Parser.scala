@@ -324,7 +324,7 @@ class Parser extends AbstractParser {
             System.gc()
         }
 
-        tokens
+        tokens //ignore line
     }
 
     private def parseFile(dir: File, file: String): Boolean = {
@@ -345,7 +345,7 @@ class Parser extends AbstractParser {
                 return false
         }
 
-        true
+        true //ignore line
     }
 
     /**

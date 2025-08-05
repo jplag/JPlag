@@ -7,6 +7,7 @@
         <version>${revision}</version>
     </parent>
     <artifactId>scxml</artifactId>
+    <name>JPlag: SCXML Language Module</name>
 
     <dependencies>
         <dependency>

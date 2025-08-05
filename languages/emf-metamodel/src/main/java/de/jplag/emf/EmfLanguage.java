@@ -20,11 +20,16 @@ import de.jplag.emf.util.EMFUtil;
 @MetaInfServices(Language.class)
 public class EmfLanguage implements Language {
 
+    /**
+     * Creates the language facade.
+     */
     public EmfLanguage() {
         EMFUtil.registerEcoreExtension();
     }
 
+    /** File extension for the textual view. **/
     public static final String VIEW_FILE_EXTENSION = ".emfatic";
+    /** File extension for model files. **/
     public static final String FILE_ENDING = "." + EcorePackage.eNAME;
 
     @Override

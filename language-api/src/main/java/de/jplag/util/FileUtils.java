@@ -35,7 +35,7 @@ public final class FileUtils {
     private static final char BYTE_ORDER_MARK = '\uFEFF';
     private static final int SINGLE_CHAR_BUFFER_SIZE = 10;
 
-    private static Charset overrideSubmissionCharset = null;
+    private static Charset userSpecifiedCharset = null;
 
     private FileUtils() {
     }
@@ -50,7 +50,7 @@ public final class FileUtils {
      */
     public static BufferedReader openFileReader(File file, boolean isSubmissionFile) throws IOException {
         InputStream stream = new BufferedInputStream(new FileInputStream(file));
-        Charset charset = isSubmissionFile && overrideSubmissionCharset != null ? overrideSubmissionCharset : detectCharset(stream);
+        Charset charset = isSubmissionFile && userSpecifiedCharset != null ? userSpecifiedCharset : detectCharset(stream);
         BufferedReader reader = new BufferedReader(new FileReader(file, charset));
         removeBom(reader, charset);
         return reader;
@@ -94,7 +94,7 @@ public final class FileUtils {
 
     /**
      * Removes the byte order mark from the beginning of the stream, if it exists and the charset is a UTF* charset. For
-     * details see: <a href="https://en.wikipedia.org/wiki/Byte_order_mark">Wikipedia</a>
+     * details see: <a href="https://en.wikipedia.org/wiki/Byte_order_mark">Wikipedia</a>.
      * @param reader The reader to remove the bom from
      * @throws IOException If an IO error occurs.
      */
@@ -125,10 +125,11 @@ public final class FileUtils {
      * @param files The files to check
      * @param isSubmissionFile If true and a charset is set for submissions, that charset will be used always
      * @return The most probable charset
+     * @throws ParsingException if reading the source files leads to an error.
      */
     public static Charset detectCharsetFromMultiple(Collection<File> files, boolean isSubmissionFile) throws ParsingException {
-        if (isSubmissionFile && overrideSubmissionCharset != null) {
-            return overrideSubmissionCharset;
+        if (isSubmissionFile && userSpecifiedCharset != null) {
+            return userSpecifiedCharset;
         } else {
             return detectCharsetFromMultiple(files);
         }
@@ -138,6 +139,7 @@ public final class FileUtils {
      * Detects the most probable charset over the whole set of files.
      * @param files The files to check
      * @return The most probable charset
+     * @throws ParsingException if reading the source files leads to an error.
      */
     public static Charset detectCharsetFromMultiple(Collection<File> files) throws ParsingException {
         Map<String, List<Integer>> charsetValues = new HashMap<>();
@@ -240,7 +242,11 @@ public final class FileUtils {
         return file.getAbsoluteFile().getParentFile().canWrite();
     }
 
-    public static void setOverrideSubmissionCharset(Charset overrideSubmissionCharset) {
-        FileUtils.overrideSubmissionCharset = overrideSubmissionCharset;
+    /**
+     * Overrides the charset detection with a specified charset.
+     * @param userSpecifiedCharset is the overriding charset.
+     */
+    public static void setOverrideSubmissionCharset(Charset userSpecifiedCharset) {
+        FileUtils.userSpecifiedCharset = userSpecifiedCharset;
     }
 }

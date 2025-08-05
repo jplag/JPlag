@@ -63,7 +63,7 @@ public class TokenPositionTestData implements TestData {
 
                         String typeName = tokenDescriptionParts[tokenDescriptionParts.length - 2];
                         int length = Integer.parseInt(tokenDescriptionParts[tokenDescriptionParts.length - 1]);
-                        this.expectedTokens.add(new TokenData(typeName, currentLine, column, length));
+                        this.expectedTokens.add(new TokenData(typeName, currentLine, column, currentLine, column + length));
                     }
 
                     case COMMENT_LINE_PREFIX -> {
@@ -86,7 +86,7 @@ public class TokenPositionTestData implements TestData {
 
         String typeName = tokenDescriptionParts[tokenDescriptionParts.length - 2];
         int length = Integer.parseInt(tokenDescriptionParts[tokenDescriptionParts.length - 1]);
-        this.expectedTokens.add(new TokenData(typeName, currentSourceLine, column, length));
+        this.expectedTokens.add(new TokenData(typeName, currentSourceLine, column, currentSourceLine, column + length));
     }
 
     @Override
@@ -116,13 +116,14 @@ public class TokenPositionTestData implements TestData {
     }
 
     /**
-     * Information about a single token
+     * Information about a single token.
      * @param typeName The name of the token type
-     * @param lineNumber The line the token is in (1 based)
-     * @param columnNumber The column the token is in (1 based)
-     * @param length The length of the token
+     * @param startLine The line the token starts in (1 based)
+     * @param startColumn The column the token starts (1 based)
+     * @param endLine The line the token ends in (1 based)
+     * @param endColumn The column the token end (1 based)
      */
-    public record TokenData(String typeName, int lineNumber, int columnNumber, int length) {
+    public record TokenData(String typeName, int startLine, int startColumn, int endLine, int endColumn) {
     }
 
     @Override

@@ -92,8 +92,7 @@ public class SubmissionSet {
     }
 
     /**
-     * Obtain the valid submissions.<br>
-     * <b>Changes in the list are reflected in this instance.</b>
+     * Obtain the valid submissions. Changes in the list are reflected in this instance.
      * @return the valid submissions.
      */
     public List<Submission> getSubmissions() {
@@ -101,8 +100,7 @@ public class SubmissionSet {
     }
 
     /**
-     * Obtain the invalid submissions.<br>
-     * <b>Changes in the list are reflected in this instance.</b>
+     * Obtain the invalid submissions. Changes in the list are reflected in this instance.
      * @return the invalid submissions.
      */
     public List<Submission> getInvalidSubmissions() {

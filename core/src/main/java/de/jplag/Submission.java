@@ -168,6 +168,8 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
+     * @return true if a comparison between the submission and the base code is available. Does not imply if there are
+     * matches to the base code.
      * @deprecated Use {@link #hasBaseCodeComparison()} instead.
      */
     @Deprecated(since = "6.1.0", forRemoval = true)
@@ -319,11 +321,11 @@ public class Submission implements Comparable<Submission> {
 
     private List<Integer> getOrder(List<Token> tokenList) {
         List<Integer> order = new ArrayList<>(tokenList.size());  // a little too big
-        int currentLineNumber = tokenList.get(0).getLine();
+        int currentLineNumber = tokenList.get(0).getStartLine();
         order.add(currentLineNumber);
         for (Token token : tokenList) {
-            if (token.getLine() != currentLineNumber) {
-                currentLineNumber = token.getLine();
+            if (token.getStartLine() != currentLineNumber) {
+                currentLineNumber = token.getStartLine();
                 order.add(currentLineNumber);
             }
         }

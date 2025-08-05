@@ -18,6 +18,9 @@ import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.CoreDocument;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 
+/**
+ * Parser adapter for natural-language text. Delegates to the Stanford CoreNLP API.
+ */
 public class ParserAdapter {
     private static final Logger logger = LoggerFactory.getLogger(ParserAdapter.class);
 
@@ -31,16 +34,25 @@ public class ParserAdapter {
     private File currentFile;
     private int currentLine;
     /**
-     * The position of the current line break in the content string
+     * The position of the current line break in the content string.
      */
     private int currentLineBreakIndex;
 
+    /**
+     * Created the parser adapter.
+     */
     public ParserAdapter() {
         Properties properties = new Properties();
         properties.put(ANNOTATORS_KEY, ANNOTATORS_VALUE);
         this.pipeline = new StanfordCoreNLP(properties);
     }
 
+    /**
+     * Parses a set of files.
+     * @param files are the files to parse.
+     * @return the token sequence.
+     * @throws ParsingException is parsing fails.
+     */
     public List<Token> parse(Set<File> files) throws ParsingException {
         tokens = new ArrayList<>();
         for (File file : files) {
@@ -107,9 +119,11 @@ public class ParserAdapter {
 
     private void addToken(CoreLabel label) {
         String text = label.originalText();
-        int column = label.beginPosition() - currentLineBreakIndex;
+        int startColumn = label.beginPosition() - currentLineBreakIndex;
+        int endColumn = label.endPosition() - currentLineBreakIndex;
         int length = label.endPosition() - label.beginPosition();
-        tokens.add(new Token(new TextTokenType(text), currentFile, currentLine, column, length));
+        // As a token can not stretch multiple lines, the startLine is equal to the end line
+        tokens.add(new Token(new TextTokenType(text), currentFile, currentLine, startColumn, currentLine, endColumn, length));
     }
 
     private String readFile(File file) throws ParsingException {

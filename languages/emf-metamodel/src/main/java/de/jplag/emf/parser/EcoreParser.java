@@ -10,6 +10,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 
 import de.jplag.ParsingException;
 import de.jplag.Token;
+import de.jplag.TokenTrace;
 import de.jplag.TokenType;
 import de.jplag.emf.EmfLanguage;
 import de.jplag.emf.MetamodelToken;
@@ -31,7 +32,9 @@ public class EcoreParser {
     /**
      * Parses all tokens from a set of files.
      * @param files is the set of files.
+     * @param normalize specifies if the containment tree normalization should be executed or not.
      * @return the list of parsed tokens.
+     * @throws ParsingException if parsing fails.
      */
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
         tokens = new ArrayList<>();
@@ -44,6 +47,8 @@ public class EcoreParser {
     /**
      * Loads a metamodel from a file and parses it.
      * @param file is the metamodel file.
+     * @param normalize specifies if the containment tree normalization should be executed or not.
+     * @throws ParsingException if parsing fails.
      */
     protected void parseModelFile(File file, boolean normalize) throws ParsingException {
         currentFile = file;
@@ -83,6 +88,7 @@ public class EcoreParser {
 
     /**
      * Extension point for subclasses to employ different normalization.
+     * @param modelResource is the EMF resource in which the model is loaded.
      */
     protected void normalizeOrder(Resource modelResource) {
         ModelSorter.sort(modelResource, new MetamodelElementTokenizer());
@@ -102,7 +108,7 @@ public class EcoreParser {
      * @param source is the corresponding {@link EObject} for which the token is added.
      */
     protected void addToken(TokenType type, EObject source) {
-        MetamodelToken token = new MetamodelToken(type, currentFile, source);
-        tokens.add(treeView.convertToMetadataEnrichedToken(token));
+        TokenTrace trace = treeView.getTokenTrace(source, type);
+        tokens.add(new MetamodelToken(type, currentFile, trace, source));
     }
 }
