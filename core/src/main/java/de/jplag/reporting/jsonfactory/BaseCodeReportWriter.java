@@ -1,6 +1,7 @@
 package de.jplag.reporting.jsonfactory;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -53,19 +54,30 @@ public class BaseCodeReportWriter {
     }
 
     private void writeBaseCodeFile(Submission submission) {
-        List<BaseCodeMatch> matches = List.of();
+        List<BaseCodeMatch> matches = new ArrayList<>();
         if (submission.getBaseCodeComparison() != null) {
             JPlagComparison baseCodeComparison = submission.getBaseCodeComparison();
             boolean takeLeft = baseCodeComparison.firstSubmission().equals(submission);
-            matches = baseCodeComparison.matches().stream().map(match -> convertToBaseCodeMatch(submission, match, takeLeft)).toList();
+            matches.addAll(baseCodeComparison.matches().stream().map(match -> convertToBaseCodeMatch(submission, match, takeLeft)).toList());
+            matches.addAll(
+                    baseCodeComparison.commentMatches().stream().map(match -> convertToCommentBaseCodeMatch(submission, match, takeLeft)).toList());
         }
         resultWriter.addJsonEntry(matches, Path.of(BASEPATH, submissionToIdFunction.apply(submission).concat(".json")));
+    }
+
+    private BaseCodeMatch convertToCommentBaseCodeMatch(Submission submission, Match match, boolean takeLeft) {
+        List<Token> tokens = submission.getComments().subList(takeLeft ? match.startOfFirst() : match.startOfSecond(),
+                (takeLeft ? match.endOfFirst() : match.endOfSecond()) + 1);
+        return convertTokenListToBaseCodeMatch(tokens, submission, match, takeLeft);
     }
 
     private BaseCodeMatch convertToBaseCodeMatch(Submission submission, Match match, boolean takeLeft) {
         List<Token> tokens = submission.getTokenList().subList(takeLeft ? match.startOfFirst() : match.startOfSecond(),
                 (takeLeft ? match.endOfFirst() : match.endOfSecond()) + 1);
+        return convertTokenListToBaseCodeMatch(tokens, submission, match, takeLeft);
+    }
 
+    private BaseCodeMatch convertTokenListToBaseCodeMatch(List<Token> tokens, Submission submission, Match match, boolean takeLeft) {
         Comparator<? super Token> lineStartComparator = Comparator.comparingInt(Token::getLine).thenComparingInt(Token::getColumn);
         Comparator<? super Token> lineEndComparator = Comparator.comparingInt(Token::getLine)
                 .thenComparingInt((Token t) -> t.getColumn() + t.getLength());
