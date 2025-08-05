@@ -1,12 +1,14 @@
 package de.jplag.commenthandling;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jplag.*;
 import de.jplag.comparison.GreedyStringTiling;
+import de.jplag.comparison.SubmissionTuple;
 import de.jplag.comparison.TokenSequenceMapper;
 import de.jplag.exceptions.ComparisonException;
 import de.jplag.logging.ProgressBar;
@@ -19,6 +21,7 @@ import de.jplag.options.JPlagOptions;
  * based on the implementation of {@code LongestCommonSubsequenceSearch}.
  */
 public class CommentComparer {
+    private static final Logger logger = LoggerFactory.getLogger(CommentComparer.class);
     private final JPlagOptions options;
 
     /**
@@ -84,38 +87,54 @@ public class CommentComparer {
             compareSubmissionsToBaseCode(result.getSubmissions(), algorithm);
         }
 
-        List<JPlagComparison> fixedComparisons = new ArrayList<>();
+        Map<SubmissionTuple, JPlagComparison> commentComparisons = new HashMap<>();
 
         // Comparing comments from pairwise submissions
+        // We first compare all submissions and store their comment comparison, to ensure we don't lose comparisons
+        // should the comment comparison crash out before finishing all of them
         ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.COMPARING_COMMENTS, result.getAllComparisons().size());
         try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
-            List<Future<JPlagComparison>> futures = result.getAllComparisons().stream().map(oldComparison -> executor.submit(() -> {
-                JPlagComparison commentComparison = algorithm.compare(oldComparison.firstSubmission(), oldComparison.secondSubmission());
+            List<Future<AbstractMap.SimpleEntry<SubmissionTuple, JPlagComparison>>> futures = result.getAllComparisons().stream()
+                    .map(oldComparison -> executor.submit(() -> {
+                        JPlagComparison commentComparison = algorithm.compare(oldComparison.firstSubmission(), oldComparison.secondSubmission());
 
-                if (commentComparison.firstSubmission().equals(oldComparison.secondSubmission())) {
-                    // Due to internals of the comparison algorithm, the submissions are flipped between code & comment comparisons
-                    // To ensure that matches are assigned to the correct submission, we're flipping the comment comparison
-                    commentComparison = this.flipComparison(commentComparison);
-                }
+                        if (commentComparison.firstSubmission().equals(oldComparison.secondSubmission())) {
+                            // Due to internals of the comparison algorithm, the submissions are flipped between code & comment comparisons
+                            // To ensure that matches are assigned to the correct submission, we're flipping the comment comparison
+                            commentComparison = this.flipComparison(commentComparison);
+                        }
 
-                progressBar.step();
-                return new JPlagComparison(oldComparison.firstSubmission(), oldComparison.secondSubmission(), oldComparison.matches(),
-                        oldComparison.ignoredMatches(), commentComparison.matches());
-            })).toList();
+                        progressBar.step();
+                        return new AbstractMap.SimpleEntry<>(new SubmissionTuple(oldComparison.firstSubmission(), oldComparison.secondSubmission()),
+                                commentComparison);
+                    })).toList();
 
             executor.shutdown();
             if (!executor.awaitTermination(24, TimeUnit.HOURS)) {
                 throw new ComparisonException("Comment comparison timed out.");
             }
 
-            for (Future<JPlagComparison> future : futures) {
-                fixedComparisons.add(future.get());
+            for (Future<AbstractMap.SimpleEntry<SubmissionTuple, JPlagComparison>> future : futures) {
+                commentComparisons.put(future.get().getKey(), future.get().getValue());
             }
         } catch (InterruptedException | ExecutionException e) {
             Thread.currentThread().interrupt();
             throw new ComparisonException("Error during comment comparison algorithm.", e);
         } finally {
             progressBar.dispose();
+        }
+
+        List<JPlagComparison> fixedComparisons = new ArrayList<>();
+        for (JPlagComparison comparison : result.getAllComparisons()) {
+            JPlagComparison commentComparison = commentComparisons
+                    .get(new SubmissionTuple(comparison.firstSubmission(), comparison.secondSubmission()));
+            if (commentComparison == null) {
+                logger.warn("Comparison {} has no comment comparison!", comparison);
+                fixedComparisons.add(comparison);
+                continue;
+            }
+            fixedComparisons.add(new JPlagComparison(comparison.firstSubmission(), comparison.secondSubmission(), comparison.matches(),
+                    comparison.ignoredMatches(), commentComparison.matches()));
         }
 
         long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
