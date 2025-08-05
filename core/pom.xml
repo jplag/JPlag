@@ -47,8 +47,7 @@
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>text</artifactId>
-            <version>6.2.0-SNAPSHOT</version>
-            <scope>compile</scope>
+            <version>${revision}</version>
         </dependency>
     </dependencies>
 
