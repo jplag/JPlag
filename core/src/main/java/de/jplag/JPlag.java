@@ -94,8 +94,10 @@ public class JPlag {
         }
 
         // Compare comments
-        CommentComparer commentComparer = new CommentComparer(options);
-        result = commentComparer.compareCommentsAndMergeMatches(result);
+        if (options.analyzeComments()) {
+            CommentComparer commentComparer = new CommentComparer(options);
+            result = commentComparer.compareCommentsAndMergeMatches(result);
+        }
 
         if (logger.isInfoEnabled()) {
             logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getDuration()));
