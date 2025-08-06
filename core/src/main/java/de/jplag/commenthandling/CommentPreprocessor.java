@@ -59,13 +59,19 @@ public class CommentPreprocessor {
                 continue;
             }
 
-            int line = comment.line() + token.getLine() - 1;
-            int column = token.getColumn();
-            if (token.getLine() == 1) {
-                column += comment.column() - 1;
+            int startLine = comment.line() + token.getStartLine() - 1;
+            int endLine = comment.line() + token.getEndLine() - 1;
+            int startColumn = token.getStartColumn();
+            int endColumn = token.getEndColumn();
+            if (token.getStartLine() == 1) {
+                startColumn += comment.column() - 1;
             }
+            if (token.getEndLine() == 1) {
+                endColumn += comment.column() - 1;
+            }
+            int length = token.getType().getDescription().length();
 
-            fixedTokens.add(new Token(token.getType(), comment.file(), line, column, token.getLength()));
+            fixedTokens.add(new Token(token.getType(), comment.file(), startLine, startColumn, endLine, endColumn, length));
         }
         return fixedTokens;
     }

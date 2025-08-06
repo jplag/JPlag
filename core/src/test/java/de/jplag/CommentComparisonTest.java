@@ -14,7 +14,7 @@ import de.jplag.exceptions.ExitException;
  * Tests the comment extraction & comparison functionality, which extracts and compares the comments from the source
  * files and compares them separately from the code.
  */
-public class CommentComparisonTest extends TestBase {
+class CommentComparisonTest extends TestBase {
 
     @Test
     @DisplayName("test comment comparison on two submissions")
