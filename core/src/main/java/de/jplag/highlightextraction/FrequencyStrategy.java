@@ -1,8 +1,10 @@
 package de.jplag.highlightextraction;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
+import de.jplag.Match;
 import de.jplag.TokenType;
 
 /**
@@ -19,4 +21,7 @@ public interface FrequencyStrategy {
      */
     void processMatchTokenTypes(List<TokenType> matchTokenTypes, Consumer<List<TokenType>> addSequenceKey, Consumer<List<TokenType>> addSequence,
             int strategyNumber);
+
+    double calculateWeight(Match match, Map<String, List<String>> frequencyMap, List<String> matchToken);
+
 }
