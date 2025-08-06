@@ -27,18 +27,31 @@ public class GreedyStringTiling {
     private final int minimumMatchLength;
     private final JPlagOptions options;
     private final Map<Submission, Set<Token>> baseCodeMarkings = new IdentityHashMap<>();
+    private final TokenListSupplier tokenSupplier;
 
     private final Map<Submission, RollingTokenHashTable> cachedHashLookupTables = Collections.synchronizedMap(new IdentityHashMap<>());
 
     private final TokenSequenceMapper tokenSequenceMapper;
 
     /**
-     * Creates a instance of the Greedy String Tiling algorithm.
+     * Creates a instance of the Greedy String Tiling algorithm. This uses the default {@code Submission::getTokenList()}
+     * method as the supplier.
      * @param options are the options, controlling algorithm parameters like minimum token match.
      * @param tokenValueMapper provides integer mappings for token sequences.
      */
     public GreedyStringTiling(JPlagOptions options, TokenSequenceMapper tokenValueMapper) {
+        this(options, tokenValueMapper, Submission::getTokenList);
+    }
+
+    /**
+     * Creates a instance of the Greedy String Tiling algorithm.
+     * @param options are the options, controlling algorithm parameters like minimum token match.
+     * @param tokenValueMapper provides integer mappings for token sequences.
+     * @param tokenSupplier supplier returning the token list of a single submission.
+     */
+    public GreedyStringTiling(JPlagOptions options, TokenSequenceMapper tokenValueMapper, TokenListSupplier tokenSupplier) {
         this.options = options;
+        this.tokenSupplier = tokenSupplier;
         // Ensures 1 <= neighborLength <= minimumTokenMatch
         int minimumNeighborLength = Math.clamp(options.mergingOptions().minimumNeighborLength(), 1, options.minimumTokenMatch());
 
@@ -58,7 +71,7 @@ public class GreedyStringTiling {
     public final JPlagComparison generateBaseCodeMarking(Submission submission, Submission baseCodeSubmission) {
         JPlagComparison comparison = compare(submission, baseCodeSubmission);
 
-        List<Token> submissionTokenList = submission.getTokenList();
+        List<Token> submissionTokenList = this.tokenSupplier.getTokenList(submission);
         Set<Token> baseCodeMarking = new HashSet<>();
         for (Match match : comparison.matches()) {
             int startIndex = comparison.firstSubmission() == submission ? match.startOfFirst() : match.startOfSecond();
@@ -86,7 +99,8 @@ public class GreedyStringTiling {
     public final JPlagComparison compare(Submission firstSubmission, Submission secondSubmission) {
         Submission smallerSubmission;
         Submission largerSubmission;
-        Comparator<Submission> submissionComparator = Comparator.comparing(Submission::getNumberOfTokens).thenComparing(Submission::getName);
+        Comparator<Submission> submissionComparator = Comparator.comparing((Submission it) -> this.tokenSupplier.getTokenList(it).size())
+                .thenComparing(Submission::getName);
 
         if (submissionComparator.compare(firstSubmission, secondSubmission) <= 0) {
             smallerSubmission = firstSubmission;
@@ -105,7 +119,7 @@ public class GreedyStringTiling {
      * @return the comparison results.
      */
     private JPlagComparison compareOrdered(Submission leftSubmission, Submission rightSubmission) {
-        assert leftSubmission.getNumberOfTokens() <= rightSubmission.getNumberOfTokens();
+        assert tokenSupplier.getTokenList(leftSubmission).size() <= tokenSupplier.getTokenList(rightSubmission).size();
         int[] leftTokens = this.tokenSequenceMapper.getTokenSequenceFor(leftSubmission);
         int[] rightTokens = this.tokenSequenceMapper.getTokenSequenceFor(rightSubmission);
 
@@ -207,7 +221,7 @@ public class GreedyStringTiling {
      */
     private boolean[] calculateExcludedTokens(Submission submission) {
         Set<Token> baseCodeTokens = baseCodeMarkings.get(submission);
-        List<Token> tokens = submission.getTokenList();
+        List<Token> tokens = this.tokenSupplier.getTokenList(submission);
         boolean[] exclusionFlags = new boolean[tokens.size()];
         for (int tokenIndex = 0; tokenIndex < exclusionFlags.length; tokenIndex++) {
             exclusionFlags[tokenIndex] = tokens.get(tokenIndex).getType().isExcludedFromMatching()

@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.clustering.ClusteringFactory;
+import de.jplag.commenthandling.CommentComparer;
 import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.RootDirectoryException;
@@ -90,6 +91,12 @@ public class JPlag {
         // Use Match Merging against obfuscation
         if (options.mergingOptions().enabled()) {
             result = new MatchMerging(options).mergeMatchesOf(result);
+        }
+
+        // Compare comments
+        if (options.analyzeComments()) {
+            CommentComparer commentComparer = new CommentComparer(options);
+            result = commentComparer.compareCommentsAndMergeMatches(result);
         }
 
         if (logger.isInfoEnabled()) {
