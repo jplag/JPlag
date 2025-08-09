@@ -55,7 +55,7 @@ import { SearchBarComponent, ToolTipComponent, ButtonComponent } from '../../bas
 import { MetricJsonIdentifier } from '@jplag/model'
 import MetricSelector from '../optionsSelectors/MetricSelector.vue'
 
-const props = defineProps({
+defineProps({
   header: {
     type: String,
     default: 'Top Comparisons:'

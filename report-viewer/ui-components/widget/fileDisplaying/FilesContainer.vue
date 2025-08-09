@@ -118,6 +118,7 @@ const matchesPerFile = computed(() => {
 })
 
 const sortedFiles: Ref<ComparisonSubmissionFile[]> = ref([])
+// eslint-disable-next-line vue/no-setup-props-reactivity-loss
 sortFiles(props.fileSorting)
 
 function sortFiles(fileSorting: FileSortingOptions) {

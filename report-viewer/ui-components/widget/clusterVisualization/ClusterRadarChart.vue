@@ -7,8 +7,8 @@
     <div v-if="selectedOptions.length > 0" class="flex max-h-full grow flex-col overflow-hidden">
       <DropDownSelector
         :options="selectedOptions"
-        @selection-changed="(value) => (idOfShownSubmission = value)"
         :display-name-function="getDisplayName"
+        @selection-changed="(value) => (idOfShownSubmission = value)"
       />
       <div class="flex min-h-0 grow justify-center">
         <Radar :data="chartData" :options="radarChartOptions" />

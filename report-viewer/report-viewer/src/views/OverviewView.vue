@@ -144,7 +144,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, type PropType, onErrorCaptured, type Ref, ref, nextTick, onMounted } from 'vue'
+import { computed, onErrorCaptured, type Ref, ref, nextTick, onMounted } from 'vue'
 import { redirectOnError, router } from '@/router'
 import {
   ContainerComponent,

@@ -5,7 +5,7 @@
       <div v-if="!loaded">Could not display boxplot</div>
     </div>
 
-    <BoxPlotDiagramOptions class="grow print:grow-0" v-model:metric="metric" />
+    <BoxPlotDiagramOptions v-model:metric="metric" class="grow print:grow-0" />
   </div>
 </template>
 
