@@ -57,8 +57,8 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
         @JsonSerialize(contentUsing = FileSerializer.class) Set<File> oldSubmissionDirectories,
         @JsonSerialize(using = FileSerializer.class) File baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes,
         String exclusionFileName, SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons,
-        ClusteringOptions clusteringOptions, boolean debugParser, MergingOptions mergingOptions, boolean normalize, boolean analyzeComments, boolean skipVersionCheck)
-        implements JPlagOptionsBuilder.With {
+        ClusteringOptions clusteringOptions, boolean debugParser, MergingOptions mergingOptions, boolean normalize, boolean analyzeComments,
+        boolean skipVersionCheck) implements JPlagOptionsBuilder.With {
 
     public static final double DEFAULT_SIMILARITY_THRESHOLD = 0;
     public static final int DEFAULT_SHOWN_COMPARISONS = 2500;
@@ -197,7 +197,8 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
             boolean debugParser, MergingOptions mergingOptions) throws BasecodeException {
         this(language, minimumTokenMatch, Set.of(submissionDirectory), oldSubmissionDirectories,
                 convertLegacyBaseCodeToFile(baseCodeSubmissionName, submissionDirectory), subdirectoryName, fileSuffixes, exclusionFileName,
-                similarityMetric, similarityThreshold, maximumNumberOfComparisons, clusteringOptions, debugParser, mergingOptions, false, false, false);
+                similarityMetric, similarityThreshold, maximumNumberOfComparisons, clusteringOptions, debugParser, mergingOptions, false, false,
+                false);
     }
 
     /**
