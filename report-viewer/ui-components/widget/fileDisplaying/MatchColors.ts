@@ -1,3 +1,5 @@
+import { MatchColorIndex } from '@jplag/model'
+
 /** This is the list of colors that are used as the background color of matches in the comparison view */
 const matchColors: { red: number; green: number; blue: number }[] = [
   { red: 255, green: 122, blue: 0 },
@@ -8,8 +10,6 @@ const matchColors: { red: number; green: number; blue: number }[] = [
   { red: 112, green: 0, blue: 255 },
   { red: 0, green: 255, blue: 133 }
 ]
-
-type MatchColorIndex = number | undefined | 'base'
 
 export function getMatchColor(alpha: number, index: MatchColorIndex) {
   if (index == undefined) {

@@ -1,4 +1,4 @@
-import type { MatchColorIndex } from '@/utils/ColorUtils'
+export type MatchColorIndex = number | undefined | 'base'
 
 /**
  * Match between two files of two submissions.

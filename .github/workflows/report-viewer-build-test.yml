@@ -43,7 +43,7 @@ jobs:
           sed -i "/minor/s/.*/    \"minor\": $MINOR,/" report-viewer/src/version.json
           sed -i "/patch/s/.*/    \"patch\": $PATCH/" report-viewer/src/version.json
           echo "Version of Report Viewer:"
-          cat report-viewer/src/version.json
+          cat report-viewer/report-viewer/src/version/version.json
 
       - name: Install and Build 🔧
         working-directory: report-viewer

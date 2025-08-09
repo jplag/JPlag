@@ -92,7 +92,7 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4.7.3
         with:
           branch: gh-pages
-          folder: report-viewer/dist
+          folder: report-viewer/report-viewer/dist
           repository-name: JPlag/DevDemo
           token: ${{ secrets.SDQ_DEV_DEPLOY_TOKEN }}
           clean: true
