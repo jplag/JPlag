@@ -26,8 +26,8 @@
                         {{ MetricTypes.AVERAGE_SIMILARITY.shortName }}
                         <FontAwesomeIcon
                           :icon="
-                            store().uiState.comparisonTableSorting.column.id == 'averageSimilarity'
-                              ? store().uiState.comparisonTableSorting.direction.icon
+                            tableSorting.column.id == 'averageSimilarity'
+                              ? tableSorting.direction.icon
                               : faSort
                           "
                           class="ml-1"
@@ -51,9 +51,9 @@
                         {{ secondaryMetric.shortName }}
                         <FontAwesomeIcon
                           :icon="
-                            store().uiState.comparisonTableSorting.column.id ==
+                            tableSorting.column.id ==
                             secondaryMetric.sorting.id
-                              ? store().uiState.comparisonTableSorting.direction.icon
+                              ? tableSorting.direction.icon
                               : faSort
                           "
                           class="ml-1 cursor-pointer"
@@ -76,8 +76,8 @@
                 Cluster
                 <FontAwesomeIcon
                   :icon="
-                    store().uiState.comparisonTableSorting.column.id == 'cluster'
-                      ? store().uiState.comparisonTableSorting.direction.icon
+                    tableSorting.column.id == 'cluster'
+                      ? tableSorting.direction.icon
                       : faSort
                   "
                   class="ml-1"
@@ -100,8 +100,8 @@
                   :size-dependencies="[
                     item.firstSubmissionId,
                     item.secondSubmissionId,
-                    store().isAnonymous(item.firstSubmissionId),
-                    store().isAnonymous(item.secondSubmissionId)
+                    isAnonymous(item.firstSubmissionId),
+                    isAnonymous(item.secondSubmissionId)
                   ]"
                   :data-index="index"
                   class="min-w-fit"
@@ -140,8 +140,22 @@
 
                       <!-- Names -->
                       <div class="tableCellName tableCell">
-                        <NameElement :id="item.firstSubmissionId" class="h-full w-1/2 px-2" />
-                        <NameElement :id="item.secondSubmissionId" class="h-full w-1/2 px-2" />
+                        <!--NameElement :id="item.firstSubmissionId" class="h-full w-1/2 px-2" />
+                        <NameElement :id="item.secondSubmissionId" class="h-full w-1/2 px-2" /-->
+                        <NameElement :display-name="getDisplayName(item.firstSubmissionId)"
+                          :is-anonymous="isAnonymous(item.firstSubmissionId)"
+                          :displayed-name="getDisplayName(item.firstSubmissionId)"
+                          class="h-full w-1/2 px-2"
+                          @change-anonymous="() =>
+                            emit('changeAnonymous', item.firstSubmissionId)"
+                        />
+                        <NameElement :display-name="getDisplayName(item.secondSubmissionId)"
+                          :is-anonymous="isAnonymous(item.secondSubmissionId)"
+                          :displayed-name="getDisplayName(item.secondSubmissionId)"
+                          class="h-full w-1/2 px-2"
+                          @change-anonymous="() =>
+                            emit('changeAnonymous', item.secondSubmissionId)"
+                        />
                       </div>
 
                       <!-- Similarities -->
@@ -156,7 +170,7 @@
                         <div class="w-1/2">
                           {{
                             secondaryMetric.format(
-                              item.similarities[store().uiState.comparisonTableSecondaryMetric]
+                              item.similarities[secondaryMetricModel]
                             )
                           }}
                         </div>
@@ -224,8 +238,9 @@ import { generateHues } from './HueGenerator'
 import { ToolTipComponent } from '../../base'
 import NameElement from '../NameElement.vue'
 import ComparisonTableFilter from './ComparisonTableFilter.vue'
-import { Column, Direction, type ColumnId } from './ComparisonSorting'
+import { Column, ComparisonTableSorting, Direction, type ColumnId } from './ComparisonSorting'
 import { MetricTypes } from '../MetricType'
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
 
 const props = defineProps({
   topComparisons: {
@@ -246,19 +261,50 @@ const props = defineProps({
     required: false,
     default: undefined
   },
-  secondaryMetric: {
-    type: String as PropType<MetricJsonIdentifier>,
+  getDisplayName: {
+    type: Function as PropType<(id: string) => string>,
     required: false,
-    default: MetricTypes.MAXIMUM_SIMILARITY.identifier
+    default: (id: string) => id
+  },
+  getPlainDisplayName: {
+    type: Function as PropType<(id: string) => string>,
+    required: false,
+    default: (id: string) => id
+  },
+  getAnonymousName: {
+    type: Function as PropType<(id: string) => string>,
+    required: false,
+    default: (id: string) => id
+  },
+  isAnonymous: {
+    type: Function as PropType<(id: string) => boolean>,
+    required: false,
+    default: () => false
+  },
+  useDarkMode: {
+    type: Boolean,
+    required: false,
+    default: false
   }
 })
 
 const emit = defineEmits<{
-  (event: 'lineHovered', value: { firstId: string; secondId: string } | null): void
+  (event: 'lineHovered', value: { firstId: string; secondId: string } | null): void,
+  (event: 'changeAnonymous', id: string): void,
 }>()
 
+const secondaryMetricModel = defineModel<MetricJsonIdentifier>('secondaryMetric', {
+  default: MetricJsonIdentifier.MAXIMUM_SIMILARITY
+})
+const tableSorting = defineModel<ComparisonTableSorting>('sorting', {
+  default: {
+    column: Column.columns.averageSimilarity,
+    direction: Direction.descending
+  }
+})
+
 const secondaryMetric = computed(
-  () => MetricTypes.METRIC_MAP[props.secondaryMetric]
+  () => MetricTypes.METRIC_MAP[secondaryMetricModel.value]
 )
 
 const displayedComparisons = computed(() => {
@@ -297,13 +343,13 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
 
   return comparisons.filter((c) => {
     // name search
-    const name1 = store().submissionDisplayName(c.firstSubmissionId).toLowerCase()
-    const anonName1 = store().isAnonymous(c.firstSubmissionId)
-      ? store().getAnonymousName(c.firstSubmissionId).toLowerCase()
+    const name1 = props.getPlainDisplayName(c.firstSubmissionId).toLowerCase()
+    const anonName1 = props.isAnonymous(c.firstSubmissionId)
+      ? props.getAnonymousName(c.firstSubmissionId).toLowerCase()
       : ''
-    const name2 = store().submissionDisplayName(c.secondSubmissionId).toLowerCase()
-    const anonName2 = store().isAnonymous(c.secondSubmissionId)
-      ? store().getAnonymousName(c.secondSubmissionId).toLowerCase()
+    const name2 = props.getPlainDisplayName(c.secondSubmissionId).toLowerCase()
+    const anonName2 = props.isAnonymous(c.secondSubmissionId)
+      ? props.getAnonymousName(c.secondSubmissionId).toLowerCase()
       : ''
     if (
       searches.some(
@@ -390,7 +436,7 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
 }
 
 function getSortedComparisons(comparisons: ComparisonListElement[]) {
-  const sorting = store().uiState.comparisonTableSorting
+  const sorting = tableSorting.value
   comparisons.sort((a, b) => {
     const numsA = sorting.column.value(a)
     const numsB = sorting.column.value(b)
@@ -411,12 +457,12 @@ function getSortedComparisons(comparisons: ComparisonListElement[]) {
 }
 
 function setSorting(column: ColumnId) {
-  if (store().uiState.comparisonTableSorting.column.id == column) {
-    store().uiState.comparisonTableSorting.direction =
-      store().uiState.comparisonTableSorting.direction.next
+  if (tableSorting.value.column.id == column) {
+    tableSorting.value.direction =
+      tableSorting.value.direction.next
   } else {
-    store().uiState.comparisonTableSorting.column = Column.columns[column]
-    store().uiState.comparisonTableSorting.direction = Direction.descending
+    tableSorting.value.column = Column.columns[column]
+    tableSorting.value.direction = Direction.descending
   }
 }
 
@@ -435,10 +481,10 @@ if (props.clusters != undefined) {
 const clusterIconColors = computed(() =>
   clusterIconHues.map((h) => {
     return `hsla(${h}, ${
-      store().uiState.useDarkMode ? darkmodeSaturation : lightmodeSaturation
+      props.useDarkMode ? darkmodeSaturation : lightmodeSaturation
     }%, ${
-      store().uiState.useDarkMode ? darkmodeLightness : lightmodeLightness
-    }%, ${store().uiState.useDarkMode ? darkmodeAlpha : lightmodeAlpha})`
+      props.useDarkMode ? darkmodeLightness : lightmodeLightness
+    }%, ${props.useDarkMode ? darkmodeAlpha : lightmodeAlpha})`
   })
 )
 
@@ -479,7 +525,7 @@ watch(
 </script>
 
 <style scoped>
-@reference "../style.css";
+@reference "../../style/style.css";
 
 .tableCell {
   @apply mx-3 flex flex-row items-center justify-center text-center;

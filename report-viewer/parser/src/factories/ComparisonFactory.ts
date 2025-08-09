@@ -3,11 +3,17 @@ import slash from 'slash'
 
 const MATCH_COLOR_COUNT = 7
 
+export interface ComparisonFactoryResult {
+  comparison: Comparison
+  filesOfFirstSubmission: ComparisonSubmissionFile[]
+  filesOfSecondSubmission: ComparisonSubmissionFile[]
+}
+
 /**
  * Factory class for creating Comparison objects
  */
 export class ComparisonFactory {
-  public static getComparison(comparisonFile: string, submissionFileIndex: string, filesOfFirstSubmission: SubmissionFile[], filesOfSecondSubmission: SubmissionFile[]): Comparison {
+  public static getComparison(comparisonFile: string, submissionFileIndex: string, filesOfFirstSubmission: SubmissionFile[], filesOfSecondSubmission: SubmissionFile[]): ComparisonFactoryResult {
     return this.extractComparison(JSON.parse(comparisonFile), JSON.parse(submissionFileIndex), filesOfFirstSubmission, filesOfSecondSubmission)
   }
 
@@ -15,7 +21,7 @@ export class ComparisonFactory {
    * Creates a comparison object from a json object created by JPlag
    * @param json the json object
    */
-  private static extractComparison(comparisonJson: ReportFormatComparison, submissionFileIndexJson: ReportFormatSubmissionFileIndex, _filesOfFirstSubmission: SubmissionFile[], _filesOfSecondSubmission: SubmissionFile[]): Comparison {
+  private static extractComparison(comparisonJson: ReportFormatComparison, submissionFileIndexJson: ReportFormatSubmissionFileIndex, _filesOfFirstSubmission: SubmissionFile[], _filesOfSecondSubmission: SubmissionFile[]): ComparisonFactoryResult {
     const filesOfFirstSubmission = this.loadSubmissionFiles(_filesOfFirstSubmission, this.transfromIndexFormatting(submissionFileIndexJson.fileIndexes[comparisonJson.firstSubmissionId]))
     const filesOfSecondSubmission = this.loadSubmissionFiles(_filesOfSecondSubmission, this.transfromIndexFormatting(submissionFileIndexJson.fileIndexes[comparisonJson.secondSubmissionId]))
 
@@ -45,7 +51,7 @@ export class ComparisonFactory {
       fileOfSecond.matchedTokenCount += match.lengthOfSecond
     })
 
-    return new Comparison(
+    const comparison = new Comparison(
       comparisonJson.firstSubmissionId,
       comparisonJson.secondSubmissionId,
       this.extractSimilarities(comparisonJson.similarities),
@@ -55,6 +61,9 @@ export class ComparisonFactory {
       comparisonJson.firstSimilarity,
       comparisonJson.secondSimilarity
     )
+    return {
+      comparison, filesOfFirstSubmission, filesOfSecondSubmission
+    }
   }
 
   private static extractSimilarities(

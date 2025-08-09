@@ -1,13 +1,12 @@
 import { File, SubmissionFile } from '@jplag/model'
 import jszip from 'jszip'
 import slash from 'slash'
-import { FileHandler } from './FileHandler'
 
 /**
  * Class for handling report files.
  */
-export class ReportFileHandler extends FileHandler {
-  protected async extractContent(file: Blob) {
+export class ReportFileHandler {
+  public async extractContent(file: Blob) {
     const files: File[] = []
     const submissionFiles: SubmissionFile[] = []
     console.info('Start handling report file and storing necessary data...')

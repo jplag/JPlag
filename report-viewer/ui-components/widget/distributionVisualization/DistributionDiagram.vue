@@ -38,7 +38,7 @@ const emit = defineEmits<{
   (e: 'click:upperPercentile', UpperPercentile: number): void
 }>()
 
-const config = defineModel<DistributionChartConfig>({
+const config = defineModel<DistributionChartConfig>('config', {
   default: {
     metric: 'averageSimilarity',
     xScale: 'linear',

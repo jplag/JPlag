@@ -1,5 +1,3 @@
-import versionJson from '@/version.json'
-
 /**
  * Version of the report viewer.
  */
@@ -53,6 +51,3 @@ export class Version {
     return Version.ERROR_VERSION
   }
 }
-
-export const reportViewerVersion = Version.fromJsonField(versionJson['report_viewer_version'])
-export const minimalReportVersion = Version.fromJsonField(versionJson['minimal_report_version'])

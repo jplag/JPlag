@@ -1,7 +1,7 @@
 <template>
   <div class="group relative flex items-center justify-center">
     <div class="break-anywhere">
-      {{ displayName }}
+      {{ displayedName }}
     </div>
     <div
       class="invisible absolute top-0 right-0 z-10 flex h-full cursor-pointer items-center p-2 delay-0 group-hover:visible group-hover:delay-100"
@@ -24,7 +24,7 @@ library.add(faEye)
 library.add(faEyeSlash)
 
 defineProps({
-  displayName: {
+  displayedName: {
     type: String,
     required: true
   },
