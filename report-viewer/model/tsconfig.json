@@ -5,5 +5,5 @@
     "rootDir": "src",
     "outDir": "dist"
   },
-  "include": ["src/**/*", "../ui-components/widget/MetricType.ts"]
+  "include": ["src/**/*"]
 }
