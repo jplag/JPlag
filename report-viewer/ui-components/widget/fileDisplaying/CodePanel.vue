@@ -70,9 +70,15 @@
 </template>
 
 <script setup lang="ts">
-import type { MatchInSingleFile, ComparisonSubmissionFile, Language, Match, BaseCodeMatch } from '@jplag/model'
+import type {
+  MatchInSingleFile,
+  ComparisonSubmissionFile,
+  Language,
+  Match,
+  BaseCodeMatch
+} from '@jplag/model'
 import { ref, type PropType, computed, type Ref } from 'vue'
-import { InteractableComponent, ToolTipComponent} from '../../base'
+import { InteractableComponent, ToolTipComponent } from '../../base'
 import { highlight } from './CodeHighlighter'
 import CodeLine from './CodeLine.vue'
 

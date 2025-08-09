@@ -33,9 +33,7 @@
           :matches="matchesPerFile[file.fileName]"
           :highlight-language="highlightLanguage"
           class="mt-1 first:mt-0"
-          :base-code-matches="
-            baseCodeMatches.filter((match) => match.fileName === file.fileName)
-          "
+          :base-code-matches="baseCodeMatches.filter((match) => match.fileName === file.fileName)"
           @match-selected="(match: Match) => $emit('matchSelected', match)"
         />
       </VueDraggableNext>
@@ -44,7 +42,14 @@
 </template>
 
 <script setup lang="ts">
-import { type ComparisonSubmissionFile, type MatchInSingleFile, type Language, type Match, type BaseCodeMatch, MetricJsonIdentifier } from '@jplag/model'
+import {
+  type ComparisonSubmissionFile,
+  type MatchInSingleFile,
+  type Language,
+  type Match,
+  type BaseCodeMatch,
+  MetricJsonIdentifier
+} from '@jplag/model'
 import CodePanel from './CodePanel.vue'
 import { ContainerComponent, ScrollableComponent, ButtonComponent } from '../../base'
 import { VueDraggableNext } from 'vue-draggable-next'

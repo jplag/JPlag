@@ -5,9 +5,7 @@ export class BaseCodeReportFactory {
   private static readonly basePath = 'basecode'
 
   public static getReport(baseCodeReport: string): BaseCodeMatch[] {
-    return this.extractReport(
-      JSON.parse(baseCodeReport)
-    )
+    return this.extractReport(JSON.parse(baseCodeReport))
   }
 
   private static extractReport(json: ReportFormatBaseCodeMatch[]): BaseCodeMatch[] {

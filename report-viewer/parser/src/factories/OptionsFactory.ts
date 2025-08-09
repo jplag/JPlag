@@ -1,4 +1,9 @@
-import { type CliClusterOptions, type CliOptions, type ReportFormatCliOptions, getLanguageParser } from '@jplag/model'
+import {
+  type CliClusterOptions,
+  type CliOptions,
+  type ReportFormatCliOptions,
+  getLanguageParser
+} from '@jplag/model'
 
 export class OptionsFactory {
   public static getCliOptions(optionsFile: string): CliOptions {

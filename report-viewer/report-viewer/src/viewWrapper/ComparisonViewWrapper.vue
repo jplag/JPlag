@@ -19,7 +19,6 @@ import ComparisonView from '@/views/ComparisonView.vue'
 import { reportStore } from '@/stores/reportStore'
 import { loadReport } from '@/model/fileLoading'
 
-
 defineProps({
   firstSubmissionId: {
     type: String,

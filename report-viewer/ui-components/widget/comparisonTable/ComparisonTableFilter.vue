@@ -36,11 +36,7 @@
       class="col-start-1 row-start-3 w-30 min-w-fit whitespace-nowrap md:col-start-3 md:row-start-1"
       @click="emit('changeAnonymousForAll')"
     >
-      {{
-        allAreAnonymized
-          ? 'Show All'
-          : 'Anonymize All'
-      }}
+      {{ allAreAnonymized ? 'Show All' : 'Anonymize All' }}
     </ButtonComponent>
     <MetricSelector
       class="col-start-1 row-start-4 md:col-span-3 md:col-start-1 md:row-start-2"
@@ -49,15 +45,13 @@
       :metrics="secondaryMetricOptions"
       :max-tool-tip-width="200"
       tooltip-direction="bottom"
-      @selection-changed="
-        (metric: MetricJsonIdentifier) => (secondaryMetric = metric)
-      "
+      @selection-changed="(metric: MetricJsonIdentifier) => (secondaryMetric = metric)"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { SearchBarComponent, ToolTipComponent, ButtonComponent} from '../../base'
+import { SearchBarComponent, ToolTipComponent, ButtonComponent } from '../../base'
 import { MetricJsonIdentifier } from '@jplag/model'
 import MetricSelector from '../optionsSelectors/MetricSelector.vue'
 

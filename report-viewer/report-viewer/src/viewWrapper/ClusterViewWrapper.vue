@@ -41,5 +41,4 @@ const parsedIndex = computed(() => {
 if (!reportStore().isReportLoaded()) {
   loadReport()
 }
-
 </script>

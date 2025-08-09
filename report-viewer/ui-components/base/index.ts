@@ -12,4 +12,17 @@ import ToastComponent from './ToastComponent.vue'
 import ToolTipComponent from './ToolTipComponent.vue'
 
 export * from './ToolTip'
-export { ButtonComponent, ContainerComponent, DropDownSelector, InfoIcon, InteractableComponent, LoadingCircle, ScrollableComponent, SearchBarComponent, TabbedContainer, TextInformation, ToastComponent, ToolTipComponent }
+export {
+  ButtonComponent,
+  ContainerComponent,
+  DropDownSelector,
+  InfoIcon,
+  InteractableComponent,
+  LoadingCircle,
+  ScrollableComponent,
+  SearchBarComponent,
+  TabbedContainer,
+  TextInformation,
+  ToastComponent,
+  ToolTipComponent
+}

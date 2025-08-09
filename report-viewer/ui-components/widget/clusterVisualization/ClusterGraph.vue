@@ -46,7 +46,7 @@ const props = defineProps({
 })
 
 const emit = defineEmits<{
-  (event: 'lineHovered', value: { firstId: string; secondId: string } | null): void,
+  (event: 'lineHovered', value: { firstId: string; secondId: string } | null): void
   (event: 'lineClicked', value: { firstId: string; secondId: string }): void
 }>()
 

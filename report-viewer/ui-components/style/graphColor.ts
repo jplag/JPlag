@@ -5,15 +5,15 @@ const graphRGB = {
 }
 
 interface GraphColors {
-  ticksAndFont: string;
-  gridLines: string;
-  contentFill: string;
-  contentBorder: string;
-  pointFill: string;
-  additionalLine: string;
-  contentFillAlpha(alpha: number): string;
-  highlightedLineRGB: { red: number; green: number; blue: number };
-  highlightedLine(alpha: number): string;
+  ticksAndFont: string
+  gridLines: string
+  contentFill: string
+  contentBorder: string
+  pointFill: string
+  additionalLine: string
+  contentFillAlpha(alpha: number): string
+  highlightedLineRGB: { red: number; green: number; blue: number }
+  highlightedLine(alpha: number): string
 }
 
 export function graphColors(useDarkMode: boolean = false): GraphColors {

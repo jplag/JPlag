@@ -55,7 +55,11 @@
           />
         </template>
         <template #Radar>
-          <ClusterRadarChart :cluster="clusterListElement" :use-dark-mode="uiStore().useDarkMode" class="grow" />
+          <ClusterRadarChart
+            :cluster="clusterListElement"
+            :use-dark-mode="uiStore().useDarkMode"
+            class="grow"
+          />
         </template>
       </TabbedContainer>
     </div>
@@ -93,7 +97,14 @@
 </template>
 
 <script setup lang="ts">
-import { ClusterRadarChart, ClusterGraph, ComparisonsTable, MetricType, MetricTypes, MetricIcon } from '@jplag/ui-components/widget'
+import {
+  ClusterRadarChart,
+  ClusterGraph,
+  ComparisonsTable,
+  MetricType,
+  MetricTypes,
+  MetricIcon
+} from '@jplag/ui-components/widget'
 import { ContainerComponent, TextInformation, TabbedContainer } from '@jplag/ui-components/base'
 import { computed, ref, onErrorCaptured, type Ref } from 'vue'
 import { redirectOnError } from '@/router'
@@ -136,11 +147,13 @@ const comparisonTableOptions = [
 const usedMetric: MetricType = MetricTypes.AVERAGE_SIMILARITY
 
 const comparisons = computed(() =>
-  reportStore().getTopComparisons().filter(
-    (c) =>
-      cluster.value.members.includes(c.firstSubmissionId) &&
-      cluster.value.members.includes(c.secondSubmissionId)
-  )
+  reportStore()
+    .getTopComparisons()
+    .filter(
+      (c) =>
+        cluster.value.members.includes(c.firstSubmissionId) &&
+        cluster.value.members.includes(c.secondSubmissionId)
+    )
 )
 
 let counter = 0
@@ -152,13 +165,15 @@ comparisons.value
   })
 
 const relatedComparisons = computed(() =>
-  reportStore().getTopComparisons().filter(
-    (c) =>
-      (cluster.value.members.includes(c.firstSubmissionId) &&
-        !cluster.value.members.includes(c.secondSubmissionId)) ||
-      (!cluster.value.members.includes(c.firstSubmissionId) &&
-        cluster.value.members.includes(c.secondSubmissionId))
-  )
+  reportStore()
+    .getTopComparisons()
+    .filter(
+      (c) =>
+        (cluster.value.members.includes(c.firstSubmissionId) &&
+          !cluster.value.members.includes(c.secondSubmissionId)) ||
+        (!cluster.value.members.includes(c.firstSubmissionId) &&
+          cluster.value.members.includes(c.secondSubmissionId))
+    )
 )
 counter = 0
 relatedComparisons.value

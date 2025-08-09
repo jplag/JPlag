@@ -11,10 +11,7 @@
         class="fixed right-2 bottom-2 flex h-12 w-12 items-center justify-center text-center print:hidden"
         @click="uiStore().useDarkMode = !uiStore().useDarkMode"
       >
-        <FontAwesomeIcon
-          class="text-2xl"
-          :icon="uiStore().useDarkMode ? faSun : faMoon"
-        />
+        <FontAwesomeIcon class="text-2xl" :icon="uiStore().useDarkMode ? faSun : faMoon" />
       </ButtonComponent>
       <ToastComponent v-if="showToast" :time-to-live="10000">
         You are using an outdated version of the JPlag Report Viewer ({{

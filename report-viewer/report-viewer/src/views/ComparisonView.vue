@@ -47,8 +47,8 @@
             ><div class="text-sm whitespace-pre">
               <p>
                 Percentage of code from
-                {{ reportStore().getDisplayName(comparison.firstSubmissionId) }} that was found in the
-                code of {{ reportStore().getDisplayName(comparison.secondSubmissionId) }}.
+                {{ reportStore().getDisplayName(comparison.firstSubmissionId) }} that was found in
+                the code of {{ reportStore().getDisplayName(comparison.secondSubmissionId) }}.
               </p>
               <p>
                 The numbers might not be symmetric, due to the submissions having different lengths.
@@ -64,8 +64,8 @@
             ><div class="text-sm whitespace-pre">
               <p>
                 Percentage of code from
-                {{ reportStore().getDisplayName(comparison.secondSubmissionId) }} that was found in the
-                code of {{ reportStore().getDisplayName(comparison.firstSubmissionId) }}.
+                {{ reportStore().getDisplayName(comparison.secondSubmissionId) }} that was found in
+                the code of {{ reportStore().getDisplayName(comparison.firstSubmissionId) }}.
               </p>
               <p>
                 The numbers might not be symmetric, due to the submissions having different lengths.
@@ -124,8 +124,21 @@ import { onMounted, ref, watch, type Ref, computed, onErrorCaptured } from 'vue'
 import hljsLightMode from 'highlight.js/styles/vs.css?raw'
 import hljsDarkMode from 'highlight.js/styles/vs2015.css?raw'
 import { redirectOnError } from '@/router'
-import { ContainerComponent, ButtonComponent, TextInformation, ToolTipComponent } from '@jplag/ui-components/base'
-import { MatchList, FilesContainer, OptionsSelectorComponent, MetricIcon, FileSortingOptions, fileSortingTooltips, MetricTypes } from '@jplag/ui-components/widget'
+import {
+  ContainerComponent,
+  ButtonComponent,
+  TextInformation,
+  ToolTipComponent
+} from '@jplag/ui-components/base'
+import {
+  MatchList,
+  FilesContainer,
+  OptionsSelectorComponent,
+  MetricIcon,
+  FileSortingOptions,
+  fileSortingTooltips,
+  MetricTypes
+} from '@jplag/ui-components/widget'
 import { reportStore } from '@/stores/reportStore'
 import { Match, MetricJsonIdentifier } from '@jplag/model'
 import { uiStore } from '@/stores/uiStore'
@@ -141,12 +154,18 @@ const props = defineProps({
   }
 })
 
-const completeComparisonResult = computed(() => reportStore().getComparison(props.firstSubmissionId, props.secondSubmissionId))
+const completeComparisonResult = computed(() =>
+  reportStore().getComparison(props.firstSubmissionId, props.secondSubmissionId)
+)
 const comparison = computed(() => completeComparisonResult.value.comparison)
 const filesOfFirst = computed(() => completeComparisonResult.value.filesOfFirstSubmission)
 const filesOfSecond = computed(() => completeComparisonResult.value.filesOfSecondSubmission)
-const firstBaseCodeMatches = computed(() => reportStore().getBaseCodeReport(props.firstSubmissionId))
-const secondBaseCodeMatches = computed(() => reportStore().getBaseCodeReport(props.secondSubmissionId))
+const firstBaseCodeMatches = computed(() =>
+  reportStore().getBaseCodeReport(props.firstSubmissionId)
+)
+const secondBaseCodeMatches = computed(() =>
+  reportStore().getBaseCodeReport(props.secondSubmissionId)
+)
 
 const panel1: Ref<typeof FilesContainer | null> = ref(null)
 const panel2: Ref<typeof FilesContainer | null> = ref(null)

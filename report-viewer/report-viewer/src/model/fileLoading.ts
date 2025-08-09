@@ -4,8 +4,8 @@ import { ReportFileHandler } from '@jplag/parser'
 export const REPORT_FILE_NAME = 'results.jplag'
 
 export async function loadReport(): Promise<void> {
-  let reportFile: Blob|null = null
-  let reportName: string|null = null
+  let reportFile: Blob | null = null
+  let reportName: string | null = null
   if (await useLocalReportFileMode()) {
     reportFile = await getLocalFile(REPORT_FILE_NAME)
     reportName = REPORT_FILE_NAME
@@ -21,7 +21,7 @@ export async function loadReport(): Promise<void> {
   reportStore().loadReport(report.files, report.submissionFiles, reportName ?? REPORT_FILE_NAME)
 }
 
-async function getLocalFile(path: string): Promise<Blob|null> {
+async function getLocalFile(path: string): Promise<Blob | null> {
   const request = await fetch(`${window.location.origin}${import.meta.env.BASE_URL}${path}`)
   if (request.status == 200) {
     const blob = await request.blob()

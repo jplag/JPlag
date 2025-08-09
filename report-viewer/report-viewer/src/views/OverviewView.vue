@@ -46,11 +46,14 @@
 
         <TextInformation label="Shown/Total Comparisons" class="flex-auto">
           <template #default
-            >{{ reportStore().includedComparisonCount() }} / {{ runInformation.totalComparisons }}</template
+            >{{ reportStore().includedComparisonCount() }} /
+            {{ runInformation.totalComparisons }}</template
           >
           <template #tooltip>
             <div class="text-sm whitespace-pre">
-              <TextInformation label="Shown Comparisons">{{ reportStore().includedComparisonCount() }}</TextInformation>
+              <TextInformation label="Shown Comparisons">{{
+                reportStore().includedComparisonCount()
+              }}</TextInformation>
               <TextInformation label="Total Comparisons">{{
                 runInformation.totalComparisons
               }}</TextInformation>
@@ -108,10 +111,10 @@
         />
       </template>
       <template #Boxplot>
-        <BoxPlot 
+        <BoxPlot
           v-model:metric="uiStore().distributionChartConfig.metric"
-          :distributions="reportStore().getDistributions()" 
-          class="grow print:flex-none" 
+          :distributions="reportStore().getDistributions()"
+          class="grow print:flex-none"
         />
       </template>
     </TabbedContainer>
@@ -143,15 +146,30 @@
 <script setup lang="ts">
 import { computed, type PropType, onErrorCaptured, type Ref, ref, nextTick, onMounted } from 'vue'
 import { redirectOnError, router } from '@/router'
-import {ContainerComponent, ButtonComponent, TextInformation, ToolTipComponent, InfoIcon, TabbedContainer } from '@jplag/ui-components/base'
-import { DistributionDiagram, ComparisonsTable, BoxPlot, Column, Direction } from '@jplag/ui-components/widget'
+import {
+  ContainerComponent,
+  ButtonComponent,
+  TextInformation,
+  ToolTipComponent,
+  InfoIcon,
+  TabbedContainer
+} from '@jplag/ui-components/base'
+import {
+  DistributionDiagram,
+  ComparisonsTable,
+  BoxPlot,
+  Column,
+  Direction
+} from '@jplag/ui-components/widget'
 import { reportStore } from '@/stores/reportStore'
 import { uiStore } from '@/stores/uiStore'
 
 const runInformation = computed(() => reportStore().getRunInformation())
 const topComparisons = computed(() => reportStore().getTopComparisons())
 
-const hasMoreSubmissionPaths = computed(() => reportStore().getCliOptions().submissionDirectories.length > 1)
+const hasMoreSubmissionPaths = computed(
+  () => reportStore().getCliOptions().submissionDirectories.length > 1
+)
 const submissionPathValue = computed(() =>
   hasMoreSubmissionPaths.value
     ? 'Click More to see all paths'

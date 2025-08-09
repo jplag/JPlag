@@ -9,11 +9,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": [
-    "env.d.ts",
-    "src/**/*",
-    "src/**/*.vue",
-    "src/**/*.json"
-  ],
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue", "src/**/*.json"],
   "exclude": ["src/**/__tests__/*"]
 }

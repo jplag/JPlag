@@ -15,4 +15,17 @@ export * from './distributionVisualization/DistributionChartConfig'
 export * from './fileDisplaying/FileSortingOptions'
 export * from './MetricType'
 export * from './comparisonTable/ComparisonSorting'
-export { ClusterRadarChart, ClusterGraph, ComparisonsTable, BoxPlot, DistributionDiagram, FilesContainer, MatchList, MetricSelector, OptionComponent, OptionsSelectorComponent, MetricIcon, NameElement }
+export {
+  ClusterRadarChart,
+  ClusterGraph,
+  ComparisonsTable,
+  BoxPlot,
+  DistributionDiagram,
+  FilesContainer,
+  MatchList,
+  MetricSelector,
+  OptionComponent,
+  OptionsSelectorComponent,
+  MetricIcon,
+  NameElement
+}

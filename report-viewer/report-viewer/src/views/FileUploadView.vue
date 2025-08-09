@@ -65,7 +65,6 @@ import { uiStore } from '@/stores/uiStore'
 import { ReportFileHandler } from '@jplag/parser'
 import { LoadingCircle } from '@jplag/ui-components/base'
 
-
 reportStore().reset()
 
 const exampleFiles = ref(import.meta.env.MODE == 'demo' || import.meta.env.MODE == 'dev-demo')

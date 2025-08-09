@@ -7,10 +7,7 @@
         title="Metric:"
         :default-selected="model"
         :metrics="metricOptions"
-        @selection-changed="
-          (metric: MetricJsonIdentifier) =>
-            (model = metric)
-        "
+        @selection-changed="(metric: MetricJsonIdentifier) => (model = metric)"
       />
     </ScrollableComponent>
   </div>

@@ -1,11 +1,11 @@
 import type { Cluster, ComparisonListElement } from '@jplag/model'
 
 export class TopComparisonFactory {
-  public static getTopComparisons(topComparisonFile: string, clusters: Cluster[]): ComparisonListElement[] {
-    return this.extractTopComparisons(
-      JSON.parse(topComparisonFile),
-      clusters
-    )
+  public static getTopComparisons(
+    topComparisonFile: string,
+    clusters: Cluster[]
+  ): ComparisonListElement[] {
+    return this.extractTopComparisons(JSON.parse(topComparisonFile), clusters)
   }
 
   private static extractTopComparisons(

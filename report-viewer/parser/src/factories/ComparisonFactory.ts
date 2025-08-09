@@ -1,4 +1,12 @@
-import { Comparison, getMatchLength, type Match, type ReportFormatMatch, SubmissionFile, MetricJsonIdentifier, ComparisonSubmissionFile } from '@jplag/model'
+import {
+  Comparison,
+  getMatchLength,
+  type Match,
+  type ReportFormatMatch,
+  SubmissionFile,
+  MetricJsonIdentifier,
+  ComparisonSubmissionFile
+} from '@jplag/model'
 import slash from 'slash'
 
 const MATCH_COLOR_COUNT = 7
@@ -13,17 +21,42 @@ export interface ComparisonFactoryResult {
  * Factory class for creating Comparison objects
  */
 export class ComparisonFactory {
-  public static getComparison(comparisonFile: string, submissionFileIndex: string, filesOfFirstSubmission: SubmissionFile[], filesOfSecondSubmission: SubmissionFile[]): ComparisonFactoryResult {
-    return this.extractComparison(JSON.parse(comparisonFile), JSON.parse(submissionFileIndex), filesOfFirstSubmission, filesOfSecondSubmission)
+  public static getComparison(
+    comparisonFile: string,
+    submissionFileIndex: string,
+    filesOfFirstSubmission: SubmissionFile[],
+    filesOfSecondSubmission: SubmissionFile[]
+  ): ComparisonFactoryResult {
+    return this.extractComparison(
+      JSON.parse(comparisonFile),
+      JSON.parse(submissionFileIndex),
+      filesOfFirstSubmission,
+      filesOfSecondSubmission
+    )
   }
 
   /**
    * Creates a comparison object from a json object created by JPlag
    * @param json the json object
    */
-  private static extractComparison(comparisonJson: ReportFormatComparison, submissionFileIndexJson: ReportFormatSubmissionFileIndex, _filesOfFirstSubmission: SubmissionFile[], _filesOfSecondSubmission: SubmissionFile[]): ComparisonFactoryResult {
-    const filesOfFirstSubmission = this.loadSubmissionFiles(_filesOfFirstSubmission, this.transfromIndexFormatting(submissionFileIndexJson.fileIndexes[comparisonJson.firstSubmissionId]))
-    const filesOfSecondSubmission = this.loadSubmissionFiles(_filesOfSecondSubmission, this.transfromIndexFormatting(submissionFileIndexJson.fileIndexes[comparisonJson.secondSubmissionId]))
+  private static extractComparison(
+    comparisonJson: ReportFormatComparison,
+    submissionFileIndexJson: ReportFormatSubmissionFileIndex,
+    _filesOfFirstSubmission: SubmissionFile[],
+    _filesOfSecondSubmission: SubmissionFile[]
+  ): ComparisonFactoryResult {
+    const filesOfFirstSubmission = this.loadSubmissionFiles(
+      _filesOfFirstSubmission,
+      this.transfromIndexFormatting(
+        submissionFileIndexJson.fileIndexes[comparisonJson.firstSubmissionId]
+      )
+    )
+    const filesOfSecondSubmission = this.loadSubmissionFiles(
+      _filesOfSecondSubmission,
+      this.transfromIndexFormatting(
+        submissionFileIndexJson.fileIndexes[comparisonJson.secondSubmissionId]
+      )
+    )
 
     const matches: Match[] = comparisonJson.matches.map((match) => {
       return {
@@ -62,7 +95,9 @@ export class ComparisonFactory {
       comparisonJson.secondSimilarity
     )
     return {
-      comparison, filesOfFirstSubmission, filesOfSecondSubmission
+      comparison,
+      filesOfFirstSubmission,
+      filesOfSecondSubmission
     }
   }
 
@@ -84,7 +119,10 @@ export class ComparisonFactory {
     return newFileIndex
   }
 
-  private static loadSubmissionFiles(files: SubmissionFile[], fileIndex: Record<string, ReportSubmissionFile>) {
+  private static loadSubmissionFiles(
+    files: SubmissionFile[],
+    fileIndex: Record<string, ReportSubmissionFile>
+  ) {
     const submissionFiles: ComparisonSubmissionFile[] = []
     for (const file of files) {
       submissionFiles.push({

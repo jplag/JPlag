@@ -3,10 +3,14 @@ export class SubmissionMappingsFactory {
     return this.extractSubmissionMappings(JSON.parse(submissionMappingsFile))
   }
 
-  private static extractSubmissionMappings(json: ReportFormatSubmissionMappings): SubmissionMappings {
+  private static extractSubmissionMappings(
+    json: ReportFormatSubmissionMappings
+  ): SubmissionMappings {
     return {
       idToDisplayNameMap: this.convertIdToDisplayNameMap(json.submissionIds),
-      comparisonFilesLookup: this.convertComparisonFilesLookup(json.submissionIdsToComparisonFileName)
+      comparisonFilesLookup: this.convertComparisonFilesLookup(
+        json.submissionIdsToComparisonFileName
+      )
     }
   }
 
@@ -14,7 +18,9 @@ export class SubmissionMappingsFactory {
     return new Map<string, string>(Object.entries(json))
   }
 
-  private static convertComparisonFilesLookup(json: Record<string, Record<string, string>>): Map<string, Map<string, string>> {
+  private static convertComparisonFilesLookup(
+    json: Record<string, Record<string, string>>
+  ): Map<string, Map<string, string>> {
     const entries: Array<Array<string | object>> = Object.entries(json)
     const comparisonMap = new Map<string, Map<string, string>>()
     for (const [key, value] of entries) {

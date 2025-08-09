@@ -51,8 +51,7 @@
                         {{ secondaryMetric.shortName }}
                         <FontAwesomeIcon
                           :icon="
-                            tableSorting.column.id ==
-                            secondaryMetric.sorting.id
+                            tableSorting.column.id == secondaryMetric.sorting.id
                               ? tableSorting.direction.icon
                               : faSort
                           "
@@ -75,11 +74,7 @@
               >
                 Cluster
                 <FontAwesomeIcon
-                  :icon="
-                    tableSorting.column.id == 'cluster'
-                      ? tableSorting.direction.icon
-                      : faSort
-                  "
+                  :icon="tableSorting.column.id == 'cluster' ? tableSorting.direction.icon : faSort"
                   class="ml-1"
                 />
               </div>
@@ -142,19 +137,19 @@
                       <div class="tableCellName tableCell">
                         <!--NameElement :id="item.firstSubmissionId" class="h-full w-1/2 px-2" />
                         <NameElement :id="item.secondSubmissionId" class="h-full w-1/2 px-2" /-->
-                        <NameElement :display-name="getDisplayName(item.firstSubmissionId)"
+                        <NameElement
+                          :display-name="getDisplayName(item.firstSubmissionId)"
                           :is-anonymous="isAnonymous(item.firstSubmissionId)"
                           :displayed-name="getDisplayName(item.firstSubmissionId)"
                           class="h-full w-1/2 px-2"
-                          @change-anonymous="() =>
-                            emit('changeAnonymous', item.firstSubmissionId)"
+                          @change-anonymous="() => emit('changeAnonymous', item.firstSubmissionId)"
                         />
-                        <NameElement :display-name="getDisplayName(item.secondSubmissionId)"
+                        <NameElement
+                          :display-name="getDisplayName(item.secondSubmissionId)"
                           :is-anonymous="isAnonymous(item.secondSubmissionId)"
                           :displayed-name="getDisplayName(item.secondSubmissionId)"
                           class="h-full w-1/2 px-2"
-                          @change-anonymous="() =>
-                            emit('changeAnonymous', item.secondSubmissionId)"
+                          @change-anonymous="() => emit('changeAnonymous', item.secondSubmissionId)"
                         />
                       </div>
 
@@ -168,11 +163,7 @@
                           }}
                         </div>
                         <div class="w-1/2">
-                          {{
-                            secondaryMetric.format(
-                              item.similarities[secondaryMetricModel]
-                            )
-                          }}
+                          {{ secondaryMetric.format(item.similarities[secondaryMetricModel]) }}
                         </div>
                       </div>
                     </RouterLink>
@@ -289,8 +280,8 @@ const props = defineProps({
 })
 
 const emit = defineEmits<{
-  (event: 'lineHovered', value: { firstId: string; secondId: string } | null): void,
-  (event: 'changeAnonymous', id: string): void,
+  (event: 'lineHovered', value: { firstId: string; secondId: string } | null): void
+  (event: 'changeAnonymous', id: string): void
 }>()
 
 const secondaryMetricModel = defineModel<MetricJsonIdentifier>('secondaryMetric', {
@@ -303,9 +294,7 @@ const tableSorting = defineModel<ComparisonTableSorting>('sorting', {
   }
 })
 
-const secondaryMetric = computed(
-  () => MetricTypes.METRIC_MAP[secondaryMetricModel.value]
-)
+const secondaryMetric = computed(() => MetricTypes.METRIC_MAP[secondaryMetricModel.value])
 
 const displayedComparisons = computed(() => {
   const comparisons = getFilteredComparisons(getSortedComparisons(Array.from(props.topComparisons)))
@@ -458,8 +447,7 @@ function getSortedComparisons(comparisons: ComparisonListElement[]) {
 
 function setSorting(column: ColumnId) {
   if (tableSorting.value.column.id == column) {
-    tableSorting.value.direction =
-      tableSorting.value.direction.next
+    tableSorting.value.direction = tableSorting.value.direction.next
   } else {
     tableSorting.value.column = Column.columns[column]
     tableSorting.value.direction = Direction.descending
@@ -480,9 +468,7 @@ if (props.clusters != undefined) {
 }
 const clusterIconColors = computed(() =>
   clusterIconHues.map((h) => {
-    return `hsla(${h}, ${
-      props.useDarkMode ? darkmodeSaturation : lightmodeSaturation
-    }%, ${
+    return `hsla(${h}, ${props.useDarkMode ? darkmodeSaturation : lightmodeSaturation}%, ${
       props.useDarkMode ? darkmodeLightness : lightmodeLightness
     }%, ${props.useDarkMode ? darkmodeAlpha : lightmodeAlpha})`
   })

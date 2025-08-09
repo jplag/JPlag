@@ -145,7 +145,7 @@ import MetricIcon from '../MetricIcon.vue'
 const props = defineProps({
   /**
    * Matches of the comparison.
-  * type: Array<Match>
+   * type: Array<Match>
    */
   matches: {
     type: Array<Match>,

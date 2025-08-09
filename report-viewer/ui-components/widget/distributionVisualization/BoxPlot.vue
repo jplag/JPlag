@@ -32,14 +32,16 @@ const props = defineProps({
   useDarkMode: {
     type: Boolean,
     default: false
-  },
+  }
 })
 
 const metric = defineModel<MetricJsonIdentifier>('metric', {
   default: MetricJsonIdentifier.AVERAGE_SIMILARITY
 })
 
-const distribution = computed(() => Array.from(props.distributions[metric.value].splitIntoBuckets(100)).reverse())
+const distribution = computed(() =>
+  Array.from(props.distributions[metric.value].splitIntoBuckets(100)).reverse()
+)
 
 const totalValues = computed(() => distribution.value.reduce((acc, val) => acc + val, 0))
 // https://www.data-to-viz.com/caveat/boxplot.html

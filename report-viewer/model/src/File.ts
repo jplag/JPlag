@@ -23,7 +23,6 @@ export interface SubmissionFile extends File {
  * Internal representation of a single file from a submission.
  */
 export interface ComparisonSubmissionFile extends SubmissionFile {
-
   /**
    * Number of total tokens in the file.
    */

@@ -7,32 +7,21 @@
         title="Metric:"
         :default-selected="config.metric"
         :metrics="metricOptions"
-        @selection-changed="
-          (metric: MetricJsonIdentifier) =>
-            (config.metric = metric)
-        "
+        @selection-changed="(metric: MetricJsonIdentifier) => (config.metric = metric)"
       />
       <OptionsSelector
         class="mt-2"
         title="Scale x-Axis:"
         :labels="['Linear', 'Logarithmic']"
         :default-selected="config.xScale == 'linear' ? 0 : 1"
-        @selection-changed="
-          (i: number) =>
-            (config.xScale = i == 0 ? 'linear' : 'logarithmic')
-        "
+        @selection-changed="(i: number) => (config.xScale = i == 0 ? 'linear' : 'logarithmic')"
       />
       <OptionsSelector
         class="mt-2"
         title="Bucket Count:"
         :labels="resolutionOptions.map((div) => div.toString())"
-        :default-selected="
-          resolutionOptions.indexOf(config.bucketCount)
-        "
-        @selection-changed="
-          (i: number) =>
-            (config.bucketCount = resolutionOptions[i])
-        "
+        :default-selected="resolutionOptions.indexOf(config.bucketCount)"
+        @selection-changed="(i: number) => (config.bucketCount = resolutionOptions[i])"
       />
     </ScrollableComponent>
   </div>

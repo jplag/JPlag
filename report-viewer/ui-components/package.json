@@ -9,7 +9,8 @@
     "chartjs-plugin-datalabels": "^2.2.0",
     "highlight.js": "^11.11.1",
     "vue-draggable-next": "^2.2.1",
-    "vue-virtual-scroller": "^2.0.0-beta.8"
+    "vue-virtual-scroller": "^2.0.0-beta.8",
+    "vue-chartjs": "^5.3.2"
   },
   "peerDependencies": {
     "@fortawesome/free-solid-svg-icons": "^7.0.0",

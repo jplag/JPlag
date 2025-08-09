@@ -32,7 +32,7 @@ defineProps({
     type: Boolean,
     required: false,
     default: false
-  },
+  }
 })
 
 const emit = defineEmits(['changeAnonymous'])

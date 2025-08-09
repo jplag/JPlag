@@ -139,7 +139,7 @@
 </template>
 
 <script setup lang="ts">
-import { ContainerComponent, TextInformation, ScrollableComponent} from '@jplag/ui-components/base'
+import { ContainerComponent, TextInformation, ScrollableComponent } from '@jplag/ui-components/base'
 import { MetricTypes } from '@jplag/ui-components/widget'
 import { CliOptions, RunInformation, SubmissionState } from '@jplag/model'
 import { reportStore } from '@/stores/reportStore'

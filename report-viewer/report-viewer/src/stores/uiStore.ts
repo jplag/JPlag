@@ -1,10 +1,16 @@
-import { MetricJsonIdentifier } from "@jplag/model";
-import { Column, ComparisonTableSorting, Direction, DistributionChartConfig, FileSortingOptions } from "@jplag/ui-components/widget";
-import { defineStore } from "pinia";
-import { ref } from "vue";
+import { MetricJsonIdentifier } from '@jplag/model'
+import {
+  Column,
+  ComparisonTableSorting,
+  Direction,
+  DistributionChartConfig,
+  FileSortingOptions
+} from '@jplag/ui-components/widget'
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
 
-export const uiStore = defineStore("uiStore", () => {
-  const useDarkMode = ref(false);
+export const uiStore = defineStore('uiStore', () => {
+  const useDarkMode = ref(false)
   const distributionChartConfig = ref<DistributionChartConfig>({
     metric: MetricJsonIdentifier.AVERAGE_SIMILARITY,
     xScale: 'linear',

@@ -1,9 +1,6 @@
 <template>
   <div class="flex flex-col gap-1 md:overflow-hidden">
-    <OverviewView
-      v-if="reportStore().isReportLoaded()"
-      class="flex-1 print:flex-none"
-    />
+    <OverviewView v-if="reportStore().isReportLoaded()" class="flex-1 print:flex-none" />
     <div v-else class="flex flex-1 flex-col items-center justify-center">
       <LoadingCircle class="mx-auto" />
     </div>
