@@ -49,6 +49,7 @@ import io.soabase.recordbuilder.core.RecordBuilder;
  * @param mergingOptions are the options related to the subsequence match merging mechanism that opposed obfuscation.
  * @param normalize enables additional normalization mechanisms. Only supported by some language modules.
  * @param analyzeComments If true, comments will be extracted from the submissions.
+ * @param skipVersionCheck If true, skips checking GitHub API for the latest version.
  */
 @RecordBuilder()
 public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Language language, Integer minimumTokenMatch,
@@ -56,7 +57,7 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
         @JsonSerialize(contentUsing = FileSerializer.class) Set<File> oldSubmissionDirectories,
         @JsonSerialize(using = FileSerializer.class) File baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes,
         String exclusionFileName, SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons,
-        ClusteringOptions clusteringOptions, boolean debugParser, MergingOptions mergingOptions, boolean normalize, boolean analyzeComments)
+        ClusteringOptions clusteringOptions, boolean debugParser, MergingOptions mergingOptions, boolean normalize, boolean analyzeComments, boolean skipVersionCheck)
         implements JPlagOptionsBuilder.With {
 
     public static final double DEFAULT_SIMILARITY_THRESHOLD = 0;
@@ -79,13 +80,13 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
 
     public JPlagOptions(Language language, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories) {
         this(language, null, submissionDirectories, oldSubmissionDirectories, null, null, null, null, DEFAULT_SIMILARITY_METRIC,
-                DEFAULT_SIMILARITY_THRESHOLD, DEFAULT_SHOWN_COMPARISONS, new ClusteringOptions(), false, new MergingOptions(), false, false);
+                DEFAULT_SIMILARITY_THRESHOLD, DEFAULT_SHOWN_COMPARISONS, new ClusteringOptions(), false, new MergingOptions(), false, false, false);
     }
 
     public JPlagOptions(Language language, Integer minimumTokenMatch, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories,
             File baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
             SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
-            boolean debugParser, MergingOptions mergingOptions, boolean normalize, boolean analyzeComments) {
+            boolean debugParser, MergingOptions mergingOptions, boolean normalize, boolean analyzeComments, boolean skipVersionCheck) {
         this.language = language;
         this.debugParser = debugParser;
         this.fileSuffixes = fileSuffixes == null || fileSuffixes.isEmpty() ? null : Collections.unmodifiableList(fileSuffixes);
@@ -102,6 +103,7 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
         this.mergingOptions = mergingOptions;
         this.normalize = normalize;
         this.analyzeComments = analyzeComments;
+        this.skipVersionCheck = skipVersionCheck;
     }
 
     public boolean hasBaseCode() {
@@ -195,7 +197,7 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
             boolean debugParser, MergingOptions mergingOptions) throws BasecodeException {
         this(language, minimumTokenMatch, Set.of(submissionDirectory), oldSubmissionDirectories,
                 convertLegacyBaseCodeToFile(baseCodeSubmissionName, submissionDirectory), subdirectoryName, fileSuffixes, exclusionFileName,
-                similarityMetric, similarityThreshold, maximumNumberOfComparisons, clusteringOptions, debugParser, mergingOptions, false, false);
+                similarityMetric, similarityThreshold, maximumNumberOfComparisons, clusteringOptions, debugParser, mergingOptions, false, false, false);
     }
 
     /**

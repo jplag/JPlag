@@ -53,7 +53,9 @@ public final class CLI {
      */
     public void executeCli() throws ExitException, IOException {
         logger.debug("Your version of JPlag is {}", JPlag.JPLAG_VERSION);
-        JPlagVersionChecker.printVersionNotification();
+        if(!this.inputHandler.getCliOptions().advanced.skipVersionCheck){
+            JPlagVersionChecker.printVersionNotification();
+        }
 
         if (!this.inputHandler.parse()) {
             CollectedLogger.setLogLevel(this.inputHandler.getCliOptions().advanced.logLevel);
