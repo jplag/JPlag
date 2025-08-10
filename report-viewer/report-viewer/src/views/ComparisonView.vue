@@ -22,7 +22,10 @@
             </p>
           </template>
           <template #default>
-            <ButtonComponent class="hidden h-10 w-10 md:block" @click="print()">
+            <ButtonComponent
+              class="hidden h-10 w-10 items-center justify-center md:flex"
+              @click="print()"
+            >
               <FontAwesomeIcon class="text-2xl" :icon="faPrint" />
             </ButtonComponent>
           </template>

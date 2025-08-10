@@ -7,7 +7,7 @@
       <canvas ref="graphCanvas"></canvas>
     </div>
 
-    <DistributionDiagramOptions class="grow print:grow-0" />
+    <DistributionDiagramOptions v-model="config" class="grow print:grow-0" />
   </div>
 </template>
 
@@ -226,6 +226,7 @@ function drawGraph() {
 onMounted(() => {
   drawGraph()
 })
+
 watch(
   computed(() => {
     return {

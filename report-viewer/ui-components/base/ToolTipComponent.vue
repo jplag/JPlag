@@ -8,7 +8,6 @@
       v-if="$slots.tooltip"
       ref="tooltipRef"
       class="invisible absolute box-border delay-0 group-hover:visible group-hover:delay-200"
-      style="visibility: hidden"
     >
       <span
         class="arrowBase bg-tooltip pointer-events-auto relative z-10 block rounded-md px-1 text-center text-white after:absolute after:border-4 after:border-solid after:border-transparent"

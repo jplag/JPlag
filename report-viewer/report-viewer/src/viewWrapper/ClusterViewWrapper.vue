@@ -39,6 +39,6 @@ const parsedIndex = computed(() => {
 })
 
 if (!reportStore().isReportLoaded()) {
-  loadReport()
+  loadReport().catch((error) => redirectOnError(error))
 }
 </script>

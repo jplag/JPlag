@@ -17,7 +17,10 @@
         ><FontAwesomeIcon :icon="['fas', 'expand-alt']" />
         <p>Expand All</p></ButtonComponent
       >
-      <ButtonComponent v-else class="w-full space-x-2 md:w-fit print:hidden" @click="collapseAll()"
+      <ButtonComponent
+        v-else
+        class="w-full space-x-2 md:max-w-fit print:hidden"
+        @click="collapseAll()"
         ><FontAwesomeIcon :icon="['fas', 'compress-alt']" />
         <p>Collapse All</p></ButtonComponent
       >

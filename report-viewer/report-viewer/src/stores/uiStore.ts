@@ -20,7 +20,14 @@ export const uiStore = defineStore('uiStore', () => {
     column: Column.averageSimilarity,
     direction: Direction.descending
   })
+  const secondaryTableMetric = ref<MetricJsonIdentifier>(MetricJsonIdentifier.MAXIMUM_SIMILARITY)
   const fileSorting = ref<FileSortingOptions>(FileSortingOptions.ALPHABETICAL)
 
-  return { useDarkMode, distributionChartConfig, comparisonTableSorting, fileSorting }
+  return {
+    useDarkMode,
+    distributionChartConfig,
+    comparisonTableSorting,
+    secondaryTableMetric,
+    fileSorting
+  }
 })

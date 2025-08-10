@@ -18,6 +18,9 @@
 import ComparisonView from '@/views/ComparisonView.vue'
 import { reportStore } from '@/stores/reportStore'
 import { loadReport } from '@/model/fileLoading'
+import { redirectOnError } from '@/router'
+import { LoadingCircle } from '@jplag/ui-components/base'
+import VersionRepositoryReference from '@/components/VersionRepositoryReference.vue'
 
 defineProps({
   firstSubmissionId: {
@@ -31,6 +34,6 @@ defineProps({
 })
 
 if (!reportStore().isReportLoaded()) {
-  loadReport()
+  loadReport().catch((error) => redirectOnError(error))
 }
 </script>

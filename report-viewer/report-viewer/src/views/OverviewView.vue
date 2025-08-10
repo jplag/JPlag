@@ -106,6 +106,7 @@
         <DistributionDiagram
           v-model:config="uiStore().distributionChartConfig"
           :distributions="reportStore().getDistributions()"
+          :use-dark-mode="uiStore().useDarkMode"
           class="grow print:flex-none"
           @click:upper-percentile="onBarClicked"
         />
@@ -114,6 +115,7 @@
         <BoxPlot
           v-model:metric="uiStore().distributionChartConfig.metric"
           :distributions="reportStore().getDistributions()"
+          :use-dark-mode="uiStore().useDarkMode"
           class="grow print:flex-none"
         />
       </template>
@@ -126,10 +128,10 @@
     <ContainerComponent
       class="col-start-1 row-start-3 flex overflow-hidden md:col-start-3 md:row-start-2 print:hidden"
     >
-      <ComparisonsTable
+      <ComparisonTableWrapper
         ref="comparisonTable"
         :clusters="reportStore().getAllClusters()"
-        :top-comparisons="topComparisons"
+        :comparisons="topComparisons"
         class="min-h-0 max-w-full flex-1 print:min-h-full print:grow"
       >
         <template v-if="topComparisons.length < runInformation.totalComparisons" #footer>
@@ -138,7 +140,7 @@
             argument.
           </p>
         </template>
-      </ComparisonsTable>
+      </ComparisonTableWrapper>
     </ContainerComponent>
   </div>
 </template>
@@ -154,15 +156,10 @@ import {
   InfoIcon,
   TabbedContainer
 } from '@jplag/ui-components/base'
-import {
-  DistributionDiagram,
-  ComparisonsTable,
-  BoxPlot,
-  Column,
-  Direction
-} from '@jplag/ui-components/widget'
+import { DistributionDiagram, BoxPlot, Column, Direction } from '@jplag/ui-components/widget'
 import { reportStore } from '@/stores/reportStore'
 import { uiStore } from '@/stores/uiStore'
+import ComparisonTableWrapper from '../components/ComparisonTableWrapper.vue'
 
 const runInformation = computed(() => reportStore().getRunInformation())
 const topComparisons = computed(() => reportStore().getTopComparisons())
@@ -185,7 +182,7 @@ onErrorCaptured((error) => {
   return false
 })
 
-const comparisonTable: Ref<typeof ComparisonsTable | null> = ref(null)
+const comparisonTable: Ref<typeof ComparisonTableWrapper | null> = ref(null)
 function onBarClicked(upperPercentile: number) {
   const adjustedPercentile = upperPercentile / 100
   if (!comparisonTable.value) {

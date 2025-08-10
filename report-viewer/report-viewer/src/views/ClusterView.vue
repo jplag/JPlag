@@ -70,8 +70,8 @@
       :first-bottom-tooltip-index="1"
     >
       <template #Members>
-        <ComparisonsTable
-          :top-comparisons="comparisons"
+        <ComparisonTableWrapper
+          :comparisons="comparisons"
           class="max-h-0 min-h-full flex-1 overflow-hidden"
           header="Comparisons of Cluster Members:"
           :highlighted-row-ids="highlightedElement ?? undefined"
@@ -83,11 +83,11 @@
               higher maximum number argument.
             </p>
           </template>
-        </ComparisonsTable>
+        </ComparisonTableWrapper>
       </template>
       <template #Related-Comparisons>
-        <ComparisonsTable
-          :top-comparisons="relatedComparisons"
+        <ComparisonTableWrapper
+          :comparisons="relatedComparisons"
           class="max-h-0 min-h-full flex-1 overflow-hidden"
           header="Comparisons related to the Cluster:"
         />
@@ -100,7 +100,6 @@
 import {
   ClusterRadarChart,
   ClusterGraph,
-  ComparisonsTable,
   MetricType,
   MetricTypes,
   MetricIcon
@@ -111,6 +110,7 @@ import { redirectOnError } from '@/router'
 import { ClusterListElement, ClusterListElementMember, MetricJsonIdentifier } from '@jplag/model'
 import { reportStore } from '@/stores/reportStore'
 import { uiStore } from '@/stores/uiStore'
+import ComparisonTableWrapper from '@/components/ComparisonTableWrapper.vue'
 
 const props = defineProps({
   index: {

@@ -5,7 +5,7 @@
     </div>
     <div
       class="invisible absolute top-0 right-0 z-10 flex h-full cursor-pointer items-center p-2 delay-0 group-hover:visible group-hover:delay-100"
-      @click="emit('changeAnonymous')"
+      @click="(e) => emit('changeAnonymous', e)"
     >
       <FontAwesomeIcon
         class="text-gray-500"

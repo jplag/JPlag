@@ -3,7 +3,13 @@
 -->
 <template>
   <div class="flex flex-col">
-    <ComparisonTableFilter v-model:search-string="searchString" :header="header" />
+    <ComparisonTableFilter
+      v-model:search-string="searchString"
+      v-model:secondary-metric="secondaryMetricModel"
+      :header="header"
+      :all-are-anonymized="allAreAnonymized"
+      @change-anonymous-for-all="emit('changeAnonymousForAll')"
+    />
 
     <div class="flex flex-1 flex-col overflow-hidden">
       <div class="flex h-full max-h-full flex-col overflow-x-scroll">
@@ -142,14 +148,14 @@
                           :is-anonymous="isAnonymous(item.firstSubmissionId)"
                           :displayed-name="getDisplayName(item.firstSubmissionId)"
                           class="h-full w-1/2 px-2"
-                          @change-anonymous="() => emit('changeAnonymous', item.firstSubmissionId)"
+                          @change-anonymous="(e) => changeAnonymous(e, item.firstSubmissionId)"
                         />
                         <NameElement
                           :display-name="getDisplayName(item.secondSubmissionId)"
                           :is-anonymous="isAnonymous(item.secondSubmissionId)"
                           :displayed-name="getDisplayName(item.secondSubmissionId)"
                           class="h-full w-1/2 px-2"
-                          @change-anonymous="() => emit('changeAnonymous', item.secondSubmissionId)"
+                          @change-anonymous="(e) => changeAnonymous(e, item.secondSubmissionId)"
                         />
                       </div>
 
@@ -272,6 +278,11 @@ const props = defineProps({
     required: false,
     default: () => false
   },
+  allAreAnonymized: {
+    type: Boolean,
+    required: false,
+    default: false
+  },
   useDarkMode: {
     type: Boolean,
     required: false,
@@ -282,6 +293,7 @@ const props = defineProps({
 const emit = defineEmits<{
   (event: 'lineHovered', value: { firstId: string; secondId: string } | null): void
   (event: 'changeAnonymous', id: string): void
+  (event: 'changeAnonymousForAll'): void
 }>()
 
 const secondaryMetricModel = defineModel<MetricJsonIdentifier>('secondaryMetric', {
@@ -305,7 +317,9 @@ const displayedComparisons = computed(() => {
   return comparisons
 })
 
-const searchString = ref('')
+const searchString = defineModel<string>('searchString', {
+  default: ''
+})
 
 /**
  * This function gets called when the search bar for the comparison table has been updated.
@@ -484,6 +498,12 @@ function isHighlightedRow(item: ComparisonListElement) {
   )
 }
 
+function changeAnonymous(event: Event, submissionId: string) {
+  event.stopPropagation()
+  event.preventDefault()
+  emit('changeAnonymous', submissionId)
+}
+
 function scrollToItem(itemIndex?: number) {
   if (!itemIndex) {
     dynamicScroller.value?.scrollToBottom()
@@ -526,7 +546,7 @@ watch(
 }
 
 .tableCellSimilarity {
-  @apply w-40 min-w-40 shrink-0;
+  @apply w-48 min-w-48 shrink-0;
 }
 
 .tableCellCluster {

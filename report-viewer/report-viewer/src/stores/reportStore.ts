@@ -200,22 +200,47 @@ export const reportStore = defineStore('reportStore', () => {
     return topComparisons.value
   }
 
-  function getDisplayName(submissionId: string) {
+  function getAnonymizedName(submissionId: string) {
+    let number = anonymizedNumber.value.get(submissionId)
+    if (number === undefined) {
+      number = anonymizedNumber.value.size + 1
+      anonymizedNumber.value.set(submissionId, number)
+    }
+    return `anon${number}`
+  }
+  function getPlainDisplayName(submissionId: string) {
     if (!idToDisplayNameMap.value) {
       throw new Error('ID to display name map is not initialized')
-    }
-    if (anonymizedSet.value.has(submissionId)) {
-      let number = anonymizedNumber.value.get(submissionId)
-      if (number === undefined) {
-        number = anonymizedNumber.value.size + 1
-        anonymizedNumber.value.set(submissionId, number)
-      }
-      return `anon${number}`
     }
     return idToDisplayNameMap.value.get(submissionId) ?? submissionId
   }
   function isAnonymized(submissionId: string) {
     return anonymizedSet.value.has(submissionId)
+  }
+  function getDisplayName(submissionId: string) {
+    if (isAnonymized(submissionId)) {
+      return getAnonymizedName(submissionId)
+    }
+    return getPlainDisplayName(submissionId)
+  }
+  function toggleAnonymous(submissionId: string) {
+    if (anonymizedSet.value.has(submissionId)) {
+      anonymizedSet.value.delete(submissionId)
+    } else {
+      anonymizedSet.value.add(submissionId)
+    }
+  }
+  function allAreAnonymized() {
+    return anonymizedSet.value.size === getSubmissionCount()
+  }
+  function toggleAnonymousForAll() {
+    if (allAreAnonymized()) {
+      anonymizedSet.value.clear()
+    } else {
+      idToDisplayNameMap.value!.forEach((_, id) => {
+        anonymizedSet.value.add(id)
+      })
+    }
   }
 
   function reset() {
@@ -250,6 +275,11 @@ export const reportStore = defineStore('reportStore', () => {
     reset,
     getDisplayName,
     isAnonymized,
+    toggleAnonymous,
+    getPlainDisplayName,
+    getAnonymizedName,
+    toggleAnonymousForAll,
+    allAreAnonymized,
     getBaseCodeReport
   }
 })

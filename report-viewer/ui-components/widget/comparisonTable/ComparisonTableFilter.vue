@@ -5,7 +5,7 @@
     <h2 class="col-start-1 row-start-1">{{ header }}</h2>
     <ToolTipComponent
       direction="left"
-      class="col-start-1 row-start-2 w-full max-w-full md:col-start-2 md:row-start-1"
+      class="row-starsdt-2 col-start-1 w-full max-w-full md:col-start-2 md:row-start-1"
       :show-info-symbol="false"
     >
       <template #default>

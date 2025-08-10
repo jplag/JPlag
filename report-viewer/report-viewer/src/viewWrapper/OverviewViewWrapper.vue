@@ -15,8 +15,9 @@ import { LoadingCircle } from '@jplag/ui-components/base'
 import VersionRepositoryReference from '../components/VersionRepositoryReference.vue'
 import { reportStore } from '@/stores/reportStore'
 import { loadReport } from '@/model/fileLoading'
+import { redirectOnError } from '@/router'
 
 if (!reportStore().isReportLoaded()) {
-  loadReport()
+  loadReport().catch((error) => redirectOnError(error))
 }
 </script>

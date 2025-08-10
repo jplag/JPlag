@@ -1,6 +1,6 @@
 import ClusterRadarChart from './clusterVisualization/ClusterRadarChart.vue'
 import ClusterGraph from './clusterVisualization/ClusterGraph.vue'
-import ComparisonsTable from './comparisonTable/ComparisonsTable.vue'
+import ComparisonTable from './comparisonTable/ComparisonTable.vue'
 import BoxPlot from './distributionVisualization/BoxPlot.vue'
 import DistributionDiagram from './distributionVisualization/DistributionDiagram.vue'
 import FilesContainer from './fileDisplaying/FilesContainer.vue'
@@ -18,7 +18,7 @@ export * from './comparisonTable/ComparisonSorting'
 export {
   ClusterRadarChart,
   ClusterGraph,
-  ComparisonsTable,
+  ComparisonTable,
   BoxPlot,
   DistributionDiagram,
   FilesContainer,
