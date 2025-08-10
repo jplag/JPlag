@@ -8,9 +8,9 @@
     "chartjs-chart-graph": "^4.3.4",
     "chartjs-plugin-datalabels": "^2.2.0",
     "highlight.js": "^11.11.1",
+    "vue-chartjs": "^5.3.2",
     "vue-draggable-next": "^2.2.1",
-    "vue-virtual-scroller": "^2.0.0-beta.8",
-    "vue-chartjs": "^5.3.2"
+    "vue-virtual-scroller": "^2.0.0-beta.8"
   },
   "peerDependencies": {
     "@fortawesome/free-solid-svg-icons": "^7.0.0",
@@ -18,5 +18,12 @@
     "pinia": "^3.0.3",
     "tailwindcss": "^4.1.11",
     "vue": "^3.4.0"
+  },
+  "scripts": {
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "jsdom": "^26.1.0",
+    "@vue/test-utils": "^2.4.6"
   }
 }

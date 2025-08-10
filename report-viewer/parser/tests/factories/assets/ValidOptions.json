@@ -1,16 +1,11 @@
 {
   "language": "java",
   "minimumTokenMatch": 9,
-  "submissionDirectories": [
-    ".\\files"
-  ],
+  "submissionDirectories": [".\\files"],
   "oldSubmissionDirectories": ["old"],
   "baseCodeSubmissionDirectory": ".",
   "subdirectoryName": "src/",
-  "fileSuffixes": [
-    ".java",
-    ".JAVA"
-  ],
+  "fileSuffixes": [".java", ".JAVA"],
   "exclusionFileName": "ex.txt",
   "similarityMetric": "AVG",
   "similarityThreshold": 0.0,
