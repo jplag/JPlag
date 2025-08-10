@@ -3,6 +3,7 @@
     ref="table"
     v-model:secondary-metric="uiStore().secondaryTableMetric"
     v-model:sorting="uiStore().comparisonTableSorting"
+    v-model:search-string="searchString"
     :clusters="cluster"
     :top-comparisons="comparisons"
     :use-dark-mode="uiStore().useDarkMode"
@@ -25,7 +26,7 @@ import { ComparisonTable } from '@jplag/ui-components/widget'
 import { uiStore } from '@/stores/uiStore'
 import { reportStore } from '@/stores/reportStore'
 import { Cluster, ComparisonListElement } from '@jplag/model'
-import { PropType, Ref, ref } from 'vue'
+import { PropType, Ref, ref, watch } from 'vue'
 
 defineProps({
   comparisons: {
@@ -51,6 +52,33 @@ defineProps({
 const emit = defineEmits<{
   (event: 'lineHovered', value: { firstId: string; secondId: string } | null): void
 }>()
+
+const searchString = ref('')
+
+watch(
+  () => searchString.value,
+  (value) => {
+    // Update the anonymous set
+    const searchParts = value
+      .trimEnd()
+      .toLowerCase()
+      .split(/ +/g)
+      .map((s) => s.trim().replace(/,/g, ''))
+    if (searchParts.length == 0) {
+      return
+    }
+
+    for (const submissionId of reportStore().getSubmissionIds()) {
+      const submissionParts = reportStore()
+        .getPlainDisplayName(submissionId)
+        .toLowerCase()
+        .split(/ +/g)
+      if (submissionParts.every((part) => searchParts.includes(part))) {
+        reportStore().setAnonymous(submissionId, false)
+      }
+    }
+  }
+)
 
 const table: Ref<typeof ComparisonTable | null> = ref(null)
 

@@ -140,6 +140,12 @@ export const reportStore = defineStore('reportStore', () => {
     }
     return idToDisplayNameMap.value.size
   }
+  function getSubmissionIds() {
+    if (!idToDisplayNameMap.value) {
+      throw new Error('Submission files are not initialized')
+    }
+    return Array.from(idToDisplayNameMap.value.keys())
+  }
 
   function includedComparisonCount() {
     if (!topComparisons.value) {
@@ -230,6 +236,13 @@ export const reportStore = defineStore('reportStore', () => {
       anonymizedSet.value.add(submissionId)
     }
   }
+  function setAnonymous(id: string, anonymized: boolean) {
+    if (anonymized) {
+      anonymizedSet.value.add(id)
+    } else {
+      anonymizedSet.value.delete(id)
+    }
+  }
   function allAreAnonymized() {
     return anonymizedSet.value.size === getSubmissionCount()
   }
@@ -280,7 +293,9 @@ export const reportStore = defineStore('reportStore', () => {
     getAnonymizedName,
     toggleAnonymousForAll,
     allAreAnonymized,
-    getBaseCodeReport
+    setAnonymous,
+    getBaseCodeReport,
+    getSubmissionIds
   }
 })
 
