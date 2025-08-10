@@ -18,7 +18,7 @@ import ClusterView from '@/views/ClusterView.vue'
 import LoadingCircle from '@jplag/ui-components/base/LoadingCircle.vue'
 import VersionRepositoryReference from '../components/VersionRepositoryReference.vue'
 import { reportStore } from '@/stores/reportStore'
-import { loadReport } from '@/model/fileLoading'
+import { loadReport } from '@/stores/fileLoading'
 import { computed } from 'vue'
 import { redirectOnError } from '@/router'
 

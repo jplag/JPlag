@@ -1,5 +1,6 @@
 {
   "name": "report-viewer",
+  "license": "GPL-3.0",
   "private": true,
   "type": "module",
   "workspaces": [
@@ -8,9 +9,6 @@
     "model/"
   ],
   "scripts": {
-    "build": "npm run build --workspace=report-viewer",
-    "dev": "npm run dev --workspace=report-viewer",
-    "preview": "npm run preview --workspace=report-viewer",
     "format": "prettier --write .",
     "lint": "eslint --max-warnings 0",
     "prepare": "git config --local core.hooksPath gitHooks/hooks"

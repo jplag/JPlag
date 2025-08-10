@@ -128,7 +128,7 @@ jobs:
           node-version: "lts/*"
 
       - name: Install and Build
-        working-directory: report-viewer
+        working-directory: report-viewer/report-viewer
         run: |
           npm install
           npm run build
@@ -145,7 +145,7 @@ jobs:
           merge-multiple: true
 
       - name: Run tests
-        working-directory: report-viewer
+        working-directory: report-viewer/report-viewer
         run: |
           npm run test:e2e
 

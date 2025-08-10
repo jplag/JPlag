@@ -14,7 +14,7 @@ import OverviewView from '@/views/OverviewView.vue'
 import { LoadingCircle } from '@jplag/ui-components/base'
 import VersionRepositoryReference from '../components/VersionRepositoryReference.vue'
 import { reportStore } from '@/stores/reportStore'
-import { loadReport } from '@/model/fileLoading'
+import { loadReport } from '@/stores/fileLoading'
 import { redirectOnError } from '@/router'
 
 if (!reportStore().isReportLoaded()) {

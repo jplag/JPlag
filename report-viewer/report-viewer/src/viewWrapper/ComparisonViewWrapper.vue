@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import ComparisonView from '@/views/ComparisonView.vue'
 import { reportStore } from '@/stores/reportStore'
-import { loadReport } from '@/model/fileLoading'
+import { loadReport } from '@/stores/fileLoading'
 import { redirectOnError } from '@/router'
 import { LoadingCircle } from '@jplag/ui-components/base'
 import VersionRepositoryReference from '@/components/VersionRepositoryReference.vue'

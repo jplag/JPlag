@@ -46,7 +46,7 @@ jobs:
           cat report-viewer/report-viewer/src/version/version.json
 
       - name: Install and Build 🔧
-        working-directory: report-viewer
+        working-directory: report-viewer/report-viewer
         run: |
           npm install
           npm run build

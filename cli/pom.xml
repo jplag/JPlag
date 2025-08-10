@@ -222,7 +222,7 @@
                                 <phase>generate-resources</phase>
                                 <configuration>
                                     <executable>npm</executable>
-                                    <workingDirectory>../report-viewer</workingDirectory>
+                                    <workingDirectory>../report-viewer/report-viewer</workingDirectory>
                                     <arguments>
                                         <argument>run</argument>
                                         <argument>build</argument>

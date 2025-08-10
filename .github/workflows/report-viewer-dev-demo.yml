@@ -80,10 +80,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: Result
-          path: report-viewer/public
+          path: report-viewer/report-viewer/public
 
       - name: Install and Build 🔧
-        working-directory: report-viewer
+        working-directory: report-viewer/report-viewer
         run: |
           npm install
           npm run build-dev-demo

@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import FileUploadView from '../views/FileUploadView.vue'
-import OverviewViewWrapper from '../viewWrapper/OverviewViewWrapper.vue'
-import ComparisonViewWrapper from '../viewWrapper/ComparisonViewWrapper.vue'
-import ErrorView from '../views/ErrorView.vue'
-import InformationViewWrapper from '../viewWrapper/InformationViewWrapper.vue'
-import ClusterViewWrapper from '../viewWrapper/ClusterViewWrapper.vue'
-import OldVersionRedirectView from '../views/OldVersionRedirectView.vue'
+import FileUploadView from './views/FileUploadView.vue'
+import OverviewViewWrapper from './viewWrapper/OverviewViewWrapper.vue'
+import ComparisonViewWrapper from './viewWrapper/ComparisonViewWrapper.vue'
+import ErrorView from './views/ErrorView.vue'
+import InformationViewWrapper from './viewWrapper/InformationViewWrapper.vue'
+import ClusterViewWrapper from './viewWrapper/ClusterViewWrapper.vue'
+import OldVersionRedirectView from './views/OldVersionRedirectView.vue'
 import { Version } from '@jplag/model'
 
 /**

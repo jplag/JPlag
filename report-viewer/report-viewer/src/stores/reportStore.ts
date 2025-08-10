@@ -1,4 +1,4 @@
-import { router } from '@/router'
+import { router } from '../router'
 import { minimalReportVersion, reportViewerVersion } from '@/version/versions'
 import {
   CliOptions,
