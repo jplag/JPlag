@@ -39,10 +39,13 @@ export const reportStore = defineStore('reportStore', () => {
   const anonymizedSet = ref(new Set<string>())
   const anonymizedNumber = ref(new Map<string, number>())
 
-  function loadReport(_files: File[], _submissionFiles: SubmissionFile[], fileName: string) {
+  function loadReport(
+    _files: File[],
+    _submissionFiles: SubmissionFile[],
+    fileName: string
+  ): boolean {
     _files.forEach((f) => files.value.set(f.fileName, f))
     reportFileName.value = fileName
-
     // check for version and redirect to old version if neccessary
     const version = getVersionFromRaw(
       files.value.get('runInformation.json'),
@@ -51,9 +54,11 @@ export const reportStore = defineStore('reportStore', () => {
     if (!version) {
       throw new Error('Could not find a version in the report')
     }
-    if (!compareVersions(version, reportViewerVersion, minimalReportVersion)) {
-      router.push('OldVersionRedirectView')
-      return
+    const r = compareVersions(version, reportViewerVersion, minimalReportVersion)
+    if (!r) {
+      files.value.clear()
+      router.push({ name: 'OldVersionRedirectView', params: { version: version.toString() } })
+      return false
     }
 
     // we delay the loading of the submission files till after the version check, since this step might take longer, due to the large amount of files
@@ -79,6 +84,8 @@ export const reportStore = defineStore('reportStore', () => {
     )
     idToDisplayNameMap.value = mappings.idToDisplayNameMap
     comparisonFilesLookup.value = mappings.comparisonFilesLookup
+
+    return true
   }
 
   function isReportLoaded() {

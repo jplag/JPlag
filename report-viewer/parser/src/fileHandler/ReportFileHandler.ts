@@ -13,6 +13,9 @@ export class ReportFileHandler {
     await jszip.loadAsync(file).then(async (zip) => {
       for (const originalFileName of Object.keys(zip.files)) {
         const unixFileName = slash(originalFileName)
+        if (unixFileName.endsWith('/')) {
+          continue
+        }
         if (/\/?(files)\//.test(unixFileName) && !/\/?__MACOSX\//.test(unixFileName)) {
           const directoryPath = unixFileName.substring(0, unixFileName.lastIndexOf('/'))
           const fileBase = unixFileName.substring(unixFileName.lastIndexOf('/') + 1)

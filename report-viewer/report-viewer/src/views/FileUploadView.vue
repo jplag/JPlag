@@ -117,8 +117,11 @@ async function handleFile(file: Blob, fileName: string) {
     case 'application/x-zip':
     case '': {
       const report = await new ReportFileHandler().extractContent(file)
-      reportStore().loadReport(report.files, report.submissionFiles, fileName)
-      return navigateToOverview()
+      const r = reportStore().loadReport(report.files, report.submissionFiles, fileName)
+      if (r) {
+        return navigateToOverview()
+      }
+      break
     }
     default:
       throw new Error(`Unknown MIME type '${file.type}'`)

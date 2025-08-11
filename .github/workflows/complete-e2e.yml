@@ -141,7 +141,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           pattern: "*-${{ matrix.os }}"
-          path: "report-viewer/tests/e2e/assets"
+          path: "report-viewer/report-viewer/tests/e2e/assets"
           merge-multiple: true
 
       - name: Run tests
@@ -155,6 +155,6 @@ jobs:
         with:
           name: "test-results-${{ matrix.os }}"
           path: |
-            report-viewer/test-results
-            report-viewer/playwright-report
+            report-viewer/report-viewer/test-results
+            report-viewer/report-viewer/playwright-report
           retention-days: 30

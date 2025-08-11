@@ -2,8 +2,8 @@ import re
 
 CORE_PACKAGE = '../../../core/src/main/java/de/jplag'
 REPORTING_PACKAGE = f"{CORE_PACKAGE}/reporting/reportobject/model"
-REPORT_VIEWER_MODELS = f"../../../report-viewer/src/model"
-REPORT_VIEWER_FACTORIES = f"{REPORT_VIEWER_MODELS}/factories"
+REPORT_VIEWER_MODELS = f"../../../report-viewer/model/src"
+REPORT_VIEWER_FACTORIES = f"../../../report-viewer/parser/src/factories"
 
 cli_options = ({ 'file_path': f"{CORE_PACKAGE}/options/JPlagOptions.java", 'record_name': 'JPlagOptions' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/CliOptions.ts", 'interface_name': 'AbstractOptions' })
 merging_options = ({ 'file_path': f"{CORE_PACKAGE}/merging/MergingOptions.java", 'record_name': 'MergingOptions' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/CliOptions.ts", 'interface_name': 'CliMergingOptions' })
@@ -43,7 +43,7 @@ type_matches = {
     'boolean': 'boolean',
     'File': 'string',
     'SubmissionState': 'SubmissionState',
-    'SimilarityMetric': 'MetricType',
+    'SimilarityMetric': 'MetricJsonIdentifier',
     'Preprocessing': 'string',
     'ClusteringAlgorithm': 'string',
     'InterClusterSimilarity': 'string',
