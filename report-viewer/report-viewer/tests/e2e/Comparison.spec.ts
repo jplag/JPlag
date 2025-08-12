@@ -5,16 +5,16 @@ test('Test comparison table and comparsion view', async ({ page }) => {
   await uploadFile('progpedia-report.jplag', page)
 
   // check for elements in average similarity table
-  await page.getByPlaceholder('Filter/Unhide Comparisons').fill('Purple')
+  await page.getByPlaceholder('Filter/Unhide Comparisons').fill('Lazy')
   const comparisonTableAverageSorted = await page.getByText(/Cluster [0-9]/).textContent()
-  expect(comparisonTableAverageSorted).toContain('100Purple FishBeige Dog')
+  expect(comparisonTableAverageSorted).toContain('101Gray WolfLazy Bobcat')
 
   const tableHeader = page.getByText('Submissions in ComparisonSimilarity')
   await tableHeader.getByText('MAX', { exact: true }).click()
   // check for elements in maximum similarity table
-  await page.getByPlaceholder('Filter/Unhide Comparisons').fill('Blue')
+  await page.getByPlaceholder('Filter/Unhide Comparisons').fill('Lazy')
   const comparisonTableMaxSorted = await page.getByText(/Cluster [0-9]/).textContent()
-  expect(comparisonTableMaxSorted).toContain('100Blue AntelopeLime Lynx')
+  expect(comparisonTableMaxSorted).toContain('102Gray WolfLazy Bobcat')
 
   await page.getByPlaceholder('Filter/Unhide Comparisons').fill('')
   // move mouse to avoid hover effects
