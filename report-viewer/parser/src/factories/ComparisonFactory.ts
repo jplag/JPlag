@@ -152,10 +152,10 @@ export class ComparisonFactory {
       )
     }
 
-    for (let i = 0; i < matches.length; i++) {
-      const firstIndex = matchesFirst.findIndex((match) => match === matches[i])
-      const secondIndex = matchesSecond.findIndex((match) => match === matches[i])
-      const sortedIndex = sortedSize.findIndex((match) => match === matches[i])
+    for (const matchToColor of matches) {
+      const firstIndex = matchesFirst.findIndex((match) => match === matchToColor)
+      const secondIndex = matchesSecond.findIndex((match) => match === matchToColor)
+      const sortedIndex = sortedSize.findIndex((match) => match === matchToColor)
       const startCounter = currentColorIndex
       while (
         !isColorAvailable(matchesFirst, firstIndex) ||
@@ -169,7 +169,7 @@ export class ComparisonFactory {
           throw currentColorIndex
         }
       }
-      matches[i].colorIndex = currentColorIndex
+      matchToColor.colorIndex = currentColorIndex
       currentColorIndex = (currentColorIndex + 1) % MATCH_COLOR_COUNT
     }
     return sortedSize

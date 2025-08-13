@@ -141,8 +141,6 @@
 
                       <!-- Names -->
                       <div class="tableCellName tableCell">
-                        <!--NameElement :id="item.firstSubmissionId" class="h-full w-1/2 px-2" />
-                        <NameElement :id="item.secondSubmissionId" class="h-full w-1/2 px-2" /-->
                         <NameElement
                           :display-name="getDisplayName(item.firstSubmissionId)"
                           :is-anonymous="isAnonymous(item.firstSubmissionId)"

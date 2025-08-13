@@ -7,8 +7,6 @@ import '@jplag/ui-components/style/style.css'
 import { router } from './router'
 import { createPinia } from 'pinia'
 
-import '@jplag/ui-components/style/style.css'
-
 const app = createApp(App)
 app.use(createPinia())
 app.use(router)
