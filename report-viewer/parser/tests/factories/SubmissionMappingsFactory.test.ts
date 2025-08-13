@@ -26,9 +26,5 @@ describe('Test JSON to Options', async () => {
     expect(comparisonFilesLookup.get('MaxMustermann')?.get('Submission01')).toEqual(
       'submission01-max_mustermann.json'
     )
-    /*
-
-    const comparisonFileMapKeys = Array.from(store().state.submissionIdsToComparisonFileName.keys())
-    */
   })
 })
