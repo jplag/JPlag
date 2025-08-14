@@ -281,7 +281,6 @@ export const reportStore = defineStore('reportStore', () => {
   return {
     loadReport,
     isReportLoaded,
-    getFile,
     getComparison,
     getSubmissionCount,
     getReportFileName,
