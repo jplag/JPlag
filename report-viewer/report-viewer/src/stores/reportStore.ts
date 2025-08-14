@@ -1,5 +1,5 @@
 import { router } from '../router'
-import { minimalReportVersion, reportViewerVersion } from '@/version/versions'
+import { minimalReportVersion, reportViewerVersion } from '../version/versions'
 import {
   CliOptions,
   Cluster,

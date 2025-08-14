@@ -10,6 +10,7 @@
     "build-dev-demo": "run-p type-check && vite build --mode dev-demo",
     "type-check": "vue-tsc --noEmit --composite false",
     "test:e2e": "playwright test",
+    "test:unit": "vitest",
     "preview": "vite preview"
   },
   "dependencies": {
