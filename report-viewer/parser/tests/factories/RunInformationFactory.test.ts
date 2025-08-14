@@ -3,8 +3,8 @@ import validRunInformation from './assets/ValidRunInformation.json?raw'
 import { RunInformationFactory } from '../../src'
 import { SubmissionState } from '@jplag/model'
 
-describe('Test JSON to Run Information', async () => {
-  it('Test Valid JSON', async () => {
+describe('Test JSON to Run Information', () => {
+  it('Test Valid JSON', () => {
     const result = RunInformationFactory.getRunInformation(validRunInformation)
 
     expect(result).toEqual({

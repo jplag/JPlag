@@ -3,8 +3,8 @@ import validDistribution from './assets/ValidDistribution.json?raw'
 import { DistributionFactory } from '../../src'
 import { MetricJsonIdentifier } from '@jplag/model'
 
-describe('Test JSON to Distribution', async () => {
-  it('Test Valid JSON', async () => {
+describe('Test JSON to Distribution', () => {
+  it('Test Valid JSON', () => {
     const result = DistributionFactory.getDistributions(validDistribution)
 
     expect(result).toEqual({

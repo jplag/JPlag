@@ -3,8 +3,8 @@ import validOptions from './assets/ValidOptions.json?raw'
 import { OptionsFactory } from '../../src'
 import { MetricJsonIdentifier, ParserLanguage } from '@jplag/model'
 
-describe('Test JSON to Options', async () => {
-  it('Test Valid JSON', async () => {
+describe('Test JSON to Options', () => {
+  it('Test Valid JSON', () => {
     const result = OptionsFactory.getCliOptions(validOptions)
 
     expect(result).toEqual({

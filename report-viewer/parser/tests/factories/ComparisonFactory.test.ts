@@ -5,7 +5,7 @@ import { ComparisonFactory } from '../../src'
 import { MetricJsonIdentifier, SubmissionFile } from '@jplag/model'
 
 describe('Test JSON to Comparison', () => {
-  it('Post 5.0', async () => {
+  it('Post 5.0', () => {
     const filesOfFirst: SubmissionFile[] = [
       {
         fileName: 'root1/Structure.java',
