@@ -1,5 +1,5 @@
 import type { Match } from './Match'
-import type { SubmissionFile } from './File'
+import type { ComparisonSubmissionFile } from './File'
 import { MatchInSingleFile } from './MatchInSingleFile'
 import type { MetricJsonIdentifier } from './MetricJsonIdentifier'
 
@@ -10,8 +10,8 @@ export class Comparison {
   private readonly _firstSubmissionId: string
   private readonly _secondSubmissionId: string
   private readonly _similarities: Record<MetricJsonIdentifier, number>
-  private readonly _filesOfFirstSubmission: SubmissionFile[]
-  private readonly _filesOfSecondSubmission: SubmissionFile[]
+  private readonly _filesOfFirstSubmission: ComparisonSubmissionFile[]
+  private readonly _filesOfSecondSubmission: ComparisonSubmissionFile[]
   private readonly _allMatches: Array<Match>
   private readonly _firstSimilarity: number
   private readonly _secondSimilarity: number
@@ -20,8 +20,8 @@ export class Comparison {
     firstSubmissionId: string,
     secondSubmissionId: string,
     similarities: Record<MetricJsonIdentifier, number>,
-    filesOfFirstSubmission: SubmissionFile[],
-    filesOfSecondSubmission: SubmissionFile[],
+    filesOfFirstSubmission: ComparisonSubmissionFile[],
+    filesOfSecondSubmission: ComparisonSubmissionFile[],
     allMatches: Array<Match>,
     firstSimilarity: number,
     secondSimilarity: number
@@ -39,14 +39,14 @@ export class Comparison {
   /**
    * @return Map of all files of the first submission
    */
-  get filesOfFirstSubmission(): SubmissionFile[] {
+  get filesOfFirstSubmission(): ComparisonSubmissionFile[] {
     return this._filesOfFirstSubmission
   }
 
   /**
    * @return Map of all files of the second submission
    */
-  get filesOfSecondSubmission(): SubmissionFile[] {
+  get filesOfSecondSubmission(): ComparisonSubmissionFile[] {
     return this._filesOfSecondSubmission
   }
 

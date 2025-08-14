@@ -97,7 +97,7 @@
     <div ref="styleholder" class="col-span-0 row-span-0"></div>
     <FilesContainer
       ref="panel1"
-      :files="filesOfFirst"
+      :files="comparison.filesOfFirstSubmission"
       :matches="comparison.matchesInFirstSubmission"
       :file-owner-display-name="reportStore().getDisplayName(comparison.firstSubmissionId)"
       :highlight-language="reportStore().getCliOptions().language"
@@ -108,7 +108,7 @@
     />
     <FilesContainer
       ref="panel2"
-      :files="filesOfSecond"
+      :files="comparison.filesOfSecondSubmission"
       :matches="comparison.matchesInSecondSubmissions"
       :file-owner-display-name="reportStore().getDisplayName(comparison.secondSubmissionId)"
       :highlight-language="reportStore().getCliOptions().language"
@@ -157,12 +157,9 @@ const props = defineProps({
   }
 })
 
-const completeComparisonResult = computed(() =>
+const comparison = computed(() =>
   reportStore().getComparison(props.firstSubmissionId, props.secondSubmissionId)
 )
-const comparison = computed(() => completeComparisonResult.value.comparison)
-const filesOfFirst = computed(() => completeComparisonResult.value.filesOfFirstSubmission)
-const filesOfSecond = computed(() => completeComparisonResult.value.filesOfSecondSubmission)
 const firstBaseCodeMatches = computed(() =>
   reportStore().getBaseCodeReport(props.firstSubmissionId)
 )
