@@ -6,6 +6,7 @@ mockSessionStorage()
 
 import { reportStore } from '../../../src/stores/reportStore'
 import { setActivePinia, createPinia } from 'pinia'
+import { router } from '../../../src/router'
 
 describe('Test Report File Handling', () => {
   beforeEach(() => {
@@ -106,4 +107,54 @@ describe('Test Report File Handling', () => {
     expect(test1SubmissionJava?.matchedTokenCount).toEqual(90)
     expect(test2SubmissionJava?.matchedTokenCount).toEqual(85)
   })
+
+  it('Test old version in runInformation', () => {
+    reportStore().loadReport(
+      [
+        {
+          fileName: 'runInformation.json',
+          data: buildOldVersionInfo('version', 3, 0, 0)
+        }
+      ],
+      [],
+      'test'
+    )
+
+    expect(reportStore().isReportLoaded()).toEqual(false)
+    expect(router.push).toHaveBeenCalled()
+    expect(router.push).toHaveBeenCalledWith({
+      name: 'OldVersionRedirectView',
+      params: { version: '3.0.0' }
+    })
+  })
+
+  it('Test old verion in overview', () => {
+    reportStore().loadReport(
+      [
+        {
+          fileName: 'overview.json',
+          data: buildOldVersionInfo('jplag_version', 2, 0, 0)
+        }
+      ],
+      [],
+      'test'
+    )
+
+    expect(reportStore().isReportLoaded()).toEqual(false)
+    expect(router.push).toHaveBeenCalled()
+    expect(router.push).toHaveBeenCalledWith({
+      name: 'OldVersionRedirectView',
+      params: { version: '2.0.0' }
+    })
+  })
 })
+
+function buildOldVersionInfo(
+  fieldName: string,
+  major: number,
+  minor: number,
+  patch: number
+): string {
+  const version = { major, minor, patch }
+  return `{"${fieldName}": ${JSON.stringify(version)}}`
+}
