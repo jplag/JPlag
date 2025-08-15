@@ -15,9 +15,6 @@ on:
       - ".github/workflows/scripts/checkHelpText.py"
       - "**.md"
       - "**.java"
-  workflow_run:
-    workflows: ["Build Native Libraries"]
-    types: [completed]
 
 jobs:
   pre_job:
@@ -31,8 +28,13 @@ jobs:
           concurrent_skipping: 'same_content_newer'
           skip_after_successful_duplicate: 'true'
 
-  check_help_text:
+  build-native-libs:
     needs: pre_job
+    if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
+    uses: ./.github/workflows/build-native-libraries.yml
+
+  check_help_text:
+    needs: [pre_job, build-native-libs]
     if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
     runs-on: ubuntu-latest
     
@@ -61,6 +63,8 @@ jobs:
         # Copy tree-sitter-python libraries
         mkdir -p languages/python/src/main/resources/native/linux/
         cp native-libraries/languages/python/src/main/resources/native/linux/* languages/python/src/main/resources/native/linux/ || true
+        
+        echo "Native libraries installed successfully"
   
     - name: Build Assembly
       run: mvn -DskipTests clean package assembly:single
