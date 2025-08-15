@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import de.jplag.AbstractParser;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
@@ -30,7 +29,7 @@ import io.github.treesitter.jtreesitter.Tree;
  * and extracting tokens.
  * </p>
  */
-public abstract class AbstractTreeSitterParserAdapter extends AbstractParser {
+public abstract class AbstractTreeSitterParserAdapter {
     /** Tree-sitter parser instance for this language. */
     protected final Parser parser;
 
