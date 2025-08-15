@@ -24,7 +24,6 @@ public class PythonParserAdapter extends AbstractTreeSitterParserAdapter {
 
         try {
             code = Files.readString(file.toPath());
-
         } catch (IOException exception) {
             throw new RuntimeException("Failed to read file: " + file.getName(), exception);
         }
