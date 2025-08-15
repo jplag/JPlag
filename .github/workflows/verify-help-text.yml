@@ -48,6 +48,17 @@ jobs:
         java-version: 22
         distribution: 'temurin'
 
+    - name: Install jextract
+      run: |
+        # Download jextract for Linux x64
+        wget https://download.java.net/java/early_access/jextract/22/6/openjdk-22-jextract+6-47_linux-x64_bin.tar.gz
+        tar -xzf openjdk-22-jextract+6-47_linux-x64_bin.tar.gz
+
+        # Install to /usr/local/jextract
+        echo "Installing jextract-22 to /usr/local/jextract"
+        sudo mv jextract-22 /usr/local/jextract
+        echo "/usr/local/jextract/bin" >> $GITHUB_PATH
+
     - name: Download native libraries
       uses: actions/download-artifact@v4
       with:

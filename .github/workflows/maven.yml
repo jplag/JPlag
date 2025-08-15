@@ -48,6 +48,17 @@ jobs:
         java-version: 22
         distribution: 'temurin'
 
+    - name: Install jextract
+      run: |
+        # Download jextract for Linux x64
+        wget https://download.java.net/java/early_access/jextract/22/6/openjdk-22-jextract+6-47_linux-x64_bin.tar.gz
+        tar -xzf openjdk-22-jextract+6-47_linux-x64_bin.tar.gz
+
+        # Install to /usr/local/jextract
+        echo "Installing jextract-22 to /usr/local/jextract"
+        sudo mv jextract-22 /usr/local/jextract
+        echo "/usr/local/jextract/bin" >> $GITHUB_PATH
+
     - name: Download native libraries
       uses: actions/download-artifact@v4
       with:
@@ -59,16 +70,10 @@ jobs:
         # Copy tree-sitter core libraries
         mkdir -p language-tree-sitter-utils/src/main/resources/native/linux/
         cp native-libraries/language-tree-sitter-utils/src/main/resources/native/linux/* language-tree-sitter-utils/src/main/resources/native/linux/ || true
-
-        echo "Contents of language-tree-sitter-utils directory:"
-        find language-tree-sitter-utils/src/main/resources/native/linux/ -type f -name "*.so" 2>/dev/null || echo "No .so files found"
         
         # Copy tree-sitter-python libraries
         mkdir -p languages/python/src/main/resources/native/linux/
         cp native-libraries/languages/python/src/main/resources/native/linux/* languages/python/src/main/resources/native/linux/ || true
-
-        echo "Contents of languages/python/src/main/resources/native/linux/ directory:"
-        find languages/python/src/main/resources/native/linux/ -type f -name "*.so" 2>/dev/null || echo "No .so files found"
         
         echo "Native libraries installed successfully"
 
