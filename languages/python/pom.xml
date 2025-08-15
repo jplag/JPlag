@@ -12,7 +12,7 @@
         <dependency>
             <groupId>io.github.tree-sitter</groupId>
             <artifactId>jtreesitter</artifactId>
-            <version>0.25.1</version>
+            <version>${tree-sitter.version}</version>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
