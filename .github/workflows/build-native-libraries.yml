@@ -12,6 +12,7 @@ on:
       - "language-tree-sitter-utils/**"
       - ".github/workflows/build-native-libraries.yml"
   workflow_dispatch:
+  workflow_call:
 
 jobs:
   build-linux:
