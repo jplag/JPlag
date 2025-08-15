@@ -15,6 +15,9 @@ on:
       - ".github/workflows/scripts/checkHelpText.py"
       - "**.md"
       - "**.java"
+  workflow_run:
+    workflows: ["Build Native Libraries"]
+    types: [completed]
 
 jobs:
   pre_job:
@@ -42,6 +45,22 @@ jobs:
       with:
         java-version: 22
         distribution: 'temurin'
+
+    - name: Download native libraries
+      uses: actions/download-artifact@v4
+      with:
+        name: native-libraries-linux
+        path: native-libraries
+
+    - name: Install native libraries
+      run: |
+        # Copy tree-sitter core libraries
+        mkdir -p language-tree-sitter-utils/src/main/resources/native/linux/
+        cp native-libraries/language-tree-sitter-utils/src/main/resources/native/linux/* language-tree-sitter-utils/src/main/resources/native/linux/ || true
+        
+        # Copy tree-sitter-python libraries
+        mkdir -p languages/python/src/main/resources/native/linux/
+        cp native-libraries/languages/python/src/main/resources/native/linux/* languages/python/src/main/resources/native/linux/ || true
   
     - name: Build Assembly
       run: mvn -DskipTests clean package assembly:single
