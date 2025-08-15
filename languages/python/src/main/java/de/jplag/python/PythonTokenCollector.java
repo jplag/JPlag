@@ -165,39 +165,12 @@ public class PythonTokenCollector implements TreeSitterVisitor {
      * @return The length of the token
      */
     private int getTokenLength(PythonTokenType tokenType, Node node) {
-        return switch (tokenType) {
-            case IMPORT -> 6; // "import"
-            case CLASS_BEGIN, CLASS_END -> 5; // "class"
-            case METHOD_BEGIN, METHOD_END -> 3; // "def"
-            case ASSIGN -> 1; // "="
-            case WHILE_BEGIN, WHILE_END -> 5; // "while"
-            case FOR_BEGIN, FOR_END -> 3; // "for"
-            case TRY_BEGIN, TRY_END -> 3; // "try"
-            case EXCEPT_BEGIN, EXCEPT_END -> 6; // "except"
-            case FINALLY_BEGIN, FINALLY_END -> 7; // "finally"
-            case BREAK -> 5; // "break"
-            case CONTINUE -> 8; // "continue"
-            case RETURN -> 6; // "return"
-            case RAISE -> 5; // "raise"
-            case DECORATOR_BEGIN, DECORATOR_END -> 1; // "@"
-            case LAMBDA -> 6; // "lambda"
-            case ASSERT -> 6; // "assert"
-            case YIELD -> 5; // "yield"
-            case DEL -> 3; // "del"
-            case WITH_BEGIN, WITH_END -> 4; // "with"
-            case ASYNC -> 5; // "async"
-            case AWAIT -> 5; // "await"
-            case PASS -> 4; // "pass"
-            case GLOBAL -> 6; // "global"
-            case NONLOCAL -> 8; // "nonlocal"
-            case NAMED_EXPR -> 2; // ":="
-            case MATCH_BEGIN, MATCH_END -> 5; // "match"
-            case CASE -> 4; // "case"
-            case EXCEPT_GROUP_BEGIN, EXCEPT_GROUP_END -> 7; // "except*"
-            case TYPE_ALIAS -> 4; // "type"
-            case IF_BEGIN, IF_END, APPLY -> node.getEndByte() - node.getStartByte(); // Variable length tokens that need node inspection
-            default -> node.getEndByte() - node.getStartByte(); // Fallback to node span
-        };
+        int length = tokenType.getLength();
+        if (length == -1) {
+            // Dynamic length tokens need to be calculated from the node span
+            return node.getEndByte() - node.getStartByte();
+        }
+        return length;
     }
 
     /**
