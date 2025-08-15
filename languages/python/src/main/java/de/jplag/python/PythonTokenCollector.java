@@ -151,7 +151,7 @@ public class PythonTokenCollector implements TreeSitterVisitor {
         }
         column = getColumnNumber(node.getStartByte());
 
-        tokens.add(new Token(tokenType, file, line, column, length, null));
+        tokens.add(new Token(tokenType, file, line, column, line, column + length, length));
     }
 
     /**
