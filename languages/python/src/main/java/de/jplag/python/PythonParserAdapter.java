@@ -20,16 +20,19 @@ public class PythonParserAdapter extends AbstractTreeSitterParserAdapter {
 
     @Override
     protected List<Token> extractTokens(File file, Node rootNode) {
+        String code;
+
         try {
-            // TODO: Consider caching file content to avoid re-reading
-            String code = Files.readString(file.toPath());
-            PythonTokenCollector collector = new PythonTokenCollector(file, code);
-            TreeSitterTraversal.traverse(rootNode, collector);
-            List<Token> tokens = collector.getTokens();
-            tokens.add(Token.fileEnd(file));
-            return tokens;
+            code = Files.readString(file.toPath());
+
         } catch (IOException exception) {
             throw new RuntimeException("Failed to read file: " + file.getName(), exception);
         }
+
+        PythonTokenCollector collector = new PythonTokenCollector(file, code);
+        TreeSitterTraversal.traverse(rootNode, collector);
+        List<Token> tokens = collector.getTokens();
+        tokens.add(Token.fileEnd(file));
+        return tokens;
     }
 }
