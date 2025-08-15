@@ -6,8 +6,10 @@
         class="mt-2"
         title="Metric:"
         :default-selected="store().uiState.distributionChartConfig.metric"
+        :metrics="metricOptions"
         @selection-changed="
-          (metric: MetricType) => (store().uiState.distributionChartConfig.metric = metric)
+          (metric: MetricJsonIdentifier) =>
+            (store().uiState.distributionChartConfig.metric = metric)
         "
       />
       <OptionsSelector
@@ -37,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { MetricType } from '@/model/MetricType'
+import { MetricJsonIdentifier } from '@/model/MetricJsonIdentifier'
 import { store } from '@/stores/store'
 import MetricSelector from '@/components/optionsSelectors/MetricSelector.vue'
 import OptionsSelector from '@/components/optionsSelectors/OptionsSelectorComponent.vue'
@@ -45,4 +47,9 @@ import ScrollableComponent from '../ScrollableComponent.vue'
 import { type BucketOptions } from '@/model/Distribution'
 
 const resolutionOptions = [10, 20, 25, 50, 100] as BucketOptions[]
+
+const metricOptions = [
+  MetricJsonIdentifier.AVERAGE_SIMILARITY,
+  MetricJsonIdentifier.MAXIMUM_SIMILARITY
+]
 </script>

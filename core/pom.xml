@@ -9,6 +9,7 @@
         <version>${revision}</version>
     </parent>
     <artifactId>jplag</artifactId>
+    <name>JPlag: Core</name>
 
     <dependencies>
         <dependency>
@@ -40,7 +41,7 @@
         <dependency>
             <groupId>io.soabase.record-builder</groupId>
             <artifactId>record-builder-processor</artifactId>
-            <version>44</version>
+            <version>47</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

@@ -11,38 +11,41 @@
     <div v-for="[index, label] in labels.entries()" :key="index">
       <ToolTipComponent
         v-if="(label as ToolTipLabel).displayValue !== undefined"
-        direction="right"
+        :direction="tooltipDirection"
         :tool-tip-container-will-be-centered="true"
+        :show-info-symbol="false"
       >
         <template #default>
           <OptionComponent
-            :label="(label as ToolTipLabel).displayValue"
             :selected="index == getSelected()"
+            :has-tool-tip="true"
             @click="select(index)"
-          />
+          >
+            <span class="flex items-center gap-x-1 align-middle">
+              <slot :name="(label as ToolTipLabel).displayValue.replace(' ', '-').toLowerCase()" />
+              <span>{{ (label as ToolTipLabel).displayValue }}</span>
+            </span>
+          </OptionComponent>
         </template>
 
         <template #tooltip>
-          <p class="text-sm whitespace-pre">
+          <p class="text-sm whitespace-pre-wrap" :style="tooltipStyle">
             {{ (label as ToolTipLabel).tooltip }}
           </p>
         </template>
       </ToolTipComponent>
-      <OptionComponent
-        v-else
-        :label="label as string"
-        :selected="index == getSelected()"
-        @click="select(index)"
-      />
+      <OptionComponent v-else :selected="index == getSelected()" @click="select(index)">{{
+        label
+      }}</OptionComponent>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref, type PropType } from 'vue'
 import ToolTipComponent from '../ToolTipComponent.vue'
 import OptionComponent from './OptionComponent.vue'
-import { type ToolTipLabel } from '@/model/ui/ToolTip'
+import { type ToolTipDirection, type ToolTipLabel } from '@/model/ui/ToolTip'
 
 const props = defineProps({
   title: {
@@ -58,6 +61,16 @@ const props = defineProps({
     type: Number,
     required: false,
     default: 0
+  },
+  maxToolTipWidth: {
+    type: Number,
+    required: false,
+    default: -1
+  },
+  tooltipDirection: {
+    type: String as PropType<ToolTipDirection>,
+    required: false,
+    default: 'right'
   }
 })
 
@@ -75,6 +88,10 @@ function select(index: number) {
   emit('selectionChanged', index)
   selected.value = index
 }
+
+const tooltipStyle = computed(() => {
+  return props.maxToolTipWidth > 0 ? { maxWidth: `${props.maxToolTipWidth}px` } : {}
+})
 
 defineExpose({
   select

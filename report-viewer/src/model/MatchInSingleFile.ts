@@ -59,9 +59,17 @@ export class MatchInSingleFile {
 
   get fileName(): string {
     if (this._index === 1) {
-      return this._match.firstFile
+      return this._match.firstFileName
     } else {
-      return this._match.secondFile
+      return this._match.secondFileName
+    }
+  }
+
+  get length(): number {
+    if (this._index === 1) {
+      return this._match.lengthOfFirst
+    } else {
+      return this._match.lengthOfSecond
     }
   }
 }

@@ -37,10 +37,11 @@ public class SpectralClustering implements GenericClusteringAlgorithm {
         this.options = options;
     }
 
+    /**
+     * Calculate points to cluster based n "On spectral clustering: analysis and an algorithm" by Ng, Jordan and Weiss 2001.
+     */
     @Override
     public Collection<Collection<Integer>> cluster(RealMatrix similarityMatrix) {
-        // Calculate points to cluster according to "On spectral clustering: analysis and an algorithm" by Ng, Jordan & Weiss
-        // 2001
         int dimension = similarityMatrix.getRowDimension();
 
         // We don't use the similarity function, we already have some kind of similarity
@@ -88,28 +89,28 @@ public class SpectralClustering implements GenericClusteringAlgorithm {
 
         // Find number of clusters using bayesian optimization
         RealVector lengthScale = new ArrayRealVector(1, options.spectralKernelBandwidth());
-        BayesianOptimization bo = new BayesianOptimization(new ArrayRealVector(1, minClusters), new ArrayRealVector(1, maxClusters),
+        BayesianOptimizer optimizer = new BayesianOptimizer(new ArrayRealVector(1, minClusters), new ArrayRealVector(1, maxClusters),
                 options.spectralMinRuns(), options.spectralMaxRuns(), options.spectralGaussianProcessVariance(), lengthScale);
-        // bo.debug = true;
-        BayesianOptimization.OptimizationResult<Collection<Collection<Integer>>> bayesianOptimizationResult = bo.maximize(r -> {
+        BayesianOptimizer.OptimizationResult<Collection<Collection<Integer>>> bayesianOptimizationResult = optimizer.maximize(r -> {
             int clusters = (int) Math.round(r.getEntry(0));
             clusters = Math.max(minClusters, clusters);
             clusters = Math.min(maxClusters, clusters);
             Collection<Collection<Integer>> clustering = cluster(clusters, dimension, eigenValueIds, eigenDecomposition);
             ClusteringResult<Integer> modularityRes = ClusteringResult.fromIntegerCollections(new ArrayList<>(clustering), similarityMatrix);
-            return new BayesianOptimization.OptimizationResult<>(modularityRes.getWorth(similarityMatrix::getEntry), clustering);
+            return new BayesianOptimizer.OptimizationResult<>(modularityRes.getWorth(similarityMatrix::getEntry), clustering);
         });
 
         return bayesianOptimizationResult.getValue();
     }
 
-    private Collection<Collection<Integer>> cluster(int numberOfClusters, int dimension, List<Integer> eigenValueIds, EigenDecomposition ed) {
+    private Collection<Collection<Integer>> cluster(int numberOfClusters, int dimension, List<Integer> eigenValueIds,
+            EigenDecomposition decomposition) {
         RealMatrix concatenatedEigenVectors = new Array2DRowRealMatrix(dimension, numberOfClusters);
         concatenatedEigenVectors.walkInOptimizedOrder(new DefaultRealMatrixChangingVisitor() {
             @Override
             public double visit(int row, int column, double value) {
                 int eigenVectorId = eigenValueIds.get(column);
-                RealVector eigenVector = ed.getEigenvector(eigenVectorId);
+                RealVector eigenVector = decomposition.getEigenvector(eigenVectorId);
                 return eigenVector.getEntry(row);
             }
         });
@@ -119,7 +120,7 @@ public class SpectralClustering implements GenericClusteringAlgorithm {
 
         Clusterer<ClusterableEigenVector> clusterer = new KMeansPlusPlusClusterer<>(numberOfClusters, options.spectralMaxKMeansIterationPerRun());
         List<? extends Cluster<ClusterableEigenVector>> clusters = clusterer.cluster(normRows);
-        return clusters.stream().map(cluster -> cluster.getPoints().stream().map(eigenVector -> eigenVector.id).collect(Collectors.toList()))
+        return clusters.stream().map(cluster -> cluster.getPoints().stream().map(eigenVector -> eigenVector.id).toList())
                 .collect(Collectors.toList());
     }
 

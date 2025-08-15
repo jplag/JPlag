@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-public class ClusterTest {
+class ClusterTest {
 
     private static final double EPSILON = 0.00001;
     Cluster<Character> cluster;

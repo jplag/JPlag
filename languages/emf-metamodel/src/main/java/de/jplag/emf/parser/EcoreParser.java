@@ -8,9 +8,9 @@ import java.util.Set;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 
-import de.jplag.AbstractParser;
 import de.jplag.ParsingException;
 import de.jplag.Token;
+import de.jplag.TokenTrace;
 import de.jplag.TokenType;
 import de.jplag.emf.EmfLanguage;
 import de.jplag.emf.MetamodelToken;
@@ -23,7 +23,7 @@ import de.jplag.emf.util.EmfaticModelView;
 /**
  * Parser for EMF metamodels.
  */
-public class EcoreParser extends AbstractParser {
+public class EcoreParser {
     protected List<Token> tokens;
     protected File currentFile;
     protected AbstractModelView treeView;
@@ -61,14 +61,14 @@ public class EcoreParser extends AbstractParser {
             visitor.visit(root);
         }
         tokens.add(Token.fileEnd(currentFile));
-        treeView.writeToFile(getCorrespondingViewFileSuffix());
+        treeView.writeToFile(getCorrespondingViewFileExtension());
     }
 
     /**
-     * @return the correct view file suffix for the model view. Can be overriden in subclasses for alternative views.
+     * @return the correct view file extension for the model view. Can be overriden in subclasses for alternative views.
      */
-    protected String getCorrespondingViewFileSuffix() {
-        return EmfLanguage.VIEW_FILE_SUFFIX;
+    protected String getCorrespondingViewFileExtension() {
+        return EmfLanguage.VIEW_FILE_EXTENSION;
     }
 
     /**
@@ -103,7 +103,7 @@ public class EcoreParser extends AbstractParser {
      * @param source is the corresponding {@link EObject} for which the token is added.
      */
     protected void addToken(TokenType type, EObject source) {
-        MetamodelToken token = new MetamodelToken(type, currentFile, source);
-        tokens.add(treeView.convertToMetadataEnrichedToken(token));
+        TokenTrace trace = treeView.getTokenTrace(source, type);
+        tokens.add(new MetamodelToken(type, currentFile, trace, source));
     }
 }

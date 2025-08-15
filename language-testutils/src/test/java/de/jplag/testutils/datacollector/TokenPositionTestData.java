@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.jupiter.api.Assertions;
+
 import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
@@ -17,6 +19,13 @@ import de.jplag.util.FileUtils;
  * information for tests. The sources can be used as regular test sources.
  */
 public class TokenPositionTestData implements TestData {
+    private static final String INVALID_LINE_ERROR_MESSAGE = "Invalid line for token position test %s at line: %s";
+    private static final String TOKEN_DEFINITION_LINE_REGEX = "\\$[\\s]*\\| [a-zA-Z0-9_]+ [0-9]+[\\s]*";
+    private static final char SOURCE_FILE_LINE_PREFIX = '>';
+    private static final char TOKEN_LINE_PREFIX = '$';
+    private static final char COMMENT_LINE_PREFIX = '#';
+    private static final char TOKEN_COLUMN_MARKER = '|';
+
     private final List<String> sourceLines;
     private final List<TokenData> expectedTokens;
 
@@ -40,27 +49,51 @@ public class TokenPositionTestData implements TestData {
         int currentLine = 0;
 
         for (String sourceLine : testFileLines) {
-            if (sourceLine.charAt(0) == '>') {
-                this.sourceLines.add(sourceLine.substring(1));
-                currentLine++;
-            }
+            if (!sourceLine.isBlank()) {
+                switch (sourceLine.charAt(0)) {
+                    case SOURCE_FILE_LINE_PREFIX -> {
+                        this.sourceLines.add(sourceLine.substring(1));
+                        currentLine++;
+                    }
 
-            if (sourceLine.charAt(0) == '$') {
-                int column = sourceLine.indexOf('|');
-                String[] tokenDescriptionParts = sourceLine.split(" ", 0);
+                    case TOKEN_LINE_PREFIX -> {
+                        this.extractTokenData(sourceLine, currentLine);
+                        int column = sourceLine.indexOf(TOKEN_COLUMN_MARKER);
+                        String[] tokenDescriptionParts = sourceLine.split(" ", 0);
 
-                String typeName = tokenDescriptionParts[tokenDescriptionParts.length - 2];
-                int length = Integer.parseInt(tokenDescriptionParts[tokenDescriptionParts.length - 1]);
-                this.expectedTokens.add(new TokenData(typeName, currentLine, column, length));
+                        String typeName = tokenDescriptionParts[tokenDescriptionParts.length - 2];
+                        int length = Integer.parseInt(tokenDescriptionParts[tokenDescriptionParts.length - 1]);
+                        this.expectedTokens.add(new TokenData(typeName, currentLine, column, currentLine, column + length));
+                    }
+
+                    case COMMENT_LINE_PREFIX -> {
+                        // Line is considered a comment
+                    }
+
+                    default -> Assertions.fail(String.format(INVALID_LINE_ERROR_MESSAGE, this.descriptor, sourceLine));
+                }
             }
         }
     }
 
+    private void extractTokenData(String line, int currentSourceLine) {
+        if (!line.matches(TOKEN_DEFINITION_LINE_REGEX)) {
+            Assertions.fail("Invalid line for token position test " + this.descriptor + " at line: " + line);
+        }
+
+        int column = line.indexOf('|');
+        String[] tokenDescriptionParts = line.split(" ", 0);
+
+        String typeName = tokenDescriptionParts[tokenDescriptionParts.length - 2];
+        int length = Integer.parseInt(tokenDescriptionParts[tokenDescriptionParts.length - 1]);
+        this.expectedTokens.add(new TokenData(typeName, currentSourceLine, column, currentSourceLine, column + length));
+    }
+
     @Override
     public List<Token> parseTokens(Language language) throws ParsingException, IOException {
-        File file = File.createTempFile("testSource", language.suffixes()[0]);
+        File file = File.createTempFile("testSource", language.fileExtensions().getFirst());
         FileUtils.write(file, String.join(System.lineSeparator(), sourceLines));
-        List<Token> tokens = language.parse(Collections.singleton(file));
+        List<Token> tokens = language.parse(Collections.singleton(file), false);
         TemporaryFileHolder.temporaryFiles.add(file);
         return tokens;
     }
@@ -85,11 +118,12 @@ public class TokenPositionTestData implements TestData {
     /**
      * Information about a single token
      * @param typeName The name of the token type
-     * @param lineNumber The line the token is in (1 based)
-     * @param columnNumber The column the token is in (1 based)
-     * @param length The length of the token
+     * @param startLine The line the token starts in (1 based)
+     * @param startColumn The column the token starts (1 based)
+     * @param endLine The line the token ends in (1 based)
+     * @param endColumn The column the token end (1 based)
      */
-    public record TokenData(String typeName, int lineNumber, int columnNumber, int length) {
+    public record TokenData(String typeName, int startLine, int startColumn, int endLine, int endColumn) {
     }
 
     @Override

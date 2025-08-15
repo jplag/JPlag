@@ -54,7 +54,7 @@ class RustLanguageTest {
     @Test
     void parseTestFiles() throws ParsingException {
         for (String fileName : testFiles) {
-            List<Token> tokens = language.parse(Set.of(new File(testFileLocation, fileName)));
+            List<Token> tokens = language.parse(Set.of(new File(testFileLocation, fileName)), false);
             String output = TokenPrinter.printTokens(tokens, testFileLocation);
             logger.info(output);
 
@@ -79,7 +79,7 @@ class RustLanguageTest {
             // All lines that contain code
             var codeLines = new ArrayList<>(getCodeLines(lines));
             // All lines that contain token
-            var tokenLines = tokens.stream().mapToInt(Token::getLine).filter(line -> line != Token.NO_VALUE).distinct().boxed().toList();
+            var tokenLines = tokens.stream().mapToInt(Token::getStartLine).filter(line -> line != Token.NO_VALUE).distinct().boxed().toList();
 
             // Keep only lines that have no tokens
             codeLines.removeAll(tokenLines);

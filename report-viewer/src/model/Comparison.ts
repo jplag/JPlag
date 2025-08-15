@@ -1,7 +1,8 @@
 import type { Match } from './Match'
 import type { SubmissionFile } from '@/model/File'
 import { MatchInSingleFile } from './MatchInSingleFile'
-import type { MetricType } from './MetricType'
+import type { MetricJsonIdentifier } from './MetricJsonIdentifier'
+import slash from 'slash'
 
 /**
  * Comparison model used by the ComparisonView
@@ -9,7 +10,7 @@ import type { MetricType } from './MetricType'
 export class Comparison {
   private readonly _firstSubmissionId: string
   private readonly _secondSubmissionId: string
-  private readonly _similarities: Record<MetricType, number>
+  private readonly _similarities: Record<MetricJsonIdentifier, number>
   private readonly _filesOfFirstSubmission: SubmissionFile[]
   private readonly _filesOfSecondSubmission: SubmissionFile[]
   private readonly _allMatches: Array<Match>
@@ -19,7 +20,7 @@ export class Comparison {
   constructor(
     firstSubmissionId: string,
     secondSubmissionId: string,
-    similarities: Record<MetricType, number>,
+    similarities: Record<MetricJsonIdentifier, number>,
     filesOfFirstSubmission: SubmissionFile[],
     filesOfSecondSubmission: SubmissionFile[],
     allMatches: Array<Match>,
@@ -103,7 +104,7 @@ export class Comparison {
   private groupMatchesByFileName(index: 1 | 2): Map<string, Array<MatchInSingleFile>> {
     const acc = new Map<string, Array<MatchInSingleFile>>()
     this._allMatches.forEach((val) => {
-      const name = index === 1 ? val.firstFile : val.secondFile
+      const name = slash(index === 1 ? val.firstFileName : val.secondFileName)
 
       if (!acc.get(name)) {
         acc.set(name, [])

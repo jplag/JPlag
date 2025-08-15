@@ -18,11 +18,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jplag.commentextraction.Comment;
+import de.jplag.commentextraction.CommentExtractor;
+import de.jplag.commentextraction.CommentExtractorSettings;
 import de.jplag.exceptions.LanguageException;
 import de.jplag.normalization.TokenSequenceNormalizer;
 import de.jplag.options.JPlagOptions;
@@ -45,6 +49,7 @@ public class Submission implements Comparable<Submission> {
     private List<Token> tokenList; // list of tokens from all files, used for comparison
     private JPlagComparison baseCodeComparison; // Comparison of thus submission with the base code
     private Map<File, Integer> fileTokenCount;
+    private List<Comment> comments; // list of comments from all files
 
     /**
      * Creates a submission.
@@ -62,6 +67,7 @@ public class Submission implements Comparable<Submission> {
         this.files = files;
         this.language = language;
         tokenList = Collections.emptyList(); // Placeholder, will be replaced when submission is parsed
+        comments = new ArrayList<>();
         state = UNPARSED;
     }
 
@@ -154,7 +160,7 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * @deprecated Use {@link hasBaseCodeComparison} instead.
+     * @deprecated Use {@link #hasBaseCodeComparison()} instead.
      */
     @Deprecated(since = "6.1.0", forRemoval = true)
     public boolean hasBaseCodeMatches() {
@@ -169,7 +175,7 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * @return whether the submission is new, That is, must be checked for plagiarism.
+     * @return whether the submission is new, that is, must be checked for plagiarism.
      */
     public boolean isNew() {
         return isNew;
@@ -232,10 +238,11 @@ public class Submission implements Comparable<Submission> {
      * @param debugParser specifies if the submission should be copied upon parsing errors.
      * @param normalize specifies if the token sequences should be normalized.
      * @param minimalTokens specifies the minimum number of tokens required of a valid submission.
+     * @param analyzeComments specifies if comments should be extracted and analyzed.
      * @return Whether parsing was successful.
      * @throws LanguageException if the language parser is not able to parse at all.
      */
-    /* package-private */ boolean parse(boolean debugParser, boolean normalize, int minimalTokens) throws LanguageException {
+    /* package-private */ boolean parse(boolean debugParser, boolean normalize, int minimalTokens, boolean analyzeComments) throws LanguageException {
         if (files == null || files.isEmpty()) {
             logger.error("Nothing to parse for submission \"{}\"", name);
             state = NOTHING_TO_PARSE;
@@ -263,9 +270,24 @@ public class Submission implements Comparable<Submission> {
             return false;
         }
 
+        if (analyzeComments) {
+            this.extractAndParseComments();
+        }
+
         tokenList = Collections.unmodifiableList(tokenList);
         state = VALID;
         return true;
+    }
+
+    private void extractAndParseComments() {
+        Optional<CommentExtractorSettings> commentExtractorSettings = language.getCommentExtractorSettings();
+        if (commentExtractorSettings.isPresent()) {
+            for (File file : files) {
+                CommentExtractor extractor = new CommentExtractor(file, commentExtractorSettings.get());
+                comments.addAll(extractor.extract());
+            }
+            logger.debug("Found {} comments", comments.size());
+        }
     }
 
     /**
@@ -286,11 +308,11 @@ public class Submission implements Comparable<Submission> {
 
     private List<Integer> getOrder(List<Token> tokenList) {
         List<Integer> order = new ArrayList<>(tokenList.size());  // a little too big
-        int currentLineNumber = tokenList.get(0).getLine();
+        int currentLineNumber = tokenList.get(0).getStartLine();
         order.add(currentLineNumber);
         for (Token token : tokenList) {
-            if (token.getLine() != currentLineNumber) {
-                currentLineNumber = token.getLine();
+            if (token.getStartLine() != currentLineNumber) {
+                currentLineNumber = token.getStartLine();
                 order.add(currentLineNumber);
             }
         }

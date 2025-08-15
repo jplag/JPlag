@@ -32,13 +32,10 @@
           class="border-accent-dark bg-accent/25 mx-auto mt-10 flex w-96 cursor-pointer flex-col justify-center rounded-md border px-5 py-5"
           @click="uploadFileThroughWindow()"
         >
-          <div>Drag and Drop zip file on this page</div>
+          <div>Drag and Drop report file on this page</div>
           <div>Or click here to select a file</div>
         </div>
         <div>(No files will be uploaded)</div>
-        <Button v-if="localFiles" class="mx-auto mt-8 w-fit" @click="continueWithLocal">
-          Continue with local files
-        </Button>
         <a
           href="https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag"
           target="_blank"
@@ -62,26 +59,18 @@ import { onErrorCaptured, ref, type Ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { router } from '@/router'
 import { store } from '@/stores/store'
-import Button from '@/components/ButtonComponent.vue'
 import VersionInfoComponent from '@/components/VersionInfoComponent.vue'
 import LoadingCircle from '@/components/LoadingCircle.vue'
-import { ZipFileHandler } from '@/model/fileHandling/ZipFileHandler'
+import { ReportFileHandler } from '@/model/fileHandling/ReportFileHandler'
 import { BaseFactory } from '@/model/factories/BaseFactory'
 
 store().clearStore()
 
 const exampleFiles = ref(import.meta.env.MODE == 'demo' || import.meta.env.MODE == 'dev-demo')
-const localFiles = ref(false)
-// Checks whether local files exist
-BaseFactory.getLocalFile('files/overview.json')
-  .then(() => {
-    localFiles.value = true
-  })
-  .catch(() => {})
 
-BaseFactory.useLocalZipMode().then((value) => {
+BaseFactory.useLocalReportFileMode().then((value) => {
   if (value) {
-    store().state.uploadedFileName = BaseFactory.zipFileName
+    store().state.uploadedFileName = BaseFactory.reportFileName
     navigateToOverview()
   }
 })
@@ -89,7 +78,7 @@ BaseFactory.useLocalZipMode().then((value) => {
 document.title = 'JPlag Report Viewer'
 
 const loadingFiles = ref(false)
-type fileMethod = 'query' | 'local' | 'upload' | 'unknown'
+type fileMethod = 'query' | 'upload' | 'unknown'
 const errors: Ref<{ error: Error; source: fileMethod }[]> = ref([])
 
 // Loads file passed in query param, if any.
@@ -127,8 +116,7 @@ async function handleFile(file: Blob) {
     case 'application/x-zip-compressed':
     case 'application/x-zip':
     case '':
-      store().setLoadingType('zip')
-      await new ZipFileHandler().handleFile(file)
+      await new ReportFileHandler().handleFile(file)
       return navigateToOverview()
     default:
       throw new Error(`Unknown MIME type '${file.type}'`)
@@ -188,15 +176,6 @@ async function loadQueryFile(url: URL) {
   }
 }
 
-/**
- * Handles click on Continue with local files.
- */
-function continueWithLocal() {
-  store().state.uploadedFileName = BaseFactory.zipFileName
-  store().setLoadingType('local')
-  navigateToOverview()
-}
-
 function registerError(error: Error, source: fileMethod) {
   loadingFiles.value = false
   store().state.uploadedFileName = ''
@@ -211,7 +190,6 @@ function getErrorText() {
     }
     const longNames = {
       query: 'querying files',
-      local: 'getting local files',
       upload: 'loading files'
     }
     return 'Error during ' + longNames[source]

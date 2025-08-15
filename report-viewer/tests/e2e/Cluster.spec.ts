@@ -19,6 +19,7 @@ test('Test cluster view', async ({ page }) => {
   // Check cluster diagram
   await page.waitForTimeout(3000)
   const radarChart = page.locator('canvas').first()
+  await page.getByRole('combobox').selectOption('C')
   expect(page.getByRole('combobox').first()).toHaveValue('C')
   const clusterImageC = radarChart.screenshot()
   await page.getByRole('combobox').selectOption('B')
@@ -44,6 +45,6 @@ function compareTableRow(
   similarityMAX: number
 ) {
   expect(table).toContain(
-    `${row}${id1}${id2}${similarityAVG.toFixed(2)}% ${similarityMAX.toFixed(2)}%`
+    `${row}${id1}${id2}${similarityAVG.toFixed(2)}%${similarityMAX.toFixed(2)}%`
   )
 }

@@ -7,9 +7,9 @@ import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import de.jplag.AbstractParser;
 import de.jplag.ParsingException;
 import de.jplag.Token;
+import de.jplag.TokenTrace;
 import de.jplag.scxml.ScxmlLanguage;
 import de.jplag.scxml.ScxmlToken;
 import de.jplag.scxml.ScxmlTokenType;
@@ -22,7 +22,7 @@ import de.jplag.scxml.util.ScxmlView;
  * Parser adapter for SCXML statecharts that uses a Statechart object obtained from an instance of ScxmlParser to
  * extract tokens.
  */
-public class ScxmlParserAdapter extends AbstractParser {
+public class ScxmlParserAdapter {
 
     /**
      * The list of extracted tokens for the current file.
@@ -76,7 +76,7 @@ public class ScxmlParserAdapter extends AbstractParser {
 
         visitor.visit(statechart);
         tokens.add(Token.fileEnd(currentStatechartFile));
-        view.writeToFile(ScxmlLanguage.VIEW_FILE_SUFFIX);
+        view.writeToFile(ScxmlLanguage.VIEW_FILE_EXTENSION);
     }
 
     /**
@@ -86,9 +86,8 @@ public class ScxmlParserAdapter extends AbstractParser {
      * @param source the statechart element associated with the token
      */
     public void addToken(ScxmlTokenType type, StatechartElement source) {
-        ScxmlToken token = new ScxmlToken(type, currentStatechartFile, source);
-        Token enhancedToken = view.enhanceToken(token, visitor.getCurrentStatechartDepth());
-        tokens.add(enhancedToken);
+        TokenTrace trace = view.appendElement(type, source, visitor.getCurrentStatechartDepth());
+        tokens.add(new ScxmlToken(type, currentStatechartFile, trace, source));
     }
 
     /**

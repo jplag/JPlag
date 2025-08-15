@@ -3,7 +3,7 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { describe, it, vi, expect } from 'vitest'
 import { createTestingPinia } from '@pinia/testing'
 import { store } from '@/stores/store'
-import { MetricType } from '@/model/MetricType.ts'
+import { MetricJsonIdentifier } from '@/model/MetricJsonIdentifier.ts'
 import { router } from '@/router'
 
 describe('ComparisonTable', async () => {
@@ -17,8 +17,8 @@ describe('ComparisonTable', async () => {
             firstSubmissionId: 'A',
             secondSubmissionId: 'B',
             similarities: {
-              [MetricType.AVERAGE]: 1,
-              [MetricType.MAXIMUM]: 0.5
+              [MetricJsonIdentifier.AVERAGE_SIMILARITY]: 1,
+              [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: 0.5
             },
             clusterIndex: -1
           },
@@ -28,8 +28,8 @@ describe('ComparisonTable', async () => {
             firstSubmissionId: 'C',
             secondSubmissionId: 'D',
             similarities: {
-              [MetricType.AVERAGE]: 0.5,
-              [MetricType.MAXIMUM]: 1
+              [MetricJsonIdentifier.AVERAGE_SIMILARITY]: 0.5,
+              [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: 1
             },
             clusterIndex: -1
           }
@@ -66,8 +66,8 @@ describe('ComparisonTable', async () => {
             firstSubmissionId: 'A',
             secondSubmissionId: 'B',
             similarities: {
-              [MetricType.AVERAGE]: 0.3,
-              [MetricType.MAXIMUM]: 0.5
+              [MetricJsonIdentifier.AVERAGE_SIMILARITY]: 0.3,
+              [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: 0.5
             },
             clusterIndex: -1
           },
@@ -77,8 +77,8 @@ describe('ComparisonTable', async () => {
             firstSubmissionId: 'C',
             secondSubmissionId: 'D',
             similarities: {
-              [MetricType.AVERAGE]: 0.5,
-              [MetricType.MAXIMUM]: 1
+              [MetricJsonIdentifier.AVERAGE_SIMILARITY]: 0.5,
+              [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: 1
             },
             clusterIndex: -1
           },
@@ -88,8 +88,8 @@ describe('ComparisonTable', async () => {
             firstSubmissionId: 'E',
             secondSubmissionId: 'F',
             similarities: {
-              [MetricType.AVERAGE]: 0.3,
-              [MetricType.MAXIMUM]: 0.1
+              [MetricJsonIdentifier.AVERAGE_SIMILARITY]: 0.3,
+              [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: 0.1
             },
             clusterIndex: -1
           },
@@ -99,8 +99,8 @@ describe('ComparisonTable', async () => {
             firstSubmissionId: 'H',
             secondSubmissionId: 'G',
             similarities: {
-              [MetricType.AVERAGE]: 0.9,
-              [MetricType.MAXIMUM]: 0.2
+              [MetricJsonIdentifier.AVERAGE_SIMILARITY]: 0.9,
+              [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: 0.2
             },
             clusterIndex: -1
           }
@@ -150,8 +150,8 @@ describe('ComparisonTable', async () => {
             firstSubmissionId: 'A',
             secondSubmissionId: 'B',
             similarities: {
-              [MetricType.AVERAGE]: 0.3,
-              [MetricType.MAXIMUM]: 0.5
+              [MetricJsonIdentifier.AVERAGE_SIMILARITY]: 0.3,
+              [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: 0.5
             },
             clusterIndex: -1
           },
@@ -161,8 +161,8 @@ describe('ComparisonTable', async () => {
             firstSubmissionId: 'C',
             secondSubmissionId: 'D',
             similarities: {
-              [MetricType.AVERAGE]: 0.4,
-              [MetricType.MAXIMUM]: 1
+              [MetricJsonIdentifier.AVERAGE_SIMILARITY]: 0.4,
+              [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: 1
             },
             clusterIndex: -1
           },
@@ -172,8 +172,8 @@ describe('ComparisonTable', async () => {
             firstSubmissionId: 'E',
             secondSubmissionId: 'F',
             similarities: {
-              [MetricType.AVERAGE]: 0.3,
-              [MetricType.MAXIMUM]: 0.1
+              [MetricJsonIdentifier.AVERAGE_SIMILARITY]: 0.3,
+              [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: 0.1
             },
             clusterIndex: -1
           },
@@ -183,8 +183,8 @@ describe('ComparisonTable', async () => {
             firstSubmissionId: 'H',
             secondSubmissionId: 'G',
             similarities: {
-              [MetricType.AVERAGE]: 0.9,
-              [MetricType.MAXIMUM]: 0.2
+              [MetricJsonIdentifier.AVERAGE_SIMILARITY]: 0.9,
+              [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: 0.2
             },
             clusterIndex: -1
           }
@@ -247,8 +247,8 @@ describe('ComparisonTable', async () => {
             firstSubmissionId: 'A',
             secondSubmissionId: 'B',
             similarities: {
-              [MetricType.AVERAGE]: 0.3,
-              [MetricType.MAXIMUM]: 0.5
+              [MetricJsonIdentifier.AVERAGE_SIMILARITY]: 0.3,
+              [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: 0.5
             },
             cluster: {
               index: 0,
@@ -263,8 +263,8 @@ describe('ComparisonTable', async () => {
             firstSubmissionId: 'C',
             secondSubmissionId: 'D',
             similarities: {
-              [MetricType.AVERAGE]: 0.5,
-              [MetricType.MAXIMUM]: 1
+              [MetricJsonIdentifier.AVERAGE_SIMILARITY]: 0.5,
+              [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: 1
             },
             cluster: {
               index: 1,
@@ -279,8 +279,8 @@ describe('ComparisonTable', async () => {
             firstSubmissionId: 'E',
             secondSubmissionId: 'F',
             similarities: {
-              [MetricType.AVERAGE]: 0.3,
-              [MetricType.MAXIMUM]: 0.1
+              [MetricJsonIdentifier.AVERAGE_SIMILARITY]: 0.3,
+              [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: 0.1
             },
             cluster: {
               index: 2,
@@ -295,8 +295,8 @@ describe('ComparisonTable', async () => {
             firstSubmissionId: 'H',
             secondSubmissionId: 'G',
             similarities: {
-              [MetricType.AVERAGE]: 0.9,
-              [MetricType.MAXIMUM]: 0.2
+              [MetricJsonIdentifier.AVERAGE_SIMILARITY]: 0.9,
+              [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: 0.2
             },
             cluster: undefined
           }
@@ -345,7 +345,7 @@ describe('ComparisonTable', async () => {
     expect(displayedComparisonsMaxSorted[2].firstSubmissionId).toBe('H')
     expect(displayedComparisonsMaxSorted[3].firstSubmissionId).toBe('E')
 
-    await metricOptions[2].trigger('click')
+    await metricOptions[3].trigger('click')
     await flushPromises()
 
     // Test sorting by cluster

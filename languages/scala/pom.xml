@@ -8,6 +8,7 @@
         <version>${revision}</version>
     </parent>
     <artifactId>scala</artifactId>
+    <name>JPlag: Scala Language Module</name>
 
     <properties>
         <scala.version>2.13.16</scala.version>
@@ -25,33 +26,11 @@
         <dependency>
             <groupId>org.scalameta</groupId>
             <artifactId>scalameta_${scala.compat.version}</artifactId>
-            <version>4.13.4</version>
+            <version>4.13.8</version>
         </dependency>
     </dependencies>
 
     <build>
-        <plugins>
-            <plugin>
-                <!-- see http://davidb.github.com/scala-maven-plugin -->
-                <groupId>net.alchim31.maven</groupId>
-                <artifactId>scala-maven-plugin</artifactId>
-                <version>4.9.5</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                            <goal>testCompile</goal>
-                        </goals>
-                        <configuration>
-                            <args>
-                                <arg>-dependencyfile</arg>
-                                <arg>${project.build.directory}/.scala_dependencies</arg>
-                            </args>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
         <sourceDirectory>src/main/scala</sourceDirectory>
         <testSourceDirectory>src/test/java</testSourceDirectory>
     </build>

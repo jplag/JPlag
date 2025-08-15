@@ -1,36 +1,58 @@
 <template>
-  <div class="space-y-2">
-    <div
-      class="flex flex-col flex-wrap gap-x-8 gap-y-2 overflow-hidden md:flex-row md:items-center"
+  <div
+    class="grid grid-cols-1 grid-rows-4 space-y-2 gap-x-2 md:grid-cols-[auto_1fr_auto] md:grid-rows-[auto_auto]"
+  >
+    <h2 class="col-start-1 row-start-1">{{ header }}</h2>
+    <ToolTipComponent
+      direction="left"
+      class="col-start-1 row-start-2 w-full max-w-full md:col-start-2 md:row-start-1"
+      :show-info-symbol="false"
     >
-      <h2>{{ header }}</h2>
-      <ToolTipComponent direction="left" class="max-w-full grow md:min-w-[40%]">
-        <template #default>
-          <SearchBarComponent v-model="searchStringValue" placeholder="Filter/Unhide Comparisons" />
-        </template>
-        <template #tooltip>
-          <p class="text-sm whitespace-pre">
-            Type in the name of a submission to only show comparisons that contain this submission.
-          </p>
-          <p class="text-sm whitespace-pre">Fully written out names get unhidden.</p>
-          <p class="text-sm whitespace-pre">
-            You can also filter by index by entering a number or typing <i>index:number</i>
-          </p>
-          <p class="text-sm whitespace-pre">
-            You can filter for specific similarity thresholds via &lt;/&gt;/&lt;=/&gt;= followed by
-            the percentage. <br />
-            You can filter for a specific metric by prefacing the percentage with the three-letter
-            metric name (e.g. <i>avg:>80</i>)
-          </p>
-        </template>
-      </ToolTipComponent>
+      <template #default>
+        <SearchBarComponent
+          v-model="searchStringValue"
+          class="w-full"
+          placeholder="Filter/Unhide Comparisons"
+        />
+      </template>
+      <template #tooltip>
+        <p class="text-sm whitespace-pre">
+          Type in the name of a submission to only show comparisons that contain this submission.
+        </p>
+        <p class="text-sm whitespace-pre">Fully written out names get unhidden.</p>
+        <p class="text-sm whitespace-pre">
+          You can also filter by index by entering a number or typing <i>index:number</i>
+        </p>
+        <p class="text-sm whitespace-pre">
+          You can filter for specific similarity thresholds via &lt;/&gt;/&lt;=/&gt;= followed by
+          the percentage. <br />
+          You can filter for a specific metric by prefacing the percentage with the short metric
+          name (e.g. <i>avg:>80</i>)
+        </p>
+      </template>
+    </ToolTipComponent>
 
-      <ButtonComponent class="w-24" @click="changeAnonymousForAll()">
-        {{
-          store().state.anonymous.size == store().getSubmissionIds.length ? 'Show All' : 'Hide All'
-        }}
-      </ButtonComponent>
-    </div>
+    <ButtonComponent
+      class="col-start-1 row-start-3 w-30 min-w-fit whitespace-nowrap md:col-start-3 md:row-start-1"
+      @click="changeAnonymousForAll()"
+    >
+      {{
+        store().state.anonymous.size == store().getSubmissionIds.length
+          ? 'Show All'
+          : 'Anonymize All'
+      }}
+    </ButtonComponent>
+    <MetricSelector
+      class="col-start-1 row-start-4 md:col-span-3 md:col-start-1 md:row-start-2"
+      title="Secondary Metric:"
+      :default-selected="store().uiState.comparisonTableSecondaryMetric"
+      :metrics="secondaryMetricOptions"
+      :max-tool-tip-width="200"
+      tooltip-direction="bottom"
+      @selection-changed="
+        (metric: MetricJsonIdentifier) => (store().uiState.comparisonTableSecondaryMetric = metric)
+      "
+    />
   </div>
 </template>
 
@@ -40,6 +62,8 @@ import SearchBarComponent from './SearchBarComponent.vue'
 import ToolTipComponent from './ToolTipComponent.vue'
 import ButtonComponent from './ButtonComponent.vue'
 import { store } from '@/stores/store'
+import { MetricJsonIdentifier } from '@/model/MetricJsonIdentifier'
+import MetricSelector from './optionsSelectors/MetricSelector.vue'
 
 const props = defineProps({
   searchString: {
@@ -90,4 +114,10 @@ function changeAnonymousForAll() {
     store().state.anonymous = new Set(store().getSubmissionIds)
   }
 }
+
+const secondaryMetricOptions = [
+  MetricJsonIdentifier.MAXIMUM_SIMILARITY,
+  MetricJsonIdentifier.LONGEST_MATCH,
+  MetricJsonIdentifier.MAXIMUM_LENGTH
+]
 </script>

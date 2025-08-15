@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class CumulativeDistributionFunctionPreprocessorTest extends PreprocessingTestBase {
+class CumulativeDistributionFunctionPreprocessorTest extends PreprocessingTestBase {
 
     private static final double EPSILON = 0.0000001;
 
@@ -21,7 +21,7 @@ public class CumulativeDistributionFunctionPreprocessorTest extends Preprocessin
     void satisfiesInterface() {
         double[][] original = createTestData();
         double[][] result = preprocessor.preprocessSimilarities(original);
-        validPreprocessing(original, result, preprocessor::originalIndexOf);
+        isValidPreprocessing(original, result, preprocessor::originalIndexOf);
     }
 
     @Test

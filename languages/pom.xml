@@ -8,6 +8,7 @@
     </parent>
     <artifactId>languages</artifactId>
     <packaging>pom</packaging>
+    <name>JPlag: Language Modules (Parent)</name>
     <modules>
         <module>c</module>
         <module>cpp</module>

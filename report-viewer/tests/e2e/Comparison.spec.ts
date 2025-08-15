@@ -9,14 +9,18 @@ test('Test comparison table and comparsion view', async ({ page }) => {
   const comparisonTableAverageSorted = await page.getByText(/Cluster [0-9]/).textContent()
   expect(comparisonTableAverageSorted).toContain('100Purple FishBeige Dog')
 
-  await page.getByText('MAX', { exact: true }).click()
+  const tableHeader = page.getByText('Submissions in ComparisonSimilarity')
+  await tableHeader.getByText('MAX', { exact: true }).click()
   // check for elements in maximum similarity table
   await page.getByPlaceholder('Filter/Unhide Comparisons').fill('Blue')
   const comparisonTableMaxSorted = await page.getByText(/Cluster [0-9]/).textContent()
   expect(comparisonTableMaxSorted).toContain('100Blue AntelopeLime Lynx')
 
   await page.getByPlaceholder('Filter/Unhide Comparisons').fill('')
-  await page.getByText('Hide All').click()
+  // move mouse to avoid hover effects
+  await page.mouse.move(0, 0)
+  await page.waitForTimeout(200)
+  await page.getByText('Anonymize All').click()
   // check for elements being hidden
   const comparisonTableOverviewHidden = await page.getByText('Cluster 1').textContent()
   expect(comparisonTableOverviewHidden).toMatch(/1anon[0-9]+anon[0-9]+/)
@@ -29,7 +33,7 @@ test('Test comparison table and comparsion view', async ({ page }) => {
   expect(comparisonTableOverviewFiltered).toMatch(/[0-9]+anon[0-9]+Lazy Bobcat/)
   expect(comparisonTableOverviewFiltered).toMatch(/[0-9]+Lazy Bobcatanon[0-9]+/)
 
-  await page.getByText('Hide All').click()
+  await page.getByText('Anonymize All').click()
   await page.getByText('Show All').click()
   await page.getByPlaceholder('Filter/Unhide Comparisons').fill('Lazy')
   // go to comparison page
@@ -45,11 +49,11 @@ test('Test comparison table and comparsion view', async ({ page }) => {
   const content2 = 'class Node'
 
   const bodyComparison = await page.locator('body').textContent()
-  expect(bodyComparison).toMatch(/Average Similarity: [0-9]{2}.[0-9]{2}%/)
-  expect(bodyComparison).toMatch(new RegExp(`Similarity ${submissionName1}: [0-9]{2}.[0-9]{2}%`))
-  expect(bodyComparison).toMatch(new RegExp(`Similarity ${submissionName2}: [0-9]{2}.[0-9]{2}%`))
+  expect(bodyComparison).toMatch(/Average Similarity:[0-9]{2}.[0-9]{2}%/)
+  expect(bodyComparison).toMatch(new RegExp(`Similarity ${submissionName1}:[0-9]{2}.[0-9]{2}%`))
+  expect(bodyComparison).toMatch(new RegExp(`Similarity ${submissionName2}:[0-9]{2}.[0-9]{2}%`))
 
-  expect(bodyComparison).toMatch(new RegExp(`${fileName1} - ${fileName2}: [0-9]+`))
+  expect(bodyComparison).toMatch(new RegExp(`${fileName1} - ${fileName2}:[0-9]+`))
   expect(bodyComparison).toContain(`${submissionName1}/${fileName1}`)
   expect(bodyComparison).toContain(`${submissionName2}/${fileName2}`)
 

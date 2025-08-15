@@ -7,7 +7,7 @@
         <version>${revision}</version>
     </parent>
     <artifactId>language-antlr-utils</artifactId>
-    <name>language-antlr-utils</name>
+    <name>JPlag: Utilities for ANTLR-based Language Modules</name>
     <description>Contains default implementations for anltr base language modules</description>
 
     <dependencies>

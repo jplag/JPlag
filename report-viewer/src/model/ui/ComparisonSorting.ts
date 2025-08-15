@@ -1,6 +1,6 @@
 import { faSortDown, faSortUp } from '@fortawesome/free-solid-svg-icons'
 import type { FontAwesomeIconProps } from '@fortawesome/vue-fontawesome'
-import { MetricType } from '@/model/MetricType'
+import { MetricJsonIdentifier } from '@/model/MetricJsonIdentifier'
 import type { ComparisonListElement } from '../ComparisonListElement'
 
 interface Direction {
@@ -9,9 +9,14 @@ interface Direction {
   comparator: (a: number, b: number) => number
 }
 
-export type ColumnId = 'averageSimilarity' | 'maximumSimilarity' | 'cluster'
+export type ColumnId =
+  | 'averageSimilarity'
+  | 'maximumSimilarity'
+  | 'cluster'
+  | 'longestMatch'
+  | 'maximumLength'
 
-interface Column {
+export interface ColumnSorting {
   id: ColumnId
   /**
    * Compile a list of values to sort by
@@ -38,42 +43,87 @@ export namespace Direction {
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Column {
-  export const averageSimilarity: Column = {
+  export const averageSimilarity: ColumnSorting = {
     id: 'averageSimilarity',
-    value: (c: ComparisonListElement) => [
-      c.similarities[MetricType.AVERAGE],
-      c.similarities[MetricType.MAXIMUM]
-    ]
+    value: (c: ComparisonListElement) =>
+      buildComparisonValues(c, MetricJsonIdentifier.AVERAGE_SIMILARITY)
   }
-  export const maximumSimilarity: Column = {
+  export const maximumSimilarity: ColumnSorting = {
     id: 'maximumSimilarity',
-    value: (c: ComparisonListElement) => [
-      c.similarities[MetricType.MAXIMUM],
-      c.similarities[MetricType.AVERAGE]
-    ]
+    value: (c: ComparisonListElement) =>
+      buildComparisonValues(c, MetricJsonIdentifier.MAXIMUM_SIMILARITY)
   }
-  export const cluster: Column = {
+  export const longestMatch: ColumnSorting = {
+    id: 'longestMatch',
+    value: (c: ComparisonListElement) =>
+      buildComparisonValues(c, MetricJsonIdentifier.LONGEST_MATCH)
+  }
+  export const maximumLength: ColumnSorting = {
+    id: 'maximumLength',
+    value: (c: ComparisonListElement) =>
+      buildComparisonValues(c, MetricJsonIdentifier.MAXIMUM_LENGTH)
+  }
+
+  export const cluster: ColumnSorting = {
     id: 'cluster',
     value: (c: ComparisonListElement) => {
       if (c.cluster) {
         return [
           c.cluster.averageSimilarity,
           c.cluster.index,
-          c.similarities[MetricType.AVERAGE],
-          c.similarities[MetricType.MAXIMUM]
+          ...buildComparisonValues(c, MetricJsonIdentifier.AVERAGE_SIMILARITY)
         ]
       }
-      return [-1, -1, c.similarities[MetricType.AVERAGE], c.similarities[MetricType.MAXIMUM]]
+      return [-1, -1, ...buildComparisonValues(c, MetricJsonIdentifier.AVERAGE_SIMILARITY)]
     }
   }
-  export const columns: Record<ColumnId, Column> = {
+  export const columns: Record<ColumnId, ColumnSorting> = {
     averageSimilarity,
     maximumSimilarity,
+    longestMatch,
+    maximumLength,
     cluster
+  }
+
+  const defaultMetricOrder = [
+    MetricJsonIdentifier.AVERAGE_SIMILARITY,
+    MetricJsonIdentifier.MAXIMUM_SIMILARITY,
+    MetricJsonIdentifier.LONGEST_MATCH,
+    MetricJsonIdentifier.MAXIMUM_LENGTH
+  ]
+
+  function buildComparisonValues(c: ComparisonListElement, metric: MetricJsonIdentifier): number[] {
+    const metrics = getSimilarityOrder(metric)
+    return metrics.map((m) => c.similarities[m])
+  }
+
+  function getSimilarityOrder(main: MetricJsonIdentifier) {
+    const list: MetricJsonIdentifier[] = [main]
+    for (const metric of defaultMetricOrder) {
+      if (metric !== main) {
+        list.push(metric)
+      }
+    }
+    return list
+  }
+
+  export function getSortingFromMetric(metric: MetricJsonIdentifier): ColumnSorting {
+    switch (metric) {
+      case MetricJsonIdentifier.AVERAGE_SIMILARITY:
+        return Column.averageSimilarity
+      case MetricJsonIdentifier.MAXIMUM_SIMILARITY:
+        return Column.maximumSimilarity
+      case MetricJsonIdentifier.LONGEST_MATCH:
+        return Column.longestMatch
+      case MetricJsonIdentifier.MAXIMUM_LENGTH:
+        return Column.maximumLength
+      default:
+        throw new Error(`Unknown metric: ${metric}`)
+    }
   }
 }
 
 export interface ComparisonTableSorting {
-  column: Column
+  column: ColumnSorting
   direction: Direction
 }

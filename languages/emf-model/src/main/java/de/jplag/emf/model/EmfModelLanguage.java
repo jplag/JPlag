@@ -22,8 +22,8 @@ import de.jplag.emf.model.parser.DynamicModelParser;
 public class EmfModelLanguage extends DynamicEmfLanguage {
 
     @Override
-    public String[] suffixes() {
-        return new String[] {};
+    public List<String> fileExtensions() {
+        return List.of();
     }
 
     @Override
@@ -37,7 +37,7 @@ public class EmfModelLanguage extends DynamicEmfLanguage {
     }
 
     @Override
-    public String viewFileSuffix() {
+    public String viewFileExtension() {
         return ".treeview";
     }
 
@@ -54,5 +54,10 @@ public class EmfModelLanguage extends DynamicEmfLanguage {
     @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
         return new DynamicModelParser().parse(files, normalize);
+    }
+
+    @Override
+    public boolean supportsMultiLanguage() {
+        return false;
     }
 }

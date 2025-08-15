@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import type { State, UIState } from './state'
-import { MetricType } from '@/model/MetricType'
+import { MetricJsonIdentifier } from '@/model/MetricJsonIdentifier'
 import type { SubmissionFile, File } from '@/model/File'
 import { FileSortingOptions } from '@/model/ui/FileSortingOptions'
 import { Column, Direction } from '@/model/ui/ComparisonSorting'
@@ -16,9 +16,6 @@ const store = defineStore('store', {
       anonymousIds: {},
       files: {},
       submissions: {},
-      // Mode that was used to load the files
-      localModeUsed: false,
-      zipModeUsed: false,
       fileIdToDisplayName: new Map(),
       uploadedFileName: ''
     },
@@ -29,11 +26,12 @@ const store = defineStore('store', {
         direction: Direction.descending
       },
       distributionChartConfig: {
-        metric: MetricType.AVERAGE,
+        metric: MetricJsonIdentifier.AVERAGE_SIMILARITY,
         xScale: 'linear',
         bucketCount: 10
       },
-      fileSorting: FileSortingOptions.ALPHABETICAL
+      fileSorting: FileSortingOptions.ALPHABETICAL,
+      comparisonTableSecondaryMetric: MetricJsonIdentifier.MAXIMUM_SIMILARITY
     }
   }),
   getters: {
@@ -131,8 +129,6 @@ const store = defineStore('store', {
         anonymousIds: {},
         files: {},
         submissions: {},
-        localModeUsed: false,
-        zipModeUsed: false,
         fileIdToDisplayName: new Map(),
         uploadedFileName: ''
       }
@@ -194,14 +190,6 @@ const store = defineStore('store', {
         submissionFile.fileName,
         submissionFile
       )
-    },
-    /**
-     * Sets the loading type
-     * @param payload Type used to input JPlag results
-     */
-    setLoadingType(loadingType: 'zip' | 'local') {
-      this.state.localModeUsed = loadingType == 'local'
-      this.state.zipModeUsed = loadingType == 'zip'
     },
     /**
      * Switches whether darkMode is being used for the UI
