@@ -35,8 +35,11 @@ jobs:
           # Download jextract for Linux x64
           wget https://download.java.net/java/early_access/jextract/22/6/openjdk-22-jextract+6-47_linux-x64_bin.tar.gz
           tar -xzf openjdk-22-jextract+6-47_linux-x64_bin.tar.gz
+
+          # Install to /usr/local/jextract
+          echo "Installing jextract-22 to /usr/local/jextract"
           sudo mv jextract-22 /usr/local/jextract
-          export PATH="/usr/local/jextract/bin:$PATH"
+          echo "/usr/local/jextract/bin" >> $GITHUB_PATH
       
       - name: Verify jextract availability
         run: |
@@ -88,11 +91,13 @@ jobs:
           fi
           
           # Remove quarantine attribute (macOS specific)
+          echo "Removing quarantine attribute for jextract-22 on macOS"
           sudo xattr -r -d com.apple.quarantine jextract-22
           
           # Install to /usr/local/jextract
+          echo "Installing jextract-22 to /usr/local/jextract"
           sudo mv jextract-22 /usr/local/jextract
-          export PATH="/usr/local/jextract/bin:$PATH"
+          echo "/usr/local/jextract/bin" >> $GITHUB_PATH
       
       - name: Verify jextract availability
         run: |
@@ -136,8 +141,10 @@ jobs:
           tar -xzf jextract-windows.tar.gz
           
           # Install to C:\jextract (Windows equivalent of /usr/local)
+          echo "Installing jextract-22 to C:\jextract"
           mkdir -p C:\jextract
           mv jextract-22\* C:\jextract\
+          echo "C:\jextract\bin" >> $env:GITHUB_PATH
       
       - name: Verify jextract availability
         run: |
