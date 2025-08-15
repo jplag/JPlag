@@ -13,11 +13,6 @@ import de.jplag.Token;
 @MetaInfServices(Language.class)
 public class PythonLanguage implements Language {
     @Override
-    public String[] suffixes() {
-        return new String[] {".py"};
-    }
-
-    @Override
     public String getName() {
         return "Python";
     }
@@ -35,5 +30,10 @@ public class PythonLanguage implements Language {
     @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
         return new PythonParserAdapter().parse(files);
+    }
+
+    @Override
+    public List<String> fileExtensions() {
+        return List.of(".py");
     }
 }
