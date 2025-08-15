@@ -28,7 +28,20 @@ jobs:
       - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential git
+          sudo apt-get install -y build-essential git wget
+      
+      - name: Install jextract
+        run: |
+          # Download jextract for Linux x64
+          wget https://download.java.net/java/early_access/jextract/22/6/openjdk-22-jextract+6-47_linux-x64_bin.tar.gz
+          tar -xzf openjdk-22-jextract+6-47_linux-x64_bin.tar.gz
+          sudo mv jextract-22 /usr/local/jextract
+          export PATH="/usr/local/jextract/bin:$PATH"
+      
+      - name: Verify jextract availability
+        run: |
+          jextract --version
+          echo "Jextract is available for native library generation"
       
       - name: Verify make installation
         run: |
@@ -63,6 +76,29 @@ jobs:
         run: |
           xcode-select --install || true
       
+      - name: Install jextract
+        run: |
+          # Download jextract for macOS (detect architecture)
+          if [[ $(uname -m) == "arm64" ]]; then
+            wget https://download.java.net/java/early_access/jextract/22/6/openjdk-22-jextract+6-47_macos-aarch64_bin.tar.gz
+            tar -xzf openjdk-22-jextract+6-47_macos-aarch64_bin.tar.gz
+          else
+            wget https://download.java.net/java/early_access/jextract/22/6/openjdk-22-jextract+6-47_macos-x64_bin.tar.gz
+            tar -xzf openjdk-22-jextract+6-47_macos-x64_bin.tar.gz
+          fi
+          
+          # Remove quarantine attribute (macOS specific)
+          sudo xattr -r -d com.apple.quarantine jextract-22
+          
+          # Install to /usr/local/jextract
+          sudo mv jextract-22 /usr/local/jextract
+          export PATH="/usr/local/jextract/bin:$PATH"
+      
+      - name: Verify jextract availability
+        run: |
+          jextract --version
+          echo "Jextract is available for native library generation"
+      
       - name: Verify make installation
         run: |
           make -v
@@ -92,6 +128,21 @@ jobs:
         with:
           java-version: 22
           distribution: 'temurin'
+      
+      - name: Install jextract
+        run: |
+          # Download jextract for Windows x64
+          curl -L -o jextract-windows.tar.gz https://download.java.net/java/early_access/jextract/22/6/openjdk-22-jextract+6-47_windows-x64_bin.tar.gz
+          tar -xzf jextract-windows.tar.gz
+          
+          # Install to C:\jextract (Windows equivalent of /usr/local)
+          mkdir -p C:\jextract
+          mv jextract-22\* C:\jextract\
+      
+      - name: Verify jextract availability
+        run: |
+          jextract --version
+          echo "Jextract is available for native library generation"
       
       - name: Verify make installation
         run: |
