@@ -24,13 +24,8 @@ jobs:
           concurrent_skipping: 'same_content_newer'
           skip_after_successful_duplicate: 'true'
 
-  build-native-libs:
-    needs: pre_job
-    if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
-    uses: ./.github/workflows/build-native-libraries.yml
-
   build_jar:
-    needs: [pre_job, build-native-libs]
+    needs: pre_job
     if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
     runs-on: ubuntu-latest
 
@@ -54,23 +49,10 @@ jobs:
           sudo mv jextract-22 /usr/local/jextract
           echo "/usr/local/jextract/bin" >> $GITHUB_PATH
 
-      - name: Download native libraries
-        uses: actions/download-artifact@v4
-        with:
-          name: native-libraries-linux
-          path: native-libraries
-
-      - name: Install native libraries
+      - name: Build native libraries
         run: |
-          # Copy tree-sitter core libraries
-          mkdir -p language-tree-sitter-utils/src/main/resources/native/linux/
-          cp native-libraries/language-tree-sitter-utils/src/main/resources/native/linux/* language-tree-sitter-utils/src/main/resources/native/linux/ || true
-          
-          # Copy tree-sitter-python libraries
-          mkdir -p languages/python/src/main/resources/native/linux/
-          cp native-libraries/languages/python/src/main/resources/native/linux/* languages/python/src/main/resources/native/linux/ || true
-          
-          echo "Native libraries installed successfully"
+          chmod +x scripts/build-native-libraries.sh
+          mvn -Pbuild-native-libraries generate-resources
       
       - uses: actions/setup-node@v4
         with:
