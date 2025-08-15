@@ -216,6 +216,48 @@ describe('MatchList', () => {
     })
     expect(wrapperWithoutBaseCode.text()).not.toContain('Base Code')
   })
+
+  it('Test emit on click', async () => {
+    const wrapper = mount(MatchList, {
+      props: {
+        matches: [
+          buildMatch(
+            'firstFile.java',
+            'secondFile.java',
+            { line: 1, column: 1, tokenListIndex: 1 },
+            { line: 2, column: 1, tokenListIndex: 2 },
+            { line: 1, column: 1, tokenListIndex: 1 },
+            { line: 2, column: 1, tokenListIndex: 2 }
+          ),
+          buildMatch(
+            'thirdFile.java',
+            'fourthFile.java',
+            { line: 1, column: 1, tokenListIndex: 1 },
+            { line: 2, column: 1, tokenListIndex: 2 },
+            { line: 1, column: 1, tokenListIndex: 1 },
+            { line: 2, column: 1, tokenListIndex: 2 }
+          )
+        ],
+        displayName1: 'Test1',
+        displayName2: 'Test2'
+      }
+    })
+
+    const bubbles = wrapper.findAllComponents(OptionComponent)
+    expect(bubbles.length).toBe(3) // 1 for "Matches:" and 2 for the matches
+    await bubbles[1].trigger('click')
+    expect(wrapper.emitted('matchSelected')).toBeDefined()
+    expect(wrapper.emitted('matchSelected')!.length).toBe(1)
+    const firstMatchClick = wrapper.emitted('matchSelected')![0][0] as Match
+    expect(firstMatchClick.firstFileName).toEqual('firstFile.java')
+    expect(firstMatchClick.secondFileName).toEqual('secondFile.java')
+
+    await bubbles[2].trigger('click')
+    expect(wrapper.emitted('matchSelected')!.length).toBe(2)
+    const secondMatchClick = wrapper.emitted('matchSelected')![1][0] as Match
+    expect(secondMatchClick.firstFileName).toEqual('thirdFile.java')
+    expect(secondMatchClick.secondFileName).toEqual('fourthFile.java')
+  })
 })
 
 function buildMatch(
