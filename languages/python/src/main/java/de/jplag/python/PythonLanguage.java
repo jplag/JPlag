@@ -36,4 +36,9 @@ public class PythonLanguage implements Language {
     public List<String> fileExtensions() {
         return List.of(".py");
     }
+
+    @Override
+    public boolean hasPriority() {
+        return true;
+    }
 }
