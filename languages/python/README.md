@@ -118,7 +118,7 @@ The module uses Tree-sitter's byte offsets for accurate token length calculation
 private int getTokenLength(PythonTokenType tokenType, Node node) {
     int length = tokenType.getLength();
     if (length == -1) {
-        // Dynamic length tokens calculated from Tree-sitter's precise byte offsets
+        // Dynamic length tokens calculated from Tree-sitter's byte offsets
         return node.getEndByte() - node.getStartByte();
     }
     return length;
