@@ -22,7 +22,7 @@ import de.jplag.options.JPlagOptions;
 
 class LanguageTest extends CliTest {
     private static final List<Class<? extends Language>> ignoredLanguages = List.of(MultiLanguage.class);
-    private static final int AVAILABLE_LANGUAGES = getAllLanguages().size();
+    private static final int AVAILABLE_LANGUAGES = 20;
 
     public static Collection<Language> getAllLanguages() {
         return LanguageLoader.getAllAvailableLanguages().values().stream().filter(language -> !ignoredLanguages.contains(language.getClass()))
@@ -44,8 +44,8 @@ class LanguageTest extends CliTest {
 
     @Test
     void testLoading() {
-        var languages = LanguageLoader.getAllAvailableLanguages();
-        assertEquals(AVAILABLE_LANGUAGES, languages.size(), "Loaded Languages: " + languages.keySet());
+        var languages = getAllLanguages();
+        assertEquals(AVAILABLE_LANGUAGES, languages.size(), "Loaded Languages: " + languages.stream().map(Language::getIdentifier).toList());
     }
 
     @ParameterizedTest
