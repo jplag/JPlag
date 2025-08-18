@@ -140,13 +140,10 @@ public class PythonTokenCollector implements TreeSitterVisitor {
      * @param length The length of the token
      */
     private void addToken(PythonTokenType tokenType, Node node, int length) {
-        int line;
-        int column;
-
         // We add 1 to the index as Tree-sitter uses 0-based indexing
-        line = (isEndToken(tokenType) ? node.getEndPoint() : node.getStartPoint()).row() + 1;
+        int line = (isEndToken(tokenType) ? node.getEndPoint() : node.getStartPoint()).row() + 1;
         // Use start position as column for visual alignment
-        column = node.getStartPoint().column() + 1;
+        int column = node.getStartPoint().column() + 1;
 
         tokens.add(new Token(tokenType, file, line, column, line, column + length, length));
     }
