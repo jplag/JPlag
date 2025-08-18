@@ -132,9 +132,7 @@ The module implements handling for end tokens to ensure proper nesting represent
 ```java
 private boolean isEndToken(PythonTokenType tokenType) {
     return switch (tokenType) {
-        case CLASS_END, METHOD_END, WHILE_END, FOR_END, TRY_END, 
-             EXCEPT_END, FINALLY_END, IF_END, DECORATOR_END, 
-             WITH_END, MATCH_END, EXCEPT_GROUP_END -> true;
+        case CLASS_END, METHOD_END, FOR_END -> true;
         default -> false;
     };
 }
