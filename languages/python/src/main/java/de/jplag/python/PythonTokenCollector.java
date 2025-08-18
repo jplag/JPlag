@@ -143,13 +143,10 @@ public class PythonTokenCollector implements TreeSitterVisitor {
         int line;
         int column;
 
-        // For end tokens, use the end position for line but start position for column (visual alignment)
-        if (isEndToken(tokenType)) {
-            line = getLineNumber(node.getEndByte());
-        } else {
-            line = getLineNumber(node.getStartByte());
-        }
-        column = getColumnNumber(node.getStartByte());
+        // We add 1 to the index as Tree-sitter uses 0-based indexing
+        line = (isEndToken(tokenType) ? node.getEndPoint() : node.getStartPoint()).row() + 1;
+        // Use start position as column for visual alignment
+        column = node.getStartPoint().column() + 1;
 
         tokens.add(new Token(tokenType, file, line, column, line, column + length, length));
     }
@@ -171,47 +168,6 @@ public class PythonTokenCollector implements TreeSitterVisitor {
             return node.getEndByte() - node.getStartByte();
         }
         return length;
-    }
-
-    /**
-     * Checks if the character at the given position is a newline.
-     * @param position The position in the source code
-     * @return True if the character is a newline
-     */
-    private boolean isNewline(int position) {
-        return code.charAt(position) == '\n';
-    }
-
-    /**
-     * Converts a byte offset to a line number (1-based). Counts newline characters from the beginning of the source code up
-     * to the specified offset.
-     * @param byteOffset The byte offset in the source code
-     * @return The line number
-     */
-    private int getLineNumber(int byteOffset) {
-        int line = 1;
-        for (int i = 0; i < byteOffset && i < code.length(); i++) {
-            if (isNewline(i)) {
-                line++;
-            }
-        }
-        return line;
-    }
-
-    /**
-     * Converts a byte offset to a column number (1-based). Finds the last newline before the specified offset and
-     * calculates the column position relative to that line.
-     * @param byteOffset The byte offset in the source code
-     * @return The 1-based column number
-     */
-    private int getColumnNumber(int byteOffset) {
-        int lastNewlinePosition = -1;
-        for (int i = 0; i < byteOffset && i < code.length(); i++) {
-            if (isNewline(i)) {
-                lastNewlinePosition = i;
-            }
-        }
-        return byteOffset - lastNewlinePosition;
     }
 
     /**
