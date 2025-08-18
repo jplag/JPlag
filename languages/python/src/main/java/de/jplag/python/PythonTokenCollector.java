@@ -28,7 +28,6 @@ import io.github.treesitter.jtreesitter.Node;
 public class PythonTokenCollector implements TreeSitterVisitor {
     private final List<Token> tokens;
     private final File file;
-    private final String code;
 
     private final Map<String, Consumer<Node>> enterHandlers = new HashMap<>();
     private final Map<String, Consumer<Node>> exitHandlers = new HashMap<>();
@@ -36,12 +35,10 @@ public class PythonTokenCollector implements TreeSitterVisitor {
     /**
      * Creates a new Python token collector for the specified file.
      * @param file The source file being parsed
-     * @param code The source code content as a string
      */
-    public PythonTokenCollector(File file, String code) {
+    public PythonTokenCollector(File file) {
         tokens = new ArrayList<>();
         this.file = file;
-        this.code = code;
         initializeHandlers();
     }
 

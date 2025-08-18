@@ -42,7 +42,7 @@ public final class PythonTokenSequencePrinter {
             try (Parser parser = new Parser(language)) {
                 Tree tree = parser.parse(pythonCode, InputEncoding.UTF_8).orElseThrow(() -> new RuntimeException("Failed to parse " + fileName));
 
-                PythonTokenCollector collector = new PythonTokenCollector(testFile, pythonCode);
+                PythonTokenCollector collector = new PythonTokenCollector(testFile);
                 TreeSitterTraversal.traverse(tree.getRootNode(), collector);
                 List<Token> tokens = collector.getTokens();
 
