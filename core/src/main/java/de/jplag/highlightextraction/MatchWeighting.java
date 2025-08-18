@@ -34,8 +34,6 @@ public class MatchWeighting {
             for (int i = start; i < start + len; i++) {
                 matchTokens.add(comparisonToken.get(i).toString());
             }
-            //List<String> matchtoken = comparisonToken.subList(match.getStartOfFirst(), match.endOfFirst()); //todo -1 weg !!!!!!!!!!!!!!!!
-
             weightMatch(match, matchTokens);
         }
     }
