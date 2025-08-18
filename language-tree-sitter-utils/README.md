@@ -173,43 +173,13 @@ public class YourLanguageTokenCollector implements TreeSitterVisitor {
         }
     }
 
-    private void addToken(YourLanguageTokenType tokenType, Node node) {
-        int length = getTokenLength(tokenType, node);
-        int startLine = getLineNumber(node.getStartByte());
-        int startColumn = getColumnNumber(node.getStartByte());
-        int endLine = getLineNumber(node.getEndByte());
+    private void addToken(YourLanguageTokenType tokenType, Node node, int length) {
+        int startLine = node.getStartPoint().row() + 1;
+        int startColumn = node.getStartPoint.column() + 1;
+        int endLine = node.getEndPoint().row() + 1;
         int endColumn = startColumn + length;
         
         tokens.add(new Token(tokenType, file, startLine, startColumn, endLine, endColumn, length));
-    }
-
-    private int getTokenLength(YourLanguageTokenType tokenType, Node node) {
-        int length = tokenType.getLength();
-        if (length == -1) {
-            // Dynamic length tokens need to be calculated from the node span
-            return node.getEndByte() - node.getStartByte();
-        }
-        return length;
-    }
-
-    private int getLineNumber(int byteOffset) {
-        int line = 1;
-        for (int i = 0; i < byteOffset && i < code.length(); i++) {
-            if (code.charAt(i) == '\n') {
-                line++;
-            }
-        }
-        return line;
-    }
-
-    private int getColumnNumber(int byteOffset) {
-        int lastNewlinePosition = -1;
-        for (int i = 0; i < byteOffset && i < code.length(); i++) {
-            if (code.charAt(i) == '\n') {
-                lastNewlinePosition = i;
-            }
-        }
-        return byteOffset - lastNewlinePosition;
     }
 
     public List<Token> getTokens() {

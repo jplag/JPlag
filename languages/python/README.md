@@ -78,38 +78,6 @@ enterHandlers.put("function_definition", node -> addToken(PythonTokenType.METHOD
 enterHandlers.put("if_statement", node -> addToken(PythonTokenType.IF_BEGIN, node));
 ```
 
-### Position Calculation
-
-Tree-sitter provides byte offsets, but JPlag needs line and column positions. The module implements custom position calculation for this.
-
-#### Line Number Calculation
-
-```java
-private int getLineNumber(int byteOffset) {
-    int line = 1;
-    for (int i = 0; i < byteOffset && i < code.length(); i++) {
-        if (isNewline(i)) {
-            line++;
-        }
-    }
-    return line;
-}
-```
-
-#### Column Number Calculation
-
-```java
-private int getColumnNumber(int byteOffset) {
-    int lastNewlinePosition = -1;
-    for (int i = 0; i < byteOffset && i < code.length(); i++) {
-        if (isNewline(i)) {
-            lastNewlinePosition = i;
-        }
-    }
-    return byteOffset - lastNewlinePosition;
-}
-```
-
 ### Token Length Strategy
 
 The module uses Tree-sitter's byte offsets for accurate token length calculation:
@@ -122,19 +90,6 @@ private int getTokenLength(PythonTokenType tokenType, Node node) {
         return node.getEndByte() - node.getStartByte();
     }
     return length;
-}
-```
-
-### End Token Positioning
-
-The module implements handling for end tokens to ensure proper nesting representation:
-
-```java
-private boolean isEndToken(PythonTokenType tokenType) {
-    return switch (tokenType) {
-        case CLASS_END, METHOD_END, FOR_END -> true;
-        default -> false;
-    };
 }
 ```
 
