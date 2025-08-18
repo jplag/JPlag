@@ -21,6 +21,7 @@ import static de.jplag.python.PythonTokenType.IF_END;
 import static de.jplag.python.PythonTokenType.IMPORT;
 import static de.jplag.python.PythonTokenType.LAMBDA;
 import static de.jplag.python.PythonTokenType.LIST;
+import static de.jplag.python.PythonTokenType.LIST_COMPREHENSION;
 import static de.jplag.python.PythonTokenType.MATCH_BEGIN;
 import static de.jplag.python.PythonTokenType.MATCH_END;
 import static de.jplag.python.PythonTokenType.METHOD_BEGIN;
@@ -29,6 +30,7 @@ import static de.jplag.python.PythonTokenType.NAMED_EXPR;
 import static de.jplag.python.PythonTokenType.PASS;
 import static de.jplag.python.PythonTokenType.RAISE;
 import static de.jplag.python.PythonTokenType.RETURN;
+import static de.jplag.python.PythonTokenType.SET_COMPREHENSION;
 import static de.jplag.python.PythonTokenType.TRY_BEGIN;
 import static de.jplag.python.PythonTokenType.TRY_END;
 import static de.jplag.python.PythonTokenType.TYPE_ALIAS;
@@ -60,8 +62,8 @@ public class PythonLanguageTest extends LanguageModuleTest {
                 TRY_BEGIN, APPLY, RETURN, EXCEPT_BEGIN, RETURN, EXCEPT_END, TRY_END, METHOD_END, METHOD_BEGIN, ASSIGN, APPLY, ASSIGN, APPLY, ASSIGN,
                 APPLY, ASSIGN, LIST, ASSIGN, APPLY, IF_BEGIN, APPLY, APPLY, IF_END, FOR_BEGIN, APPLY, IF_BEGIN, CONTINUE, IF_END, IF_BEGIN, BREAK,
                 IF_END, APPLY, FOR_END, IF_BEGIN, NAMED_EXPR, APPLY, APPLY, IF_END, ASSIGN, LIST, IF_BEGIN, NAMED_EXPR, APPLY, APPLY, IF_BEGIN, APPLY,
-                IF_END, IF_END, TRY_BEGIN, ASSIGN, APPLY, APPLY, EXCEPT_BEGIN, APPLY, EXCEPT_END, TRY_END, ASSIGN, LAMBDA, LAMBDA, ASSIGN, APPLY,
-                RETURN, APPLY, METHOD_END, IF_BEGIN, ASSIGN, APPLY, APPLY, IF_END);
+                IF_END, IF_END, TRY_BEGIN, ASSIGN, APPLY, APPLY, EXCEPT_BEGIN, APPLY, EXCEPT_END, TRY_END, ASSIGN, LAMBDA, LAMBDA, ASSIGN,
+                LIST_COMPREHENSION, APPLY, RETURN, APPLY, METHOD_END, IF_BEGIN, ASSIGN, APPLY, APPLY, IF_END);
 
         collector.testFile("AsyncTest.py").testSourceCoverage().testTokenSequence(METHOD_BEGIN, ASYNC, AWAIT, AWAIT, APPLY, YIELD, YIELD, METHOD_END,
                 METHOD_BEGIN, ASYNC, FOR_BEGIN, ASYNC, APPLY, AWAIT, AWAIT, APPLY, FOR_END, METHOD_END, METHOD_BEGIN, ASYNC, WITH_BEGIN, ASYNC, APPLY,
@@ -76,9 +78,9 @@ public class PythonLanguageTest extends LanguageModuleTest {
         collector.testFile("ExpressionsTest.py").testSourceCoverage().testTokenSequence(METHOD_BEGIN, ASSIGN, LAMBDA, LAMBDA, ASSIGN, LAMBDA, LAMBDA,
                 ASSIGN, LAMBDA, LAMBDA, ASSIGN, LIST, ASSIGN, APPLY, APPLY, LAMBDA, LAMBDA, ASSIGN, APPLY, APPLY, LAMBDA, LAMBDA, RETURN, METHOD_END,
                 METHOD_BEGIN, ASSIGN, LIST, IF_BEGIN, NAMED_EXPR, APPLY, APPLY, IF_END, WHILE_BEGIN, NAMED_EXPR, APPLY, APPLY, IF_BEGIN, APPLY, BREAK,
-                IF_END, WHILE_END, ASSIGN, APPLY, NAMED_EXPR, IF_BEGIN, NAMED_EXPR, APPLY, RETURN, IF_END, METHOD_END, METHOD_BEGIN, ASSIGN, LAMBDA,
-                LAMBDA, IF_BEGIN, NAMED_EXPR, APPLY, LIST, ASSIGN, LAMBDA, LAMBDA, APPLY, RETURN, APPLY, IF_END, METHOD_END, IF_BEGIN, APPLY, APPLY,
-                APPLY, IF_END);
+                IF_END, WHILE_END, ASSIGN, LIST_COMPREHENSION, APPLY, NAMED_EXPR, IF_BEGIN, NAMED_EXPR, APPLY, RETURN, IF_END, METHOD_END,
+                METHOD_BEGIN, ASSIGN, LAMBDA, LAMBDA, LIST_COMPREHENSION, IF_BEGIN, NAMED_EXPR, APPLY, LIST, ASSIGN, LAMBDA, LAMBDA, APPLY, RETURN,
+                APPLY, IF_END, METHOD_END, IF_BEGIN, APPLY, APPLY, APPLY, IF_END);
 
         collector.testFile("ControlFlowTest.py").testSourceCoverage().testTokenSequence(METHOD_BEGIN, ASSIGN, WHILE_BEGIN, ASSIGN, IF_BEGIN, BREAK,
                 IF_END, WHILE_END, ASSIGN, LIST, ASSIGN, WHILE_BEGIN, ASSIGN, IF_BEGIN, CONTINUE, IF_END, APPLY, IF_BEGIN, APPLY, BREAK, IF_END,
@@ -99,6 +101,12 @@ public class PythonLanguageTest extends LanguageModuleTest {
         collector.testFile("TypeAliasTest.py").testSourceCoverage().testTokenSequence(IMPORT, TYPE_ALIAS, TYPE_ALIAS, METHOD_BEGIN, ASSIGN, LIST,
                 ASSIGN, METHOD_BEGIN, FOR_BEGIN, APPLY, FOR_END, METHOD_END, APPLY, RETURN, METHOD_END, METHOD_BEGIN, TYPE_ALIAS, TYPE_ALIAS, LIST,
                 ASSIGN, LIST, LIST, LIST, ASSIGN, LAMBDA, LAMBDA, APPLY, RETURN, METHOD_END, IF_BEGIN, APPLY, APPLY, IF_END);
+
+        collector.testFile("ComprehensionsTest.py").testSourceCoverage().testTokenSequence(METHOD_BEGIN, ASSIGN, LIST, ASSIGN, LIST_COMPREHENSION,
+                RETURN, METHOD_END, METHOD_BEGIN, ASSIGN, LIST, ASSIGN, LIST_COMPREHENSION, RETURN, METHOD_END, METHOD_BEGIN, ASSIGN, LIST, LIST,
+                LIST, LIST, ASSIGN, LIST_COMPREHENSION, RETURN, METHOD_END, METHOD_BEGIN, ASSIGN, LIST, ASSIGN, SET_COMPREHENSION, RETURN, METHOD_END,
+                METHOD_BEGIN, ASSIGN, LIST, ASSIGN, SET_COMPREHENSION, RETURN, METHOD_END, METHOD_BEGIN, ASSIGN, LIST, ASSIGN, LIST, ASSIGN, APPLY,
+                RETURN, METHOD_END, METHOD_BEGIN, ASSIGN, LIST, ASSIGN, LIST, ASSIGN, APPLY, RETURN, METHOD_END);
     }
 
     @Override

@@ -43,6 +43,9 @@ public enum PythonTokenType implements TokenType {
     LIST("LIST", -1), // list literal (dynamic length)
     SET("SET", -1), // set literal (dynamic length)
     DICTIONARY("DICTIONARY", -1), // dict literal (dynamic length)
+    LIST_COMPREHENSION("LIST_COMPR", -1), // list comprehension (dynamic length)
+    SET_COMPREHENSION("SET_COMPR", -1), // set comprehension (dynamic length)
+    DICT_COMPREHENSION("DICT_COMPR", -1), // dict comprehension (dynamic length)
 
     // Python 3.8
     NAMED_EXPR("NAMED", 2), // := (PEP 572)
