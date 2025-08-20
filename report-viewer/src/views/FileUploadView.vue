@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { onErrorCaptured, ref, type Ref } from 'vue'
+import { onErrorCaptured, onMounted, ref, type Ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { router } from '@/router'
 import { store } from '@/stores/store'
@@ -197,6 +197,17 @@ function getErrorText() {
 
   return errors.value.map((e) => `${getSourceText(e.source)}: ${e.error.message}`).join('\n')
 }
+
+onMounted(() => {
+  // Handle .jplag files sent from a parent window and open them automatically
+  window.addEventListener('message', async (event) => {
+    const { type, file, name } = event.data ?? {}
+    if (type === 'upload-jplag-report' && file) {
+      const zipFile = new File([file], name ?? 'report.jplag')
+      handleFile(zipFile)
+    }
+  })
+})
 
 onErrorCaptured((error) => {
   registerError(error, 'unknown')
