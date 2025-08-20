@@ -53,11 +53,12 @@ public final class CLI {
      */
     public void executeCli() throws ExitException, IOException {
         logger.debug("Your version of JPlag is {}", JPlag.JPLAG_VERSION);
-        if (!this.inputHandler.getCliOptions().advanced.skipVersionCheck) {
-            JPlagVersionChecker.printVersionNotification();
-        }
 
         if (!this.inputHandler.parse()) {
+            if (!this.inputHandler.getCliOptions().advanced.skipVersionCheck) {
+                JPlagVersionChecker.printVersionNotification();
+            }
+
             CollectedLogger.setLogLevel(this.inputHandler.getCliOptions().advanced.logLevel);
             ProgressBarLogger.setProgressBarProvider(new CliProgressBarProvider());
             if (this.inputHandler.getCliOptions().advanced.submissionCharsetOverride != null) {
