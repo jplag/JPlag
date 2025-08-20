@@ -86,7 +86,7 @@
         <emf.ecore.xmi.version>2.39.0</emf.ecore.xmi.version>
         <eclipse.core.version>3.22.200</eclipse.core.version>
         <emfatic.version>1.1.0</emfatic.version>
-        <mockito.version>5.18.0</mockito.version>
+        <mockito.version>5.19.0</mockito.version>
         <!-- ensure that this variable is initialized, even if it is empty -->
         <argLine/>
 
