@@ -8,11 +8,13 @@ import de.jplag.JPlagComparison;
 import de.jplag.Match;
 
 /**
- * Calculates the frequency dependent similarity for the comparisons according to the frequency similarity weighting strategy.
+ * Calculates the frequency dependent similarity for the comparisons according to the frequency similarity weighting
+ * strategy.
  */
 public class FrequencySimilarity {
     List<JPlagComparison> comparisons;
     SimilarityStrategy strategy;
+
     /**
      * Constructor defines comparisons and strategy for the similarity calculation
      */
@@ -20,6 +22,7 @@ public class FrequencySimilarity {
         this.comparisons = comparisons;
         this.strategy = strategy;
     }
+
     /**
      * Sorts the comparisons, according to the frequency
      */
@@ -28,6 +31,7 @@ public class FrequencySimilarity {
         return this.comparisons = comparisons.stream()
                 .sorted(Comparator.comparingDouble((JPlagComparison c) -> frequencySimilarity(c, frequencyWeight)).reversed()).toList();
     }
+
     /**
      * Calculates the similarity score for a comparison
      */
@@ -46,8 +50,10 @@ public class FrequencySimilarity {
         return (matchedFrequencyTokensOfFirst + matchedFrequencyTokensOfSecond) / (double) divisor;
 
     }
+
     /**
-     * Changes the considered match length according to the frequency weight, depending on the frequency similarity strategy.
+     * Changes the considered match length according to the frequency weight, depending on the frequency similarity
+     * strategy.
      */
     public int getWeightedMatchLength(JPlagComparison comparison, double weight, boolean first, SimilarityStrategy strategy) {
         double minWeight;

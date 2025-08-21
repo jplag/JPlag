@@ -6,12 +6,14 @@ import java.util.Map;
 
 import de.jplag.Match;
 import de.jplag.TokenType;
+
 /**
  * Calculates frequency values and writes them into the matches.
  */
 public class MatchWeighting {
     private final FrequencyStrategy strategy;
     private final Map<List<TokenType>, Integer> frequencyMap;
+
     /**
      * Constructor defining the used frequency strategy and frequency map.
      */
@@ -19,6 +21,7 @@ public class MatchWeighting {
         this.strategy = strategy;
         this.frequencyMap = frequencyMap;
     }
+
     /**
      * Calculates frequency value for a match.
      */
@@ -26,6 +29,7 @@ public class MatchWeighting {
         double matchWeight = strategy.calculateWeight(match, frequencyMap, matchToken);
         match.setFrequencyWeight(matchWeight);
     }
+
     /**
      * Calculates frequency value for all matches.
      */

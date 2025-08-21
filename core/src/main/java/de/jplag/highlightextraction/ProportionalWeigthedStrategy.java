@@ -1,4 +1,5 @@
 package de.jplag.highlightextraction;
+
 /**
  * Strategy that considers rare matches stronger and frequent ones less.
  */

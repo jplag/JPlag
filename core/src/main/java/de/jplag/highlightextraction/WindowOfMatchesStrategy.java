@@ -57,7 +57,11 @@ public class WindowOfMatchesStrategy implements FrequencyStrategy {
         for (List<TokenType> key : keys) {
             frequencies.add(frequencyMap.get(key));
         }
-        return frequencies.stream().mapToInt(Integer::intValue).average().orElse(0.0);
+        try {
+            return frequencies.stream().mapToInt(Integer::intValue).average().orElse(0.0);
+        } catch (NullPointerException e) {
+            return 0.0;
+        }
     }
 
 }

@@ -1,6 +1,5 @@
 package de.jplag.highlightextraction.evaluation;
 
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.*;
@@ -8,26 +7,23 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import de.jplag.*;
-import de.jplag.highlightextraction.*;
 import org.junit.jupiter.api.*;
 
+import de.jplag.*;
 import de.jplag.comparison.LongestCommonSubsequenceSearch;
+import de.jplag.highlightextraction.*;
 import de.jplag.options.JPlagOptions;
 
 /**
- * class for frequency Determination evaluate creates cdv Data for evaluation.
+ * Class for frequency Determination evaluate creates csv Data for evaluation.
  */
 public class FrequencyDeterminationEvaluation extends TestBase {
     private static LongestCommonSubsequenceSearch strategy;
     private static SubmissionSet submissionSet;
     private static JPlagResult result;
 
-    private static final String[] datasetPaths = {
-            "FrequencyDetermination\\00000019\\Java",
-            "FrequencyDetermination\\00000056\\Java",
-            "FrequencyDetermination\\Sheet3TaskA"
-    };
+    private static final String[] datasetPaths = {"FrequencyDetermination\\00000019\\Java", "FrequencyDetermination\\00000056\\Java",
+            "FrequencyDetermination\\Sheet3TaskA"};
 
     private static Path baseOutputDir;
 
@@ -65,24 +61,22 @@ public class FrequencyDeterminationEvaluation extends TestBase {
         fd.buildFrequencyMap(result.getAllComparisons());
         System.out.println(fd);
 
-        Map<List<TokenType>,Integer> tokenFrequencyMap = fd.getMatchFrequencyMap();
+        Map<List<TokenType>, Integer> tokenFrequencyMap = fd.getMatchFrequencyMap();
         printTestResult(tokenFrequencyMap);
         saveCsv(tokenFrequencyMap, datasetPath, testName);
     }
 
-    void printTestResult(Map<List<TokenType>,Integer> tokenFrequencyMap) {
+    void printTestResult(Map<List<TokenType>, Integer> tokenFrequencyMap) {
         System.out.println("\nToken-Frequency-analysis:");
-        for (Map.Entry<List<TokenType>,Integer> myEntry : tokenFrequencyMap.entrySet()) {
+        for (Map.Entry<List<TokenType>, Integer> myEntry : tokenFrequencyMap.entrySet()) {
             List<TokenType> key = myEntry.getKey();
             int count = myEntry.getValue();
             String id = myEntry.getValue().toString();
-            System.out.printf("Tokens: [%.30s...] | Frequency: %2d | %s%n | %s \n",
-                    key, count, "*".repeat(Math.min(count, 50)), id);
+            System.out.printf("Tokens: [%.30s...] | Frequency: %2d | %s%n | %s \n", key, count, "*".repeat(Math.min(count, 50)), id);
         }
     }
 
-
-    private void saveCsv(Map<List<TokenType>,Integer> tokenFrequencyMap, String datasetPath, String testName) throws IOException {
+    private void saveCsv(Map<List<TokenType>, Integer> tokenFrequencyMap, String datasetPath, String testName) throws IOException {
         String datasetName = Paths.get(datasetPath).getName(1).toString();
         Path testOutputDir = baseOutputDir.resolve(datasetName).resolve(testName);
         Files.createDirectories(testOutputDir);
@@ -93,8 +87,7 @@ public class FrequencyDeterminationEvaluation extends TestBase {
         ArrayList<List<TokenType>> keys = new ArrayList<>(tokenFrequencyMap.keySet());
         keys.sort(Comparator.comparingInt(k -> tokenFrequencyMap.get(k)));
 
-        try (FileWriter csvWriter = new FileWriter(csvFile.toFile());
-             FileWriter mapWriter = new FileWriter(mapFile.toFile())) {
+        try (FileWriter csvWriter = new FileWriter(csvFile.toFile()); FileWriter mapWriter = new FileWriter(mapFile.toFile())) {
 
             csvWriter.write("ID,Haeufigkeit\n");
             mapWriter.write("ID,Token\n");
@@ -103,8 +96,7 @@ public class FrequencyDeterminationEvaluation extends TestBase {
             for (List<TokenType> key : keys) {
                 int count = tokenFrequencyMap.get(key);
                 csvWriter.write(String.format("%d,%d\n", id, count));
-                String keyString = key.stream()
-                        .map(TokenType::toString)   // TokenType zu String
+                String keyString = key.stream().map(TokenType::toString)   // TokenType zu String
                         .collect(Collectors.joining(","));
                 keyString = keyString.replace("\"", "\"\"");
                 mapWriter.write(String.format("%d,\"%s\"\n", id, keyString));

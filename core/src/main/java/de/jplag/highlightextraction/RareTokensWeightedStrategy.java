@@ -1,4 +1,5 @@
 package de.jplag.highlightextraction;
+
 /**
  * Strategy that considers rare matches stronger using a linear weighting function.
  */
