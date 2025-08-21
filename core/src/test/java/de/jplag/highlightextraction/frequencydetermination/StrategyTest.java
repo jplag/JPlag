@@ -75,7 +75,7 @@ class StrategyTest extends TestBase {
         matchOccursTwiceInSameComparison = testComparison.matches().get(1);
         matchOccursTwiceAcrossComparisons = testComparison.matches().get(2);
         matchOccursThreeTimesAcrossComparisons = testComparison.matches().get(3);
-        matchShort = new Match(testComparison.matches().get(0).startOfFirst(), testComparison.matches().get(0).startOfSecond(), 12, 12);
+        matchShort = new Match(testComparison.matches().get(0).getStartOfFirst(), testComparison.matches().get(0).getStartOfSecond(), 12, 12);
         ignoredMatches = testComparison.ignoredMatches();
     }
 
@@ -191,7 +191,7 @@ class StrategyTest extends TestBase {
      * @return A list of TokenTypes representing the matched sequence.
      */
     private static List<TokenType> getMatchTokenTypes(Match match) {
-        List<Token> tokens = testSubmission.getTokenList().subList(match.startOfFirst(), match.startOfFirst() + match.lengthOfFirst());
+        List<Token> tokens = testSubmission.getTokenList().subList(match.getStartOfFirst(), match.getStartOfFirst() + match.getLengthOfFirst());
         List<TokenType> tokenStrings = new ArrayList<>();
         for (Token token : tokens) {
             tokenStrings.add(token.getType());
@@ -264,7 +264,8 @@ class StrategyTest extends TestBase {
         int wantedMatchLength = 5;
         SubMatchesStrategy strategy = new SubMatchesStrategy();
         Map<List<TokenType>, Integer> frequencyMap = new HashMap<>();
-        List<Token> matchToken = testSubmission.getTokenList().subList(matchShort.startOfFirst(), matchShort.startOfFirst() + wantedMatchLength);
+        List<Token> matchToken = testSubmission.getTokenList().subList(matchShort.getStartOfFirst(),
+                matchShort.getStartOfFirst() + wantedMatchLength);
         List<TokenType> matchTokenTypes = matchToken.stream().map(Token::getType).toList();
         int minSubSequenceSize = 3;
         Consumer<List<TokenType>> addSequenceKey = seq -> frequencyMap.putIfAbsent(seq, 0);

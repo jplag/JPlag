@@ -8,14 +8,13 @@ import java.util.function.Consumer;
 import de.jplag.Match;
 import de.jplag.TokenType;
 
-import static de.jplag.highlightextraction.StrategyMethods.generateAllSubKeys;
-
 /**
  * Strategy that counts all occurrences of complete matches and contiguous submatches from the comparisons, if the
  * matches and submatches are longer than minSubSequenceLength.
  */
 public class SubMatchesStrategy implements FrequencyStrategy {
     int minSubSequenceLength;
+
     /**
      * Creates submatches to build the keys and adds their frequencies to the frequencyMap.
      * @param matchTokenTypes List of matchTokenTypes representing the match.
@@ -26,21 +25,21 @@ public class SubMatchesStrategy implements FrequencyStrategy {
     @Override
     public void processMatchTokenTypes(List<TokenType> matchTokenTypes, Consumer<List<TokenType>> addSequenceKey,
             Consumer<List<TokenType>> addSequence, int minSubSequenceSize) {
-        this.minSubSequenceLength = minSubSequenceLength;
+        this.minSubSequenceLength = minSubSequenceSize;
         List<List<TokenType>> subSequences = SubSequenceUtil.getSubSequences(matchTokenTypes, minSubSequenceSize);
         for (List<TokenType> subSequence : subSequences) {
             addSequence.accept(subSequence);
         }
 
     }
+
     @Override
-    public double calculateWeight(Match match, Map<String, List<String>> frequencyMap, List<String> matchToken) {
-        List<String> keys = generateAllSubKeys(matchToken, minSubSequenceLength);
-        System.out.println("Generated keys: " + keys);
+    public double calculateWeight(Match match, Map<List<TokenType>, Integer> frequencyMap, List<TokenType> matchToken) {
+        List<List<TokenType>> keys = SubSequenceUtil.getSubSequences(matchToken, minSubSequenceLength);
+        SubSequenceUtil.getSubSequences(matchToken, minSubSequenceLength);
         List<Integer> frequencies = new ArrayList<>();
-        for (String key : keys) {
-            int freq = frequencyMap.getOrDefault(key, List.of()).size();
-            System.out.println("Key: '" + key + "', freq: " + freq);
+        for (List<TokenType> key : keys) {
+            int freq = frequencyMap.getOrDefault(key, 0);
             frequencies.add(freq);
         }
 

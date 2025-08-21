@@ -15,7 +15,8 @@ import de.jplag.TokenType;
  * contiguous windows of the matches from the comparisons.
  */
 public class WindowOfMatchesStrategy implements FrequencyStrategy {
-int minSubSequenceLength;
+    int minSubSequenceLength;
+
     /**
      * Adds all submatches with window length of the matches to a map using the token sequence as the key.
      * @param matchTokenTypes Token list of the match.
@@ -50,13 +51,12 @@ int minSubSequenceLength;
     }
 
     @Override
-    public double calculateWeight(Match match, Map<String, List<String>> frequencyMap, List<String> matchToken) {
-        List<String> keys = getWindowSequences(matchToken, minSubSequenceLength);
+    public double calculateWeight(Match match, Map<List<TokenType>, Integer> frequencyMap, List<TokenType> matchToken) {
+        List<List<TokenType>> keys = getWindowSequences(matchToken, minSubSequenceLength);
         List<Integer> frequencies = new ArrayList<>();
-        for (String key : keys) {
-            frequencies.add(frequencyMap.get(key).size());
+        for (List<TokenType> key : keys) {
+            frequencies.add(frequencyMap.get(key));
         }
-
         return frequencies.stream().mapToInt(Integer::intValue).average().orElse(0.0);
     }
 

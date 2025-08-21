@@ -1,26 +1,25 @@
 package de.jplag.highlightextraction;
 
 /**
- * This class 
+ * This class
  */
 public enum WeightingStrategies {
+    PROPORTIONAL(new ProportionalWeigthedStrategy()),
+    LINEAR(new RareTokensWeightedStrategy()),
+    QUADRATIC(new QuadraticWeightedStrategy()),
+    SIGMOID(new SigmoidWeightingStrategy());
 
-        PROPORTIONAL(new ProportionalWeigthedStrategy()),
-        LINEAR(new RareTokensWeightedStrategy()),
-        QUADRATIC(new QuadraticWeightedStrategy()),
-        SIGMOID(new SigmoidWeightingStrategy());
-
-        private final SimilarityStrategy strategy;
+    private final SimilarityStrategy strategy;
 
     WeightingStrategies(SimilarityStrategy strategy) {
-            this.strategy = strategy;
-        }
+        this.strategy = strategy;
+    }
 
-        /**
-         * @return the frequency strategy of the enum constant.
-         */
-        public SimilarityStrategy getStrategy() {
-            return strategy;
-        }
+    /**
+     * @return the frequency strategy of the enum constant.
+     */
+    public SimilarityStrategy getStrategy() {
+        return strategy;
+    }
 
 }

@@ -39,4 +39,5 @@ public final class SubSequenceUtil {
 
         return subSequences;
     }
+
 }

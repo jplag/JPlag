@@ -5,34 +5,40 @@ import java.util.List;
 import java.util.Map;
 
 import de.jplag.Match;
-
+import de.jplag.TokenType;
+/**
+ * Calculates frequency values and writes them into the matches.
+ */
 public class MatchWeighting {
     private final FrequencyStrategy strategy;
-    private final Map<String, List<String>> frequencyMap;
-
-    public MatchWeighting(FrequencyStrategy strategy, Map<String, List<String>> frequencyMap) {
+    private final Map<List<TokenType>, Integer> frequencyMap;
+    /**
+     * Constructor defining the used frequency strategy and frequency map.
+     */
+    public MatchWeighting(FrequencyStrategy strategy, Map<List<TokenType>, Integer> frequencyMap) {
         this.strategy = strategy;
         this.frequencyMap = frequencyMap;
     }
-
-    public void weightMatch(Match match, List<String> matchToken) {
+    /**
+     * Calculates frequency value for a match.
+     */
+    public void weightMatch(Match match, List<TokenType> matchToken) {
         double matchWeight = strategy.calculateWeight(match, frequencyMap, matchToken);
-        if (matchWeight == 0) {
-            System.out.println("Achtung null");
-        }
         match.setFrequencyWeight(matchWeight);
     }
-
-    public void weightAllMatches(List<Match> matches, List<String> comparisonToken) {
+    /**
+     * Calculates frequency value for all matches.
+     */
+    public void weightAllMatches(List<Match> matches, List<TokenType> comparisonToken) {
         for (Match match : matches) {
             int start = match.getStartOfFirst();
-            int len = match.getLengthOfFirst();
-            if (start + len > comparisonToken.size())
+            int length = match.getLengthOfFirst();
+            if (start + length > comparisonToken.size())
                 continue;
 
-            List<String> matchTokens = new ArrayList<>();
-            for (int i = start; i < start + len; i++) {
-                matchTokens.add(comparisonToken.get(i).toString());
+            List<TokenType> matchTokens = new ArrayList<>();
+            for (int i = start; i <= start + length; i++) {
+                matchTokens.add(comparisonToken.get(i));
             }
             weightMatch(match, matchTokens);
         }

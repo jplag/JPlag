@@ -1,6 +1,8 @@
 package de.jplag.highlightextraction;
-
-public class QuadraticWeightedStrategy implements SimilarityStrategy{
+/**
+ * Strategy that considers rare matches stronger using a quadratic weighting function.
+ */
+public class QuadraticWeightedStrategy implements SimilarityStrategy {
 
     @Override
     public double computeWeight(double minWeight, double maxWeight, double rarity) {

@@ -7,8 +7,6 @@ import java.util.function.Consumer;
 import de.jplag.Match;
 import de.jplag.TokenType;
 
-import static de.jplag.highlightextraction.StrategyMethods.createKey;
-
 /**
  * Strategy that calculates the frequencies of matches across all submissions. For each match, the complete token
  * sequence is added to the frequency map without modification. So the Strategy counts all occurrences of complete
@@ -29,8 +27,8 @@ public class CompleteMatchesStrategy implements FrequencyStrategy {
     }
 
     @Override
-    public double calculateWeight(Match match, Map<String, List<String>> frequencyMap, List<String> matchToken) {
-        List<String> values = frequencyMap.get(createKey(matchToken));
-        return values != null ? values.size() : 0.0;
+    public double calculateWeight(Match match, Map<List<TokenType>, Integer> frequencyMap, List<TokenType> matchToken) {
+        Integer values = frequencyMap.get(matchToken);
+        return values != null ? values : 0.0;
     }
 }

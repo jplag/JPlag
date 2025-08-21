@@ -1,7 +1,7 @@
 package de.jplag.highlightextraction;
 
 /**
- * Enum representing the different strategies for frequency calculation of token subsequences in comparisons.
+ * Enum representing the different strategies for frequency similarity calculation.
  */
 public enum FrequencyStrategies {
     COMPLETE_MATCHES(new CompleteMatchesStrategy()),
@@ -16,7 +16,7 @@ public enum FrequencyStrategies {
     }
 
     /**
-     * @return the frequency strategy of the enum constant.
+     * @return the frequency similarity strategy of the enum constant.
      */
     public FrequencyStrategy getStrategy() {
         return strategy;

@@ -22,6 +22,9 @@ public interface FrequencyStrategy {
     void processMatchTokenTypes(List<TokenType> matchTokenTypes, Consumer<List<TokenType>> addSequenceKey, Consumer<List<TokenType>> addSequence,
             int strategyNumber);
 
-    double calculateWeight(Match match, Map<String, List<String>> frequencyMap, List<String> matchToken);
+    /**
+     * Returns weight factor, as frequency value for the matches.
+     */
+    double calculateWeight(Match match, Map<List<TokenType>, Integer> frequencyMap, List<TokenType> matchToken);
 
 }
