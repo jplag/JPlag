@@ -35,9 +35,11 @@ public class WeightingEvaluation extends TestBase {
     /**
      * Add your own Datapath.
      */
-    private static final String[] datasetPaths = {"...JPlag\\core\\src\\test\\resources\\de\\jplag\\samples\\FrequencyDetermination\\00000019\\Java",
-            "...\\JPlag\\core\\src\\test\\resources\\de\\jplag\\samples\\FrequencyDetermination\\00000056\\Java",
-            "...JPlag\\core\\src\\test\\resources\\de\\jplag\\samples\\FrequencyDetermination\\Sheet3TaskA"};
+    private static final String[] datasetPaths = {
+//            "...JPlag\\core\\src\\test\\resources\\de\\jplag\\samples\\FrequencyDetermination\\00000019\\Java",
+//            "...\\JPlag\\core\\src\\test\\resources\\de\\jplag\\samples\\FrequencyDetermination\\00000056\\Java",
+//            "...JPlag\\core\\src\\test\\resources\\de\\jplag\\samples\\FrequencyDetermination\\Sheet3TaskA"
+    };
 
     private static final FrequencyStrategy[] freqStrategies = {new CompleteMatchesStrategy(), new ContainedMatchesStrategy(),
             new SubMatchesStrategy(), new WindowOfMatchesStrategy()};
