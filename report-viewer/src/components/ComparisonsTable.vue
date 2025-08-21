@@ -217,7 +217,7 @@
 <script setup lang="ts">
 import type { Cluster } from '@/model/Cluster'
 import type { ComparisonListElement } from '@/model/ComparisonListElement'
-import { type PropType, watch, computed, ref, type Ref } from 'vue'
+import { type PropType, watch, computed, ref, type Ref, onMounted } from 'vue'
 import { store } from '@/stores/store'
 import { DynamicScroller, DynamicScrollerItem } from 'vue-virtual-scroller'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -230,6 +230,7 @@ import { MetricJsonIdentifier } from '@/model/MetricJsonIdentifier'
 import NameElement from './NameElement.vue'
 import ComparisonTableFilter from './ComparisonTableFilter.vue'
 import { Column, Direction, type ColumnId } from '@/model/ui/ComparisonSorting'
+import { router } from '@/router'
 
 library.add(faUserGroup)
 
@@ -461,6 +462,33 @@ function scrollToItem(itemIndex?: number) {
 }
 defineExpose({
   scrollToItem
+})
+
+onMounted(() => {
+  // Listen for messages from a parent window to open a comparison between two submissions
+  window.addEventListener('message', async (event) => {
+    const { type, firstSubmissionId, secondSubmissionId } = event.data ?? {}
+    if (type === 'open-comparison' && firstSubmissionId && secondSubmissionId) {
+      const comparisonFileName = store().getComparisonFileName(
+        firstSubmissionId,
+        secondSubmissionId
+      )
+      if (!comparisonFileName) {
+        console.error(
+          `Unable to find comparison between ${firstSubmissionId} and ${secondSubmissionId}`
+        )
+        return
+      }
+
+      router.push({
+        name: 'ComparisonView',
+        params: {
+          firstSubmissionId: firstSubmissionId,
+          secondSubmissionId: secondSubmissionId
+        }
+      })
+    }
+  })
 })
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
