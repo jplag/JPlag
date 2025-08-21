@@ -203,8 +203,8 @@ onMounted(() => {
   window.addEventListener('message', async (event) => {
     const { type, file, name } = event.data ?? {}
     if (type === 'upload-jplag-report' && file) {
-      const zipFile = new File([file], name ?? 'report.jplag')
-      handleFile(zipFile)
+      const jplagReport = new File([file], name ?? 'report.jplag')
+      handleFile(jplagReport)
     }
   })
 })
