@@ -21,6 +21,7 @@ interface AbstractOptions<L> {
   mergingOptions: CliMergingOptions
   normalize: boolean
   analyzeComments: boolean
+  skipVersionCheck: boolean
 }
 
 export interface CliClusterOptions {
