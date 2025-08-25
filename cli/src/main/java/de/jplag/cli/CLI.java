@@ -117,9 +117,9 @@ public final class CLI {
     }
 
     /**
-     * Runs JPlag and shows the result in the report viewer
-     * @throws IOException If something went wrong with the internal server
-     * @throws ExitException If JPlag threw an exception
+     * Runs JPlag and shows the result in the report viewer.
+     * @throws IOException If something went wrong with the internal server.
+     * @throws ExitException If JPlag threw an exception.
      */
     public void runAndView() throws IOException, ExitException {
         runViewer(runJPlag());
@@ -213,6 +213,10 @@ public final class CLI {
         return targetFileName;
     }
 
+    /**
+     * Entry point for the JPlag CLI application. Initializes the CLI and handles execution and errors.
+     * @param args command-line arguments passed to the application
+     */
     public static void main(String[] args) {
         // This needs to be executed before any other code, as it changes the default behavior of the JVM for network
         // connections.

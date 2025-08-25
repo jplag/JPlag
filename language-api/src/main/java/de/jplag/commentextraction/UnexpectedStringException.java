@@ -8,6 +8,10 @@ public class UnexpectedStringException extends Exception {
 
     private static final long serialVersionUID = 6086579651767129532L; // generated
 
+    /**
+     * Creates a exception with a custom message.
+     * @param message is the custom message.
+     */
     public UnexpectedStringException(String message) {
         super(message);
     }

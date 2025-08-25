@@ -1,5 +1,5 @@
 /**
- * This is code from the TagParser class of Jplag
+ * This is code from the TagParser class of JPlag.
  */
 public class AlsoNoDuplicate {
     public static String parse(String message, String[] params) {

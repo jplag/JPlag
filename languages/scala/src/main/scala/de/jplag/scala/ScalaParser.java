@@ -104,7 +104,7 @@ import scala.meta.parsers.Api;
 import scala.meta.parsers.Parse;
 
 /**
- * Parser for scala code
+ * Parser for Scala code.
  */
 public class ScalaParser {
     private static final Set<String> OPERATORS = Set.of("+", "-", "*", "/", "%", "**", "==", "!=", ">", "<", ">=", "<=", "&&", "||", "!", "=", "+=",
@@ -144,7 +144,7 @@ public class ScalaParser {
     }
 
     /**
-     * Parses an ast node and returns the appropriate token record
+     * Parses an ast node and returns the appropriate token record.
      * @param tree The ast node to parse
      * @return The token record
      */
@@ -309,7 +309,7 @@ public class ScalaParser {
     }
 
     /**
-     * Adds the given token before the node and visits the node if it is present
+     * Adds the given token before the node and visits the node if it is present.
      * @param tree The ast node
      * @param tokenType The token type to add
      */
@@ -320,7 +320,7 @@ public class ScalaParser {
     }
 
     /**
-     * Visits the given node. Adds tokens and traverses into children
+     * Visits the given node. Adds tokens and traverses into children.
      * @param tree The node
      */
     public void visit(Tree tree) {
@@ -331,7 +331,7 @@ public class ScalaParser {
     }
 
     /**
-     * Visits all nodes in the list
+     * Visits all nodes in the list.
      * @param items The list of nodes
      */
     public void visitAll(scala.collection.immutable.List<? extends Tree> items) {
@@ -363,7 +363,7 @@ public class ScalaParser {
     }
 
     /**
-     * Adds the given tokens around the node and visits it
+     * Adds the given tokens around the node and visits it.
      * @param tree The ast node
      * @param traverserRecord The tokens to add
      */
@@ -374,7 +374,7 @@ public class ScalaParser {
     }
 
     /**
-     * Adds the given token type for the node
+     * Adds the given token type for the node.
      * @param tokenType The type of token to add
      * @param node The node to add the token for
      * @param fromEnd if true, the token is added to the end. Otherwise, it is added to the beginning of the node
@@ -390,7 +390,7 @@ public class ScalaParser {
     }
 
     /**
-     * Adds a token with the given data
+     * Adds a token with the given data.
      * @param tokenType The type of token
      * @param line The start line
      * @param column The start column
@@ -401,7 +401,7 @@ public class ScalaParser {
     }
 
     /**
-     * Parses the given files
+     * Parses the given files.
      * @param files The files to parse
      * @return The list of tokens
      * @throws ParsingException If the parsing fails
@@ -415,7 +415,7 @@ public class ScalaParser {
     }
 
     /**
-     * Parses a single file
+     * Parses a single file.
      * @param file The file to parse
      * @throws ParsingException If the parsing fails
      */
@@ -434,7 +434,7 @@ public class ScalaParser {
     }
 
     /**
-     * Wrapper to call the scala methods from java
+     * Wrapper to call the scala methods from java.
      */
     private static class MyApi implements Api {
         public Source parse(Input.VirtualFile virtualFile) {

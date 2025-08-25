@@ -40,7 +40,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version: "lts/*"
 
       - name: Build Assembly
         run: mvn -DskipTests clean package assembly:single
@@ -125,7 +125,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version: "lts/*"
 
       - name: Install and Build
         working-directory: report-viewer

@@ -33,8 +33,8 @@ public class JPlagOptionsBuilder {
     }
 
     /**
-     * Builds the JPlag options
-     * @return The JPlag options
+     * Builds the JPlag options.
+     * @return The JPlag options.
      * @throws CliException If the input handler could properly parse everything.
      */
     public JPlagOptions buildOptions() throws CliException {

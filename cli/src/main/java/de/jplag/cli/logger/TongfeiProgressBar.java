@@ -6,6 +6,10 @@ package de.jplag.cli.logger;
 public class TongfeiProgressBar extends LogDelayingProgressBar {
     private final me.tongfei.progressbar.ProgressBar progressBar;
 
+    /**
+     * Creates a new TongfeiProgressBar with the given underlying progress bar.
+     * @param progressBar the Tongfei ProgressBar instance to wrap
+     */
     public TongfeiProgressBar(me.tongfei.progressbar.ProgressBar progressBar) {
         super();
         this.progressBar = progressBar;

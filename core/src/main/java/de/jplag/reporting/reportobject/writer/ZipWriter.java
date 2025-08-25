@@ -18,7 +18,7 @@ import de.jplag.reporting.FilePathUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Writes JPlag result data as a zip
+ * Writes JPlag result data as a zip.
  */
 public class ZipWriter implements JPlagResultWriter {
     private static final Logger logger = LoggerFactory.getLogger(ZipWriter.class);
@@ -32,7 +32,7 @@ public class ZipWriter implements JPlagResultWriter {
     private final ZipOutputStream file;
 
     /**
-     * The zip file to write to
+     * The zip file to write to.
      * @param zipFile The file
      * @throws FileNotFoundException If the file cannot be opened for writing
      */

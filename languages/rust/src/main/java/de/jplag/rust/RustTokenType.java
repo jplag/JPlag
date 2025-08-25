@@ -2,6 +2,9 @@ package de.jplag.rust;
 
 import de.jplag.TokenType;
 
+/**
+ * Token types for Rust.
+ */
 public enum RustTokenType implements TokenType {
     INNER_ATTRIBUTE("INNER_ATTR"),
     OUTER_ATTRIBUTE("OUTER_ATTR"),

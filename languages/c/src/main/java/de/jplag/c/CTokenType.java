@@ -2,6 +2,9 @@ package de.jplag.c;
 
 import de.jplag.TokenType;
 
+/**
+ * Token types for the C language.
+ */
 public enum CTokenType implements TokenType {
     C_BLOCK_BEGIN("BLOCK{"),
     C_BLOCK_END("}BLOCK"),

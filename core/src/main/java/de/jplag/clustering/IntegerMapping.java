@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Creates a mapping of any set to integers
+ * Creates a mapping of any set to integers.
+ * @param <T> is the type of the elements contained in the set.
  */
 public class IntegerMapping<T> {
 
@@ -14,6 +15,10 @@ public class IntegerMapping<T> {
     private final List<T> backMapping;
     private int size = 0;
 
+    /**
+     * Constructs an IntegerMapping with the specified initial capacity.
+     * @param initialCapacity the initial capacity of the mapping.
+     */
     public IntegerMapping(int initialCapacity) {
         mapping = HashMap.newHashMap(initialCapacity);
         backMapping = new ArrayList<>(initialCapacity);
