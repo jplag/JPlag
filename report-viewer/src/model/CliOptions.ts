@@ -37,6 +37,11 @@ export interface CliClusterOptions {
   agglomerativeInterClusterSimilarity: string
   preprocessorThreshold: number
   preprocessorPercentile: number
+   frequency: boolean
+    frequencyStrategy: string
+    frequencyStrategyMinValue: number
+    weightingStrategy: string
+    weightingStrategyWeightingFactor: number
 }
 
 interface CliMergingOptions {

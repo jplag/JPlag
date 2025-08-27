@@ -245,8 +245,8 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
             int frequencyStrategyMinValue, WeightingStrategies weightingStrategy, double weightingStrategyWeightingFactor) throws BasecodeException {
         this(language, minimumTokenMatch, Set.of(submissionDirectory), oldSubmissionDirectories,
                 convertLegacyBaseCodeToFile(baseCodeSubmissionName, submissionDirectory), subdirectoryName, fileSuffixes, exclusionFileName,
-                similarityMetric, similarityThreshold, maximumNumberOfComparisons, clusteringOptions, debugParser, mergingOptions, false,
-                false, frequency, frequencyStrategies, frequencyStrategyMinValue, weightingStrategy, weightingStrategyWeightingFactor);
+                similarityMetric, similarityThreshold, maximumNumberOfComparisons, clusteringOptions, debugParser, mergingOptions, false, false,
+                frequency, frequencyStrategies, frequencyStrategyMinValue, weightingStrategy, weightingStrategyWeightingFactor);
     }
 
     /**
