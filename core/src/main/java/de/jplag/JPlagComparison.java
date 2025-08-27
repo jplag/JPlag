@@ -27,6 +27,17 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
         this.ignoredMatches = Collections.unmodifiableList(ignoredMatches);
     }
 
+    private static double frequencyWeightedScore = -1;
+    private static boolean frequency = false;
+
+    public static void setFrequency(boolean frequency) {
+        JPlagComparison.frequency = frequency;
+    }
+
+    public void setFrequencyWeightedScore(double score) {
+        frequencyWeightedScore = score;
+    }
+
     /**
      * Get the total number of matched tokens for this comparison, which is the sum of the minimum lengths of all
      * subsequence matches. This excludes ignored matches.
@@ -62,6 +73,9 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
      * structural similarity.
      */
     public final double similarity() {
+        if (frequency && frequencyWeightedScore >= 0) {
+            return frequencyWeightedScore;
+        }
         int divisor = firstSubmission.getSimilarityDivisor() + secondSubmission.getSimilarityDivisor();
         if (divisor == 0) {
             return 0;

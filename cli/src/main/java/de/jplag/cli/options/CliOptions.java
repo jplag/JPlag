@@ -183,6 +183,9 @@ public class CliOptions implements Runnable {
     public double clusterPreprocessingThreshold;
 
     public static class FrequencyAnalysis {
+        @Option(names = {"--frequency-analysis"}, description = "if frequency calculation is used")
+        public boolean frequency = false;
+
         @Option(names = {
                 "--frequency-strategy"}, description = "strategy for frequency Analysis, Options: completeMatches, containedMatches, subMatches, windowOfMatches")
         public FrequencyStrategies frequencyStrategy = FrequencyStrategies.COMPLETE_MATCHES;

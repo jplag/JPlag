@@ -23,6 +23,10 @@ public class FrequencySimilarity {
         this.strategy = strategy;
     }
 
+    public double weigthedComparisonSimilarity(JPlagComparison comparison, double weightingFactor) {
+        return frequencySimilarity(comparison, weightingFactor);
+    }
+
     /**
      * Sorts the comparisons, according to the frequency
      */

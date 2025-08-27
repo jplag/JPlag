@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import de.jplag.JPlagComparison;
 import de.jplag.Match;
+import de.jplag.Token;
 import de.jplag.TokenType;
 
 /**
@@ -47,4 +49,16 @@ public class MatchWeighting {
             weightMatch(match, matchTokens);
         }
     }
+
+    /**
+     * Calculates frequency value for all matches.
+     */
+    public void weightAllComparisons(List<JPlagComparison> comparisons) {
+        for (JPlagComparison comparison : comparisons) {
+            List<Token> comparisonToken = comparison.firstSubmission().getTokenList();
+            List<TokenType> comparisonTokenTypes = comparisonToken.stream().map(Token::getType).toList();
+            weightAllMatches(comparison.matches(), comparisonTokenTypes);
+        }
+    }
+
 }
