@@ -22,7 +22,7 @@ interface AbstractOptions<L> {
   normalize: boolean
   analyzeComments: boolean
   frequency: boolean
-  frequencyStrategy: string
+  frequencyStrategies: string
   frequencyStrategyMinValue: number
   weightingStrategy: string
   weightingStrategyWeightingFactor: number
