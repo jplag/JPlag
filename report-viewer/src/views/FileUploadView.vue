@@ -32,7 +32,7 @@
           class="border-accent-dark bg-accent/25 mx-auto mt-10 flex w-96 cursor-pointer flex-col justify-center rounded-md border px-5 py-5"
           @click="uploadFileThroughWindow()"
         >
-          <div>Drag and Drop zip file on this page</div>
+          <div>Drag and Drop report file on this page</div>
           <div>Or click here to select a file</div>
         </div>
         <div>(No files will be uploaded)</div>
@@ -61,16 +61,16 @@ import { router } from '@/router'
 import { store } from '@/stores/store'
 import VersionInfoComponent from '@/components/VersionInfoComponent.vue'
 import LoadingCircle from '@/components/LoadingCircle.vue'
-import { ZipFileHandler } from '@/model/fileHandling/ZipFileHandler'
+import { ReportFileHandler } from '@/model/fileHandling/ReportFileHandler'
 import { BaseFactory } from '@/model/factories/BaseFactory'
 
 store().clearStore()
 
 const exampleFiles = ref(import.meta.env.MODE == 'demo' || import.meta.env.MODE == 'dev-demo')
 
-BaseFactory.useLocalZipMode().then((value) => {
+BaseFactory.useLocalReportFileMode().then((value) => {
   if (value) {
-    store().state.uploadedFileName = BaseFactory.zipFileName
+    store().state.uploadedFileName = BaseFactory.reportFileName
     navigateToOverview()
   }
 })
@@ -116,7 +116,7 @@ async function handleFile(file: Blob) {
     case 'application/x-zip-compressed':
     case 'application/x-zip':
     case '':
-      await new ZipFileHandler().handleFile(file)
+      await new ReportFileHandler().handleFile(file)
       return navigateToOverview()
     default:
       throw new Error(`Unknown MIME type '${file.type}'`)

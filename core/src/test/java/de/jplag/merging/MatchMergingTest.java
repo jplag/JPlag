@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -21,15 +22,14 @@ import de.jplag.Submission;
 import de.jplag.SubmissionSet;
 import de.jplag.SubmissionSetBuilder;
 import de.jplag.TestBase;
+import de.jplag.Token;
 import de.jplag.comparison.LongestCommonSubsequenceSearch;
+import de.jplag.exceptions.ComparisonException;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 
 /**
- * This class extends on {@link TestBase} and performs several test on Match Merging, in order to check its
- * functionality. Therefore it uses java programs and feds them into the JPlag pipeline. Results are stored before- and
- * after Match Merging and used for all tests. The samples named "original" and "plag" are from PROGpedia and under the
- * CC BY 4.0 license.
+ * Tests for the subsequence match merging mechanism implemented in {@link MatchMerging}.
  */
 class MatchMergingTest extends TestBase {
     private final JPlagOptions options;
@@ -43,8 +43,8 @@ class MatchMergingTest extends TestBase {
     private static final int MINIMUM_REQUIRED_MERGES = 0;
 
     MatchMergingTest() throws ExitException {
-        options = getDefaultOptions("merging")
-                .withMergingOptions(new MergingOptions(true, MINIMUM_NEIGHBOR_LENGTH, MAXIMUM_GAP_SIZE, MINIMUM_REQUIRED_MERGES));
+        MergingOptions mergingOptions = new MergingOptions(true, MINIMUM_NEIGHBOR_LENGTH, MAXIMUM_GAP_SIZE, MINIMUM_REQUIRED_MERGES);
+        options = getDefaultOptions("merging").withMergingOptions(mergingOptions);
 
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         submissionSet = builder.buildSubmissionSet();
@@ -53,13 +53,11 @@ class MatchMergingTest extends TestBase {
     }
 
     @BeforeEach
-    void prepareTestState() {
+    void prepareTestState() throws ComparisonException {
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
         comparisonsBefore = new ArrayList<>(result.getAllComparisons());
 
-        if (options.mergingOptions().enabled()) {
-            result = new MatchMerging(options).mergeMatchesOf(result);
-        }
+        result = new MatchMerging(options).mergeMatchesOf(result);
         comparisonsAfter = new ArrayList<>(result.getAllComparisons());
 
         comparisonsBefore.sort(Comparator.comparing(Object::toString));
@@ -67,19 +65,19 @@ class MatchMergingTest extends TestBase {
     }
 
     @Test
-    @DisplayName("Test length of matches after Match Merging")
+    @DisplayName("Test if merged matches exceed the minimum token match threshold.")
     void testBufferRemoval() {
         checkMatchLength(JPlagComparison::matches, options.minimumTokenMatch(), comparisonsAfter);
     }
 
     @Test
-    @DisplayName("Test length of matches after Greedy String Tiling")
+    @DisplayName("Test if original matches exceed the minimum token match threshold.")
     void testGSTMatches() {
         checkMatchLength(JPlagComparison::matches, options.minimumTokenMatch(), comparisonsBefore);
     }
 
     @Test
-    @DisplayName("Test length of ignored matches after Greedy String Tiling")
+    @DisplayName("Test if ignored matches exceed the minimum neighbor length threshold.")
     void testGSTIgnoredMatches() {
         checkMatchLength(JPlagComparison::ignoredMatches, options.mergingOptions().minimumNeighborLength(), comparisonsBefore);
     }
@@ -95,7 +93,7 @@ class MatchMergingTest extends TestBase {
     }
 
     @Test
-    @DisplayName("Test if similarity increased after Match Merging")
+    @DisplayName("Test if the similarity values increase or stay the same.")
     void testSimilarityIncreased() {
         for (int i = 0; i < comparisonsAfter.size(); i++) {
             assertTrue(comparisonsAfter.get(i).similarity() >= comparisonsBefore.get(i).similarity());
@@ -103,7 +101,7 @@ class MatchMergingTest extends TestBase {
     }
 
     @Test
-    @DisplayName("Test if amount of matches reduced after Match Merging")
+    @DisplayName("Test if the number of matches decreases or stays the same.")
     void testFewerMatches() {
         for (int i = 0; i < comparisonsAfter.size(); i++) {
             int totalMatchesAfter = comparisonsAfter.get(i).matches().size() + comparisonsAfter.get(i).ignoredMatches().size();
@@ -115,14 +113,14 @@ class MatchMergingTest extends TestBase {
     }
 
     @Test
-    @DisplayName("Test if amount of token increased after Match Merging")
+    @DisplayName("Test if the number of matches tokens increases.")
     void testMoreToken() {
         for (int i = 0; i < comparisonsAfter.size(); i++) {
-            int tokensBeforeFirst = comparisonsBefore.get(i).firstSubmission().getTokenList().size();
-            int tokensBeforeSecond = comparisonsBefore.get(i).secondSubmission().getTokenList().size();
+            int tokensBeforeFirst = comparisonsBefore.get(i).firstSubmission().getNumberOfTokens();
+            int tokensBeforeSecond = comparisonsBefore.get(i).secondSubmission().getNumberOfTokens();
 
-            int tokensAfterFirst = comparisonsAfter.get(i).firstSubmission().getTokenList().size();
-            int tokensAfterSecond = comparisonsAfter.get(i).secondSubmission().getTokenList().size();
+            int tokensAfterFirst = comparisonsAfter.get(i).firstSubmission().getNumberOfTokens();
+            int tokensAfterSecond = comparisonsAfter.get(i).secondSubmission().getNumberOfTokens();
 
             assertTrue(tokensAfterFirst >= tokensBeforeFirst);
             assertTrue(tokensAfterSecond >= tokensBeforeSecond);
@@ -130,7 +128,7 @@ class MatchMergingTest extends TestBase {
     }
 
     @Test
-    @DisplayName("Test if amount of FILE_END token stayed the same")
+    @DisplayName("Test if number of FILE_END tokens stays the same.")
     void testFileEnd() {
         int amountFileEndBefore = countFileEndTokens(comparisonsBefore);
         int amountFileEndAfter = countFileEndTokens(comparisonsAfter);
@@ -152,7 +150,7 @@ class MatchMergingTest extends TestBase {
     }
 
     @Test
-    @DisplayName("Sanity check for match merging")
+    @DisplayName("Test merging five matches into one.")
     void testSanity() {
 
         List<Match> matchesBefore = findComparison(comparisonsBefore, "sanityA.java", "sanityB.java").ignoredMatches();
@@ -191,9 +189,55 @@ class MatchMergingTest extends TestBase {
         }
     }
 
+    @Test
+    @DisplayName("Test for the absence of cross file matches.")
+    void testFileBoundaries() throws ExitException {
+        MergingOptions mergingOptions = new MergingOptions(true, MINIMUM_NEIGHBOR_LENGTH, MAXIMUM_GAP_SIZE, MINIMUM_REQUIRED_MERGES);
+        JPlagOptions customOptions = getDefaultOptions("crossFile").withMergingOptions(mergingOptions);
+        SubmissionSetBuilder builder = new SubmissionSetBuilder(customOptions);
+        SubmissionSet submissions = builder.buildSubmissionSet();
+        LongestCommonSubsequenceSearch search = new LongestCommonSubsequenceSearch(customOptions);
+        JPlagResult result = search.compareSubmissions(submissions);
+
+        assumeEquals(2, result.getNumberOfSubmissions());
+        assumeEquals(1, result.getAllComparisons().size());
+        JPlagComparison comparison = result.getAllComparisons().getFirst();
+        assumeEquals(2, comparison.matches().size());
+
+        checkForCrossFileMatches(comparison, comparison.matches());
+
+        JPlagResult mergedResult = new MatchMerging(customOptions).mergeMatchesOf(result);
+        JPlagComparison mergedComparison = mergedResult.getAllComparisons().getFirst();
+
+        assertEquals(2, mergedResult.getNumberOfSubmissions());
+        assertEquals(1, mergedResult.getAllComparisons().size());
+        assertEquals(2, mergedComparison.matches().size());
+
+        checkForCrossFileMatches(mergedComparison, mergedComparison.matches());
+    }
+
+    private void checkForCrossFileMatches(JPlagComparison comparison, List<Match> matches) {
+        for (Match match : matches) {
+            List<Token> leftTokens = comparison.firstSubmission().getTokenList().subList(match.getStartOfFirst(),
+                    match.getStartOfFirst() + match.getLengthOfFirst());
+            List<Token> rightTokens = comparison.secondSubmission().getTokenList().subList(match.getStartOfSecond(),
+                    match.getStartOfSecond() + match.getLengthOfSecond());
+            verifyTokensFromSingleFile(leftTokens);
+            verifyTokensFromSingleFile(rightTokens);
+        }
+
+    }
+
+    private void verifyTokensFromSingleFile(List<Token> tokens) {
+        List<File> files = tokens.stream().map(Token::getFile).toList();
+        for (File file : files) {
+            assertEquals(files.getFirst(), file, "Two different files in token sequence: " + files.getFirst().getName() + " and " + file.getName());
+        }
+    }
+
     private static JPlagComparison findComparison(List<JPlagComparison> comparisons, String firstName, String secondName) {
         return comparisons.stream()
-                .filter(it -> firstName.equals(it.firstSubmission().getName()) && secondName.equals(it.secondSubmission().getName())).findAny()
-                .orElseThrow();
+                .filter(it -> firstName.equals(it.firstSubmission().getName()) && secondName.equals(it.secondSubmission().getName())) //
+                .findAny().orElseThrow();
     }
 }

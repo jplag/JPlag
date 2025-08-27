@@ -74,9 +74,10 @@
 
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-        <spotless.version>2.44.5</spotless.version>
+        <spotless.version>2.46.1</spotless.version>
         <slf4j.version>2.0.17</slf4j.version>
-        <junit.version>5.13.1</junit.version>
+        <junit.version>5.13.4</junit.version>
+        <checkstyle.version>10.26.1</checkstyle.version>
 
         <antlr2.version>2.7.7</antlr2.version>
         <antlr4.version>4.13.2</antlr4.version>
@@ -87,10 +88,10 @@
         <emfatic.version>1.1.0</emfatic.version>
         <mockito.version>5.18.0</mockito.version>
         <!-- ensure that this variable is initialized, even if it is empty -->
-        <argLine></argLine>
+        <argLine/>
 
         <!-- The Revision of JPlag -->
-        <revision>6.2.0-SNAPSHOT</revision>
+        <revision>6.3.0-SNAPSHOT</revision>
     </properties>
 
     <dependencyManagement>
@@ -144,7 +145,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.19.0</version>
+                <version>2.19.2</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -275,7 +276,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
-                    <version>3.2.7</version>
+                    <version>3.2.8</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -288,7 +289,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.7.0</version>
+                <version>1.7.2</version>
                 <configuration>
                     <updatePomFile>true</updatePomFile>
                     <flattenMode>resolveCiFriendliesOnly</flattenMode>
@@ -336,6 +337,37 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <configLocation>config/checkstyle/checkstyle.xml</configLocation>
+                    <sourceDirectories>
+                        <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
+                        <!-- <sourceDirectory>${project.build.testSourceDirectory}</sourceDirectory> -->
+                    </sourceDirectories>
+                    <consoleOutput>true</consoleOutput>
+                    <failsOnError>true</failsOnError>
+                    <linkXRef>false</linkXRef>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>${checkstyle.version}</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>verify-checkstyle</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <phase>verify</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.11.2</version>
                 <executions>
@@ -363,7 +395,7 @@
             <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.7.0</version>
+                <version>0.8.0</version>
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>central</publishingServerId>
@@ -386,7 +418,7 @@
                         <importOrder>
                             <file>spotless.importorder</file>
                         </importOrder>
-                        <removeUnusedImports></removeUnusedImports>
+                        <removeUnusedImports/>
                     </java>
                     <pom>
                         <sortPom>
@@ -430,8 +462,8 @@
                 <module>core</module>
                 <module>languages</module>
                 <module>language-api</module>
-                <module>language-testutils</module>
                 <module>language-antlr-utils</module>
+                <module>language-testutils</module>
             </modules>
             <build>
                 <plugins>

@@ -1,22 +1,22 @@
 import { expect, Page, test } from '@playwright/test'
 import { uploadFile } from './TestUtils'
 
-const oldVersionZips = [
+const oldVersionReports = [
   {
-    zipName: 'progpedia-report-v5_1_0.zip',
+    fileName: 'progpedia-report-v5_1_0.zip',
     version: '5.1.0',
     urlPostfix: 'v5'
   },
   {
-    zipName: 'progpedia-report-v4_2_0.zip',
+    fileName: 'progpedia-report-v4_2_0.zip',
     version: '4.2.0',
     urlPostfix: 'v5'
   }
 ]
 
-for (const oldVersion of oldVersionZips) {
+for (const oldVersion of oldVersionReports) {
   test(`Test old version redirect for v${oldVersion.version}`, async ({ page }) => {
-    await uploadFile(oldVersion.zipName, page, getWaitForOldPageFunction(oldVersion.version))
+    await uploadFile(oldVersion.fileName, page, getWaitForOldPageFunction(oldVersion.version))
 
     const bodyContent = await page.locator('body').textContent()
     expect(bodyContent).toContain(

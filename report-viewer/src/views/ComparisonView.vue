@@ -29,9 +29,15 @@
         </ToolTipComponent>
       </h2>
       <div class="flex flex-col gap-x-10 gap-y-2 md:flex-row">
-        <TextInformation label="Average Similarity" class="font-bold"
-          >{{ (comparison.similarities[MetricType.AVERAGE] * 100).toFixed(2) }}%</TextInformation
-        >
+        <span class="flex items-center gap-x-1">
+          <MetricIcon class="h-3" :metric="MetricJsonIdentifier.AVERAGE_SIMILARITY" />
+          <TextInformation label="Average Similarity" class="font-bold">{{
+            MetricTypes.AVERAGE_SIMILARITY.format(
+              comparison.similarities[MetricTypes.AVERAGE_SIMILARITY.identifier]
+            )
+          }}</TextInformation>
+        </span>
+
         <TextInformation
           :label="`Similarity ${store().getDisplayName(comparison.firstSubmissionId)}`"
           tooltip-side="right"
@@ -126,13 +132,15 @@ import Container from '@/components/ContainerComponent.vue'
 import type { Language } from '@/model/Language'
 import hljsLightMode from 'highlight.js/styles/vs.css?raw'
 import hljsDarkMode from 'highlight.js/styles/vs2015.css?raw'
-import { MetricType } from '@/model/MetricType'
+import { MetricTypes } from '@/model/MetricType'
 import { Comparison } from '@/model/Comparison'
 import { redirectOnError } from '@/router'
 import ToolTipComponent from '@/components/ToolTipComponent.vue'
 import { FileSortingOptions, fileSortingTooltips } from '@/model/ui/FileSortingOptions'
 import OptionsSelectorComponent from '@/components/optionsSelectors/OptionsSelectorComponent.vue'
 import type { BaseCodeMatch } from '@/model/BaseCodeReport'
+import { MetricJsonIdentifier } from '@/model/MetricJsonIdentifier'
+import MetricIcon from '@/components/MetricIcon.vue'
 
 library.add(faPrint)
 

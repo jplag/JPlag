@@ -10,16 +10,26 @@ public enum HttpRequestMethod {
     private final String name;
 
     /**
-     * @param name The name of the request method
+     * Constructs a request method with the given name.
+     * @param name The name of the request method.
      */
     HttpRequestMethod(String name) {
         this.name = name;
     }
 
+    /**
+     * Returns the name of this HTTP request method.
+     * @return the method name (e.g. "GET", "POST").
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns the corresponding HttpRequestMethod for the given name.
+     * @param name the method name to match.
+     * @return the matching HttpRequestMethod, or null if not found.
+     */
     public static HttpRequestMethod fromName(String name) {
         for (HttpRequestMethod value : HttpRequestMethod.values()) {
             if (value.name.equals(name)) {

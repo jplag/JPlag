@@ -1,7 +1,8 @@
 package de.jplag.cli.server;
 
 /**
- * Data types used by JPlag in the context of http. Contains the according mime type.
+ * Enum representing supported HTTP content types used by JPlag, each associated with its MIME type and optional file
+ * extension.
  */
 public enum ContentType {
     HTML("text/html; charset=utf-8", ".html"),
@@ -21,19 +22,23 @@ public enum ContentType {
         this.nameSuffix = nameSuffix;
     }
 
+    /**
+     * Returns the MIME type string for this content type.
+     * @return the MIME type
+     */
     public String getValue() {
         return value;
     }
 
     /**
-     * Guesses the type from the given path using the suffix after the last '.'.
+     * Guesses the type from the given path using the extension after the last dot.
      * @param path The path to guess from
      * @return The guessed type
      */
     public static ContentType fromPath(String path) {
-        String suffix = path.substring(path.lastIndexOf('.'));
+        String extension = path.substring(path.lastIndexOf('.'));
         for (ContentType value : ContentType.values()) {
-            if (suffix.equals(value.nameSuffix)) {
+            if (extension.equals(value.nameSuffix)) {
                 return value;
             }
         }

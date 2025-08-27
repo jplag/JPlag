@@ -10,7 +10,7 @@ class CumulativeDistributionFunctionPreprocessorTest extends PreprocessingTestBa
 
     private static final double EPSILON = 0.0000001;
 
-    CumulativeDistributionFunctionPreprocessor preprocessor;
+    private CumulativeDistributionFunctionPreprocessor preprocessor;
 
     @BeforeEach
     void init() {
@@ -21,7 +21,7 @@ class CumulativeDistributionFunctionPreprocessorTest extends PreprocessingTestBa
     void satisfiesInterface() {
         double[][] original = createTestData();
         double[][] result = preprocessor.preprocessSimilarities(original);
-        validPreprocessing(original, result, preprocessor::originalIndexOf);
+        isValidPreprocessing(original, result, preprocessor::originalIndexOf);
     }
 
     @Test

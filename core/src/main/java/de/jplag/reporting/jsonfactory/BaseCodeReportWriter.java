@@ -24,7 +24,7 @@ public class BaseCodeReportWriter {
 
     private final JPlagResultWriter resultWriter;
     private final Function<Submission, String> submissionToIdFunction;
-    public static final String BASEPATH = "basecode";
+    private static final String BASEPATH = "basecode";
 
     /**
      * Creates a new BaseCodeReportWriter.
@@ -66,18 +66,18 @@ public class BaseCodeReportWriter {
         List<Token> tokens = submission.getTokenList().subList(takeLeft ? match.getStartOfFirst() : match.getStartOfSecond(),
                 (takeLeft ? match.endOfFirst() : match.endOfSecond()) + 1);
 
-        Comparator<? super Token> lineStartComparator = Comparator.comparingInt(Token::getLine).thenComparingInt(Token::getColumn);
-        Comparator<? super Token> lineEndComparator = Comparator.comparingInt(Token::getLine)
-                .thenComparingInt((Token t) -> t.getColumn() + t.getLength());
+        Comparator<? super Token> lineStartComparator = Comparator.comparingInt(Token::getStartLine).thenComparingInt(Token::getStartColumn);
+        Comparator<? super Token> lineEndComparator = Comparator.comparingInt(Token::getEndLine).thenComparingInt(Token::getEndColumn);
         Token start = tokens.stream().min(lineStartComparator).orElseThrow();
         Token end = tokens.stream().max(lineEndComparator).orElseThrow();
 
-        CodePosition startPosition = new CodePosition(start.getLine(), start.getColumn() - 1,
+        CodePosition startPosition = new CodePosition(start.getStartLine(), start.getStartColumn() - 1,
                 takeLeft ? match.getStartOfFirst() : match.getStartOfSecond());
-        CodePosition endPosition = new CodePosition(end.getLine(), end.getColumn() + end.getLength() - 1,
-                takeLeft ? match.endOfFirst() : match.endOfSecond());
+        CodePosition endPosition = new CodePosition(end.getEndLine(), end.getEndColumn() - 1, takeLeft ? match.endOfFirst() : match.endOfSecond());
+
+        int length = takeLeft ? match.getLengthOfFirst() : match.getLengthOfSecond();
 
         return new BaseCodeMatch(FilePathUtil.getRelativeSubmissionPath(start.getFile(), submission, submissionToIdFunction).toString(),
-                startPosition, endPosition, match.length());
+                startPosition, endPosition, length);
     }
 }

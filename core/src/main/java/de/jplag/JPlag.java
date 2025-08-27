@@ -22,6 +22,9 @@ import de.jplag.reporting.reportobject.model.Version;
 public class JPlag {
     private static final Logger logger = LoggerFactory.getLogger(JPlag.class);
 
+    /**
+     * Version identifier of JPlag.
+     */
     public static final Version JPLAG_VERSION = loadVersion();
 
     private static Version loadVersion() {

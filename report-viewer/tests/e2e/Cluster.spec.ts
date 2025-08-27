@@ -45,6 +45,6 @@ function compareTableRow(
   similarityMAX: number
 ) {
   expect(table).toContain(
-    `${row}${id1}${id2}${similarityAVG.toFixed(2)}% ${similarityMAX.toFixed(2)}%`
+    `${row}${id1}${id2}${similarityAVG.toFixed(2)}%${similarityMAX.toFixed(2)}%`
   )
 }

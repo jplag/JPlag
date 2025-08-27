@@ -17,13 +17,15 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * Represents a data set for the end-to-end test suite.
- * @param name The name of the data set
- * @param language The language
- * @param format The format
+ * @param name the dataset name (required)
+ * @param language the programming language of the dataset (required)
+ * @param format the format of the dataset (required)
  * @param sourceLocation The source directory, may be null
  * @param resultFile The result file name, may be null
  * @param goldStandardFile The gold standard file, may be null
- * @param options The options for the jplag runs, may be null
+ * @param goldStandardDelimiter optional delimiter used in the gold standard file
+ * @param storageFormat optional storage format
+ * @param options The options for the JPlag runs, may be null
  */
 public record DataSet(@JsonProperty(required = true) String name,
         @JsonDeserialize(using = LanguageDeserializer.class) @JsonProperty(required = true) Language language,
@@ -37,7 +39,7 @@ public record DataSet(@JsonProperty(required = true) String name,
     private static final String DEFAULT_RESULT_FILE_NAME = "%s.json";
 
     /**
-     * Gets the source directories
+     * Gets the source directories.
      * @return The source directories
      */
     public Set<File> getSourceDirectories() throws IOException {
@@ -45,7 +47,7 @@ public record DataSet(@JsonProperty(required = true) String name,
     }
 
     /**
-     * Helper function replacing null by the default value
+     * Helper function replacing null by the default value.
      * @return The source directory
      */
     File actualSourceDirectory() throws IOException {
@@ -70,7 +72,7 @@ public record DataSet(@JsonProperty(required = true) String name,
     }
 
     /**
-     * Helper function replacing null by the default value
+     * Helper function replacing null by the default value.
      * @return The result file
      */
     public File getResultFile() {
@@ -97,7 +99,7 @@ public record DataSet(@JsonProperty(required = true) String name,
     }
 
     /**
-     * Returns the actual delimiter, replacing null by the default value
+     * Returns the actual delimiter, replacing null by the default value.
      */
     public String getActualDelimiter() {
         return Objects.requireNonNullElse(this.goldStandardDelimiter, DEFAULT_GOLD_STANDARD_DELIMITER);

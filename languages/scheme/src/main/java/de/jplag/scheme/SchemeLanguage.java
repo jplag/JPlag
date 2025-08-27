@@ -10,12 +10,15 @@ import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
+/**
+ * Scheme language module facade.
+ */
 @MetaInfServices(Language.class)
 public class SchemeLanguage implements Language {
 
     @Override
-    public String[] suffixes() {
-        return new String[] {".scm", ".ss"};
+    public List<String> fileExtensions() {
+        return List.of(".scm", ".ss");
     }
 
     @Override

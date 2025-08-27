@@ -10,12 +10,15 @@ import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
+/**
+ * Facade for the C language.
+ */
 @MetaInfServices(Language.class)
 public class CLanguage implements Language {
 
     @Override
-    public String[] suffixes() {
-        return new String[] {".cpp", ".cxx", ".c++", ".c", ".cc", ".h", ".hpp", ".hh", ".hxx"};
+    public List<String> fileExtensions() {
+        return List.of(".cpp", ".cxx", ".c++", ".c", ".cc", ".h", ".hpp", ".hh", ".hxx");
     }
 
     @Override

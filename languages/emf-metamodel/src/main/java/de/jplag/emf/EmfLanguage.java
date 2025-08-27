@@ -20,16 +20,21 @@ import de.jplag.emf.util.EMFUtil;
 @MetaInfServices(Language.class)
 public class EmfLanguage implements Language {
 
+    /**
+     * Creates the language facade.
+     */
     public EmfLanguage() {
         EMFUtil.registerEcoreExtension();
     }
 
-    public static final String VIEW_FILE_SUFFIX = ".emfatic";
+    /** File extension for the textual view. **/
+    public static final String VIEW_FILE_EXTENSION = ".emfatic";
+    /** File extension for model files. **/
     public static final String FILE_ENDING = "." + EcorePackage.eNAME;
 
     @Override
-    public String[] suffixes() {
-        return new String[] {FILE_ENDING};
+    public List<String> fileExtensions() {
+        return List.of(FILE_ENDING);
     }
 
     @Override
@@ -58,7 +63,7 @@ public class EmfLanguage implements Language {
     }
 
     @Override
-    public String viewFileSuffix() {
-        return VIEW_FILE_SUFFIX;
+    public String viewFileExtension() {
+        return VIEW_FILE_EXTENSION;
     }
 }

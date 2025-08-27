@@ -33,8 +33,8 @@ public class JPlagOptionsBuilder {
     }
 
     /**
-     * Builds the JPlag options
-     * @return The JPlag options
+     * Builds the JPlag options.
+     * @return The JPlag options.
      * @throws CliException If the input handler could properly parse everything.
      */
     public JPlagOptions buildOptions() throws CliException {
@@ -64,9 +64,9 @@ public class JPlagOptionsBuilder {
                 oldSubmissionDirectories, null, this.cliOptions.advanced.subdirectory, suffixes, this.cliOptions.advanced.exclusionFileName,
                 JPlagOptions.DEFAULT_SIMILARITY_METRIC, this.cliOptions.advanced.similarityThreshold, this.cliOptions.shownComparisons,
                 clusteringOptions, this.cliOptions.advanced.debug, mergingOptions, this.cliOptions.normalize,
-                this.cliOptions.frequencyAnalysis.frequency, this.cliOptions.frequencyAnalysis.frequencyStrategy,
-                this.cliOptions.frequencyAnalysis.frequencyStrategyMinValue, this.cliOptions.frequencyAnalysis.weightingStrategy,
-                this.cliOptions.frequencyAnalysis.weightingStrategyWeightingFactor);
+                this.cliOptions.advanced.analyzeComments, this.cliOptions.frequencyAnalysis.frequency,
+                this.cliOptions.frequencyAnalysis.frequencyStrategy, this.cliOptions.frequencyAnalysis.frequencyStrategyMinValue,
+                this.cliOptions.frequencyAnalysis.weightingStrategy, this.cliOptions.frequencyAnalysis.weightingStrategyWeightingFactor);
     }
 
     private ClusteringOptions getClusteringOptions() {

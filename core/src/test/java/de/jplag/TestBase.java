@@ -1,5 +1,7 @@
 package de.jplag;
 
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
@@ -7,6 +9,9 @@ import java.util.Optional;
 import java.util.StringJoiner;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import org.junit.jupiter.api.Assumptions;
+import org.opentest4j.TestAbortedException;
 
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.exceptions.ExitException;
@@ -30,6 +35,7 @@ public abstract class TestBase {
 
     // TODO nicht static
     /**
+     * @param subdirectories list of directories that form a path relative to the base path.
      * @return the base path where the test samples reside concatenated with any number of subdirectories.
      */
     protected static String getBasePath(String... subdirectories) {
@@ -48,6 +54,9 @@ public abstract class TestBase {
 
     /**
      * Runs JPlag with default options for a given test sample and returns the result.
+     * @param testSampleName is the name of the test sample directory in the resources.
+     * @return the result of the JPlag run.
+     * @throws ExitException if JPlag fails.
      */
     protected JPlagResult runJPlagWithDefaultOptions(String testSampleName) throws ExitException {
         return JPlag.run(getDefaultOptions(testSampleName));
@@ -55,6 +64,10 @@ public abstract class TestBase {
 
     /**
      * Runs JPlag with customized options and returns the result.
+     * @param testSampleName is the name of the test sample directory in the resources.
+     * @param customization is a function that configures and returns the JPlagOptions for the run.
+     * @return the result of the JPlag run.
+     * @throws ExitException if JPlag fails.
      */
     protected JPlagResult runJPlag(String testSampleName, Function<JPlagOptions, JPlagOptions> customization) throws ExitException {
         return JPlag.run(getOptions(testSampleName, customization));
@@ -62,6 +75,10 @@ public abstract class TestBase {
 
     /**
      * Runs JPlag with multiple root folders and customized options and returns the result.
+     * @param newPaths are the root folders.
+     * @param customization is a function that configures and returns the JPlagOptions for the run.
+     * @return the result of the JPlag run.
+     * @throws ExitException if JPlag fails.
      */
     protected JPlagResult runJPlag(List<String> newPaths, Function<JPlagOptions, JPlagOptions> customization) throws ExitException {
         return JPlag.run(getOptions(newPaths, customization));
@@ -69,6 +86,11 @@ public abstract class TestBase {
 
     /**
      * Runs JPlag with multiple root folders (old and new) and customized options and returns the result.
+     * @param newPaths are the new root folders.
+     * @param oldPaths are the old root folders (not checked internally).
+     * @param customization is a function that configures and returns the JPlagOptions for the run.
+     * @return the result of the JPlag run.
+     * @throws ExitException if JPlag fails.
      */
     protected JPlagResult runJPlag(List<String> newPaths, List<String> oldPaths, Function<JPlagOptions, JPlagOptions> customization)
             throws ExitException {
@@ -82,13 +104,18 @@ public abstract class TestBase {
 
     /**
      * Get default options.
+     * @param testSampleName is the name of the test sample directory in the resources.
+     * @return the options.
      */
     protected JPlagOptions getDefaultOptions(String testSampleName) {
         return getOptions(List.of(getBasePath(testSampleName)), List.of(), options -> options);
     }
 
     /**
-     * Get customized options.
+     * Get custom options.
+     * @param testSampleName is the name of the test sample directory in the resources.
+     * @param customization is a function that configures and returns the JPlagOptions for the run.
+     * @return the options.
      */
     protected JPlagOptions getOptions(String testSampleName, Function<JPlagOptions, JPlagOptions> customization) {
         return getOptions(List.of(getBasePath(testSampleName)), List.of(), customization);
@@ -96,6 +123,9 @@ public abstract class TestBase {
 
     /**
      * Get customized options for JPlag run with multiple root folders.
+     * @param newPaths are the new folders.
+     * @param customization is a function that configures and returns the JPlagOptions for the run.
+     * @return the options.
      */
     protected JPlagOptions getOptions(List<String> newPaths, Function<JPlagOptions, JPlagOptions> customization) {
         return getOptions(newPaths, List.of(), customization);
@@ -104,6 +134,10 @@ public abstract class TestBase {
     // TODO nicht statisch lasse
     /**
      * Get customized options for JPlag run with multiple root folders (old and new).
+     * @param newPaths are the new root folders.
+     * @param oldPaths are the old root folders (not checked internally).
+     * @param customization is a function that configures and returns the JPlagOptions for the run.
+     * @return the options.
      */
     protected JPlagOptions getOptions(List<String> newPaths, List<String> oldPaths, Function<JPlagOptions, JPlagOptions> customization) {
         var newFiles = newPaths.stream().map(File::new).collect(Collectors.toSet());
@@ -153,5 +187,15 @@ public abstract class TestBase {
             }
         }
         directory.delete();
+    }
+
+    /**
+     * Validate a given assumption for object equality based on {@link Assumptions#assumeTrue(boolean)}.
+     * @param expected the expected value.
+     * @param actual the actual value.
+     * @throws TestAbortedException if the assumption is not {@code true}.
+     */
+    protected static void assumeEquals(Object expected, Object actual) {
+        assumeTrue(expected.equals(actual), "Expected: " + expected + ", Actual: " + actual);
     }
 }

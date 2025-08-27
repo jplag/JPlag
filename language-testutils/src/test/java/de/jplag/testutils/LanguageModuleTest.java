@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assumptions;
@@ -79,7 +80,7 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Test the configured source files for source line coverage
+     * Test the configured source files for source line coverage.
      * @param data The source to check
      * @throws ParsingException If the parser throws some error
      * @throws IOException If any IO Exception occurs
@@ -95,14 +96,14 @@ public abstract class LanguageModuleTest {
         this.configureIgnoredLines(ignoredLines);
         List<Integer> relevantLines = new ArrayList<>(ignoredLines.getRelevantLines());
 
-        tokens.stream().map(Token::getLine).forEach(relevantLines::remove);
+        tokens.stream().flatMap(t -> IntStream.rangeClosed(t.getStartLine(), t.getEndLine()).boxed()).forEach(relevantLines::remove);
 
         assertTrue(relevantLines.isEmpty(),
                 "Test test source " + data.describeTestSource() + " contained uncovered lines:" + System.lineSeparator() + relevantLines);
     }
 
     /**
-     * Returns all test sources, that need to be checked for source line coverage
+     * Returns all test sources, that need to be checked for source line coverage.
      * @return The test sources
      */
     final List<TestData> sourceCoverageFiles() {
@@ -110,7 +111,7 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Checks the configured source files for token coverage
+     * Checks the configured source files for token coverage.
      * @param data The source to check
      * @throws ParsingException If the parser throws some error
      * @throws IOException If any IO Exception occurs
@@ -158,7 +159,7 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Returns all test sources, that need to be checked for contained tokens
+     * Returns all test sources, that need to be checked for contained tokens.
      * @return The test sources
      */
     final List<TestDataCollector.TokenListTest> testTokensContainedData() {
@@ -166,7 +167,7 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Checks the given test sources for an exact token sequence
+     * Checks the given test sources for an exact token sequence.
      * @param test The source to check
      * @throws ParsingException If the parser throws some error
      * @throws IOException If any IO Exception occurs
@@ -192,7 +193,7 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Returns all test sources, that need to be checked for a matching token sequence
+     * Returns all test sources, that need to be checked for a matching token sequence.
      * @return The test sources
      */
     final List<TestDataCollector.TokenListTest> testTokenSequenceData() {
@@ -200,7 +201,7 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Tests if the tokens specified for the token position tests are present in the sources
+     * Tests if the tokens specified for the token position tests are present in the sources.
      * @param testData The specifications of the expected tokens and the test source
      * @throws ParsingException If the parsing fails
      * @throws IOException If IO operations fail. If this happens, that should be unrelated to the test itself.
@@ -216,19 +217,23 @@ public abstract class LanguageModuleTest {
             TokenType expectedType = this.languageTokens.stream().filter(type -> type.toString().equals(expectedToken.typeName())).findFirst()
                     .orElseThrow(() -> new IOException(String.format("The token type %s does not exist.", expectedToken.typeName())));
 
-            if (extractedTokens.stream().noneMatch(token -> token.getType() == expectedType && token.getLine() == expectedToken.lineNumber()
-                    && token.getColumn() == expectedToken.columnNumber() && token.getLength() == expectedToken.length())) {
+            if (extractedTokens.stream().noneMatch(token -> testTokenMatch(token, expectedType, expectedToken))) {
                 failedTokens.add(expectedToken);
             }
         }
 
         if (!failedTokens.isEmpty()) {
-            String failureDescriptors = String.join(System.lineSeparator(),
-                    failedTokens.stream().map(
-                            token -> token.typeName() + " at (" + token.lineNumber() + ":" + token.columnNumber() + ") with length " + token.length())
-                            .toList());
+            String failureDescriptors = String.join(System.lineSeparator(), failedTokens.stream().map(token -> token.typeName() + " at ("
+                    + token.startLine() + ":" + token.startColumn() + ") to (" + token.endLine() + ":" + token.endColumn() + ")").toList());
             fail("Some tokens weren't extracted with the correct properties:" + System.lineSeparator() + failureDescriptors);
         }
+    }
+
+    private boolean testTokenMatch(Token token, TokenType expectedType, TokenPositionTestData.TokenData expectedToken) {
+        boolean typeMatch = token.getType() == expectedType;
+        boolean startPositionMatch = token.getStartLine() == expectedToken.startLine() && token.getStartColumn() == expectedToken.startColumn();
+        boolean endPositionMatch = token.getEndLine() == expectedToken.endLine() && token.getEndColumn() == expectedToken.endColumn();
+        return typeMatch && startPositionMatch && endPositionMatch;
     }
 
     /**
@@ -239,7 +244,7 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Tests all configured test sources for a monotone order of tokens
+     * Tests all configured test sources for a monotone order of tokens.
      * @param data The test source
      * @throws ParsingException If the parser throws some error
      * @throws IOException If any IO Exception occurs
@@ -254,15 +259,15 @@ public abstract class LanguageModuleTest {
             Token first = tokens.get(i);
             Token second = tokens.get(i + 1);
 
-            if (first.getLine() > second.getLine()) {
-                fail(String.format("Invalid token order. Token %s has a higher line number (%s) than token %s (%s).", first.getType(),
-                        first.getLine(), second.getType(), second.getLine()));
+            if (first.getStartLine() > second.getStartLine()) {
+                fail(String.format("Invalid token order. Token %s (%s:%s) comes after %s (%s:%s)", first.getType(), first.getStartLine(),
+                        first.getStartColumn(), second.getType(), second.getStartLine(), second.getStartColumn()));
             }
         }
     }
 
     /**
-     * Checks that all configured test sources end with a FileEnd token
+     * Checks that all configured test sources end with a FileEnd token.
      * @param data The test source
      * @throws ParsingException If the parser throws some error
      * @throws IOException If any IO Exception occurs
@@ -277,7 +282,7 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Returns all configured test sources
+     * Returns all configured test sources.
      * @return The test sources
      */
     final List<TestData> getAllTestData() {
@@ -285,7 +290,7 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Collects the test sources
+     * Collects the test sources.
      */
     @BeforeAll
     final void collectTestData() {

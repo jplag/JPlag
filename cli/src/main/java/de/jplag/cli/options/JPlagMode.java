@@ -5,19 +5,19 @@ package de.jplag.cli.options;
  */
 public enum JPlagMode {
     /**
-     * Only run JPlag and create a results.jplag
+     * Only run JPlag and create a results.jplag.
      */
     RUN,
     /**
-     * Only start the report viewer
+     * Only start the report viewer.
      */
     VIEW,
     /**
-     * Run JPlag and open the result in report viewer
+     * Run JPlag and open the result in report viewer.
      */
     RUN_AND_VIEW,
     /**
-     * Choose the mode automatically from the given input files
+     * Choose the mode automatically from the given input files.
      */
     AUTO,
 }

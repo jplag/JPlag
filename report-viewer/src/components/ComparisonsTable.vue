@@ -23,7 +23,7 @@
                   >
                     <template #default>
                       <p class="w-full text-center">
-                        {{ metricToolTips[MetricType.AVERAGE].shortName }}
+                        {{ MetricTypes.AVERAGE_SIMILARITY.shortName }}
                         <FontAwesomeIcon
                           :icon="
                             store().uiState.comparisonTableSorting.column.id == 'averageSimilarity'
@@ -35,8 +35,8 @@
                       </p>
                     </template>
                     <template #tooltip>
-                      <p class="text-sm whitespace-pre">
-                        {{ metricToolTips[MetricType.AVERAGE].tooltip }}
+                      <p class="max-w-80 text-sm whitespace-pre-wrap">
+                        {{ MetricTypes.AVERAGE_SIMILARITY.tooltip }}
                       </p>
                     </template>
                   </ToolTipComponent>
@@ -44,24 +44,25 @@
                   <ToolTipComponent
                     class="flex-1 cursor-pointer"
                     :direction="displayClusters ? 'top' : 'left'"
-                    @click="setSorting('maximumSimilarity')"
+                    @click="setSorting(secondaryMetric.sorting.id)"
                   >
                     <template #default>
                       <p class="w-full text-center">
-                        {{ metricToolTips[MetricType.MAXIMUM].shortName
-                        }}<FontAwesomeIcon
+                        {{ secondaryMetric.shortName }}
+                        <FontAwesomeIcon
                           :icon="
-                            store().uiState.comparisonTableSorting.column.id == 'maximumSimilarity'
+                            store().uiState.comparisonTableSorting.column.id ==
+                            secondaryMetric.sorting.id
                               ? store().uiState.comparisonTableSorting.direction.icon
                               : faSort
                           "
-                          class="ml-1"
+                          class="ml-1 cursor-pointer"
                         />
                       </p>
                     </template>
                     <template #tooltip>
-                      <p class="text-sm whitespace-pre">
-                        {{ metricToolTips[MetricType.MAXIMUM].tooltip }}
+                      <p class="max-w-80 text-sm whitespace-pre-wrap">
+                        {{ secondaryMetric.tooltip }}
                       </p>
                     </template>
                   </ToolTipComponent>
@@ -113,6 +114,14 @@
                         item.id % 2 == 1,
                       'bg-accent/30!': isHighlightedRow(item)
                     }"
+                    @mouseover="
+                      () =>
+                        emit('lineHovered', {
+                          firstId: item.firstSubmissionId,
+                          secondId: item.secondSubmissionId
+                        })
+                    "
+                    @mouseleave="() => emit('lineHovered', null)"
                   >
                     <RouterLink
                       :to="{
@@ -138,10 +147,18 @@
                       <!-- Similarities -->
                       <div class="tableCellSimilarity tableCell">
                         <div class="w-1/2">
-                          {{ (item.similarities[MetricType.AVERAGE] * 100).toFixed(2) }}%
+                          {{
+                            MetricTypes.AVERAGE_SIMILARITY.format(
+                              item.similarities[MetricTypes.AVERAGE_SIMILARITY.identifier]
+                            )
+                          }}
                         </div>
                         <div class="w-1/2">
-                          {{ (item.similarities[MetricType.MAXIMUM] * 100).toFixed(2) }}%
+                          {{
+                            secondaryMetric.format(
+                              item.similarities[store().uiState.comparisonTableSecondaryMetric]
+                            )
+                          }}
                         </div>
                       </div>
                     </RouterLink>
@@ -208,7 +225,8 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faSort, faUserGroup } from '@fortawesome/free-solid-svg-icons'
 import { generateHues } from '@/utils/ColorUtils'
 import ToolTipComponent from './ToolTipComponent.vue'
-import { MetricType, metricToolTips } from '@/model/MetricType'
+import { MetricTypes } from '@/model/MetricType'
+import { MetricJsonIdentifier } from '@/model/MetricJsonIdentifier'
 import NameElement from './NameElement.vue'
 import ComparisonTableFilter from './ComparisonTableFilter.vue'
 import { Column, Direction, type ColumnId } from '@/model/ui/ComparisonSorting'
@@ -235,6 +253,14 @@ const props = defineProps({
     default: undefined
   }
 })
+
+const emit = defineEmits<{
+  (event: 'lineHovered', value: { firstId: string; secondId: string } | null): void
+}>()
+
+const secondaryMetric = computed(
+  () => MetricTypes.METRIC_MAP[store().uiState.comparisonTableSecondaryMetric]
+)
 
 const displayedComparisons = computed(() => {
   const comparisons = getFilteredComparisons(getSortedComparisons(Array.from(props.topComparisons)))
@@ -268,13 +294,24 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
     .map((s) => s.substring(6))
     .map((s) => parseInt(s))
 
-  const metricSearches = searches.filter((s) => /((avg|max):)?([<>])=?[0-9]+%?/.test(s))
+  const metricSearches = searches.filter((s) => /((avg|max|long|len):)?([<>])=?[0-9]+%?/.test(s))
 
   return comparisons.filter((c) => {
     // name search
     const name1 = store().submissionDisplayName(c.firstSubmissionId).toLowerCase()
+    const anonName1 = store().isAnonymous(c.firstSubmissionId)
+      ? store().getAnonymousName(c.firstSubmissionId).toLowerCase()
+      : ''
     const name2 = store().submissionDisplayName(c.secondSubmissionId).toLowerCase()
-    if (searches.some((s) => name1.includes(s) || name2.includes(s))) {
+    const anonName2 = store().isAnonymous(c.secondSubmissionId)
+      ? store().getAnonymousName(c.secondSubmissionId).toLowerCase()
+      : ''
+    if (
+      searches.some(
+        (s) =>
+          name1.includes(s) || name2.includes(s) || anonName1.includes(s) || anonName2.includes(s)
+      )
+    ) {
       return true
     }
 
@@ -287,33 +324,44 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
     }
 
     // metric search
-    const searchPerMetric: Record<MetricType, string[]> = {
-      [MetricType.AVERAGE]: [],
-      [MetricType.MAXIMUM]: []
-    }
+    const searchPerMetric: Record<MetricJsonIdentifier, string[]> = {} as Record<
+      MetricJsonIdentifier,
+      string[]
+    >
+    MetricTypes.METRIC_JSON_IDENTIFIERS.forEach((m) => {
+      searchPerMetric[m] = []
+    })
     metricSearches.forEach((s) => {
-      const regexResult = /^(?:(avg|max):)([<>]=?[0-9]+%?$)/.exec(s)
+      const regexResult = /^(?:(avg|max|long|len):)([<>]=?[0-9]+%?$)/.exec(s)
       if (regexResult) {
         const metricName = regexResult[1]
-        let metric = MetricType.AVERAGE
-        for (const m of [MetricType.AVERAGE, MetricType.MAXIMUM]) {
-          if (metricToolTips[m].shortName.toLowerCase() == metricName) {
+        let metric = MetricTypes.AVERAGE_SIMILARITY
+        for (const m of MetricTypes.METRIC_LIST) {
+          if (m.shortName.toLowerCase() == metricName) {
             metric = m
             break
           }
         }
-        searchPerMetric[metric].push(regexResult[2])
+        searchPerMetric[metric.identifier].push(regexResult[2])
       } else {
-        searchPerMetric[MetricType.AVERAGE].push(s)
-        searchPerMetric[MetricType.MAXIMUM].push(s)
+        MetricTypes.METRIC_JSON_IDENTIFIERS.forEach((m) => {
+          searchPerMetric[m].push(s)
+        })
       }
     })
-    for (const metric of [MetricType.AVERAGE, MetricType.MAXIMUM]) {
+    for (const metric of MetricTypes.METRIC_JSON_IDENTIFIERS) {
       for (const search of searchPerMetric[metric]) {
         const regexResult = /([<>]=?)([0-9]+)%?/.exec(search)!
         const operator = regexResult[1]
         const value = parseInt(regexResult[2])
-        if (evaluateMetricComparison(c.similarities[metric] * 100, operator, value)) {
+        const metricObject = MetricTypes.METRIC_MAP[metric]
+        if (
+          evaluateMetricComparison(
+            metricObject.getTableFilterValue(c.similarities[metric]),
+            operator,
+            value
+          )
+        ) {
           return true
         }
       }

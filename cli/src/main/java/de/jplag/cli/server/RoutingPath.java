@@ -30,7 +30,9 @@ public class RoutingPath {
     }
 
     /**
-     * @return All path segments except the first
+     * Returns a new RoutingPath representing the tail (next segment) of the current path.
+     * @return the tail RoutingPath
+     * @throws IllegalStateException if there is no tail (path is complete)
      */
     public RoutingPath tail() {
         if (!hasTail()) {

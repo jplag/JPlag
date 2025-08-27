@@ -8,11 +8,14 @@ import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
+/**
+ * Artificial ANTLR-based language for testing.
+ */
 public class TestLanguage implements Language {
 
     @Override
-    public String[] suffixes() {
-        return new String[] {"expression"};
+    public List<String> fileExtensions() {
+        return List.of("expression");
     }
 
     @Override
