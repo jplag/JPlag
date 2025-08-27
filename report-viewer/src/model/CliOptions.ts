@@ -21,6 +21,11 @@ interface AbstractOptions<L> {
   mergingOptions: CliMergingOptions
   normalize: boolean
   analyzeComments: boolean
+  frequency: boolean
+  frequencyStrategy: string
+  frequencyStrategyMinValue: number
+  weightingStrategy: string
+  weightingStrategyWeightingFactor: number
 }
 
 export interface CliClusterOptions {
@@ -37,11 +42,6 @@ export interface CliClusterOptions {
   agglomerativeInterClusterSimilarity: string
   preprocessorThreshold: number
   preprocessorPercentile: number
-   frequency: boolean
-    frequencyStrategy: string
-    frequencyStrategyMinValue: number
-    weightingStrategy: string
-    weightingStrategyWeightingFactor: number
 }
 
 interface CliMergingOptions {
