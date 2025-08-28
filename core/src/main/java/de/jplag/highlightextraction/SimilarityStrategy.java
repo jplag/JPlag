@@ -1,4 +1,5 @@
 package de.jplag.highlightextraction;
+
 /**
  * Strategy for calculating the weight of a match
  */

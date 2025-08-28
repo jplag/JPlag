@@ -5,7 +5,7 @@ package de.jplag.highlightextraction;
  */
 public class SigmoidWeightingStrategy implements SimilarityStrategy {
     /**
-     * Strategy that considers rare matches stronger than  frequent ones. Weighted with a sigmoid weighting function.
+     * Strategy that considers rare matches stronger than frequent ones. Weighted with a sigmoid weighting function.
      * @param minWeight min considered weight
      * @param maxWeight max considered weight
      * @param rarity the normalized relative frequency of a match

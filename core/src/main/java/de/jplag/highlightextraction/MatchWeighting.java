@@ -16,7 +16,6 @@ public class MatchWeighting {
     private final FrequencyStrategy strategy;
     private final Map<List<TokenType>, Integer> frequencyMap;
 
-
     /**
      * Constructor defining the used frequency strategy and frequency map.
      * @param strategy chosen to determine the frequency of a match

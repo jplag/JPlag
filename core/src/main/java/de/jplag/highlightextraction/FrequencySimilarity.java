@@ -35,7 +35,7 @@ public class FrequencySimilarity {
 
     /**
      * Sorts the comparisons, according to the frequency.
-      * @param weight weighting factor, is factor for the (max) influence of the frequency
+     * @param weight weighting factor, is factor for the (max) influence of the frequency
      * @return the comparisons sorted with similarity score
      */
 
@@ -49,7 +49,7 @@ public class FrequencySimilarity {
      * Calculates the similarity score for a comparison. The score gets influenced form the frequency of the match according
      * to the cooden Frequency Strategy, Similarity Strategy and weighting factor.
      * @param comparison considered comparison to calculate the similarity score for
-      * @param weight weighting factor, is factor for the (max) influence of the frequency
+     * @param weight weighting factor, is factor for the (max) influence of the frequency
      * @return the similarity score
      */
     public double frequencySimilarity(JPlagComparison comparison, double weight) {
@@ -67,7 +67,6 @@ public class FrequencySimilarity {
         return (matchedFrequencyTokensOfFirst + matchedFrequencyTokensOfSecond) / (double) divisor;
 
     }
-
 
     /**
      * Changes the considered match length according to the frequency weight, depending on the frequency similarity

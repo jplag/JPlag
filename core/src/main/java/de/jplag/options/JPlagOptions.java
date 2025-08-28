@@ -55,7 +55,8 @@ import io.soabase.recordbuilder.core.RecordBuilder;
  * @param frequencyStrategies strategy for determining the frequency
  * @param frequencyStrategyMinValue min considered subsequence length in frequencyStrategies
  * @param weightingStrategy weighting function used in the frequency Analysis
- * @param weightingStrategyWeightingFactor factor how strong the considered influence of the weighting function (maximal) can be
+ * @param weightingStrategyWeightingFactor factor how strong the considered influence of the weighting function
+ * (maximal) can be
  */
 @RecordBuilder()
 public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Language language, Integer minimumTokenMatch,
@@ -124,7 +125,8 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
      * @param frequencyStrategies strategy for determining the frequency
      * @param frequencyStrategyMinValue min considered subsequence length in frequencyStrategies
      * @param weightingStrategy weighting function used in the frequency Analysis
-     * @param weightingStrategyWeightingFactor factor how strong the considered influence of the weighting function (maximal) can be
+     * @param weightingStrategyWeightingFactor factor how strong the considered influence of the weighting function
+     * (maximal) can be
      */
     public JPlagOptions(Language language, Integer minimumTokenMatch, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories,
             File baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
@@ -249,7 +251,8 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
      * @param frequencyStrategies strategy for determining the frequency
      * @param frequencyStrategyMinValue min considered subsequence length in frequencyStrategies
      * @param weightingStrategy weighting function used in the frequency Analysis
-    *  @param weightingStrategyWeightingFactor factor how strong the considered influence of the weighting function (maximal) can be
+     * @param weightingStrategyWeightingFactor factor how strong the considered influence of the weighting function
+     * (maximal) can be
      * @deprecated Use the default initializer with @{{@link #baseCodeSubmissionDirectory} instead.
      */
     @Deprecated(since = "4.0.0", forRemoval = true)

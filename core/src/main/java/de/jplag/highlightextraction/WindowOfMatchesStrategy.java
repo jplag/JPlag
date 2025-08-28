@@ -50,7 +50,6 @@ public class WindowOfMatchesStrategy implements FrequencyStrategy {
         return windowSequences;
     }
 
-
     /**
      * Calculates the weight of a match considering window sized subsequences of the match
      * @param match Considered match
