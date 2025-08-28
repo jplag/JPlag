@@ -23,6 +23,7 @@ public class FrequencySimilarity {
 
     /**
      * Constructor defines comparisons and strategy for the similarity calculation.
+     * @param comparisons considered comparisons to calculate the similarity score for
      * @param strategy chosen weighting function
      */
     public FrequencySimilarity(List<JPlagComparison> comparisons, SimilarityStrategy strategy) {
