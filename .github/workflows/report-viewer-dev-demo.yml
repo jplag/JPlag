@@ -80,10 +80,10 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: Result
-          path: report-viewer/public
+          path: report-viewer/report-viewer/public
 
       - name: Install and Build 🔧
-        working-directory: report-viewer
+        working-directory: report-viewer/report-viewer
         run: |
           npm install
           npm run build-dev-demo
@@ -92,7 +92,7 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4.7.3
         with:
           branch: gh-pages
-          folder: report-viewer/dist
+          folder: report-viewer/report-viewer/dist
           repository-name: JPlag/DevDemo
           token: ${{ secrets.SDQ_DEV_DEPLOY_TOKEN }}
           clean: true

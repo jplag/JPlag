@@ -21,7 +21,7 @@ jobs:
           node-version: "lts/*"
 
       - name: Install and Build 🔧
-        working-directory: report-viewer
+        working-directory: report-viewer/report-viewer
         run: |
           npm install
           npm run build-dev
@@ -30,7 +30,7 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4.7.3
         with:
           branch: gh-pages
-          folder: report-viewer/dist
+          folder: report-viewer/report-viewer/dist
           repository-name: JPlag/JPlag-Dev
           token: ${{ secrets.SDQ_DEV_DEPLOY_TOKEN }}
           clean: true

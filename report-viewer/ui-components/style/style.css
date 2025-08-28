@@ -1,0 +1,75 @@
+@import 'tailwindcss';
+
+@source '../base';
+@source '../widget';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-font-light: #ffffff;
+  --color-font-dark: #000000;
+
+  --color-background-light: hsl(0, 0%, 97%);
+  --color-background-dark: hsl(230, 10%, 8%);
+
+  --color-container-light: hsl(0, 0%, 98%);
+  --color-container-dark: hsl(250, 10%, 15%);
+  --color-container-border-light: hsl(0, 0%, 80%);
+  --color-container-border-dark: hsl(0, 0%, 25%);
+  --color-container-secondary-light: hsl(0, 0%, 95%);
+  --color-container-secondary-dark: hsl(250, 10%, 20%);
+
+  --color-interactable-light: hsl(0, 0%, 100%);
+  --color-interactable-dark: hsl(250, 10%, 20%);
+  --color-interactable-border-light: hsl(0, 0%, 75%);
+  --color-interactable-border-dark: hsl(0, 0%, 25%);
+
+  --color-scrollbar-background-light: var(--color-slate-100);
+  --color-scrollbar-background-dark: #30363d;
+  --color-scrollbar-thumb-light: var(--color-slate-400);
+  --color-scrollbar-thumb-dark: #505a66;
+
+  --color-accent: #be1622;
+  --color-accent-dark: #7f0f18;
+
+  --color-link: #0070f3;
+  --color-link-dark: #00c;
+
+  --color-error: #dc322f;
+
+  --color-tooltip: rgba(0, 0, 0, 0.8);
+}
+
+@utility break-anywhere {
+  overflow-wrap: anywhere;
+}
+
+@utility print-exact {
+  print-color-adjust: exact;
+}
+
+@utility display-initial {
+  display: initial;
+}
+
+@layer base {
+  #app {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h2 {
+    @apply text-3xl;
+  }
+
+  *::-webkit-scrollbar {
+    @apply h-[6px] w-[6px] cursor-pointer;
+  }
+  *::-webkit-scrollbar-track {
+    @apply bg-scrollbar-background-light dark:bg-scrollbar-background-dark rounded-full border-2;
+  }
+  *::-webkit-scrollbar-thumb {
+    @apply bg-scrollbar-thumb-light dark:bg-scrollbar-thumb-dark rounded-full border-2;
+  }
+}
