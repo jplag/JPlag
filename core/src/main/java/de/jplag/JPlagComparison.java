@@ -27,13 +27,27 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
         this.ignoredMatches = Collections.unmodifiableList(ignoredMatches);
     }
 
+    /**
+     * Similarity score of the comparison calculated in frequency analysis depending on the frequency of a match among all
+     * comparisons.
+     */
     private static double frequencyWeightedScore = -1;
+    /**
+     * If the frequency analysis is used or the normal similarity will be considered.
+     */
     private static boolean frequency = false;
 
+    /**
+     * @param frequency if the frequency analysis is used or the normal similarity will be considered
+     */
     public static void setFrequency(boolean frequency) {
         JPlagComparison.frequency = frequency;
     }
 
+    /**
+     * @param score Similarity score of the comparison calculated in frequency analysis depending on the frequency of a
+     * match among all comparisons.
+     */
     public void setFrequencyWeightedScore(double score) {
         frequencyWeightedScore = score;
     }
@@ -74,7 +88,7 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
      * @return Average similarity in interval [0, 1]. 0 means zero percent structural similarity, 1 means 100 percent
      * structural similarity.
      */
-    public final double similarity() {
+    public double similarity() {
         if (frequency && frequencyWeightedScore >= 0) {
             return frequencyWeightedScore;
         }

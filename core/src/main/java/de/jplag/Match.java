@@ -50,8 +50,8 @@ public class Match {
         return frequencyWeight;
     }
 
-    public void setFrequencyWeight(double freuencyWeight) {
-        this.frequencyWeight = freuencyWeight;
+    public void setFrequencyWeight(double frequencyWeight) {
+        this.frequencyWeight = frequencyWeight;
     }
 
     /**
@@ -106,6 +106,10 @@ public class Match {
         return minimumLength();
     }
 
+    /**
+     * @param o Match Object to compare
+     * @return if there equal
+     */
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass())
@@ -115,6 +119,9 @@ public class Match {
                 && lengthOfSecond == match.lengthOfSecond;
     }
 
+    /**
+     * @return the hashcode of a match
+     */
     @Override
     public int hashCode() {
         return Objects.hash(startOfFirst, startOfSecond, lengthOfFirst, lengthOfSecond);
