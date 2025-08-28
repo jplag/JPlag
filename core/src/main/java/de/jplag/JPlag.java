@@ -107,7 +107,7 @@ public class JPlag {
         FrequencySimilarity similarity = new FrequencySimilarity(result.getAllComparisons(), similarityStrategy);
         for (JPlagComparison comparison : result.getAllComparisons()) {
             double score = similarity.weightedComparisonSimilarity(comparison, options.weightingStrategyWeightingFactor());
-            comparison.setFrequencyWeightedScore(score);
+            JPlagComparison.setFrequencyWeightedScore(score);
             JPlagComparison.setFrequency(options.frequency());
         }
 
