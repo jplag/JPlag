@@ -33,7 +33,6 @@ public abstract class TestBase {
      */
     protected static final double DELTA = 0.001;
 
-    // TODO nicht static
     /**
      * @param subdirectories list of directories that form a path relative to the base path.
      * @return the base path where the test samples reside concatenated with any number of subdirectories.
@@ -131,7 +130,6 @@ public abstract class TestBase {
         return getOptions(newPaths, List.of(), customization);
     }
 
-    // TODO nicht statisch lasse
     /**
      * Get customized options for JPlag run with multiple root folders (old and new).
      * @param newPaths are the new root folders.

@@ -48,7 +48,7 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
      * @param score Similarity score of the comparison calculated in frequency analysis depending on the frequency of a
      * match among all comparisons.
      */
-    public void setFrequencyWeightedScore(double score) {
+    public static void setFrequencyWeightedScore(double score) {
         frequencyWeightedScore = score;
     }
 

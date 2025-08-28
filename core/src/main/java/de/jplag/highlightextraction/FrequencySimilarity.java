@@ -50,8 +50,9 @@ public class FrequencySimilarity {
 
     public List<JPlagComparison> calculateFrequencySimilarity(List<JPlagComparison> comparisons, double weight) {
         final double frequencyWeight = weight;
-        return this.comparisons = comparisons.stream()
+        this.comparisons = comparisons.stream()
                 .sorted(Comparator.comparingDouble((JPlagComparison c) -> frequencySimilarity(c, frequencyWeight)).reversed()).toList();
+        return this.comparisons;
     }
 
     /**
