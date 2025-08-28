@@ -3,14 +3,14 @@ package de.jplag.cli.options;
 import java.io.File;
 import java.nio.charset.Charset;
 
-import de.jplag.highlightextraction.FrequencyStrategies;
-import de.jplag.highlightextraction.WeightingStrategies;
 import org.slf4j.event.Level;
 
 import de.jplag.Language;
 import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
+import de.jplag.highlightextraction.FrequencyStrategies;
+import de.jplag.highlightextraction.WeightingStrategies;
 import de.jplag.java.JavaLanguage;
 import de.jplag.merging.MergingOptions;
 import de.jplag.options.JPlagOptions;
