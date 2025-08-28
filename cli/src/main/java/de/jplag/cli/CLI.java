@@ -54,24 +54,31 @@ public final class CLI {
     public void executeCli() throws ExitException, IOException {
         logger.debug("Your version of JPlag is {}", JPlag.JPLAG_VERSION);
 
-        if (!this.inputHandler.parse()) {
-            if (!this.inputHandler.getCliOptions().advanced.skipVersionCheck) {
-                JPlagVersionChecker.printVersionNotification();
-            }
-
-            CollectedLogger.setLogLevel(this.inputHandler.getCliOptions().advanced.logLevel);
-            ProgressBarLogger.setProgressBarProvider(new CliProgressBarProvider());
-            if (this.inputHandler.getCliOptions().advanced.submissionCharsetOverride != null) {
-                FileUtils.setOverrideSubmissionCharset(this.inputHandler.getCliOptions().advanced.submissionCharsetOverride);
-            }
-
-            switch (this.inputHandler.getCliOptions().mode) {
-                case RUN -> runJPlag();
-                case VIEW -> runViewer(this.inputHandler.getFileForViewMode());
-                case RUN_AND_VIEW -> runAndView();
-                case AUTO -> selectModeAutomatically();
-            }
+        boolean shouldAbortRunNow = this.inputHandler.parse();
+        
+        // check version regardless of parsing result
+        if (!this.inputHandler.getCliOptions().advanced.skipVersionCheck) {
+            JPlagVersionChecker.printVersionNotification();
         }
+        
+        if (shouldAbortRunNow) {
+            // help text has been printed, do nothing else
+            return;
+        }
+
+        CollectedLogger.setLogLevel(this.inputHandler.getCliOptions().advanced.logLevel);
+        ProgressBarLogger.setProgressBarProvider(new CliProgressBarProvider());
+        if (this.inputHandler.getCliOptions().advanced.submissionCharsetOverride != null) {
+            FileUtils.setOverrideSubmissionCharset(this.inputHandler.getCliOptions().advanced.submissionCharsetOverride);
+        }
+
+        switch (this.inputHandler.getCliOptions().mode) {
+            case RUN -> runJPlag();
+            case VIEW -> runViewer(this.inputHandler.getFileForViewMode());
+            case RUN_AND_VIEW -> runAndView();
+            case AUTO -> selectModeAutomatically();
+        }
+        
     }
 
     /**
