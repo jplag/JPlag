@@ -3,13 +3,14 @@ package de.jplag.cli.options;
 import java.io.File;
 import java.nio.charset.Charset;
 
+import de.jplag.highlightextraction.FrequencyStrategies;
+import de.jplag.highlightextraction.WeightingStrategies;
 import org.slf4j.event.Level;
 
 import de.jplag.Language;
 import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
-import de.jplag.highlightextraction.*;
 import de.jplag.java.JavaLanguage;
 import de.jplag.merging.MergingOptions;
 import de.jplag.options.JPlagOptions;
@@ -90,6 +91,7 @@ public class CliOptions implements Runnable {
     @ArgGroup(validate = false, heading = "%nSubsequence Match Merging%n")
     public Merging merging = new Merging();
 
+    /** Frequency based analysis of the Matches. */
     @ArgGroup(validate = false, heading = "%nFrequency Analysis%n")
     public FrequencyAnalysis frequencyAnalysis = new FrequencyAnalysis();
 
@@ -261,12 +263,12 @@ public class CliOptions implements Runnable {
         @Option(names = {"--frequency-analysis"}, description = "if frequency calculation is used")
         public boolean frequency = false;
 
-        /** Frequency Determination strategy */
+        /** Frequency Determination strategy. */
         @Option(names = {
                 "--frequency-strategy"}, description = "strategy for frequency Analysis, Options: completeMatches, containedMatches, subMatches, windowOfMatches")
         public FrequencyStrategies frequencyStrategy = FrequencyStrategies.COMPLETE_MATCHES;
 
-        /** Min value for considered subsequence length in Frequency Determination strategy */
+        /** Min value for considered subsequence length in Frequency Determination strategy. */
         @Option(names = {
                 "--frequency-min-value"}, description = "max of min match length that will be compared and this value, is min size of considered submatches")
         public int frequencyStrategyMinValue = 1;
