@@ -55,12 +55,12 @@ public final class CLI {
         logger.debug("Your version of JPlag is {}", JPlag.JPLAG_VERSION);
 
         boolean shouldAbortRunNow = this.inputHandler.parse();
-        
+
         // check version regardless of parsing result
         if (!this.inputHandler.getCliOptions().advanced.skipVersionCheck) {
             JPlagVersionChecker.printVersionNotification();
         }
-        
+
         if (shouldAbortRunNow) {
             // help text has been printed, do nothing else
             return;
