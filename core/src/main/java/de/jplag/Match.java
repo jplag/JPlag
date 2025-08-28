@@ -30,32 +30,52 @@ public class Match {
         this.lengthOfSecond = lengthOfSecond;
     }
 
+    /**
+     * @return startpoint of the match in the first submission.
+     */
     public int getStartOfFirst() {
         return startOfFirst;
     }
 
+    /**
+     * @return startpoint of the match in the second submission.
+     */
     public int getStartOfSecond() {
         return startOfSecond;
     }
 
+    /**
+     * @return The length of the first submission.
+     */
     public int getLengthOfFirst() {
         return lengthOfFirst;
     }
 
+    /**
+     * @return The length of the second submission.
+     */
     public int getLengthOfSecond() {
         return lengthOfSecond;
     }
 
+    /**
+     * @return The in the frequency analysis considered frequency of the match.
+     */
     public double getFrequencyWeight() {
         return frequencyWeight;
     }
 
+    /**
+     * The in the frequency analysis considered frequency of the match.
+     * @param frequencyWeight the frequency value of the match.
+     */
     public void setFrequencyWeight(double frequencyWeight) {
         this.frequencyWeight = frequencyWeight;
     }
 
     /**
      * Checks if two matches overlap.
+     * @param other the match that is compared against the given.
      * @return true if they do.
      */
     public boolean overlaps(Match other) {

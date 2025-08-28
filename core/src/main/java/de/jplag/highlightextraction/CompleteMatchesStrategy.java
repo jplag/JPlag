@@ -27,7 +27,7 @@ public class CompleteMatchesStrategy implements FrequencyStrategy {
     }
 
     /**
-     * Calculates the weight of a match
+     * Calculates the weight of a match.
      * @param match Considered match
      * @param frequencyMap Frequency map build with processMatchTokenTypes method
      * @param matchToken tokenType sequence of the match

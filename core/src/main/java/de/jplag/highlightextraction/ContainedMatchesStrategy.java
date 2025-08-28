@@ -15,6 +15,9 @@ import de.jplag.TokenType;
  * the comparisons, if the submatches are longer than minSubSequenceLength.
  */
 public class ContainedMatchesStrategy implements FrequencyStrategy {
+    /**
+     * Minimum considered subsequence length.
+     */
     int minSubSequenceLength;
 
     /**
@@ -39,7 +42,7 @@ public class ContainedMatchesStrategy implements FrequencyStrategy {
     }
 
     /**
-     * Calculates the weight of a match considering subsequences of the match
+     * Calculates the weight of a match considering subsequences of the match.
      * @param match Considered match
      * @param frequencyMap Frequency map build with processMatchTokenTypes method
      * @param matchToken tokenType sequence of the match

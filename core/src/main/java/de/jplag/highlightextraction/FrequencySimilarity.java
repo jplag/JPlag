@@ -12,11 +12,17 @@ import de.jplag.Match;
  * strategy.
  */
 public class FrequencySimilarity {
+    /**
+     * All comparisons to calculate the similarity for.
+     */
     List<JPlagComparison> comparisons;
+    /**
+     * Chosen weighting function.
+     */
     SimilarityStrategy strategy;
 
     /**
-     * Constructor defines comparisons and strategy for the similarity calculation
+     * Constructor defines comparisons and strategy for the similarity calculation.
      * @param strategy chosen weighting function
      */
     public FrequencySimilarity(List<JPlagComparison> comparisons, SimilarityStrategy strategy) {
@@ -25,6 +31,7 @@ public class FrequencySimilarity {
     }
 
     /**
+     * Calculates the similarity score for a comparison.
      * @param comparison considered comparison to calculate the similarity score for
      * @param weightingFactor weighting factor, is factor for the (max) influence of the frequency
      * @return similarity of the comparison
@@ -35,6 +42,7 @@ public class FrequencySimilarity {
 
     /**
      * Sorts the comparisons, according to the frequency.
+     * @param comparisons considered comparisons to calculate the similarity score for
      * @param weight weighting factor, is factor for the (max) influence of the frequency
      * @return the comparisons sorted with similarity score
      */

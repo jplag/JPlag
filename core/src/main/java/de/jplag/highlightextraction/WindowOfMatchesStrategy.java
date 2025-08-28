@@ -15,6 +15,9 @@ import de.jplag.TokenType;
  * contiguous windows of the matches from the comparisons.
  */
 public class WindowOfMatchesStrategy implements FrequencyStrategy {
+    /**
+     * The window size for the considered window sequences.
+     */
     int minSubSequenceLength;
 
     /**
@@ -51,7 +54,7 @@ public class WindowOfMatchesStrategy implements FrequencyStrategy {
     }
 
     /**
-     * Calculates the weight of a match considering window sized subsequences of the match
+     * Calculates the weight of a match considering window sized subsequences of the match.
      * @param match Considered match
      * @param frequencyMap Frequency map build with processMatchTokenTypes method
      * @param matchToken tokenType sequence of the match
