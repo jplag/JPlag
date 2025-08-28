@@ -255,21 +255,27 @@ public class CliOptions implements Runnable {
     @Option(names = {"--cluster-pp-threshold"}, hidden = true)
     public double clusterPreprocessingThreshold;
 
+    /** Highlight extraction options. */
     public static class FrequencyAnalysis {
+        /** Skip Highlight extraction options. */
         @Option(names = {"--frequency-analysis"}, description = "if frequency calculation is used")
         public boolean frequency = false;
 
+        /** Frequency Determination strategy */
         @Option(names = {
                 "--frequency-strategy"}, description = "strategy for frequency Analysis, Options: completeMatches, containedMatches, subMatches, windowOfMatches")
         public FrequencyStrategies frequencyStrategy = FrequencyStrategies.COMPLETE_MATCHES;
 
+        /** Min value for considered subsequence length in Frequency Determination strategy */
         @Option(names = {
                 "--frequency-min-value"}, description = "max of min match length that will be compared and this value, is min size of considered submatches")
         public int frequencyStrategyMinValue = 1;
 
+        /** Weighting function to combine with frequency Determination strategy. */
         @Option(names = {"--weighting-strategy"}, description = "strategy for frequency Weighting, Options: PROPORTIONAL, LINEAR, QUADRATIC, SIGMOID")
         public WeightingStrategies weightingStrategy = WeightingStrategies.SIGMOID;
 
+        /** How strong the weighting maximal influences a match length with up to double the length. */
         @Option(names = {
                 "--weighting-factor"}, description = "factor on how strong the weighting will be considered, scale factor for max stretch of a token sequence")
         public double weightingStrategyWeightingFactor = 0.25;

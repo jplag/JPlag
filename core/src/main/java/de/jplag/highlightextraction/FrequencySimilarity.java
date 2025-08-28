@@ -17,19 +17,28 @@ public class FrequencySimilarity {
 
     /**
      * Constructor defines comparisons and strategy for the similarity calculation
+     * @param strategy chosen weighting function
      */
     public FrequencySimilarity(List<JPlagComparison> comparisons, SimilarityStrategy strategy) {
         this.comparisons = comparisons;
         this.strategy = strategy;
     }
 
-    public double weigthedComparisonSimilarity(JPlagComparison comparison, double weightingFactor) {
+    /**
+     * @param comparison considered comparison to calculate the similarity score for
+     * @param weightingFactor weighting factor, is factor for the (max) influence of the frequency
+     * @return similarity of the comparison
+     */
+    public double weightedComparisonSimilarity(JPlagComparison comparison, double weightingFactor) {
         return frequencySimilarity(comparison, weightingFactor);
     }
 
     /**
-     * Sorts the comparisons, according to the frequency
+     * Sorts the comparisons, according to the frequency.
+      * @param weight weighting factor, is factor for the (max) influence of the frequency
+     * @return the comparisons sorted with similarity score
      */
+
     public List<JPlagComparison> calculateFrequencySimilarity(List<JPlagComparison> comparisons, double weight) {
         final double frequencyWeight = weight;
         return this.comparisons = comparisons.stream()
@@ -37,7 +46,11 @@ public class FrequencySimilarity {
     }
 
     /**
-     * Calculates the similarity score for a comparison
+     * Calculates the similarity score for a comparison. The score gets influenced form the frequency of the match according
+     * to the cooden Frequency Strategy, Similarity Strategy and weighting factor.
+     * @param comparison considered comparison to calculate the similarity score for
+      * @param weight weighting factor, is factor for the (max) influence of the frequency
+     * @return the similarity score
      */
     public double frequencySimilarity(JPlagComparison comparison, double weight) {
         if (weight == 0.0) {
@@ -55,9 +68,15 @@ public class FrequencySimilarity {
 
     }
 
+
     /**
      * Changes the considered match length according to the frequency weight, depending on the frequency similarity
      * strategy.
+     * @param comparison considered comparison to calculate the similarity score for
+     * @param weight weighting factor, is factor for the (max) influence of the frequency
+     * @param first considered submission to calculate the frequency for, both will be calculated
+     * @param strategy chosen weighting function
+     * @return the similarity score
      */
     public int getWeightedMatchLength(JPlagComparison comparison, double weight, boolean first, SimilarityStrategy strategy) {
         double minWeight;
@@ -88,7 +107,7 @@ public class FrequencySimilarity {
                 freq = 0.0;
             double rarity = 1.0 - Math.min(freq / finalMaxFrequency, 1.0);
             double rarityWeight = strategy.computeWeight(minWeight, maxWeight, rarity);
-            double myWeight = (1 - weight) * 1.0 + weight * rarityWeight;
+            double myWeight = (1 - weight) + weight * rarityWeight;
 
             if (first) {
                 return match.getLengthOfFirst() * myWeight;

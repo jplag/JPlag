@@ -11,6 +11,9 @@ public enum FrequencyStrategies {
 
     private final FrequencyStrategy strategy;
 
+    /**
+     * @param strategy FrequencyStrategy chosen for Frequency Determination in the frequency Analysis.
+     */
     FrequencyStrategies(FrequencyStrategy strategy) {
         this.strategy = strategy;
     }

@@ -24,6 +24,10 @@ public interface FrequencyStrategy {
 
     /**
      * Returns weight factor, as frequency value for the matches.
+     * @param match Considered match
+     * @param frequencyMap Frequency map build with processMatchTokenTypes method
+     * @param matchToken tokenType sequence of the match
+     * @return a weight for the match
      */
     double calculateWeight(Match match, Map<List<TokenType>, Integer> frequencyMap, List<TokenType> matchToken);
 

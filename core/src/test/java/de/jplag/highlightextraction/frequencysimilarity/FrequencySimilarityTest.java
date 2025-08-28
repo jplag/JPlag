@@ -26,7 +26,7 @@ public class FrequencySimilarityTest extends TestBase {
     private FrequencySimilarity frequencySimilarity3;
     private FrequencySimilarity frequencySimilarity4;
     public static SimilarityStrategy proportionalWeigthedStrategy = new ProportionalWeigthedStrategy();
-    public static SimilarityStrategy rareTokensWeightedStrategy = new RareTokensWeightedStrategy();
+    public static SimilarityStrategy rareTokensWeightedStrategy = new LinearWeightedStrategy();
     public static SimilarityStrategy quadraticWeightedStrategy = new QuadraticWeightedStrategy();
     public static SimilarityStrategy sigmoidWeightingStrategy = new SigmoidWeightingStrategy();
     public Map<List<TokenType>, Integer> frequencyMap = new HashMap<>();

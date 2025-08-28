@@ -38,6 +38,13 @@ public class ContainedMatchesStrategy implements FrequencyStrategy {
         }
     }
 
+    /**
+     * Calculates the weight of a match considering subsequences of the match
+     * @param match Considered match
+     * @param frequencyMap Frequency map build with processMatchTokenTypes method
+     * @param matchToken tokenType sequence of the match
+     * @return a weight for the match
+     */
     @Override
     public double calculateWeight(Match match, Map<List<TokenType>, Integer> frequencyMap, List<TokenType> matchToken) {
         List<List<TokenType>> keys = getSubSequences(matchToken, minSubSequenceLength);
