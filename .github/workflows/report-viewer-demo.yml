@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: 21
           distribution: 'temurin'
@@ -39,13 +39,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: 21
           distribution: 'temurin'
 
       - name: Get JAR
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: JPlag
 
@@ -90,13 +90,13 @@ jobs:
           cat report-viewer/src/version.json
 
       - name: Download Results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: Result
-          path: report-viewer/public
+          path: report-viewer/report-viewer/public
 
       - name: Install and Build 🔧
-        working-directory: report-viewer
+        working-directory: report-viewer/report-viewer
         run: |
           npm install
           npm run build-demo
@@ -105,7 +105,7 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4.7.3
         with:
           branch: gh-pages
-          folder: report-viewer/dist
+          folder: report-viewer/report-viewer/dist
           repository-name: JPlag/Demo
           token: ${{ secrets.SDQ_DEV_DEPLOY_TOKEN }}
           clean: true
