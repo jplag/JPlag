@@ -14,7 +14,7 @@ import de.jplag.commentextraction.CommentExtractorSettings;
 import de.jplag.commentextraction.EnvironmentDelimiter;
 
 /**
- * Language for Java 9 and newer.
+ * Language for Java programs. Supports the Java version with which is project is build with (see top-level pom.xml).
  */
 @MetaInfServices(Language.class)
 public class JavaLanguage implements Language {

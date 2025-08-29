@@ -79,10 +79,13 @@ import de.jplag.typescript.grammar.TypeScriptParser.VariableDeclarationContext;
 import de.jplag.typescript.grammar.TypeScriptParser.WhileStatementContext;
 
 /**
- * This class is responsible for mapping parsed TypeScript to the internal Token structure
+ * This class is responsible for mapping parsed TypeScript to the internal Token structure.
  */
 public class TypeScriptListener extends AbstractAntlrListener {
 
+    /**
+     * Creates the listener.
+     */
     public TypeScriptListener() {
         visit(ImportStatementContext.class).map(IMPORT);
         visit(Export).map(EXPORT);

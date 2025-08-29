@@ -10,6 +10,9 @@ import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
+/**
+ * Facade for the C language.
+ */
 @MetaInfServices(Language.class)
 public class CLanguage implements Language {
 

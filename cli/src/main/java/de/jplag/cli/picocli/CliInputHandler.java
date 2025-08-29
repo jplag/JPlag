@@ -56,7 +56,7 @@ public class CliInputHandler {
     private ParseResult parseResult;
 
     /**
-     * Creates a new handler. Before using it you need to call {@link #parse()}
+     * Creates a new handler. Before using it you need to call {@link #parse()}.
      * @param args The arguments.
      */
     public CliInputHandler(String[] args) {
@@ -175,7 +175,7 @@ public class CliInputHandler {
     }
 
     /**
-     * Returns the file to display when using --move VIEW. The result can be null, if no file was selected
+     * Returns the file to display when using --move VIEW. The result can be null, if no file was selected.
      * @return The file to show
      * @throws CliException If multiple options would be valid
      */

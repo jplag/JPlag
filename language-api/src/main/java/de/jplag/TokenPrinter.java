@@ -194,7 +194,7 @@ public final class TokenPrinter {
      * A proxy for the StringBuilder that keeps track of the position inside the output.
      */
     private static final class PrinterOutputBuilder {
-        public static final String LINE_SEPARATOR = System.lineSeparator();
+        private static final String LINE_SEPARATOR = System.lineSeparator();
         private final StringBuilder builder = new StringBuilder();
         private int columnIndex = 1;
         private int lineNumber;
@@ -217,19 +217,19 @@ public final class TokenPrinter {
         }
 
         /**
-         * Appends the given string to the output
-         * @param str the string to append
-         * @return this
+         * Appends the given string to the output.
+         * @param text the string to append
+         * @return a reference on itself.
          */
-        public PrinterOutputBuilder append(String str) {
+        public PrinterOutputBuilder append(String text) {
             // Avoid too many blank lines
-            trailingLineSeparators = str.equals(LINE_SEPARATOR) ? trailingLineSeparators + 1 : 0;
+            trailingLineSeparators = text.equals(LINE_SEPARATOR) ? trailingLineSeparators + 1 : 0;
             if (trailingLineSeparators >= 3) {
                 return this;
             }
 
-            builder.append(str);
-            columnIndex += str.length();
+            builder.append(text);
+            columnIndex += text.length();
             return this;
         }
 

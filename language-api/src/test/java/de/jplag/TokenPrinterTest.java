@@ -21,7 +21,7 @@ class TokenPrinterTest {
     private static final Logger logger = LoggerFactory.getLogger(TokenPrinterTest.class);
 
     /**
-     * Tests the function of the TokenPrinter
+     * Tests the function of the TokenPrinter.
      */
     @Test
     void printMockDirectoriesAsSubmissions() {
@@ -99,6 +99,9 @@ class TokenPrinterTest {
     }
 
     private enum TestTokenType implements TokenType {
+        /**
+         * Represents a token of type STRING, used for testing purposes.
+         */
         STRING("STRING");
 
         private final String description;

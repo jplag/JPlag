@@ -53,9 +53,9 @@ public record Match(int startOfFirst, int startOfSecond, int lengthOfFirst, int 
 
     /**
      * @return length is the length of these similar sections (number of tokens).
+     * @see Match#minimumLength()
      * @deprecated matches are no longer required to be symmetrical. Thus, both sides can have different lengths. This
      * method now returns the minimal length.
-     * @see Match#minimumLength()
      */
     @Deprecated(since = "6.2.0", forRemoval = true)
     public int length() {
