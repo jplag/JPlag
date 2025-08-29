@@ -141,7 +141,6 @@ Advanced
                           1996).
       -s, --subdirectory=<subdirectory>
                         Look in directories <root-dir>/*/<dir> for programs.
-      --skip-version-check  Skip fetching latest version information from the API.
       -x, --exclusion-file=<exclusionFileName>
                         All files named in this file will be ignored in the
                           comparison (line-separated list).
