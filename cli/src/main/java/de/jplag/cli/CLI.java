@@ -78,7 +78,7 @@ public final class CLI {
             case RUN_AND_VIEW -> runAndView();
             case AUTO -> selectModeAutomatically();
         }
-        
+
     }
 
     /**
