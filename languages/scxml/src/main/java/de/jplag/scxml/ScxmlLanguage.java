@@ -17,6 +17,7 @@ import de.jplag.scxml.parser.ScxmlParserAdapter;
 @MetaInfServices(Language.class)
 public class ScxmlLanguage implements Language {
 
+    /** File extension for the view files. **/
     public static final String VIEW_FILE_EXTENSION = ".scxmlview";
 
     @Override

@@ -2,6 +2,9 @@ package de.jplag.kotlin;
 
 import de.jplag.TokenType;
 
+/**
+ * Token types for Kotlin.
+ */
 public enum KotlinTokenType implements TokenType {
     PACKAGE("PACKAGE"),
     IMPORT("IMPORT"),

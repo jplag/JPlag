@@ -10,6 +10,9 @@ import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
+/**
+ * Language facade for Python 3.
+ */
 @MetaInfServices(Language.class)
 public class PythonLanguage implements Language {
 

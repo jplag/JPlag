@@ -10,6 +10,9 @@ import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
+/**
+ * Scheme language module facade.
+ */
 @MetaInfServices(Language.class)
 public class SchemeLanguage implements Language {
 

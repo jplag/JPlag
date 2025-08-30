@@ -29,9 +29,10 @@
       "endInSecond": {
         "line": 3,
         "column": 16,
-        "tokenListIndex": 139
+        "tokenListIndex": 138
       },
-      "tokens": 139
+      "lengthOfFirst": 139,
+      "lengthOfSecond": 138
     },
     {
       "firstFileName": "root1\\Submission.java",
@@ -54,9 +55,10 @@
       "endInSecond": {
         "line": 160,
         "column": 89,
-        "tokenListIndex": 239
+        "tokenListIndex": 234
       },
-      "tokens": 34
+      "lengthOfFirst": 34,
+      "lengthOfSecond": 29
     },
     {
       "firstFileName": "root1\\Submission.java",
@@ -81,7 +83,8 @@
         "column": 89,
         "token": 281
       },
-      "tokens": 33
+      "lengthOfFirst": 33,
+      "lengthOfSecond": 33
     },
     {
       "firstFileName": "root1\\Submission.java",
@@ -106,7 +109,8 @@
         "column": 89,
         "token": 128
       },
-      "tokens": 23
+      "lengthOfFirst": 23,
+      "lengthOfSecond": 27
     }
   ],
   "firstSimilarity": 0.4,

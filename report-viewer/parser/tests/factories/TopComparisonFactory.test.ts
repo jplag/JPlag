@@ -3,8 +3,8 @@ import validTopComparisons from './assets/ValidTopComparisons.json?raw'
 import { TopComparisonFactory } from '../../src'
 import { MetricJsonIdentifier } from '@jplag/model'
 
-describe('Test JSON to Distribution', async () => {
-  it('Test without clusters', async () => {
+describe('Test JSON to Distribution', () => {
+  it('Test without clusters', () => {
     const result = TopComparisonFactory.getTopComparisons(validTopComparisons, [])
 
     expect(result.length).toEqual(5)

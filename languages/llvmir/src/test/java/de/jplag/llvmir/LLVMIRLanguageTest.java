@@ -14,7 +14,7 @@ import de.jplag.testutils.datacollector.TestDataCollector;
 import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
 
 /**
- * Provides tests for the llvmir language module
+ * Provides tests for the llvmir language module.
  */
 class LLVMIRLanguageTest extends LanguageModuleTest {
     public LLVMIRLanguageTest() {

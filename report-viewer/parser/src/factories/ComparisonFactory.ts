@@ -11,12 +11,6 @@ import slash from 'slash'
 
 const MATCH_COLOR_COUNT = 7
 
-export interface ComparisonFactoryResult {
-  comparison: Comparison
-  filesOfFirstSubmission: ComparisonSubmissionFile[]
-  filesOfSecondSubmission: ComparisonSubmissionFile[]
-}
-
 /**
  * Factory class for creating Comparison objects
  */
@@ -26,7 +20,7 @@ export class ComparisonFactory {
     submissionFileIndex: string,
     filesOfFirstSubmission: SubmissionFile[],
     filesOfSecondSubmission: SubmissionFile[]
-  ): ComparisonFactoryResult {
+  ): Comparison {
     return this.extractComparison(
       JSON.parse(comparisonFile),
       JSON.parse(submissionFileIndex),
@@ -44,7 +38,7 @@ export class ComparisonFactory {
     submissionFileIndexJson: ReportFormatSubmissionFileIndex,
     _filesOfFirstSubmission: SubmissionFile[],
     _filesOfSecondSubmission: SubmissionFile[]
-  ): ComparisonFactoryResult {
+  ): Comparison {
     const filesOfFirstSubmission = this.loadSubmissionFiles(
       _filesOfFirstSubmission,
       this.transfromIndexFormatting(
@@ -84,7 +78,7 @@ export class ComparisonFactory {
       fileOfSecond.matchedTokenCount += match.lengthOfSecond
     })
 
-    const comparison = new Comparison(
+    return new Comparison(
       comparisonJson.firstSubmissionId,
       comparisonJson.secondSubmissionId,
       this.extractSimilarities(comparisonJson.similarities),
@@ -94,11 +88,6 @@ export class ComparisonFactory {
       comparisonJson.firstSimilarity,
       comparisonJson.secondSimilarity
     )
-    return {
-      comparison,
-      filesOfFirstSubmission,
-      filesOfSecondSubmission
-    }
   }
 
   private static extractSimilarities(
@@ -175,7 +164,9 @@ export class ComparisonFactory {
     return sortedSize
   }
 
-  private static getFilesWithDisplayNames(files: SubmissionFile[]): SubmissionFile[] {
+  private static getFilesWithDisplayNames(
+    files: ComparisonSubmissionFile[]
+  ): ComparisonSubmissionFile[] {
     if (files.length == 1) {
       return files
     }

@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest'
 import validSubmissionMappings from './assets/ValidSubmissionMappings.json?raw'
 import { SubmissionMappingsFactory } from '../../src'
 
-describe('Test JSON to Options', async () => {
-  it('Test Valid JSON', async () => {
+describe('Test JSON to Options', () => {
+  it('Test Valid JSON', () => {
     const { idToDisplayNameMap, comparisonFilesLookup } =
       SubmissionMappingsFactory.getSubmissionMappings(validSubmissionMappings)
 
