@@ -126,18 +126,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
+      - name: Set up Zig
+        uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.13.0
+      
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           java-version: 22
           distribution: 'temurin'
-
-      - name: Set up Zig
-        uses: mlugg/setup-zig@v2
-
-      - name: Verify Zig installation
-        run: |
-          zig version
       
       - name: Install jextract
         run: |
@@ -150,6 +148,10 @@ jobs:
           mkdir -p C:\jextract
           mv jextract-22\* C:\jextract\
           echo "C:\jextract\bin" >> $env:GITHUB_PATH
+      
+      - name: Verify Zig installation
+        run: |
+          zig version
       
       - name: Verify jextract availability
         run: |
