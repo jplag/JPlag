@@ -142,15 +142,15 @@ build_library() {
     
     # Build the library using appropriate build system
     if [[ "$PLATFORM" == "windows" ]]; then
-        # The core tree-sitter library has build.zig
+        # The core Tree-sitter library has build.zig
         if [[ "$library_name" == "tree-sitter" ]]; then
             print_info "Compiling $library_name using Zig..."
             zig build \
                 -Doptimize=ReleaseFast \
                 -Dbuild-shared=true
         else
-            print_info "Compiling $library_name using make (grammar library)..."
-            # Need MinGW/MSYS2 environment for grammar libraries on Windows
+            print_info "Compiling $library_name using make..."
+            # Need MinGW environment for other Tree-sitter libraries on Windows
             make
         fi
     else
