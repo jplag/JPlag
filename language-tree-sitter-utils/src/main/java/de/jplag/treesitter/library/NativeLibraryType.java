@@ -11,7 +11,7 @@ public enum NativeLibraryType {
     /**
      * The core Tree-sitter library containing the parsing engine
      */
-    TREE_SITTER("tree-sitter", "0.25.1"),
+    TREE_SITTER("tree-sitter", "0.25.8"),
     /**
      * Python language grammar for Tree-sitter
      */
