@@ -171,8 +171,8 @@ build_library() {
             ;;
         "windows")
             # Zig puts output in zig-out/lib/ directory
-            if [ -f "zig-out/lib/$LIBRARY_NAME.dll" ]; then
-                cp "zig-out/lib/$LIBRARY_NAME.dll" "$target_path/"
+            if [ -f "zig-out/bin/$LIBRARY_NAME.dll" ]; then
+                cp "zig-out/bin/$LIBRARY_NAME.dll" "$target_path/"
             else
                 print_error "Could not find compiled library file"
                 print_info "Contents of zig-out directory:"
