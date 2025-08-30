@@ -131,7 +131,7 @@ jobs:
       - name: Set up Zig
         uses: goto-bus-stop/setup-zig@v2
         with:
-          version: 0.15.1
+          version: 0.14.1
       
       - name: Set up JDK
         uses: actions/setup-java@v4
