@@ -141,9 +141,7 @@ jobs:
             git
             wget
             tar
-      
-      - name: Set up Zig
-        uses: mlugg/setup-zig@v2
+            unzip
       
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -163,14 +161,23 @@ jobs:
           mv jextract-22/* /usr/local/jextract/
           echo "/usr/local/jextract/bin" >> $GITHUB_PATH
       
-      - name: Verify Zig installation
-        run: |
-          zig version
-      
       - name: Verify jextract availability
         run: |
           jextract --version
           echo "Jextract is available for native library generation"
+
+      - name: Install Zig
+        run: |
+          # Download and extract Zig for Windows
+          wget https://ziglang.org/download/0.15.1/zig-windows-x86_64-0.15.1.zip
+          unzip zig-windows-x86_64-0.15.1.zip
+          
+          # Add the extracted directory directly to PATH
+          echo "$(pwd)/zig-windows-x86_64-0.15.1" >> $GITHUB_PATH
+
+      - name: Verify Zig installation
+        run: |
+          zig version
       
       - name: Build native libraries
         run: |
