@@ -159,7 +159,7 @@ jobs:
           echo "Installing jextract-22 to /usr/local/jextract"
           mv jextract-22 /usr/local/jextract
           echo "/usr/local/jextract/bin" >> $GITHUB_PATH
-          
+
           # Add jextract to PATH for this step
           export PATH="/usr/local/jextract/bin:$PATH"
       
@@ -169,7 +169,6 @@ jobs:
           echo "Jextract is available for native library generation"
 
       - name: Install Zig
-        shell: msys2 {0}
         run: |
           # Download and extract Zig for Windows
           wget https://ziglang.org/download/0.15.1/zig-x86_64-windows-0.15.1.zip
