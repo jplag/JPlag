@@ -159,15 +159,18 @@ jobs:
           echo "Installing jextract-22 to /usr/local/jextract"
           mv jextract-22 /usr/local/jextract
           echo "/usr/local/jextract/bin" >> $GITHUB_PATH
-          
-          # Debug: Check what's in the bin directory
-          echo "Contents of /usr/local/jextract/bin:"
-          ls -la /usr/local/jextract/bin/
       
       - name: Verify jextract availability
         run: |
-          jextract --version
-          echo "Jextract is available for native library generation"
+          echo "Current PATH: $PATH"
+          echo "Checking if jextract is in PATH:"
+          which jextract || echo "jextract not found in PATH"
+          
+          echo "Trying to run jextract directly:"
+          /usr/local/jextract/bin/jextract --version || echo "Direct jextract failed with exit code $?"
+          
+          echo "Checking jextract script content:"
+          head -5 /usr/local/jextract/bin/jextract
 
       - name: Install Zig
         run: |
