@@ -157,8 +157,7 @@ jobs:
           
           # Install to /usr/local/jextract
           echo "Installing jextract-22 to /usr/local/jextract"
-          mkdir -p /usr/local/jextract
-          mv jextract-22 /usr/local/jextract/
+          mv jextract-22 /usr/local/jextract
           echo "/usr/local/jextract/bin" >> $GITHUB_PATH
       
       - name: Verify jextract availability
