@@ -150,6 +150,7 @@ jobs:
           distribution: 'temurin'
       
       - name: Install jextract
+        shell: msys2 {0}
         run: |
           # Download jextract for Windows x64
           wget https://download.java.net/java/early_access/jextract/22/6/openjdk-22-jextract+6-47_windows-x64_bin.tar.gz
@@ -161,31 +162,30 @@ jobs:
           echo "/usr/local/jextract/bin" >> $GITHUB_PATH
       
       - name: Verify jextract availability
+        shell: msys2 {0}
         run: |
-          echo "Current PATH: $PATH"
-          echo "Checking if jextract is in PATH:"
-          which jextract || echo "jextract not found in PATH"
-          
-          echo "Trying to run jextract directly:"
-          /usr/local/jextract/bin/jextract --version || echo "Direct jextract failed with exit code $?"
-          
-          echo "Checking jextract script content:"
-          head -5 /usr/local/jextract/bin/jextract
+          jextract --version
+          echo "Jextract is available for native library generation"
 
       - name: Install Zig
+        shell: msys2 {0}
         run: |
           # Download and extract Zig for Windows
-          wget https://ziglang.org/download/0.15.1/zig-windows-x86_64-0.15.1.zip
-          unzip zig-windows-x86_64-0.15.1.zip
+          wget https://ziglang.org/download/0.15.1/zig-x86_64-windows-0.15.1.zip
+          unzip zig-x86_64-windows-0.15.1.zip
           
           # Add the extracted directory directly to PATH
-          echo "$(pwd)/zig-windows-x86_64-0.15.1" >> $GITHUB_PATH
+          echo "$(pwd)/zig-x86_64-windows-0.15.1" >> $GITHUB_PATH
 
       - name: Verify Zig installation
+        shell: msys2 {0}
         run: |
+          echo "$(pwd)/zig-x86_64-windows-0.15.1" >> $GITHUB_PATH
           zig version
+          echo "Zig is available for native library generation"
       
       - name: Build native libraries
+        shell: msys2 {0}
         run: |
           # Convert line endings for Windows
           git config --global core.autocrlf false
