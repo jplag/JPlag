@@ -126,8 +126,16 @@ jobs:
   build-windows:
     runs-on: windows-latest
     continue-on-error: true  # TODO: Windows builds fail with "Windows is not supported"
+    defaults:
+      run:
+        shell: msys2 {0}
     steps:
       - uses: actions/checkout@v4
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: git mingw-w64-ucrt-x86_64-gcc
       
       - name: Set up JDK
         uses: actions/setup-java@v4
