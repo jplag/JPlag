@@ -45,7 +45,6 @@ jobs:
       - name: Verify jextract availability
         run: |
           jextract --version
-          echo "Jextract is available for native library generation"
       
       - name: Verify make installation
         run: |
@@ -103,7 +102,6 @@ jobs:
       - name: Verify jextract availability
         run: |
           jextract --version
-          echo "Jextract is available for native library generation"
       
       - name: Verify make installation
         run: |
@@ -125,63 +123,37 @@ jobs:
 
   build-windows:
     runs-on: windows-latest
-    defaults:
-      run:
-        shell: msys2 {0}
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Set up MSYS2
-        uses: msys2/setup-msys2@v2
-        with:
-          msystem: MINGW64
-          install: >-
-            mingw-w64-x86_64-gcc
-            mingw-w64-x86_64-make
-            git
-            wget
-            tar
-            unzip
       
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           java-version: 22
           distribution: 'temurin'
+
+      - name: Set up Zig
+        uses: mlugg/setup-zig@v2
+
+      - name: Verify Zig installation
+        run: |
+          zig version
       
       - name: Install jextract
         run: |
           # Download jextract for Windows x64
-          wget https://download.java.net/java/early_access/jextract/22/6/openjdk-22-jextract+6-47_windows-x64_bin.tar.gz
-          tar -xzf openjdk-22-jextract+6-47_windows-x64_bin.tar.gz
+          curl -L -o jextract-windows.tar.gz https://download.java.net/java/early_access/jextract/22/6/openjdk-22-jextract+6-47_windows-x64_bin.tar.gz
+          tar -xzf jextract-windows.tar.gz
           
-          # Install to /usr/local/jextract
-          echo "Installing jextract-22 to /usr/local/jextract"
-          mv jextract-22 /usr/local/jextract
-          echo "/usr/local/jextract/bin" >> $GITHUB_PATH
-
-          # Add jextract to PATH for this step
-          export PATH="/usr/local/jextract/bin:$PATH"
+          # Install to C:\jextract
+          echo "Installing jextract-22 to C:\jextract"
+          mkdir -p C:\jextract
+          mv jextract-22\* C:\jextract\
+          echo "C:\jextract\bin" >> $env:GITHUB_PATH
       
       - name: Verify jextract availability
         run: |
           jextract --version
-          echo "Jextract is available for native library generation"
-
-      - name: Install Zig
-        run: |
-          # Download and extract Zig for Windows
-          wget https://ziglang.org/download/0.15.1/zig-x86_64-windows-0.15.1.zip
-          unzip zig-x86_64-windows-0.15.1.zip
-          
-          # Add the extracted directory directly to PATH
-          echo "$(pwd)/zig-x86_64-windows-0.15.1" >> $GITHUB_PATH
-
-      - name: Verify Zig installation
-        run: |
-          echo "$(pwd)/zig-x86_64-windows-0.15.1" >> $GITHUB_PATH
-          zig version
-          echo "Zig is available for native library generation"
       
       - name: Build native libraries
         run: |
