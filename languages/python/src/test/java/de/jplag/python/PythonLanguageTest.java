@@ -10,8 +10,11 @@ import static de.jplag.python.PythonTokenType.CLASS_BEGIN;
 import static de.jplag.python.PythonTokenType.CLASS_END;
 import static de.jplag.python.PythonTokenType.CONTINUE;
 import static de.jplag.python.PythonTokenType.DICTIONARY;
+import static de.jplag.python.PythonTokenType.DICT_COMPREHENSION;
 import static de.jplag.python.PythonTokenType.EXCEPT_BEGIN;
 import static de.jplag.python.PythonTokenType.EXCEPT_END;
+import static de.jplag.python.PythonTokenType.EXCEPT_GROUP_BEGIN;
+import static de.jplag.python.PythonTokenType.EXCEPT_GROUP_END;
 import static de.jplag.python.PythonTokenType.FINALLY_BEGIN;
 import static de.jplag.python.PythonTokenType.FINALLY_END;
 import static de.jplag.python.PythonTokenType.FOR_BEGIN;
@@ -91,12 +94,13 @@ public class PythonLanguageTest extends LanguageModuleTest {
                 IF_BEGIN, PASS, IF_END, WHILE_END, METHOD_END, METHOD_BEGIN, FOR_BEGIN, APPLY, IF_BEGIN, BREAK, IF_END, IF_BEGIN, PASS, IF_END,
                 FOR_END, METHOD_END, IF_BEGIN, APPLY, APPLY, APPLY, APPLY, APPLY, IF_END);
 
-        collector.testFile("ExceptionGroupTest.py")
-                // TODO: Update to Python 3.12 first .testSourceCoverage()
-                .testTokenSequence(METHOD_BEGIN, METHOD_BEGIN, ASSIGN, LIST, APPLY, APPLY, APPLY, APPLY, IF_BEGIN, RAISE, APPLY, IF_END, METHOD_END,
-                        TRY_BEGIN, APPLY, APPLY, APPLY, APPLY, TRY_END, METHOD_END, METHOD_BEGIN, METHOD_BEGIN, ASSIGN, LIST, APPLY, APPLY, ASSIGN,
-                        LIST, APPLY, TRY_BEGIN, RAISE, APPLY, EXCEPT_BEGIN, APPLY, RAISE, APPLY, EXCEPT_END, TRY_END, METHOD_END, TRY_BEGIN, APPLY,
-                        APPLY, APPLY, APPLY, APPLY, TRY_END, METHOD_END, IF_BEGIN, APPLY, APPLY, IF_END);
+        collector.testFile("ExceptionGroupTest.py").testSourceCoverage().testTokenSequence(METHOD_BEGIN, METHOD_BEGIN, ASSIGN, LIST, APPLY, APPLY,
+                APPLY, APPLY, IF_BEGIN, RAISE, APPLY, IF_END, METHOD_END, TRY_BEGIN, APPLY, EXCEPT_GROUP_BEGIN, APPLY, EXCEPT_GROUP_END,
+                EXCEPT_GROUP_BEGIN, APPLY, EXCEPT_GROUP_END, EXCEPT_GROUP_BEGIN, APPLY, EXCEPT_GROUP_END, TRY_END, METHOD_END, METHOD_BEGIN,
+                METHOD_BEGIN, ASSIGN, LIST, APPLY, APPLY, ASSIGN, LIST, APPLY, TRY_BEGIN, RAISE, APPLY, EXCEPT_BEGIN, APPLY, RAISE, APPLY, EXCEPT_END,
+                TRY_END, METHOD_END, TRY_BEGIN, APPLY, EXCEPT_GROUP_BEGIN, APPLY, EXCEPT_GROUP_END, EXCEPT_GROUP_BEGIN, APPLY, EXCEPT_GROUP_END,
+                EXCEPT_GROUP_BEGIN, APPLY, EXCEPT_GROUP_END, EXCEPT_GROUP_BEGIN, APPLY, EXCEPT_GROUP_END, TRY_END, METHOD_END, IF_BEGIN, APPLY, APPLY,
+                IF_END);
 
         collector.testFile("TypeAliasTest.py").testSourceCoverage().testTokenSequence(IMPORT, TYPE_ALIAS, TYPE_ALIAS, METHOD_BEGIN, ASSIGN, LIST,
                 ASSIGN, METHOD_BEGIN, FOR_BEGIN, APPLY, FOR_END, METHOD_END, APPLY, RETURN, METHOD_END, METHOD_BEGIN, TYPE_ALIAS, TYPE_ALIAS, LIST,
