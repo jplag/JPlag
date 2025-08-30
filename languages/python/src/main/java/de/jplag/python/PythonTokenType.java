@@ -40,12 +40,12 @@ public enum PythonTokenType implements TokenType {
     PASS("PASS", 4), // pass
     GLOBAL("GLOBAL", 6), // global
     NONLOCAL("NONLOCAL", 8), // nonlocal
-    LIST("LIST", -1), // list literal (dynamic length)
-    SET("SET", -1), // set literal (dynamic length)
-    DICTIONARY("DICTIONARY", -1), // dict literal (dynamic length)
-    LIST_COMPREHENSION("LIST_COMPR", -1), // list comprehension (dynamic length)
-    SET_COMPREHENSION("SET_COMPR", -1), // set comprehension (dynamic length)
-    DICT_COMPREHENSION("DICT_COMPR", -1), // dict comprehension (dynamic length)
+    LIST("LIST"), // list literal (dynamic length)
+    SET("SET"), // set literal (dynamic length)
+    DICTIONARY("DICTIONARY"), // dict literal (dynamic length)
+    LIST_COMPREHENSION("LIST_COMPR"), // list comprehension (dynamic length)
+    SET_COMPREHENSION("SET_COMPR"), // set comprehension (dynamic length)
+    DICT_COMPREHENSION("DICT_COMPR"), // dict comprehension (dynamic length)
 
     // Python 3.8
     NAMED_EXPR("NAMED", 2), // := (PEP 572)
@@ -76,6 +76,11 @@ public enum PythonTokenType implements TokenType {
      */
     public int getLength() {
         return this.length;
+    }
+
+    PythonTokenType(String description) {
+        this.description = description;
+        this.length = -1;
     }
 
     PythonTokenType(String description, int length) {
