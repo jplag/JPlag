@@ -22,6 +22,8 @@ public enum PythonTokenType implements TokenType {
     FINALLY_END("}FINALLY", 7), // finally
     IF_BEGIN("IF{", 2), // if
     IF_END("}IF", 2), // if
+    ELIF("ELIF", 4), // elif
+    ELSE("ELSE", 4), // else
     APPLY("APPLY", -1), // function call (dynamic length)
     BREAK("BREAK", 5), // break
     CONTINUE("CONTINUE", 8), // continue

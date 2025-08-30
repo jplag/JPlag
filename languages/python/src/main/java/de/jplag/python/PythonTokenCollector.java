@@ -59,8 +59,8 @@ public class PythonTokenCollector implements TreeSitterVisitor {
         enterHandlers.put("except_group_clause", node -> addToken(PythonTokenType.EXCEPT_GROUP_BEGIN, node));
         enterHandlers.put("finally_clause", node -> addToken(PythonTokenType.FINALLY_BEGIN, node));
         enterHandlers.put("if_statement", node -> addToken(PythonTokenType.IF_BEGIN, node));
-        enterHandlers.put("elif_clause", node -> addToken(PythonTokenType.IF_BEGIN, node));
-        enterHandlers.put("else_clause", node -> addToken(PythonTokenType.IF_BEGIN, node));
+        enterHandlers.put("elif_clause", node -> addToken(PythonTokenType.ELIF, node));
+        enterHandlers.put("else_clause", node -> addToken(PythonTokenType.ELSE, node));
         enterHandlers.put("call", node -> addToken(PythonTokenType.APPLY, node));
         enterHandlers.put("break_statement", node -> addToken(PythonTokenType.BREAK, node));
         enterHandlers.put("continue_statement", node -> addToken(PythonTokenType.CONTINUE, node));
@@ -97,8 +97,6 @@ public class PythonTokenCollector implements TreeSitterVisitor {
         exitHandlers.put("except_group_clause", node -> addToken(PythonTokenType.EXCEPT_GROUP_END, node));
         exitHandlers.put("finally_clause", node -> addToken(PythonTokenType.FINALLY_END, node));
         exitHandlers.put("if_statement", node -> addToken(PythonTokenType.IF_END, node));
-        exitHandlers.put("elif_clause", node -> addToken(PythonTokenType.IF_END, node));
-        exitHandlers.put("else_clause", node -> addToken(PythonTokenType.IF_END, node));
         exitHandlers.put("decorator", node -> addToken(PythonTokenType.DECORATOR_END, node));
         exitHandlers.put("with_statement", node -> addToken(PythonTokenType.WITH_END, node));
         exitHandlers.put("match_statement", node -> addToken(PythonTokenType.MATCH_END, node));
