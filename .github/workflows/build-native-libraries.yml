@@ -125,13 +125,27 @@ jobs:
 
   build-windows:
     runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Set up MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          install: >-
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-make
+            git
+            wget
+            tar
       
       - name: Set up Zig
         uses: goto-bus-stop/setup-zig@v2
         with:
-          version: 0.13.0
+          version: 0.15.1
       
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -142,14 +156,14 @@ jobs:
       - name: Install jextract
         run: |
           # Download jextract for Windows x64
-          curl -L -o jextract-windows.tar.gz https://download.java.net/java/early_access/jextract/22/6/openjdk-22-jextract+6-47_windows-x64_bin.tar.gz
-          tar -xzf jextract-windows.tar.gz
+          wget https://download.java.net/java/early_access/jextract/22/6/openjdk-22-jextract+6-47_windows-x64_bin.tar.gz
+          tar -xzf openjdk-22-jextract+6-47_windows-x64_bin.tar.gz
           
-          # Install to C:\jextract
-          echo "Installing jextract-22 to C:\jextract"
-          mkdir -p C:\jextract
-          mv jextract-22\* C:\jextract\
-          echo "C:\jextract\bin" >> $env:GITHUB_PATH
+          # Install to /usr/local/jextract (MSYS2 path)
+          echo "Installing jextract-22 to /usr/local/jextract"
+          mkdir -p /usr/local/jextract
+          mv jextract-22/* /usr/local/jextract/
+          echo "/usr/local/jextract/bin" >> $GITHUB_PATH
       
       - name: Verify Zig installation
         run: |
