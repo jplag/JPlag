@@ -89,8 +89,10 @@
         <!-- ensure that this variable is initialized, even if it is empty -->
         <argLine/>
 
+        <!-- Tree-sitter Java language API-->
+        <java-tree-sitter.version>0.25.4</java-tree-sitter.version>
         <!-- Tree-sitter native library versions -->
-        <tree-sitter.version>0.25.1</tree-sitter.version>
+        <tree-sitter.version>0.25.8</tree-sitter.version>
         <tree-sitter-python.version>0.23.6</tree-sitter-python.version>
 
         <!-- The Revision of JPlag -->
@@ -120,7 +122,7 @@
             <dependency>
                 <groupId>io.github.tree-sitter</groupId>
                 <artifactId>jtreesitter</artifactId>
-                <version>0.25.1</version>
+                <version>${java-tree-sitter.version}</version>
             </dependency>
 
             <!-- CoreNLP -->
