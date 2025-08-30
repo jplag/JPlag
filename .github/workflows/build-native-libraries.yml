@@ -128,22 +128,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
+      - name: Set up Zig
+        uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.15.1
+      
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           java-version: 22
           distribution: 'temurin'
-      
-      - name: Install Zig
-        shell: powershell
-        run: |
-          # Download and install Zig for Windows (stable release)
-          $zigVersion = "0.15.1"
-          $zigUrl = "https://ziglang.org/download/$zigVersion/zig-x86_64-windows-$zigVersion.zip"
-          Invoke-WebRequest -Uri $zigUrl -OutFile "zig-windows.zip"
-          Expand-Archive -Path "zig-windows.zip" -DestinationPath "C:\"
-          Rename-Item -Path "C:\zig-x86_64-windows-$zigVersion" -NewName "C:\zig"
-          echo "C:\zig" >> $env:GITHUB_PATH
       
       - name: Install jextract
         run: |
