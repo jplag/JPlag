@@ -143,7 +143,14 @@ build_library() {
     # Build the library using appropriate build system
     if [[ "$PLATFORM" == "windows" ]]; then
         print_info "Compiling $library_name using Zig..."
-        zig build-lib --name $LIBRARY_NAME
+        # Use Tree-sitter's amalgamated source file
+        zig build-lib \
+            -dynamic \
+            -O ReleaseFast \
+            -target x86_64-windows \
+            -lc \
+            --name $LIBRARY_NAME \
+            lib/src/lib.c
     else
         print_info "Compiling $library_name using make..."
         make
