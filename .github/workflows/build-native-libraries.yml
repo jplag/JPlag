@@ -125,17 +125,8 @@ jobs:
 
   build-windows:
     runs-on: windows-latest
-    continue-on-error: true  # TODO: Windows builds fail with "Windows is not supported"
-    defaults:
-      run:
-        shell: msys2 {0}
     steps:
       - uses: actions/checkout@v4
-      - uses: msys2/setup-msys2@v2
-        with:
-          msystem: UCRT64
-          update: true
-          install: git mingw-w64-ucrt-x86_64-gcc
       
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -143,26 +134,37 @@ jobs:
           java-version: 22
           distribution: 'temurin'
       
+      - name: Install Zig
+        shell: powershell
+        run: |
+          # Download and install Zig for Windows
+          $zigVersion = "0.16.0"
+          $zigUrl = "https://ziglang.org/download/$zigVersion/zig-windows-x86_64-$zigVersion.zip"
+          Invoke-WebRequest -Uri $zigUrl -OutFile "zig-windows.zip"
+          Expand-Archive -Path "zig-windows.zip" -DestinationPath "C:\"
+          Rename-Item -Path "C:\zig-windows-x86_64-$zigVersion" -NewName "C:\zig"
+          echo "C:\zig" >> $env:GITHUB_PATH
+      
       - name: Install jextract
         run: |
           # Download jextract for Windows x64
           curl -L -o jextract-windows.tar.gz https://download.java.net/java/early_access/jextract/22/6/openjdk-22-jextract+6-47_windows-x64_bin.tar.gz
           tar -xzf jextract-windows.tar.gz
           
-          # Install to C:\jextract (Windows equivalent of /usr/local)
+          # Install to C:\jextract
           echo "Installing jextract-22 to C:\jextract"
           mkdir -p C:\jextract
           mv jextract-22\* C:\jextract\
           echo "C:\jextract\bin" >> $env:GITHUB_PATH
       
+      - name: Verify Zig installation
+        run: |
+          zig version
+      
       - name: Verify jextract availability
         run: |
           jextract --version
           echo "Jextract is available for native library generation"
-      
-      - name: Verify make installation
-        run: |
-          make -v
       
       - name: Build native libraries
         run: |
@@ -180,7 +182,7 @@ jobs:
             build/native/
 
   combine-artifacts:
-    needs: [build-linux, build-macos] #, build-windows]
+    needs: [build-linux, build-macos, build-windows]
     runs-on: ubuntu-latest
     # if: github.event_name == 'push' && github.ref == 'refs/heads/main' TODO: Enable condition when finished 
     steps:

@@ -39,8 +39,15 @@ check_dependencies() {
         missing_deps+=("git")
     fi
     
-    if ! command -v make &> /dev/null; then
-        missing_deps+=("make")
+    # Check for build tools based on platform
+    if [[ "$PLATFORM" == "windows" ]]; then
+        if ! command -v zig &> /dev/null; then
+            missing_deps+=("zig")
+        fi
+    else
+        if ! command -v make &> /dev/null; then
+            missing_deps+=("make")
+        fi
     fi
     
     if [ ${#missing_deps[@]} -ne 0 ]; then
@@ -133,9 +140,14 @@ build_library() {
     
     cd "$library_name"
     
-    # Build the library using make
-    print_info "Compiling $library_name using make..."
-    make
+    # Build the library using appropriate build system
+    if [[ "$PLATFORM" == "windows" ]]; then
+        print_info "Compiling $library_name using Zig..."
+        zig build -Doptimize=ReleaseFast
+    else
+        print_info "Compiling $library_name using make..."
+        make
+    fi
     
     # Copy to target directory
     local target_path="../../../../$TARGET_DIR/$PLATFORM"
@@ -149,7 +161,15 @@ build_library() {
             cp "$LIBRARY_NAME.dylib" "$target_path/"
             ;;
         "windows")
-            cp "$LIBRARY_NAME.dll" "$target_path/"
+            # Zig puts output in zig-out/lib/ directory
+            if [ -f "zig-out/lib/$LIBRARY_NAME.dll" ]; then
+                cp "zig-out/lib/$LIBRARY_NAME.dll" "$target_path/"
+            elif [ -f "$LIBRARY_NAME.dll" ]; then
+                cp "$LIBRARY_NAME.dll" "$target_path/"
+            else
+                print_error "Could not find compiled library file"
+                exit 1
+            fi
             ;;
     esac
     
