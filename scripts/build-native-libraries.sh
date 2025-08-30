@@ -143,7 +143,7 @@ build_library() {
     # Build the library using appropriate build system
     if [[ "$PLATFORM" == "windows" ]]; then
         print_info "Compiling $library_name using Zig..."
-        zig build-lib -Doptimize=ReleaseFast --name $LIBRARY_NAME
+        zig build-lib --name $LIBRARY_NAME
     else
         print_info "Compiling $library_name using make..."
         make
