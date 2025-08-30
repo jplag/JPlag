@@ -35,6 +35,8 @@ result/
 result.zip
 result.jplag
 
+.venv/
+
 # macOS
 *.DS_Store
 
