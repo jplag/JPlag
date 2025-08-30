@@ -150,7 +150,6 @@ jobs:
           distribution: 'temurin'
       
       - name: Install jextract
-        shell: msys2 {0}
         run: |
           # Download jextract for Windows x64
           wget https://download.java.net/java/early_access/jextract/22/6/openjdk-22-jextract+6-47_windows-x64_bin.tar.gz
@@ -160,9 +159,11 @@ jobs:
           echo "Installing jextract-22 to /usr/local/jextract"
           mv jextract-22 /usr/local/jextract
           echo "/usr/local/jextract/bin" >> $GITHUB_PATH
+          
+          # Add jextract to PATH for this step
+          export PATH="/usr/local/jextract/bin:$PATH"
       
       - name: Verify jextract availability
-        shell: msys2 {0}
         run: |
           jextract --version
           echo "Jextract is available for native library generation"
@@ -178,14 +179,12 @@ jobs:
           echo "$(pwd)/zig-x86_64-windows-0.15.1" >> $GITHUB_PATH
 
       - name: Verify Zig installation
-        shell: msys2 {0}
         run: |
           echo "$(pwd)/zig-x86_64-windows-0.15.1" >> $GITHUB_PATH
           zig version
           echo "Zig is available for native library generation"
       
       - name: Build native libraries
-        shell: msys2 {0}
         run: |
           # Convert line endings for Windows
           git config --global core.autocrlf false
