@@ -143,9 +143,7 @@ jobs:
             tar
       
       - name: Set up Zig
-        uses: goto-bus-stop/setup-zig@v2
-        with:
-          version: 0.15.1
+        uses: mlugg/setup-zig@v2
       
       - name: Set up JDK
         uses: actions/setup-java@v4
