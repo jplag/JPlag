@@ -13,18 +13,17 @@ import de.jplag.treesitter.util.OS;
  * <p>
  * This class handles the extraction, caching, and path resolution of native Tree-sitter libraries. It supports both
  * bundled libraries (extracted from JAR resources) and pre-installed libraries. Libraries are cached in the user's home
- * directory under {@code .jplag/libs} to avoid repeated extraction.
+ * directory under {@code .jplag/libs/<version>/} to avoid repeated extraction and allow multiple versions to coexist.
  * </p>
  * <p>
  * The class automatically detects the current platform and loads the appropriate native library version for the
- * specified language and version combination.
+ * specified language.
  * </p>
  */
 public final class NativeLibrary {
     private static final String HOME_DIR = "user.home";
     private static final Path NATIVE_LIBRARY_DIR = Path.of(System.getProperty(HOME_DIR), ".jplag", "libs");
 
-    private final String name;
     private final String version;
     private final String systemLibraryName;
 
@@ -34,18 +33,17 @@ public final class NativeLibrary {
      * @param version The version of the library
      */
     public NativeLibrary(String name, String version) {
-        this.name = name;
         this.version = version;
         this.systemLibraryName = System.mapLibraryName(name);
     }
 
     /**
-     * Gets the resource path for the native library based on the current platform.
+     * Gets the resource path for the native library based on the current platform and version.
      * @return The URL pointing to the bundled native library resource
      * @throws IllegalStateException If the resource is not found for the current platform
      */
     private URL getResourcePath() {
-        String path = String.format("/native/%s/%s", OS.name(), systemLibraryName);
+        String path = String.format("/native/%s/%s/%s", OS.name(), version, systemLibraryName);
         URL url = NativeLibrary.class.getResource(path);
         if (url == null) {
             throw new IllegalStateException("Resource not found: " + path);
@@ -58,7 +56,7 @@ public final class NativeLibrary {
      * @return The path in the user's home directory for caching the library
      */
     private Path getStoredLibraryPath() {
-        return NATIVE_LIBRARY_DIR.resolve(systemLibraryName);
+        return NATIVE_LIBRARY_DIR.resolve(version).resolve(systemLibraryName);
     }
 
     /**

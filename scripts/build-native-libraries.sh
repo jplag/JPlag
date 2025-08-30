@@ -149,8 +149,8 @@ build_library() {
         make
     fi
     
-    # Copy to target directory
-    local target_path="../../../../$TARGET_DIR/$PLATFORM"
+    # Copy to target directory with version
+    local target_path="../../../../$TARGET_DIR/$PLATFORM/$version"
     mkdir -p "$target_path"
     
     case $PLATFORM in
