@@ -1,9 +1,6 @@
 {
-  "name": "@jplag/model",
+  "name": "@jplag/logger",
   "type": "module",
   "main": "src/index.ts",
-  "types": "src/index.ts",
-  "scripts": {
-    "test": "vitest"
-  }
+  "types": "src/index.ts"
 }
