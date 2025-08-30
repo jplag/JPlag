@@ -137,12 +137,12 @@ jobs:
       - name: Install Zig
         shell: powershell
         run: |
-          # Download and install Zig for Windows
-          $zigVersion = "0.16.0"
-          $zigUrl = "https://ziglang.org/download/$zigVersion/zig-windows-x86_64-$zigVersion.zip"
+          # Download and install Zig for Windows (stable release)
+          $zigVersion = "0.15.1"
+          $zigUrl = "https://ziglang.org/download/$zigVersion/zig-x86_64-windows-$zigVersion.zip"
           Invoke-WebRequest -Uri $zigUrl -OutFile "zig-windows.zip"
           Expand-Archive -Path "zig-windows.zip" -DestinationPath "C:\"
-          Rename-Item -Path "C:\zig-windows-x86_64-$zigVersion" -NewName "C:\zig"
+          Rename-Item -Path "C:\zig-x86_64-windows-$zigVersion" -NewName "C:\zig"
           echo "C:\zig" >> $env:GITHUB_PATH
       
       - name: Install jextract
