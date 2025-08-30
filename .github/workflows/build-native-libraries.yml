@@ -149,9 +149,7 @@ jobs:
           jextract --version
 
       - name: Set up Zig
-        uses: goto-bus-stop/setup-zig@v2
-        with:
-          version: 0.13.0
+        uses: mlugg/setup-zig@v2
 
       - name: Verify Zig installation
         run: |
