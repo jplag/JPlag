@@ -154,12 +154,15 @@ jobs:
           # Download jextract for Windows x64
           wget https://download.java.net/java/early_access/jextract/22/6/openjdk-22-jextract+6-47_windows-x64_bin.tar.gz
           tar -xzf openjdk-22-jextract+6-47_windows-x64_bin.tar.gz
-          ls -la
           
           # Install to /usr/local/jextract
           echo "Installing jextract-22 to /usr/local/jextract"
           mv jextract-22 /usr/local/jextract
           echo "/usr/local/jextract/bin" >> $GITHUB_PATH
+          
+          # Debug: Check what's in the bin directory
+          echo "Contents of /usr/local/jextract/bin:"
+          ls -la /usr/local/jextract/bin/
       
       - name: Verify jextract availability
         run: |
