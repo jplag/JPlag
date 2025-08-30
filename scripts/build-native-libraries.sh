@@ -142,15 +142,15 @@ build_library() {
     
     # Build the library using appropriate build system
     if [[ "$PLATFORM" == "windows" ]]; then
+        # The core tree-sitter library has build.zig
         if [[ "$library_name" == "tree-sitter" ]]; then
             print_info "Compiling $library_name using Zig..."
-            # Core tree-sitter has build.zig
             zig build \
                 -Doptimize=ReleaseFast \
                 -Dbuild-shared=true
         else
             print_info "Compiling $library_name using make (grammar library)..."
-            # Need MinGW/MSYS2 environment for grammar libraries
+            # Need MinGW/MSYS2 environment for grammar libraries on Windows
             make
         fi
     else
@@ -177,8 +177,6 @@ build_library() {
                 cp "zig-out/bin/$LIBRARY_NAME.dll" "$target_path/"
             else
                 print_error "Could not find compiled library file"
-                print_info "Contents of zig-out directory:"
-                ls -la zig-out/* 2>/dev/null || echo "No files found"
                 exit 1
             fi
             ;;
