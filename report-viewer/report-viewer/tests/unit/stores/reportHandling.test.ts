@@ -61,11 +61,7 @@ describe('Test Report File Handling', () => {
   it('Test comparison', () => {
     reportStore().loadReport(mockFiles, submissionFiles, 'test')
 
-    const comparisonResult = reportStore().getComparison('test1', 'test2')
-    expect(comparisonResult).toBeDefined()
-    const comparison = comparisonResult.comparison
-    const filesOfFirstSubmission = comparisonResult.filesOfFirstSubmission
-    const filesOfSecondSubmission = comparisonResult.filesOfSecondSubmission
+    const comparison = reportStore().getComparison('test1', 'test2')
 
     expect(comparison).toBeDefined()
     expect(comparison.firstSubmissionId).toEqual('test1')
@@ -77,6 +73,8 @@ describe('Test Report File Handling', () => {
     expect(comparison.filesOfFirstSubmission.length).toBeGreaterThan(0)
     expect(comparison.filesOfSecondSubmission.length).toBeGreaterThan(0)
 
+    const filesOfFirstSubmission = comparison.filesOfFirstSubmission
+    const filesOfSecondSubmission = comparison.filesOfSecondSubmission
     expect(filesOfFirstSubmission.length).toEqual(2)
     expect(filesOfSecondSubmission.length).toEqual(2)
 
