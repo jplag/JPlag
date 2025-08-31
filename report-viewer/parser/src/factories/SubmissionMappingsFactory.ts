@@ -1,3 +1,5 @@
+import { Logger } from '@jplag/logger'
+
 export class SubmissionMappingsFactory {
   public static getSubmissionMappings(submissionMappingsFile: string): SubmissionMappings {
     return this.extractSubmissionMappings(JSON.parse(submissionMappingsFile))
@@ -6,6 +8,7 @@ export class SubmissionMappingsFactory {
   private static extractSubmissionMappings(
     json: ReportFormatSubmissionMappings
   ): SubmissionMappings {
+    Logger.label('SubmissionMappingsFactory').info('Parse submission mappings')
     return {
       idToDisplayNameMap: this.convertIdToDisplayNameMap(json.submissionIds),
       comparisonFilesLookup: this.convertComparisonFilesLookup(

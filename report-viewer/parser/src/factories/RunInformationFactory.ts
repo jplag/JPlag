@@ -1,7 +1,9 @@
+import { Logger } from '@jplag/logger'
 import { RunInformation, type FailedSubmission, Version } from '@jplag/model'
 
 export class RunInformationFactory {
   public static getRunInformation(runInformationFile: string): RunInformation {
+    Logger.label('RunInformationFactory').info('Parse run information')
     return this.extractRunInformation(JSON.parse(runInformationFile))
   }
 

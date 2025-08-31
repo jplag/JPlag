@@ -1,6 +1,7 @@
 import { File, SubmissionFile } from '@jplag/model'
 import jszip from 'jszip'
 import slash from 'slash'
+import { Logger } from '@jplag/logger/src'
 
 /**
  * Class for handling report files.
@@ -9,7 +10,7 @@ export class ReportFileHandler {
   public async extractContent(file: Blob) {
     const files: File[] = []
     const submissionFiles: SubmissionFile[] = []
-    console.info('Start handling report file and storing necessary data...')
+    Logger.label('ReportFileHandler').info('Start extracting content from report file')
     await jszip.loadAsync(file).then(async (zip) => {
       for (const originalFileName of Object.keys(zip.files)) {
         const unixFileName = slash(originalFileName)
@@ -40,6 +41,9 @@ export class ReportFileHandler {
         }
       }
     })
+    Logger.debug(
+      `Found ${files.length} general files and ${submissionFiles.length} submission files.`
+    )
     return { files, submissionFiles }
   }
 

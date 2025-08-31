@@ -61,9 +61,6 @@ export class StaticLogger {
     // @ts-expect-error TS doesn't know about import.meta.env.DEV as it comes from vite
     if (import.meta.env.DEV) {
       displayedCaller = this.getCaller(log.caller)
-      if (log.label) {
-        displayedCaller += ` (${displayedCaller})`
-      }
     }
     return `[${log.level.toUpperCase()}] ${log.time.toISOString()} ${displayedCaller}${isConsole ? '\n' : ': '}${message}`
   }

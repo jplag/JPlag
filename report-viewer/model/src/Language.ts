@@ -1,3 +1,5 @@
+import { Logger } from '@jplag/Logger'
+
 /**
  * Enum for the language parsers JPlag supports
  */
@@ -39,7 +41,9 @@ function getLanguageParser(language: string): Language {
     }
   }
 
-  console.warn(`Unknown language: ${language}\nCode highlighting might not work correctly.`)
+  Logger.label('getLanguageParser@Language').warn(
+    `Unknown language: ${language}\nCode highlighting might not work correctly.`
+  )
   return 'unknown language'
 }
 

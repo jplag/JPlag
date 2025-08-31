@@ -1,3 +1,4 @@
+import { Logger } from '@jplag/logger'
 import {
   Comparison,
   getMatchLength,
@@ -21,6 +22,7 @@ export class ComparisonFactory {
     filesOfFirstSubmission: SubmissionFile[],
     filesOfSecondSubmission: SubmissionFile[]
   ): Comparison {
+    Logger.label('ComparisonFactory').info('Parse comparison')
     return this.extractComparison(
       JSON.parse(comparisonFile),
       JSON.parse(submissionFileIndex),

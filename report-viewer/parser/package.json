@@ -5,6 +5,7 @@
   "types": "src/index.ts",
   "dependencies": {
     "@jplag/model": "../model",
+    "@jplag/logger": "../logger",
     "jszip": "^3.10.1",
     "slash": "^5.1.0"
   },

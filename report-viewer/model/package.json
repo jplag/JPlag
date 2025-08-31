@@ -2,5 +2,8 @@
   "name": "@jplag/logger",
   "type": "module",
   "main": "src/index.ts",
-  "types": "src/index.ts"
+  "types": "src/index.ts",
+  "dependencies": {
+    "@jplag/logger": "../logger"
+  }
 }

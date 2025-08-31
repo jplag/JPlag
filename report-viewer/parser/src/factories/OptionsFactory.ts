@@ -1,3 +1,4 @@
+import { Logger } from '@jplag/logger'
 import {
   type CliClusterOptions,
   type CliOptions,
@@ -7,6 +8,7 @@ import {
 
 export class OptionsFactory {
   public static getCliOptions(optionsFile: string): CliOptions {
+    Logger.label('OptionsFactory').info('Parse CLI options')
     return this.extractOptions(JSON.parse(optionsFile))
   }
 

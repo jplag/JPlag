@@ -1,3 +1,5 @@
+import { Logger } from '@jplag/Logger'
+
 /**
  * Version of the report viewer.
  */
@@ -48,6 +50,7 @@ export class Version {
     if (versionField) {
       return new Version(versionField.major, versionField.minor, versionField.patch)
     }
+    Logger.label('Version').error('Version field is missing or invalid in the JSON.')
     return Version.ERROR_VERSION
   }
 }

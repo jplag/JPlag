@@ -1,3 +1,4 @@
+import { Logger } from '@jplag/logger'
 import type { Cluster, ComparisonListElement } from '@jplag/model'
 
 export class TopComparisonFactory {
@@ -5,6 +6,7 @@ export class TopComparisonFactory {
     topComparisonFile: string,
     clusters: Cluster[]
   ): ComparisonListElement[] {
+    Logger.label('TopComparisonFactory').info('Parse top comparisons from top comparison file')
     return this.extractTopComparisons(JSON.parse(topComparisonFile), clusters)
   }
 
