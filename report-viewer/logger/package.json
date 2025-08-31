@@ -5,5 +5,8 @@
   "types": "src/index.ts",
   "scripts": {
     "test": "vitest"
+  },
+  "peerDependencies": {
+    "Vue": "^3.5.20"
   }
 }

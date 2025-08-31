@@ -6,15 +6,12 @@ import VueVirtualScroller from '@jplag/ui-components/widget/comparisonTable/Virt
 import '@jplag/ui-components/style/style.css'
 import { router } from './router'
 import { createPinia } from 'pinia'
+import { loggerInstaller } from '@jplag/logger/src/vue'
 
 const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 app.use(VueVirtualScroller)
-
-app.config.errorHandler = (err, vm, info) => {
-  console.error(err, info)
-  alert('An unhandled error occurred. Please check the console for more details.')
-}
+app.use(loggerInstaller)
 
 app.mount('#app')
