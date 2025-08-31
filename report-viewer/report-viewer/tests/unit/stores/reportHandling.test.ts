@@ -1,8 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { mockFiles, mockSessionStorage, registerMockRouter, submissionFiles } from './mocks'
+import {
+  mockFiles,
+  mockParser,
+  mockSessionStorage,
+  registerMockRouter,
+  submissionFiles
+} from './mocks'
 
 registerMockRouter()
 mockSessionStorage()
+mockParser()
 
 import { reportStore } from '../../../src/stores/reportStore'
 import { setActivePinia, createPinia } from 'pinia'

@@ -1,4 +1,9 @@
-import { Distribution, type DistributionMap, MetricJsonIdentifier } from '@jplag/model'
+import {
+  Distribution,
+  type DistributionMap,
+  DistributionMetrics,
+  MetricJsonIdentifier
+} from '@jplag/model'
 
 export class DistributionFactory {
   public static getDistributions(distributionFile: string): DistributionMap {
@@ -7,8 +12,11 @@ export class DistributionFactory {
 
   private static extractDistributions(json: ReportFormatDistributionMap): DistributionMap {
     const distributions = {} as DistributionMap
-    for (const [key, value] of Object.entries(json)) {
-      distributions[key as MetricJsonIdentifier] = new Distribution(value)
+    for (const metric of [
+      MetricJsonIdentifier.AVERAGE_SIMILARITY,
+      MetricJsonIdentifier.MAXIMUM_SIMILARITY
+    ] as DistributionMetrics[]) {
+      distributions[metric] = new Distribution(json[metric])
     }
     return distributions
   }
