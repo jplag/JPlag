@@ -1,8 +1,6 @@
 package de.jplag.python;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import de.jplag.Token;
 import de.jplag.treesitter.TreeSitterVisitor;
@@ -23,7 +21,6 @@ import io.github.treesitter.jtreesitter.Node;
  * </p>
  */
 public class PythonTokenCollector extends TreeSitterVisitor {
-    private final List<Token> tokens;
     private final File file;
 
     /**
@@ -31,7 +28,6 @@ public class PythonTokenCollector extends TreeSitterVisitor {
      * @param file The source file being parsed
      */
     public PythonTokenCollector(File file) {
-        tokens = new ArrayList<>();
         this.file = file;
     }
 
@@ -157,13 +153,5 @@ public class PythonTokenCollector extends TreeSitterVisitor {
             case CLASS_END, METHOD_END, WHILE_END, FOR_END, TRY_END, EXCEPT_END, FINALLY_END, IF_END, DECORATOR_END, WITH_END, MATCH_END -> true;
             default -> false;
         };
-    }
-
-    /**
-     * Gets the collected tokens.
-     * @return A copy of the list of extracted tokens
-     */
-    public List<Token> getTokens() {
-        return new ArrayList<>(tokens);
     }
 }

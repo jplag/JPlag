@@ -131,11 +131,9 @@ import de.jplag.treesitter.TreeSitterVisitor;
 import io.github.treesitter.jtreesitter.Node;
 
 public class YourLanguageTokenCollector extends TreeSitterVisitor {
-    private final List<Token> tokens;
     private final File file;
 
     public YourLanguageTokenCollector(File file) {
-        tokens = new ArrayList<>();
         this.file = file;
     }
 

@@ -1,8 +1,12 @@
 package de.jplag.treesitter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+
+import de.jplag.Token;
 
 import io.github.treesitter.jtreesitter.Node;
 
@@ -33,10 +37,23 @@ public abstract class TreeSitterVisitor {
     protected final Map<String, Consumer<Node>> exitHandlers = new HashMap<>();
 
     /**
+     * List of tokens collected during traversal.
+     */
+    protected final List<Token> tokens = new ArrayList<>();
+
+    /**
      * Constructor that calls {@link #initializeHandlers()} to set up the handler maps.
      */
     protected TreeSitterVisitor() {
         initializeHandlers();
+    }
+
+    /**
+     * Gets the collected tokens.
+     * @return A copy of the list of extracted tokens
+     */
+    public List<Token> getTokens() {
+        return new ArrayList<>(tokens);
     }
 
     /**
