@@ -7,7 +7,7 @@ This module implements Python language support for JPlag using Tree-sitter. The 
 The Python Tree-sitter module consists of several key components that work together to parse Python source code and extract tokens for plagiarism detection:
 
 - **TreeSitterPython**: Native language grammar loader
-- **PythonParserAdapter**: Main parsing orchestration and error handling
+- **PythonParser**: Main parsing orchestration and error handling
 - **PythonTokenCollector**: Token extraction from AST using a handler-based approach
 - **PythonTokenType**: Language-specific token definitions with embedded length information
 - **PythonLanguage**: JPlag language interface implementation
@@ -28,9 +28,9 @@ public class TreeSitterPython extends TreeSitterLanguage {
 }
 ```
 
-#### PythonParserAdapter
+#### PythonParser
 ```java
-public class PythonParserAdapter extends AbstractTreeSitterParserAdapter {
+public class PythonParser extends AbstractTreeSitterParser {
     @Override
     protected MemorySegment getLanguageMemorySegment() {
         return TreeSitterPython.language();

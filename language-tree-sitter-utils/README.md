@@ -11,7 +11,7 @@ A Tree-sitter-based language module consists of these components:
 | Language class | `de.jplag.Language` | Entry point for the language module | Copy and adapt from existing module |
 | TokenType enum | `de.jplag.TokenType` | Language-specific token definitions | **Implement new** |
 | Tree-sitter Language class | `de.jplag.treesitter.TreeSitterLanguage` | Loads native grammar | **Implement new** |
-| ParserAdapter class | `de.jplag.treesitter.AbstractTreeSitterParserAdapter` | Sets up parser and calls traverser | Copy and adapt from existing module |
+| Parser class | `de.jplag.treesitter.AbstractTreeSitterParser` | Sets up parser and calls traverser | Copy and adapt from existing module |
 | TokenCollector class | `de.jplag.treesitter.TreeSitterVisitor` | Extracts tokens from AST | **Implement new** |
 
 ## Step-by-Step Implementation
@@ -185,7 +185,7 @@ public class YourLanguageTokenCollector extends TreeSitterVisitor {
 
 ### Step 6: Create Parser Adapter
 
-Implement a parser adapter that extends `AbstractTreeSitterParserAdapter`:
+Implement a parser that extends `AbstractTreeSitterParser`:
 
 ```java
 package de.jplag.yourlanguage;
@@ -197,10 +197,10 @@ import java.nio.file.Files;
 import java.util.List;
 
 import de.jplag.Token;
-import de.jplag.treesitter.AbstractTreeSitterParserAdapter;
+import de.jplag.treesitter.AbstractTreeSitterParser;
 import io.github.treesitter.jtreesitter.Node;
 
-public class YourLanguageParserAdapter extends AbstractTreeSitterParserAdapter {
+public class YourLanguageParser extends AbstractTreeSitterParser {
     @Override
     protected MemorySegment getLanguageMemorySegment() {
         return TreeSitterYourLanguage.language();

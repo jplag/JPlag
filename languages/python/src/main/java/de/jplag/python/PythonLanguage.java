@@ -29,7 +29,7 @@ public class PythonLanguage implements Language {
 
     @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return new PythonParserAdapter().parse(files);
+        return new PythonParser().parse(files);
     }
 
     @Override

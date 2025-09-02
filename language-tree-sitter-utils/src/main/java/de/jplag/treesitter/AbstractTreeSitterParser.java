@@ -18,7 +18,7 @@ import io.github.treesitter.jtreesitter.Parser;
 import io.github.treesitter.jtreesitter.Tree;
 
 /**
- * Base class for Tree-sitter parser adapters.
+ * Base class for Tree-sitter parsers.
  * <p>
  * This abstract class provides the foundation for implementing language-specific Tree-sitter parsers. It handles the
  * common parsing workflow including file reading, Tree-sitter parsing, and token extraction. Subclasses must implement
@@ -29,15 +29,15 @@ import io.github.treesitter.jtreesitter.Tree;
  * and extracting tokens.
  * </p>
  */
-public abstract class AbstractTreeSitterParserAdapter {
+public abstract class AbstractTreeSitterParser {
     /** Tree-sitter parser instance for this language. */
     protected final Parser parser;
 
     /**
-     * Creates a new Tree-sitter parser adapter with the language grammar. Initializes the Tree-sitter parser with the
+     * Creates a new Tree-sitter parser with the language grammar. Initializes the Tree-sitter parser with the
      * language grammar obtained from the subclass implementation.
      */
-    protected AbstractTreeSitterParserAdapter() {
+    protected AbstractTreeSitterParser() {
         Language language = new Language(getLanguageMemorySegment());
         this.parser = new Parser(language);
     }
