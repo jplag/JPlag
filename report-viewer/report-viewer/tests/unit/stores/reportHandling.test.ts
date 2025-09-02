@@ -133,7 +133,7 @@ describe('Test Report File Handling', () => {
     })
   })
 
-  it('Test old verion in overview', () => {
+  it('Test old version in overview', () => {
     reportStore().loadReport(
       [
         {
