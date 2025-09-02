@@ -50,7 +50,7 @@ public class PythonTokenCollector extends TreeSitterVisitor {
         enterHandlers.put("for_statement", node -> addToken(PythonTokenType.FOR_BEGIN, node));
         enterHandlers.put("try_statement", node -> addToken(PythonTokenType.TRY_BEGIN, node));
         enterHandlers.put("except_clause", node -> addToken(PythonTokenType.EXCEPT_BEGIN, node));
-        enterHandlers.put("except_group_clause", node -> addToken(PythonTokenType.EXCEPT_GROUP_BEGIN, node));
+        enterHandlers.put("except_group_clause", node -> addToken(PythonTokenType.EXCEPT_BEGIN, node));
         enterHandlers.put("finally_clause", node -> addToken(PythonTokenType.FINALLY_BEGIN, node));
         enterHandlers.put("if_statement", node -> addToken(PythonTokenType.IF_BEGIN, node));
         enterHandlers.put("elif_clause", node -> addToken(PythonTokenType.ELIF, node));
@@ -88,7 +88,7 @@ public class PythonTokenCollector extends TreeSitterVisitor {
         exitHandlers.put("for_statement", node -> addToken(PythonTokenType.FOR_END, node));
         exitHandlers.put("try_statement", node -> addToken(PythonTokenType.TRY_END, node));
         exitHandlers.put("except_clause", node -> addToken(PythonTokenType.EXCEPT_END, node));
-        exitHandlers.put("except_group_clause", node -> addToken(PythonTokenType.EXCEPT_GROUP_END, node));
+        exitHandlers.put("except_group_clause", node -> addToken(PythonTokenType.EXCEPT_END, node));
         exitHandlers.put("finally_clause", node -> addToken(PythonTokenType.FINALLY_END, node));
         exitHandlers.put("if_statement", node -> addToken(PythonTokenType.IF_END, node));
         exitHandlers.put("decorator", node -> addToken(PythonTokenType.DECORATOR_END, node));
@@ -154,7 +154,7 @@ public class PythonTokenCollector extends TreeSitterVisitor {
      */
     private boolean isEndToken(PythonTokenType tokenType) {
         return switch (tokenType) {
-            case CLASS_END, METHOD_END, WHILE_END, FOR_END, TRY_END, EXCEPT_END, FINALLY_END, IF_END, DECORATOR_END, WITH_END, MATCH_END, EXCEPT_GROUP_END -> true;
+            case CLASS_END, METHOD_END, WHILE_END, FOR_END, TRY_END, EXCEPT_END, FINALLY_END, IF_END, DECORATOR_END, WITH_END, MATCH_END -> true;
             default -> false;
         };
     }
