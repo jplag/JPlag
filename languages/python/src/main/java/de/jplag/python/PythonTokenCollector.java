@@ -2,10 +2,7 @@ package de.jplag.python;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
 
 import de.jplag.Token;
 import de.jplag.treesitter.TreeSitterVisitor;
@@ -25,12 +22,9 @@ import io.github.treesitter.jtreesitter.Node;
  * source code structure.
  * </p>
  */
-public class PythonTokenCollector implements TreeSitterVisitor {
+public class PythonTokenCollector extends TreeSitterVisitor {
     private final List<Token> tokens;
     private final File file;
-
-    private final Map<String, Consumer<Node>> enterHandlers = new HashMap<>();
-    private final Map<String, Consumer<Node>> exitHandlers = new HashMap<>();
 
     /**
      * Creates a new Python token collector for the specified file.
@@ -39,13 +33,13 @@ public class PythonTokenCollector implements TreeSitterVisitor {
     public PythonTokenCollector(File file) {
         tokens = new ArrayList<>();
         this.file = file;
-        initializeHandlers();
     }
 
     /**
      * Initializes the handler maps for different Python node types.
      */
-    private void initializeHandlers() {
+    @Override
+    protected void initializeHandlers() {
         enterHandlers.put("import_statement", node -> addToken(PythonTokenType.IMPORT, node));
         enterHandlers.put("import_from_statement", node -> addToken(PythonTokenType.IMPORT, node));
         enterHandlers.put("class_definition", node -> addToken(PythonTokenType.CLASS_BEGIN, node));
@@ -100,24 +94,6 @@ public class PythonTokenCollector implements TreeSitterVisitor {
         exitHandlers.put("decorator", node -> addToken(PythonTokenType.DECORATOR_END, node));
         exitHandlers.put("with_statement", node -> addToken(PythonTokenType.WITH_END, node));
         exitHandlers.put("match_statement", node -> addToken(PythonTokenType.MATCH_END, node));
-    }
-
-    @Override
-    public void enter(Node node) {
-        String nodeType = node.getType();
-        Consumer<Node> handler = enterHandlers.get(nodeType);
-        if (handler != null) {
-            handler.accept(node);
-        }
-    }
-
-    @Override
-    public void exit(Node node) {
-        String nodeType = node.getType();
-        Consumer<Node> handler = exitHandlers.get(nodeType);
-        if (handler != null) {
-            handler.accept(node);
-        }
     }
 
     /**

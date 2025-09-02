@@ -47,7 +47,7 @@ public class PythonParserAdapter extends AbstractTreeSitterParserAdapter {
         }
 
         PythonTokenCollector collector = new PythonTokenCollector(file, code);
-        TreeSitterTraversal.traverse(rootNode, collector);
+        collector.traverse(rootNode);
         List<Token> tokens = collector.getTokens();
         tokens.add(Token.fileEnd(file));
         return tokens;

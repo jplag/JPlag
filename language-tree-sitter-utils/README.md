@@ -130,22 +130,17 @@ import de.jplag.Token;
 import de.jplag.treesitter.TreeSitterVisitor;
 import io.github.treesitter.jtreesitter.Node;
 
-public class YourLanguageTokenCollector implements TreeSitterVisitor {
+public class YourLanguageTokenCollector extends TreeSitterVisitor {
     private final List<Token> tokens;
     private final File file;
-    private final String code;
 
-    private final Map<String, Consumer<Node>> enterHandlers = new HashMap<>();
-    private final Map<String, Consumer<Node>> exitHandlers = new HashMap<>();
-
-    public YourLanguageTokenCollector(File file, String code) {
+    public YourLanguageTokenCollector(File file) {
         tokens = new ArrayList<>();
         this.file = file;
-        this.code = code;
-        initializeHandlers();
     }
 
-    private void initializeHandlers() {
+    @Override
+    protected void initializeHandlers() {
         // Map Tree-sitter node types to token creation handlers
         enterHandlers.put("class_definition", node -> addToken(YourLanguageTokenType.CLASS_BEGIN, node));
         enterHandlers.put("function_definition", node -> addToken(YourLanguageTokenType.METHOD_BEGIN, node));
@@ -203,7 +198,6 @@ import java.util.List;
 
 import de.jplag.Token;
 import de.jplag.treesitter.AbstractTreeSitterParserAdapter;
-import de.jplag.treesitter.TreeSitterTraversal;
 import io.github.treesitter.jtreesitter.Node;
 
 public class YourLanguageParserAdapter extends AbstractTreeSitterParserAdapter {
@@ -223,7 +217,7 @@ public class YourLanguageParserAdapter extends AbstractTreeSitterParserAdapter {
         }
 
         YourLanguageTokenCollector collector = new YourLanguageTokenCollector(file, code);
-        TreeSitterTraversal.traverse(rootNode, collector);
+        collector.traverse(rootNode);
         List<Token> tokens = collector.getTokens();
         tokens.add(Token.fileEnd(file));
         return tokens;

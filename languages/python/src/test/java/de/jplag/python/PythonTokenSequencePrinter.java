@@ -8,7 +8,6 @@ import java.nio.file.Path;
 import java.util.List;
 
 import de.jplag.Token;
-import de.jplag.treesitter.TreeSitterTraversal;
 
 import io.github.treesitter.jtreesitter.InputEncoding;
 import io.github.treesitter.jtreesitter.Language;
@@ -43,7 +42,7 @@ public final class PythonTokenSequencePrinter {
                 Tree tree = parser.parse(pythonCode, InputEncoding.UTF_8).orElseThrow(() -> new RuntimeException("Failed to parse " + fileName));
 
                 PythonTokenCollector collector = new PythonTokenCollector(testFile);
-                TreeSitterTraversal.traverse(tree.getRootNode(), collector);
+                collector.traverse(tree.getRootNode());
                 List<Token> tokens = collector.getTokens();
 
                 // Print all tokens in order
