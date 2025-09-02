@@ -34,8 +34,8 @@ public abstract class AbstractTreeSitterParser {
     protected final Parser parser;
 
     /**
-     * Creates a new Tree-sitter parser with the language grammar. Initializes the Tree-sitter parser with the
-     * language grammar obtained from the subclass implementation.
+     * Creates a new Tree-sitter parser with the language grammar. Initializes the Tree-sitter parser with the language
+     * grammar obtained from the subclass implementation.
      */
     protected AbstractTreeSitterParser() {
         Language language = new Language(getLanguageMemorySegment());
