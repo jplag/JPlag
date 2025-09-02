@@ -1,7 +1,7 @@
-import { type Language, ParserLanguage } from '@/model/Language'
+import { ParserLanguage, type Language } from '@/model/Language'
 import hljs from 'highlight.js'
-import scheme from 'highlight.js/lib/languages/scheme'
 import llvm from 'highlight.js/lib/languages/llvm'
+import scheme from 'highlight.js/lib/languages/scheme'
 import typescript from 'highlight.js/lib/languages/typescript'
 
 /**
@@ -36,6 +36,7 @@ export function highlight(code: string, lang: Language) {
 function getHighlightLanguage(lang: Language) {
   switch (lang) {
     case ParserLanguage.PYTHON:
+    case ParserLanguage.PYTHON_TREESITTER:
       return 'python'
     case ParserLanguage.C:
       return 'c'

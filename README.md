@@ -183,6 +183,7 @@ Languages:
   kotlin
   llvmir
   multi
+  python
   python3
   rlang
   rust

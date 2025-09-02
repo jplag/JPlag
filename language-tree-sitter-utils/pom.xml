@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>de.jplag</groupId>
+        <artifactId>aggregator</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>language-tree-sitter-utils</artifactId>
+    <name>language-tree-sitter-utils</name>
+    <description>Contains default implementations for Tree-sitter base language modules</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.github.tree-sitter</groupId>
+            <artifactId>jtreesitter</artifactId>
+            <version>${java-tree-sitter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>de.jplag</groupId>
+            <artifactId>language-api</artifactId>
+            <version>${revision}</version>
+        </dependency>
+    </dependencies>
+</project>

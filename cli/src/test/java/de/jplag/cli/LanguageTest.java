@@ -22,6 +22,12 @@ import de.jplag.options.JPlagOptions;
 
 class LanguageTest extends CliTest {
     private static final List<Class<? extends Language>> ignoredLanguages = List.of(MultiLanguage.class);
+    private static final int AVAILABLE_LANGUAGES = 20;
+
+    public static Collection<Language> getAllLanguages() {
+        return LanguageLoader.getAllAvailableLanguages().values().stream().filter(language -> !ignoredLanguages.contains(language.getClass()))
+                .toList();
+    }
 
     @Test
     void testDefaultLanguage() throws ExitException, IOException {
@@ -38,8 +44,8 @@ class LanguageTest extends CliTest {
 
     @Test
     void testLoading() {
-        var languages = LanguageLoader.getAllAvailableLanguages();
-        assertEquals(20, languages.size(), "Loaded Languages: " + languages.keySet());
+        var languages = getAllLanguages();
+        assertEquals(AVAILABLE_LANGUAGES, languages.size(), "Loaded Languages: " + languages.stream().map(Language::getIdentifier).toList());
     }
 
     @ParameterizedTest
@@ -56,10 +62,5 @@ class LanguageTest extends CliTest {
         String[] suffixes = {"x", "y", "z"};
         JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.SUFFIXES, suffixes));
         assertEquals(List.of(suffixes), options.fileSuffixes());
-    }
-
-    public static Collection<Language> getAllLanguages() {
-        return LanguageLoader.getAllAvailableLanguages().values().stream().filter(language -> !ignoredLanguages.contains(language.getClass()))
-                .toList();
     }
 }
