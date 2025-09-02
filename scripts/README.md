@@ -49,25 +49,29 @@ You can also build individual libraries manually:
 
 ### Output Structure
 
-The built libraries are placed in the following structure:
+The built libraries are placed in the following versioned structure:
 
 ```
 language-tree-sitter-utils/src/main/resources/native/
-├── linux/
-│   └── libtree-sitter.so
-├── mac/
-│   └── libtree-sitter.dylib
-└── windows/
-    └── libtree-sitter.dll
+├── v0.25.1/
+│   ├── linux/
+│   │   └── libtree-sitter.so
+│   ├── mac/
+│   │   └── libtree-sitter.dylib
+│   └── windows/
+│       └── libtree-sitter.dll
 
 languages/python/src/main/resources/native/
-├── linux/
-│   └── libtree-sitter-python.so
-├── mac/
-│   └── libtree-sitter-python.dylib
-└── windows/
-    └── libtree-sitter-python.dll
+├── v0.23.6/
+│   ├── linux/
+│   │   └── libtree-sitter-python.so
+│   ├── mac/
+│   │   └── libtree-sitter-python.dylib
+│   └── windows/
+│       └── libtree-sitter-python.dll
 ```
+
+This versioned structure allows multiple library versions to coexist and enables proper cache management in the native library loading system.
 
 ## CI/CD Integration
 
