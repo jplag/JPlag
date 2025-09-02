@@ -45,7 +45,7 @@ const USE_DARK_MODE_KEYWORD = 'jplag:use-dark-mode'
 function getDefaultUseDarkModeOption() {
   const local = localStorage.getItem(USE_DARK_MODE_KEYWORD)
   if (local !== null) {
-    return local == 'true'
+    return local === 'true'
   }
 
   return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
