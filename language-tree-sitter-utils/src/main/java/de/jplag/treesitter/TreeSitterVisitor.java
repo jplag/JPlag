@@ -79,16 +79,6 @@ public abstract class TreeSitterVisitor {
      * Subclasses must implement this method to populate the {@link #enterHandlers} and {@link #exitHandlers} maps with the
      * appropriate node type handlers.
      * </p>
-     * <p>
-     * Example:
-     * 
-     * <pre>{@code
-     * protected void initializeHandlers() {
-     *     enterHandlers.put("class_definition", node -> addToken(CLASS_BEGIN, node));
-     *     exitHandlers.put("class_definition", node -> addToken(CLASS_END, node));
-     * }
-     * }</pre>
-     * </p>
      */
     protected abstract void initializeHandlers();
 
