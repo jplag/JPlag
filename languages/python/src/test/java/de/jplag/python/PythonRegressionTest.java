@@ -116,11 +116,6 @@ public class PythonRegressionTest {
      * @return The mapped token type or {@code null} if the token should be filtered out
      */
     private TokenType mapTokenType(TokenType newType) {
-        // Check if token type is from ANTLR module
-        if (!(newType instanceof PythonTokenType)) {
-            return newType;
-        }
-
         PythonTokenType pythonType = (PythonTokenType) newType;
 
         return switch (pythonType) {
@@ -153,14 +148,15 @@ public class PythonRegressionTest {
             case ASYNC -> Python3TokenType.ASYNC;
             case AWAIT -> Python3TokenType.AWAIT;
             case LIST, SET, DICTIONARY -> Python3TokenType.ARRAY;
+            case LIST_COMPREHENSION, SET_COMPREHENSION, DICT_COMPREHENSION -> Python3TokenType.ARRAY;
 
             // Map to single FINALLY token
             case FINALLY_BEGIN -> Python3TokenType.FINALLY;
             case DECORATOR_BEGIN -> Python3TokenType.DEC_BEGIN;
             case DECORATOR_END -> Python3TokenType.DEC_END;
 
-            // Tokens not present in old module
-            case FINALLY_END, TRY_END, EXCEPT_GROUP_BEGIN, EXCEPT_GROUP_END, NAMED_EXPR, MATCH_BEGIN, MATCH_END, CASE, TYPE_ALIAS, PASS, GLOBAL, NONLOCAL -> null;
+            // Tokens not present in old module and to be ignored
+            case ELIF, ELSE, FINALLY_END, TRY_END, EXCEPT_GROUP_BEGIN, EXCEPT_GROUP_END, NAMED_EXPR, MATCH_BEGIN, MATCH_END, CASE, TYPE_ALIAS, PASS, GLOBAL, NONLOCAL -> null;
 
             default -> throw new IllegalArgumentException("Unmapped token type: " + pythonType);
         };
