@@ -10,5 +10,6 @@
 <script setup lang="ts">
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faSun, faMoon } from '@fortawesome/free-solid-svg-icons'
+import ButtonComponent from './ButtonComponent.vue'
 const useDarkMode = defineModel<boolean>({ default: false })
 </script>
