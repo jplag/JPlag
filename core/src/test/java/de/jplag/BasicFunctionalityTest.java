@@ -119,10 +119,10 @@ class BasicFunctionalityTest extends TestBase {
         assertEquals(expectedMatches.size(), matches.size());
 
         for (int i = 0; i < matches.size(); i++) {
-            assertEquals(expectedMatches.get(i).getStartOfFirst(), matches.get(i).getStartOfFirst());
-            assertEquals(expectedMatches.get(i).getStartOfSecond(), matches.get(i).getStartOfSecond());
-            assertEquals(expectedMatches.get(i).getLengthOfFirst(), matches.get(i).getLengthOfFirst());
-            assertEquals(expectedMatches.get(i).getLengthOfSecond(), matches.get(i).getLengthOfSecond());
+            assertEquals(expectedMatches.get(i).startOfFirst(), matches.get(i).startOfFirst());
+            assertEquals(expectedMatches.get(i).startOfSecond(), matches.get(i).startOfSecond());
+            assertEquals(expectedMatches.get(i).lengthOfFirst(), matches.get(i).lengthOfFirst());
+            assertEquals(expectedMatches.get(i).lengthOfSecond(), matches.get(i).lengthOfSecond());
         }
 
     }

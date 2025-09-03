@@ -41,8 +41,8 @@ public class FrequencyDetermination {
             List<TokenType> submissionTokenTypes = submissionTokens.stream().map(Token::getType).toList();
 
             for (Match match : comparison.matches()) {
-                int startIndexOfMatch = match.getStartOfFirst();
-                int lengthOfMatch = match.getLengthOfFirst();
+                int startIndexOfMatch = match.startOfFirst();
+                int lengthOfMatch = match.lengthOfFirst();
                 if (startIndexOfMatch + lengthOfMatch > submissionTokenTypes.size()) {
                     throw new IllegalArgumentException("startIndexOfMatch + lengthOfMatch <= submissionTokenTypes.size()");
                 }

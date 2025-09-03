@@ -63,7 +63,7 @@ public class BaseCodeReportWriter {
     }
 
     private BaseCodeMatch convertToBaseCodeMatch(Submission submission, Match match, boolean takeLeft) {
-        List<Token> tokens = submission.getTokenList().subList(takeLeft ? match.getStartOfFirst() : match.getStartOfSecond(),
+        List<Token> tokens = submission.getTokenList().subList(takeLeft ? match.startOfFirst() : match.startOfSecond(),
                 (takeLeft ? match.endOfFirst() : match.endOfSecond()) + 1);
 
         Comparator<? super Token> lineStartComparator = Comparator.comparingInt(Token::getStartLine).thenComparingInt(Token::getStartColumn);
@@ -72,10 +72,10 @@ public class BaseCodeReportWriter {
         Token end = tokens.stream().max(lineEndComparator).orElseThrow();
 
         CodePosition startPosition = new CodePosition(start.getStartLine(), start.getStartColumn() - 1,
-                takeLeft ? match.getStartOfFirst() : match.getStartOfSecond());
+                takeLeft ? match.startOfFirst() : match.startOfSecond());
         CodePosition endPosition = new CodePosition(end.getEndLine(), end.getEndColumn() - 1, takeLeft ? match.endOfFirst() : match.endOfSecond());
 
-        int length = takeLeft ? match.getLengthOfFirst() : match.getLengthOfSecond();
+        int length = takeLeft ? match.lengthOfFirst() : match.lengthOfSecond();
 
         return new BaseCodeMatch(FilePathUtil.getRelativeSubmissionPath(start.getFile(), submission, submissionToIdFunction).toString(),
                 startPosition, endPosition, length);

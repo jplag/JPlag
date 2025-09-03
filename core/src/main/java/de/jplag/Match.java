@@ -1,7 +1,5 @@
 package de.jplag;
 
-import java.util.Objects;
-
 /**
  * Represents two code fragments in two submissions that are structurally similar. These sections are usually identical
  * token subsequences, but can vary slightly when employing post-processing mechanisms, for example subsequence match
@@ -33,28 +31,28 @@ public class Match {
     /**
      * @return startpoint of the match in the first submission.
      */
-    public int getStartOfFirst() {
+    public int startOfFirst() {
         return startOfFirst;
     }
 
     /**
      * @return startpoint of the match in the second submission.
      */
-    public int getStartOfSecond() {
+    public int startOfSecond() {
         return startOfSecond;
     }
 
     /**
      * @return The length of the first submission.
      */
-    public int getLengthOfFirst() {
+    public int lengthOfFirst() {
         return lengthOfFirst;
     }
 
     /**
      * @return The length of the second submission.
      */
-    public int getLengthOfSecond() {
+    public int lengthOfSecond() {
         return lengthOfSecond;
     }
 
@@ -137,13 +135,5 @@ public class Match {
         Match match = (Match) o;
         return startOfFirst == match.startOfFirst && startOfSecond == match.startOfSecond && lengthOfFirst == match.lengthOfFirst
                 && lengthOfSecond == match.lengthOfSecond;
-    }
-
-    /**
-     * @return the hashcode of a match
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hash(startOfFirst, startOfSecond, lengthOfFirst, lengthOfSecond);
     }
 }

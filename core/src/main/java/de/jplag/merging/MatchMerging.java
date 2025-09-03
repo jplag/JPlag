@@ -82,8 +82,8 @@ public class MatchMerging {
         List<Match> sortedByLeft = new ArrayList<>(globalMatches);
         List<Match> sortedByRight = new ArrayList<>(globalMatches);
 
-        sortedByLeft.sort(Comparator.comparingInt(Match::getStartOfFirst));
-        sortedByRight.sort(Comparator.comparingInt(Match::getStartOfSecond));
+        sortedByLeft.sort(Comparator.comparingInt(Match::startOfFirst));
+        sortedByRight.sort(Comparator.comparingInt(Match::startOfSecond));
 
         for (int i = 0; i < sortedByLeft.size() - 1; i++) {
 
@@ -133,17 +133,17 @@ public class MatchMerging {
             Match upperMatch = neighbors.get(i).upperMatch();
             Match lowerMatch = neighbors.get(i).lowerMatch();
 
-            int tokensBetweenLeft = lowerMatch.getStartOfFirst() - upperMatch.endOfFirst() - 1;
-            int tokensBetweenRight = lowerMatch.getStartOfSecond() - upperMatch.endOfSecond() - 1;
+            int tokensBetweenLeft = lowerMatch.startOfFirst() - upperMatch.endOfFirst() - 1;
+            int tokensBetweenRight = lowerMatch.startOfSecond() - upperMatch.endOfSecond() - 1;
             double averageTokensBetweenMatches = (tokensBetweenLeft + tokensBetweenRight) / 2.0;
             // Checking length is not necessary as GST already checked length while computing matches
             if (averageTokensBetweenMatches <= options.mergingOptions().maximumGapSize()
                     && !mergeOverlapsFiles(leftSubmission, rightSubmission, upperMatch, tokensBetweenLeft, tokensBetweenRight)) {
                 globalMatches.remove(upperMatch);
                 globalMatches.remove(lowerMatch);
-                int leftLength = upperMatch.getLengthOfFirst() + tokensBetweenLeft + lowerMatch.getLengthOfFirst();
-                int leftRight = upperMatch.getLengthOfSecond() + tokensBetweenRight + lowerMatch.getLengthOfSecond();
-                Match mergedMatch = new Match(upperMatch.getStartOfFirst(), upperMatch.getStartOfSecond(), leftLength, leftRight);
+                int leftLength = upperMatch.lengthOfFirst() + tokensBetweenLeft + lowerMatch.lengthOfFirst();
+                int leftRight = upperMatch.lengthOfSecond() + tokensBetweenRight + lowerMatch.lengthOfSecond();
+                Match mergedMatch = new Match(upperMatch.startOfFirst(), upperMatch.startOfSecond(), leftLength, leftRight);
 
                 globalMatches.add(mergedMatch);
                 neighbors = updateNeighbors(neighbors, neighbors.get(i), mergedMatch);

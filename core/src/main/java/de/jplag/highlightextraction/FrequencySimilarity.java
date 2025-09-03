@@ -107,9 +107,9 @@ public class FrequencySimilarity {
             double freq = match.getFrequencyWeight();
             if (freq == 0) {
                 if (first) {
-                    return match.getLengthOfFirst();
+                    return match.lengthOfFirst();
                 } else {
-                    return match.getLengthOfSecond();
+                    return match.lengthOfSecond();
                 }
             }
             if (Double.isNaN(freq) || freq < 0.0)
@@ -119,9 +119,9 @@ public class FrequencySimilarity {
             double myWeight = (1 - weight) + weight * rarityWeight;
 
             if (first) {
-                return match.getLengthOfFirst() * myWeight;
+                return match.lengthOfFirst() * myWeight;
             } else {
-                return match.getLengthOfSecond() * myWeight;
+                return match.lengthOfSecond() * myWeight;
             }
 
         }).sum();

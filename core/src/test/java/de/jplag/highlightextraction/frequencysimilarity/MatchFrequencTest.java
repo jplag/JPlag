@@ -54,8 +54,8 @@ public class MatchFrequencTest extends TestBase {
         JPlagComparison testComparison = result.getAllComparisons().getFirst();
         testMatch = testComparison.matches().get(0);
         testSubmission = testComparison.firstSubmission();
-        matchContained = new Match(testMatch.getStartOfFirst(), testMatch.getStartOfSecond(), testMatch.getLengthOfFirst() - 1,
-                testMatch.getLengthOfSecond() - 1);
+        matchContained = new Match(testMatch.startOfFirst(), testMatch.startOfSecond(), testMatch.lengthOfFirst() - 1,
+                testMatch.lengthOfSecond() - 1);
     }
 
     /**
@@ -83,7 +83,7 @@ public class MatchFrequencTest extends TestBase {
         frequencyMap.clear();
         List<TokenType> matchToken = new ArrayList<>();
         List<TokenType> submissionToken = new ArrayList<>();
-        for (int i = testMatch.getStartOfFirst(); i <= testMatch.getLengthOfFirst() + testMatch.getStartOfFirst(); i++) {
+        for (int i = testMatch.startOfFirst(); i <= testMatch.lengthOfFirst() + testMatch.startOfFirst(); i++) {
             matchToken.add(testSubmission.getTokenList().get(i).getType());
         }
         for (int i = 0; i < testSubmission.getTokenList().size(); i++) {
@@ -112,10 +112,10 @@ public class MatchFrequencTest extends TestBase {
         List<TokenType> matchToken = new ArrayList<>();
         List<TokenType> matchContainedToken = new ArrayList<>();
         List<TokenType> submissionToken = new ArrayList<>();
-        for (int i = testMatch.getStartOfFirst(); i <= testMatch.getLengthOfFirst() + testMatch.getStartOfFirst(); i++) {
+        for (int i = testMatch.startOfFirst(); i <= testMatch.lengthOfFirst() + testMatch.startOfFirst(); i++) {
             matchToken.add(testSubmission.getTokenList().get(i).getType());
         }
-        for (int i = matchContained.getStartOfFirst(); i <= matchContained.getLengthOfFirst() + matchContained.getStartOfFirst(); i++) {
+        for (int i = matchContained.startOfFirst(); i <= matchContained.lengthOfFirst() + matchContained.startOfFirst(); i++) {
             matchContainedToken.add(testSubmission.getTokenList().get(i).getType());
         }
         for (int i = 0; i < testSubmission.getTokenList().size(); i++) {
@@ -139,10 +139,10 @@ public class MatchFrequencTest extends TestBase {
         List<TokenType> matchToken = new ArrayList<>();
         List<TokenType> matchContainedToken = new ArrayList<>();
         List<TokenType> submissionToken = new ArrayList<>();
-        for (int i = testMatch.getStartOfFirst(); i <= testMatch.getLengthOfFirst() + testMatch.getStartOfFirst(); i++) {
+        for (int i = testMatch.startOfFirst(); i <= testMatch.lengthOfFirst() + testMatch.startOfFirst(); i++) {
             matchToken.add(testSubmission.getTokenList().get(i).getType());
         }
-        for (int i = matchContained.getStartOfFirst(); i <= matchContained.getLengthOfFirst() + matchContained.getStartOfFirst(); i++) {
+        for (int i = matchContained.startOfFirst(); i <= matchContained.lengthOfFirst() + matchContained.startOfFirst(); i++) {
             matchContainedToken.add(testSubmission.getTokenList().get(i).getType());
         }
         for (int i = 0; i < testSubmission.getTokenList().size(); i++) {
@@ -166,10 +166,10 @@ public class MatchFrequencTest extends TestBase {
         List<TokenType> matchToken = new ArrayList<>();
         List<TokenType> matchContainedToken = new ArrayList<>();
         List<TokenType> submissionToken = new ArrayList<>();
-        for (int i = testMatch.getStartOfFirst(); i <= testMatch.getLengthOfFirst() + testMatch.getStartOfFirst(); i++) {
+        for (int i = testMatch.startOfFirst(); i <= testMatch.lengthOfFirst() + testMatch.startOfFirst(); i++) {
             matchToken.add(testSubmission.getTokenList().get(i).getType());
         }
-        for (int i = matchContained.getStartOfFirst(); i <= matchContained.getLengthOfFirst() + matchContained.getStartOfFirst(); i++) {
+        for (int i = matchContained.startOfFirst(); i <= matchContained.lengthOfFirst() + matchContained.startOfFirst(); i++) {
             matchContainedToken.add(testSubmission.getTokenList().get(i).getType());
         }
         for (int i = 0; i < testSubmission.getTokenList().size(); i++) {

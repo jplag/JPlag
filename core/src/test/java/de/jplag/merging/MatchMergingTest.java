@@ -86,8 +86,8 @@ class MatchMergingTest extends TestBase {
         for (JPlagComparison comparison : comparisons) {
             matches = matchFunction.apply(comparison);
             for (Match match : matches) {
-                assertTrue(match.getLengthOfFirst() >= threshold);
-                assertTrue(match.getLengthOfSecond() >= threshold);
+                assertTrue(match.lengthOfFirst() >= threshold);
+                assertTrue(match.lengthOfSecond() >= threshold);
             }
         }
     }
@@ -218,10 +218,10 @@ class MatchMergingTest extends TestBase {
 
     private void checkForCrossFileMatches(JPlagComparison comparison, List<Match> matches) {
         for (Match match : matches) {
-            List<Token> leftTokens = comparison.firstSubmission().getTokenList().subList(match.getStartOfFirst(),
-                    match.getStartOfFirst() + match.getLengthOfFirst());
-            List<Token> rightTokens = comparison.secondSubmission().getTokenList().subList(match.getStartOfSecond(),
-                    match.getStartOfSecond() + match.getLengthOfSecond());
+            List<Token> leftTokens = comparison.firstSubmission().getTokenList().subList(match.startOfFirst(),
+                    match.startOfFirst() + match.lengthOfFirst());
+            List<Token> rightTokens = comparison.secondSubmission().getTokenList().subList(match.startOfSecond(),
+                    match.startOfSecond() + match.lengthOfSecond());
             verifyTokensFromSingleFile(leftTokens);
             verifyTokensFromSingleFile(rightTokens);
         }

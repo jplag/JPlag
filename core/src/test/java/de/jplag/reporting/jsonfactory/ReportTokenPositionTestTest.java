@@ -133,9 +133,9 @@ class ReportTokenPositionTestTest {
 
     Match createMockMatch(int startOfFirst, int endOfFirst, int startOfSecond, int endOfSecond) {
         Match match = mock(Match.class);
-        when(match.getStartOfFirst()).thenReturn(startOfFirst);
+        when(match.startOfFirst()).thenReturn(startOfFirst);
         when(match.endOfFirst()).thenReturn(endOfFirst);
-        when(match.getStartOfSecond()).thenReturn(startOfSecond);
+        when(match.startOfSecond()).thenReturn(startOfSecond);
         when(match.endOfSecond()).thenReturn(endOfSecond);
         return match;
     }

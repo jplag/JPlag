@@ -43,8 +43,8 @@ public class MatchWeighting {
      */
     public void weightAllMatches(List<Match> matches, List<TokenType> comparisonToken) {
         for (Match match : matches) {
-            int start = match.getStartOfFirst();
-            int length = match.getLengthOfFirst();
+            int start = match.startOfFirst();
+            int length = match.lengthOfFirst();
             if (start + length > comparisonToken.size())
                 continue;
 
