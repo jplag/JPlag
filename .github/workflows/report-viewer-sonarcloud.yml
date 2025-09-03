@@ -7,17 +7,17 @@ on:
       - develop
     paths:
       - "report-viewer/**"
-      - ".github/workflows/sonarcloud-report-viewer.yml"
+      - ".github/workflows/report-viewer-sonarcloud.yml"
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
       - "report-viewer/**"
-      - ".github/workflows/sonarcloud-report-viewer.yml"
+      - ".github/workflows/report-viewer-sonarcloud.yml"
   pull_request_target:
     types: [opened, synchronize, reopened]
     paths:
       - "report-viewer/**"
-      - ".github/workflows/sonarcloud-report-viewer.yml"
+      - ".github/workflows/report-viewer-sonarcloud.yml"
 
       # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
