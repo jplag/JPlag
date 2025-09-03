@@ -22,13 +22,23 @@
       <div v-else>Demo of JPlag v{{ reportViewerVersion.toString() }}</div>
       <div>Displays the result of JPlag on the Progpedia dataset.</div>
     </div>
-    <VersionRepositoryReference :show-version="false" :override-style="false" />
+    <VersionRepositoryReference :override-style="false" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { minimalReportVersion, reportViewerVersion } from '../version/versions'
 import VersionRepositoryReference from './VersionRepositoryReference.vue'
+
+defineProps({
+  reportViewerVersion: {
+    type: Object,
+    required: true
+  },
+  minimalReportVersion: {
+    type: Object,
+    required: true
+  }
+})
 
 const isDemo = import.meta.env.MODE == 'demo'
 </script>

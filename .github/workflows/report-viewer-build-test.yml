@@ -39,11 +39,11 @@ jobs:
           MAJOR=$(echo $VERSION | cut -d '.' -f 1)
           MINOR=$(echo $VERSION | cut -d '.' -f 2)
           PATCH=$(echo $VERSION | cut -d '.' -f 3)
-          sed -i "/major/s/.*/    \"major\": $MAJOR,/" report-viewer/report-viewer/src/version/version.json
-          sed -i "/minor/s/.*/    \"minor\": $MINOR,/" report-viewer/report-viewer/src/version/version.json
-          sed -i "/patch/s/.*/    \"patch\": $PATCH/" report-viewer/report-viewer/src/version/version.json
+          sed -i "/major/s/.*/    \"major\": $MAJOR,/" report-viewer/version/src/version.json
+          sed -i "/minor/s/.*/    \"minor\": $MINOR,/" report-viewer/version/src/version.json
+          sed -i "/patch/s/.*/    \"patch\": $PATCH/" report-viewer/version/src/version.json
           echo "Version of Report Viewer:"
-          cat report-viewer/report-viewer/src/version/version.json
+          cat report-viewer/version/src/version.json
 
       - name: Install and Build 🔧
         working-directory: report-viewer/report-viewer

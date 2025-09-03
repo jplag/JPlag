@@ -10,8 +10,12 @@ import TabbedContainer from './TabbedContainer.vue'
 import TextInformation from './TextInformation.vue'
 import ToastComponent from './ToastComponent.vue'
 import ToolTipComponent from './ToolTipComponent.vue'
+import VersionInfoComponent from './footer/VersionInfoComponent.vue'
+import VersionRepositoryReference from './footer/VersionRepositoryReference.vue'
+import ThemeSwitch from './ThemeSwitch.vue'
 
 export * from './ToolTip'
+export * from './themeManagment'
 export {
   ButtonComponent,
   ContainerComponent,
@@ -24,5 +28,8 @@ export {
   TabbedContainer,
   TextInformation,
   ToastComponent,
-  ToolTipComponent
+  ToolTipComponent,
+  VersionInfoComponent,
+  VersionRepositoryReference,
+  ThemeSwitch
 }

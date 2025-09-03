@@ -5,7 +5,11 @@
     }"
   >
     <span
-      v-if="!reportViewerVersion.isDevVersion() && !reportViewerVersion.isInvalid() && showVersion"
+      v-if="
+        reportViewerVersion !== undefined &&
+        !reportViewerVersion.isDevVersion() &&
+        !reportViewerVersion.isInvalid()
+      "
       >JPlag v{{ reportViewerVersion.toString() }}</span
     >
     <span>
@@ -22,15 +26,16 @@
 <script setup lang="ts">
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
-import { reportViewerVersion } from '../version/versions'
+import { Version } from '@jplag/model'
+import { PropType } from 'vue'
 
 defineProps({
-  overrideStyle: {
-    type: Boolean,
+  reportViewerVersion: {
+    type: Object as PropType<Version | undefined>,
     required: false,
-    default: true
+    default: undefined
   },
-  showVersion: {
+  overrideStyle: {
     type: Boolean,
     required: false,
     default: true

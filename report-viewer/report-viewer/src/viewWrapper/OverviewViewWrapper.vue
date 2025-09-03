@@ -5,17 +5,18 @@
       <LoadingCircle class="mx-auto" />
     </div>
 
-    <VersionRepositoryReference />
+    <VersionRepositoryReference :report-viewer-version="reportViewerVersion" />
   </div>
 </template>
 
 <script setup lang="ts">
 import OverviewView from '@/views/OverviewView.vue'
 import { LoadingCircle } from '@jplag/ui-components/base'
-import VersionRepositoryReference from '../components/VersionRepositoryReference.vue'
+import { VersionRepositoryReference } from '@jplag/ui-components/base'
 import { reportStore } from '@/stores/reportStore'
 import { loadReport } from '@/stores/fileLoading'
 import { redirectOnError } from '@/router'
+import { reportViewerVersion } from '@jplag/version'
 
 if (!reportStore().isReportLoaded()) {
   loadReport().catch((error) => redirectOnError(error))

@@ -7,12 +7,7 @@
         class="print:min-h-none min-h-screen w-screen p-2 pb-0! md:h-screen md:max-h-screen md:p-5 print:max-h-none print:w-full print:overflow-visible print:p-0"
       />
 
-      <ButtonComponent
-        class="fixed right-2 bottom-2 flex h-12 w-12 items-center justify-center text-center print:hidden"
-        @click="uiStore().useDarkMode = !uiStore().useDarkMode"
-      >
-        <FontAwesomeIcon class="text-2xl" :icon="uiStore().useDarkMode ? faSun : faMoon" />
-      </ButtonComponent>
+      <ThemeSwitch v-model="uiStore().useDarkMode" />
       <ToastComponent v-if="showToast" :time-to-live="10000">
         You are using an outdated version of the JPlag Report Viewer ({{
           reportViewerVersion.toString()
@@ -28,13 +23,11 @@
 
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import { ButtonComponent, ToastComponent } from '@jplag/ui-components/base'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons'
+import { ToastComponent, ThemeSwitch } from '@jplag/ui-components/base'
 import { computed, ref } from 'vue'
 import { uiStore } from './stores/uiStore'
 import { Version } from '@jplag/model'
-import { reportViewerVersion } from './version/versions'
+import { reportViewerVersion } from '@jplag/version'
 
 const newestVersion = ref(Version.ERROR_VERSION)
 const isDemo = import.meta.env.MODE == 'demo'

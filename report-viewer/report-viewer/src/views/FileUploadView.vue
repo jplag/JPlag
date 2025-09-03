@@ -50,7 +50,11 @@
         <p>For more details check the console.</p>
       </div>
     </div>
-    <VersionInfoComponent class="absolute bottom-5 left-5" />
+    <VersionInfoComponent
+      :minimal-report-version="minimalReportVersion"
+      :report-viewer-version="reportViewerVersion"
+      class="absolute bottom-5 left-5"
+    />
   </div>
 </template>
 
@@ -58,12 +62,13 @@
 import { onErrorCaptured, ref, type Ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { router } from '@/router'
-import VersionInfoComponent from '../components/VersionInfoComponent.vue'
+import { VersionInfoComponent } from '@jplag/ui-components/base'
 import { reportStore } from '@/stores/reportStore'
 import { REPORT_FILE_NAME, useLocalReportFileMode } from '@/stores/fileLoading'
 import { uiStore } from '@/stores/uiStore'
 import { ReportFileHandler } from '@jplag/parser'
 import { LoadingCircle } from '@jplag/ui-components/base'
+import { minimalReportVersion, reportViewerVersion } from '@jplag/version'
 
 reportStore().reset()
 

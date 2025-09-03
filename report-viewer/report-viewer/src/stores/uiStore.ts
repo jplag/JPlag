@@ -1,4 +1,5 @@
 import { MetricJsonIdentifier } from '@jplag/model'
+import { getUseDarkModeSetting, saveUseDarkModeSetting } from '@jplag/ui-components/base'
 import {
   Column,
   ComparisonTableSorting,
@@ -10,11 +11,11 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 
 export const uiStore = defineStore('uiStore', () => {
-  const _useDarkMode = ref(getDefaultUseDarkModeOption())
+  const _useDarkMode = ref(getUseDarkModeSetting())
   const useDarkMode = computed({
     get: () => _useDarkMode.value,
     set: (v: boolean) => {
-      localStorage.setItem(USE_DARK_MODE_KEYWORD, v ? 'true' : 'false')
+      saveUseDarkModeSetting(v)
       _useDarkMode.value = v
     }
   })
@@ -39,14 +40,3 @@ export const uiStore = defineStore('uiStore', () => {
     fileSorting
   }
 })
-
-const USE_DARK_MODE_KEYWORD = 'jplag:use-dark-mode'
-
-function getDefaultUseDarkModeOption() {
-  const local = localStorage.getItem(USE_DARK_MODE_KEYWORD)
-  if (local !== null) {
-    return local === 'true'
-  }
-
-  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-}
