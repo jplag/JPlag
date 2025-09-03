@@ -182,7 +182,7 @@
                 <resources>
                     <resource>
                         <targetPath>report-viewer</targetPath>
-                        <directory>../report-viewer/dist</directory>
+                        <directory>../report-viewer/report-viewer/dist</directory>
                     </resource>
                     <!-- Even though it is already in the resources folder, it needs to be explicitly included to be part of the jar -->
                     <resource>
@@ -222,7 +222,7 @@
                                 <phase>generate-resources</phase>
                                 <configuration>
                                     <executable>npm</executable>
-                                    <workingDirectory>../report-viewer</workingDirectory>
+                                    <workingDirectory>../report-viewer/report-viewer</workingDirectory>
                                     <arguments>
                                         <argument>run</argument>
                                         <argument>build</argument>

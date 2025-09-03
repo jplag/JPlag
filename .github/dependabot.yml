@@ -25,9 +25,10 @@ updates:
     labels:
       - "dependencies"
       - "minor"
+  # NPM - root package.json (for shared dependencies)
   - package-ecosystem: "npm"
-    target-branch: "develop"
     directory: "/report-viewer"
+    target-branch: "develop"
     schedule:
       interval: "weekly"
       day: "wednesday"
@@ -36,6 +37,51 @@ updates:
     commit-message:
       prefix: "Dependency"
       include: "scope"
-
-
-
+  # NPM - model package
+  - package-ecosystem: "npm"
+    directory: "/report-viewer/model"
+    target-branch: "develop"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "11:00"
+      timezone: "Europe/Berlin"
+    commit-message:
+      prefix: "Dependency"
+      include: "scope"
+  # NPM - parser package
+  - package-ecosystem: "npm"
+    directory: "/report-viewer/parser"
+    target-branch: "develop"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "11:00"
+      timezone: "Europe/Berlin"
+    commit-message:
+      prefix: "Dependency"
+      include: "scope"
+  # NPM - ui-components package
+  - package-ecosystem: "npm"
+    directory: "/report-viewer/ui-components"
+    target-branch: "develop"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "11:00"
+      timezone: "Europe/Berlin"
+    commit-message:
+      prefix: "Dependency"
+      include: "scope"
+  # NPM - report-viewer package
+  - package-ecosystem: "npm"
+    directory: "/report-viewer/report-viewer"
+    target-branch: "develop"
+    schedule:
+      interval: "weekly"
+      day: "wednesday"
+      time: "11:00"
+      timezone: "Europe/Berlin"
+    commit-message:
+      prefix: "Dependency"
+      include: "scope"

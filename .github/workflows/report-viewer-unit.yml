@@ -26,14 +26,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
 
-      - name: Install and Test 🧪
+      - name: Install
         working-directory: report-viewer
         run: |
           npm install
-          npm run test:unit
+      - name: Test model
+        working-directory: report-viewer/model
+        run: |
+          npm run test
+      - name: Test parser
+        working-directory: report-viewer/parser
+        run: |
+          npm run test
+      - name: Test ui-components
+        working-directory: report-viewer/ui-components
+        run: |
+          npm run test

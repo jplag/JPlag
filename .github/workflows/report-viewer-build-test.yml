@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       
       - uses: actions/setup-node@v4
         with:
@@ -39,14 +39,14 @@ jobs:
           MAJOR=$(echo $VERSION | cut -d '.' -f 1)
           MINOR=$(echo $VERSION | cut -d '.' -f 2)
           PATCH=$(echo $VERSION | cut -d '.' -f 3)
-          sed -i "/major/s/.*/    \"major\": $MAJOR,/" report-viewer/src/version.json
-          sed -i "/minor/s/.*/    \"minor\": $MINOR,/" report-viewer/src/version.json
-          sed -i "/patch/s/.*/    \"patch\": $PATCH/" report-viewer/src/version.json
+          sed -i "/major/s/.*/    \"major\": $MAJOR,/" report-viewer/report-viewer/src/version/version.json
+          sed -i "/minor/s/.*/    \"minor\": $MINOR,/" report-viewer/report-viewer/src/version/version.json
+          sed -i "/patch/s/.*/    \"patch\": $PATCH/" report-viewer/report-viewer/src/version/version.json
           echo "Version of Report Viewer:"
-          cat report-viewer/src/version.json
+          cat report-viewer/report-viewer/src/version/version.json
 
       - name: Install and Build 🔧
-        working-directory: report-viewer
+        working-directory: report-viewer/report-viewer
         run: |
           npm install
           npm run build
