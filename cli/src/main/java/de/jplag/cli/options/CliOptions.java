@@ -9,6 +9,7 @@ import de.jplag.Language;
 import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
+import de.jplag.highlightextraction.FrequencyAnalysisOptions;
 import de.jplag.highlightextraction.FrequencyStrategies;
 import de.jplag.highlightextraction.WeightingStrategies;
 import de.jplag.java.JavaLanguage;
@@ -93,7 +94,7 @@ public class CliOptions implements Runnable {
 
     /** Frequency based analysis of the Matches. */
     @ArgGroup(validate = false, heading = "%nFrequency Analysis%n")
-    public FrequencyAnalysis frequencyAnalysis = new FrequencyAnalysis();
+    public FrequencyAnalysis frequencyOptions = new FrequencyAnalysis();
 
     /**
      * Empty run method to enable automatic help printing by picocli.
@@ -174,6 +175,33 @@ public class CliOptions implements Runnable {
                     "--cluster-metric"}, description = "The similarity metric used for clustering. Available metrics: ${COMPLETION-CANDIDATES} (default: ${DEFAULT-VALUE}).")
             public SimilarityMetric metric = new ClusteringOptions().similarityMetric();
         }
+    }
+
+    /** Highlight extraction options. */
+    public static class FrequencyAnalysis {
+        /** Skip Highlight extraction options. */
+        @Option(names = {"--frequency-analysis"}, description = "If frequency calculation is used")
+        public boolean frequency = new FrequencyAnalysisOptions().frequency();
+
+        /** Frequency Determination strategy. */
+        @Option(names = {
+                "--frequency-strategy"}, description = "Strategy for frequency Analysis, Options: completeMatches, containedMatches, subMatches, windowOfMatches")
+        public FrequencyStrategies frequencyStrategy = new FrequencyAnalysisOptions().frequencyStrategy();
+
+        /** Min value for considered subsequence length in Frequency Determination strategy. */
+        @Option(names = {
+                "--frequency-min-value"}, description = "Max of min match length that will be compared and this value, is min size of considered submatches")
+        public int frequencyStrategyMinValue = new FrequencyAnalysisOptions().frequencyStrategyMinValue();
+
+        /** Weighting function to combine with frequency Determination strategy. */
+        @Option(names = {"--weighting-strategy"}, description = "Strategy for frequency Weighting, Options: PROPORTIONAL, LINEAR, QUADRATIC, SIGMOID")
+        public WeightingStrategies weightingStrategy = new FrequencyAnalysisOptions().weightingStrategy();
+
+        /** How strong the weighting maximal influences a match length with up to double the length. */
+        @Option(names = {
+                "--weighting-factor"}, description = "Factor on how strong the weighting will be considered, scale factor for max stretch of a token sequence")
+        public double weightingStrategyWeightingFactor = new FrequencyAnalysisOptions().weightingFactor();
+
     }
 
     /**
@@ -257,30 +285,4 @@ public class CliOptions implements Runnable {
     @Option(names = {"--cluster-pp-threshold"}, hidden = true)
     public double clusterPreprocessingThreshold;
 
-    /** Highlight extraction options. */
-    public static class FrequencyAnalysis {
-        /** Skip Highlight extraction options. */
-        @Option(names = {"--frequency-analysis"}, description = "If frequency calculation is used")
-        public boolean frequency = false;
-
-        /** Frequency Determination strategy. */
-        @Option(names = {
-                "--frequency-strategy"}, description = "Strategy for frequency Analysis, Options: completeMatches, containedMatches, subMatches, windowOfMatches")
-        public FrequencyStrategies frequencyStrategy = FrequencyStrategies.COMPLETE_MATCHES;
-
-        /** Min value for considered subsequence length in Frequency Determination strategy. */
-        @Option(names = {
-                "--frequency-min-value"}, description = "Max of min match length that will be compared and this value, is min size of considered submatches")
-        public int frequencyStrategyMinValue = 1;
-
-        /** Weighting function to combine with frequency Determination strategy. */
-        @Option(names = {"--weighting-strategy"}, description = "Strategy for frequency Weighting, Options: PROPORTIONAL, LINEAR, QUADRATIC, SIGMOID")
-        public WeightingStrategies weightingStrategy = WeightingStrategies.SIGMOID;
-
-        /** How strong the weighting maximal influences a match length with up to double the length. */
-        @Option(names = {
-                "--weighting-factor"}, description = "Factor on how strong the weighting will be considered, scale factor for max stretch of a token sequence")
-        public double weightingStrategyWeightingFactor = 0.25;
-
-    }
 }
