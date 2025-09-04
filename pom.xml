@@ -81,7 +81,7 @@
 
         <antlr2.version>2.7.7</antlr2.version>
         <antlr4.version>4.13.2</antlr4.version>
-        <emf.version>2.39.0</emf.version>
+        <emf.version>2.40.0</emf.version>
         <emf.ecore.version>2.43.0</emf.ecore.version>
         <emf.ecore.xmi.version>2.39.0</emf.ecore.xmi.version>
         <eclipse.core.version>3.22.200</eclipse.core.version>
