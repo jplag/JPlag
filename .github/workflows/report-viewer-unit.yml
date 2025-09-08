@@ -48,3 +48,7 @@ jobs:
         working-directory: report-viewer/ui-components
         run: |
           npm run test
+      - name: Test report-viewer
+        working-directory: report-viewer/report-viewer
+        run: |
+          npm run test:unit

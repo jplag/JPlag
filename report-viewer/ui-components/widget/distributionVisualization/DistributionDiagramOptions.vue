@@ -7,7 +7,7 @@
         title="Metric:"
         :default-selected="config.metric"
         :metrics="metricOptions"
-        @selection-changed="(metric: MetricJsonIdentifier) => (config.metric = metric)"
+        @selection-changed="(metric: DistributionMetrics) => (config.metric = metric)"
       />
       <OptionsSelector
         class="mt-2"
@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { MetricJsonIdentifier, type BucketOptions } from '@jplag/model'
+import { DistributionMetrics, MetricJsonIdentifier, type BucketOptions } from '@jplag/model'
 import MetricSelector from '../optionsSelectors/MetricSelector.vue'
 import OptionsSelector from '../optionsSelectors/OptionsSelectorComponent.vue'
 import { ScrollableComponent } from '../../base'
@@ -44,7 +44,7 @@ const config = defineModel<DistributionChartConfig>({
 
 const resolutionOptions = [10, 20, 25, 50, 100] as BucketOptions[]
 
-const metricOptions = [
+const metricOptions: DistributionMetrics[] = [
   MetricJsonIdentifier.AVERAGE_SIMILARITY,
   MetricJsonIdentifier.MAXIMUM_SIMILARITY
 ]
