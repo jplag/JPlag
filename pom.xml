@@ -343,7 +343,7 @@
                     <configLocation>config/checkstyle/checkstyle.xml</configLocation>
                     <sourceDirectories>
                         <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
-                        <!-- <sourceDirectory>${project.build.testSourceDirectory}</sourceDirectory> -->
+                        <sourceDirectory>${project.build.testSourceDirectory}</sourceDirectory>
                     </sourceDirectories>
                     <consoleOutput>true</consoleOutput>
                     <failsOnError>true</failsOnError>
