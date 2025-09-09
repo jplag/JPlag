@@ -17,6 +17,10 @@ import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
  * Provides tests for the llvmir language module.
  */
 class LLVMIRLanguageTest extends LanguageModuleTest {
+
+    /**
+     * Constructs a LLVM-IR language test module with the appropriate language and token type.
+     */
     public LLVMIRLanguageTest() {
         super(new LLVMIRLanguage(), LLVMIRTokenType.class);
     }

@@ -72,8 +72,9 @@ public abstract class LanguageModuleTest {
 
     /**
      * Creates a new language module test.
-     * @param language The language to test
-     * @param tokenEnum The enum containing the token types
+     * @param <T> the enum type implementing {@link TokenType}.
+     * @param language the language under test.
+     * @param tokenEnum the enum class representing token types.
      */
     public <T extends Enum<T> & TokenType> LanguageModuleTest(Language language, Class<T> tokenEnum) {
         this(language, tokenEnum.getEnumConstants());
