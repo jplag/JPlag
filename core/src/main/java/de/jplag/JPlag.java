@@ -17,7 +17,6 @@ import de.jplag.exceptions.RootDirectoryException;
 import de.jplag.exceptions.SubmissionException;
 import de.jplag.merging.MatchMerging;
 import de.jplag.options.JPlagOptions;
-import de.jplag.reporting.reportobject.model.Version;
 
 /**
  * This class coordinates the whole errorConsumer flow.

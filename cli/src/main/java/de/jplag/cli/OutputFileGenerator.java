@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import de.jplag.JPlagResult;
 import de.jplag.cli.options.CliOptions;
-import de.jplag.csv.comparisons.CsvComparisonOutput;
+import de.jplag.reporting.csv.comparisons.CsvComparisonOutput;
 import de.jplag.reporting.reportobject.ReportObjectFactory;
 
 /**

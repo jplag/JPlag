@@ -17,8 +17,8 @@ import de.jplag.Language;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.exceptions.BasecodeException;
 import de.jplag.merging.MergingOptions;
-import de.jplag.reporting.jsonfactory.serializer.FileSerializer;
-import de.jplag.reporting.jsonfactory.serializer.LanguageSerializer;
+import de.jplag.serializer.FileSerializer;
+import de.jplag.serializer.LanguageSerializer;
 import de.jplag.util.FileUtils;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;

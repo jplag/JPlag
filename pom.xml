@@ -451,6 +451,7 @@
                 <module>language-api</module>
                 <module>language-antlr-utils</module>
                 <module>language-testutils</module>
+                <module>reporting</module>
             </modules>
         </profile>
         <profile>
