@@ -23,21 +23,19 @@
 
     <developers>
         <developer>
-            <id>tsaglam</id>
-            <name>Timur Sağlam</name>
-            <email>saglam@kit.edu</email>
-            <url>https://dsis.kastel.kit.edu/staff_saglam.php</url>
+            <id>robinmaisch</id>
+            <name>Robin Maisch</name>
+            <email>jplag@ipd.kit.edu</email>
+            <url>https://mcse.kastel.kit.edu/staff_robin_maisch.php</url>
             <organization>KASTEL</organization>
-            <organizationUrl>https://dsis.kastel.kit.edu/</organizationUrl>
+            <organizationUrl>https://mcse.kastel.kit.edu/</organizationUrl>
             <timezone>GMT+1</timezone>
         </developer>
         <developer>
-            <id>sebinside</id>
-            <name>Sebastian Hahner</name>
-            <email>hahner@kit.edu</email>
-            <url>https://dsis.kastel.kit.edu/staff_sebastian_hahner.php</url>
-            <organization>KASTEL</organization>
-            <organizationUrl>https://dsis.kastel.kit.edu/</organizationUrl>
+            <id>tsaglam</id>
+            <name>Timur Sağlam</name>
+            <email>jplag@ipd.kit.edu</email>
+            <url>https://dsis.kastel.kit.edu/staff_saglam.php</url>
             <timezone>GMT+1</timezone>
         </developer>
     </developers>
