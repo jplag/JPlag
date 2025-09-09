@@ -144,6 +144,10 @@ public class CliOptions implements Runnable {
         /** Override charset for submissions. */
         @Option(names = "--encoding", description = "Specifies the charset of the submissions. This disables the automatic charset detection", completionCandidates = CharsetCandidates.class, converter = CharsetConverter.class)
         public Charset submissionCharsetOverride;
+
+        /** Skip check for new version (hidden). */
+        @Option(names = "--skip-version-check", description = "Skip fetching latest version information from the API.", hidden = true)
+        public boolean skipVersionCheck = false;
     }
 
     /** Clustering options. */
