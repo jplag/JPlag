@@ -5,16 +5,26 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.*;
+import de.jplag.JPlagResult;
+import de.jplag.SubmissionSet;
+import de.jplag.SubmissionSetBuilder;
+import de.jplag.TestBase;
+import de.jplag.TokenType;
 import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
-import de.jplag.highlightextraction.*;
+import de.jplag.highlightextraction.CompleteMatchesStrategy;
+import de.jplag.highlightextraction.ContainedMatchesStrategy;
+import de.jplag.highlightextraction.FrequencyDetermination;
+import de.jplag.highlightextraction.FrequencyStrategy;
+import de.jplag.highlightextraction.SubMatchesStrategy;
+import de.jplag.highlightextraction.WindowOfMatchesStrategy;
 import de.jplag.options.JPlagOptions;
 
 /**
