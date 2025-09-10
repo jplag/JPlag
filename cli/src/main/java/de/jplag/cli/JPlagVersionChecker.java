@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.JPlag;
-import de.jplag.reporting.reportobject.model.Version;
+import de.jplag.Version;
 
 /**
  * Handles the check for newer versions.

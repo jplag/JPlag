@@ -18,6 +18,12 @@
             <version>${revision}</version>
         </dependency>
 
+        <dependency>
+            <groupId>de.jplag</groupId>
+            <artifactId>reporting</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
         <!-- Languages -->
         <dependency>
             <groupId>de.jplag</groupId>
