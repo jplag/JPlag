@@ -184,4 +184,5 @@ public class JPlagResult {
         }
         return similarityDistribution;
     }
+
 }

@@ -9,6 +9,9 @@ import de.jplag.Language;
 import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
+import de.jplag.highlightextraction.FrequencyAnalysisOptions;
+import de.jplag.highlightextraction.FrequencyStrategies;
+import de.jplag.highlightextraction.WeightingStrategies;
 import de.jplag.java.JavaLanguage;
 import de.jplag.merging.MergingOptions;
 import de.jplag.options.JPlagOptions;
@@ -88,6 +91,10 @@ public class CliOptions implements Runnable {
     /** Subsequence merging options group. */
     @ArgGroup(validate = false, heading = "%nSubsequence Match Merging%n")
     public Merging merging = new Merging();
+
+    /** Frequency based analysis of the Matches. */
+    @ArgGroup(validate = false, heading = "%nFrequency Analysis%n")
+    public FrequencyAnalysis frequencyOptions = new FrequencyAnalysis();
 
     /**
      * Empty run method to enable automatic help printing by picocli.
@@ -174,6 +181,34 @@ public class CliOptions implements Runnable {
         }
     }
 
+    /** Highlight extraction options. */
+    public static class FrequencyAnalysis {
+        /** Skip Highlight extraction options. */
+        @Option(names = {"--frequency-analysis"}, description = "If frequency calculation is used")
+        public boolean frequency = new FrequencyAnalysisOptions().frequency();
+
+        /** Frequency Determination strategy. */
+        @Option(names = {
+                "--frequency-strategy"}, description = "Strategy for frequency Analysis, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE}).")
+        public FrequencyStrategies frequencyStrategy = new FrequencyAnalysisOptions().frequencyStrategy();
+
+        /** Min value for considered subsequence length in Frequency Determination strategy. */
+        @Option(names = {
+                "--frequency-min-value"}, description = "Max of min match length that will be compared and this value, is min size of considered submatches")
+        public int frequencyStrategyMinValue = new FrequencyAnalysisOptions().frequencyStrategyMinValue();
+
+        /** Weighting function to combine with frequency Determination strategy. */
+        @Option(names = {
+                "--weighting-strategy"}, description = "Strategy for frequency Weighting, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE}).")
+        public WeightingStrategies weightingStrategy = new FrequencyAnalysisOptions().weightingStrategy();
+
+        /** How strong the weighting maximal influences a match length with up to double the length. */
+        @Option(names = {
+                "--weighting-factor"}, description = "Factor on how strong the weighting will be considered, scale factor for max stretch of a token sequence")
+        public double weightingStrategyWeightingFactor = new FrequencyAnalysisOptions().weightingFactor();
+
+    }
+
     /**
      * Options for merging neighboring matches in the token sequence. Useful for reducing false negatives in cases of mild
      * obfuscation.
@@ -254,4 +289,5 @@ public class CliOptions implements Runnable {
     /** Absolute threshold used in preprocessing to cut off low-similarity pairs (hidden). */
     @Option(names = {"--cluster-pp-threshold"}, hidden = true)
     public double clusterPreprocessingThreshold;
+
 }
