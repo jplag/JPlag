@@ -23,21 +23,19 @@
 
     <developers>
         <developer>
-            <id>tsaglam</id>
-            <name>Timur Sağlam</name>
-            <email>saglam@kit.edu</email>
-            <url>https://dsis.kastel.kit.edu/staff_saglam.php</url>
+            <id>robinmaisch</id>
+            <name>Robin Maisch</name>
+            <email>jplag@ipd.kit.edu</email>
+            <url>https://mcse.kastel.kit.edu/staff_robin_maisch.php</url>
             <organization>KASTEL</organization>
-            <organizationUrl>https://dsis.kastel.kit.edu/</organizationUrl>
+            <organizationUrl>https://mcse.kastel.kit.edu/</organizationUrl>
             <timezone>GMT+1</timezone>
         </developer>
         <developer>
-            <id>sebinside</id>
-            <name>Sebastian Hahner</name>
-            <email>hahner@kit.edu</email>
-            <url>https://dsis.kastel.kit.edu/staff_sebastian_hahner.php</url>
-            <organization>KASTEL</organization>
-            <organizationUrl>https://dsis.kastel.kit.edu/</organizationUrl>
+            <id>tsaglam</id>
+            <name>Timur Sağlam</name>
+            <email>jplag@ipd.kit.edu</email>
+            <url>https://dsis.kastel.kit.edu/staff_saglam.php</url>
             <timezone>GMT+1</timezone>
         </developer>
     </developers>
@@ -71,14 +69,12 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <!--suppress UnresolvedMavenProperty -->
         <sonar.coverage.jacoco.xmlReportPaths>${maven.multiModuleProjectDirectory}/coverage-report/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <spotless.version>2.46.1</spotless.version>
         <slf4j.version>2.0.17</slf4j.version>
         <junit.version>5.13.4</junit.version>
         <checkstyle.version>11.0.1</checkstyle.version>
-
         <antlr2.version>2.7.7</antlr2.version>
         <antlr4.version>4.13.2</antlr4.version>
         <emf.version>2.40.0</emf.version>
