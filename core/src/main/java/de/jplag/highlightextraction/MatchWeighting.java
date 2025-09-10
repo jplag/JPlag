@@ -32,7 +32,7 @@ public class MatchWeighting {
      * @param matchToken token sequence of the match
      */
     public void weightMatch(Match match, List<TokenType> matchToken) {
-        double matchWeight = strategy.calculateWeight(match, frequencyMap, matchToken);
+        double matchWeight = strategy.calculateMatchFrequency(match, frequencyMap, matchToken);
         match.setFrequencyWeight(matchWeight);
     }
 

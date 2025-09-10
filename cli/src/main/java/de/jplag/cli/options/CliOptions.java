@@ -185,7 +185,7 @@ public class CliOptions implements Runnable {
 
         /** Frequency Determination strategy. */
         @Option(names = {
-                "--frequency-strategy"}, description = "Strategy for frequency Analysis, Options: completeMatches, containedMatches, subMatches, windowOfMatches")
+                "--frequency-strategy"}, description = "Strategy for frequency Analysis, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE}).")
         public FrequencyStrategies frequencyStrategy = new FrequencyAnalysisOptions().frequencyStrategy();
 
         /** Min value for considered subsequence length in Frequency Determination strategy. */
@@ -194,7 +194,8 @@ public class CliOptions implements Runnable {
         public int frequencyStrategyMinValue = new FrequencyAnalysisOptions().frequencyStrategyMinValue();
 
         /** Weighting function to combine with frequency Determination strategy. */
-        @Option(names = {"--weighting-strategy"}, description = "Strategy for frequency Weighting, Options: PROPORTIONAL, LINEAR, QUADRATIC, SIGMOID")
+        @Option(names = {
+                "--weighting-strategy"}, description = "Strategy for frequency Weighting, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE}).")
         public WeightingStrategies weightingStrategy = new FrequencyAnalysisOptions().weightingStrategy();
 
         /** How strong the weighting maximal influences a match length with up to double the length. */

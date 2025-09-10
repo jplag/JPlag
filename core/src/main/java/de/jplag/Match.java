@@ -128,7 +128,7 @@ public class Match {
 
     /**
      * @param o Match Object to compare
-     * @return if there equal
+     * @return true if they are equal
      */
     @Override
     public boolean equals(Object o) {

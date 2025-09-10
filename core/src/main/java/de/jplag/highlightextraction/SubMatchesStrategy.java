@@ -44,9 +44,8 @@ public class SubMatchesStrategy implements FrequencyStrategy {
      * @return a weight for the match
      */
     @Override
-    public double calculateWeight(Match match, Map<List<TokenType>, Integer> frequencyMap, List<TokenType> matchToken) {
+    public double calculateMatchFrequency(Match match, Map<List<TokenType>, Integer> frequencyMap, List<TokenType> matchToken) {
         List<List<TokenType>> keys = SubSequenceUtil.getSubSequences(matchToken, minSubSequenceLength);
-        SubSequenceUtil.getSubSequences(matchToken, minSubSequenceLength);
         List<Integer> frequencies = new ArrayList<>();
         for (List<TokenType> key : keys) {
             int freq = frequencyMap.getOrDefault(key, 0);

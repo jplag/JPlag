@@ -57,7 +57,7 @@ public class FrequencySimilarity {
 
     /**
      * Calculates the similarity score for a comparison. The score gets influenced form the frequency of the match according
-     * to the cooden Frequency Strategy, Similarity Strategy and weighting factor.
+     * to the chosen Frequency Strategy, Similarity Strategy and weighting factor.
      * @param comparison considered comparison to calculate the similarity score for
      * @param weight weighting factor, is factor for the (max) influence of the frequency
      * @return the similarity score
@@ -94,7 +94,7 @@ public class FrequencySimilarity {
         if (maxFrequency == 0.0)
             maxFrequency = 1.0;
 
-        if (Objects.equals(strategy, ProportionalWeigthedStrategy.class)) {
+        if (Objects.equals(strategy, ProportionalWeightedStrategy.class)) {
             minWeight = 0.01;
             maxWeight = 2.0;
         } else {

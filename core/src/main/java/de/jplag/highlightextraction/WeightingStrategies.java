@@ -4,7 +4,7 @@ package de.jplag.highlightextraction;
  * This class contains the possible weighting functions for a match, in the frequency analysis.
  */
 public enum WeightingStrategies {
-    PROPORTIONAL(new ProportionalWeigthedStrategy()),
+    PROPORTIONAL(new ProportionalWeightedStrategy()),
     LINEAR(new LinearWeightedStrategy()),
     QUADRATIC(new QuadraticWeightedStrategy()),
     SIGMOID(new SigmoidWeightingStrategy());

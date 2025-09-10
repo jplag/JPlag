@@ -3,7 +3,7 @@ package de.jplag.highlightextraction;
 /**
  * Strategy that considers rare matches stronger and frequent ones less.
  */
-public class ProportionalWeigthedStrategy implements SimilarityStrategy {
+public class ProportionalWeightedStrategy implements SimilarityStrategy {
 
     /**
      * Strategy that considers rare matches stronger and frequent ones less.

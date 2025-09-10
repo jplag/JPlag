@@ -41,22 +41,37 @@ public record FrequencyAnalysisOptions(boolean frequency, FrequencyStrategies fr
         return frequency;
     }
 
+    /**
+     * If frequency Analysis is used.
+     */
     public FrequencyAnalysisOptions withFrequency(boolean frequency) {
         return new FrequencyAnalysisOptions(frequency, frequencyStrategy, frequencyStrategyMinValue, weightingStrategy, weightingFactor);
     }
 
+    /**
+     * Chosen FrequencyStrategy.
+     */
     public FrequencyAnalysisOptions withFrequencyStrategy(FrequencyStrategies strategy) {
         return new FrequencyAnalysisOptions(frequency, strategy, frequencyStrategyMinValue, weightingStrategy, weightingFactor);
     }
 
+    /**
+     * Minimum considered subsequence length.
+     */
     public FrequencyAnalysisOptions withFrequencyStrategyMinValue(int minValue) {
         return new FrequencyAnalysisOptions(frequency, frequencyStrategy, minValue, weightingStrategy, weightingFactor);
     }
 
+    /**
+     * Chosen weightingStrategy.
+     */
     public FrequencyAnalysisOptions withWeightingStrategy(WeightingStrategies strategy) {
         return new FrequencyAnalysisOptions(frequency, frequencyStrategy, frequencyStrategyMinValue, strategy, weightingFactor);
     }
 
+    /**
+     * Weighting factor for weightingStrategy.
+     */
     public FrequencyAnalysisOptions withWeightingFactor(double factor) {
         return new FrequencyAnalysisOptions(frequency, frequencyStrategy, frequencyStrategyMinValue, weightingStrategy, factor);
     }

@@ -23,7 +23,7 @@ public class FrequencySimilarityTest extends TestBase {
     private FrequencySimilarity similarityLinear;
     private FrequencySimilarity similarityQuadratic;
     private FrequencySimilarity similaritySigmoid;
-    public static SimilarityStrategy proportionalWeigthedStrategy = new ProportionalWeigthedStrategy();
+    public static SimilarityStrategy proportionalWeightedStrategy = new ProportionalWeightedStrategy();
     public static SimilarityStrategy rareTokensWeightedStrategy = new LinearWeightedStrategy();
     public static SimilarityStrategy quadraticWeightedStrategy = new QuadraticWeightedStrategy();
     public static SimilarityStrategy sigmoidWeightingStrategy = new SigmoidWeightingStrategy();
@@ -60,7 +60,7 @@ public class FrequencySimilarityTest extends TestBase {
                 testMatch.lengthOfSecond() - 1);
         this.comparison = result.getAllComparisons().getFirst();
         this.comparison2 = result.getAllComparisons().getLast();
-        this.similarityProportional = new FrequencySimilarity(List.of(comparison), proportionalWeigthedStrategy);
+        this.similarityProportional = new FrequencySimilarity(List.of(comparison), proportionalWeightedStrategy);
         this.similarityLinear = new FrequencySimilarity(List.of(comparison), rareTokensWeightedStrategy);
         this.similarityQuadratic = new FrequencySimilarity(List.of(comparison), quadraticWeightedStrategy);
         this.similaritySigmoid = new FrequencySimilarity(List.of(comparison), sigmoidWeightingStrategy);
@@ -89,7 +89,7 @@ public class FrequencySimilarityTest extends TestBase {
      * Tests frequency similarity strategies
      */
     @Test
-    @DisplayName("frequencySimilarity berechnet realistische Werte")
+    @DisplayName("frequencySimilarity calculates realistic values")
     void testFrequencySimilarity_withRealisticMatchData() {
 
         double resultProportional = similarityProportional.frequencySimilarity(comparison, 0.5);
@@ -130,7 +130,7 @@ public class FrequencySimilarityTest extends TestBase {
      * Tests frequency similarity strategies
      */
     @Test
-    @DisplayName("frequencySimilarity berechnet realistische Werte")
+    @DisplayName("frequencySimilarity calculates realistic values")
     void testFrequencySimilarity_Proportional() {
 
         double resultProportional = similarityProportional.frequencySimilarity(comparison, 0.5);
