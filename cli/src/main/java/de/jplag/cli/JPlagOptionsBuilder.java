@@ -42,7 +42,6 @@ public class JPlagOptionsBuilder {
         Set<File> oldSubmissionDirectories = Set.of(this.cliOptions.oldDirectories);
         List<String> suffixes = List.of(this.cliOptions.advanced.suffixes);
         submissionDirectories.addAll(List.of(this.cliOptions.newDirectories));
-        submissionDirectories.addAll(this.cliInputHandler.getSubcommandSubmissionDirectories());
 
         JPlagOptions jPlagOptions = initializeJPlagOptions(submissionDirectories, oldSubmissionDirectories, suffixes);
 

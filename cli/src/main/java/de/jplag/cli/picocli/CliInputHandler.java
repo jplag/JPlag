@@ -9,7 +9,6 @@ import java.io.File;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -78,7 +77,9 @@ public class CliInputHandler {
         }).collect(Collectors.joining(System.lineSeparator())) + System.lineSeparator());
         cli.getHelpSectionMap().put(SECTION_KEY_COMMAND_LIST_HEADING, help -> "Languages:" + System.lineSeparator());
 
-        buildSubcommands().forEach(cli::addSubcommand);
+        for (CommandLine.Model.CommandSpec subcommand : buildSubcommands(this.options)) {
+            cli.addSubcommand(subcommand).setHelpFactory(new HelpFactory());
+        }
 
         cli.getHelpSectionMap().put(SECTION_KEY_SYNOPSIS, help -> help.synopsis(help.synopsisHeadingLength()) + generateDescription());
         cli.getHelpSectionMap().put(SECTION_KEY_DESCRIPTION_HEADING, help -> OPTION_LIST_HEADING);
@@ -87,7 +88,7 @@ public class CliInputHandler {
         return cli;
     }
 
-    private List<CommandLine.Model.CommandSpec> buildSubcommands() {
+    private List<CommandLine.Model.CommandSpec> buildSubcommands(CliOptions options) {
         return LanguageLoader.getAllAvailableLanguages().values().stream().map(language -> {
             CommandLine.Model.CommandSpec command = CommandLine.Model.CommandSpec.create().name(language.getIdentifier());
 
@@ -95,9 +96,7 @@ public class CliInputHandler {
                 command.addOption(CommandLine.Model.OptionSpec.builder(option.getNameAsUnixParameter()).type(option.getType().getJavaType())
                         .description(option.getDescription()).build());
             }
-            command.mixinStandardHelpOptions(true);
-            command.addPositional(
-                    CommandLine.Model.PositionalParamSpec.builder().type(List.class).auxiliaryTypes(File.class).hidden(true).required(false).build());
+            command.addMixin("root", CommandLine.Model.CommandSpec.forAnnotatedObject(options).name("mixin"));
 
             return command;
         }).toList();
@@ -158,16 +157,6 @@ public class CliInputHandler {
             }
         });
         return language;
-    }
-
-    /**
-     * @return The submission directories configured for the subcommand, if one has been given.
-     */
-    public List<File> getSubcommandSubmissionDirectories() {
-        if (this.parseResult.subcommand() != null && this.parseResult.subcommand().hasMatchedPositional(0)) {
-            return this.parseResult.subcommand().matchedPositional(0).getValue();
-        }
-        return Collections.emptyList();
     }
 
     private String generateDescription() {
