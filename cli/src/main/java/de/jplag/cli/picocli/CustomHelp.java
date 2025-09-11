@@ -42,7 +42,7 @@ public class CustomHelp extends CommandLine.Help {
 
     @Override
     public String optionList(Layout layout, Comparator<CommandLine.Model.OptionSpec> optionSort, IParamLabelRenderer valueLabelRenderer) {
-        List<CommandLine.Model.OptionSpec> visibleOptionsNotInGroups = excludeHiddenAndGroupOptions(options());
+        List<CommandLine.Model.OptionSpec> visibleOptionsNotInGroups = filterOptions(listAllOptions());
         if (!this.isSubcommand()) { // Subcommands don't make use of groups in JPlag, so they are suppressed
             return optionListExcludingGroups(visibleOptionsNotInGroups, layout, optionSort, valueLabelRenderer) + optionListGroupSections();
         } else {
@@ -50,7 +50,7 @@ public class CustomHelp extends CommandLine.Help {
         }
     }
 
-    private List<CommandLine.Model.OptionSpec> options() {
+    private List<CommandLine.Model.OptionSpec> listAllOptions() {
         return this.commandSpec().options();
     }
 
@@ -59,7 +59,7 @@ public class CustomHelp extends CommandLine.Help {
      * @param all The list of all options
      * @return The filtered list
      */
-    private List<CommandLine.Model.OptionSpec> excludeHiddenAndGroupOptions(List<CommandLine.Model.OptionSpec> all) {
+    private List<CommandLine.Model.OptionSpec> filterOptions(List<CommandLine.Model.OptionSpec> all) {
         List<CommandLine.Model.OptionSpec> result = new ArrayList<>(all);
         for (CommandLine.Model.ArgGroupSpec group : optionSectionGroups()) {
             result.removeAll(group.allOptionsNested());
