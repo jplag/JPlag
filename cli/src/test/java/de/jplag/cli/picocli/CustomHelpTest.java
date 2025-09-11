@@ -1,8 +1,10 @@
 package de.jplag.cli.picocli;
 
-import de.jplag.cli.options.CliOptions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import de.jplag.cli.options.CliOptions;
+
 import picocli.CommandLine;
 
 public class CustomHelpTest {
