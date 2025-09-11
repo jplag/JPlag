@@ -7,6 +7,10 @@ import de.jplag.cli.options.CliOptions;
 
 import picocli.CommandLine;
 
+/**
+ * Contains basic tests for the {@link CustomHelp}. Verifies that filtering the global options for subcommands works as
+ * intended
+ */
 public class CustomHelpTest {
     @Test
     void testPrintOptions_rootSpec() {
