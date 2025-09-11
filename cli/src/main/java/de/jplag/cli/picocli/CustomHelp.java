@@ -32,8 +32,8 @@ public class CustomHelp extends CommandLine.Help {
 
     @Override
     public String parameterList() {
-        if (this.isSubcommand()) { // Language parameters cannot be positional, so for subcommands they aren't printed. Otherwise, global positional
-                                   // parameters would be printed for subcommands.
+        if (!this.isSubcommand()) { // Language parameters cannot be positional, so for subcommands they aren't printed. Otherwise, global positional
+                                    // parameters would be printed for subcommands.
             return super.parameterList();
         } else {
             return "";
