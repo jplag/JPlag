@@ -6,6 +6,8 @@ import java.util.Objects;
 
 import de.jplag.JPlagComparison;
 import de.jplag.Match;
+import de.jplag.Token;
+import de.jplag.TokenType;
 
 /**
  * Calculates the frequency dependent similarity for the comparisons according to the frequency similarity weighting
@@ -20,15 +22,17 @@ public class FrequencySimilarity {
      * Chosen weighting function.
      */
     SimilarityStrategy strategy;
+    private final MatchFrequency matchFrequency;
 
     /**
      * Constructor defines comparisons and strategy for the similarity calculation.
      * @param comparisons considered comparisons to calculate the similarity score for
      * @param strategy chosen weighting function
      */
-    public FrequencySimilarity(List<JPlagComparison> comparisons, SimilarityStrategy strategy) {
+    public FrequencySimilarity(List<JPlagComparison> comparisons, SimilarityStrategy strategy, MatchFrequency matchFrequency) {
         this.comparisons = comparisons;
         this.strategy = strategy;
+        this.matchFrequency = matchFrequency;
     }
 
     /**
@@ -53,6 +57,12 @@ public class FrequencySimilarity {
         this.comparisons = comparisons.stream()
                 .sorted(Comparator.comparingDouble((JPlagComparison c) -> frequencySimilarity(c, frequencyWeight)).reversed()).toList();
         return this.comparisons;
+    }
+
+    private double getFrequencyFromMap(JPlagComparison comparison, Match match) {
+        List<TokenType> submissionTokenTypes = comparison.firstSubmission().getTokenList().stream().map(Token::getType).toList();
+        List<TokenType> matchTokens = FrequencyUtil.matchesToMatchTokenTypes(match, submissionTokenTypes);
+        return matchFrequency.matchFrequencyMap().getOrDefault(matchTokens, 0.0);
     }
 
     /**
@@ -90,7 +100,18 @@ public class FrequencySimilarity {
     public int getWeightedMatchLength(JPlagComparison comparison, double weight, boolean first, SimilarityStrategy strategy) {
         double minWeight;
         double maxWeight;
-        double maxFrequency = comparison.matches().stream().mapToDouble(Match::getFrequencyWeight).max().orElse(1.0);
+
+        double maxFrequency = 0.0;
+        if (matchFrequency.matchFrequencyMap().isEmpty()) {
+            maxFrequency = 1.0;
+        } else {
+            for (double frequency : matchFrequency.matchFrequencyMap().values()) {
+                if (frequency > maxFrequency) {
+                    maxFrequency = frequency;
+                }
+            }
+        }
+
         if (maxFrequency == 0.0)
             maxFrequency = 1.0;
 
@@ -104,7 +125,7 @@ public class FrequencySimilarity {
 
         double finalMaxFrequency = maxFrequency;
         double weightedSum = comparison.matches().stream().mapToDouble(match -> {
-            double freq = match.getFrequencyWeight();
+            double freq = getFrequencyFromMap(comparison, match);
             if (freq == 0) {
                 if (first) {
                     return match.lengthOfFirst();

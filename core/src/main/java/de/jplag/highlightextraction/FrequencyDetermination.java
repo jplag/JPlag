@@ -41,12 +41,7 @@ public class FrequencyDetermination {
             List<TokenType> submissionTokenTypes = submissionTokens.stream().map(Token::getType).toList();
 
             for (Match match : comparison.matches()) {
-                int startIndexOfMatch = match.startOfFirst();
-                int lengthOfMatch = match.lengthOfFirst();
-                if (startIndexOfMatch + lengthOfMatch > submissionTokenTypes.size()) {
-                    throw new IllegalArgumentException("startIndexOfMatch + lengthOfMatch <= submissionTokenTypes.size()");
-                }
-                List<TokenType> matchTokenTypes = submissionTokenTypes.subList(startIndexOfMatch, startIndexOfMatch + lengthOfMatch);
+                List<TokenType> matchTokenTypes = FrequencyUtil.matchesToMatchTokenTypes(match, submissionTokenTypes);
                 frequencyStrategy.processMatchTokenTypes(matchTokenTypes, this::addSequenceKey, this::addSequence, strategyNumber);
             }
         }

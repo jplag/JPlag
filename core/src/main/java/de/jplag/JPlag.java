@@ -15,11 +15,7 @@ import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.RootDirectoryException;
 import de.jplag.exceptions.SubmissionException;
-import de.jplag.highlightextraction.FrequencyDetermination;
-import de.jplag.highlightextraction.FrequencySimilarity;
-import de.jplag.highlightextraction.FrequencyStrategy;
-import de.jplag.highlightextraction.MatchWeighting;
-import de.jplag.highlightextraction.SimilarityStrategy;
+import de.jplag.highlightextraction.*;
 import de.jplag.merging.MatchMerging;
 import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.reportobject.model.Version;
@@ -97,19 +93,10 @@ public class JPlag {
             result = new MatchMerging(options).mergeMatchesOf(result);
         }
 
-        FrequencyStrategy strategy = options.frequencyStrategies().getStrategy();
-        FrequencyDetermination frequencyDetermination = new FrequencyDetermination(strategy,
-                Math.max(options.frequencyStrategyMinValue(), options.minimumTokenMatch()));
-        frequencyDetermination.buildFrequencyMap(result.getAllComparisons());
-        MatchWeighting matchWeighting = new MatchWeighting(strategy, frequencyDetermination.getMatchFrequencyMap());
-        matchWeighting.weightAllComparisons(result.getAllComparisons());
-        SimilarityStrategy similarityStrategy = options.weightingStrategy().getStrategy();
-        FrequencySimilarity similarity = new FrequencySimilarity(result.getAllComparisons(), similarityStrategy);
-        for (JPlagComparison comparison : result.getAllComparisons()) {
-            double score = similarity.weightedComparisonSimilarity(comparison, options.weightingStrategyWeightingFactor());
-            JPlagComparison.setFrequencyWeightedScore(score);
-            JPlagComparison.setFrequency(options.frequency());
-        }
+        FrequencyMatchWeighter matchWeighter = new FrequencyMatchWeighter();
+        matchWeighter.useMatchFrequencyToInfluenceSimilarity(options.frequencyStrategies().getStrategy(), options.frequencyStrategyMinValue(),
+                options.minimumTokenMatch(), result.getAllComparisons(), options.weightingStrategy().getStrategy(),
+                options.weightingStrategyWeightingFactor(), options.frequency());
 
         if (logger.isInfoEnabled()) {
             logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getDuration()));
