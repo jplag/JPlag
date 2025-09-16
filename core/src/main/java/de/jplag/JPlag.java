@@ -94,14 +94,15 @@ public class JPlag {
         }
 
         FrequencyMatchWeighter matchWeighter = new FrequencyMatchWeighter();
-        matchWeighter.useMatchFrequencyToInfluenceSimilarity(options.frequencyStrategies().getStrategy(), options.frequencyStrategyMinValue(),
-                options.minimumTokenMatch(), result.getAllComparisons(), options.weightingStrategy().getStrategy(),
-                options.weightingStrategyWeightingFactor(), options.frequency());
+        List<JPlagComparison> frequencyWeightedComparisons = matchWeighter.useMatchFrequencyToInfluenceSimilarity(
+                options.frequencyStrategies().getStrategy(), options.frequencyStrategyMinValue(), options.minimumTokenMatch(),
+                result.getAllComparisons(), options.weightingStrategy().getStrategy(), options.weightingStrategyWeightingFactor(),
+                options.frequency());
 
         if (logger.isInfoEnabled()) {
             logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getDuration()));
         }
-        result.setClusteringResult(ClusteringFactory.getClusterings(result.getAllComparisons(), options.clusteringOptions()));
+        result.setClusteringResult(ClusteringFactory.getClusterings(frequencyWeightedComparisons, options.clusteringOptions()));
 
         logSkippedSubmissions(submissionSet, options);
 

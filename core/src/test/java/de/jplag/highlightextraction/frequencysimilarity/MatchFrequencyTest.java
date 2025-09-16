@@ -96,7 +96,7 @@ public class MatchFrequencyTest extends TestBase {
         completeMatchesStrategy.processMatchTokenTypes(matchToken, this::addSequenceKey, this::addSequence, 0);
         MatchWeighting weighting = new MatchWeighting(completeMatchesStrategy, frequencyMap);
         weighting.weightAllMatches(List.of(testMatch), submissionToken);
-        System.out.println(testMatch.getFrequencyWeight());
+        // System.out.println(testMatch.getFrequencyWeight());
         // assertEquals(2.0, testMatch.getFrequencyWeight(), 0.01, "only one Match added twice");
     }
 

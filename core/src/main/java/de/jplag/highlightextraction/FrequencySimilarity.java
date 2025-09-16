@@ -1,6 +1,5 @@
 package de.jplag.highlightextraction;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -41,23 +40,25 @@ public class FrequencySimilarity {
      * @param weightingFactor weighting factor, is factor for the (max) influence of the frequency
      * @return similarity of the comparison
      */
-    public double weightedComparisonSimilarity(JPlagComparison comparison, double weightingFactor) {
-        return frequencySimilarity(comparison, weightingFactor);
+    public JPlagComparison weightedComparisonSimilarity(JPlagComparison comparison, double weightingFactor, boolean frequencyUsed) {
+        double frequencyWeightedSimilarity = frequencySimilarity(comparison, weightingFactor);
+        return new JPlagComparison(comparison, frequencyWeightedSimilarity, frequencyUsed);
     }
-
-    /**
-     * Sorts the comparisons, according to the frequency.
-     * @param comparisons considered comparisons to calculate the similarity score for
-     * @param weight weighting factor, is factor for the (max) influence of the frequency
-     * @return the comparisons sorted with similarity score
-     */
-
-    public List<JPlagComparison> calculateFrequencySimilarity(List<JPlagComparison> comparisons, double weight) {
-        final double frequencyWeight = weight;
-        this.comparisons = comparisons.stream()
-                .sorted(Comparator.comparingDouble((JPlagComparison c) -> frequencySimilarity(c, frequencyWeight)).reversed()).toList();
-        return this.comparisons;
-    }
+    //
+    // /**
+    // * Sorts the comparisons, according to the frequency.
+    // * @param comparisons considered comparisons to calculate the similarity score for
+    // * @param weight weighting factor, is factor for the (max) influence of the frequency
+    // * @return the comparisons sorted with similarity score
+    // */
+    //
+    // public List<JPlagComparison> calculateFrequencySimilarity(List<JPlagComparison> comparisons, double weight) {
+    // final double frequencyWeight = weight;
+    // this.comparisons = comparisons.stream()
+    // .sorted(Comparator.comparingDouble((JPlagComparison comparison) -> frequencySimilarity(comparison,
+    // frequencyWeight)).reversed()).toList();
+    // return this.comparisons;
+    // }
 
     private double getFrequencyFromMap(JPlagComparison comparison, Match match) {
         List<TokenType> submissionTokenTypes = comparison.firstSubmission().getTokenList().stream().map(Token::getType).toList();

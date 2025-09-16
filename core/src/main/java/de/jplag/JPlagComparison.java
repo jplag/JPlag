@@ -11,7 +11,8 @@ import java.util.List;
  * @param ignoredMatches is the unmodifiable list of ignored matches whose length is below the minimum token match
  * threshold.
  */
-public record JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches, List<Match> ignoredMatches) {
+public record JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches, List<Match> ignoredMatches,
+        double frequencyWeightedSimilarity, boolean frequencyUsed) {
 
     /**
      * Constructs a new comparison between two submissions. The match lists are wrapped as unmodifiable to preserve
@@ -21,35 +22,17 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
      * @param matches is the list of all matches between the two submissions.
      */
     public JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches, List<Match> ignoredMatches) {
-        this.firstSubmission = firstSubmission;
-        this.secondSubmission = secondSubmission;
-        this.matches = Collections.unmodifiableList(matches);
-        this.ignoredMatches = Collections.unmodifiableList(ignoredMatches);
+        this(firstSubmission, secondSubmission, Collections.unmodifiableList(matches), Collections.unmodifiableList(ignoredMatches), -1, false);
     }
 
     /**
-     * Similarity score of the comparison calculated in frequency analysis depending on the frequency of a match among all
-     * comparisons.
+     * Copy constructor to give the Comparisons an individual frequency.
+     * @param originalComparison the comparison without used frequency Analysis.
+     * @param frequencyWeightedSimilarity frequency Weighted similarity, that will replace standard similarity.
      */
-    public static double frequencyWeightedScore = -1;
-    /**
-     * If the frequency analysis is used or the normal similarity will be considered.
-     */
-    private static boolean frequency = false;
-
-    /**
-     * @param frequency if the frequency analysis is used or the normal similarity will be considered
-     */
-    public static void setFrequency(boolean frequency) {
-        JPlagComparison.frequency = frequency;
-    }
-
-    /**
-     * @param score Similarity score of the comparison calculated in frequency analysis depending on the frequency of a
-     * match among all comparisons.
-     */
-    public static void setFrequencyWeightedScore(double score) {
-        frequencyWeightedScore = score;
+    public JPlagComparison(JPlagComparison originalComparison, double frequencyWeightedSimilarity, boolean frequencyUsed) {
+        this(originalComparison.firstSubmission(), originalComparison.secondSubmission(), originalComparison.matches(),
+                originalComparison.ignoredMatches(), frequencyWeightedSimilarity, frequencyUsed);
     }
 
     /**
@@ -89,8 +72,8 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
      * structural similarity.
      */
     public double similarity() {
-        if (frequency && frequencyWeightedScore >= 0) {
-            return frequencyWeightedScore;
+        if (frequencyUsed && frequencyWeightedSimilarity >= 0) {
+            return frequencyWeightedSimilarity;
         }
         int divisor = firstSubmission.getSimilarityDivisor() + secondSubmission.getSimilarityDivisor();
         if (divisor == 0) {
