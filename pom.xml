@@ -83,6 +83,7 @@
         <eclipse.core.version>3.23.0</eclipse.core.version>
         <emfatic.version>1.1.0</emfatic.version>
         <mockito.version>5.19.0</mockito.version>
+        <record.builder.version>48</record.builder.version>
         <!-- ensure that this variable is initialized, even if it is empty -->
         <argLine/>
 
