@@ -26,7 +26,7 @@ class NewJavaFeaturesTest extends TestBase {
     private static final String VERSION_MATCH_MESSAGE = "Java version matches, but results deviate from expected values";
     private static final String CI_VARIABLE = "CI";
 
-    private static final int EXPECTED_JAVA_VERSION = 21;
+    private static final int EXPECTED_JAVA_VERSION = 25;
 
     @Test
     @DisplayName("test comparison of Java files with modern language features")
