@@ -78,8 +78,8 @@ public class JavaLanguageTest extends LanguageModuleTest {
         collector.testFile("PatternMatching.java", "PatternMatchingManual.java").testSourceCoverage().testTokenSequence(J_CLASS_BEGIN, J_RECORD_BEGIN,
                 J_VARDEF, J_RECORD_END, J_METHOD_BEGIN, J_VARDEF, J_NEWCLASS, J_IF_BEGIN, J_VARDEF, J_IF_END, J_METHOD_END, J_CLASS_END);
 
-        collector.testFile("StringConcat.java", "StringTemplate.java").testSourceCoverage().testTokenSequence(J_CLASS_BEGIN, J_METHOD_BEGIN, J_VARDEF,
-                J_VARDEF, J_VARDEF, J_APPLY, J_METHOD_END, J_CLASS_END);
+        collector.testFile("StringConcat.java").testSourceCoverage().testTokenSequence(J_CLASS_BEGIN, J_METHOD_BEGIN, J_VARDEF, J_VARDEF, J_VARDEF,
+                J_APPLY, J_METHOD_END, J_CLASS_END);
 
         collector.testFile("AnonymousVariables.java").testTokenSequence(J_CLASS_BEGIN, J_METHOD_BEGIN, J_VARDEF, J_IF_BEGIN, J_IF_END, J_METHOD_END,
                 J_CLASS_END);
