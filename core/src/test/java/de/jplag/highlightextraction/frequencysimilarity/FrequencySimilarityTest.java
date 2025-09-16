@@ -60,10 +60,6 @@ public class FrequencySimilarityTest extends TestBase {
                 testMatch.lengthOfSecond() - 1);
         this.comparison = result.getAllComparisons().getFirst();
         this.comparison2 = result.getAllComparisons().getLast();
-        this.similarityProportional = new FrequencySimilarity(List.of(comparison), proportionalWeightedStrategy);
-        this.similarityLinear = new FrequencySimilarity(List.of(comparison), rareTokensWeightedStrategy);
-        this.similarityQuadratic = new FrequencySimilarity(List.of(comparison), quadraticWeightedStrategy);
-        this.similaritySigmoid = new FrequencySimilarity(List.of(comparison), sigmoidWeightingStrategy);
         List<TokenType> submissionToken = new ArrayList<>();
         JPlagComparison.setFrequency(true);
         for (int i = 0; i < testSubmission.getTokenList().size(); i++) {
@@ -74,7 +70,12 @@ public class FrequencySimilarityTest extends TestBase {
         completeMatchesStrategy.processMatchTokenTypes(extractMatchTokenTypes(comparison.matches().getLast()), this::addSequenceKey,
                 this::addSequence, 20);
         MatchWeighting weighting = new MatchWeighting(completeMatchesStrategy, frequencyMap);
-        weighting.weightAllMatches(List.of(comparison.matches().getFirst(), comparison.matches().getLast()), submissionToken);
+        MatchFrequency matchFrequency = weighting.weightAllMatches(List.of(comparison.matches().getFirst(), comparison.matches().getLast()),
+                submissionToken);
+        this.similarityProportional = new FrequencySimilarity(List.of(comparison), proportionalWeightedStrategy, matchFrequency);
+        this.similarityLinear = new FrequencySimilarity(List.of(comparison), rareTokensWeightedStrategy, matchFrequency);
+        this.similarityQuadratic = new FrequencySimilarity(List.of(comparison), quadraticWeightedStrategy, matchFrequency);
+        this.similaritySigmoid = new FrequencySimilarity(List.of(comparison), sigmoidWeightingStrategy, matchFrequency);
     }
 
     private List<TokenType> extractMatchTokenTypes(Match match) {

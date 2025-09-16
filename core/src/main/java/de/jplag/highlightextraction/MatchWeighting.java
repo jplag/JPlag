@@ -42,11 +42,12 @@ public class MatchWeighting {
      * @param matches the matches to determine the frequency for
      * @param firstSubmissionToken token sequence of the comparison
      */
-    public void weightAllMatches(List<Match> matches, List<TokenType> firstSubmissionToken) {
+    public MatchFrequency weightAllMatches(List<Match> matches, List<TokenType> firstSubmissionToken) {
         for (Match match : matches) {
             List<TokenType> matchTokens = FrequencyUtil.matchesToMatchTokenTypes(match, firstSubmissionToken);
             weightMatch(match, matchTokens);
         }
+        return matchFrequency;
     }
 
     /**
