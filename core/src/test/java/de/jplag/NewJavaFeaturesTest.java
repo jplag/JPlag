@@ -15,9 +15,9 @@ import de.jplag.exceptions.ExitException;
  */
 class NewJavaFeaturesTest extends TestBase {
 
-    private static final int EXPECTED_MATCHES = 8; // might change if you add files to the submissions
-    private static final int NUMBER_OF_TEST_FILES = 8;
-    private static final double EXPECTED_SIMILARITY = 0.971; // might change if you add files to the submissions
+    private static final int EXPECTED_MATCHES = 9; // might change if you add files to the submissions
+    private static final int NUMBER_OF_TEST_FILES = 9;
+    private static final double EXPECTED_SIMILARITY = 0.933; // might change if you add files to the submissions
 
     private static final String EXCLUSION_FILE_NAME = "blacklist.txt";
     private static final String ROOT_DIRECTORY = "NewJavaFeatures";
