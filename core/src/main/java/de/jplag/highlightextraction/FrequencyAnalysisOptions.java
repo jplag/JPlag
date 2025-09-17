@@ -10,35 +10,12 @@ package de.jplag.highlightextraction;
  */
 public record FrequencyAnalysisOptions(boolean isFrequencyAnalysisEnabled, FrequencyAnalysisStrategy frequencyStrategy, int frequencyStrategyMinValue,
         MatchFrequencyWeightingFunction weightingStrategy, double weightingFactor) {
-    /**
-     * Options for Frequency Analysis.
-     * @param isFrequencyAnalysisEnabled if the calculated value of the isFrequencyAnalysisEnabled analysis is used
-     * @param frequencyStrategy the strategy used to determine the isFrequencyAnalysisEnabled of a Match
-     * @param frequencyStrategyMinValue the minimum considered size of Subsequences from matches in the frequencyStrategy
-     * @param weightingStrategy strategy used to influence the similarity based on Match isFrequencyAnalysisEnabled
-     * @param weightingFactor how strong the impact of the weightingStrategy is
-     */
-    public FrequencyAnalysisOptions(boolean isFrequencyAnalysisEnabled, FrequencyAnalysisStrategy frequencyStrategy, int frequencyStrategyMinValue,
-            MatchFrequencyWeightingFunction weightingStrategy, double weightingFactor) {
-        this.isFrequencyAnalysisEnabled = isFrequencyAnalysisEnabled;
-        this.frequencyStrategy = frequencyStrategy;
-        this.frequencyStrategyMinValue = frequencyStrategyMinValue;
-        this.weightingStrategy = weightingStrategy;
-        this.weightingFactor = weightingFactor;
-    }
 
     /**
      * Default options for isFrequencyAnalysisEnabled Analysis.
      */
     public FrequencyAnalysisOptions() {
         this(false, FrequencyAnalysisStrategy.COMPLETE_MATCHES, 1, MatchFrequencyWeightingFunction.SIGMOID, 0.25);
-    }
-
-    /**
-     * @return if the isFrequencyAnalysisEnabled Analysis is used.
-     */
-    public boolean isFrequencyAnalysisEnabled() {
-        return isFrequencyAnalysisEnabled;
     }
 
     /**

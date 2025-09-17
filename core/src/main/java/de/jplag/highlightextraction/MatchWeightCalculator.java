@@ -58,9 +58,9 @@ public class MatchWeightCalculator {
      */
     public MatchFrequency weightAllComparisons(List<JPlagComparison> comparisons) {
         for (JPlagComparison comparison : comparisons) {
-            List<Token> FirstSubmissionToken = comparison.firstSubmission().getTokenList();
-            List<TokenType> FirstSubmissionTokenTypes = FirstSubmissionToken.stream().map(Token::getType).toList();
-            weightAllMatches(comparison.matches(), FirstSubmissionTokenTypes);
+            List<Token> firstSubmissionToken = comparison.firstSubmission().getTokenList();
+            List<TokenType> firstSubmissionTokenTypes = firstSubmissionToken.stream().map(Token::getType).toList();
+            weightAllMatches(comparison.matches(), firstSubmissionTokenTypes);
         }
         return matchFrequency;
     }

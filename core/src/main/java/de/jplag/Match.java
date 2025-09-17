@@ -10,25 +10,6 @@ package de.jplag;
  * @param lengthOfSecond is the length of these similar sections (number of tokens) in the second submission.
  */
 public record Match(int startOfFirst, int startOfSecond, int lengthOfFirst, int lengthOfSecond) {
-    /**
-     * Represents two code fragments in two submissions that are structurally similar. These sections are usually identical
-     * token subsequences, but can vary slightly when employing post-processing mechanisms, for example subsequence match
-     * merging.
-     * @param startOfFirst is the index of the first token of the match in the first submission.
-     * @param startOfSecond is the index of the first token of the match in the second submission.
-     * @param lengthOfFirst is the length of these similar sections (number of tokens) in the first submission.
-     * @param lengthOfSecond is the length of these similar sections (number of tokens) in the second submission.
-     */
-    public Match {
-    }
-
-    /**
-     * @return startpoint of the match in the first submission.
-     */
-    @Override
-    public int startOfFirst() {
-        return startOfFirst;
-    }
 
     /**
      * @return startpoint of the match in the second submission.

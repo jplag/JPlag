@@ -88,7 +88,6 @@ public class MatchFrequencyWeighting {
             MatchWeightingFunction weightingFunction) {
         double minimumWeight;
         double maximumWeight;
-
         double maximumFoundFrequency = 0.0;
         if (matchFrequency.matchFrequencyMap().isEmpty()) {
             maximumFoundFrequency = 1.0;
@@ -113,19 +112,17 @@ public class MatchFrequencyWeighting {
 
         double finalMaximumFoundFrequency = maximumFoundFrequency;
         double consideredLengthOfMatchesWithFrequencyInfluence = comparison.matches().stream().mapToDouble(match -> {
-            double matchFrequency = getFrequencyFromMap(comparison, match);
-            if (matchFrequency == 0) {
+            double frequencyOfMatch = getFrequencyFromMap(comparison, match);
+
+            if (frequencyOfMatch == 0) {
                 if (firstSubmission) {
                     return match.lengthOfFirst();
                 } else {
                     return match.lengthOfSecond();
                 }
             }
-            if (Double.isNaN(matchFrequency) || matchFrequency < 0.0)
-                matchFrequency = 0.0;
-            double relativeFrequencyOfMatch = 1.0 - Math.min(matchFrequency / finalMaximumFoundFrequency, 1.0);
-            double weightOfMatch = weightingFunction.computeWeight(minimumWeight, maximumWeight, relativeFrequencyOfMatch);
-            double influenceOnMatchLength = (1 - frequencyWeight) + frequencyWeight * weightOfMatch;
+            double influenceOnMatchLength = getInfluenceOnMatchLength(frequencyWeight, weightingFunction, frequencyOfMatch,
+                    finalMaximumFoundFrequency, minimumWeight, maximumWeight);
 
             if (firstSubmission) {
                 return match.lengthOfFirst() * influenceOnMatchLength;
@@ -136,5 +133,14 @@ public class MatchFrequencyWeighting {
         }).sum();
 
         return (int) Math.round(consideredLengthOfMatchesWithFrequencyInfluence);
+    }
+
+    private static double getInfluenceOnMatchLength(double frequencyWeight, MatchWeightingFunction weightingFunction, double matchFrequency,
+            double finalMaximumFoundFrequency, double minimumWeight, double maximumWeight) {
+        if (Double.isNaN(matchFrequency) || matchFrequency < 0.0)
+            matchFrequency = 0.0;
+        double relativeFrequencyOfMatch = 1.0 - Math.min(matchFrequency / finalMaximumFoundFrequency, 1.0);
+        double weightOfMatch = weightingFunction.computeWeight(minimumWeight, maximumWeight, relativeFrequencyOfMatch);
+        return (1 - frequencyWeight) + frequencyWeight * weightOfMatch;
     }
 }
