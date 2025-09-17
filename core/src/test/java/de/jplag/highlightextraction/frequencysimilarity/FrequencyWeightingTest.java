@@ -29,7 +29,7 @@ import de.jplag.options.JPlagOptions;
 /**
  * Tests the Frequency Weighting class with different parameter combinations.
  */
-public class FrequencyWeightingTest extends TestBase {
+class FrequencyWeightingTest extends TestBase {
     private static Submission testSubmission;
     private static Match match;
     private static Match matchShort;
