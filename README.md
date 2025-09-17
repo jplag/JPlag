@@ -171,6 +171,7 @@ Subsequence Match Merging
       --required-merges=<minimumRequiredMerges>
                         Minimal required merges for the merging to be applied
                           (between 1 and 50, default: 6).
+                          
 Frequency Analysis
       --isFrequencyAnalysisEnabled-analysis
                         Selects which frequency analysis to use. Options:
