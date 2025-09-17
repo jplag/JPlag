@@ -1,9 +1,9 @@
 package de.jplag.highlightextraction;
 
 /**
- * Enum representing the different strategies for frequency similarity calculation.
+ * Enum representing the different strategies for isFrequencyAnalysisEnabled similarity calculation.
  */
-public enum FrequencyStrategies {
+public enum FrequencyAnalysisStrategy {
     COMPLETE_MATCHES(new CompleteMatchesStrategy()),
     CONTAINED_MATCHES(new ContainedMatchesStrategy()),
     SUB_MATCHES(new SubMatchesStrategy()),
@@ -12,14 +12,14 @@ public enum FrequencyStrategies {
     private final FrequencyStrategy strategy;
 
     /**
-     * @param strategy FrequencyStrategy chosen for Frequency Determination in the frequency Analysis.
+     * @param strategy FrequencyStrategy chosen for Frequency Determination in the isFrequencyAnalysisEnabled Analysis.
      */
-    FrequencyStrategies(FrequencyStrategy strategy) {
+    FrequencyAnalysisStrategy(FrequencyStrategy strategy) {
         this.strategy = strategy;
     }
 
     /**
-     * @return the frequency similarity strategy of the enum constant.
+     * @return the isFrequencyAnalysisEnabled similarity strategy of the enum constant.
      */
     public FrequencyStrategy getStrategy() {
         return strategy;

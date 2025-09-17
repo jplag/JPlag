@@ -94,10 +94,7 @@ public class JPlag {
         }
 
         FrequencyMatchWeighter matchWeighter = new FrequencyMatchWeighter();
-        List<JPlagComparison> frequencyWeightedComparisons = matchWeighter.useMatchFrequencyToInfluenceSimilarity(
-                options.frequencyStrategies().getStrategy(), options.frequencyStrategyMinValue(), options.minimumTokenMatch(),
-                result.getAllComparisons(), options.weightingStrategy().getStrategy(), options.weightingStrategyWeightingFactor(),
-                options.frequency());
+        List<JPlagComparison> frequencyWeightedComparisons = matchWeighter.useMatchFrequencyToInfluenceSimilarity(options, result);
 
         if (logger.isInfoEnabled()) {
             logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getDuration()));

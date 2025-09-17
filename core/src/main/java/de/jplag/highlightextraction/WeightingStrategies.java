@@ -1,7 +1,7 @@
 package de.jplag.highlightextraction;
 
 /**
- * This class contains the possible weighting functions for a match, in the frequency analysis.
+ * This class contains the possible weighting functions for a match, in the isFrequencyAnalysisEnabled analysis.
  */
 public enum WeightingStrategies {
     PROPORTIONAL(new ProportionalWeightedStrategy()),
@@ -9,19 +9,19 @@ public enum WeightingStrategies {
     QUADRATIC(new QuadraticWeightedStrategy()),
     SIGMOID(new SigmoidWeightingStrategy());
 
-    private final SimilarityStrategy strategy;
+    private final MatchWeightingFunction strategy;
 
     /**
      * @param strategy weighting strategy
      */
-    WeightingStrategies(SimilarityStrategy strategy) {
+    WeightingStrategies(MatchWeightingFunction strategy) {
         this.strategy = strategy;
     }
 
     /**
-     * @return the frequency strategy of the enum constant.
+     * @return the isFrequencyAnalysisEnabled strategy of the enum constant.
      */
-    public SimilarityStrategy getStrategy() {
+    public MatchWeightingFunction getStrategy() {
         return strategy;
     }
 

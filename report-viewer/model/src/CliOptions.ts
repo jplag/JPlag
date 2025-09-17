@@ -21,8 +21,8 @@ interface AbstractOptions<L> {
   mergingOptions: CliMergingOptions
   normalize: boolean
   analyzeComments: boolean
-  frequency: boolean
-  frequencyStrategies: string
+  isFrequencyAnalysisEnabled: boolean
+  frequencyAnalysisStrategy: string
   frequencyStrategyMinValue: number
   weightingStrategy: string
   weightingStrategyWeightingFactor: number

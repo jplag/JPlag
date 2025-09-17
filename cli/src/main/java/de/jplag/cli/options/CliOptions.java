@@ -10,7 +10,7 @@ import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
 import de.jplag.highlightextraction.FrequencyAnalysisOptions;
-import de.jplag.highlightextraction.FrequencyStrategies;
+import de.jplag.highlightextraction.FrequencyAnalysisStrategy;
 import de.jplag.highlightextraction.WeightingStrategies;
 import de.jplag.java.JavaLanguage;
 import de.jplag.merging.MergingOptions;
@@ -180,22 +180,22 @@ public class CliOptions implements Runnable {
     /** Highlight extraction options. */
     public static class FrequencyAnalysis {
         /** Skip Highlight extraction options. */
-        @Option(names = {"--frequency-analysis"}, description = "If frequency calculation is used")
-        public boolean frequency = new FrequencyAnalysisOptions().frequency();
+        @Option(names = {"--isFrequencyAnalysisEnabled-analysis"}, description = "If isFrequencyAnalysisEnabled calculation is used")
+        public boolean frequency = new FrequencyAnalysisOptions().isFrequencyAnalysisEnabled();
 
         /** Frequency Determination strategy. */
         @Option(names = {
-                "--frequency-strategy"}, description = "Strategy for frequency Analysis, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE}).")
-        public FrequencyStrategies frequencyStrategy = new FrequencyAnalysisOptions().frequencyStrategy();
+                "--isFrequencyAnalysisEnabled-strategy"}, description = "Strategy for isFrequencyAnalysisEnabled Analysis, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE}).")
+        public FrequencyAnalysisStrategy frequencyStrategy = new FrequencyAnalysisOptions().frequencyStrategy();
 
         /** Min value for considered subsequence length in Frequency Determination strategy. */
         @Option(names = {
-                "--frequency-min-value"}, description = "Max of min match length that will be compared and this value, is min size of considered submatches")
+                "--isFrequencyAnalysisEnabled-min-value"}, description = "Max of min match length that will be compared and this value, is min size of considered submatches")
         public int frequencyStrategyMinValue = new FrequencyAnalysisOptions().frequencyStrategyMinValue();
 
-        /** Weighting function to combine with frequency Determination strategy. */
+        /** Weighting function to combine with isFrequencyAnalysisEnabled Determination strategy. */
         @Option(names = {
-                "--weighting-strategy"}, description = "Strategy for frequency Weighting, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE}).")
+                "--weighting-strategy"}, description = "Strategy for isFrequencyAnalysisEnabled Weighting, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE}).")
         public WeightingStrategies weightingStrategy = new FrequencyAnalysisOptions().weightingStrategy();
 
         /** How strong the weighting maximal influences a match length with up to double the length. */

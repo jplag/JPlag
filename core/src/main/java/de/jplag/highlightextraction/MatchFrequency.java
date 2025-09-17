@@ -7,8 +7,9 @@ import java.util.Map;
 import de.jplag.TokenType;
 
 /**
- * Contains the map that maps each Match to its frequency Calculated according to the chosen FrequencyStrategy
- * @param matchFrequencyMap maps each Match to its frequency.
+ * Contains the map that maps each Match to its isFrequencyAnalysisEnabled Calculated according to the chosen
+ * FrequencyStrategy
+ * @param matchFrequencyMap maps each Match to its isFrequencyAnalysisEnabled.
  */
 public record MatchFrequency(Map<List<TokenType>, Double> matchFrequencyMap) {
     /**

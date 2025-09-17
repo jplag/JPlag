@@ -23,8 +23,8 @@ public class WindowOfMatchesStrategy implements FrequencyStrategy {
     /**
      * Adds all submatches with window length of the matches to a map using the token sequence as the key.
      * @param matchTokenTypes Token list of the match.
-     * @param addSequenceKey Consumer that adds the sequence to the list, without counting the frequency.
-     * @param addSequence Consumer that adds the sequence to the list, and updates the frequency.
+     * @param addSequenceKey Consumer that adds the sequence to the list, without counting the isFrequencyAnalysisEnabled.
+     * @param addSequence Consumer that adds the sequence to the list, and updates the isFrequencyAnalysisEnabled.
      * @param minSubSequenceLength The length of the considered token window.
      */
     @Override

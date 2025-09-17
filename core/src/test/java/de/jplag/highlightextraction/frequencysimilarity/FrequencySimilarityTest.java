@@ -8,11 +8,11 @@ import de.jplag.TestBase;
 // import de.jplag.highlightextraction.*;
 
 /**
- * Tests if the similarity of a comparison is updated as expected based on the frequency of a match.
+ * Tests if the similarity of a comparison is updated as expected based on the isFrequencyAnalysisEnabled of a match.
  */
 public class FrequencySimilarityTest extends TestBase {
     /**
-     * Tests frequency similarity strategies.
+     * Tests isFrequencyAnalysisEnabled similarity strategies.
      */
     @Test
     @DisplayName("frequencySimilarity calculates realistic values")
@@ -50,7 +50,7 @@ public class FrequencySimilarityTest extends TestBase {
 // }
 //
 // /**
-// * Creates Test data to validate different match-frequency combinations.
+// * Creates Test data to validate different match-isFrequencyAnalysisEnabled combinations.
 // * @throws ExitException if getJPlagResult fails to create the comparison result.
 // */
 // @BeforeEach
@@ -95,7 +95,7 @@ public class FrequencySimilarityTest extends TestBase {
 // }
 //
 // /**
-// * Tests frequency similarity strategies
+// * Tests isFrequencyAnalysisEnabled similarity strategies
 // */
 // @Test
 // @DisplayName("frequencySimilarity calculates realistic values")
@@ -142,7 +142,7 @@ public class FrequencySimilarityTest extends TestBase {
 // }
 //
 // /**
-// * Tests frequency similarity strategies
+// * Tests isFrequencyAnalysisEnabled similarity strategies
 // */
 // @Test
 // @DisplayName("frequencySimilarity calculates realistic values")
@@ -190,15 +190,15 @@ public class FrequencySimilarityTest extends TestBase {
 //
 // /**
 // * Adds the Sequence to the Frequency map.
-// * @param sequence The token sequence whose frequency will be updated.
+// * @param sequence The token sequence whose isFrequencyAnalysisEnabled will be updated.
 // */
 // private void addSequenceKey(List<TokenType> sequence) {
 // frequencyMap.putIfAbsent(sequence, 0);
 // }
 //
 // /**
-// * Updates the frequency of the given sequence in the frequency map.
-// * @param sequence The token sequence whose frequency will be updated.
+// * Updates the isFrequencyAnalysisEnabled of the given sequence in the isFrequencyAnalysisEnabled map.
+// * @param sequence The token sequence whose isFrequencyAnalysisEnabled will be updated.
 // */
 // private void addSequence(List<TokenType> sequence) {
 // frequencyMap.put(sequence, frequencyMap.getOrDefault(sequence, 0) + 1);

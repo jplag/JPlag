@@ -10,12 +10,12 @@ import java.util.List;
  * @param matches is the unmodifiable list of all subsequence matches between the two submissions.
  * @param ignoredMatches is the unmodifiable list of ignored matches whose length is below the minimum token match
  * threshold.
- * @param frequencyWeightedSimilarity the similarity influenced by the frequency of a match
- * @param frequencyUsed if the frequencyWeightedSimilarity shall be used or the similarity value without considering the
- * match frequency
+ * @param frequencyWeightedSimilarity the similarity influenced by the isFrequencyAnalysisEnabled of a match
+ * @param isFrequencyAnalysisEnabled if the frequencyWeightedSimilarity shall be used or the similarity value without
+ * considering the match isFrequencyAnalysisEnabled
  */
 public record JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches, List<Match> ignoredMatches,
-        double frequencyWeightedSimilarity, boolean frequencyUsed) {
+        double frequencyWeightedSimilarity, boolean isFrequencyAnalysisEnabled) {
 
     /**
      * Constructs a new comparison between two submissions. The match lists are wrapped as unmodifiable to preserve
@@ -29,9 +29,10 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
     }
 
     /**
-     * Copy constructor to give the Comparisons an individual frequency.
-     * @param originalComparison the comparison without used frequency Analysis.
-     * @param frequencyWeightedSimilarity frequency Weighted similarity, that will replace standard similarity.
+     * Copy constructor to give the Comparisons an individual isFrequencyAnalysisEnabled.
+     * @param originalComparison the comparison without used isFrequencyAnalysisEnabled Analysis.
+     * @param frequencyWeightedSimilarity isFrequencyAnalysisEnabled Weighted similarity, that will replace standard
+     * similarity.
      */
     public JPlagComparison(JPlagComparison originalComparison, double frequencyWeightedSimilarity, boolean frequencyUsed) {
         this(originalComparison.firstSubmission(), originalComparison.secondSubmission(), originalComparison.matches(),
@@ -75,7 +76,7 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
      * structural similarity.
      */
     public double similarity() {
-        if (frequencyUsed && frequencyWeightedSimilarity >= 0) {
+        if (isFrequencyAnalysisEnabled && frequencyWeightedSimilarity >= 0) {
             return frequencyWeightedSimilarity;
         }
         int divisor = firstSubmission.getSimilarityDivisor() + secondSubmission.getSimilarityDivisor();

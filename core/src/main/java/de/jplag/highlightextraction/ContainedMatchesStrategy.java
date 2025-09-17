@@ -18,14 +18,14 @@ public class ContainedMatchesStrategy implements FrequencyStrategy {
     /**
      * Minimum considered subsequence length.
      */
-    int minSubSequenceLength;
+    private int minSubSequenceLength;
 
     /**
      * Adds all submatches of the given match to the map if their length is at least minSubSequenceLength long, using the
      * token sequence as key. The full match itself is also added if it is at least minSubSequenceLength.
      * @param matchTokenTypes List of tokens representing the match.
-     * @param addSequenceKey Consumer that adds the sequence to the list, without counting the frequency
-     * @param addSequence Consumer that adds the sequence to the list, and updates the frequency
+     * @param addSequenceKey Consumer that adds the sequence to the list, without counting the isFrequencyAnalysisEnabled
+     * @param addSequence Consumer that adds the sequence to the list, and updates the isFrequencyAnalysisEnabled
      * @param minSubSequenceLength Minimum length of the considered submatches.
      */
     @Override

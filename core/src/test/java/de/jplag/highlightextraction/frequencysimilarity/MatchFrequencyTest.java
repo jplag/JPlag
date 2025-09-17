@@ -22,13 +22,13 @@ import de.jplag.exceptions.ExitException;
 import de.jplag.highlightextraction.CompleteMatchesStrategy;
 import de.jplag.highlightextraction.ContainedMatchesStrategy;
 import de.jplag.highlightextraction.FrequencyStrategy;
-import de.jplag.highlightextraction.MatchWeighting;
+import de.jplag.highlightextraction.MatchWeightCalculator;
 import de.jplag.highlightextraction.SubMatchesStrategy;
 import de.jplag.highlightextraction.WindowOfMatchesStrategy;
 import de.jplag.options.JPlagOptions;
 
 /**
- * Checks if the frequency value is calculated and written into the matches correctly.
+ * Checks if the isFrequencyAnalysisEnabled value is calculated and written into the matches correctly.
  */
 public class MatchFrequencyTest extends TestBase {
     /**
@@ -48,7 +48,7 @@ public class MatchFrequencyTest extends TestBase {
      */
     public static FrequencyStrategy windowOfMatchesStrategy = new WindowOfMatchesStrategy();
     /**
-     * Frequency map to calculate the frequency of a match.
+     * Frequency map to calculate the isFrequencyAnalysisEnabled of a match.
      */
     public Map<List<TokenType>, Integer> frequencyMap = new HashMap<>();
     /**
@@ -78,7 +78,7 @@ public class MatchFrequencyTest extends TestBase {
     }
 
     /**
-     * Creates Test data to validate different match-frequency combinations.
+     * Creates Test data to validate different match-isFrequencyAnalysisEnabled combinations.
      * @throws ExitException if getJPlagResult fails to create the comparison result.
      */
     @BeforeEach
@@ -94,22 +94,22 @@ public class MatchFrequencyTest extends TestBase {
 
     /**
      * Adds the Sequence to the Frequency map.
-     * @param sequence The token sequence whose frequency will be updated.
+     * @param sequence The token sequence whose isFrequencyAnalysisEnabled will be updated.
      */
     private void addSequenceKey(List<TokenType> sequence) {
         frequencyMap.putIfAbsent(sequence, 0);
     }
 
     /**
-     * Updates the frequency of the given sequence in the frequency map.
-     * @param sequence The token sequence whose frequency will be updated.
+     * Updates the isFrequencyAnalysisEnabled of the given sequence in the isFrequencyAnalysisEnabled map.
+     * @param sequence The token sequence whose isFrequencyAnalysisEnabled will be updated.
      */
     private void addSequence(List<TokenType> sequence) {
         frequencyMap.put(sequence, frequencyMap.getOrDefault(sequence, 0) + 1);
     }
 
     /**
-     * Checks if the frequency value is calculated correctly in the completeMatchesStrategy.
+     * Checks if the isFrequencyAnalysisEnabled value is calculated correctly in the completeMatchesStrategy.
      */
     @Test
     @DisplayName("Match weighted correct completeMatchesStrategy")
@@ -130,14 +130,14 @@ public class MatchFrequencyTest extends TestBase {
         // assertEquals(1.0, weight, 0.01, "only one Match added");
 
         completeMatchesStrategy.processMatchTokenTypes(matchToken, this::addSequenceKey, this::addSequence, 0);
-        MatchWeighting weighting = new MatchWeighting(completeMatchesStrategy, frequencyMap);
+        MatchWeightCalculator weighting = new MatchWeightCalculator(completeMatchesStrategy, frequencyMap);
         weighting.weightAllMatches(List.of(testMatch), submissionToken);
         // System.out.println(testMatch.getFrequencyWeight());
         // assertEquals(2.0, testMatch.getFrequencyWeight(), 0.01, "only one Match added twice");
     }
 
     /**
-     * Checks if the frequency value is calculated correctly in the containedMatchesStrategy.
+     * Checks if the isFrequencyAnalysisEnabled value is calculated correctly in the containedMatchesStrategy.
      */
     @Test
     @DisplayName("Match weigthed correct containedMatchesStrategy")
@@ -157,14 +157,14 @@ public class MatchFrequencyTest extends TestBase {
         }
         containedMatchesStrategy.processMatchTokenTypes(matchToken, this::addSequenceKey, this::addSequence, 100);
         containedMatchesStrategy.processMatchTokenTypes(matchContainedToken, this::addSequenceKey, this::addSequence, 100);
-        MatchWeighting weighting = new MatchWeighting(containedMatchesStrategy, frequencyMap);
+        MatchWeightCalculator weighting = new MatchWeightCalculator(containedMatchesStrategy, frequencyMap);
         weighting.weightAllMatches(List.of(testMatch, matchContained), submissionToken);
         // assertEquals(1.0, testMatch.getFrequencyWeight(), 0.01, "weight for 2 considered subsequences");
         // assertEquals(1.0, matchContained.getFrequencyWeight(), 0.01, "once found");
     }
 
     /**
-     * Checks if the frequency value is calculated correctly in the subMatchStrategy.
+     * Checks if the isFrequencyAnalysisEnabled value is calculated correctly in the subMatchStrategy.
      */
     @Test
     @DisplayName("Match weighted correct subMatchStrategy")
@@ -184,14 +184,14 @@ public class MatchFrequencyTest extends TestBase {
         }
         subMatchStrategy.processMatchTokenTypes(matchToken, this::addSequenceKey, this::addSequence, 100);
         subMatchStrategy.processMatchTokenTypes(matchContainedToken, this::addSequenceKey, this::addSequence, 100);
-        MatchWeighting weighting = new MatchWeighting(subMatchStrategy, frequencyMap);
+        MatchWeightCalculator weighting = new MatchWeightCalculator(subMatchStrategy, frequencyMap);
         weighting.weightAllMatches(List.of(testMatch, matchContained), submissionToken);
         // assertEquals(2.0, testMatch.getFrequencyWeight(), 0.01, "considered subsequences");
         // assertEquals(2.0, matchContained.getFrequencyWeight(), 0.01, "considered subsequences");
     }
 
     /**
-     * Checks if the frequency value is calculated correctly in the windowOfMatchesStrategy.
+     * Checks if the isFrequencyAnalysisEnabled value is calculated correctly in the windowOfMatchesStrategy.
      */
     @Test
     @DisplayName("Match weighted correct windowOfMatchesStrategy")
@@ -211,7 +211,7 @@ public class MatchFrequencyTest extends TestBase {
         }
         windowOfMatchesStrategy.processMatchTokenTypes(matchToken, this::addSequenceKey, this::addSequence, 100);
         windowOfMatchesStrategy.processMatchTokenTypes(matchContainedToken, this::addSequenceKey, this::addSequence, 100);
-        MatchWeighting weighting = new MatchWeighting(windowOfMatchesStrategy, frequencyMap);
+        MatchWeightCalculator weighting = new MatchWeightCalculator(windowOfMatchesStrategy, frequencyMap);
         weighting.weightAllMatches(List.of(testMatch, matchContained), submissionToken);
         // assertEquals(2.0, testMatch.getFrequencyWeight(), 0.01, "considered subsequences");
         // assertEquals(2.0, matchContained.getFrequencyWeight(), 0.01, "considered subsequences");

@@ -46,10 +46,10 @@ class StrategyIntegrationTest extends TestBase {
     }
 
     /**
-     * Tests frequency determination using the CompleteMatchesStrategy.
+     * Tests isFrequencyAnalysisEnabled determination using the CompleteMatchesStrategy.
      */
     @Test
-    @DisplayName("Test token frequency completeMatches")
+    @DisplayName("Test token isFrequencyAnalysisEnabled completeMatches")
     void testFrequencyAnalysisStrategiesCompleteMatches() {
         FrequencyStrategy strategy = new CompleteMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 1);
@@ -60,10 +60,10 @@ class StrategyIntegrationTest extends TestBase {
     }
 
     /**
-     * Tests frequency determination using the ContainedMatchesStrategy.
+     * Tests isFrequencyAnalysisEnabled determination using the ContainedMatchesStrategy.
      */
     @Test
-    @DisplayName("Test token frequency with containedMatches")
+    @DisplayName("Test token isFrequencyAnalysisEnabled with containedMatches")
     void testFrequencyAnalysisStrategiesContainedMatches() {
         FrequencyStrategy strategy = new ContainedMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 300);
@@ -74,10 +74,10 @@ class StrategyIntegrationTest extends TestBase {
     }
 
     /**
-     * Tests frequency determination using the SubMatchesStrategy.
+     * Tests isFrequencyAnalysisEnabled determination using the SubMatchesStrategy.
      */
     @Test
-    @DisplayName("Test token frequency with subMatches")
+    @DisplayName("Test token isFrequencyAnalysisEnabled with subMatches")
     void testFrequencyAnalysisStrategiesSubMatches() {
         FrequencyStrategy strategy = new SubMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 300);
@@ -88,10 +88,10 @@ class StrategyIntegrationTest extends TestBase {
     }
 
     /**
-     * Tests frequency determination using the WindowOfMatchesStrategy.
+     * Tests isFrequencyAnalysisEnabled determination using the WindowOfMatchesStrategy.
      */
     @Test
-    @DisplayName("Test token frequency with windows of Matches")
+    @DisplayName("Test token isFrequencyAnalysisEnabled with windows of Matches")
     void testFrequencyAnalysisStrategiesWindowOfMatches() {
         FrequencyStrategy strategy = new WindowOfMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 300);
@@ -102,7 +102,7 @@ class StrategyIntegrationTest extends TestBase {
     }
 
     /**
-     * Logs the frequency map with visualization.
+     * Logs the isFrequencyAnalysisEnabled map with visualization.
      * @param tokenFrequencyMap a map where keys are TokenType hash values and values are their frequencies.
      */
     void printTestResult(Map<List<TokenType>, Integer> tokenFrequencyMap) {
