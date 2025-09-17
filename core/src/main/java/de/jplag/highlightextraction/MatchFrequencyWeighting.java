@@ -99,47 +99,29 @@ public class MatchFrequencyWeighting {
         maximumWeight = 2.0;
 
         double finalMaximumFoundFrequency = maximumFoundFrequency;
-        double consideredLengthOfMatchesWithFrequencyInfluence = comparison.matches().stream()
-                .mapToDouble(match -> calculateWeightedMatchLength(comparison, frequencyWeight, firstSubmission, weightingFunction, match,
-                        finalMaximumFoundFrequency, minimumWeight, maximumWeight))
-                .sum();
+        double consideredLengthOfMatchesWithFrequencyInfluence = comparison.matches().stream().mapToDouble(match -> {
+
+            double frequencyOfMatch = getFrequencyFromMap(comparison, match);
+
+            if (frequencyOfMatch == 0) {
+                if (firstSubmission) {
+                    return match.lengthOfFirst();
+                } else {
+                    return match.lengthOfSecond();
+                }
+            }
+
+            double influenceOnMatchLength = getInfluenceOnMatchLength(frequencyWeight, weightingFunction, frequencyOfMatch,
+                    finalMaximumFoundFrequency, minimumWeight, maximumWeight);
+
+            if (firstSubmission) {
+                return match.lengthOfFirst() * influenceOnMatchLength;
+            } else {
+                return match.lengthOfSecond() * influenceOnMatchLength;
+            }
+        }).sum();
 
         return (int) Math.round(consideredLengthOfMatchesWithFrequencyInfluence);
-    }
-
-    /**
-     * Calculates how much the considered length of the match will be changed to influence the similarity score according to
-     * the matches' frequency.
-     * @param comparison considered comparison to calculate the similarity score for
-     * @param frequencyWeight weighting factor, is factor for the (max) influence of the isFrequencyAnalysisEnabled
-     * @param firstSubmission considered submission to calculate the isFrequencyAnalysisEnabled for, both will be calculated
-     * @param weightingFunction chosen weighting function
-     * @param match match the Weight is calculated for
-     * @param finalMaximumFoundFrequency the frequency of the match that is found most frequent across all matches in all
-     * comparisons
-     * @param minimumWeight minimum possible Weighting influence
-     * @param maximumWeight maximum possible Weighting influence
-     * @return the new considered match length
-     */
-    private double calculateWeightedMatchLength(JPlagComparison comparison, double frequencyWeight, boolean firstSubmission,
-            MatchWeightingFunction weightingFunction, Match match, double finalMaximumFoundFrequency, double minimumWeight, double maximumWeight) {
-        double frequencyOfMatch = getFrequencyFromMap(comparison, match);
-
-        if (frequencyOfMatch == 0) {
-            if (firstSubmission) {
-                return match.lengthOfFirst();
-            } else {
-                return match.lengthOfSecond();
-            }
-        }
-        double influenceOnMatchLength = getInfluenceOnMatchLength(frequencyWeight, weightingFunction, frequencyOfMatch, finalMaximumFoundFrequency,
-                minimumWeight, maximumWeight);
-
-        if (firstSubmission) {
-            return match.lengthOfFirst() * influenceOnMatchLength;
-        } else {
-            return match.lengthOfSecond() * influenceOnMatchLength;
-        }
     }
 
     /**
