@@ -22,9 +22,6 @@ public class FrequencyUtil {
     public static List<TokenType> matchesToMatchTokenTypes(Match match, List<TokenType> submissionTokenTypes) {
         int startIndexOfMatch = match.startOfFirst();
         int lengthOfMatch = match.lengthOfFirst();
-        if (startIndexOfMatch + lengthOfMatch > submissionTokenTypes.size()) {
-            throw new IllegalArgumentException("startIndexOfMatch + lengthOfMatch <= submissionTokenTypes.size()");
-        }
         return submissionTokenTypes.subList(startIndexOfMatch, startIndexOfMatch + lengthOfMatch);
     }
 

@@ -17,7 +17,7 @@ import de.jplag.Language;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.exceptions.BasecodeException;
 import de.jplag.highlightextraction.FrequencyAnalysisStrategy;
-import de.jplag.highlightextraction.WeightingStrategies;
+import de.jplag.highlightextraction.MatchFrequencyWeightingFunction;
 import de.jplag.merging.MergingOptions;
 import de.jplag.reporting.jsonfactory.serializer.FileSerializer;
 import de.jplag.reporting.jsonfactory.serializer.LanguageSerializer;
@@ -66,7 +66,7 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
         String exclusionFileName, SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons,
         ClusteringOptions clusteringOptions, boolean debugParser, MergingOptions mergingOptions, boolean normalize, boolean analyzeComments,
         boolean isFrequencyAnalysisEnabled, FrequencyAnalysisStrategy frequencyAnalysisStrategy, int frequencyStrategyMinValue,
-        WeightingStrategies weightingStrategy, double weightingStrategyWeightingFactor) implements JPlagOptionsBuilder.With {
+        MatchFrequencyWeightingFunction weightingStrategy, double weightingStrategyWeightingFactor) implements JPlagOptionsBuilder.With {
 
     /** Default value for the similarity threshold. **/
     public static final double DEFAULT_SIMILARITY_THRESHOLD = 0;
@@ -100,7 +100,7 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
     public JPlagOptions(Language language, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories) {
         this(language, null, submissionDirectories, oldSubmissionDirectories, null, null, null, null, DEFAULT_SIMILARITY_METRIC,
                 DEFAULT_SIMILARITY_THRESHOLD, DEFAULT_SHOWN_COMPARISONS, new ClusteringOptions(), false, new MergingOptions(), false, false, false,
-                FrequencyAnalysisStrategy.COMPLETE_MATCHES, 1, WeightingStrategies.SIGMOID, 0.25);
+                FrequencyAnalysisStrategy.COMPLETE_MATCHES, 1, MatchFrequencyWeightingFunction.SIGMOID, 0.25);
     }
 
     /**
@@ -132,7 +132,7 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
             File baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
             SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
             boolean debugParser, MergingOptions mergingOptions, boolean normalize, boolean analyzeComments, boolean isFrequencyAnalysisEnabled,
-            FrequencyAnalysisStrategy frequencyAnalysisStrategy, int frequencyStrategyMinValue, WeightingStrategies weightingStrategy,
+            FrequencyAnalysisStrategy frequencyAnalysisStrategy, int frequencyStrategyMinValue, MatchFrequencyWeightingFunction weightingStrategy,
             double weightingStrategyWeightingFactor) {
         this.language = language;
         this.debugParser = debugParser;
@@ -260,7 +260,8 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
             String baseCodeSubmissionName, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
             SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
             boolean debugParser, MergingOptions mergingOptions, boolean frequency, FrequencyAnalysisStrategy frequencyAnalysisStrategy,
-            int frequencyStrategyMinValue, WeightingStrategies weightingStrategy, double weightingStrategyWeightingFactor) throws BasecodeException {
+            int frequencyStrategyMinValue, MatchFrequencyWeightingFunction weightingStrategy, double weightingStrategyWeightingFactor)
+            throws BasecodeException {
         this(language, minimumTokenMatch, Set.of(submissionDirectory), oldSubmissionDirectories,
                 convertLegacyBaseCodeToFile(baseCodeSubmissionName, submissionDirectory), subdirectoryName, fileSuffixes, exclusionFileName,
                 similarityMetric, similarityThreshold, maximumNumberOfComparisons, clusteringOptions, debugParser, mergingOptions, false, false,

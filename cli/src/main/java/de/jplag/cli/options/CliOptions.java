@@ -11,7 +11,7 @@ import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
 import de.jplag.highlightextraction.FrequencyAnalysisOptions;
 import de.jplag.highlightextraction.FrequencyAnalysisStrategy;
-import de.jplag.highlightextraction.WeightingStrategies;
+import de.jplag.highlightextraction.MatchFrequencyWeightingFunction;
 import de.jplag.java.JavaLanguage;
 import de.jplag.merging.MergingOptions;
 import de.jplag.options.JPlagOptions;
@@ -196,7 +196,7 @@ public class CliOptions implements Runnable {
         /** Weighting function to combine with isFrequencyAnalysisEnabled Determination strategy. */
         @Option(names = {
                 "--weighting-strategy"}, description = "Strategy for isFrequencyAnalysisEnabled Weighting, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE}).")
-        public WeightingStrategies weightingStrategy = new FrequencyAnalysisOptions().weightingStrategy();
+        public MatchFrequencyWeightingFunction weightingStrategy = new FrequencyAnalysisOptions().weightingStrategy();
 
         /** How strong the weighting maximal influences a match length with up to double the length. */
         @Option(names = {

@@ -1,7 +1,6 @@
 package de.jplag.highlightextraction;
 
 import java.util.List;
-import java.util.Objects;
 
 import de.jplag.JPlagComparison;
 import de.jplag.Match;
@@ -92,64 +91,65 @@ public class FrequencySimilarity {
     }
 
     /**
-     * Changes the considered match length according to the isFrequencyAnalysisEnabled weight, depending on the
-     * isFrequencyAnalysisEnabled similarity strategy.
+     * Changes the considered match length according to the isFrequencyAnalysisEnabled frequencyWeight, depending on the
+     * isFrequencyAnalysisEnabled similarity weightingFunction.
      * @param comparison considered comparison to calculate the similarity score for
-     * @param weight weighting factor, is factor for the (max) influence of the isFrequencyAnalysisEnabled
-     * @param first considered submission to calculate the isFrequencyAnalysisEnabled for, both will be calculated
-     * @param strategy chosen weighting function
+     * @param frequencyWeight weighting factor, is factor for the (max) influence of the isFrequencyAnalysisEnabled
+     * @param firstSubmission considered submission to calculate the isFrequencyAnalysisEnabled for, both will be calculated
+     * @param weightingFunction chosen weighting function
      * @return the similarity score
      */
-    public int getWeightedMatchLength(JPlagComparison comparison, double weight, boolean first, MatchWeightingFunction strategy) {
-        double minWeight;
-        double maxWeight;
+    public int getWeightedMatchLength(JPlagComparison comparison, double frequencyWeight, boolean firstSubmission,
+            MatchWeightingFunction weightingFunction) {
+        double minimumWeight;
+        double maximumWeight;
 
-        double maxFrequency = 0.0;
+        double maximumFoundFrequency = 0.0;
         if (matchFrequency.matchFrequencyMap().isEmpty()) {
-            maxFrequency = 1.0;
+            maximumFoundFrequency = 1.0;
         } else {
             for (double frequency : matchFrequency.matchFrequencyMap().values()) {
-                if (frequency > maxFrequency) {
-                    maxFrequency = frequency;
+                if (frequency > maximumFoundFrequency) {
+                    maximumFoundFrequency = frequency;
                 }
             }
         }
 
-        if (maxFrequency == 0.0)
-            maxFrequency = 1.0;
+        if (maximumFoundFrequency == 0.0)
+            maximumFoundFrequency = 1.0;
 
-        if (Objects.equals(strategy, ProportionalWeightedStrategy.class)) {
-            minWeight = 0.01;
-            maxWeight = 2.0;
+        if (weightingFunction == MatchFrequencyWeightingFunction.PROPORTIONAL) {
+            minimumWeight = 0.01;
+            maximumWeight = 2.0;
         } else {
-            minWeight = 1.0;
-            maxWeight = 2.0;
+            minimumWeight = 1.0;
+            maximumWeight = 2.0;
         }
 
-        double finalMaxFrequency = maxFrequency;
-        double weightedSum = comparison.matches().stream().mapToDouble(match -> {
-            double frequency = getFrequencyFromMap(comparison, match);
-            if (frequency == 0) {
-                if (first) {
+        double finalMaximumFoundFrequency = maximumFoundFrequency;
+        double consideredLengthOfMatchesWithFrequencyInfluence = comparison.matches().stream().mapToDouble(match -> {
+            double matchFrequency = getFrequencyFromMap(comparison, match);
+            if (matchFrequency == 0) {
+                if (firstSubmission) {
                     return match.lengthOfFirst();
                 } else {
                     return match.lengthOfSecond();
                 }
             }
-            if (Double.isNaN(frequency) || frequency < 0.0)
-                frequency = 0.0;
-            double rarity = 1.0 - Math.min(frequency / finalMaxFrequency, 1.0);
-            double rarityWeight = strategy.computeWeight(minWeight, maxWeight, rarity);
-            double myWeight = (1 - weight) + weight * rarityWeight;
+            if (Double.isNaN(matchFrequency) || matchFrequency < 0.0)
+                matchFrequency = 0.0;
+            double relativeFrequencyOfMatch = 1.0 - Math.min(matchFrequency / finalMaximumFoundFrequency, 1.0);
+            double weightOfMatch = weightingFunction.computeWeight(minimumWeight, maximumWeight, relativeFrequencyOfMatch);
+            double influenceOnMatchLength = (1 - frequencyWeight) + frequencyWeight * weightOfMatch;
 
-            if (first) {
-                return match.lengthOfFirst() * myWeight;
+            if (firstSubmission) {
+                return match.lengthOfFirst() * influenceOnMatchLength;
             } else {
-                return match.lengthOfSecond() * myWeight;
+                return match.lengthOfSecond() * influenceOnMatchLength;
             }
 
         }).sum();
 
-        return (int) Math.round(weightedSum);
+        return (int) Math.round(consideredLengthOfMatchesWithFrequencyInfluence);
     }
 }

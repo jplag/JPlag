@@ -9,7 +9,7 @@ package de.jplag.highlightextraction;
  * @param weightingFactor how strong the impact of the weightingStrategy is
  */
 public record FrequencyAnalysisOptions(boolean isFrequencyAnalysisEnabled, FrequencyAnalysisStrategy frequencyStrategy, int frequencyStrategyMinValue,
-        WeightingStrategies weightingStrategy, double weightingFactor) {
+        MatchFrequencyWeightingFunction weightingStrategy, double weightingFactor) {
     /**
      * Options for Frequency Analysis.
      * @param isFrequencyAnalysisEnabled if the calculated value of the isFrequencyAnalysisEnabled analysis is used
@@ -19,7 +19,7 @@ public record FrequencyAnalysisOptions(boolean isFrequencyAnalysisEnabled, Frequ
      * @param weightingFactor how strong the impact of the weightingStrategy is
      */
     public FrequencyAnalysisOptions(boolean isFrequencyAnalysisEnabled, FrequencyAnalysisStrategy frequencyStrategy, int frequencyStrategyMinValue,
-            WeightingStrategies weightingStrategy, double weightingFactor) {
+            MatchFrequencyWeightingFunction weightingStrategy, double weightingFactor) {
         this.isFrequencyAnalysisEnabled = isFrequencyAnalysisEnabled;
         this.frequencyStrategy = frequencyStrategy;
         this.frequencyStrategyMinValue = frequencyStrategyMinValue;
@@ -31,7 +31,7 @@ public record FrequencyAnalysisOptions(boolean isFrequencyAnalysisEnabled, Frequ
      * Default options for isFrequencyAnalysisEnabled Analysis.
      */
     public FrequencyAnalysisOptions() {
-        this(false, FrequencyAnalysisStrategy.COMPLETE_MATCHES, 1, WeightingStrategies.SIGMOID, 0.25);
+        this(false, FrequencyAnalysisStrategy.COMPLETE_MATCHES, 1, MatchFrequencyWeightingFunction.SIGMOID, 0.25);
     }
 
     /**
@@ -67,7 +67,7 @@ public record FrequencyAnalysisOptions(boolean isFrequencyAnalysisEnabled, Frequ
     /**
      * Chosen weightingStrategy.
      */
-    public FrequencyAnalysisOptions withWeightingStrategy(WeightingStrategies strategy) {
+    public FrequencyAnalysisOptions withWeightingStrategy(MatchFrequencyWeightingFunction strategy) {
         return new FrequencyAnalysisOptions(isFrequencyAnalysisEnabled, frequencyStrategy, frequencyStrategyMinValue, strategy, weightingFactor);
     }
 
