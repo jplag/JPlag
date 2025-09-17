@@ -175,12 +175,15 @@ Subsequence Match Merging
 Frequency Analysis
       --isFrequencyAnalysisEnabled-analysis
                         If isFrequencyAnalysisEnabled calculation is used
-                        one of: COMPLETE_MATCHES, CONTAINED_MATCHES,
-                        SUB_MATCHES, WINDOW_OF_MATCHES (default: null).
+      --isFrequencyAnalysisEnabled-strategy=<{COMPLETE_MATCHES,
+        CONTAINED_MATCHES,⎵SUB_MATCHES,⎵WINDOW_OF_MATCHES}>
+                        Strategy for isFrequencyAnalysisEnabled Analysis, one
+                          of: COMPLETE_MATCHES, CONTAINED_MATCHES, SUB_MATCHES,
+                          WINDOW_OF_MATCHES⎵(default:⎵null).
       --weighting-strategy=<{PROPORTIONAL, LINEAR, QUADRATIC, SIGMOID}>
-                        Strategy for isFrequencyAnalysisEnabled Weighting,
-                        one of: PROPORTIONAL, LINEAR, QUADRATIC, SIGMOID
-                        (default: null).
+                        Strategy for isFrequencyAnalysisEnabled Weighting, one
+                          of: PROPORTIONAL, LINEAR, QUADRATIC, SIGMOID
+                          (default: null).
 Languages:
   c
   cpp
