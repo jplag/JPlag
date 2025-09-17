@@ -190,7 +190,7 @@ public class CliOptions implements Runnable {
 
         /** Min value for considered subsequence length in Frequency Determination strategy. */
         @Option(names = {
-                "--isFrequencyAnalysisEnabled-min-value"}, description = "Max of min match length that will be compared and this value, is min size of considered submatches")
+                "--isFrequencyAnalysisEnabled-min-value"}, description = "Max of min match length that will be compared and this value, is min size of considered submatches", hidden = true)
         public int frequencyStrategyMinValue = new FrequencyAnalysisOptions().frequencyStrategyMinValue();
 
         /** Weighting function to combine with isFrequencyAnalysisEnabled Determination strategy. */
@@ -200,7 +200,7 @@ public class CliOptions implements Runnable {
 
         /** How strong the weighting maximal influences a match length with up to double the length. */
         @Option(names = {
-                "--weighting-factor"}, description = "Factor on how strong the weighting will be considered, scale factor for max stretch of a token sequence")
+                "--weighting-factor"}, description = "Factor on how strong the weighting will be considered, scale factor for max stretch of a token sequence", hidden = true)
         public double weightingStrategyWeightingFactor = new FrequencyAnalysisOptions().weightingFactor();
 
     }
