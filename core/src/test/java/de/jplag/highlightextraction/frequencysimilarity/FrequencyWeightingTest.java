@@ -115,7 +115,7 @@ public class FrequencyWeightingTest extends TestBase {
     }
 
     /**
-     *
+     * Tests the different weighting functions with different weights.
      */
     @Test
     @DisplayName("Test the weighting functions")

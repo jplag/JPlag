@@ -19,7 +19,12 @@ import de.jplag.TestBase;
 import de.jplag.TokenType;
 import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
-import de.jplag.highlightextraction.*;
+import de.jplag.highlightextraction.CompleteMatchesStrategy;
+import de.jplag.highlightextraction.ContainedMatchesStrategy;
+import de.jplag.highlightextraction.FrequencyDetermination;
+import de.jplag.highlightextraction.FrequencyStrategy;
+import de.jplag.highlightextraction.SubMatchesStrategy;
+import de.jplag.highlightextraction.WindowOfMatchesStrategy;
 import de.jplag.options.JPlagOptions;
 
 /**
