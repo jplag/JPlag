@@ -72,7 +72,7 @@ public class CommentComparer {
     }
 
     private List<Match> flipMatches(List<Match> matches) {
-        return matches.stream().map(match -> new Match(match.startOfSecond(), match.startOfFirst(), match.lengthOfFirst(), match.lengthOfSecond()))
+        return matches.stream().map(match -> new Match(match.startOfSecond(), match.startOfFirst(), match.lengthOfSecond(), match.lengthOfFirst()))
                 .toList();
     }
 

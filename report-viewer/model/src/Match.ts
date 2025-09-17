@@ -24,7 +24,7 @@ export interface ReportFormatMatch {
   endInSecond: CodePosition
   lengthOfFirst: number
   lengthOfSecond: number
-  isComment?: boolean
+  isComment: boolean
 }
 
 export interface CodePosition {

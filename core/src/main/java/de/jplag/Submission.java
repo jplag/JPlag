@@ -297,7 +297,7 @@ public class Submission implements Comparable<Submission> {
                 CommentExtractor extractor = new CommentExtractor(file, commentExtractorSettings.get());
                 rawComments.addAll(extractor.extract());
             }
-            logger.debug("Found {} comments", comments.size());
+            logger.debug("Found {} comments", rawComments.size());
             CommentPreprocessor preprocessor = new CommentPreprocessor(rawComments);
             this.comments = preprocessor.processToToken();
         }
