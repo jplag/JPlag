@@ -1,0 +1,18 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "dist"
+  },
+  "include": [
+    "base/**/*",
+    "base/**/*.vue",
+    "base/**/*.ts",
+    "widget/**/*",
+    "widget/**/*.vue",
+    "widget/**/*.ts",
+    "style/**/*",
+    "style/**/*.vue",
+    "style/**/*.ts"
+  ]
+}
