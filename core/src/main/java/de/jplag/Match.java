@@ -12,30 +12,6 @@ package de.jplag;
 public record Match(int startOfFirst, int startOfSecond, int lengthOfFirst, int lengthOfSecond) {
 
     /**
-     * @return startpoint of the match in the second submission.
-     */
-    @Override
-    public int startOfSecond() {
-        return startOfSecond;
-    }
-
-    /**
-     * @return The length of the first submission.
-     */
-    @Override
-    public int lengthOfFirst() {
-        return lengthOfFirst;
-    }
-
-    /**
-     * @return The length of the second submission.
-     */
-    @Override
-    public int lengthOfSecond() {
-        return lengthOfSecond;
-    }
-
-    /**
      * Checks if two matches overlap.
      * @param other the match that is compared against the given.
      * @return true if they do.
