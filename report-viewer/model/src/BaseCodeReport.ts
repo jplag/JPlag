@@ -13,7 +13,8 @@ export class BaseCodeMatch extends MatchInSingleFile {
         endInSecond: end,
         colorIndex: 'base',
         lengthOfFirst: tokens,
-        lengthOfSecond: tokens
+        lengthOfSecond: tokens,
+        isComment: false
       },
       1
     )
