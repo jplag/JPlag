@@ -171,15 +171,17 @@ Subsequence Match Merging
       --required-merges=<minimumRequiredMerges>
                         Minimal required merges for the merging to be applied
                           (between 1 and 50, default: 6).
-                          
+                                           
 Frequency Analysis
-      --isFrequencyAnalysisEnabled-analysis
-                        Selects which frequency analysis to use. Options:
-                        COMPLETE_MATCHES, CONTAINED_MATCHES, SUB_MATCHES,
-                        WINDOW_OF_MATCHES (default: null).
-      --isFrequencyAnalysisEnabled-strategy=<{PROPORTIONAL, LINEAR,
-        QUADRATIC, SIGMOID}>
-                        Strategy for frequency weighting.
+      --isFrequencyAnalysisEnabled-analysis=<{COMPLETE_MATCHES,
+        CONTAINED_MATCHES, SUB_MATCHES, WINDOW_OF_MATCHES}>
+                        If isFrequencyAnalysisEnabled calculation is used
+                        one of: COMPLETE_MATCHES, CONTAINED_MATCHES,
+                        SUB_MATCHES, WINDOW_OF_MATCHES (default: null).
+      --weighting-strategy=<{PROPORTIONAL, LINEAR, QUADRATIC, SIGMOID}>
+                        Strategy for isFrequencyAnalysisEnabled Weighting,
+                        one of: PROPORTIONAL, LINEAR, QUADRATIC, SIGMOID
+                        (default: null).
 Languages:
   c
   cpp
