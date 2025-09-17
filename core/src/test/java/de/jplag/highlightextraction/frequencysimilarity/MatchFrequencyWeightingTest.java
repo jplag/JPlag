@@ -30,7 +30,7 @@ import de.jplag.options.JPlagOptions;
 /**
  * Checks if the isFrequencyAnalysisEnabled value is calculated and written into the matches correctly.
  */
-public class MatchFrequencyTest extends TestBase {
+public class MatchFrequencyWeightingTest extends TestBase {
     /**
      * A FrequencyStrategy that will be tested.
      */
