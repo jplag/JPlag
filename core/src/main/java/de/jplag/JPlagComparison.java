@@ -10,6 +10,9 @@ import java.util.List;
  * @param matches is the unmodifiable list of all subsequence matches between the two submissions.
  * @param ignoredMatches is the unmodifiable list of ignored matches whose length is below the minimum token match
  * threshold.
+ * @param frequencyWeightedSimilarity the similarity influenced by the frequency of a match
+ * @param frequencyUsed if the frequencyWeightedSimilarity shall be used or the similarity value without considering the
+ * match frequency
  */
 public record JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches, List<Match> ignoredMatches,
         double frequencyWeightedSimilarity, boolean frequencyUsed) {

@@ -9,23 +9,59 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import de.jplag.*;
+import de.jplag.JPlagComparison;
+import de.jplag.JPlagResult;
+import de.jplag.Match;
+import de.jplag.Submission;
+import de.jplag.SubmissionSet;
+import de.jplag.SubmissionSetBuilder;
+import de.jplag.TestBase;
+import de.jplag.TokenType;
 import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
-import de.jplag.highlightextraction.*;
+import de.jplag.highlightextraction.CompleteMatchesStrategy;
+import de.jplag.highlightextraction.ContainedMatchesStrategy;
+import de.jplag.highlightextraction.FrequencyStrategy;
+import de.jplag.highlightextraction.MatchWeighting;
+import de.jplag.highlightextraction.SubMatchesStrategy;
+import de.jplag.highlightextraction.WindowOfMatchesStrategy;
 import de.jplag.options.JPlagOptions;
 
 /**
  * Checks if the frequency value is calculated and written into the matches correctly.
  */
 public class MatchFrequencyTest extends TestBase {
+    /**
+     * A FrequencyStrategy that will be tested.
+     */
     public static FrequencyStrategy completeMatchesStrategy = new CompleteMatchesStrategy();
+    /**
+     * A FrequencyStrategy that will be tested.
+     */
     public static FrequencyStrategy subMatchStrategy = new SubMatchesStrategy();
+    /**
+     * A FrequencyStrategy that will be tested.
+     */
     public static FrequencyStrategy containedMatchesStrategy = new ContainedMatchesStrategy();
+    /**
+     * A FrequencyStrategy that will be tested.
+     */
     public static FrequencyStrategy windowOfMatchesStrategy = new WindowOfMatchesStrategy();
+    /**
+     * Frequency map to calculate the frequency of a match.
+     */
     public Map<List<TokenType>, Integer> frequencyMap = new HashMap<>();
+    /**
+     * Match used for the tests.
+     */
     Match testMatch;
+    /**
+     * Match that is contained in the test match.
+     */
     Match matchContained;
+    /**
+     * Submission used for the tests.
+     */
     Submission testSubmission;
 
     /**
@@ -73,7 +109,7 @@ public class MatchFrequencyTest extends TestBase {
     }
 
     /**
-     * Checks if the frequency value is calculated correctly in the completeMatchesStrategy
+     * Checks if the frequency value is calculated correctly in the completeMatchesStrategy.
      */
     @Test
     @DisplayName("Match weighted correct completeMatchesStrategy")
@@ -101,7 +137,7 @@ public class MatchFrequencyTest extends TestBase {
     }
 
     /**
-     * Checks if the frequency value is calculated correctly in the containedMatchesStrategy
+     * Checks if the frequency value is calculated correctly in the containedMatchesStrategy.
      */
     @Test
     @DisplayName("Match weigthed correct containedMatchesStrategy")
@@ -128,7 +164,7 @@ public class MatchFrequencyTest extends TestBase {
     }
 
     /**
-     * Checks if the frequency value is calculated correctly in the subMatchStrategie
+     * Checks if the frequency value is calculated correctly in the subMatchStrategy.
      */
     @Test
     @DisplayName("Match weighted correct subMatchStrategy")
@@ -155,7 +191,7 @@ public class MatchFrequencyTest extends TestBase {
     }
 
     /**
-     * Checks if the frequency value is calculated correctly in the windowOfMatchesStrategy
+     * Checks if the frequency value is calculated correctly in the windowOfMatchesStrategy.
      */
     @Test
     @DisplayName("Match weighted correct windowOfMatchesStrategy")

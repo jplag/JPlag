@@ -41,6 +41,7 @@ public class MatchWeighting {
      * Calculates frequency value for all matches.
      * @param matches the matches to determine the frequency for
      * @param firstSubmissionToken token sequence of the comparison
+     * @return the frequency of the match
      */
     public MatchFrequency weightAllMatches(List<Match> matches, List<TokenType> firstSubmissionToken) {
         for (Match match : matches) {
@@ -53,6 +54,7 @@ public class MatchWeighting {
     /**
      * Calculates frequency value for all matches.
      * @param comparisons list of comparisons to weight
+     * @return the frequency of the match
      */
     public MatchFrequency weightAllComparisons(List<JPlagComparison> comparisons) {
         for (JPlagComparison comparison : comparisons) {

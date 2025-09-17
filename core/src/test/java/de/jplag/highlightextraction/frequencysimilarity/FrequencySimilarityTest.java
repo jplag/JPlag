@@ -3,12 +3,16 @@ package de.jplag.highlightextraction.frequencysimilarity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import de.jplag.*;
-import de.jplag.highlightextraction.*;
+import de.jplag.TestBase;
 
+// import de.jplag.highlightextraction.*;
+
+/**
+ * Tests if the similarity of a comparison is updated as expected based on the frequency of a match.
+ */
 public class FrequencySimilarityTest extends TestBase {
     /**
-     * // * Tests frequency similarity strategies //
+     * Tests frequency similarity strategies.
      */
     @Test
     @DisplayName("frequencySimilarity calculates realistic values")

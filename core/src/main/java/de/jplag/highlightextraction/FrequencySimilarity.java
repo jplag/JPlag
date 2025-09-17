@@ -27,6 +27,7 @@ public class FrequencySimilarity {
      * Constructor defines comparisons and strategy for the similarity calculation.
      * @param comparisons considered comparisons to calculate the similarity score for
      * @param strategy chosen weighting function
+     * @param matchFrequency the matchFrequency containing the map that maps a match to its frequency
      */
     public FrequencySimilarity(List<JPlagComparison> comparisons, SimilarityStrategy strategy, MatchFrequency matchFrequency) {
         this.comparisons = comparisons;
@@ -38,6 +39,7 @@ public class FrequencySimilarity {
      * Calculates the similarity score for a comparison.
      * @param comparison considered comparison to calculate the similarity score for
      * @param weightingFactor weighting factor, is factor for the (max) influence of the frequency
+     * @param frequencyUsed if the frequency shall be considered
      * @return similarity of the comparison
      */
     public JPlagComparison weightedComparisonSimilarity(JPlagComparison comparison, double weightingFactor, boolean frequencyUsed) {
