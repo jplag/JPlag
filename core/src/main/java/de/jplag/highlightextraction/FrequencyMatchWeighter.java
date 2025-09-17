@@ -24,7 +24,7 @@ public class FrequencyMatchWeighter {
         MatchWeightCalculator matchWeighting = new MatchWeightCalculator(options.frequencyAnalysisStrategy().getStrategy(),
                 frequencyDetermination.getMatchFrequencyMap());
         MatchFrequency matchFrequency = matchWeighting.weightAllComparisons(result.getAllComparisons());
-        FrequencySimilarity similarity = new FrequencySimilarity(result.getAllComparisons(), options.weightingStrategy(), matchFrequency);
+        MatchFrequencyWeighting similarity = new MatchFrequencyWeighting(result.getAllComparisons(), options.weightingStrategy(), matchFrequency);
         return result.getAllComparisons().stream().map(comparison -> similarity.weightedComparisonSimilarity(comparison,
                 options.weightingStrategyWeightingFactor(), options.isFrequencyAnalysisEnabled())).toList();
     }

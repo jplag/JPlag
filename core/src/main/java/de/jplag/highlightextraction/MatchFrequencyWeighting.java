@@ -11,7 +11,7 @@ import de.jplag.TokenType;
  * Calculates the isFrequencyAnalysisEnabled dependent similarity for the comparisons according to the
  * isFrequencyAnalysisEnabled similarity weighting strategy.
  */
-public class FrequencySimilarity {
+public class MatchFrequencyWeighting {
     /**
      * All comparisons to calculate the similarity for.
      */
@@ -28,7 +28,7 @@ public class FrequencySimilarity {
      * @param strategy chosen weighting function
      * @param matchFrequency the matchFrequency containing the map that maps a match to its isFrequencyAnalysisEnabled
      */
-    public FrequencySimilarity(List<JPlagComparison> comparisons, MatchWeightingFunction strategy, MatchFrequency matchFrequency) {
+    public MatchFrequencyWeighting(List<JPlagComparison> comparisons, MatchWeightingFunction strategy, MatchFrequency matchFrequency) {
         this.comparisons = comparisons;
         this.strategy = strategy;
         this.matchFrequency = matchFrequency;
@@ -45,21 +45,6 @@ public class FrequencySimilarity {
         double frequencyWeightedSimilarity = frequencySimilarity(comparison, weightingFactor);
         return new JPlagComparison(comparison, frequencyWeightedSimilarity, isFrequencyAnalysisEnabled);
     }
-    //
-    // /**
-    // * Sorts the comparisons, according to the isFrequencyAnalysisEnabled.
-    // * @param comparisons considered comparisons to calculate the similarity score for
-    // * @param weight weighting factor, is factor for the (max) influence of the isFrequencyAnalysisEnabled
-    // * @return the comparisons sorted with similarity score
-    // */
-    //
-    // public List<JPlagComparison> calculateFrequencySimilarity(List<JPlagComparison> comparisons, double weight) {
-    // final double frequencyWeight = weight;
-    // this.comparisons = comparisons.stream()
-    // .sorted(Comparator.comparingDouble((JPlagComparison comparison) -> frequencySimilarity(comparison,
-    // frequencyWeight)).reversed()).toList();
-    // return this.comparisons;
-    // }
 
     private double getFrequencyFromMap(JPlagComparison comparison, Match match) {
         List<TokenType> submissionTokenTypes = comparison.firstSubmission().getTokenList().stream().map(Token::getType).toList();

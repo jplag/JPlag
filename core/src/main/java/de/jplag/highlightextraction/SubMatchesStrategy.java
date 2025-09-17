@@ -16,7 +16,7 @@ public class SubMatchesStrategy implements FrequencyStrategy {
     /**
      * Minimum considered subsequence length.
      */
-    int minSubSequenceLength;
+    int minimumSubSequenceLength;
 
     /**
      * Creates submatches to build the keys and adds their frequencies to the frequencyMap.
@@ -28,7 +28,7 @@ public class SubMatchesStrategy implements FrequencyStrategy {
     @Override
     public void processMatchTokenTypes(List<TokenType> matchTokenTypes, Consumer<List<TokenType>> addSequenceKey,
             Consumer<List<TokenType>> addSequence, int minSubSequenceSize) {
-        this.minSubSequenceLength = minSubSequenceSize;
+        this.minimumSubSequenceLength = minSubSequenceSize;
         List<List<TokenType>> subSequences = SubSequenceUtil.getSubSequences(matchTokenTypes, minSubSequenceSize);
         for (List<TokenType> subSequence : subSequences) {
             addSequence.accept(subSequence);
@@ -45,14 +45,14 @@ public class SubMatchesStrategy implements FrequencyStrategy {
      */
     @Override
     public double calculateMatchFrequency(Match match, Map<List<TokenType>, Integer> frequencyMap, List<TokenType> matchToken) {
-        List<List<TokenType>> subSequences = SubSequenceUtil.getSubSequences(matchToken, minSubSequenceLength);
-        List<Integer> frequencies = new ArrayList<>();
+        List<List<TokenType>> subSequences = SubSequenceUtil.getSubSequences(matchToken, minimumSubSequenceLength);
+        List<Integer> subSequenceFrequencies = new ArrayList<>();
         for (List<TokenType> subSequence : subSequences) {
             int matchFrequency = frequencyMap.getOrDefault(subSequence, 0);
-            frequencies.add(matchFrequency);
+            subSequenceFrequencies.add(matchFrequency);
         }
 
-        return frequencies.stream().mapToInt(Integer::intValue).average().orElse(0.0);
+        return subSequenceFrequencies.stream().mapToInt(Integer::intValue).average().orElse(0.0);
 
     }
 }
