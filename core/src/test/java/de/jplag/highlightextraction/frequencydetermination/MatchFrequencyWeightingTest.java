@@ -36,38 +36,14 @@ import de.jplag.options.JPlagOptions;
  * Checks if the isFrequencyAnalysisEnabled value is calculated and written into the matches correctly.
  */
 public class MatchFrequencyWeightingTest extends TestBase {
-    /**
-     * A FrequencyStrategy that will be tested.
-     */
-    public static FrequencyStrategy completeMatchesStrategy = new CompleteMatchesStrategy();
-    /**
-     * A FrequencyStrategy that will be tested.
-     */
-    public static FrequencyStrategy subMatchStrategy = new SubMatchesStrategy();
-    /**
-     * A FrequencyStrategy that will be tested.
-     */
-    public static FrequencyStrategy containedMatchesStrategy = new ContainedMatchesStrategy();
-    /**
-     * A FrequencyStrategy that will be tested.
-     */
-    public static FrequencyStrategy windowOfMatchesStrategy = new WindowOfMatchesStrategy();
-    /**
-     * Frequency map to calculate the isFrequencyAnalysisEnabled of a match.
-     */
-    public Map<List<TokenType>, Integer> frequencyMap = new HashMap<>();
-    /**
-     * Match used for the tests.
-     */
-    Match testMatch;
-    /**
-     * Match that is contained in the test match.
-     */
-    Match matchContained;
-    /**
-     * Submission used for the tests.
-     */
-    Submission testSubmission;
+    private static final FrequencyStrategy completeMatchesStrategy = new CompleteMatchesStrategy();
+    private static final FrequencyStrategy subMatchStrategy = new SubMatchesStrategy();
+    private static final FrequencyStrategy containedMatchesStrategy = new ContainedMatchesStrategy();
+    private static final FrequencyStrategy windowOfMatchesStrategy = new WindowOfMatchesStrategy();
+    private final Map<List<TokenType>, Integer> frequencyMap = new HashMap<>();
+    private Match testMatch;
+    private Match matchContained;
+    private Submission testSubmission;
 
     /**
      * Creates Test data by running JPlag Methods to get JPlag result for building test data.
