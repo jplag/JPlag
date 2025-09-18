@@ -18,7 +18,7 @@ export async function loadReport(): Promise<void> {
 
     const urlParts = queryURL.split('/')
     const lastUrlPart = urlParts[urlParts.length - 1]
-    if (lastUrlPart && lastUrlPart.endsWith('.jplag')) {
+    if (lastUrlPart?.endsWith('.jplag')) {
       reportName = lastUrlPart
     }
   }
