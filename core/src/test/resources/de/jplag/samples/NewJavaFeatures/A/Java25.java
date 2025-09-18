@@ -27,7 +27,7 @@ public class Java25 {
             if (age < 0)
                 age = 0;   // validate before calling super
             super(age);            // now allowed after other statements
-            System.out.println("Employee age: " + age);
+            IO.println("Employee age: " + age);
         }
     }
 }
