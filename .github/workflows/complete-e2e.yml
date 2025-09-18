@@ -63,16 +63,16 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         dataset: [
-          {zip: "progpedia.zip", name: "progpedia", folder: "ACCEPTED", language: "java", cliArgs: "-bc base"},
-          {zip: "fileSingleRoot.zip", name: "fileSingleRoot", folder: "fileSingleRoot", language: "java", cliArgs: ""},
-          {zip: "folderSingleRoot.zip", name: "folderSingleRoot", folder: "folderSingleRoot", language: "java", cliArgs: ""},
-          {zip: "fileMultiRoot.zip", name: "fileMultiRoot", folder: "f0", language: "java", cliArgs: "--new f1"},
-          {zip: "folderMultiRoot.zip", name: "folderMultiRoot", folder: "f0", language: "java", cliArgs: "--new f1"},
-          {zip: "mixedMultiRoot.zip", name: "mixedBaseFile", folder: "f0", language: "java", cliArgs: "--new f1"},
-          {zip: "mixedMultiRoot.zip", name: "mixedBaseFolder", folder: "f1", language: "java", cliArgs: "--new f0"},
-          {zip: "cpp.zip", name: "cpp", folder: "./cpp", language: "cpp", cliArgs: ""},
-          {zip: "csharp.zip", name: "csharp", folder: "./csharp", language: "csharp", cliArgs: ""},
-          {zip: "python.zip", name: "python", folder: "./python", language: "python3", cliArgs: ""}
+          {zip: "progpedia.zip", name: "progpedia", folder: "ACCEPTED", cliArgs: "-l java -bc base"},
+          {zip: "fileSingleRoot.zip", name: "fileSingleRoot", folder: "fileSingleRoot", cliArgs: "-l java"},
+          {zip: "folderSingleRoot.zip", name: "folderSingleRoot", folder: "folderSingleRoot", cliArgs: "-l java"},
+          {zip: "fileMultiRoot.zip", name: "fileMultiRoot", folder: "f0", cliArgs: "-l java --new f1"},
+          {zip: "folderMultiRoot.zip", name: "folderMultiRoot", folder: "f0", cliArgs: "-l java --new f1"},
+          {zip: "mixedMultiRoot.zip", name: "mixedBaseFile", folder: "f0", cliArgs: "-l java --new f1"},
+          {zip: "mixedMultiRoot.zip", name: "mixedBaseFolder", folder: "f1", cliArgs: "-l java --new f0"},
+          {zip: "cpp.zip", name: "cpp", folder: "./cpp", cliArgs: "-l cpp"},
+          {zip: "csharp.zip", name: "csharp", folder: "./csharp", cliArgs: "-l csharp"},
+          {zip: "python.zip", name: "python", folder: "./python", cliArgs: "-l python3"}
           ]
 
     steps:
@@ -102,7 +102,7 @@ jobs:
 
       - name: Run JPlag
         run: |
-          java -jar jplag.jar ${{ matrix.dataset.folder }} -l ${{ matrix.dataset.language }} -r ${{ matrix.dataset.name }}-report ${{ matrix.dataset.cliArgs }}
+          java -jar jplag.jar ${{ matrix.dataset.folder }} -r ${{ matrix.dataset.name }}-report ${{ matrix.dataset.cliArgs }}
 
       - name: Upload result
         uses: actions/upload-artifact@v4
