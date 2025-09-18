@@ -39,7 +39,7 @@ export interface CliClusterOptions {
   preprocessorPercentile: number
 }
 
-interface CliMergingOptions {
+export interface CliMergingOptions {
   enabled: boolean
   minimumNeighborLength: number
   maximumGapSize: number

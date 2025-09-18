@@ -29,7 +29,7 @@ import {
 import { computed, ref } from 'vue'
 import { Version } from '@jplag/model'
 import { reportViewerVersion } from '@jplag/version'
-import CliView from './components/CliView.vue'
+import CliView from './views/CliView.vue'
 
 const newestVersion = ref(Version.ERROR_VERSION)
 const isDemo = import.meta.env.MODE == 'demo'
