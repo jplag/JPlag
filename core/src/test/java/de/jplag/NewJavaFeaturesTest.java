@@ -20,8 +20,8 @@ class NewJavaFeaturesTest extends TestBase {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private static final int EXPECTED_MATCHES = 9; // might change if you add files to the submissions
-    private static final int NUMBER_OF_TEST_FILES = 9;
-    private static final double EXPECTED_SIMILARITY = 0.933; // might change if you add files to the submissions
+    private static final int NUMBER_OF_TEST_FILES = 10;
+    private static final double EXPECTED_SIMILARITY = 0.898; // might change if you add files to the submissions
 
     private static final String EXCLUSION_FILE_NAME = "blacklist.txt";
     private static final String ROOT_DIRECTORY = "NewJavaFeatures";
