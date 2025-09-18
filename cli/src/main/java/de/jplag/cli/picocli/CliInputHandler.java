@@ -77,7 +77,7 @@ public class CliInputHandler {
         }).collect(Collectors.joining(System.lineSeparator())) + System.lineSeparator());
         cli.getHelpSectionMap().put(SECTION_KEY_COMMAND_LIST_HEADING, help -> "Languages:" + System.lineSeparator());
 
-        for (CommandLine.Model.CommandSpec subcommand : buildSubcommands(this.options)) {
+        for (CommandLine.Model.CommandSpec subcommand : buildSubcommands()) {
             cli.addSubcommand(subcommand).setHelpFactory(new HelpFactory());
         }
 
@@ -88,7 +88,7 @@ public class CliInputHandler {
         return cli;
     }
 
-    private List<CommandLine.Model.CommandSpec> buildSubcommands(CliOptions options) {
+    private List<CommandLine.Model.CommandSpec> buildSubcommands() {
         return LanguageLoader.getAllAvailableLanguages().values().stream().map(language -> {
             CommandLine.Model.CommandSpec command = CommandLine.Model.CommandSpec.create().name(language.getIdentifier());
 
@@ -96,10 +96,22 @@ public class CliInputHandler {
                 command.addOption(CommandLine.Model.OptionSpec.builder(option.getNameAsUnixParameter()).type(option.getType().getJavaType())
                         .description(option.getDescription()).build());
             }
-            command.addMixin("root", CommandLine.Model.CommandSpec.forAnnotatedObject(options).name("mixin"));
+            command.addMixin("root", buildRootParametersForSubcommands());
 
             return command;
         }).toList();
+    }
+
+    private CommandLine.Model.CommandSpec buildRootParametersForSubcommands() {
+        CommandLine.Model.CommandSpec originalOptions = CommandLine.Model.CommandSpec.forAnnotatedObject(this.options);
+        CommandLine.Model.CommandSpec hiddenOptions = CommandLine.Model.CommandSpec.create();
+        originalOptions.options().forEach(option -> {
+            hiddenOptions.addOption(CommandLine.Model.OptionSpec.builder(option).hidden(true).required(false).build());
+        });
+        originalOptions.positionalParameters().forEach(parameter -> {
+            hiddenOptions.addPositional(CommandLine.Model.PositionalParamSpec.builder(parameter).hidden(true).required(false).build());
+        });
+        return hiddenOptions;
     }
 
     /**
