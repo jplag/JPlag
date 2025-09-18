@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jplag.exceptions.ExitException;
 
@@ -14,6 +16,8 @@ import de.jplag.exceptions.ExitException;
  * similarity scores. It also allows running in CI environments even if the Java version differs.
  */
 class NewJavaFeaturesTest extends TestBase {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private static final int EXPECTED_MATCHES = 9; // might change if you add files to the submissions
     private static final int NUMBER_OF_TEST_FILES = 9;
@@ -37,6 +41,10 @@ class NewJavaFeaturesTest extends TestBase {
         assumeTrue(javaVersion == EXPECTED_JAVA_VERSION || isCiRun, VERSION_MISMATCH_MESSAGE.formatted(javaVersion, EXPECTED_JAVA_VERSION));
 
         JPlagResult result = runJPlagWithExclusionFile(ROOT_DIRECTORY, EXCLUSION_FILE_NAME);
+
+        for (Submission submission : result.getSubmissions().getSubmissions()) {
+            logger.info(TokenPrinter.printTokens(submission.getTokenList(), submission.getRoot()));
+        }
 
         // Ensure test input did not change:
         assertEquals(2, result.getNumberOfSubmissions(), String.format(CHANGE_MESSAGE, "Submissions"));
