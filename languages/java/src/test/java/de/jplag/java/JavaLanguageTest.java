@@ -87,6 +87,9 @@ public class JavaLanguageTest extends LanguageModuleTest {
         collector.testFile("ClassWithoutModifier.java").testSourceCoverage().testTokenSequence(J_PACKAGE, J_IMPORT, J_IMPORT, J_IMPORT, J_CLASS_BEGIN,
                 J_CLASS_END, J_CLASS_BEGIN, J_CLASS_END);
 
+        collector.testFile("NormalSourceFile.java", "CompactSourceFile.java").testSourceCoverage().testTokenSequence(J_CLASS_BEGIN, J_METHOD_BEGIN,
+                J_APPLY, J_METHOD_END, J_METHOD_BEGIN, J_APPLY, J_METHOD_END, J_CLASS_END);
+
         collector.addTokenPositionTests("tokenPositions");
     }
 
