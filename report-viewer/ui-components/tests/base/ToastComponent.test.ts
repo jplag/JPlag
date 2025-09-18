@@ -1,9 +1,16 @@
-import { describe, expect, it } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { describe, expect, it, vi, afterEach, beforeEach } from 'vitest'
+import { flushPromises, mount } from '@vue/test-utils'
 import { ToastComponent } from '../../base'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 describe('ToastComponent', async () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
   it('renders', () => {
     const wrapper = mount(ToastComponent, {
       props: {
@@ -42,7 +49,11 @@ describe('ToastComponent', async () => {
     })
 
     expect(wrapper.isVisible()).toBeTruthy()
-    await new Promise((resolve) => setTimeout(resolve, 200))
+    vi.advanceTimersByTime(90)
+    await flushPromises()
+    expect(wrapper.isVisible()).toBeTruthy()
+    vi.advanceTimersByTime(20)
+    await flushPromises()
     expect(wrapper.isVisible()).toBeFalsy()
   })
 })
