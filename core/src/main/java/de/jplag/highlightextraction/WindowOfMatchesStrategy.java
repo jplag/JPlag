@@ -25,13 +25,13 @@ public class WindowOfMatchesStrategy implements FrequencyStrategy {
      * @param matchTokenTypes Token list of the match.
      * @param addSequenceKey Consumer that adds the sequence to the list, without counting the frequency.
      * @param addSequence Consumer that adds the sequence to the list, and updates the frequency.
-     * @param minSubSequenceLength The length of the considered token window.
+     * @param minSubSequenceSize The length of the considered token window.
      */
     @Override
     public void processMatchTokenTypes(List<TokenType> matchTokenTypes, Consumer<List<TokenType>> addSequenceKey,
-            Consumer<List<TokenType>> addSequence, int minSubSequenceLength) {
-        this.minSubSequenceLength = minSubSequenceLength;
-        List<List<TokenType>> windowSequences = getWindowSequences(matchTokenTypes, minSubSequenceLength);
+            Consumer<List<TokenType>> addSequence, int minSubSequenceSize) {
+        minSubSequenceLength = minSubSequenceSize;
+        List<List<TokenType>> windowSequences = getWindowSequences(matchTokenTypes, minSubSequenceSize);
         for (List<TokenType> windowSequence : windowSequences) {
             addSequence.accept(windowSequence);
         }

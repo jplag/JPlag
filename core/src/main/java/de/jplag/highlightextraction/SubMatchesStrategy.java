@@ -28,7 +28,7 @@ public class SubMatchesStrategy implements FrequencyStrategy {
     @Override
     public void processMatchTokenTypes(List<TokenType> matchTokenTypes, Consumer<List<TokenType>> addSequenceKey,
             Consumer<List<TokenType>> addSequence, int minSubSequenceSize) {
-        this.minimumSubSequenceLength = minSubSequenceSize;
+        minimumSubSequenceLength = minSubSequenceSize;
         List<List<TokenType>> subSequences = SubSequenceUtil.getSubSequences(matchTokenTypes, minSubSequenceSize);
         for (List<TokenType> subSequence : subSequences) {
             addSequence.accept(subSequence);

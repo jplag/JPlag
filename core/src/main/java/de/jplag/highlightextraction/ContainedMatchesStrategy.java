@@ -26,17 +26,17 @@ public class ContainedMatchesStrategy implements FrequencyStrategy {
      * @param matchTokenTypes List of tokens representing the match.
      * @param addSequenceKey Consumer that adds the sequence to the list, without counting the frequency
      * @param addSequence Consumer that adds the sequence to the list, and updates the frequency
-     * @param minSubSequenceLength Minimum length of the considered submatches.
+     * @param minSubSequenceSize Minimum length of the considered submatches.
      */
     @Override
     public void processMatchTokenTypes(List<TokenType> matchTokenTypes, Consumer<List<TokenType>> addSequenceKey,
-            Consumer<List<TokenType>> addSequence, int minSubSequenceLength) {
-        this.minSubSequenceLength = minSubSequenceLength;
-        List<List<TokenType>> subSequences = getSubSequences(matchTokenTypes, minSubSequenceLength);
+            Consumer<List<TokenType>> addSequence, int minSubSequenceSize) {
+        minSubSequenceLength = minSubSequenceSize;
+        List<List<TokenType>> subSequences = getSubSequences(matchTokenTypes, minSubSequenceSize);
         for (List<TokenType> subSequence : subSequences) {
             addSequenceKey.accept(subSequence);
         }
-        if (matchTokenTypes.size() >= minSubSequenceLength) {
+        if (matchTokenTypes.size() >= minSubSequenceSize) {
             addSequence.accept(matchTokenTypes);
         }
     }

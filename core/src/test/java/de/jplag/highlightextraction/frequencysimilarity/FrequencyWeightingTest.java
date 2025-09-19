@@ -33,9 +33,9 @@ class FrequencyWeightingTest extends TestBase {
     private static Submission testSubmission;
     private static Match match;
     private static Match matchShort;
-    private static final List<Match> testMatches = new LinkedList<>();
+    private static final List<Match> TEST_MATCHES = new LinkedList<>();
     private static List<Match> ignoredMatches = new LinkedList<>();
-    private static final List<JPlagComparison> testComparisons = new LinkedList<>();
+    private static final List<JPlagComparison> TEST_COMPARISONS = new LinkedList<>();
 
     /**
      * Creates Test data to validate different match-frequency combinations.
@@ -106,12 +106,12 @@ class FrequencyWeightingTest extends TestBase {
      * @param testSubmissions multiple submissions with the same data but different names for testing
      */
     private void buildTestComparisons(TestSubmissions testSubmissions) {
-        testMatches.clear();
-        testComparisons.clear();
-        testMatches.add(match);
-        JPlagComparison testComparison = new JPlagComparison(testSubmissions.testSubmissionW(), testSubmissions.testSubmissionX(), testMatches,
+        TEST_MATCHES.clear();
+        TEST_COMPARISONS.clear();
+        TEST_MATCHES.add(match);
+        JPlagComparison testComparison = new JPlagComparison(testSubmissions.testSubmissionW(), testSubmissions.testSubmissionX(), TEST_MATCHES,
                 ignoredMatches);
-        testComparisons.add(testComparison);
+        TEST_COMPARISONS.add(testComparison);
     }
 
     /**
@@ -122,25 +122,25 @@ class FrequencyWeightingTest extends TestBase {
     void testWeightingFunction() {
         MatchFrequency matchFrequency = new MatchFrequency();
         List<TokenType> testSubmissionTokenTypes = testSubmission.getTokenList().stream().map(Token::getType).toList();
-        matchFrequency.matchFrequencyMap().put(FrequencyUtil.matchesToMatchTokenTypes(testMatches.getFirst(), testSubmissionTokenTypes), 5.0);
+        matchFrequency.matchFrequencyMap().put(FrequencyUtil.matchesToMatchTokenTypes(TEST_MATCHES.getFirst(), testSubmissionTokenTypes), 5.0);
         matchFrequency.matchFrequencyMap().put(FrequencyUtil.matchesToMatchTokenTypes(matchShort, testSubmissionTokenTypes), 1.0);
 
-        MatchFrequencyWeighting matchFrequencyWeightingLinear = new MatchFrequencyWeighting(testComparisons, MatchFrequencyWeightingFunction.LINEAR,
+        MatchFrequencyWeighting matchFrequencyWeightingLinear = new MatchFrequencyWeighting(TEST_COMPARISONS, MatchFrequencyWeightingFunction.LINEAR,
                 matchFrequency);
-        MatchFrequencyWeighting matchFrequencyWeightingProportional = new MatchFrequencyWeighting(testComparisons,
+        MatchFrequencyWeighting matchFrequencyWeightingProportional = new MatchFrequencyWeighting(TEST_COMPARISONS,
                 MatchFrequencyWeightingFunction.PROPORTIONAL, matchFrequency);
-        MatchFrequencyWeighting matchFrequencyWeightingQuadratic = new MatchFrequencyWeighting(testComparisons,
+        MatchFrequencyWeighting matchFrequencyWeightingQuadratic = new MatchFrequencyWeighting(TEST_COMPARISONS,
                 MatchFrequencyWeightingFunction.QUADRATIC, matchFrequency);
-        MatchFrequencyWeighting matchFrequencyWeightingSigmoid = new MatchFrequencyWeighting(testComparisons, MatchFrequencyWeightingFunction.SIGMOID,
-                matchFrequency);
+        MatchFrequencyWeighting matchFrequencyWeightingSigmoid = new MatchFrequencyWeighting(TEST_COMPARISONS,
+                MatchFrequencyWeightingFunction.SIGMOID, matchFrequency);
 
-        double linearWeightedMatchLength = matchFrequencyWeightingLinear.getWeightedMatchLength(testComparisons.getFirst(), 1, true,
+        double linearWeightedMatchLength = matchFrequencyWeightingLinear.getWeightedMatchLength(TEST_COMPARISONS.getFirst(), 1, true,
                 MatchFrequencyWeightingFunction.LINEAR);
-        double proportionalWeightedMatchLength = matchFrequencyWeightingProportional.getWeightedMatchLength(testComparisons.getFirst(), 1, true,
+        double proportionalWeightedMatchLength = matchFrequencyWeightingProportional.getWeightedMatchLength(TEST_COMPARISONS.getFirst(), 1, true,
                 MatchFrequencyWeightingFunction.PROPORTIONAL);
-        double quadraticWeightedMatchLength = matchFrequencyWeightingQuadratic.getWeightedMatchLength(testComparisons.getFirst(), 1, true,
+        double quadraticWeightedMatchLength = matchFrequencyWeightingQuadratic.getWeightedMatchLength(TEST_COMPARISONS.getFirst(), 1, true,
                 MatchFrequencyWeightingFunction.QUADRATIC);
-        double sigmoidWeightedMatchLength = matchFrequencyWeightingSigmoid.getWeightedMatchLength(testComparisons.getFirst(), 1, true,
+        double sigmoidWeightedMatchLength = matchFrequencyWeightingSigmoid.getWeightedMatchLength(TEST_COMPARISONS.getFirst(), 1, true,
                 MatchFrequencyWeightingFunction.SIGMOID);
 
         assertEquals(315, linearWeightedMatchLength, 0.0001);
@@ -149,41 +149,41 @@ class FrequencyWeightingTest extends TestBase {
         assertEquals(317, sigmoidWeightedMatchLength, 0.0001);
 
         MatchFrequency matchFrequency1 = new MatchFrequency();
-        matchFrequency1.matchFrequencyMap().put(FrequencyUtil.matchesToMatchTokenTypes(testMatches.getFirst(), testSubmissionTokenTypes), 5.0);
+        matchFrequency1.matchFrequencyMap().put(FrequencyUtil.matchesToMatchTokenTypes(TEST_MATCHES.getFirst(), testSubmissionTokenTypes), 5.0);
 
-        MatchFrequencyWeighting matchFrequencyWeightingLinear1 = new MatchFrequencyWeighting(testComparisons, MatchFrequencyWeightingFunction.LINEAR,
+        MatchFrequencyWeighting matchFrequencyWeightingLinear1 = new MatchFrequencyWeighting(TEST_COMPARISONS, MatchFrequencyWeightingFunction.LINEAR,
                 matchFrequency);
-        MatchFrequencyWeighting matchFrequencyWeightingProportional1 = new MatchFrequencyWeighting(testComparisons,
+        MatchFrequencyWeighting matchFrequencyWeightingProportional1 = new MatchFrequencyWeighting(TEST_COMPARISONS,
                 MatchFrequencyWeightingFunction.PROPORTIONAL, matchFrequency);
-        MatchFrequencyWeighting matchFrequencyWeightingQuadratic1 = new MatchFrequencyWeighting(testComparisons,
+        MatchFrequencyWeighting matchFrequencyWeightingQuadratic1 = new MatchFrequencyWeighting(TEST_COMPARISONS,
                 MatchFrequencyWeightingFunction.QUADRATIC, matchFrequency);
-        MatchFrequencyWeighting matchFrequencyWeightingSigmoid1 = new MatchFrequencyWeighting(testComparisons,
+        MatchFrequencyWeighting matchFrequencyWeightingSigmoid1 = new MatchFrequencyWeighting(TEST_COMPARISONS,
                 MatchFrequencyWeightingFunction.SIGMOID, matchFrequency);
 
-        linearWeightedMatchLength = matchFrequencyWeightingLinear1.frequencySimilarity(testComparisons.getFirst(), 0);
-        proportionalWeightedMatchLength = matchFrequencyWeightingProportional1.frequencySimilarity(testComparisons.getFirst(), 0);
-        quadraticWeightedMatchLength = matchFrequencyWeightingQuadratic1.frequencySimilarity(testComparisons.getFirst(), 0);
-        sigmoidWeightedMatchLength = matchFrequencyWeightingSigmoid1.frequencySimilarity(testComparisons.getFirst(), 0);
+        linearWeightedMatchLength = matchFrequencyWeightingLinear1.frequencySimilarity(TEST_COMPARISONS.getFirst(), 0);
+        proportionalWeightedMatchLength = matchFrequencyWeightingProportional1.frequencySimilarity(TEST_COMPARISONS.getFirst(), 0);
+        quadraticWeightedMatchLength = matchFrequencyWeightingQuadratic1.frequencySimilarity(TEST_COMPARISONS.getFirst(), 0);
+        sigmoidWeightedMatchLength = matchFrequencyWeightingSigmoid1.frequencySimilarity(TEST_COMPARISONS.getFirst(), 0);
 
         assertEquals(0.31157, linearWeightedMatchLength, 0.0001);
         assertEquals(0.31157, proportionalWeightedMatchLength, 0.0001);
         assertEquals(0.31157, quadraticWeightedMatchLength, 0.0001);
         assertEquals(0.31157, sigmoidWeightedMatchLength, 0.0001);
 
-        linearWeightedMatchLength = matchFrequencyWeightingLinear1.frequencySimilarity(testComparisons.getFirst(), 1);
-        proportionalWeightedMatchLength = matchFrequencyWeightingProportional1.frequencySimilarity(testComparisons.getFirst(), 1);
-        quadraticWeightedMatchLength = matchFrequencyWeightingQuadratic1.frequencySimilarity(testComparisons.getFirst(), 1);
-        sigmoidWeightedMatchLength = matchFrequencyWeightingSigmoid1.frequencySimilarity(testComparisons.getFirst(), 1);
+        linearWeightedMatchLength = matchFrequencyWeightingLinear1.frequencySimilarity(TEST_COMPARISONS.getFirst(), 1);
+        proportionalWeightedMatchLength = matchFrequencyWeightingProportional1.frequencySimilarity(TEST_COMPARISONS.getFirst(), 1);
+        quadraticWeightedMatchLength = matchFrequencyWeightingQuadratic1.frequencySimilarity(TEST_COMPARISONS.getFirst(), 1);
+        sigmoidWeightedMatchLength = matchFrequencyWeightingSigmoid1.frequencySimilarity(TEST_COMPARISONS.getFirst(), 1);
 
         assertEquals(0.31157, linearWeightedMatchLength, 0.0001);
         assertEquals(0.00296, proportionalWeightedMatchLength, 0.0001);
         assertEquals(0.31157, quadraticWeightedMatchLength, 0.0001);
         assertEquals(0.31355, sigmoidWeightedMatchLength, 0.0001);
 
-        linearWeightedMatchLength = matchFrequencyWeightingLinear1.frequencySimilarity(testComparisons.getFirst(), 0.5);
-        proportionalWeightedMatchLength = matchFrequencyWeightingProportional1.frequencySimilarity(testComparisons.getFirst(), 0.5);
-        quadraticWeightedMatchLength = matchFrequencyWeightingQuadratic1.frequencySimilarity(testComparisons.getFirst(), 0.5);
-        sigmoidWeightedMatchLength = matchFrequencyWeightingSigmoid1.frequencySimilarity(testComparisons.getFirst(), 0.5);
+        linearWeightedMatchLength = matchFrequencyWeightingLinear1.frequencySimilarity(TEST_COMPARISONS.getFirst(), 0.5);
+        proportionalWeightedMatchLength = matchFrequencyWeightingProportional1.frequencySimilarity(TEST_COMPARISONS.getFirst(), 0.5);
+        quadraticWeightedMatchLength = matchFrequencyWeightingQuadratic1.frequencySimilarity(TEST_COMPARISONS.getFirst(), 0.5);
+        sigmoidWeightedMatchLength = matchFrequencyWeightingSigmoid1.frequencySimilarity(TEST_COMPARISONS.getFirst(), 0.5);
 
         assertEquals(0.31157, linearWeightedMatchLength, 0.0001);
         assertEquals(0.15727, proportionalWeightedMatchLength, 0.0001);
