@@ -18,7 +18,7 @@ public class ContainedMatchesStrategy implements FrequencyStrategy {
     /**
      * Minimum considered subsequence length.
      */
-    private static int minSubSequenceLength;
+    private int minSubSequenceLength;
 
     /**
      * Adds all submatches of the given match to the map if their length is at least minSubSequenceLength long, using the
@@ -26,7 +26,6 @@ public class ContainedMatchesStrategy implements FrequencyStrategy {
      * @param matchTokenTypes List of tokens representing the match.
      * @param addSequenceKey Consumer that adds the sequence to the list, without counting the frequency
      * @param addSequence Consumer that adds the sequence to the list, and updates the frequency
-     * @param minSubSequenceSize Minimum length of the considered submatches.
      */
     @Override
     public void processMatchTokenTypes(List<TokenType> matchTokenTypes, Consumer<List<TokenType>> addSequenceKey,

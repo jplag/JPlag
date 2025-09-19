@@ -64,9 +64,9 @@ public class JPlagOptionsBuilder {
                 oldSubmissionDirectories, null, this.cliOptions.advanced.subdirectory, suffixes, this.cliOptions.advanced.exclusionFileName,
                 JPlagOptions.DEFAULT_SIMILARITY_METRIC, this.cliOptions.advanced.similarityThreshold, this.cliOptions.shownComparisons,
                 clusteringOptions, this.cliOptions.advanced.debug, mergingOptions, this.cliOptions.normalize,
-                this.cliOptions.advanced.analyzeComments, this.cliOptions.frequencyOptions.frequency,
-                this.cliOptions.frequencyOptions.frequencyStrategy, this.cliOptions.frequencyOptions.frequencyStrategyMinValue,
-                this.cliOptions.frequencyOptions.weightingStrategy, this.cliOptions.frequencyOptions.weightingStrategyWeightingFactor);
+                this.cliOptions.advanced.analyzeComments, this.cliOptions.frequencyOptions.frequencyStrategy,
+                this.cliOptions.frequencyOptions.frequencyStrategyMinValue, this.cliOptions.frequencyOptions.weightingStrategy,
+                this.cliOptions.frequencyOptions.weightingFactor);
     }
 
     private ClusteringOptions getClusteringOptions() {

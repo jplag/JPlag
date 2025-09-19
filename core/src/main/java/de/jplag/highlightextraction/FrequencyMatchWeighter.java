@@ -9,7 +9,7 @@ import de.jplag.options.JPlagOptions;
 /**
  * Contains the logic of the frequency based weighting of the Matches in all Comparisons, influencing the similarity
  * between two comparisons according to the FrequencyStrategy and Similarity strategy. isFrequencyAnalysisEnabled =
- * false would use the old similarity, same as a weighting factor of 0.
+ * false would use the old similarity.
  */
 public class FrequencyMatchWeighter {
     /**
@@ -18,6 +18,7 @@ public class FrequencyMatchWeighter {
      * @return the new Comparisons with a weighted similarity.
      */
     public List<JPlagComparison> useMatchFrequencyToInfluenceSimilarity(JPlagOptions options, JPlagResult result) {
+        final boolean weightingFactor = isFrequencyAnalysisEnabled(options.weightingFactor());
         FrequencyDetermination frequencyDetermination = new FrequencyDetermination(options.frequencyAnalysisStrategy().getStrategy(),
                 Math.max(options.frequencyStrategyMinValue(), options.minimumTokenMatch()));
         frequencyDetermination.buildFrequencyMap(result.getAllComparisons());
@@ -25,8 +26,12 @@ public class FrequencyMatchWeighter {
                 frequencyDetermination.getMatchFrequencyMap());
         MatchFrequency matchFrequency = matchWeighting.weightAllComparisons(result.getAllComparisons());
         MatchFrequencyWeighting similarity = new MatchFrequencyWeighting(result.getAllComparisons(), options.weightingStrategy(), matchFrequency);
-        return result.getAllComparisons().stream().map(comparison -> similarity.weightedComparisonSimilarity(comparison,
-                options.weightingStrategyWeightingFactor(), options.isFrequencyAnalysisEnabled())).toList();
+        return result.getAllComparisons().stream()
+                .map(comparison -> similarity.weightedComparisonSimilarity(comparison, options.weightingFactor(), weightingFactor)).toList();
+    }
+
+    private static boolean isFrequencyAnalysisEnabled(double weightingFactor) {
+        return weightingFactor != -1;
     }
 
 }

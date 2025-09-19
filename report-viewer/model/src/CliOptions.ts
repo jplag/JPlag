@@ -25,7 +25,7 @@ interface AbstractOptions<L> {
   frequencyAnalysisStrategy: string
   frequencyStrategyMinValue: number
   weightingStrategy: string
-  weightingStrategyWeightingFactor: number
+  weightingFactor: number
 }
 
 export interface CliClusterOptions {

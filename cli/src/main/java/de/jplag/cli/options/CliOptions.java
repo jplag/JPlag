@@ -179,29 +179,26 @@ public class CliOptions implements Runnable {
 
     /** Highlight extraction options. */
     public static class FrequencyAnalysis {
-        /** Skip Highlight extraction options. */
-        @Option(names = {"--isFrequencyAnalysisEnabled-analysis"}, description = "If isFrequencyAnalysisEnabled calculation is used")
-        public boolean frequency = new FrequencyAnalysisOptions().isFrequencyAnalysisEnabled();
 
         /** Frequency Determination strategy. */
         @Option(names = {
-                "--isFrequencyAnalysisEnabled-strategy"}, description = "Strategy for isFrequencyAnalysisEnabled Analysis, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE}).")
+                "--frequency-strategy"}, description = "Strategy for frequency Analysis, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE}).")
         public FrequencyAnalysisStrategy frequencyStrategy = new FrequencyAnalysisOptions().frequencyStrategy();
 
         /** Min value for considered subsequence length in Frequency Determination strategy. */
         @Option(names = {
-                "--isFrequencyAnalysisEnabled-min-value"}, description = "Max of min match length that will be compared and this value, is min size of considered submatches", hidden = true)
+                "--frequency-min-value"}, description = "Max of min match length that will be compared and this value, is min size of considered submatches", hidden = true)
         public int frequencyStrategyMinValue = new FrequencyAnalysisOptions().frequencyStrategyMinValue();
 
-        /** Weighting function to combine with isFrequencyAnalysisEnabled Determination strategy. */
+        /** Weighting function to combine with frequency Determination strategy. */
         @Option(names = {
-                "--weighting-strategy"}, description = "Strategy for isFrequencyAnalysisEnabled Weighting, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE}).")
+                "--weighting-strategy"}, description = "Strategy for frequency Weighting, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE}).")
         public MatchFrequencyWeightingFunction weightingStrategy = new FrequencyAnalysisOptions().weightingStrategy();
 
         /** How strong the weighting maximal influences a match length with up to double the length. */
         @Option(names = {
                 "--weighting-factor"}, description = "Factor on how strong the weighting will be considered, scale factor for max stretch of a token sequence", hidden = true)
-        public double weightingStrategyWeightingFactor = new FrequencyAnalysisOptions().weightingFactor();
+        public double weightingFactor = new FrequencyAnalysisOptions().weightingFactor();
 
     }
 

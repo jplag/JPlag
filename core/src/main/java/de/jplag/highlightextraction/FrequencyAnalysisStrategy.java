@@ -19,7 +19,7 @@ public enum FrequencyAnalysisStrategy {
     }
 
     /**
-     * @return the isFrequencyAnalysisEnabled similarity strategy of the enum constant.
+     * @return the frequency similarity strategy of the enum constant.
      */
     public FrequencyStrategy getStrategy() {
         return strategy;

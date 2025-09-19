@@ -18,7 +18,7 @@ public class WindowOfMatchesStrategy implements FrequencyStrategy {
     /**
      * The window size for the considered window sequences.
      */
-    private static int minSubSequenceLength;
+    private int minSubSequenceLength;
 
     /**
      * Adds all submatches with window length of the matches to a map using the token sequence as the key.

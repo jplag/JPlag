@@ -16,7 +16,7 @@ public class SubMatchesStrategy implements FrequencyStrategy {
     /**
      * Minimum considered subsequence length.
      */
-    private static int minimumSubSequenceLength;
+    private int minimumSubSequenceLength;
 
     /**
      * Creates submatches to build the keys and adds their frequencies to the frequencyMap.
