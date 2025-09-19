@@ -35,7 +35,6 @@ public class CompleteMatchesStrategy implements FrequencyStrategy {
      */
     @Override
     public double calculateMatchFrequency(Match match, Map<List<TokenType>, Integer> frequencyMap, List<TokenType> matchToken) {
-        Integer values = frequencyMap.get(matchToken);
-        return values != null ? values : 0.0;
+        return frequencyMap.getOrDefault(matchToken, 0);
     }
 }

@@ -18,7 +18,7 @@ public class ContainedMatchesStrategy implements FrequencyStrategy {
     /**
      * Minimum considered subsequence length.
      */
-    private int minSubSequenceLength;
+    private static int minSubSequenceLength;
 
     /**
      * Adds all submatches of the given match to the map if their length is at least minSubSequenceLength long, using the

@@ -19,7 +19,7 @@ public class MatchFrequencyWeighting {
     /**
      * Chosen weighting function.
      */
-    MatchWeightingFunction strategy;
+    private final MatchWeightingFunction strategy;
     private final MatchFrequency matchFrequency;
 
     /**
