@@ -35,8 +35,8 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
      * similarity.
      */
     public JPlagComparison(JPlagComparison originalComparison, double frequencyWeightedSimilarity, boolean frequencyUsed) {
-        this(originalComparison.firstSubmission(), originalComparison.secondSubmission(), originalComparison.matches(),
-                originalComparison.ignoredMatches(), frequencyWeightedSimilarity, frequencyUsed);
+        this(originalComparison.firstSubmission(), originalComparison.secondSubmission(), Collections.unmodifiableList(originalComparison.matches),
+                Collections.unmodifiableList(originalComparison.ignoredMatches), frequencyWeightedSimilarity, frequencyUsed);
     }
 
     /**

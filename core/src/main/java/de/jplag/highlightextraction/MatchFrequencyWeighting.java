@@ -8,8 +8,8 @@ import de.jplag.Token;
 import de.jplag.TokenType;
 
 /**
- * Calculates the isFrequencyAnalysisEnabled dependent similarity for the comparisons according to the
- * isFrequencyAnalysisEnabled similarity weighting strategy.
+ * Calculates the frequency dependent similarity for the comparisons according to the frequency similarity weighting
+ * strategy.
  */
 public class MatchFrequencyWeighting {
     /**
@@ -26,7 +26,7 @@ public class MatchFrequencyWeighting {
      * Constructor defines comparisons and strategy for the similarity calculation.
      * @param comparisons considered comparisons to calculate the similarity score for
      * @param strategy chosen weighting function
-     * @param matchFrequency the matchFrequency containing the map that maps a match to its isFrequencyAnalysisEnabled
+     * @param matchFrequency the matchFrequency containing the map that maps a match to its frequency
      */
     public MatchFrequencyWeighting(List<JPlagComparison> comparisons, MatchWeightingFunction strategy, MatchFrequency matchFrequency) {
         this.comparisons = comparisons;
@@ -37,8 +37,8 @@ public class MatchFrequencyWeighting {
     /**
      * Calculates the similarity score for a comparison.
      * @param comparison considered comparison to calculate the similarity score for
-     * @param weightingFactor weighting factor, is factor for the (max) influence of the isFrequencyAnalysisEnabled
-     * @param isFrequencyAnalysisEnabled if the isFrequencyAnalysisEnabled shall be considered
+     * @param weightingFactor weighting factor, is factor for the (max) influence of the frequency
+     * @param isFrequencyAnalysisEnabled if the frequency shall be considered
      * @return similarity of the comparison
      */
     public JPlagComparison weightedComparisonSimilarity(JPlagComparison comparison, double weightingFactor, boolean isFrequencyAnalysisEnabled) {
@@ -53,10 +53,10 @@ public class MatchFrequencyWeighting {
     }
 
     /**
-     * Calculates the similarity score for a comparison. The score gets influenced form the isFrequencyAnalysisEnabled of
-     * the match according to the chosen Frequency Strategy, Similarity Strategy and weighting factor.
+     * Calculates the similarity score for a comparison. The score gets influenced form the frequency of the match according
+     * to the chosen Frequency Strategy, Similarity Strategy and weighting factor.
      * @param comparison considered comparison to calculate the similarity score for
-     * @param weight weighting factor, is factor for the (max) influence of the isFrequencyAnalysisEnabled
+     * @param weight weighting factor, is factor for the (max) influence of the frequency
      * @return the similarity score
      */
     public double frequencySimilarity(JPlagComparison comparison, double weight) {
@@ -76,11 +76,12 @@ public class MatchFrequencyWeighting {
     }
 
     /**
-     * Changes the considered match length according to the isFrequencyAnalysisEnabled frequencyWeight, depending on the
-     * isFrequencyAnalysisEnabled similarity weightingFunction.
+     * Changes the considered match length according to the frequency Weight, depending on the frequency similarity
+     * weightingFunction.
      * @param comparison considered comparison to calculate the similarity score for
-     * @param frequencyWeight weighting factor, is factor for the (max) influence of the isFrequencyAnalysisEnabled
-     * @param firstSubmission considered submission to calculate the isFrequencyAnalysisEnabled for, both will be calculated
+     * @param frequencyWeight weighting factor, is factor for the (max) influence of the frequency
+     * @param firstSubmission considered submission to calculate the frequency, the frequency for both submissions will be
+     * calculated
      * @param weightingFunction chosen weighting function
      * @return the similarity score
      */
@@ -149,7 +150,7 @@ public class MatchFrequencyWeighting {
     /**
      * Calculates how much the considered length of the match will be changed to influence the similarity score according to
      * the matches' frequency.
-     * @param frequencyWeight weighting factor, is factor for the (max) influence of the isFrequencyAnalysisEnabled
+     * @param frequencyWeight weighting factor, is factor for the (max) influence of the frequency
      * @param weightingFunction chosen weighting function
      * @param matchFrequency calculated frequency of the match
      * @param finalMaximumFoundFrequency highes frequency that occurs across all matches in all comparisons

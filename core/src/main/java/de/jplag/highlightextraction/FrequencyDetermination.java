@@ -20,7 +20,7 @@ public class FrequencyDetermination {
 
     /**
      * Constructor.
-     * @param frequencyStrategy The chosen strategy for isFrequencyAnalysisEnabled calculation.
+     * @param frequencyStrategy The chosen strategy for frequency calculation.
      * @param strategyNumber Parameter used by certain strategies to determine submatch length.
      */
     public FrequencyDetermination(FrequencyStrategy frequencyStrategy, int strategyNumber) {
@@ -30,8 +30,7 @@ public class FrequencyDetermination {
     }
 
     /**
-     * Builds the isFrequencyAnalysisEnabled map by applying the strategy method on all matches found in the given list of
-     * comparisons.
+     * Builds the frequency map by applying the strategy method on all matches found in the given list of comparisons.
      * @param comparisons contains information of matches between two submissions.
      * @throws IllegalArgumentException if match indices are out of range.
      */
@@ -50,22 +49,22 @@ public class FrequencyDetermination {
 
     /**
      * Adds the Sequence to the Frequency map.
-     * @param sequence The token sequence whose isFrequencyAnalysisEnabled will be updated.
+     * @param sequence The token sequence whose frequency will be updated.
      */
     private void addSequenceKey(List<TokenType> sequence) {
         matchFrequencyMap.putIfAbsent(sequence, 0);
     }
 
     /**
-     * @return Map containing (sub-)matches and their isFrequencyAnalysisEnabled according to the strategy.
+     * @return Map containing (sub-)matches and their frequency according to the strategy.
      */
     public Map<List<TokenType>, Integer> getMatchFrequencyMap() {
         return matchFrequencyMap;
     }
 
     /**
-     * Updates the isFrequencyAnalysisEnabled of the given sequence in the isFrequencyAnalysisEnabled map.
-     * @param sequence The token sequence whose isFrequencyAnalysisEnabled will be updated.
+     * Updates the frequency of the given sequence in the frequency map.
+     * @param sequence The token sequence whose frequency will be updated.
      */
     private void addSequence(List<TokenType> sequence) {
         matchFrequencyMap.put(sequence, matchFrequencyMap.getOrDefault(sequence, 0) + 1);

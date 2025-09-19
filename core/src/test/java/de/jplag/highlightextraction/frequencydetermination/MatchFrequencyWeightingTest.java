@@ -33,9 +33,9 @@ import de.jplag.highlightextraction.WindowOfMatchesStrategy;
 import de.jplag.options.JPlagOptions;
 
 /**
- * Checks if the isFrequencyAnalysisEnabled value is calculated and written into the matches correctly.
+ * Checks if the frequency value is calculated and written into the matches correctly.
  */
-public class MatchFrequencyWeightingTest extends TestBase {
+class MatchFrequencyWeightingTest extends TestBase {
     private static final FrequencyStrategy completeMatchesStrategy = new CompleteMatchesStrategy();
     private static final FrequencyStrategy subMatchStrategy = new SubMatchesStrategy();
     private static final FrequencyStrategy containedMatchesStrategy = new ContainedMatchesStrategy();
@@ -59,7 +59,7 @@ public class MatchFrequencyWeightingTest extends TestBase {
     }
 
     /**
-     * Creates Test data to validate different match-isFrequencyAnalysisEnabled combinations.
+     * Creates Test data to validate different match-frequency combinations.
      * @throws ExitException if getJPlagResult fails to create the comparison result.
      */
     @BeforeEach
@@ -75,22 +75,22 @@ public class MatchFrequencyWeightingTest extends TestBase {
 
     /**
      * Adds the Sequence to the Frequency map.
-     * @param sequence The token sequence whose isFrequencyAnalysisEnabled will be updated.
+     * @param sequence The token sequence whose frequency will be updated.
      */
     private void addSequenceKey(List<TokenType> sequence) {
         frequencyMap.putIfAbsent(sequence, 0);
     }
 
     /**
-     * Updates the isFrequencyAnalysisEnabled of the given sequence in the isFrequencyAnalysisEnabled map.
-     * @param sequence The token sequence whose isFrequencyAnalysisEnabled will be updated.
+     * Updates the frequency of the given sequence in the frequency map.
+     * @param sequence The token sequence whose frequency will be updated.
      */
     private void addSequence(List<TokenType> sequence) {
         frequencyMap.put(sequence, frequencyMap.getOrDefault(sequence, 0) + 1);
     }
 
     /**
-     * Checks if the isFrequencyAnalysisEnabled value is calculated correctly in the completeMatchesStrategy.
+     * Checks if the frequency value is calculated correctly in the completeMatchesStrategy.
      */
     @Test
     @DisplayName("Match weighted correct completeMatchesStrategy")
@@ -120,7 +120,7 @@ public class MatchFrequencyWeightingTest extends TestBase {
     }
 
     /**
-     * Checks if the isFrequencyAnalysisEnabled value is calculated correctly in the containedMatchesStrategy.
+     * Checks if the frequency value is calculated correctly in the containedMatchesStrategy.
      */
     @Test
     @DisplayName("Match weighted correct containedMatchesStrategy")
@@ -153,7 +153,7 @@ public class MatchFrequencyWeightingTest extends TestBase {
     }
 
     /**
-     * Checks if the isFrequencyAnalysisEnabled value is calculated correctly in the subMatchStrategy.
+     * Checks if the frequency value is calculated correctly in the subMatchStrategy.
      */
     @Test
     @DisplayName("Match weighted correct subMatchStrategy")
@@ -186,7 +186,7 @@ public class MatchFrequencyWeightingTest extends TestBase {
     }
 
     /**
-     * Checks if the isFrequencyAnalysisEnabled value is calculated correctly in the windowOfMatchesStrategy.
+     * Checks if the frequency value is calculated correctly in the windowOfMatchesStrategy.
      */
     @Test
     @DisplayName("Match weighted correct windowOfMatchesStrategy")

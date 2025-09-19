@@ -2,24 +2,24 @@ package de.jplag.highlightextraction;
 
 /**
  * Options for Frequency Analysis.
- * @param isFrequencyAnalysisEnabled if isFrequencyAnalysisEnabled analysis is used
- * @param frequencyStrategy the strategy used to determine the isFrequencyAnalysisEnabled of a Match
+ * @param isFrequencyAnalysisEnabled if frequency analysis is used
+ * @param frequencyStrategy the strategy used to determine the frequency of a Match
  * @param frequencyStrategyMinValue the minimum considered size of Subsequences from matches in the frequencyStrategy
- * @param weightingStrategy strategy used to influence the similarity based on Match isFrequencyAnalysisEnabled
+ * @param weightingStrategy strategy used to influence the similarity based on Match frequency
  * @param weightingFactor how strong the impact of the weightingStrategy is
  */
 public record FrequencyAnalysisOptions(boolean isFrequencyAnalysisEnabled, FrequencyAnalysisStrategy frequencyStrategy, int frequencyStrategyMinValue,
         MatchFrequencyWeightingFunction weightingStrategy, double weightingFactor) {
 
     /**
-     * Default options for isFrequencyAnalysisEnabled Analysis.
+     * Default options for frequency Analysis.
      */
     public FrequencyAnalysisOptions() {
         this(false, FrequencyAnalysisStrategy.COMPLETE_MATCHES, 1, MatchFrequencyWeightingFunction.SIGMOID, 0.25);
     }
 
     /**
-     * If isFrequencyAnalysisEnabled Analysis is used.
+     * If the frequency Analysis is used.
      */
     public FrequencyAnalysisOptions withFrequency(boolean isFrequencyAnalysisEnabled) {
         return new FrequencyAnalysisOptions(isFrequencyAnalysisEnabled, frequencyStrategy, frequencyStrategyMinValue, weightingStrategy,

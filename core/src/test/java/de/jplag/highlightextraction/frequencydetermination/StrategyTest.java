@@ -57,7 +57,7 @@ class StrategyTest extends TestBase {
     private static final List<JPlagComparison> testComparisons = new LinkedList<>();
 
     /**
-     * Creates Test data to validate different match-isFrequencyAnalysisEnabled combinations.
+     * Creates Test data to validate different match-frequency combinations.
      * @throws ExitException if getJPlagResult fails to create the comparison result.
      */
     @BeforeEach
@@ -100,7 +100,7 @@ class StrategyTest extends TestBase {
 
     /**
      * Represents four created submissions with identical code but different names, used to simulate various
-     * match-comparison combinations for isFrequencyAnalysisEnabled testing.
+     * match-comparison combinations for frequency testing.
      * @param testSubmissionW name of a test submission to Identify the testSubmissions
      * @param testSubmissionX name of a test submission to Identify the testSubmissions
      * @param testSubmissionY name of a test submission to Identify the testSubmissions
@@ -189,11 +189,10 @@ class StrategyTest extends TestBase {
     }
 
     /**
-     * Asserts that a match is contained in the isFrequencyAnalysisEnabled map and that its isFrequencyAnalysisEnabled is as
-     * expected.
+     * Asserts that a match is contained in the frequency map and that its frequency is as expected.
      * @param match The match to verify
      * @param expectedFrequency How many times the match is expected to appear
-     * @param tokenFrequencyMap Map of token sequence hashes for isFrequencyAnalysisEnabled count
+     * @param tokenFrequencyMap Map of token sequence hashes for frequency count
      */
     private void assertTokenFrequencyAndContainsMatch(Match match, int expectedFrequency, Map<List<TokenType>, Integer> tokenFrequencyMap) {
         List<TokenType> matchTokenTypes = getMatchTokenTypes(match);
@@ -339,8 +338,7 @@ class StrategyTest extends TestBase {
             List<TokenType> key = entry.getKey();
             int frequency = entry.getValue();
             if (key.size() >= strategyNumber) {
-                assertEquals(frequency, matchFrequencyMap.get(key),
-                        "The isFrequencyAnalysisEnabled is different than the expected isFrequencyAnalysisEnabled: " + frequency);
+                assertEquals(frequency, matchFrequencyMap.get(key), "The frequency is different than the expected frequency: " + frequency);
             }
         }
     }

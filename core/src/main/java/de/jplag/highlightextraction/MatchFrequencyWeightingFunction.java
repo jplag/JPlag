@@ -1,7 +1,7 @@
 package de.jplag.highlightextraction;
 
 /**
- * This class contains the possible weighting functions for a match, in the isFrequencyAnalysisEnabled analysis.
+ * This class contains the possible weighting functions for a match, in the frequency analysis.
  */
 public enum MatchFrequencyWeightingFunction implements MatchWeightingFunction {
     PROPORTIONAL {

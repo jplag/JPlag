@@ -7,9 +7,9 @@ import de.jplag.JPlagResult;
 import de.jplag.options.JPlagOptions;
 
 /**
- * Contains the logic of the isFrequencyAnalysisEnabled based weighting of the Matches in all Comparisons, influencing
- * the similarity between two comparisons according to the FrequencyStrategy and Similarity strategy.
- * isFrequencyAnalysisEnabled = false would use the old similarity, same as a weighting factor of 0.
+ * Contains the logic of the frequency based weighting of the Matches in all Comparisons, influencing the similarity
+ * between two comparisons according to the FrequencyStrategy and Similarity strategy. isFrequencyAnalysisEnabled =
+ * false would use the old similarity, same as a weighting factor of 0.
  */
 public class FrequencyMatchWeighter {
     /**

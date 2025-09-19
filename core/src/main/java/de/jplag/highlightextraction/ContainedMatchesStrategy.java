@@ -24,8 +24,8 @@ public class ContainedMatchesStrategy implements FrequencyStrategy {
      * Adds all submatches of the given match to the map if their length is at least minSubSequenceLength long, using the
      * token sequence as key. The full match itself is also added if it is at least minSubSequenceLength.
      * @param matchTokenTypes List of tokens representing the match.
-     * @param addSequenceKey Consumer that adds the sequence to the list, without counting the isFrequencyAnalysisEnabled
-     * @param addSequence Consumer that adds the sequence to the list, and updates the isFrequencyAnalysisEnabled
+     * @param addSequenceKey Consumer that adds the sequence to the list, without counting the frequency
+     * @param addSequence Consumer that adds the sequence to the list, and updates the frequency
      * @param minSubSequenceLength Minimum length of the considered submatches.
      */
     @Override
@@ -50,12 +50,12 @@ public class ContainedMatchesStrategy implements FrequencyStrategy {
      */
     @Override
     public double calculateMatchFrequency(Match match, Map<List<TokenType>, Integer> frequencyMap, List<TokenType> matchToken) {
-        List<List<TokenType>> keys = getSubSequences(matchToken, minSubSequenceLength);
+        List<List<TokenType>> subSequences = getSubSequences(matchToken, minSubSequenceLength);
         List<Integer> frequencies = new ArrayList<>();
-        for (List<TokenType> key : keys) {
-            frequencies.add(frequencyMap.getOrDefault(key, 0));
+        for (List<TokenType> subsequence : subSequences) {
+            frequencies.add(frequencyMap.getOrDefault(subsequence, 0));
         }
-        return frequencies.stream().filter(freq -> freq > 0).mapToInt(Integer::intValue).average().orElse(0.0);
+        return frequencies.stream().filter(frequency -> frequency > 0).mapToInt(Integer::intValue).average().orElse(0.0);
     }
 
 }

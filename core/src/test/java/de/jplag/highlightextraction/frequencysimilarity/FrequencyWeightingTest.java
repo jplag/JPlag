@@ -38,7 +38,7 @@ class FrequencyWeightingTest extends TestBase {
     private static final List<JPlagComparison> testComparisons = new LinkedList<>();
 
     /**
-     * Creates Test data to validate different match-isFrequencyAnalysisEnabled combinations.
+     * Creates Test data to validate different match-frequency combinations.
      * @throws ExitException if getJPlagResult fails to create the comparison result.
      */
     @BeforeEach
@@ -93,7 +93,7 @@ class FrequencyWeightingTest extends TestBase {
 
     /**
      * Represents four created submissions with identical code but different names, used to simulate various
-     * match-comparison combinations for isFrequencyAnalysisEnabled testing.
+     * match-comparison combinations for frequency testing.
      * @param testSubmissionW name of a test submission to Identify the testSubmissions
      * @param testSubmissionX name of a test submission to Identify the testSubmissions
      */
