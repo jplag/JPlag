@@ -134,6 +134,8 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
+     * The similarity divisor is used for calculating the similarity of two submissions. It is based on the token length of
+     * a submission.
      * @return Similarity divisor for the submission.
      */
     public int getSimilarityDivisor() {
