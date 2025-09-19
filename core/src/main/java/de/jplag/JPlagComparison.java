@@ -71,7 +71,8 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
 
     /**
      * Computes the average (or symmetric) similarity between the two submissions. The similarity is adjusted based on
-     * whether both submissions contain base code matches.
+     * whether both submissions contain base code matches. Checks if the frequency analysis is used, if it is then a
+     * frequency based similarity score will be returned.
      * @return Average similarity in interval [0, 1]. 0 means zero percent structural similarity, 1 means 100 percent
      * structural similarity.
      */

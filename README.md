@@ -173,15 +173,14 @@ Subsequence Match Merging
                           (between 1 and 50, default: 6).
 
 Frequency Analysis
-      --frequency-strategy=<{COMPLETE_MATCHES, CONTAINED_MATCHES, SUB_MATCHES, 
-                        WINDOW_OF_MATCHES}>
+      --frequency-strategy=<{COMPLETE_MATCHES, CONTAINED_MATCHES, SUB_MATCHES,
+        WINDOW_OF_MATCHES}>
                         Strategy for frequency Analysis, one of:
-                         COMPLETE_MATCHES, CONTAINED_MATCHES, SUB_MATCHES,
-                         WINDOW_OF_MATCHES (default: null).
+                          COMPLETE_MATCHES, CONTAINED_MATCHES, SUB_MATCHES,
+                          WINDOW_OF_MATCHES (default: null).
       --weighting-strategy=<{PROPORTIONAL, LINEAR, QUADRATIC, SIGMOID}>
                         Strategy for frequency Weighting, one of: PROPORTIONAL,
-                         LINEAR, QUADRATIC, SIGMOID
-                          (default: null).
+                          LINEAR, QUADRATIC, SIGMOID (default: null).
 Languages:
   c
   cpp

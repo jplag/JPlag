@@ -52,9 +52,11 @@ public class ContainedMatchesStrategy implements FrequencyStrategy {
         List<List<TokenType>> subSequences = getSubSequences(matchToken, minSubSequenceLength);
         List<Integer> frequencies = new ArrayList<>();
         for (List<TokenType> subsequence : subSequences) {
-            frequencies.add(frequencyMap.getOrDefault(subsequence, 0));
+            Integer subSequenceFrequency = frequencyMap.get(subsequence);
+            if (subSequenceFrequency != null && subSequenceFrequency != 0) {
+                frequencies.add(subSequenceFrequency);
+            }
         }
-        return frequencies.stream().filter(frequency -> frequency > 0).mapToInt(Integer::intValue).average().orElse(0.0);
+        return frequencies.stream().mapToInt(Integer::intValue).average().orElse(0.0);
     }
-
 }
