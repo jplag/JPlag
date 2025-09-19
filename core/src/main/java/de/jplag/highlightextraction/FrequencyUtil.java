@@ -8,7 +8,7 @@ import de.jplag.TokenType;
 /**
  * Contains methods that are used in multiple highlight extraction classes.
  */
-public class FrequencyUtil {
+public final class FrequencyUtil {
     private FrequencyUtil() {
         // private constructor to prevent instantiation
     }

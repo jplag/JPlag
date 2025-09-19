@@ -123,7 +123,7 @@ public class MatchFrequencyWeightingTest extends TestBase {
      * Checks if the isFrequencyAnalysisEnabled value is calculated correctly in the containedMatchesStrategy.
      */
     @Test
-    @DisplayName("Match weigthed correct containedMatchesStrategy")
+    @DisplayName("Match weighted correct containedMatchesStrategy")
     void testWeightMatch_setsCorrectWeight_containedMatchesStrategy() {
         frequencyMap.clear();
         List<TokenType> matchToken = new ArrayList<>();

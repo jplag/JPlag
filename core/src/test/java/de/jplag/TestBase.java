@@ -37,7 +37,7 @@ public abstract class TestBase {
      * @param subdirectories list of directories that form a path relative to the base path.
      * @return the base path where the test samples reside concatenated with any number of subdirectories.
      */
-    protected static String getBasePath(String... subdirectories) {
+    protected String getBasePath(String... subdirectories) {
         StringJoiner path = new StringJoiner(File.separator);
         path.add(BASE_PATH);
         for (String directory : subdirectories) {
