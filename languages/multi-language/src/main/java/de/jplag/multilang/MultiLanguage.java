@@ -20,7 +20,7 @@ import de.jplag.options.LanguageOptions;
  */
 @MetaInfServices(Language.class)
 public class MultiLanguage implements Language {
-    private static final Logger LOG = LoggerFactory.getLogger(MultiLanguage.class);
+    private static final Logger logger = LoggerFactory.getLogger(MultiLanguage.class);
     private static final String WARNING = "This module only allows parsing of multiple languages. No comparisons will be made between languages";
     private final MultiLanguageOptions options;
     private boolean printedWarning;
@@ -74,7 +74,7 @@ public class MultiLanguage implements Language {
     private void printWarning() {
         if (!this.printedWarning) {
             this.printedWarning = true;
-            LOG.warn(WARNING);
+            logger.warn(WARNING);
         }
     }
 }
