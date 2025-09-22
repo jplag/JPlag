@@ -20,10 +20,10 @@ import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
-import de.jplag.highlightextraction.FrequencyUtil;
-import de.jplag.highlightextraction.MatchFrequency;
-import de.jplag.highlightextraction.MatchFrequencyWeighting;
-import de.jplag.highlightextraction.MatchFrequencyWeightingFunction;
+import de.jplag.frequency.FrequencyUtil;
+import de.jplag.frequency.MatchFrequency;
+import de.jplag.frequency.MatchFrequencyWeighting;
+import de.jplag.frequency.MatchFrequencyWeightingFunction;
 import de.jplag.options.JPlagOptions;
 
 /**

@@ -1,4 +1,4 @@
-package de.jplag.highlightextraction;
+package de.jplag.frequency;
 
 /**
  * Options for Frequency Analysis.

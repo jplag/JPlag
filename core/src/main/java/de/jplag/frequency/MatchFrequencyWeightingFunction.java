@@ -1,4 +1,4 @@
-package de.jplag.highlightextraction;
+package de.jplag.frequency;
 
 /**
  * This class contains the possible weighting functions for a match, in the frequency analysis.

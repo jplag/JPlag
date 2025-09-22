@@ -1,4 +1,4 @@
-package de.jplag.highlightextraction;
+package de.jplag.frequency;
 
 import java.util.List;
 

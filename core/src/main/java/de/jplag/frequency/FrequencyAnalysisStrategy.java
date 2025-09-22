@@ -1,4 +1,4 @@
-package de.jplag.highlightextraction;
+package de.jplag.frequency;
 
 /**
  * Enum representing the different strategies for frequency similarity calculation.

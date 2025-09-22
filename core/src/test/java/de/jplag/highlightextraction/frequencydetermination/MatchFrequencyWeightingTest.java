@@ -22,14 +22,14 @@ import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
-import de.jplag.highlightextraction.CompleteMatchesStrategy;
-import de.jplag.highlightextraction.ContainedMatchesStrategy;
-import de.jplag.highlightextraction.FrequencyStrategy;
-import de.jplag.highlightextraction.FrequencyUtil;
-import de.jplag.highlightextraction.MatchFrequency;
-import de.jplag.highlightextraction.MatchWeightCalculator;
-import de.jplag.highlightextraction.SubMatchesStrategy;
-import de.jplag.highlightextraction.WindowOfMatchesStrategy;
+import de.jplag.frequency.CompleteMatchesStrategy;
+import de.jplag.frequency.ContainedMatchesStrategy;
+import de.jplag.frequency.FrequencyStrategy;
+import de.jplag.frequency.FrequencyUtil;
+import de.jplag.frequency.MatchFrequency;
+import de.jplag.frequency.MatchWeightCalculator;
+import de.jplag.frequency.SubMatchesStrategy;
+import de.jplag.frequency.WindowOfMatchesStrategy;
 import de.jplag.options.JPlagOptions;
 
 /**
