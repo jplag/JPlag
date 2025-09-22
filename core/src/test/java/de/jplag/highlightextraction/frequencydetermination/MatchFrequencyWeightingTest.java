@@ -26,7 +26,7 @@ import de.jplag.frequency.CompleteMatchesStrategy;
 import de.jplag.frequency.ContainedMatchesStrategy;
 import de.jplag.frequency.FrequencyStrategy;
 import de.jplag.frequency.FrequencyUtil;
-import de.jplag.frequency.MatchWeightCalculator;
+import de.jplag.frequency.MatchFrequencyEvaluator;
 import de.jplag.frequency.SubMatchesStrategy;
 import de.jplag.frequency.WindowOfMatchesStrategy;
 import de.jplag.options.JPlagOptions;
@@ -110,8 +110,8 @@ class MatchFrequencyWeightingTest extends TestBase {
         assertEquals(1.0, weight, 0.01, "only one Match added");
 
         COMPLETE_MATCHES_STRATEGY.processMatchTokenTypes(matchToken, this::addSequenceKey, this::addSequence, 0);
-        MatchWeightCalculator weighting = new MatchWeightCalculator(COMPLETE_MATCHES_STRATEGY, frequencyMap);
-        Map<List<TokenType>, Double> matchFrequency = weighting.weightAllMatches(List.of(testMatch), submissionToken);
+        MatchFrequencyEvaluator weighting = new MatchFrequencyEvaluator(COMPLETE_MATCHES_STRATEGY, frequencyMap);
+        Map<List<TokenType>, Double> matchFrequency = weighting.computeMatchFrequencies(List.of(testMatch), submissionToken);
         List<TokenType> testSubmissionTokenTypes = testSubmission.getTokenList().stream().map(Token::getType).toList();
         double matchFrequencyCalculated = matchFrequency.get(FrequencyUtil.matchesToMatchTokenTypes(testMatch, testSubmissionTokenTypes));
         assertEquals(0.0, matchFrequencyCalculated, 0.01, "only one Match added twice");
@@ -138,9 +138,9 @@ class MatchFrequencyWeightingTest extends TestBase {
         }
         CONTAINED_MATCHES_STRATEGY.processMatchTokenTypes(matchToken, this::addSequenceKey, this::addSequence, 100);
         CONTAINED_MATCHES_STRATEGY.processMatchTokenTypes(matchContainedToken, this::addSequenceKey, this::addSequence, 100);
-        MatchWeightCalculator weighting = new MatchWeightCalculator(CONTAINED_MATCHES_STRATEGY, frequencyMap);
-        weighting.weightAllMatches(List.of(testMatch, matchContained), submissionToken);
-        Map<List<TokenType>, Double> matchFrequency = weighting.weightAllMatches(List.of(testMatch), submissionToken);
+        MatchFrequencyEvaluator weighting = new MatchFrequencyEvaluator(CONTAINED_MATCHES_STRATEGY, frequencyMap);
+        weighting.computeMatchFrequencies(List.of(testMatch, matchContained), submissionToken);
+        Map<List<TokenType>, Double> matchFrequency = weighting.computeMatchFrequencies(List.of(testMatch), submissionToken);
         List<TokenType> testSubmissionTokenTypes = testSubmission.getTokenList().stream().map(Token::getType).toList();
         double matchFrequencyCalculated = matchFrequency.get(FrequencyUtil.matchesToMatchTokenTypes(testMatch, testSubmissionTokenTypes));
         double matchFrequencyCalculated1 = matchFrequency.get(FrequencyUtil.matchesToMatchTokenTypes(matchContained, testSubmissionTokenTypes));
@@ -169,9 +169,9 @@ class MatchFrequencyWeightingTest extends TestBase {
         }
         SUB_MATCHES_STRATEGY.processMatchTokenTypes(matchToken, this::addSequenceKey, this::addSequence, 100);
         SUB_MATCHES_STRATEGY.processMatchTokenTypes(matchContainedToken, this::addSequenceKey, this::addSequence, 100);
-        MatchWeightCalculator weighting = new MatchWeightCalculator(SUB_MATCHES_STRATEGY, frequencyMap);
-        weighting.weightAllMatches(List.of(testMatch, matchContained), submissionToken);
-        Map<List<TokenType>, Double> matchFrequency = weighting.weightAllMatches(List.of(testMatch), submissionToken);
+        MatchFrequencyEvaluator weighting = new MatchFrequencyEvaluator(SUB_MATCHES_STRATEGY, frequencyMap);
+        weighting.computeMatchFrequencies(List.of(testMatch, matchContained), submissionToken);
+        Map<List<TokenType>, Double> matchFrequency = weighting.computeMatchFrequencies(List.of(testMatch), submissionToken);
         List<TokenType> testSubmissionTokenTypes = testSubmission.getTokenList().stream().map(Token::getType).toList();
         double matchFrequencyCalculated = matchFrequency.get(FrequencyUtil.matchesToMatchTokenTypes(testMatch, testSubmissionTokenTypes));
         double matchFrequencyCalculated1 = matchFrequency.get(FrequencyUtil.matchesToMatchTokenTypes(matchContained, testSubmissionTokenTypes));
@@ -200,9 +200,9 @@ class MatchFrequencyWeightingTest extends TestBase {
         }
         WINDOW_OF_MATCHES_STRATEGY.processMatchTokenTypes(matchToken, this::addSequenceKey, this::addSequence, 100);
         WINDOW_OF_MATCHES_STRATEGY.processMatchTokenTypes(matchContainedToken, this::addSequenceKey, this::addSequence, 100);
-        MatchWeightCalculator weighting = new MatchWeightCalculator(WINDOW_OF_MATCHES_STRATEGY, frequencyMap);
-        weighting.weightAllMatches(List.of(testMatch, matchContained), submissionToken);
-        Map<List<TokenType>, Double> matchFrequency = weighting.weightAllMatches(List.of(testMatch), submissionToken);
+        MatchFrequencyEvaluator weighting = new MatchFrequencyEvaluator(WINDOW_OF_MATCHES_STRATEGY, frequencyMap);
+        weighting.computeMatchFrequencies(List.of(testMatch, matchContained), submissionToken);
+        Map<List<TokenType>, Double> matchFrequency = weighting.computeMatchFrequencies(List.of(testMatch), submissionToken);
         List<TokenType> testSubmissionTokenTypes = testSubmission.getTokenList().stream().map(Token::getType).toList();
         double matchFrequencyCalculated = matchFrequency.get(FrequencyUtil.matchesToMatchTokenTypes(testMatch, testSubmissionTokenTypes));
         double matchFrequencyCalculated1 = matchFrequency.get(FrequencyUtil.matchesToMatchTokenTypes(matchContained, testSubmissionTokenTypes));

@@ -25,19 +25,19 @@ public final class FrequencyAnalysis {
      */
     public static JPlagResult applyFrequencyWeighting(JPlagResult result, FrequencyAnalysisOptions options, int minimumTokenMatch) {
 
-        // Count token sequence frequency:
+        // Compute absolute token sequence frequency:
         FrequencyDetermination frequencyDetermination = new FrequencyDetermination(options.frequencyStrategy().getStrategy(),
                 Math.max(options.frequencyStrategyMinValue(), minimumTokenMatch));
         Map<List<TokenType>, Integer> tokenSequenceFrequencies = frequencyDetermination.buildFrequencyMap(result.getAllComparisons());
 
-        // Calculate match frequency:
-        MatchWeightCalculator matchWeighting = new MatchWeightCalculator(options.frequencyStrategy().getStrategy(), tokenSequenceFrequencies);
-        Map<List<TokenType>, Double> matchFrequencies = matchWeighting.weightAllComparisons(result.getAllComparisons());
+        // Compute absolute match sequence frequency:
+        MatchFrequencyEvaluator frequencyEvaluator = new MatchFrequencyEvaluator(options.frequencyStrategy().getStrategy(), tokenSequenceFrequencies);
+        Map<List<TokenType>, Double> matchFrequencies = frequencyEvaluator.computeMatchFrequencies(result.getAllComparisons());
 
         // Weigh matches based on frequency:
-        MatchFrequencyWeighting similarity = new MatchFrequencyWeighting(result.getAllComparisons(), options.weightingStrategy(), matchFrequencies);
+        MatchFrequencyWeighting weighting = new MatchFrequencyWeighting(result.getAllComparisons(), options.weightingStrategy(), matchFrequencies);
         List<JPlagComparison> convertedComparisons = result.getAllComparisons().stream()
-                .map(comparison -> similarity.weightedComparisonSimilarity(comparison, options.weightingFactor())).toList();
+                .map(comparison -> weighting.weightedComparisonSimilarity(comparison, options.weightingFactor())).toList();
         return new JPlagResult(convertedComparisons, result.getSubmissions(), result.getDuration(), result.getOptions());
     }
 
