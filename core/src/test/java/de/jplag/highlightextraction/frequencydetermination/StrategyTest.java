@@ -178,8 +178,7 @@ class StrategyTest extends TestBase {
         int strategyNumber = 9;
         FrequencyStrategy strategy = new CompleteMatchesStrategy();
         FrequencyDetermination frequencyDetermination = new FrequencyDetermination(strategy, strategyNumber);
-        frequencyDetermination.buildFrequencyMap(TEST_COMPARISONS);
-        Map<List<TokenType>, Integer> tokenFrequencyMap = frequencyDetermination.getMatchFrequencyMap();
+        Map<List<TokenType>, Integer> tokenFrequencyMap = frequencyDetermination.buildFrequencyMap(TEST_COMPARISONS);
         STRATEGY_INTEGRATION_TEST.printTestResult(tokenFrequencyMap);
 
         assertTokenFrequencyAndContainsMatch(matchAppearsOnce, 1, tokenFrequencyMap);
@@ -322,8 +321,7 @@ class StrategyTest extends TestBase {
         int strategyNumber = 100;
         FrequencyStrategy strategy = new ContainedMatchesStrategy();
         FrequencyDetermination frequencyDetermination = new FrequencyDetermination(strategy, strategyNumber);
-        frequencyDetermination.buildFrequencyMap(TEST_COMPARISONS);
-        Map<List<TokenType>, Integer> matchFrequencyMap = frequencyDetermination.getMatchFrequencyMap();
+        Map<List<TokenType>, Integer> matchFrequencyMap = frequencyDetermination.buildFrequencyMap(TEST_COMPARISONS);
         Map<List<TokenType>, Integer> frequencyCount = new HashMap<>();
         for (JPlagComparison comparison : TEST_COMPARISONS) {
             for (Match match : comparison.matches()) {

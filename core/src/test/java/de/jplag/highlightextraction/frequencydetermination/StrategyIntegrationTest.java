@@ -63,8 +63,8 @@ class StrategyIntegrationTest extends TestBase {
     void testFrequencyAnalysisStrategiesCompleteMatches() {
         FrequencyStrategy strategy = new CompleteMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 1);
-        fd.buildFrequencyMap(result.getAllComparisons());
-        Map<List<TokenType>, Integer> tokenFrequencyMap = fd.getMatchFrequencyMap();
+
+        Map<List<TokenType>, Integer> tokenFrequencyMap = fd.buildFrequencyMap(result.getAllComparisons());
         assertFalse(tokenFrequencyMap.isEmpty(), "Map should not be empty");
         printTestResult(tokenFrequencyMap);
     }
@@ -77,8 +77,7 @@ class StrategyIntegrationTest extends TestBase {
     void testFrequencyAnalysisStrategiesContainedMatches() {
         FrequencyStrategy strategy = new ContainedMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 300);
-        fd.buildFrequencyMap(result.getAllComparisons());
-        Map<List<TokenType>, Integer> tokenFrequencyMap = fd.getMatchFrequencyMap();
+        Map<List<TokenType>, Integer> tokenFrequencyMap = fd.buildFrequencyMap(result.getAllComparisons());
         assertFalse(tokenFrequencyMap.isEmpty(), "Map should not be empty");
         printTestResult(tokenFrequencyMap);
     }
@@ -91,8 +90,7 @@ class StrategyIntegrationTest extends TestBase {
     void testFrequencyAnalysisStrategiesSubMatches() {
         FrequencyStrategy strategy = new SubMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 300);
-        fd.buildFrequencyMap(result.getAllComparisons());
-        Map<List<TokenType>, Integer> tokenFrequencyMap = fd.getMatchFrequencyMap();
+        Map<List<TokenType>, Integer> tokenFrequencyMap = fd.buildFrequencyMap(result.getAllComparisons());
         assertFalse(tokenFrequencyMap.isEmpty(), "Map should not be empty");
         printTestResult(tokenFrequencyMap);
     }
@@ -105,8 +103,7 @@ class StrategyIntegrationTest extends TestBase {
     void testFrequencyAnalysisStrategiesWindowOfMatches() {
         FrequencyStrategy strategy = new WindowOfMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 300);
-        fd.buildFrequencyMap(result.getAllComparisons());
-        Map<List<TokenType>, Integer> tokenFrequencyMap = fd.getMatchFrequencyMap();
+        Map<List<TokenType>, Integer> tokenFrequencyMap = fd.buildFrequencyMap(result.getAllComparisons());
         assertFalse(tokenFrequencyMap.isEmpty(), "Map should not be empty");
         printTestResult(tokenFrequencyMap);
     }
