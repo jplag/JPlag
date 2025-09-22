@@ -1,6 +1,7 @@
 package de.jplag.frequency;
 
 import java.util.List;
+import java.util.Map;
 
 import de.jplag.JPlagComparison;
 import de.jplag.Match;
@@ -20,7 +21,7 @@ public class MatchFrequencyWeighting {
      * Chosen weighting function.
      */
     private final MatchWeightingFunction strategy;
-    private final MatchFrequency matchFrequency;
+    private final Map<List<TokenType>, Double> tokenSequenceFrequencies;
     private static final double MINIMUM_PROPORTIONAL_WEIGHT = 0.01;
     private static final double MINIMUM_WEIGHT = 1.0;
     private static final double MAXIMUM_WEIGHT = 2.0;
@@ -31,12 +32,13 @@ public class MatchFrequencyWeighting {
      * Constructor defines comparisons and strategy for the similarity calculation.
      * @param comparisons considered comparisons to calculate the similarity score for
      * @param strategy chosen weighting function
-     * @param matchFrequency the matchFrequency containing the map that maps a match to its frequency
+     * @param tokenSequenceFrequencies the matchFrequency containing the map that maps a match to its frequency
      */
-    public MatchFrequencyWeighting(List<JPlagComparison> comparisons, MatchWeightingFunction strategy, MatchFrequency matchFrequency) {
+    public MatchFrequencyWeighting(List<JPlagComparison> comparisons, MatchWeightingFunction strategy,
+            Map<List<TokenType>, Double> tokenSequenceFrequencies) {
         this.comparisons = comparisons;
         this.strategy = strategy;
-        this.matchFrequency = matchFrequency;
+        this.tokenSequenceFrequencies = tokenSequenceFrequencies;
     }
 
     /**
@@ -54,7 +56,7 @@ public class MatchFrequencyWeighting {
     private double getFrequencyFromMap(JPlagComparison comparison, Match match) {
         List<TokenType> submissionTokenTypes = comparison.firstSubmission().getTokenList().stream().map(Token::getType).toList();
         List<TokenType> matchTokens = FrequencyUtil.matchesToMatchTokenTypes(match, submissionTokenTypes);
-        return matchFrequency.matchFrequencyMap().getOrDefault(matchTokens, DEFAULT_MINIMUM_FREQUENCY);
+        return tokenSequenceFrequencies.getOrDefault(matchTokens, DEFAULT_MINIMUM_FREQUENCY);
     }
 
     /**
@@ -137,10 +139,10 @@ public class MatchFrequencyWeighting {
      * @return this frequency
      */
     private double getMaximumFoundFrequency(double maximumFoundFrequency) {
-        if (matchFrequency.matchFrequencyMap().isEmpty()) {
+        if (tokenSequenceFrequencies.isEmpty()) {
             maximumFoundFrequency = DEFAULT_MAXIMUM_FREQUENCY;
         } else {
-            for (double frequency : matchFrequency.matchFrequencyMap().values()) {
+            for (double frequency : tokenSequenceFrequencies.values()) {
                 if (frequency > maximumFoundFrequency) {
                     maximumFoundFrequency = frequency;
                 }

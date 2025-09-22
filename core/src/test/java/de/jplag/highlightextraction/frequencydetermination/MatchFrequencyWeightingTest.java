@@ -26,7 +26,6 @@ import de.jplag.frequency.CompleteMatchesStrategy;
 import de.jplag.frequency.ContainedMatchesStrategy;
 import de.jplag.frequency.FrequencyStrategy;
 import de.jplag.frequency.FrequencyUtil;
-import de.jplag.frequency.MatchFrequency;
 import de.jplag.frequency.MatchWeightCalculator;
 import de.jplag.frequency.SubMatchesStrategy;
 import de.jplag.frequency.WindowOfMatchesStrategy;
@@ -112,10 +111,9 @@ class MatchFrequencyWeightingTest extends TestBase {
 
         COMPLETE_MATCHES_STRATEGY.processMatchTokenTypes(matchToken, this::addSequenceKey, this::addSequence, 0);
         MatchWeightCalculator weighting = new MatchWeightCalculator(COMPLETE_MATCHES_STRATEGY, frequencyMap);
-        MatchFrequency matchFrequency = weighting.weightAllMatches(List.of(testMatch), submissionToken);
+        Map<List<TokenType>, Double> matchFrequency = weighting.weightAllMatches(List.of(testMatch), submissionToken);
         List<TokenType> testSubmissionTokenTypes = testSubmission.getTokenList().stream().map(Token::getType).toList();
-        double matchFrequencyCalculated = matchFrequency.matchFrequencyMap()
-                .get(FrequencyUtil.matchesToMatchTokenTypes(testMatch, testSubmissionTokenTypes));
+        double matchFrequencyCalculated = matchFrequency.get(FrequencyUtil.matchesToMatchTokenTypes(testMatch, testSubmissionTokenTypes));
         assertEquals(0.0, matchFrequencyCalculated, 0.01, "only one Match added twice");
     }
 
@@ -142,12 +140,10 @@ class MatchFrequencyWeightingTest extends TestBase {
         CONTAINED_MATCHES_STRATEGY.processMatchTokenTypes(matchContainedToken, this::addSequenceKey, this::addSequence, 100);
         MatchWeightCalculator weighting = new MatchWeightCalculator(CONTAINED_MATCHES_STRATEGY, frequencyMap);
         weighting.weightAllMatches(List.of(testMatch, matchContained), submissionToken);
-        MatchFrequency matchFrequency = weighting.weightAllMatches(List.of(testMatch), submissionToken);
+        Map<List<TokenType>, Double> matchFrequency = weighting.weightAllMatches(List.of(testMatch), submissionToken);
         List<TokenType> testSubmissionTokenTypes = testSubmission.getTokenList().stream().map(Token::getType).toList();
-        double matchFrequencyCalculated = matchFrequency.matchFrequencyMap()
-                .get(FrequencyUtil.matchesToMatchTokenTypes(testMatch, testSubmissionTokenTypes));
-        double matchFrequencyCalculated1 = matchFrequency.matchFrequencyMap()
-                .get(FrequencyUtil.matchesToMatchTokenTypes(matchContained, testSubmissionTokenTypes));
+        double matchFrequencyCalculated = matchFrequency.get(FrequencyUtil.matchesToMatchTokenTypes(testMatch, testSubmissionTokenTypes));
+        double matchFrequencyCalculated1 = matchFrequency.get(FrequencyUtil.matchesToMatchTokenTypes(matchContained, testSubmissionTokenTypes));
         assertEquals(1.0, matchFrequencyCalculated, 0.01, "weight for 2 considered subsequences");
         assertEquals(0.0, matchFrequencyCalculated1, 0.01, "once found");
     }
@@ -175,12 +171,10 @@ class MatchFrequencyWeightingTest extends TestBase {
         SUB_MATCHES_STRATEGY.processMatchTokenTypes(matchContainedToken, this::addSequenceKey, this::addSequence, 100);
         MatchWeightCalculator weighting = new MatchWeightCalculator(SUB_MATCHES_STRATEGY, frequencyMap);
         weighting.weightAllMatches(List.of(testMatch, matchContained), submissionToken);
-        MatchFrequency matchFrequency = weighting.weightAllMatches(List.of(testMatch), submissionToken);
+        Map<List<TokenType>, Double> matchFrequency = weighting.weightAllMatches(List.of(testMatch), submissionToken);
         List<TokenType> testSubmissionTokenTypes = testSubmission.getTokenList().stream().map(Token::getType).toList();
-        double matchFrequencyCalculated = matchFrequency.matchFrequencyMap()
-                .get(FrequencyUtil.matchesToMatchTokenTypes(testMatch, testSubmissionTokenTypes));
-        double matchFrequencyCalculated1 = matchFrequency.matchFrequencyMap()
-                .get(FrequencyUtil.matchesToMatchTokenTypes(matchContained, testSubmissionTokenTypes));
+        double matchFrequencyCalculated = matchFrequency.get(FrequencyUtil.matchesToMatchTokenTypes(testMatch, testSubmissionTokenTypes));
+        double matchFrequencyCalculated1 = matchFrequency.get(FrequencyUtil.matchesToMatchTokenTypes(matchContained, testSubmissionTokenTypes));
         assertEquals(2.0, matchFrequencyCalculated, 0.01, "considered subsequences");
         assertEquals(2.0, matchFrequencyCalculated1, 0.01, "considered subsequences");
     }
@@ -208,12 +202,10 @@ class MatchFrequencyWeightingTest extends TestBase {
         WINDOW_OF_MATCHES_STRATEGY.processMatchTokenTypes(matchContainedToken, this::addSequenceKey, this::addSequence, 100);
         MatchWeightCalculator weighting = new MatchWeightCalculator(WINDOW_OF_MATCHES_STRATEGY, frequencyMap);
         weighting.weightAllMatches(List.of(testMatch, matchContained), submissionToken);
-        MatchFrequency matchFrequency = weighting.weightAllMatches(List.of(testMatch), submissionToken);
+        Map<List<TokenType>, Double> matchFrequency = weighting.weightAllMatches(List.of(testMatch), submissionToken);
         List<TokenType> testSubmissionTokenTypes = testSubmission.getTokenList().stream().map(Token::getType).toList();
-        double matchFrequencyCalculated = matchFrequency.matchFrequencyMap()
-                .get(FrequencyUtil.matchesToMatchTokenTypes(testMatch, testSubmissionTokenTypes));
-        double matchFrequencyCalculated1 = matchFrequency.matchFrequencyMap()
-                .get(FrequencyUtil.matchesToMatchTokenTypes(matchContained, testSubmissionTokenTypes));
+        double matchFrequencyCalculated = matchFrequency.get(FrequencyUtil.matchesToMatchTokenTypes(testMatch, testSubmissionTokenTypes));
+        double matchFrequencyCalculated1 = matchFrequency.get(FrequencyUtil.matchesToMatchTokenTypes(matchContained, testSubmissionTokenTypes));
         assertEquals(2.0, matchFrequencyCalculated, 0.01, "considered subsequences");
         assertEquals(2.0, matchFrequencyCalculated1, 0.01, "considered subsequences");
     }

@@ -34,7 +34,7 @@ public class FrequencyDetermination {
      * @param comparisons contains information of matches between two submissions.
      * @throws IllegalArgumentException if match indices are out of range.
      */
-    public void buildFrequencyMap(List<JPlagComparison> comparisons) {
+    public Map<List<TokenType>, Integer> buildFrequencyMap(List<JPlagComparison> comparisons) {
         for (JPlagComparison comparison : comparisons) {
             Submission leftSubmission = comparison.firstSubmission();
             List<Token> submissionTokens = leftSubmission.getTokenList();
@@ -45,6 +45,7 @@ public class FrequencyDetermination {
                 frequencyStrategy.processMatchTokenTypes(matchTokenTypes, this::addSequenceKey, this::addSequence, strategyNumber);
             }
         }
+        return matchFrequencyMap;
     }
 
     /**
@@ -53,13 +54,6 @@ public class FrequencyDetermination {
      */
     private void addSequenceKey(List<TokenType> sequence) {
         matchFrequencyMap.putIfAbsent(sequence, 0);
-    }
-
-    /**
-     * @return Map containing (sub-)matches and their frequency according to the strategy.
-     */
-    public Map<List<TokenType>, Integer> getMatchFrequencyMap() {
-        return matchFrequencyMap;
     }
 
     /**

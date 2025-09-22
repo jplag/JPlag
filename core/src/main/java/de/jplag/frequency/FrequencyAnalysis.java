@@ -1,9 +1,11 @@
 package de.jplag.frequency;
 
 import java.util.List;
+import java.util.Map;
 
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
+import de.jplag.TokenType;
 
 /**
  * Contains the logic of the frequency based weighting of the Matches in all Comparisons, influencing the similarity
@@ -23,15 +25,17 @@ public final class FrequencyAnalysis {
      */
     public static JPlagResult applyFrequencyWeighting(JPlagResult result, FrequencyAnalysisOptions options, int minimumTokenMatch) {
 
+        // Count token sequence frequency:
         FrequencyDetermination frequencyDetermination = new FrequencyDetermination(options.frequencyStrategy().getStrategy(),
                 Math.max(options.frequencyStrategyMinValue(), minimumTokenMatch));
-        frequencyDetermination.buildFrequencyMap(result.getAllComparisons());
-        MatchWeightCalculator matchWeighting = new MatchWeightCalculator(options.frequencyStrategy().getStrategy(),
-                frequencyDetermination.getMatchFrequencyMap());
-        MatchFrequency matchFrequency = matchWeighting.weightAllComparisons(result.getAllComparisons());
-        MatchFrequencyWeighting similarity = new MatchFrequencyWeighting(result.getAllComparisons(), options.weightingStrategy(), matchFrequency);
+        Map<List<TokenType>, Integer> tokenSequenceFrequencies = frequencyDetermination.buildFrequencyMap(result.getAllComparisons());
+
+        // Calculate match frequency:
+        MatchWeightCalculator matchWeighting = new MatchWeightCalculator(options.frequencyStrategy().getStrategy(), tokenSequenceFrequencies);
+        Map<List<TokenType>, Double> matchFrequencies = matchWeighting.weightAllComparisons(result.getAllComparisons());
 
         // Weigh matches based on frequency:
+        MatchFrequencyWeighting similarity = new MatchFrequencyWeighting(result.getAllComparisons(), options.weightingStrategy(), matchFrequencies);
         List<JPlagComparison> convertedComparisons = result.getAllComparisons().stream()
                 .map(comparison -> similarity.weightedComparisonSimilarity(comparison, options.weightingFactor())).toList();
         return new JPlagResult(convertedComparisons, result.getSubmissions(), result.getDuration(), result.getOptions());

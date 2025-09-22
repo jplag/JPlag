@@ -1,5 +1,6 @@
 package de.jplag.frequency;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +15,7 @@ import de.jplag.TokenType;
 public class MatchWeightCalculator {
     private final FrequencyStrategy strategy;
     private final Map<List<TokenType>, Integer> frequencyMap;
-    private final MatchFrequency matchFrequency;
+    private final Map<List<TokenType>, Double> matchFrequency;
 
     /**
      * Constructor defining the used frequency strategy and frequency map.
@@ -24,7 +25,7 @@ public class MatchWeightCalculator {
     public MatchWeightCalculator(FrequencyStrategy strategy, Map<List<TokenType>, Integer> frequencyMap) {
         this.strategy = strategy;
         this.frequencyMap = frequencyMap;
-        this.matchFrequency = new MatchFrequency();
+        this.matchFrequency = new HashMap<>();
     }
 
     /**
@@ -32,9 +33,9 @@ public class MatchWeightCalculator {
      * @param match the match to determine the frequency for
      * @param matchToken token sequence of the match
      */
-    public void weightMatch(Match match, List<TokenType> matchToken) {
+    private void weightMatch(Match match, List<TokenType> matchToken) {
         double matchWeight = strategy.calculateMatchFrequency(match, frequencyMap, matchToken);
-        matchFrequency.matchFrequencyMap().put(matchToken, matchWeight);
+        matchFrequency.put(matchToken, matchWeight);
     }
 
     /**
@@ -43,7 +44,7 @@ public class MatchWeightCalculator {
      * @param firstSubmissionToken token sequence of the comparison
      * @return the frequency of the match
      */
-    public MatchFrequency weightAllMatches(List<Match> matches, List<TokenType> firstSubmissionToken) {
+    public Map<List<TokenType>, Double> weightAllMatches(List<Match> matches, List<TokenType> firstSubmissionToken) {
         for (Match match : matches) {
             List<TokenType> matchTokens = FrequencyUtil.matchesToMatchTokenTypes(match, firstSubmissionToken);
             weightMatch(match, matchTokens);
@@ -56,7 +57,7 @@ public class MatchWeightCalculator {
      * @param comparisons list of comparisons to weight
      * @return the frequency of the match
      */
-    public MatchFrequency weightAllComparisons(List<JPlagComparison> comparisons) {
+    public Map<List<TokenType>, Double> weightAllComparisons(List<JPlagComparison> comparisons) {
         for (JPlagComparison comparison : comparisons) {
             List<Token> firstSubmissionToken = comparison.firstSubmission().getTokenList();
             List<TokenType> firstSubmissionTokenTypes = firstSubmissionToken.stream().map(Token::getType).toList();
