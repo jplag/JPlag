@@ -100,7 +100,7 @@ public class JPlag {
         }
 
         if (options.frequencyAnalysisOptions().enabled()) {
-            FrequencyAnalysis.applyFrequencyWeighting(result, options.frequencyAnalysisOptions(), options.minimumTokenMatch());
+            result = FrequencyAnalysis.applyFrequencyWeighting(result, options.frequencyAnalysisOptions(), options.minimumTokenMatch());
         }
 
         if (logger.isInfoEnabled()) {
