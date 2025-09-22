@@ -59,7 +59,7 @@ class StrategyIntegrationTest extends TestBase {
      * Tests frequency determination using the CompleteMatchesStrategy.
      */
     @Test
-    @DisplayName("Test token frequency completeMatches")
+    @DisplayName("Test match frequency completeMatches strategy")
     void testFrequencyAnalysisStrategiesCompleteMatches() {
         FrequencyStrategy strategy = new CompleteMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 1);
@@ -73,7 +73,7 @@ class StrategyIntegrationTest extends TestBase {
      * Tests frequency determination using the ContainedMatchesStrategy.
      */
     @Test
-    @DisplayName("Test token frequency with containedMatches")
+    @DisplayName("Test match frequency with containedMatches strategy")
     void testFrequencyAnalysisStrategiesContainedMatches() {
         FrequencyStrategy strategy = new ContainedMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 300);
@@ -87,7 +87,7 @@ class StrategyIntegrationTest extends TestBase {
      * Tests frequency determination using the SubMatchesStrategy.
      */
     @Test
-    @DisplayName("Test token frequency with subMatches")
+    @DisplayName("Test match frequency with subMatches strategy")
     void testFrequencyAnalysisStrategiesSubMatches() {
         FrequencyStrategy strategy = new SubMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 300);
@@ -101,7 +101,7 @@ class StrategyIntegrationTest extends TestBase {
      * Tests frequency determination using the WindowOfMatchesStrategy.
      */
     @Test
-    @DisplayName("Test token frequency with windows of Matches")
+    @DisplayName("Test match frequency with windows of Matches strategy")
     void testFrequencyAnalysisStrategiesWindowOfMatches() {
         FrequencyStrategy strategy = new WindowOfMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 300);
