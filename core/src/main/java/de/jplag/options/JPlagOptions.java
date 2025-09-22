@@ -16,8 +16,7 @@ import de.jplag.JPlag;
 import de.jplag.Language;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.exceptions.BasecodeException;
-import de.jplag.frequency.FrequencyAnalysisStrategy;
-import de.jplag.frequency.MatchFrequencyWeightingFunction;
+import de.jplag.frequency.FrequencyAnalysisOptions;
 import de.jplag.merging.MergingOptions;
 import de.jplag.reporting.jsonfactory.serializer.FileSerializer;
 import de.jplag.reporting.jsonfactory.serializer.LanguageSerializer;
@@ -63,8 +62,7 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
         @JsonSerialize(using = FileSerializer.class) File baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes,
         String exclusionFileName, SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons,
         ClusteringOptions clusteringOptions, boolean debugParser, MergingOptions mergingOptions, boolean normalize, boolean analyzeComments,
-        FrequencyAnalysisStrategy frequencyAnalysisStrategy, int frequencyStrategyMinValue, MatchFrequencyWeightingFunction weightingStrategy,
-        double weightingFactor) implements JPlagOptionsBuilder.With {
+        FrequencyAnalysisOptions frequencyAnalysisOptions) implements JPlagOptionsBuilder.With {
 
     /** Default value for the similarity threshold. **/
     public static final double DEFAULT_SIMILARITY_THRESHOLD = 0;
@@ -98,7 +96,7 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
     public JPlagOptions(Language language, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories) {
         this(language, null, submissionDirectories, oldSubmissionDirectories, null, null, null, null, DEFAULT_SIMILARITY_METRIC,
                 DEFAULT_SIMILARITY_THRESHOLD, DEFAULT_SHOWN_COMPARISONS, new ClusteringOptions(), false, new MergingOptions(), false, false,
-                FrequencyAnalysisStrategy.COMPLETE_MATCHES, 1, MatchFrequencyWeightingFunction.SIGMOID, 0.25);
+                new FrequencyAnalysisOptions());
     }
 
     /**
@@ -128,8 +126,7 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
             File baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
             SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
             boolean debugParser, MergingOptions mergingOptions, boolean normalize, boolean analyzeComments,
-            FrequencyAnalysisStrategy frequencyAnalysisStrategy, int frequencyStrategyMinValue, MatchFrequencyWeightingFunction weightingStrategy,
-            double weightingFactor) {
+            FrequencyAnalysisOptions frequencyAnalysisOptions) {
         this.language = language;
         this.debugParser = debugParser;
         this.fileSuffixes = fileSuffixes == null || fileSuffixes.isEmpty() ? null : Collections.unmodifiableList(fileSuffixes);
@@ -146,10 +143,7 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
         this.mergingOptions = mergingOptions;
         this.normalize = normalize;
         this.analyzeComments = analyzeComments;
-        this.frequencyAnalysisStrategy = frequencyAnalysisStrategy;
-        this.frequencyStrategyMinValue = frequencyStrategyMinValue;
-        this.weightingStrategy = weightingStrategy;
-        this.weightingFactor = weightingFactor;
+        this.frequencyAnalysisOptions = frequencyAnalysisOptions;
     }
 
     /**
@@ -252,12 +246,11 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
     public JPlagOptions(Language language, Integer minimumTokenMatch, File submissionDirectory, Set<File> oldSubmissionDirectories,
             String baseCodeSubmissionName, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
             SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
-            boolean debugParser, MergingOptions mergingOptions, FrequencyAnalysisStrategy frequencyAnalysisStrategy, int frequencyStrategyMinValue,
-            MatchFrequencyWeightingFunction weightingStrategy, double weightingFactor) throws BasecodeException {
+            boolean debugParser, MergingOptions mergingOptions) throws BasecodeException {
         this(language, minimumTokenMatch, Set.of(submissionDirectory), oldSubmissionDirectories,
                 convertLegacyBaseCodeToFile(baseCodeSubmissionName, submissionDirectory), subdirectoryName, fileSuffixes, exclusionFileName,
                 similarityMetric, similarityThreshold, maximumNumberOfComparisons, clusteringOptions, debugParser, mergingOptions, false, false,
-                frequencyAnalysisStrategy, frequencyStrategyMinValue, weightingStrategy, weightingFactor);
+                new FrequencyAnalysisOptions());
     }
 
     /**
@@ -280,8 +273,7 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
         try {
             return new JPlagOptions(language, minimumTokenMatch, submissionDirectory, oldSubmissionDirectories, baseCodeSubmissionName,
                     subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                    clusteringOptions, debugParser, mergingOptions, frequencyAnalysisStrategy, frequencyStrategyMinValue, weightingStrategy,
-                    weightingFactor);
+                    clusteringOptions, debugParser, mergingOptions);
         } catch (BasecodeException e) {
             throw new IllegalArgumentException(e.getMessage(), e.getCause());
         }

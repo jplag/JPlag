@@ -184,6 +184,13 @@ public class CliOptions implements Runnable {
     /** Highlight extraction options. */
     public static class FrequencyAnalysis {
 
+        /**
+         * Enables frequency analysis to weigh matched code fragments according to their overall rarity.
+         */
+        @Option(names = {
+                "--include-frequency"}, description = "Enables frequency analysis to weigh matched code fragments according to their overall rarity.")
+        public boolean enabled = FrequencyAnalysisOptions.DEFAULT_ENABLED;
+
         /** Frequency Determination strategy. */
         @Option(names = {
                 "--frequency-strategy"}, description = "Strategy for frequency Analysis, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE}).")

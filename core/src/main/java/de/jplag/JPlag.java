@@ -99,13 +99,14 @@ public class JPlag {
             result = new MatchMerging(options).mergeMatchesOf(result);
         }
 
-        FrequencyMatchWeighter matchWeighter = new FrequencyMatchWeighter();
-        List<JPlagComparison> frequencyWeightedComparisons = matchWeighter.useMatchFrequencyToInfluenceSimilarity(options, result);
+        if (options.frequencyAnalysisOptions().enabled()) {
+            FrequencyMatchWeighter.useMatchFrequencyToInfluenceSimilarity(result, options.frequencyAnalysisOptions(), options.minimumTokenMatch());
+        }
 
         if (logger.isInfoEnabled()) {
             logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getDuration()));
         }
-        result.setClusteringResult(ClusteringFactory.getClusterings(frequencyWeightedComparisons, options.clusteringOptions()));
+        result.setClusteringResult(ClusteringFactory.getClusterings(result.getAllComparisons(), options.clusteringOptions()));
 
         logSkippedSubmissions(submissionSet, options);
 

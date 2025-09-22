@@ -46,9 +46,9 @@ public class MatchFrequencyWeighting {
      * @param isFrequencyAnalysisEnabled if the frequency shall be considered
      * @return similarity of the comparison
      */
-    public JPlagComparison weightedComparisonSimilarity(JPlagComparison comparison, double weightingFactor, boolean isFrequencyAnalysisEnabled) {
+    public JPlagComparison weightedComparisonSimilarity(JPlagComparison comparison, double weightingFactor) {
         double frequencyWeightedSimilarity = frequencySimilarity(comparison, weightingFactor);
-        return new JPlagComparison(comparison, frequencyWeightedSimilarity, isFrequencyAnalysisEnabled);
+        return new JPlagComparison(comparison, frequencyWeightedSimilarity, true);
     }
 
     private double getFrequencyFromMap(JPlagComparison comparison, Match match) {
