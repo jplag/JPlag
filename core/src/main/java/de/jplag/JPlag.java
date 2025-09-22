@@ -15,7 +15,7 @@ import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.RootDirectoryException;
 import de.jplag.exceptions.SubmissionException;
-import de.jplag.frequency.FrequencyMatchWeighter;
+import de.jplag.frequency.FrequencyAnalysis;
 import de.jplag.merging.MatchMerging;
 import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.reportobject.model.Version;
@@ -100,7 +100,7 @@ public class JPlag {
         }
 
         if (options.frequencyAnalysisOptions().enabled()) {
-            FrequencyMatchWeighter.useMatchFrequencyToInfluenceSimilarity(result, options.frequencyAnalysisOptions(), options.minimumTokenMatch());
+            FrequencyAnalysis.applyFrequencyWeighting(result, options.frequencyAnalysisOptions(), options.minimumTokenMatch());
         }
 
         if (logger.isInfoEnabled()) {
