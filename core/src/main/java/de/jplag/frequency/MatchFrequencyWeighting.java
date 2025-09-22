@@ -45,7 +45,6 @@ public class MatchFrequencyWeighting {
      * Calculates the similarity score for a comparison.
      * @param comparison considered comparison to calculate the similarity score for
      * @param weightingFactor weighting factor, is factor for the (max) influence of the frequency
-     * @param isFrequencyAnalysisEnabled if the frequency shall be considered
      * @return similarity of the comparison
      */
     public JPlagComparison weightedComparisonSimilarity(JPlagComparison comparison, double weightingFactor) {

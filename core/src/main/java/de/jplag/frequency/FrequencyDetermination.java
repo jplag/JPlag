@@ -32,6 +32,7 @@ public class FrequencyDetermination {
     /**
      * Builds the frequency map by applying the strategy method on all matches found in the given list of comparisons.
      * @param comparisons contains information of matches between two submissions.
+     * @return the mapping between token sequences and number of occurrences.
      * @throws IllegalArgumentException if match indices are out of range.
      */
     public Map<List<TokenType>, Integer> buildFrequencyMap(List<JPlagComparison> comparisons) {

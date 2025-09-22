@@ -22,6 +22,7 @@ public final class FrequencyAnalysis {
      * @param result are the JPlag results to re-weigh according to frequency of matched section.
      * @param options are the frequency analysis options.
      * @param minimumTokenMatch is the minimum token match value.
+     * @return the modified result with re-weighed matches.
      */
     public static JPlagResult applyFrequencyWeighting(JPlagResult result, FrequencyAnalysisOptions options, int minimumTokenMatch) {
 

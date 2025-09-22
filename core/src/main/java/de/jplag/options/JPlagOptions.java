@@ -50,10 +50,7 @@ import io.soabase.recordbuilder.core.RecordBuilder;
  * @param mergingOptions are the options related to the subsequence match merging mechanism that opposed obfuscation.
  * @param normalize enables additional normalization mechanisms. Only supported by some language modules.
  * @param analyzeComments If true, comments will be extracted from the submissions.
- * @param frequencyAnalysisStrategy strategy for determining the frequency
- * @param frequencyStrategyMinValue min considered subsequence length in frequencyStrategies
- * @param weightingStrategy weighting function used in the frequency Analysis
- * @param weightingFactor factor how strong the considered influence of the weighting function (maximal) can be
+ * @param frequencyAnalysisOptions are the options for the frequency analysis which factors in match rarity.
  */
 @RecordBuilder()
 public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Language language, Integer minimumTokenMatch,
@@ -117,10 +114,7 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
      * @param mergingOptions Options related to subsequence merging to oppose obfuscation
      * @param normalize Enables additional normalization mechanisms (language-dependent)
      * @param analyzeComments Whether to extract comments from submissions
-     * @param frequencyAnalysisStrategy strategy for determining the frequency
-     * @param frequencyStrategyMinValue min considered subsequence length in frequencyStrategies
-     * @param weightingStrategy weighting function used in the frequency Analysis
-     * @param weightingFactor factor how strong the considered influence of the weighting function (maximal) can be
+     * @param frequencyAnalysisOptions are the options for the frequency analysis which factors in match rarity.
      */
     public JPlagOptions(Language language, Integer minimumTokenMatch, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories,
             File baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
@@ -236,10 +230,6 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
      * set to {@link #SHOW_ALL_COMPARISONS} all comparisons will be shown.
      * @param clusteringOptions Clustering options
      * @param debugParser If true, submissions that cannot be parsed will be stored in a separate directory.
-     * @param frequencyAnalysisStrategy strategy for determining the frequency
-     * @param frequencyStrategyMinValue min considered subsequence length in frequencyStrategies
-     * @param weightingStrategy weighting function used in the frequency Analysis
-     * @param weightingFactor factor how strong the considered influence of the weighting function (maximal) can be
      * @deprecated Use the default initializer with @{{@link #baseCodeSubmissionDirectory} instead.
      */
     @Deprecated(since = "4.0.0", forRemoval = true)
