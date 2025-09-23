@@ -96,7 +96,7 @@ router.onError((error) => {
 // preserve query parameters
 router.beforeEach((to, from, next) => {
   // Only add the old query if the target has none defined, this prevents an infinite redirect loop
-  if (Object.keys(to.query).length == 0 && Object.keys(from.query).length > 0) {
+  if (Object.keys(to.query).length === 0 && Object.keys(from.query).length > 0) {
     next({ ...to, query: from.query })
   } else {
     next()
