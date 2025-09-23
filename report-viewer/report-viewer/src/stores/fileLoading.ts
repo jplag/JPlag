@@ -12,11 +12,11 @@ export async function loadReport(): Promise<void> {
     reportFile = await getLocalFile('example.jplag')
     reportName = 'progpedia.jplag'
   } else if (getQueryFileUrl() !== null) {
-    const queryURL = getQueryFileUrl()!
-    const response = await fetch(new URL(queryURL))
+    const queryURL = new URL(getQueryFileUrl()!)
+    const response = await fetch(queryURL)
     reportFile = await response.blob()
 
-    const urlParts = queryURL.split('/')
+    const urlParts = queryURL.pathname.split('/')
     const lastUrlPart = urlParts[urlParts.length - 1]
     if (lastUrlPart?.endsWith('.jplag')) {
       reportName = lastUrlPart
