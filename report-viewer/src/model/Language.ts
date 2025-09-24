@@ -4,6 +4,7 @@
 enum ParserLanguage {
   JAVA = 'java',
   PYTHON = 'python3',
+  PYTHON_TREESITTER = 'python',
   C = 'c',
   CPP = 'cpp',
   C_SHARP = 'csharp',
@@ -43,4 +44,4 @@ function getLanguageParser(language: string): Language {
   return 'unknown language'
 }
 
-export { ParserLanguage, type Language, getLanguageParser }
+export { getLanguageParser, ParserLanguage, type Language }

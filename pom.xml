@@ -72,8 +72,8 @@
         <!--suppress UnresolvedMavenProperty -->
         <sonar.coverage.jacoco.xmlReportPaths>${maven.multiModuleProjectDirectory}/coverage-report/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>22</maven.compiler.source>
+        <maven.compiler.target>22</maven.compiler.target>
         <spotless.version>2.46.1</spotless.version>
         <slf4j.version>2.0.17</slf4j.version>
         <junit.version>5.13.4</junit.version>
@@ -88,6 +88,12 @@
         <mockito.version>5.18.0</mockito.version>
         <!-- ensure that this variable is initialized, even if it is empty -->
         <argLine/>
+
+        <!-- Tree-sitter Java language API-->
+        <java-tree-sitter.version>0.25.4</java-tree-sitter.version>
+        <!-- Tree-sitter native library versions -->
+        <tree-sitter.version>0.25.8</tree-sitter.version>
+        <tree-sitter-python.version>0.23.6</tree-sitter-python.version>
 
         <!-- The Revision of JPlag -->
         <revision>6.2.0</revision>
@@ -111,10 +117,12 @@
                 <artifactId>antlr4</artifactId>
                 <version>${antlr4.version}</version>
             </dependency>
+
+            <!-- Tree-sitter -->
             <dependency>
-                <groupId>net.sourceforge.argparse4j</groupId>
-                <artifactId>argparse4j</artifactId>
-                <version>0.9.0</version>
+                <groupId>io.github.tree-sitter</groupId>
+                <artifactId>jtreesitter</artifactId>
+                <version>${java-tree-sitter.version}</version>
             </dependency>
 
             <!-- CoreNLP -->
@@ -135,6 +143,13 @@
                 <artifactId>slf4j-simple</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>net.sourceforge.argparse4j</groupId>
+                <artifactId>argparse4j</artifactId>
+                <version>0.9.0</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.kohsuke.metainf-services</groupId>
                 <artifactId>metainf-services</artifactId>
@@ -419,6 +434,7 @@
                 <module>language-api</module>
                 <module>language-antlr-utils</module>
                 <module>language-testutils</module>
+                <module>language-tree-sitter-utils</module>
             </modules>
         </profile>
         <profile>
@@ -432,6 +448,7 @@
                 <module>language-api</module>
                 <module>language-antlr-utils</module>
                 <module>language-testutils</module>
+                <module>language-tree-sitter-utils</module>
             </modules>
             <build>
                 <plugins>
@@ -447,6 +464,55 @@
                                 <phase>verify</phase>
                                 <configuration>
                                     <keyname>6BE449478888A56047B5F03E804BFAACC6E9DAC2</keyname>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>build-native-libraries</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.2.0</version>
+                        <executions>
+                            <execution>
+                                <id>build-tree-sitter-core</id>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                                <configuration>
+                                    <executable>bash</executable>
+                                    <arguments>
+                                        <argument>${project.basedir}/scripts/build-native-libraries.sh</argument>
+                                        <argument>tree-sitter</argument>
+                                        <argument>${tree-sitter.version}</argument>
+                                    </arguments>
+                                    <workingDirectory>${project.basedir}</workingDirectory>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>build-tree-sitter-python</id>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                                <configuration>
+                                    <executable>bash</executable>
+                                    <arguments>
+                                        <argument>${project.basedir}/scripts/build-native-libraries.sh</argument>
+                                        <argument>tree-sitter-python</argument>
+                                        <argument>${tree-sitter-python.version}</argument>
+                                    </arguments>
+                                    <workingDirectory>${project.basedir}</workingDirectory>
                                 </configuration>
                             </execution>
                         </executions>
