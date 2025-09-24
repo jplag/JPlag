@@ -16,6 +16,7 @@ import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.RootDirectoryException;
 import de.jplag.exceptions.SubmissionException;
+import de.jplag.highlightextraction.FrequencyMatchWeighter;
 import de.jplag.merging.MatchMerging;
 import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.reportobject.model.Version;
@@ -105,10 +106,13 @@ public class JPlag {
             result = commentComparer.compareCommentsAndMergeMatches(result);
         }
 
+        FrequencyMatchWeighter matchWeighter = new FrequencyMatchWeighter();
+        List<JPlagComparison> frequencyWeightedComparisons = matchWeighter.useMatchFrequencyToInfluenceSimilarity(options, result);
+
         if (logger.isInfoEnabled()) {
             logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getDuration()));
         }
-        result.setClusteringResult(ClusteringFactory.getClusterings(result.getAllComparisons(), options.clusteringOptions()));
+        result.setClusteringResult(ClusteringFactory.getClusterings(frequencyWeightedComparisons, options.clusteringOptions()));
 
         logSkippedSubmissions(submissionSet, options);
 
