@@ -1,7 +1,6 @@
 package de.jplag.commenthandling;
 
 import java.util.AbstractMap;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -138,21 +137,20 @@ public class CommentComparer {
             progressBar.dispose();
         }
 
-        List<JPlagComparison> fixedComparisons = new ArrayList<>();
-        for (JPlagComparison comparison : result.getAllComparisons()) {
+        // Extending all comparisons with their corresponding comment comparisons
+        List<JPlagComparison> extendedComparisons = result.getAllComparisons().stream().map((comparison) -> {
             JPlagComparison commentComparison = commentComparisons
                     .get(new SubmissionTuple(comparison.firstSubmission(), comparison.secondSubmission()));
             if (commentComparison == null) {
                 logger.warn("Comparison {} has no comment comparison!", comparison);
-                fixedComparisons.add(comparison);
-                continue;
+                return comparison;
             }
-            fixedComparisons.add(new JPlagComparison(comparison.firstSubmission(), comparison.secondSubmission(), comparison.matches(),
-                    comparison.ignoredMatches(), commentComparison.matches()));
-        }
+            return new JPlagComparison(comparison.firstSubmission(), comparison.secondSubmission(), comparison.matches(), comparison.ignoredMatches(),
+                    commentComparison.matches());
+        }).toList();
 
         long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
 
-        return new JPlagResult(fixedComparisons, result.getSubmissions(), result.getDuration() + durationInMillis, result.getOptions());
+        return new JPlagResult(extendedComparisons, result.getSubmissions(), result.getDuration() + durationInMillis, result.getOptions());
     }
 }
