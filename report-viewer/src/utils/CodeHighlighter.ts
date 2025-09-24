@@ -1,8 +1,9 @@
-import { ParserLanguage, type Language } from '@/model/Language'
 import hljs from 'highlight.js'
 import llvm from 'highlight.js/lib/languages/llvm'
 import scheme from 'highlight.js/lib/languages/scheme'
 import typescript from 'highlight.js/lib/languages/typescript'
+
+import { ParserLanguage, type Language } from '@/model/Language'
 
 /**
  * Highlights the given code with the given language.
