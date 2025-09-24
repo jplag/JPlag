@@ -15,24 +15,16 @@ import de.jplag.text.ParserAdapter;
  * Preprocesses comments into tokens by running them through the JPlag text module.
  */
 public class CommentPreprocessor {
-    private final List<Comment> comments;
-    private final ParserAdapter textParser;
-
-    /**
-     * Creates a new preprocessor for the supplied list of comments.
-     * @param comments Comments to process
-     */
-    public CommentPreprocessor(List<Comment> comments) {
-        this.comments = comments;
-        this.comments.sort(Comparator.comparing(Comment::file));
-        this.textParser = new ParserAdapter();
+    private CommentPreprocessor() {
     }
 
     /**
      * Processes all input comments into a list of tokens.
      * @return List of tokens containing all comments
      */
-    public List<Token> processToToken() {
+    public static List<Token> processToToken(List<Comment> comments) {
+        ParserAdapter textParser = new ParserAdapter();
+        comments.sort(Comparator.comparing(Comment::file));
         List<Token> result = new ArrayList<>();
         File lastFile = null;
         for (Comment comment : comments) {
@@ -42,17 +34,17 @@ public class CommentPreprocessor {
                 }
                 lastFile = comment.file();
             }
-            result.addAll(processSingleCommentToToken(comment));
+            result.addAll(processSingleCommentToToken(comment, textParser));
         }
         result.add(Token.fileEnd(lastFile));
         return result;
     }
 
-    private List<Token> processSingleCommentToToken(Comment comment) {
+    private static List<Token> processSingleCommentToToken(Comment comment, ParserAdapter textParser) {
         return fixTokenPositions(textParser.parseStrings(Set.of(comment.content())), comment);
     }
 
-    private List<Token> fixTokenPositions(List<Token> tokens, Comment comment) {
+    private static List<Token> fixTokenPositions(List<Token> tokens, Comment comment) {
         List<Token> fixedTokens = new ArrayList<>();
         for (Token token : tokens) {
             if (token.getType() == SharedTokenType.FILE_END) {
