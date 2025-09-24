@@ -113,7 +113,7 @@ public class PythonTokenCollector extends TreeSitterVisitor {
      */
     private void addToken(PythonTokenType tokenType, Node node, int length) {
         // We add 1 to the index as Tree-sitter uses 0-based indexing
-        int line = (isEndToken(tokenType) ? node.getEndPoint() : node.getStartPoint()).row() + 1;
+        int line = (tokenType.isEndToken() ? node.getEndPoint() : node.getStartPoint()).row() + 1;
         // Use start position as column for visual alignment
         int column = node.getStartPoint().column() + 1;
 
@@ -137,21 +137,5 @@ public class PythonTokenCollector extends TreeSitterVisitor {
             return node.getEndByte() - node.getStartByte();
         }
         return length;
-    }
-
-    /**
-     * Checks if a token type represents an end token that should use the end position of the node.
-     * <p>
-     * End tokens are positioned at the end of their corresponding constructs (classes, functions, loops, etc.) to properly
-     * represent the nesting structure in the token stream.
-     * </p>
-     * @param tokenType The token type to check
-     * @return True if the token type is an end token
-     */
-    private boolean isEndToken(PythonTokenType tokenType) {
-        return switch (tokenType) {
-            case CLASS_END, METHOD_END, WHILE_END, FOR_END, TRY_END, EXCEPT_END, FINALLY_END, IF_END, DECORATOR_END, WITH_END, MATCH_END -> true;
-            default -> false;
-        };
     }
 }

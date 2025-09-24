@@ -80,6 +80,21 @@ public enum PythonTokenType implements TokenType {
         return this.length;
     }
 
+    /**
+     * Checks if this token type represents an end token that should use the end position of the node.
+     * <p>
+     * End tokens are positioned at the end of their corresponding constructs (classes, functions, loops, etc.) to properly
+     * represent the nesting structure in the token stream.
+     * </p>
+     * @return True if this token type is an end token
+     */
+    public boolean isEndToken() {
+        return switch (this) {
+            case CLASS_END, METHOD_END, WHILE_END, FOR_END, TRY_END, EXCEPT_END, FINALLY_END, IF_END, DECORATOR_END, WITH_END, MATCH_END -> true;
+            default -> false;
+        };
+    }
+
     PythonTokenType(String description) {
         this.description = description;
         this.length = -1;
