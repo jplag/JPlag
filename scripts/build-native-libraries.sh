@@ -172,7 +172,7 @@ build_library() {
         "windows")
             # Zig puts output in zig-out/lib/ directory and names it $library_name.dll
             if [ -f "zig-out/bin/$library_name.dll" ]; then
-                # Hence we need to rename it to $LIBRARY_NAME.dll
+                # Rename the build output ($library_name.dll) to the expected format ($LIBRARY_NAME.dll)
                 mv "zig-out/bin/$library_name.dll" "zig-out/bin/$LIBRARY_NAME.dll"
                 cp "zig-out/bin/$LIBRARY_NAME.dll" "$target_path/"
             else
