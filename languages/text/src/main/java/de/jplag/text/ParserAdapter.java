@@ -76,7 +76,6 @@ public class ParserAdapter {
             logger.trace("Parsing next string file content");
             this.currentFile = null;
             parseFile(fileContent);
-            tokens.add(Token.fileEnd(null));
         }
         return tokens;
     }
