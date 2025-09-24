@@ -44,4 +44,4 @@ function getLanguageParser(language: string): Language {
   return 'unknown language'
 }
 
-export { ParserLanguage, getLanguageParser, type Language }
+export { getLanguageParser, ParserLanguage, type Language }
