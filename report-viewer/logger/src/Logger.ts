@@ -1,5 +1,7 @@
 /* eslint-disable no-console */
+import { NullableMappedPosition, Position, SourceMapConsumer } from 'source-map'
 import { ConsoleAndFileMessage, Message } from './Message'
+import { Queue } from './Queue'
 
 type LogLevel = 'info' | 'warn' | 'error' | 'debug' | 'log'
 
@@ -8,29 +10,93 @@ interface LabeledLogger {
   label: (label: string) => ILogger
 }
 
+type MapInPosition = Position & { bias?: number; source: string }
+
+interface OneWaySourceMapTranslation {
+  originalPositionFor(generatedPosition: MapInPosition): NullableMappedPosition
+}
+
+const identifySourceMapTranslation: OneWaySourceMapTranslation = {
+  originalPositionFor(generatedPosition: MapInPosition): NullableMappedPosition {
+    return {
+      source: generatedPosition.source,
+      line: generatedPosition.line,
+      column: generatedPosition.column,
+      name: null
+    }
+  }
+}
+
 export class StaticLogger {
   private static logs: Log[] = []
+  private static backLog: Queue<Log> = new Queue<Log>()
+  private static mappers: Record<string, OneWaySourceMapTranslation> = {}
+  private static isProcessingBackLog = false
 
-  private static print(level: LogLevel, label?: string, ...data: Message[]) {
-    const newLog = this.buildLog(level, data, label)
-    this.logs.push(newLog)
-    console[level](this.buildMessage(newLog, true))
+  public static async fetchMapper(fileName: string) {
+    const mapFileName = `assets/${fileName}.map`
+    const content = await fetch(new URL(mapFileName, window.location.href))
+      .then((res) => res.text())
+      .catch(() => null)
+    console.log(content)
+    // vite returns the html for all non matching requests, so we filter that here
+    if (content !== null && !content.startsWith('<')) {
+      // @ts-expect-error This is needed in web environments
+      SourceMapConsumer.initialize({
+        'lib/mappings.wasm': 'https://unpkg.com/source-map@0.7.3/lib/mappings.wasm'
+      })
+      const consumer = await new SourceMapConsumer(content)
+      this.mappers[fileName] = consumer
+    } else {
+      this.mappers[fileName] = identifySourceMapTranslation
+    }
+  }
+
+  private static tryPrint(level: LogLevel, ...data: Message[]) {
+    const log = this.buildLog(level, data)
+    // If we still have unprinted logs, we append to the backlog to preserve the logging order
+    if (this.backLog.isEmpty() && this.mappers[log.caller.source]) {
+      this.print(log)
+    } else {
+      this.backLog.add(log)
+      this.processBackLog()
+    }
+  }
+
+  private static async processBackLog() {
+    if (this.isProcessingBackLog) return
+    this.isProcessingBackLog = true
+
+    while (!this.backLog.isEmpty()) {
+      const log = this.backLog.remove()!
+      if (!this.mappers[log.caller.source]) {
+        await this.fetchMapper(log.caller.source)
+      }
+      this.print(log)
+    }
+
+    this.isProcessingBackLog = false
+  }
+
+  private static print(log: Log) {
+    this.logs.push(log)
+    console[log.level](this.buildMessage(log, true))
   }
 
   public static error(...data: Message[]) {
-    this.print('error', undefined, ...data)
+    this.tryPrint('error', ...data)
   }
   public static warn(...data: Message[]) {
-    this.print('warn', undefined, ...data)
+    this.tryPrint('warn', ...data)
   }
   public static info(...data: Message[]) {
-    this.print('info', undefined, ...data)
+    this.tryPrint('info', ...data)
   }
   public static log(...data: Message[]) {
-    this.print('log', undefined, ...data)
+    this.tryPrint('log', ...data)
   }
   public static debug(...data: Message[]) {
-    this.print('debug', undefined, ...data)
+    this.tryPrint('debug', ...data)
   }
 
   public static getLog() {
@@ -57,26 +123,19 @@ export class StaticLogger {
       })
       .join(', ')
 
-    let displayedCaller = log.label || this.getCaller(log.caller)
-    // @ts-expect-error TS doesn't know about import.meta.env.DEV as it comes from vite
-    if (import.meta.env.DEV) {
-      displayedCaller = this.getCaller(log.caller)
-    }
-    return `[${log.level.toUpperCase()}] ${log.time.toISOString()} ${displayedCaller}${isConsole ? '\n' : ': '}${message}`
+    return `[${log.level.toUpperCase()}] ${log.time.toISOString()} ${this.getMappedPosition(log.caller)}${isConsole ? '\n' : ': '}${message}`
   }
 
-  private static buildLog(level: LogLevel, data: Message[], label?: string): Log {
+  private static buildLog(level: LogLevel, data: Message[]): Log {
     return {
-      caller: (new Error().stack?.split('\n')[3] || 'unknown').trim(),
+      caller: this.getCaller((new Error().stack?.split('\n')[3] || 'unknown').trim()),
       data,
       time: new Date(),
-      level,
-      label
+      level
     }
   }
 
-  private static getCaller(rawCaller: string) {
-    const functionName = rawCaller.split('@')[0]
+  private static getCaller(rawCaller: string): MapInPosition {
     const parts = rawCaller.split('/')
     const wholeFileName = parts[parts.length - 1]
 
@@ -84,16 +143,26 @@ export class StaticLogger {
     const fileName = positionParts[0].includes('?')
       ? positionParts[0].split('?')[0]
       : positionParts[0]
-    const codePosition =
-      positionParts[positionParts.length - 2] + ':' + positionParts[positionParts.length - 1]
+    const line = Number(positionParts[positionParts.length - 2])
+    const column = Number(positionParts[positionParts.length - 1])
 
-    return `${functionName}@${fileName}:${codePosition}`
+    return { line, column, source: fileName }
+  }
+
+  private static getMappedPosition(caller: MapInPosition) {
+    const mapper = this.mappers[caller.source]
+    const mapped = mapper?.originalPositionFor(caller)
+    const position = {
+      line: mapped?.line || caller.line,
+      column: mapped?.column || caller.column,
+      source: mapped?.source || caller.source
+    }
+    return `${position.source}:${position.line}:${position.column}`
   }
 }
 
 interface Log {
-  caller: string
-  label?: string
+  caller: MapInPosition
   data: Message[]
   time: Date
   level: LogLevel

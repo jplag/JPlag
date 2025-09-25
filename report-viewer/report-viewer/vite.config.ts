@@ -29,6 +29,9 @@ export default defineConfig((userConfig: UserConfig) => {
         '@': fileURLToPath(new URL('./src', import.meta.url))
       }
     },
+    build: {
+      sourcemap: true
+    },
     base: base
   }
 })

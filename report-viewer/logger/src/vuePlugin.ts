@@ -1,4 +1,4 @@
-import type { App } from 'Vue'
+/*import type { App } from 'Vue'
 import { Logger } from '.'
 
 export function loggerInstaller(app: App) {
@@ -8,3 +8,4 @@ export function loggerInstaller(app: App) {
     alert('An unhandled error occurred. Please check the console for more details.')
   }
 }
+*/
