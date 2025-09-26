@@ -1,4 +1,4 @@
-name: SonarCloud Scan (ReportViewer)
+name: Report Viewer SonarCloud
 
 on:
   push:

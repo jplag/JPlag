@@ -1,4 +1,4 @@
-name: SonarCloud Scan (main and develop branch)
+name: main and develop SonarCloud Scan
 
 on:
   push:

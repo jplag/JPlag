@@ -1,4 +1,4 @@
-name: Report Viewer Build Workflow # Copy of report viewer deployment, but without deployment for PRs :)
+name: Report Viewer Build
 
 on:
  workflow_dispatch:

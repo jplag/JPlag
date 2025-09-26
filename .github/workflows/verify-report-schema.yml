@@ -1,4 +1,4 @@
-name: Match Report Schema
+name: Check Report Schema
 
 on:
   workflow_dispatch:

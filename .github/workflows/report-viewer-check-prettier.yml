@@ -1,4 +1,4 @@
-name: Report Viewer Prettier Check Workflow # Checks the report viewer against the prettier rules
+name: Report Viewer Prettier
 
 on:
   workflow_dispatch:

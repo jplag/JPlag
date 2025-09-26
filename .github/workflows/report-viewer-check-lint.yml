@@ -1,4 +1,4 @@
-name: Report Viewer ESLint Workflow # Checks linting of report viewer
+name: Report Viewer ESLint
 
 
 on:

@@ -1,4 +1,4 @@
-name: Report Viewer Deployment Workflow (Dev)
+name: Deploy Dev Report Viewer
 
 on:
  workflow_dispatch: # Use this to dispatch from the Actions Tab

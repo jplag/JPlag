@@ -1,5 +1,5 @@
 # Builds JPlag and then runs Datasets and Report Viewer e2e tests on multiple OS
-name: Complete e2e Test
+name: Test Complete Usage Workflow
 
 on:
   workflow_dispatch:
