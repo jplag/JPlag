@@ -23,21 +23,19 @@
 
     <developers>
         <developer>
-            <id>tsaglam</id>
-            <name>Timur Sağlam</name>
-            <email>saglam@kit.edu</email>
-            <url>https://dsis.kastel.kit.edu/staff_saglam.php</url>
+            <id>robinmaisch</id>
+            <name>Robin Maisch</name>
+            <email>jplag@ipd.kit.edu</email>
+            <url>https://mcse.kastel.kit.edu/staff_robin_maisch.php</url>
             <organization>KASTEL</organization>
-            <organizationUrl>https://dsis.kastel.kit.edu/</organizationUrl>
+            <organizationUrl>https://mcse.kastel.kit.edu/</organizationUrl>
             <timezone>GMT+1</timezone>
         </developer>
         <developer>
-            <id>sebinside</id>
-            <name>Sebastian Hahner</name>
-            <email>hahner@kit.edu</email>
-            <url>https://dsis.kastel.kit.edu/staff_sebastian_hahner.php</url>
-            <organization>KASTEL</organization>
-            <organizationUrl>https://dsis.kastel.kit.edu/</organizationUrl>
+            <id>tsaglam</id>
+            <name>Timur Sağlam</name>
+            <email>jplag@ipd.kit.edu</email>
+            <url>https://dsis.kastel.kit.edu/staff_saglam.php</url>
             <timezone>GMT+1</timezone>
         </developer>
     </developers>
@@ -71,22 +69,20 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <!--suppress UnresolvedMavenProperty -->
         <sonar.coverage.jacoco.xmlReportPaths>${maven.multiModuleProjectDirectory}/coverage-report/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <spotless.version>2.46.1</spotless.version>
         <slf4j.version>2.0.17</slf4j.version>
         <junit.version>5.13.4</junit.version>
-        <checkstyle.version>10.26.1</checkstyle.version>
-
+        <checkstyle.version>11.0.1</checkstyle.version>
         <antlr2.version>2.7.7</antlr2.version>
         <antlr4.version>4.13.2</antlr4.version>
-        <emf.version>2.39.0</emf.version>
-        <emf.ecore.version>2.42.0</emf.ecore.version>
+        <emf.version>2.40.0</emf.version>
+        <emf.ecore.version>2.43.0</emf.ecore.version>
         <emf.ecore.xmi.version>2.39.0</emf.ecore.xmi.version>
-        <eclipse.core.version>3.22.200</eclipse.core.version>
+        <eclipse.core.version>3.23.0</eclipse.core.version>
         <emfatic.version>1.1.0</emfatic.version>
-        <mockito.version>5.18.0</mockito.version>
+        <mockito.version>5.20.0</mockito.version>
         <!-- ensure that this variable is initialized, even if it is empty -->
         <argLine/>
 
@@ -145,7 +141,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.19.2</version>
+                <version>2.20.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -192,7 +188,7 @@
                 <plugin>
                     <groupId>com.helger.maven</groupId>
                     <artifactId>ph-javacc-maven-plugin</artifactId>
-                    <version>4.1.5</version>
+                    <version>5.0.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -244,7 +240,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.5.3</version>
+                    <version>3.5.4</version>
                     <configuration>
                         <argLine>@{argLine} -javaagent:"${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar"</argLine>
                     </configuration>
@@ -343,7 +339,7 @@
                     <configLocation>config/checkstyle/checkstyle.xml</configLocation>
                     <sourceDirectories>
                         <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
-                        <!-- <sourceDirectory>${project.build.testSourceDirectory}</sourceDirectory> -->
+                        <sourceDirectory>${project.build.testSourceDirectory}</sourceDirectory>
                     </sourceDirectories>
                     <consoleOutput>true</consoleOutput>
                     <failsOnError>true</failsOnError>
@@ -369,7 +365,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.11.2</version>
+                <version>3.12.0</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -395,7 +391,7 @@
             <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.8.0</version>
+                <version>0.9.0</version>
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>central</publishingServerId>

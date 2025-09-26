@@ -5,16 +5,26 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.*;
+import de.jplag.JPlagResult;
+import de.jplag.SubmissionSet;
+import de.jplag.SubmissionSetBuilder;
+import de.jplag.TestBase;
+import de.jplag.TokenType;
 import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
-import de.jplag.highlightextraction.*;
+import de.jplag.highlightextraction.CompleteMatchesStrategy;
+import de.jplag.highlightextraction.ContainedMatchesStrategy;
+import de.jplag.highlightextraction.FrequencyDetermination;
+import de.jplag.highlightextraction.FrequencyStrategy;
+import de.jplag.highlightextraction.SubMatchesStrategy;
+import de.jplag.highlightextraction.WindowOfMatchesStrategy;
 import de.jplag.options.JPlagOptions;
 
 /**
@@ -49,7 +59,7 @@ class StrategyIntegrationTest extends TestBase {
      * Tests frequency determination using the CompleteMatchesStrategy.
      */
     @Test
-    @DisplayName("Test token frequency completeMatches")
+    @DisplayName("Test match frequency completeMatches strategy")
     void testFrequencyAnalysisStrategiesCompleteMatches() {
         FrequencyStrategy strategy = new CompleteMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 1);
@@ -63,7 +73,7 @@ class StrategyIntegrationTest extends TestBase {
      * Tests frequency determination using the ContainedMatchesStrategy.
      */
     @Test
-    @DisplayName("Test token frequency with containedMatches")
+    @DisplayName("Test match frequency with containedMatches strategy")
     void testFrequencyAnalysisStrategiesContainedMatches() {
         FrequencyStrategy strategy = new ContainedMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 300);
@@ -77,7 +87,7 @@ class StrategyIntegrationTest extends TestBase {
      * Tests frequency determination using the SubMatchesStrategy.
      */
     @Test
-    @DisplayName("Test token frequency with subMatches")
+    @DisplayName("Test match frequency with subMatches strategy")
     void testFrequencyAnalysisStrategiesSubMatches() {
         FrequencyStrategy strategy = new SubMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 300);
@@ -91,7 +101,7 @@ class StrategyIntegrationTest extends TestBase {
      * Tests frequency determination using the WindowOfMatchesStrategy.
      */
     @Test
-    @DisplayName("Test token frequency with windows of Matches")
+    @DisplayName("Test match frequency with windows of Matches strategy")
     void testFrequencyAnalysisStrategiesWindowOfMatches() {
         FrequencyStrategy strategy = new WindowOfMatchesStrategy();
         FrequencyDetermination fd = new FrequencyDetermination(strategy, 300);

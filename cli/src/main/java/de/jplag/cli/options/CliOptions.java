@@ -9,6 +9,9 @@ import de.jplag.Language;
 import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
+import de.jplag.highlightextraction.FrequencyAnalysisOptions;
+import de.jplag.highlightextraction.FrequencyAnalysisStrategy;
+import de.jplag.highlightextraction.MatchFrequencyWeightingFunction;
 import de.jplag.java.JavaLanguage;
 import de.jplag.merging.MergingOptions;
 import de.jplag.options.JPlagOptions;
@@ -89,6 +92,10 @@ public class CliOptions implements Runnable {
     @ArgGroup(validate = false, heading = "%nSubsequence Match Merging%n")
     public Merging merging = new Merging();
 
+    /** Frequency based analysis of the Matches. */
+    @ArgGroup(validate = false, heading = "%nFrequency Analysis%n")
+    public FrequencyAnalysis frequencyOptions = new FrequencyAnalysis();
+
     /**
      * Empty run method to enable automatic help printing by picocli.
      */
@@ -144,6 +151,10 @@ public class CliOptions implements Runnable {
         /** Override charset for submissions. */
         @Option(names = "--encoding", description = "Specifies the charset of the submissions. This disables the automatic charset detection", completionCandidates = CharsetCandidates.class, converter = CharsetConverter.class)
         public Charset submissionCharsetOverride;
+
+        /** Skip check for new version (hidden). */
+        @Option(names = "--skip-version-check", description = "Skip fetching latest version information from the API.", hidden = true)
+        public boolean skipVersionCheck = false;
     }
 
     /** Clustering options. */
@@ -168,6 +179,31 @@ public class CliOptions implements Runnable {
                     "--cluster-metric"}, description = "The similarity metric used for clustering. Available metrics: ${COMPLETION-CANDIDATES} (default: ${DEFAULT-VALUE}).")
             public SimilarityMetric metric = new ClusteringOptions().similarityMetric();
         }
+    }
+
+    /** Highlight extraction options. */
+    public static class FrequencyAnalysis {
+
+        /** Frequency Determination strategy. */
+        @Option(names = {
+                "--frequency-strategy"}, description = "Strategy for frequency Analysis, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE}).")
+        public FrequencyAnalysisStrategy frequencyStrategy = new FrequencyAnalysisOptions().frequencyStrategy();
+
+        /** Min value for considered subsequence length in Frequency Determination strategy. */
+        @Option(names = {
+                "--frequency-min-value"}, description = "Max of min match length that will be compared and this value, is min size of considered submatches", hidden = true)
+        public int frequencyStrategyMinValue = new FrequencyAnalysisOptions().frequencyStrategyMinValue();
+
+        /** Weighting function to combine with frequency Determination strategy. */
+        @Option(names = {
+                "--weighting-strategy"}, description = "Strategy for frequency Weighting, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE}).")
+        public MatchFrequencyWeightingFunction weightingStrategy = new FrequencyAnalysisOptions().weightingStrategy();
+
+        /** How strong the weighting maximal influences a match length with up to double the length. */
+        @Option(names = {
+                "--weighting-factor"}, description = "Factor on how strong the weighting will be considered, scale factor for max stretch of a token sequence", hidden = true)
+        public double weightingFactor = new FrequencyAnalysisOptions().weightingFactor();
+
     }
 
     /**
@@ -250,4 +286,5 @@ public class CliOptions implements Runnable {
     /** Absolute threshold used in preprocessing to cut off low-similarity pairs (hidden). */
     @Option(names = {"--cluster-pp-threshold"}, hidden = true)
     public double clusterPreprocessingThreshold;
+
 }

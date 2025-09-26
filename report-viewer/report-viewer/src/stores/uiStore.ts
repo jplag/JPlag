@@ -7,10 +7,18 @@ import {
   FileSortingOptions
 } from '@jplag/ui-components/widget'
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 export const uiStore = defineStore('uiStore', () => {
-  const useDarkMode = ref(false)
+  const _useDarkMode = ref(getDefaultUseDarkModeOption())
+  const useDarkMode = computed({
+    get: () => _useDarkMode.value,
+    set: (v: boolean) => {
+      localStorage.setItem(USE_DARK_MODE_KEYWORD, v ? 'true' : 'false')
+      _useDarkMode.value = v
+    }
+  })
+
   const distributionChartConfig = ref<DistributionChartConfig>({
     metric: MetricJsonIdentifier.AVERAGE_SIMILARITY,
     xScale: 'linear',
@@ -31,3 +39,14 @@ export const uiStore = defineStore('uiStore', () => {
     fileSorting
   }
 })
+
+const USE_DARK_MODE_KEYWORD = 'jplag:use-dark-mode'
+
+function getDefaultUseDarkModeOption() {
+  const local = localStorage.getItem(USE_DARK_MODE_KEYWORD)
+  if (local !== null) {
+    return local === 'true'
+  }
+
+  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+}

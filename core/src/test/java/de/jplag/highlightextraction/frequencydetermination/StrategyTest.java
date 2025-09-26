@@ -1,41 +1,60 @@
 package de.jplag.highlightextraction.frequencydetermination;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import de.jplag.*;
+import de.jplag.JPlagComparison;
+import de.jplag.JPlagResult;
 import de.jplag.Match;
+import de.jplag.Submission;
+import de.jplag.SubmissionSet;
+import de.jplag.SubmissionSetBuilder;
+import de.jplag.TestBase;
+import de.jplag.Token;
+import de.jplag.TokenType;
 import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
-import de.jplag.highlightextraction.*;
+import de.jplag.highlightextraction.CompleteMatchesStrategy;
+import de.jplag.highlightextraction.ContainedMatchesStrategy;
+import de.jplag.highlightextraction.FrequencyDetermination;
+import de.jplag.highlightextraction.FrequencyStrategy;
+import de.jplag.highlightextraction.SubMatchesStrategy;
+import de.jplag.highlightextraction.WindowOfMatchesStrategy;
 import de.jplag.options.JPlagOptions;
 
 /**
- * Test class to validate the FrequencyStrategies which determine how frequency certain token sequences appear in
- * matches of the comparisons. As the examples use testCode from "PartialPlagiarism" sample-folder and some fictional
- * data.
+ * Test class to validate the FrequencyStrategies which determine how isFrequencyAnalysisEnabled certain token sequences
+ * appear in matches of the comparisons. As the examples use testCode from "PartialPlagiarism" sample-folder and some
+ * fictional data.
  */
 class StrategyTest extends TestBase {
-    private static final StrategyIntegrationTest strategyIntegrationTest = new StrategyIntegrationTest();
+    private static final StrategyIntegrationTest STRATEGY_INTEGRATION_TEST = new StrategyIntegrationTest();
     private static Submission testSubmission;
     private static Match matchAppearsOnce;
     private static Match matchOccursTwiceInSameComparison;
     private static Match matchOccursTwiceAcrossComparisons;
     private static Match matchOccursThreeTimesAcrossComparisons;
     private static Match matchShort;
-    private static final List<Match> matchesAppearingOnceAndTwice = new LinkedList<>();
-    private static final List<Match> matchesAppearingTwiceAndThrice = new LinkedList<>();
-    private static final List<Match> matchesAppearingThrice = new LinkedList<>();
-    private static final List<Match> matchesDuplicateAndThrice = new LinkedList<>();
+    private static final List<Match> MATCHES_APPEARING_ONCE_AND_TWICE = new LinkedList<>();
+    private static final List<Match> MATCHES_APPEARING_TWICE_AND_THRICE = new LinkedList<>();
+    private static final List<Match> MATCHES_APPEARING_THRICE = new LinkedList<>();
+    private static final List<Match> MATCHES_DUPLICATE_AND_THRICE = new LinkedList<>();
     private static List<Match> ignoredMatches = new LinkedList<>();
-    private static final List<JPlagComparison> testComparisons = new LinkedList<>();
+    private static final List<JPlagComparison> TEST_COMPARISONS = new LinkedList<>();
 
     /**
      * Creates Test data to validate different match-frequency combinations.
@@ -87,7 +106,7 @@ class StrategyTest extends TestBase {
      * @param testSubmissionY name of a test submission to Identify the testSubmissions
      * @param testSubmissionZ name of a test submission to Identify the testSubmissions
      */
-    private record TestSubmissions(Submission testSubmissionW, Submission testSubmissionX, Submission testSubmissionY, Submission testSubmissionZ) {
+    record TestSubmissions(Submission testSubmissionW, Submission testSubmissionX, Submission testSubmissionY, Submission testSubmissionZ) {
     }
 
     /**
@@ -117,36 +136,36 @@ class StrategyTest extends TestBase {
      * @param testSubmissions multiple submissions with the same data but different names for testing
      */
     private void buildTestComparisons(TestSubmissions testSubmissions) {
-        matchesAppearingOnceAndTwice.clear();
-        matchesAppearingTwiceAndThrice.clear();
-        matchesAppearingThrice.clear();
-        matchesDuplicateAndThrice.clear();
-        testComparisons.clear();
+        MATCHES_APPEARING_ONCE_AND_TWICE.clear();
+        MATCHES_APPEARING_TWICE_AND_THRICE.clear();
+        MATCHES_APPEARING_THRICE.clear();
+        MATCHES_DUPLICATE_AND_THRICE.clear();
+        TEST_COMPARISONS.clear();
 
-        matchesAppearingOnceAndTwice.add(matchAppearsOnce);
-        matchesAppearingOnceAndTwice.add(matchOccursTwiceAcrossComparisons);
+        MATCHES_APPEARING_ONCE_AND_TWICE.add(matchAppearsOnce);
+        MATCHES_APPEARING_ONCE_AND_TWICE.add(matchOccursTwiceAcrossComparisons);
         JPlagComparison comparisonOneAndTwoTimes = new JPlagComparison(testSubmissions.testSubmissionW(), testSubmissions.testSubmissionX(),
-                matchesAppearingOnceAndTwice, ignoredMatches);
+                MATCHES_APPEARING_ONCE_AND_TWICE, ignoredMatches);
 
-        matchesAppearingTwiceAndThrice.add(matchOccursTwiceAcrossComparisons);
-        matchesAppearingTwiceAndThrice.add(matchOccursThreeTimesAcrossComparisons);
+        MATCHES_APPEARING_TWICE_AND_THRICE.add(matchOccursTwiceAcrossComparisons);
+        MATCHES_APPEARING_TWICE_AND_THRICE.add(matchOccursThreeTimesAcrossComparisons);
         JPlagComparison comparisonTwoAndThreeTimes = new JPlagComparison(testSubmissions.testSubmissionX(), testSubmissions.testSubmissionY(),
-                matchesAppearingTwiceAndThrice, ignoredMatches);
+                MATCHES_APPEARING_TWICE_AND_THRICE, ignoredMatches);
 
-        matchesAppearingThrice.add(matchOccursThreeTimesAcrossComparisons);
+        MATCHES_APPEARING_THRICE.add(matchOccursThreeTimesAcrossComparisons);
         JPlagComparison comparisonThreeTimes = new JPlagComparison(testSubmissions.testSubmissionY(), testSubmissions.testSubmissionZ(),
-                matchesAppearingThrice, ignoredMatches);
+                MATCHES_APPEARING_THRICE, ignoredMatches);
 
-        matchesDuplicateAndThrice.add(matchOccursThreeTimesAcrossComparisons);
-        matchesDuplicateAndThrice.add(matchOccursTwiceInSameComparison);
-        matchesDuplicateAndThrice.add(matchOccursTwiceInSameComparison);
+        MATCHES_DUPLICATE_AND_THRICE.add(matchOccursThreeTimesAcrossComparisons);
+        MATCHES_DUPLICATE_AND_THRICE.add(matchOccursTwiceInSameComparison);
+        MATCHES_DUPLICATE_AND_THRICE.add(matchOccursTwiceInSameComparison);
         JPlagComparison comparisonDuplicateAndThreeTimes = new JPlagComparison(testSubmissions.testSubmissionZ(), testSubmissions.testSubmissionW(),
-                matchesDuplicateAndThrice, ignoredMatches);
+                MATCHES_DUPLICATE_AND_THRICE, ignoredMatches);
 
-        testComparisons.add(comparisonOneAndTwoTimes);
-        testComparisons.add(comparisonTwoAndThreeTimes);
-        testComparisons.add(comparisonThreeTimes);
-        testComparisons.add(comparisonDuplicateAndThreeTimes);
+        TEST_COMPARISONS.add(comparisonOneAndTwoTimes);
+        TEST_COMPARISONS.add(comparisonTwoAndThreeTimes);
+        TEST_COMPARISONS.add(comparisonThreeTimes);
+        TEST_COMPARISONS.add(comparisonDuplicateAndThreeTimes);
     }
 
     /**
@@ -159,9 +178,9 @@ class StrategyTest extends TestBase {
         int strategyNumber = 9;
         FrequencyStrategy strategy = new CompleteMatchesStrategy();
         FrequencyDetermination frequencyDetermination = new FrequencyDetermination(strategy, strategyNumber);
-        frequencyDetermination.buildFrequencyMap(testComparisons);
+        frequencyDetermination.buildFrequencyMap(TEST_COMPARISONS);
         Map<List<TokenType>, Integer> tokenFrequencyMap = frequencyDetermination.getMatchFrequencyMap();
-        strategyIntegrationTest.printTestResult(tokenFrequencyMap);
+        STRATEGY_INTEGRATION_TEST.printTestResult(tokenFrequencyMap);
 
         assertTokenFrequencyAndContainsMatch(matchAppearsOnce, 1, tokenFrequencyMap);
         assertTokenFrequencyAndContainsMatch(matchOccursTwiceInSameComparison, 2, tokenFrequencyMap);
@@ -190,7 +209,7 @@ class StrategyTest extends TestBase {
      * @param match for which the TokenType Sequence is wanted.
      * @return A list of TokenTypes representing the matched sequence.
      */
-    private static List<TokenType> getMatchTokenTypes(Match match) {
+    static List<TokenType> getMatchTokenTypes(Match match) {
         List<Token> tokens = testSubmission.getTokenList().subList(match.startOfFirst(), match.startOfFirst() + match.lengthOfFirst());
         List<TokenType> tokenStrings = new ArrayList<>();
         for (Token token : tokens) {
@@ -303,10 +322,10 @@ class StrategyTest extends TestBase {
         int strategyNumber = 100;
         FrequencyStrategy strategy = new ContainedMatchesStrategy();
         FrequencyDetermination frequencyDetermination = new FrequencyDetermination(strategy, strategyNumber);
-        frequencyDetermination.buildFrequencyMap(testComparisons);
+        frequencyDetermination.buildFrequencyMap(TEST_COMPARISONS);
         Map<List<TokenType>, Integer> matchFrequencyMap = frequencyDetermination.getMatchFrequencyMap();
         Map<List<TokenType>, Integer> frequencyCount = new HashMap<>();
-        for (JPlagComparison comparison : testComparisons) {
+        for (JPlagComparison comparison : TEST_COMPARISONS) {
             for (Match match : comparison.matches()) {
                 List<TokenType> subSequence = getMatchTokenTypes(match);
                 frequencyCount.put(subSequence, frequencyCount.getOrDefault(subSequence, 0) + 1);

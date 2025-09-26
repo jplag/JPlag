@@ -10,8 +10,10 @@ package de.jplag;
  * @param lengthOfSecond is the length of these similar sections (number of tokens) in the second submission.
  */
 public record Match(int startOfFirst, int startOfSecond, int lengthOfFirst, int lengthOfSecond) {
+
     /**
      * Checks if two matches overlap.
+     * @param other the match that is compared against the given.
      * @return true if they do.
      */
     public boolean overlaps(Match other) {

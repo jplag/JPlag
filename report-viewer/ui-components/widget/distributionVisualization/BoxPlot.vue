@@ -15,7 +15,7 @@ import { computed, onMounted, ref, watch, type PropType, type Ref } from 'vue'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { BoxAndWiskers, BoxPlotChart, BoxPlotController } from '@sgratzl/chartjs-chart-boxplot'
 import { graphColors } from '../../style/graphColor'
-import { DistributionMap, MetricJsonIdentifier } from '@jplag/model'
+import { DistributionMap, DistributionMetrics, MetricJsonIdentifier } from '@jplag/model'
 import BoxPlotDiagramOptions from './BoxPlotDiagramOptions.vue'
 
 Chart.register(...registerables)
@@ -35,7 +35,7 @@ const props = defineProps({
   }
 })
 
-const metric = defineModel<MetricJsonIdentifier>('metric', {
+const metric = defineModel<DistributionMetrics>('metric', {
   default: MetricJsonIdentifier.AVERAGE_SIMILARITY
 })
 

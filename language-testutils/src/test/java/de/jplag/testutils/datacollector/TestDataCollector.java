@@ -85,7 +85,7 @@ public class TestDataCollector {
      * using the returned {@link TestDataContext}.
      * @param directoryName The name of the directory containing the token position tests.
      * @return The context containing the added sources
-     * @throws IOException If the files cannot be read
+     * @throws RuntimeException If the files cannot be read
      */
     public TestDataContext addTokenPositionTests(String directoryName) {
         File directory = new File(this.testFileLocation, directoryName);
@@ -131,6 +131,9 @@ public class TestDataCollector {
         return Collections.unmodifiableList(tokenSequenceTest);
     }
 
+    /**
+     * @return The test data that should be checked for token positions.
+     */
     public List<TokenPositionTestData> getTokenPositionTestData() {
         return Collections.unmodifiableList(this.tokenPositionTestData);
     }
