@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - ".github/workflows/report-viewer-lint.yml"
+      - ".github/workflows/report-viewer-check-lint.yml"
       - "report-viewer/**"
   pull_request:
     types: [opened, synchronize, reopened]

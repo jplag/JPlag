@@ -3,7 +3,7 @@ name: Test and Package
 on:
   push:
     paths:
-      - ".github/workflows/maven.yml"
+      - ".github/workflows/test-and-package.yml"
       - "**/pom.xml"
       - "**.java"
       - "**.g4"

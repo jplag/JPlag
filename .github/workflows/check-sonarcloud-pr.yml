@@ -3,7 +3,7 @@ name: SonarCloud Scan PR
 on:
   workflow_run:
     workflows:
-      - Build
+      - Test and Package
     types:
       - completed
 

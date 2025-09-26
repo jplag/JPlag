@@ -6,7 +6,7 @@ on:
       - main
       - develop
     paths:
-      - ".github/workflows/sonarcloud-branch.yml"
+      - ".github/workflows/check-sonarcloud-main-develop.yml"
       - "**/pom.xml"
       - "**.java"
       - "**.g4"

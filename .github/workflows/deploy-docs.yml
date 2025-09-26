@@ -7,7 +7,7 @@ on:
     tags: "v**"
     paths:
       - 'docs/**'
-      - '.github/workflows/docs.yml'
+      - '.github/workflows/deploy-docs.yml'
   workflow_dispatch:
 
 jobs:

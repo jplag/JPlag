@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - ".github/workflows/report-viewer-prettier.yml"
+      - ".github/workflows/report-viewer-check-prettier.yml"
       - "report-viewer/**"
   pull_request:
     types: [opened, synchronize, reopened]

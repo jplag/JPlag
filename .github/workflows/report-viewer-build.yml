@@ -5,7 +5,7 @@ on:
  pull_request:
     types: [opened, synchronize, reopened]
     paths:
-      - ".github/workflows/report-viewer-build-test.yml"
+      - ".github/workflows/report-viewer-build.yml"
       - "report-viewer/**"
       
 jobs:

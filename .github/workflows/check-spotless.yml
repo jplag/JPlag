@@ -3,14 +3,14 @@ name: Spotless Style Check
 on:
   push:
     paths:
-      - ".github/workflows/spotless.yml"
+      - ".github/workflows/check-spotless.yml"
       - "**/pom.xml"
       - "**.java"
       - "**.g4"
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
-      - ".github/workflows/spotless.yml"
+      - ".github/workflows/check-spotless.yml"
       - "**/pom.xml"
       - "**.java"
       - "**.g4"
