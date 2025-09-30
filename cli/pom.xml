@@ -167,7 +167,7 @@
                         <phase>package</phase>
                         <configuration>
                             <!-- Final fat JAR name -->
-                            <finalName>jplag-${revision}-with-dependencies</finalName>
+                            <finalName>jplag-${revision}-jar-with-dependencies</finalName>
 
                             <!-- Merge META-INF/services automatically -->
                             <transformers>
