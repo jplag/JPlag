@@ -77,11 +77,13 @@
         <checkstyle.version>11.0.1</checkstyle.version>
         <antlr2.version>2.7.7</antlr2.version>
         <antlr4.version>4.13.2</antlr4.version>
+        <auto-service.version>1.1.1</auto-service.version>
         <emf.version>2.40.0</emf.version>
         <emf.ecore.version>2.43.0</emf.ecore.version>
         <emf.ecore.xmi.version>2.39.0</emf.ecore.xmi.version>
         <eclipse.core.version>3.23.0</eclipse.core.version>
         <emfatic.version>1.1.0</emfatic.version>
+        <maven-shade-plugin.version>3.5.3</maven-shade-plugin.version>
         <mockito.version>5.20.0</mockito.version>
         <!-- ensure that this variable is initialized, even if it is empty -->
         <argLine/>
@@ -133,9 +135,10 @@
                 <version>${slf4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.kohsuke.metainf-services</groupId>
-                <artifactId>metainf-services</artifactId>
-                <version>1.11</version>
+                <groupId>com.google.auto.service</groupId>
+                <artifactId>auto-service</artifactId>
+                <version>${auto-service.version}</version>
+                <optional>true</optional>
             </dependency>
 
             <dependency>
