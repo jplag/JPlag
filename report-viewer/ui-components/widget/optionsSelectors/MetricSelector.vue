@@ -44,7 +44,7 @@ const props = defineProps({
   defaultSelected: {
     type: String as PropType<MetricJsonIdentifier>,
     required: false,
-    default: MetricTypes.AVERAGE_SIMILARITY
+    default: MetricJsonIdentifier.AVERAGE_SIMILARITY
   },
   maxToolTipWidth: {
     type: Number,
