@@ -30,6 +30,7 @@ public class MultiLanguageOptions extends LanguageOptions {
      */
     public List<Language> getLanguages() {
         if (this.languages == null) {
+            LanguageLoader.getAllAvailableLanguageIdentifiers().forEach(System.out::println);
             if (languageNames.getValue() == null) {
                 this.languages = LanguageLoader.getAllAvailableLanguages().values().stream().filter(Language::supportsMultiLanguage).toList();
             } else {

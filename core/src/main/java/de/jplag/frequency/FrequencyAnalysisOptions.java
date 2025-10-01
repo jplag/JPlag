@@ -1,5 +1,7 @@
 package de.jplag.frequency;
 
+import io.soabase.recordbuilder.core.RecordBuilder;
+
 /**
  * Options for Frequency Analysis.
  * @param enabled specifies if the analysis is enabled.
@@ -8,8 +10,9 @@ package de.jplag.frequency;
  * @param weightingStrategy strategy used to influence the similarity based on Match frequency
  * @param weightingFactor how strong the impact of the weightingStrategy is
  */
-public record FrequencyAnalysisOptions(boolean enabled, FrequencyAnalysisStrategy frequencyStrategy, int frequencyStrategyMinValue,
-        MatchFrequencyWeightingFunction weightingStrategy, double weightingFactor) {
+@RecordBuilder
+public record FrequencyAnalysisOptions(boolean enabled, FrequencyStrategy frequencyStrategy, int frequencyStrategyMinValue,
+        MatchFrequencyWeightingFunction weightingStrategy, double weightingFactor) implements FrequencyAnalysisOptionsBuilder.With {
 
     /** default value for the analysis being enabled. **/
     public static final boolean DEFAULT_ENABLED = false;
@@ -18,35 +21,6 @@ public record FrequencyAnalysisOptions(boolean enabled, FrequencyAnalysisStrateg
      * Default options for frequency Analysis.
      */
     public FrequencyAnalysisOptions() {
-        this(false, FrequencyAnalysisStrategy.COMPLETE_MATCHES, 1, MatchFrequencyWeightingFunction.SIGMOID, 0.25);
-    }
-
-    /**
-     * Chosen FrequencyStrategy.
-     */
-    public FrequencyAnalysisOptions withFrequencyStrategy(FrequencyAnalysisStrategy strategy) {
-        return new FrequencyAnalysisOptions(enabled, strategy, frequencyStrategyMinValue, weightingStrategy, weightingFactor);
-    }
-
-    /**
-     * Minimum considered subsequence length.
-     */
-    public FrequencyAnalysisOptions withFrequencyStrategyMinimumConsideredMatchSubsequenceSize(int minimumConsideredMatchSubsequenceSize) {
-        return new FrequencyAnalysisOptions(enabled, frequencyStrategy, minimumConsideredMatchSubsequenceSize, weightingStrategy, weightingFactor);
-    }
-
-    /**
-     * Chosen weightingStrategy.
-     */
-    public FrequencyAnalysisOptions withWeightingStrategy(MatchFrequencyWeightingFunction strategy) {
-        return new FrequencyAnalysisOptions(enabled, frequencyStrategy, frequencyStrategyMinValue, strategy, weightingFactor);
-    }
-
-    /**
-     * Weighting maximumInfluenceOfMatchFrequencyConsidered for weightingStrategy.
-     */
-    public FrequencyAnalysisOptions withWeightingFactor(double maximumInfluenceOfMatchFrequencyConsidered) {
-        return new FrequencyAnalysisOptions(enabled, frequencyStrategy, frequencyStrategyMinValue, weightingStrategy,
-                maximumInfluenceOfMatchFrequencyConsidered);
+        this(false, new CompleteMatchesStrategy(), 1, MatchFrequencyWeightingFunction.SIGMOID, 0.25);
     }
 }

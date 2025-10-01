@@ -10,7 +10,7 @@ import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
 import de.jplag.frequency.FrequencyAnalysisOptions;
-import de.jplag.frequency.FrequencyAnalysisStrategy;
+import de.jplag.frequency.FrequencyStrategy;
 import de.jplag.frequency.MatchFrequencyWeightingFunction;
 import de.jplag.java.JavaLanguage;
 import de.jplag.merging.MergingOptions;
@@ -193,8 +193,8 @@ public class CliOptions implements Runnable {
 
         /** Frequency Determination strategy. */
         @Option(names = {
-                "--frequency-strategy"}, description = "Strategy for frequency Analysis, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE}).")
-        public FrequencyAnalysisStrategy frequencyStrategy = new FrequencyAnalysisOptions().frequencyStrategy();
+                "--frequency-strategy"}, description = "Strategy for frequency Analysis, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE}).", converter = FrequencyStrategyPicocliBindings.class, completionCandidates = FrequencyStrategyPicocliBindings.class, defaultValue = "complete")
+        public FrequencyStrategy frequencyStrategy = new FrequencyAnalysisOptions().frequencyStrategy();
 
         /** Min value for considered subsequence length in Frequency Determination strategy. */
         @Option(names = {

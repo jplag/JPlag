@@ -27,12 +27,12 @@ public final class FrequencyAnalysis {
     public static JPlagResult applyFrequencyWeighting(JPlagResult result, FrequencyAnalysisOptions options, int minimumTokenMatch) {
 
         // Compute absolute token sequence frequency:
-        FrequencyDetermination frequencyDetermination = new FrequencyDetermination(options.frequencyStrategy().getStrategy(),
+        FrequencyDetermination frequencyDetermination = new FrequencyDetermination(options.frequencyStrategy(),
                 Math.max(options.frequencyStrategyMinValue(), minimumTokenMatch));
         Map<List<TokenType>, Integer> tokenSequenceFrequencies = frequencyDetermination.buildFrequencyMap(result.getAllComparisons());
 
         // Compute absolute match sequence frequency:
-        MatchFrequencyEvaluator frequencyEvaluator = new MatchFrequencyEvaluator(options.frequencyStrategy().getStrategy(), tokenSequenceFrequencies);
+        MatchFrequencyEvaluator frequencyEvaluator = new MatchFrequencyEvaluator(options.frequencyStrategy(), tokenSequenceFrequencies);
         Map<List<TokenType>, Double> matchFrequencies = frequencyEvaluator.computeMatchFrequencies(result.getAllComparisons());
 
         // Weigh matches based on frequency:
