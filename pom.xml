@@ -73,7 +73,7 @@
         <maven.compiler.target>21</maven.compiler.target>
         <spotless.version>2.46.1</spotless.version>
         <slf4j.version>2.0.17</slf4j.version>
-        <junit.version>5.13.4</junit.version>
+        <junit.version>6.0.0</junit.version>
         <checkstyle.version>11.0.1</checkstyle.version>
         <antlr2.version>2.7.7</antlr2.version>
         <antlr4.version>4.13.2</antlr4.version>
