@@ -5,7 +5,7 @@
     "@jplag/model": "../model",
     "@sgratzl/chartjs-chart-boxplot": "^4.4.4",
     "chart.js": "^4.5.0",
-    "chartjs-chart-graph": "^4.3.4",
+    "chartjs-chart-graph": "^4.3.5",
     "chartjs-plugin-datalabels": "^2.2.0",
     "highlight.js": "^11.11.1",
     "vue-chartjs": "^5.3.2",
