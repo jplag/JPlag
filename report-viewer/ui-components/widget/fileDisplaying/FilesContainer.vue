@@ -14,14 +14,14 @@
         >
       </div>
       <ButtonComponent v-if="allCollapsed" class="space-x-2 print:hidden" @click="expandAll()"
-        ><FontAwesomeIcon :icon="['fas', 'expand-alt']" />
+        ><FontAwesomeIcon :icon="faExpandAlt" />
         <p>Expand All</p></ButtonComponent
       >
       <ButtonComponent
         v-else
         class="w-full space-x-2 md:max-w-fit print:hidden"
         @click="collapseAll()"
-        ><FontAwesomeIcon :icon="['fas', 'compress-alt']" />
+        ><FontAwesomeIcon :icon="faCompressAlt" />
         <p>Collapse All</p></ButtonComponent
       >
     </div>
@@ -59,12 +59,8 @@ import { VueDraggableNext } from 'vue-draggable-next'
 import { computed, nextTick, ref, type PropType, type Ref } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCompressAlt, faExpandAlt } from '@fortawesome/free-solid-svg-icons'
-import { library } from '@fortawesome/fontawesome-svg-core'
 import { FileSortingOptions } from './FileSortingOptions'
 import MetricIcon from '../MetricIcon.vue'
-
-library.add(faCompressAlt)
-library.add(faExpandAlt)
 
 const props = defineProps({
   /**
