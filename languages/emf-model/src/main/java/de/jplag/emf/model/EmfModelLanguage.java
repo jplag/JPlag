@@ -5,20 +5,20 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-import org.kohsuke.MetaInfServices;
-
 import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.emf.dynamic.DynamicEmfLanguage;
 import de.jplag.emf.model.parser.DynamicModelParser;
 
+import com.google.auto.service.AutoService;
+
 /**
  * Language for EMF metamodels from the Eclipse Modeling Framework (EMF). This language is based on a dynamically
  * created token set.
  * @author Timur Saglam
  */
-@MetaInfServices(Language.class)
+@AutoService(Language.class)
 public class EmfModelLanguage extends DynamicEmfLanguage {
 
     @Override
