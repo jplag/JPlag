@@ -4,7 +4,7 @@
 <template>
   <Interactable class="flex flex-row items-center space-x-2 px-2 py-2">
     <FontAwesomeIcon
-      :icon="['fas', 'magnifying-glass']"
+      :icon="faMagnifyingGlass"
       class="text-gray-500"
       @click="emit('searchClicked', value)"
     />
@@ -20,12 +20,9 @@
 
 <script setup lang="ts">
 import Interactable from './InteractableComponent.vue'
-import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
 import InfoIcon from './InfoIcon.vue'
-
-library.add(faMagnifyingGlass)
 
 defineProps({
   placeholder: {

@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import org.kohsuke.MetaInfServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,11 +13,13 @@ import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.options.LanguageOptions;
 
+import com.google.auto.service.AutoService;
+
 /**
  * Multi-language facade. Delegates all source code files of known languages to the corresponding concrete language
  * modules.
  */
-@MetaInfServices(Language.class)
+@AutoService(Language.class)
 public class MultiLanguage implements Language {
     private static final Logger logger = LoggerFactory.getLogger(MultiLanguage.class);
     private static final String WARNING = "This module only allows parsing of multiple languages. No comparisons will be made between languages";
