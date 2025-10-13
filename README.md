@@ -9,7 +9,7 @@
 [![License](https://img.shields.io/github/license/jplag/jplag.svg)](https://github.com/jplag/jplag/blob/main/LICENSE)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/y/jplag/JPlag)](https://github.com/jplag/JPlag/pulse)
 [![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=jplag_JPlag&metric=coverage)](https://sonarcloud.io/component_measures?metric=Coverage&view=list&id=jplag_JPlag)
-[![Java Version](https://img.shields.io/badge/java-SE%2021-yellowgreen)](#download-and-installation)
+[![Java Version](https://img.shields.io/badge/java-SE%2025-yellowgreen)](#download-and-installation)
 
 
 JPlag finds pairwise similarities among a set of multiple programs. It can reliably detect software plagiarism and collusion in software development, even when obfuscated. All similarities are calculated locally; no source code or plagiarism results are ever uploaded online. JPlag supports a large number of languages.
@@ -29,7 +29,7 @@ All supported languages and their supported versions are listed below.
 
 | Language                                               |                                                                                Version | CLI Argument Name | [state](https://github.com/jplag/JPlag/wiki/2.-Supported-Languages) |  parser   |
 |--------------------------------------------------------|---------------------------------------------------------------------------------------:|-------------------|:-------------------------------------------------------------------:|:---------:|
-| [Java](https://www.java.com)                           |                                                                                     21 | java              |                               mature                                |   JavaC   |
+| [Java](https://www.java.com)                           |                                                                                     25 | java              |                               mature                                |   JavaC   |
 | [C](https://isocpp.org)                                |                                                                                     11 | c                 |                               legacy                                |  JavaCC   |
 | [C++](https://isocpp.org)                              |                                                                                     14 | cpp               |                               mature                                |  ANTLR 4  |
 | [C#](https://docs.microsoft.com/en-us/dotnet/csharp/)  |                                                                                      6 | csharp            |                               mature                                |  ANTLR 4  |
@@ -51,7 +51,7 @@ All supported languages and their supported versions are listed below.
 | Multi-Language                                         |                                                                                      - | multi             |                                alpha                                |     -     |
 
 ## Download and Installation
-You need Java SE 21 to run or build JPlag.
+You need Java SE 25 to run or build JPlag.
 
 ### Downloading a release
 * Download a [released version](https://github.com/jplag/jplag/releases).

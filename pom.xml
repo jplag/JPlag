@@ -69,8 +69,10 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <!--suppress UnresolvedMavenProperty -->
         <sonar.coverage.jacoco.xmlReportPaths>${maven.multiModuleProjectDirectory}/coverage-report/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
+        <maven.compiler.plugin.version>3.14.0</maven.compiler.plugin.version>
+        <maven.javadoc.plugin.version>3.12.0</maven.javadoc.plugin.version>
         <spotless.version>3.0.0</spotless.version>
         <slf4j.version>2.0.17</slf4j.version>
         <junit.version>6.0.0</junit.version>
@@ -84,6 +86,7 @@
         <eclipse.core.version>3.23.0</eclipse.core.version>
         <emfatic.version>1.1.0</emfatic.version>
         <mockito.version>5.20.0</mockito.version>
+        <record.builder.version>48</record.builder.version>
         <!-- ensure that this variable is initialized, even if it is empty -->
         <argLine/>
 
@@ -138,6 +141,11 @@
                 <artifactId>auto-service</artifactId>
                 <version>${auto-service.version}</version>
                 <optional>true</optional>
+            </dependency>
+            <dependency>
+                <groupId>com.google.auto.service</groupId>
+                <artifactId>auto-service-annotations</artifactId>
+                <version>${auto-service.version}</version>
             </dependency>
 
             <dependency>
@@ -245,6 +253,20 @@
                     <version>3.5.4</version>
                     <configuration>
                         <argLine>@{argLine} -javaagent:"${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar"</argLine>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven.compiler.plugin.version}</version>
+                    <configuration>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>com.google.auto.service</groupId>
+                                <artifactId>auto-service</artifactId>
+                                <version>${auto-service.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
                     </configuration>
                 </plugin>
                 <plugin>
