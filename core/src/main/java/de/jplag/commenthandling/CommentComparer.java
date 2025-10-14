@@ -138,7 +138,7 @@ public class CommentComparer {
         }
 
         // Extending all comparisons with their corresponding comment comparisons
-        List<JPlagComparison> extendedComparisons = result.getAllComparisons().stream().map((comparison) -> {
+        List<JPlagComparison> extendedComparisons = result.getAllComparisons().stream().map(comparison -> {
             JPlagComparison commentComparison = commentComparisons
                     .get(new SubmissionTuple(comparison.firstSubmission(), comparison.secondSubmission()));
             if (commentComparison == null) {
