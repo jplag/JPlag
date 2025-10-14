@@ -20,6 +20,7 @@ public class CommentPreprocessor {
 
     /**
      * Processes all input comments into a list of tokens.
+     * @param comments List of comments to process
      * @return List of tokens containing all comments
      */
     public static List<Token> processToToken(List<Comment> comments) {
