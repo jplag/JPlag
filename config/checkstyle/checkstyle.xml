@@ -34,7 +34,7 @@
       <property name="tokens" value="INTERFACE_DEF, CLASS_DEF, ENUM_DEF, ANNOTATION_DEF, RECORD_DEF"/>
     </module>
     <module name="NonEmptyAtclauseDescription">
-      <property name="javadocTokens" value="PARAM_BLOCK_TAG, RETURN_LITERAL, THROWS_LITERAL, EXCEPTION_LITERAL, DEPRECATED_LITERAL"/>
+      <property name="javadocTokens" value="PARAM_BLOCK_TAG, RETURN_BLOCK_TAG, THROWS_BLOCK_TAGL, EXCEPTION_BLOCK_TAG, DEPRECATED_BLOCK_TAG"/>
     </module>
     <module name="SingleLineJavadoc"/>
     <module name="AvoidStarImport"/>
