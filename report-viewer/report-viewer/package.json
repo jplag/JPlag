@@ -21,7 +21,7 @@
     "@jplag/parser": "../parser",
     "@jplag/ui-components": "../ui-components",
     "pinia": "^3.0.3",
-    "vue": "^3.5.20",
+    "vue": "^3.5.22",
     "vue-router": "^4.6.0"
   },
   "devDependencies": {
