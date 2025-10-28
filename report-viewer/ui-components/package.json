@@ -3,7 +3,7 @@
   "type": "module",
   "dependencies": {
     "@jplag/model": "../model",
-    "@sgratzl/chartjs-chart-boxplot": "^4.4.4",
+    "@sgratzl/chartjs-chart-boxplot": "^4.4.5",
     "chart.js": "^4.5.0",
     "chartjs-chart-graph": "^4.3.5",
     "chartjs-plugin-datalabels": "^2.2.0",
