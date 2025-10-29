@@ -15,21 +15,24 @@ Afterwards, visit [Getting Started](/wiki/gettingstarted.md) to learn more about
 {{releaseInfo}}
 :::
 
-::: warning
-This page is currently under construction.
-Until it is ready, please visit [the project wiki](https://github.com/jplag/JPlag/wiki).
-:::
+## Jar Download
+
+You can download the JPlag jar file directly from the GitHub releases page:
+
+<VPButton v-if="latestReleaseVersion" :text="`Version ${latestReleaseVersion.substring(1)}`" href="https://www.github.com/jplag/JPlag/releases/latest" />
+<VPButton text="Older Versions" href="https://www.github.com/jplag/JPlag/releases" theme="alt" />
 
 <script setup>
 import { ref } from 'vue'
 import { VPButton } from 'vitepress/theme'
 
 const releaseInfo = ref('The latest released version is available on GitHub.')
+const latestReleaseVersion = ref(undefined);
 const url = 'https://api.github.com/repos/JPlag/JPlag/releases/latest';
 
 fetch(url).then(response => {
     response.json().then(data => {
-    const latestReleaseVersion = data.tag_name;
+    latestReleaseVersion.value = data.tag_name;
 
     const rawDate = new Date(data.published_at);
     const latestReleaseDate = rawDate.toLocaleDateString('en-US', {
@@ -37,7 +40,7 @@ fetch(url).then(response => {
       month: 'long',
       day: 'numeric'});
 
-    releaseInfo.value = `The latest released version ${latestReleaseVersion} was released on ${latestReleaseDate}.`
+    releaseInfo.value = `The latest released version ${latestReleaseVersion.value} was released on ${latestReleaseDate}.`
 })});
 </script>
 
