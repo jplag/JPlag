@@ -11,7 +11,8 @@
     "type-check": "vue-tsc --noEmit --composite false",
     "test:e2e": "playwright test",
     "test:unit": "vitest",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@fortawesome/free-brands-svg-icons": "^7.1.0",

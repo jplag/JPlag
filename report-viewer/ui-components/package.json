@@ -20,7 +20,8 @@
     "vue": "^3.5.20"
   },
   "scripts": {
-    "test": "vitest"
+    "test": "vitest",
+    "coverage": "vitest run --coverage"
   },
   "devDependencies": {
     "jsdom": "^27.0.1",
