@@ -19,7 +19,7 @@
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>java</artifactId>
-            <version>6.3.0-SNAPSHOT</version>
+            <version>${revision}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

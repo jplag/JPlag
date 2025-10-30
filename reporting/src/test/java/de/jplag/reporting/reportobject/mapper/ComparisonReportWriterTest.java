@@ -24,7 +24,7 @@ class ComparisonReportWriterTest {
 
     @Test
     void firsLevelOfLookupMapComplete() throws ExitException {
-        File submissionDir = new File(String.join("/", BASE_PATH) + "/" + "PartialPlagiarism");
+        File submissionDir = new File(BASE_PATH, "PartialPlagiarism");
         JPlagResult result = JPlag.run(new JPlagOptions(new JavaLanguage(), Set.of(submissionDir), Set.of()));
         var mapper = new ComparisonReportWriter(Submission::getName, fileWriter);
 
@@ -35,7 +35,7 @@ class ComparisonReportWriterTest {
 
     @Test
     void secondLevelOfLookupMapComplete() throws ExitException {
-        File submissionDir = new File(String.join("/", BASE_PATH) + "/" + "PartialPlagiarism");
+        File submissionDir = new File(BASE_PATH, "PartialPlagiarism");
         JPlagResult result = JPlag.run(new JPlagOptions(new JavaLanguage(), Set.of(submissionDir), Set.of()));
         var mapper = new ComparisonReportWriter(Submission::getName, fileWriter);
 

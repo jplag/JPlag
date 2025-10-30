@@ -32,8 +32,8 @@ class ReportObjectFactoryTest {
 
     @Test
     void testCreateAndSaveReportWithBasecode() throws ExitException, IOException {
-        File submissionDir = new File(String.join("/", BASE_PATH) + "/" + BASECODE);
-        File basecodeDir = new File(String.join("/", BASE_PATH) + "/" + BASECODE_BASE);
+        File submissionDir = new File(BASE_PATH, BASECODE);
+        File basecodeDir = new File(BASE_PATH, BASECODE_BASE);
         JPlagOptions options = new JPlagOptions(new JavaLanguage(), Set.of(submissionDir), Set.of()).withBaseCodeSubmissionDirectory(basecodeDir);
         JPlagResult result = JPlag.run(options);
         File testResult = File.createTempFile("result", ".jplag");
