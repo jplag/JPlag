@@ -41,7 +41,7 @@
         <dependency>
             <groupId>io.soabase.record-builder</groupId>
             <artifactId>record-builder-processor</artifactId>
-            <version>48</version>
+            <version>${record.builder.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -57,9 +57,23 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.12.0</version>
+                <version>${maven.javadoc.plugin.version}</version>
                 <configuration>
                     <sourcepath>src/main/java;target/generated-sources/annotations</sourcepath>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.plugin.version}</version>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>io.soabase.record-builder</groupId>
+                            <artifactId>record-builder-processor</artifactId>
+                            <version>${record.builder.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
         </plugins>

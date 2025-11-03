@@ -12,8 +12,8 @@
     <description>Language API for JPlag language modules</description>
     <dependencies>
         <dependency>
-            <groupId>org.kohsuke.metainf-services</groupId>
-            <artifactId>metainf-services</artifactId>
+            <groupId>com.google.auto.service</groupId>
+            <artifactId>auto-service</artifactId>
         </dependency>
         <dependency>
             <groupId>com.ibm.icu</groupId>

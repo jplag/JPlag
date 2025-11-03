@@ -26,7 +26,7 @@ jobs:
       should_skip: ${{ steps.skip_check.outputs.should_skip }}
     steps:
       - id: skip_check
-        uses: fkirc/skip-duplicate-actions@master
+        uses: fkirc/skip-duplicate-actions@v5
         with:
           concurrent_skipping: 'same_content_newer'
           skip_after_successful_duplicate: 'true'
@@ -42,10 +42,10 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@v5
       with:
-        java-version: 21
+        java-version: 25
         distribution: 'temurin'
 
-    - uses: actions/setup-node@v5
+    - uses: actions/setup-node@v6
       with:
         node-version: "lts/*"
 
@@ -56,7 +56,7 @@ jobs:
       run: mvn -Pwith-report-viewer clean package assembly:single
 
     - name: Upload Assembly
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: "JPlag Jar"
         path: "cli/target/jplag-*-jar-with-dependencies.jar"

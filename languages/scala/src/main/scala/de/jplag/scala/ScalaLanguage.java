@@ -8,9 +8,12 @@ import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
+import com.google.auto.service.AutoService;
+
 /**
  * Scala language module.
  */
+@AutoService(Language.class)
 public class ScalaLanguage implements Language {
     @Override
     public List<String> fileExtensions() {

@@ -69,20 +69,24 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <!--suppress UnresolvedMavenProperty -->
         <sonar.coverage.jacoco.xmlReportPaths>${maven.multiModuleProjectDirectory}/coverage-report/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <spotless.version>2.46.1</spotless.version>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
+        <maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
+        <maven.javadoc.plugin.version>3.12.0</maven.javadoc.plugin.version>
+        <spotless.version>3.0.0</spotless.version>
         <slf4j.version>2.0.17</slf4j.version>
-        <junit.version>5.13.4</junit.version>
-        <checkstyle.version>11.0.1</checkstyle.version>
+        <junit.version>6.0.0</junit.version>
+        <checkstyle.version>12.1.1</checkstyle.version>
         <antlr2.version>2.7.7</antlr2.version>
         <antlr4.version>4.13.2</antlr4.version>
+        <auto-service.version>1.1.1</auto-service.version>
         <emf.version>2.40.0</emf.version>
         <emf.ecore.version>2.43.0</emf.ecore.version>
         <emf.ecore.xmi.version>2.39.0</emf.ecore.xmi.version>
         <eclipse.core.version>3.23.0</eclipse.core.version>
         <emfatic.version>1.1.0</emfatic.version>
         <mockito.version>5.20.0</mockito.version>
+        <record.builder.version>49</record.builder.version>
         <!-- ensure that this variable is initialized, even if it is empty -->
         <argLine/>
 
@@ -133,9 +137,15 @@
                 <version>${slf4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.kohsuke.metainf-services</groupId>
-                <artifactId>metainf-services</artifactId>
-                <version>1.11</version>
+                <groupId>com.google.auto.service</groupId>
+                <artifactId>auto-service</artifactId>
+                <version>${auto-service.version}</version>
+                <optional>true</optional>
+            </dependency>
+            <dependency>
+                <groupId>com.google.auto.service</groupId>
+                <artifactId>auto-service-annotations</artifactId>
+                <version>${auto-service.version}</version>
             </dependency>
 
             <dependency>
@@ -246,9 +256,23 @@
                     </configuration>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven.compiler.plugin.version}</version>
+                    <configuration>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>com.google.auto.service</groupId>
+                                <artifactId>auto-service</artifactId>
+                                <version>${auto-service.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+                <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.13</version>
+                    <version>0.8.14</version>
                     <executions>
                         <execution>
                             <id>prepare-agent</id>
@@ -285,7 +309,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.7.2</version>
+                <version>1.7.3</version>
                 <configuration>
                     <updatePomFile>true</updatePomFile>
                     <flattenMode>resolveCiFriendliesOnly</flattenMode>

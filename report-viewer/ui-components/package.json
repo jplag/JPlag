@@ -3,9 +3,9 @@
   "type": "module",
   "dependencies": {
     "@jplag/model": "../model",
-    "@sgratzl/chartjs-chart-boxplot": "^4.4.4",
+    "@sgratzl/chartjs-chart-boxplot": "^4.4.5",
     "chart.js": "^4.5.0",
-    "chartjs-chart-graph": "^4.3.4",
+    "chartjs-chart-graph": "^4.3.5",
     "chartjs-plugin-datalabels": "^2.2.0",
     "highlight.js": "^11.11.1",
     "vue-chartjs": "^5.3.2",
@@ -13,7 +13,7 @@
     "vue-virtual-scroller": "^2.0.0-beta.8"
   },
   "peerDependencies": {
-    "@fortawesome/free-solid-svg-icons": "^7.0.0",
+    "@fortawesome/free-solid-svg-icons": "^7.1.0",
     "@fortawesome/vue-fontawesome": "^3.1.1",
     "pinia": "^3.0.3",
     "tailwindcss": "^4.1.12",
@@ -23,7 +23,7 @@
     "test": "vitest"
   },
   "devDependencies": {
-    "jsdom": "^26.1.0",
+    "jsdom": "^27.0.1",
     "@vue/test-utils": "^2.4.6"
   }
 }

@@ -15,7 +15,7 @@ jobs:
       should_skip: ${{ steps.skip_check.outputs.should_skip }}
     steps:
       - id: skip_check
-        uses: fkirc/skip-duplicate-actions@master
+        uses: fkirc/skip-duplicate-actions@v5
         with:
           concurrent_skipping: 'same_content_newer'
           skip_after_successful_duplicate: 'true'
@@ -28,7 +28,7 @@ jobs:
       - name: Checkout 🛎️
         uses: actions/checkout@v5
       
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v6
         with:
           node-version: "lts/*"
 

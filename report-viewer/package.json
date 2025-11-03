@@ -15,17 +15,17 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
-    "@eslint/js": "^9.29.0",
-    "@types/node": "^24.3.0",
+    "@eslint/js": "^9.38.0",
+    "@types/node": "^24.9.2",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.6.0",
     "eslint": "^9.36.0",
-    "eslint-plugin-vue": "^10.3.0",
+    "eslint-plugin-vue": "^10.5.1",
     "globals": "^16.4.0",
-    "lint-staged": "^16.1.6",
+    "lint-staged": "^16.2.3",
     "prettier": "^3.6.2",
-    "prettier-plugin-tailwindcss": "^0.6.14",
-    "typescript": "^5.4.0",
+    "prettier-plugin-tailwindcss": "^0.7.1",
+    "typescript": "^5.9.3",
     "typescript-eslint": "^8.44.0",
     "vitest": "^3.2.4"
   }
