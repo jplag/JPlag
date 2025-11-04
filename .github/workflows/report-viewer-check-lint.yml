@@ -1,17 +1,17 @@
-name: Report Viewer Prettier Check Workflow # Checks the report viewer against the prettier rules
+name: Report Viewer ESLint
+
 
 on:
   workflow_dispatch:
   push:
     paths:
-      - ".github/workflows/report-viewer-prettier.yml"
+      - ".github/workflows/report-viewer-check-lint.yml"
       - "report-viewer/**"
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
-      - ".github/workflows/report-viewer-prettier.yml"
+      - ".github/workflows/report-viewer-lint.yml"
       - "report-viewer/**"
-
       
 jobs:
   pre_job:
@@ -37,8 +37,8 @@ jobs:
         with:
           node-version: "lts/*"
 
-      - name: Install and Check 🎨
+      - name: Install and Lint 🎨
         working-directory: report-viewer
         run: |
           npm install
-          npx prettier --check .
+          npm run lint

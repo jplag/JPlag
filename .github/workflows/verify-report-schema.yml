@@ -1,11 +1,11 @@
-name: Match Report Schema
+name: Check Report Schema
 
 on:
   workflow_dispatch:
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
-      - ".github/workflows/match-record-to-interface.yml"
+      - ".github/workflows/verify-report-schema.yml"
       - ".github/workflows/scripts/matchRecordToInterface.py"
       - "report-viewer/**"
       - "**.java"

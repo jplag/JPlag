@@ -1,9 +1,9 @@
-name: SonarCloud Scan (PRs triggered by maven.yml)
+name: SonarCloud Scan PR
 
 on:
   workflow_run:
     workflows:
-      - Build
+      - Maven Build
     types:
       - completed
 

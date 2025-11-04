@@ -1,4 +1,4 @@
-name: Report Viewer Demo Deployment
+name: Deploy Demo
 
 on:
   workflow_dispatch: # Use this to dispatch from the Actions Tab

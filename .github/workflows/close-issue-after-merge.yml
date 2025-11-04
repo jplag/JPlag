@@ -1,4 +1,4 @@
-name: Close linked issue on PR merge
+name: Close Issue on PR Merge
 
 on:
   pull_request:

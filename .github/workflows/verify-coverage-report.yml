@@ -1,4 +1,4 @@
-name: Check that all dependencies are in coverage report
+name: Check Coverage Report Dependencies
 
 on:
   workflow_dispatch:

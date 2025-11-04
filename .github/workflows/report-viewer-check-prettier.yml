@@ -1,13 +1,18 @@
-name: Report Viewer Unit Test
+name: Report Viewer Prettier
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/report-viewer-check-prettier.yml"
+      - "report-viewer/**"
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
-      - ".github/workflows/report-viewer-unit.yml"
+      - ".github/workflows/report-viewer-prettier.yml"
       - "report-viewer/**"
 
+      
 jobs:
   pre_job:
     runs-on: ubuntu-latest
@@ -20,35 +25,20 @@ jobs:
           concurrent_skipping: 'same_content_newer'
           skip_after_successful_duplicate: 'true'
 
-  test:
+  check:
     needs: pre_job
     if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v5
-
+      
       - uses: actions/setup-node@v6
         with:
           node-version: "lts/*"
 
-      - name: Install
+      - name: Install and Check 🎨
         working-directory: report-viewer
         run: |
           npm install
-      - name: Test model
-        working-directory: report-viewer/model
-        run: |
-          npm run test
-      - name: Test parser
-        working-directory: report-viewer/parser
-        run: |
-          npm run test
-      - name: Test ui-components
-        working-directory: report-viewer/ui-components
-        run: |
-          npm run test
-      - name: Test report-viewer
-        working-directory: report-viewer/report-viewer
-        run: |
-          npm run test:unit
+          npx prettier --check .

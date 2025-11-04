@@ -1,4 +1,4 @@
-name: SonarCloud Scan (ReportViewer)
+name: Report Viewer SonarCloud
 
 on:
   push:
@@ -7,17 +7,17 @@ on:
       - develop
     paths:
       - "report-viewer/**"
-      - ".github/workflows/report-viewer-sonarcloud.yml"
+      - ".github/workflows/report-viewer-check-sonarcloud.yml"
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
       - "report-viewer/**"
-      - ".github/workflows/report-viewer-sonarcloud.yml"
+      - ".github/workflows/report-viewer-check-sonarcloud.yml"
   pull_request_target:
     types: [opened, synchronize, reopened]
     paths:
       - "report-viewer/**"
-      - ".github/workflows/report-viewer-sonarcloud.yml"
+      - ".github/workflows/report-viewer-check-sonarcloud.yml"
 
       # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:

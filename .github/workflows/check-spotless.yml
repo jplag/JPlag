@@ -1,17 +1,16 @@
-name: Build
+name: Spotless Style Check
 
 on:
   push:
     paths:
-      - ".github/workflows/maven.yml"
+      - ".github/workflows/check-spotless.yml"
       - "**/pom.xml"
       - "**.java"
       - "**.g4"
-      - "report-viewer/**"
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
-      - ".github/workflows/maven.yml"
+      - ".github/workflows/check-spotless.yml"
       - "**/pom.xml"
       - "**.java"
       - "**.g4"
@@ -33,7 +32,7 @@ jobs:
 
   build:
     needs: pre_job
-    if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
+    if: ${{ needs.pre_job.outputs.should_skip != 'true' && github.actor != 'dependabot[bot]' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -45,20 +44,8 @@ jobs:
         java-version: 25
         distribution: 'temurin'
 
-    - uses: actions/setup-node@v6
-      with:
-        node-version: "lts/*"
+    - name: Check with Spotless
+      run: mvn clean spotless:check
 
-    - name: Run Tests
-      run: mvn verify -B -U
-
-    - name: Build Assembly
-      run: mvn -Pwith-report-viewer clean package assembly:single
-
-    - name: Upload Assembly
-      uses: actions/upload-artifact@v5
-      with:
-        name: "JPlag Jar"
-        path: "cli/target/jplag-*-jar-with-dependencies.jar"
 
 
