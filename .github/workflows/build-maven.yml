@@ -3,7 +3,7 @@ name: Maven Build
 on:
   push:
     paths:
-      - ".github/workflows/test-and-package.yml"
+      - ".github/workflows/build-maven.yml"
       - "**/pom.xml"
       - "**.java"
       - "**.g4"

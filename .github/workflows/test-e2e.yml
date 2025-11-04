@@ -6,7 +6,7 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
-      - ".github/workflows/complete-e2e-tests.yml"
+      - ".github/workflows/test-e2e.yml"
       - "report-viewer/**"
       - "**/pom.xml"
       - "**.java"
