@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
-    "@eslint/js": "^9.38.0",
+    "@eslint/js": "^9.39.1",
     "@types/node": "^24.9.2",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.6.0",
