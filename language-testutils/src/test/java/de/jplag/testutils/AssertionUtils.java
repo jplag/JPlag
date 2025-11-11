@@ -5,11 +5,16 @@ import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Assertions;
 
+/**
+ * Utility functions for assertions
+ */
 public class AssertionUtils {
-    public static <T> void assertAll(String heading, Collection<T> items, Consumer<T> check) {
-        Assertions.assertAll(heading, items.stream().map(item -> () -> check.accept(item)));
-    }
-
+    /**
+     * Runs a function on all elements and fails if any of the functions fail, returning all errors to the user
+     * @param items The list of items
+     * @param check The check to perform
+     * @param <T> The type of element
+     */
     public static <T> void assertAll(Collection<T> items, Consumer<T> check) {
         Assertions.assertAll(items.stream().map(item -> () -> check.accept(item)));
     }
