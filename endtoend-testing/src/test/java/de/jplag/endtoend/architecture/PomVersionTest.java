@@ -24,7 +24,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 /**
- * Ensures that version tags in pom.xml files are defined properly
+ * Ensures that version tags in pom.xml files are defined properly.
  */
 class PomVersionTest {
     private static final String POM_XML_NAME = "pom.xml";
@@ -50,12 +50,9 @@ class PomVersionTest {
     private static final File projectRoot = new File("..");
     private static final File projectRootPom = new File(projectRoot, POM_XML_NAME);
 
-    /**
-     * Verifies the version of each module is defined using ${revision}
-     */
     @ParameterizedTest
     @MethodSource("getAllChildPomFiles")
-    @DisplayName("Ensure all pom use " + REVISION_REFERENCE + " to reference parent")
+    @DisplayName("Ensure all child poms use " + REVISION_REFERENCE + " to reference parent")
     void testModuleParentVersion(File pom) throws IOException, JDOMException {
         List<Element> versionTags = scanXpath(pom, XPATH_PARENT_VERSION);
         assertEquals(1, versionTags.size());
