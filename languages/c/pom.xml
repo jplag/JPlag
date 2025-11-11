@@ -23,7 +23,7 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <jdkVersion>21</jdkVersion>
-                            <javadocFriendlyComments>true</javadocFriendlyComments> <!-- TODO valid? -->
+                            <javadocFriendlyComments>true</javadocFriendlyComments>
                             <packageName>de.jplag.c</packageName>
                             <sourceDirectory>src/main/javacc</sourceDirectory>
                             <outputDirectory>${project.build.directory}/generated-sources/javacc</outputDirectory>

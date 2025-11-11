@@ -71,24 +71,21 @@
         <sonar.coverage.jacoco.xmlReportPaths>${maven.multiModuleProjectDirectory}/coverage-report/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
-        <maven.compiler.plugin.version>3.14.1</maven.compiler.plugin.version>
-        <maven.javadoc.plugin.version>3.12.0</maven.javadoc.plugin.version>
 
         <!-- Dependency versions -->
-        <version.antlr2>2.7.7</version.antlr2>
         <version.antlr4>4.13.2</version.antlr4>
         <version.argparser4j>0.9.0</version.argparser4j>
         <version.corenlp>4.5.10</version.corenlp>
         <version.slf4j>2.0.17</version.slf4j>
         <version.auto-service>1.1.1</version.auto-service>
         <version.jackson>2.20.1</version.jackson>
-        <version.spotless>3.0.0</version.spotless>
         <version.junit>6.0.1</version.junit>
         <version.mockito>5.20.0</version.mockito>
         <version.record-builder>50</version.record-builder>
         <version.picocli>4.7.7</version.picocli>
         <version.progressbar>0.10.1</version.progressbar>
-        <version.jgrapht>1.5.2</version.jgrapht> <!-- graphs (data-structure) library -->
+        <version.jgrapht>1.5.2</version.jgrapht>
+        <!-- graphs (data-structure) library -->
         <version.apache.commons.math>3.6.1</version.apache.commons.math>
         <version.archunit>1.4.1</version.archunit>
         <version.icu-charset>78.1</version.icu-charset>
@@ -99,10 +96,14 @@
         <version.eclipse.emfatic>1.1.0</version.eclipse.emfatic>
         <version.scala>2.13.17</version.scala>
         <version.scalameta>4.14.1</version.scalameta>
-        <version.scalameta.suffix>2.13</version.scalameta.suffix> <!-- Version suffix for the scalameta depdency -->
+        <version.scalameta.suffix>2.13</version.scalameta.suffix>
+        <!-- Version suffix for the scalameta depdency -->
         <version.assertj>3.27.6</version.assertj>
+        <version.jdom>2.0.6.1</version.jdom>
+        <version.jaxen>2.0.0</version.jaxen>
 
         <!-- Plugin versions -->
+        <version.plugin.antlr4>4.13.2</version.plugin.antlr4>
         <version.plugin.javacc>5.0.0</version.plugin.javacc>
         <version.plugin.maven.jar>3.4.2</version.plugin.maven.jar>
         <version.plugin.maven.assembly>3.7.1</version.plugin.maven.assembly>
@@ -111,6 +112,7 @@
         <version.plugin.maven.surefire>3.5.4</version.plugin.maven.surefire>
         <version.plugin.maven.javadoc>3.12.0</version.plugin.maven.javadoc>
         <version.plugin.maven.source>3.3.1</version.plugin.maven.source>
+        <version.plugin.maven.compiler>3.14.1</version.plugin.maven.compiler>
         <version.plugin.jacoco>0.8.14</version.plugin.jacoco>
         <version.plugin.maven-flatten>1.7.3</version.plugin.maven-flatten>
         <version.plugin.build-helper>3.6.1</version.plugin.build-helper>
@@ -118,7 +120,7 @@
         <version.plugin.checkstyle>3.6.0</version.plugin.checkstyle>
         <version.plugin.maven-central-publishing>0.9.0</version.plugin.maven-central-publishing>
         <version.plugin.maven-exec>3.6.2</version.plugin.maven-exec>
-
+        <version.plugin.spotless>3.0.0</version.plugin.spotless>
 
         <!-- ensure that this variable is initialized, even if it is empty -->
         <argLine/>
@@ -130,11 +132,6 @@
     <dependencyManagement>
         <dependencies>
             <!-- ANTLR -->
-            <dependency>
-                <groupId>antlr</groupId>
-                <artifactId>antlr</artifactId>
-                <version>${version.antlr2}</version>
-            </dependency>
             <dependency>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-runtime</artifactId>
@@ -296,7 +293,8 @@
                 <artifactId>scala-library</artifactId>
                 <version>${version.scala}</version>
             </dependency>
-            <dependency> <!-- https://mvnrepository.com/artifact/org.scalameta/scalameta -->
+            <dependency>
+                <!-- https://mvnrepository.com/artifact/org.scalameta/scalameta -->
                 <groupId>org.scalameta</groupId>
                 <artifactId>scalameta_${version.scalameta.suffix}</artifactId>
                 <version>${version.scalameta}</version>
@@ -307,6 +305,18 @@
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
                 <version>${version.assertj}</version>
+            </dependency>
+
+            <!-- Xml parsing -->
+            <dependency>
+                <groupId>org.jdom</groupId>
+                <artifactId>jdom2</artifactId>
+                <version>${version.jdom}</version>
+            </dependency>
+            <dependency>
+                <groupId>jaxen</groupId>
+                <artifactId>jaxen</artifactId>
+                <version>${version.jaxen}</version>
             </dependency>
 
             <!-- Internal dependencies -->
@@ -492,7 +502,7 @@
                 <plugin>
                     <groupId>org.antlr</groupId>
                     <artifactId>antlr4-maven-plugin</artifactId>
-                    <version>${version.antlr4}</version>
+                    <version>${version.plugin.antlr4}</version>
                 </plugin>
 
                 <plugin>
@@ -535,7 +545,7 @@
                 <plugin>
                     <groupId>com.diffplug.spotless</groupId>
                     <artifactId>spotless-maven-plugin</artifactId>
-                    <version>${version.spotless}</version>
+                    <version>${version.plugin.spotless}</version>
                     <configuration>
                         <java>
                             <eclipse>
@@ -667,7 +677,8 @@
                         </archive>
                     </configuration>
                 </plugin>
-                <plugin> <!-- implicitly loaded by maven for jar projects -->
+                <plugin>
+                    <!-- implicitly loaded by maven for jar projects -->
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${version.plugin.maven.surefire}</version>
@@ -678,7 +689,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>${maven.compiler.plugin.version}</version>
+                    <version>${version.plugin.maven.compiler}</version>
                     <configuration>
                         <annotationProcessorPaths>
                             <path>
