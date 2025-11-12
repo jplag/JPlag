@@ -85,7 +85,6 @@
         <version.picocli>4.7.7</version.picocli>
         <version.progressbar>0.10.1</version.progressbar>
         <version.jgrapht>1.5.2</version.jgrapht>
-        <!-- graphs (data-structure) library -->
         <version.apache.commons.math>3.6.1</version.apache.commons.math>
         <version.archunit>1.4.1</version.archunit>
         <version.icu-charset>78.1</version.icu-charset>
@@ -97,7 +96,6 @@
         <version.scala>2.13.17</version.scala>
         <version.scalameta>4.14.1</version.scalameta>
         <version.scalameta.suffix>2.13</version.scalameta.suffix>
-        <!-- Version suffix for the scalameta depdency -->
         <version.assertj>3.27.6</version.assertj>
         <version.jdom>2.0.6.1</version.jdom>
         <version.jaxen>2.0.0</version.jaxen>
