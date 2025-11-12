@@ -81,7 +81,7 @@
         <version.jackson>2.20.1</version.jackson>
         <version.junit>6.0.1</version.junit>
         <version.mockito>5.20.0</version.mockito>
-        <version.record-builder>50</version.record-builder>
+        <version.record-builder>51</version.record-builder>
         <version.picocli>4.7.7</version.picocli>
         <version.progressbar>0.10.1</version.progressbar>
         <version.jgrapht>1.5.2</version.jgrapht>
@@ -114,7 +114,7 @@
         <version.plugin.jacoco>0.8.14</version.plugin.jacoco>
         <version.plugin.maven-flatten>1.7.3</version.plugin.maven-flatten>
         <version.plugin.build-helper>3.6.1</version.plugin.build-helper>
-        <version.plugin.checkstyle-puppycrawl>12.1.1</version.plugin.checkstyle-puppycrawl>
+        <version.plugin.checkstyle-puppycrawl>12.1.2</version.plugin.checkstyle-puppycrawl>
         <version.plugin.checkstyle>3.6.0</version.plugin.checkstyle>
         <version.plugin.maven-central-publishing>0.9.0</version.plugin.maven-central-publishing>
         <version.plugin.maven-exec>3.6.2</version.plugin.maven-exec>
