@@ -29,7 +29,7 @@
     "@tailwindcss/vite": "^4.1.16",
     "@vitejs/plugin-vue": "^6.0.1",
     "npm-run-all": "^4.1.5",
-    "tailwindcss": "^4.1.12",
+    "tailwindcss": "^4.1.17",
     "vite": "^7.2.0",
     "vue-tsc": "^3.1.2"
   }
