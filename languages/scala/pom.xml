@@ -11,7 +11,7 @@
     <name>JPlag: Scala Language Module</name>
 
     <properties>
-        <scala.version>2.13.17</scala.version>
+        <scala.version>2.13.18</scala.version>
         <scala.compat.version>2.13</scala.compat.version>
     </properties>
 
