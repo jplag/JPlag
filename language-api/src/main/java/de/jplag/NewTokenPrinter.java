@@ -8,7 +8,7 @@ import java.util.Optional;
 
 /**
  * Visualizes tokens by printing their positions along with the source code to help with debugging. Tokens are
- * visualized using Unicode box drawing characters to mark the ranges
+ * visualized using Unicode box drawing characters to mark the ranges.
  */
 public class NewTokenPrinter {
     private static final String ZERO_WIDTH_TOKEN_MARKER = "┴";
@@ -25,7 +25,7 @@ public class NewTokenPrinter {
     private final List<List<Token>> tokensByLine;
 
     /**
-     * Creates a new token printer
+     * Creates a new token printer.
      * @param fileLines The lines of the file
      * @param allTokens The list of all tokens
      */
@@ -51,7 +51,7 @@ public class NewTokenPrinter {
     }
 
     /**
-     * Prints the tokens and the source code
+     * Prints the tokens and the source code.
      * @return The visualization as a single string
      */
     public String printTokens() {
@@ -61,7 +61,7 @@ public class NewTokenPrinter {
     }
 
     /**
-     * Prints the source code and the tokens to the output builder
+     * Prints the source code and the tokens to the output builder.
      */
     private void printTokensToOutputBuilder() {
         List<Token> continuations = Collections.emptyList();
@@ -79,7 +79,7 @@ public class NewTokenPrinter {
     }
 
     /**
-     * Prints the tokens for the current source line
+     * Prints the tokens for the current source line.
      * @param continuations The tokens that have to be continued from the previous line
      * @param currentLine The index of the current line (1-based)
      * @return The list of tokens that have to be continued
@@ -126,7 +126,7 @@ public class NewTokenPrinter {
     }
 
     /**
-     * Prints the token lines to the output builder
+     * Prints the token lines to the output builder.
      * @param lines The list of lines to print
      */
     private void printTokenLines(List<TokenLineBuilder> lines) {
@@ -138,7 +138,7 @@ public class NewTokenPrinter {
     }
 
     /**
-     * Finds a line that still has space at the given position by examining first set1 and then set2
+     * Finds a line that still has space at the given position by examining first set1 and then set2.
      * @param startPosition The position to look for
      * @param set1 The first set
      * @param set2 The second set
@@ -154,7 +154,7 @@ public class NewTokenPrinter {
     }
 
     /**
-     * Helper for creating the token annotation lines
+     * Helper for creating the token annotation lines.
      */
     private class TokenLineBuilder {
         private final StringBuilder lineBuilder;
@@ -168,7 +168,7 @@ public class NewTokenPrinter {
         }
 
         /**
-         * Adds a token that starts and ends in the current line
+         * Adds a token that starts and ends in the current line.
          * @param token The token to add
          */
         void addInLineToken(Token token) {
@@ -200,7 +200,7 @@ public class NewTokenPrinter {
         }
 
         /**
-         * Adds a token that starts in the current line and ends later
+         * Adds a token that starts in the current line and ends later.
          * @param token The token to add
          */
         void addStartingToken(Token token) {
@@ -212,7 +212,7 @@ public class NewTokenPrinter {
         }
 
         /**
-         * Adds information for a token that starts before the current line and ends later
+         * Adds information for a token that starts before the current line and ends later.
          * @param token The token to add information for
          */
         void addContinuedThroughToken(Token token) {
@@ -223,7 +223,7 @@ public class NewTokenPrinter {
         }
 
         /**
-         * Adds a token that started in a previous line and ends in the current line
+         * Adds a token that started in a previous line and ends in the current line.
          * @param token The token to add
          */
         void addContinuedTokenEnd(Token token) {
