@@ -27,10 +27,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.Language;
+import de.jplag.NewTokenPrinter;
 import de.jplag.ParsingException;
 import de.jplag.SharedTokenType;
 import de.jplag.Token;
-import de.jplag.TokenPrinter;
 import de.jplag.TokenType;
 import de.jplag.testutils.datacollector.TestData;
 import de.jplag.testutils.datacollector.TestDataCollector;
@@ -305,7 +305,8 @@ public abstract class LanguageModuleTest {
 
     private List<Token> parseTokens(TestData source) throws ParsingException, IOException {
         List<Token> tokens = source.parseTokens(this.language);
-        logger.info(TokenPrinter.printTokens(tokens));
+        // logger.info(TokenPrinter.printTokens(tokens));
+        logger.info(System.lineSeparator() + new NewTokenPrinter(List.of(source.getSourceLines()), tokens).printTokens());
         return tokens;
     }
 
