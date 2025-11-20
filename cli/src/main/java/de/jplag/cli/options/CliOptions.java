@@ -144,8 +144,8 @@ public class CliOptions implements Runnable {
         @Option(names = "--log-level", description = "Set the log level for the cli.")
         public Level logLevel = Level.INFO;
 
-        /** Analyze similarity of comments (hidden). */
-        @Option(names = "--comments", description = "Analyze similarity of comments. Increases the similarity of submissions if similar comments are found, but never decreases it.", hidden = true)
+        /** Analyze similarity of comments. */
+        @Option(names = "--comments", description = "Analyze similarity of comments. Increases the similarity of submissions if similar comments are found, but never decreases it.")
         public boolean analyzeComments = false;
 
         /** Override charset for submissions. */

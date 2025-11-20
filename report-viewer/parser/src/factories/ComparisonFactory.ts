@@ -76,6 +76,11 @@ export class ComparisonFactory {
 
       fileOfFirst.matchedTokenCount += match.lengthOfFirst
       fileOfSecond.matchedTokenCount += match.lengthOfSecond
+
+      if (match.isComment) {
+        fileOfFirst.tokenCount += match.lengthOfFirst
+        fileOfSecond.tokenCount += match.lengthOfSecond
+      }
     })
 
     return new Comparison(

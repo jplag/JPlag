@@ -44,6 +44,11 @@
             <version>${record.builder.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>de.jplag</groupId>
+            <artifactId>text</artifactId>
+            <version>${revision}</version>
+        </dependency>
     </dependencies>
 
     <build>
