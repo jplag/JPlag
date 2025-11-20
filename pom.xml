@@ -466,7 +466,7 @@
                 <module>cli</module>
                 <module>core</module>
                 <module>coverage-report</module>
-                <module>endtoend-testing</module>
+                <module>regression-tests</module>
                 <module>languages</module>
                 <module>language-api</module>
                 <module>language-antlr-utils</module>

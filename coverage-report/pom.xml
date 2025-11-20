@@ -21,7 +21,7 @@
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
-            <artifactId>endtoend-testing</artifactId>
+            <artifactId>regression-tests</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
