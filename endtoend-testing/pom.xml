@@ -12,18 +12,25 @@
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>jplag</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>cli</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>language-testutils</artifactId>
-            <version>${revision}</version>
             <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jaxen</groupId>
+            <artifactId>jaxen</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -33,7 +40,6 @@
         <dependency>
             <groupId>com.tngtech.archunit</groupId>
             <artifactId>archunit-junit5</artifactId>
-            <version>1.4.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
