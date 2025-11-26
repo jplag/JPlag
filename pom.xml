@@ -106,7 +106,7 @@
         <version.plugin.checkstyle-puppycrawl>12.1.2</version.plugin.checkstyle-puppycrawl>
         <version.plugin.checkstyle>3.6.0</version.plugin.checkstyle>
         <version.plugin.jacoco>0.8.14</version.plugin.jacoco>
-        <version.plugin.javacc>5.0.0</version.plugin.javacc>
+        <version.plugin.javacc>5.0.1</version.plugin.javacc>
         <version.plugin.maven-central-publishing>0.9.0</version.plugin.maven-central-publishing>
         <version.plugin.maven-exec>3.6.2</version.plugin.maven-exec>
         <version.plugin.maven-flatten>1.7.3</version.plugin.maven-flatten>
