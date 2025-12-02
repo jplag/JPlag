@@ -69,6 +69,7 @@ public class JavaCpgLanguage implements Language {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             return List.of();
+
         }
     }
 
