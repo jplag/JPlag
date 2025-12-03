@@ -91,6 +91,13 @@ public class SpectralClustering implements GenericClusteringAlgorithm {
         int minClusters = Math.max(2, (int) DoubleStream.of(eigenDecomposition.getRealEigenvalues()).filter(x -> x < MULTIPLICITY_EPSILON).count());
         int maxClusters = (int) Math.ceil(dimension / 2.0);
 
+        // If optimization space is too small or degenerate, skip Bayesian Optimization
+        // This avoids numerical issues in the optimizer when there's little or nothing to optimize
+        if (maxClusters <= minClusters) {
+            // Only one valid choice for number of clusters
+            return cluster(minClusters, dimension, eigenValueIds, eigenDecomposition);
+        }
+
         // Find number of clusters using bayesian optimization
         RealVector lengthScale = new ArrayRealVector(1, options.spectralKernelBandwidth());
         BayesianOptimizer optimizer = new BayesianOptimizer(new ArrayRealVector(1, minClusters), new ArrayRealVector(1, maxClusters),
