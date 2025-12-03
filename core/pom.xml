@@ -33,6 +33,10 @@
             <artifactId>record-builder-processor</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.haifengl</groupId>
+            <artifactId>smile-core</artifactId>
+        </dependency>
 
         <!-- the core project only requires one language module for testing: -->
         <dependency>

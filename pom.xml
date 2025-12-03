@@ -99,6 +99,7 @@
         <version.scalameta.suffix>2.13</version.scalameta.suffix>
         <version.scalameta>4.14.2</version.scalameta>
         <version.slf4j>2.0.17</version.slf4j>
+        <version.smile-core>5.0.0</version.smile-core>
 
         <!-- Plugin versions -->
         <version.plugin.antlr4>${version.antlr4}</version.plugin.antlr4>
@@ -296,6 +297,13 @@
                 <groupId>org.scalameta</groupId>
                 <artifactId>scalameta_${version.scalameta.suffix}</artifactId>
                 <version>${version.scalameta}</version>
+            </dependency>
+
+            <!-- CLustering -->
+            <dependency>
+                <groupId>com.github.haifengl</groupId>
+                <artifactId>smile-core</artifactId>
+                <version>${version.smile-core}</version>
             </dependency>
 
             <!-- Assertj -->
