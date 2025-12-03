@@ -17,6 +17,8 @@ import org.apache.commons.math3.random.RandomVectorGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import smile.math.BFGS;
+
 /**
  * Maximizes a function using bayesian optimization.
  */
