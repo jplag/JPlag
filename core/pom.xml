@@ -35,7 +35,7 @@
         </dependency>
         <dependency>
             <groupId>com.github.haifengl</groupId>
-            <artifactId>smile-core</artifactId>
+            <artifactId>smile-base</artifactId>
         </dependency>
 
         <!-- the core project only requires one language module for testing: -->
