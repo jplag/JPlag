@@ -4,6 +4,15 @@
       <div v-if="reportViewerVersion.isInvalid()">Could not load version information</div>
       <div v-else-if="reportViewerVersion.isDevVersion()">
         You are using a development version of the JPlag Report Viewer.
+        <span v-if="commitHash">
+          (commit:
+          <a
+            class="text-link-dark dark:text-link underline"
+            :href="`https://github.com/jplag/JPlag/commit/${commitHash}`"
+            target="_blank"
+            >{{ commitHash.substring(0, 7) }}</a
+          >)
+        </span>
       </div>
 
       <div v-else>
@@ -27,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { minimalReportVersion, reportViewerVersion } from '../version/versions'
+import { minimalReportVersion, reportViewerVersion, commitHash } from '../version/versions'
 import VersionRepositoryReference from './VersionRepositoryReference.vue'
 
 const isDemo = import.meta.env.MODE == 'demo'
