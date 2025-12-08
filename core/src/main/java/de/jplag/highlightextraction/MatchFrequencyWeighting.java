@@ -1,10 +1,11 @@
 package de.jplag.highlightextraction;
 
 import java.util.List;
+import java.util.Map;
+import java.util.OptionalDouble;
 
 import de.jplag.JPlagComparison;
 import de.jplag.Match;
-import de.jplag.Token;
 import de.jplag.TokenType;
 
 /**
@@ -19,11 +20,8 @@ public class MatchFrequencyWeighting {
     /**
      * Chosen weighting function.
      */
-    private final MatchWeightingFunction strategy;
-    private final MatchFrequency matchFrequency;
-    private static final double MINIMUM_PROPORTIONAL_WEIGHT = 0.01;
-    private static final double MINIMUM_WEIGHT = 1.0;
-    private static final double MAXIMUM_WEIGHT = 2.0;
+    private final WeightingFunction strategy;
+    private final Map<List<TokenType>, Double> matchFrequency;
     private static final double DEFAULT_MAXIMUM_FREQUENCY = 1.0;
     private static final double DEFAULT_MINIMUM_FREQUENCY = 0.0;
 
@@ -33,7 +31,7 @@ public class MatchFrequencyWeighting {
      * @param strategy chosen weighting function
      * @param matchFrequency the matchFrequency containing the map that maps a match to its frequency
      */
-    public MatchFrequencyWeighting(List<JPlagComparison> comparisons, MatchWeightingFunction strategy, MatchFrequency matchFrequency) {
+    public MatchFrequencyWeighting(List<JPlagComparison> comparisons, WeightingFunction strategy, Map<List<TokenType>, Double> matchFrequency) {
         this.comparisons = comparisons;
         this.strategy = strategy;
         this.matchFrequency = matchFrequency;
@@ -43,29 +41,27 @@ public class MatchFrequencyWeighting {
      * Calculates the similarity score for a comparison.
      * @param comparison considered comparison to calculate the similarity score for
      * @param weightingFactor weighting factor, is factor for the (max) influence of the frequency
-     * @param isFrequencyAnalysisEnabled if the frequency shall be considered
      * @return similarity of the comparison
      */
-    public JPlagComparison weightedComparisonSimilarity(JPlagComparison comparison, double weightingFactor, boolean isFrequencyAnalysisEnabled) {
+    public JPlagComparison weightedComparisonSimilarity(JPlagComparison comparison, double weightingFactor) {
         double frequencyWeightedSimilarity = frequencySimilarity(comparison, weightingFactor);
-        return new JPlagComparison(comparison, frequencyWeightedSimilarity, isFrequencyAnalysisEnabled);
+        return new JPlagComparison(comparison, frequencyWeightedSimilarity, true);
     }
 
-    private double getFrequencyFromMap(JPlagComparison comparison, Match match) {
-        List<TokenType> submissionTokenTypes = comparison.firstSubmission().getTokenList().stream().map(Token::getType).toList();
-        List<TokenType> matchTokens = FrequencyUtil.matchesToMatchTokenTypes(match, submissionTokenTypes);
-        return matchFrequency.matchFrequencyMap().getOrDefault(matchTokens, DEFAULT_MINIMUM_FREQUENCY);
+    private double getMatchCount(JPlagComparison comparison, Match match) {
+        List<TokenType> matchTokenTypes = TokenSequenceUtil.tokenTypesFor(comparison, match);
+        return matchFrequency.getOrDefault(matchTokenTypes, DEFAULT_MINIMUM_FREQUENCY);
     }
 
     /**
      * Calculates the similarity score for a comparison. The score gets influenced form the frequency of the match according
      * to the chosen Frequency Strategy, Similarity Strategy and weighting factor.
      * @param comparison considered comparison to calculate the similarity score for
-     * @param weight weighting factor, is factor for the (max) influence of the frequency
+     * @param factor weighting factor, is factor for the (max) influence of the frequency
      * @return the similarity score
      */
-    public double frequencySimilarity(JPlagComparison comparison, double weight) {
-        if (weight == 0.0) {
+    public double frequencySimilarity(JPlagComparison comparison, double factor) {
+        if (factor == 0.0) {
             return comparison.similarity();
         }
 
@@ -73,10 +69,10 @@ public class MatchFrequencyWeighting {
         if (divisor == 0) {
             return 0;
         }
-        int matchedFrequencyTokensOfFirst = getWeightedMatchLength(comparison, weight, true, strategy);
-        int matchedFrequencyTokensOfSecond = getWeightedMatchLength(comparison, weight, false, strategy);
+        double weightedMatchLengthLeft = getWeightedMatchLength(comparison, factor, true, strategy);
+        double weightedMatchLengthRight = getWeightedMatchLength(comparison, factor, false, strategy);
 
-        return (matchedFrequencyTokensOfFirst + matchedFrequencyTokensOfSecond) / (double) divisor;
+        return (weightedMatchLengthLeft + weightedMatchLengthRight) / (double) divisor;
 
     }
 
@@ -90,66 +86,34 @@ public class MatchFrequencyWeighting {
      * @param weightingFunction chosen weighting function
      * @return the similarity score
      */
-    public int getWeightedMatchLength(JPlagComparison comparison, double frequencyWeight, boolean firstSubmission,
-            MatchWeightingFunction weightingFunction) {
-        double minimumWeight;
-        double maximumWeight;
-        double maximumFoundFrequency = DEFAULT_MINIMUM_FREQUENCY;
-        maximumFoundFrequency = getMaximumFoundFrequency(maximumFoundFrequency);
+    public double getWeightedMatchLength(JPlagComparison comparison, double frequencyWeight, boolean firstSubmission,
+            WeightingFunction weightingFunction) {
 
-        if (weightingFunction == MatchFrequencyWeightingFunction.PROPORTIONAL) {
-            minimumWeight = MINIMUM_PROPORTIONAL_WEIGHT;
-        } else {
-            minimumWeight = MINIMUM_WEIGHT;
+        double finalMaximumFoundFrequency = getMaxFrequency();
+        double weightedTotalMatchLength = 0;
+        for (Match match : comparison.matches()) {
+            double matchCount = getMatchCount(comparison, match);
+            double matchLength = firstSubmission ? match.lengthOfFirst() : match.lengthOfSecond();
+
+            if (matchCount == 0) {
+                return matchLength;
+            }
+
+            double weightFactor = getWeightFactor(frequencyWeight, weightingFunction, matchCount, finalMaximumFoundFrequency);
+
+            weightedTotalMatchLength += matchLength * weightFactor;
         }
-        maximumWeight = MAXIMUM_WEIGHT;
 
-        double finalMaximumFoundFrequency = maximumFoundFrequency;
-        double consideredLengthOfMatchesWithFrequencyInfluence = comparison.matches().stream().mapToDouble(match -> {
-
-            double frequencyOfMatch = getFrequencyFromMap(comparison, match);
-
-            if (frequencyOfMatch == 0) {
-                if (firstSubmission) {
-                    return match.lengthOfFirst();
-                } else {
-                    return match.lengthOfSecond();
-                }
-            }
-
-            double influenceOnMatchLength = getInfluenceOnMatchLength(frequencyWeight, weightingFunction, frequencyOfMatch,
-                    finalMaximumFoundFrequency, minimumWeight, maximumWeight);
-
-            if (firstSubmission) {
-                return match.lengthOfFirst() * influenceOnMatchLength;
-            } else {
-                return match.lengthOfSecond() * influenceOnMatchLength;
-            }
-        }).sum();
-
-        return (int) Math.round(consideredLengthOfMatchesWithFrequencyInfluence);
+        return weightedTotalMatchLength;
     }
 
     /**
-     * Calculates the frequency of the match that is found most frequent across all matches in all comparisons.
-     * @param maximumFoundFrequency the frequency of the match that is found most frequent across all matches in all
-     * comparisons.
-     * @return this frequency
+     * Gets the max number of occurrences of any match across the submission set.
+     * @return the max occurrence.
      */
-    private double getMaximumFoundFrequency(double maximumFoundFrequency) {
-        if (matchFrequency.matchFrequencyMap().isEmpty()) {
-            maximumFoundFrequency = DEFAULT_MAXIMUM_FREQUENCY;
-        } else {
-            for (double frequency : matchFrequency.matchFrequencyMap().values()) {
-                if (frequency > maximumFoundFrequency) {
-                    maximumFoundFrequency = frequency;
-                }
-            }
-        }
-
-        if (maximumFoundFrequency == 0.0)
-            maximumFoundFrequency = DEFAULT_MAXIMUM_FREQUENCY;
-        return maximumFoundFrequency;
+    private double getMaxFrequency() {
+        OptionalDouble maxFrequency = matchFrequency.values().stream().mapToDouble(Double::doubleValue).max();
+        return maxFrequency.orElse(DEFAULT_MAXIMUM_FREQUENCY);
     }
 
     /**
@@ -158,18 +122,15 @@ public class MatchFrequencyWeighting {
      * @param frequencyWeight weighting factor, is factor for the (max) influence of the frequency
      * @param weightingFunction chosen weighting function
      * @param matchFrequency calculated frequency of the match
-     * @param finalMaximumFoundFrequency highes frequency that occurs across all matches in all comparisons
-     * @param minimumWeight minimum possible Weighting influence
-     * @param maximumWeight maximum possible Weighting influence
+     * @param maxFrequency highes frequency that occurs across all matches in all comparisons
      * @return the influence the frequency has on the considered match length
      */
-    private static double getInfluenceOnMatchLength(double frequencyWeight, MatchWeightingFunction weightingFunction, double matchFrequency,
-            double finalMaximumFoundFrequency, double minimumWeight, double maximumWeight) {
-        if (Double.isNaN(matchFrequency) || matchFrequency < DEFAULT_MINIMUM_FREQUENCY)
+    private static double getWeightFactor(double frequencyWeight, WeightingFunction weightingFunction, double matchFrequency, double maxFrequency) {
+        if (Double.isNaN(matchFrequency) || matchFrequency < DEFAULT_MINIMUM_FREQUENCY) {
             matchFrequency = DEFAULT_MINIMUM_FREQUENCY;
-        double relativeFrequencyOfMatch = DEFAULT_MAXIMUM_FREQUENCY
-                - Math.min(matchFrequency / finalMaximumFoundFrequency, DEFAULT_MAXIMUM_FREQUENCY);
-        double weightOfMatch = weightingFunction.computeWeight(minimumWeight, maximumWeight, relativeFrequencyOfMatch);
+        }
+        double relativeFrequencyOfMatch = DEFAULT_MAXIMUM_FREQUENCY - Math.min(matchFrequency / maxFrequency, DEFAULT_MAXIMUM_FREQUENCY);
+        double weightOfMatch = weightingFunction.computeWeight(relativeFrequencyOfMatch);
         return (DEFAULT_MAXIMUM_FREQUENCY - frequencyWeight) + frequencyWeight * weightOfMatch;
     }
 }

@@ -12,6 +12,7 @@ import de.jplag.cli.options.CliOptions;
 import de.jplag.cli.picocli.CliInputHandler;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.Preprocessing;
+import de.jplag.highlightextraction.FrequencyAnalysisOptions;
 import de.jplag.merging.MergingOptions;
 import de.jplag.options.JPlagOptions;
 
@@ -59,14 +60,13 @@ public class JPlagOptionsBuilder {
             throws CliException {
         ClusteringOptions clusteringOptions = getClusteringOptions();
         MergingOptions mergingOptions = getMergingOptions();
+        FrequencyAnalysisOptions frequencyAnalysisOptions = getFrequencyAnalysisOptions();
 
         return new JPlagOptions(this.cliInputHandler.getSelectedLanguage(), this.cliOptions.minTokenMatch, submissionDirectories,
                 oldSubmissionDirectories, null, this.cliOptions.advanced.subdirectory, suffixes, this.cliOptions.advanced.exclusionFileName,
                 JPlagOptions.DEFAULT_SIMILARITY_METRIC, this.cliOptions.advanced.similarityThreshold, this.cliOptions.shownComparisons,
                 clusteringOptions, this.cliOptions.advanced.debug, mergingOptions, this.cliOptions.normalize,
-                this.cliOptions.advanced.analyzeComments, this.cliOptions.frequencyOptions.frequencyStrategy,
-                this.cliOptions.frequencyOptions.frequencyStrategyMinValue, this.cliOptions.frequencyOptions.weightingStrategy,
-                this.cliOptions.frequencyOptions.weightingFactor);
+                this.cliOptions.advanced.analyzeComments, frequencyAnalysisOptions);
     }
 
     private ClusteringOptions getClusteringOptions() {
@@ -103,5 +103,11 @@ public class JPlagOptionsBuilder {
     private MergingOptions getMergingOptions() {
         return new MergingOptions(this.cliOptions.merging.enabled, this.cliOptions.merging.minimumNeighborLength,
                 this.cliOptions.merging.maximumGapSize, this.cliOptions.merging.minimumRequiredMerges);
+    }
+
+    private FrequencyAnalysisOptions getFrequencyAnalysisOptions() {
+        return new FrequencyAnalysisOptions(this.cliOptions.highlightextraction.enabled, this.cliOptions.highlightextraction.frequencyStrategy,
+                this.cliOptions.highlightextraction.frequencyStrategyMinValue, this.cliOptions.highlightextraction.weightingFunction,
+                this.cliOptions.highlightextraction.weightingFactor);
     }
 }

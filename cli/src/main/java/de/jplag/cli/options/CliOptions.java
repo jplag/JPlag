@@ -10,8 +10,8 @@ import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
 import de.jplag.highlightextraction.FrequencyAnalysisOptions;
-import de.jplag.highlightextraction.FrequencyAnalysisStrategy;
-import de.jplag.highlightextraction.MatchFrequencyWeightingFunction;
+import de.jplag.highlightextraction.WeightingFunction;
+import de.jplag.highlightextraction.strategy.FrequencyStrategy;
 import de.jplag.java.JavaLanguage;
 import de.jplag.merging.MergingOptions;
 import de.jplag.options.JPlagOptions;
@@ -92,9 +92,9 @@ public class CliOptions implements Runnable {
     @ArgGroup(validate = false, heading = "%nSubsequence Match Merging%n")
     public Merging merging = new Merging();
 
-    /** Frequency based analysis of the Matches. */
-    @ArgGroup(validate = false, heading = "%nFrequency Analysis%n")
-    public FrequencyAnalysis frequencyOptions = new FrequencyAnalysis();
+    /** Match Highlighting options group. */
+    @ArgGroup(validate = false, heading = "%nMatch Highlighting%n")
+    public Highlighting highlightextraction = new Highlighting();
 
     /**
      * Empty run method to enable automatic help printing by picocli.
@@ -182,27 +182,34 @@ public class CliOptions implements Runnable {
     }
 
     /** Highlight extraction options. */
-    public static class FrequencyAnalysis {
+    public static class Highlighting {
+
+        /**
+         * Enables frequency-based highlighting of matches. Supports the detection of rare and unique matches in contrast to
+         * common code, where matches have weak relevance.
+         */
+        @Option(names = {"--highlighting"}, description = "Enables highlighting of rare matches.")
+        public boolean enabled;
 
         /** Frequency Determination strategy. */
         @Option(names = {
-                "--frequency-strategy"}, description = "Strategy for frequency Analysis, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE}).")
-        public FrequencyAnalysisStrategy frequencyStrategy = new FrequencyAnalysisOptions().frequencyStrategy();
+                "--analysis-strategy"}, description = "Strategy for frequency analysis, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE}).")
+        public FrequencyStrategy frequencyStrategy = FrequencyAnalysisOptions.DEFAULT_ANALYSIS_STRATEGY;
 
-        /** Min value for considered subsequence length in Frequency Determination strategy. */
+        /** Minimum subsequence length in frequency analysis. */
         @Option(names = {
-                "--frequency-min-value"}, description = "Max of min match length that will be compared and this value, is min size of considered submatches", hidden = true)
-        public int frequencyStrategyMinValue = new FrequencyAnalysisOptions().frequencyStrategyMinValue();
+                "--min-subsequence-length"}, description = "Max of min match length that will be compared and this value, is min size of considered submatches", hidden = true)
+        public int frequencyStrategyMinValue = FrequencyAnalysisOptions.DEFAULT_MINIMUM_SUBSEQUENCE_LENGTH;
 
         /** Weighting function to combine with frequency Determination strategy. */
         @Option(names = {
                 "--weighting-strategy"}, description = "Strategy for frequency Weighting, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE}).")
-        public MatchFrequencyWeightingFunction weightingStrategy = new FrequencyAnalysisOptions().weightingStrategy();
+        public WeightingFunction weightingFunction = FrequencyAnalysisOptions.DEFAULT_WEIGHTING_FUNCTION;
 
         /** How strong the weighting maximal influences a match length with up to double the length. */
         @Option(names = {
                 "--weighting-factor"}, description = "Factor on how strong the weighting will be considered, scale factor for max stretch of a token sequence", hidden = true)
-        public double weightingFactor = new FrequencyAnalysisOptions().weightingFactor();
+        public double weightingFactor = FrequencyAnalysisOptions.DEFAULT_WEIGHTING_FACTOR;
 
     }
 
