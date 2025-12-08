@@ -31,7 +31,7 @@ import de.jplag.options.JPlagOptions;
  * Tests the Frequency Weighting class with different parameter combinations.
  */
 class FrequencyWeightingTest extends TestBase {
-    public static final double ORIGINAL_SIMILARITY = 0.31157;
+    private static final double ORIGINAL_SIMILARITY = 0.31157;
     private static Submission testSubmission;
     private static Match match;
     private static Match matchShort;
