@@ -173,10 +173,11 @@ Subsequence Match Merging
                           (between 1 and 50, default: 6).
 
 Frequency Analysis
-      --analysis-strategy=<{COMPLETE, CONTAINED, SUBMATCHES, WINDOW}>
+      --analysis-strategy=<{COMPLETE_MATCHES, CONTAINED_MATCHES, SUBMATCHES,
+        MATCH_WINDOWS}>
                         Specifies the strategy for frequency analysis, one of:
-                          COMPLETE, CONTAINED, SUBMATCHES, WINDOW (default:
-                          COMPLETE).
+                          COMPLETE_MATCHES, CONTAINED_MATCHES, SUBMATCHES,
+                          MATCH_WINDOWS (default: COMPLETE_MATCHES).
       --frequency       Enables analysis and highlighting of rare matches.
       --weighting=<{PROPORTIONAL, LINEAR, QUADRATIC, SIGMOID}>
                         The function for frequency-based match weighting, one

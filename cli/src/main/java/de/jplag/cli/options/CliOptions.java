@@ -197,7 +197,7 @@ public class CliOptions implements Runnable {
 
         /** Minimum subsequence length in frequency analysis. */
         @Option(names = {
-                "--min-subsequence-length"}, description = "Minimum length of submatches to consider for the strategies CONTAINED, SUBMATCHES/length of windows to consider for the WINDOW strategy (default: ${DEFAULT-VALUE})", hidden = true)
+                "--min-subsequence-length"}, description = "Minimum length of submatches to consider for the strategies CONTAINED_MATCHES, SUBMATCHES/length of windows to consider for the MATCH_WINDOWS strategy (default: ${DEFAULT-VALUE})", hidden = true)
         public int minimumSubsequenceLength = FrequencyAnalysisOptions.DEFAULT_MINIMUM_SUBSEQUENCE_LENGTH;
 
         /** Weighting function to combine with frequency Determination strategy. */

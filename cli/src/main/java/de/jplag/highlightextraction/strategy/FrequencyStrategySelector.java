@@ -5,14 +5,14 @@ package de.jplag.highlightextraction.strategy;
  */
 public enum FrequencyStrategySelector {
 
-    COMPLETE {
+    COMPLETE_MATCHES {
         @Override
         public FrequencyStrategy create(int unused) {
             return new CompleteMatchesStrategy();
         }
     },
 
-    CONTAINED {
+    CONTAINED_MATCHES {
         @Override
         public FrequencyStrategy create(int minimumLength) {
             return new ContainedMatchesStrategy(minimumLength);
@@ -26,7 +26,7 @@ public enum FrequencyStrategySelector {
         }
     },
 
-    WINDOW {
+    MATCH_WINDOWS {
         @Override
         public FrequencyStrategy create(int windowLength) {
             return new WindowOfMatchesStrategy(windowLength);
@@ -36,7 +36,7 @@ public enum FrequencyStrategySelector {
     /**
      * Default selector for the {@link FrequencyStrategy}.
      */
-    public static final FrequencyStrategySelector DEFAULT_FREQUENCY_STRATEGY_SELECTOR = COMPLETE;
+    public static final FrequencyStrategySelector DEFAULT_FREQUENCY_STRATEGY_SELECTOR = COMPLETE_MATCHES;
 
     /**
      * Creates a new {@link FrequencyStrategy} object corresponding to the respective selected option.
