@@ -11,7 +11,7 @@ import de.jplag.highlightextraction.SublistIterator;
  * Strategy that counts all occurrences of complete matches inside all complete matches and contiguous submatches from
  * the comparisons, if the submatches are longer than minLength.
  */
-public class ContainedMatchesStrategy extends FrequencyStrategy {
+public final class ContainedMatchesStrategy extends FrequencyStrategy {
     /**
      * Minimum considered subsequence length.
      */

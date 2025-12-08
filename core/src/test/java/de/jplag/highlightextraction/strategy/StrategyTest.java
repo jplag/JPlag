@@ -245,7 +245,7 @@ class StrategyTest extends TestBase {
     void testSubmatchesStrategy() {
         int wantedMatchLength = 5;
         int minSubSequenceSize = 3;
-        SubMatchesStrategy strategy = new SubMatchesStrategy(minSubSequenceSize);
+        SubmatchesStrategy strategy = new SubmatchesStrategy(minSubSequenceSize);
 
         List<Token> matchToken = testSubmission.getTokenList().subList(matchShort.startOfFirst(), matchShort.startOfFirst() + wantedMatchLength);
         List<TokenType> matchTokenTypes = matchToken.stream().map(Token::getType).toList();

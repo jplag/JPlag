@@ -22,7 +22,7 @@ import de.jplag.exceptions.ExitException;
 import de.jplag.highlightextraction.strategy.CompleteMatchesStrategy;
 import de.jplag.highlightextraction.strategy.ContainedMatchesStrategy;
 import de.jplag.highlightextraction.strategy.FrequencyStrategy;
-import de.jplag.highlightextraction.strategy.SubMatchesStrategy;
+import de.jplag.highlightextraction.strategy.SubmatchesStrategy;
 import de.jplag.highlightextraction.strategy.WindowOfMatchesStrategy;
 import de.jplag.options.JPlagOptions;
 
@@ -30,9 +30,10 @@ import de.jplag.options.JPlagOptions;
  * Checks if the frequency value is calculated and written into the matches correctly.
  */
 class WeightStrategyTest extends TestBase {
-
-    public static final int MIN_LENGTH = 100;
-    public static final int WINDOW_LENGTH = 100;
+    /**
+     * Minimum length of a submatch or a match window.
+     */
+    private static final int MIN_LENGTH = 100;
     private Match match;
     private Match submatch;
     private JPlagComparison comparison;
@@ -94,7 +95,7 @@ class WeightStrategyTest extends TestBase {
     @Test
     @DisplayName("Match weighted correct subMatchStrategy")
     void testWeightMatch_setsCorrectWeight_subMatchStrategy() {
-        Map<List<TokenType>, Double> matchCounts = setupMatchCounts(new SubMatchesStrategy(MIN_LENGTH));
+        Map<List<TokenType>, Double> matchCounts = setupMatchCounts(new SubmatchesStrategy(MIN_LENGTH));
         assertWeight(matchCounts, match, 2.0);
         assertWeight(matchCounts, submatch, 2.0);
     }
@@ -105,7 +106,7 @@ class WeightStrategyTest extends TestBase {
     @Test
     @DisplayName("Match weighted correct windowOfMatchesStrategy")
     void testWeightMatch_setsCorrectWeight_windowOfMatchesStrategy() {
-        Map<List<TokenType>, Double> matchCounts = setupMatchCounts(new WindowOfMatchesStrategy(WINDOW_LENGTH));
+        Map<List<TokenType>, Double> matchCounts = setupMatchCounts(new WindowOfMatchesStrategy(MIN_LENGTH));
         assertWeight(matchCounts, match, 2.0);
         assertWeight(matchCounts, submatch, 2.0);
     }

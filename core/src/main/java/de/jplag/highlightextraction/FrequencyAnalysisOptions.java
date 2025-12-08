@@ -8,12 +8,11 @@ import de.jplag.highlightextraction.weighting.SigmoidWeighting;
  * Options for Frequency Analysis.
  * @param enabled if false, highlight extraction is skipped.
  * @param analysisStrategy the strategy used to determine the frequency of a Match
- * @param minimumSubsequenceLength the minimum considered size of Subsequences from matches in the analysisStrategy
  * @param weightingStrategy strategy used to influence the similarity based on Match frequency
  * @param weightingFactor how strong the impact of the weightingStrategy is
  */
-public record FrequencyAnalysisOptions(boolean enabled, FrequencyStrategy analysisStrategy, int minimumSubsequenceLength,
-        WeightingFunction weightingStrategy, double weightingFactor) {
+public record FrequencyAnalysisOptions(boolean enabled, FrequencyStrategy analysisStrategy, WeightingFunction weightingStrategy,
+        double weightingFactor) {
 
     /** Default value for the highlighting enabling. */
     public static final boolean DEFAULT_ENABLED = false;
@@ -30,34 +29,46 @@ public record FrequencyAnalysisOptions(boolean enabled, FrequencyStrategy analys
      * Default options for frequency Analysis.
      */
     public FrequencyAnalysisOptions() {
-        this(DEFAULT_ENABLED, DEFAULT_ANALYSIS_STRATEGY, DEFAULT_MINIMUM_SUBSEQUENCE_LENGTH, DEFAULT_WEIGHTING_FUNCTION, DEFAULT_WEIGHTING_FACTOR);
+        this(DEFAULT_ENABLED, DEFAULT_ANALYSIS_STRATEGY, DEFAULT_WEIGHTING_FUNCTION, DEFAULT_WEIGHTING_FACTOR);
     }
 
     /**
-     * Chosen FrequencyStrategy.
+     * Creates a copy of this {@link FrequencyAnalysisOptions} using the given value for
+     * {@link FrequencyAnalysisOptions#enabled}.
+     * @param enabled the new value for enabled
+     * @return the new frequency analysis options.
+     */
+    public FrequencyAnalysisOptions withEnabled(boolean enabled) {
+        return new FrequencyAnalysisOptions(enabled, analysisStrategy, weightingStrategy, weightingFactor);
+    }
+
+    /**
+     * Creates a copy of this {@link FrequencyAnalysisOptions} using the given value for
+     * {@link FrequencyAnalysisOptions#analysisStrategy}.
+     * @param strategy the new value for analysisStrategy
+     * @return the new frequency analysis options.
      */
     public FrequencyAnalysisOptions withAnalysisStrategy(FrequencyStrategy strategy) {
-        return new FrequencyAnalysisOptions(enabled, strategy, minimumSubsequenceLength, weightingStrategy, weightingFactor);
+        return new FrequencyAnalysisOptions(enabled, strategy, weightingStrategy, weightingFactor);
     }
 
     /**
-     * Minimum considered subsequence length.
-     */
-    public FrequencyAnalysisOptions withMinimumSubsequenceLength(int minimumSubsequenceLength) {
-        return new FrequencyAnalysisOptions(enabled, analysisStrategy, minimumSubsequenceLength, weightingStrategy, weightingFactor);
-    }
-
-    /**
-     * Chosen weightingStrategy.
+     * Creates a copy of this {@link FrequencyAnalysisOptions} using the given value for
+     * {@link FrequencyAnalysisOptions#weightingStrategy}.
+     * @param weighting the new value for weightingStrategy
+     * @return the new frequency analysis options.
      */
     public FrequencyAnalysisOptions withWeightingFunction(WeightingFunction weighting) {
-        return new FrequencyAnalysisOptions(enabled, analysisStrategy, minimumSubsequenceLength, weighting, weightingFactor);
+        return new FrequencyAnalysisOptions(enabled, analysisStrategy, weighting, weightingFactor);
     }
 
     /**
-     * Weighting weightingFactor for weightingStrategy.
+     * Creates a copy of this {@link FrequencyAnalysisOptions} using the given value for
+     * {@link FrequencyAnalysisOptions#weightingFactor}.
+     * @param weightingFactor the new value for weightingFactor
+     * @return the new frequency analysis options.
      */
     public FrequencyAnalysisOptions withWeightingFactor(double weightingFactor) {
-        return new FrequencyAnalysisOptions(enabled, analysisStrategy, minimumSubsequenceLength, weightingStrategy, weightingFactor);
+        return new FrequencyAnalysisOptions(enabled, analysisStrategy, weightingStrategy, weightingFactor);
     }
 }

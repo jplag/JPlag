@@ -13,7 +13,12 @@ import org.junit.jupiter.api.TestInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.*;
+import de.jplag.JPlagComparison;
+import de.jplag.JPlagResult;
+import de.jplag.SubmissionSet;
+import de.jplag.SubmissionSetBuilder;
+import de.jplag.TestBase;
+import de.jplag.TokenType;
 import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
@@ -23,7 +28,10 @@ import de.jplag.options.JPlagOptions;
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class StrategyIntegrationTest extends TestBase {
-    public static final int MIN_LENGTH = 300;
+    /**
+     * Minimum length of a submatch or a match window.
+     */
+    private static final int MIN_LENGTH = 300;
     /**
      * Stores the result of the pairwise comparison of submissions, used in all test methods.
      */
@@ -80,7 +88,7 @@ class StrategyIntegrationTest extends TestBase {
     @Test
     @DisplayName("Test match frequency with subMatches strategy")
     void testFrequencyAnalysisStrategiesSubMatches() {
-        FrequencyStrategy strategy = new SubMatchesStrategy(MIN_LENGTH);
+        FrequencyStrategy strategy = new SubmatchesStrategy(MIN_LENGTH);
         List<JPlagComparison> comparisons = result.getAllComparisons();
         strategy.processMatches(comparisons);
         Map<List<TokenType>, Integer> tokenFrequencyMap = strategy.getResult();

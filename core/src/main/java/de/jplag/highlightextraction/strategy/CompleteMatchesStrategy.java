@@ -9,7 +9,7 @@ import de.jplag.TokenType;
  * sequence is added to the frequency map without modification. So the Strategy counts all occurrences of complete
  * matches inside all the complete matches of the comparisons.
  */
-public class CompleteMatchesStrategy extends FrequencyStrategy {
+public final class CompleteMatchesStrategy extends FrequencyStrategy {
     /**
      * Adds the given token sequence to the map and updates its frequency.
      * @param matchTokenTypes List of tokens types representing the match.

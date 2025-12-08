@@ -11,7 +11,7 @@ import de.jplag.highlightextraction.WindowIterator;
  * frequencies over all submissions. So the Strategy counts all occurrences of the contiguous windows inside all the
  * contiguous windows of the matches from the comparisons.
  */
-public class WindowOfMatchesStrategy extends FrequencyStrategy {
+public final class WindowOfMatchesStrategy extends FrequencyStrategy {
     /**
      * The window size for the considered window sequences.
      */

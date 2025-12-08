@@ -10,8 +10,7 @@ import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
 import de.jplag.highlightextraction.FrequencyAnalysisOptions;
-import de.jplag.highlightextraction.WeightingFunction;
-import de.jplag.highlightextraction.strategy.FrequencyStrategy;
+import de.jplag.highlightextraction.strategy.FrequencyStrategySelector;
 import de.jplag.java.JavaLanguage;
 import de.jplag.merging.MergingOptions;
 import de.jplag.options.JPlagOptions;
@@ -92,9 +91,9 @@ public class CliOptions implements Runnable {
     @ArgGroup(validate = false, heading = "%nSubsequence Match Merging%n")
     public Merging merging = new Merging();
 
-    /** Match Highlighting options group. */
-    @ArgGroup(validate = false, heading = "%nMatch Highlighting%n")
-    public Highlighting highlightextraction = new Highlighting();
+    /** Frequency Analysis options group. */
+    @ArgGroup(validate = false, heading = "%nFrequency Analysis%n")
+    public FrequencyAnalysis highlightExtraction = new FrequencyAnalysis();
 
     /**
      * Empty run method to enable automatic help printing by picocli.
@@ -182,33 +181,33 @@ public class CliOptions implements Runnable {
     }
 
     /** Highlight extraction options. */
-    public static class Highlighting {
+    public static class FrequencyAnalysis {
 
         /**
          * Enables frequency-based highlighting of matches. Supports the detection of rare and unique matches in contrast to
          * common code, where matches have weak relevance.
          */
-        @Option(names = {"--highlighting"}, description = "Enables highlighting of rare matches.")
+        @Option(names = {"--frequency"}, description = "Enables analysis and highlighting of rare matches.")
         public boolean enabled;
 
         /** Frequency Determination strategy. */
         @Option(names = {
-                "--analysis-strategy"}, description = "Strategy for frequency analysis, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE}).")
-        public FrequencyStrategy frequencyStrategy = FrequencyAnalysisOptions.DEFAULT_ANALYSIS_STRATEGY;
+                "--analysis-strategy"}, description = "Specifies the strategy for frequency analysis, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT-VALUE}).")
+        public FrequencyStrategySelector frequencyStrategy = FrequencyStrategySelector.DEFAULT_FREQUENCY_STRATEGY_SELECTOR;
 
         /** Minimum subsequence length in frequency analysis. */
         @Option(names = {
-                "--min-subsequence-length"}, description = "Max of min match length that will be compared and this value, is min size of considered submatches", hidden = true)
-        public int frequencyStrategyMinValue = FrequencyAnalysisOptions.DEFAULT_MINIMUM_SUBSEQUENCE_LENGTH;
+                "--min-subsequence-length"}, description = "Minimum length of submatches to consider for the strategies CONTAINED, SUBMATCHES/length of windows to consider for the WINDOW strategy (default: ${DEFAULT-VALUE})", hidden = true)
+        public int minimumSubsequenceLength = FrequencyAnalysisOptions.DEFAULT_MINIMUM_SUBSEQUENCE_LENGTH;
 
         /** Weighting function to combine with frequency Determination strategy. */
         @Option(names = {
-                "--weighting-strategy"}, description = "Strategy for frequency Weighting, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE}).")
-        public WeightingFunction weightingFunction = FrequencyAnalysisOptions.DEFAULT_WEIGHTING_FUNCTION;
+                "--weighting"}, description = "The function for frequency-based match weighting, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT-VALUE}).")
+        public WeightingFunctionSelector weightingFunction = WeightingFunctionSelector.DEFAULT_WEIGHTING_FUNCTION;
 
         /** How strong the weighting maximal influences a match length with up to double the length. */
         @Option(names = {
-                "--weighting-factor"}, description = "Factor on how strong the weighting will be considered, scale factor for max stretch of a token sequence", hidden = true)
+                "--weighting-factor"}, description = "Controls the influence of the frequency-based match weighting (between 0 and 1, default: ${DEFAULT-VALUE}).", hidden = true)
         public double weightingFactor = FrequencyAnalysisOptions.DEFAULT_WEIGHTING_FACTOR;
 
     }
