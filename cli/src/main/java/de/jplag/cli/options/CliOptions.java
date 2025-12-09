@@ -9,9 +9,9 @@ import de.jplag.Language;
 import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
-import de.jplag.highlightextraction.FrequencyAnalysisOptions;
-import de.jplag.highlightextraction.FrequencyAnalysisStrategy;
-import de.jplag.highlightextraction.MatchFrequencyWeightingFunction;
+import de.jplag.frequency.FrequencyAnalysisOptions;
+import de.jplag.frequency.FrequencyStrategy;
+import de.jplag.frequency.MatchFrequencyWeightingFunction;
 import de.jplag.java.JavaLanguage;
 import de.jplag.merging.MergingOptions;
 import de.jplag.options.JPlagOptions;
@@ -184,10 +184,17 @@ public class CliOptions implements Runnable {
     /** Highlight extraction options. */
     public static class FrequencyAnalysis {
 
+        /**
+         * Enables frequency analysis to weigh matched code fragments according to their overall rarity.
+         */
+        @Option(names = {
+                "--include-frequency"}, description = "Enables frequency analysis to weigh matched code fragments according to their overall rarity.")
+        public boolean enabled = FrequencyAnalysisOptions.DEFAULT_ENABLED;
+
         /** Frequency Determination strategy. */
         @Option(names = {
-                "--frequency-strategy"}, description = "Strategy for frequency Analysis, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE}).")
-        public FrequencyAnalysisStrategy frequencyStrategy = new FrequencyAnalysisOptions().frequencyStrategy();
+                "--frequency-strategy"}, description = "Strategy for frequency Analysis, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT_VALUE}).", converter = FrequencyStrategyPicocliBindings.class, completionCandidates = FrequencyStrategyPicocliBindings.class, defaultValue = "complete")
+        public FrequencyStrategy frequencyStrategy = new FrequencyAnalysisOptions().frequencyStrategy();
 
         /** Min value for considered subsequence length in Frequency Determination strategy. */
         @Option(names = {

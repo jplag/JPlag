@@ -12,6 +12,7 @@ import de.jplag.cli.options.CliOptions;
 import de.jplag.cli.picocli.CliInputHandler;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.Preprocessing;
+import de.jplag.frequency.FrequencyAnalysisOptions;
 import de.jplag.merging.MergingOptions;
 import de.jplag.options.JPlagOptions;
 
@@ -59,49 +60,53 @@ public class JPlagOptionsBuilder {
             throws CliException {
         ClusteringOptions clusteringOptions = getClusteringOptions();
         MergingOptions mergingOptions = getMergingOptions();
+        FrequencyAnalysisOptions frequencyAnalysisOptions = getFrequencyAnalysisOptions();
 
         return new JPlagOptions(this.cliInputHandler.getSelectedLanguage(), this.cliOptions.minTokenMatch, submissionDirectories,
                 oldSubmissionDirectories, null, this.cliOptions.advanced.subdirectory, suffixes, this.cliOptions.advanced.exclusionFileName,
                 JPlagOptions.DEFAULT_SIMILARITY_METRIC, this.cliOptions.advanced.similarityThreshold, this.cliOptions.shownComparisons,
                 clusteringOptions, this.cliOptions.advanced.debug, mergingOptions, this.cliOptions.normalize,
-                this.cliOptions.advanced.analyzeComments, this.cliOptions.frequencyOptions.frequencyStrategy,
-                this.cliOptions.frequencyOptions.frequencyStrategyMinValue, this.cliOptions.frequencyOptions.weightingStrategy,
-                this.cliOptions.frequencyOptions.weightingFactor);
+                this.cliOptions.advanced.analyzeComments, frequencyAnalysisOptions);
     }
 
     private ClusteringOptions getClusteringOptions() {
-        ClusteringOptions clusteringOptions = new ClusteringOptions().withEnabled(!this.cliOptions.clustering.disable)
-                .withAlgorithm(this.cliOptions.clustering.enabled.algorithm).withSimilarityMetric(this.cliOptions.clustering.enabled.metric)
-                .withSpectralKernelBandwidth(this.cliOptions.clusterSpectralBandwidth)
-                .withSpectralGaussianProcessVariance(this.cliOptions.clusterSpectralNoise).withSpectralMinRuns(this.cliOptions.clusterSpectralMinRuns)
-                .withSpectralMaxRuns(this.cliOptions.clusterSpectralMaxRuns)
-                .withSpectralMaxKMeansIterationPerRun(this.cliOptions.clusterSpectralKMeansIterations)
-                .withAgglomerativeThreshold(this.cliOptions.clusterAgglomerativeThreshold)
-                .withAgglomerativeInterClusterSimilarity(this.cliOptions.clusterAgglomerativeInterClusterSimilarity);
+        ClusteringOptions clusteringOptions = new ClusteringOptions().withEnabled(!cliOptions.clustering.disable)
+                .withAlgorithm(cliOptions.clustering.enabled.algorithm).withSimilarityMetric(cliOptions.clustering.enabled.metric)
+                .withSpectralKernelBandwidth(cliOptions.clusterSpectralBandwidth).withSpectralGaussianProcessVariance(cliOptions.clusterSpectralNoise)
+                .withSpectralMinRuns(cliOptions.clusterSpectralMinRuns).withSpectralMaxRuns(cliOptions.clusterSpectralMaxRuns)
+                .withSpectralMaxKMeansIterationPerRun(cliOptions.clusterSpectralKMeansIterations)
+                .withAgglomerativeThreshold(cliOptions.clusterAgglomerativeThreshold)
+                .withAgglomerativeInterClusterSimilarity(cliOptions.clusterAgglomerativeInterClusterSimilarity);
 
-        if (this.cliOptions.clusterPreprocessingNone) {
+        if (cliOptions.clusterPreprocessingNone) {
             clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.NONE);
         }
 
-        if (this.cliOptions.clusterPreprocessingCdf) {
+        if (cliOptions.clusterPreprocessingCdf) {
             clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION);
         }
 
-        if (this.cliOptions.clusterPreprocessingPercentile != 0) {
+        if (cliOptions.clusterPreprocessingPercentile != 0) {
             clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.PERCENTILE)
-                    .withPreprocessorPercentile(this.cliOptions.clusterPreprocessingPercentile);
+                    .withPreprocessorPercentile(cliOptions.clusterPreprocessingPercentile);
         }
 
-        if (this.cliOptions.clusterPreprocessingThreshold != 0) {
+        if (cliOptions.clusterPreprocessingThreshold != 0) {
             clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.THRESHOLD)
-                    .withPreprocessorThreshold(this.cliOptions.clusterPreprocessingThreshold);
+                    .withPreprocessorThreshold(cliOptions.clusterPreprocessingThreshold);
         }
 
         return clusteringOptions;
     }
 
     private MergingOptions getMergingOptions() {
-        return new MergingOptions(this.cliOptions.merging.enabled, this.cliOptions.merging.minimumNeighborLength,
-                this.cliOptions.merging.maximumGapSize, this.cliOptions.merging.minimumRequiredMerges);
+        return new MergingOptions(cliOptions.merging.enabled, cliOptions.merging.minimumNeighborLength, cliOptions.merging.maximumGapSize,
+                cliOptions.merging.minimumRequiredMerges);
+    }
+
+    private FrequencyAnalysisOptions getFrequencyAnalysisOptions() {
+        return new FrequencyAnalysisOptions(cliOptions.frequencyOptions.enabled, cliOptions.frequencyOptions.frequencyStrategy,
+                cliOptions.frequencyOptions.frequencyStrategyMinValue, cliOptions.frequencyOptions.weightingStrategy,
+                cliOptions.frequencyOptions.weightingFactor);
     }
 }

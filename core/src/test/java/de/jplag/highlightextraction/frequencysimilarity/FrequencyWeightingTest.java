@@ -2,8 +2,10 @@ package de.jplag.highlightextraction.frequencysimilarity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,10 +22,9 @@ import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
-import de.jplag.highlightextraction.FrequencyUtil;
-import de.jplag.highlightextraction.MatchFrequency;
-import de.jplag.highlightextraction.MatchFrequencyWeighting;
-import de.jplag.highlightextraction.MatchFrequencyWeightingFunction;
+import de.jplag.frequency.FrequencyUtil;
+import de.jplag.frequency.MatchFrequencyWeighting;
+import de.jplag.frequency.MatchFrequencyWeightingFunction;
 import de.jplag.options.JPlagOptions;
 
 /**
@@ -120,10 +121,10 @@ class FrequencyWeightingTest extends TestBase {
     @Test
     @DisplayName("Test the weighting functions")
     void testWeightingFunction() {
-        MatchFrequency matchFrequency = new MatchFrequency();
+        Map<List<TokenType>, Double> matchFrequency = new HashMap<>();
         List<TokenType> testSubmissionTokenTypes = testSubmission.getTokenList().stream().map(Token::getType).toList();
-        matchFrequency.matchFrequencyMap().put(FrequencyUtil.matchesToMatchTokenTypes(TEST_MATCHES.getFirst(), testSubmissionTokenTypes), 5.0);
-        matchFrequency.matchFrequencyMap().put(FrequencyUtil.matchesToMatchTokenTypes(matchShort, testSubmissionTokenTypes), 1.0);
+        matchFrequency.put(FrequencyUtil.matchesToMatchTokenTypes(TEST_MATCHES.getFirst(), testSubmissionTokenTypes), 5.0);
+        matchFrequency.put(FrequencyUtil.matchesToMatchTokenTypes(matchShort, testSubmissionTokenTypes), 1.0);
 
         MatchFrequencyWeighting matchFrequencyWeightingLinear = new MatchFrequencyWeighting(TEST_COMPARISONS, MatchFrequencyWeightingFunction.LINEAR,
                 matchFrequency);
@@ -148,8 +149,8 @@ class FrequencyWeightingTest extends TestBase {
         assertEquals(315, quadraticWeightedMatchLength, 0.0001);
         assertEquals(317, sigmoidWeightedMatchLength, 0.0001);
 
-        MatchFrequency matchFrequency1 = new MatchFrequency();
-        matchFrequency1.matchFrequencyMap().put(FrequencyUtil.matchesToMatchTokenTypes(TEST_MATCHES.getFirst(), testSubmissionTokenTypes), 5.0);
+        Map<List<TokenType>, Double> matchFrequency1 = new HashMap<>();
+        matchFrequency1.put(FrequencyUtil.matchesToMatchTokenTypes(TEST_MATCHES.getFirst(), testSubmissionTokenTypes), 5.0);
 
         MatchFrequencyWeighting matchFrequencyWeightingLinear1 = new MatchFrequencyWeighting(TEST_COMPARISONS, MatchFrequencyWeightingFunction.LINEAR,
                 matchFrequency);

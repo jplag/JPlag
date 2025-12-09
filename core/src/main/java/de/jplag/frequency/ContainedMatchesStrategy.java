@@ -1,6 +1,6 @@
-package de.jplag.highlightextraction;
+package de.jplag.frequency;
 
-import static de.jplag.highlightextraction.SubSequenceUtil.getSubSequences;
+import static de.jplag.frequency.SubSequenceUtil.getSubSequences;
 
 import java.util.ArrayList;
 import java.util.List;

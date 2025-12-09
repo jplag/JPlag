@@ -1,4 +1,4 @@
-package de.jplag.highlightextraction;
+package de.jplag.frequency;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,9 +32,10 @@ public class FrequencyDetermination {
     /**
      * Builds the frequency map by applying the strategy method on all matches found in the given list of comparisons.
      * @param comparisons contains information of matches between two submissions.
+     * @return the mapping between token sequences and number of occurrences.
      * @throws IllegalArgumentException if match indices are out of range.
      */
-    public void buildFrequencyMap(List<JPlagComparison> comparisons) {
+    public Map<List<TokenType>, Integer> buildFrequencyMap(List<JPlagComparison> comparisons) {
         for (JPlagComparison comparison : comparisons) {
             Submission leftSubmission = comparison.firstSubmission();
             List<Token> submissionTokens = leftSubmission.getTokenList();
@@ -45,6 +46,7 @@ public class FrequencyDetermination {
                 frequencyStrategy.processMatchTokenTypes(matchTokenTypes, this::addSequenceKey, this::addSequence, strategyNumber);
             }
         }
+        return matchFrequencyMap;
     }
 
     /**
@@ -53,13 +55,6 @@ public class FrequencyDetermination {
      */
     private void addSequenceKey(List<TokenType> sequence) {
         matchFrequencyMap.putIfAbsent(sequence, 0);
-    }
-
-    /**
-     * @return Map containing (sub-)matches and their frequency according to the strategy.
-     */
-    public Map<List<TokenType>, Integer> getMatchFrequencyMap() {
-        return matchFrequencyMap;
     }
 
     /**

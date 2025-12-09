@@ -15,7 +15,7 @@ import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.RootDirectoryException;
 import de.jplag.exceptions.SubmissionException;
-import de.jplag.highlightextraction.FrequencyMatchWeighter;
+import de.jplag.frequency.FrequencyAnalysis;
 import de.jplag.merging.MatchMerging;
 import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.reportobject.model.Version;
@@ -99,13 +99,14 @@ public class JPlag {
             result = new MatchMerging(options).mergeMatchesOf(result);
         }
 
-        FrequencyMatchWeighter matchWeighter = new FrequencyMatchWeighter();
-        List<JPlagComparison> frequencyWeightedComparisons = matchWeighter.useMatchFrequencyToInfluenceSimilarity(options, result);
+        if (options.frequencyAnalysisOptions().enabled()) {
+            result = FrequencyAnalysis.applyFrequencyWeighting(result, options.frequencyAnalysisOptions(), options.minimumTokenMatch());
+        }
 
         if (logger.isInfoEnabled()) {
             logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getDuration()));
         }
-        result.setClusteringResult(ClusteringFactory.getClusterings(frequencyWeightedComparisons, options.clusteringOptions()));
+        result.setClusteringResult(ClusteringFactory.getClusterings(result.getAllComparisons(), options.clusteringOptions()));
 
         logSkippedSubmissions(submissionSet, options);
 
