@@ -36,7 +36,7 @@ public class MatchWeighting {
         frequencyStrategy.processMatches(comparisons);
         MatchWeightCalculator matchWeighting = new MatchWeightCalculator(frequencyStrategy);
         Map<List<TokenType>, Double> matchFrequency = matchWeighting.weightAllComparisons(comparisons);
-        MatchFrequencyWeighting similarity = new MatchFrequencyWeighting(comparisons, options.weightingStrategy(), matchFrequency);
+        MatchFrequencyWeighting similarity = new MatchFrequencyWeighting(comparisons, options.weightingFunction(), matchFrequency);
         return comparisons.stream().map(comparison -> similarity.weightedComparisonSimilarity(comparison, options.weightingFactor())).toList();
     }
 

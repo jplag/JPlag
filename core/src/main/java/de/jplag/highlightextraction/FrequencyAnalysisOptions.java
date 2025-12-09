@@ -8,10 +8,10 @@ import de.jplag.highlightextraction.weighting.SigmoidWeighting;
  * Options for Frequency Analysis.
  * @param enabled if false, highlight extraction is skipped.
  * @param analysisStrategy the strategy used to determine the frequency of a Match
- * @param weightingStrategy strategy used to influence the similarity based on Match frequency
- * @param weightingFactor how strong the impact of the weightingStrategy is
+ * @param weightingFunction function used to determine the weight from the match rarity
+ * @param weightingFactor scales the impact of the weighting
  */
-public record FrequencyAnalysisOptions(boolean enabled, FrequencyStrategy analysisStrategy, WeightingFunction weightingStrategy,
+public record FrequencyAnalysisOptions(boolean enabled, FrequencyStrategy analysisStrategy, WeightingFunction weightingFunction,
         double weightingFactor) {
 
     /** Default value for the highlighting enabling. */
@@ -39,7 +39,7 @@ public record FrequencyAnalysisOptions(boolean enabled, FrequencyStrategy analys
      * @return the new frequency analysis options.
      */
     public FrequencyAnalysisOptions withEnabled(boolean enabled) {
-        return new FrequencyAnalysisOptions(enabled, analysisStrategy, weightingStrategy, weightingFactor);
+        return new FrequencyAnalysisOptions(enabled, analysisStrategy, weightingFunction, weightingFactor);
     }
 
     /**
@@ -49,13 +49,13 @@ public record FrequencyAnalysisOptions(boolean enabled, FrequencyStrategy analys
      * @return the new frequency analysis options.
      */
     public FrequencyAnalysisOptions withAnalysisStrategy(FrequencyStrategy strategy) {
-        return new FrequencyAnalysisOptions(enabled, strategy, weightingStrategy, weightingFactor);
+        return new FrequencyAnalysisOptions(enabled, strategy, weightingFunction, weightingFactor);
     }
 
     /**
      * Creates a copy of this {@link FrequencyAnalysisOptions} using the given value for
-     * {@link FrequencyAnalysisOptions#weightingStrategy}.
-     * @param weighting the new value for weightingStrategy
+     * {@link FrequencyAnalysisOptions#weightingFunction}.
+     * @param weighting the new value for weightingFunction
      * @return the new frequency analysis options.
      */
     public FrequencyAnalysisOptions withWeightingFunction(WeightingFunction weighting) {
@@ -69,6 +69,6 @@ public record FrequencyAnalysisOptions(boolean enabled, FrequencyStrategy analys
      * @return the new frequency analysis options.
      */
     public FrequencyAnalysisOptions withWeightingFactor(double weightingFactor) {
-        return new FrequencyAnalysisOptions(enabled, analysisStrategy, weightingStrategy, weightingFactor);
+        return new FrequencyAnalysisOptions(enabled, analysisStrategy, weightingFunction, weightingFactor);
     }
 }
