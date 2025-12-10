@@ -80,7 +80,7 @@
         <version.assertj>3.27.6</version.assertj>
         <version.auto-service>1.1.1</version.auto-service>
         <version.corenlp>4.5.10</version.corenlp>
-        <version.eclipse.core>3.23.0</version.eclipse.core>
+        <version.eclipse.core>3.23.100</version.eclipse.core>
         <version.eclipse.emfatic>1.1.0</version.eclipse.emfatic>
         <version.emf.ecore-xmi>2.39.0</version.emf.ecore-xmi>
         <version.emf.ecore>2.44.0</version.emf.ecore>
