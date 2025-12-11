@@ -48,15 +48,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.12.0</version>
-                <configuration>
-                    <!-- required in order to avoid build failure on assembly: -->
-                    <detectOfflineLinks>false</detectOfflineLinks>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 </project>
