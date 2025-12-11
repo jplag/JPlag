@@ -38,13 +38,16 @@ public class BayesianOptimizer {
     private double consecutiveRandomPicks; // consecutive rounds where the acquisition function yielded no useful improvement
 
     /**
-     * Sets up a bayesian optimization.
-     * @param minima of the explored parameters
-     * @param maxima of the explored parameters
-     * @param initPoints points that are initially sampled for exploration
-     * @param maxEvaluations maximal evaluations of the fitted function
-     * @param noise of the explored function
-     * @param lengthScale width parameter for the matern kernel
+     * Constructs a BayesianOptimizer with specified parameter boundaries and optimization settings.
+     * @param minima the minimum values for each parameter dimension
+     * @param maxima the maximum values for each parameter dimension
+     * @param initPoints the number of initial random points to sample before optimization
+     * @param maxEvaluations the maximum number of evaluations allowed during optimization
+     * @param noise the noise level assumed in the observations
+     * @param lengthScale the length scale vector used in the Gaussian process kernel
+     * @throws IllegalArgumentException if minima has zero dimension
+     * @throws DimensionMismatchException if minima and maxima dimensions differ
+     * @throws OutOfRangeException if initPoints is less than 1 or greater than maxEvaluations
      */
     public BayesianOptimizer(RealVector minima, RealVector maxima, int initPoints, int maxEvaluations, double noise, RealVector lengthScale) {
         if (minima.getDimension() == 0) {
@@ -98,7 +101,7 @@ public class BayesianOptimizer {
     }
 
     /**
-     * Numerically optimize acquisition function
+     * Numerically optimize acquisition function.
      */
     private RealVector maximizeAcquisitionFunction(GaussianProcess gaussianProcess, double yMax, Spliterator<RealVector> samples) {
         double bestScore = Double.NEGATIVE_INFINITY;
@@ -178,25 +181,46 @@ public class BayesianOptimizer {
         return best;
     }
 
+    /**
+     * Represents the result of an optimization process.
+     * @param <T> the type of the optimized value
+     */
     public static final class OptimizationResult<T> {
 
         private final double score;
         private final T value;
         private RealVector params;
 
+        /**
+         * Constructs an OptimizationResult with the given score and value.
+         * @param score the optimization score (e.g., objective function value)
+         * @param value the optimized value
+         */
         public OptimizationResult(double score, T value) {
             this.score = score;
             this.value = value;
         }
 
+        /**
+         * Returns the optimized value.
+         * @return the optimized value
+         */
         public T getValue() {
             return value;
         }
 
+        /**
+         * Returns the score associated with the optimization.
+         * @return the optimization score
+         */
         public double getScore() {
             return score;
         }
 
+        /**
+         * Returns the parameters corresponding to the optimized value.
+         * @return the parameter vector, or null if not set
+         */
         public RealVector getParams() {
             return params;
         }

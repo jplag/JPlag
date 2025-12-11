@@ -14,8 +14,8 @@ import de.jplag.options.LanguageOptions;
 public interface Language {
 
     /**
-     * File extensions for the files containing code of the language. All capitalization variants of extensions are matched.
-     * An empty array means all extensions are valid.
+     * @return File extensions for the files containing code of the language. All capitalization variants of extensions are
+     * matched. An empty array means all extensions are valid.
      * @deprecated see {@link Language#fileExtensions()}
      */
     @Deprecated(since = "6.2.0", forRemoval = true)
@@ -24,23 +24,24 @@ public interface Language {
     }
 
     /**
-     * Permitted file extensions for the program files of this language. All capitalization variants of extensions are
-     * matched. An empty array means all extensions are valid.
+     * @return Permitted file extensions for the program files of this language. All capitalization variants of extensions
+     * are matched. An empty array means all extensions are valid.
      */
     List<String> fileExtensions();
 
     /**
-     * Descriptive name of the language.
+     * @return Descriptive name of the language.
      */
     String getName();
 
     /**
-     * Identifier of the language used for CLI options and dynamic loading. You should use some name within {@code [a-z_-]+}
+     * @return Identifier of the language used for CLI options and dynamic loading. You should use some name within
+     * {@code [a-z_-]+}
      */
     String getIdentifier();
 
     /**
-     * Minimum number of tokens required for a match.
+     * @return Minimum number of tokens required for a match.
      */
     int minimumTokenMatch();
 
@@ -66,30 +67,30 @@ public interface Language {
     List<Token> parse(Set<File> files, boolean normalize) throws ParsingException;
 
     /**
-     * Indicates whether the tokens returned by parse have semantic information added to them, i.e., whether the token
-     * attribute semantics is null or not.
+     * @return Indicates whether the tokens returned by parse have semantic information added to them, i.e., whether the
+     * token attribute semantics is null or not.
      */
     default boolean tokensHaveSemantics() {
         return false;
     }
 
     /**
-     * Determines whether a fixed-width font should be used to display that language.
+     * @return Determines whether a fixed-width font should be used to display that language.
      */
     default boolean isPreformatted() {
         return true;
     }
 
     /**
-     * Indicates whether the input code files should be used as representation in the report, or different files that form a
-     * view on the input files.
+     * @return Indicates whether the input code files should be used as representation in the report, or different files
+     * that form a view on the input files.
      */
     default boolean useViewFiles() {
         return false;
     }
 
     /**
-     * If the language uses representation files, this method returns the suffix used for the representation files.
+     * @return If the language uses representation files, this method returns the suffix used for the representation files.
      * @deprecated see {@link Language#viewFileExtension()}
      */
     @Deprecated(since = "6.2.0", forRemoval = true)
@@ -98,7 +99,8 @@ public interface Language {
     }
 
     /**
-     * If the language uses representation files, this method returns the file extension used for the representation files.
+     * @return If the language uses representation files, this method returns the file extension used for the representation
+     * files.
      */
     default String viewFileExtension() {
         return "";

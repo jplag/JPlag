@@ -22,11 +22,12 @@ public class CsvComparisonOutput {
     }
 
     /**
-     * Writes the comparisons as a csv
+     * Writes the comparisons as a csv.
      * @param comparisons The list of comparisons
      * @param anonymize If true only random ids will be printed and an additional file will contain the actual names
      * @param directory The directory to write into
      * @param fileName The base name for the file without ".csv"
+     * @throws IOException if the output cannot be written.
      */
     public static void writeCsvResults(List<JPlagComparison> comparisons, boolean anonymize, File directory, String fileName) throws IOException {
         NameMapper mapper = new NameMapper.IdentityMapper();

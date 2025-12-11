@@ -72,15 +72,16 @@ public abstract class LanguageModuleTest {
 
     /**
      * Creates a new language module test.
-     * @param language The language to test
-     * @param tokenEnum The enum containing the token types
+     * @param <T> the enum type implementing {@link TokenType}.
+     * @param language the language under test.
+     * @param tokenEnum the enum class representing token types.
      */
     public <T extends Enum<T> & TokenType> LanguageModuleTest(Language language, Class<T> tokenEnum) {
         this(language, tokenEnum.getEnumConstants());
     }
 
     /**
-     * Test the configured source files for source line coverage
+     * Test the configured source files for source line coverage.
      * @param data The source to check
      * @throws ParsingException If the parser throws some error
      * @throws IOException If any IO Exception occurs
@@ -103,7 +104,7 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Returns all test sources, that need to be checked for source line coverage
+     * Returns all test sources, that need to be checked for source line coverage.
      * @return The test sources
      */
     final List<TestData> sourceCoverageFiles() {
@@ -111,7 +112,7 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Checks the configured source files for token coverage
+     * Checks the configured source files for token coverage.
      * @param data The source to check
      * @throws ParsingException If the parser throws some error
      * @throws IOException If any IO Exception occurs
@@ -159,7 +160,7 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Returns all test sources, that need to be checked for contained tokens
+     * Returns all test sources, that need to be checked for contained tokens.
      * @return The test sources
      */
     final List<TestDataCollector.TokenListTest> testTokensContainedData() {
@@ -167,7 +168,7 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Checks the given test sources for an exact token sequence
+     * Checks the given test sources for an exact token sequence.
      * @param test The source to check
      * @throws ParsingException If the parser throws some error
      * @throws IOException If any IO Exception occurs
@@ -193,7 +194,7 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Returns all test sources, that need to be checked for a matching token sequence
+     * Returns all test sources, that need to be checked for a matching token sequence.
      * @return The test sources
      */
     final List<TestDataCollector.TokenListTest> testTokenSequenceData() {
@@ -201,7 +202,7 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Tests if the tokens specified for the token position tests are present in the sources
+     * Tests if the tokens specified for the token position tests are present in the sources.
      * @param testData The specifications of the expected tokens and the test source
      * @throws ParsingException If the parsing fails
      * @throws IOException If IO operations fail. If this happens, that should be unrelated to the test itself.
@@ -244,7 +245,7 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Tests all configured test sources for a monotone order of tokens
+     * Tests all configured test sources for a monotone order of tokens.
      * @param data The test source
      * @throws ParsingException If the parser throws some error
      * @throws IOException If any IO Exception occurs
@@ -267,7 +268,7 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Checks that all configured test sources end with a FileEnd token
+     * Checks that all configured test sources end with a FileEnd token.
      * @param data The test source
      * @throws ParsingException If the parser throws some error
      * @throws IOException If any IO Exception occurs
@@ -282,7 +283,7 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Returns all configured test sources
+     * Returns all configured test sources.
      * @return The test sources
      */
     final List<TestData> getAllTestData() {
@@ -290,7 +291,7 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Collects the test sources
+     * Collects the test sources.
      */
     @BeforeAll
     final void collectTestData() {

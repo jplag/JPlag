@@ -53,22 +53,32 @@ public final class CLI {
      */
     public void executeCli() throws ExitException, IOException {
         logger.debug("Your version of JPlag is {}", JPlag.JPLAG_VERSION);
-        JPlagVersionChecker.printVersionNotification();
 
-        if (!this.inputHandler.parse()) {
-            CollectedLogger.setLogLevel(this.inputHandler.getCliOptions().advanced.logLevel);
-            ProgressBarLogger.setProgressBarProvider(new CliProgressBarProvider());
-            if (this.inputHandler.getCliOptions().advanced.submissionCharsetOverride != null) {
-                FileUtils.setOverrideSubmissionCharset(this.inputHandler.getCliOptions().advanced.submissionCharsetOverride);
-            }
+        boolean shouldAbortRunNow = this.inputHandler.parse();
 
-            switch (this.inputHandler.getCliOptions().mode) {
-                case RUN -> runJPlag();
-                case VIEW -> runViewer(this.inputHandler.getFileForViewMode());
-                case RUN_AND_VIEW -> runAndView();
-                case AUTO -> selectModeAutomatically();
-            }
+        // check version regardless of parsing result
+        if (!this.inputHandler.getCliOptions().advanced.skipVersionCheck) {
+            JPlagVersionChecker.printVersionNotification();
         }
+
+        if (shouldAbortRunNow) {
+            // help text has been printed, do nothing else
+            return;
+        }
+
+        CollectedLogger.setLogLevel(this.inputHandler.getCliOptions().advanced.logLevel);
+        ProgressBarLogger.setProgressBarProvider(new CliProgressBarProvider());
+        if (this.inputHandler.getCliOptions().advanced.submissionCharsetOverride != null) {
+            FileUtils.setOverrideSubmissionCharset(this.inputHandler.getCliOptions().advanced.submissionCharsetOverride);
+        }
+
+        switch (this.inputHandler.getCliOptions().mode) {
+            case RUN -> runJPlag();
+            case VIEW -> runViewer(this.inputHandler.getFileForViewMode());
+            case RUN_AND_VIEW -> runAndView();
+            case AUTO -> selectModeAutomatically();
+        }
+
     }
 
     /**
@@ -114,9 +124,9 @@ public final class CLI {
     }
 
     /**
-     * Runs JPlag and shows the result in the report viewer
-     * @throws IOException If something went wrong with the internal server
-     * @throws ExitException If JPlag threw an exception
+     * Runs JPlag and shows the result in the report viewer.
+     * @throws IOException If something went wrong with the internal server.
+     * @throws ExitException If JPlag threw an exception.
      */
     public void runAndView() throws IOException, ExitException {
         runViewer(runJPlag());
@@ -210,6 +220,10 @@ public final class CLI {
         return targetFileName;
     }
 
+    /**
+     * Entry point for the JPlag CLI application. Initializes the CLI and handles execution and errors.
+     * @param args command-line arguments passed to the application
+     */
     public static void main(String[] args) {
         // This needs to be executed before any other code, as it changes the default behavior of the JVM for network
         // connections.

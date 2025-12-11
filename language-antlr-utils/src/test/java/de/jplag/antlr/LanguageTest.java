@@ -9,7 +9,7 @@ import de.jplag.ParsingException;
 import de.jplag.antlr.testLanguage.TestLanguage;
 
 /**
- * Some tests for the abstract antlr language
+ * Some tests for the abstract antlr language.
  */
 class LanguageTest {
 

@@ -23,21 +23,19 @@
 
     <developers>
         <developer>
-            <id>tsaglam</id>
-            <name>Timur Sağlam</name>
-            <email>saglam@kit.edu</email>
-            <url>https://dsis.kastel.kit.edu/staff_saglam.php</url>
+            <id>robinmaisch</id>
+            <name>Robin Maisch</name>
+            <email>jplag@ipd.kit.edu</email>
+            <url>https://mcse.kastel.kit.edu/staff_robin_maisch.php</url>
             <organization>KASTEL</organization>
-            <organizationUrl>https://dsis.kastel.kit.edu/</organizationUrl>
+            <organizationUrl>https://mcse.kastel.kit.edu/</organizationUrl>
             <timezone>GMT+1</timezone>
         </developer>
         <developer>
-            <id>sebinside</id>
-            <name>Sebastian Hahner</name>
-            <email>hahner@kit.edu</email>
-            <url>https://dsis.kastel.kit.edu/staff_sebastian_hahner.php</url>
-            <organization>KASTEL</organization>
-            <organizationUrl>https://dsis.kastel.kit.edu/</organizationUrl>
+            <id>tsaglam</id>
+            <name>Timur Sağlam</name>
+            <email>jplag@ipd.kit.edu</email>
+            <url>https://dsis.kastel.kit.edu/staff_saglam.php</url>
             <timezone>GMT+1</timezone>
         </developer>
     </developers>
@@ -71,109 +69,423 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <!--suppress UnresolvedMavenProperty -->
         <sonar.coverage.jacoco.xmlReportPaths>${maven.multiModuleProjectDirectory}/coverage-report/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
 
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <spotless.version>2.46.1</spotless.version>
-        <slf4j.version>2.0.17</slf4j.version>
-        <junit.version>5.13.4</junit.version>
+        <!-- Dependency versions -->
+        <version.antlr4>4.13.2</version.antlr4>
+        <version.apache.commons.math>3.6.1</version.apache.commons.math>
+        <version.archunit>1.4.1</version.archunit>
+        <version.argparser4j>0.9.0</version.argparser4j>
+        <version.assertj>3.27.6</version.assertj>
+        <version.auto-service>1.1.1</version.auto-service>
+        <version.corenlp>4.5.10</version.corenlp>
+        <version.eclipse.core>3.23.100</version.eclipse.core>
+        <version.eclipse.emfatic>1.1.0</version.eclipse.emfatic>
+        <version.emf.ecore-xmi>2.39.0</version.emf.ecore-xmi>
+        <version.emf.ecore>2.44.0</version.emf.ecore>
+        <version.emf>2.41.0</version.emf>
+        <version.icu-charset>78.1</version.icu-charset>
+        <version.jackson>2.20.1</version.jackson>
+        <version.jaxen>2.0.0</version.jaxen>
+        <version.jdom>2.0.6.1</version.jdom>
+        <version.jgrapht>1.5.2</version.jgrapht>
+        <version.junit>6.0.1</version.junit>
+        <version.mockito>5.21.0</version.mockito>
+        <version.picocli>4.7.7</version.picocli>
+        <version.progressbar>0.10.1</version.progressbar>
+        <version.record-builder>51</version.record-builder>
+        <version.scala>2.13.18</version.scala>
+        <version.scalameta.suffix>2.13</version.scalameta.suffix>
+        <version.scalameta>4.14.2</version.scalameta>
+        <version.slf4j>2.0.17</version.slf4j>
+        <version.metainf>1.11</version.metainf>
 
-        <antlr2.version>2.7.7</antlr2.version>
-        <antlr4.version>4.13.2</antlr4.version>
-        <emf.version>2.39.0</emf.version>
-        <emf.ecore.version>2.42.0</emf.ecore.version>
-        <emf.ecore.xmi.version>2.39.0</emf.ecore.xmi.version>
-        <eclipse.core.version>3.22.200</eclipse.core.version>
-        <emfatic.version>1.1.0</emfatic.version>
-        <mockito.version>5.18.0</mockito.version>
+        <!-- Plugin versions -->
+        <version.plugin.antlr4>${version.antlr4}</version.plugin.antlr4>
+        <version.plugin.build-helper>3.6.1</version.plugin.build-helper>
+        <version.plugin.checkstyle-puppycrawl>12.2.0</version.plugin.checkstyle-puppycrawl>
+        <version.plugin.checkstyle>3.6.0</version.plugin.checkstyle>
+        <version.plugin.jacoco>0.8.14</version.plugin.jacoco>
+        <version.plugin.javacc>5.0.1</version.plugin.javacc>
+        <version.plugin.maven-central-publishing>0.9.0</version.plugin.maven-central-publishing>
+        <version.plugin.maven-exec>3.6.2</version.plugin.maven-exec>
+        <version.plugin.maven-flatten>1.7.3</version.plugin.maven-flatten>
+        <version.plugin.maven.assembly>3.8.0</version.plugin.maven.assembly>
+        <version.plugin.maven.compiler>3.14.1</version.plugin.maven.compiler>
+        <version.plugin.maven.deploy>3.1.4</version.plugin.maven.deploy>
+        <version.plugin.maven.gpg>3.2.8</version.plugin.maven.gpg>
+        <version.plugin.maven.jar>3.5.0</version.plugin.maven.jar>
+        <version.plugin.maven.javadoc>3.12.0</version.plugin.maven.javadoc>
+        <version.plugin.maven.source>3.4.0</version.plugin.maven.source>
+        <version.plugin.maven.surefire>3.5.4</version.plugin.maven.surefire>
+        <version.plugin.spotless>3.1.0</version.plugin.spotless>
+
         <!-- ensure that this variable is initialized, even if it is empty -->
         <argLine/>
 
         <!-- The Revision of JPlag -->
-        <revision>6.2.0</revision>
+        <revision>6.3.0</revision>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <!-- ANTLR -->
             <dependency>
-                <groupId>antlr</groupId>
-                <artifactId>antlr</artifactId>
-                <version>${antlr2.version}</version>
+                <groupId>org.kohsuke.metainf-services</groupId>
+                <artifactId>metainf-services</artifactId>
+                <version>${version.metainf}</version>
+                <optional>true</optional>
             </dependency>
+
+            <!-- ANTLR -->
             <dependency>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-runtime</artifactId>
-                <version>${antlr4.version}</version>
+                <version>${version.antlr4}</version>
             </dependency>
             <dependency>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4</artifactId>
-                <version>${antlr4.version}</version>
+                <version>${version.antlr4}</version>
             </dependency>
             <dependency>
                 <groupId>net.sourceforge.argparse4j</groupId>
                 <artifactId>argparse4j</artifactId>
-                <version>0.9.0</version>
+                <version>${version.argparser4j}</version>
             </dependency>
 
             <!-- CoreNLP -->
             <dependency>
                 <groupId>edu.stanford.nlp</groupId>
                 <artifactId>stanford-corenlp</artifactId>
-                <version>4.5.10</version>
+                <version>${version.corenlp}</version>
             </dependency>
 
             <!-- LOGGER -->
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>${slf4j.version}</version>
+                <version>${version.slf4j}</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-simple</artifactId>
-                <version>${slf4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.kohsuke.metainf-services</groupId>
-                <artifactId>metainf-services</artifactId>
-                <version>1.11</version>
+                <version>${version.slf4j}</version>
             </dependency>
 
+            <!-- Service loader -->
+            <dependency>
+                <groupId>com.google.auto.service</groupId>
+                <artifactId>auto-service</artifactId>
+                <version>${version.auto-service}</version>
+                <optional>true</optional>
+            </dependency>
+            <dependency>
+                <groupId>com.google.auto.service</groupId>
+                <artifactId>auto-service-annotations</artifactId>
+                <version>${version.auto-service}</version>
+            </dependency>
+
+            <!-- Jaxson Json parser/writer -->
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.19.2</version>
+                <version>${version.jackson}</version>
+            </dependency>
+
+            <!-- JUnit -->
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${version.junit}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-params</artifactId>
+                <version>${version.junit}</version>
+            </dependency>
+
+            <!-- Mockito -->
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${version.mockito}</version>
+            </dependency>
+
+            <!-- Cli -->
+            <dependency>
+                <groupId>info.picocli</groupId>
+                <artifactId>picocli</artifactId>
+                <version>${version.picocli}</version>
+            </dependency>
+
+            <!-- Progress bar -->
+            <dependency>
+                <groupId>me.tongfei</groupId>
+                <artifactId>progressbar</artifactId>
+                <version>${version.progressbar}</version>
+            </dependency>
+
+            <!-- Apache commons -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-math3</artifactId>
+                <version>${version.apache.commons.math}</version>
+            </dependency>
+
+            <!-- JGrapht -->
+            <dependency>
+                <groupId>org.jgrapht</groupId>
+                <artifactId>jgrapht-core</artifactId>
+                <version>${version.jgrapht}</version>
+            </dependency>
+
+            <!-- Record builder -->
+            <dependency>
+                <groupId>io.soabase.record-builder</groupId>
+                <artifactId>record-builder-processor</artifactId>
+                <version>${version.record-builder}</version>
+            </dependency>
+
+            <!-- Archunit -->
+            <dependency>
+                <groupId>com.tngtech.archunit</groupId>
+                <artifactId>archunit-junit5</artifactId>
+                <version>${version.archunit}</version>
+            </dependency>
+
+            <!-- Icu -->
+            <dependency>
+                <groupId>com.ibm.icu</groupId>
+                <artifactId>icu4j-charset</artifactId>
+                <version>${version.icu-charset}</version>
+            </dependency>
+
+            <!-- Eclipse / EMF -->
+            <dependency>
+                <groupId>org.eclipse.emfatic</groupId>
+                <artifactId>org.eclipse.emfatic.core</artifactId>
+                <version>${version.eclipse.emfatic}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.platform</groupId>
+                <artifactId>org.eclipse.core.resources</artifactId>
+                <version>${version.eclipse.core}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.emf</groupId>
+                <artifactId>org.eclipse.emf.ecore</artifactId>
+                <version>${version.emf}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.emf</groupId>
+                <artifactId>org.eclipse.emf.common</artifactId>
+                <version>${version.emf.ecore}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.emf</groupId>
+                <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
+                <version>${version.emf.ecore-xmi}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>emf-metamodel-dynamic</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- Scala -->
+            <dependency>
+                <groupId>org.scala-lang</groupId>
+                <artifactId>scala-library</artifactId>
+                <version>${version.scala}</version>
+            </dependency>
+            <dependency>
+                <!-- https://mvnrepository.com/artifact/org.scalameta/scalameta -->
+                <groupId>org.scalameta</groupId>
+                <artifactId>scalameta_${version.scalameta.suffix}</artifactId>
+                <version>${version.scalameta}</version>
+            </dependency>
+
+            <!-- Assertj -->
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${version.assertj}</version>
+            </dependency>
+
+            <!-- Xml parsing -->
+            <dependency>
+                <groupId>org.jdom</groupId>
+                <artifactId>jdom2</artifactId>
+                <version>${version.jdom}</version>
+            </dependency>
+            <dependency>
+                <groupId>jaxen</groupId>
+                <artifactId>jaxen</artifactId>
+                <version>${version.jaxen}</version>
+            </dependency>
+
+            <!-- Internal dependencies -->
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>jplag</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>cli</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>endtoend-testing</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>language-antlr-utils</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>language-testutils</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>language-testutils</artifactId>
+                <version>${revision}</version>
+                <type>test-jar</type>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>language-api</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>text</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>java</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>python-3</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>csharp</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>c</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>cpp</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>golang</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>kotlin</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>rlang</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>rust</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>scala</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>scheme</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>scxml</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>swift</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>emf-metamodel</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>emf-model</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>typescript</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>javascript</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>llvmir</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>multi-language</artifactId>
+                <version>${revision}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
+        <!-- Junit -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.github.stefanbirkner</groupId>
-            <artifactId>system-lambda</artifactId>
-            <version>1.2.1</version>
-            <scope>test</scope>
-        </dependency>
+
+        <!-- Mockito -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Slf4j -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -191,23 +503,154 @@
                 <plugin>
                     <groupId>com.helger.maven</groupId>
                     <artifactId>ph-javacc-maven-plugin</artifactId>
-                    <version>4.1.5</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>antlr-maven-plugin</artifactId>
-                    <version>2.1</version>
+                    <version>${version.plugin.javacc}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.antlr</groupId>
                     <artifactId>antlr4-maven-plugin</artifactId>
-                    <version>${antlr4.version}</version>
+                    <version>${version.plugin.antlr4}</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>${version.plugin.maven.gpg}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonatype.central</groupId>
+                    <artifactId>central-publishing-maven-plugin</artifactId>
+                    <version>${version.plugin.maven-central-publishing}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>${version.plugin.maven-exec}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>${version.plugin.build-helper}</version>
+                    <executions>
+                        <execution>
+                            <id>add-source</id>
+                            <goals>
+                                <goal>add-source</goal>
+                            </goals>
+                            <phase>generate-sources</phase>
+                            <configuration>
+                                <sources>
+                                    <source>${project.build.directory}/generated-sources/javacc/</source>
+                                    <source>${project.build.directory}/generated-sources/antlr4/</source>
+                                </sources>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>com.diffplug.spotless</groupId>
+                    <artifactId>spotless-maven-plugin</artifactId>
+                    <version>${version.plugin.spotless}</version>
+                    <configuration>
+                        <java>
+                            <eclipse>
+                                <!--suppress UnresolvedMavenProperty -->
+                                <file>${maven.multiModuleProjectDirectory}/formatter.xml</file>
+                            </eclipse>
+
+                            <importOrder>
+                                <file>spotless.importorder</file>
+                            </importOrder>
+                            <removeUnusedImports/>
+                        </java>
+                        <pom>
+                            <sortPom>
+                                <encoding>UTF-8</encoding>
+                                <keepBlankLines>true</keepBlankLines>
+                                <indentBlankLines>false</indentBlankLines>
+                                <nrOfIndentSpace>4</nrOfIndentSpace>
+                            </sortPom>
+                        </pom>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${version.plugin.maven.source}</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>${version.plugin.checkstyle}</version>
+                    <configuration>
+                        <configLocation>config/checkstyle/checkstyle.xml</configLocation>
+                        <sourceDirectories>
+                            <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
+                            <sourceDirectory>${project.build.testSourceDirectory}</sourceDirectory>
+                        </sourceDirectories>
+                        <consoleOutput>true</consoleOutput>
+                        <failsOnError>true</failsOnError>
+                        <linkXRef>false</linkXRef>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.puppycrawl.tools</groupId>
+                            <artifactId>checkstyle</artifactId>
+                            <version>${version.plugin.checkstyle-puppycrawl}</version>
+                        </dependency>
+                    </dependencies>
+                    <executions>
+                        <execution>
+                            <id>verify-checkstyle</id>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                            <phase>verify</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>flatten-maven-plugin</artifactId>
+                    <version>${version.plugin.maven-flatten}</version>
+                    <configuration>
+                        <updatePomFile>true</updatePomFile>
+                        <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                        <pomElements>
+                            <dependencyManagement>expand</dependencyManagement>
+                            <dependencies>expand</dependencies>
+                        </pomElements>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>flatten</id>
+                            <goals>
+                                <goal>flatten</goal>
+                            </goals>
+                            <phase>process-resources</phase>
+                        </execution>
+                        <execution>
+                            <id>flatten.clean</id>
+                            <goals>
+                                <goal>clean</goal>
+                            </goals>
+                            <phase>clean</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.4.2</version>
+                    <version>${version.plugin.maven.jar}</version>
                     <configuration>
                         <archive>
                             <manifest>
@@ -227,7 +670,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.7.1</version>
+                    <version>${version.plugin.maven.assembly}</version>
                     <configuration>
                         <descriptorRefs>
                             <descriptorRef>jar-with-dependencies</descriptorRef>
@@ -241,17 +684,37 @@
                     </configuration>
                 </plugin>
                 <plugin>
+                    <!-- implicitly loaded by maven for jar projects -->
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.5.3</version>
+                    <version>${version.plugin.maven.surefire}</version>
                     <configuration>
-                        <argLine>@{argLine} -javaagent:"${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar"</argLine>
+                        <argLine>@{argLine} -javaagent:"${settings.localRepository}/org/mockito/mockito-core/${version.mockito}/mockito-core-${version.mockito}.jar"</argLine>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${version.plugin.maven.compiler}</version>
+                    <configuration>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>com.google.auto.service</groupId>
+                                <artifactId>auto-service</artifactId>
+                                <version>${version.auto-service}</version>
+                            </path>
+                            <path>
+                                <groupId>io.soabase.record-builder</groupId>
+                                <artifactId>record-builder-processor</artifactId>
+                                <version>${version.record-builder}</version>
+                            </path>
+                        </annotationProcessorPaths>
                     </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.13</version>
+                    <version>${version.plugin.jacoco}</version>
                     <executions>
                         <execution>
                             <id>prepare-agent</id>
@@ -274,13 +737,19 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-gpg-plugin</artifactId>
-                    <version>3.2.8</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>3.1.4</version>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${version.plugin.maven.javadoc}</version>
+                    <configuration>
+                        <sourcepath>src/main/java;target/generated-sources/annotations;target/generated-sources/antlr4;target/generated-sources/javacc</sourcepath>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>attach-javadocs</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -288,82 +757,35 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.7.2</version>
-                <configuration>
-                    <updatePomFile>true</updatePomFile>
-                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
-                    <pomElements>
-                        <dependencyManagement>expand</dependencyManagement>
-                        <dependencies>expand</dependencies>
-                    </pomElements>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>flatten</id>
-                        <goals>
-                            <goal>flatten</goal>
-                        </goals>
-                        <phase>process-resources</phase>
-                    </execution>
-                    <execution>
-                        <id>flatten.clean</id>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                        <phase>clean</phase>
-                    </execution>
-                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.6.1</version>
-                <executions>
-                    <execution>
-                        <id>add-source</id>
-                        <goals>
-                            <goal>add-source</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <sources>
-                                <source>${project.build.directory}/generated-sources/javacc/</source>
-                                <source>${project.build.directory}/generated-sources/antlr/</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.11.2</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.3.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+            </plugin>
+
             <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.8.0</version>
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>central</publishingServerId>
@@ -371,36 +793,6 @@
                     <autoPublish>true</autoPublish>
                     <waitUntil>published</waitUntil>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.diffplug.spotless</groupId>
-                <artifactId>spotless-maven-plugin</artifactId>
-                <version>${spotless.version}</version>
-                <configuration>
-                    <java>
-                        <eclipse>
-                            <!--suppress UnresolvedMavenProperty -->
-                            <file>${maven.multiModuleProjectDirectory}/formatter.xml</file>
-                        </eclipse>
-
-                        <importOrder>
-                            <file>spotless.importorder</file>
-                        </importOrder>
-                        <removeUnusedImports/>
-                    </java>
-                    <pom>
-                        <sortPom>
-                            <encoding>UTF-8</encoding>
-                            <keepBlankLines>true</keepBlankLines>
-                            <indentBlankLines>false</indentBlankLines>
-                            <nrOfIndentSpace>4</nrOfIndentSpace>
-                        </sortPom>
-                    </pom>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

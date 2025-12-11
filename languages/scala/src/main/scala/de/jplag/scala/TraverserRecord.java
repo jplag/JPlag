@@ -15,7 +15,7 @@ import scala.meta.Tree;
  */
 public record TraverserRecord(Optional<ScalaTokenType> before, Optional<ScalaTokenType> after, BiConsumer<Tree, ScalaParser> traverse) {
     /**
-     * Initializes the token record with no tokens and a traverse function that visits all children
+     * Initializes the token record with no tokens and a traverse function that visits all children.
      */
     public TraverserRecord() {
         this(Optional.empty(), Optional.empty(), (tree, parser) -> {
@@ -27,7 +27,7 @@ public record TraverserRecord(Optional<ScalaTokenType> before, Optional<ScalaTok
     }
 
     /**
-     * Same as {@link #TraverserRecord()}, but with tokens
+     * Same as {@link #TraverserRecord()}, but with tokens.
      * @param before Token before the node
      * @param after Token after the node
      */
@@ -41,7 +41,7 @@ public record TraverserRecord(Optional<ScalaTokenType> before, Optional<ScalaTok
     }
 
     /**
-     * Same as {@link #TraverserRecord()}, but with a token before
+     * Same as {@link #TraverserRecord()}, but with a token before.
      * @param before Token before the node
      */
     public TraverserRecord(ScalaTokenType before) {
@@ -54,7 +54,7 @@ public record TraverserRecord(Optional<ScalaTokenType> before, Optional<ScalaTok
     }
 
     /**
-     * Returns a copy with a different token before the node
+     * Returns a copy with a different token before the node.
      * @param tokenType Token before the node
      * @return The copy
      */
@@ -63,7 +63,7 @@ public record TraverserRecord(Optional<ScalaTokenType> before, Optional<ScalaTok
     }
 
     /**
-     * Returns a copy with a different token after the node
+     * Returns a copy with a different token after the node.
      * @param tokenType Token after the node
      * @return The copy
      */
@@ -72,7 +72,7 @@ public record TraverserRecord(Optional<ScalaTokenType> before, Optional<ScalaTok
     }
 
     /**
-     * Returns a copy with a different traverse function
+     * Returns a copy with a different traverse function.
      * @param traverse The new traverse function
      * @return The copy
      */

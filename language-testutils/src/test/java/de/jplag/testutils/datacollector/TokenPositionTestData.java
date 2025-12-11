@@ -94,7 +94,7 @@ public class TokenPositionTestData implements TestData {
         File file = File.createTempFile("testSource", language.fileExtensions().getFirst());
         FileUtils.write(file, String.join(System.lineSeparator(), sourceLines));
         List<Token> tokens = language.parse(Collections.singleton(file), false);
-        TemporaryFileHolder.temporaryFiles.add(file);
+        TemporaryFileHolder.addTemporaryFile(file);
         return tokens;
     }
 
@@ -116,7 +116,7 @@ public class TokenPositionTestData implements TestData {
     }
 
     /**
-     * Information about a single token
+     * Information about a single token.
      * @param typeName The name of the token type
      * @param startLine The line the token starts in (1 based)
      * @param startColumn The column the token starts (1 based)

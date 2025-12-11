@@ -16,6 +16,9 @@ public final class CollectedLoggerFactory implements ILoggerFactory {
 
     private final ConcurrentMap<String, CollectedLogger> loggerMap;
 
+    /**
+     * Creates the logger factory.
+     */
     public CollectedLoggerFactory() {
         loggerMap = new ConcurrentHashMap<>();
     }

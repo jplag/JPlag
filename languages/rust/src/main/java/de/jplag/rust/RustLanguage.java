@@ -4,16 +4,16 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import org.kohsuke.MetaInfServices;
-
 import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
+import com.google.auto.service.AutoService;
+
 /**
  * This represents the Rust language as a language supported by JPlag.
  */
-@MetaInfServices(Language.class)
+@AutoService(Language.class)
 public class RustLanguage implements Language {
 
     @Override

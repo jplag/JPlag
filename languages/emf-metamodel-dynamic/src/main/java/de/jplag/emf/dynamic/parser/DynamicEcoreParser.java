@@ -11,13 +11,16 @@ import de.jplag.emf.parser.EcoreParser;
 import de.jplag.emf.util.AbstractMetamodelVisitor;
 
 /**
- * Parser for EMF metamodels based on dynamically created tokens.
+ * Parser for EMF metamodels based on dynamically created tokens. This means each metaclass corresponds to a token type.
  * @author Timur Saglam
  */
 public class DynamicEcoreParser extends EcoreParser {
 
     private final DynamicElementTokenizer tokenizer;
 
+    /**
+     * Creates the parser and the corresponding tokenizer.
+     */
     public DynamicEcoreParser() {
         tokenizer = new DynamicElementTokenizer();
     }

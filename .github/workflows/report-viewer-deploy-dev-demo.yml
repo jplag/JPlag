@@ -1,0 +1,102 @@
+name: Deploy Dev Demo
+
+on:
+  workflow_dispatch: # Use this to dispatch from the Actions Tab
+  push:
+    branches:
+      - develop
+      
+jobs:
+  build-jar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v6
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: 25
+          distribution: 'temurin'
+        
+      - name: Build Assembly
+        run: mvn clean package assembly:single
+        
+      - name: Upload Assembly
+        uses: actions/upload-artifact@v5
+        with:
+          name: "JPlag"
+          path: "cli/target/jplag-*-jar-with-dependencies.jar"
+
+
+  run-example:
+    needs: build-jar
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v6
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: 25
+          distribution: 'temurin'
+      
+      - name: Get JAR
+        uses: actions/download-artifact@v6
+        with:
+          name: JPlag
+      
+      - name: Copy and unzip submissions
+        run: unzip ./.github/workflows/files/progpedia.zip
+        
+      - name: Rename jar
+        run: mv *.jar ./jplag.jar
+  
+      - name: Run JPlag
+        run: java -jar jplag.jar ACCEPTED -bc base -r example
+      
+      - name: Upload Result
+        uses: actions/upload-artifact@v5
+        with:
+          name: "Result"
+          path: "example.jplag"
+            
+
+  build-and-deploy:
+    needs: run-example
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+              
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "lts/*"
+      
+      - name: Download Results
+        uses: actions/download-artifact@v6
+        with:
+          name: Result
+          path: report-viewer/report-viewer/public
+
+      - name: Install and Build 🔧
+        working-directory: report-viewer/report-viewer
+        run: |
+          npm install
+          npm run build-dev-demo
+        
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4.7.6
+        with:
+          branch: gh-pages
+          folder: report-viewer/report-viewer/dist
+          repository-name: JPlag/DevDemo
+          token: ${{ secrets.SDQ_DEV_DEPLOY_TOKEN }}
+          clean: true
+          single-commit: true
+  

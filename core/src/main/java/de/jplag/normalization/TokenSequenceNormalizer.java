@@ -24,7 +24,7 @@ public final class TokenSequenceNormalizer {
      * Performs token sequence normalization. Tokens representing dead code have been eliminated and tokens representing
      * subsequent independent statements have been put in a fixed order if sorting is true. Works by first constructing a
      * Normalization Graph and then turning it back into a token sequence. For more information refer to the
-     * <a href="https://doi.org/10.1145/3639478.3643074">corresponding paper</a>
+     * <a href="https://doi.org/10.1145/3639478.3643074">corresponding paper</a>.
      * @param tokens The original token sequence, remains unaltered.
      * @return The normalized token sequence.
      */
