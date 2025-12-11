@@ -19,5 +19,9 @@
             <groupId>com.ibm.icu</groupId>
             <artifactId>icu4j-charset</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.kohsuke.metainf-services</groupId>
+            <artifactId>metainf-services</artifactId>
+        </dependency>
     </dependencies>
 </project>
