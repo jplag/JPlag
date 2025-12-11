@@ -431,13 +431,13 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         scan(node.getDimensions(), null);
         boolean hasInit = node.getInitializers() != null && !node.getInitializers().isEmpty();
         if (hasInit) {
-            start = positions.getStartPosition(ast, node.getInitializers().get(0));
+            start = positions.getStartPosition(ast, node.getInitializers().get(0)) - 1;
             addToken(JavaTokenType.J_ARRAY_INIT_BEGIN, start, 1, new CodeSemantics());
         }
         scan(node.getInitializers(), null);
         // super method has annotation processing but we have it disabled anyways
         if (hasInit) {
-            end = positions.getEndPosition(ast, node.getInitializers().getLast()) - 1;
+            end = positions.getEndPosition(ast, node) - 1;
             addToken(JavaTokenType.J_ARRAY_INIT_END, end, 1, new CodeSemantics());
         }
         return null;
@@ -515,6 +515,13 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     public Void visitMethodInvocation(MethodInvocationTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node.getMethodSelect());
+
+        String text = node.getMethodSelect().toString();
+        if (text.contains(".") && !text.contains("\n")) {
+            int offset = text.length() - text.lastIndexOf('.');
+            start = end - offset;
+        }
+
         CodeSemantics codeSemantics = CRITICAL_METHODS.contains(node.getMethodSelect().toString()) ? CodeSemantics.createCritical()
                 : CodeSemantics.createControl();
         addToken(JavaTokenType.J_APPLY, start, end, codeSemantics);
