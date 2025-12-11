@@ -1,7 +1,7 @@
 import re
 
 CORE_PACKAGE = '../../../core/src/main/java/de/jplag'
-REPORTING_PACKAGE = f"{CORE_PACKAGE}/reporting/reportobject/model"
+REPORTING_PACKAGE = f"../../../reporting/src/main/java/de/jplag/reporting/reportobject/model"
 REPORT_VIEWER_MODELS = f"../../../report-viewer/model/src"
 REPORT_VIEWER_FACTORIES = f"../../../report-viewer/parser/src/factories"
 
@@ -20,7 +20,7 @@ submission_file = ({ 'file_path': f"{REPORTING_PACKAGE}/SubmissionFile.java", 'r
 
 run_information = ({ 'file_path': f"{REPORTING_PACKAGE}/RunInformation.java", 'record_name': 'RunInformation' }, { 'file_path': f"{REPORT_VIEWER_FACTORIES}/RunInformationFactory.ts", 'interface_name': 'ReportFormatRunInformation' })
 failed_submission = ({ 'file_path': f"{REPORTING_PACKAGE}/FailedSubmission.java", 'record_name': 'FailedSubmission' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/RunInformation.ts", 'interface_name': 'FailedSubmission' })
-version = ({ 'file_path': f"{REPORTING_PACKAGE}/Version.java", 'record_name': 'Version' }, { 'file_path': f"{REPORT_VIEWER_FACTORIES}/RunInformationFactory.ts", 'interface_name': 'ReportFormatVersion' })
+version = ({ 'file_path': f"{CORE_PACKAGE}/Version.java", 'record_name': 'Version' }, { 'file_path': f"{REPORT_VIEWER_FACTORIES}/RunInformationFactory.ts", 'interface_name': 'ReportFormatVersion' })
 
 submission_mappings = ({ 'file_path': f"{REPORTING_PACKAGE}/SubmissionMappings.java", 'record_name': 'SubmissionMappings' }, { 'file_path': f"{REPORT_VIEWER_FACTORIES}/SubmissionMappingsFactory.ts", 'interface_name': 'ReportFormatSubmissionMappings' })
 

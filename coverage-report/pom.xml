@@ -33,6 +33,11 @@
             <groupId>de.jplag</groupId>
             <artifactId>language-testutils</artifactId>
         </dependency>
+        <dependency>
+            <groupId>de.jplag</groupId>
+            <artifactId>reporting</artifactId>
+            <version>${revision}</version>
+        </dependency>
 
         <!-- Languages -->
         <dependency>
