@@ -59,6 +59,7 @@ class EndToEndSuiteTest {
      * Creates the test cases over all language options for which data is available and the current test options.
      * @return dynamic test cases across all test data and languages
      * @throws ExitException If JPlag throws an error
+     * @throws IOException If loading test resources fails
      */
     @TestFactory
     Collection<DynamicContainer> endToEndTestFactory() throws ExitException, IOException {
@@ -82,7 +83,7 @@ class EndToEndSuiteTest {
     }
 
     /**
-     * Generates the tests for the given language
+     * Generates the tests for the given language.
      * @param language The language
      * @param dataSets The data sets for this language
      * @return The dynamic container containing the tests
@@ -97,7 +98,7 @@ class EndToEndSuiteTest {
     }
 
     /**
-     * Generates tests for a data set
+     * Generates tests for a data set.
      * @param dataSet The data set
      * @return The dynamic container containing the tests
      * @throws ExitException If JPlag throws an error
@@ -147,7 +148,7 @@ class EndToEndSuiteTest {
     }
 
     /**
-     * Generates the test cases for the individual comparisons
+     * Generates the test cases for the individual comparisons.
      * @param result The result description for the tests
      * @param comparisons The comparisons
      * @return The container with the tests
@@ -185,7 +186,7 @@ class EndToEndSuiteTest {
     }
 
     /**
-     * Generates the tests for the gold standard
+     * Generates the tests for the gold standard.
      * @param dataSet The data set
      * @param comparisonMap The comparisons
      * @param goldStandard The gold standard previously saved
@@ -223,7 +224,7 @@ class EndToEndSuiteTest {
     }
 
     /**
-     * Creates the display info from the passed failed test results
+     * Creates the display info from the passed failed test results.
      * @return formatted text for the failed comparative values of the current test
      */
     private String createValidationErrorOutput(String name, List<String> validationErrors, JPlagComparison result) {
@@ -234,7 +235,7 @@ class EndToEndSuiteTest {
     }
 
     /**
-     * Creates the tests for the average deviation
+     * Creates the tests for the average deviation.
      * @param deltaStatistics The deltas
      * @return The list of tests
      */

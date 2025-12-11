@@ -18,7 +18,8 @@ import de.jplag.emf.util.EMFUtil;
 import de.jplag.emf.util.GenericEmfTreeView;
 
 /**
- * Parser for EMF metamodels based on dynamically created tokens.
+ * Parser for EMF metamodels based on dynamically created tokens. This means each model element corresponds to a token
+ * which is typed according to the model elements type.
  */
 public class DynamicModelParser extends DynamicEcoreParser {
     private static final Logger logger = LoggerFactory.getLogger(DynamicModelParser.class);

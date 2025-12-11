@@ -154,10 +154,17 @@ public class CollectedLogger extends AbstractLogger {
         }
     }
 
+    /**
+     * @return the log level.
+     */
     public static Level getLogLevel() {
         return currentLogLevel;
     }
 
+    /**
+     * Sets the log level to a specified value.
+     * @param logLevel is the specified value.
+     */
     public static void setLogLevel(Level logLevel) {
         currentLogLevel = logLevel;
     }

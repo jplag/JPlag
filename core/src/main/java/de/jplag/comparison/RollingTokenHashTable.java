@@ -12,12 +12,12 @@ import java.util.Map;
 class RollingTokenHashTable {
     /**
      * Value combination is chosen such that the maximum possible hash value does not exceed Int.max. Computation formula
-     * for maximum hash value is \sum from (i=0 to MAX_HASH_LENGTH - 1) with (HASH_MODULO - 1) * 2^i
+     * for maximum hash value is \sum from (i=0 to MAX_HASH_LENGTH - 1) with (HASH_MODULO - 1) * 2^i.
      */
     private static final int MAX_HASH_LENGTH = 25;
     private static final int HASH_MODULO = 64;
 
-    /** Indicator that the subsequence should not be considered for comparison matching */
+    /** Indicator that the subsequence should not be considered for comparison matching. */
     public static final int NO_HASH = -1;
 
     private final int windowSize;
@@ -65,7 +65,7 @@ class RollingTokenHashTable {
 
     /**
      * Creates hashes for all subsequences with windowSize. Code is optimized to perform in O(n) using a windowing approach.
-     * Hashes are computed by \sum from (i=0 to windowSize) with hash(values[offset+i]) * 2^(hashLength-1-i)
+     * Hashes are computed by \sum from (i=0 to windowSize) with hash(values[offset+i]) * 2^(hashLength-1-i).
      * @param marked contains which of the values are marked. Subsequences containing a marked value will receive the
      * {@link #NO_HASH} value.
      */

@@ -58,9 +58,9 @@ JPlag is a state-of-the-art source code plagiarism detector. It allows one to ch
 
 JPlag was created in 1996 and is still actively developed and maintained at Karlsruhe Institute of Technology (KIT). JPlag supports Java, C#, C, C++, Python, Javascript, Typescript, Go, R, Rust, Kotlin, Swift, Scala, and other languages.
 
-<img src="/img/screenshot1.png" style="margin-bottom:30px;" />
-<img src="/img/screenshot2.png" style="margin-bottom:30px;" />
-<img src="/img/screenshot3.png" style="margin-bottom:30px;" />
+<Image src-light="/img/screenshots/OverviewLight.png" src-dark="/img/screenshots/OverviewDark.png" style="margin-bottom:30px;" />
+<Image src-light="/img/screenshots/ComparisonLight.png" src-dark="/img/screenshots/ComparisonDark.png" style="margin-bottom:30px;" />
+<Image src-light="/img/screenshots/ClusterLight.png" src-dark="/img/screenshots/ClusterDark.png" style="margin-bottom:30px;" />
 
 # Recent Publications
 
@@ -75,4 +75,5 @@ All aspects of JPlag have been [scientifically published](/publications/). For a
 
 <script setup>
 import PaperHighlight from './PaperHighlight.vue'
+import Image from './Image.vue'
 </script>

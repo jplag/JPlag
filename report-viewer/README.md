@@ -11,6 +11,7 @@ npm install
 
 ### Run the development server
 ```
+cd report-viewer
 npm run dev
 ```
 
@@ -22,23 +23,10 @@ The report viewer will be built and packaged with the cli in a jar file if built
 mvn -Pwith-report-viewer clean package assembly:single
 ```
 
-To build it in the standard way, without any base url, run:
+To build a standalone report-viewer run:
 ```
 npm run build
 ```
-
-For production builds (for example to host on GitHub Pages in a repository called `JPlag`) run:
-```
-npm run build:prod
-```
-When hosting this build it will need to be accessible under `yourdomain.tld/JPlag/`.
-
-To build the demo version run:
-```
-npm run build:demo
-```
-Similar to the production build, this build will have `demo` as its base url.
-
 
 ## Contributing
 

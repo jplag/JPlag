@@ -101,7 +101,14 @@ import de.jplag.swift.grammar.Swift5Parser.Variable_declarationContext;
 import de.jplag.swift.grammar.Swift5Parser.While_statementContext;
 import de.jplag.swift.grammar.Swift5Parser.WillSet_clauseContext;
 
+/**
+ * Tree visitor for Swift programs.
+ */
 public class SwiftListener extends AbstractAntlrListener {
+
+    /**
+     * Creates the listener.
+     */
     public SwiftListener() {
         this.registerDataStructureRules();
         this.registerFunctionRules();
@@ -184,8 +191,8 @@ public class SwiftListener extends AbstractAntlrListener {
     /**
      * Indicates whether the given context encodes a computed read-only variable getter. An example of this is
      * <code>var example: Int { return 1 }</code>.
-     * @param context
-     * @return
+     * @param context is the getter/setter context.
+     * @return true if it is a computed read-only variable getter.
      */
     private boolean isComputedReadOnlyVariableGetterContext(Getter_setter_blockContext context) {
         return context.getChildCount() == 1 && context.getChild(0) instanceof Code_blockContext;

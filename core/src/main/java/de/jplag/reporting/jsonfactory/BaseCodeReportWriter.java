@@ -24,7 +24,7 @@ public class BaseCodeReportWriter {
 
     private final JPlagResultWriter resultWriter;
     private final Function<Submission, String> submissionToIdFunction;
-    public static final String BASEPATH = "basecode";
+    private static final String BASEPATH = "basecode";
 
     /**
      * Creates a new BaseCodeReportWriter.

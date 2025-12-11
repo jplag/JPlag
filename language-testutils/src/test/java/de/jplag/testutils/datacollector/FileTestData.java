@@ -12,7 +12,7 @@ import de.jplag.Token;
 import de.jplag.util.FileUtils;
 
 /**
- * Provides test source from a file
+ * Provides test source from a file.
  */
 class FileTestData implements TestData {
     private final File file;

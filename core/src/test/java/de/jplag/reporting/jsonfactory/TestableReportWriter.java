@@ -8,6 +8,9 @@ import de.jplag.reporting.reportobject.writer.DummyResultWriter;
 
 class TestableReportWriter extends DummyResultWriter {
 
+    /**
+     * Stores JSON content objects keyed by their file path.
+     */
     public final Map<Path, Object> jsonEntries;
 
     public TestableReportWriter() {

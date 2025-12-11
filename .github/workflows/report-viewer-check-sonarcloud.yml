@@ -1,0 +1,40 @@
+name: Report Viewer SonarCloud
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - "report-viewer/**"
+      - ".github/workflows/report-viewer-check-sonarcloud.yml"
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "report-viewer/**"
+      - ".github/workflows/report-viewer-check-sonarcloud.yml"
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "report-viewer/**"
+      - ".github/workflows/report-viewer-check-sonarcloud.yml"
+
+      # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  sonarcloud:
+    name: SonarCloud
+    runs-on: ubuntu-latest
+    if: ${{ github.actor != 'dependabot[bot]' }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v7.0.0
+        with:
+          projectBaseDir: report-viewer
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_REPORT_VIEWER }}

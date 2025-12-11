@@ -11,7 +11,7 @@ class ThresholdPreprocessorTest extends PreprocessingTestBase {
 
     private static final double EPSILON = 0.0000001;
 
-    ThresholdPreprocessor preprocessor;
+    private ThresholdPreprocessor preprocessor;
 
     @BeforeEach
     void init() {

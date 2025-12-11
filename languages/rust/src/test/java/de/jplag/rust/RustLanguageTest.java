@@ -39,6 +39,9 @@ class RustLanguageTest {
     private static final String COMPLETE_TEST_FILE = "complete.rs";
     private static final String RUST_SHEBANG = "#!.*$";
     private static final double EPSILON = 1E-6;
+    /**
+     * Minimum required source coverage for tests, represented as a fraction of lines covered by tokens.
+     */
     public static final double BASELINE_COVERAGE = 0.75;
 
     private final Logger logger = LoggerFactory.getLogger(RustLanguageTest.class);

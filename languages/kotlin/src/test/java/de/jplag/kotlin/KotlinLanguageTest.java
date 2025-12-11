@@ -5,9 +5,15 @@ import de.jplag.testutils.datacollector.TestDataCollector;
 import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
 
 /**
- * Provides tests for the kotlin language module
+ * Unit test for the Kotlin language module, verifying tokenization and source coverage. Extends
+ * {@link LanguageModuleTest} to provide Kotlin-specific test files, token sequences, and rules for ignoring irrelevant
+ * source lines such as multi-line comments.
  */
 public class KotlinLanguageTest extends LanguageModuleTest {
+
+    /**
+     * Constructs a Kotlin language test module with the appropriate language and token type.
+     */
     public KotlinLanguageTest() {
         super(new KotlinLanguage(), KotlinTokenType.class);
     }

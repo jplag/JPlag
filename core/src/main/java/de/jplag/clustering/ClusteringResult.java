@@ -22,6 +22,11 @@ public class ClusteringResult<T> {
     private final List<Cluster<T>> clusters;
     private final double communityStrength;
 
+    /**
+     * Constructs a ClusteringResult with the given clusters and community strength.
+     * @param clusters the collection of clusters in this result
+     * @param communityStrength the overall strength of the community
+     */
     public ClusteringResult(Collection<Cluster<T>> clusters, double communityStrength) {
         this.clusters = List.copyOf(clusters);
         this.communityStrength = communityStrength;
@@ -30,6 +35,10 @@ public class ClusteringResult<T> {
         }
     }
 
+    /**
+     * Returns an unmodifiable collection of clusters in this clustering result.
+     * @return unmodifiable collection of clusters
+     */
     public Collection<Cluster<T>> getClusters() {
         return Collections.unmodifiableList(clusters);
     }
@@ -57,8 +66,11 @@ public class ClusteringResult<T> {
     }
 
     /**
-     * Responsible for calculating the {@link ClusteringResult#getCommunityStrength} of a new clustering on integers and
-     * it's clusters.
+     * Creates a ClusteringResult from a list of integer clusters and a similarity matrix. Responsible for calculating the
+     * {@link ClusteringResult#getCommunityStrength} of a new clustering on integers and it's clusters.
+     * @param clustering a list of clusters, each cluster is a collection of integer submission indices
+     * @param similarity a similarity matrix between submissions
+     * @return a ClusteringResult with computed community strength and average similarities for each cluster
      */
     public static ClusteringResult<Integer> fromIntegerCollections(List<Collection<Integer>> clustering, RealMatrix similarity) {
         int numberOfSubmissions = similarity.getRowDimension();

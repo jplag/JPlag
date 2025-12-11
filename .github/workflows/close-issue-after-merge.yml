@@ -1,0 +1,21 @@
+name: Close Issue on PR Merge
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  close_issues:
+    if: github.event.pull_request.merged == true && github.base_ref == 'develop'
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout 🛎️
+      uses: actions/checkout@v6
+      
+    - name: Run script
+      working-directory: .github/workflows/scripts
+      run: |
+        pip install requests
+        python closeDevIssues.py ${{ secrets.GITHUB_TOKEN }} jplag JPlag ${{ github.event.pull_request.number }}
