@@ -85,11 +85,11 @@ jobs:
           MAJOR=$(echo $VERSION | cut -d '.' -f 1)
           MINOR=$(echo $VERSION | cut -d '.' -f 2)
           PATCH=$(echo $VERSION | cut -d '.' -f 3)
-          json=$(cat report-viewer/src/version.json)
+          json=$(cat report-viewer/report-viewer/src/version/version.json)
           json=$(echo "$json" | jq --arg MAJOR "$MAJOR" --arg MINOR "$MINOR" --arg PATCH "$PATCH" '.report_viewer_version |= { "major": $MAJOR | tonumber, "minor": $MINOR | tonumber, "patch": $PATCH | tonumber }')
-          echo "$json" >  report-viewer/src/version.json
+          echo "$json" >  report-viewer/report-viewer/src/version/version.json
           echo "Version of Report Viewer:"
-          cat report-viewer/src/version.json
+          cat report-viewer/report-viewer/src/version/version.json
 
       - name: Download Results
         uses: actions/download-artifact@v6
