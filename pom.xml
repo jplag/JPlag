@@ -125,7 +125,7 @@
         <argLine/>
 
         <!-- The Revision of JPlag -->
-        <revision>6.3.0</revision>
+        <revision>6.4.0-SNAPSHOT</revision>
     </properties>
 
     <dependencyManagement>
