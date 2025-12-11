@@ -12,7 +12,7 @@ public class LinearWeighting implements WeightingFunction {
 
     @Override
     public double computeWeight(double rarity) {
-        return MINIMUM_WEIGHT + rarity;
+        return MINIMUM_WEIGHT + (MAXIMUM_WEIGHT - MINIMUM_WEIGHT) * rarity;
     }
 
 }

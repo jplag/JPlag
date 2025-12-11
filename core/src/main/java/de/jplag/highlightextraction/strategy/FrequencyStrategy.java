@@ -55,7 +55,7 @@ public abstract class FrequencyStrategy {
      * @param matchTokens tokenType sequence of the match
      * @return a weight for the match
      */
-    public abstract double calculateMatchFrequency(List<TokenType> matchTokens);
+    public abstract double calculateMatchCount(List<TokenType> matchTokens);
 
     protected void registerSequence(List<TokenType> sequence) {
         matchCounts.putIfAbsent(sequence, 0);
@@ -69,7 +69,7 @@ public abstract class FrequencyStrategy {
         matchCounts.compute(sequence, (_, count) -> Objects.isNull(count) ? 1 : count + 1);
     }
 
-    protected int getFrequency(List<TokenType> sequence) {
+    protected int getCount(List<TokenType> sequence) {
         return matchCounts.getOrDefault(sequence, 0);
     }
 

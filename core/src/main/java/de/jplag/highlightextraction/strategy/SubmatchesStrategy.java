@@ -41,10 +41,10 @@ public final class SubmatchesStrategy extends FrequencyStrategy {
      * @return a weight for the match
      */
     @Override
-    public double calculateMatchFrequency(List<TokenType> matchToken) {
+    public double calculateMatchCount(List<TokenType> matchToken) {
         Iterable<List<TokenType>> subSequences = () -> new SublistIterator<>(matchToken, minLength);
 
-        return StreamSupport.stream(subSequences.spliterator(), false).mapToInt(this::getFrequency).average().orElse(0.0);
+        return StreamSupport.stream(subSequences.spliterator(), false).mapToInt(this::getCount).average().orElse(0.0);
 
     }
 }

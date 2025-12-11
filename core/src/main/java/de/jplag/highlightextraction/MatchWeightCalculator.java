@@ -48,7 +48,7 @@ class MatchWeightCalculator {
     private Map<List<TokenType>, Double> weightAllMatches(JPlagComparison comparison, Map<List<TokenType>, Double> matchWeights) {
         for (Match match : comparison.matches()) {
             List<TokenType> matchTokens = TokenSequenceUtil.tokenTypesFor(comparison, match);
-            matchWeights.computeIfAbsent(matchTokens, strategy::calculateMatchFrequency);
+            matchWeights.computeIfAbsent(matchTokens, strategy::calculateMatchCount);
         }
 
         return matchWeights;

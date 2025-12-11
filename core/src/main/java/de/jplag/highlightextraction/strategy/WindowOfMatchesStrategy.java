@@ -41,10 +41,10 @@ public final class WindowOfMatchesStrategy extends FrequencyStrategy {
      * @return a weight for the match
      */
     @Override
-    public double calculateMatchFrequency(List<TokenType> matchTokenTypes) {
+    public double calculateMatchCount(List<TokenType> matchTokenTypes) {
         WindowIterator<TokenType> tokenTypeWindows = new WindowIterator<>(matchTokenTypes, windowLength);
         List<Integer> frequencies = new ArrayList<>();
-        tokenTypeWindows.forEachRemaining(window -> frequencies.add(getFrequency(window)));
+        tokenTypeWindows.forEachRemaining(window -> frequencies.add(getCount(window)));
         return frequencies.stream().mapToInt(Integer::intValue).average().orElse(0.0);
     }
 

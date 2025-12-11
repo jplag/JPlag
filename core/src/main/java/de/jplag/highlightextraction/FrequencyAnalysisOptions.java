@@ -21,13 +21,13 @@ public record FrequencyAnalysisOptions(boolean enabled, @JsonSerialize(using = A
 
     /** Default value for the highlighting enabling. */
     public static final boolean DEFAULT_ENABLED = false;
-    /** Default value for the analysis strategy. */
+    /** Default analysis strategy. */
     public static final FrequencyStrategy DEFAULT_ANALYSIS_STRATEGY = new CompleteMatchesStrategy();
-    /** Default value for the minimum match weight factor. */
+    /** Default minimum subsequence length. */
     public static final int DEFAULT_MINIMUM_SUBSEQUENCE_LENGTH = 1;
-    /** Default value for the weighing function. */
+    /** Default weighting function. */
     public static final WeightingFunction DEFAULT_WEIGHTING_FUNCTION = new SigmoidWeighting();
-    /** Default value for the minimum match weight factor. */
+    /** Default minimum match weight factor. */
     public static final double DEFAULT_WEIGHTING_FACTOR = 0.25;
 
     /**

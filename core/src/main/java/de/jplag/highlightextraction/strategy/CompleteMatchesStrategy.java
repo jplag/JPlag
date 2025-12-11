@@ -5,9 +5,9 @@ import java.util.List;
 import de.jplag.TokenType;
 
 /**
- * Strategy that calculates the frequencies of matches across all submissions. For each match, the complete token
- * sequence is added to the frequency map without modification. So the Strategy counts all occurrences of complete
- * matches inside all the complete matches of the comparisons.
+ * Strategy that determines a count value of matches across all submissions. For each match, the complete token sequence
+ * is added to the frequency map without modification. So the Strategy counts all occurrences of complete matches inside
+ * all the complete matches of the comparisons.
  */
 public final class CompleteMatchesStrategy extends FrequencyStrategy {
     /**
@@ -20,12 +20,12 @@ public final class CompleteMatchesStrategy extends FrequencyStrategy {
     }
 
     /**
-     * Calculates the frequency of a match. According to the strategy.
+     * Calculates the frequency of a match according to the strategy.
      * @param matchTokens token type sequence of the match
      * @return a weight for the match
      */
     @Override
-    public double calculateMatchFrequency(List<TokenType> matchTokens) {
-        return getFrequency(matchTokens);
+    public double calculateMatchCount(List<TokenType> matchTokens) {
+        return getCount(matchTokens);
     }
 }

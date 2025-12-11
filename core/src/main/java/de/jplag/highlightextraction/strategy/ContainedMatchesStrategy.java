@@ -30,6 +30,7 @@ public final class ContainedMatchesStrategy extends FrequencyStrategy {
      * sequence as key. The full match itself is also added if it is at least minLength.
      * @param matchTokenTypes List of tokens representing the match.
      */
+    @Override
     public void processMatchTokenTypes(List<TokenType> matchTokenTypes) {
         Iterator<List<TokenType>> subsequences = new SublistIterator<>(matchTokenTypes, minLength);
         subsequences.forEachRemaining(this::registerSequence);
@@ -45,12 +46,12 @@ public final class ContainedMatchesStrategy extends FrequencyStrategy {
      * @return a weight for the match
      */
     @Override
-    public double calculateMatchFrequency(List<TokenType> matchToken) {
+    public double calculateMatchCount(List<TokenType> matchToken) {
         Iterator<List<TokenType>> subSequences = new SublistIterator<>(matchToken, minLength);
         IntStream.Builder builder = IntStream.builder();
 
         subSequences.forEachRemaining(subsequence -> {
-            int frequency = getFrequency(subsequence);
+            int frequency = getCount(subsequence);
             if (frequency > 0) {
                 builder.accept(frequency);
             }
