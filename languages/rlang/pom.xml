@@ -18,7 +18,6 @@
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>language-antlr-utils</artifactId>
-            <version>${revision}</version>
         </dependency>
     </dependencies>
 
@@ -35,7 +34,6 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 </project>

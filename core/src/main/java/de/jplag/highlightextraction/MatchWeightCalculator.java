@@ -1,68 +1,57 @@
 package de.jplag.highlightextraction;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import de.jplag.JPlagComparison;
 import de.jplag.Match;
-import de.jplag.Token;
 import de.jplag.TokenType;
+import de.jplag.highlightextraction.strategy.FrequencyStrategy;
 
 /**
- * Calculates frequency values of the matches and writes them into a map.
+ * Calculates weights of the matches and writes them into a map.
  */
-public class MatchWeightCalculator {
+class MatchWeightCalculator {
     private final FrequencyStrategy strategy;
-    private final Map<List<TokenType>, Integer> frequencyMap;
-    private final MatchFrequency matchFrequency;
 
     /**
-     * Constructor defining the used frequency strategy and frequency map.
-     * @param strategy chosen to determine the frequency of a match
-     * @param frequencyMap build frequencyMap based on the strategy
+     * Constructor defining the used weighting strategy.
+     * @param strategy is the strategy used to determine the frequency of a match
      */
-    public MatchWeightCalculator(FrequencyStrategy strategy, Map<List<TokenType>, Integer> frequencyMap) {
+    public MatchWeightCalculator(FrequencyStrategy strategy) {
         this.strategy = strategy;
-        this.frequencyMap = frequencyMap;
-        this.matchFrequency = new MatchFrequency();
     }
 
     /**
-     * Calculates frequency value for a match.
-     * @param match the match to determine the frequency for
-     * @param matchToken token sequence of the match
-     */
-    public void weightMatch(Match match, List<TokenType> matchToken) {
-        double matchWeight = strategy.calculateMatchFrequency(match, frequencyMap, matchToken);
-        matchFrequency.matchFrequencyMap().put(matchToken, matchWeight);
-    }
-
-    /**
-     * Calculates frequency value for all matches.
-     * @param matches the matches to determine the frequency for
-     * @param firstSubmissionToken token sequence of the comparison
-     * @return the frequency of the match
-     */
-    public MatchFrequency weightAllMatches(List<Match> matches, List<TokenType> firstSubmissionToken) {
-        for (Match match : matches) {
-            List<TokenType> matchTokens = FrequencyUtil.matchesToMatchTokenTypes(match, firstSubmissionToken);
-            weightMatch(match, matchTokens);
-        }
-        return matchFrequency;
-    }
-
-    /**
-     * Calculates frequency value for all matches.
+     * Calculates the weight of each match.
      * @param comparisons list of comparisons to weight
-     * @return the frequency of the match
+     * @return the weights of the matches
      */
-    public MatchFrequency weightAllComparisons(List<JPlagComparison> comparisons) {
+    Map<List<TokenType>, Double> weightAllComparisons(List<JPlagComparison> comparisons) {
+        Map<List<TokenType>, Double> matchWeights = new HashMap<>();
         for (JPlagComparison comparison : comparisons) {
-            List<Token> firstSubmissionToken = comparison.firstSubmission().getTokenList();
-            List<TokenType> firstSubmissionTokenTypes = firstSubmissionToken.stream().map(Token::getType).toList();
-            weightAllMatches(comparison.matches(), firstSubmissionTokenTypes);
+            weightAllMatches(comparison, matchWeights);
         }
-        return matchFrequency;
+        return matchWeights;
+    }
+
+    /**
+     * Calculates the weights for all matches of the comparison.
+     * @param comparison is the comparison
+     * @return a map of the matches to their weights
+     */
+    Map<List<TokenType>, Double> weightAllMatches(JPlagComparison comparison) {
+        return weightAllMatches(comparison, new HashMap<>());
+    }
+
+    private Map<List<TokenType>, Double> weightAllMatches(JPlagComparison comparison, Map<List<TokenType>, Double> matchWeights) {
+        for (Match match : comparison.matches()) {
+            List<TokenType> matchTokens = TokenSequenceUtil.tokenTypesFor(comparison, match);
+            matchWeights.computeIfAbsent(matchTokens, strategy::calculateMatchCount);
+        }
+
+        return matchWeights;
     }
 
 }

@@ -24,6 +24,7 @@
                         <configuration>
                             <jdkVersion>1.5</jdkVersion>
                             <javadocFriendlyComments>true</javadocFriendlyComments>
+                            <!-- TODO valid? -->
                             <packageName>de.jplag.scheme</packageName>
                             <sourceDirectory>src/main/javacc</sourceDirectory>
                             <outputDirectory>${project.build.directory}/generated-sources/javacc</outputDirectory>
