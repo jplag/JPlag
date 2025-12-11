@@ -99,6 +99,7 @@
         <version.scalameta.suffix>2.13</version.scalameta.suffix>
         <version.scalameta>4.14.2</version.scalameta>
         <version.slf4j>2.0.17</version.slf4j>
+        <version.metainf>1.11</version.metainf>
 
         <!-- Plugin versions -->
         <version.plugin.antlr4>${version.antlr4}</version.plugin.antlr4>
@@ -129,6 +130,13 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.kohsuke.metainf-services</groupId>
+                <artifactId>metainf-services</artifactId>
+                <version>${version.metainf}</version>
+                <optional>true</optional>
+            </dependency>
+
             <!-- ANTLR -->
             <dependency>
                 <groupId>org.antlr</groupId>
