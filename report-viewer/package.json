@@ -14,7 +14,7 @@
     "prepare": "git config --local core.hooksPath gitHooks/hooks"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.2.0",
+    "@eslint/eslintrc": "^3.3.3",
     "@eslint/js": "^9.39.1",
     "@types/node": "^24.9.2",
     "@vue/eslint-config-prettier": "^10.2.0",
