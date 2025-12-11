@@ -23,8 +23,4 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <sourceDirectory>src/main/scala</sourceDirectory>
-        <testSourceDirectory>src/test/java</testSourceDirectory>
-    </build>
 </project>
