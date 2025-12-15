@@ -1,4 +1,4 @@
-package de.jplag.java_cpg.token;
+package de.jplag.java_cpg.token.cpg;
 
 import java.io.File;
 import java.util.Objects;

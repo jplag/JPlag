@@ -1,0 +1,19 @@
+package de.jplag.java_cpg.token.semantic;
+
+import de.jplag.TokenType;
+import de.jplag.java_cpg.token.cpg.CpgTokenType;
+
+public record SemanticCpgTokenType(CpgTokenType cpgTokenType, SemanticVector semanticVector) implements TokenType {
+
+
+
+    @Override
+    public String getDescription() {
+        return "";
+    }
+
+    @Override
+    public Boolean isExcludedFromMatching() {
+        return TokenType.super.isExcludedFromMatching();
+    }
+}

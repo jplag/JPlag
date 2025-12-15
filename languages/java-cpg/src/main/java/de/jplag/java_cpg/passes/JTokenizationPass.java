@@ -16,9 +16,9 @@ import de.fraunhofer.aisec.cpg.helpers.SubgraphWalker;
 import de.fraunhofer.aisec.cpg.passes.TranslationResultPass;
 import de.jplag.Token;
 import de.jplag.TokenType;
-import de.jplag.java_cpg.token.CpgNodeListener;
-import de.jplag.java_cpg.token.CpgToken;
-import de.jplag.java_cpg.token.CpgTokenConsumer;
+import de.jplag.java_cpg.token.TokenizationCpgNodeListener;
+import de.jplag.java_cpg.token.cpg.CpgToken;
+import de.jplag.java_cpg.token.cpg.CpgTokenConsumer;
 import de.jplag.java_cpg.visitor.NodeOrderStrategy;
 
 /**
@@ -45,7 +45,7 @@ public class JTokenizationPass extends TranslationResultPass {
     @Override
     public void accept(TranslationResult translationResult) {
         tokenList.clear();
-        CpgNodeListener listener = new CpgNodeListener(consumer);
+        TokenizationCpgNodeListener listener = new TokenizationCpgNodeListener(consumer);
         SubgraphWalker.IterativeGraphWalker walker = new SubgraphWalker.IterativeGraphWalker();
         walker.setStrategy(strategy::getIterator);
         walker.registerOnNodeVisit(listener::visit);

@@ -12,8 +12,9 @@ import de.fraunhofer.aisec.cpg.passes.EvaluationOrderGraphPass
 import de.fraunhofer.aisec.cpg.passes.TranslationUnitPass
 import de.fraunhofer.aisec.cpg.passes.order.DependsOn
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
-import de.jplag.java_cpg.token.CpgNodeListener
-import de.jplag.java_cpg.token.CpgTokenType
+import de.jplag.java_cpg.semantics.NodeRegistry
+import de.jplag.java_cpg.token.TokenizationCpgNodeListener
+import de.jplag.java_cpg.token.cpg.CpgTokenType
 import de.jplag.java_cpg.transformation.TransformationException
 import de.jplag.java_cpg.transformation.matching.edges.CpgNthEdge
 import de.jplag.java_cpg.transformation.matching.edges.Edges.BLOCK__STATEMENTS
@@ -157,6 +158,7 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
                     // this edge shows that the value reaches the next iteration
                     predBlock.addNextDFG(stmtBlock, properties)
                 }
+                NodeRegistry.registerNodeData(statement, "VARIABLE_LOOP", true)
                 // read-write dependency
                 properties = mutableMapOf(Pair(Properties.NAME, name))
                 stmtBlock.addNextDFG(predBlock, properties)
@@ -711,8 +713,8 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
         val nodes1 = NodeOrderStrategy.flattenStatement(n1).iterator()
         val nodes2 = NodeOrderStrategy.flattenStatement(n2).iterator()
 
-        val tokens1 = CpgNodeListener.tokenIterator(nodes1);
-        val tokens2 = CpgNodeListener.tokenIterator(nodes2);
+        val tokens1 = TokenizationCpgNodeListener.tokenIterator(nodes1);
+        val tokens2 = TokenizationCpgNodeListener.tokenIterator(nodes2);
 
         while (tokens1.hasNext() && tokens2.hasNext()) {
             val next1 = tokens1.next().type.let { if (it is CpgTokenType) it.ordinal else 0 }

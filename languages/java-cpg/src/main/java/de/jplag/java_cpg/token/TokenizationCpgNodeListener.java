@@ -1,7 +1,7 @@
 package de.jplag.java_cpg.token;
 
 import static de.jplag.SharedTokenType.FILE_END;
-import static de.jplag.java_cpg.token.CpgTokenType.*;
+import static de.jplag.java_cpg.token.cpg.CpgTokenType.*;
 
 import java.io.File;
 import java.util.Iterator;
@@ -15,21 +15,24 @@ import de.fraunhofer.aisec.cpg.graph.statements.*;
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*;
 import de.jplag.Token;
 import de.jplag.TokenType;
+import de.jplag.java_cpg.token.cpg.CpgToken;
+import de.jplag.java_cpg.token.cpg.CpgTokenConsumer;
+import de.jplag.java_cpg.token.cpg.CpgTokenType;
 
 /**
  * This class specifies for which {@link Node}s a {@link CpgToken} shall be created.
  */
-public class CpgNodeListener extends ACpgNodeListener {
+public class TokenizationCpgNodeListener extends ACpgNodeListener {
 
     private final CpgTokenConsumer tokenConsumer;
     private final LinkedList<TokenType> openBlocks;
     private final LinkedList<BlockTokens> expectedBlocks;
 
     /**
-     * Creates a new {@link CpgNodeListener}.
+     * Creates a new {@link TokenizationCpgNodeListener}.
      * @param consumer the {@link CpgTokenConsumer} that receives the tokens.
      */
-    public CpgNodeListener(CpgTokenConsumer consumer) {
+    public TokenizationCpgNodeListener(CpgTokenConsumer consumer) {
         this.tokenConsumer = consumer;
         this.expectedBlocks = new LinkedList<>();
         this.openBlocks = new LinkedList<>();
@@ -51,7 +54,7 @@ public class CpgNodeListener extends ACpgNodeListener {
                 }
             };
 
-            final CpgNodeListener listener = new CpgNodeListener(consumer);
+            final TokenizationCpgNodeListener listener = new TokenizationCpgNodeListener(consumer);
 
             @Override
             public boolean hasNext() {
