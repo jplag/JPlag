@@ -104,7 +104,7 @@
         <!-- Plugin versions -->
         <version.plugin.antlr4>${version.antlr4}</version.plugin.antlr4>
         <version.plugin.build-helper>3.6.1</version.plugin.build-helper>
-        <version.plugin.checkstyle-puppycrawl>12.2.0</version.plugin.checkstyle-puppycrawl>
+        <version.plugin.checkstyle-puppycrawl>12.3.0</version.plugin.checkstyle-puppycrawl>
         <version.plugin.checkstyle>3.6.0</version.plugin.checkstyle>
         <version.plugin.jacoco>0.8.14</version.plugin.jacoco>
         <version.plugin.javacc>5.0.1</version.plugin.javacc>
