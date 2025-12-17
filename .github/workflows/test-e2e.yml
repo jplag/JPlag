@@ -86,7 +86,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Get JAR
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: JPlag
 
@@ -138,7 +138,7 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Download JPlag Reports
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           pattern: "*-${{ matrix.os }}"
           path: "report-viewer/report-viewer/tests/e2e/assets"

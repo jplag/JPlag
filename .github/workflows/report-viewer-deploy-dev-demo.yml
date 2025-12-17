@@ -45,7 +45,7 @@ jobs:
           distribution: 'temurin'
       
       - name: Get JAR
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: JPlag
       
@@ -79,7 +79,7 @@ jobs:
           node-version: "lts/*"
       
       - name: Download Results
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: Result
           path: report-viewer/report-viewer/public

@@ -45,7 +45,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Get JAR
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: JPlag
 
@@ -92,7 +92,7 @@ jobs:
           cat report-viewer/report-viewer/src/version/version.json
 
       - name: Download Results
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: Result
           path: report-viewer/report-viewer/public
