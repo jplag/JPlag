@@ -5,15 +5,13 @@ import de.jplag.java_cpg.token.cpg.CpgTokenType;
 
 public record SemanticCpgTokenType(CpgTokenType cpgTokenType, SemanticVector semanticVector) implements TokenType {
 
-
-
     @Override
     public String getDescription() {
-        return "";
+        return cpgTokenType.getDescription() + " " + semanticVector.toString();
     }
 
     @Override
     public Boolean isExcludedFromMatching() {
-        return TokenType.super.isExcludedFromMatching();
+        return cpgTokenType.isExcludedFromMatching();
     }
 }

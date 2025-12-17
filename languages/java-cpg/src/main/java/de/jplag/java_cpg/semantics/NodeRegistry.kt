@@ -1,17 +1,17 @@
 package de.jplag.java_cpg.semantics
 
 import de.fraunhofer.aisec.cpg.graph.Node
+import de.jplag.java_cpg.token.semantic.SemanticVector
 
 object NodeRegistry {
 
-    private val nodeMap: MutableMap<Node, MutableMap<String, Any>> = mutableMapOf()
+    private val nodeMap: MutableMap<Node, SemanticVector> = mutableMapOf()
 
-    fun registerNodeData(node: Node, key: String, value: Any) {
-        val dataMap = nodeMap.getOrPut(node) { mutableMapOf() }
-        dataMap[key] = value
+    fun registerNodeData(node: Node, value: SemanticVector) {
+        nodeMap[node] = value
     }
-    fun getNodeData(node: Node, key: String): Any? {
-        return nodeMap[node]?.get(key)
+    fun getNodeData(node: Node): SemanticVector? {
+        return nodeMap[node]
     }
 
     fun clear() {

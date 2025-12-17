@@ -13,34 +13,31 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-public class CalculationCpgNodeListener extends ACpgNodeListener{
+public class CalculationCpgNodeListener extends ACpgNodeListener {
     private final Deque<Node> nodeStack = new ArrayDeque<>();
-    private static final String SEMANTIC_VECTOR= "SemanticVector";
 
     @Override
     public void visit(@NotNull Node node) {
         nodeStack.push(node);
-        NodeRegistry.INSTANCE.registerNodeData(node, SEMANTIC_VECTOR, new SemanticVector());
+        NodeRegistry.INSTANCE.registerNodeData(node, new SemanticVector());
+        if (NodeRegistry.INSTANCE.getNodeData(node) == null) {
+            NodeRegistry.INSTANCE.registerNodeData(node, new SemanticVector());
+        }
     }
 
     private void exitAnyNode(Node node) {
         if (!nodeStack.pop().equals(node)) {
             throw new IllegalStateException("Node stack is inconsistent!");
         }
-        SemanticVector parentSemanticVector = (SemanticVector) NodeRegistry.INSTANCE.getNodeData(nodeStack.getFirst(), SEMANTIC_VECTOR);
-        SemanticVector currentSemanticVector = (SemanticVector) NodeRegistry.INSTANCE.getNodeData(node, SEMANTIC_VECTOR);
+        SemanticVector parentSemanticVector = NodeRegistry.INSTANCE.getNodeData(nodeStack.getFirst());
+        SemanticVector currentSemanticVector = NodeRegistry.INSTANCE.getNodeData(node);
 
-        if (NodeRegistry.INSTANCE.getNodeData(node, "VARIABLE_LOOP") != null && (boolean) NodeRegistry.INSTANCE.getNodeData(node, "VARIABLE_LOOP")) {
-            currentSemanticVector.incrementDimension(SemanticDimension.LOOP_CARRIED_DEPENDENCY);
-            NodeRegistry.INSTANCE.registerNodeData(node, SEMANTIC_VECTOR, currentSemanticVector);
-        }
         parentSemanticVector.addVector(currentSemanticVector);
         if (SemanticDimensionsMapper.mapNodeType(node) != null) {
             parentSemanticVector.incrementDimension(SemanticDimensionsMapper.mapNodeType(node));
         }
-        NodeRegistry.INSTANCE.registerNodeData(nodeStack.getFirst(), SEMANTIC_VECTOR,parentSemanticVector);
+        NodeRegistry.INSTANCE.registerNodeData(nodeStack.getFirst(), parentSemanticVector);
     }
-
 
     @Override
     void exit(AssertStatement assertStatement) {
@@ -388,6 +385,5 @@ public class CalculationCpgNodeListener extends ACpgNodeListener{
     void exit(WhileStatement whileStatement) {
         exitAnyNode(whileStatement);
     }
-
 
 }

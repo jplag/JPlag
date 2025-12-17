@@ -15,6 +15,8 @@ import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import de.jplag.java_cpg.semantics.NodeRegistry
 import de.jplag.java_cpg.token.TokenizationCpgNodeListener
 import de.jplag.java_cpg.token.cpg.CpgTokenType
+import de.jplag.java_cpg.token.semantic.SemanticDimension
+import de.jplag.java_cpg.token.semantic.SemanticVector
 import de.jplag.java_cpg.transformation.TransformationException
 import de.jplag.java_cpg.transformation.matching.edges.CpgNthEdge
 import de.jplag.java_cpg.transformation.matching.edges.Edges.BLOCK__STATEMENTS
@@ -158,7 +160,10 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
                     // this edge shows that the value reaches the next iteration
                     predBlock.addNextDFG(stmtBlock, properties)
                 }
-                NodeRegistry.registerNodeData(statement, "VARIABLE_LOOP", true)
+                //adding loop-carried dependency information for later creation of semantic vectors
+                val semanticVector = SemanticVector()
+                semanticVector.incrementDimension(SemanticDimension.LOOP_CARRIED_DEPENDENCY)
+                NodeRegistry.registerNodeData(statement, semanticVector)
                 // read-write dependency
                 properties = mutableMapOf(Pair(Properties.NAME, name))
                 stmtBlock.addNextDFG(predBlock, properties)
