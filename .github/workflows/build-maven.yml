@@ -56,7 +56,7 @@ jobs:
       run: mvn -Pwith-report-viewer clean package assembly:single
 
     - name: Upload Assembly
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: "JPlag Jar"
         path: "cli/target/jplag-*-jar-with-dependencies.jar"
