@@ -163,7 +163,7 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
                 //adding loop-carried dependency information for later creation of semantic vectors
                 val semanticVector = SemanticVector()
                 semanticVector.incrementDimension(SemanticDimension.LOOP_CARRIED_DEPENDENCY)
-                NodeRegistry.registerNodeData(statement, semanticVector)
+                NodeRegistry.INSTANCE.registerNodeData(statement, semanticVector)
                 // read-write dependency
                 properties = mutableMapOf(Pair(Properties.NAME, name))
                 stmtBlock.addNextDFG(predBlock, properties)
