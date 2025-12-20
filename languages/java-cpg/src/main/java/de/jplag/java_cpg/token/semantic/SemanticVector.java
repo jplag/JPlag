@@ -6,6 +6,7 @@ public class SemanticVector {
     public SemanticVector() {
         this.values = new int[SemanticDimension.DIMENSION_COUNT];
     }
+
     public void incrementDimension(SemanticDimension dimension) {
         this.values[dimension.ordinal()]++;
     }
@@ -36,6 +37,7 @@ public class SemanticVector {
         sb.append("}");
         return sb.toString();
     }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -51,6 +53,7 @@ public class SemanticVector {
         }
         return true;
     }
+
     @Override
     public int hashCode() {
         return java.util.Arrays.hashCode(values);

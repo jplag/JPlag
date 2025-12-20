@@ -6,16 +6,16 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import de.jplag.TokenEquivalenceModel;
-import de.jplag.java_cpg.token.cpg.CpgTokenEquivalenceModel;
-import de.jplag.java_cpg.token.semantic.SemanticCpgTokenEquivalenceModel;
-import de.jplag.options.LanguageOptions;
 import org.kohsuke.MetaInfServices;
 
 import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
+import de.jplag.TokenEquivalenceModel;
+import de.jplag.java_cpg.token.cpg.CpgTokenEquivalenceModel;
+import de.jplag.java_cpg.token.semantic.SemanticCpgTokenEquivalenceModel;
 import de.jplag.java_cpg.transformation.GraphTransformation;
+import de.jplag.options.LanguageOptions;
 
 /**
  * This class represents the frond end of the CPG module of JPlag.
@@ -123,16 +123,9 @@ public class JavaCpgLanguage implements Language {
         return FILE_EXTENSIONS;
     }
 
-
     @Override
     public boolean supportsNormalization() {
         return true;
-    }
-
-
-    @Override
-    public LanguageOptions getLanguageOptions() {
-        return new JavaCpgLanguageOptions();
     }
 
     @Override

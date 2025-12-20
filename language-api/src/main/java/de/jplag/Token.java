@@ -22,7 +22,8 @@ public class Token {
     private final int length;
     private final File file;
     private final TokenType type;
-    private CodeSemantics semantics; // value null if no semantics, maybe move into tokentype since information about the tokens information not bout the position?
+    private CodeSemantics semantics; // value null if no semantics, maybe move into tokentype since information about the tokens information not bout
+                                     // the position?
 
     /**
      * Creates a token with column and length information.

@@ -1,6 +1,5 @@
 package de.jplag;
 
-
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 

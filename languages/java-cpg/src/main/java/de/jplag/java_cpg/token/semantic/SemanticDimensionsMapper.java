@@ -1,6 +1,5 @@
 package de.jplag.java_cpg.token.semantic;
 
-
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.graph.declarations.MethodDeclaration;
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration;
@@ -36,34 +35,34 @@ public final class SemanticDimensionsMapper {
                     default -> throw new IllegalStateException("Unexpected value: " + binaryOperator.getOperatorCode());
                 }
             }
-            case ReturnStatement _ ->  {
+            case ReturnStatement _ -> {
                 return SemanticDimension.RETURN_STATEMENT;
             }
-            case CaseStatement _ ->  {
+            case CaseStatement _ -> {
                 return SemanticDimension.CASE;
             }
-            case SwitchStatement _ ->  {
+            case SwitchStatement _ -> {
                 return SemanticDimension.SWITCH;
             }
-            case LambdaExpression _ ->  {
+            case LambdaExpression _ -> {
                 return SemanticDimension.LAMBDA_EXPRESSION;
             }
-            case ConstructExpression _ ->  {
+            case ConstructExpression _ -> {
                 return SemanticDimension.CLASS_OR_ARRAY_CREATOR;
             }
-            case IfStatement _ ->  {
+            case IfStatement _ -> {
                 return SemanticDimension.IF;
             }
-            case AssertStatement _ ->  {
+            case AssertStatement _ -> {
                 return SemanticDimension.ASSERT;
             }
-            case CatchClause _ ->  {
+            case CatchClause _ -> {
                 return SemanticDimension.CATCH;
             }
-            case TryStatement _ ->  {
+            case TryStatement _ -> {
                 return SemanticDimension.TRY;
             }
-            case ForEachStatement _, ForStatement _, WhileStatement _, DoStatement _ ->  {
+            case ForEachStatement _, ForStatement _, WhileStatement _, DoStatement _ -> {
                 return SemanticDimension.LOOP;
             }
             default -> {

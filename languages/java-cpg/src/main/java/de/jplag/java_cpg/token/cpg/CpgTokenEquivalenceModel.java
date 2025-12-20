@@ -1,11 +1,11 @@
 package de.jplag.java_cpg.token.cpg;
 
+import java.util.List;
+
 import de.jplag.DefaultTokenEquivalenceModel;
 import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.java_cpg.token.semantic.SemanticCpgTokenType;
-
-import java.util.List;
 
 public class CpgTokenEquivalenceModel extends DefaultTokenEquivalenceModel {
     @Override
@@ -22,8 +22,5 @@ public class CpgTokenEquivalenceModel extends DefaultTokenEquivalenceModel {
     public TokenType getPrimaryType(Token token) {
         return ((SemanticCpgTokenType) token.getType()).tokenType();
     }
-
-
-
 
 }

@@ -1,6 +1,5 @@
 package de.jplag;
 
-import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
 public class DefaultTokenEquivalenceModel implements TokenEquivalenceModel {
@@ -15,4 +14,3 @@ public class DefaultTokenEquivalenceModel implements TokenEquivalenceModel {
         return leftValue == rightValue;
     }
 }
-

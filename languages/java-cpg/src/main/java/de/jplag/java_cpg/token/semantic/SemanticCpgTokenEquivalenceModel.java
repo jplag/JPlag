@@ -11,7 +11,6 @@ public class SemanticCpgTokenEquivalenceModel extends CpgTokenEquivalenceModel {
         this.semanticThreshold = (double) semanticThreshold;
     }
 
-
     @Override
     public boolean areSecondaryEquivalent(TokenType leftType, TokenType rightType) {
         int[] leftVector = ((SemanticCpgTokenType) leftType).semanticVector().getValue();

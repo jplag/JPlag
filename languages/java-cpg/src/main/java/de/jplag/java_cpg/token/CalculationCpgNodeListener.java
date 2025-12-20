@@ -1,17 +1,17 @@
 package de.jplag.java_cpg.token;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+
+import org.jetbrains.annotations.NotNull;
+
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.graph.declarations.*;
 import de.fraunhofer.aisec.cpg.graph.statements.*;
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*;
 import de.jplag.java_cpg.semantics.NodeRegistry;
-import de.jplag.java_cpg.token.semantic.SemanticDimension;
 import de.jplag.java_cpg.token.semantic.SemanticDimensionsMapper;
 import de.jplag.java_cpg.token.semantic.SemanticVector;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayDeque;
-import java.util.Deque;
 
 public class CalculationCpgNodeListener extends ACpgNodeListener {
     private final Deque<Node> nodeStack = new ArrayDeque<>();
@@ -223,7 +223,7 @@ public class CalculationCpgNodeListener extends ACpgNodeListener {
     @Override
     void exit(Literal<?> literal) {
         exitAnyNode(literal);
-        //TODO Add data dependencies
+        // TODO Add data dependencies
     }
 
     @Override

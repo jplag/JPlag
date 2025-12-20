@@ -81,7 +81,8 @@ public class TokenizationCpgNodeListener extends ACpgNodeListener {
 
     @Override
     public void exit(TranslationUnitDeclaration translationUnitDeclaration) {
-        tokenConsumer.addToken(new SemanticCpgTokenType(FILE_END, getSemanticVector(translationUnitDeclaration)),new File(translationUnitDeclaration.getName().toString()), -1, -1, -1, translationUnitDeclaration.getName());
+        tokenConsumer.addToken(new SemanticCpgTokenType(FILE_END, getSemanticVector(translationUnitDeclaration)),
+                new File(translationUnitDeclaration.getName().toString()), -1, -1, -1, translationUnitDeclaration.getName());
     }
 
     @Override
@@ -302,7 +303,7 @@ public class TokenizationCpgNodeListener extends ACpgNodeListener {
             openBlocks.addFirst(BLOCK_END);
         } else {
             BlockTokens blockTokens = expectedBlocks.pop();
-            tokenConsumer.addToken(new SemanticCpgTokenType(blockTokens.opening, getSemanticVector(block)), block, false);  //TODO semantic vector?
+            tokenConsumer.addToken(new SemanticCpgTokenType(blockTokens.opening, getSemanticVector(block)), block, false);  // TODO semantic vector?
             openBlocks.addFirst(blockTokens.closing);
         }
     }

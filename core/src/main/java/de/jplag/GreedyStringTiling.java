@@ -104,8 +104,8 @@ public class GreedyStringTiling {
         int[] leftValues = tokenValueListFromSubmission(leftSubmission);
         int[] rightValues = tokenValueListFromSubmission(rightSubmission);
 
-        if (!tokenEquivalenceModel.ensureTokenType(leftSubmission.getTokenList()) ||
-                !tokenEquivalenceModel.ensureTokenType(rightSubmission.getTokenList())) {
+        if (!tokenEquivalenceModel.ensureTokenType(leftSubmission.getTokenList())
+                || !tokenEquivalenceModel.ensureTokenType(rightSubmission.getTokenList())) {
             throw new IllegalStateException("Token equivalence model requires specific token types, but they are not given.");
         }
 
@@ -188,9 +188,9 @@ public class GreedyStringTiling {
         }
         int offset = minimumSequenceLength;
         while (tokenEquivalenceModel.arePrimaryEquivalent(leftValues[leftStartIndex + offset], rightValues[rightStartIndex + offset], tokenTypeValues)
-                && tokenEquivalenceModel.areSecondaryEquivalent(leftTokens.get(leftStartIndex + offset).getType(), rightTokens.get(rightStartIndex + offset).getType())
-                &&!leftMarked[leftStartIndex + offset]
-                && !rightMarked[rightStartIndex + offset]) {
+                && tokenEquivalenceModel.areSecondaryEquivalent(leftTokens.get(leftStartIndex + offset).getType(),
+                        rightTokens.get(rightStartIndex + offset).getType())
+                && !leftMarked[leftStartIndex + offset] && !rightMarked[rightStartIndex + offset]) {
             offset++;
         }
         return offset;

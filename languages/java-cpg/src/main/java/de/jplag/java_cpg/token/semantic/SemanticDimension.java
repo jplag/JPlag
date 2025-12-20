@@ -18,10 +18,10 @@ public enum SemanticDimension {
     CLASS_OR_ARRAY_CREATOR,
     IF,//
     ASSERT,//
-    THROW, //not found
+    THROW, // not found
     TRY,//
     CATCH,//
-    FINALLY, //not found
+    FINALLY, // not found
     LOOP;
 
     public static final int DIMENSION_COUNT = values().length;
