@@ -122,4 +122,10 @@ public interface Language {
     default boolean requiresCoreNormalization() {
         return true;
     }
+
+    LanguageOptions getLanguageOptions();
+
+    default TokenEquivalenceModel getTokenEquivalenceModel(LanguageOptions options) {
+        return new DefaultTokenEquivalenceModel();
+    }
 }

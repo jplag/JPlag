@@ -1,11 +1,17 @@
 package de.jplag.java_cpg;
 
+import static de.jplag.java_cpg.token.CpgTokenEquivalenceMode.SEMANTIC;
+import static de.jplag.java_cpg.token.CpgTokenEquivalenceMode.DEFAULT;
 import static de.jplag.java_cpg.transformation.TransformationRepository.*;
 
 import java.io.File;
 import java.util.List;
 import java.util.Set;
 
+import de.jplag.TokenEquivalenceModel;
+import de.jplag.java_cpg.token.cpg.CpgTokenEquivalenceModel;
+import de.jplag.java_cpg.token.semantic.SemanticCpgTokenEquivalenceModel;
+import de.jplag.options.LanguageOptions;
 import org.kohsuke.MetaInfServices;
 
 import de.jplag.Language;
@@ -119,8 +125,24 @@ public class JavaCpgLanguage implements Language {
         return FILE_EXTENSIONS;
     }
 
+
     @Override
     public boolean supportsNormalization() {
         return true;
+    }
+
+
+    @Override
+    public LanguageOptions getLanguageOptions() {
+        return new JavaCpgLanguageOptions();
+    }
+
+    @Override
+    public TokenEquivalenceModel getTokenEquivalenceModel(LanguageOptions options) {
+        JavaCpgLanguageOptions javaOptions = (JavaCpgLanguageOptions) options;
+        return switch (((JavaCpgLanguageOptions) options).getTokenEquivalenceMode()) {
+            case DEFAULT -> new CpgTokenEquivalenceModel();
+            case SEMANTIC -> new SemanticCpgTokenEquivalenceModel(javaOptions.getSemanticThreshold());
+        };
     }
 }

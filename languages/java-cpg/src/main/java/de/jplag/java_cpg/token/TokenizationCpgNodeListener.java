@@ -81,7 +81,7 @@ public class TokenizationCpgNodeListener extends ACpgNodeListener {
 
     @Override
     public void exit(TranslationUnitDeclaration translationUnitDeclaration) {
-        tokenConsumer.addToken(FILE_END, new File(translationUnitDeclaration.getName().toString()), -1, -1, -1, translationUnitDeclaration.getName());
+        tokenConsumer.addToken(new SemanticCpgTokenType(FILE_END, getSemanticVector(translationUnitDeclaration)),new File(translationUnitDeclaration.getName().toString()), -1, -1, -1, translationUnitDeclaration.getName());
     }
 
     @Override
