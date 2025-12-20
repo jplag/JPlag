@@ -35,7 +35,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: 21
+          java-version: 25
           distribution: 'temurin'
   
       - uses: actions/setup-node@v4
