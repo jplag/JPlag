@@ -19,6 +19,10 @@ public class SemanticVector {
         }
     }
 
+    public int[] getValue() {
+        return values;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

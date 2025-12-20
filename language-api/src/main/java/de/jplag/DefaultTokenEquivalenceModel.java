@@ -1,21 +1,18 @@
 package de.jplag;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentMap;
 
 public class DefaultTokenEquivalenceModel implements TokenEquivalenceModel {
 
     @Override
-    public int[] generatePrimaryRepresentation(List<Token> tokens) {
-        return new int[0];
+    public TokenType getPrimaryType(Token token) {
+        return token.getType();
     }
 
     @Override
-    public boolean ensureSecondaryTokenType(List<Token> tokens) {
-        return true;
-    }
-
-    @Override
-    public boolean arePrimaryEquivalent(int leftValue, int rightValue) {
+    public boolean arePrimaryEquivalent(int leftValue, int rightValue, ConcurrentMap<TokenType, Integer> tokenTypedValues) {
         return leftValue == rightValue;
     }
 }
+

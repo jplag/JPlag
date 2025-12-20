@@ -1,7 +1,5 @@
 package de.jplag.java_cpg;
 
-import static de.jplag.java_cpg.token.CpgTokenEquivalenceMode.SEMANTIC;
-import static de.jplag.java_cpg.token.CpgTokenEquivalenceMode.DEFAULT;
 import static de.jplag.java_cpg.transformation.TransformationRepository.*;
 
 import java.io.File;

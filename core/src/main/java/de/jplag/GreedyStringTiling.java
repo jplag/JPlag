@@ -30,6 +30,8 @@ public class GreedyStringTiling {
     private final Map<Submission, int[]> cachedTokenValueLists = new IdentityHashMap<>();
     private final Map<Submission, SubsequenceHashLookupTable> cachedHashLookupTables = new IdentityHashMap<>();
 
+    private final TokenEquivalenceModel tokenEquivalenceModel;
+
     public GreedyStringTiling(JPlagOptions options) {
         this.options = options;
         // Ensures 1 <= neighborLength <= minimumTokenMatch
@@ -37,6 +39,7 @@ public class GreedyStringTiling {
         this.minimumMatchLength = options.mergingOptions().enabled() ? minimumNeighborLength : options.minimumTokenMatch();
         this.tokenTypeValues = new ConcurrentHashMap<>();
         this.tokenTypeValues.put(SharedTokenType.FILE_END, 0);
+        this.tokenEquivalenceModel = options.language().getTokenEquivalenceModel(options.language().getOptions());
     }
 
     /**
@@ -101,6 +104,11 @@ public class GreedyStringTiling {
         int[] leftValues = tokenValueListFromSubmission(leftSubmission);
         int[] rightValues = tokenValueListFromSubmission(rightSubmission);
 
+        if (tokenEquivalenceModel.ensureTokenType(leftSubmission.getTokenList()) ||
+                tokenEquivalenceModel.ensureTokenType(rightSubmission.getTokenList())) {
+            throw new IllegalStateException("Token equivalence model requires specific token types, but they are not given.");
+        }
+
         boolean[] leftMarked = calculateInitiallyMarked(leftSubmission);
         boolean[] rightMarked = calculateInitiallyMarked(rightSubmission);
 
@@ -127,7 +135,7 @@ public class GreedyStringTiling {
                     }
 
                     int subsequenceMatchLength = maximalMatchingSubsequenceLengthNotMarked(leftValues, leftStartIndex, leftMarked, rightValues,
-                            rightStartIndex, rightMarked, maximumMatchLength);
+                            rightStartIndex, rightMarked, maximumMatchLength, leftSubmission.getTokenList(), rightSubmission.getTokenList());
                     if (subsequenceMatchLength >= maximumMatchLength) {
                         if (subsequenceMatchLength > maximumMatchLength) {
                             iterationMatches.clear();
@@ -170,7 +178,7 @@ public class GreedyStringTiling {
      * length.
      */
     private int maximalMatchingSubsequenceLengthNotMarked(int[] leftValues, int leftStartIndex, boolean[] leftMarked, int[] rightValues,
-            int rightStartIndex, boolean[] rightMarked, int minimumSequenceLength) {
+            int rightStartIndex, boolean[] rightMarked, int minimumSequenceLength, List<Token> leftTokens, List<Token> rightTokens) {
         for (int offset = minimumSequenceLength - 1; offset >= 0; offset--) {
             int leftIndex = leftStartIndex + offset;
             int rightIndex = rightStartIndex + offset;
@@ -179,7 +187,9 @@ public class GreedyStringTiling {
             }
         }
         int offset = minimumSequenceLength;
-        while (leftValues[leftStartIndex + offset] == rightValues[rightStartIndex + offset] && !leftMarked[leftStartIndex + offset]
+        while (tokenEquivalenceModel.arePrimaryEquivalent(leftValues[leftStartIndex + offset], rightValues[rightStartIndex + offset], tokenTypeValues)
+                && tokenEquivalenceModel.areSecondaryEquivalent(leftTokens.get(leftStartIndex + offset).getType(), rightTokens.get(rightStartIndex + offset).getType())
+                &&!leftMarked[leftStartIndex + offset]
                 && !rightMarked[rightStartIndex + offset]) {
             offset++;
         }
@@ -219,7 +229,7 @@ public class GreedyStringTiling {
             List<Token> tokens = key.getTokenList();
             int[] tokenValueList = new int[tokens.size()];
             for (int i = 0; i < tokens.size(); i++) {
-                TokenType type = tokens.get(i).getType();
+                TokenType type = tokenEquivalenceModel.getPrimaryType(tokens.get(i));
                 synchronized (tokenTypeValues) {
                     tokenTypeValues.putIfAbsent(type, tokenTypeValues.size());
                 }

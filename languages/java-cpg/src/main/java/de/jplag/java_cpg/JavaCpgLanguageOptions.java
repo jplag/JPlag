@@ -14,7 +14,7 @@ public class JavaCpgLanguageOptions extends LanguageOptions {
     private final LanguageOption<Integer> semanticThreshold = createDefaultOption(OptionType.integer(),
             "semantic-threshold",
             "The threshold for semantic token equivalence. Only used if token-equivalence is set to SEMANTIC. Range: 0-100",
-            80);
+            5);
 
     public CpgTokenEquivalenceMode getTokenEquivalenceMode() {
         return CpgTokenEquivalenceMode.valueOf(this.tokenEquivalenceMode.getValue());
