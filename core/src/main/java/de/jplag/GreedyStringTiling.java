@@ -104,8 +104,8 @@ public class GreedyStringTiling {
         int[] leftValues = tokenValueListFromSubmission(leftSubmission);
         int[] rightValues = tokenValueListFromSubmission(rightSubmission);
 
-        if (tokenEquivalenceModel.ensureTokenType(leftSubmission.getTokenList()) ||
-                tokenEquivalenceModel.ensureTokenType(rightSubmission.getTokenList())) {
+        if (!tokenEquivalenceModel.ensureTokenType(leftSubmission.getTokenList()) ||
+                !tokenEquivalenceModel.ensureTokenType(rightSubmission.getTokenList())) {
             throw new IllegalStateException("Token equivalence model requires specific token types, but they are not given.");
         }
 
