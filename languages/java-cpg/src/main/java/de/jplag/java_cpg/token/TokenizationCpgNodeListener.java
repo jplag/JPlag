@@ -15,7 +15,7 @@ import de.fraunhofer.aisec.cpg.graph.statements.*;
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*;
 import de.jplag.Token;
 import de.jplag.TokenType;
-import de.jplag.java_cpg.semantics.NodeRegistry;
+import de.jplag.java_cpg.NodeRegistry;
 import de.jplag.java_cpg.token.cpg.CpgToken;
 import de.jplag.java_cpg.token.cpg.CpgTokenConsumer;
 import de.jplag.java_cpg.token.cpg.CpgTokenType;

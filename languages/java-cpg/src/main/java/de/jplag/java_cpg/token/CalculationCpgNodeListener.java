@@ -9,7 +9,7 @@ import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.graph.declarations.*;
 import de.fraunhofer.aisec.cpg.graph.statements.*;
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*;
-import de.jplag.java_cpg.semantics.NodeRegistry;
+import de.jplag.java_cpg.NodeRegistry;
 import de.jplag.java_cpg.token.semantic.SemanticDimensionsMapper;
 import de.jplag.java_cpg.token.semantic.SemanticVector;
 

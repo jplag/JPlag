@@ -12,7 +12,7 @@ import de.fraunhofer.aisec.cpg.passes.EvaluationOrderGraphPass
 import de.fraunhofer.aisec.cpg.passes.TranslationUnitPass
 import de.fraunhofer.aisec.cpg.passes.order.DependsOn
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
-import de.jplag.java_cpg.semantics.NodeRegistry
+import de.jplag.java_cpg.NodeRegistry
 import de.jplag.java_cpg.token.TokenizationCpgNodeListener
 import de.jplag.java_cpg.token.cpg.CpgTokenType
 import de.jplag.java_cpg.token.semantic.SemanticDimension

@@ -1,4 +1,4 @@
-package de.jplag.java_cpg.semantics
+package de.jplag.java_cpg
 
 import de.fraunhofer.aisec.cpg.graph.Node
 import de.jplag.java_cpg.token.semantic.SemanticVector
