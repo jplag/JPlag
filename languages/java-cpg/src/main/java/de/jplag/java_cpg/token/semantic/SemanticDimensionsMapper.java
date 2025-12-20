@@ -11,13 +11,13 @@ import de.fraunhofer.aisec.cpg.graph.statements.expressions.LambdaExpression;
 public final class SemanticDimensionsMapper {
     public static SemanticDimension mapNodeType(Node node) {
         switch (node) {
-            case MethodDeclaration _ -> {
+            case (node instanceof ReturnStatement) {
                 return SemanticDimension.METHOD_DECLARATION;
             }
-            case VariableDeclaration _ -> {
+            case (node instanceof VariableDeclaration) {
                 return SemanticDimension.VARIABLE_DECLARATION;
             }
-            case BinaryOperator _ -> {
+            case (node instanceof BinaryOperator) {
                 BinaryOperator binaryOperator = (BinaryOperator) node;
                 switch (binaryOperator.getOperatorCode()) {
                     case "&&", "||" -> {
@@ -35,34 +35,34 @@ public final class SemanticDimensionsMapper {
                     default -> throw new IllegalStateException("Unexpected value: " + binaryOperator.getOperatorCode());
                 }
             }
-            case ReturnStatement _ -> {
+            case (node instanceof ReturnStatement) {
                 return SemanticDimension.RETURN_STATEMENT;
             }
-            case CaseStatement _ -> {
+            case (node instanceof CaseStatement) {
                 return SemanticDimension.CASE;
             }
-            case SwitchStatement _ -> {
+            case (node instanceof SwitchStatement){
                 return SemanticDimension.SWITCH;
             }
-            case LambdaExpression _ -> {
+            case (node instanceof LambdaExpression) {
                 return SemanticDimension.LAMBDA_EXPRESSION;
             }
-            case ConstructExpression _ -> {
+            case (node instanceof ConstructExpression) {
                 return SemanticDimension.CLASS_OR_ARRAY_CREATOR;
             }
-            case IfStatement _ -> {
+            case (node instanceof IfStatement) {
                 return SemanticDimension.IF;
             }
-            case AssertStatement _ -> {
+            case (node instanceof AssertStatement) {
                 return SemanticDimension.ASSERT;
             }
-            case CatchClause _ -> {
+            case (node instanceof CatchClause) {
                 return SemanticDimension.CATCH;
             }
-            case TryStatement _ -> {
+            case (node instanceof TryStatement) {
                 return SemanticDimension.TRY;
             }
-            case ForEachStatement _, ForStatement _, WhileStatement _, DoStatement _ -> {
+            case (node instanceof ForEachStatement || node instanceof ForStatement || node instanceof WhileStatement || node instanceof DoStatement) {
                 return SemanticDimension.LOOP;
             }
             default -> {
