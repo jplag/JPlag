@@ -1,10 +1,13 @@
 package de.jplag.java_cpg.token.semantic;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.jplag.TokenType;
 import de.jplag.java_cpg.token.cpg.CpgTokenEquivalenceModel;
 
 public class SemanticCpgTokenEquivalenceModel extends CpgTokenEquivalenceModel {
-
+    private static final Logger logger = LoggerFactory.getLogger(SemanticCpgTokenEquivalenceModel.class);
     private final double semanticThreshold;
 
     public SemanticCpgTokenEquivalenceModel(int semanticThreshold) {

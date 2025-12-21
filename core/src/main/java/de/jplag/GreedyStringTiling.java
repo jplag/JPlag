@@ -182,7 +182,9 @@ public class GreedyStringTiling {
         for (int offset = minimumSequenceLength - 1; offset >= 0; offset--) {
             int leftIndex = leftStartIndex + offset;
             int rightIndex = rightStartIndex + offset;
-            if (leftValues[leftIndex] != rightValues[rightIndex] || leftMarked[leftIndex] || rightMarked[rightIndex]) {
+            if (!tokenEquivalenceModel.arePrimaryEquivalent(leftValues[leftIndex], rightValues[rightIndex], tokenTypeValues)
+                    || !tokenEquivalenceModel.areSecondaryEquivalent(leftTokens.get(leftIndex).getType(), rightTokens.get(rightIndex).getType())
+                    || leftMarked[leftIndex] || rightMarked[rightIndex]) {
                 return 0;
             }
         }
