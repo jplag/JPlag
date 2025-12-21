@@ -16,7 +16,6 @@ import de.jplag.TokenEquivalenceModel;
 import de.jplag.java_cpg.token.cpg.CpgTokenEquivalenceModel;
 import de.jplag.java_cpg.token.semantic.SemanticCpgTokenEquivalenceModel;
 import de.jplag.java_cpg.transformation.GraphTransformation;
-import de.jplag.options.LanguageOptions;
 
 /**
  * This class represents the frond end of the CPG module of JPlag.

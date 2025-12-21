@@ -11,7 +11,7 @@ public class CpgTokenEquivalenceModel extends DefaultTokenEquivalenceModel {
     @Override
     public boolean ensureTokenType(List<Token> tokens) {
         for (Token token : tokens) {
-            if (token.getType() instanceof SemanticCpgTokenType) {
+            if (!(token.getType() instanceof SemanticCpgTokenType)) {
                 return false;
             }
         }
