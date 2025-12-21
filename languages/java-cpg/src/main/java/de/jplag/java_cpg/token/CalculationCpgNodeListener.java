@@ -19,24 +19,32 @@ public class CalculationCpgNodeListener extends ACpgNodeListener {
     @Override
     public void visit(@NotNull Node node) {
         nodeStack.push(node);
-        NodeRegistry.INSTANCE.registerNodeData(node, new SemanticVector());
         if (NodeRegistry.INSTANCE.getNodeData(node) == null) {
             NodeRegistry.INSTANCE.registerNodeData(node, new SemanticVector());
         }
+    }
+
+    @Override
+    public void exit(@NotNull Node node) {
+        exitAnyNode(node);
     }
 
     private void exitAnyNode(Node node) {
         if (!nodeStack.pop().equals(node)) {
             throw new IllegalStateException("Node stack is inconsistent!");
         }
-        SemanticVector parentSemanticVector = NodeRegistry.INSTANCE.getNodeData(nodeStack.getFirst());
-        SemanticVector currentSemanticVector = NodeRegistry.INSTANCE.getNodeData(node);
 
-        parentSemanticVector.addVector(currentSemanticVector);
+        SemanticVector currentSemanticVector = NodeRegistry.INSTANCE.getNodeData(node);
         if (SemanticDimensionsMapper.mapNodeType(node) != null) {
-            parentSemanticVector.incrementDimension(SemanticDimensionsMapper.mapNodeType(node));
+            currentSemanticVector.incrementDimension(SemanticDimensionsMapper.mapNodeType(node));
+            NodeRegistry.INSTANCE.registerNodeData(node, currentSemanticVector);
         }
-        NodeRegistry.INSTANCE.registerNodeData(nodeStack.getFirst(), parentSemanticVector);
+        if (!nodeStack.isEmpty()) {
+            SemanticVector parentSemanticVector = NodeRegistry.INSTANCE.getNodeData(nodeStack.getFirst());
+            parentSemanticVector.addVector(currentSemanticVector);
+            NodeRegistry.INSTANCE.registerNodeData(nodeStack.getFirst(), parentSemanticVector);
+        }
+
     }
 
     @Override

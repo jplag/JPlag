@@ -21,4 +21,9 @@ public class JavaCpgLanguageOptions extends LanguageOptions {
         return this.semanticThreshold.getValue();
     }
 
+    // setter for tests
+    public void setTokenEquivalenceMode(CpgTokenEquivalenceMode mode) {
+        this.tokenEquivalenceMode.setValue(mode.name());
+    }
+
 }
