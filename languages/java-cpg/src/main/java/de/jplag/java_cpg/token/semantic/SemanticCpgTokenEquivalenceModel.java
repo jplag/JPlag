@@ -8,7 +8,7 @@ public class SemanticCpgTokenEquivalenceModel extends CpgTokenEquivalenceModel {
     private final double semanticThreshold;
 
     public SemanticCpgTokenEquivalenceModel(int semanticThreshold) {
-        this.semanticThreshold = (double) semanticThreshold;
+        this.semanticThreshold = semanticThreshold;
     }
 
     @Override

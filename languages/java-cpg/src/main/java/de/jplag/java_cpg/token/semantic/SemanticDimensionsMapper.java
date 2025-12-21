@@ -4,9 +4,7 @@ import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.graph.declarations.MethodDeclaration;
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration;
 import de.fraunhofer.aisec.cpg.graph.statements.*;
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.BinaryOperator;
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.ConstructExpression;
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.LambdaExpression;
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.*;
 
 public final class SemanticDimensionsMapper {
     public static SemanticDimension mapNodeType(Node node) {
@@ -31,6 +29,10 @@ public final class SemanticDimensionsMapper {
                 default -> throw new IllegalStateException("Unexpected value: " + binaryOperator.getOperatorCode());
             }
         } else if (node instanceof ReturnStatement) {
+            // skip auto generated return statements
+            if (node.getLocation() == null) {
+                return null;
+            }
             return SemanticDimension.RETURN_STATEMENT;
         } else if (node instanceof CaseStatement) {
             return SemanticDimension.CASE;
@@ -38,7 +40,7 @@ public final class SemanticDimensionsMapper {
             return SemanticDimension.SWITCH;
         } else if (node instanceof LambdaExpression) {
             return SemanticDimension.LAMBDA_EXPRESSION;
-        } else if (node instanceof ConstructExpression) {
+        } else if (node instanceof NewArrayExpression || node instanceof NewExpression) {
             return SemanticDimension.CLASS_OR_ARRAY_CREATOR;
         } else if (node instanceof IfStatement) {
             return SemanticDimension.IF;
@@ -46,8 +48,22 @@ public final class SemanticDimensionsMapper {
             return SemanticDimension.ASSERT;
         } else if (node instanceof CatchClause) {
             return SemanticDimension.CATCH;
+        } else if (node instanceof UnaryOperator unaryOperator) {
+            if ((unaryOperator.getOperatorCode() != null && unaryOperator.getOperatorCode().equals("throw"))) {
+                return SemanticDimension.THROW;
+            } else {
+                return null;
+            }
         } else if (node instanceof TryStatement) {
             return SemanticDimension.TRY;
+        } else if (node instanceof AssignExpression) {
+            return SemanticDimension.ASSIGNMENT_EXPRESSION;
+        } else if (node instanceof SubscriptExpression) {
+            return SemanticDimension.ARRAY_SELECTOR;
+        } else if (node instanceof ConstructExpression) {
+            return SemanticDimension.CONSTRUCTOR_INVOCATION;
+        } else if (node instanceof CallExpression) {
+            return SemanticDimension.METHOD_INVOCATION;
         } else if (node instanceof ForEachStatement || node instanceof ForStatement || node instanceof WhileStatement
                 || node instanceof DoStatement) {
             return SemanticDimension.LOOP;
