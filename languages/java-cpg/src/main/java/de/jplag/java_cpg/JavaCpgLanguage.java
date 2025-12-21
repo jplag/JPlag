@@ -1,5 +1,6 @@
 package de.jplag.java_cpg;
 
+import static de.jplag.java_cpg.token.CpgTokenEquivalenceMode.*;
 import static de.jplag.java_cpg.transformation.TransformationRepository.*;
 
 import java.io.File;
@@ -26,6 +27,7 @@ public class JavaCpgLanguage implements Language {
     private static final String[] FILE_EXTENSIONS = {".java"};
     private static final String NAME = "Java Code Property Graph module";
     private static final String IDENTIFIER = "java-cpg";
+    private final JavaCpgLanguageOptions options = new JavaCpgLanguageOptions();
     private final CpgAdapter cpgAdapter;
 
     /**
@@ -74,6 +76,11 @@ public class JavaCpgLanguage implements Language {
             Thread.currentThread().interrupt();
             return List.of();
         }
+    }
+
+    @Override
+    public JavaCpgLanguageOptions getOptions() {
+        return options;
     }
 
     @Override
@@ -129,9 +136,9 @@ public class JavaCpgLanguage implements Language {
     }
 
     @Override
-    public TokenEquivalenceModel getTokenEquivalenceModel(LanguageOptions options) {
-        JavaCpgLanguageOptions javaOptions = (JavaCpgLanguageOptions) options;
-        return switch (((JavaCpgLanguageOptions) options).getTokenEquivalenceMode()) {
+    public TokenEquivalenceModel getTokenEquivalenceModel() {
+        JavaCpgLanguageOptions javaOptions = getOptions();
+        return switch (options.getTokenEquivalenceMode()) {
             case DEFAULT -> new CpgTokenEquivalenceModel();
             case SEMANTIC -> new SemanticCpgTokenEquivalenceModel(javaOptions.getSemanticThreshold());
         };

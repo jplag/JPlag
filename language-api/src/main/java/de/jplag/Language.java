@@ -123,7 +123,7 @@ public interface Language {
         return true;
     }
 
-    default TokenEquivalenceModel getTokenEquivalenceModel(LanguageOptions options) {
+    default TokenEquivalenceModel getTokenEquivalenceModel() {
         return new DefaultTokenEquivalenceModel();
     }
 }

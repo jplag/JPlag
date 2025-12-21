@@ -39,7 +39,7 @@ public class GreedyStringTiling {
         this.minimumMatchLength = options.mergingOptions().enabled() ? minimumNeighborLength : options.minimumTokenMatch();
         this.tokenTypeValues = new ConcurrentHashMap<>();
         this.tokenTypeValues.put(SharedTokenType.FILE_END, 0);
-        this.tokenEquivalenceModel = options.language().getTokenEquivalenceModel(options.language().getOptions());
+        this.tokenEquivalenceModel = options.language().getTokenEquivalenceModel();
     }
 
     /**
