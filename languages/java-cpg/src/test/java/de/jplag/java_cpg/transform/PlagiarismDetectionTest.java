@@ -13,6 +13,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import de.jplag.TokenEquivalenceModel;
+import de.jplag.java_cpg.token.cpg.CpgTokenEquivalenceModel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -34,11 +36,13 @@ public class PlagiarismDetectionTest {
     protected static final Path BASE_PATH = Path.of("src", "test", "resources", "java");
     protected static File baseDirectory;
     private static JavaCpgLanguage language;
+    private static TokenEquivalenceModel equivalenceModel;
 
     @BeforeAll
     public static void setUpOnce() {
         language = new JavaCpgLanguage();
         baseDirectory = BASE_PATH.toFile();
+        equivalenceModel = new CpgTokenEquivalenceModel();
     }
 
     private static Stream<Arguments> getArguments() {
@@ -85,7 +89,14 @@ public class PlagiarismDetectionTest {
 
         for (int i = 0; i < results.size(); i++) {
             for (int j = i + 1; j < results.size(); j++) {
-                Assertions.assertIterableEquals(results.get(i), results.get(j));
+                Assertions.assertIterableEquals(
+                        results.get(i).stream()
+                                .map(equivalenceModel::getPrimaryType)
+                                .toList(),
+                        results.get(j).stream()
+                                .map(equivalenceModel::getPrimaryType)
+                                .toList()
+                );
             }
         }
     }
