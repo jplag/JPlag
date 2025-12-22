@@ -15,7 +15,6 @@ import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.TokenPrinter;
 import de.jplag.TokenType;
-import de.jplag.java_cpg.token.CpgTokenEquivalenceMode;
 
 /**
  * Basic test class for testing the Java language module.
@@ -50,12 +49,6 @@ public abstract class AbstractJavaCpgLanguageTest {
         logger.info(LOG_MESSAGE, fileName, tokenTypes);
         logger.info(TokenPrinter.printTokens(parsedTokens, BASE_PATH.toAbsolutePath().toFile()));
         return tokenTypes;
-    }
-
-    protected List<TokenType> parseJavaFileSemantic(String fileName, boolean transform) throws ParsingException {
-        JavaCpgLanguageOptions options = language.getOptions();
-        options.setTokenEquivalenceMode(CpgTokenEquivalenceMode.SEMANTIC);
-        return parseJavaFile(fileName, transform);
     }
 
 }

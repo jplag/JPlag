@@ -8,13 +8,13 @@ public class SemanticTokenCreationTest extends AbstractJavaCpgLanguageTest {
     @Test
     @DisplayName("Test semantic token creation for if.")
     void testSemanticTokenCreation() throws Exception {
-        parseJavaFile("longSubmission/GameBoard.java", false);
+        parseJavaFile("if/IfWithBraces.java", false);
     }
 
     @Test
     @DisplayName("Test semantic token creation for if.")
     void testSemanticTokenCreationComplex() throws Exception {
-        parseJavaFile("longSubmission/Board.java", false);
+        parseJavaFile("longSubmission/Loop.java", true);
     }
 
 }

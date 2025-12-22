@@ -144,7 +144,13 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
             val (predBlock, stmtBlock, name) = getSiblingAncestors(dfgPredecessor, statement, depth, parent)
 
             // no self-dependencies
-            if (predBlock == stmtBlock) return@forEach
+            if (predBlock == stmtBlock) {
+                // also adding loops for the semantic vectors, self-dependencies are loop dependencies concerning semantic vectors
+                val semanticVector = SemanticVector()
+                semanticVector.incrementDimension(SemanticDimension.LOOP_CARRIED_DEPENDENCY)
+                NodeRegistry.INSTANCE.registerNodeData(statement, semanticVector)
+                return@forEach
+            }
 
             if (stmtBlock is ReturnStatement || locationBefore(predBlock, stmtBlock)) {
                 if (stmtBlock in predBlock.nextDFG) return@forEach
