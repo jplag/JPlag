@@ -13,8 +13,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import de.jplag.TokenEquivalenceModel;
-import de.jplag.java_cpg.token.cpg.CpgTokenEquivalenceModel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -24,7 +22,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import de.jplag.ParsingException;
 import de.jplag.Token;
+import de.jplag.TokenEquivalenceModel;
 import de.jplag.java_cpg.JavaCpgLanguage;
+import de.jplag.java_cpg.token.cpg.CpgTokenEquivalenceModel;
 import de.jplag.java_cpg.transformation.GraphTransformation;
 
 /**
@@ -89,14 +89,8 @@ public class PlagiarismDetectionTest {
 
         for (int i = 0; i < results.size(); i++) {
             for (int j = i + 1; j < results.size(); j++) {
-                Assertions.assertIterableEquals(
-                        results.get(i).stream()
-                                .map(equivalenceModel::getPrimaryType)
-                                .toList(),
-                        results.get(j).stream()
-                                .map(equivalenceModel::getPrimaryType)
-                                .toList()
-                );
+                Assertions.assertIterableEquals(results.get(i).stream().map(equivalenceModel::getPrimaryType).toList(),
+                        results.get(j).stream().map(equivalenceModel::getPrimaryType).toList());
             }
         }
     }

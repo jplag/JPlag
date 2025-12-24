@@ -23,10 +23,9 @@ public final class SemanticDimensionsMapper {
                 case "==", "!=", "<", "<=", ">", ">=" -> {
                     return SemanticDimension.CONDITIONAL_EXPRESSION;
                 }
-                case null -> {
-                    throw new IllegalStateException("BinaryOperator with null operator code");
+                case null, default -> {
+                    return null;
                 }
-                default -> throw new IllegalStateException("Unexpected value: " + binaryOperator.getOperatorCode());
             }
         } else if (node instanceof ReturnStatement) {
             // skip auto generated return statements

@@ -350,6 +350,12 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
         parentMap: MutableMap<Node, ParentInfo>,
         parent: Block,
     ) {
+        // quick fix for loops in EOG cycles, creates a problems in the Transformation util
+        // TODO find root cause
+        if (parent.statements.isEmpty()) {
+            logger.warn("Skipping reorderStatements: empty block {}", desc(parent))
+            return
+        }
         // save entry point to keep EOG graph intact at the end
         val entry = TransformationUtil.getEogBorders(parent.statements[0]).entries[0]
         val eogPred = TransformationUtil.getEntryEdges(parent, entry, false)

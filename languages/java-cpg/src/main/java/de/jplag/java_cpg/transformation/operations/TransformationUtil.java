@@ -1,8 +1,6 @@
 package de.jplag.java_cpg.transformation.operations;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -44,14 +42,28 @@ public final class TransformationUtil {
             result = SubgraphWalker.INSTANCE.getEOGPathEdges(astRoot);
             if (result.getEntries().isEmpty()) {
                 Node entry = astRoot;
-                while (!entry.getPrevEOG().isEmpty())
+                Set<Node> visited = new HashSet<>();
+                while (!entry.getPrevEOG().isEmpty()) {
+                    // still loops possible, detection added, TODO solve properly, EOG inconsistence
+                    if (!visited.add(entry)) {
+                        logger.warn("EOG cycle detected at {}", entry);
+                        break;
+                    }
                     entry = entry.getPrevEOG().getFirst();
+                }
                 result.setEntries(List.of(entry));
             }
             if (result.getExits().isEmpty()) {
                 Node exit = astRoot;
-                while (!exit.getNextEOG().isEmpty())
+                // still loops possible, detection added, TODO solve properly, EOG inconsistence
+                Set<Node> visited = new HashSet<>();
+                while (!exit.getNextEOG().isEmpty()) {
+                    if (!visited.add(exit)) {
+                        logger.warn("EOG cycle detected at {}", exit);
+                        break;
+                    }
                     exit = exit.getNextEOG().getFirst();
+                }
                 result.setExits(List.of(exit));
             }
 
@@ -153,7 +165,10 @@ public final class TransformationUtil {
             }
         }
         exitEdges = exitEdges.stream().filter(e -> e.getEnd().equals(DUMMY)).toList();
-        assert !exitEdges.isEmpty();
+        if (exitEdges.isEmpty()) {
+            logger.warn("No exit edges when reconnecting successor {} -> {}", target, newSuccessor);
+            return;
+        }
         Node entry = getEntry(newSuccessor);
 
         getEntryEdges(newSuccessor, entry, false).forEach(e -> {
