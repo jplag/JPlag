@@ -97,7 +97,7 @@
         <version.record-builder>51</version.record-builder>
         <version.scala>2.13.18</version.scala>
         <version.scalameta.suffix>2.13</version.scalameta.suffix>
-        <version.scalameta>4.14.2</version.scalameta>
+        <version.scalameta>4.14.3</version.scalameta>
         <version.slf4j>2.0.17</version.slf4j>
         <version.metainf>1.11</version.metainf>
 
