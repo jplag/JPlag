@@ -23,7 +23,7 @@
     "test": "vitest"
   },
   "devDependencies": {
-    "jsdom": "^27.3.0",
+    "jsdom": "^27.4.0",
     "@vue/test-utils": "^2.4.6"
   }
 }
