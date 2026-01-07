@@ -90,7 +90,7 @@
         <version.jaxen>2.0.0</version.jaxen>
         <version.jdom>2.0.6.1</version.jdom>
         <version.jgrapht>1.5.2</version.jgrapht>
-        <version.junit>6.0.1</version.junit>
+        <version.junit>6.0.2</version.junit>
         <version.mockito>5.21.0</version.mockito>
         <version.picocli>4.7.7</version.picocli>
         <version.progressbar>0.10.1</version.progressbar>
