@@ -27,7 +27,7 @@
         />
       </div>
       <h1 class="text-7xl">JPlag Report Viewer</h1>
-      <div v-if="!hasQueryFile && !loadingFiles && !exampleFiles">
+      <div v-if="!loadingFiles && !exampleFiles">
         <div
           class="border-accent-dark bg-accent/25 mx-auto mt-10 flex w-96 cursor-pointer flex-col justify-center rounded-md border px-5 py-5"
           @click="uploadFileThroughWindow()"
@@ -56,11 +56,10 @@
 
 <script setup lang="ts">
 import { onErrorCaptured, ref, type Ref } from 'vue'
-import { useRoute } from 'vue-router'
 import { router } from '@/router'
 import VersionInfoComponent from '../components/VersionInfoComponent.vue'
 import { reportStore } from '@/stores/reportStore'
-import { REPORT_FILE_NAME, useLocalReportFileMode } from '@/stores/fileLoading'
+import { canLoadFile } from '@/stores/fileLoading'
 import { uiStore } from '@/stores/uiStore'
 import { ReportFileHandler } from '@jplag/parser'
 import { LoadingCircle } from '@jplag/ui-components/base'
@@ -69,7 +68,7 @@ reportStore().reset()
 
 const exampleFiles = ref(import.meta.env.MODE == 'demo' || import.meta.env.MODE == 'dev-demo')
 
-useLocalReportFileMode().then((value) => {
+canLoadFile().then((value) => {
   if (value) {
     navigateToOverview()
   }
@@ -80,22 +79,6 @@ document.title = 'JPlag Report Viewer'
 const loadingFiles = ref(false)
 type fileMethod = 'query' | 'upload' | 'unknown'
 const errors: Ref<{ error: Error; source: fileMethod }[]> = ref([])
-
-// Loads file passed in query param, if any.
-const queryParams = useRoute().query
-let queryFileURL: URL | null = null
-if (typeof queryParams.file === 'string' && queryParams.file !== '') {
-  try {
-    queryFileURL = new URL(queryParams.file)
-  } catch (e) {
-    registerError(e as Error, 'query')
-    queryFileURL = null
-  }
-}
-if (queryFileURL !== null) {
-  loadQueryFile(queryFileURL)
-}
-const hasQueryFile = queryFileURL !== null
 
 function navigateToOverview() {
   router.push({
@@ -162,21 +145,6 @@ async function uploadFileThroughWindow() {
     handleFile(file, file.name)
   }
   input.click()
-}
-
-/**
- * Handles click on Continue with query file.
- */
-async function loadQueryFile(url: URL) {
-  try {
-    const response = await fetch(url)
-    if (!response.ok) {
-      throw new Error('Response not OK')
-    }
-    await handleFile(await response.blob(), REPORT_FILE_NAME)
-  } catch (e) {
-    registerError(e as Error, 'query')
-  }
 }
 
 function registerError(error: Error, source: fileMethod) {

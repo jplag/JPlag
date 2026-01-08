@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EcorePackage;
-import org.kohsuke.MetaInfServices;
 
 import de.jplag.Language;
 import de.jplag.ParsingException;
@@ -13,11 +12,13 @@ import de.jplag.Token;
 import de.jplag.emf.parser.EcoreParser;
 import de.jplag.emf.util.EMFUtil;
 
+import com.google.auto.service.AutoService;
+
 /**
  * Language for EMF metamodels from the Eclipse Modeling Framework (EMF).
  * @author Timur Saglam
  */
-@MetaInfServices(Language.class)
+@AutoService(Language.class)
 public class EmfLanguage implements Language {
 
     /**

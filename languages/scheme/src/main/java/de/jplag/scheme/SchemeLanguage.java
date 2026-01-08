@@ -4,16 +4,16 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import org.kohsuke.MetaInfServices;
-
 import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
+import com.google.auto.service.AutoService;
+
 /**
  * Scheme language module facade.
  */
-@MetaInfServices(Language.class)
+@AutoService(Language.class)
 public class SchemeLanguage implements Language {
 
     @Override

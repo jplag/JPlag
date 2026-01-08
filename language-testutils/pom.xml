@@ -14,7 +14,6 @@
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>language-api</artifactId>
-            <version>${revision}</version>
         </dependency>
     </dependencies>
 </project>

@@ -9,6 +9,8 @@ import de.jplag.Language;
 import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
+import de.jplag.highlightextraction.FrequencyAnalysisOptions;
+import de.jplag.highlightextraction.strategy.FrequencyStrategySelector;
 import de.jplag.java.JavaLanguage;
 import de.jplag.merging.MergingOptions;
 import de.jplag.options.JPlagOptions;
@@ -88,6 +90,10 @@ public class CliOptions implements Runnable {
     /** Subsequence merging options group. */
     @ArgGroup(validate = false, heading = "%nSubsequence Match Merging%n")
     public Merging merging = new Merging();
+
+    /** Frequency Analysis options group. */
+    @ArgGroup(validate = false, heading = "%nFrequency Analysis%n")
+    public FrequencyAnalysis highlightExtraction = new FrequencyAnalysis();
 
     /**
      * Empty run method to enable automatic help printing by picocli.
@@ -174,6 +180,38 @@ public class CliOptions implements Runnable {
         }
     }
 
+    /** Highlight extraction options. */
+    public static class FrequencyAnalysis {
+
+        /**
+         * Enables frequency-based highlighting of matches. Supports the detection of rare and unique matches in contrast to
+         * common code, where matches have weak relevance.
+         */
+        @Option(names = {"--frequency"}, description = "Enables analysis and highlighting of rare matches.")
+        public boolean enabled;
+
+        /** Frequency Determination strategy. */
+        @Option(names = {
+                "--analysis-strategy"}, description = "Specifies the strategy for frequency analysis, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT-VALUE}).")
+        public FrequencyStrategySelector frequencyStrategy = FrequencyStrategySelector.DEFAULT_FREQUENCY_STRATEGY_SELECTOR;
+
+        /** Minimum subsequence length in frequency analysis. */
+        @Option(names = {
+                "--min-subsequence-length"}, description = "Minimum length of submatches to consider for the strategies CONTAINED_MATCHES, SUBMATCHES/length of windows to consider for the MATCH_WINDOWS strategy (default: ${DEFAULT-VALUE})", hidden = true)
+        public int minimumSubsequenceLength = FrequencyAnalysisOptions.DEFAULT_MINIMUM_SUBSEQUENCE_LENGTH;
+
+        /** Weighting function to combine with frequency Determination strategy. */
+        @Option(names = {
+                "--weighting"}, description = "The function for frequency-based match weighting, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT-VALUE}).")
+        public WeightingFunctionSelector weightingFunction = WeightingFunctionSelector.DEFAULT_WEIGHTING_FUNCTION;
+
+        /** How strong the weighting maximal influences a match length with up to double the length. */
+        @Option(names = {
+                "--weighting-factor"}, description = "Controls the influence of the frequency-based match weighting (between 0 and 1, default: ${DEFAULT-VALUE}).", hidden = true)
+        public double weightingFactor = FrequencyAnalysisOptions.DEFAULT_WEIGHTING_FACTOR;
+
+    }
+
     /**
      * Options for merging neighboring matches in the token sequence. Useful for reducing false negatives in cases of mild
      * obfuscation.
@@ -254,4 +292,5 @@ public class CliOptions implements Runnable {
     /** Absolute threshold used in preprocessing to cut off low-similarity pairs (hidden). */
     @Option(names = {"--cluster-pp-threshold"}, hidden = true)
     public double clusterPreprocessingThreshold;
+
 }

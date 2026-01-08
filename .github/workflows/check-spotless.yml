@@ -1,0 +1,51 @@
+name: Spotless Style Check
+
+on:
+  push:
+    paths:
+      - ".github/workflows/check-spotless.yml"
+      - "**/pom.xml"
+      - "**.java"
+      - "**.g4"
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - ".github/workflows/check-spotless.yml"
+      - "**/pom.xml"
+      - "**.java"
+      - "**.g4"
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  pre_job:
+    runs-on: ubuntu-latest
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@v5
+        with:
+          concurrent_skipping: 'same_content_newer'
+          skip_after_successful_duplicate: 'true'
+
+  build:
+    needs: pre_job
+    if: ${{ needs.pre_job.outputs.should_skip != 'true' && github.actor != 'dependabot[bot]' }}
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Set up JDK
+      uses: actions/setup-java@v5
+      with:
+        java-version: 25
+        distribution: 'temurin'
+
+    - name: Check with Spotless
+      run: mvn clean spotless:check
+
+
+

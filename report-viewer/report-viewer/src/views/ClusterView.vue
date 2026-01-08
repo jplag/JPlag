@@ -58,6 +58,7 @@
           <ClusterRadarChart
             :cluster="clusterListElement"
             :use-dark-mode="uiStore().useDarkMode"
+            :get-display-name="reportStore().getDisplayName"
             class="grow"
           />
         </template>

@@ -16,6 +16,7 @@ import de.jplag.JPlag;
 import de.jplag.Language;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.exceptions.BasecodeException;
+import de.jplag.highlightextraction.FrequencyAnalysisOptions;
 import de.jplag.merging.MergingOptions;
 import de.jplag.reporting.jsonfactory.serializer.FileSerializer;
 import de.jplag.reporting.jsonfactory.serializer.LanguageSerializer;
@@ -49,6 +50,7 @@ import io.soabase.recordbuilder.core.RecordBuilder;
  * @param mergingOptions are the options related to the subsequence match merging mechanism that opposed obfuscation.
  * @param normalize enables additional normalization mechanisms. Only supported by some language modules.
  * @param analyzeComments If true, comments will be extracted from the submissions.
+ * @param frequencyAnalysisOptions are the options related to highlight extraction.
  */
 @RecordBuilder()
 public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Language language, Integer minimumTokenMatch,
@@ -56,8 +58,8 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
         @JsonSerialize(contentUsing = FileSerializer.class) Set<File> oldSubmissionDirectories,
         @JsonSerialize(using = FileSerializer.class) File baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes,
         String exclusionFileName, SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons,
-        ClusteringOptions clusteringOptions, boolean debugParser, MergingOptions mergingOptions, boolean normalize, boolean analyzeComments)
-        implements JPlagOptionsBuilder.With {
+        ClusteringOptions clusteringOptions, boolean debugParser, MergingOptions mergingOptions, boolean normalize, boolean analyzeComments,
+        FrequencyAnalysisOptions frequencyAnalysisOptions) implements JPlagOptionsBuilder.With {
 
     /** Default value for the similarity threshold. **/
     public static final double DEFAULT_SIMILARITY_THRESHOLD = 0;
@@ -90,7 +92,8 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
      */
     public JPlagOptions(Language language, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories) {
         this(language, null, submissionDirectories, oldSubmissionDirectories, null, null, null, null, DEFAULT_SIMILARITY_METRIC,
-                DEFAULT_SIMILARITY_THRESHOLD, DEFAULT_SHOWN_COMPARISONS, new ClusteringOptions(), false, new MergingOptions(), false, false);
+                DEFAULT_SIMILARITY_THRESHOLD, DEFAULT_SHOWN_COMPARISONS, new ClusteringOptions(), false, new MergingOptions(), false, false,
+                new FrequencyAnalysisOptions());
     }
 
     /**
@@ -111,11 +114,13 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
      * @param mergingOptions Options related to subsequence merging to oppose obfuscation
      * @param normalize Enables additional normalization mechanisms (language-dependent)
      * @param analyzeComments Whether to extract comments from submissions
+     * @param frequencyAnalysisOptions Options related to highlight extraction
      */
     public JPlagOptions(Language language, Integer minimumTokenMatch, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories,
             File baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
             SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
-            boolean debugParser, MergingOptions mergingOptions, boolean normalize, boolean analyzeComments) {
+            boolean debugParser, MergingOptions mergingOptions, boolean normalize, boolean analyzeComments,
+            FrequencyAnalysisOptions frequencyAnalysisOptions) {
         this.language = language;
         this.debugParser = debugParser;
         this.fileSuffixes = fileSuffixes == null || fileSuffixes.isEmpty() ? null : Collections.unmodifiableList(fileSuffixes);
@@ -132,6 +137,7 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
         this.mergingOptions = mergingOptions;
         this.normalize = normalize;
         this.analyzeComments = analyzeComments;
+        this.frequencyAnalysisOptions = frequencyAnalysisOptions;
     }
 
     /**
@@ -224,16 +230,18 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
      * set to {@link #SHOW_ALL_COMPARISONS} all comparisons will be shown.
      * @param clusteringOptions Clustering options
      * @param debugParser If true, submissions that cannot be parsed will be stored in a separate directory.
+     * @param frequencyAnalysisOptions options related to highlight extraction
      * @deprecated Use the default initializer with @{{@link #baseCodeSubmissionDirectory} instead.
      */
     @Deprecated(since = "4.0.0", forRemoval = true)
     public JPlagOptions(Language language, Integer minimumTokenMatch, File submissionDirectory, Set<File> oldSubmissionDirectories,
             String baseCodeSubmissionName, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
             SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
-            boolean debugParser, MergingOptions mergingOptions) throws BasecodeException {
+            boolean debugParser, MergingOptions mergingOptions, FrequencyAnalysisOptions frequencyAnalysisOptions) throws BasecodeException {
         this(language, minimumTokenMatch, Set.of(submissionDirectory), oldSubmissionDirectories,
                 convertLegacyBaseCodeToFile(baseCodeSubmissionName, submissionDirectory), subdirectoryName, fileSuffixes, exclusionFileName,
-                similarityMetric, similarityThreshold, maximumNumberOfComparisons, clusteringOptions, debugParser, mergingOptions, false, false);
+                similarityMetric, similarityThreshold, maximumNumberOfComparisons, clusteringOptions, debugParser, mergingOptions, false, false,
+                frequencyAnalysisOptions);
     }
 
     /**
@@ -256,7 +264,7 @@ public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Lang
         try {
             return new JPlagOptions(language, minimumTokenMatch, submissionDirectory, oldSubmissionDirectories, baseCodeSubmissionName,
                     subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
-                    clusteringOptions, debugParser, mergingOptions);
+                    clusteringOptions, debugParser, mergingOptions, frequencyAnalysisOptions);
         } catch (BasecodeException e) {
             throw new IllegalArgumentException(e.getMessage(), e.getCause());
         }

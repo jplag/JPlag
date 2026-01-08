@@ -8,6 +8,14 @@
       v-if="!reportViewerVersion.isDevVersion() && !reportViewerVersion.isInvalid() && showVersion"
       >JPlag v{{ reportViewerVersion.toString() }}</span
     >
+    <span v-else-if="reportViewerVersion.isDevVersion() && showVersion && commitHash !== undefined">
+      <a
+        class="text-link-dark dark:text-link underline"
+        target="_blank"
+        :href="`https://github.com/jplag/JPlag/commit/${commitHash}`"
+        >{{ commitHash }}</a
+      >
+    </span>
     <span>
       JPlag is open source. Bug reports and feature requests can be submitted on
       <a
@@ -22,7 +30,7 @@
 <script setup lang="ts">
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
-import { reportViewerVersion } from '../version/versions'
+import { commitHash, reportViewerVersion } from '../version/versions'
 
 defineProps({
   overrideStyle: {

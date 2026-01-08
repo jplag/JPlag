@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jplag.exceptions.ExitException;
 
@@ -15,9 +17,11 @@ import de.jplag.exceptions.ExitException;
  */
 class NewJavaFeaturesTest extends TestBase {
 
-    private static final int EXPECTED_MATCHES = 8; // might change if you add files to the submissions
-    private static final int NUMBER_OF_TEST_FILES = 8;
-    private static final double EXPECTED_SIMILARITY = 0.971; // might change if you add files to the submissions
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    private static final int EXPECTED_MATCHES = 9; // might change if you add files to the submissions
+    private static final int NUMBER_OF_TEST_FILES = 10;
+    private static final double EXPECTED_SIMILARITY = 0.898; // might change if you add files to the submissions
 
     private static final String EXCLUSION_FILE_NAME = "blacklist.txt";
     private static final String ROOT_DIRECTORY = "NewJavaFeatures";
@@ -26,7 +30,7 @@ class NewJavaFeaturesTest extends TestBase {
     private static final String VERSION_MATCH_MESSAGE = "Java version matches, but results deviate from expected values";
     private static final String CI_VARIABLE = "CI";
 
-    private static final int EXPECTED_JAVA_VERSION = 21;
+    private static final int EXPECTED_JAVA_VERSION = 25;
 
     @Test
     @DisplayName("test comparison of Java files with modern language features")
@@ -37,6 +41,10 @@ class NewJavaFeaturesTest extends TestBase {
         assumeTrue(javaVersion == EXPECTED_JAVA_VERSION || isCiRun, VERSION_MISMATCH_MESSAGE.formatted(javaVersion, EXPECTED_JAVA_VERSION));
 
         JPlagResult result = runJPlagWithExclusionFile(ROOT_DIRECTORY, EXCLUSION_FILE_NAME);
+
+        for (Submission submission : result.getSubmissions().getSubmissions()) {
+            logger.info(TokenPrinter.printTokens(submission.getTokenList(), submission.getRoot()));
+        }
 
         // Ensure test input did not change:
         assertEquals(2, result.getNumberOfSubmissions(), String.format(CHANGE_MESSAGE, "Submissions"));

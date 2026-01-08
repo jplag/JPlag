@@ -503,10 +503,9 @@ function changeAnonymous(event: Event, submissionId: string) {
 }
 
 function scrollToItem(itemIndex?: number) {
-  if (!itemIndex) {
-    dynamicScroller.value?.scrollToBottom()
+  if (itemIndex !== undefined && itemIndex >= 0) {
+    dynamicScroller.value?.scrollToItem(itemIndex)
   }
-  dynamicScroller.value?.scrollToItem(itemIndex)
 }
 defineExpose({
   scrollToItem
