@@ -15,6 +15,7 @@ import de.fraunhofer.aisec.cpg.processing.IVisitor;
 public abstract class VisitorExitor<V extends IVisitable<V>> extends IVisitor<V> {
 
     private static final String EXIT_METHOD_IDENTIFIER = "exit";
+    private static final String VISIT_METHOD_IDENTIFIER = "visit";
 
     /**
      * Calls the most specific implementation of exit for the given {@link Node}.
@@ -23,6 +24,15 @@ public abstract class VisitorExitor<V extends IVisitable<V>> extends IVisitor<V>
     public void exit(V node) {
         try {
             Method mostSpecificExit = this.getClass().getMethod(EXIT_METHOD_IDENTIFIER, node.getClass());
+            mostSpecificExit.invoke(this, node);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            // Do nothing, just like in IVisitor
+        }
+    }
+
+    public void visit(V node) {
+        try {
+            Method mostSpecificExit = this.getClass().getMethod(VISIT_METHOD_IDENTIFIER, node.getClass());
             mostSpecificExit.invoke(this, node);
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             // Do nothing, just like in IVisitor

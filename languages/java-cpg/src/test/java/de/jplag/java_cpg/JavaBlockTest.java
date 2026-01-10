@@ -16,7 +16,7 @@ class JavaBlockTest extends AbstractJavaCpgLanguageTest {
     @MethodSource("provideSrcDirectories")
     @DisplayName("Test pairs of classes with explicit vs. implicit blocks.")
     void testJavaClassPair(String dir) {
-        Assertions.assertDoesNotThrow(() -> parseJavaFile(dir, false));
+        Assertions.assertDoesNotThrow(() -> parseJavaFile(dir, false, false));
     }
 
     /**

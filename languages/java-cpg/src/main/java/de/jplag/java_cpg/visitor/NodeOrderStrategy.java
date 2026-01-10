@@ -10,11 +10,8 @@ import de.fraunhofer.aisec.cpg.TranslationResult;
 import de.fraunhofer.aisec.cpg.graph.Component;
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.graph.declarations.*;
-import de.fraunhofer.aisec.cpg.graph.scopes.BlockScope;
-import de.fraunhofer.aisec.cpg.graph.scopes.LoopScope;
-import de.fraunhofer.aisec.cpg.graph.scopes.TryScope;
-import de.fraunhofer.aisec.cpg.graph.scopes.ValueDeclarationScope;
 import de.fraunhofer.aisec.cpg.graph.statements.*;
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.AssignExpression;
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.Block;
 import de.fraunhofer.aisec.cpg.helpers.SubgraphWalker;
 import de.fraunhofer.aisec.cpg.processing.IStrategy;
@@ -31,18 +28,19 @@ public class NodeOrderStrategy implements IStrategy<Node> {
 
     private static final boolean USE_CALL_GRAPH_ORDER = true;
     private List<MethodDeclaration> methodOrder;
+    private final boolean detailedTraversal;
 
     /**
      * Creates a new {@link NodeOrderStrategy}.
      */
-    public NodeOrderStrategy() {
-        // nothing to do yet
+    public NodeOrderStrategy(boolean detailedTraversal) {
+        this.detailedTraversal = detailedTraversal;
     }
 
     @Override
     public @NotNull Iterator<Node> getIterator(Node node) {
         if (node instanceof TranslationResult translationResult) {
-            this.methodOrder = new MethodOrderStrategy().setupMethodCallGraphOrder(translationResult);
+            this.methodOrder = new MethodOrderStrategy(detailedTraversal).setupMethodCallGraphOrder(translationResult);
             return Strategy.INSTANCE.AST_FORWARD(node);
         } else if (node instanceof Component c) {
             return walkComponent(c);
@@ -60,14 +58,23 @@ public class NodeOrderStrategy implements IStrategy<Node> {
             return walkIfStatement(ifStatement);
         } else if (node instanceof ForStatement forStatement) {
             return walkForStatement(forStatement);
+        } else if (node instanceof DeclarationStatement declarationStatement) {
+            return walkDeclarationStatement(declarationStatement);
+        } else if (node instanceof AssignExpression assignExpression) {
+            return walkAssignExpression(assignExpression);
         } else if (node instanceof Block block) {
             return walkBlock(block);
-        } else if (node.getScope() instanceof BlockScope || node.getScope() instanceof LoopScope || node.getScope() instanceof TryScope
-                || node.getScope() instanceof ValueDeclarationScope) {
-            return Strategy.INSTANCE.EOG_FORWARD(node);
         } else {
             return Strategy.INSTANCE.AST_FORWARD(node);
         }
+    }
+
+    private Iterator<Node> walkAssignExpression(AssignExpression assignExpression) {
+        return assignExpression.getRhs().stream().map(n -> (Node) n).iterator();
+    }
+
+    private Iterator<Node> walkDeclarationStatement(DeclarationStatement declarationStatement) {
+        return declarationStatement.getDeclarations().stream().map(n -> (Node) n).iterator();
     }
 
     private Iterator<Node> walkTranslationUnit(TranslationUnitDeclaration tu) {
@@ -131,7 +138,7 @@ public class NodeOrderStrategy implements IStrategy<Node> {
 
     @NotNull
     private static Iterator<Node> walkBlock(Block block) {
-        return block.getStatements().stream().map(TransformationUtil::getEntry).iterator();
+        return block.getStatements().stream().map(n -> (Node) n).iterator();
     }
 
     /**
@@ -142,7 +149,7 @@ public class NodeOrderStrategy implements IStrategy<Node> {
      */
     public static List<Node> flattenStatement(Statement statement) {
         List<Node> astChildren = SubgraphWalker.INSTANCE.flattenAST(statement);
-        NodeOrderStrategy strategy = new NodeOrderStrategy();
+        NodeOrderStrategy strategy = new NodeOrderStrategy(true);
         Node entry = TransformationUtil.getEntry(statement);
 
         List<Node> nodes = new ArrayList<>(astChildren.size());
@@ -154,26 +161,41 @@ public class NodeOrderStrategy implements IStrategy<Node> {
     }
 
     private Iterator<Node> walkDoWhileStatement(DoStatement doStatement) {
-        // Condition is visited already at this point
+        Node condition = doStatement.getCondition();
         Node body = doStatement.getStatement();
         if (Objects.isNull(body)) {
-            return Collections.emptyIterator();
+            if (detailedTraversal) {
+                return Stream.of(condition).iterator();
+            } else {
+                return Collections.emptyIterator();
+            }
+
         }
-        return Stream.of(body).iterator();
+        if (detailedTraversal) {
+            return Stream.of(condition, body).iterator();
+        } else {
+            return Stream.of(body).iterator();
+        }
 
     }
 
     private Iterator<Node> walkForStatement(ForStatement forStatement) {
-        // Condition is visited already at this point
         Node body = forStatement.getStatement();
-        if (Objects.isNull(body)) {
-            return Collections.emptyIterator();
+        List<Node> nodes = new ArrayList<>();
+        if (detailedTraversal) {
+            nodes.add(forStatement.getInitializerStatement());
+            nodes.add(forStatement.getCondition());
+            nodes.add(forStatement.getIterationStatement());
         }
-        return Stream.of(body).iterator();
+        nodes.add(body);
+        return nodes.stream().filter(Objects::nonNull).iterator();
     }
 
     private Iterator<Node> walkIfStatement(IfStatement ifStatement) {
-        // Condition is already visited at this point
+        if (detailedTraversal) {
+            return Stream.<Node>of(ifStatement.getCondition(), ifStatement.getThenStatement(), ifStatement.getElseStatement())
+                    .filter(Objects::nonNull).iterator();
+        }
         return Stream.<Node>of(ifStatement.getThenStatement(), ifStatement.getElseStatement()).filter(Objects::nonNull).iterator();
     }
 
@@ -188,11 +210,21 @@ public class NodeOrderStrategy implements IStrategy<Node> {
     }
 
     private Iterator<Node> walkWhileStatement(WhileStatement whileStatement) {
-        // Condition is visited already at this point
+        Node condition = whileStatement.getCondition();
         Node body = whileStatement.getStatement();
         if (Objects.isNull(body)) {
-            return Collections.emptyIterator();
+            if (detailedTraversal) {
+                return Stream.of(condition).iterator();
+            } else {
+                return Collections.emptyIterator();
+            }
+
         }
-        return Stream.of(body).iterator();
+        if (detailedTraversal) {
+            return Stream.of(condition, body).iterator();
+        } else {
+            return Stream.of(body).iterator();
+        }
+
     }
 }

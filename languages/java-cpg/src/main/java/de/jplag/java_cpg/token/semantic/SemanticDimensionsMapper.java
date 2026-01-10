@@ -48,8 +48,12 @@ public final class SemanticDimensionsMapper {
         } else if (node instanceof CatchClause) {
             return SemanticDimension.CATCH;
         } else if (node instanceof UnaryOperator unaryOperator) {
-            if ((unaryOperator.getOperatorCode() != null && unaryOperator.getOperatorCode().equals("throw"))) {
+            if (unaryOperator.getOperatorCode() == null) {
+                return null;
+            } else if (unaryOperator.getOperatorCode().equals("throw")) {
                 return SemanticDimension.THROW;
+            } else if (unaryOperator.getOperatorCode().equals("++") || unaryOperator.getOperatorCode().equals("--")) {
+                return SemanticDimension.ASSIGNMENT_EXPRESSION;
             } else {
                 return null;
             }

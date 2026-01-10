@@ -9,6 +9,7 @@ import de.jplag.TokenType
 import de.jplag.java_cpg.token.TokenizationCpgNodeListener
 import de.jplag.java_cpg.token.cpg.CpgToken
 import de.jplag.java_cpg.token.cpg.CpgTokenConsumer
+import de.jplag.java_cpg.visitor.NodeOrderStrategy
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -22,6 +23,7 @@ class TokenizationPass(ctx: TranslationContext) : AResultVisitingPass(ctx) {
 
     private val tokenList = ArrayList<Token>()
     private val consumer: CpgTokenConsumer
+    override val strategy = NodeOrderStrategy(false)
 
     init {
         this.consumer = ConcreteCpgTokenConsumer()

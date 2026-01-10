@@ -12,7 +12,7 @@ public final class NodeRegistry {
     private NodeRegistry() {
     }
 
-    private final Map<Node, SemanticVector> nodeMap = new ConcurrentHashMap<Node, SemanticVector>();
+    private final Map<Node, SemanticVector> nodeMap = new ConcurrentHashMap<>();
 
     public void registerNodeData(Node node, SemanticVector value) {
         nodeMap.put(node, value);
@@ -24,5 +24,9 @@ public final class NodeRegistry {
 
     public void clear() {
         nodeMap.clear();
+    }
+
+    public boolean containsNode(Node node) {
+        return nodeMap.containsKey(node);
     }
 }

@@ -273,15 +273,16 @@ public class TokenizationCpgNodeListener extends ACpgNodeListener {
     }
 
     @Override
-    void visit(UnaryOperator unaryoperator) {
+    public void visit(UnaryOperator unaryoperator) {
 
         String operatorCode = unaryoperator.getOperatorCode();
         if (Objects.isNull(operatorCode))
             return;
         if (Objects.equals(operatorCode, "throw")) {
             tokenConsumer.addToken(new SemanticCpgTokenType(THROW, getSemanticVector(unaryoperator)), unaryoperator, false);
+        } else if (Objects.equals(operatorCode, "++") || Objects.equals(operatorCode, "--")) {
+            tokenConsumer.addToken(new SemanticCpgTokenType(ASSIGNMENT, getSemanticVector(unaryoperator)), unaryoperator, false);
         }
-
         super.visit(unaryoperator);
     }
 

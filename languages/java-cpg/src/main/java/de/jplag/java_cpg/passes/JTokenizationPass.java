@@ -31,7 +31,7 @@ public class JTokenizationPass extends TranslationResultPass {
     private static final Logger logger = LoggerFactory.getLogger(JTokenizationPass.class);
     private final ArrayList<Token> tokenList = new ArrayList<>();
     private final CpgTokenConsumer consumer = new ConcreteCpgTokenConsumer();
-    private final NodeOrderStrategy strategy = new NodeOrderStrategy();
+    private final NodeOrderStrategy strategy = new NodeOrderStrategy(false);
     Consumer<List<Token>> callback = null;
 
     /**

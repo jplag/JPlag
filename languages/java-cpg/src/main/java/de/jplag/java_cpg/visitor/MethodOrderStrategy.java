@@ -31,9 +31,9 @@ public class MethodOrderStrategy {
     /**
      * Creates a new {@link MethodOrderStrategy}.
      */
-    public MethodOrderStrategy() {
+    public MethodOrderStrategy(boolean detailedTraversal) {
         this.index = 0;
-        this.nodeOrderStrategy = new NodeOrderStrategy();
+        this.nodeOrderStrategy = new NodeOrderStrategy(detailedTraversal);
     }
 
     private static List<MethodDeclaration> getFunctionCandidates(MethodDeclaration methodDeclaration, CallExpression call) {

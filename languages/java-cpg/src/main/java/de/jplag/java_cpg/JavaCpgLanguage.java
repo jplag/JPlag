@@ -1,6 +1,5 @@
 package de.jplag.java_cpg;
 
-import static de.jplag.java_cpg.token.CpgTokenEquivalenceMode.*;
 import static de.jplag.java_cpg.transformation.TransformationRepository.*;
 
 import java.io.File;
@@ -69,6 +68,7 @@ public class JavaCpgLanguage implements Language {
 
     @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
+        cpgAdapter.enableSemanticAnalysis(getOptions().isSemanticAnalysisEnabled());
         try {
             return cpgAdapter.adapt(files, normalize);
         } catch (InterruptedException e) {

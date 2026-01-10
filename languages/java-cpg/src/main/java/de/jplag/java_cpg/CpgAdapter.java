@@ -26,6 +26,7 @@ public class CpgAdapter {
 
     private List<Token> tokenList;
     private boolean reorderingEnabled = true;
+    private boolean enableSemanticAnalysis = false;
 
     /**
      * Constructs a new CpgAdapter.
@@ -40,13 +41,17 @@ public class CpgAdapter {
         tokenList = null;
         if (!normalize) {
             clearTransformations();
-            setReorderingEnabled(false);
         }
-        // TokenizationPass sets tokenList
+        setReorderingEnabled(normalize || enableSemanticAnalysis);
 
         translate(files);
 
         return tokenList;
+    }
+
+    public void enableSemanticAnalysis(boolean enableSemanticAnalysis) {
+        this.enableSemanticAnalysis = enableSemanticAnalysis;
+        VectorCalculationPass.Companion.setDoSemanticAnalysis(enableSemanticAnalysis);
     }
 
     /**
@@ -107,7 +112,7 @@ public class CpgAdapter {
                     ImportResolver.class, SymbolResolver.class, PrepareTransformationPass.class, FixAstPass.class, DynamicInvokeResolver.class,
                     FilenameMapper.class, AstTransformationPass.class, EvaluationOrderGraphPass.class,  // creates
                     // EOG
-                    DfgSortPass.class, CpgTransformationPass.class, TokenizationPass.class));
+                    DfgSortPass.class, CpgTransformationPass.class, VectorCalculationPass.class, TokenizationPass.class));
 
             if (!reorderingEnabled)
                 passClasses.remove(DfgSortPass.class);
