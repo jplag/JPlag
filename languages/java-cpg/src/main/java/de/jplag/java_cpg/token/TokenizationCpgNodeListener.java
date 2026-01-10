@@ -111,7 +111,7 @@ public class TokenizationCpgNodeListener extends ACpgNodeListener {
         if (blockEndToken == BLOCK_END)
             return;
 
-        tokenConsumer.addToken(new SemanticCpgTokenType(BLOCK_END, getSemanticVector(block)), block, true);
+        tokenConsumer.addToken(new SemanticCpgTokenType(blockEndToken, getSemanticVector(block)), block, true);
     }
 
     private void expect(CpgTokenType opening, CpgTokenType closing) {
