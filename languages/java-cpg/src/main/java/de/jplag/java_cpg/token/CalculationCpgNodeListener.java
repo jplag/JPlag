@@ -11,8 +11,8 @@ import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration;
 import de.fraunhofer.aisec.cpg.graph.edge.PropertyEdge;
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*;
 import de.jplag.java_cpg.NodeRegistry;
-import de.jplag.java_cpg.token.semantic.SemanticDimensionsMapper;
-import de.jplag.java_cpg.token.semantic.SemanticVector;
+import de.jplag.java_cpg.token.characteristic.CharacteristicVector;
+import de.jplag.java_cpg.token.characteristic.CharacteristicVectorDimensionsMapper;
 
 public class CalculationCpgNodeListener extends VisitorExitor<Node> {
     private final Deque<Node> nodeStack = new ArrayDeque<>();
@@ -28,7 +28,7 @@ public class CalculationCpgNodeListener extends VisitorExitor<Node> {
     public void visit(@NotNull Node node) {
         nodeStack.push(node);
         if (NodeRegistry.INSTANCE.getNodeData(node) == null) {
-            NodeRegistry.INSTANCE.registerNodeData(node, new SemanticVector());
+            NodeRegistry.INSTANCE.registerNodeData(node, new CharacteristicVector());
         }
     }
 
@@ -41,9 +41,6 @@ public class CalculationCpgNodeListener extends VisitorExitor<Node> {
     }
 
     private void exitReferenceNode(Reference node) {
-        if (node.getName().getLocalName().equals("System")) {
-            return;
-        }
         List<Node> referencedNodes = node.getPrevDFGEdges().stream().map(PropertyEdge::getStart)
                 // filter for methods that write to the referenced variable
                 .filter(n -> n instanceof AssignExpression || n instanceof VariableDeclaration
@@ -52,7 +49,7 @@ public class CalculationCpgNodeListener extends VisitorExitor<Node> {
                 .toList();
         Node mostPriorNode = node.getRefersTo();
         if (mostPriorNode == null) {
-            throw new IllegalStateException("Reference node does not refer to any node!");
+            return;
         }
         for (Node priorNode : referencedNodes) {
             if (priorNode.getLocation() == null || mostPriorNode.getLocation() == null || node.getLocation() == null) {
@@ -74,14 +71,13 @@ public class CalculationCpgNodeListener extends VisitorExitor<Node> {
         if (mostPriorNode.getName().getLocalName().equals("this")) {
             return;
         }
-        SemanticVector referencedSemanticVector = NodeRegistry.INSTANCE.getNodeData(mostPriorNode);
-        if (referencedSemanticVector == null) {
-            logger.warn("Node {} that references ''{}'' has no semantic vector assigned!", node, node.getCode());
+        CharacteristicVector referencedCharacteristicVector = NodeRegistry.INSTANCE.getNodeData(mostPriorNode);
+        if (referencedCharacteristicVector == null) {
             return;
         }
-        SemanticVector currentSemanticVector = NodeRegistry.INSTANCE.getNodeData(node);
-        currentSemanticVector.addVector(referencedSemanticVector);
-        NodeRegistry.INSTANCE.registerNodeData(node, currentSemanticVector);
+        CharacteristicVector currentCharacteristicVector = NodeRegistry.INSTANCE.getNodeData(node);
+        currentCharacteristicVector.addVector(referencedCharacteristicVector);
+        NodeRegistry.INSTANCE.registerNodeData(node, currentCharacteristicVector);
     }
 
     private void exitAnyNode(Node node) {
@@ -89,15 +85,15 @@ public class CalculationCpgNodeListener extends VisitorExitor<Node> {
             throw new IllegalStateException("Node stack is inconsistent!");
         }
 
-        SemanticVector currentSemanticVector = NodeRegistry.INSTANCE.getNodeData(node);
-        if (SemanticDimensionsMapper.mapNodeType(node) != null) {
-            currentSemanticVector.incrementDimension(SemanticDimensionsMapper.mapNodeType(node));
-            NodeRegistry.INSTANCE.registerNodeData(node, currentSemanticVector);
+        CharacteristicVector currentCharacteristicVector = NodeRegistry.INSTANCE.getNodeData(node);
+        if (CharacteristicVectorDimensionsMapper.mapNodeType(node) != null) {
+            currentCharacteristicVector.incrementDimension(CharacteristicVectorDimensionsMapper.mapNodeType(node));
+            NodeRegistry.INSTANCE.registerNodeData(node, currentCharacteristicVector);
         }
         if (!nodeStack.isEmpty()) {
-            SemanticVector parentSemanticVector = NodeRegistry.INSTANCE.getNodeData(nodeStack.getFirst());
-            parentSemanticVector.addVector(currentSemanticVector);
-            NodeRegistry.INSTANCE.registerNodeData(nodeStack.getFirst(), parentSemanticVector);
+            CharacteristicVector parentCharacteristicVector = NodeRegistry.INSTANCE.getNodeData(nodeStack.getFirst());
+            parentCharacteristicVector.addVector(currentCharacteristicVector);
+            NodeRegistry.INSTANCE.registerNodeData(nodeStack.getFirst(), parentCharacteristicVector);
         }
     }
 

@@ -1,21 +1,21 @@
-package de.jplag.java_cpg.token.semantic;
+package de.jplag.java_cpg.token.characteristic;
 
-public class SemanticVector {
+public class CharacteristicVector {
     private final int[] values;
 
-    public SemanticVector() {
-        this.values = new int[SemanticDimension.DIMENSION_COUNT];
+    public CharacteristicVector() {
+        this.values = new int[CharacteristicVectorDimension.DIMENSION_COUNT];
     }
 
-    public void incrementDimension(SemanticDimension dimension) {
+    public void incrementDimension(CharacteristicVectorDimension dimension) {
         this.values[dimension.ordinal()]++;
     }
 
-    public void addVector(SemanticVector otherVector) {
+    public void addVector(CharacteristicVector otherVector) {
         if (otherVector == null) {
             throw new IllegalArgumentException("Other vector must not be null");
         }
-        for (int i = 0; i < SemanticDimension.DIMENSION_COUNT; i++) {
+        for (int i = 0; i < CharacteristicVectorDimension.DIMENSION_COUNT; i++) {
             this.values[i] += otherVector.values[i];
         }
     }
@@ -27,10 +27,10 @@ public class SemanticVector {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("SemanticVector{");
-        for (int i = 0; i < SemanticDimension.DIMENSION_COUNT; i++) {
-            sb.append(SemanticDimension.values()[i].name()).append("=").append(values[i]);
-            if (i < SemanticDimension.DIMENSION_COUNT - 1) {
+        sb.append("CharacteristicVector{");
+        for (int i = 0; i < CharacteristicVectorDimension.DIMENSION_COUNT; i++) {
+            sb.append(CharacteristicVectorDimension.values()[i].name()).append("=").append(values[i]);
+            if (i < CharacteristicVectorDimension.DIMENSION_COUNT - 1) {
                 sb.append(", ");
             }
         }
@@ -43,10 +43,10 @@ public class SemanticVector {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof SemanticVector otherVector)) {
+        if (!(obj instanceof CharacteristicVector otherVector)) {
             return false;
         }
-        for (int i = 0; i < SemanticDimension.DIMENSION_COUNT; i++) {
+        for (int i = 0; i < CharacteristicVectorDimension.DIMENSION_COUNT; i++) {
             if (this.values[i] != otherVector.values[i]) {
                 return false;
             }

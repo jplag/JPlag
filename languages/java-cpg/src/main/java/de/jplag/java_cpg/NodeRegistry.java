@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import de.fraunhofer.aisec.cpg.graph.Node;
-import de.jplag.java_cpg.token.semantic.SemanticVector;
+import de.jplag.java_cpg.token.characteristic.CharacteristicVector;
 
 public final class NodeRegistry {
     public static final NodeRegistry INSTANCE = new NodeRegistry();
@@ -12,13 +12,13 @@ public final class NodeRegistry {
     private NodeRegistry() {
     }
 
-    private final Map<Node, SemanticVector> nodeMap = new ConcurrentHashMap<>();
+    private final Map<Node, CharacteristicVector> nodeMap = new ConcurrentHashMap<>();
 
-    public void registerNodeData(Node node, SemanticVector value) {
+    public void registerNodeData(Node node, CharacteristicVector value) {
         nodeMap.put(node, value);
     }
 
-    public SemanticVector getNodeData(Node node) {
+    public CharacteristicVector getNodeData(Node node) {
         return nodeMap.get(node);
     }
 

@@ -12,8 +12,8 @@ import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.TokenEquivalenceModel;
+import de.jplag.java_cpg.token.characteristic.CharacteristicCpgTokenEquivalenceModel;
 import de.jplag.java_cpg.token.cpg.CpgTokenEquivalenceModel;
-import de.jplag.java_cpg.token.semantic.SemanticCpgTokenEquivalenceModel;
 import de.jplag.java_cpg.transformation.GraphTransformation;
 
 /**
@@ -139,7 +139,7 @@ public class JavaCpgLanguage implements Language {
         JavaCpgLanguageOptions javaOptions = getOptions();
         return switch (options.getTokenEquivalenceMode()) {
             case DEFAULT -> new CpgTokenEquivalenceModel();
-            case SEMANTIC -> new SemanticCpgTokenEquivalenceModel(javaOptions.getSemanticThreshold());
+            case CHARACTERISTIC -> new CharacteristicCpgTokenEquivalenceModel(javaOptions.getCharacteristicVectorThreshold());
         };
     }
 }

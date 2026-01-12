@@ -1,4 +1,4 @@
-package de.jplag.java_cpg.token.semantic;
+package de.jplag.java_cpg.token.characteristic;
 
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.graph.declarations.MethodDeclaration;
@@ -6,22 +6,22 @@ import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration;
 import de.fraunhofer.aisec.cpg.graph.statements.*;
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*;
 
-public final class SemanticDimensionsMapper {
-    public static SemanticDimension mapNodeType(Node node) {
+public final class CharacteristicVectorDimensionsMapper {
+    public static CharacteristicVectorDimension mapNodeType(Node node) {
         if (node instanceof MethodDeclaration) {
-            return SemanticDimension.METHOD_DECLARATION;
+            return CharacteristicVectorDimension.METHOD_DECLARATION;
         } else if (node instanceof VariableDeclaration) {
-            return SemanticDimension.VARIABLE_DECLARATION;
+            return CharacteristicVectorDimension.VARIABLE_DECLARATION;
         } else if (node instanceof BinaryOperator binaryOperator) {
             switch (binaryOperator.getOperatorCode()) {
                 case "&&", "||" -> {
-                    return SemanticDimension.LOGICAL_EXPRESSION;
+                    return CharacteristicVectorDimension.LOGICAL_EXPRESSION;
                 }
                 case "+", "-", "*", "/", "%", "++", "--", "<<", ">>", ">>>", "&", "|", "^" -> {
-                    return SemanticDimension.NUMERICAL_EXPRESSION;
+                    return CharacteristicVectorDimension.NUMERICAL_EXPRESSION;
                 }
                 case "==", "!=", "<", "<=", ">", ">=" -> {
-                    return SemanticDimension.CONDITIONAL_EXPRESSION;
+                    return CharacteristicVectorDimension.CONDITIONAL_EXPRESSION;
                 }
                 case null, default -> {
                     return null;
@@ -32,44 +32,44 @@ public final class SemanticDimensionsMapper {
             if (node.getLocation() == null) {
                 return null;
             }
-            return SemanticDimension.RETURN_STATEMENT;
+            return CharacteristicVectorDimension.RETURN_STATEMENT;
         } else if (node instanceof CaseStatement) {
-            return SemanticDimension.CASE;
+            return CharacteristicVectorDimension.CASE;
         } else if (node instanceof SwitchStatement) {
-            return SemanticDimension.SWITCH;
+            return CharacteristicVectorDimension.SWITCH;
         } else if (node instanceof LambdaExpression) {
-            return SemanticDimension.LAMBDA_EXPRESSION;
+            return CharacteristicVectorDimension.LAMBDA_EXPRESSION;
         } else if (node instanceof NewArrayExpression || node instanceof NewExpression) {
-            return SemanticDimension.CLASS_OR_ARRAY_CREATOR;
+            return CharacteristicVectorDimension.CLASS_OR_ARRAY_CREATOR;
         } else if (node instanceof IfStatement) {
-            return SemanticDimension.IF;
+            return CharacteristicVectorDimension.IF;
         } else if (node instanceof AssertStatement) {
-            return SemanticDimension.ASSERT;
+            return CharacteristicVectorDimension.ASSERT;
         } else if (node instanceof CatchClause) {
-            return SemanticDimension.CATCH;
+            return CharacteristicVectorDimension.CATCH;
         } else if (node instanceof UnaryOperator unaryOperator) {
             if (unaryOperator.getOperatorCode() == null) {
                 return null;
             } else if (unaryOperator.getOperatorCode().equals("throw")) {
-                return SemanticDimension.THROW;
+                return CharacteristicVectorDimension.THROW;
             } else if (unaryOperator.getOperatorCode().equals("++") || unaryOperator.getOperatorCode().equals("--")) {
-                return SemanticDimension.ASSIGNMENT_EXPRESSION;
+                return CharacteristicVectorDimension.ASSIGNMENT_EXPRESSION;
             } else {
                 return null;
             }
         } else if (node instanceof TryStatement) {
-            return SemanticDimension.TRY;
+            return CharacteristicVectorDimension.TRY;
         } else if (node instanceof AssignExpression) {
-            return SemanticDimension.ASSIGNMENT_EXPRESSION;
+            return CharacteristicVectorDimension.ASSIGNMENT_EXPRESSION;
         } else if (node instanceof SubscriptExpression) {
-            return SemanticDimension.ARRAY_SELECTOR;
+            return CharacteristicVectorDimension.ARRAY_SELECTOR;
         } else if (node instanceof ConstructExpression) {
-            return SemanticDimension.CONSTRUCTOR_INVOCATION;
+            return CharacteristicVectorDimension.CONSTRUCTOR_INVOCATION;
         } else if (node instanceof CallExpression) {
-            return SemanticDimension.METHOD_INVOCATION;
+            return CharacteristicVectorDimension.METHOD_INVOCATION;
         } else if (node instanceof ForEachStatement || node instanceof ForStatement || node instanceof WhileStatement
                 || node instanceof DoStatement) {
-            return SemanticDimension.LOOP;
+            return CharacteristicVectorDimension.LOOP;
         } else {
             return null;
         }

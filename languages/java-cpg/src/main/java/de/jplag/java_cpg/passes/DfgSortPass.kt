@@ -14,9 +14,9 @@ import de.fraunhofer.aisec.cpg.passes.order.DependsOn
 import de.fraunhofer.aisec.cpg.processing.strategy.Strategy
 import de.jplag.java_cpg.NodeRegistry
 import de.jplag.java_cpg.token.TokenizationCpgNodeListener
+import de.jplag.java_cpg.token.characteristic.CharacteristicVector
 import de.jplag.java_cpg.token.cpg.CpgTokenType
-import de.jplag.java_cpg.token.semantic.SemanticDimension
-import de.jplag.java_cpg.token.semantic.SemanticVector
+import de.jplag.java_cpg.token.characteristic.CharacteristicVectorDimension
 import de.jplag.java_cpg.transformation.TransformationException
 import de.jplag.java_cpg.transformation.matching.edges.CpgNthEdge
 import de.jplag.java_cpg.transformation.matching.edges.Edges.BLOCK__STATEMENTS
@@ -146,9 +146,9 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
             // no self-dependencies
             if (predBlock == stmtBlock) {
                 // also adding loops for the semantic vectors, self-dependencies are loop dependencies concerning semantic vectors
-                val semanticVector = SemanticVector()
-                semanticVector.incrementDimension(SemanticDimension.LOOP_CARRIED_DEPENDENCY)
-                NodeRegistry.INSTANCE.registerNodeData(statement, semanticVector)
+                val characteristicVector = CharacteristicVector()
+                characteristicVector.incrementDimension(CharacteristicVectorDimension.LOOP_CARRIED_DEPENDENCY)
+                NodeRegistry.INSTANCE.registerNodeData(statement, characteristicVector)
                 return@forEach
             }
 
@@ -167,14 +167,14 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
                     predBlock.addNextDFG(stmtBlock, properties)
                 }
                 //adding loop-carried dependency information for later creation of semantic vectors
-                val semanticVector: SemanticVector
+                val characteristicVector: CharacteristicVector
                 if(NodeRegistry.INSTANCE.containsNode(statement)) {
-                    semanticVector = NodeRegistry.INSTANCE.getNodeData(statement)
+                    characteristicVector = NodeRegistry.INSTANCE.getNodeData(statement)
                 } else {
-                    semanticVector = SemanticVector()
+                    characteristicVector = CharacteristicVector()
                 }
-                semanticVector.incrementDimension(SemanticDimension.LOOP_CARRIED_DEPENDENCY)
-                NodeRegistry.INSTANCE.registerNodeData(statement, semanticVector)
+                characteristicVector.incrementDimension(CharacteristicVectorDimension.LOOP_CARRIED_DEPENDENCY)
+                NodeRegistry.INSTANCE.registerNodeData(statement, characteristicVector)
                 // read-write dependency
                 properties = mutableMapOf(Pair(Properties.NAME, name))
                 stmtBlock.addNextDFG(predBlock, properties)

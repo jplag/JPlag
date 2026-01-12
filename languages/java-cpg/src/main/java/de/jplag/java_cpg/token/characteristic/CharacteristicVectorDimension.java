@@ -1,6 +1,6 @@
-package de.jplag.java_cpg.token.semantic;
+package de.jplag.java_cpg.token.characteristic;
 
-public enum SemanticDimension {
+public enum CharacteristicVectorDimension {
     VARIABLE_DECLARATION, //
     METHOD_DECLARATION, //
     LOOP_CARRIED_DEPENDENCY,
