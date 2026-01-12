@@ -41,6 +41,9 @@ public class CalculationCpgNodeListener extends VisitorExitor<Node> {
     }
 
     private void exitReferenceNode(Reference node) {
+        if (node.getName().getLocalName().equals("System")) {
+            return;
+        }
         List<Node> referencedNodes = node.getPrevDFGEdges().stream().map(PropertyEdge::getStart)
                 // filter for methods that write to the referenced variable
                 .filter(n -> n instanceof AssignExpression || n instanceof VariableDeclaration

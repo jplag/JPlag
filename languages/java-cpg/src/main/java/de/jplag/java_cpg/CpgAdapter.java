@@ -43,6 +43,7 @@ public class CpgAdapter {
             clearTransformations();
         }
         setReorderingEnabled(normalize || enableSemanticAnalysis);
+        NodeRegistry.INSTANCE.clear();
 
         translate(files);
 

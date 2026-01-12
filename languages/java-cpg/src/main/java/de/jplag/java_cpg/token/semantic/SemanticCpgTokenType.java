@@ -13,4 +13,13 @@ public record SemanticCpgTokenType(TokenType tokenType, SemanticVector semanticV
     public Boolean isExcludedFromMatching() {
         return tokenType.isExcludedFromMatching();
     }
+
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof SemanticCpgTokenType)) {
+            return false;
+        }
+        return ((SemanticCpgTokenType) object).semanticVector.equals(this.semanticVector)
+                && ((SemanticCpgTokenType) object).tokenType.equals(this.tokenType);
+    }
 }
