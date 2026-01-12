@@ -1,4 +1,4 @@
-package de.jplag.regression_test.model;
+package de.jplag.regressiontest.model;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,9 +8,9 @@ import java.util.Optional;
 import java.util.Set;
 
 import de.jplag.Language;
-import de.jplag.regression_test.constants.TestDirectoryConstants;
-import de.jplag.regression_test.helper.LanguageDeserializer;
-import de.jplag.regression_test.helper.UnzipManager;
+import de.jplag.regressiontest.constants.TestDirectoryConstants;
+import de.jplag.regressiontest.helper.LanguageDeserializer;
+import de.jplag.regressiontest.helper.UnzipManager;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

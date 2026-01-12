@@ -1,4 +1,4 @@
-package de.jplag.regression_test.model;
+package de.jplag.regressiontest.model;
 
 import de.jplag.JPlagComparison;
 import de.jplag.options.SimilarityMetric;

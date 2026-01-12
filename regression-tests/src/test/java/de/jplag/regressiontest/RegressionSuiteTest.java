@@ -1,4 +1,4 @@
-package de.jplag.regression_test;
+package de.jplag.regressiontest;
 
 import static de.jplag.options.SimilarityMetric.MAX;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,16 +34,16 @@ import de.jplag.Submission;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.SimilarityMetric;
-import de.jplag.regression_test.constants.TestDirectoryConstants;
-import de.jplag.regression_test.helper.DeltaSummaryStatistics;
-import de.jplag.regression_test.helper.FileHelper;
-import de.jplag.regression_test.helper.TestSuiteHelper;
-import de.jplag.regression_test.model.ComparisonIdentifier;
-import de.jplag.regression_test.model.DataSet;
-import de.jplag.regression_test.model.DataSetRunConfiguration;
-import de.jplag.regression_test.model.ExpectedResult;
-import de.jplag.regression_test.model.GoldStandard;
-import de.jplag.regression_test.model.ResultDescription;
+import de.jplag.regressiontest.constants.TestDirectoryConstants;
+import de.jplag.regressiontest.helper.DeltaSummaryStatistics;
+import de.jplag.regressiontest.helper.FileHelper;
+import de.jplag.regressiontest.helper.TestSuiteHelper;
+import de.jplag.regressiontest.model.ComparisonIdentifier;
+import de.jplag.regressiontest.model.DataSet;
+import de.jplag.regressiontest.model.DataSetRunConfiguration;
+import de.jplag.regressiontest.model.ExpectedResult;
+import de.jplag.regressiontest.model.GoldStandard;
+import de.jplag.regressiontest.model.ResultDescription;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

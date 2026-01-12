@@ -1,4 +1,4 @@
-package de.jplag.regression_test.constants;
+package de.jplag.regressiontest.constants;
 
 import java.nio.file.Path;
 

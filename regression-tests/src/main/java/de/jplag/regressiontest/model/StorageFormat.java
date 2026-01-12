@@ -1,4 +1,4 @@
-package de.jplag.regression_test.model;
+package de.jplag.regressiontest.model;
 
 /**
  * Enum representing storage formats for datasets or files.

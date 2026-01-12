@@ -16,7 +16,7 @@ The test will fail if the average similarity on one of those groups changed. In 
 ## Updating tests
 
 If the similarities reported by JPlag change and these changes are wanted, the reference values for the regression tests need to be updated.
-To do that the test in [RegressionGeneratorTest.java](src/test/java/de/jplag/regression_test/RegressionGeneratorTest.java) have to be executed.
+To do that the test in [RegressionGeneratorTest.java](src/test/java/de/jplag/regressiontest/RegressionGeneratorTest.java) have to be executed.
 This will generate new reference files.
 
 ## Adding new tests

@@ -1,4 +1,4 @@
-package de.jplag.regression_test.helper;
+package de.jplag.regressiontest.helper;
 
 import java.util.stream.Collectors;
 import java.util.stream.Stream;

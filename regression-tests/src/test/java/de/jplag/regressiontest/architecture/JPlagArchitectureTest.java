@@ -1,4 +1,4 @@
-package de.jplag.regression_test.architecture;
+package de.jplag.regressiontest.architecture;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.fields;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;

@@ -1,4 +1,4 @@
-package de.jplag.regression_test.helper;
+package de.jplag.regressiontest.helper;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +14,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.regression_test.model.DataSet;
+import de.jplag.regressiontest.model.DataSet;
 
 /**
  * Manages unzip operations with caching for datasets.
