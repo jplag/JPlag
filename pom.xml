@@ -85,7 +85,7 @@
         <version.emf.ecore-xmi>2.39.0</version.emf.ecore-xmi>
         <version.emf.ecore>2.44.0</version.emf.ecore>
         <version.emf>2.41.0</version.emf>
-        <version.icu-charset>78.1</version.icu-charset>
+        <version.icu-charset>78.2</version.icu-charset>
         <version.jackson>2.20.1</version.jackson>
         <version.jaxen>2.0.0</version.jaxen>
         <version.jdom>2.0.6.1</version.jdom>
