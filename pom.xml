@@ -95,7 +95,7 @@
         <version.picocli>4.7.7</version.picocli>
         <version.progressbar>0.10.1</version.progressbar>
         <version.record-builder>51</version.record-builder>
-        <version.scala>2.13.18</version.scala>
+        <version.scala>3.8.0</version.scala>
         <version.scalameta.suffix>2.13</version.scalameta.suffix>
         <version.scalameta>4.14.4</version.scalameta>
         <version.slf4j>2.0.17</version.slf4j>
