@@ -26,6 +26,10 @@ public final class CharacteristicVectorDimensionsMapper {
         if (node instanceof MethodDeclaration) {
             return CharacteristicVectorDimension.METHOD_DECLARATION;
         } else if (node instanceof VariableDeclaration) {
+            if(node.getLocation() == null){
+                //skip auto generated declarations
+                return null;
+            }
             return CharacteristicVectorDimension.VARIABLE_DECLARATION;
         } else if (node instanceof BinaryOperator binaryOperator) {
             switch (binaryOperator.getOperatorCode()) {
@@ -43,6 +47,10 @@ public final class CharacteristicVectorDimensionsMapper {
                 }
             }
         } else if (node instanceof ReturnStatement) {
+            if(node.getLocation() == null){
+                //skip auto generated returns
+                return null;
+            }
             return CharacteristicVectorDimension.RETURN_STATEMENT;
         } else if (node instanceof CaseStatement) {
             return CharacteristicVectorDimension.CASE;

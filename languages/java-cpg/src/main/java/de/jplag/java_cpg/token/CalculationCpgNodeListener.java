@@ -26,9 +26,6 @@ public class CalculationCpgNodeListener extends VisitorExitor<Node> {
 
     @Override
     public void visit(@NotNull Node node) {
-        if (node.getLocation() == null) {
-            return;
-        }
         nodeStack.push(node);
         if (NodeRegistry.INSTANCE.getNodeData(node) == null) {
             NodeRegistry.INSTANCE.registerNodeData(node, new CharacteristicVector());
@@ -37,9 +34,6 @@ public class CalculationCpgNodeListener extends VisitorExitor<Node> {
 
     @Override
     public void exit(@NotNull Node node) {
-        if (node.getLocation() == null) {
-            return;
-        }
         if (doSemanticAnalysis && node instanceof Reference reference) {
             exitReferenceNode(reference);
         }

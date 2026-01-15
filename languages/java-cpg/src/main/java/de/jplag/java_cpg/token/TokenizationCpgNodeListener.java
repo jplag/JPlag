@@ -318,8 +318,7 @@ public class TokenizationCpgNodeListener extends ACpgNodeListener {
             openBlocks.addFirst(BLOCK_END);
         } else {
             BlockTokens blockTokens = expectedBlocks.pop();
-            tokenConsumer.addToken(new CharacteristicCpgTokenType(blockTokens.opening, getSemanticVector(block)), block, false);  // TODO semantic
-                                                                                                                                  // vector?
+            tokenConsumer.addToken(new CharacteristicCpgTokenType(blockTokens.opening, getSemanticVector(block)), block, false);
             openBlocks.addFirst(blockTokens.closing);
         }
     }
