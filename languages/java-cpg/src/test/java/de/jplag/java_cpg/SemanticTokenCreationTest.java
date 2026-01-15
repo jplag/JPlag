@@ -24,13 +24,11 @@ public class SemanticTokenCreationTest extends AbstractJavaCpgLanguageTest {
     void testBasicCharacteristicTokens() throws Exception {
         List<TokenType> tokens = new ArrayList<>();
         tokens.add(token(CpgTokenType.RECORD_DECL_BEGIN,
-                Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 4, CharacteristicVectorDimension.METHOD_DECLARATION, 1,
+                Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 3, CharacteristicVectorDimension.METHOD_DECLARATION, 1,
                         CharacteristicVectorDimension.ARRAY_SELECTOR, 1, CharacteristicVectorDimension.NUMERICAL_EXPRESSION, 1,
                         CharacteristicVectorDimension.CONDITIONAL_EXPRESSION, 1, CharacteristicVectorDimension.ASSIGNMENT_EXPRESSION, 2,
                         CharacteristicVectorDimension.METHOD_INVOCATION, 1, CharacteristicVectorDimension.RETURN_STATEMENT, 1,
                         CharacteristicVectorDimension.LOOP, 1)));
-
-        tokens.add(token(CpgTokenType.FIELD_DECL, Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 1)));
 
         tokens.add(token(CpgTokenType.METHOD_DECL_BEGIN,
                 Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 3, CharacteristicVectorDimension.METHOD_DECLARATION, 1,
@@ -81,14 +79,14 @@ public class SemanticTokenCreationTest extends AbstractJavaCpgLanguageTest {
                         CharacteristicVectorDimension.RETURN_STATEMENT, 1, CharacteristicVectorDimension.LOOP, 1)));
 
         tokens.add(token(CpgTokenType.RECORD_DECL_END,
-                Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 4, CharacteristicVectorDimension.METHOD_DECLARATION, 1,
+                Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 3, CharacteristicVectorDimension.METHOD_DECLARATION, 1,
                         CharacteristicVectorDimension.ARRAY_SELECTOR, 1, CharacteristicVectorDimension.NUMERICAL_EXPRESSION, 1,
                         CharacteristicVectorDimension.CONDITIONAL_EXPRESSION, 1, CharacteristicVectorDimension.ASSIGNMENT_EXPRESSION, 2,
                         CharacteristicVectorDimension.METHOD_INVOCATION, 1, CharacteristicVectorDimension.RETURN_STATEMENT, 1,
                         CharacteristicVectorDimension.LOOP, 1)));
 
         tokens.add(token(SharedTokenType.FILE_END,
-                Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 4, CharacteristicVectorDimension.METHOD_DECLARATION, 1,
+                Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 3, CharacteristicVectorDimension.METHOD_DECLARATION, 1,
                         CharacteristicVectorDimension.ARRAY_SELECTOR, 1, CharacteristicVectorDimension.NUMERICAL_EXPRESSION, 1,
                         CharacteristicVectorDimension.CONDITIONAL_EXPRESSION, 1, CharacteristicVectorDimension.ASSIGNMENT_EXPRESSION, 2,
                         CharacteristicVectorDimension.METHOD_INVOCATION, 1, CharacteristicVectorDimension.RETURN_STATEMENT, 1,
@@ -103,16 +101,14 @@ public class SemanticTokenCreationTest extends AbstractJavaCpgLanguageTest {
         List<CharacteristicCpgTokenType> tokens = List.of(
 
                 token(CpgTokenType.RECORD_DECL_BEGIN,
-                        Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 11, CharacteristicVectorDimension.METHOD_DECLARATION, 1,
+                        Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 8, CharacteristicVectorDimension.METHOD_DECLARATION, 1,
                                 CharacteristicVectorDimension.LOOP_CARRIED_DEPENDENCY, 2, CharacteristicVectorDimension.ARRAY_SELECTOR, 2,
                                 CharacteristicVectorDimension.NUMERICAL_EXPRESSION, 2, CharacteristicVectorDimension.CONDITIONAL_EXPRESSION, 1,
                                 CharacteristicVectorDimension.ASSIGNMENT_EXPRESSION, 5, CharacteristicVectorDimension.METHOD_INVOCATION, 2,
                                 CharacteristicVectorDimension.RETURN_STATEMENT, 1, CharacteristicVectorDimension.LOOP, 1)),
 
-                token(CpgTokenType.FIELD_DECL, Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 1)),
-
                 token(CpgTokenType.METHOD_DECL_BEGIN,
-                        Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 10, CharacteristicVectorDimension.METHOD_DECLARATION, 1,
+                        Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 8, CharacteristicVectorDimension.METHOD_DECLARATION, 1,
                                 CharacteristicVectorDimension.LOOP_CARRIED_DEPENDENCY, 2, CharacteristicVectorDimension.ARRAY_SELECTOR, 2,
                                 CharacteristicVectorDimension.NUMERICAL_EXPRESSION, 2, CharacteristicVectorDimension.CONDITIONAL_EXPRESSION, 1,
                                 CharacteristicVectorDimension.ASSIGNMENT_EXPRESSION, 5, CharacteristicVectorDimension.METHOD_INVOCATION, 2,
@@ -121,7 +117,7 @@ public class SemanticTokenCreationTest extends AbstractJavaCpgLanguageTest {
                 token(CpgTokenType.METHOD_PARAM, Map.of()),
 
                 token(CpgTokenType.METHOD_BODY_BEGIN,
-                        Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 10, CharacteristicVectorDimension.LOOP_CARRIED_DEPENDENCY, 2,
+                        Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 8, CharacteristicVectorDimension.LOOP_CARRIED_DEPENDENCY, 2,
                                 CharacteristicVectorDimension.ARRAY_SELECTOR, 2, CharacteristicVectorDimension.NUMERICAL_EXPRESSION, 2,
                                 CharacteristicVectorDimension.CONDITIONAL_EXPRESSION, 1, CharacteristicVectorDimension.ASSIGNMENT_EXPRESSION, 5,
                                 CharacteristicVectorDimension.METHOD_INVOCATION, 2, CharacteristicVectorDimension.RETURN_STATEMENT, 1,
@@ -132,51 +128,51 @@ public class SemanticTokenCreationTest extends AbstractJavaCpgLanguageTest {
                 token(CpgTokenType.VARIABLE_DECL, Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 1)),
 
                 token(CpgTokenType.FOR_STATEMENT,
-                        Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 6, CharacteristicVectorDimension.LOOP_CARRIED_DEPENDENCY, 2,
+                        Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 5, CharacteristicVectorDimension.LOOP_CARRIED_DEPENDENCY, 2,
                                 CharacteristicVectorDimension.ARRAY_SELECTOR, 1, CharacteristicVectorDimension.NUMERICAL_EXPRESSION, 1,
                                 CharacteristicVectorDimension.CONDITIONAL_EXPRESSION, 1, CharacteristicVectorDimension.ASSIGNMENT_EXPRESSION, 3,
                                 CharacteristicVectorDimension.METHOD_INVOCATION, 1, CharacteristicVectorDimension.LOOP, 1)),
 
                 token(CpgTokenType.FOR_BLOCK_BEGIN,
-                        Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 2, CharacteristicVectorDimension.ARRAY_SELECTOR, 1,
+                        Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 1, CharacteristicVectorDimension.ARRAY_SELECTOR, 1,
                                 CharacteristicVectorDimension.NUMERICAL_EXPRESSION, 1, CharacteristicVectorDimension.ASSIGNMENT_EXPRESSION, 2,
                                 CharacteristicVectorDimension.METHOD_INVOCATION, 1)),
 
                 token(CpgTokenType.ASSIGNMENT,
-                        Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 2, CharacteristicVectorDimension.ARRAY_SELECTOR, 1,
+                        Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 1, CharacteristicVectorDimension.ARRAY_SELECTOR, 1,
                                 CharacteristicVectorDimension.NUMERICAL_EXPRESSION, 1, CharacteristicVectorDimension.ASSIGNMENT_EXPRESSION, 2,
                                 CharacteristicVectorDimension.METHOD_INVOCATION, 1)),
 
                 token(CpgTokenType.METHOD_CALL,
-                        Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 2, CharacteristicVectorDimension.ARRAY_SELECTOR, 1,
+                        Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 1, CharacteristicVectorDimension.ARRAY_SELECTOR, 1,
                                 CharacteristicVectorDimension.ASSIGNMENT_EXPRESSION, 1, CharacteristicVectorDimension.METHOD_INVOCATION, 1)),
 
                 token(CpgTokenType.FOR_BLOCK_END,
-                        Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 2, CharacteristicVectorDimension.ARRAY_SELECTOR, 1,
+                        Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 1, CharacteristicVectorDimension.ARRAY_SELECTOR, 1,
                                 CharacteristicVectorDimension.NUMERICAL_EXPRESSION, 1, CharacteristicVectorDimension.ASSIGNMENT_EXPRESSION, 2,
                                 CharacteristicVectorDimension.METHOD_INVOCATION, 1)),
 
                 token(CpgTokenType.RETURN,
-                        Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 2, CharacteristicVectorDimension.ARRAY_SELECTOR, 1,
+                        Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 1, CharacteristicVectorDimension.ARRAY_SELECTOR, 1,
                                 CharacteristicVectorDimension.NUMERICAL_EXPRESSION, 1, CharacteristicVectorDimension.ASSIGNMENT_EXPRESSION, 2,
                                 CharacteristicVectorDimension.METHOD_INVOCATION, 1, CharacteristicVectorDimension.RETURN_STATEMENT, 1)),
 
                 token(CpgTokenType.METHOD_BODY_END,
-                        Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 10, CharacteristicVectorDimension.LOOP_CARRIED_DEPENDENCY, 2,
+                        Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 8, CharacteristicVectorDimension.LOOP_CARRIED_DEPENDENCY, 2,
                                 CharacteristicVectorDimension.ARRAY_SELECTOR, 2, CharacteristicVectorDimension.NUMERICAL_EXPRESSION, 2,
                                 CharacteristicVectorDimension.CONDITIONAL_EXPRESSION, 1, CharacteristicVectorDimension.ASSIGNMENT_EXPRESSION, 5,
                                 CharacteristicVectorDimension.METHOD_INVOCATION, 2, CharacteristicVectorDimension.RETURN_STATEMENT, 1,
                                 CharacteristicVectorDimension.LOOP, 1)),
 
                 token(CpgTokenType.RECORD_DECL_END,
-                        Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 11, CharacteristicVectorDimension.METHOD_DECLARATION, 1,
+                        Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 8, CharacteristicVectorDimension.METHOD_DECLARATION, 1,
                                 CharacteristicVectorDimension.LOOP_CARRIED_DEPENDENCY, 2, CharacteristicVectorDimension.ARRAY_SELECTOR, 2,
                                 CharacteristicVectorDimension.NUMERICAL_EXPRESSION, 2, CharacteristicVectorDimension.CONDITIONAL_EXPRESSION, 1,
                                 CharacteristicVectorDimension.ASSIGNMENT_EXPRESSION, 5, CharacteristicVectorDimension.METHOD_INVOCATION, 2,
                                 CharacteristicVectorDimension.RETURN_STATEMENT, 1, CharacteristicVectorDimension.LOOP, 1)),
 
                 token(SharedTokenType.FILE_END,
-                        Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 11, CharacteristicVectorDimension.METHOD_DECLARATION, 1,
+                        Map.of(CharacteristicVectorDimension.VARIABLE_DECLARATION, 8, CharacteristicVectorDimension.METHOD_DECLARATION, 1,
                                 CharacteristicVectorDimension.LOOP_CARRIED_DEPENDENCY, 2, CharacteristicVectorDimension.ARRAY_SELECTOR, 2,
                                 CharacteristicVectorDimension.NUMERICAL_EXPRESSION, 2, CharacteristicVectorDimension.CONDITIONAL_EXPRESSION, 1,
                                 CharacteristicVectorDimension.ASSIGNMENT_EXPRESSION, 5, CharacteristicVectorDimension.METHOD_INVOCATION, 2,
