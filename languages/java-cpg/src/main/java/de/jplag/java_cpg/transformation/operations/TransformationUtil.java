@@ -44,7 +44,6 @@ public final class TransformationUtil {
                 Node entry = astRoot;
                 Set<Node> visited = new HashSet<>();
                 while (!entry.getPrevEOG().isEmpty()) {
-                    // still loops possible, detection added, TODO solve properly, EOG inconsistence
                     if (!visited.add(entry)) {
                         logger.warn("EOG cycle detected at {}", entry);
                         break;
@@ -55,7 +54,6 @@ public final class TransformationUtil {
             }
             if (result.getExits().isEmpty()) {
                 Node exit = astRoot;
-                // still loops possible, detection added, TODO solve properly, EOG inconsistence
                 Set<Node> visited = new HashSet<>();
                 while (!exit.getNextEOG().isEmpty()) {
                     if (!visited.add(exit)) {

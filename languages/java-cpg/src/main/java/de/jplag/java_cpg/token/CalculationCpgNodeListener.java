@@ -17,7 +17,6 @@ import de.jplag.java_cpg.token.characteristic.CharacteristicVectorDimensionsMapp
 public class CalculationCpgNodeListener extends VisitorExitor<Node> {
     private final Deque<Node> nodeStack = new ArrayDeque<>();
     private final boolean doSemanticAnalysis;
-    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(CalculationCpgNodeListener.class);
 
     public CalculationCpgNodeListener(boolean doSemanticAnalysis) {
         super();
@@ -47,9 +46,23 @@ public class CalculationCpgNodeListener extends VisitorExitor<Node> {
                         || (n instanceof UnaryOperator unaryOperator && (unaryOperator.getOperatorCode() != null
                                 && (unaryOperator.getOperatorCode().equals("++") || unaryOperator.getOperatorCode().equals("--")))))
                 .toList();
-        Node mostPriorNode = node.getRefersTo();
+        Node mostPriorNode = findMostPriorNode(node, referencedNodes);
         if (mostPriorNode == null) {
             return;
+        }
+        CharacteristicVector referencedCharacteristicVector = NodeRegistry.INSTANCE.getNodeData(mostPriorNode);
+        if (referencedCharacteristicVector == null) {
+            return;
+        }
+        CharacteristicVector currentCharacteristicVector = NodeRegistry.INSTANCE.getNodeData(node);
+        currentCharacteristicVector.addVector(referencedCharacteristicVector);
+        NodeRegistry.INSTANCE.registerNodeData(node, currentCharacteristicVector);
+    }
+
+    private Node findMostPriorNode(Reference node, List<Node> referencedNodes) {
+        Node mostPriorNode = node.getRefersTo();
+        if (mostPriorNode == null) {
+            return null;
         }
         for (Node priorNode : referencedNodes) {
             if (priorNode.getLocation() == null || mostPriorNode.getLocation() == null || node.getLocation() == null) {
@@ -69,15 +82,9 @@ public class CalculationCpgNodeListener extends VisitorExitor<Node> {
         }
         // dont add references to "this"
         if (mostPriorNode.getName().getLocalName().equals("this")) {
-            return;
+            return null;
         }
-        CharacteristicVector referencedCharacteristicVector = NodeRegistry.INSTANCE.getNodeData(mostPriorNode);
-        if (referencedCharacteristicVector == null) {
-            return;
-        }
-        CharacteristicVector currentCharacteristicVector = NodeRegistry.INSTANCE.getNodeData(node);
-        currentCharacteristicVector.addVector(referencedCharacteristicVector);
-        NodeRegistry.INSTANCE.registerNodeData(node, currentCharacteristicVector);
+        return mostPriorNode;
     }
 
     private void exitAnyNode(Node node) {

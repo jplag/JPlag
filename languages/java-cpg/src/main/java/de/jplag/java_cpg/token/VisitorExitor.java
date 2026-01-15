@@ -30,6 +30,7 @@ public abstract class VisitorExitor<V extends IVisitable<V>> extends IVisitor<V>
         }
     }
 
+    @Override
     public void visit(V node) {
         try {
             Method mostSpecificExit = this.getClass().getMethod(VISIT_METHOD_IDENTIFIER, node.getClass());
