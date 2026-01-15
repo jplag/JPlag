@@ -30,6 +30,7 @@ import com.sun.source.tree.ForLoopTree;
 import com.sun.source.tree.IdentifierTree;
 import com.sun.source.tree.IfTree;
 import com.sun.source.tree.ImportTree;
+import com.sun.source.tree.InstanceOfTree;
 import com.sun.source.tree.LineMap;
 import com.sun.source.tree.MemberSelectTree;
 import com.sun.source.tree.MethodInvocationTree;
@@ -475,11 +476,29 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
                 semantics = CodeSemantics.createKeep();
             }
             addToken(JavaTokenType.J_VARDEF, start, end, semantics);
+
+            if (node.getInitializer() != null) {
+                long initPos = start + node.toString().indexOf('=');
+                addToken(JavaTokenType.J_ASSIGN, initPos, initPos + 1, semantics);
+            }
             // manually add variable to semantics since identifier isn't visited
             variableRegistry.setNextVariableAccessType(VariableAccessType.WRITE);
             variableRegistry.registerVariableAccess(name, !inLocalScope);
         }
         return super.visitVariable(node, null);
+    }
+
+    @Override
+    public Void visitInstanceOf(InstanceOfTree node, Void unused) {
+        super.visitInstanceOf(node, unused);
+
+        if (node.getPattern() != null && node.getPattern().getKind() == Tree.Kind.BINDING_PATTERN) {
+            long start = positions.getStartPosition(ast, node.getPattern());
+            long end = positions.getEndPosition(ast, node.getPattern());
+            addToken(JavaTokenType.J_ASSIGN, start, end, new CodeSemantics());
+        }
+
+        return null;
     }
 
     @Override
