@@ -1,16 +1,30 @@
 package de.jplag.java_cpg.token.characteristic;
 
+/**
+ * This class represents a characteristic vector that counts occurrences of different elements in source code
+ */
 public class CharacteristicVector {
     private final int[] values;
 
+    /**
+     * Creates a new characteristic vector with all dimensions initialized to zero
+     */
     public CharacteristicVector() {
         this.values = new int[CharacteristicVectorDimension.DIMENSION_COUNT];
     }
 
+    /**
+     * Increments the count for the given dimension by one
+     * @param dimension The dimension to increment
+     */
     public void incrementDimension(CharacteristicVectorDimension dimension) {
         this.values[dimension.ordinal()]++;
     }
 
+    /**
+     * Adds another characteristic vector to this one by summing up the counts for each dimension
+     * @param otherVector The other characteristic vector to add
+     */
     public void addVector(CharacteristicVector otherVector) {
         if (otherVector == null) {
             throw new IllegalArgumentException("Other vector must not be null");
@@ -20,6 +34,10 @@ public class CharacteristicVector {
         }
     }
 
+    /**
+     * Getter for the values of the characteristic vector
+     * @return An array of integers representing the counts for each dimension
+     */
     public int[] getValue() {
         return values;
     }

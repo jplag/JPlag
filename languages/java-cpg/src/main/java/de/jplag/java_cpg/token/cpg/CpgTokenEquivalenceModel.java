@@ -7,6 +7,9 @@ import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.java_cpg.token.characteristic.CharacteristicCpgTokenType;
 
+/**
+ * A token equivalence model that determines whether to tokens are equivalent based on their {@link CpgTokenType}.
+ */
 public class CpgTokenEquivalenceModel extends DefaultTokenEquivalenceModel {
     @Override
     public boolean ensureTokenType(List<Token> tokens) {

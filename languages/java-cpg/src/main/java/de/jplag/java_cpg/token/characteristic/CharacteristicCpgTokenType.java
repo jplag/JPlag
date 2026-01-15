@@ -2,6 +2,11 @@ package de.jplag.java_cpg.token.characteristic;
 
 import de.jplag.TokenType;
 
+/**
+ * A token type that combines a base token type with a characteristic vector.
+ * @param tokenType the base token type
+ * @param characteristicVector the characteristic vector
+ */
 public record CharacteristicCpgTokenType(TokenType tokenType, CharacteristicVector characteristicVector) implements TokenType {
 
     @Override

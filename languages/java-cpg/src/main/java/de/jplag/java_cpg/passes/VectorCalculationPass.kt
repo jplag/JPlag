@@ -7,6 +7,9 @@ import de.jplag.java_cpg.token.CalculationCpgNodeListener
 import de.jplag.java_cpg.token.VisitorExitor
 import de.jplag.java_cpg.visitor.NodeOrderStrategy
 
+/**
+ * This pass calculates the characteristic vectors for the nodes in the [TranslationContext].
+ */
 @DependsOn(CpgTransformationPass::class)
 class VectorCalculationPass (ctx: TranslationContext) : AResultVisitingPass (ctx)  {
 

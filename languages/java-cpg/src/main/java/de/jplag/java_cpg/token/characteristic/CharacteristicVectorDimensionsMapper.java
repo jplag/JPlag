@@ -6,7 +6,22 @@ import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration;
 import de.fraunhofer.aisec.cpg.graph.statements.*;
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*;
 
+/**
+ * Maps CPG nodes to characteristic vector dimensions.
+ */
 public final class CharacteristicVectorDimensionsMapper {
+    /**
+     * Private constructor to prevent instantiation.
+     */
+    private CharacteristicVectorDimensionsMapper() {
+        // private constructor to prevent instantiation
+    }
+
+    /**
+     * Maps a CPG node to a characteristic vector dimension depending mainly on its type.
+     * @param node the CPG node
+     * @return the characteristic vector dimension, or null if the node type is not mapped
+     */
     public static CharacteristicVectorDimension mapNodeType(Node node) {
         if (node instanceof MethodDeclaration) {
             return CharacteristicVectorDimension.METHOD_DECLARATION;
@@ -28,10 +43,6 @@ public final class CharacteristicVectorDimensionsMapper {
                 }
             }
         } else if (node instanceof ReturnStatement) {
-            // skip auto generated return statements
-            if (node.getLocation() == null) {
-                return null;
-            }
             return CharacteristicVectorDimension.RETURN_STATEMENT;
         } else if (node instanceof CaseStatement) {
             return CharacteristicVectorDimension.CASE;

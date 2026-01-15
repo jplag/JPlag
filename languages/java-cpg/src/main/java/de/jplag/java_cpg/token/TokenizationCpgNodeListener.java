@@ -92,6 +92,10 @@ public class TokenizationCpgNodeListener extends ACpgNodeListener {
 
     @Override
     public void exit(RecordDeclaration recordDeclaration) {
+        if (recordDeclaration.getLocation() == null) {
+            // skip auto generated records e.g. for used classes like Queue
+            return;
+        }
         tokenConsumer.addToken(new CharacteristicCpgTokenType(RECORD_DECL_END, getSemanticVector(recordDeclaration)), recordDeclaration, true);
     }
 
@@ -139,6 +143,10 @@ public class TokenizationCpgNodeListener extends ACpgNodeListener {
 
     @Override
     public void visit(FieldDeclaration fieldDeclaration) {
+        if (fieldDeclaration.getLocation() == null) {
+            // skip auto generated fields e.g. static class calls from Integer.
+            return;
+        }
         tokenConsumer.addToken(new CharacteristicCpgTokenType(FIELD_DECL, getSemanticVector(fieldDeclaration)), fieldDeclaration, false);
     }
 
@@ -165,6 +173,10 @@ public class TokenizationCpgNodeListener extends ACpgNodeListener {
 
     @Override
     public void visit(RecordDeclaration recordDeclaration) {
+        if (recordDeclaration.getLocation() == null) {
+            // skip auto generated records e.g. for used classes like Queue
+            return;
+        }
         tokenConsumer.addToken(new CharacteristicCpgTokenType(RECORD_DECL_BEGIN, getSemanticVector(recordDeclaration)), recordDeclaration, false);
     }
 

@@ -1,15 +1,19 @@
 package de.jplag.java_cpg.token.characteristic;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.jplag.TokenType;
 import de.jplag.java_cpg.token.cpg.CpgTokenEquivalenceModel;
 
+/**
+ * A token equivalence model that determines whether to tokens are equivalent based on
+ * {@link CharacteristicCpgTokenType}.
+ */
 public class CharacteristicCpgTokenEquivalenceModel extends CpgTokenEquivalenceModel {
-    private static final Logger logger = LoggerFactory.getLogger(CharacteristicCpgTokenEquivalenceModel.class);
     private final double characteristicVectorThreshold;
 
+    /**
+     * Creates a new characteristic CPG token equivalence model.
+     * @param characteristicVectorThreshold The threshold for the characteristic vectors to be considered equivalent
+     */
     public CharacteristicCpgTokenEquivalenceModel(int characteristicVectorThreshold) {
         this.characteristicVectorThreshold = characteristicVectorThreshold;
     }

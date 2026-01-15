@@ -50,6 +50,10 @@ public class CpgAdapter {
         return tokenList;
     }
 
+    /**
+     * Enables or disables semantic analysis during token calculation.
+     * @param enableSemanticAnalysis true to enable semantic analysis, false to disable it
+     */
     public void enableSemanticAnalysis(boolean enableSemanticAnalysis) {
         this.enableSemanticAnalysis = enableSemanticAnalysis;
         VectorCalculationPass.Companion.setDoSemanticAnalysis(enableSemanticAnalysis);
