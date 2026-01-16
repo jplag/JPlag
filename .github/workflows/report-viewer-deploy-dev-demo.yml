@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Set up JDK
         uses: actions/setup-java@v5
@@ -24,7 +24,7 @@ jobs:
         run: mvn clean package assembly:single
         
       - name: Upload Assembly
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: "JPlag"
           path: "cli/target/jplag-*-jar-with-dependencies.jar"
@@ -36,7 +36,7 @@ jobs:
 
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Set up JDK
         uses: actions/setup-java@v5
@@ -45,7 +45,7 @@ jobs:
           distribution: 'temurin'
       
       - name: Get JAR
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: JPlag
       
@@ -59,7 +59,7 @@ jobs:
         run: java -jar jplag.jar ACCEPTED -bc base -r example
       
       - name: Upload Result
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: "Result"
           path: "example.jplag"
@@ -70,14 +70,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
               
       - uses: actions/setup-node@v6
         with:
           node-version: "lts/*"
       
       - name: Download Results
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: Result
           path: report-viewer/report-viewer/public
@@ -89,7 +91,7 @@ jobs:
           npm run build-dev-demo
         
       - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@v4.7.4
+        uses: JamesIves/github-pages-deploy-action@v4.8.0
         with:
           branch: gh-pages
           folder: report-viewer/report-viewer/dist

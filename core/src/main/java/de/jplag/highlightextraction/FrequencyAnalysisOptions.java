@@ -1,48 +1,79 @@
 package de.jplag.highlightextraction;
 
+import de.jplag.highlightextraction.strategy.CompleteMatchesStrategy;
+import de.jplag.highlightextraction.strategy.FrequencyStrategy;
+import de.jplag.highlightextraction.weighting.SigmoidWeighting;
+import de.jplag.reporting.jsonfactory.serializer.AllCapsClassNameSerializer;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.soabase.recordbuilder.core.RecordBuilder;
+
 /**
  * Options for Frequency Analysis.
- * @param frequencyStrategy the strategy used to determine the frequency of a Match
- * @param frequencyStrategyMinValue the minimum considered size of Subsequences from matches in the frequencyStrategy
- * @param weightingStrategy strategy used to influence the similarity based on Match frequency
- * @param weightingFactor how strong the impact of the weightingStrategy is
+ * @param enabled if false, highlight extraction is skipped.
+ * @param analysisStrategy the strategy used to determine the frequency of a Match
+ * @param weightingFunction function used to determine the weight from the match rarity
+ * @param weightingFactor scales the impact of the weighting
  */
-public record FrequencyAnalysisOptions(FrequencyAnalysisStrategy frequencyStrategy, int frequencyStrategyMinValue,
-        MatchFrequencyWeightingFunction weightingStrategy, double weightingFactor) {
+@RecordBuilder
+public record FrequencyAnalysisOptions(boolean enabled, @JsonSerialize(using = AllCapsClassNameSerializer.class) FrequencyStrategy analysisStrategy,
+        @JsonSerialize(using = AllCapsClassNameSerializer.class) WeightingFunction weightingFunction, double weightingFactor) {
+
+    /** Default value for the highlighting enabling. */
+    public static final boolean DEFAULT_ENABLED = false;
+    /** Default analysis strategy. */
+    public static final FrequencyStrategy DEFAULT_ANALYSIS_STRATEGY = new CompleteMatchesStrategy();
+    /** Default minimum subsequence length. */
+    public static final int DEFAULT_MINIMUM_SUBSEQUENCE_LENGTH = 1;
+    /** Default weighting function. */
+    public static final WeightingFunction DEFAULT_WEIGHTING_FUNCTION = new SigmoidWeighting();
+    /** Default minimum match weight factor. */
+    public static final double DEFAULT_WEIGHTING_FACTOR = 0.25;
 
     /**
      * Default options for frequency Analysis.
      */
     public FrequencyAnalysisOptions() {
-        this(FrequencyAnalysisStrategy.COMPLETE_MATCHES, 1, MatchFrequencyWeightingFunction.SIGMOID, 0.25);
+        this(DEFAULT_ENABLED, DEFAULT_ANALYSIS_STRATEGY, DEFAULT_WEIGHTING_FUNCTION, DEFAULT_WEIGHTING_FACTOR);
     }
 
     /**
-     * Chosen FrequencyStrategy.
+     * Creates a copy of this {@link FrequencyAnalysisOptions} using the given value for
+     * {@link FrequencyAnalysisOptions#enabled}.
+     * @param enabled the new value for enabled
+     * @return the new frequency analysis options.
      */
-    public FrequencyAnalysisOptions withFrequencyStrategy(FrequencyAnalysisStrategy strategy) {
-        return new FrequencyAnalysisOptions(strategy, frequencyStrategyMinValue, weightingStrategy, weightingFactor);
+    public FrequencyAnalysisOptions withEnabled(boolean enabled) {
+        return new FrequencyAnalysisOptions(enabled, analysisStrategy, weightingFunction, weightingFactor);
     }
 
     /**
-     * Minimum considered subsequence length.
+     * Creates a copy of this {@link FrequencyAnalysisOptions} using the given value for
+     * {@link FrequencyAnalysisOptions#analysisStrategy}.
+     * @param strategy the new value for analysisStrategy
+     * @return the new frequency analysis options.
      */
-    public FrequencyAnalysisOptions withFrequencyStrategyMinimumConsideredMatchSubsequenceSize(int minimumConsideredMatchSubsequenceSize) {
-        return new FrequencyAnalysisOptions(frequencyStrategy, minimumConsideredMatchSubsequenceSize, weightingStrategy, weightingFactor);
+    public FrequencyAnalysisOptions withAnalysisStrategy(FrequencyStrategy strategy) {
+        return new FrequencyAnalysisOptions(enabled, strategy, weightingFunction, weightingFactor);
     }
 
     /**
-     * Chosen weightingStrategy.
+     * Creates a copy of this {@link FrequencyAnalysisOptions} using the given value for
+     * {@link FrequencyAnalysisOptions#weightingFunction}.
+     * @param weighting the new value for weightingFunction
+     * @return the new frequency analysis options.
      */
-    public FrequencyAnalysisOptions withWeightingStrategy(MatchFrequencyWeightingFunction strategy) {
-        return new FrequencyAnalysisOptions(frequencyStrategy, frequencyStrategyMinValue, strategy, weightingFactor);
+    public FrequencyAnalysisOptions withWeightingFunction(WeightingFunction weighting) {
+        return new FrequencyAnalysisOptions(enabled, analysisStrategy, weighting, weightingFactor);
     }
 
     /**
-     * Weighting maximumInfluenceOfMatchFrequencyConsidered for weightingStrategy.
+     * Creates a copy of this {@link FrequencyAnalysisOptions} using the given value for
+     * {@link FrequencyAnalysisOptions#weightingFactor}.
+     * @param weightingFactor the new value for weightingFactor
+     * @return the new frequency analysis options.
      */
-    public FrequencyAnalysisOptions withWeightingFactor(double maximumInfluenceOfMatchFrequencyConsidered) {
-        return new FrequencyAnalysisOptions(frequencyStrategy, frequencyStrategyMinValue, weightingStrategy,
-                maximumInfluenceOfMatchFrequencyConsidered);
+    public FrequencyAnalysisOptions withWeightingFactor(double weightingFactor) {
+        return new FrequencyAnalysisOptions(enabled, analysisStrategy, weightingFunction, weightingFactor);
     }
 }
