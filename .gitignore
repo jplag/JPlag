@@ -5,9 +5,6 @@ target/
 
 *.class
 
-# GitHub
-wiki
-
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 

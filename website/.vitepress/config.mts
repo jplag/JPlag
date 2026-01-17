@@ -52,8 +52,36 @@ export default defineConfig({
             link: '/wiki/'
           },
           {
-            text: 'Getting Started',
-            link: '/wiki/gettingstarted.md'
+            text: 'How to Use JPlag',
+            link: '/wiki/how-to-use-jplag'
+          }, 
+          {
+            text: 'Supported Languages',
+            link: '/wiki/supported-languages'
+          },
+          {
+            text: 'Contributing to JPlag',
+            link: '/wiki/contributing-to-jplag'
+          },
+          {
+            text: 'Adding New Languages',
+            link: '/wiki/adding-new-languages'
+          },
+          {
+            text: 'End to End Testing',
+            link: '/wiki/end-to-end-testing'
+          },
+          {
+            text: 'Report File Generation',
+            link: '/wiki/report-file-generation'
+          },
+          {
+            text: 'Report Viewer',
+            link: '/wiki/report-viewer'
+          },
+          {
+            text: 'Clustering of Submissions',
+            link: '/wiki/clustering-of-submissions'
           }
         ]
       }
