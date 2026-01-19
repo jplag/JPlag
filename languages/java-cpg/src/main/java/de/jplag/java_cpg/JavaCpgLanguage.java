@@ -139,7 +139,8 @@ public class JavaCpgLanguage implements Language {
         JavaCpgLanguageOptions javaOptions = getOptions();
         return switch (options.getTokenEquivalenceMode()) {
             case DEFAULT -> new CpgTokenEquivalenceModel();
-            case CHARACTERISTIC -> new CharacteristicCpgTokenEquivalenceModel(javaOptions.getCharacteristicVectorThreshold());
+            case CHARACTERISTIC -> new CharacteristicCpgTokenEquivalenceModel(javaOptions.getCharacteristicVectorThreshold(),
+                    javaOptions.getVectorComparisonStrategy());
         };
     }
 }

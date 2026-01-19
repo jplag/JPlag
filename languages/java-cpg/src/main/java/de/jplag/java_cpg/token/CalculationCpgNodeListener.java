@@ -7,6 +7,8 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 import de.fraunhofer.aisec.cpg.graph.Node;
+import de.fraunhofer.aisec.cpg.graph.declarations.MethodDeclaration;
+import de.fraunhofer.aisec.cpg.graph.declarations.RecordDeclaration;
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration;
 import de.fraunhofer.aisec.cpg.graph.edge.PropertyEdge;
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.*;
@@ -40,6 +42,9 @@ public class CalculationCpgNodeListener extends VisitorExitor<Node> {
     }
 
     private void exitReferenceNode(Reference node) {
+        if (node.getRefersTo() instanceof MethodDeclaration) {
+            return;
+        }
         List<Node> referencedNodes = node.getPrevDFGEdges().stream().map(PropertyEdge::getStart)
                 // filter for methods that write to the referenced variable
                 .filter(n -> n instanceof AssignExpression || n instanceof VariableDeclaration
@@ -61,11 +66,14 @@ public class CalculationCpgNodeListener extends VisitorExitor<Node> {
 
     private Node findMostPriorNode(Reference node, List<Node> referencedNodes) {
         Node mostPriorNode = node.getRefersTo();
-        if (mostPriorNode == null) {
+        if (mostPriorNode == null || mostPriorNode.getLocation() == null || mostPriorNode instanceof RecordDeclaration) {
+            return null;
+        }
+        if (node.getLocation() == null) {
             return null;
         }
         for (Node priorNode : referencedNodes) {
-            if (priorNode.getLocation() == null || mostPriorNode.getLocation() == null || node.getLocation() == null) {
+            if (priorNode.getLocation() == null || priorNode instanceof RecordDeclaration) {
                 continue;
             }
             // only keep nodes before the current one

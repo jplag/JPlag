@@ -1,6 +1,7 @@
 package de.jplag.java_cpg;
 
 import de.jplag.java_cpg.token.CpgTokenEquivalenceMode;
+import de.jplag.java_cpg.token.characteristic.VectorComparisonMode;
 import de.jplag.options.LanguageOption;
 import de.jplag.options.LanguageOptions;
 import de.jplag.options.OptionType;
@@ -14,11 +15,15 @@ public class JavaCpgLanguageOptions extends LanguageOptions {
             "The mode for token equivalence. Possible values are DEFAULT and SEMANTIC", CpgTokenEquivalenceMode.DEFAULT.name());
 
     private final LanguageOption<Integer> characteristicVectorThreshold = createDefaultOption(OptionType.integer(), "characteristic-vector-threshold",
-            "The threshold for token equivalence with characteristic vectors. Only used if token-equivalence is set to CHARACTERISTIC. Range: 0-100",
+            "The threshold for token equivalence with characteristic vectors. Only used if token-equivalence is set to CHARACTERISTIC. For cosine similarity the value is multiplied with 100 before being compared to the threshold",
             5);
 
     private final LanguageOption<Boolean> enableSemanticAnalysis = createDefaultOption(OptionType.bool(), "enable-semantic-analysis",
             "Whether to enable semantic token generation. If disabled, characteristic vectors will be calculated without data dependencies", false);
+
+    private final LanguageOption<String> vectorComparisonStrategy = createDefaultOption(OptionType.string(), "vector-comparison-strategy",
+            "The strategy to compare characteristic vectors. Possible values are EUCLIDEAN_DISTANCE, L1_DISTANCE and COSINE_SIMILARITY. Only used if token-equivalence is set to CHARACTERISTIC.",
+            VectorComparisonMode.EUCLIDEAN_DISTANCE.name());
 
     /**
      * Getter for the token equivalence mode
@@ -42,6 +47,14 @@ public class JavaCpgLanguageOptions extends LanguageOptions {
      */
     public boolean isSemanticAnalysisEnabled() {
         return this.enableSemanticAnalysis.getValue();
+    }
+
+    /**
+     * Getter for the vector comparison strategy
+     * @return The vector comparison strategy
+     */
+    public VectorComparisonMode getVectorComparisonStrategy() {
+        return VectorComparisonMode.valueOf(this.vectorComparisonStrategy.getValue());
     }
 
     // setter for tests

@@ -121,7 +121,6 @@ public class CpgAdapter {
 
             if (!reorderingEnabled)
                 passClasses.remove(DfgSortPass.class);
-
             for (Class<? extends Pass<?>> passClass : passClasses) {
                 configBuilder.registerPass(getKClass(passClass));
             }
