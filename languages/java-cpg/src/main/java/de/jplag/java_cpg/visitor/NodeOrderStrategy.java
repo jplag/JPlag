@@ -139,11 +139,7 @@ public class NodeOrderStrategy implements IStrategy<Node> {
     @NotNull
     private static Iterator<Node> walkBlock(Block block) {
         // sort the statements in the block by their position in the source code
-        Comparator<Node> comparator = Comparator
-                .comparingInt((Node n) -> n.getLocation() != null ? n.getLocation().getRegion().startLine : Integer.MAX_VALUE)
-                .thenComparingInt(n -> n.getLocation() != null ? n.getLocation().getRegion().startColumn : Integer.MAX_VALUE);
-
-        return block.getStatements().stream().map(n -> (Node) n).sorted(comparator).iterator();
+        return block.getStatements().stream().map(n -> (Node) n).iterator();
     }
 
     /**
