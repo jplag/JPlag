@@ -3,6 +3,7 @@ package de.jplag.java_cpg.token;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
+import java.util.Objects;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -45,6 +46,9 @@ public class CalculationCpgNodeListener extends VisitorExitor<Node> {
         if (node.getRefersTo() instanceof MethodDeclaration) {
             return;
         }
+        if (node.getLocation() == null) {
+            return;
+        }
         List<Node> referencedNodes = node.getPrevDFGEdges().stream().map(PropertyEdge::getStart)
                 // filter for methods that write to the referenced variable
                 .filter(n -> n instanceof AssignExpression || n instanceof VariableDeclaration
@@ -65,21 +69,16 @@ public class CalculationCpgNodeListener extends VisitorExitor<Node> {
     }
 
     private Node findMostPriorNode(Reference node, List<Node> referencedNodes) {
-        Node mostPriorNode = node.getRefersTo();
-        if (mostPriorNode == null || mostPriorNode.getLocation() == null || mostPriorNode instanceof RecordDeclaration) {
-            return null;
-        }
-        if (node.getLocation() == null) {
-            return null;
+        Node mostPriorNode = null;
+        if (isValidCandidate(node, node.getRefersTo())) {
+            mostPriorNode = node.getRefersTo();
         }
         for (Node priorNode : referencedNodes) {
-            if (priorNode.getLocation() == null || priorNode instanceof RecordDeclaration) {
+            if (!isValidCandidate(node, priorNode)) {
                 continue;
             }
-            // only keep nodes before the current one
-            if (priorNode.getLocation().getRegion().startLine > node.getLocation().getRegion().startLine
-                    || (priorNode.getLocation().getRegion().startLine == node.getLocation().getRegion().startLine
-                            && (priorNode.getLocation().getRegion().startColumn >= node.getLocation().getRegion().startColumn))) {
+            if (mostPriorNode == null) {
+                mostPriorNode = priorNode;
                 continue;
             }
             if (priorNode.getLocation().getRegion().getEndLine() > mostPriorNode.getLocation().getRegion().getEndLine()
@@ -87,10 +86,6 @@ public class CalculationCpgNodeListener extends VisitorExitor<Node> {
                             && (priorNode.getLocation().getRegion().getEndColumn() > mostPriorNode.getLocation().getRegion().getEndColumn()))) {
                 mostPriorNode = priorNode;
             }
-        }
-        // dont add references to "this"
-        if (mostPriorNode.getName().getLocalName().equals("this")) {
-            return null;
         }
         return mostPriorNode;
     }
@@ -110,6 +105,20 @@ public class CalculationCpgNodeListener extends VisitorExitor<Node> {
             parentCharacteristicVector.addVector(currentCharacteristicVector);
             NodeRegistry.INSTANCE.registerNodeData(nodeStack.getFirst(), parentCharacteristicVector);
         }
+    }
+
+    private boolean isValidCandidate(Node node, Node candidate) {
+        if (candidate == null || candidate.getLocation() == null || candidate instanceof RecordDeclaration) {
+            return false;
+        }
+        // only keep nodes before the current one
+        if (candidate.getLocation().getRegion().startLine > node.getLocation().getRegion().startLine
+                || (candidate.getLocation().getRegion().startLine == node.getLocation().getRegion().startLine
+                        && (candidate.getLocation().getRegion().startColumn >= node.getLocation().getRegion().startColumn))) {
+            return false;
+        }
+        return Objects.equals(candidate.getLocation().getArtifactLocation().toString(), node.getLocation().getArtifactLocation().toString())
+                && !candidate.getName().getLocalName().equals("this");
     }
 
 }

@@ -36,7 +36,7 @@ public class CharacteristicCpgTokenEquivalenceModel extends CpgTokenEquivalenceM
     private boolean areEquivalentEuclidean(int[] leftVector, int[] rightVector) {
         double sum = 0.0;
         for (int i = 0; i < leftVector.length; i++) {
-            sum += Math.pow(leftVector[i] - rightVector[i], 2);
+            sum += Math.pow((double) leftVector[i] - (double) rightVector[i], 2);
         }
         double distance = Math.sqrt(sum);
         return distance <= characteristicVectorThreshold;

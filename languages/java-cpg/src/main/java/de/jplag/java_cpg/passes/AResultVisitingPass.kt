@@ -33,7 +33,9 @@ abstract class AResultVisitingPass (ctx: TranslationContext) : TranslationResult
         doAfterTraversal()
 
     }
-    protected open fun doBeforeTraversal() {}
+    protected open fun doBeforeTraversal() {
+        //optional for subclasses after traversal, do nothing per default
+    }
 
     /**
      * This method creates the listener with visit and exit methods that will be applied to each node during traversal.
@@ -41,7 +43,9 @@ abstract class AResultVisitingPass (ctx: TranslationContext) : TranslationResult
      * @return A [VisitorExitor] for nodes.
      */
     protected abstract fun createListener() : VisitorExitor<Node>
-    protected open fun doAfterTraversal() {}
+    protected open fun doAfterTraversal() {
+        //optional for subclasses after traversal, do nothing per default
+    }
 
 
 }

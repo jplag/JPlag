@@ -75,4 +75,22 @@ public class JavaCpgLanguageOptions extends LanguageOptions {
     public void setEnableSemanticAnalysis(boolean enableSemanticAnalysis) {
         this.enableSemanticAnalysis.setValue(enableSemanticAnalysis);
     }
+
+    // setter for tests
+    /**
+     * Setter for the characteristic vector threshold
+     * @param threshold The characteristic vector threshold
+     */
+    public void setCharacteristicVectorThreshold(int threshold) {
+        this.characteristicVectorThreshold.setValue(threshold);
+    }
+
+    // setter for tests
+    /**
+     * Setter for the vector comparison strategy
+     * @param strategy The vector comparison strategy
+     */
+    public void setVectorComparisonStrategy(VectorComparisonMode strategy) {
+        this.vectorComparisonStrategy.setValue(strategy.name());
+    }
 }
