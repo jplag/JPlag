@@ -138,7 +138,6 @@ public class NodeOrderStrategy implements IStrategy<Node> {
 
     @NotNull
     private static Iterator<Node> walkBlock(Block block) {
-        // sort the statements in the block by their position in the source code
         return block.getStatements().stream().map(n -> (Node) n).iterator();
     }
 
@@ -193,8 +192,11 @@ public class NodeOrderStrategy implements IStrategy<Node> {
     }
 
     private Iterator<Node> walkIfStatement(IfStatement ifStatement) {
-        return Stream.<Node>of(ifStatement.getCondition(), ifStatement.getThenStatement(), ifStatement.getElseStatement()).filter(Objects::nonNull)
-                .iterator();
+        if (detailedTraversal) {
+            return Stream.<Node>of(ifStatement.getCondition(), ifStatement.getThenStatement(), ifStatement.getElseStatement())
+                    .filter(Objects::nonNull).iterator();
+        }
+        return Stream.<Node>of(ifStatement.getThenStatement(), ifStatement.getElseStatement()).filter(Objects::nonNull).iterator();
 
     }
 
