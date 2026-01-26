@@ -2,6 +2,9 @@ package de.jplag.golang;
 
 import de.jplag.TokenType;
 
+/**
+ * Token types for the go language.
+ */
 public enum GoTokenType implements TokenType {
     // TOP LEVEL STRUCTURES
 

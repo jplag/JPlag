@@ -3,14 +3,14 @@ package de.jplag.endtoend.helper;
 import java.io.IOException;
 
 import de.jplag.Language;
-import de.jplag.cli.LanguageLoader;
+import de.jplag.LanguageLoader;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
 /**
- * Deserialized a language from a json file
+ * Deserialized a language from a json file.
  */
 public class LanguageDeserializer extends JsonDeserializer<Language> {
     @Override

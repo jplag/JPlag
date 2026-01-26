@@ -29,4 +29,3 @@ coverage
 
 test-results/
 playwright-report/
-tests/e2e/assets

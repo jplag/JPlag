@@ -43,7 +43,7 @@ class NaturalLanguageTest {
     @Test
     void testParsingJavaDoc() throws ParsingException {
         // Parse test input
-        List<Token> result = language.parse(Set.of(new File(BASE_PATH.toFile(), TEST_SUBJECT)));
+        List<Token> result = language.parse(Set.of(new File(BASE_PATH.toFile(), TEST_SUBJECT)), false);
         logger.info(TokenPrinter.printTokens(result, baseDirectory));
 
         List<TokenType> tokenTypes = result.stream().map(Token::getType).toList();
@@ -56,7 +56,7 @@ class NaturalLanguageTest {
     void testLineBreakInputs(String input) throws IOException, ParsingException {
         File testFile = File.createTempFile("input", "txt");
         Files.writeString(testFile.toPath(), input);
-        List<Token> result = language.parse(Set.of(testFile));
+        List<Token> result = language.parse(Set.of(testFile), false);
         assertEquals(1, result.size());
     }
 
@@ -65,8 +65,8 @@ class NaturalLanguageTest {
     void testTokenAfterLineBreak(String input) throws IOException, ParsingException {
         File testFile = File.createTempFile("input", "txt");
         Files.writeString(testFile.toPath(), input);
-        List<Token> result = language.parse(Set.of(testFile));
-        assertEquals(2, result.get(0).getLine());
+        List<Token> result = language.parse(Set.of(testFile), false);
+        assertEquals(2, result.get(0).getStartLine());
     }
 
 }

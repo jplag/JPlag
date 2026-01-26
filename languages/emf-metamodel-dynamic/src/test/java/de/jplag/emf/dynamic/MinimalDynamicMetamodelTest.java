@@ -49,7 +49,7 @@ class MinimalDynamicMetamodelTest {
         List<File> testFiles = Arrays.stream(TEST_SUBJECTS).map(path -> new File(BASE_PATH.toFile(), path)).toList();
         List<Token> result = language.parse(new HashSet<>(testFiles), true);
         List<TokenType> tokenTypes = result.stream().map(Token::getType).toList();
-        logger.debug(TokenPrinter.printTokens(result, baseDirectory, Optional.of(EmfLanguage.VIEW_FILE_SUFFIX)));
+        logger.debug(TokenPrinter.printTokens(result, baseDirectory, Optional.of(EmfLanguage.VIEW_FILE_EXTENSION)));
         logger.info("parsed token types: " + tokenTypes.stream().map(TokenType::getDescription).toList());
         assertEquals(94, tokenTypes.size());
         assertEquals(7, new HashSet<>(tokenTypes.stream().filter(DynamicMetamodelTokenType.class::isInstance).toList()).size());
@@ -65,6 +65,6 @@ class MinimalDynamicMetamodelTest {
 
     @AfterEach
     public void tearDown() {
-        FileUtil.clearFiles(new File(BASE_PATH.toString()), EmfLanguage.VIEW_FILE_SUFFIX);
+        FileUtil.clearFiles(new File(BASE_PATH.toString()), EmfLanguage.VIEW_FILE_EXTENSION);
     }
 }

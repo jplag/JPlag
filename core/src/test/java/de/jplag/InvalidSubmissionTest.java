@@ -21,6 +21,7 @@ class InvalidSubmissionTest extends TestBase {
     /**
      * Tests if invalid submissions are correctly filtered, leading to no valid submissions. The debug options lead to the
      * invalid submissions being stored.
+     * @throws ExitException when JPlag causes an error.
      */
     @Test
     @DisplayName("test filtering and copying of invalid submissions with debug mode")
@@ -34,8 +35,9 @@ class InvalidSubmissionTest extends TestBase {
             File errorFolder = new File(Path.of("errors", "java").toString());
             assertTrue(errorFolder.exists());
             String[] errorSubmissions = errorFolder.list();
-            if (errorSubmissions != null)
+            if (errorSubmissions != null) {
                 Arrays.sort(errorSubmissions); // File systems don't promise alphabetical order.
+            }
             deleteDirectory(errorFolder.getParentFile());
             assertArrayEquals(new String[] {"A", "B"}, errorSubmissions);
         }

@@ -3,6 +3,7 @@ package de.jplag.clustering;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,6 +13,9 @@ import org.slf4j.LoggerFactory;
 import de.jplag.JPlagComparison;
 import de.jplag.Submission;
 import de.jplag.clustering.algorithm.GenericClusteringAlgorithm;
+import de.jplag.logging.ProgressBar;
+import de.jplag.logging.ProgressBarLogger;
+import de.jplag.logging.ProgressBarType;
 
 /**
  * Runs the clustering according to an options object.
@@ -30,6 +34,16 @@ public class ClusteringFactory {
 
     private static final Logger logger = LoggerFactory.getLogger(ClusteringFactory.class);
 
+    private ClusteringFactory() {
+        // private constructor for non-instantiability.
+    }
+
+    /**
+     * Performs clustering on the given comparisons using the specified options.
+     * @param comparisons the collection of comparisons to cluster.
+     * @param options the clustering configuration.
+     * @return a list containing the clustering result, or an empty list if clustering is disabled or input is empty.
+     */
     public static List<ClusteringResult<Submission>> getClusterings(Collection<JPlagComparison> comparisons, ClusteringOptions options) {
         if (comparisons.isEmpty()) {
             return Collections.emptyList();
@@ -38,9 +52,10 @@ public class ClusteringFactory {
         if (!options.enabled()) {
             logger.warn(CLUSTERING_DISABLED);
             return Collections.emptyList();
-        } else {
-            logger.info(CLUSTERING_PARAMETERS, options.algorithm(), options.preprocessor());
         }
+        logger.info(CLUSTERING_PARAMETERS, options.algorithm(), options.preprocessor());
+
+        ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.CLUSTERING, 0);
 
         // init algorithm
         GenericClusteringAlgorithm clusteringAlgorithm = options.algorithm().create(options);
@@ -61,6 +76,8 @@ public class ClusteringFactory {
 
         // remove bad clusters
         result = removeBadClusters(result);
+
+        progressBar.dispose();
         logClusters(result);
 
         return List.of(result);
@@ -73,8 +90,8 @@ public class ClusteringFactory {
 
     private static void logClusters(ClusteringResult<Submission> result) {
         var clusters = new ArrayList<>(result.getClusters());
-        clusters.sort((first, second) -> Double.compare(second.getAverageSimilarity(), first.getAverageSimilarity()));
-        logger.info(CLUSTERING_RESULT, clusters.size());
+        clusters.sort(Comparator.comparing(Cluster<Submission>::getAverageSimilarity).reversed());
+        logger.trace(CLUSTERING_RESULT, clusters.size());
         clusters.forEach(ClusteringFactory::logCluster);
     }
 
@@ -82,7 +99,7 @@ public class ClusteringFactory {
         String members = membersToString(cluster.getMembers());
         String similarity = String.format(SIMILARITY_FORMAT, cluster.getAverageSimilarity() * 100);
         String strength = String.format(STRENGTH_FORMAT, cluster.getCommunityStrength());
-        logger.info(CLUSTER_PATTERN, similarity, strength, cluster.getMembers().size(), members);
+        logger.trace(CLUSTER_PATTERN, similarity, strength, cluster.getMembers().size(), members);
     }
 
     private static String membersToString(Collection<Submission> members) {

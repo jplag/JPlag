@@ -61,8 +61,6 @@ public class GaussianProcess {
         return out;
     }
 
-    private static final double SQRT_5 = Math.sqrt(5);
-
     /**
      * Fit Gaussian Process using a matern kernel.
      * @param observedCoordinates TODO DOCUMENTATION MISSING
@@ -71,11 +69,15 @@ public class GaussianProcess {
      * @param normalize if Y should be normalized
      * @param lengthScale X values are divided by these values before calculating their euclidean distance. If all entries
      * are equal the kernel is isometric.
+     * @return a fitted GaussianProcess instance
+     * @throws IllegalArgumentException if inputs are invalid, such as empty coordinates, mismatched dimensions, or
+     * non-positive noise
      */
     public static GaussianProcess fit(List<RealVector> observedCoordinates, double[] observations, double noise, boolean normalize,
             double[] lengthScale) {
-        if (observedCoordinates.isEmpty())
+        if (observedCoordinates.isEmpty()) {
             throw new IllegalArgumentException("Observed coordinates are empty");
+        }
         if (observedCoordinates.size() != observations.length) {
             throw new IllegalArgumentException(MessageFormat.format("Observed coordinates and observations are of different dimensions {0} and {1}",
                     observedCoordinates.size(), observations.length));
@@ -116,7 +118,7 @@ public class GaussianProcess {
     }
 
     /**
-     * Matern kernel for nu=2.5 (we get a twice differentiable gp)
+     * Matern kernel for nu=2.5 (we get a twice differentiable gp).
      */
     private static RealMatrix maternKernel(List<RealVector> observedCoordinates, RealVector lengthScale) {
         RealMatrix k = new Array2DRowRealMatrix(observedCoordinates.size(), observedCoordinates.size());
@@ -142,12 +144,19 @@ public class GaussianProcess {
 
     private static double maternKernel(RealVector left, RealVector right, RealVector lengthScale) {
         double dist = left.ebeDivide(lengthScale).getDistance(right.ebeDivide(lengthScale));
-        dist *= SQRT_5;
+        dist *= Math.sqrt(5);
         return (1 + dist) * Math.exp(-dist);
     }
 
     /**
-     * ascii graph for debugging
+     * Generates a ASCII graph string representation of the Gaussian process prediction over a grid. The output visualizes
+     * the mean and standard deviation as characters in a 2D grid.
+     * @param min the minimum coordinate vector of the input range
+     * @param max the maximum coordinate vector of the input range
+     * @param width the width of the output grid
+     * @param height the height of the output grid
+     * @param minY the minimum Y value to consider for scaling the output
+     * @return a string representing the prediction plot with mean '+' and std deviation '-' marks
      */
     public String toString(RealVector min, RealVector max, int width, int height, double minY) {
         char[][] out = new char[height][width];
@@ -176,19 +185,22 @@ public class GaussianProcess {
         int[] mindCharPos = DoubleStream.of(mean).mapToInt(toCharPos).toArray();
 
         for (int i = 0; i < width; i++) {
-            if (upperCharPos[i] > 0 && upperCharPos[i] < height)
+            if (upperCharPos[i] > 0 && upperCharPos[i] < height) {
                 out[upperCharPos[i]][i] = '-';
-            if (lowerCharPos[i] > 0 && lowerCharPos[i] < height)
+            }
+            if (lowerCharPos[i] > 0 && lowerCharPos[i] < height) {
                 out[lowerCharPos[i]][i] = '-';
-            if (mindCharPos[i] > 0 && mindCharPos[i] < height)
+            }
+            if (mindCharPos[i] > 0 && mindCharPos[i] < height) {
                 out[mindCharPos[i]][i] = '+';
+            }
         }
 
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < height; i++) {
             stringBuilder.append(out[i]);
             if (i < 98) {
-                stringBuilder.append('\n');
+                stringBuilder.append(System.lineSeparator());
             }
         }
         return stringBuilder.toString();

@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.StringJoiner;
 
 import org.eclipse.emf.ecore.ENamedElement;
@@ -15,7 +14,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 
 import de.jplag.TokenTrace;
-import de.jplag.emf.MetamodelToken;
+import de.jplag.TokenType;
 
 /**
  * Very basic tree view representation of an EMF metamodel or model.
@@ -28,6 +27,7 @@ public class GenericEmfTreeView extends AbstractModelView {
     /**
      * Creates a tree view for a metamodel.
      * @param file is the path to the metamodel.
+     * @param modelResource is the EMF resource in which the model is loaded.
      */
     public GenericEmfTreeView(File file, Resource modelResource) {
         super(file);
@@ -38,20 +38,9 @@ public class GenericEmfTreeView extends AbstractModelView {
         modelResource.getContents().forEach(visitor::visit);
     }
 
-    /**
-     * Adds a token to the view, thus adding the index information to the token. Returns a new token enriched with the index
-     * metadata.
-     * @param token is the token to add.
-     */
     @Override
-    public MetamodelToken convertToMetadataEnrichedToken(MetamodelToken token) {
-        Optional<EObject> optionalEObject = token.getEObject();
-        if (optionalEObject.isPresent()) {
-            EObject object = optionalEObject.get();
-            TokenTrace trace = objectToLine.get(object);
-            return new MetamodelToken(token.getType(), token.getFile(), trace, optionalEObject);
-        }
-        return new MetamodelToken(token.getType(), token.getFile());
+    public TokenTrace getTokenTrace(EObject modelElement, TokenType tokenType) {
+        return objectToLine.get(modelElement);
     }
 
     private final class TreeViewBuilder extends AbstractMetamodelVisitor {
@@ -115,7 +104,7 @@ public class GenericEmfTreeView extends AbstractModelView {
                     name = valueListToString(multipleValues);
                 } else {
                     name = value.toString();
-                    name = (name.length() > ABBREVIATION_LIMIT) ? name.substring(0, ABBREVIATION_LIMIT) + ABBREVIATION_SUFFIX : name;
+                    name = name.length() > ABBREVIATION_LIMIT ? name.substring(0, ABBREVIATION_LIMIT) + ABBREVIATION_SUFFIX : name;
                     name = TEXT_AFFIX + name + TEXT_AFFIX;
                 }
             }

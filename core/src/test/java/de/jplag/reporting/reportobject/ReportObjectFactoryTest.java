@@ -28,17 +28,17 @@ class ReportObjectFactoryTest extends TestBase {
     @Test
     void testCreateAndSaveReportWithBasecode() throws ExitException, IOException {
         JPlagResult result = runJPlag(BASECODE, it -> it.withBaseCodeSubmissionDirectory(new File(BASE_PATH, BASECODE_BASE)));
-        File testZip = File.createTempFile("result", ".zip");
+        File testResult = File.createTempFile("result", ".jplag");
 
-        ReportObjectFactory reportObjectFactory = new ReportObjectFactory(testZip);
+        ReportObjectFactory reportObjectFactory = new ReportObjectFactory(testResult);
         reportObjectFactory.createAndSaveReport(result);
 
         assertNotNull(result);
-        assertTrue(isArchive(testZip));
+        assertTrue(isArchive(testResult));
     }
 
     /**
-     * Checks if the given file is a valid archive
+     * Checks if the given file is a valid archive.
      * @param file The file to check
      * @return True, if file is an archive
      */

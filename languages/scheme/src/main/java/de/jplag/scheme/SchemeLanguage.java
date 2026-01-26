@@ -4,34 +4,31 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import org.kohsuke.MetaInfServices;
-
+import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
-@MetaInfServices(de.jplag.Language.class)
-public class SchemeLanguage implements de.jplag.Language {
+import com.google.auto.service.AutoService;
 
-    private static final String IDENTIFIER = "scheme";
-    private final de.jplag.scheme.Parser parser;
-
-    public SchemeLanguage() {
-        parser = new Parser();
-    }
+/**
+ * Scheme language module facade.
+ */
+@AutoService(Language.class)
+public class SchemeLanguage implements Language {
 
     @Override
-    public String[] suffixes() {
-        return new String[] {".scm", ".SCM", ".ss", ".SS"};
+    public List<String> fileExtensions() {
+        return List.of(".scm", ".ss");
     }
 
     @Override
     public String getName() {
-        return "SchemeR4RS Parser [basic markup]";
+        return "Scheme";
     }
 
     @Override
     public String getIdentifier() {
-        return IDENTIFIER;
+        return "scheme";
     }
 
     @Override
@@ -41,6 +38,6 @@ public class SchemeLanguage implements de.jplag.Language {
 
     @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return this.parser.parse(files);
+        return new Parser().parse(files);
     }
 }

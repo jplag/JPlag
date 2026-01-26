@@ -5,15 +5,15 @@ package de.jplag.logging;
  */
 public interface ProgressBar {
     /**
-     * Advances the progress bar by a single step
+     * Advances the progress bar by a single step.
      */
     default void step() {
         step(1);
     }
 
     /**
-     * Advances the progress bar by amount steps
-     * @param number The number of steps
+     * Advances the progress bar by amount steps.
+     * @param number The number of steps.
      */
     void step(int number);
 

@@ -12,7 +12,8 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD, ElementType.METHOD})
 public @interface CsvValue {
     /**
-     * The index of the csv field. Has to be used as the compiler sometimes changes the order of fields/methods
+     * The index of the csv field. Has to be used as the compiler sometimes changes the order of fields/methods.
+     * @return the index.
      */
     int value();
 }

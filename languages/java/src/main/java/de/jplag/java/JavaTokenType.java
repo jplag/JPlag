@@ -2,6 +2,9 @@ package de.jplag.java;
 
 import de.jplag.TokenType;
 
+/**
+ * Token types used for tokenizing Java code.
+ */
 public enum JavaTokenType implements TokenType {
     J_PACKAGE("PACKAGE"), // check
     J_IMPORT("IMPORT"), // check

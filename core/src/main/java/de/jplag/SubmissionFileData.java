@@ -3,11 +3,11 @@ package de.jplag;
 import java.io.File;
 
 /**
- * Contains the information about a single file in a submission. For single file submissions the submission file is the
- * same as the root.
- * @param submissionFile The file, that is part of a submission
- * @param root The root of the submission
- * @param isNew Indicates weather this follows the new or the old syntax
+ * Captures file information for a specific submission.
+ * @param submissionFile the entry file of the submission, which can be either a directory or a program file.
+ * @param rootDirectory the root directory in which the submission file resides.
+ * @param isNew indicates whether this submission is marked as new or old. Old submissions are only compared to new
+ * ones, not to each other.
  */
-public record SubmissionFileData(File submissionFile, File root, boolean isNew) {
+public record SubmissionFileData(File submissionFile, File rootDirectory, boolean isNew) {
 }

@@ -8,24 +8,25 @@ import java.util.List;
 import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
+import de.jplag.testutils.TemporaryFileHolder;
 import de.jplag.util.FileUtils;
 
 /**
- * Provides test source from a string
+ * Provides test source from a string.
  */
 class InlineTestData implements TestData {
     private final String testData;
 
-    public InlineTestData(String testData) {
+    InlineTestData(String testData) {
         this.testData = testData;
     }
 
     @Override
     public List<Token> parseTokens(Language language) throws ParsingException, IOException {
-        File file = File.createTempFile("testSource", language.suffixes()[0]);
+        File file = File.createTempFile("testSource", language.fileExtensions().getFirst());
         FileUtils.write(file, this.testData);
-        List<Token> tokens = language.parse(Collections.singleton(file));
-        file.delete();
+        List<Token> tokens = language.parse(Collections.singleton(file), false);
+        TemporaryFileHolder.addTemporaryFile(file);
         return tokens;
     }
 

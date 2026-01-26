@@ -1,30 +1,36 @@
 package de.jplag.javascript;
 
-import org.kohsuke.MetaInfServices;
+import java.util.List;
 
+import de.jplag.Language;
 import de.jplag.typescript.TypeScriptLanguage;
 
-/**
- * Represents the JavaScript Language as a variance of TypeScript
- */
-@MetaInfServices(de.jplag.Language.class)
-public class JavaScriptLanguage extends TypeScriptLanguage {
+import com.google.auto.service.AutoService;
 
-    private static final String IDENTIFIER = "javascript";
-    private static final String NAME = "JavaScript";
+/**
+ * Represents the JavaScript Language as a variance of TypeScript. Delegates all responsibility to the TypeScript
+ * language.
+ */
+@AutoService(Language.class)
+public class JavaScriptLanguage extends TypeScriptLanguage {
 
     @Override
     public String getIdentifier() {
-        return IDENTIFIER;
+        return "javascript";
     }
 
     @Override
-    public String[] suffixes() {
-        return new String[] {".js"};
+    public List<String> fileExtensions() {
+        return List.of(".js");
     }
 
     @Override
     public String getName() {
-        return NAME;
+        return "JavaScript";
+    }
+
+    @Override
+    public boolean hasPriority() {
+        return false; // Since this module extends Typescript, it has no priority.
     }
 }

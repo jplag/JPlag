@@ -7,6 +7,7 @@
         <version>${revision}</version>
     </parent>
     <artifactId>cli</artifactId>
+    <name>JPlag: Command Line Interface</name>
 
     <dependencies>
         <!-- IMPORTANT: For Coverage testing, you have to add dependencies to the coverage-report project ! -->
@@ -14,24 +15,20 @@
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>jplag</artifactId>
-            <version>${revision}</version>
         </dependency>
 
         <!-- Languages -->
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>language-api</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>text</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>java</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
@@ -41,104 +38,90 @@
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>python-3</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>csharp</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>c</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>cpp</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>golang</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>kotlin</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>rlang</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>rust</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>scala</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>scheme</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>scxml</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>swift</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>emf-metamodel</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>emf-model</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>typescript</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>javascript</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>llvmir</artifactId>
-            <version>${revision}</version>
         </dependency>
-        <!-- CLI -->
         <dependency>
-            <groupId>org.kohsuke.metainf-services</groupId>
-            <artifactId>metainf-services</artifactId>
+            <groupId>de.jplag</groupId>
+            <artifactId>multi-language</artifactId>
         </dependency>
 
+        <!-- CLI -->
         <dependency>
             <groupId>info.picocli</groupId>
             <artifactId>picocli</artifactId>
-            <version>4.7.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.auto.service</groupId>
+            <artifactId>auto-service</artifactId>
         </dependency>
 
         <dependency>
             <groupId>me.tongfei</groupId>
             <artifactId>progressbar</artifactId>
-            <version>0.10.0</version>
         </dependency>
     </dependencies>
     <build>
@@ -181,14 +164,22 @@
                 <resources>
                     <resource>
                         <targetPath>report-viewer</targetPath>
-                        <directory>../report-viewer/dist</directory>
+                        <directory>../report-viewer/report-viewer/dist</directory>
+                    </resource>
+                    <!-- Even though it is already in the resources folder, it needs to be explicitly included to be part of the jar -->
+                    <resource>
+                        <targetPath>v5</targetPath>
+                        <directory>src/main/resources/v5</directory>
+                    </resource>
+                    <resource>
+                        <targetPath>v6_1</targetPath>
+                        <directory>src/main/resources/v6_1</directory>
                     </resource>
                 </resources>
                 <plugins>
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
-                        <version>3.2.0</version>
                         <executions>
                             <execution>
                                 <id>npm install</id>
@@ -212,7 +203,7 @@
                                 <phase>generate-resources</phase>
                                 <configuration>
                                     <executable>npm</executable>
-                                    <workingDirectory>../report-viewer</workingDirectory>
+                                    <workingDirectory>../report-viewer/report-viewer</workingDirectory>
                                     <arguments>
                                         <argument>run</argument>
                                         <argument>build</argument>

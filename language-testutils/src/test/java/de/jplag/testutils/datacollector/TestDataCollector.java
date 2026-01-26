@@ -1,30 +1,36 @@
 package de.jplag.testutils.datacollector;
 
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import de.jplag.TokenType;
 
 /**
- * Collects data for tests. Used by {@link de.jplag.testutils.LanguageModuleTest}s
+ * Collects data for tests. Used by {@link de.jplag.testutils.LanguageModuleTest}s.
  */
 public class TestDataCollector {
     private final List<TestData> sourceCoverageData;
     private final List<TestData> tokenCoverageData;
     private final List<TokenListTest> containedTokenData;
     private final List<TokenListTest> tokenSequenceTest;
+    private final List<TokenPositionTestData> tokenPositionTestData;
 
     private final List<TestData> allTestData;
 
     private final File testFileLocation;
 
     /**
-     * Creates a new collector. Should only be called by {@link de.jplag.testutils.LanguageModuleTest}
+     * Creates a new collector. Should only be called by {@link de.jplag.testutils.LanguageModuleTest}.
      * @param testFileLocation The location containing the test source files.
      */
     public TestDataCollector(File testFileLocation) {
@@ -34,6 +40,7 @@ public class TestDataCollector {
         this.tokenCoverageData = new ArrayList<>();
         this.containedTokenData = new ArrayList<>();
         this.tokenSequenceTest = new ArrayList<>();
+        this.tokenPositionTestData = new ArrayList<>();
 
         this.allTestData = new ArrayList<>();
     }
@@ -53,11 +60,11 @@ public class TestDataCollector {
     /**
      * Adds all files matching a certain type. Returns a {@link TestDataContext}, that can be used to configure various
      * tests on the given files.
-     * @param fileSuffix is the suffix of the files to be added.
+     * @param fileExtension is the extension of the files to be added.
      * @return The {@link TestDataContext}
      */
-    public TestDataContext testAllOfType(String fileSuffix) {
-        Set<TestData> data = Arrays.stream(testFileLocation.list()).filter(it -> it.endsWith(fileSuffix))
+    public TestDataContext testAllOfType(String fileExtension) {
+        Set<TestData> data = Arrays.stream(testFileLocation.list()).filter(it -> it.endsWith(fileExtension))
                 .map(it -> new File(this.testFileLocation, it)).map(FileTestData::new).collect(Collectors.toSet());
         return new TestDataContext(data);
     }
@@ -71,6 +78,29 @@ public class TestDataCollector {
     public TestDataContext inlineSource(String... sources) {
         Set<TestData> data = Arrays.stream(sources).map(InlineTestData::new).collect(Collectors.toSet());
         return new TestDataContext(data);
+    }
+
+    /**
+     * Adds all files from the given directory for token position tests. The sources can still be used for other tests,
+     * using the returned {@link TestDataContext}.
+     * @param directoryName The name of the directory containing the token position tests.
+     * @return The context containing the added sources
+     * @throws RuntimeException If the files cannot be read
+     */
+    public TestDataContext addTokenPositionTests(String directoryName) {
+        File directory = new File(this.testFileLocation, directoryName);
+        assumeTrue(directory.exists() && directory.isDirectory());
+        Set<TestData> allTestsInDirectory = new HashSet<>();
+        for (File file : Objects.requireNonNull(directory.listFiles())) {
+            try {
+                TokenPositionTestData data = new TokenPositionTestData(file);
+                allTestsInDirectory.add(data);
+                this.tokenPositionTestData.add(data);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return new TestDataContext(allTestsInDirectory);
     }
 
     /**
@@ -102,6 +132,13 @@ public class TestDataCollector {
     }
 
     /**
+     * @return The test data that should be checked for token positions.
+     */
+    public List<TokenPositionTestData> getTokenPositionTestData() {
+        return Collections.unmodifiableList(this.tokenPositionTestData);
+    }
+
+    /**
      * @return The list of all test data
      */
     public List<TestData> getAllTestData() {
@@ -109,7 +146,7 @@ public class TestDataCollector {
     }
 
     /**
-     * Data for tests, that also require a list of tokens
+     * Data for tests, that also require a list of tokens.
      * @param tokens The list of tokens
      * @param data The test data
      */
@@ -122,9 +159,9 @@ public class TestDataCollector {
     }
 
     /**
-     * A builder used to configure tests for a set of data
+     * A builder used to configure tests for a set of data.
      */
-    public class TestDataContext {
+    public final class TestDataContext {
         private final Set<TestData> testData;
 
         private TestDataContext(Set<TestData> testData) {
@@ -133,7 +170,7 @@ public class TestDataCollector {
         }
 
         /**
-         * Test the data set for source coverage
+         * Test the data set for source coverage.
          * @return self reference
          */
         public TestDataContext testSourceCoverage() {
@@ -142,7 +179,7 @@ public class TestDataCollector {
         }
 
         /**
-         * Test the data set for token coverage
+         * Test the data set for token coverage.
          * @return self reference
          */
         public TestDataContext testTokenCoverage() {

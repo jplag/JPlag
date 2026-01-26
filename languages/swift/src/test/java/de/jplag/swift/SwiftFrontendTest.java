@@ -53,7 +53,7 @@ class SwiftFrontendTest {
     private static final String DELIMITED_COMMENT_END = ".*\\*/\\s*$";
 
     private final Logger logger = LoggerFactory.getLogger(SwiftFrontendTest.class);
-    private final String[] testFiles = new String[] {COMPLETE_TEST_FILE};
+    private final String[] testFiles = {COMPLETE_TEST_FILE};
     private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "swift").toFile();
     private SwiftLanguage language;
 
@@ -65,12 +65,12 @@ class SwiftFrontendTest {
     @Test
     void parseTestFiles() throws ParsingException {
         for (String fileName : testFiles) {
-            List<Token> tokens = language.parse(Set.of(new File(testFileLocation, fileName)));
+            List<Token> tokens = language.parse(Set.of(new File(testFileLocation, fileName)), false);
             String output = TokenPrinter.printTokens(tokens, testFileLocation, Optional.empty());
             logger.info(output);
 
             testSourceCoverage(fileName, tokens);
-            if (fileName.equals(COMPLETE_TEST_FILE)) {
+            if (COMPLETE_TEST_FILE.equals(fileName)) {
                 testTokenCoverage(tokens, fileName);
             }
 
@@ -91,7 +91,7 @@ class SwiftFrontendTest {
             // All lines that contain code
             var codeLines = getCodeLines(lines);
             // All lines that contain token
-            var tokenLines = tokens.stream().mapToInt(Token::getLine).filter(line -> line != Token.NO_VALUE).distinct().toArray();
+            var tokenLines = tokens.stream().mapToInt(Token::getStartLine).filter(line -> line != Token.NO_VALUE).distinct().toArray();
 
             if (codeLines.length > tokenLines.length) {
                 var diffLine = IntStream.range(0, codeLines.length)
@@ -121,10 +121,12 @@ class SwiftFrontendTest {
             String line = lines.get(idx - 1);
             if (line.matches(EMPTY_OR_SINGLE_LINE_COMMENT) || line.contains(NO_TOKEN_ANNOTATION)) {
                 return false;
-            } else if (line.matches(DELIMITED_COMMENT_START)) {
+            }
+            if (line.matches(DELIMITED_COMMENT_START)) {
                 state.insideComment = true;
                 return false;
-            } else if (state.insideComment) {
+            }
+            if (state.insideComment) {
                 // This fails if code follows after '*/'. If the code is formatted well, this should not happen.
                 if (line.matches(DELIMITED_COMMENT_END)) {
                     state.insideComment = false;

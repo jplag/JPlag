@@ -147,10 +147,10 @@ public class VariableRegistry {
         }
         Variable variable = isClassVariable ? getClassVariable(variableName) : getVariable(variableName);
         if (variable != null) {
-            if (nextVariableAccessType.isRead) {
+            if (nextVariableAccessType.isRead()) {
                 semantics.addRead(variable);
             }
-            if (nextVariableAccessType.isWrite || (mutableWrite && variable.isMutable())) {
+            if (nextVariableAccessType.isWrite() || mutableWrite && variable.isMutable()) {
                 semantics.addWrite(variable);
             }
         }  // track global variables here through else

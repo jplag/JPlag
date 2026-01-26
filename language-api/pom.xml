@@ -8,17 +8,20 @@
         <version>${revision}</version>
     </parent>
     <artifactId>language-api</artifactId>
-    <name>JPlag Language API</name>
+    <name>JPlag: API for Language Modules</name>
     <description>Language API for JPlag language modules</description>
     <dependencies>
         <dependency>
-            <groupId>org.kohsuke.metainf-services</groupId>
-            <artifactId>metainf-services</artifactId>
+            <groupId>com.google.auto.service</groupId>
+            <artifactId>auto-service</artifactId>
         </dependency>
         <dependency>
             <groupId>com.ibm.icu</groupId>
             <artifactId>icu4j-charset</artifactId>
-            <version>74.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kohsuke.metainf-services</groupId>
+            <artifactId>metainf-services</artifactId>
         </dependency>
     </dependencies>
 </project>

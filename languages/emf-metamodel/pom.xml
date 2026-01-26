@@ -7,27 +7,28 @@
         <version>${revision}</version>
     </parent>
     <artifactId>emf-metamodel</artifactId>
+    <name>JPlag: EMF Metamodel Language Module</name>
 
     <dependencies>
         <dependency>
             <groupId>org.eclipse.emfatic</groupId>
             <artifactId>org.eclipse.emfatic.core</artifactId>
-            <version>${emfatic.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.platform</groupId>
+            <artifactId>org.eclipse.core.resources</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.emf</groupId>
             <artifactId>org.eclipse.emf.ecore</artifactId>
-            <version>${emf.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.emf</groupId>
             <artifactId>org.eclipse.emf.common</artifactId>
-            <version>${emf.ecore.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.emf</groupId>
             <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
-            <version>${emf.ecore.xmi.version}</version>
         </dependency>
     </dependencies>
 </project>

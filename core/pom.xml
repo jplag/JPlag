@@ -9,12 +9,12 @@
         <version>${revision}</version>
     </parent>
     <artifactId>jplag</artifactId>
+    <name>JPlag: Core</name>
 
     <dependencies>
         <dependency>
             <groupId>org.jgrapht</groupId>
             <artifactId>jgrapht-core</artifactId>
-            <version>1.5.2</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -23,18 +23,21 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
-            <version>3.6.1</version>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>language-api</artifactId>
-            <version>${revision}</version>
         </dependency>
+        <dependency>
+            <groupId>io.soabase.record-builder</groupId>
+            <artifactId>record-builder-processor</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- the core project only requires one language module for testing: -->
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>java</artifactId>
-            <version>${revision}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

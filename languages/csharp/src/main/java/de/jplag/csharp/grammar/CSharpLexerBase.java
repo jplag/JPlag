@@ -73,7 +73,7 @@ abstract class CSharpLexerBase extends Lexer {
     protected void onDoubleQuoteInside() {
         interpolatedStringLevel--;
         interpolatedVerbatiums.pop();
-        verbatium = (interpolatedVerbatiums.size() > 0 ? interpolatedVerbatiums.peek() : false);
+        verbatium = interpolatedVerbatiums.size() > 0 ? interpolatedVerbatiums.peek() : false;
     }
 
     protected void onCloseBraceInside() {

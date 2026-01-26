@@ -42,7 +42,7 @@ public class Cluster<T> {
     }
 
     /**
-     * See {@link ClusteringResult#getCommunityStrength}
+     * See {@link ClusteringResult#getCommunityStrength}.
      * @return community strength of the cluster
      */
     public double getCommunityStrength() {
@@ -63,8 +63,9 @@ public class Cluster<T> {
      */
     public double getCommunityStrengthPerConnection() {
         int size = members.size();
-        if (size < 2)
+        if (size < 2) {
             return 0;
+        }
         return getCommunityStrength() / connections();
     }
 
@@ -79,13 +80,16 @@ public class Cluster<T> {
         double posCommunityStrengthSum = goodClusters.stream().mapToDouble(Cluster::getCommunityStrengthPerConnection).sum();
 
         int size = clusteringResult.getClusters().size();
-        if (size < 2)
+        if (size < 2) {
             return getCommunityStrengthPerConnection();
+        }
         return getCommunityStrengthPerConnection() / posCommunityStrengthSum;
     }
 
     /**
-     * How much this cluster is worth during optimization.
+     * Calculates the worth of this cluster based on community strength and average similarity.
+     * @param similarity function to compute similarity between two members
+     * @return the computed worth score
      */
     public double getWorth(BiFunction<T, T, Double> similarity) {
         double communityStrength = getCommunityStrength();
@@ -117,7 +121,7 @@ public class Cluster<T> {
 
     private int connections() {
         int size = members.size();
-        return ((size - 1) * size) / 2;
+        return (size - 1) * size / 2;
     }
 
     /**

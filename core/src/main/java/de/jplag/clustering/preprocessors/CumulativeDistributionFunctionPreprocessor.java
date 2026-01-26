@@ -11,7 +11,7 @@ import de.jplag.clustering.PreprocessorHelper;
 
 /**
  * Multiplies entries of the similarity matrix by their cumulative probability. - Weights that are very low will be
- * (close to) zero - Weights that are very high will be (close to) unchanged
+ * (close to) zero - Weights that are very high will be (close to) unchanged.
  */
 public class CumulativeDistributionFunctionPreprocessor implements ClusteringPreprocessor {
 
@@ -20,7 +20,7 @@ public class CumulativeDistributionFunctionPreprocessor implements ClusteringPre
     @Override
     public double[][] preprocessSimilarities(double[][] similarityMatrix) {
         RealMatrix similarity = new Array2DRowRealMatrix(similarityMatrix, true);
-        int connections = (similarity.getColumnDimension() * (similarity.getColumnDimension() - 1)) / 2;
+        int connections = similarity.getColumnDimension() * (similarity.getColumnDimension() - 1) / 2;
         EmpiricalDistribution dist = new EmpiricalDistribution(Math.max(100, connections / 100));
         double[] allWeights = new double[connections];
         similarity.walkInOptimizedOrder(new DefaultRealMatrixPreservingVisitor() {

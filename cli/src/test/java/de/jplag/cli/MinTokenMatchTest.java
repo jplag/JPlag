@@ -3,41 +3,53 @@ package de.jplag.cli;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.io.IOException;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class MinTokenMatchTest extends CommandLineInterfaceTest {
+import de.jplag.cli.test.CliArgument;
+import de.jplag.cli.test.CliTest;
+import de.jplag.exceptions.ExitException;
+import de.jplag.options.JPlagOptions;
+
+class MinTokenMatchTest extends CliTest {
 
     @Test
-    void testLanguageDefault() throws CliException {
+    void testLanguageDefault() throws ExitException, IOException {
         // Language defaults not set yet:
-        buildOptionsFromCLI(defaultArguments());
+        JPlagOptions options = runCliForOptions();
+
         assertNotNull(options.language());
         assertEquals(options.language().minimumTokenMatch(), options.minimumTokenMatch().intValue());
     }
 
     @Test
     void testInvalidInput() {
-        Assertions.assertThrowsExactly(CliException.class, () -> buildOptionsFromCLI(defaultArguments().minTokens("Not an integer...")));
+        Assertions.assertThrowsExactly(CliException.class, () -> {
+            runCli(options -> options.withInvalid(CliArgument.MIN_TOKEN_MATCH, "Not an integer..."));
+        });
     }
 
     @Test
     void testUpperBound() {
-        String higherThanMax = String.valueOf(((long) Integer.MAX_VALUE) + 1);
+        String higherThanMax = String.valueOf((long) Integer.MAX_VALUE + 1);
 
-        Assertions.assertThrowsExactly(CliException.class, () -> buildOptionsFromCLI(defaultArguments().minTokens(higherThanMax)));
+        Assertions.assertThrowsExactly(CliException.class, () -> {
+            runCli(options -> options.withInvalid(CliArgument.MIN_TOKEN_MATCH, higherThanMax));
+        });
     }
 
     @Test
-    void testLowerBound() throws CliException {
-        buildOptionsFromCLI(defaultArguments().minTokens(-1));
+    void testLowerBound() throws ExitException, IOException {
+        JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.MIN_TOKEN_MATCH, -1));
         assertEquals(1, options.minimumTokenMatch().intValue());
     }
 
     @Test
-    void testValidThreshold() throws CliException {
+    void testValidThreshold() throws ExitException, IOException {
         int expectedValue = 50;
-        buildOptionsFromCLI(defaultArguments().minTokens(expectedValue));
+        JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.MIN_TOKEN_MATCH, expectedValue));
         assertEquals(expectedValue, options.minimumTokenMatch().intValue());
     }
 }

@@ -7,12 +7,12 @@
         <version>${revision}</version>
     </parent>
     <artifactId>scxml</artifactId>
+    <name>JPlag: SCXML Language Module</name>
 
     <dependencies>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.25.3</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

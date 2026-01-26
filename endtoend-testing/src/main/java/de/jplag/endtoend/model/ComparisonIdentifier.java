@@ -7,7 +7,7 @@ import java.util.Scanner;
 import java.util.Set;
 
 /**
- * Identifier for a comparison. The order of the names does not matter
+ * Identifier for a comparison. The order of the names does not matter.
  * @param firstName The first name
  * @param secondName The second name
  */
@@ -20,8 +20,8 @@ public record ComparisonIdentifier(String firstName, String secondName) {
             return false;
         }
 
-        return (firstName.equals(other.firstName) && secondName.equals(other.secondName))
-                || (secondName.equals(other.firstName) && firstName.equals(other.secondName));
+        return firstName.equals(other.firstName) && secondName.equals(other.secondName)
+                || secondName.equals(other.firstName) && firstName.equals(other.secondName);
     }
 
     @Override

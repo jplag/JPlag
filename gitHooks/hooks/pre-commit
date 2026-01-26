@@ -1,0 +1,42 @@
+#!/bin/bash
+
+echo "Running pre commit checks"
+
+hasJavaFiles=0
+hasJsFiles=0
+
+files=`git diff --name-only --cached`
+while read name
+do
+  if [[ $name == report-viewer* ]]
+  then
+    hasJsFiles=1
+  fi
+
+  if [[ $name == *.java ]]
+  then
+    hasJavaFiles=1
+  fi
+done <<< "$files"
+
+if [[ $hasJsFiles -gt 0 ]]
+then
+  echo "Running report viewer pre commit checks"
+  cd report-viewer
+  ../gitHooks/scripts/reportViewerPreCommit
+  if [ $? -gt 0 ]
+  then
+    exit 1
+  fi
+  cd ..
+fi
+
+if [[ $hasJavaFiles -gt 0 ]]
+then
+  echo "Running java pre commit checks"
+  gitHooks/scripts/javaPreCommit
+  if [ $? -gt 0 ]
+  then
+    exit 1
+  fi
+fi

@@ -8,13 +8,16 @@ import java.util.List;
  * Container for a languages options. Should be implemented per language.
  */
 public abstract class LanguageOptions {
+    /**
+     * Empty options, default for languages without any options.
+     */
     public static final LanguageOptions EMPTY_OPTIONS = new LanguageOptions() {
     };
 
     private final List<LanguageOption<?>> options;
 
     /**
-     * New instance
+     * Creates empty options container.
      */
     protected LanguageOptions() {
         this.options = new ArrayList<>();
@@ -48,7 +51,7 @@ public abstract class LanguageOptions {
     }
 
     /**
-     * Creates a new option
+     * Creates a new option.
      * @param type The type
      * @param name The name
      * @param description The description
@@ -62,7 +65,7 @@ public abstract class LanguageOptions {
     }
 
     /**
-     * Creates a new option with empty description
+     * Creates a new option with empty description.
      * @param type The type
      * @param name The name
      * @param <T> The java type
@@ -73,7 +76,7 @@ public abstract class LanguageOptions {
     }
 
     /**
-     * @return The list of all options
+     * @return The list of all options.
      */
     public List<LanguageOption<?>> getOptionsAsList() {
         return Collections.unmodifiableList(this.options);

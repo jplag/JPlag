@@ -11,17 +11,27 @@ import java.util.Optional;
 import org.apache.commons.math3.util.Pair;
 
 /**
- * Mapped data automatically based on the exposed fields and methods.
+ * Maps data automatically based on the exposed fields and methods.
  * @param <T> The mapped type. Mark included methods and fields with @{@link CsvValue}
  */
 public class ReflectiveCsvDataMapper<T> implements CsvDataMapper<T> {
     private final List<Pair<Integer, GetterFunction<T>>> values;
-    private String[] titles;
+    private final String[] titles;
 
     /**
      * @param type The mapped type.
      */
     public ReflectiveCsvDataMapper(Class<T> type) {
+        this(type, null);
+    }
+
+    /**
+     * @param type is the mapped type.
+     * @param titles are the titles for the csv. Must be as many as @{@link CsvValue} annotation in the given type.
+     * @throws IllegalArgumentException if the csv data is invalid.
+     * @throws IllegalStateException if the data can not be mapped.
+     */
+    public ReflectiveCsvDataMapper(Class<T> type, String[] titles) {
         this.values = new ArrayList<>();
 
         for (Field field : type.getFields()) {
@@ -46,17 +56,8 @@ public class ReflectiveCsvDataMapper<T> implements CsvDataMapper<T> {
         }
 
         this.values.sort(Comparator.comparing(Pair::getKey));
-        this.titles = null;
-    }
 
-    /**
-     * @param type The mapped type
-     * @param titles The titles for the csv. Must be as many as @{@link CsvValue} annotation in the given type.
-     */
-    public ReflectiveCsvDataMapper(Class<T> type, String[] titles) {
-        this(type);
-
-        if (this.values.size() != titles.length) {
+        if (titles != null && this.values.size() != titles.length) {
             throw new IllegalArgumentException("Csv data must have the same number of tiles and values per row.");
         }
 

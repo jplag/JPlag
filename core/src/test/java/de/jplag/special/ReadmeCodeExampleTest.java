@@ -26,6 +26,7 @@ class ReadmeCodeExampleTest {
      * with the code example in `Readme.md`.
      */
     @Test
+    @SuppressWarnings("java:S2699")
     void testReadmeCodeExample() {
         Language language = new JavaLanguage();
         Set<File> submissionDirectories = Set.of(new File("/path/to/rootDir"));

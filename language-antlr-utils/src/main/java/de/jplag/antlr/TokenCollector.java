@@ -40,27 +40,31 @@ public class TokenCollector {
     }
 
     <T> void addToken(TokenType jplagType, Function<T, CodeSemantics> semanticsSupplier, T entity,
-            Function<T, org.antlr.v4.runtime.Token> extractToken, VariableRegistry variableRegistry) {
+            Function<T, org.antlr.v4.runtime.Token> extractStartToken, Function<T, org.antlr.v4.runtime.Token> extractEndToken,
+            VariableRegistry variableRegistry) {
         if (jplagType == null) {
             return;
         }
-        org.antlr.v4.runtime.Token antlrToken = extractToken.apply(entity);
-        int line = antlrToken.getLine();
-        int column = antlrToken.getCharPositionInLine() + 1;
-        int length = antlrToken.getText().length();
+        org.antlr.v4.runtime.Token antlrToken = extractStartToken.apply(entity);
+        org.antlr.v4.runtime.Token antlrEndToken = extractEndToken.apply(entity);
+        int startLine = antlrToken.getLine();
+        int startColumn = antlrToken.getCharPositionInLine() + 1;
+        int endLine = antlrEndToken.getLine();
+        int endColumn = antlrEndToken.getCharPositionInLine() + 1;
+        int length = antlrEndToken.getStopIndex() - antlrToken.getStartIndex() + 1;
         Token token;
         if (extractsSemantics) {
             if (semanticsSupplier == null) {
                 throw new IllegalStateException(String.format("Expected semantics bud did not receive any for token %s", jplagType.getDescription()));
             }
             CodeSemantics semantics = semanticsSupplier.apply(entity);
-            token = new Token(jplagType, this.file, line, column, length, semantics);
+            token = new Token(jplagType, this.file, startLine, startColumn, endLine, endColumn, length, semantics);
             variableRegistry.updateSemantics(semantics);
         } else {
             if (semanticsSupplier != null) {
                 logger.warn("Received semantics for token {} despite not expecting any", jplagType.getDescription());
             }
-            token = new Token(jplagType, this.file, line, column, length);
+            token = new Token(jplagType, this.file, startLine, startColumn, endLine, endColumn, length);
         }
         addToken(token);
     }

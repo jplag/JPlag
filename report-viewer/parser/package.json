@@ -1,0 +1,14 @@
+{
+  "name": "@jplag/parser",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "dependencies": {
+    "@jplag/model": "../model",
+    "jszip": "^3.10.1",
+    "slash": "^5.1.0"
+  },
+  "scripts": {
+    "test": "vitest"
+  }
+}

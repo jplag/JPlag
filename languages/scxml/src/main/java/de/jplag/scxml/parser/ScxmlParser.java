@@ -99,7 +99,7 @@ public class ScxmlParser {
         assert id != null : "state element must have id attribute";
 
         boolean initial = initialStateTargets.contains(id) || NodeUtil.getAttribute(node, INITIAL_ATTRIBUTE) != null;
-        boolean parallel = node.getNodeName().equals(PARALLEL_STATE_ELEMENT);
+        boolean parallel = PARALLEL_STATE_ELEMENT.equals(node.getNodeName());
 
         Node child = NodeUtil.getFirstChild(node, INITIAL_ELEMENT);
         assert !(parallel && child != null) : "parallel state " + id + " must not have initial element";
@@ -114,7 +114,7 @@ public class ScxmlParser {
         if (node == null) {
             return null;
         }
-        Action.Type type = node.getNodeName().equals(ONENTRY_ELEMENT) ? Action.Type.ON_ENTRY : Action.Type.ON_EXIT;
+        Action.Type type = ONENTRY_ELEMENT.equals(node.getNodeName()) ? Action.Type.ON_ENTRY : Action.Type.ON_EXIT;
         return new Action(type, visitExecutableContents(node));
     }
 

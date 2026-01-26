@@ -14,7 +14,7 @@ public class DefaultTokenEquivalenceModel implements TokenEquivalenceModel {
     }
 
     @Override
-    public boolean arePrimaryEquivalent(int leftValue, int rightValue, ConcurrentMap<TokenType, Integer> tokenTypedValues) {
+    public boolean arePrimaryEquivalent(int leftValue, int rightValue) {
         return leftValue == rightValue;
     }
 }

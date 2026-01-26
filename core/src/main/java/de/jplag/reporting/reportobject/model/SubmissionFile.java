@@ -1,6 +1,8 @@
 package de.jplag.reporting.reportobject.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-public record SubmissionFile(@JsonProperty("token_count") int tokenCount) {
+/**
+ * Represents metadata about a submission file used in a plagiarism comparison.
+ * @param tokenCount The number of tokens contained in the file. of tokenized elements.
+ */
+public record SubmissionFile(int tokenCount) {
 }

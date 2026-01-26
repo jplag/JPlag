@@ -1,0 +1,37 @@
+name: Bug Report
+description: Report a bug or unexpected behavior
+labels: ["bug"]
+assignees: []
+
+body:
+  - type: textarea
+    id: bug_description
+    attributes:
+      label: Bug Description
+      placeholder: Describe the issue in detail, including where it occurs (CLI, API, etc.)...
+    validations:
+      required: true
+
+  - type: input
+    id: jplag_version
+    attributes:
+      label: JPlag Version
+      placeholder: E.g., 6.1.0, custom version, or fork of...
+    validations:
+      required: true
+
+  - type: input
+    id: environment_os
+    attributes:
+      label: Operating System
+      placeholder: E.g., Windows 11, macOS 13.4, Ubuntu 22.04,...
+    validations:
+      required: false
+
+  - type: input
+    id: environment_java
+    attributes:
+      label: Java Version
+      placeholder: E.g., OpenJDK 17, Oracle JDK 21,...
+    validations:
+      required: false

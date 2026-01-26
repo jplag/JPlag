@@ -3,7 +3,7 @@ package de.jplag.cli.server;
 import com.sun.net.httpserver.HttpExchange;
 
 /**
- * Responds with data from the resources
+ * Responds with data from the resources.
  */
 public class RoutingResources implements Routing {
     private String prefix;

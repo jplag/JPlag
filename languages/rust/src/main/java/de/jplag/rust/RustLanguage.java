@@ -4,50 +4,40 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import org.kohsuke.MetaInfServices;
-
+import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
+
+import com.google.auto.service.AutoService;
 
 /**
  * This represents the Rust language as a language supported by JPlag.
  */
-@MetaInfServices(de.jplag.Language.class)
-public class RustLanguage implements de.jplag.Language {
-
-    protected static final String[] FILE_EXTENSIONS = {".rs"};
-    private static final String NAME = "Rust Language Module";
-    private static final String IDENTIFIER = "rust";
-    private static final int MINIMUM_TOKEN_MATCH = 8;
-
-    private final RustParserAdapter parserAdapter;
-
-    public RustLanguage() {
-        this.parserAdapter = new RustParserAdapter();
-    }
+@AutoService(Language.class)
+public class RustLanguage implements Language {
 
     @Override
-    public String[] suffixes() {
-        return FILE_EXTENSIONS;
+    public List<String> fileExtensions() {
+        return List.of(".rs");
     }
 
     @Override
     public String getName() {
-        return NAME;
+        return "Rust";
     }
 
     @Override
     public String getIdentifier() {
-        return IDENTIFIER;
+        return "rust";
     }
 
     @Override
     public int minimumTokenMatch() {
-        return MINIMUM_TOKEN_MATCH;
+        return 8;
     }
 
     @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return parserAdapter.parse(files);
+        return new RustParserAdapter().parse(files);
     }
 }

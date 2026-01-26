@@ -11,8 +11,8 @@ public class FixedSourcePositions implements SourcePositions {
     private final SourcePositions base;
 
     /**
-     * New instance
-     * @param base The source positions to use as the base
+     * New instance.
+     * @param base The source positions to use as the base.
      */
     public FixedSourcePositions(SourcePositions base) {
         this.base = base;

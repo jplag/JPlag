@@ -15,15 +15,18 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Uses GCC to find unused variables and saves their location. The scanner can then check if a token belongs to an
- * unused variable
+ * unused variable.
  */
 public class GCCSourceAnalysis implements SourceAnalysis {
 
-    public static final String COMPILE_COMMAND = "gcc -Wall -fsyntax-only %s";
+    private static final String COMPILE_COMMAND = "gcc -Wall -fsyntax-only %s";
     private Map<String, List<Integer>> linesToDelete = new HashMap<>();
 
     private final Logger logger;
 
+    /**
+     * Creates an instance of the analysis.
+     */
     public GCCSourceAnalysis() {
         this.logger = LoggerFactory.getLogger(this.getClass());
     }
@@ -45,7 +48,7 @@ public class GCCSourceAnalysis implements SourceAnalysis {
         for (File file : files) {
             try {
                 Runtime runtime = Runtime.getRuntime();
-                Process gcc = runtime.exec(COMPILE_COMMAND.formatted(file.getAbsolutePath()));
+                Process gcc = runtime.exec(new String[] {COMPILE_COMMAND.formatted(file.getAbsolutePath())});
                 gcc.waitFor();
 
                 // gcc prints compiler warnings to the error stream, not the standard stream

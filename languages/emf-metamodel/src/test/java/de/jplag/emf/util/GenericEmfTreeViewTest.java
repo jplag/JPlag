@@ -15,7 +15,7 @@ import de.jplag.testutils.FileUtil;
 
 class GenericEmfTreeViewTest extends AbstractEmfTest {
 
-    private static final String VIEW_FILE_SUFFIX = ".treeview";
+    private static final String VIEW_FILE_EXTENSION = ".treeview";
     private static final String EXPECTED_VIEW_FOLDER = "treeview";
 
     private static List<String> provideModelNames() {
@@ -32,16 +32,16 @@ class GenericEmfTreeViewTest extends AbstractEmfTest {
 
         // Generate emfatic view:
         GenericEmfTreeView view = new GenericEmfTreeView(modelFile, modelResource);
-        view.writeToFile(VIEW_FILE_SUFFIX);
+        view.writeToFile(VIEW_FILE_EXTENSION);
 
         // Compare expected vs. actual view file:
-        assertViewFilesMatch(modelFile, VIEW_FILE_SUFFIX, EXPECTED_VIEW_FOLDER);
+        assertViewFilesMatch(modelFile, VIEW_FILE_EXTENSION, EXPECTED_VIEW_FOLDER);
     }
 
     @AfterEach
     @Override
     protected void tearDown() {
-        FileUtil.clearFiles(new File(BASE_PATH.toString()), VIEW_FILE_SUFFIX);
+        FileUtil.clearFiles(new File(BASE_PATH.toString()), VIEW_FILE_EXTENSION);
     }
 
 }

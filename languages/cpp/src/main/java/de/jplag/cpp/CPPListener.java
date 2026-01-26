@@ -95,15 +95,16 @@ import de.jplag.semantics.VariableScope;
  * Extracts tokens from the ANTLR parse tree. Token extraction is built to be similar to the Java language module. In
  * some cases, the grammar is ambiguous and requires surrounding context to extract the correct token.
  * <p>
- * Those cases are covered by {@link SimpleTypeSpecifierContext} and {@link SimpleDeclarationContext}
+ * Those cases are covered by {@link SimpleTypeSpecifierContext} and {@link SimpleDeclarationContext}.
  */
 class CPPListener extends AbstractAntlrListener {
 
     CPPListener() {
-        visit(ClassSpecifierContext.class, rule -> rule.classHead().Union() != null).map(UNION_BEGIN, UNION_END).withSemantics(CodeSemantics::new);
+        visit(ClassSpecifierContext.class, rule -> rule.classHead().Union() != null).map(UNION_BEGIN, UNION_END).addClassScope()
+                .withSemantics(CodeSemantics::createControl);
         mapClass(ClassKeyContext::Class, CLASS_BEGIN, CLASS_END);
         mapClass(ClassKeyContext::Struct, STRUCT_BEGIN, STRUCT_END);  // structs are basically just classes
-        visit(EnumSpecifierContext.class).map(ENUM_BEGIN, ENUM_END).withSemantics(CodeSemantics::createControl);
+        visit(EnumSpecifierContext.class).map(ENUM_BEGIN, ENUM_END).addClassScope().withSemantics(CodeSemantics::createControl);
 
         visit(FunctionDefinitionContext.class).map(FUNCTION_BEGIN, FUNCTION_END).addLocalScope().withSemantics(CodeSemantics::createControl);
 
@@ -202,7 +203,7 @@ class CPPListener extends AbstractAntlrListener {
         visit(DeclaratorContext.class, rule -> {
             ParserRuleContext parent = rule.getParent();
             BraceOrEqualInitializerContext desc = getDescendant(parent, BraceOrEqualInitializerContext.class);
-            return (desc != null && desc.Assign() != null && (parent == desc.getParent() || parent == desc.getParent().getParent()));
+            return desc != null && desc.Assign() != null && (parent == desc.getParent() || parent == desc.getParent().getParent());
         }).map(ASSIGN).withSemantics(CodeSemantics::new).onEnter((ctx, varReg) -> varReg.setNextVariableAccessType(VariableAccessType.WRITE));
 
         visit(ParameterDeclarationContext.class).map(VARDEF).withSemantics(CodeSemantics::new).onEnter((ctx, varReg) -> {
@@ -229,7 +230,7 @@ class CPPListener extends AbstractAntlrListener {
             ParserRuleContext parentCtx = ctx.getParent().getParent();
             if (!parentCtx.getParent().getParent().getText().contains("(")) {
                 boolean isClassVariable = parentCtx.getClass() == PostfixExpressionContext.class // after dot
-                        && ((PostfixExpressionContext) parentCtx).postfixExpression().getText().equals("this");
+                        && "this".equals(((PostfixExpressionContext) parentCtx).postfixExpression().getText());
                 varReg.registerVariableAccess(ctx.getText(), isClassVariable);
             }
         });

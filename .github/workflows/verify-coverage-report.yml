@@ -1,0 +1,28 @@
+name: Check Coverage Report Dependencies
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/verify-coverage-report.yml"
+      - "./scripts/checkCoverage.py"
+      - "**/pom.xml"
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - ".github/workflows/verify-coverage-report..yml"
+      - "./scripts/checkCoverage.py"
+      - "**/pom.xml"
+
+jobs:
+  check_coverage:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout 🛎️
+      uses: actions/checkout@v6
+      
+    - name: Run script
+      working-directory: .github/workflows/scripts
+      run: |
+        python checkCoverage.py

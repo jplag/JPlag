@@ -12,7 +12,7 @@ import java.util.zip.ZipFile;
 /**
  * Helper class to perform all necessary operations or functions on files or folders.
  */
-public class FileHelper {
+public final class FileHelper {
     private static final int ZIP_THRESHOLD_ENTRIES = 100000;
     private static final int ZIP_THRESHOLD_SIZE = 1000000000;
     private static final double ZIP_THRESHOLD_RATIO = 10;
@@ -34,7 +34,7 @@ public class FileHelper {
     }
 
     /**
-     * Creates directory if it dose not exist
+     * Creates directory if it does not exist.
      * @param directory to be created
      * @throws IOException if the directory could not be created
      */
@@ -45,7 +45,7 @@ public class FileHelper {
     }
 
     /**
-     * Creates file if it dose not exist
+     * Creates file if it does not exist.
      * @param file to be created
      * @throws IOException if the file could not be created
      */
@@ -68,6 +68,7 @@ public class FileHelper {
      * @param zip The zip file to extract
      * @param targetDirectory The target directory
      * @throws IOException If io operations go wrong
+     * @throws IllegalStateException if the ZIP archive exceeds size or entry count thresholds.
      */
     public static void unzip(File zip, File targetDirectory) throws IOException {
         try (ZipFile zipFile = new ZipFile(zip)) {
@@ -92,7 +93,7 @@ public class FileHelper {
                     }
                 }
 
-                if ((totalSizeArchive > ZIP_THRESHOLD_SIZE) || (totalEntriesArchive > ZIP_THRESHOLD_ENTRIES)) {
+                if (totalSizeArchive > ZIP_THRESHOLD_SIZE || totalEntriesArchive > ZIP_THRESHOLD_ENTRIES) {
                     throw new IllegalStateException(String.format(ZIP_BOMB_ERROR_MESSAGE, zip.getAbsolutePath()));
                 }
             }

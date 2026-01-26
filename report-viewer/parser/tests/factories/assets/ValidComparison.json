@@ -1,0 +1,118 @@
+{
+  "firstSubmissionId": "root1",
+  "secondSubmissionId": "root2",
+  "similarities": {
+    "AVG": 0.45,
+    "MAX": 0.5,
+    "LONGEST_MATCH": 139,
+    "MAXIMUM_LENGTH": 462
+  },
+  "matches": [
+    {
+      "firstFileName": "root1\\Structure.java",
+      "secondFileName": "root2\\Structure.java",
+      "startInFirst": {
+        "line": 1,
+        "column": 1,
+        "tokenListIndex": 0
+      },
+      "endInFirst": {
+        "line": 3,
+        "column": 16,
+        "tokenListIndex": 139
+      },
+      "startInSecond": {
+        "line": 1,
+        "column": 1,
+        "tokenListIndex": 0
+      },
+      "endInSecond": {
+        "line": 3,
+        "column": 16,
+        "tokenListIndex": 138
+      },
+      "lengthOfFirst": 139,
+      "lengthOfSecond": 138
+    },
+    {
+      "firstFileName": "root1\\Submission.java",
+      "secondFileName": "root2\\Submission.java",
+      "startInFirst": {
+        "line": 129,
+        "column": 1,
+        "tokenListIndex": 200
+      },
+      "endInFirst": {
+        "line": 155,
+        "column": 89,
+        "tokenListIndex": 234
+      },
+      "startInSecond": {
+        "line": 134,
+        "column": 1,
+        "tokenListIndex": 205
+      },
+      "endInSecond": {
+        "line": 160,
+        "column": 89,
+        "tokenListIndex": 234
+      },
+      "lengthOfFirst": 34,
+      "lengthOfSecond": 29
+    },
+    {
+      "firstFileName": "root1\\Submission.java",
+      "secondFileName": "root2\\Submission.java",
+      "startInFirst": {
+        "line": 165,
+        "column": 1,
+        "token": 240
+      },
+      "endInFirst": {
+        "line": 194,
+        "column": 89,
+        "token": 273
+      },
+      "startInSecond": {
+        "line": 173,
+        "column": 1,
+        "token": 248
+      },
+      "endInSecond": {
+        "line": 203,
+        "column": 89,
+        "token": 281
+      },
+      "lengthOfFirst": 33,
+      "lengthOfSecond": 33
+    },
+    {
+      "firstFileName": "root1\\Submission.java",
+      "secondFileName": "root2\\Submission.java",
+      "startInFirst": {
+        "line": 112,
+        "column": 1,
+        "token": 101
+      },
+      "endInFirst": {
+        "line": 127,
+        "column": 89,
+        "token": 124
+      },
+      "startInSecond": {
+        "line": 116,
+        "column": 1,
+        "token": 105
+      },
+      "endInSecond": {
+        "line": 132,
+        "column": 89,
+        "token": 128
+      },
+      "lengthOfFirst": 23,
+      "lengthOfSecond": 27
+    }
+  ],
+  "firstSimilarity": 0.4,
+  "secondSimilarity": 0.5
+}

@@ -6,6 +6,9 @@ import java.util.List;
 import de.jplag.Token;
 import de.jplag.TokenType;
 
+/**
+ * Utility class for working with tokens and their associated files. This class cannot be instantiated.
+ */
 public final class TokenUtils {
 
     private TokenUtils() {

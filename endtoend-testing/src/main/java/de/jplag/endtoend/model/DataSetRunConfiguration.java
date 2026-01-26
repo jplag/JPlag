@@ -9,7 +9,7 @@ import java.util.Set;
 import de.jplag.options.JPlagOptions;
 
 /**
- * A run configuration for the end-to-end tests
+ * A run configuration for the end-to-end tests.
  * @param jPlagOptions The jplag options to use
  * @param identifier The identifier for the configuration
  */
@@ -17,7 +17,7 @@ public record DataSetRunConfiguration(JPlagOptions jPlagOptions, String identifi
     private static final String IDENTIFIER_FORMAT = "MTM: %s";
 
     /**
-     * Builds all configurations for a data set
+     * Builds all configurations for a data set.
      * @param dataSet The data set
      * @return The configurations
      */

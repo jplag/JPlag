@@ -15,6 +15,10 @@ public class PercentileThresholdProcessor implements ClusteringPreprocessor {
     private final double percentile;
     private ThresholdPreprocessor thresholdPreprocessor;
 
+    /**
+     * Constructs a new preprocessor with the given percentile value.
+     * @param percentile The percentile used to determine the similarity threshold.
+     */
     public PercentileThresholdProcessor(double percentile) {
         this.percentile = percentile;
     }
@@ -23,7 +27,7 @@ public class PercentileThresholdProcessor implements ClusteringPreprocessor {
     public double[][] preprocessSimilarities(double[][] similarityMatrix) {
         Array2DRowRealMatrix similarity = new Array2DRowRealMatrix(similarityMatrix, false);
         Percentile percentileEstimator = new Percentile().withEstimationType(EstimationType.R_2);
-        int connections = (similarity.getColumnDimension() * (similarity.getColumnDimension() - 1)) / 2;
+        int connections = similarity.getColumnDimension() * (similarity.getColumnDimension() - 1) / 2;
         double[] allWeights = new double[connections];
         similarity.walkInOptimizedOrder(new DefaultRealMatrixPreservingVisitor() {
 

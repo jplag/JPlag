@@ -19,7 +19,7 @@ public class Java21 {
             case Both(Circle c, Rect(int w, int _)) -> System.out.println("something");
             case Square -> {
                 int l = ((Square) s).length;
-                System.out.println(STR."Square with length \{Math.abs(l)}");
+                System.out.println("Square with length " + Math.abs(l));
             }
         }
 

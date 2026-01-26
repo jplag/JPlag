@@ -1,0 +1,10 @@
+{
+  "version": { "major": 6, "minor": 2, "patch": 0 },
+  "failedSubmissions": [
+    { "submissionId": "failed1", "submissionState": "TOO_SMALL" },
+    { "submissionId": "failedTest", "submissionState": "CANNOT_PARSE" }
+  ],
+  "dateOfExecution": "06/05/25",
+  "executionTime": 471,
+  "totalComparisons": 2145
+}

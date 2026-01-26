@@ -9,21 +9,21 @@ import org.antlr.v4.runtime.Token;
 
 /**
  * Copied from https://github.com/antlr/grammars-v4/tree/master/javascript/typescript/Java. Slightly modified to fit
- * JPlag code style
+ * JPlag code style.
  */
 abstract class TypeScriptLexerBase extends Lexer {
     /**
-     * Stores values of nested modes. By default mode is strict or defined externally (useStrictDefault)
+     * Stores values of nested modes. By default mode is strict or defined externally (useStrictDefault).
      */
     private final Deque<Boolean> scopeStrictModes = new ArrayDeque<>();
 
     private Token lastToken = null;
     /**
-     * Default value of strict mode Can be defined externally by setUseStrictDefault
+     * Default value of strict mode Can be defined externally by setUseStrictDefault.
      */
     private boolean useStrictDefault = false;
     /**
-     * Current value of strict mode Can be defined during parsing, see StringFunctions.js and StringGlobal.js samples
+     * Current value of strict mode Can be defined during parsing, see StringFunctions.js and StringGlobal.js samples.
      */
     private boolean useStrictCurrent = false;
     /**
@@ -63,7 +63,7 @@ abstract class TypeScriptLexerBase extends Lexer {
     /**
      * Return the next token from the character stream and records this last token in case it resides on the default
      * channel. This recorded token is used to determine when the lexer could possibly match a regex literal. Also changes
-     * scopeStrictModes stack if tokenize special string 'use strict';
+     * scopeStrictModes stack if tokenize special string 'use strict';.
      * @return the next token from the character stream.
      */
     @Override
@@ -92,7 +92,7 @@ abstract class TypeScriptLexerBase extends Lexer {
     protected void processStringLiteral() {
         if (lastToken == null || lastToken.getType() == TypeScriptLexer.OpenBrace) {
             String text = getText();
-            if (text.equals("\"use strict\"") || text.equals("'use strict'")) {
+            if ("\"use strict\"".equals(text) || "'use strict'".equals(text)) {
                 if (!scopeStrictModes.isEmpty()) {
                     scopeStrictModes.pop();
                 }
@@ -111,7 +111,7 @@ abstract class TypeScriptLexerBase extends Lexer {
     }
 
     /**
-     * Returns {@code true} if the lexer can match a regex literal.
+     * @return {@code true} if the lexer can match a regex literal.
      */
     protected boolean isRegexPossible() {
 

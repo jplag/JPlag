@@ -4,46 +4,40 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import org.kohsuke.MetaInfServices;
-
+import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
-@MetaInfServices(de.jplag.Language.class)
-public class GoLanguage implements de.jplag.Language {
+import com.google.auto.service.AutoService;
 
-    private static final String NAME = "Go Parser";
-    private static final String IDENTIFIER = "go";
-    private static final int DEFAULT_MIN_TOKEN_MATCH = 8;
-    private static final String[] FILE_EXTENSIONS = {".go"};
-    private final GoParserAdapter parserAdapter;
-
-    public GoLanguage() {
-        this.parserAdapter = new GoParserAdapter();
-    }
+/**
+ * Facade for the ANTLR-based Go language module.
+ */
+@AutoService(Language.class)
+public class GoLanguage implements Language {
 
     @Override
-    public String[] suffixes() {
-        return FILE_EXTENSIONS;
+    public List<String> fileExtensions() {
+        return List.of(".go");
     }
 
     @Override
     public String getName() {
-        return NAME;
+        return "Go";
     }
 
     @Override
     public String getIdentifier() {
-        return IDENTIFIER;
+        return "go";
     }
 
     @Override
     public int minimumTokenMatch() {
-        return DEFAULT_MIN_TOKEN_MATCH;
+        return 8;
     }
 
     @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return parserAdapter.parse(files);
+        return new GoParserAdapter().parse(files);
     }
 }

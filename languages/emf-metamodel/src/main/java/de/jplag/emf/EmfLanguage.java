@@ -5,58 +5,57 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EcorePackage;
-import org.kohsuke.MetaInfServices;
 
+import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.emf.parser.EcoreParser;
+import de.jplag.emf.util.EMFUtil;
+
+import com.google.auto.service.AutoService;
 
 /**
  * Language for EMF metamodels from the Eclipse Modeling Framework (EMF).
  * @author Timur Saglam
  */
-@MetaInfServices(de.jplag.Language.class)
-public class EmfLanguage implements de.jplag.Language {
-    public static final String VIEW_FILE_SUFFIX = ".emfatic";
+@AutoService(Language.class)
+public class EmfLanguage implements Language {
+
+    /**
+     * Creates the language facade.
+     */
+    public EmfLanguage() {
+        EMFUtil.registerEcoreExtension();
+    }
+
+    /** File extension for the textual view. **/
+    public static final String VIEW_FILE_EXTENSION = ".emfatic";
+    /** File extension for model files. **/
     public static final String FILE_ENDING = "." + EcorePackage.eNAME;
 
-    private static final String NAME = "EMF metamodel";
-    private static final String IDENTIFIER = "emf";
-    private static final int DEFAULT_MIN_TOKEN_MATCH = 6;
-
-    protected final EcoreParser parser;
-
-    public EmfLanguage() {
-        this(new EcoreParser());
-    }
-
-    protected EmfLanguage(EcoreParser parser) {
-        this.parser = parser;
-    }
-
     @Override
-    public String[] suffixes() {
-        return new String[] {FILE_ENDING};
+    public List<String> fileExtensions() {
+        return List.of(FILE_ENDING);
     }
 
     @Override
     public String getName() {
-        return NAME;
+        return "EMF metamodel";
     }
 
     @Override
     public String getIdentifier() {
-        return IDENTIFIER;
+        return "emf";
     }
 
     @Override
     public int minimumTokenMatch() {
-        return DEFAULT_MIN_TOKEN_MATCH;
+        return 6;
     }
 
     @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return parser.parse(files, normalize);
+        return new EcoreParser().parse(files, normalize);
     }
 
     @Override
@@ -65,7 +64,7 @@ public class EmfLanguage implements de.jplag.Language {
     }
 
     @Override
-    public String viewFileSuffix() {
-        return VIEW_FILE_SUFFIX;
+    public String viewFileExtension() {
+        return VIEW_FILE_EXTENSION;
     }
 }

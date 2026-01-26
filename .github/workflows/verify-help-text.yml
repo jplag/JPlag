@@ -1,0 +1,55 @@
+name: Check Help Text Consistency
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/verify-help-text.yml"
+      - ".github/workflows/scripts/checkHelpText.py"
+      - "**.md"
+      - "**.java"
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - ".github/workflows/verify-help-text.yml"
+      - ".github/workflows/scripts/checkHelpText.py"
+      - "**.md"
+      - "**.java"
+
+jobs:
+  pre_job:
+    runs-on: ubuntu-latest
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@v5
+        with:
+          concurrent_skipping: 'same_content_newer'
+          skip_after_successful_duplicate: 'true'
+
+  check_help_text:
+    needs: pre_job
+    if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+      
+    - name: Set up JDK
+      uses: actions/setup-java@v5
+      with:
+        java-version: 25
+        distribution: 'temurin'
+  
+    - name: Build Assembly
+      run: mvn -DskipTests clean package assembly:single
+      
+    - name: Rename and move Jar
+      run: mv cli/target/jplag-*-jar-with-dependencies.jar .github/workflows/scripts/jplag.jar
+    
+    - name: Run script
+      working-directory: .github/workflows/scripts
+      run: |
+        python checkHelpText.py

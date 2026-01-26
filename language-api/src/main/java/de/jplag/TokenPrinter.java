@@ -69,10 +69,10 @@ public final class TokenPrinter {
      * Creates a string representation of a collection of files line by line and adds the tokens under the lines.
      * @param tokenList is the list of tokens parsed from the files.
      * @param rootDirectory is the common directory of the files.
-     * @param suffix is the optional view file suffix.
+     * @param viewFileExtension is the optional view file extension.
      * @return the string representation.
      */
-    public static String printTokens(List<Token> tokenList, File rootDirectory, Optional<String> suffix) {
+    public static String printTokens(List<Token> tokenList, File rootDirectory, Optional<String> viewFileExtension) {
         PrinterOutputBuilder builder = new PrinterOutputBuilder();
         Map<File, List<Token>> fileToTokens = groupTokensByFile(tokenList);
 
@@ -83,7 +83,7 @@ public final class TokenPrinter {
                 builder.append("<unknown path>");
             }
 
-            List<LineData> lineDatas = getLineData(fileTokens, suffix);
+            List<LineData> lineDatas = getLineData(fileTokens, viewFileExtension);
             lineDatas.forEach(lineData -> {
                 builder.setLine(lineData.lineNumber());
 
@@ -126,11 +126,11 @@ public final class TokenPrinter {
         return builder.toString();
     }
 
-    private static List<LineData> getLineData(List<Token> fileTokens, Optional<String> suffix) {
+    private static List<LineData> getLineData(List<Token> fileTokens, Optional<String> viewFileExtension) {
         // We expect that all fileTokens share the same Token.file!
         File file = fileTokens.get(0).getFile();
-        if (suffix.isPresent()) {
-            file = new File(file.getPath() + suffix.get());
+        if (viewFileExtension.isPresent()) {
+            file = new File(file.getPath() + viewFileExtension.get());
         }
 
         // Sort tokens by file and line -> tokens can be processed without any further checks
@@ -193,8 +193,8 @@ public final class TokenPrinter {
     /**
      * A proxy for the StringBuilder that keeps track of the position inside the output.
      */
-    private static class PrinterOutputBuilder {
-        public static final String LINE_SEPARATOR = System.lineSeparator();
+    private static final class PrinterOutputBuilder {
+        private static final String LINE_SEPARATOR = System.lineSeparator();
         private final StringBuilder builder = new StringBuilder();
         private int columnIndex = 1;
         private int lineNumber;
@@ -217,19 +217,19 @@ public final class TokenPrinter {
         }
 
         /**
-         * Appends the given string to the output
-         * @param str the string to append
-         * @return this
+         * Appends the given string to the output.
+         * @param text the string to append
+         * @return a reference on itself.
          */
-        public PrinterOutputBuilder append(String str) {
+        public PrinterOutputBuilder append(String text) {
             // Avoid too many blank lines
-            trailingLineSeparators = str.equals(LINE_SEPARATOR) ? trailingLineSeparators + 1 : 0;
+            trailingLineSeparators = text.equals(LINE_SEPARATOR) ? trailingLineSeparators + 1 : 0;
             if (trailingLineSeparators >= 3) {
                 return this;
             }
 
-            builder.append(str);
-            columnIndex += str.length();
+            builder.append(text);
+            columnIndex += text.length();
             return this;
         }
 

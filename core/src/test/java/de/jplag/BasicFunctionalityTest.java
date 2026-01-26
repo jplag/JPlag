@@ -14,7 +14,7 @@ import de.jplag.exceptions.ExitException;
  */
 class BasicFunctionalityTest extends TestBase {
 
-    private static int DISTRIBUTION_INDEX = 66;
+    private static final int DISTRIBUTION_INDEX = 66;
 
     @Test
     @DisplayName("test submissions that contain obvious plagiarism")
@@ -56,7 +56,8 @@ class BasicFunctionalityTest extends TestBase {
     /**
      * This case is more complex and consists out of 5 submissions with different plagiarism. A is the original code (coming
      * from an older JPlag version) B is a partial copy of that code C is a full copy of that code D is dumb plagiarism,
-     * e.g., changed variable names, additional unneeded code, ... E is just a Hello World Java errorConsumer
+     * e.g., changed variable names, additional unneeded code, ... E is just a Hello World Java errorConsumer.
+     * @throws ExitException when JPlag causes an error.
      */
     @Test
     @DisplayName("test multiple submissions with varying degree of plagiarism")
@@ -68,7 +69,7 @@ class BasicFunctionalityTest extends TestBase {
 
         // All comparisons with E shall have no matches
         result.getAllComparisons().stream()
-                .filter(comparison -> comparison.secondSubmission().getName().equals("E") || comparison.firstSubmission().getName().equals("E"))
+                .filter(comparison -> "E".equals(comparison.secondSubmission().getName()) || "E".equals(comparison.firstSubmission().getName()))
                 .forEach(comparison -> assertEquals(0, comparison.similarity(), DELTA));
 
         // Hard coded assertions on selected comparisons
@@ -84,6 +85,22 @@ class BasicFunctionalityTest extends TestBase {
         assertEquals(0.959, biggestMatch.get().maximalSimilarity(), DELTA);
         assertEquals(0.630, biggestMatch.get().minimalSimilarity(), DELTA);
         assertEquals(12, biggestMatch.get().matches().size());
+    }
+
+    @Test
+    @DisplayName("test basic functionality for varying minimum token match values.")
+    void testHighMinimumTokenMatch() throws ExitException {
+        for (int i = 10; i < 50; i++) {
+            int minimumTokenMatch = i;
+            JPlagResult result = runJPlag("PartialPlagiarism", it -> it.withMinimumTokenMatch(minimumTokenMatch));
+            if (minimumTokenMatch <= 12) {
+                assertEquals(5, result.getNumberOfSubmissions());
+                assertEquals(10, result.getAllComparisons().size());
+            } else {
+                assertEquals(4, result.getNumberOfSubmissions());
+                assertEquals(6, result.getAllComparisons().size());
+            }
+        }
     }
 
     @Test
@@ -104,7 +121,8 @@ class BasicFunctionalityTest extends TestBase {
         for (int i = 0; i < matches.size(); i++) {
             assertEquals(expectedMatches.get(i).startOfFirst(), matches.get(i).startOfFirst());
             assertEquals(expectedMatches.get(i).startOfSecond(), matches.get(i).startOfSecond());
-            assertEquals(expectedMatches.get(i).length(), matches.get(i).length());
+            assertEquals(expectedMatches.get(i).lengthOfFirst(), matches.get(i).lengthOfFirst());
+            assertEquals(expectedMatches.get(i).lengthOfSecond(), matches.get(i).lengthOfSecond());
         }
 
     }

@@ -4,8 +4,16 @@ import de.jplag.testutils.LanguageModuleTest;
 import de.jplag.testutils.datacollector.TestDataCollector;
 import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
 
+/**
+ * Unit test for the TypeScript language module, verifying tokenization and source coverage. Extends
+ * {@link LanguageModuleTest} to provide TypeScript-specific test files, token sequences, and rules for ignoring
+ * irrelevant source lines such as comments and multi-line blocks.
+ */
 public class TypeScriptLanguageTest extends LanguageModuleTest {
 
+    /**
+     * Constructs a TypeScript language test module with the appropriate language and token type.
+     */
     public TypeScriptLanguageTest() {
         super(new TypeScriptLanguage(), TypeScriptTokenType.class);
     }

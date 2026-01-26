@@ -12,8 +12,11 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.IntStream;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -32,6 +35,7 @@ import de.jplag.TokenType;
 import de.jplag.testutils.datacollector.TestData;
 import de.jplag.testutils.datacollector.TestDataCollector;
 import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
+import de.jplag.testutils.datacollector.TokenPositionTestData;
 
 /**
  * Base class for language module tests. Automatically adds all common tests types for jplag languages.
@@ -47,7 +51,7 @@ public abstract class LanguageModuleTest {
     private final List<TokenType> languageTokens;
 
     /**
-     * Creates a new language module test
+     * Creates a new language module test.
      * @param language The language to test
      * @param languageTokens All tokens, that can be reported by the module. The end file token can be omitted.
      */
@@ -58,7 +62,7 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Creates a new language module test
+     * Creates a new language module test.
      * @param language The language to test
      * @param languageTokens All tokens, that can be reported by the module. The end file token can be omitted.
      */
@@ -67,16 +71,17 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Creates a new language module test
-     * @param language The language to test
-     * @param tokenEnum The enum containing the token types
+     * Creates a new language module test.
+     * @param <T> the enum type implementing {@link TokenType}.
+     * @param language the language under test.
+     * @param tokenEnum the enum class representing token types.
      */
     public <T extends Enum<T> & TokenType> LanguageModuleTest(Language language, Class<T> tokenEnum) {
         this(language, tokenEnum.getEnumConstants());
     }
 
     /**
-     * Test the configured source files for source line coverage
+     * Test the configured source files for source line coverage.
      * @param data The source to check
      * @throws ParsingException If the parser throws some error
      * @throws IOException If any IO Exception occurs
@@ -92,14 +97,14 @@ public abstract class LanguageModuleTest {
         this.configureIgnoredLines(ignoredLines);
         List<Integer> relevantLines = new ArrayList<>(ignoredLines.getRelevantLines());
 
-        tokens.stream().map(Token::getLine).forEach(relevantLines::remove);
+        tokens.stream().flatMap(t -> IntStream.rangeClosed(t.getStartLine(), t.getEndLine()).boxed()).forEach(relevantLines::remove);
 
         assertTrue(relevantLines.isEmpty(),
                 "Test test source " + data.describeTestSource() + " contained uncovered lines:" + System.lineSeparator() + relevantLines);
     }
 
     /**
-     * Returns all test sources, that need to be checked for source line coverage
+     * Returns all test sources, that need to be checked for source line coverage.
      * @return The test sources
      */
     final List<TestData> sourceCoverageFiles() {
@@ -107,7 +112,7 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Checks the configured source files for token coverage
+     * Checks the configured source files for token coverage.
      * @param data The source to check
      * @throws ParsingException If the parser throws some error
      * @throws IOException If any IO Exception occurs
@@ -155,7 +160,7 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Returns all test sources, that need to be checked for contained tokens
+     * Returns all test sources, that need to be checked for contained tokens.
      * @return The test sources
      */
     final List<TestDataCollector.TokenListTest> testTokensContainedData() {
@@ -163,7 +168,7 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Checks the given test sources for an exact token sequence
+     * Checks the given test sources for an exact token sequence.
      * @param test The source to check
      * @throws ParsingException If the parser throws some error
      * @throws IOException If any IO Exception occurs
@@ -174,7 +179,7 @@ public abstract class LanguageModuleTest {
     final void testTokenSequence(TestDataCollector.TokenListTest test) throws ParsingException, IOException {
         List<TokenType> actual = extractTokenTypes(test.data());
         List<TokenType> expected = new ArrayList<>(test.tokens());
-        if (expected.get(expected.size() - 1) != SharedTokenType.FILE_END) {
+        if (expected.getLast() != SharedTokenType.FILE_END) {
             expected.add(SharedTokenType.FILE_END);
         }
         assertTokensMatch(expected, actual, "Extracted token from " + test.data().describeTestSource() + " does not match expected sequence.");
@@ -189,7 +194,7 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Returns all test sources, that need to be checked for a matching token sequence
+     * Returns all test sources, that need to be checked for a matching token sequence.
      * @return The test sources
      */
     final List<TestDataCollector.TokenListTest> testTokenSequenceData() {
@@ -197,7 +202,50 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Tests all configured test sources for a monotone order of tokens
+     * Tests if the tokens specified for the token position tests are present in the sources.
+     * @param testData The specifications of the expected tokens and the test source
+     * @throws ParsingException If the parsing fails
+     * @throws IOException If IO operations fail. If this happens, that should be unrelated to the test itself.
+     */
+    @ParameterizedTest
+    @MethodSource("getTokenPositionTestData")
+    @DisplayName("Tests if the extracted tokens contain the tokens specified in the test files.")
+    final void testTokenPositions(TokenPositionTestData testData) throws ParsingException, IOException {
+        List<Token> extractedTokens = parseTokens(testData);
+        List<TokenPositionTestData.TokenData> failedTokens = new ArrayList<>();
+
+        for (TokenPositionTestData.TokenData expectedToken : testData.getExpectedTokens()) {
+            TokenType expectedType = this.languageTokens.stream().filter(type -> type.toString().equals(expectedToken.typeName())).findFirst()
+                    .orElseThrow(() -> new IOException(String.format("The token type %s does not exist.", expectedToken.typeName())));
+
+            if (extractedTokens.stream().noneMatch(token -> testTokenMatch(token, expectedType, expectedToken))) {
+                failedTokens.add(expectedToken);
+            }
+        }
+
+        if (!failedTokens.isEmpty()) {
+            String failureDescriptors = String.join(System.lineSeparator(), failedTokens.stream().map(token -> token.typeName() + " at ("
+                    + token.startLine() + ":" + token.startColumn() + ") to (" + token.endLine() + ":" + token.endColumn() + ")").toList());
+            fail("Some tokens weren't extracted with the correct properties:" + System.lineSeparator() + failureDescriptors);
+        }
+    }
+
+    private boolean testTokenMatch(Token token, TokenType expectedType, TokenPositionTestData.TokenData expectedToken) {
+        boolean typeMatch = token.getType() == expectedType;
+        boolean startPositionMatch = token.getStartLine() == expectedToken.startLine() && token.getStartColumn() == expectedToken.startColumn();
+        boolean endPositionMatch = token.getEndLine() == expectedToken.endLine() && token.getEndColumn() == expectedToken.endColumn();
+        return typeMatch && startPositionMatch && endPositionMatch;
+    }
+
+    /**
+     * @return All token positions tests that are configured
+     */
+    final List<TokenPositionTestData> getTokenPositionTestData() {
+        return ignoreEmptyTestType(this.collector.getTokenPositionTestData());
+    }
+
+    /**
+     * Tests all configured test sources for a monotone order of tokens.
      * @param data The test source
      * @throws ParsingException If the parser throws some error
      * @throws IOException If any IO Exception occurs
@@ -206,21 +254,21 @@ public abstract class LanguageModuleTest {
     @MethodSource("getAllTestData")
     @DisplayName("Test that the tokens map to ascending line numbers")
     final void testMonotoneTokenOrder(TestData data) throws ParsingException, IOException {
-        List<Token> tokens = parseTokens(data);
+        List<Token> tokens = parseTokens(data).stream().filter(it -> !getIgnoredTokensForMonotoneTokenOrder().contains(it.getType())).toList();
 
         for (int i = 0; i < tokens.size() - 2; i++) {
             Token first = tokens.get(i);
             Token second = tokens.get(i + 1);
 
-            if (first.getLine() > second.getLine()) {
-                fail(String.format("Invalid token order. Token %s has a higher line number (%s) than token %s (%s).", first.getType(),
-                        first.getLine(), second.getType(), second.getLine()));
+            if (first.getStartLine() > second.getStartLine()) {
+                fail(String.format("Invalid token order. Token %s (%s:%s) comes after %s (%s:%s)", first.getType(), first.getStartLine(),
+                        first.getStartColumn(), second.getType(), second.getStartLine(), second.getStartColumn()));
             }
         }
     }
 
     /**
-     * Checks that all configured test sources end with a FileEnd token
+     * Checks that all configured test sources end with a FileEnd token.
      * @param data The test source
      * @throws ParsingException If the parser throws some error
      * @throws IOException If any IO Exception occurs
@@ -231,12 +279,11 @@ public abstract class LanguageModuleTest {
     final void testTokenSequencesEndsWithFileEnd(TestData data) throws ParsingException, IOException {
         List<Token> tokens = parseTokens(data);
 
-        assertEquals(SharedTokenType.FILE_END, tokens.get(tokens.size() - 1).getType(),
-                "Last token in " + data.describeTestSource() + " is not file end.");
+        assertEquals(SharedTokenType.FILE_END, tokens.getLast().getType(), "Last token in " + data.describeTestSource() + " is not file end.");
     }
 
     /**
-     * Returns all configured test sources
+     * Returns all configured test sources.
      * @return The test sources
      */
     final List<TestData> getAllTestData() {
@@ -244,11 +291,16 @@ public abstract class LanguageModuleTest {
     }
 
     /**
-     * Collects the test sources
+     * Collects the test sources.
      */
     @BeforeAll
     final void collectTestData() {
         collectTestData(this.collector);
+    }
+
+    @AfterAll
+    final void deleteTemporaryFiles() {
+        TemporaryFileHolder.deleteTemporaryFiles();
     }
 
     private List<Token> parseTokens(TestData source) throws ParsingException, IOException {
@@ -278,13 +330,13 @@ public abstract class LanguageModuleTest {
      * Collects all tests, that should be executed.
      * @param collector Use to collect the tests
      */
-    abstract protected void collectTestData(TestDataCollector collector);
+    protected abstract void collectTestData(TestDataCollector collector);
 
     /**
      * Configure which lines should not be checked for source coverage.
      * @param collector Used to ignore lines
      */
-    abstract protected void configureIgnoredLines(TestSourceIgnoredLinesCollector collector);
+    protected abstract void configureIgnoredLines(TestSourceIgnoredLinesCollector collector);
 
     /**
      * Returns the default directory structure by default.
@@ -292,5 +344,9 @@ public abstract class LanguageModuleTest {
      */
     protected File getTestFileLocation() {
         return new File(DEFAULT_TEST_CODE_PATH_BASE.toFile(), this.language.getIdentifier());
+    }
+
+    protected List<TokenType> getIgnoredTokensForMonotoneTokenOrder() {
+        return Collections.emptyList();
     }
 }

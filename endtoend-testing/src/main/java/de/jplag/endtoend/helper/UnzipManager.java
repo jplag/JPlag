@@ -16,9 +16,12 @@ import org.slf4j.LoggerFactory;
 
 import de.jplag.endtoend.model.DataSet;
 
-public class UnzipManager {
-    private final Map<DataSet, File> unzippedFiles;
+/**
+ * Manages unzip operations with caching for datasets.
+ */
+public final class UnzipManager {
     private static UnzipManager instance;
+    private final Map<DataSet, File> unzippedFiles;
     private final Logger logger = LoggerFactory.getLogger(UnzipManager.class);
 
     private static synchronized UnzipManager getInstance() {
@@ -29,12 +32,19 @@ public class UnzipManager {
         return instance;
     }
 
-    public static File unzipOrCache(DataSet dataSet, File zip) throws IOException {
-        return getInstance().unzipOrCacheInternal(dataSet, zip);
-    }
-
     private UnzipManager() {
         this.unzippedFiles = new HashMap<>();
+    }
+
+    /**
+     * Unzips the given ZIP file for the dataset or returns a cached directory.
+     * @param dataSet the dataset associated with the ZIP
+     * @param zip the ZIP file to unzip
+     * @return the directory with unzipped contents
+     * @throws IOException if an I/O error occurs during unzipping
+     */
+    public static File unzipOrCache(DataSet dataSet, File zip) throws IOException {
+        return getInstance().unzipOrCacheInternal(dataSet, zip);
     }
 
     private File unzipOrCacheInternal(DataSet dataSet, File zip) throws IOException {

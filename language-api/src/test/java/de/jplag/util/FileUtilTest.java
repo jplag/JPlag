@@ -14,7 +14,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import de.jplag.ParsingException;
 
-public class FileUtilTest {
+/**
+ * Unit tests for {@link FileUtils}.
+ */
+class FileUtilTest {
     private static final Path TEST_FILE_LOCATION = Path.of("src", "test", "resources", "de", "jplag", "fileReaderTests");
     private static final Path TEST_FILE_SET_LOCATION = Path.of("src", "test", "resources", "de", "jplag", "fileSetEncoding");
 
@@ -42,7 +45,7 @@ public class FileUtilTest {
         Assertions.assertEquals(StandardCharsets.ISO_8859_1, encoding);
     }
 
-    public static File[] searchTestFiles() {
+    private static File[] searchTestFiles() {
         return TEST_FILE_LOCATION.toFile().listFiles();
     }
 }

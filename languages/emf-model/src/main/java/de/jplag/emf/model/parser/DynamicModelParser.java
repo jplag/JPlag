@@ -7,19 +7,23 @@ import java.util.List;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jplag.ParsingException;
 import de.jplag.emf.EmfLanguage;
 import de.jplag.emf.dynamic.parser.DynamicEcoreParser;
-import de.jplag.emf.model.EmfModelLanguage;
 import de.jplag.emf.util.AbstractModelView;
 import de.jplag.emf.util.EMFUtil;
 import de.jplag.emf.util.GenericEmfTreeView;
 
 /**
- * Parser for EMF metamodels based on dynamically created tokens.
+ * Parser for EMF metamodels based on dynamically created tokens. This means each model element corresponds to a token
+ * which is typed according to the model elements type.
  */
 public class DynamicModelParser extends DynamicEcoreParser {
+    private static final Logger logger = LoggerFactory.getLogger(DynamicModelParser.class);
+
     private static final String VIEW_FILE_WARNING = "Skipping view file {} as submission!";
     private static final String METAPACKAGE_WARNING = "Loading model instance {} without any metamodel!";
     private static final String METAPACKAGE_ERROR = "Error, not a metapackage: ";
@@ -40,7 +44,7 @@ public class DynamicModelParser extends DynamicEcoreParser {
         // implicit assumption: Metamodel gets parsed first!
         if (file.getName().endsWith(EmfLanguage.FILE_ENDING)) {
             parseMetamodelFile(file);
-        } else if (file.getName().endsWith(EmfModelLanguage.VIEW_FILE_SUFFIX)) {
+        } else if (file.getName().endsWith(EmfLanguage.VIEW_FILE_EXTENSION)) {
             logger.warn(VIEW_FILE_WARNING, file.getName());
         } else {
             if (metapackages.isEmpty()) {
@@ -51,8 +55,8 @@ public class DynamicModelParser extends DynamicEcoreParser {
     }
 
     @Override
-    protected String getCorrespondingViewFileSuffix() {
-        return EmfModelLanguage.VIEW_FILE_SUFFIX;
+    protected String getCorrespondingViewFileExtension() {
+        return EmfLanguage.VIEW_FILE_EXTENSION;
     }
 
     @Override

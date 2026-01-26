@@ -16,6 +16,7 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jplag.ParsingException;
 import de.jplag.Token;
@@ -27,32 +28,49 @@ import com.sun.source.util.JavacTask;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.Trees;
 
+/**
+ * The {@code JavacAdapter} class provides an adapter to the Java compiler for JPlag. It is responsible for compiling
+ * Java source files and handling any compiler-specific configuration or errors. This adapter abstracts the interaction
+ * with the underlying compiler, enabling JPlag to analyze Java code submissions.
+ */
 public class JavacAdapter {
 
-    private static final JavaCompiler javac = ToolProvider.getSystemJavaCompiler();
+    private static final Logger logger = LoggerFactory.getLogger(JavacAdapter.class);
 
+    private static final String NO_ANNOTATION_PROCESSING = "-proc:none";
+    private static final String PREVIEW_FLAG = "--enable-preview";
+    private static final String RELEASE_VERSION_OPTION = "--release=";
+
+    private static final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+
+    /**
+     * Parses the given set of Java source files using JavaC.
+     * @param files is the Java source files to parse.
+     * @param parser is the parser to receive the tokens.
+     * @throws ParsingException if an error occurs during parsing.
+     */
     public void parseFiles(Set<File> files, final Parser parser) throws ParsingException {
         var listener = new DiagnosticCollector<>();
 
         List<ParsingException> parsingExceptions = new ArrayList<>();
-        final Charset guessedCharset = FileUtils.detectCharsetFromMultiple(files);
-        try (final StandardJavaFileManager fileManager = javac.getStandardFileManager(listener, null, guessedCharset)) {
+        final Charset charset = FileUtils.detectCharsetFromMultiple(files, true);
+        try (final StandardJavaFileManager fileManager = compiler.getStandardFileManager(listener, null, charset)) {
             var javaFiles = fileManager.getJavaFileObjectsFromFiles(files);
 
-            // We need to disable annotation processing, see
-            // https://stackoverflow.com/questions/72737445/system-java-compiler-behaves-different-depending-on-dependencies-defined-in-mave
-            final CompilationTask task = javac.getTask(null, fileManager, listener,
-                    List.of("-proc:none", "--enable-preview", "--release=" + JavaLanguage.JAVA_VERSION), null, javaFiles);
+            // We need to disable annotation processing, see https://stackoverflow.com/q/72737445
+            String releaseVersion = RELEASE_VERSION_OPTION + Runtime.version().feature(); // required for preview flag
+            List<String> options = List.of(NO_ANNOTATION_PROCESSING, PREVIEW_FLAG, releaseVersion);
+            final CompilationTask task = compiler.getTask(null, fileManager, listener, options, null, javaFiles);
             final Trees trees = Trees.instance(task);
             final SourcePositions positions = new FixedSourcePositions(trees.getSourcePositions());
-            for (final CompilationUnitTree ast : executeCompilationTask(task, parser.logger)) {
+            for (final CompilationUnitTree ast : executeCompilationTask(task)) {
                 File file = new File(ast.getSourceFile().toUri());
                 final LineMap map = ast.getLineMap();
                 var scanner = new TokenGeneratingTreeScanner(file, parser, map, positions, ast);
                 ast.accept(scanner, null);
                 parser.add(Token.semanticFileEnd(file));
             }
-        } catch (IOException exception) {
+        } catch (Exception exception) {
             throw new ParsingException(null, exception.getMessage(), exception);
         }
         parsingExceptions.addAll(processErrors(listener));
@@ -61,7 +79,7 @@ public class JavacAdapter {
         }
     }
 
-    private Iterable<? extends CompilationUnitTree> executeCompilationTask(final CompilationTask task, Logger logger) {
+    private Iterable<? extends CompilationUnitTree> executeCompilationTask(final CompilationTask task) {
         Iterable<? extends CompilationUnitTree> abstractSyntaxTrees = Collections.emptyList();
         try {
             abstractSyntaxTrees = ((JavacTask) task).parse();

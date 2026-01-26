@@ -140,9 +140,12 @@ import de.jplag.csharp.grammar.CSharpParser.UsingStaticDirectiveContext;
 import de.jplag.csharp.grammar.CSharpParser.WhileStatementContext;
 
 /**
- * Extracts tokens for the {@link CSharpLanguage}
+ * Extracts tokens for the {@link CSharpLanguage}.
  */
 public class CSharpListener extends AbstractAntlrListener {
+    /**
+     * Creates the listener.
+     */
     public CSharpListener() {
         visit(UsingNamespaceDirectiveContext.class).map(USING_DIRECTIVE);
         visit(UsingAliasDirectiveContext.class, this::isAliasUsageAlsoImport).map(USING_DIRECTIVE);
@@ -262,6 +265,6 @@ public class CSharpListener extends AbstractAntlrListener {
     private boolean isAliasUsageAlsoImport(UsingAliasDirectiveContext context) {
         Namespace_or_type_nameContext namespace = getDescendant(context, Namespace_or_type_nameContext.class);
 
-        return namespace != null && (!namespace.DOT().isEmpty() && getDescendant(namespace, Type_argument_listContext.class) == null);
+        return namespace != null && !namespace.DOT().isEmpty() && getDescendant(namespace, Type_argument_listContext.class) == null;
     }
 }

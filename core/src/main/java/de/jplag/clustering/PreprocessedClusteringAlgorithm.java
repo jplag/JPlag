@@ -17,6 +17,12 @@ public class PreprocessedClusteringAlgorithm implements GenericClusteringAlgorit
     private final GenericClusteringAlgorithm base;
     private final ClusteringPreprocessor preprocessor;
 
+    /**
+     * Constructs a new clustering algorithm that applies a preprocessor to the similarity matrix before delegating
+     * clustering to the base algorithm.
+     * @param base The base clustering algorithm to delegate to
+     * @param preprocessor The preprocessor to apply to the similarity matrix before clustering
+     */
     public PreprocessedClusteringAlgorithm(GenericClusteringAlgorithm base, ClusteringPreprocessor preprocessor) {
         this.base = base;
         this.preprocessor = preprocessor;
@@ -25,12 +31,11 @@ public class PreprocessedClusteringAlgorithm implements GenericClusteringAlgorit
     @Override
     public Collection<Collection<Integer>> cluster(RealMatrix similarityMatrix) {
         double[][] data = preprocessor.preprocessSimilarities(similarityMatrix.getData());
-        if (data.length > 2) {
-            Collection<Collection<Integer>> preliminaryResult = base.cluster(new Array2DRowRealMatrix(data, false));
-            return preliminaryResult.stream().map(cluster -> cluster.stream().map(preprocessor::originalIndexOf).collect(Collectors.toList()))
-                    .collect(Collectors.toList());
+        if (data.length <= 2) {
+            return Collections.emptyList();
         }
-        return Collections.emptyList();
+        Collection<Collection<Integer>> preliminaryResult = base.cluster(new Array2DRowRealMatrix(data, false));
+        return preliminaryResult.stream().map(cluster -> cluster.stream().map(preprocessor::originalIndexOf).toList()).collect(Collectors.toList());
     }
 
 }

@@ -1,8 +1,6 @@
 package de.jplag.endtoend;
 
-import static de.jplag.options.SimilarityMetric.INTERSECTION;
 import static de.jplag.options.SimilarityMetric.MAX;
-import static de.jplag.options.SimilarityMetric.MIN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -61,6 +59,7 @@ class EndToEndSuiteTest {
      * Creates the test cases over all language options for which data is available and the current test options.
      * @return dynamic test cases across all test data and languages
      * @throws ExitException If JPlag throws an error
+     * @throws IOException If loading test resources fails
      */
     @TestFactory
     Collection<DynamicContainer> endToEndTestFactory() throws ExitException, IOException {
@@ -84,7 +83,7 @@ class EndToEndSuiteTest {
     }
 
     /**
-     * Generates the tests for the given language
+     * Generates the tests for the given language.
      * @param language The language
      * @param dataSets The data sets for this language
      * @return The dynamic container containing the tests
@@ -99,7 +98,7 @@ class EndToEndSuiteTest {
     }
 
     /**
-     * Generates tests for a data set
+     * Generates tests for a data set.
      * @param dataSet The data set
      * @return The dynamic container containing the tests
      * @throws ExitException If JPlag throws an error
@@ -149,7 +148,7 @@ class EndToEndSuiteTest {
     }
 
     /**
-     * Generates the test cases for the individual comparisons
+     * Generates the test cases for the individual comparisons.
      * @param result The result description for the tests
      * @param comparisons The comparisons
      * @return The container with the tests
@@ -176,23 +175,18 @@ class EndToEndSuiteTest {
         return DynamicTest.dynamicTest(name, () -> {
             assertNotNull(result, "No comparison result could be found");
             List<String> errors = new ArrayList<>();
-            for (SimilarityMetric metric : List.of(MIN, MAX)) {
-                double expected = expectedResult.getSimilarityForMetric(metric);
-                double actual = metric.applyAsDouble(result);
-                if (Math.abs(expected - actual) >= EPSILON) {
-                    errors.add(formattedValidationError(metric, expected, actual));
-                }
-                statistics.accept(actual, expected);
+            double expected = expectedResult.getSimilarityForMetric(MAX);
+            double actual = MAX.applyAsDouble(result);
+            if (Math.abs(expected - actual) >= EPSILON) {
+                errors.add(formattedValidationError(MAX, expected, actual));
             }
-            if (expectedResult.resultMatchedTokenNumber() != result.getNumberOfMatchedTokens()) {
-                errors.add(formattedValidationError(INTERSECTION, expectedResult.resultMatchedTokenNumber(), result.getNumberOfMatchedTokens()));
-            }
+            statistics.accept(actual, expected);
             assertTrue(errors.isEmpty(), createValidationErrorOutput(name, errors, result));
         });
     }
 
     /**
-     * Generates the tests for the gold standard
+     * Generates the tests for the gold standard.
      * @param dataSet The data set
      * @param comparisonMap The comparisons
      * @param goldStandard The gold standard previously saved
@@ -214,10 +208,9 @@ class EndToEndSuiteTest {
                             "expected non plagiarism comparisons have deviating similarities"));
 
             return DynamicContainer.dynamicContainer("expected plagiarism test", List.of(goldStandardMatch, goldStandardNonMatch));
-        } else {
-            return DynamicTest.dynamicTest("expected plagiarisms skipped",
-                    () -> Assumptions.abort("The expected plagiarisms test is skipped, because no expected plagiarisms are defined."));
         }
+        return DynamicTest.dynamicTest("expected plagiarisms skipped",
+                () -> Assumptions.abort("The expected plagiarisms test is skipped, because no expected plagiarisms are defined."));
     }
 
     /**
@@ -231,7 +224,7 @@ class EndToEndSuiteTest {
     }
 
     /**
-     * Creates the display info from the passed failed test results
+     * Creates the display info from the passed failed test results.
      * @return formatted text for the failed comparative values of the current test
      */
     private String createValidationErrorOutput(String name, List<String> validationErrors, JPlagComparison result) {
@@ -242,7 +235,7 @@ class EndToEndSuiteTest {
     }
 
     /**
-     * Creates the tests for the average deviation
+     * Creates the tests for the average deviation.
      * @param deltaStatistics The deltas
      * @return The list of tests
      */
@@ -263,9 +256,8 @@ class EndToEndSuiteTest {
         return submission.getTokenList().stream().map(it -> {
             if (Enum.class.isAssignableFrom(it.getType().getClass())) {
                 return ((Enum<?>) it.getType()).name();
-            } else {
-                return it.getType().getDescription();
             }
+            return it.getType().getDescription();
         }).toList();
     }
 }

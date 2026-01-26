@@ -37,7 +37,7 @@ class RLanguageTest {
     private static final String COMPLETE_TEST_FILE = "Complete.R";
 
     private final Logger logger = LoggerFactory.getLogger(RLanguageTest.class);
-    private final String[] testFiles = new String[] {"Game.R", COMPLETE_TEST_FILE};
+    private final String[] testFiles = {"Game.R", COMPLETE_TEST_FILE};
     private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "rlang").toFile();
     private RLanguage language;
 
@@ -49,13 +49,14 @@ class RLanguageTest {
     @Test
     void parseTestFiles() throws ParsingException {
         for (String fileName : testFiles) {
-            List<Token> tokens = language.parse(Set.of(new File(testFileLocation, fileName)));
+            List<Token> tokens = language.parse(Set.of(new File(testFileLocation, fileName)), false);
             String output = TokenPrinter.printTokens(tokens, testFileLocation);
             logger.info(output);
 
             testSourceCoverage(fileName, tokens);
-            if (fileName.equals(COMPLETE_TEST_FILE))
+            if (COMPLETE_TEST_FILE.equals(fileName)) {
                 testTokenCoverage(tokens, fileName);
+            }
         }
     }
 
@@ -74,7 +75,7 @@ class RLanguageTest {
             // All lines that contain code
             var codeLines = IntStream.range(1, lines.size() + 1).filter(idx -> !lines.get(idx - 1).matches(emptyLineExpression)).toArray();
             // All lines that contain token
-            var tokenLines = tokens.stream().mapToInt(Token::getLine).filter(line -> line != Token.NO_VALUE).distinct().toArray();
+            var tokenLines = tokens.stream().mapToInt(Token::getStartLine).filter(line -> line != Token.NO_VALUE).distinct().toArray();
 
             if (codeLines.length > tokenLines.length) {
                 var diffLine = IntStream.range(0, codeLines.length)

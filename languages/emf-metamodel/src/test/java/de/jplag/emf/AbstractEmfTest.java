@@ -42,7 +42,7 @@ public abstract class AbstractEmfTest {
 
     @AfterEach
     protected void tearDown() {
-        FileUtil.clearFiles(new File(BASE_PATH.toString()), EmfLanguage.VIEW_FILE_SUFFIX);
+        FileUtil.clearFiles(new File(BASE_PATH.toString()), EmfLanguage.VIEW_FILE_EXTENSION);
     }
 
     /**

@@ -1,14 +1,15 @@
-/**
+/*
  * The original version of this file originates from SMILE: https://github.com/haifengl/smile
  */
 
-/*******************************************************************************
- * Copyright (c) 2010-2020 Haifeng Li. All rights reserved. Smile is free software: you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation,
- * either version 3 of the License, or (at your option) any later version. Smile is distributed in the hope that it will
- * be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE. See the GNU Lesser General Public License for more details. You should have received a copy of the GNU
- * Lesser General Public License along with Smile. If not, see <https://www.gnu.org/licenses/>.
+/*
+ * ****************************************************************************** Copyright (c) 2010-2020 Haifeng Li.
+ * All rights reserved. Smile is free software: you can redistribute it and/or modify it under the terms of the GNU
+ * Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at
+ * your option) any later version. Smile is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General
+ * Public License for more details. You should have received a copy of the GNU Lesser General Public License along with
+ * Smile. If not, see <https://www.gnu.org/licenses/>.
  ******************************************************************************/
 
 package de.jplag.clustering.algorithm;
@@ -83,28 +84,28 @@ public class BFGS {
      * At each stage this function updates an interval of uncertainty with endpoints <code>stx</code> and <code>sty</code>.
      * The interval of uncertainty is initially chosen so that it contains a minimizer of the modified function
      * <p>
-     * 
+     *
      * <pre>
      *      f(x+stp*s) - f(x) - ftol*stp*(gradf(x)'s).
      * </pre>
-     * 
+     *
      * If a step is obtained for which the modified function has a nonpositive function value and nonnegative derivative,
      * then the interval of uncertainty is chosen so that it contains a minimizer of <code>f(x+stp*s)</code>.
      * <p>
      * The algorithm is designed to find a step which satisfies the sufficient decrease condition
      * <p>
-     * 
+     *
      * <pre>
      *       f(x+stp*s) &lt;= f(X) + ftol*stp*(gradf(x)'s),
      * </pre>
-     * 
+     *
      * and the curvature condition
      * <p>
-     * 
+     *
      * <pre>
      *       abs(gradf(x+stp*s)'s)) &lt;= gtol*abs(gradf(x)'s).
      * </pre>
-     * 
+     *
      * If <code>ftol</code> is less than <code>gtol</code> and if, for example, the function is bounded below, then there is
      * always a step which satisfies both conditions. If no step can be found which satisfies both conditions, then the
      * algorithm usually stops when rounding errors prevent further progress. In this case <code>stp</code> only satisfies
@@ -179,37 +180,34 @@ public class BFGS {
             if (alam < alammin) {
                 System.arraycopy(xold, 0, x, 0, n);
                 return f;
-            } else if (f <= fold + ftol * alam * slope) {
+            }
+            if ((f <= fold + ftol * alam * slope) || (runs-- < 0)) {
                 // Sufficient function decrease.
                 return f;
-            } else if (runs-- < 0) {
-                return f;
+            }
+            if (alam == 1.0) {
+                // First time
+                tmpalam = -slope / (2.0 * (f - fold - slope));
             } else {
-                // Backtrack
-                if (alam == 1.0) {
-                    // First time
-                    tmpalam = -slope / (2.0 * (f - fold - slope));
+                // Subsequent backtracks.
+                rhs1 = f - fold - alam * slope;
+                rhs2 = f2 - fold - alam2 * slope;
+                a = (rhs1 / (alam * alam) - rhs2 / (alam2 * alam2)) / (alam - alam2);
+                b = (-alam2 * rhs1 / (alam * alam) + alam * rhs2 / (alam2 * alam2)) / (alam - alam2);
+                if (a == 0.0) {
+                    tmpalam = -slope / (2.0 * b);
                 } else {
-                    // Subsequent backtracks.
-                    rhs1 = f - fold - alam * slope;
-                    rhs2 = f2 - fold - alam2 * slope;
-                    a = (rhs1 / (alam * alam) - rhs2 / (alam2 * alam2)) / (alam - alam2);
-                    b = (-alam2 * rhs1 / (alam * alam) + alam * rhs2 / (alam2 * alam2)) / (alam - alam2);
-                    if (a == 0.0) {
-                        tmpalam = -slope / (2.0 * b);
-                    } else {
-                        disc = b * b - 3.0 * a * slope;
-                        if (disc < 0.0) {
-                            tmpalam = 0.5 * alam;
-                        } else if (b <= 0.0) {
-                            tmpalam = (-b + sqrt(disc)) / (3.0 * a);
-                        } else {
-                            tmpalam = -slope / (b + sqrt(disc));
-                        }
-                    }
-                    if (tmpalam > 0.5 * alam) {
+                    disc = b * b - 3.0 * a * slope;
+                    if (disc < 0.0) {
                         tmpalam = 0.5 * alam;
+                    } else if (b <= 0.0) {
+                        tmpalam = (-b + sqrt(disc)) / (3.0 * a);
+                    } else {
+                        tmpalam = -slope / (b + sqrt(disc));
                     }
+                }
+                if (tmpalam > 0.5 * alam) {
+                    tmpalam = 0.5 * alam;
                 }
             }
             alam2 = alam;
@@ -219,11 +217,12 @@ public class BFGS {
     }
 
     /**
-     * This method solves the bound constrained minimization problem using the L-BFGS-B method. The L-BFGS-B algorithm
-     * extends L-BFGS to handle simple box constraints on variables; that is, constraints of the form li ≤ xi ≤ ui where li
-     * and ui are per-variable constant lower and upper bounds, respectively (for each xi, either or both bounds may be
-     * omitted). The method works by identifying fixed and free variables at every step (using a simple gradient method),
-     * and then using the L-BFGS method on the free variables only to get higher accuracy, and then repeating the process.
+     * Minimizes a differentiable multivariate function using the L-BFGS-B algorithm. This method solves the bound
+     * constrained minimization problem using the L-BFGS-B method. The L-BFGS-B algorithm extends L-BFGS to handle simple
+     * box constraints on variables; that is, constraints of the form li ≤ xi ≤ ui where li and ui are per-variable constant
+     * lower and upper bounds, respectively (for each xi, either or both bounds may be omitted). The method works by
+     * identifying fixed and free variables at every step (using a simple gradient method), and then using the L-BFGS method
+     * on the free variables only to get higher accuracy, and then repeating the process.
      * @param func the function to be minimized.
      * @param m the number of corrections used in the L-BFGS update. Values of <code>m</code> less than 3 are not
      * recommended; large values of <code>m</code> will result in excessive computing time. <code>3 &lt;= m &lt;= 7</code>
@@ -236,6 +235,7 @@ public class BFGS {
      * @param gtol the convergence tolerance on zeroing the gradient.
      * @param maxIter the maximum number of iterations.
      * @return the minimum value of the function.
+     * @throws IllegalArgumentException if parameters are invalid or bounds sizes do not match x length
      */
     public static double minimize(DifferentiableMultivariateFunction func, int m, double[] x, double[] l, double[] u, double gtol, int maxIter) {
         if (gtol <= 0.0) {
@@ -431,8 +431,9 @@ public class BFGS {
 
         for (int i = 0; i < n; i++) {
             t[i] = g[i] == 0 ? Double.MAX_VALUE : (g[i] < 0 ? (x[i] - u[i]) / g[i] : (x[i] - l[i]) / g[i]);
-            if (t[i] != 0.0)
+            if (t[i] != 0.0) {
                 d[i] = -g[i];
+            }
         }
 
         int[] index = sortWithIndex(t);
@@ -446,8 +447,9 @@ public class BFGS {
 
         int i = 0;
         for (; i < n; i++) {
-            if (t[index[i]] >= 0)
+            if (t[index[i]] >= 0) {
                 break;
+            }
         }
 
         double dt = i < n ? t[i] : 0;
@@ -587,10 +589,11 @@ public class BFGS {
 
         for (int i = 0; i < n; i++) {
             double gi = g[i];
-            if (gi < 0)
+            if (gi < 0) {
                 gi = max(x[i] - u[i], gi);
-            else
+            } else {
                 gi = min(x[i] - l[i], gi);
+            }
             norm = max(norm, abs(gi));
         }
 
@@ -605,22 +608,30 @@ public class BFGS {
         int n = v.length;
 
         for (int i = 0; i < n; i++) {
-            if (v[i] > u[i])
+            if (v[i] > u[i]) {
                 v[i] = u[i];
-            else if (v[i] < l[i])
+            } else if (v[i] < l[i]) {
                 v[i] = l[i];
+            }
         }
     }
 
+    /**
+     * Represents a multivariate real-valued function.
+     */
     public interface MultivariateFunction {
         /**
-         * Computes the value of the function at x.
-         * @param x a real vector.
-         * @return the function value.
+         * Computes the value of the function at the given point.
+         * @param x input vector
+         * @return function value at x
          */
         double f(double[] x);
     }
 
+    /**
+     * Extends {@link MultivariateFunction} to include gradient computation. Provides a default finite difference
+     * approximation of the gradient.
+     */
     public interface DifferentiableMultivariateFunction extends MultivariateFunction {
         /** A number close to zero, between machine epsilon and its square root. */
         double EPSILON = Double.parseDouble(System.getProperty("smile.gradient.epsilon", "1E-8"));

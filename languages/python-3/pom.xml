@@ -7,11 +7,16 @@
         <version>${revision}</version>
     </parent>
     <artifactId>python-3</artifactId>
+    <name>JPlag: Python3 Language Module</name>
 
     <dependencies>
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.jplag</groupId>
+            <artifactId>language-antlr-utils</artifactId>
         </dependency>
     </dependencies>
 

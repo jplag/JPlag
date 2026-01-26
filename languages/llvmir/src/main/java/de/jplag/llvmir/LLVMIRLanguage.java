@@ -1,42 +1,44 @@
 package de.jplag.llvmir;
 
-import org.kohsuke.MetaInfServices;
+import java.io.File;
+import java.util.List;
+import java.util.Set;
 
 import de.jplag.Language;
-import de.jplag.antlr.AbstractAntlrLanguage;
+import de.jplag.ParsingException;
+import de.jplag.Token;
+
+import com.google.auto.service.AutoService;
 
 /**
  * The entry point for the ANTLR parser based LLVM IR language module.
  */
-@MetaInfServices(Language.class)
-public class LLVMIRLanguage extends AbstractAntlrLanguage {
-
-    private static final String NAME = "LLVMIR Parser";
-    private static final String IDENTIFIER = "llvmir";
-    private static final int DEFAULT_MIN_TOKEN_MATCH = 70;
-    private static final String[] FILE_EXTENSIONS = {".ll"};
-
-    public LLVMIRLanguage() {
-        super(new LLVMIRParserAdapter());
-    }
+@AutoService(Language.class)
+public class LLVMIRLanguage implements Language {
 
     @Override
-    public String[] suffixes() {
-        return FILE_EXTENSIONS;
+    public List<String> fileExtensions() {
+        return List.of(".ll");
     }
 
     @Override
     public String getName() {
-        return NAME;
+        return "LLVM IR";
     }
 
     @Override
     public String getIdentifier() {
-        return IDENTIFIER;
+        return "llvmir";
     }
 
     @Override
     public int minimumTokenMatch() {
-        return DEFAULT_MIN_TOKEN_MATCH;
+        return 70;
+    }
+
+    @Override
+    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
+        return new LLVMIRParserAdapter().parse(files);
+
     }
 }

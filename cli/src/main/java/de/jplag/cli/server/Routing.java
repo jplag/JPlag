@@ -3,7 +3,7 @@ package de.jplag.cli.server;
 import com.sun.net.httpserver.HttpExchange;
 
 /**
- * Handles the data for a url prefix.
+ * Handles the data for an url prefix.
  */
 public interface Routing {
     /**
@@ -14,8 +14,8 @@ public interface Routing {
     }
 
     /**
-     * Gets the data for the given url
-     * @param subPath The remaining suffix of the url, that is not jet interpreted
+     * Gets the data for the given url.
+     * @param subPath The remaining suffix of the url, that is not yet interpreted
      * @param request The original http request
      * @param viewer The current report viewer
      * @return The data to respond with

@@ -501,3 +501,8 @@ def force_legacy_ssl_support():
 def switchWithBreak():
     while True:
         break
+
+async def x():
+    return ""
+
+x = await x()

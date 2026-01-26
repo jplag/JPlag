@@ -25,7 +25,16 @@ import de.jplag.testutils.LanguageModuleTest;
 import de.jplag.testutils.datacollector.TestDataCollector;
 import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
 
+/**
+ * Unit test for the C# language module, verifying tokenization and source coverage. Extends {@link LanguageModuleTest}
+ * to provide C#-specific test files, token sequences, and rules for ignoring irrelevant source lines such as comments,
+ * preprocessor directives, and using-alias statements.
+ */
 public class CSharpTest extends LanguageModuleTest {
+
+    /**
+     * Constructs a C# language test module with the appropriate language and token type.
+     */
     public CSharpTest() {
         super(new CSharpLanguage(), CSharpTokenType.class);
     }

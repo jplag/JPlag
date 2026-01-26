@@ -67,70 +67,121 @@ JPlag is released on [Maven Central](https://search.maven.org/search?q=de.jplag)
 
 ### Building from sources 
 1. Download or clone the code from this repository.
-2. Run `mvn clean package` from the root of the repository to compile and build all submodules.
-   Run `mvn clean package assembly:single` instead if you need the full jar which includes all dependencies.
+2. Run `mvn clean package` from the repository root to compile and build all submodules.
+   Run `mvn clean package assembly:single` instead if you need the full jar, which includes all dependencies.
    Run `mvn -P with-report-viewer clean package assembly:single` to build the full jar with the report viewer. In this case, you'll need [Node.js](https://nodejs.org/en/download) installed.
-3. You will find the generated JARs in the subdirectory `cli/target`.
+3. You will find the generated JARs (`jplag-x.y.z-jar-with-dependencies.jar`) in the subdirectory `cli/target`.
 
 ## Usage
-JPlag can either be used via the CLI or directly via its Java API. For more information, see the [usage information in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag). If you are using the CLI, you can display your results via [jplag.github.io](https://jplag.github.io/JPlag/). No data will leave your computer!
+JPlag can either be used via the CLI or directly via its Java API. For more information, see the [usage information in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag). If you are using the CLI, the report viewer UI will launch automatically. No data will leave your computer!
 
 ### CLI
 *Note that the [legacy CLI](https://github.com/jplag/jplag/blob/legacy/README.md) is varying slightly.*
-The language can either be set with the -l parameter or as a subcommand (`jplag [jplag options] <language name> [language options]`). A subcommand takes priority over the -l option.
-When using the subcommand, language-specific arguments can be set. A list of language-specific options can be obtained by requesting the help page of a subcommand (e.g. `jplag java -h`).
+The language can either be set with the -l parameter or as a subcommand (`jplag [jplag options] -l <language name> [language options]`). A subcommand takes priority over the -l option.
+Language-specific arguments can be set when using the subcommand. A list of language-specific options can be obtained by requesting the help page of a subcommand (e.g., `jplag java —h`).
 
 ```
 Parameter descriptions: 
       [root-dirs[,root-dirs...]...]
-                        Root-directory with submissions to check for plagiarism.
+                        Root-directory with submissions to check for
+                          plagiarism. If mode is set to VIEW, this parameter
+                          can be used to specify a report file to open. In that
+                          case only a single file may be specified.
       -bc, --bc, --base-code=<baseCode>
-                        Path to the base code directory (common framework used in all submissions).
-  -l, --language=<language>
-                        Select the language of the submissions (default: java). See subcommands below.
-  -M, --mode=<{RUN, VIEW, RUN_AND_VIEW}>
-                        The mode of JPlag: either only run analysis, only open the viewer, or do both (default: null)
-  -n, --shown-comparisons=<shownComparisons>
-                        The maximum number of comparisons that will be shown in the generated report, if set to -1 all comparisons will be shown (default: 500)
+                        Path to the base code directory (common framework used
+                          in all submissions).
+      -l, --language=<language>
+                        Select the language of the submissions (default: java).
+                          See subcommands below.
+      -M, --mode=<{RUN, VIEW, RUN_AND_VIEW, AUTO}>
+                        The mode of JPlag. One of: RUN, VIEW, RUN_AND_VIEW,
+                          AUTO (default: null). If VIEW is chosen, you can
+                          optionally specify a path to an existing report.
+      -n, --shown-comparisons=<shownComparisons>
+                        The maximum number of comparisons that will be shown in
+                          the generated report, if set to -1 all comparisons
+                          will be shown (default: 2500)
       -new, --new=<newDirectories>[,<newDirectories>...]
-                        Root-directories with submissions to check for plagiarism (same as root).
-      --normalize       Activate the normalization of tokens. Supported for languages: Java, Java-CPG, C++.
+                        Root-directories with submissions to check for
+                         plagiarism (same as root).
+      --normalize       Activate the normalization of tokens. Supported for
+       languages: Java, Java-CPG, C++.
       -old, --old=<oldDirectories>[,<oldDirectories>...]
-                        Root-directories with prior submissions to compare against.
-  -r, --result-file=<resultFile>
-                        Name of the file in which the comparison results will be stored (default: results). Missing .zip endings will be automatically added.
-  -t, --min-tokens=<minTokenMatch>
-                        Tunes the comparison sensitivity by adjusting the minimum token required to be counted as a matching section. A smaller value increases the sensitivity but might lead to more
-                          false-positives.
+                        Root-directories with prior submissions to compare
+                          against.
+      -r, --result-file=<resultFile>
+                        Name of the file in which the comparison results will
+                          be stored (default: results). Missing .jplag
+                          extension will be automatically added.
+      -t, --min-tokens=<minTokenMatch>
+                        Tunes the comparison sensitivity by adjusting the
+                          minimum token required to be counted as a matching
+                          section. A smaller value increases the sensitivity
+                          but might lead to more false-positives.
 
 Advanced
       --csv-export      Export pairwise similarity values as a CSV file.
-  -d, --debug           Store on-parsable files in error folder.
-  -m, --similarity-threshold=<similarityThreshold>
-                        Comparison similarity threshold [0.0-1.0]: All comparisons above this threshold will be saved (default: 0.0).
-  -p, --suffixes=<suffixes>[,<suffixes>...]
-                        comma-separated list of all filename suffixes that are included.
-  -P, --port=<port>     The port used for the internal report viewer (default: 1996).
-  -s, --subdirectory=<subdirectory>
+      -d, --debug           Store on-parsable files in error folder.
+      --encoding=<submissionCharsetOverride>
+                        Specifies the charset of the submissions. This disables
+                          the automatic charset detection
+      --log-level=<{ERROR, WARN, INFO, DEBUG, TRACE}>
+                        Set the log level for the cli.
+      -m, --similarity-threshold=<similarityThreshold>
+                        Comparison similarity threshold [0.0-1.0]: All
+                          comparisons above this threshold will be saved
+                          (default: 0.0).
+      --overwrite       Existing result files will be overwritten.
+      -p, --suffixes=<suffixes>[,<suffixes>...]
+                        comma-separated list of all filename suffixes that are
+                          included.
+      -P, --port=<port>     The port used for the internal report viewer (default:
+                          1996).
+      -s, --subdirectory=<subdirectory>
                         Look in directories <root-dir>/*/<dir> for programs.
-  -x, --exclusion-file=<exclusionFileName>
-                        All files named in this file will be ignored in the comparison (line-separated list).
+      -x, --exclusion-file=<exclusionFileName>
+                        All files named in this file will be ignored in the
+                          comparison (line-separated list).
 
 Clustering
       --cluster-alg, --cluster-algorithm=<{AGGLOMERATIVE, SPECTRAL}>
-                        Specifies the clustering algorithm (default: spectral).
-      --cluster-metric=<{AVG, MIN, MAX, INTERSECTION}>
-                        The similarity metric used for clustering (default: average similarity).
+                        Specifies the clustering algorithm. Available
+                          algorithms: agglomerative, spectral (default:
+                          spectral).
+      --cluster-metric=<{AVG, MIN, MAX, INTERSECTION, LONGEST_MATCH,
+        MAXIMUM_LENGTH}>
+                        The similarity metric used for clustering. Available
+                          metrics: average similarity, minimum similarity,
+                          maximal similarity, matched tokens, number of tokens
+                          in the longest match, length of the longer submission
+                          (default: average similarity).
       --cluster-skip    Skips the cluster calculation.
 
 Subsequence Match Merging
       --gap-size=<maximumGapSize>
-                        Maximal gap between neighboring matches to be merged (between 1 and minTokenMatch, default: 6).
-      --match-merging   Enables merging of neighboring matches to counteract obfuscation attempts.
+                        Maximal gap between neighboring matches to be merged
+                          (between 1 and minTokenMatch, default: 6).
+      --match-merging   Enables merging of neighboring matches to counteract
+                          obfuscation attempts.
       --neighbor-length=<minimumNeighborLength>
-                        Minimal length of neighboring matches to be merged (between 1 and minTokenMatch, default: 2).
+                        Minimal length of neighboring matches to be merged
+                          (between 1 and minTokenMatch, default: 2).
+      --required-merges=<minimumRequiredMerges>
+                        Minimal required merges for the merging to be applied
+                          (between 1 and 50, default: 6).
 
-Subcommands (supported languages):
+Frequency Analysis
+      --analysis-strategy=<{COMPLETE_MATCHES, CONTAINED_MATCHES, SUBMATCHES,
+        MATCH_WINDOWS}>
+                        Specifies the strategy for frequency analysis, one of:
+                          COMPLETE_MATCHES, CONTAINED_MATCHES, SUBMATCHES,
+                          MATCH_WINDOWS (default: COMPLETE_MATCHES).
+      --frequency       Enables analysis and highlighting of rare matches.
+      --weighting=<{PROPORTIONAL, LINEAR, QUADRATIC, SIGMOID}>
+                        The function for frequency-based match weighting, one
+                          of: PROPORTIONAL, LINEAR, QUADRATIC, SIGMOID
+                          (default: SIGMOID).
+Languages:
   c
   cpp
   csharp
@@ -141,6 +192,7 @@ Subcommands (supported languages):
   javascript
   kotlin
   llvmir
+  multi
   python3
   rlang
   rust
@@ -183,7 +235,5 @@ Please consider our [guidelines for contributions](https://github.com/jplag/JPla
 
 ## Contact
 If you encounter bugs or other issues, please report them [here](https://github.com/jplag/jplag/issues).
-For other purposes, you can contact us at jplag@ipd.kit.edu .
-If you are doing research related to JPlag, we would love to know what you are doing. Feel free to contact us!
-
-### More information can be found in our [Wiki](https://github.com/jplag/JPlag/wiki)!
+For other purposes, you can contact us at jplag@ipd.kit.edu.
+We would love to hear about your research related to JPlag. Feel free to contact us!

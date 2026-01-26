@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.IntUnaryOperator;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
@@ -19,11 +18,11 @@ import org.apache.commons.math3.linear.RealMatrix;
 
 import de.jplag.clustering.ClusteringPreprocessor;
 
-public class PreprocessingTestBase {
+class PreprocessingTestBase {
 
     private static final double EPSILON = 0.000001;
 
-    public double[][] createTestData() {
+    double[][] createTestData() {
         RealMatrix similarity = new Array2DRowRealMatrix(5, 5);
         for (int i = 0; i < 4; i++) {
             similarity.setEntry(i, i, 1);
@@ -43,12 +42,12 @@ public class PreprocessingTestBase {
         return similarity.getData();
     }
 
-    public void validPreprocessing(double[][] originalArray, double[][] resultArray, IntUnaryOperator originalIndex) {
+    void isValidPreprocessing(double[][] originalArray, double[][] resultArray, IntUnaryOperator originalIndex) {
         RealMatrix result = new Array2DRowRealMatrix(resultArray, false);
         RealMatrix original = new Array2DRowRealMatrix(originalArray, false);
         assertEquals(result.getColumnDimension(), result.getRowDimension(), "not a square matrix");
 
-        List<Integer> usedOriginalIndices = IntStream.range(0, result.getColumnDimension()).map(originalIndex).boxed().collect(Collectors.toList());
+        List<Integer> usedOriginalIndices = IntStream.range(0, result.getColumnDimension()).map(originalIndex).boxed().toList();
 
         assertEquals(usedOriginalIndices.size(), new HashSet<>(usedOriginalIndices).size(), "original indices not unique");
 
@@ -62,7 +61,7 @@ public class PreprocessingTestBase {
         }
     }
 
-    public double[][] withAllValues(ClusteringPreprocessor preprocessor, double[][] original, double[][] result,
+    double[][] withAllValues(ClusteringPreprocessor preprocessor, double[][] original, double[][] result,
             BiConsumer<Double, Optional<Double>> originalAndPreprocessedConsumer) {
 
         // Construct mapping from original indices to preprocessed indices as implied by

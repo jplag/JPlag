@@ -4,35 +4,31 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import org.kohsuke.MetaInfServices;
-
+import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
-@MetaInfServices(de.jplag.Language.class)
-public class PythonLanguage implements de.jplag.Language {
+import com.google.auto.service.AutoService;
 
-    private static final String IDENTIFIER = "python3";
-
-    private final Parser parser;
-
-    public PythonLanguage() {
-        parser = new Parser();
-    }
+/**
+ * Language facade for Python 3.
+ */
+@AutoService(Language.class)
+public class PythonLanguage implements Language {
 
     @Override
-    public String[] suffixes() {
-        return new String[] {".py"};
+    public List<String> fileExtensions() {
+        return List.of(".py");
     }
 
     @Override
     public String getName() {
-        return "Python3 Parser";
+        return "Python";
     }
 
     @Override
     public String getIdentifier() {
-        return IDENTIFIER;
+        return "python3";
     }
 
     @Override
@@ -42,6 +38,6 @@ public class PythonLanguage implements de.jplag.Language {
 
     @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return this.parser.parse(files);
+        return new PythonParserAdapter().parse(files);
     }
 }

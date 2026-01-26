@@ -39,10 +39,13 @@ class RustLanguageTest {
     private static final String COMPLETE_TEST_FILE = "complete.rs";
     private static final String RUST_SHEBANG = "#!.*$";
     private static final double EPSILON = 1E-6;
+    /**
+     * Minimum required source coverage for tests, represented as a fraction of lines covered by tokens.
+     */
     public static final double BASELINE_COVERAGE = 0.75;
 
     private final Logger logger = LoggerFactory.getLogger(RustLanguageTest.class);
-    private final String[] testFiles = new String[] {"deno_core_runtime.rs", COMPLETE_TEST_FILE};
+    private final String[] testFiles = {"deno_core_runtime.rs", COMPLETE_TEST_FILE};
     private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "rust").toFile();
     private RustLanguage language;
 
@@ -54,13 +57,14 @@ class RustLanguageTest {
     @Test
     void parseTestFiles() throws ParsingException {
         for (String fileName : testFiles) {
-            List<Token> tokens = language.parse(Set.of(new File(testFileLocation, fileName)));
+            List<Token> tokens = language.parse(Set.of(new File(testFileLocation, fileName)), false);
             String output = TokenPrinter.printTokens(tokens, testFileLocation);
             logger.info(output);
 
             testSourceCoverage(fileName, tokens);
-            if (fileName.equals(COMPLETE_TEST_FILE))
+            if (COMPLETE_TEST_FILE.equals(fileName)) {
                 testTokenCoverage(tokens, fileName);
+            }
         }
     }
 
@@ -78,12 +82,12 @@ class RustLanguageTest {
             // All lines that contain code
             var codeLines = new ArrayList<>(getCodeLines(lines));
             // All lines that contain token
-            var tokenLines = tokens.stream().mapToInt(Token::getLine).filter(line -> line != Token.NO_VALUE).distinct().boxed().toList();
+            var tokenLines = tokens.stream().mapToInt(Token::getStartLine).filter(line -> line != Token.NO_VALUE).distinct().boxed().toList();
 
             // Keep only lines that have no tokens
             codeLines.removeAll(tokenLines);
 
-            double coverage = 1.d - (codeLines.size() * 1.d / (codeLines.size() + tokenLines.size()));
+            double coverage = 1.d - codeLines.size() * 1.d / (codeLines.size() + tokenLines.size());
             if (coverage == 1) {
                 logger.info("All lines covered.");
             } else {
@@ -106,11 +110,10 @@ class RustLanguageTest {
 
         return IntStream.range(1, lines.size() + 1).sequential().filter(idx -> {
             String line = lines.get(idx - 1);
-            if (line.matches(RUST_EMPTY_OR_SINGLE_LINE_COMMENT)) {
+            if (line.matches(RUST_EMPTY_OR_SINGLE_LINE_COMMENT) || (idx == 1 && line.matches(RUST_SHEBANG))) {
                 return false;
-            } else if (idx == 1 && line.matches(RUST_SHEBANG)) {
-                return false;
-            } else if (line.matches(RUST_MULTILINE_COMMENT_BEGIN)) {
+            }
+            if (line.matches(RUST_MULTILINE_COMMENT_BEGIN)) {
                 state.insideMultilineComment = true;
                 return false;
             } else if (state.insideMultilineComment && line.matches(RUST_MULTILINE_COMMENT_END)) {

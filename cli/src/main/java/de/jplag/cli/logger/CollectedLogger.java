@@ -1,43 +1,29 @@
 package de.jplag.cli.logger;
 
+import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.io.Serial;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-import org.slf4j.helpers.FormattingTuple;
-import org.slf4j.helpers.MarkerIgnoringBase;
+import org.slf4j.Marker;
+import org.slf4j.event.Level;
+import org.slf4j.helpers.AbstractLogger;
 import org.slf4j.helpers.MessageFormatter;
-import org.slf4j.spi.LocationAwareLogger;
 
 /**
- * This logger is able to collect errors and print them at the end. Mainly adopted from org.slf4j.impl.SimpleLogger
- * @author Dominik Fuchss
+ * A logger implementation that prints all errors during finalization. Handles the enabled log levels for SLF4J.
  */
-public final class CollectedLogger extends MarkerIgnoringBase {
+public class CollectedLogger extends AbstractLogger {
 
-    @Serial
-    private static final long serialVersionUID = -1278670638921140275L;
+    private static final String JPLAG_LOGGER_PREFIX = "de.jplag.";
+    private static final Level LOG_LEVEL_FOR_EXTERNAL_LIBRARIES = Level.ERROR;
+    private static final int MAXIMUM_MESSAGE_LENGTH = 32;
+    private static Level currentLogLevel = Level.INFO;
 
-    private static final int LOG_LEVEL_TRACE = LocationAwareLogger.TRACE_INT;
-    private static final int LOG_LEVEL_DEBUG = LocationAwareLogger.DEBUG_INT;
-    private static final int LOG_LEVEL_INFO = LocationAwareLogger.INFO_INT;
-    private static final int LOG_LEVEL_WARN = LocationAwareLogger.WARN_INT;
-    private static final int LOG_LEVEL_ERROR = LocationAwareLogger.ERROR_INT;
-
-    /**
-     * The default log level that shall be used for external libraries (like Stanford Core NLP)
-     */
-    private static final int LOG_LEVEL_FOR_EXTERNAL_LIBRARIES = LOG_LEVEL_ERROR;
-
-    private static final int CURRENT_LOG_LEVEL = LOG_LEVEL_INFO;
-
-    /**
-     * The short name of this simple log instance
-     */
-    private transient String shortLogName = null;
+    private final transient SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss_SSS");
+    private final ConcurrentLinkedDeque<LogEntry> allErrors = new ConcurrentLinkedDeque<>();
 
     /**
      * Indicator whether finalization is in progress.
@@ -45,264 +31,148 @@ public final class CollectedLogger extends MarkerIgnoringBase {
      */
     private transient boolean isFinalizing = false;
 
-    private final transient SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss_SSS");
-
-    private final ConcurrentLinkedDeque<Triple<String, Throwable, Date>> allErrors = new ConcurrentLinkedDeque<>();
-
+    /**
+     * Creates a logger with a specific name and level.
+     * @param name is the name of the logger.
+     */
     CollectedLogger(String name) {
         this.name = name;
     }
 
-    private void log(int level, String message, Throwable throwable) {
-        log(level, message, throwable, null);
+    @Override
+    public boolean isTraceEnabled() {
+        return isLogLevelEnabled(Level.TRACE);
     }
 
-    private void log(int level, String message, Throwable throwable, Date timeOfError) {
-        if (!isLevelEnabled(level)) {
-            return;
+    @Override
+    public boolean isTraceEnabled(Marker marker) {
+        return isTraceEnabled();
+    }
+
+    @Override
+    public boolean isDebugEnabled() {
+        return isLogLevelEnabled(Level.DEBUG);
+    }
+
+    @Override
+    public boolean isDebugEnabled(Marker marker) {
+        return isDebugEnabled();
+    }
+
+    @Override
+    public boolean isInfoEnabled() {
+        return isLogLevelEnabled(Level.INFO);
+    }
+
+    @Override
+    public boolean isInfoEnabled(Marker marker) {
+        return isInfoEnabled();
+    }
+
+    @Override
+    public boolean isWarnEnabled() {
+        return isLogLevelEnabled(Level.WARN);
+    }
+
+    @Override
+    public boolean isWarnEnabled(Marker marker) {
+        return isWarnEnabled();
+    }
+
+    @Override
+    public boolean isErrorEnabled() {
+        return isLogLevelEnabled(Level.ERROR);
+    }
+
+    @Override
+    public boolean isErrorEnabled(Marker marker) {
+        return isErrorEnabled();
+    }
+
+    @Override
+    protected String getFullyQualifiedCallerName() {
+        return null; // does not seem to be used by anything, but is required by SLF4J
+    }
+
+    @Override
+    protected void handleNormalizedLoggingCall(Level level, Marker marker, String format, Object[] args, Throwable cause) {
+        String logMessage = prepareFormattedMessage(format, args);
+        LogEntry entry = new LogEntry(logMessage, cause, new Date(), level);
+
+        if (level == Level.ERROR && !isFinalizing) {
+            allErrors.add(entry);
+        } else {
+            printLogEntry(entry);
         }
-
-        if (level == LOG_LEVEL_ERROR && !isFinalizing) {
-            // Buffer errors for the final output
-            allErrors.add(new Triple<>(message, throwable, new Date()));
-            return;
-        }
-
-        StringBuilder builder = new StringBuilder(32);
-
-        // Append date-time
-        builder.append(dateFormat.format(timeOfError == null ? new Date() : timeOfError)).append(' ');
-
-        // Append current Level
-        builder.append('[').append(renderLevel(level)).append(']').append(' ');
-
-        // Append the name of the log instance
-        if (shortLogName == null) {
-            shortLogName = computeShortName();
-        }
-        builder.append(shortLogName).append(" - ");
-        // Append the message
-        builder.append(message);
-
-        write(builder, throwable);
     }
 
     void printAllErrorsForLogger() {
-        this.isFinalizing = true;
-        // Copy errors to prevent infinite recursion
-        var errors = new ArrayList<>(this.allErrors);
-        if (errors.isEmpty()) {
-            return;
+        isFinalizing = true;
+        ArrayList<LogEntry> errors = new ArrayList<>(allErrors);
+        if (!errors.isEmpty()) {
+            info("Summary of all errors:");
+            allErrors.clear();
+            errors.forEach(this::printLogEntry);
         }
-
-        this.allErrors.removeAll(errors);
-
-        info("Summary of all Errors:");
-        errors.forEach(error -> log(LOG_LEVEL_ERROR, error.first(), error.second(), error.third()));
         isFinalizing = false;
-    }
-
-    @SuppressWarnings("java:S106")
-    void write(StringBuilder buf, Throwable throwable) {
-        PrintStream targetStream = System.out;
-
-        targetStream.println(buf.toString());
-        writeThrowable(throwable, targetStream);
-        targetStream.flush();
-    }
-
-    private void writeThrowable(Throwable throwable, PrintStream targetStream) {
-        if (throwable != null) {
-            throwable.printStackTrace(targetStream);
-        }
     }
 
     private String computeShortName() {
         return name.substring(name.lastIndexOf(".") + 1);
     }
 
-    private boolean isLevelEnabled(int logLevel) {
-        return logLevel >= (isJPlagLog() ? CURRENT_LOG_LEVEL : LOG_LEVEL_FOR_EXTERNAL_LIBRARIES);
-    }
-
     private boolean isJPlagLog() {
-        return this.name.startsWith("de.jplag.");
+        return name.startsWith(JPLAG_LOGGER_PREFIX);
     }
 
-    private String renderLevel(int level) {
-        return switch (level) {
-            case LOG_LEVEL_TRACE -> "TRACE";
-            case LOG_LEVEL_DEBUG -> "DEBUG";
-            case LOG_LEVEL_INFO -> "INFO";
-            case LOG_LEVEL_WARN -> "WARN";
-            case LOG_LEVEL_ERROR -> "ERROR";
-            default -> throw new IllegalStateException("Unrecognized level [" + level + "]");
-        };
+    private boolean isLogLevelEnabled(Level logLevel) {
+        return logLevel.toInt() >= (isJPlagLog() ? currentLogLevel.toInt() : LOG_LEVEL_FOR_EXTERNAL_LIBRARIES.toInt());
     }
 
-    @Override
-    public boolean isTraceEnabled() {
-        return isLevelEnabled(LOG_LEVEL_TRACE);
-    }
-
-    @Override
-    public void trace(String message) {
-        log(LOG_LEVEL_TRACE, message, null);
-    }
-
-    @Override
-    public void trace(String format, Object param1) {
-        formatAndLog(LOG_LEVEL_TRACE, format, param1, null);
-    }
-
-    @Override
-    public void trace(String format, Object param1, Object param2) {
-        formatAndLog(LOG_LEVEL_TRACE, format, param1, param2);
-    }
-
-    @Override
-    public void trace(String format, Object... argArray) {
-        formatAndLog(LOG_LEVEL_TRACE, format, argArray);
-    }
-
-    @Override
-    public void trace(String message, Throwable t) {
-        log(LOG_LEVEL_TRACE, message, t);
-    }
-
-    @Override
-    public boolean isDebugEnabled() {
-        return isLevelEnabled(LOG_LEVEL_DEBUG);
-    }
-
-    @Override
-    public void debug(String message) {
-        log(LOG_LEVEL_DEBUG, message, null);
-    }
-
-    @Override
-    public void debug(String format, Object param1) {
-        formatAndLog(LOG_LEVEL_DEBUG, format, param1, null);
-    }
-
-    @Override
-    public void debug(String format, Object param1, Object param2) {
-        formatAndLog(LOG_LEVEL_DEBUG, format, param1, param2);
-    }
-
-    @Override
-    public void debug(String format, Object... argArray) {
-        formatAndLog(LOG_LEVEL_DEBUG, format, argArray);
-    }
-
-    @Override
-    public void debug(String message, Throwable throwable) {
-        log(LOG_LEVEL_DEBUG, message, throwable);
-    }
-
-    @Override
-    public boolean isInfoEnabled() {
-        return isLevelEnabled(LOG_LEVEL_INFO);
-    }
-
-    @Override
-    public void info(String message) {
-        log(LOG_LEVEL_INFO, message, null);
-    }
-
-    @Override
-    public void info(String format, Object arg) {
-        formatAndLog(LOG_LEVEL_INFO, format, arg, null);
-    }
-
-    @Override
-    public void info(String format, Object arg1, Object arg2) {
-        formatAndLog(LOG_LEVEL_INFO, format, arg1, arg2);
-    }
-
-    @Override
-    public void info(String format, Object... argArray) {
-        formatAndLog(LOG_LEVEL_INFO, format, argArray);
-    }
-
-    @Override
-    public void info(String message, Throwable throwable) {
-        log(LOG_LEVEL_INFO, message, throwable);
-    }
-
-    @Override
-    public boolean isWarnEnabled() {
-        return isLevelEnabled(LOG_LEVEL_WARN);
-    }
-
-    @Override
-    public void warn(String message) {
-        log(LOG_LEVEL_WARN, message, null);
-    }
-
-    @Override
-    public void warn(String format, Object arg) {
-        formatAndLog(LOG_LEVEL_WARN, format, arg, null);
-    }
-
-    @Override
-    public void warn(String format, Object arg1, Object arg2) {
-        formatAndLog(LOG_LEVEL_WARN, format, arg1, arg2);
-    }
-
-    @Override
-    public void warn(String format, Object... argArray) {
-        formatAndLog(LOG_LEVEL_WARN, format, argArray);
-    }
-
-    @Override
-    public void warn(String message, Throwable throwable) {
-        log(LOG_LEVEL_WARN, message, throwable);
-    }
-
-    @Override
-    public boolean isErrorEnabled() {
-        return isLevelEnabled(LOG_LEVEL_ERROR);
-    }
-
-    @Override
-    public void error(String message) {
-        log(LOG_LEVEL_ERROR, message, null);
-    }
-
-    @Override
-    public void error(String format, Object arg) {
-        formatAndLog(LOG_LEVEL_ERROR, format, arg, null);
-    }
-
-    @Override
-    public void error(String format, Object arg1, Object arg2) {
-        formatAndLog(LOG_LEVEL_ERROR, format, arg1, arg2);
-    }
-
-    @Override
-    public void error(String format, Object... argArray) {
-        formatAndLog(LOG_LEVEL_ERROR, format, argArray);
-    }
-
-    @Override
-    public void error(String message, Throwable throwable) {
-        log(LOG_LEVEL_ERROR, message, throwable);
-    }
-
-    private void formatAndLog(int level, String format, Object arg1, Object arg2) {
-        if (!isLevelEnabled(level)) {
-            return;
+    private String prepareFormattedMessage(String format, Object[] args) {
+        if (args == null) {
+            return format;
         }
-        FormattingTuple formattingTuple = MessageFormatter.format(format, arg1, arg2);
-        log(level, formattingTuple.getMessage(), formattingTuple.getThrowable());
+
+        return MessageFormatter.arrayFormat(format, args).getMessage();
     }
 
-    private void formatAndLog(int level, String format, Object... arguments) {
-        if (!isLevelEnabled(level)) {
-            return;
+    private StringBuilder prepareLogOutput(LogEntry entry) {
+        StringBuilder outputBuilder = new StringBuilder(MAXIMUM_MESSAGE_LENGTH);
+        outputBuilder.append(dateFormat.format(entry.timeOfLog())).append(' ');
+        outputBuilder.append('[').append(entry.logLevel().name()).append("] ");
+        outputBuilder.append(computeShortName()).append(" - ");
+        outputBuilder.append(entry.message());
+        return outputBuilder;
+    }
+
+    private void printLogEntry(LogEntry entry) {
+        StringBuilder output = prepareLogOutput(entry);
+        DelayablePrinter.getInstance().println(output.toString());
+        if (entry.cause() != null) {
+            this.printStackTrace(entry.cause());
         }
-        FormattingTuple formattingTuple = MessageFormatter.arrayFormat(format, arguments);
-        log(level, formattingTuple.getMessage(), formattingTuple.getThrowable());
+    }
+
+    /**
+     * @return the log level.
+     */
+    public static Level getLogLevel() {
+        return currentLogLevel;
+    }
+
+    /**
+     * Sets the log level to a specified value.
+     * @param logLevel is the specified value.
+     */
+    public static void setLogLevel(Level logLevel) {
+        currentLogLevel = logLevel;
+    }
+
+    private void printStackTrace(Throwable error) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        error.printStackTrace(new PrintStream(outputStream));
+        String stackTrace = outputStream.toString();
+        DelayablePrinter.getInstance().println(stackTrace);
     }
 }

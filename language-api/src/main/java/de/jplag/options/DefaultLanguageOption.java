@@ -1,7 +1,7 @@
 package de.jplag.options;
 
 /**
- * Default implementation for {@link LanguageOption}
+ * Default implementation for {@link LanguageOption}.
  * @param <T> The type of the option
  */
 public class DefaultLanguageOption<T> implements LanguageOption<T> {
@@ -20,7 +20,7 @@ public class DefaultLanguageOption<T> implements LanguageOption<T> {
         this.hasValue = true;
     }
 
-    DefaultLanguageOption(OptionType<T> type, String description, String name) {
+    DefaultLanguageOption(OptionType<T> type, String name, String description) {
         this(type, name, description, null);
         this.hasValue = false;
     }

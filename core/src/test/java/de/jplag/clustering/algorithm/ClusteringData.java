@@ -14,8 +14,16 @@ import org.apache.commons.math3.linear.RealMatrix;
 
 import de.jplag.clustering.ClusteringOptions;
 
+/**
+ * Enum providing predefined clustering test data sets, including similarity matrices, expected cluster groupings, and
+ * clustering options.
+ */
 public enum ClusteringData {
 
+    /**
+     * A test data set with four points, where points 0 and 1 are similar, points 2 and 3 are similar, and others are
+     * dissimilar. The expected clusters are {0, 1} and {2, 3}.
+     */
     FOUR_POINTS(() -> {
         RealMatrix similarity = new Array2DRowRealMatrix(4, 4);
         for (int i = 0; i < 4; i++) {
@@ -40,15 +48,22 @@ public enum ClusteringData {
 
     ClusteringData(Supplier<RealMatrix> similarity, int[][] expected, ClusteringOptions options) {
         this.similarity = similarity.get();
-        this.expected = makeSets(
-                Arrays.stream(expected).map(intArray -> Arrays.stream(intArray).boxed().collect(Collectors.toList())).collect(Collectors.toList()));
+        this.expected = makeSets(Arrays.stream(expected).map(intArray -> Arrays.stream(intArray).boxed().toList()).toList());
         this.options = options;
     }
 
+    /**
+     * Returns the clustering options associated with this test data.
+     * @return clustering options
+     */
     public ClusteringOptions getOptions() {
         return options;
     }
 
+    /**
+     * Returns the similarity matrix for this test data.
+     * @return similarity matrix
+     */
     public RealMatrix getSimilarity() {
         return similarity;
     }
@@ -57,6 +72,11 @@ public enum ClusteringData {
         return collections.stream().map(HashSet::new).collect(Collectors.toSet());
     }
 
+    /**
+     * Asserts that the actual clustering result matches the expected clusters.
+     * @param actual the actual cluster result to check
+     * @throws AssertionError if the clusters don't match
+     */
     public void assertValid(Collection<? extends Collection<Integer>> actual) {
         assertEquals(expected, makeSets(actual), this.name() + " not clustered correctly");
     }

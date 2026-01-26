@@ -7,6 +7,7 @@
         <version>${revision}</version>
     </parent>
     <artifactId>cpp</artifactId>
+    <name>JPlag: C++ Language Module</name>
 
     <dependencies>
         <dependency>
@@ -16,7 +17,6 @@
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>language-antlr-utils</artifactId>
-            <version>${revision}</version>
         </dependency>
     </dependencies>
 

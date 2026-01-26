@@ -1,0 +1,34 @@
+{
+  "language": "java",
+  "minimumTokenMatch": 9,
+  "submissionDirectories": [".\\files"],
+  "oldSubmissionDirectories": ["old"],
+  "baseCodeSubmissionDirectory": ".",
+  "subdirectoryName": "src/",
+  "fileSuffixes": [".java", ".JAVA"],
+  "exclusionFileName": "ex.txt",
+  "similarityMetric": "AVG",
+  "similarityThreshold": 0.0,
+  "maximumNumberOfComparisons": 500,
+  "clusteringOptions": {
+    "enabled": true,
+    "metric": "AVG",
+    "spectralKernelBandwidth": 20.0,
+    "spectralGaussianProcessVariance": 0.0025000000000000005,
+    "spectralMinRuns": 5,
+    "spectralMaxRuns": 50,
+    "spectralMaxKMeansIterationPerRun": 200,
+    "agglomerativeThreshold": 0.2,
+    "preprocessor": "CUMULATIVE_DISTRIBUTION_FUNCTION",
+    "algorithm": "SPECTRAL",
+    "agglomerativeInterClusterSimilarity": "AVERAGE",
+    "preprocessorThreshold": 0.2,
+    "preprocessorPercentile": 0.5
+  },
+  "mergingOptions": {
+    "enabled": false,
+    "minimumNeighborLength": 0,
+    "maximumGapSize": 0,
+    "minimumRequiredMerges": 3
+  }
+}

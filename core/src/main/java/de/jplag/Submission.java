@@ -1,5 +1,11 @@
 package de.jplag;
 
+import static de.jplag.SubmissionState.CANNOT_PARSE;
+import static de.jplag.SubmissionState.NOTHING_TO_PARSE;
+import static de.jplag.SubmissionState.TOO_SMALL;
+import static de.jplag.SubmissionState.UNPARSED;
+import static de.jplag.SubmissionState.VALID;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,63 +18,44 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.normalization.TokenStringNormalizer;
+import de.jplag.commentextraction.Comment;
+import de.jplag.commentextraction.CommentExtractor;
+import de.jplag.commentextraction.CommentExtractorSettings;
+import de.jplag.exceptions.LanguageException;
+import de.jplag.normalization.TokenSequenceNormalizer;
 import de.jplag.options.JPlagOptions;
 
 /**
- * Represents a single submission. A submission can contain multiple files.
+ * This class represents a single submission, which is either a single file or a directory containing multiple files. It
+ * encapsulates the details and processing logic required to handle the submission files, including parsing,
+ * tokenization, and normalization.
  */
 public class Submission implements Comparable<Submission> {
     private static final Logger logger = LoggerFactory.getLogger(Submission.class);
 
-    /**
-     * Identification of the submission (often a directory or file name).
-     */
-    private final String name;
-
-    /**
-     * Root of the submission files (including the subdir if used).
-     */
-    private final File submissionRootFile;
-
-    /**
-     * Whether the submission is new. That is, must be checked for plagiarism.
-     */
-    private final boolean isNew;
-
-    /**
-     * Files of the submission.
-     */
+    private final String name; // identifier for the submission (a directory or file name).
+    private final File submissionRootFile; // Root of the submission, a director or file (including the subdir if used).
+    private final boolean isNew; // old submissions are only checked against new ones.
     private final Collection<File> files;
-
-    /**
-     * Whether an error occurred during parsing the submission files.
-     */
-    private boolean hasErrors;
-
-    /**
-     * Parse result, tokens from all files.
-     */
-    private List<Token> tokenList;
-
-    /**
-     * Base code comparison
-     */
-    private JPlagComparison baseCodeComparison;
-
     private final Language language;
 
+    private SubmissionState state; // whether an error occurred during parsing or not
+    private List<Token> tokenList; // list of tokens from all files, used for comparison
+    private JPlagComparison baseCodeComparison; // Comparison of thus submission with the base code
     private Map<File, Integer> fileTokenCount;
+    private List<Comment> comments; // list of comments from all files
 
     /**
      * Creates a submission.
-     * @param name Identification of the submission (directory or filename).
-     * @param submissionRootFile is the submission file, or the root of the submission itself.
+     * @param name is the identifier of the submission (directory or filename). May include parent directory name if JPlag
+     * is executed with multiple root directories.
+     * @param submissionRootFile is the submission file or the root of the submission itself.
      * @param isNew states whether the submission must be checked for plagiarism.
      * @param files are the files of the submissions, if the root is a single file it should just contain one file.
      * @param language is the language of the submission.
@@ -79,6 +66,9 @@ public class Submission implements Comparable<Submission> {
         this.isNew = isNew;
         this.files = files;
         this.language = language;
+        tokenList = Collections.emptyList(); // Placeholder, will be replaced when submission is parsed
+        comments = new ArrayList<>();
+        state = UNPARSED;
     }
 
     @Override
@@ -103,20 +93,25 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * @return base code comparison
+     * Provides access to the comparison of this submission to the basecode.
+     * @return base code comparison.
      */
     public JPlagComparison getBaseCodeComparison() {
         return baseCodeComparison;
     }
 
     /**
-     * @return a list of files this submission consists of.
+     * Provided all source code files.
+     * @return a collection of files this submission consists of.
      */
     public Collection<File> getFiles() {
         return files;
     }
 
     /**
+     * Provides the submission name. If the submission is a single program file, it is the file name. If the submission
+     * contains multiple program files, it is the directory name. If JPlag is executed with multiple root directories, the
+     * name starts the root directory identifier, e.g., <code>rootName/submissionName</code>.
      * @return name of the submission (directory or file name).
      */
     public String getName() {
@@ -127,14 +122,11 @@ public class Submission implements Comparable<Submission> {
      * @return Number of tokens in the parse result.
      */
     public int getNumberOfTokens() {
-        if (tokenList == null) {
-            return 0;
-        }
         return tokenList.size();
     }
 
     /**
-     * @return the unique file of the submission, which is either in a root folder or a subfolder of root folder when the
+     * @return the unique root of the submission, which is either in a root folder or a subfolder of root folder when the
      * subdirectory option is used.
      */
     public File getRoot() {
@@ -142,12 +134,13 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * @param subtractBaseCode If true subtract basecode matches if possible.
+     * The similarity divisor is used for calculating the similarity of two submissions. It is based on the token length of
+     * a submission.
      * @return Similarity divisor for the submission.
      */
-    int getSimilarityDivisor(boolean subtractBaseCode) {
+    public int getSimilarityDivisor() {
         int divisor = getNumberOfTokens() - getFiles().size();
-        if (subtractBaseCode && baseCodeComparison != null) {
+        if (baseCodeComparison != null) {
             divisor -= baseCodeComparison.getNumberOfMatchedTokens();
         }
         return divisor;
@@ -157,33 +150,44 @@ public class Submission implements Comparable<Submission> {
      * @return unmodifiable list of tokens generated by parsing the submission.
      */
     public List<Token> getTokenList() {
-        return tokenList == null ? null : Collections.unmodifiableList(tokenList);
+        return tokenList;
     }
 
     /**
-     * @return Whether a comparison between the submission and the base code is available.
+     * @return true if a comparison between the submission and the base code is available. Does not imply if there are
+     * matches to the base code.
      */
+    public boolean hasBaseCodeComparison() {
+        return baseCodeComparison != null;
+    }
+
+    /**
+     * @return true if a comparison between the submission and the base code is available. Does not imply if there are
+     * matches to the base code.
+     * @deprecated Use {@link #hasBaseCodeComparison()} instead.
+     */
+    @Deprecated(since = "6.1.0", forRemoval = true)
     public boolean hasBaseCodeMatches() {
         return baseCodeComparison != null;
     }
 
     /**
-     * @return true if at least one error occurred while parsing this submission; false otherwise.
+     * @return the state of the submissions, indicating whether it is valid or has errors.
      */
-    public boolean hasErrors() {
-        return hasErrors;
+    public SubmissionState getState() {
+        return state;
     }
 
     /**
-     * @return whether the submission is new, That is, must be checked for plagiarism.
+     * @return whether the submission is new, that is, must be checked for plagiarism.
      */
     public boolean isNew() {
         return isNew;
     }
 
     /**
-     * Sets the base code comparison
-     * @param baseCodeComparison is submissions matches with the base code
+     * Sets the base code comparison.
+     * @param baseCodeComparison is submissions matches with the base code.
      */
     public void setBaseCodeComparison(JPlagComparison baseCodeComparison) {
         this.baseCodeComparison = baseCodeComparison;
@@ -194,7 +198,7 @@ public class Submission implements Comparable<Submission> {
      * @param tokenList is the list of these tokens.
      */
     public void setTokenList(List<Token> tokenList) {
-        this.tokenList = tokenList;
+        this.tokenList = Collections.unmodifiableList(new ArrayList<>(tokenList));
     }
 
     /**
@@ -233,49 +237,61 @@ public class Submission implements Comparable<Submission> {
         return subdirectory;
     }
 
-    /* package-private */ void markAsErroneous() {
-        hasErrors = true;
-    }
-
     /**
      * Parse files of the submission.
      * @param debugParser specifies if the submission should be copied upon parsing errors.
-     * @param normalize specifies if the tokens sequences should be normalized.
+     * @param normalize specifies if the token sequences should be normalized.
+     * @param minimalTokens specifies the minimum number of tokens required of a valid submission.
+     * @param analyzeComments specifies if comments should be extracted and analyzed.
      * @return Whether parsing was successful.
+     * @throws LanguageException if the language parser is not able to parse at all.
      */
-    /* package-private */ boolean parse(boolean debugParser, boolean normalize) {
+    /* package-private */ boolean parse(boolean debugParser, boolean normalize, int minimalTokens, boolean analyzeComments) throws LanguageException {
         if (files == null || files.isEmpty()) {
-            logger.error("ERROR: nothing to parse for submission \"{}\"", name);
-            tokenList = null;
-            hasErrors = true; // invalidate submission
+            logger.error("Nothing to parse for submission \"{}\"", name);
+            state = NOTHING_TO_PARSE;
             return false;
         }
 
         try {
             tokenList = language.parse(new HashSet<>(files), normalize);
-            if (logger.isDebugEnabled()) {
-                for (Token token : tokenList) {
-                    logger.debug(String.join(" | ", token.getType().toString(), Integer.toString(token.getLine()), token.getSemantics().toString()));
-                }
-            }
+        } catch (CriticalParsingException e) {
+            throw new LanguageException(e.getMessage(), e.getCause());
         } catch (ParsingException e) {
             String shortenedMessage = e.getMessage().replace(submissionRootFile.toString(), name);
             logger.warn("Failed to parse submission {}:{}{}", name, System.lineSeparator(), shortenedMessage);
-            tokenList = null;
-            hasErrors = true;
+            state = CANNOT_PARSE;
             if (debugParser) {
                 copySubmission();
             }
             return false;
         }
 
-        if (tokenList.size() < 3) {
-            logger.error("Submission \"{}\" is too short!", name);
-            tokenList = null;
-            hasErrors = true; // invalidate submission
+        if (tokenList.size() < minimalTokens) {
+            // print the number of tokens without the file-end token to help users choose the right parameters:
+            logger.error("Submission {} contains {} tokens, which is below the minimum match length {}!", name, tokenList.size() - 1, minimalTokens);
+            state = TOO_SMALL;
             return false;
         }
+
+        if (analyzeComments) {
+            this.extractAndParseComments();
+        }
+
+        tokenList = Collections.unmodifiableList(tokenList);
+        state = VALID;
         return true;
+    }
+
+    private void extractAndParseComments() {
+        Optional<CommentExtractorSettings> commentExtractorSettings = language.getCommentExtractorSettings();
+        if (commentExtractorSettings.isPresent()) {
+            for (File file : files) {
+                CommentExtractor extractor = new CommentExtractor(file, commentExtractorSettings.get());
+                comments.addAll(extractor.extract());
+            }
+            logger.debug("Found {} comments", comments.size());
+        }
     }
 
     /**
@@ -284,7 +300,7 @@ public class Submission implements Comparable<Submission> {
      */
     void normalize() {
         List<Integer> originalOrder = getOrder(tokenList);
-        tokenList = TokenStringNormalizer.normalize(tokenList);
+        tokenList = TokenSequenceNormalizer.normalize(tokenList);
         List<Integer> normalizedOrder = getOrder(tokenList);
 
         logger.debug("original line order: {}", originalOrder);
@@ -296,11 +312,11 @@ public class Submission implements Comparable<Submission> {
 
     private List<Integer> getOrder(List<Token> tokenList) {
         List<Integer> order = new ArrayList<>(tokenList.size());  // a little too big
-        int currentLineNumber = tokenList.get(0).getLine();
+        int currentLineNumber = tokenList.get(0).getStartLine();
         order.add(currentLineNumber);
         for (Token token : tokenList) {
-            if (token.getLine() != currentLineNumber) {
-                currentLineNumber = token.getLine();
+            if (token.getStartLine() != currentLineNumber) {
+                currentLineNumber = token.getStartLine();
                 order.add(currentLineNumber);
             }
         }
@@ -308,12 +324,13 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * @return Submission containing shallow copies of its fields.
+     * @return A shallow copy of this submission with the same name, root, files, etc.
      */
     public Submission copy() {
         Submission copy = new Submission(name, submissionRootFile, isNew, files, language);
-        copy.setTokenList(new ArrayList<>(tokenList));
+        copy.setTokenList(tokenList);
         copy.setBaseCodeComparison(baseCodeComparison);
+        copy.state = state;
         return copy;
     }
 

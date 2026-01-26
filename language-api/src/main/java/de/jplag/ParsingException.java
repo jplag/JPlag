@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 /**
- * An exception to throw if any error occurred while parsing files in a language frontend.
+ * An exception to throw if any error occurred while parsing files in a language module.
  */
 public class ParsingException extends Exception {
     @Serial
@@ -52,6 +52,10 @@ public class ParsingException extends Exception {
         super(constructMessage(file, reason), cause);
     }
 
+    private ParsingException(String message) {
+        super(message);
+    }
+
     /**
      * Creates a new parsing exception which wraps the provided exceptions. If no exception to wrap is provided, null is
      * returned. If only one exception is provided, it is returned.
@@ -68,10 +72,6 @@ public class ParsingException extends Exception {
                 yield new ParsingException(message);
             }
         };
-    }
-
-    private ParsingException(String message) {
-        super(message);
     }
 
     private static String constructMessage(File file, String reason) {
