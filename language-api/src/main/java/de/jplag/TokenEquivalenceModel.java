@@ -1,13 +1,12 @@
 package de.jplag;
 
 import java.util.List;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * Defines an interface for when tokens are considered equivalent. This is used to determine matches between tokens by
  * using a two step approach: First, the primary types of the tokens are compared using
- * {@link #arePrimaryEquivalent(int, int)}. If they are considered equivalent, the secondary types are
- * compared using {@link #areSecondaryEquivalent(TokenType, TokenType)}.
+ * {@link #arePrimaryEquivalent(int, int)}. If they are considered equivalent, the secondary types are compared using
+ * {@link #areSecondaryEquivalent(TokenType, TokenType)}.
  */
 public interface TokenEquivalenceModel {
 

@@ -1,7 +1,5 @@
 package de.jplag;
 
-import java.util.concurrent.ConcurrentMap;
-
 /**
  * The default token equivalence model that can be used by most languages. It assumes tokens are only equivalent if they
  * have the same type and contain no additional data.
