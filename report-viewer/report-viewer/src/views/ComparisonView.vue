@@ -126,7 +126,7 @@ import { faPrint } from '@fortawesome/free-solid-svg-icons'
 import { onMounted, ref, watch, type Ref, computed, onErrorCaptured } from 'vue'
 import hljsLightMode from 'highlight.js/styles/vs.css?raw'
 import hljsDarkMode from 'highlight.js/styles/vs2015.css?raw'
-import { redirectOnError } from '@/router'
+import { redirectOnError } from '../router'
 import {
   ContainerComponent,
   ButtonComponent,
@@ -142,9 +142,9 @@ import {
   fileSortingTooltips,
   MetricTypes
 } from '@jplag/ui-components/widget'
-import { reportStore } from '@/stores/reportStore'
+import { reportStore } from '../stores/reportStore'
 import { Match, MetricJsonIdentifier } from '@jplag/model'
-import { uiStore } from '@/stores/uiStore'
+import { uiStore } from '../stores/uiStore'
 
 const props = defineProps({
   firstSubmissionId: {

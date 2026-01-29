@@ -46,7 +46,7 @@
 
 <script setup lang="ts">
 import { ContainerComponent, InteractableComponent } from '@jplag/ui-components/base'
-import { uiStore } from '@/stores/uiStore'
+import { uiStore } from '../stores/uiStore'
 import { Version } from '@jplag/model'
 import { reportViewerVersion, minimalReportVersion } from '../version/versions'
 import { computed } from 'vue'

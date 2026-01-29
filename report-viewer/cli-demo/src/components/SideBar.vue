@@ -21,9 +21,8 @@
 </template>
 
 <script setup lang="ts">
-import { router } from '@/router';
-
-const paths = ['Submissions', 'Language', 'Comparison', 'Viewer']
+import { router } from '../router';
+const paths = ['Submissions', 'Language', 'Comparison', 'OverviewView']
 </script>
 
 <style scoped>

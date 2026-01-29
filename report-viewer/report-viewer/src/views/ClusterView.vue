@@ -107,12 +107,11 @@ import {
 } from '@jplag/ui-components/widget'
 import { ContainerComponent, TextInformation, TabbedContainer } from '@jplag/ui-components/base'
 import { computed, ref, onErrorCaptured, type Ref } from 'vue'
-import { redirectOnError } from '@/router'
+import { redirectOnError } from '../router'
 import { ClusterListElement, ClusterListElementMember, MetricJsonIdentifier } from '@jplag/model'
-import { reportStore } from '@/stores/reportStore'
-import { uiStore } from '@/stores/uiStore'
-import ComparisonTableWrapper from '@/components/ComparisonTableWrapper.vue'
-
+import { reportStore } from '../stores/reportStore'
+import { uiStore } from '../stores/uiStore'
+import ComparisonTableWrapper from '../components/ComparisonTableWrapper.vue'
 const props = defineProps({
   index: {
     type: Number,

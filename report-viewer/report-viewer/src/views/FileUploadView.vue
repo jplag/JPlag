@@ -14,7 +14,7 @@
           class="mx-auto mt-8 h-auto w-60"
           height="168"
           width="240"
-          src="@/assets/jplag-light-transparent.png"
+          src="../assets/jplag-light-transparent.png"
           alt="JPlag Logo"
         />
         <img
@@ -22,7 +22,7 @@
           class="mx-auto mt-8 h-auto w-60"
           height="168"
           width="240"
-          src="@/assets/jplag-dark-transparent.png"
+          src="../assets/jplag-dark-transparent.png"
           alt="JPlag Logo"
         />
       </div>
@@ -56,11 +56,11 @@
 
 <script setup lang="ts">
 import { onErrorCaptured, ref, type Ref } from 'vue'
-import { router } from '@/router'
+import { router } from '../router'
 import VersionInfoComponent from '../components/VersionInfoComponent.vue'
-import { reportStore } from '@/stores/reportStore'
-import { canLoadFile } from '@/stores/fileLoading'
-import { uiStore } from '@/stores/uiStore'
+import { reportStore } from '../stores/reportStore'
+import { canLoadFile } from '../stores/fileLoading'
+import { uiStore } from '../stores/uiStore'
 import { ReportFileHandler } from '@jplag/parser'
 import { LoadingCircle } from '@jplag/ui-components/base'
 

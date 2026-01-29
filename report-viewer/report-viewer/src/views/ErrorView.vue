@@ -5,13 +5,13 @@
         <img
           v-if="uiStore().useDarkMode"
           class="mx-auto mt-32 h-auto w-60"
-          src="@/assets/jplag-light-transparent.png"
+          src="../assets/jplag-light-transparent.png"
           alt="JPlag Logo"
         />
         <img
           v-else
           class="mx-auto mt-32 h-auto w-60"
-          src="@/assets/jplag-dark-transparent.png"
+          src="../assets/jplag-dark-transparent.png"
           alt="JPlag Logo"
         />
       </div>
@@ -35,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { uiStore } from '@/stores/uiStore'
+import { uiStore } from '../stores/uiStore'
 import { ContainerComponent, InteractableComponent } from '@jplag/ui-components/base'
 import { onErrorCaptured } from 'vue'
 

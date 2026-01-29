@@ -4,10 +4,7 @@
     "composite": true,
     "baseUrl": ".",
     "rootDir": "src",
-    "outDir": "dist",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "outDir": "dist"
   },
   "include": ["env.d.ts", "src/**/*", "src/**/*.vue", "src/**/*.json", "src/**/*.ts"]
 }

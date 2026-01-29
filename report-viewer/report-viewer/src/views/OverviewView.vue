@@ -147,7 +147,7 @@
 
 <script setup lang="ts">
 import { computed, onErrorCaptured, type Ref, ref, nextTick, onMounted } from 'vue'
-import { redirectOnError, router } from '@/router'
+import { redirectOnError, router } from '../router'
 import {
   ContainerComponent,
   ButtonComponent,
@@ -157,8 +157,8 @@ import {
   TabbedContainer
 } from '@jplag/ui-components/base'
 import { DistributionDiagram, BoxPlot, Column, Direction } from '@jplag/ui-components/widget'
-import { reportStore } from '@/stores/reportStore'
-import { uiStore } from '@/stores/uiStore'
+import { reportStore } from '../stores/reportStore'
+import { uiStore } from '../stores/uiStore'
 import ComparisonTableWrapper from '../components/ComparisonTableWrapper.vue'
 
 const runInformation = computed(() => reportStore().getRunInformation())

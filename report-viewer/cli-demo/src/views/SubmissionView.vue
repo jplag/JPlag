@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import FolderSelector from '@/components/FolderSelector.vue';
+import FolderSelector from '../components/FolderSelector.vue';
 import ContainerComponent from '@jplag/ui-components/base/ContainerComponent.vue';
 
 </script>

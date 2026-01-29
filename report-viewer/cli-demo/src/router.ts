@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import LanguageView from './views/LanguageView.vue'
 import SubmissionView from './views/SubmissionView.vue'
 import ComparisonView from './views/ComparisonView.vue'
-import ViewerView from './views/ViewerView.vue'
+import { router as reportViewerRouter } from '@jplag/report-viewer/src/router'
 
 
 /**
@@ -26,13 +26,13 @@ const router = createRouter({
       name: 'Comparison',
       component: ComparisonView
     },
-    {
-      path: '/viewer',
-      name: 'Viewer',
-      component: ViewerView
-    }
+    ...reportViewerRouter.getRoutes().map(r => ({
+      ...r,
+      path: '/viewer' + r.path
+    }))
   ]
 })
+
 
 
 

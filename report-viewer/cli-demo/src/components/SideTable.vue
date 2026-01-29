@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { LoadedSubmission } from '@/model/Submission'
+import { LoadedSubmission } from '../model/Submission'
 import { OptionComponent } from '@jplag/ui-components/widget'
 
 defineProps({

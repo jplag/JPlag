@@ -23,8 +23,8 @@
 
 <script setup lang="ts">
 import { ComparisonTable } from '@jplag/ui-components/widget'
-import { uiStore } from '@/stores/uiStore'
-import { reportStore } from '@/stores/reportStore'
+import { uiStore } from '../stores/uiStore'
+import { reportStore } from '../stores/reportStore'
 import { Cluster, ComparisonListElement } from '@jplag/model'
 import { PropType, Ref, ref, watch } from 'vue'
 

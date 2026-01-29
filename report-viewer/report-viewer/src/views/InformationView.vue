@@ -142,9 +142,9 @@
 import { ContainerComponent, TextInformation, ScrollableComponent } from '@jplag/ui-components/base'
 import { MetricTypes } from '@jplag/ui-components/widget'
 import { SubmissionState } from '@jplag/model'
-import { reportStore } from '@/stores/reportStore'
+import { reportStore } from '../stores/reportStore'
 import { computed, onErrorCaptured } from 'vue'
-import { redirectOnError } from '@/router'
+import { redirectOnError } from '../router'
 
 const runInformation = computed(() => reportStore().getRunInformation())
 const options = computed(() => reportStore().getCliOptions())

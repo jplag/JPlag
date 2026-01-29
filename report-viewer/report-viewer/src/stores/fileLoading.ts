@@ -1,4 +1,4 @@
-import { reportStore } from '@/stores/reportStore'
+import { reportStore } from '../stores/reportStore'
 import { ReportFileHandler } from '@jplag/parser'
 
 export const REPORT_FILE_NAME = 'results.jplag'

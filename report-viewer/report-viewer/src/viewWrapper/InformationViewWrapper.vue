@@ -13,9 +13,9 @@
 import InformationView from '../views/InformationView.vue'
 import { LoadingCircle } from '@jplag/ui-components/base'
 import VersionRepositoryReference from '../components/VersionRepositoryReference.vue'
-import { reportStore } from '@/stores/reportStore'
-import { loadReport } from '@/stores/fileLoading'
-import { redirectOnError } from '@/router'
+import { reportStore } from '../stores/reportStore'
+import { loadReport } from '../stores/fileLoading'
+import { redirectOnError } from '../router'
 
 if (!reportStore().isReportLoaded()) {
   loadReport().catch((error) => redirectOnError(error))
