@@ -99,13 +99,13 @@ public class JPlag {
         if (options.mergingOptions().enabled()) {
             result = new MatchMerging(options).mergeMatchesOf(result);
         }
-      
+
         // Compare comments
         if (options.analyzeComments()) {
             CommentComparer commentComparer = new CommentComparer(options);
             result = commentComparer.compareCommentsAndMergeMatches(result);
         }
-      
+
         if (options.frequencyAnalysisOptions().enabled()) {
             MatchWeighting matchWeighter = new MatchWeighting(options.frequencyAnalysisOptions());
             List<JPlagComparison> frequencyWeightedComparisons = matchWeighter.useMatchFrequencyToInfluenceSimilarity(result);
