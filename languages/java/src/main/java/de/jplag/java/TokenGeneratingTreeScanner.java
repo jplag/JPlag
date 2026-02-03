@@ -138,10 +138,10 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
                 variableRegistry.registerVariable(name, VariableScope.CLASS, mutable);
             }
         }
-        boolean hasModifiers = !node.getModifiers().getFlags().isEmpty();
-        long start = hasModifiers ? positions.getEndPosition(ast, node.getModifiers()) + 1 : positions.getStartPosition(ast, node);
-        long nameLength = node.getSimpleName().length();
-        long end = positions.getEndPosition(ast, node) - 1;
+
+        long start = extractStartPosition(node);
+        long end = extractEndPosition(node, start);
+
         CodeSemantics semantics = CodeSemantics.createControl();
         if (node.getKind() == Tree.Kind.ENUM) {
             addToken(JavaTokenType.J_ENUM_BEGIN, start, 4, semantics);
@@ -150,6 +150,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         } else if (node.getKind() == Tree.Kind.RECORD) {
             addToken(JavaTokenType.J_RECORD_BEGIN, start, 1, semantics);
         } else if (node.getKind() == Tree.Kind.ANNOTATION_TYPE) {
+            long nameLength = node.getSimpleName().length();
             // The start position for the is calculated that way, because the @ is the final element in the modifier list for
             // annotations
             addToken(JavaTokenType.J_ANNO_T_BEGIN, start - 2, start - 2 + 11 + nameLength, semantics);
@@ -172,6 +173,24 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         }
         variableRegistry.exitClass();
         return null;
+    }
+
+    private long extractEndPosition(ClassTree node, long start) {
+        long end = positions.getEndPosition(ast, node) - 1;
+        if (end <= start) { // Java 25 compact source files have implicit classes
+            // use end of last member as class end:
+            return node.getMembers().stream().mapToLong(it -> positions.getEndPosition(ast, it)).max().orElse(start);
+        }
+        return end;
+    }
+
+    private long extractStartPosition(ClassTree node) {
+        boolean hasModifiers = !node.getModifiers().getFlags().isEmpty();
+        long endPosition = positions.getEndPosition(ast, node.getModifiers());
+        if (hasModifiers && endPosition != -1) { // Java 25 compact source files have implicit (final) classes.
+            return endPosition + 1;
+        }
+        return positions.getStartPosition(ast, node);
     }
 
     @Override

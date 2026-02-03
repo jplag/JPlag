@@ -108,7 +108,7 @@ public class JPlagResult {
     }
 
     /**
-     * Provides access the the options.
+     * Provides access to the options.
      * @return the JPlag options with which the JPlag run was configured.
      */
     public JPlagOptions getOptions() {
