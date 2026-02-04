@@ -21,7 +21,7 @@
     "@vue/eslint-config-typescript": "^14.6.0",
     "eslint": "^9.39.2",
     "eslint-plugin-vue": "^10.7.0",
-    "globals": "^17.0.0",
+    "globals": "^17.3.0",
     "lint-staged": "^16.2.7",
     "prettier": "^3.8.0",
     "prettier-plugin-tailwindcss": "^0.7.2",
