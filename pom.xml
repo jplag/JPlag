@@ -112,7 +112,7 @@
         <version.plugin.maven-exec>3.6.3</version.plugin.maven-exec>
         <version.plugin.maven-flatten>1.7.3</version.plugin.maven-flatten>
         <version.plugin.maven.assembly>3.8.0</version.plugin.maven.assembly>
-        <version.plugin.maven.compiler>3.14.1</version.plugin.maven.compiler>
+        <version.plugin.maven.compiler>3.15.0</version.plugin.maven.compiler>
         <version.plugin.maven.deploy>3.1.4</version.plugin.maven.deploy>
         <version.plugin.maven.gpg>3.2.8</version.plugin.maven.gpg>
         <version.plugin.maven.jar>3.5.0</version.plugin.maven.jar>
