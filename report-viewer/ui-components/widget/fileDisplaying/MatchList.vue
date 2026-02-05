@@ -76,9 +76,10 @@
         </template>
         <template #tooltip>
           <p class="text-sm whitespace-pre">
-            Match between {{ getFileName(match.firstFileName) }} (Line
-            {{ match.startInFirst.line }}-{{ match.endInFirst.line }}) and
-            {{ getFileName(match.secondFileName) }} (Line {{ match.startInSecond.line }}-{{
+            {{ match.isComment ? 'Comment match' : 'Match' }} between
+            {{ getFileName(match.firstFileName) }} (Line {{ match.startInFirst.line }}-{{
+              match.endInFirst.line
+            }}) and {{ getFileName(match.secondFileName) }} (Line {{ match.startInSecond.line }}-{{
               match.endInSecond.line
             }}) <br />
             Match is {{ match.lengthOfFirst }} tokens long in {{ displayName1 }}.
@@ -86,10 +87,9 @@
             Match is {{ match.lengthOfSecond }} tokens long in {{ displayName2 }}.
             <br />
             <span v-if="showTokenRanges(match)">
-              Token indices of match: {{ match.startInFirst.tokenListIndex }}-{{
-                match.endInFirst.tokenListIndex
-              }}
-              and {{ match.startInSecond.tokenListIndex }}-{{ match.endInSecond.tokenListIndex }}.
+              {{ match.isComment ? 'Comment token' : 'Token' }} indices of match:
+              {{ match.startInFirst.tokenListIndex }}-{{ match.endInFirst.tokenListIndex }} and
+              {{ match.startInSecond.tokenListIndex }}-{{ match.endInSecond.tokenListIndex }}.
               <br />
             </span>
 

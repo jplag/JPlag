@@ -1,6 +1,7 @@
 package de.jplag.reporting.jsonfactory;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -112,13 +113,27 @@ public class ComparisonReportWriter {
     }
 
     private List<Match> convertMatchesToReportMatches(JPlagComparison comparison) {
-        return comparison.matches().stream().map(match -> convertMatchToReportMatch(comparison, match)).toList();
+        List<Match> convertedMatches = new ArrayList<>();
+        convertedMatches.addAll(comparison.matches().stream().map(match -> convertMatchToReportMatch(comparison, match)).toList());
+        convertedMatches.addAll(comparison.commentMatches().stream().map(match -> convertCommentMatchToReportMatch(comparison, match)).toList());
+        return convertedMatches;
     }
 
     private Match convertMatchToReportMatch(JPlagComparison comparison, de.jplag.Match match) {
         List<Token> tokensFirst = comparison.firstSubmission().getTokenList().subList(match.startOfFirst(), match.endOfFirst() + 1);
         List<Token> tokensSecond = comparison.secondSubmission().getTokenList().subList(match.startOfSecond(), match.endOfSecond() + 1);
 
+        return this.convertTokenListToReportMatch(tokensFirst, tokensSecond, comparison, match);
+    }
+
+    private Match convertCommentMatchToReportMatch(JPlagComparison comparison, de.jplag.Match match) {
+        List<Token> tokensFirst = comparison.firstSubmission().getComments().subList(match.startOfFirst(), match.endOfFirst() + 1);
+        List<Token> tokensSecond = comparison.secondSubmission().getComments().subList(match.startOfSecond(), match.endOfSecond() + 1);
+
+        return this.convertTokenListToReportMatch(tokensFirst, tokensSecond, comparison, match).asComment();
+    }
+
+    private Match convertTokenListToReportMatch(List<Token> tokensFirst, List<Token> tokensSecond, JPlagComparison comparison, de.jplag.Match match) {
         Comparator<? super Token> lineStartComparator = Comparator.comparingInt(Token::getStartLine).thenComparingInt(Token::getStartColumn);
         Comparator<? super Token> lineEndComparator = Comparator.comparingInt(Token::getEndLine).thenComparingInt(Token::getEndColumn);
 

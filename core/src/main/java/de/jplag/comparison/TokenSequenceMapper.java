@@ -21,13 +21,25 @@ import de.jplag.logging.ProgressBarType;
 public class TokenSequenceMapper {
     private final Map<TokenType, Integer> tokenTypeToId;
     private final Map<Submission, int[]> submissionToTokenSequence;
+    private final TokenListSupplier tokenSupplier;
+
+    /**
+     * Creates the submission to token ID mapping for a set of submissions. This will also show the progress to the user
+     * using the {@link ProgressBarLogger}. This uses the default {@code Submission::getTokenList()} method as the supplier.
+     * @param submissionSet is the set of submissions to process.
+     */
+    public TokenSequenceMapper(SubmissionSet submissionSet) {
+        this(submissionSet, Submission::getTokenList);
+    }
 
     /**
      * Creates the submission to token ID mapping for a set of submissions. This will also show the progress to the user
      * using the {@link ProgressBarLogger}.
      * @param submissionSet is the set of submissions to process.
+     * @param tokenSupplier supplier returning the token list of a single submission.
      */
-    public TokenSequenceMapper(SubmissionSet submissionSet) {
+    public TokenSequenceMapper(SubmissionSet submissionSet, TokenListSupplier tokenSupplier) {
+        this.tokenSupplier = tokenSupplier;
         tokenTypeToId = new HashMap<>();
         submissionToTokenSequence = new IdentityHashMap<>();
 
@@ -44,7 +56,7 @@ public class TokenSequenceMapper {
     }
 
     private void addSingleSubmission(Submission submission) {
-        List<Token> tokens = submission.getTokenList();
+        List<Token> tokens = this.tokenSupplier.getTokenList(submission);
         int[] tokenSequence = new int[tokens.size()];
         for (int i = 0; i < tokens.size(); i++) {
             TokenType type = tokens.get(i).getType();

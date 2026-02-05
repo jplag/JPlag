@@ -57,17 +57,32 @@ public class ParserAdapter {
         tokens = new ArrayList<>();
         for (File file : files) {
             logger.trace("Parsing file {}", file);
-            parseFile(file);
+            this.currentFile = file;
+            String content = readFile(file);
+            parseFile(content);
             tokens.add(Token.fileEnd(file));
         }
         return tokens;
     }
 
-    private void parseFile(File file) throws ParsingException {
-        this.currentFile = file;
+    /**
+     * Parses a set of strings.
+     * @param fileContents strings to parse.
+     * @return the token sequence.
+     */
+    public List<Token> parseStrings(Set<String> fileContents) {
+        tokens = new ArrayList<>();
+        for (String fileContent : fileContents) {
+            logger.trace("Parsing next string file content");
+            this.currentFile = null;
+            parseFile(fileContent);
+        }
+        return tokens;
+    }
+
+    private void parseFile(String content) {
         this.currentLine = 1; // lines start at 1
         this.currentLineBreakIndex = -1;
-        String content = readFile(file);
         int lastTokenEnd = 0;
         CoreDocument coreDocument = pipeline.processToCoreDocument(content);
         for (CoreLabel token : coreDocument.tokens()) {
