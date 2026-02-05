@@ -1,0 +1,189 @@
+name: Build Native Libraries
+
+on:
+  push:
+    paths:
+      - "scripts/build-native-libraries.sh"
+      - "language-tree-sitter-utils/**"
+      - ".github/workflows/build-native-libraries.yml"
+  pull_request:
+    paths:
+      - "scripts/build-native-libraries.sh"
+      - "language-tree-sitter-utils/**"
+      - ".github/workflows/build-native-libraries.yml"
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 22
+          distribution: 'temurin'
+      
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git wget
+      
+      - name: Install jextract
+        run: |
+          # Download jextract for Linux x64
+          wget https://download.java.net/java/early_access/jextract/22/6/openjdk-22-jextract+6-47_linux-x64_bin.tar.gz
+          tar -xzf openjdk-22-jextract+6-47_linux-x64_bin.tar.gz
+
+          # Install to /usr/local/jextract
+          echo "Installing jextract-22 to /usr/local/jextract"
+          sudo mv jextract-22 /usr/local/jextract
+          echo "/usr/local/jextract/bin" >> $GITHUB_PATH
+      
+      - name: Verify jextract availability
+        run: |
+          jextract --version
+      
+      - name: Verify make installation
+        run: |
+          make -v
+      
+      - name: Build native libraries
+        run: |
+          chmod +x scripts/build-native-libraries.sh
+          mvn -Pbuild-native-libraries generate-resources
+      
+      - name: Upload Linux libraries
+        uses: actions/upload-artifact@v4
+        with:
+          name: "native-libraries-linux"
+          path: |
+            language-tree-sitter-utils/src/main/resources/native/linux/
+            languages/python/src/main/resources/native/linux/
+            build/native/
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 22
+          distribution: 'temurin'
+      
+      - name: Install build dependencies
+        run: |
+          xcode-select --install || true
+      
+      - name: Install jextract
+        run: |
+          # Download jextract for macOS (detect architecture)
+          if [[ $(uname -m) == "arm64" ]]; then
+            wget https://download.java.net/java/early_access/jextract/22/6/openjdk-22-jextract+6-47_macos-aarch64_bin.tar.gz
+            tar -xzf openjdk-22-jextract+6-47_macos-aarch64_bin.tar.gz
+          else
+            wget https://download.java.net/java/early_access/jextract/22/6/openjdk-22-jextract+6-47_macos-x64_bin.tar.gz
+            tar -xzf openjdk-22-jextract+6-47_macos-x64_bin.tar.gz
+          fi
+          
+          # Remove quarantine attribute (macOS specific)
+          echo "Removing quarantine attribute for jextract-22 on macOS"
+          sudo xattr -r -d com.apple.quarantine jextract-22
+          
+          # Install to /usr/local/jextract
+          echo "Installing jextract-22 to /usr/local/jextract"
+          sudo mv jextract-22 /usr/local/jextract
+          echo "/usr/local/jextract/bin" >> $GITHUB_PATH
+      
+      - name: Verify jextract availability
+        run: |
+          jextract --version
+      
+      - name: Verify make installation
+        run: |
+          make -v
+      
+      - name: Build native libraries
+        run: |
+          chmod +x scripts/build-native-libraries.sh
+          mvn -Pbuild-native-libraries generate-resources
+      
+      - name: Upload macOS libraries
+        uses: actions/upload-artifact@v4
+        with:
+          name: "native-libraries-macos"
+          path: |
+            language-tree-sitter-utils/src/main/resources/native/mac/
+            languages/python/src/main/resources/native/mac/
+            build/native/
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 22
+          distribution: 'temurin'
+      
+      - name: Install jextract
+        run: |
+          # Download jextract for Windows x64
+          curl -L -o jextract-windows.tar.gz https://download.java.net/java/early_access/jextract/22/6/openjdk-22-jextract+6-47_windows-x64_bin.tar.gz
+          tar -xzf jextract-windows.tar.gz
+          
+          # Install to C:\jextract
+          echo "Installing jextract-22 to C:\jextract"
+          mkdir -p C:\jextract
+          mv jextract-22\* C:\jextract\
+          echo "C:\jextract\bin" >> $env:GITHUB_PATH
+      
+      - name: Verify jextract availability
+        run: |
+          jextract --version
+
+      - name: Set up Zig
+        uses: goto-bus-stop/setup-zig@v2
+        with:
+          version: 0.13.0
+
+      - name: Verify Zig installation
+        run: |
+          zig version
+      
+      - name: Build native libraries
+        run: |
+          # Convert line endings for Windows
+          git config --global core.autocrlf false
+          mvn -Pbuild-native-libraries generate-resources
+      
+      - name: Upload Windows libraries
+        uses: actions/upload-artifact@v4
+        with:
+          name: "native-libraries-windows"
+          path: |
+            language-tree-sitter-utils/src/main/resources/native/windows/
+            languages/python/src/main/resources/native/windows/
+            build/native/
+
+  combine-artifacts:
+    needs: [build-linux, build-macos, build-windows]
+    runs-on: ubuntu-latest
+    # if: github.event_name == 'push' && github.ref == 'refs/heads/main' TODO: Enable condition when finished 
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      
+      - name: Combine and commit libraries
+        run: |
+          # This step combines the artifacts and commit them to the repository
+          # For now, we'll just list what we have
+          find artifacts -name "*.so" -o -name "*.dylib" -o -name "*.dll" | sort

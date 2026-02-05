@@ -40,8 +40,24 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@v4
       with:
-        java-version: 21
+        java-version: 22
         distribution: 'temurin'
+
+    - name: Install jextract
+      run: |
+        # Download jextract for Linux x64
+        wget https://download.java.net/java/early_access/jextract/22/6/openjdk-22-jextract+6-47_linux-x64_bin.tar.gz
+        tar -xzf openjdk-22-jextract+6-47_linux-x64_bin.tar.gz
+
+        # Install to /usr/local/jextract
+        echo "Installing jextract-22 to /usr/local/jextract"
+        sudo mv jextract-22 /usr/local/jextract
+        echo "/usr/local/jextract/bin" >> $GITHUB_PATH
+
+    - name: Build native libraries
+      run: |
+        chmod +x scripts/build-native-libraries.sh
+        mvn -Pbuild-native-libraries generate-resources
   
     - name: Build Assembly
       run: mvn -DskipTests clean package assembly:single
