@@ -12,7 +12,7 @@
     <properties>
         <cpg.version>8.0.0</cpg.version>
         <cpg.groupId>de.fraunhofer.aisec</cpg.groupId>
-        <kotlin.version>1.9.0</kotlin.version>
+        <kotlin.version>2.3.10</kotlin.version>
     </properties>
 
     <dependencies>
@@ -20,7 +20,6 @@
         <dependency>
             <groupId>${cpg.groupId}</groupId>
             <artifactId>cpg-core</artifactId>
-            <version>${cpg.version}</version>
 
             <exclusions>
                 <exclusion>
@@ -32,22 +31,18 @@
         <dependency>
             <groupId>${cpg.groupId}</groupId>
             <artifactId>cpg-language-java</artifactId>
-            <version>${cpg.version}</version>
         </dependency>
         <dependency>
             <groupId>${cpg.groupId}</groupId>
             <artifactId>cpg-analysis</artifactId>
-            <version>${cpg.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib-jdk8</artifactId>
-            <version>${kotlin.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-test</artifactId>
-            <version>${kotlin.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -57,11 +52,10 @@
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-maven-plugin</artifactId>
-                <version>${kotlin.version}</version>
                 <configuration>
                     <jvmTarget>1.8</jvmTarget>
                     <args>
-                        <arg>-Xcontext-receivers</arg>
+                        <arg>-Xcontext-parameters</arg>
                     </args>
                 </configuration>
                 <executions>
@@ -85,8 +79,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>21</source>
-                    <target>21</target>
+                    <source>25</source>
+                    <target>25</target>
                 </configuration>
             </plugin>
         </plugins>

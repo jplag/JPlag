@@ -33,7 +33,6 @@
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>java-cpg</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>

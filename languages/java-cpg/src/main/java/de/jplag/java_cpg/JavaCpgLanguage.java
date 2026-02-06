@@ -22,7 +22,6 @@ import de.jplag.java_cpg.transformation.GraphTransformation;
 @MetaInfServices(de.jplag.Language.class)
 public class JavaCpgLanguage implements Language {
     private static final int DEFAULT_MINIMUM_TOKEN_MATCH = 9;
-    private static final String[] FILE_EXTENSIONS = {".java"};
     private static final String NAME = "Java Code Property Graph module";
     private static final String IDENTIFIER = "java-cpg";
     private final JavaCpgLanguageOptions options = new JavaCpgLanguageOptions();
@@ -125,8 +124,8 @@ public class JavaCpgLanguage implements Language {
     }
 
     @Override
-    public String[] suffixes() {
-        return FILE_EXTENSIONS;
+    public List<String> fileExtensions() {
+        return List.of(".java");
     }
 
     @Override

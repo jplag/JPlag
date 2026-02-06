@@ -147,6 +147,9 @@ public interface Language {
         return true;
     }
 
+    /**
+     * @return The token equivalence model to use for this language. Override this method if you need a custom token equivalence model.
+     */
     default TokenEquivalenceModel getTokenEquivalenceModel() {
         return new DefaultTokenEquivalenceModel();
     }
