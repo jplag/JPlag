@@ -105,7 +105,6 @@
         <cpg.groupId>de.fraunhofer.aisec</cpg.groupId>
         <version.kotlin>2.3.10</version.kotlin>
 
-
         <!-- Plugin versions -->
         <version.plugin.antlr4>${version.antlr4}</version.plugin.antlr4>
         <version.plugin.build-helper>3.6.1</version.plugin.build-helper>
