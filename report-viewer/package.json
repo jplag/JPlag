@@ -23,7 +23,7 @@
     "eslint-plugin-vue": "^10.7.0",
     "globals": "^17.3.0",
     "lint-staged": "^16.2.7",
-    "prettier": "^3.8.0",
+    "prettier": "^3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.54.0",
