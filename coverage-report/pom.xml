@@ -119,6 +119,10 @@
             <groupId>de.jplag</groupId>
             <artifactId>multi-language</artifactId>
         </dependency>
+        <dependency>
+            <groupId>de.jplag</groupId>
+            <artifactId>java-cpg</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
