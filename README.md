@@ -2,20 +2,21 @@
 	<img alt="JPlag logo" src="core/src/main/resources/de/jplag/logo-dark.png" width="350">
 </p>
 
-# JPlag - Detecting Software Plagiarism
-[![CI Build](https://github.com/jplag/jplag/actions/workflows/maven.yml/badge.svg)](https://github.com/jplag/jplag/actions/workflows/maven.yml)
+# JPlag - Detecting Source Code Plagiarism
+[![CI Build](https://github.com/jplag/jplag/actions/workflows/build-maven.yml/badge.svg)](https://github.com/jplag/jplag/actions/workflows/build-maven.yml)
 [![Latest Release](https://img.shields.io/github/release/jplag/jplag.svg)](https://github.com/jplag/jplag/releases/latest)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.jplag/jplag/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.jplag/jplag)
+[![Maven Central](https://img.shields.io/maven-metadata/v.svg?metadataUrl=https%3A%2F%2Frepo1.maven.org%2Fmaven2%2Fde%2Fjplag%2Fjplag%2Fmaven-metadata.xml&label=maven-central&color=00ff00)](https://central.sonatype.com/artifact/de.jplag/jplag)
 [![License](https://img.shields.io/github/license/jplag/jplag.svg)](https://github.com/jplag/jplag/blob/main/LICENSE)
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/y/jplag/JPlag)](https://github.com/jplag/JPlag/pulse)
 [![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=jplag_JPlag&metric=coverage)](https://sonarcloud.io/component_measures?metric=Coverage&view=list&id=jplag_JPlag)
-[![Report Viewer](https://img.shields.io/badge/report%20viewer-online-b80025)](https://jplag.github.io/JPlag/)
-[![Java Version](https://img.shields.io/badge/java-SE%2021-yellowgreen)](#download-and-installation)
+[![Java Version](https://img.shields.io/badge/java-SE%2025-yellowgreen)](#download-and-installation)
 
 
-JPlag finds pairwise similarities among a set of multiple programs. It can reliably detect software plagiarism and collusion in software development, even when obfuscated. All similarities are calculated locally, and no source code or plagiarism results are ever uploaded to the internet. JPlag supports a large number of programming and modeling languages.
+JPlag finds pairwise similarities among a set of multiple programs. It can reliably detect software plagiarism and collusion in software development, even when obfuscated. All similarities are calculated locally; no source code or plagiarism results are ever uploaded online. JPlag supports a large number of languages.
 
 * 📈 [JPlag Demo](https://jplag.github.io/Demo/)
+
+* 📖 [JPlag Wiki](https://github.com/jplag/JPlag/wiki)
 
 * 🏛️ [JPlag on Helmholtz RSD](https://helmholtz.software/software/jplag)
 
@@ -28,32 +29,33 @@ All supported languages and their supported versions are listed below.
 
 | Language                                               |                                                                                Version | CLI Argument Name | [state](https://github.com/jplag/JPlag/wiki/2.-Supported-Languages) |  parser   |
 |--------------------------------------------------------|---------------------------------------------------------------------------------------:|-------------------|:-------------------------------------------------------------------:|:---------:|
-| [Java](https://www.java.com)                           |                                                                                     21 | java              |                               mature                                |   JavaC   |
+| [Java](https://www.java.com)                           |                                                                                     25 | java              |                               mature                                |   JavaC   |
 | [C](https://isocpp.org)                                |                                                                                     11 | c                 |                               legacy                                |  JavaCC   |
-| [C++](https://isocpp.org)                              |                                                                                     14 | cpp               |                                beta                                 |  ANTLR 4  |
+| [C++](https://isocpp.org)                              |                                                                                     14 | cpp               |                               mature                                |  ANTLR 4  |
 | [C#](https://docs.microsoft.com/en-us/dotnet/csharp/)  |                                                                                      6 | csharp            |                               mature                                |  ANTLR 4  |
-| [Python](https://www.python.org)                       |                                                                                    3.6 | python3           |                               legacy                                |  ANTLR 4  |
+| [Python](https://www.python.org)                       |                                                                                    3.6 | python3           |                               mature                                |  ANTLR 4  |
 | [JavaScript](https://www.javascript.com/)              |                                                                                    ES6 | javascript        |                                beta                                 |  ANTLR 4  |
 | [TypeScript](https://www.typescriptlang.org/)          | [~5](https://github.com/antlr/grammars-v4/tree/master/javascript/typescript/README.md) | typescript        |                                beta                                 |  ANTLR 4  |
 | [Go](https://go.dev)                                   |                                                                                   1.17 | golang            |                                beta                                 |  ANTLR 4  |
-| [Kotlin](https://kotlinlang.org)                       |                                                                                    1.3 | kotlin            |                                beta                                 |  ANTLR 4  |
-| [R](https://www.r-project.org/)                        |                                                                                  3.5.0 | rlang             |                                beta                                 |  ANTLR 4  |
-| [Rust](https://www.rust-lang.org/)                     |                                                                                 1.60.0 | rust              |                                beta                                 |  ANTLR 4  |
+| [Kotlin](https://kotlinlang.org)                       |                                                                                    1.3 | kotlin            |                               mature                                |  ANTLR 4  |
+| [R](https://www.r-project.org/)                        |                                                                                  3.5.0 | rlang             |                               mature                                |  ANTLR 4  |
+| [Rust](https://www.rust-lang.org/)                     |                                                                                 1.60.0 | rust              |                               mature                                |  ANTLR 4  |
 | [Swift](https://www.swift.org)                         |                                                                                    5.4 | swift             |                                beta                                 |  ANTLR 4  |
-| [Scala](https://www.scala-lang.org)                    |                                                                                 2.13.8 | scala             |                                beta                                 | Scalameta |
+| [Scala](https://www.scala-lang.org)                    |                                                                                 2.13.8 | scala             |                               mature                                | Scalameta |
 | [LLVM IR](https://llvm.org)                            |                                                                                     15 | llvmir            |                                beta                                 |  ANTLR 4  |
 | [Scheme](http://www.scheme-reports.org)                |                                                                                      ? | scheme            |                               legacy                                |  JavaCC   |
 | [EMF Metamodel](https://www.eclipse.org/modeling/emf/) |                                                                                 2.25.0 | emf               |                                beta                                 |    EMF    |
 | [EMF Model](https://www.eclipse.org/modeling/emf/)     |                                                                                 2.25.0 | emf-model         |                                alpha                                |    EMF    |
 | [SCXML](https://www.w3.org/TR/scxml/)                  |                                                                                    1.0 | scxml             |                                alpha                                |    XML    |
-| Text (naive)                                           |                                                                                      - | text              |                               legacy                                |  CoreNLP  |
+| Text (naive, use with caution)                         |                                                                                      - | text              |                               legacy                                |  CoreNLP  |
+| Multi-Language                                         |                                                                                      - | multi             |                                alpha                                |     -     |
 
 ## Download and Installation
-You need Java SE 21 to run or build JPlag.
+You need Java SE 25 to run or build JPlag.
 
 ### Downloading a release
 * Download a [released version](https://github.com/jplag/jplag/releases).
-* In case you depend on the legacy version of JPlag we refer to the [legacy release v2.12.1](https://github.com/jplag/jplag/releases/tag/v2.12.1-SNAPSHOT) and the [legacy branch](https://github.com/jplag/jplag/tree/legacy).
+* In case you depend on the legacy version of JPlag, we refer to the [legacy release v2.12.1](https://github.com/jplag/jplag/releases/tag/v2.12.1-SNAPSHOT) and the [legacy branch](https://github.com/jplag/jplag/tree/legacy).
 
 ### Via Maven
 JPlag is released on [Maven Central](https://search.maven.org/search?q=de.jplag), it can be included as follows:
@@ -65,7 +67,7 @@ JPlag is released on [Maven Central](https://search.maven.org/search?q=de.jplag)
 </dependency>
 ```
 
-### Building from sources 
+### Building from sources
 1. Download or clone the code from this repository.
 2. Run `mvn clean package` from the repository root to compile and build all submodules.
    Run `mvn clean package assembly:single` instead if you need the full jar, which includes all dependencies.
@@ -103,9 +105,9 @@ Parameter descriptions:
                           will be shown (default: 2500)
       -new, --new=<newDirectories>[,<newDirectories>...]
                         Root-directories with submissions to check for
-                         plagiarism (same as root).
+                          plagiarism (same as root).
       --normalize       Activate the normalization of tokens. Supported for
-       languages: Java, Java-CPG, C++.
+                          languages: Java, Java-CPG, C++.
       -old, --old=<oldDirectories>[,<oldDirectories>...]
                         Root-directories with prior submissions to compare
                           against.
@@ -189,6 +191,7 @@ Languages:
   emf-model
   go
   java
+  java-cpg
   javascript
   kotlin
   llvmir

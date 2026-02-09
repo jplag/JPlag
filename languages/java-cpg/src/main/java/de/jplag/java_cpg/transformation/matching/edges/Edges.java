@@ -1,5 +1,14 @@
 package de.jplag.java_cpg.transformation.matching.edges;
 
+import static de.jplag.java_cpg.transformation.matching.edges.IEdge.EdgeCategory.ANALYTIC;
+import static de.jplag.java_cpg.transformation.matching.edges.IEdge.EdgeCategory.REFERENCE;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+
 import de.fraunhofer.aisec.cpg.graph.Component;
 import de.fraunhofer.aisec.cpg.graph.Name;
 import de.fraunhofer.aisec.cpg.graph.Node;
@@ -37,15 +46,6 @@ import de.fraunhofer.aisec.cpg.graph.types.Type;
 import de.fraunhofer.aisec.cpg.sarif.PhysicalLocation;
 import de.jplag.java_cpg.transformation.GraphTransformation.Builder;
 import de.jplag.java_cpg.transformation.matching.pattern.WildcardGraphPattern;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-
-import static de.jplag.java_cpg.transformation.matching.edges.IEdge.EdgeCategory.ANALYTIC;
-import static de.jplag.java_cpg.transformation.matching.edges.IEdge.EdgeCategory.REFERENCE;
 
 /**
  * A constant class containing relevant {@link IEdge} objects.

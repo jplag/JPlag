@@ -76,7 +76,7 @@ public class CliOptions implements Runnable {
     public JPlagMode mode = JPlagMode.AUTO;
 
     /** Enable token normalization (Java, C++). */
-    @Option(names = {"--normalize"}, description = "Activate the normalization of tokens. Supported for languages: Java, C++.")
+    @Option(names = {"--normalize"}, description = "Activate the normalization of tokens. Supported for languages: Java, Java-CPG, C++.")
     public boolean normalize = false;
 
     /** Advanced options group. */
