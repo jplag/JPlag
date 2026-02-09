@@ -191,7 +191,6 @@ Languages:
   emf-model
   go
   java
-  java-cpg
   javascript
   kotlin
   llvmir
