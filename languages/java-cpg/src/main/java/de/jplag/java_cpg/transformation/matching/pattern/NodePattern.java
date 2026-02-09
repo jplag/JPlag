@@ -1,6 +1,10 @@
 package de.jplag.java_cpg.transformation.matching.pattern;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -32,7 +36,7 @@ public interface NodePattern<T extends Node> {
     }
 
     /**
-     * Adds a for-all relation to this pattern
+     * Adds a for-all relation to this pattern.
      * @param related the pattern to match against all related nodes
      * @param edge the edge that points to the related nodes
      * @param <R> the related node type
@@ -51,6 +55,11 @@ public interface NodePattern<T extends Node> {
      */
     void addProperty(Predicate<? super T> property);
 
+    /**
+     * Adds a relation to this pattern.
+     * @param trRelatedOneToNNode the relation to add
+     * @param <R> the related node type
+     */
     <R extends Node> void addRelation(Relation<? super T, R, ?> trRelatedOneToNNode);
 
     /**
@@ -65,8 +74,16 @@ public interface NodePattern<T extends Node> {
      */
     List<Class<? extends T>> getCandidateClasses();
 
+    /**
+     * Gets the role associated to this node pattern.
+     * @return the role
+     */
     Role getRole();
 
+    /**
+     * Sets the role associated to this node pattern.
+     * @param role the role to set
+     */
     void setRole(Role role);
 
     /**
@@ -75,6 +92,11 @@ public interface NodePattern<T extends Node> {
      */
     Class<T> getRootClass();
 
+    /**
+     * Handles the relationships between this node pattern and the target node pattern using the provided comparator.
+     * @param target the target node pattern
+     * @param comparator the relation comparison function
+     */
     void handleRelationships(NodePattern<T> target, RelationComparisonFunction comparator);
 
     /**
@@ -123,6 +145,10 @@ public interface NodePattern<T extends Node> {
         private final EnumSet<NodeAnnotation> annotations;
         private Role role;
 
+        /**
+         * Creates a new {@link NodePatternImpl} for the given {@link Node} class.
+         * @param clazz the node class
+         */
         public NodePatternImpl(Class<T> clazz) {
             this.clazz = clazz;
             this.properties = new ArrayList<>();
@@ -135,10 +161,17 @@ public interface NodePattern<T extends Node> {
             candidateCounter++;
         }
 
+        /**
+         * Gets the current candidate counter value.
+         * @return the candidate counter
+         */
         public static long getCounter() {
             return candidateCounter;
         }
 
+        /**
+         * Resets the candidate counter to zero.
+         */
         public static void resetCounter() {
             candidateCounter = 0;
         }
@@ -198,6 +231,10 @@ public interface NodePattern<T extends Node> {
             return List.of(getRootClass());
         }
 
+        /**
+         * Gets the role associated to this node pattern.
+         * @return the role
+         */
         public Role getRole() {
             return role;
         }

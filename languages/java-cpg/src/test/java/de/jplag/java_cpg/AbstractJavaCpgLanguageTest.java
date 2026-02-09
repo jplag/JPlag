@@ -39,6 +39,8 @@ public abstract class AbstractJavaCpgLanguageTest {
     /**
      * Parses a java file in the {@code baseDirectory} and returns the list of token types.
      * @param fileName is the name of the file to parse.
+     * @param transform whether to apply the transformation to the parsed graph.
+     * @param enableSemanticAnalysis whether to enable semantic analysis during parsing.
      * @return the token types.
      * @throws ParsingException if parsing fails.
      */

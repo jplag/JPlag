@@ -5,7 +5,12 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.jplag.*;
+import de.jplag.SharedTokenType;
+import de.jplag.Submission;
+import de.jplag.SubmissionSet;
+import de.jplag.Token;
+import de.jplag.TokenEquivalenceModel;
+import de.jplag.TokenType;
 import de.jplag.logging.ProgressBarLogger;
 import de.jplag.logging.ProgressBarType;
 
@@ -22,6 +27,7 @@ public class TokenSequenceMapper {
     /**
      * Creates the submission to token ID mapping for a set of submissions. This will also show the progress to the user
      * using the {@link ProgressBarLogger}.
+     * @param tokenEquivalenceModel the model to use for token type equivalence.
      * @param submissionSet is the set of submissions to process.
      */
     public TokenSequenceMapper(TokenEquivalenceModel tokenEquivalenceModel, SubmissionSet submissionSet) {

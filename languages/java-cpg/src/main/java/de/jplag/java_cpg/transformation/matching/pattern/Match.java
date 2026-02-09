@@ -2,7 +2,11 @@ package de.jplag.java_cpg.transformation.matching.pattern;
 
 import static de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.desc;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
@@ -179,6 +183,15 @@ public class Match implements Comparable<Match> {
         return patternToNode.size();
     }
 
+    /**
+     * This method is used to instantiate a {@link GraphOperation} for a {@link WildcardGraphPattern} from the corresponding
+     * wildcard match data stored in this {@link Match}.
+     * @param <T> the node type of the parent node pattern
+     * @param wcParent the parent node pattern of the wildcard graph pattern
+     * @param wildcardedOperation a wildcarded graph operation, i.e. a graph operation containing a wildcard graph pattern
+     * with the given parent node pattern
+     * @return the instantiated graph operation
+     */
     public <T extends Node> GraphOperation instantiateGraphOperation(ParentNodePattern<T> wcParent, GraphOperationImpl<?, T> wildcardedOperation) {
         WildcardMatch<?, T> wildcardMatch = (WildcardMatch<?, T>) this.wildcardMatches.get(wcParent);
         return wildcardMatch.instantiateGraphOperation(wildcardedOperation::fromWildcardMatch);
@@ -209,6 +222,7 @@ public class Match implements Comparable<Match> {
      * @param index the child index
      * @param <T> the parent node type
      * @param <R> the child node type
+     * @param <C> the concrete type of the parent node
      * @return the nth edge
      */
     public <T extends Node, R extends Node, C extends T> Match resolveAnyOfNEdge(NodePattern<C> parent, OneToNRelation<T, R> relation, int index) {
@@ -244,6 +258,7 @@ public class Match implements Comparable<Match> {
     /**
      * Saves the data related to a concrete occurrence of a {@link WildcardGraphPattern}.
      * @param <R> the concrete type of the child, specified by the edge
+     * @param <T> the concrete type of the parent, specified by the edge
      */
     public static final class WildcardMatch<T extends Node, R extends Node> {
         private final NodePattern<? extends T> parentPattern;
@@ -273,6 +288,11 @@ public class Match implements Comparable<Match> {
             return Objects.hash(parentPattern, edge);
         }
 
+        /**
+         * Instantiates a {@link GraphOperation} using the given factory method.
+         * @param factoryMethod the factory method
+         * @return the instantiated graph operation
+         */
         public GraphOperation instantiateGraphOperation(BiFunction<NodePattern<? extends T>, CpgEdge<T, R>, GraphOperation> factoryMethod) {
             return factoryMethod.apply(this.parentPattern, this.edge);
         }

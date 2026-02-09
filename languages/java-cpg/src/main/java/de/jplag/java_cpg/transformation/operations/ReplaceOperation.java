@@ -80,6 +80,13 @@ public final class ReplaceOperation<T extends Node, R extends Node> extends Grap
         return match.instantiateGraphOperation(wcParent, this);
     }
 
+    /**
+     * Instantiates a ReplaceOperation from a wildcard match.
+     * @param pattern the pattern of the wildcard match
+     * @param edge the edge of the wildcard match
+     * @param <T2> the type of the source node of the edge, defined by the wildcard pattern
+     * @return a new ReplaceOperation instantiated from the wildcard match
+     */
     public <T2 extends Node> ReplaceOperation<T2, R> fromWildcardMatch(NodePattern<? extends T2> pattern, CpgEdge<T2, R> edge) {
         return new ReplaceOperation<>(pattern, edge, this.newChildPattern, this.disconnectEog);
     }

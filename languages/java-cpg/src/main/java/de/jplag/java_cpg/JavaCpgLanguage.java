@@ -1,6 +1,26 @@
 package de.jplag.java_cpg;
 
-import static de.jplag.java_cpg.transformation.TransformationRepository.*;
+import static de.jplag.java_cpg.transformation.TransformationRepository.forStatementToWhileStatement;
+import static de.jplag.java_cpg.transformation.TransformationRepository.ifWithNegatedConditionResolution;
+import static de.jplag.java_cpg.transformation.TransformationRepository.inlineSingleUseConstant;
+import static de.jplag.java_cpg.transformation.TransformationRepository.inlineSingleUseVariable;
+import static de.jplag.java_cpg.transformation.TransformationRepository.moveConstantToOnlyUsingClass;
+import static de.jplag.java_cpg.transformation.TransformationRepository.removeEmptyConstructor;
+import static de.jplag.java_cpg.transformation.TransformationRepository.removeEmptyDeclarationStatement;
+import static de.jplag.java_cpg.transformation.TransformationRepository.removeEmptyRecord;
+import static de.jplag.java_cpg.transformation.TransformationRepository.removeGetterMethod;
+import static de.jplag.java_cpg.transformation.TransformationRepository.removeImplicitStandardConstructor;
+import static de.jplag.java_cpg.transformation.TransformationRepository.removeLibraryField;
+import static de.jplag.java_cpg.transformation.TransformationRepository.removeLibraryRecord;
+import static de.jplag.java_cpg.transformation.TransformationRepository.removeOptionalGetCall;
+import static de.jplag.java_cpg.transformation.TransformationRepository.removeOptionalOfCall;
+import static de.jplag.java_cpg.transformation.TransformationRepository.removeUnsupportedConstructor;
+import static de.jplag.java_cpg.transformation.TransformationRepository.removeUnsupportedMethod;
+import static de.jplag.java_cpg.transformation.TransformationRepository.wrapDoStatement;
+import static de.jplag.java_cpg.transformation.TransformationRepository.wrapElseStatement;
+import static de.jplag.java_cpg.transformation.TransformationRepository.wrapForStatement;
+import static de.jplag.java_cpg.transformation.TransformationRepository.wrapThenStatement;
+import static de.jplag.java_cpg.transformation.TransformationRepository.wrapWhileStatement;
 
 import java.io.File;
 import java.util.List;

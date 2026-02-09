@@ -32,6 +32,7 @@ public final class RemoveOperation<T extends Node, R extends Node> extends Graph
      * @param sourcePattern The source pattern of which a related node shall be removed
      * @param edge the edge
      * @param disconnectEog if true, the target node is disconnected in the EOG graph
+     * @throws TransformationException if the source pattern is null or not a wildcard pattern, or if the edge is null
      */
     public RemoveOperation(NodePattern<? extends T> sourcePattern, CpgEdge<T, R> edge, boolean disconnectEog) {
         super(sourcePattern, edge);
@@ -109,6 +110,13 @@ public final class RemoveOperation<T extends Node, R extends Node> extends Graph
 
     }
 
+    /**
+     * Instantiates a new {@link RemoveOperation} for the given wildcard pattern and edge.
+     * @param pattern the wildcard pattern
+     * @param edge the edge
+     * @param <T2> the parent node type of the new operation
+     * @return the instantiated {@link RemoveOperation}
+     */
     public <T2 extends Node> RemoveOperation<T2, R> fromWildcardMatch(NodePattern<? extends T2> pattern, CpgEdge<T2, R> edge) {
         return new RemoveOperation<>(pattern, edge, this.disconnectEog);
     }

@@ -12,9 +12,19 @@ import de.fraunhofer.aisec.cpg.graph.Node;
 import de.jplag.java_cpg.transformation.matching.edges.CpgEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgMultiEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgNthEdge;
-import de.jplag.java_cpg.transformation.matching.pattern.*;
+import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern;
+import de.jplag.java_cpg.transformation.matching.pattern.Match;
+import de.jplag.java_cpg.transformation.matching.pattern.MultiGraphPattern;
+import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
+import de.jplag.java_cpg.transformation.matching.pattern.SimpleGraphPattern;
 import de.jplag.java_cpg.transformation.matching.pattern.relation.Relation;
-import de.jplag.java_cpg.transformation.operations.*;
+import de.jplag.java_cpg.transformation.operations.CreateNodeOperation;
+import de.jplag.java_cpg.transformation.operations.DummyNeighbor;
+import de.jplag.java_cpg.transformation.operations.GraphOperation;
+import de.jplag.java_cpg.transformation.operations.InsertOperation;
+import de.jplag.java_cpg.transformation.operations.RemoveOperation;
+import de.jplag.java_cpg.transformation.operations.ReplaceOperation;
+import de.jplag.java_cpg.transformation.operations.SetOperation;
 
 /**
  * This saves all information related to a transformation on a graph.
@@ -30,7 +40,7 @@ public interface GraphTransformation {
     void apply(Match match, TranslationContext ctx);
 
     /**
-     * Gets the {@link ExecutionOrder} for this {@link GraphTransformation}
+     * Gets the {@link ExecutionOrder} for this {@link GraphTransformation}.
      * @return the execution order
      */
     ExecutionOrder getExecutionOrder();
@@ -76,6 +86,9 @@ public interface GraphTransformation {
          */
         CPG_TRANSFORM(true);
 
+        /**
+         * Indicates whether EOG edges should be disconnected from the source node of a removed/replaced edge.
+         */
         public final boolean disconnectEog;
 
         ExecutionPhase(boolean disconnectEog) {
@@ -89,10 +102,19 @@ public interface GraphTransformation {
      */
     enum ExecutionOrder {
 
+        /**
+         * Processes matches in ascending order of their location in the source code.
+         */
         ASCENDING_LOCATION,
+        /**
+         * Processes matches in descending order of their location in the source code.
+         */
         DESCENDING_LOCATION
     }
 
+    /**
+     * This class implements the {@link GraphTransformation} interface.
+     */
     class GraphTransformationImpl implements GraphTransformation {
         private static final Logger logger = LoggerFactory.getLogger(GraphTransformationImpl.class);
         protected final GraphPattern sourcePattern;
@@ -103,6 +125,20 @@ public interface GraphTransformation {
         private final ExecutionPhase phase;
         private final ExecutionOrder executionOrder;
 
+        /**
+         * Creates a new GraphTransformationImpl with the given parameters.
+         * @param sourcePattern the source pattern of this transformation, which indicates the structure to search for in the
+         * graph
+         * @param targetPattern the target pattern of this transformation, which indicates the structure to create in the graph
+         * @param name the name of this transformation
+         * @param phase the execution phase of this transformation, which determines when to apply it
+         * @param newNodes the list of nodes to create in the graph, which are present in the target pattern but not in the
+         * source pattern
+         * @param operations the list of operations to apply to the graph, which are calculated from the differences between
+         * source and target pattern
+         * @param executionOrder the execution order of this transformation, which determines the order in which matches of this
+         * transformation are processed
+         */
         public GraphTransformationImpl(GraphPattern sourcePattern, GraphPattern targetPattern, String name, ExecutionPhase phase,
                 List<CreateNodeOperation<?>> newNodes, List<GraphOperation> operations, ExecutionOrder executionOrder) {
             this.sourcePattern = sourcePattern;
@@ -132,6 +168,7 @@ public interface GraphTransformation {
          * @param match the match of the graph transformations source pattern to the concrete CPG
          * @param operations the list of transformations to apply
          * @param ctx the translation context of the current translation
+         * @throws TransformationException if an error occurs during the application of the transformations
          */
         protected void apply(Match match, List<GraphOperation> operations, TranslationContext ctx) {
             for (GraphOperation op : operations) {
@@ -215,10 +252,23 @@ public interface GraphTransformation {
             return new Builder(sourcePattern, targetPattern, name, phase);
         }
 
+        /**
+         * Returns a {@link Builder} for a {@link GraphTransformation} based on the given source and target.
+         * @param sourcePattern the source {@link MultiGraphPattern}
+         * @param targetPattern the target {@link MultiGraphPattern}
+         * @param name the transformation name
+         * @param phase determines when to apply the transformation
+         * @return a {@link Builder} for a {@link GraphTransformation} between source and target
+         */
         public static Builder from(MultiGraphPattern sourcePattern, MultiGraphPattern targetPattern, String name, ExecutionPhase phase) {
             return new Builder(sourcePattern, targetPattern, name, phase);
         }
 
+        /**
+         * Calculates the transformation steps from the differences between source and target pattern and returns a
+         * {@link GraphTransformation}.
+         * @return the calculated {@link GraphTransformation}
+         */
         public GraphTransformation build() {
             return this.calculateTransformation();
         }
@@ -307,14 +357,31 @@ public interface GraphTransformation {
             source.handleRelationships(target, RelationComparisonFunction.from(this, ops));
         }
 
+        /**
+         * Sets the execution order for this transformation, which determines the order in which matches of this transformation
+         * are processed.
+         * @param executionOrder the execution order to set
+         * @return this builder
+         */
         public GraphTransformation.Builder setExecutionOrder(ExecutionOrder executionOrder) {
             this.executionOrder = executionOrder;
             return this;
         }
 
+        /**
+         * This functional interface is used to compare relationships between two node patterns and save the necessary
+         * transformation operations.
+         */
         @FunctionalInterface
         public interface RelationComparisonFunction {
-
+            /**
+             * Compares the relationship between the given source and target node patterns and saves the necessary transformation
+             * operations in the given list.
+             * @param builder the builder to access the compare function recursively for child nodes
+             * @param ops the list to save transformation operations in
+             * @return a RelationComparisonFunction that can be used to compare relationships between node patterns and save
+             * transformation operations
+             */
             static RelationComparisonFunction from(Builder builder, List<GraphOperation> ops) {
                 return new RelationComparisonFunction() {
                     @Override
@@ -325,6 +392,17 @@ public interface GraphTransformation {
                 };
             }
 
+            /**
+             * Casts the given source and target relationships to the correct type and compares them, saving the necessary
+             * transformation operations in the given list.
+             * @param source the source relationship to compare
+             * @param target the target relationship to compare
+             * @param parent the parent node pattern of the source and target node patterns
+             * @param <T> the common type of the related source and target node patterns, defined by the incoming edge
+             * @param <P> the (super)type of the parent node, specified by the incoming edge
+             * @param <R> the type of the related node, defined by the edge of the source relationship
+             * @throws TransformationException if the edge of the source relationship is not a CpgEdge or CpgMultiEdge
+             */
             default <T extends Node, P extends T, R extends Node> void castAndCompare(Relation<? super T, R, ?> source, Relation<?, ?, ?> target,
                     NodePattern.NodePatternImpl<P> parent) {
                 Relation<T, R, ?> castTarget = (Relation<T, R, ?>) target;
@@ -337,6 +415,18 @@ public interface GraphTransformation {
                 compare(source.pattern, castTarget.pattern, parent, edge);
             }
 
+            /**
+             * Compares the given source and target node patterns, which are related by the given incoming edge to their parent node
+             * patterns, and saves the necessary transformation operations in the given list.
+             * @param source the source node pattern to compare
+             * @param target the target node pattern to compare
+             * @param parent the parent node pattern of the source and target node patterns
+             * @param incomingEdge the edge by which the source and target node patterns are related to their parent node patterns
+             * @param <T> the common type of the source and target node patterns, defined by the incoming edge
+             * @param <T1> the actual concrete type of the source node pattern
+             * @param <T2> the actual concrete type of the target node pattern
+             * @param <P> the (super)type of the parent node, specified by the incoming edge
+             */
             <T extends Node, T1 extends T, T2 extends T, P extends Node> void compare(NodePattern<T1> source, NodePattern<T2> target,
                     NodePattern<? extends P> parent, CpgEdge<P, T> incomingEdge);
         }

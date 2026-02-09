@@ -15,6 +15,11 @@ import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
  */
 public final class ForAllRelatedNode<T extends Node, R extends Node> extends OneToNRelation<T, R> {
 
+    /**
+     * Creates a new ForAllRelatedNode with the given pattern and edge.
+     * @param pattern the pattern to match for all related nodes
+     * @param edge the edge describing the relation between the parent node and the related nodes
+     */
     public ForAllRelatedNode(NodePattern<? extends R> pattern, CpgMultiEdge<T, R> edge) {
         super(pattern, edge);
     }

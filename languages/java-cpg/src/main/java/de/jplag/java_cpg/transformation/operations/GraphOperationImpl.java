@@ -36,5 +36,12 @@ public abstract class GraphOperationImpl<T extends Node, R extends Node> impleme
         return this.parentPattern instanceof WildcardGraphPattern.ParentNodePattern && this.edge instanceof WildcardGraphPattern.Edge;
     }
 
+    /**
+     * Creates a new GraphOperationImpl with the given wildcard pattern and edge.
+     * @param pattern the wildcard pattern
+     * @param edge the edge
+     * @param <T2> the type of the parent node of the new GraphOperationImpl
+     * @return the new GraphOperationImpl
+     */
     public abstract <T2 extends Node> GraphOperationImpl<T2, R> fromWildcardMatch(NodePattern<? extends T2> pattern, CpgEdge<T2, R> edge);
 }

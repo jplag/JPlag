@@ -40,7 +40,10 @@ public class PatternRegistry {
     /**
      * Gets the {@link NodePattern} with the given {@link Role}, cast to the given {@link Node} class.
      * @param role the role
+     * @param <T> the node type
+     * @param targetClass the target class
      * @return the node pattern associated to the role
+     * @throws ClassCastException if the pattern is not compatible with the target class
      */
     public <T extends Node> NodePattern<T> getPattern(Role role, Class<T> targetClass) {
         NodePattern<?> nodePattern = patternByRole.get(role);

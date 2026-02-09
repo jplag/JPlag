@@ -23,10 +23,19 @@ import de.jplag.java_cpg.transformation.matching.PatternRepository;
 import de.jplag.java_cpg.transformation.matching.pattern.Match;
 import de.jplag.java_cpg.transformation.matching.pattern.SimpleGraphPattern;
 
+/**
+ * Tests for matching patterns in the graph.
+ */
 public class MatchingTest extends AbstractJavaCpgLanguageTest {
-
+    /**
+     * Logger for this class.
+     */
     public static final Logger LOGGER = LoggerFactory.getLogger(MatchingTest.class);
 
+    /**
+     * Provides test data for the parameterized test.
+     * @return a stream of arguments, each containing a filename, a root node type, and a graph pattern to match
+     */
     public static Stream<Arguments> providePairs() {
         return Stream.of(Arguments.of("IfElseWithNegatedCondition.java", IfStatement.class, PatternRepository.ifElseWithNegatedCondition().build()),
                 Arguments.of("GetterSetter.java", MethodDeclaration.class, PatternRepository.setterMethod().build()));

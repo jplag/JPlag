@@ -24,10 +24,19 @@ import de.jplag.java_cpg.transformation.matching.CpgIsomorphismDetector;
 import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern;
 import de.jplag.java_cpg.transformation.matching.pattern.Match;
 
+/**
+ * The test class for testing the creation of transformations.
+ */
 public class CreateTransformTest extends AbstractJavaCpgLanguageTest {
 
     private CpgIsomorphismDetector detector;
 
+    /**
+     * Provides tuples of file names, transformations and the type of the root node pattern of the transformation's source
+     * pattern for testing the creation of transformations.
+     * @return a stream of tuples of file names, transformations and the type of the root node pattern of the
+     * transformation's source pattern
+     */
     public static Stream<Arguments> provideTuples() {
         return Stream.of(
                 Arguments.of("UnusedVariableDeclaration.java", TransformationRepository.removeUnusedVariableDeclaration, VariableDeclaration.class),

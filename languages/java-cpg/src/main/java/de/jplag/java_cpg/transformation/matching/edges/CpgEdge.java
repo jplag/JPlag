@@ -1,6 +1,6 @@
 package de.jplag.java_cpg.transformation.matching.edges;
 
-import static de.jplag.java_cpg.transformation.matching.edges.IEdge.EdgeCategory.*;
+import static de.jplag.java_cpg.transformation.matching.edges.IEdge.EdgeCategory.AST;
 
 import java.util.List;
 import java.util.Objects;

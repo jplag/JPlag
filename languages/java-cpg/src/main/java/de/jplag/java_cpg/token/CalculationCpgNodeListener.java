@@ -12,15 +12,27 @@ import de.fraunhofer.aisec.cpg.graph.declarations.MethodDeclaration;
 import de.fraunhofer.aisec.cpg.graph.declarations.RecordDeclaration;
 import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration;
 import de.fraunhofer.aisec.cpg.graph.edge.PropertyEdge;
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.*;
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.AssignExpression;
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.Reference;
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.UnaryOperator;
 import de.jplag.java_cpg.NodeRegistry;
 import de.jplag.java_cpg.token.characteristic.CharacteristicVector;
 import de.jplag.java_cpg.token.characteristic.CharacteristicVectorDimensionsMapper;
 
+/**
+ * This class is a listener for the calculation of characteristic vectors for CPG nodes. It is used in the
+ * {@link de.jplag.java_cpg.passes.VectorCalculationPass}. It calculates the characteristic vector for each node and
+ * stores it in the {@link NodeRegistry}.
+ */
 public class CalculationCpgNodeListener extends VisitorExitor<Node> {
     private final Deque<Node> nodeStack = new ArrayDeque<>();
     private final boolean doSemanticAnalysis;
 
+    /**
+     * Creates a new CalculationCpgNodeListener.
+     * @param doSemanticAnalysis whether to perform semantic analysis to add characteristic vectors of referenced nodes to
+     * the reference nodes.
+     */
     public CalculationCpgNodeListener(boolean doSemanticAnalysis) {
         super();
         this.doSemanticAnalysis = doSemanticAnalysis;

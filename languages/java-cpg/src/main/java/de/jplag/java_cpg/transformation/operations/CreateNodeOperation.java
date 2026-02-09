@@ -8,11 +8,22 @@ import de.fraunhofer.aisec.cpg.graph.declarations.FunctionDeclaration;
 import de.fraunhofer.aisec.cpg.graph.declarations.NamespaceDeclaration;
 import de.fraunhofer.aisec.cpg.graph.declarations.RecordDeclaration;
 import de.fraunhofer.aisec.cpg.graph.declarations.TemplateDeclaration;
-import de.fraunhofer.aisec.cpg.graph.statements.*;
+import de.fraunhofer.aisec.cpg.graph.statements.AssertStatement;
+import de.fraunhofer.aisec.cpg.graph.statements.CatchClause;
+import de.fraunhofer.aisec.cpg.graph.statements.DoStatement;
+import de.fraunhofer.aisec.cpg.graph.statements.ForEachStatement;
+import de.fraunhofer.aisec.cpg.graph.statements.ForStatement;
+import de.fraunhofer.aisec.cpg.graph.statements.IfStatement;
+import de.fraunhofer.aisec.cpg.graph.statements.SwitchStatement;
+import de.fraunhofer.aisec.cpg.graph.statements.TryStatement;
+import de.fraunhofer.aisec.cpg.graph.statements.WhileStatement;
 import de.fraunhofer.aisec.cpg.graph.statements.expressions.Block;
 import de.jplag.java_cpg.transformation.Role;
 import de.jplag.java_cpg.transformation.TransformationException;
-import de.jplag.java_cpg.transformation.matching.pattern.*;
+import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern;
+import de.jplag.java_cpg.transformation.matching.pattern.Match;
+import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
+import de.jplag.java_cpg.transformation.matching.pattern.PatternUtil;
 
 /**
  * Creates a new {@link Node} in the graph. Note: The new {@link Node} needs to be inserted into the graph via other

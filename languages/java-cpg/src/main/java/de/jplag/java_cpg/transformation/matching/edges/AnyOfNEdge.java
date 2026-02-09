@@ -5,6 +5,8 @@ import de.fraunhofer.aisec.cpg.graph.Node;
 /**
  * A {@link AnyOfNEdge} serves as a placeholder for a {@link CpgNthEdge} during transformation calculation as long as
  * the index is not known.
+ * @param <T> the source node type
+ * @param <R> the related node type
  */
 public class AnyOfNEdge<T extends Node, R extends Node> extends CpgNthEdge<T, R> {
 
@@ -13,6 +15,8 @@ public class AnyOfNEdge<T extends Node, R extends Node> extends CpgNthEdge<T, R>
 
     /**
      * Creates a new {@link AnyOfNEdge} for the corresponding {@link CpgMultiEdge}.
+     * @param cpgMultiEdge the corresponding multi edge
+     * @param minIndex the minimal index of the corresponding {@link CpgNthEdge}
      */
     public AnyOfNEdge(CpgMultiEdge<T, R> cpgMultiEdge, int minIndex) {
         super(cpgMultiEdge, -1);
@@ -20,6 +24,10 @@ public class AnyOfNEdge<T extends Node, R extends Node> extends CpgNthEdge<T, R>
         this.minIndex = minIndex;
     }
 
+    /**
+     * Gets the minimal index of the corresponding {@link CpgNthEdge}.
+     * @return the minimal index
+     */
     public int getMinimalIndex() {
         return minIndex;
     }

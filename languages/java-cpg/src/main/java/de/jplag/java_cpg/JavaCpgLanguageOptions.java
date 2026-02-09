@@ -26,7 +26,7 @@ public class JavaCpgLanguageOptions extends LanguageOptions {
             VectorComparisonMode.EUCLIDEAN_DISTANCE.name());
 
     /**
-     * Getter for the token equivalence mode
+     * Getter for the token equivalence mode.
      * @return The token equivalence mode
      */
     public CpgTokenEquivalenceMode getTokenEquivalenceMode() {
@@ -34,7 +34,7 @@ public class JavaCpgLanguageOptions extends LanguageOptions {
     }
 
     /**
-     * Getter for the characteristic vector threshold
+     * Getter for the characteristic vector threshold.
      * @return The characteristic vector threshold
      */
     public int getCharacteristicVectorThreshold() {
@@ -42,7 +42,7 @@ public class JavaCpgLanguageOptions extends LanguageOptions {
     }
 
     /**
-     * Getter for whether semantic analysis is enabled
+     * Getter for whether semantic analysis is enabled.
      * @return True, if semantic analysis is enabled
      */
     public boolean isSemanticAnalysisEnabled() {
@@ -50,7 +50,7 @@ public class JavaCpgLanguageOptions extends LanguageOptions {
     }
 
     /**
-     * Getter for the vector comparison strategy
+     * Getter for the vector comparison strategy.
      * @return The vector comparison strategy
      */
     public VectorComparisonMode getVectorComparisonStrategy() {
@@ -59,7 +59,7 @@ public class JavaCpgLanguageOptions extends LanguageOptions {
 
     // setter for tests
     /**
-     * Setter for the token equivalence mode
+     * Setter for the token equivalence mode.
      * @param mode The token equivalence mode
      */
     public void setTokenEquivalenceMode(CpgTokenEquivalenceMode mode) {
@@ -69,7 +69,7 @@ public class JavaCpgLanguageOptions extends LanguageOptions {
     // setter for tests
 
     /**
-     * Setter for enabling semantic analysis
+     * Setter for enabling semantic analysis.
      * @param enableSemanticAnalysis True, to enable semantic analysis
      */
     public void setEnableSemanticAnalysis(boolean enableSemanticAnalysis) {
@@ -78,7 +78,7 @@ public class JavaCpgLanguageOptions extends LanguageOptions {
 
     // setter for tests
     /**
-     * Setter for the characteristic vector threshold
+     * Setter for the characteristic vector threshold.
      * @param threshold The characteristic vector threshold
      */
     public void setCharacteristicVectorThreshold(int threshold) {
@@ -87,7 +87,7 @@ public class JavaCpgLanguageOptions extends LanguageOptions {
 
     // setter for tests
     /**
-     * Setter for the vector comparison strategy
+     * Setter for the vector comparison strategy.
      * @param strategy The vector comparison strategy
      */
     public void setVectorComparisonStrategy(VectorComparisonMode strategy) {

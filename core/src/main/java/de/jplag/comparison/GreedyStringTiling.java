@@ -9,7 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import de.jplag.*;
+import de.jplag.JPlagComparison;
+import de.jplag.Match;
+import de.jplag.Submission;
+import de.jplag.Token;
+import de.jplag.TokenEquivalenceModel;
 import de.jplag.options.JPlagOptions;
 
 /**

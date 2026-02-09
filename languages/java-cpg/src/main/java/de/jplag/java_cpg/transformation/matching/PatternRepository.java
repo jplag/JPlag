@@ -1,8 +1,44 @@
 package de.jplag.java_cpg.transformation.matching;
 
-import static de.jplag.java_cpg.transformation.Role.*;
-import static de.jplag.java_cpg.transformation.matching.edges.Edges.*;
-import static de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.*;
+import static de.jplag.java_cpg.transformation.Role.ASSIGN_EXPRESSION;
+import static de.jplag.java_cpg.transformation.Role.CLASS_DECLARATION;
+import static de.jplag.java_cpg.transformation.Role.CONDITION;
+import static de.jplag.java_cpg.transformation.Role.ELSE_STATEMENT;
+import static de.jplag.java_cpg.transformation.Role.FIELD_DECLARATION;
+import static de.jplag.java_cpg.transformation.Role.FIELD_REFERENCE;
+import static de.jplag.java_cpg.transformation.Role.FIELD_TYPE;
+import static de.jplag.java_cpg.transformation.Role.IF_STATEMENT;
+import static de.jplag.java_cpg.transformation.Role.INNER_CONDITION;
+import static de.jplag.java_cpg.transformation.Role.METHOD_BODY;
+import static de.jplag.java_cpg.transformation.Role.METHOD_DECLARATION;
+import static de.jplag.java_cpg.transformation.Role.METHOD_TYPE;
+import static de.jplag.java_cpg.transformation.Role.PARAMETER_DECLARATION;
+import static de.jplag.java_cpg.transformation.Role.PARAMETER_REFERENCE;
+import static de.jplag.java_cpg.transformation.Role.RETURN_STATEMENT;
+import static de.jplag.java_cpg.transformation.Role.THEN_STATEMENT;
+import static de.jplag.java_cpg.transformation.Role.VOID_TYPE;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.ASSIGN_EXPRESSION__LHS;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.ASSIGN_EXPRESSION__RHS;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.BLOCK__STATEMENTS;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.FUNCTION_TYPE__PARAMETERS;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.FUNCTION_TYPE__RETURN_TYPES;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.IF_STATEMENT__CONDITION;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.IF_STATEMENT__ELSE_STATEMENT;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.IF_STATEMENT__THEN_STATEMENT;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.METHOD_DECLARATION__BODY;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.METHOD_DECLARATION__PARAMETERS;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.METHOD_DECLARATION__RECORD_DECLARATION;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.RECORD_DECLARATION__FIELDS;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.RECORD_DECLARATION__METHODS;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.REFERENCE__REFERS_TO;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.RETURN_STATEMENT__RETURN_VALUES;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.TYPE__TYPE_NAME;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.UNARY_OPERATOR__INPUT;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.UNARY_OPERATOR__OPERATOR_CODE;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.VALUE_DECLARATION__TYPE;
+import static de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.nElements;
+import static de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.notEmpty;
+import static de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.nthElement;
 
 import de.fraunhofer.aisec.cpg.graph.declarations.FieldDeclaration;
 import de.fraunhofer.aisec.cpg.graph.declarations.MethodDeclaration;
@@ -11,7 +47,11 @@ import de.fraunhofer.aisec.cpg.graph.declarations.RecordDeclaration;
 import de.fraunhofer.aisec.cpg.graph.statements.IfStatement;
 import de.fraunhofer.aisec.cpg.graph.statements.ReturnStatement;
 import de.fraunhofer.aisec.cpg.graph.statements.Statement;
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.*;
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.AssignExpression;
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.Block;
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.Expression;
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.Reference;
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.UnaryOperator;
 import de.fraunhofer.aisec.cpg.graph.types.FunctionType;
 import de.fraunhofer.aisec.cpg.graph.types.IncompleteType;
 import de.fraunhofer.aisec.cpg.graph.types.ObjectType;
@@ -47,7 +87,7 @@ public final class PatternRepository {
     }
 
     /**
-     * Creates a {@link GraphPatternBuilder} for a setter method
+     * Creates a {@link GraphPatternBuilder} for a setter method.
      * @return the {@link GraphPatternBuilder}
      */
     public static GraphPatternBuilder setterMethod() {

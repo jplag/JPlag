@@ -29,6 +29,11 @@ public sealed class OneToNRelation<T extends Node, R extends Node> extends Relat
         return this.multiEdge;
     }
 
+    /**
+     * Gets all related nodes of this relation starting from the given target node.
+     * @param from the target node
+     * @return the related nodes
+     */
     public List<R> getTarget(T from) {
         return multiEdge.getAllTargets(from);
     }

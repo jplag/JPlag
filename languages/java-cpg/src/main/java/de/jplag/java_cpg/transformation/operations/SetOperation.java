@@ -21,7 +21,13 @@ import de.jplag.java_cpg.transformation.matching.pattern.WildcardGraphPattern;
  */
 public final class SetOperation<T extends Node, R extends Node> extends GraphOperationImpl<T, R> {
     private static final Logger logger;
+    /**
+     * This error message is used when trying to apply a SetOperation with a parent pattern that is a wildcard.
+     */
     public static final String WILDCARD_ERROR_MESSAGE = "Cannot apply SetOperation with WildcardGraphPattern.ParentPattern as parentPattern.";
+    /**
+     * This error message is used when trying to apply a SetOperation with an edge that is an Any1ofNEdge.
+     */
     public static final String MULTI_EDGE_ERROR_MESSAGE = "Cannot apply SetOperation with Any1ofNEdge.";
     private final NodePattern<? extends R> newChildPattern;
 

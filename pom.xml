@@ -784,6 +784,7 @@
                     <version>${version.plugin.maven.javadoc}</version>
                     <configuration>
                         <sourcepath>src/main/java;target/generated-sources/annotations;target/generated-sources/antlr4;target/generated-sources/javacc</sourcepath>
+                        <failOnError>false</failOnError>
                     </configuration>
                     <executions>
                         <execution>

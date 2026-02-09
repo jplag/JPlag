@@ -32,6 +32,9 @@ public class JTokenizationPass extends TranslationResultPass {
     private final ArrayList<Token> tokenList = new ArrayList<>();
     private final CpgTokenConsumer consumer = new ConcreteCpgTokenConsumer();
     private final NodeOrderStrategy strategy = new NodeOrderStrategy(false);
+    /**
+     * A callback to return the token list after tokenization. This is necessary because the tokenization is done
+     */
     Consumer<List<Token>> callback = null;
 
     /**

@@ -113,6 +113,11 @@ public final class CpgMultiEdge<T extends Node, R extends Node> extends AEdge<T,
         return getter;
     }
 
+    /**
+     * Saves the index of the given pattern in the sequence of nodes represented by this edge.
+     * @param pattern the pattern
+     * @param idx the index of the pattern in the sequence of nodes represented by this edge
+     */
     public void saveSequenceIndex(NodePattern<? extends R> pattern, int idx) {
         this.sequenceNodes.put((NodePattern<R>) pattern, idx);
     }

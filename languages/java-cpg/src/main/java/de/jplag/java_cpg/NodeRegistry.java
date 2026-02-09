@@ -11,7 +11,7 @@ import de.jplag.java_cpg.token.characteristic.CharacteristicVector;
  */
 public final class NodeRegistry {
     /**
-     * the singleton instance of the NodeRegistry
+     * The singleton instance of the NodeRegistry.
      */
     public static final NodeRegistry INSTANCE = new NodeRegistry();
 

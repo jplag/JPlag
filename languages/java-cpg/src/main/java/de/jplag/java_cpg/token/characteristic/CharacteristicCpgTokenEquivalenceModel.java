@@ -14,6 +14,7 @@ public class CharacteristicCpgTokenEquivalenceModel extends CpgTokenEquivalenceM
     /**
      * Creates a new characteristic CPG token equivalence model.
      * @param characteristicVectorThreshold The threshold for the characteristic vectors to be considered equivalent
+     * @param vectorComparisonMode The mode to compare the characteristic vectors
      */
     public CharacteristicCpgTokenEquivalenceModel(int characteristicVectorThreshold, VectorComparisonMode vectorComparisonMode) {
         this.characteristicVectorThreshold = characteristicVectorThreshold;

@@ -1,6 +1,8 @@
 package de.jplag.java_cpg.transformation.matching.pattern;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import de.fraunhofer.aisec.cpg.graph.Node;
@@ -27,8 +29,9 @@ public abstract class GraphPatternImpl implements GraphPattern {
     }
 
     /**
-     * Gets the {@link Role} of the given {@link NodePattern}
+     * Gets the {@link Role} of the given {@link NodePattern}.
      * @param pattern the node pattern
+     * @param <T> the type of the node pattern
      * @return the role
      */
     public <T extends Node> Role getRole(NodePattern<T> pattern) {

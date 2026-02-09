@@ -31,10 +31,23 @@ public final class RelatedNode<T extends Node, R extends Node> extends Relation<
         return cpgEdge;
     }
 
+    /**
+     * Gets the related node for the given reference node.
+     * @param from the reference node
+     * @return the related node
+     */
     public R getTarget(T from) {
         return cpgEdge.getRelated(from);
     }
 
+    /**
+     * Recursively matches the related node pattern to the candidate node obtained from the reference node and updates the
+     * list of open matches accordingly.
+     * @param pattern the pattern to match
+     * @param parent the reference node
+     * @param openMatches the list of open matches to update
+     * @param <C> the type of the candidate node, must be a subtype of the target node type
+     */
     public <C extends T> void recursiveMatch(NodePattern<C> pattern, T parent, List<Match> openMatches) {
         R candidateNode = getTarget(parent);
 

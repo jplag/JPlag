@@ -1,6 +1,13 @@
 package de.jplag.java_cpg.transform;
 
-import static de.jplag.java_cpg.transformation.TransformationRepository.*;
+import static de.jplag.java_cpg.transformation.TransformationRepository.forStatementToWhileStatement;
+import static de.jplag.java_cpg.transformation.TransformationRepository.ifWithNegatedConditionResolution;
+import static de.jplag.java_cpg.transformation.TransformationRepository.inlineSingleUseVariable;
+import static de.jplag.java_cpg.transformation.TransformationRepository.moveConstantToOnlyUsingClass;
+import static de.jplag.java_cpg.transformation.TransformationRepository.removeEmptyDeclarationStatement;
+import static de.jplag.java_cpg.transformation.TransformationRepository.removeLibraryField;
+import static de.jplag.java_cpg.transformation.TransformationRepository.removeLibraryRecord;
+import static de.jplag.java_cpg.transformation.TransformationRepository.removeUnusedVariableDeclaration;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,6 +45,9 @@ public class PlagiarismDetectionTest {
     private static JavaCpgLanguage language;
     private static TokenEquivalenceModel equivalenceModel;
 
+    /**
+     * Sets up the test by initializing the language, base directory and equivalence model.
+     */
     @BeforeAll
     public static void setUpOnce() {
         language = new JavaCpgLanguage();
@@ -95,6 +105,10 @@ public class PlagiarismDetectionTest {
         }
     }
 
+    /**
+     * Resets the transformations of the language after each test to ensure that transformations of one test do not affect
+     * others.
+     */
     @AfterEach
     public void resetTransformations() {
         language.resetTransformations();

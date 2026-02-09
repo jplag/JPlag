@@ -1,15 +1,129 @@
 package de.jplag.java_cpg.transformation;
 
 import static de.jplag.java_cpg.transformation.GraphTransformation.ExecutionOrder.ASCENDING_LOCATION;
-import static de.jplag.java_cpg.transformation.GraphTransformation.ExecutionPhase.*;
-import static de.jplag.java_cpg.transformation.Role.*;
-import static de.jplag.java_cpg.transformation.matching.edges.Edges.*;
-import static de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.*;
+import static de.jplag.java_cpg.transformation.GraphTransformation.ExecutionPhase.AST_TRANSFORM;
+import static de.jplag.java_cpg.transformation.GraphTransformation.ExecutionPhase.CPG_TRANSFORM;
+import static de.jplag.java_cpg.transformation.GraphTransformation.ExecutionPhase.OBLIGATORY;
+import static de.jplag.java_cpg.transformation.Role.ARGUMENT;
+import static de.jplag.java_cpg.transformation.Role.BODY;
+import static de.jplag.java_cpg.transformation.Role.CLASS_DECLARATION;
+import static de.jplag.java_cpg.transformation.Role.CONDITION;
+import static de.jplag.java_cpg.transformation.Role.CONSTRUCTOR_DECLARATION;
+import static de.jplag.java_cpg.transformation.Role.CONTAINING_FILE;
+import static de.jplag.java_cpg.transformation.Role.CONTAINING_RECORD;
+import static de.jplag.java_cpg.transformation.Role.CONTAINING_STATEMENT;
+import static de.jplag.java_cpg.transformation.Role.DECLARATION;
+import static de.jplag.java_cpg.transformation.Role.DECLARATION_CONTAINER;
+import static de.jplag.java_cpg.transformation.Role.DECLARATION_STATEMENT;
+import static de.jplag.java_cpg.transformation.Role.DEFINING_RECORD;
+import static de.jplag.java_cpg.transformation.Role.DEFINING_RECORD_REFERENCE;
+import static de.jplag.java_cpg.transformation.Role.DO_STATEMENT;
+import static de.jplag.java_cpg.transformation.Role.ELSE_STATEMENT;
+import static de.jplag.java_cpg.transformation.Role.EMPTY_RECORD;
+import static de.jplag.java_cpg.transformation.Role.FIELD_DECLARATION;
+import static de.jplag.java_cpg.transformation.Role.FIELD_USAGE;
+import static de.jplag.java_cpg.transformation.Role.FIELD_VALUE;
+import static de.jplag.java_cpg.transformation.Role.FIRST_CONSTANT_USAGE;
+import static de.jplag.java_cpg.transformation.Role.FOR_STATEMENT;
+import static de.jplag.java_cpg.transformation.Role.GETTER_METHOD_REFERENCE;
+import static de.jplag.java_cpg.transformation.Role.IF_STATEMENT;
+import static de.jplag.java_cpg.transformation.Role.INITIALIZATION_STATEMENT;
+import static de.jplag.java_cpg.transformation.Role.INNER_CONDITION;
+import static de.jplag.java_cpg.transformation.Role.ITERATION_STATEMENT;
+import static de.jplag.java_cpg.transformation.Role.MEMBER_CALL;
+import static de.jplag.java_cpg.transformation.Role.METHOD_BLOCK;
+import static de.jplag.java_cpg.transformation.Role.METHOD_DECLARATION;
+import static de.jplag.java_cpg.transformation.Role.METHOD_TYPE;
+import static de.jplag.java_cpg.transformation.Role.OPTIONAL_CLASS;
+import static de.jplag.java_cpg.transformation.Role.OPTIONAL_OBJECT;
+import static de.jplag.java_cpg.transformation.Role.RECORD_DECLARATION;
+import static de.jplag.java_cpg.transformation.Role.RETURN_STATEMENT;
+import static de.jplag.java_cpg.transformation.Role.RETURN_TYPE;
+import static de.jplag.java_cpg.transformation.Role.RETURN_VALUE;
+import static de.jplag.java_cpg.transformation.Role.SCOPE_BLOCK;
+import static de.jplag.java_cpg.transformation.Role.SURROUNDING_BLOCK;
+import static de.jplag.java_cpg.transformation.Role.THEN_STATEMENT;
+import static de.jplag.java_cpg.transformation.Role.THROW_EXCEPTION;
+import static de.jplag.java_cpg.transformation.Role.USING_RECORD;
+import static de.jplag.java_cpg.transformation.Role.VARIABLE_DECLARATION;
+import static de.jplag.java_cpg.transformation.Role.VARIABLE_USAGE;
+import static de.jplag.java_cpg.transformation.Role.VARIABLE_VALUE;
+import static de.jplag.java_cpg.transformation.Role.WHILE_STATEMENT;
+import static de.jplag.java_cpg.transformation.Role.WHILE_STATEMENT_BODY;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.BLOCK__STATEMENTS;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.CALL_EXPRESSION__ARGUMENTS;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.CALL_EXPRESSION__CALLEE;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.CALL_EXPRESSION__INVOKES;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.DECLARATION_STATEMENT__DECLARATIONS;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.DO_STATEMENT__STATEMENT;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.FIELD_DECLARATION__MODIFIERS;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.FOR_STATEMENT__CONDITION;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.FOR_STATEMENT__INITIALIZER_STATEMENT;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.FOR_STATEMENT__ITERATION_STATEMENT;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.FOR_STATEMENT__STATEMENT;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.FUNCTION_TYPE__RETURN_TYPES;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.IF_STATEMENT__CONDITION;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.IF_STATEMENT__ELSE_STATEMENT;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.IF_STATEMENT__THEN_STATEMENT;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.MEMBER_EXPRESSION__BASE;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.MEMBER_EXPRESSION__RECORD_DECLARATION;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.METHOD_DECLARATION__BODY;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.METHOD_DECLARATION__LOCAL_NAME;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.METHOD_DECLARATION__RECORD_DECLARATION;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.NAMESPACE_DECLARATION__DECLARATIONS;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.NODE__LOCATION;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.NODE__NAME;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.RECORD_DECLARATION__CONSTRUCTORS;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.RECORD_DECLARATION__FIELDS;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.RECORD_DECLARATION__METHODS;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.RECORD_DECLARATION__NAME;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.REFERENCE__REFERS_TO;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.RETURN_STATEMENT__RETURN_VALUES;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.STATEMENT__LOCALS;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.TRANSLATION_UNIT__DECLARATIONS;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.UNARY_OPERATOR__INPUT;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.UNARY_OPERATOR__OPERATOR_CODE;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.VALUE_DECLARATION__TYPE;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.VALUE_DECLARATION__USAGES;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.VARIABLE_DECLARATION__INITIALIZER;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.WHILE_STATEMENT__CONDITION;
+import static de.jplag.java_cpg.transformation.matching.edges.Edges.WHILE_STATEMENT__STATEMENT;
+import static de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.attributeContains;
+import static de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.attributeEquals;
+import static de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.attributeToStringEquals;
+import static de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.attributeToStringStartsWith;
+import static de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.isConstant;
+import static de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.isFieldReference;
+import static de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.nElements;
+import static de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.notEmpty;
+import static de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.notInstanceOf;
+import static de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.notNull;
+import static de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.nthElement;
+import static de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.or;
 
 import de.fraunhofer.aisec.cpg.graph.Node;
-import de.fraunhofer.aisec.cpg.graph.declarations.*;
-import de.fraunhofer.aisec.cpg.graph.statements.*;
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.*;
+import de.fraunhofer.aisec.cpg.graph.declarations.ConstructorDeclaration;
+import de.fraunhofer.aisec.cpg.graph.declarations.Declaration;
+import de.fraunhofer.aisec.cpg.graph.declarations.FieldDeclaration;
+import de.fraunhofer.aisec.cpg.graph.declarations.MethodDeclaration;
+import de.fraunhofer.aisec.cpg.graph.declarations.NamespaceDeclaration;
+import de.fraunhofer.aisec.cpg.graph.declarations.RecordDeclaration;
+import de.fraunhofer.aisec.cpg.graph.declarations.TranslationUnitDeclaration;
+import de.fraunhofer.aisec.cpg.graph.declarations.VariableDeclaration;
+import de.fraunhofer.aisec.cpg.graph.statements.DeclarationStatement;
+import de.fraunhofer.aisec.cpg.graph.statements.DoStatement;
+import de.fraunhofer.aisec.cpg.graph.statements.EmptyStatement;
+import de.fraunhofer.aisec.cpg.graph.statements.ForStatement;
+import de.fraunhofer.aisec.cpg.graph.statements.IfStatement;
+import de.fraunhofer.aisec.cpg.graph.statements.ReturnStatement;
+import de.fraunhofer.aisec.cpg.graph.statements.Statement;
+import de.fraunhofer.aisec.cpg.graph.statements.WhileStatement;
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.Block;
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.Expression;
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.MemberCallExpression;
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.MemberExpression;
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.Reference;
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.UnaryOperator;
 import de.fraunhofer.aisec.cpg.graph.types.FunctionType;
 import de.fraunhofer.aisec.cpg.graph.types.ObjectType;
 import de.jplag.java_cpg.transformation.matching.edges.CpgEdge;
@@ -27,94 +141,94 @@ public class TransformationRepository {
      * Alternatively, all factory methods could be public and use private fields to create a kind-of singleton pattern.
      */
     /**
-     * Constant <code>ifWithNegatedConditionResolution</code>
+     * Constant <code>ifWithNegatedConditionResolution</code>.
      */
     public static final GraphTransformation ifWithNegatedConditionResolution = ifWithNegatedConditionResolution();
     /**
-     * Constant <code>forStatementToWhileStatement</code>
+     * Constant <code>forStatementToWhileStatement</code>.
      */
     public static final GraphTransformation forStatementToWhileStatement = forStatementToWhileStatement();
     /**
-     * Constant <code>removeGetterMethod</code>
+     * Constant <code>removeGetterMethod</code>.
      */
     public static final GraphTransformation removeGetterMethod = removeGetterMethod();
     /**
-     * Constant <code>removeUnusedVariableDeclaration</code>
+     * Constant <code>removeUnusedVariableDeclaration</code>.
      */
     public static final GraphTransformation removeUnusedVariableDeclaration = removeUnusedVariableDeclaration();
 
     /**
-     * Constant <code>removeEmptyDeclarationStatement</code>
+     * Constant <code>removeEmptyDeclarationStatement</code>.
      */
     public static final GraphTransformation removeEmptyDeclarationStatement = removeEmptyDeclarationStatement();
     /**
-     * Constant <code>removeLibraryRecord</code>
+     * Constant <code>removeLibraryRecord</code>.
      */
     public static final GraphTransformation removeLibraryRecord = removeLibraryRecord();
     /**
-     * Constant <code>removeLibraryField</code>
+     * Constant <code>removeLibraryField</code>.
      */
     public static final GraphTransformation removeLibraryField = removeLibraryField();
     /**
-     * Constant <code>moveConstantToOnlyUsingClass</code>
+     * Constant <code>moveConstantToOnlyUsingClass</code>.
      */
     public static final GraphTransformation moveConstantToOnlyUsingClass = moveConstantToOnlyUsingClass();
     /**
-     * Constant <code>inlineSingleUseVariable</code>
+     * Constant <code>inlineSingleUseVariable</code>.
      */
     public static final GraphTransformation inlineSingleUseVariable = inlineSingleUseVariable();
 
     /**
-     * Constant <code>inlineSingleUseConstant</code>
+     * Constant <code>inlineSingleUseConstant</code>.
      */
     public static final GraphTransformation inlineSingleUseConstant = inlineSingleUseConstant();
     /**
-     * Constant <code>removeEmptyConstructor</code>
+     * Constant <code>removeEmptyConstructor</code>.
      */
     public static final GraphTransformation removeEmptyConstructor = removeEmptyConstructor();
 
     /**
-     * Constant <code>removeEmptyRecord</code>
+     * Constant <code>removeEmptyRecord</code>.
      */
     public static final GraphTransformation removeEmptyRecord = removeEmptyRecord();
     /**
-     * Constant <code>removeImplicitStandardConstructor</code>
+     * Constant <code>removeImplicitStandardConstructor</code>.
      */
     public static final GraphTransformation removeImplicitStandardConstructor = removeImplicitStandardConstructor();
     /**
-     * Constant <code>removeOptionalOfCall</code>
+     * Constant <code>removeOptionalOfCall</code>.
      */
     public static final GraphTransformation removeOptionalOfCall = removeOptionalOfCall();
     /**
-     * Constant <code>removeOptionalGetCall</code>
+     * Constant <code>removeOptionalGetCall</code>.
      */
     public static final GraphTransformation removeOptionalGetCall = removeOptionalGetCall();
     /**
-     * Constant <code>removeUnsupportedConstructor</code>
+     * Constant <code>removeUnsupportedConstructor</code>.
      */
     public static final GraphTransformation removeUnsupportedConstructor = removeUnsupportedConstructor();
     /**
-     * Constant <code>removeUnsupportedMethod</code>
+     * Constant <code>removeUnsupportedMethod</code>.
      */
     public static final GraphTransformation removeUnsupportedMethod = removeUnsupportedMethod();
     /**
-     * Constant <code>wrapElseStatement</code>
+     * Constant <code>wrapElseStatement</code>.
      */
     public static final GraphTransformation wrapElseStatement = wrapElseStatement();
     /**
-     * Constant <code>wrapForStatement</code>
+     * Constant <code>wrapForStatement</code>.
      */
     public static final GraphTransformation wrapForStatement = wrapForStatement();
     /**
-     * Constant <code>wrapThenStatement</code>
+     * Constant <code>wrapThenStatement</code>.
      */
     public static final GraphTransformation wrapThenStatement = wrapThenStatement();
     /**
-     * Constant <code>wrapWhileStatement</code>
+     * Constant <code>wrapWhileStatement</code>.
      */
     public static final GraphTransformation wrapWhileStatement = wrapWhileStatement();
     /**
-     * Constant <code>wrapDoStatement</code>
+     * Constant <code>wrapDoStatement</code>.
      */
     public static final GraphTransformation wrapDoStatement = wrapDoStatement();
 

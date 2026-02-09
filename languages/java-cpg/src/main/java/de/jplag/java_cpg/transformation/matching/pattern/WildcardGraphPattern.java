@@ -137,6 +137,10 @@ public class WildcardGraphPattern<R extends Node> extends SimpleGraphPattern<Nod
             return edgesToType.stream().map(IEdge::getSourceClass).collect(Collectors.toCollection(ArrayList::new));
         }
 
+        /**
+         * Gets the child pattern of this wildcard parent pattern.
+         * @return the child pattern
+         */
         public NodePattern<R> getChildPattern() {
             return childPattern;
         }

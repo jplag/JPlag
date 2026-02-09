@@ -1,14 +1,23 @@
 package de.jplag.java_cpg.transformation.matching.pattern;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.graph.declarations.Declaration;
 import de.fraunhofer.aisec.cpg.graph.declarations.RecordDeclaration;
-import de.fraunhofer.aisec.cpg.graph.statements.expressions.*;
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.CallExpression;
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.Expression;
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.Literal;
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.MemberCallExpression;
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.MemberExpression;
+import de.fraunhofer.aisec.cpg.graph.statements.expressions.Reference;
 import de.jplag.java_cpg.transformation.TransformationException;
 import de.jplag.java_cpg.transformation.matching.edges.CpgAttributeEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgEdge;
@@ -173,6 +182,7 @@ public class PatternUtil {
      * @param pattern the pattern
      * @param <R> the node pattern type
      * @return the new {@link Node}
+     * @throws TransformationException if the node cannot be instantiated
      */
     public static <R extends Node> R instantiate(NodePattern<R> pattern) {
         try {

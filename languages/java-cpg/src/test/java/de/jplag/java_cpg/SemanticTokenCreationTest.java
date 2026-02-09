@@ -17,6 +17,10 @@ import de.jplag.java_cpg.token.characteristic.CharacteristicVector;
 import de.jplag.java_cpg.token.characteristic.CharacteristicVectorDimension;
 import de.jplag.java_cpg.token.cpg.CpgTokenType;
 
+/**
+ * Tests for the creation of characteristic tokens in the Java CPG. These tests check whether the expected
+ * characteristic tokens are created for a simple loop example, both with and without semantic analysis.
+ */
 public class SemanticTokenCreationTest extends AbstractJavaCpgLanguageTest {
 
     @Test
