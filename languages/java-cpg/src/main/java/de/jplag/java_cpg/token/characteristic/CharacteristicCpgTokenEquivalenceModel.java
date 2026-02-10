@@ -25,13 +25,12 @@ public class CharacteristicCpgTokenEquivalenceModel extends CpgTokenEquivalenceM
     public boolean areSecondaryEquivalent(TokenType leftType, TokenType rightType) {
         int[] leftVector = ((CharacteristicCpgTokenType) leftType).characteristicVector().getValue();
         int[] rightVector = ((CharacteristicCpgTokenType) rightType).characteristicVector().getValue();
-        if (vectorComparisonMode == VectorComparisonMode.EUCLIDEAN_DISTANCE) {
-            return areEquivalentEuclidean(leftVector, rightVector);
-        } else if (vectorComparisonMode == VectorComparisonMode.L1_DISTANCE) {
-            return areEquivalentL1(leftVector, rightVector);
-        } else {
-            return areEquivalentCosine(leftVector, rightVector);
-        }
+        return switch (vectorComparisonMode) {
+            case EUCLIDEAN_DISTANCE -> areEquivalentEuclidean(leftVector, rightVector);
+            case L1_DISTANCE -> areEquivalentL1(leftVector, rightVector);
+            default -> areEquivalentCosine(leftVector, rightVector);
+        };
+
     }
 
     private boolean areEquivalentEuclidean(int[] leftVector, int[] rightVector) {

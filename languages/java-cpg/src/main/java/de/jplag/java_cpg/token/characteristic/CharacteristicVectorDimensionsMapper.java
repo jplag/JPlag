@@ -41,75 +41,64 @@ public final class CharacteristicVectorDimensionsMapper {
      * @return the characteristic vector dimension, or null if the node type is not mapped
      */
     public static CharacteristicVectorDimension mapNodeType(Node node) {
-        if (node instanceof MethodDeclaration) {
-            return CharacteristicVectorDimension.METHOD_DECLARATION;
-        } else if (node instanceof VariableDeclaration) {
-            if (node.getLocation() == null) {
-                // skip auto generated declarations
+        return switch (node) {
+            case MethodDeclaration _ -> CharacteristicVectorDimension.METHOD_DECLARATION;
+            case VariableDeclaration variableDeclaration -> {
+                if (variableDeclaration.getLocation() == null)
+                    yield null;
+                yield CharacteristicVectorDimension.VARIABLE_DECLARATION;
+            }
+            case BinaryOperator binaryOperator -> mapBinaryOperator(binaryOperator);
+            case ReturnStatement returnStatement -> {
+                if (returnStatement.getLocation() == null)
+                    yield null;
+                yield CharacteristicVectorDimension.RETURN_STATEMENT;
+            }
+            case CaseStatement _ -> CharacteristicVectorDimension.CASE;
+            case SwitchStatement _ -> CharacteristicVectorDimension.SWITCH;
+            case LambdaExpression _ -> CharacteristicVectorDimension.LAMBDA_EXPRESSION;
+            case NewArrayExpression _ -> CharacteristicVectorDimension.CLASS_OR_ARRAY_CREATOR;
+            case NewExpression _ -> CharacteristicVectorDimension.CLASS_OR_ARRAY_CREATOR;
+            case IfStatement _ -> CharacteristicVectorDimension.IF;
+            case AssertStatement _ -> CharacteristicVectorDimension.ASSERT;
+            case CatchClause _ -> CharacteristicVectorDimension.CATCH;
+            case UnaryOperator unaryOperator -> mapUnaryOperator(unaryOperator);
+            case TryStatement _ -> CharacteristicVectorDimension.TRY;
+            case AssignExpression _ -> CharacteristicVectorDimension.ASSIGNMENT_EXPRESSION;
+            case SubscriptExpression _ -> CharacteristicVectorDimension.ARRAY_SELECTOR;
+            case ConstructExpression _ -> CharacteristicVectorDimension.CONSTRUCTOR_INVOCATION;
+            case CallExpression _ -> CharacteristicVectorDimension.METHOD_INVOCATION;
+            case ForEachStatement _,ForStatement _,WhileStatement _,DoStatement _ -> CharacteristicVectorDimension.LOOP;
+            default -> null;
+        };
+    }
+
+    private static CharacteristicVectorDimension mapBinaryOperator(BinaryOperator binaryOperator) {
+        switch (binaryOperator.getOperatorCode()) {
+            case "&&", "||" -> {
+                return CharacteristicVectorDimension.LOGICAL_EXPRESSION;
+            }
+            case "+", "-", "*", "/", "%", "++", "--", "<<", ">>", ">>>", "&", "|", "^" -> {
+                return CharacteristicVectorDimension.NUMERICAL_EXPRESSION;
+            }
+            case "==", "!=", "<", "<=", ">", ">=" -> {
+                return CharacteristicVectorDimension.CONDITIONAL_EXPRESSION;
+            }
+            case null, default -> {
                 return null;
             }
-            return CharacteristicVectorDimension.VARIABLE_DECLARATION;
-        } else if (node instanceof BinaryOperator binaryOperator) {
-            switch (binaryOperator.getOperatorCode()) {
-                case "&&", "||" -> {
-                    return CharacteristicVectorDimension.LOGICAL_EXPRESSION;
-                }
-                case "+", "-", "*", "/", "%", "++", "--", "<<", ">>", ">>>", "&", "|", "^" -> {
-                    return CharacteristicVectorDimension.NUMERICAL_EXPRESSION;
-                }
-                case "==", "!=", "<", "<=", ">", ">=" -> {
-                    return CharacteristicVectorDimension.CONDITIONAL_EXPRESSION;
-                }
-                case null, default -> {
-                    return null;
-                }
-            }
-        } else if (node instanceof ReturnStatement) {
-            if (node.getLocation() == null) {
-                // skip auto generated returns
-                return null;
-            }
-            return CharacteristicVectorDimension.RETURN_STATEMENT;
-        } else if (node instanceof CaseStatement) {
-            return CharacteristicVectorDimension.CASE;
-        } else if (node instanceof SwitchStatement) {
-            return CharacteristicVectorDimension.SWITCH;
-        } else if (node instanceof LambdaExpression) {
-            return CharacteristicVectorDimension.LAMBDA_EXPRESSION;
-        } else if (node instanceof NewArrayExpression || node instanceof NewExpression) {
-            return CharacteristicVectorDimension.CLASS_OR_ARRAY_CREATOR;
-        } else if (node instanceof IfStatement) {
-            return CharacteristicVectorDimension.IF;
-        } else if (node instanceof AssertStatement) {
-            return CharacteristicVectorDimension.ASSERT;
-        } else if (node instanceof CatchClause) {
-            return CharacteristicVectorDimension.CATCH;
-        } else if (node instanceof UnaryOperator unaryOperator) {
-            if (unaryOperator.getOperatorCode() == null) {
-                return null;
-            } else if (unaryOperator.getOperatorCode().equals("throw")) {
-                return CharacteristicVectorDimension.THROW;
-            } else if (unaryOperator.getOperatorCode().equals("++") || unaryOperator.getOperatorCode().equals("--")) {
-                return CharacteristicVectorDimension.ASSIGNMENT_EXPRESSION;
-            } else {
-                return null;
-            }
-        } else if (node instanceof TryStatement) {
-            return CharacteristicVectorDimension.TRY;
-        } else if (node instanceof AssignExpression) {
+        }
+    }
+
+    private static CharacteristicVectorDimension mapUnaryOperator(UnaryOperator unaryOperator) {
+        if (unaryOperator.getOperatorCode() == null) {
+            return null;
+        } else if (unaryOperator.getOperatorCode().equals("throw")) {
+            return CharacteristicVectorDimension.THROW;
+        } else if (unaryOperator.getOperatorCode().equals("++") || unaryOperator.getOperatorCode().equals("--")) {
             return CharacteristicVectorDimension.ASSIGNMENT_EXPRESSION;
-        } else if (node instanceof SubscriptExpression) {
-            return CharacteristicVectorDimension.ARRAY_SELECTOR;
-        } else if (node instanceof ConstructExpression) {
-            return CharacteristicVectorDimension.CONSTRUCTOR_INVOCATION;
-        } else if (node instanceof CallExpression) {
-            return CharacteristicVectorDimension.METHOD_INVOCATION;
-        } else if (node instanceof ForEachStatement || node instanceof ForStatement || node instanceof WhileStatement
-                || node instanceof DoStatement) {
-            return CharacteristicVectorDimension.LOOP;
         } else {
             return null;
         }
     }
-
 }

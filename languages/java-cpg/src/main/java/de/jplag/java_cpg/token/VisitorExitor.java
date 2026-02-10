@@ -25,7 +25,7 @@ public abstract class VisitorExitor<V extends IVisitable<V>> extends IVisitor<V>
         try {
             Method mostSpecificExit = this.getClass().getMethod(EXIT_METHOD_IDENTIFIER, node.getClass());
             mostSpecificExit.invoke(this, node);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException _) {
             // Do nothing, just like in IVisitor
         }
     }
@@ -35,7 +35,7 @@ public abstract class VisitorExitor<V extends IVisitable<V>> extends IVisitor<V>
         try {
             Method mostSpecificExit = this.getClass().getMethod(VISIT_METHOD_IDENTIFIER, node.getClass());
             mostSpecificExit.invoke(this, node);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException _) {
             // Do nothing, just like in IVisitor
         }
     }

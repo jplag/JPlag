@@ -56,34 +56,24 @@ public class NodeOrderStrategy implements IStrategy<Node> {
 
     @Override
     public @NotNull Iterator<Node> getIterator(Node node) {
-        if (node instanceof TranslationResult translationResult) {
-            this.methodOrder = new MethodOrderStrategy(detailedTraversal).setupMethodCallGraphOrder(translationResult);
-            return Strategy.INSTANCE.AST_FORWARD(node);
-        } else if (node instanceof Component c) {
-            return walkComponent(c);
-        } else if (node instanceof TranslationUnitDeclaration tu) {
-            return walkTranslationUnit(tu);
-        } else if (node instanceof RecordDeclaration recordDecl) {
-            return walkRecord(recordDecl);
-        } else if (node instanceof MethodDeclaration methodDecl) {
-            return walkMethod(methodDecl);
-        } else if (node instanceof WhileStatement whileStatement) {
-            return walkWhileStatement(whileStatement);
-        } else if (node instanceof DoStatement doStatement) {
-            return walkDoWhileStatement(doStatement);
-        } else if (node instanceof IfStatement ifStatement) {
-            return walkIfStatement(ifStatement);
-        } else if (node instanceof ForStatement forStatement) {
-            return walkForStatement(forStatement);
-        } else if (node instanceof DeclarationStatement declarationStatement) {
-            return walkDeclarationStatement(declarationStatement);
-        } else if (node instanceof AssignExpression assignExpression) {
-            return walkAssignExpression(assignExpression);
-        } else if (node instanceof Block block) {
-            return walkBlock(block);
-        } else {
-            return Strategy.INSTANCE.AST_FORWARD(node);
-        }
+        return switch (node) {
+            case TranslationResult translationResult -> {
+                this.methodOrder = new MethodOrderStrategy(detailedTraversal).setupMethodCallGraphOrder(translationResult);
+                yield Strategy.INSTANCE.AST_FORWARD(node);
+            }
+            case Component component -> walkComponent(component);
+            case TranslationUnitDeclaration tu -> walkTranslationUnit(tu);
+            case RecordDeclaration recordDecl -> walkRecord(recordDecl);
+            case MethodDeclaration methodDecl -> walkMethod(methodDecl);
+            case WhileStatement whileStatement -> walkWhileStatement(whileStatement);
+            case DoStatement doStatement -> walkDoWhileStatement(doStatement);
+            case IfStatement ifStatement -> walkIfStatement(ifStatement);
+            case ForStatement forStatement -> walkForStatement(forStatement);
+            case DeclarationStatement declarationStatement -> walkDeclarationStatement(declarationStatement);
+            case AssignExpression assignExpression -> walkAssignExpression(assignExpression);
+            case Block block -> walkBlock(block);
+            default -> Strategy.INSTANCE.AST_FORWARD(node);
+        };
     }
 
     private Iterator<Node> walkAssignExpression(AssignExpression assignExpression) {

@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import de.fraunhofer.aisec.cpg.graph.Name;
 import de.jplag.Token;
+import de.jplag.TokenTrace;
 import de.jplag.TokenType;
 
 /**
@@ -24,7 +25,7 @@ public class CpgToken extends Token {
      * @param name the name of the represented CPG node
      */
     public CpgToken(TokenType tokenType, File file, int startLine, int startColumn, int length, Name name) {
-        super(tokenType, file, startLine, startColumn, length);
+        super(tokenType, file, new TokenTrace(startLine, startColumn, length));
         this.name = name;
     }
 

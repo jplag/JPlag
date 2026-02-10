@@ -89,13 +89,9 @@ public class CalculationCpgNodeListener extends VisitorExitor<Node> {
             if (!isValidCandidate(node, priorNode)) {
                 continue;
             }
-            if (mostPriorNode == null) {
-                mostPriorNode = priorNode;
-                continue;
-            }
-            if (priorNode.getLocation().getRegion().getEndLine() > mostPriorNode.getLocation().getRegion().getEndLine()
+            if (mostPriorNode == null || (priorNode.getLocation().getRegion().getEndLine() > mostPriorNode.getLocation().getRegion().getEndLine()
                     || (priorNode.getLocation().getRegion().getEndLine() == mostPriorNode.getLocation().getRegion().getEndLine()
-                            && (priorNode.getLocation().getRegion().getEndColumn() > mostPriorNode.getLocation().getRegion().getEndColumn()))) {
+                            && (priorNode.getLocation().getRegion().getEndColumn() > mostPriorNode.getLocation().getRegion().getEndColumn())))) {
                 mostPriorNode = priorNode;
             }
         }

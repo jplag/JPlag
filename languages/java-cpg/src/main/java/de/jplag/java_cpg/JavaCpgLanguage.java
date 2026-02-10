@@ -90,7 +90,7 @@ public class JavaCpgLanguage implements Language {
         cpgAdapter.enableSemanticAnalysis(getOptions().isSemanticAnalysisEnabled());
         try {
             return cpgAdapter.adapt(files, normalize);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException _) {
             Thread.currentThread().interrupt();
             return List.of();
         }

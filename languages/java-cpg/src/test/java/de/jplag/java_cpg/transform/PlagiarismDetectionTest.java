@@ -38,7 +38,7 @@ import de.jplag.java_cpg.transformation.GraphTransformation;
  * An integration test that checks whether pairs of submissions are accepted as equal after being subjected to different
  * transformations.
  */
-public class PlagiarismDetectionTest {
+class PlagiarismDetectionTest {
 
     protected static final Path BASE_PATH = Path.of("src", "test", "resources", "java");
     protected static File baseDirectory;
@@ -49,7 +49,7 @@ public class PlagiarismDetectionTest {
      * Sets up the test by initializing the language, base directory and equivalence model.
      */
     @BeforeAll
-    public static void setUpOnce() {
+    static void setUpOnce() {
         language = new JavaCpgLanguage();
         baseDirectory = BASE_PATH.toFile();
         equivalenceModel = new CpgTokenEquivalenceModel();
@@ -110,7 +110,7 @@ public class PlagiarismDetectionTest {
      * others.
      */
     @AfterEach
-    public void resetTransformations() {
+    void resetTransformations() {
         language.resetTransformations();
     }
 }

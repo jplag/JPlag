@@ -20,7 +20,7 @@ class VectorCalculationPass (ctx: TranslationContext) : AResultVisitingPass (ctx
     }
 
     override fun cleanup() {
-        // do nothing
+        //do nothing
     }
 
     companion object {
