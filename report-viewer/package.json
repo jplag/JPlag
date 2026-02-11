@@ -19,7 +19,7 @@
     "@types/node": "^25.2.3",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.6.0",
-    "eslint": "^9.39.2",
+    "eslint": "^10.0.0",
     "eslint-plugin-vue": "^10.7.0",
     "globals": "^17.3.0",
     "lint-staged": "^16.2.7",
