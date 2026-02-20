@@ -2,7 +2,6 @@ package de.jplag.java_cpg.token;
 
 import java.io.File;
 import java.util.Objects;
-import java.util.Optional;
 
 import de.fraunhofer.aisec.cpg.graph.Name;
 import de.fraunhofer.aisec.cpg.sarif.Region;
@@ -46,6 +45,6 @@ public class CpgToken extends Token {
 
     @Override
     public int hashCode() {
-        return Optional.of(name).map(Name::hashCode).orElse(1) * getType().hashCode();
+        return getType().hashCode();
     }
 }

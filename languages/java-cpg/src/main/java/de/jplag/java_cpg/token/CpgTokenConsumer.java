@@ -65,12 +65,16 @@ public abstract class CpgTokenConsumer implements TokenConsumer {
         // location encompasses the whole node AND all child nodes, not the syntactic element that represents the node.
         // As an approximation for the missing values, we use the beginning and end of the child nodes, respectively, which is
         // not ideal.
-        if (!isEndToken) {
-            Region nextTokenRegion = childRegions.getFirst();
-            newRegion = new Region(region.startLine, region.startColumn, nextTokenRegion.startLine, nextTokenRegion.startColumn);
+        if (!childRegions.isEmpty()) {
+            if (!isEndToken) {
+                Region nextTokenRegion = childRegions.getFirst();
+                newRegion = new Region(region.startLine, region.startColumn, nextTokenRegion.startLine, nextTokenRegion.startColumn);
+            } else {
+                Region previousTokenRegion = childRegions.getLast();
+                newRegion = new Region(previousTokenRegion.getEndLine(), previousTokenRegion.getEndColumn(), region.getEndLine(), region.getEndColumn());
+            }
         } else {
-            Region previousTokenRegion = childRegions.getLast();
-            newRegion = new Region(previousTokenRegion.getEndLine(), previousTokenRegion.getEndColumn(), region.getEndLine(), region.getEndColumn());
+            newRegion = region;
         }
 
         Name name = node.getName();
