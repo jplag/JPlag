@@ -4,12 +4,12 @@ package de.jplag;
  * Represents two code fragments in two submissions that are structurally similar. These sections are usually identical
  * token subsequences, but can vary slightly when employing post-processing mechanisms, for example subsequence match
  * merging.
- * @param startOfFirst is the index of the first token of the match in the first submission.
- * @param startOfSecond is the index of the first token of the match in the second submission.
- * @param lengthOfFirst is the length of these similar sections (number of tokens) in the first submission.
- * @param lengthOfSecond is the length of these similar sections (number of tokens) in the second submission.
  */
-public record Match(int startOfFirst, int startOfSecond, int lengthOfFirst, int lengthOfSecond) {
+public record Match(TokenRange leftTokens, TokenRange rightTokens) {
+
+    public Match(int startOfFirst, int startOfSecond, int lengthOfFirst, int lengthOfSecond) {
+        this(new TokenRange(startOfFirst, startOfFirst + lengthOfFirst - 1), new TokenRange(startOfSecond, startOfFirst + lengthOfSecond - 1));
+    }
 
     /**
      * Checks if two matches overlap.
@@ -17,32 +17,21 @@ public record Match(int startOfFirst, int startOfSecond, int lengthOfFirst, int 
      * @return true if they do.
      */
     public boolean overlaps(Match other) {
-        if (startOfFirst < other.startOfFirst) {
-            if (other.startOfFirst - startOfFirst < lengthOfFirst) {
-                return true;
-            }
-        } else if (startOfFirst - other.startOfFirst < other.lengthOfFirst) {
-            return true;
-        }
-
-        if (startOfSecond < other.startOfSecond) {
-            return other.startOfSecond - startOfSecond < lengthOfSecond;
-        }
-        return startOfSecond - other.startOfSecond < other.lengthOfSecond;
+        return leftTokens.overlaps(other.leftTokens) || rightTokens.overlaps(other.rightTokens);
     }
 
     /**
      * @return the token index of the last token of the match in the first submission.
      */
     public int endOfFirst() {
-        return startOfFirst + lengthOfFirst - 1;
+        return leftTokens.getLastToken();
     }
 
     /**
      * @return the token index of the last token of the match in the second submission.
      */
     public int endOfSecond() {
-        return startOfSecond + lengthOfSecond - 1;
+        return rightTokens.getLastToken();
     }
 
     /**
@@ -50,7 +39,7 @@ public record Match(int startOfFirst, int startOfSecond, int lengthOfFirst, int 
      * sides have the same length.
      */
     public int minimumLength() {
-        return Math.min(lengthOfFirst, lengthOfSecond);
+        return Math.min(leftTokens.tokenCount(), rightTokens.tokenCount());
     }
 
     /**
@@ -62,5 +51,21 @@ public record Match(int startOfFirst, int startOfSecond, int lengthOfFirst, int 
     @Deprecated(since = "6.2.0", forRemoval = true)
     public int length() {
         return minimumLength();
+    }
+
+    public int startOfFirst() {
+        return leftTokens.getFirstToken();
+    }
+
+    public int startOfSecond() {
+        return rightTokens.getLastToken();
+    }
+
+    public int numberOfFirstTokens() {
+        return leftTokens.tokenCount();
+    }
+
+    public int numberOfSecondTokens() {
+        return rightTokens.tokenCount();
     }
 }

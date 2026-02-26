@@ -94,7 +94,7 @@ public class MatchFrequencyWeighting {
         double weightedTotalMatchLength = 0;
         for (Match match : comparison.matches()) {
             double matchCount = getMatchCount(comparison, match);
-            double matchLength = firstSubmission ? match.lengthOfFirst() : match.lengthOfSecond();
+            double matchLength = firstSubmission ? match.numberOfFirstTokens() : match.numberOfSecondTokens();
 
             if (matchCount == 0) {
                 weightedTotalMatchLength += matchLength;

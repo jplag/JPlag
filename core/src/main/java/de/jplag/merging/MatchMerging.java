@@ -141,9 +141,8 @@ public class MatchMerging {
                     && !mergeOverlapsFiles(leftSubmission, rightSubmission, upperMatch, tokensBetweenLeft, tokensBetweenRight)) {
                 globalMatches.remove(upperMatch);
                 globalMatches.remove(lowerMatch);
-                int leftLength = upperMatch.lengthOfFirst() + tokensBetweenLeft + lowerMatch.lengthOfFirst();
-                int leftRight = upperMatch.lengthOfSecond() + tokensBetweenRight + lowerMatch.lengthOfSecond();
-                Match mergedMatch = new Match(upperMatch.startOfFirst(), upperMatch.startOfSecond(), leftLength, leftRight);
+                Match mergedMatch = new Match(upperMatch.leftTokens().mergedWith(lowerMatch.leftTokens()),
+                        upperMatch.rightTokens().mergedWith(lowerMatch.rightTokens()));
 
                 globalMatches.add(mergedMatch);
                 neighbors = updateNeighbors(neighbors, neighbors.get(i), mergedMatch);
