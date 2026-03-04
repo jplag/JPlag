@@ -119,7 +119,7 @@
         <version.plugin.maven.javadoc>3.12.0</version.plugin.maven.javadoc>
         <version.plugin.maven.source>3.4.0</version.plugin.maven.source>
         <version.plugin.maven.surefire>3.5.4</version.plugin.maven.surefire>
-        <version.plugin.spotless>3.2.1</version.plugin.spotless>
+        <version.plugin.spotless>3.3.0</version.plugin.spotless>
 
         <!-- ensure that this variable is initialized, even if it is empty -->
         <argLine/>
