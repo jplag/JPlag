@@ -8,6 +8,10 @@ on:
       - ".github/workflows/report-viewer-test-unit.yml"
       - "report-viewer/**"
 
+permissions:
+  issues: write
+  pull-requests: write 
+
 jobs:
   pre_job:
     runs-on: ubuntu-latest
@@ -25,30 +29,107 @@ jobs:
     if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout 🛎️
+      - name: Checkout
         uses: actions/checkout@v6
 
       - uses: actions/setup-node@v6
         with:
           node-version: "lts/*"
 
-      - name: Install
+      - name: Install and run tests and merge-reports
+        id: generate
         working-directory: report-viewer
         run: |
           npm install
-      - name: Test model
-        working-directory: report-viewer/model
+          npm run test:coverage --workspaces
+          npm run merge-coverage
+      
+      - name: Post comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const owner = "jplag"
+            const repo = "JPlag"
+            const issueNumber = ${{ github.event.pull_request.number }}
+
+            // Delete old comments
+            const comments = await github.paginate(
+                github.issues.listComments,
+                {
+                  owner,
+                  repo,
+                  issue_number: issueNumber,
+                  per_page: 100,
+                }
+              )
+            for (const comment of comments) {
+              if (comment.user.login !== 'github-actions[bot]') {
+                continue;
+              }
+              if (!comment.body.includes('Coverage')) {
+                continue;
+              }
+              await github.issues.deleteComment({
+                owner,
+                repo,
+                comment_id: comment.id,
+              })
+            }
+
+            // read coverage results
+            const fs = require('fs');
+            const path = require('path');
+            const basePath = path.join(process.cwd(), 'report-viewer/coverage/');
+            const summaryPath = path.join(basePath, 'summary.txt');
+            const detailPath = path.join(basePath, 'detail.txt');
+            const globber = await glob.create('report-viewer/*/coverage/summary.txt');
+            const packageSummaryPaths = (await globber.glob()).sort();
+
+            // build comment body
+            const summaryContent = fs.readFileSync(summaryPath, 'utf8').trim();
+            const detailContent = fs.readFileSync(detailPath, 'utf8').trim();
+            const packageSummaries = packageSummaryPaths.map(p => {
+              const content = fs.readFileSync(p, 'utf8').trim();
+              const name = path.relative(path.join(process.cwd(), 'report-viewer/'), p).split('/')[0];
+              return `### ${name}\n\`\`\`\n${content}\n\`\`\``;
+            }).join('\n');
+            const body = `\`\`\`
+            ${summaryContent}
+            \`\`\`
+            <details>
+            <summary>Per Package Coverage</summary>
+
+            ${packageSummaries}
+            </details>
+            <details>
+            <summary>Per File Coverage</summary>
+
+            \`\`\`
+            ${detailContent}
+            \`\`\`
+            </details>`
+
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            })
+
+      - name: Upload coverage results
+        uses: actions/upload-artifact@v6
+        with:
+          name: "coverage-report"
+          path: report-viewer/coverage/html
+          retention-days: 30
+
+      - name: Fail on low coverage
+        env:
+          COVERAGE: ${{ steps.generate.outputs.COVERAGE }}
         run: |
-          npm run test
-      - name: Test parser
-        working-directory: report-viewer/parser
-        run: |
-          npm run test
-      - name: Test ui-components
-        working-directory: report-viewer/ui-components
-        run: |
-          npm run test
-      - name: Test report-viewer
-        working-directory: report-viewer/report-viewer
-        run: |
-          npm run test:unit
+          echo "Coverage: ${{ steps.generate.outputs.COVERAGE }}"
+          if [ $(bc <<< "$COVERAGE < 20.0") -eq 1 ]; then
+            exit 1
+          fi
