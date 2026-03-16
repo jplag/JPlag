@@ -39,6 +39,8 @@ class TokenizationPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
     private val strategy = NodeOrderStrategy()
 
     override fun accept(translationResult: TranslationResult) {
+        print("Current File: " + translationResult.translationUnits.first().name)
+        logger.info("Current File: " + translationResult.translationUnits.first().name.toString())
         tokenList.clear()
         val listener = CpgNodeListener(consumer)
         val walker: SubgraphWalker.IterativeGraphWalker = SubgraphWalker.IterativeGraphWalker()
@@ -79,4 +81,3 @@ class TokenizationPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
         val logger: Logger = LoggerFactory.getLogger(TokenizationPass::class.java)
     }
 }
-

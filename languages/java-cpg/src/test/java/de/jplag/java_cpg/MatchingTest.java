@@ -13,6 +13,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.fraunhofer.aisec.cpg.ConfigurationException;
 import de.fraunhofer.aisec.cpg.TranslationResult;
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.graph.declarations.MethodDeclaration;
@@ -37,26 +38,24 @@ class MatchingTest extends AbstractJavaCpgLanguageTest {
 
     @ParameterizedTest
     @MethodSource("providePairs")
-    <T extends Node> void testMatch(String filename, Class<T> rootType, SimpleGraphPattern<T> pattern) throws InterruptedException {
+    <T extends Node> void testMatch(String filename, Class<T> rootType, SimpleGraphPattern<T> pattern)
+            throws InterruptedException, ParsingException, ConfigurationException {
         File file = new File(baseDirectory, filename);
-        try {
-            CpgAdapter cpgAdapter = new CpgAdapter();
-            cpgAdapter.clearTransformations();
-            TranslationResult graph = cpgAdapter.translate(Set.of(file));
-            CpgIsomorphismDetector detector = new CpgIsomorphismDetector();
-            detector.loadGraph(graph);
-            List<T> rootCandidates = detector.getNodesOfType(rootType);
 
-            assertTrue(rootCandidates.stream().anyMatch(candidate -> {
-                List<Match> matches = pattern.recursiveMatch(candidate);
-                if (matches.isEmpty()) {
-                    return false;
-                }
-                LOGGER.info("Mapping contained %d nodes.".formatted(matches.getFirst().getSize()));
-                return true;
-            }));
-        } catch (ParsingException e) {
-            throw new RuntimeException(e);
-        }
+        CpgAdapter cpgAdapter = new CpgAdapter(false, false, true, true);
+        cpgAdapter.clearTransformations();
+        TranslationResult graph = cpgAdapter.translate(Set.of(file));
+        CpgIsomorphismDetector detector = new CpgIsomorphismDetector();
+        detector.loadGraph(graph);
+        List<T> rootCandidates = detector.getNodesOfType(rootType);
+
+        assertTrue(rootCandidates.stream().anyMatch(candidate -> {
+            List<Match> matches = pattern.recursiveMatch(candidate);
+            if (matches.isEmpty()) {
+                return false;
+            }
+            LOGGER.info("Mapping contained %d nodes.".formatted(matches.getFirst().getSize()));
+            return true;
+        }));
     }
 }

@@ -1,0 +1,2 @@
+All Code in this directory is generated with Google Gemini 3 Pro.
+Initial Prompt: ProjectX.java + "Plagiarize this program and try to hide it"

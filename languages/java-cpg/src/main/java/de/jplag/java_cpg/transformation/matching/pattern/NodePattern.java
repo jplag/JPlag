@@ -208,26 +208,6 @@ public interface NodePattern<T extends Node> {
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
-
-            NodePatternImpl<?> that = (NodePatternImpl<?>) o;
-
-            if (!clazz.equals(that.clazz))
-                return false;
-            if (!properties.equals(that.properties))
-                return false;
-            if (!Objects.equals(matchProperties, that.matchProperties))
-                return false;
-            if (!Objects.equals(relations, that.relations))
-                return false;
-            return annotations.equals(that.annotations);
-        }
-
-        @Override
         public List<Class<? extends T>> getCandidateClasses() {
             return List.of(getRootClass());
         }
@@ -278,32 +258,6 @@ public interface NodePattern<T extends Node> {
         }
 
         @Override
-        public int hashCode() {
-            // hashCode must not use list fields, as their hashCode changes with their content
-            // this would lead to HashMaps failing to recognize the same NodePattern.
-            int result = clazz != null ? clazz.hashCode() : 0;
-            result = 31 * result + super.hashCode();
-            return result;
-        }
-
-        /**
-         * Checks the local properties of the {@link NodePattern} against the concrete {@link Node}.
-         * @param node the node
-         * @return true if the node has the corresponding type and properties
-         */
-        protected boolean localMatch(Node node) {
-            boolean typeMismatch = !clazz.isAssignableFrom(node.getClass());
-            if (typeMismatch) {
-                return false;
-            }
-
-            T tNode = clazz.cast(node);
-
-            boolean propertyMismatch = properties.stream().anyMatch(p -> !p.test(tNode));
-            return !propertyMismatch;
-        }
-
-        @Override
         public void markStopRecursion() {
             annotations.add(NodeAnnotation.STOP_RECURSION);
         }
@@ -349,8 +303,54 @@ public interface NodePattern<T extends Node> {
         }
 
         @Override
+        public int hashCode() {
+            // hashCode must not use list fields, as their hashCode changes with their content
+            // this would lead to HashMaps failing to recognize the same NodePattern.
+            int result = clazz != null ? clazz.hashCode() : 0;
+            result = 31 * result + super.hashCode();
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
+
+            NodePatternImpl<?> that = (NodePatternImpl<?>) o;
+
+            if (!clazz.equals(that.clazz))
+                return false;
+            if (!properties.equals(that.properties))
+                return false;
+            if (!Objects.equals(matchProperties, that.matchProperties))
+                return false;
+            if (!Objects.equals(relations, that.relations))
+                return false;
+            return annotations.equals(that.annotations);
+        }
+
+        @Override
         public String toString() {
             return "NodePattern{%s \"%s\"}".formatted(clazz.getSimpleName(), role.getName());
+        }
+
+        /**
+         * Checks the local properties of the {@link NodePattern} against the concrete {@link Node}.
+         * @param node the node
+         * @return true if the node has the corresponding type and properties
+         */
+        protected boolean localMatch(Node node) {
+            boolean typeMismatch = !clazz.isAssignableFrom(node.getClass());
+            if (typeMismatch) {
+                return false;
+            }
+
+            T tNode = clazz.cast(node);
+
+            boolean propertyMismatch = properties.stream().anyMatch(p -> !p.test(tNode));
+            return !propertyMismatch;
         }
 
         private enum NodeAnnotation {

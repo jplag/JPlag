@@ -3,7 +3,6 @@
  */
 enum ParserLanguage {
   JAVA = 'java',
-  JAVA_CPG = 'java-cpg',
   PYTHON = 'python3',
   C = 'c',
   CPP = 'cpp',
@@ -12,6 +11,7 @@ enum ParserLanguage {
   EMF_METAMODEL = 'emf',
   EMF_MODEL = 'emf-model',
   GO = 'go',
+  JAVA_CPG = 'java-cpg',
   KOTLIN = 'kotlin',
   R_LANG = 'rlang',
   RUST = 'rust',

@@ -17,6 +17,7 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,6 +50,34 @@ class PomVersionTest {
 
     private static final File projectRoot = new File("..");
     private static final File projectRootPom = new File(projectRoot, POM_XML_NAME);
+
+    private static final List<String> ALLOWED_EXTERNAL_DEPENDENCIES = List.of("de.fraunhofer.aisec:cpg-core", "de.fraunhofer.aisec:cpg-language-java",
+            "de.fraunhofer.aisec:cpg-analysis", "org.jetbrains.kotlin:kotlin-stdlib-jdk8", "org.jetbrains.kotlin:kotlin-test");
+
+    private static final List<String> ALLOWED_EXTERNAL_PLUGINS = List.of("org.jetbrains.kotlin:kotlin-maven-plugin");
+
+    static List<File> getAllPomFiles() {
+        List<File> collector = new ArrayList<>();
+        getAllPomFiles(projectRoot, collector);
+        return collector;
+    }
+
+    static List<File> getAllChildPomFiles() {
+        List<File> poms = getAllPomFiles();
+        poms.remove(projectRootPom);
+        return poms;
+    }
+
+    static void getAllPomFiles(File scanDir, List<File> collector) {
+        for (File file : scanDir.listFiles()) {
+            if (file.isFile() && file.getName().equals(POM_XML_NAME)) {
+                collector.add(file);
+            }
+            if (file.isDirectory()) {
+                getAllPomFiles(file, collector);
+            }
+        }
+    }
 
     @ParameterizedTest
     @MethodSource("getAllChildPomFiles")
@@ -130,34 +159,31 @@ class PomVersionTest {
         return expression.evaluate(doc);
     }
 
-    private void failForVersionTag(Element versionTag) {
+    private void failForVersionTag(@NotNull Element versionTag) {
         Namespace ns = versionTag.getNamespace();
         Element definition = versionTag.getParentElement();
-        String definitionString = "{groupId: " + definition.getChildText("groupId", ns) + ", artifactId:" + definition.getChildText("artifactId", ns)
-                + ", version:" + versionTag.getText() + "}";
+        String groupId = definition.getChildText("groupId", ns);
+        String artifactId = definition.getChildText("artifactId", ns);
+        // Handle inherited groupId from parent
+        if (groupId == null) {
+            groupId = "de.jplag";
+        }
+        String key = groupId + ":" + artifactId;
+        // Allow external dependencies and plugins
+        if (ALLOWED_EXTERNAL_DEPENDENCIES.contains(key) || ALLOWED_EXTERNAL_PLUGINS.contains(key)) {
+            return;
+        }
+        // Allow property-based external dependencies
+        if (groupId.startsWith("${") && (ALLOWED_EXTERNAL_DEPENDENCIES.stream().anyMatch(dep -> dep.endsWith(":" + artifactId))
+                || ALLOWED_EXTERNAL_PLUGINS.stream().anyMatch(plugin -> plugin.endsWith(":" + artifactId)))) {
+            return;
+        }
+        // Allow internal JPlag dependencies with ${revision}
+        if ("de.jplag".equals(groupId) && "${revision}".equals(versionTag.getText())) {
+            return;
+        }
+        String definitionString = "{groupId: " + groupId + ", artifactId:" + artifactId + ", version:" + versionTag.getText() + "}";
         Assertions.fail("Invalid version tag found for: " + definitionString);
     }
 
-    static List<File> getAllPomFiles() {
-        List<File> collector = new ArrayList<>();
-        getAllPomFiles(projectRoot, collector);
-        return collector;
-    }
-
-    static List<File> getAllChildPomFiles() {
-        List<File> poms = getAllPomFiles();
-        poms.remove(projectRootPom);
-        return poms;
-    }
-
-    static void getAllPomFiles(File scanDir, List<File> collector) {
-        for (File file : scanDir.listFiles()) {
-            if (file.isFile() && file.getName().equals(POM_XML_NAME)) {
-                collector.add(file);
-            }
-            if (file.isDirectory()) {
-                getAllPomFiles(file, collector);
-            }
-        }
-    }
 }

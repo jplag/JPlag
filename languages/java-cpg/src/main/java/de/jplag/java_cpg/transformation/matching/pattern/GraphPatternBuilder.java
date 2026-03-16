@@ -554,6 +554,11 @@ public abstract class GraphPatternBuilder {
         }
 
         @Override
+        public int hashCode() {
+            return Objects.hash(edge, cClass, modifications);
+        }
+
+        @Override
         public boolean equals(Object obj) {
             if (obj == this)
                 return true;
@@ -562,11 +567,6 @@ public abstract class GraphPatternBuilder {
             var that = (AddConsecutive) obj;
             return Objects.equals(this.edge, that.edge) && Objects.equals(this.cClass, that.cClass)
                     && Objects.equals(this.modifications, that.modifications);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(edge, cClass, modifications);
         }
 
         @Override

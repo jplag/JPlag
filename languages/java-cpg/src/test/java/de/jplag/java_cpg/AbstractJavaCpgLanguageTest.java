@@ -21,7 +21,10 @@ import de.jplag.TokenType;
  */
 public abstract class AbstractJavaCpgLanguageTest {
 
-    protected static final Path BASE_PATH = Path.of("src", "test", "resources", "java");
+    /**
+     * The base path for the test resources. The test files are located in {@code src/test/resources/java}.
+     */
+    public static final Path BASE_PATH = Path.of("src", "test", "resources", "java");
     private static final String LOG_MESSAGE = "Tokens of {}: {}";
     private final Logger logger = LoggerFactory.getLogger(AbstractJavaCpgLanguageTest.class);
     private JavaCpgLanguage language;

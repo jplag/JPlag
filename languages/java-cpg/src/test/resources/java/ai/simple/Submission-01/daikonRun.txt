@@ -1,0 +1,12 @@
+javac -source 21 -target 21 Main.java
+javac Main.java
+
+java -cp . Main "4"
+
+export DAIKONDIR=/home/alpaka/git/Daikon/daikon-5.8.22
+
+java -cp .:$DAIKONDIR/daikon.jar daikon.DynComp Main "2"
+
+java -cp .:$DAIKONDIR/daikon.jar daikon.Chicory \
+  --comparability-file=Main.decls-DynComp \
+  --daikon Main "2"

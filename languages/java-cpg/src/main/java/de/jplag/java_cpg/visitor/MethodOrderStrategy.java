@@ -249,7 +249,6 @@ public class MethodOrderStrategy {
             newFunctions.clear();
         }
         return callGraphIndex;
-
     }
 
 }

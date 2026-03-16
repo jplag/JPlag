@@ -1,0 +1,11 @@
+# Compiled class files
+*.class
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+combined.iml
+
+# Build output
+out/

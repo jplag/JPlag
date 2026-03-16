@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory
 import java.util.*
 
 /**
- * This pass sorts independent statements, removes statement that can be (conservatively) determined as useless, and builds
+ * This pass sorts independent statements, removes statements that can be (conservatively) determined as useless, and builds
  * the DFG. The original DFG of the CPG library is reset.
  */
 @DependsOn(EvaluationOrderGraphPass::class)
@@ -97,7 +97,6 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
         // Restore map:
         parentInfo.entries.toList().forEach { parentInfo[it.key] = it.value }
 
-
         /*
          *  Sets DFG edges between statements that contain dfg-related statements in inner blocks
          *  e.g. DeclarationStatement --> WhileStatement using the declared variable
@@ -118,7 +117,6 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
         }
 
         reorderStatements(essentialNodesOut, relevantStatements, parentInfo, root.body as Block)
-
     }
 
     private fun extractTransitiveDependencies(
@@ -297,6 +295,7 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
         statements: List<Statement>,
         parentInfo: MutableMap<Node, ParentInfo>,
     ) {
+        if (!removeDeadCode) return
         val irrelevantStatements = statements.filter { it !in relevantStatements }
             .filter { parentInfo[it]?.parent is Block }
             .distinct()
@@ -395,7 +394,6 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
                     .map { it as Statement }
                     .toList()
             worklist.addAll(newElements)
-
         }
         assert(done.size == relevantStatementsInThisBlock.size && done.containsAll(relevantStatementsInThisBlock))
 
@@ -485,12 +483,10 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
 
             else -> false
         }
-
     }
 
     private fun isLocal(node: Node, reference: Node): Boolean {
         return node.location != null && node.location!!.artifactLocation == reference.location?.artifactLocation
-
     }
 
     private fun extractEssentialNodes(
@@ -722,7 +718,6 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
         return if (tokens1.hasNext()) 1
         else if (tokens2.hasNext()) -1
         else 0
-
     }
 
 
@@ -746,7 +741,7 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
                     statement.statements.flatMap { getMovableStatements(it, statement, parentInfo, depth + 1) }
                         .toMutableList()
                 if (parent is Block) {
-                    // inner block without control statement that would enforce it
+                    // inner block without a control statement that would enforce it
                     result.add(statement)
                 }
                 result
@@ -823,10 +818,8 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
                 listOf(statement)
             }
 
-
             // only here to create entry in parentInfo
             else -> listOf()
-
         }
         if (parent != null) {
             parentInfo[statement] = ParentInfo(parent, depth)
@@ -851,7 +844,6 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
 
             // NewExpression is AssignmentHolder, but not usable for this analysis
             is NewExpression -> {}
-
 
             is AssignmentHolder -> {
                 if (node is VariableDeclaration && node.initializer == null) {
@@ -904,7 +896,6 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
         state.registerAssignment(assignment, node)
     }
 
-
     override fun cleanup() {
     }
 
@@ -915,7 +906,6 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
         constructor()
 
         constructor(copyMap: Map<Declaration, VariableData>) : super(copyMap)
-
 
         override fun get(key: Declaration): VariableData {
             return super.computeIfAbsent(key) { VariableData() }
@@ -1017,6 +1007,10 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
         override fun hashCode(): Int {
             return javaClass.hashCode()
         }
-
     }
+
+    companion object DfgSortPassCompanion {
+        var removeDeadCode: Boolean = true
+    }
+
 }

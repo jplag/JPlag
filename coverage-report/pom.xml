@@ -45,6 +45,10 @@
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
+            <artifactId>java-cpg</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.jplag</groupId>
             <artifactId>python-3</artifactId>
         </dependency>
         <dependency>

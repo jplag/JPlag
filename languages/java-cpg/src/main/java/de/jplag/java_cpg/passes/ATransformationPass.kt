@@ -21,6 +21,7 @@ abstract class ATransformationPass(ctx: TranslationContext) : TranslationResultP
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     override fun accept(t: TranslationResult) {
+
         val detector = CpgIsomorphismDetector()
         val transformations = getPhaseSpecificTransformations()
         for (transformation: GraphTransformation in transformations) {

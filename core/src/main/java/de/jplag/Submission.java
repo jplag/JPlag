@@ -71,9 +71,22 @@ public class Submission implements Comparable<Submission> {
         state = UNPARSED;
     }
 
+    private static File createErrorDirectory(String... subdirectoryNames) {
+        File subdirectory = Path.of(JPlagOptions.ERROR_FOLDER, subdirectoryNames).toFile();
+        if (!subdirectory.exists()) {
+            subdirectory.mkdirs();
+        }
+        return subdirectory;
+    }
+
     @Override
     public int compareTo(Submission other) {
         return name.compareTo(other.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 
     @Override
@@ -88,8 +101,8 @@ public class Submission implements Comparable<Submission> {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(name);
+    public String toString() {
+        return name;
     }
 
     /**
@@ -98,6 +111,14 @@ public class Submission implements Comparable<Submission> {
      */
     public JPlagComparison getBaseCodeComparison() {
         return baseCodeComparison;
+    }
+
+    /**
+     * Sets the base code comparison.
+     * @param baseCodeComparison is submissions matches with the base code.
+     */
+    public void setBaseCodeComparison(JPlagComparison baseCodeComparison) {
+        this.baseCodeComparison = baseCodeComparison;
     }
 
     /**
@@ -154,6 +175,14 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
+     * Sets the tokens that have been parsed from the files this submission consists of.
+     * @param tokenList is the list of these tokens.
+     */
+    public void setTokenList(List<Token> tokenList) {
+        this.tokenList = Collections.unmodifiableList(new ArrayList<>(tokenList));
+    }
+
+    /**
      * @return true if a comparison between the submission and the base code is available. Does not imply if there are
      * matches to the base code.
      */
@@ -186,32 +215,11 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
-     * Sets the base code comparison.
-     * @param baseCodeComparison is submissions matches with the base code.
-     */
-    public void setBaseCodeComparison(JPlagComparison baseCodeComparison) {
-        this.baseCodeComparison = baseCodeComparison;
-    }
-
-    /**
-     * Sets the tokens that have been parsed from the files this submission consists of.
-     * @param tokenList is the list of these tokens.
-     */
-    public void setTokenList(List<Token> tokenList) {
-        this.tokenList = Collections.unmodifiableList(new ArrayList<>(tokenList));
-    }
-
-    /**
      * String representation of the code files contained in this submission, annotated with all tokens.
      * @return the annotated code as string.
      */
     public String getTokenAnnotatedSourceCode() {
         return TokenPrinter.printTokens(tokenList, submissionRootFile);
-    }
-
-    @Override
-    public String toString() {
-        return name;
     }
 
     /**
@@ -227,14 +235,6 @@ public class Submission implements Comparable<Submission> {
                 logger.error("Error copying file: " + exception.getMessage(), exception);
             }
         }
-    }
-
-    private static File createErrorDirectory(String... subdirectoryNames) {
-        File subdirectory = Path.of(JPlagOptions.ERROR_FOLDER, subdirectoryNames).toFile();
-        if (!subdirectory.exists()) {
-            subdirectory.mkdirs();
-        }
-        return subdirectory;
     }
 
     /**
@@ -348,7 +348,9 @@ public class Submission implements Comparable<Submission> {
                 fileTokenCount.put(file, 0);
             }
             for (Token token : this.tokenList) {
-                fileTokenCount.put(token.getFile(), fileTokenCount.get(token.getFile()) + 1);
+                File tokenfile = token.getFile();
+                fileTokenCount.computeIfAbsent(tokenfile, k -> 0);
+                fileTokenCount.put(tokenfile, fileTokenCount.get(tokenfile) + 1);
             }
         }
         return fileTokenCount;
