@@ -3,6 +3,7 @@
  */
 enum ParserLanguage {
   JAVA = 'java',
+  JAVA_CPG = 'java-cpg',
   PYTHON = 'python3',
   C = 'c',
   CPP = 'cpp',

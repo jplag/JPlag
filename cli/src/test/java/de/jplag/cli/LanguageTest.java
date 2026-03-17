@@ -39,7 +39,7 @@ class LanguageTest extends CliTest {
     @Test
     void testLoading() {
         var languages = LanguageLoader.getAllAvailableLanguages();
-        assertEquals(20, languages.size(), "Loaded Languages: " + languages.keySet());
+        assertEquals(21, languages.size(), "Loaded Languages: " + languages.keySet());
     }
 
     @ParameterizedTest

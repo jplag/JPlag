@@ -79,6 +79,7 @@
         <version.argparser4j>0.9.0</version.argparser4j>
         <version.assertj>3.27.7</version.assertj>
         <version.auto-service>1.1.1</version.auto-service>
+        <version.cpg>8.3.0</version.cpg>
         <version.corenlp>4.5.10</version.corenlp>
         <version.eclipse.core>3.23.100</version.eclipse.core>
         <version.eclipse.emfatic>1.1.0</version.eclipse.emfatic>
@@ -91,6 +92,7 @@
         <version.jdom>2.0.6.1</version.jdom>
         <version.jgrapht>1.5.2</version.jgrapht>
         <version.junit>6.0.2</version.junit>
+        <version.kotlin>2.3.10</version.kotlin>
         <version.mockito>5.22.0</version.mockito>
         <version.picocli>4.7.7</version.picocli>
         <version.progressbar>0.10.2</version.progressbar>
@@ -108,6 +110,7 @@
         <version.plugin.checkstyle>3.6.0</version.plugin.checkstyle>
         <version.plugin.jacoco>0.8.14</version.plugin.jacoco>
         <version.plugin.javacc>5.0.1</version.plugin.javacc>
+        <version.plugin.kotlin.maven>${version.kotlin}</version.plugin.kotlin.maven>
         <version.plugin.maven-central-publishing>0.10.0</version.plugin.maven-central-publishing>
         <version.plugin.maven-exec>3.6.3</version.plugin.maven-exec>
         <version.plugin.maven-flatten>1.7.3</version.plugin.maven-flatten>
@@ -226,7 +229,7 @@
                 <version>${version.progressbar}</version>
             </dependency>
 
-            <!-- Apache commons -->
+            <!-- Apache Commons -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-math3</artifactId>
@@ -247,7 +250,7 @@
                 <version>${version.record-builder}</version>
             </dependency>
 
-            <!-- Archunit -->
+            <!-- ArchUnit -->
             <dependency>
                 <groupId>com.tngtech.archunit</groupId>
                 <artifactId>archunit-junit5</artifactId>
@@ -259,6 +262,33 @@
                 <groupId>com.ibm.icu</groupId>
                 <artifactId>icu4j-charset</artifactId>
                 <version>${version.icu-charset}</version>
+            </dependency>
+
+            <!-- CPG -->
+            <dependency>
+                <groupId>de.fraunhofer.aisec</groupId>
+                <artifactId>cpg-core</artifactId>
+                <version>${version.cpg}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.fraunhofer.aisec</groupId>
+                <artifactId>cpg-language-java</artifactId>
+                <version>${version.cpg}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.fraunhofer.aisec</groupId>
+                <artifactId>cpg-analysis</artifactId>
+                <version>${version.cpg}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib</artifactId>
+                <version>${version.kotlin}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-test</artifactId>
+                <version>${version.kotlin}</version>
             </dependency>
 
             <!-- Eclipse / EMF -->
@@ -306,7 +336,7 @@
                 <version>${version.scalameta}</version>
             </dependency>
 
-            <!-- Assertj -->
+            <!-- AssertJ -->
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
@@ -400,6 +430,11 @@
             <dependency>
                 <groupId>de.jplag</groupId>
                 <artifactId>kotlin</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>java-cpg</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
@@ -689,7 +724,8 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${version.plugin.maven.surefire}</version>
                     <configuration>
-                        <argLine>@{argLine} -javaagent:"${settings.localRepository}/org/mockito/mockito-core/${version.mockito}/mockito-core-${version.mockito}.jar"</argLine>
+                        <argLine>@{argLine}
+                            -javaagent:"${settings.localRepository}/org/mockito/mockito-core/${version.mockito}/mockito-core-${version.mockito}.jar"</argLine>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -748,6 +784,33 @@
                             <goals>
                                 <goal>jar</goal>
                             </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-maven-plugin</artifactId>
+                    <version>${version.plugin.kotlin.maven}</version>
+                    <configuration>
+                        <jvmTarget>25</jvmTarget>
+                        <args>
+                            <arg>-Xcontext-parameters</arg>
+                        </args>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>compile</id>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                            <phase>process-sources</phase>
+                        </execution>
+                        <execution>
+                            <id>test-compile</id>
+                            <goals>
+                                <goal>test-compile</goal>
+                            </goals>
+                            <phase>test-compile</phase>
                         </execution>
                     </executions>
                 </plugin>

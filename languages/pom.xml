@@ -18,6 +18,7 @@
         <module>emf-model</module>
         <module>golang</module>
         <module>java</module>
+        <module>java-cpg</module>
         <module>kotlin</module>
         <module>python-3</module>
         <module>rlang</module>

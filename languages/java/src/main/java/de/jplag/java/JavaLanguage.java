@@ -67,4 +67,9 @@ public class JavaLanguage implements Language {
                 List.of(new EnvironmentDelimiter("/*", "*/")), // block comments
                 List.of("\\"))); // escape characters
     }
+
+    @Override
+    public boolean hasPriority() {
+        return true;
+    }
 }

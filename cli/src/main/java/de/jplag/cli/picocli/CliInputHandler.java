@@ -31,7 +31,7 @@ public class CliInputHandler {
     private static final String OPTION_LIST_HEADING = "Parameter descriptions: ";
 
     private static final String AMBIGUOUS_VIEW_FILE = "There are multiple files specified for '--mode VIEW', please make sure only to specify one.";
-    private static final String UNKNOWN_LANGUAGE_EXCEPTION = "Language %s does not exists. Available languages are: %s";
+    private static final String UNKNOWN_LANGUAGE_EXCEPTION = "Language %s does not exist. Available languages: %s";
     private static final String IMPOSSIBLE_EXCEPTION = "This should not have happened."
             + " Please create an issue on github (https://github.com/jplag/JPlag/issues) with the entire output.";
 

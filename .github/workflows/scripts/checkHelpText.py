@@ -89,10 +89,10 @@ filesToCheck = ["../../../README.md", "../../../docs/1.-How-to-Use-JPlag.md"]
 # Verifies that the CLI text from the jar matches the one in the md file
 def checkCliTextAgainstHelpText(mdText, fileName):
     minLines = min(len(mdText), len(helpTextLines))
-    if (len(mdText) != len(helpTextLines)):
+    if len(mdText) != len(helpTextLines):
         errors.append(Error(fileName, minLines, f"The number of lines in the CLI text from the jar({len(helpTextLines)}) does not match the md text({len(mdText)})."))
     for i in range(minLines):
-        if (mdText[i] != helpTextLines[i]):
+        if mdText[i] != helpTextLines[i]:
             helpSpace = helpTextLines[i].replace(" ", '\u23B5')
             mdSpace = mdText[i].replace(" ", '\u23B5')
             errors.append(Error(fileName, i, f"Does not match the CLI text from the jar. Expected: '{helpSpace}', Found: '{mdSpace}'."))

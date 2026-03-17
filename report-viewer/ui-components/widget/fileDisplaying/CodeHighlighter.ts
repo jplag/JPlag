@@ -74,6 +74,7 @@ function getHighlightLanguage(lang: Language) {
       hljs.registerLanguage('typescript', typescript)
       return 'typescript'
     case ParserLanguage.JAVA:
+    case ParserLanguage.JAVA_CPG:
     default:
       return 'java'
   }
