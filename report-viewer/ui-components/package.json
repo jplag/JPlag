@@ -10,7 +10,7 @@
     "highlight.js": "^11.11.1",
     "vue-chartjs": "^5.3.3",
     "vue-draggable-next": "^2.3.0",
-    "vue-virtual-scroller": "^2.0.0-beta.8"
+    "vue-virtual-scroller": "^2.0.0-beta.10"
   },
   "peerDependencies": {
     "@fortawesome/free-solid-svg-icons": "^7.1.0",
