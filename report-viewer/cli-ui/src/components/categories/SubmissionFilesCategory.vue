@@ -30,6 +30,19 @@
       :scroll-offset-y="scrollOffsetY"
       :tooltip="CliToolTip.BASE_CODE"
     >
+      <div>
+        {{ baseCodeDirectory }} 
+        <button>
+          <InteractableComponent class="py-0!" @click="setBaseCode()"
+            >{{baseCodeDirectory == '' ? 'Set' : 'Change'}}</InteractableComponent
+          >
+        </button>
+        <button v-if="baseCodeDirectory != ''" class="ml-2">
+          <InteractableComponent class="py-0!" @click="baseCodeDirectory = ''"
+            >Remove</InteractableComponent
+          >
+        </button>
+      </div>
     </CliUiOption>
     <CliUiOption
       label="Old Submission Directories"
@@ -60,6 +73,7 @@ import { verifySubsmissionDirectories } from '@/model/verifier'
 import { CliToolTip } from '../../model/CliToolTip'
 import CliUiOption from '../CliUiOption.vue'
 import CliViewCategory from '../CliViewCategory.vue'
+import {InteractableComponent} from '@jplag/ui-components/base'
 
 defineProps({
   scrollOffsetY: {
@@ -80,16 +94,30 @@ const oldDirectories = defineModel<string[]>('oldDirectories', {
   default: () => []
 })
 
-function addSubmissionDirectory() {
-  const dir = prompt('Enter submission directory path:')
+async function addSubmissionDirectory() {
+  const dir = await addFolder()
   if (dir && dir.trim() !== '') {
     submissionDirectories.value.push(dir.trim())
   }
 }
-function addOldDirectory() {
-  const dir = prompt('Enter old submission directory path:')
+async function addOldDirectory() {
+  const dir = await addFolder()
   if (dir && dir.trim() !== '') {
     oldDirectories.value.push(dir.trim())
+  }
+}
+
+async function setBaseCode() {
+  const dir = await addFolder()
+  if (dir && dir.trim() !== '') {
+    baseCodeDirectory.value = dir.trim()
+  }
+}
+
+async function addFolder() {
+  const r = await fetch('http://localhost:8080/folder')
+  if (r.ok) {
+    return r.text()
   }
 }
 </script>
