@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
     <name>JPlag: Language Modules (Parent)</name>
     <modules>
+        <module>bash</module>
         <module>c</module>
         <module>cpp</module>
         <module>csharp</module>
