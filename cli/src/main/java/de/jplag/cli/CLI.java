@@ -3,9 +3,15 @@ package de.jplag.cli;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,8 +123,17 @@ public final class CLI {
         JPlagOptions options = optionsBuilder.buildOptions();
         JPlagResult result = JPlagRunner.runJPlag(options);
 
-        OutputFileGenerator.generateJPlagResultFile(result, target);
-        OutputFileGenerator.generateCsvOutput(result, new File(getResultFileBaseName()), this.inputHandler.getCliOptions());
+        try {
+            var oS = new ObjectMapper().writeValueAsString(options);
+            String filename = LocalDateTime.now()
+                    .format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")) + ".json";
+            Files.writeString(Path.of(filename), oS);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        // OutputFileGenerator.generateJPlagResultFile(result, target);
+        // OutputFileGenerator.generateCsvOutput(result, new File(getResultFileBaseName()), this.inputHandler.getCliOptions());
 
         return target;
     }
