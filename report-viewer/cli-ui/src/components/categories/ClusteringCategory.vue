@@ -45,6 +45,7 @@ import CliViewCategory from '../CliViewCategory.vue'
 import { MetricSelector, OptionsSelectorComponent } from '@jplag/ui-components/widget'
 import SwitchComponent from '../SwitchComponent.vue'
 import { MetricJsonIdentifier } from '@jplag/model'
+import ToolTipComponent from '@jplag/ui-components/base/ToolTipComponent.vue'
 
 defineProps({
   scrollOffsetY: {

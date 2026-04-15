@@ -105,6 +105,7 @@ async function addOldDirectory() {
   if (dir && dir.trim() !== '') {
     oldDirectories.value.push(dir.trim())
   }
+  console.log(dir, oldDirectories.value)
 }
 
 async function setBaseCode() {

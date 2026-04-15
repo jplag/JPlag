@@ -79,6 +79,8 @@
           <AdvancedOptionsCategory
             v-model:do-debug="cliOptions.debugParser"
             v-model:log-level="cliOptions.clusteringOptions.preprocessor"
+            v-model:sub-directory="cliOptions.subdirectoryName"
+
             :scroll-offset-y="scrollOffsetY"
             class="col-span-2 row-start-4 h-fit"
           />

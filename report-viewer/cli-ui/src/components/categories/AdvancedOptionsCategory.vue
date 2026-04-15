@@ -14,12 +14,14 @@
       :scroll-offset-y="scrollOffsetY"
       :tooltip="CliToolTip.EXCLUSION_FILE"
     ></CliUiOption>
-    <CliUiOption label="File Extensions"></CliUiOption>
+    <CliUiOption label="Suffixes">
+      <InputWrapper v-model="suffixes" class="w-60" />
+    </CliUiOption>
     <CliUiOption
       label="Subdirectory"
       :scroll-offset-y="scrollOffsetY"
       :tooltip="CliToolTip.SUBDIRECTORY"
-    ></CliUiOption>
+    ><InputWrapper v-model="subDirectory" class="w-60" /></CliUiOption>
     <CliUiOption label="Debug" :scroll-offset-y="scrollOffsetY" :tooltip="CliToolTip.DEBUG">
       <SwitchComponent v-model="doDebug" />
     </CliUiOption>
@@ -42,6 +44,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCaretDown, faCaretRight } from '@fortawesome/free-solid-svg-icons'
 import { OptionsSelectorComponent } from '@jplag/ui-components/widget'
 import { ref } from 'vue'
+import InputWrapper from '../InputWrapper.vue'
 
 defineProps({
   scrollOffsetY: {
@@ -57,6 +60,12 @@ const doDebug = defineModel<boolean>('doDebug', {
 })
 const logLevel = defineModel<string>('logLevel', {
   default: 'INFO'
+})
+const subDirectory = defineModel<string>('subDirectory', {
+  default: ''
+})
+const suffixes = defineModel<string>('fileSuffixes', {
+  default: ''
 })
 
 const LogLevelList = ['ERROR', 'WARN', 'INFO', 'DEBUG', 'TRACE']

@@ -55,6 +55,7 @@ import { computed, PropType } from 'vue'
 import { CliMergingOptions } from '@jplag/model'
 import NumberInput from '../NumberInput.vue'
 import { MinimumTokenMatch } from '@/model/ExpandedOptions'
+import ToolTipComponent from '@jplag/ui-components/base/ToolTipComponent.vue'
 
 const props = defineProps({
   scrollOffsetY: {
