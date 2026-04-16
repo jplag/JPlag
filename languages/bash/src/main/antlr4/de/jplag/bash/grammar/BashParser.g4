@@ -26,11 +26,15 @@ pipelineCommand
     ;
 
 simpleCommand
-    : cmdPrefix simpleCommandElement*
-    | simpleCommandElement+
+    : cmdPrefix commandName? argument*
+    | commandName argument*
     ;
 
-simpleCommandElement
+commandName
+    : word
+    ;
+
+argument
     : word
     | redirection
     ;
