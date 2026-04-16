@@ -17,7 +17,11 @@
             <div>
                 <DropDownSelector :options="selectedLanguages" />
                 <div>
-                    Settings 
+                    Settings
+                    <div>
+                        <span>Minimum Match Length</span>
+                        <input type="number" class="border rounded-md" />
+                    </div> 
                 </div>
             </div>
         </ContainerComponent>
@@ -25,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { ParserLanguage } from '@jplag/model';
+import { Language, ParserLanguage } from '@jplag/model';
 import { ContainerComponent } from '@jplag/ui-components/base'
 import DropDownSelector from '@jplag/ui-components/base/DropDownSelector.vue';
 import { OptionComponent } from '@jplag/ui-components/widget'
@@ -42,5 +46,6 @@ for (const l of langs.value) {
 }
 
 const selectedLanguages = computed(() => langs.value.filter(l => l[2]).map(l => l[0]))
+function getDefaultTokenMatch(l: Language)
 
 </script>

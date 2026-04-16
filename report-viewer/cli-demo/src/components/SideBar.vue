@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import { router } from '../router';
-const paths = ['Submissions', 'Language', 'Comparison', 'OverviewView']
+const paths = ['Submissions', 'Language', 'Comparison', 'Report Viewer']
 </script>
 
 <style scoped>

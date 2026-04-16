@@ -1,7 +1,7 @@
 <template>
     <div class="grid grid-cols-2 gap-5">
         <FolderSelector header="New Submission" />
-        <FolderSelector header="New Submission" />
+        <FolderSelector header="Old Submission" />
     </div>
 </template>
 
