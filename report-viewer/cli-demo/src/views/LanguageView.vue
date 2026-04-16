@@ -15,13 +15,17 @@
 
         <ContainerComponent class="flex-1">
             <div>
-                <DropDownSelector :options="selectedLanguages" />
+                <DropDownSelector :options="selectedLanguages" :value="selectedLanguage" />
                 <div>
                     Settings
                     <div>
                         <span>Minimum Match Length</span>
-                        <input type="number" class="border rounded-md" />
+                        <input type="number" class="border rounded-md" :value="getDefaultTokenMatch(selectedLanguage)" />
                     </div> 
+                    <div>
+                        <span>File Endings</span>
+                        <input type="text" class="border rounded-md" :value="getDefaultFileEndings(selectedLanguage)" />
+                    </div>
                 </div>
             </div>
         </ContainerComponent>
@@ -46,6 +50,24 @@ for (const l of langs.value) {
 }
 
 const selectedLanguages = computed(() => langs.value.filter(l => l[2]).map(l => l[0]))
-function getDefaultTokenMatch(l: Language)
+const selectedLanguage = ref(selectedLanguages.value[0])
+function getDefaultTokenMatch(l: Language) {
+    switch (l) {
+        case ParserLanguage.JAVA:
+            return 9
+        case ParserLanguage.PYTHON:
+            return 15
+    }
+    return 12
+}
 
+function getDefaultFileEndings(l: Language) {
+    switch (l) {
+        case ParserLanguage.JAVA:
+            return '.java'
+        case ParserLanguage.PYTHON:
+            return '.py'
+    }
+    return '.something'
+}
 </script>
