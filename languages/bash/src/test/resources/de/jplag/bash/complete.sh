@@ -4,6 +4,8 @@
 # Variable assignment
 greeting="Hello, World!"
 count=42
+test=(1 2 3 4 5)
+length=${#test}
 
 # Local variable (inside function)
 # Export variable
@@ -118,6 +120,17 @@ current_date=$(date +%Y-%m-%d)
 
 # Command substitution with backticks
 hostname=`hostname`
+
+# Special variables and escaped characters
+status=$?
+arg_count=$#
+find /tmp -name "*.log" -exec rm {} \;
+
+# Heredoc
+cat <<EOF
+This is heredoc content
+with multiple lines
+EOF
 
 # Nested function call
 say_hello "Alice"

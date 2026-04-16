@@ -21,8 +21,8 @@ statement
     ;
 
 pipelineCommand
-    : simpleCommand (PIPE pipelineCommand)?
-    | compoundCommand redirectionList? (PIPE pipelineCommand)?
+    : simpleCommand (PIPE NEWLINE* pipelineCommand)?
+    | compoundCommand redirectionList? (PIPE NEWLINE* pipelineCommand)?
     ;
 
 simpleCommand
@@ -83,7 +83,7 @@ untilClause
     ;
 
 caseClause
-    : CASE word IN NEWLINE* caseItem* ESAC
+    : CASE word IN NEWLINE* caseItem* (ESAC | RBRACE)
     ;
 
 caseItem
@@ -170,7 +170,13 @@ word
     | ANSI_C_STRING
     | DOLLAR NAME
     | DOLLAR NUMBER
+    | DOLLAR_SPECIAL
+    | DOLLAR_NAME_WORD
     | DOLLAR_LBRACE wordContent* RBRACE
+    | DOLLAR_LBRACE_HASH NAME RBRACE
+    | ESCAPED_CHAR
+    | LBRACE RBRACE
+    | EQUALS
     | DOLLAR_LPAREN compoundList? RPAREN
     | DOLLAR_DLPAREN arithmeticExpr DRPAREN
     | BACKTICK compoundList? BACKTICK
@@ -200,6 +206,7 @@ redirection
     | NUMBER? GREATAND word
     | NUMBER? LESSGREAT word
     | NUMBER? CLOBBER word
+    | HEREDOC_OP
     | DLESS word
     | DLESSDASH word
     | TLESS word

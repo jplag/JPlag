@@ -1,5 +1,51 @@
 lexer grammar BashLexer;
 
+@lexer::members {
+    private java.util.Deque<String> pendingHeredocs = new java.util.ArrayDeque<>();
+
+    private void queueHeredoc() {
+        String text = getText();
+        String delim = text.replaceFirst("^<<-?[ \\t]*", "");
+        if ((delim.startsWith("'") && delim.endsWith("'")) ||
+            (delim.startsWith("\"") && delim.endsWith("\""))) {
+            delim = delim.substring(1, delim.length() - 1);
+        }
+        pendingHeredocs.add(delim);
+    }
+
+    private void consumePendingHeredocs() {
+        while (!pendingHeredocs.isEmpty()) {
+            String delim = pendingHeredocs.poll();
+            StringBuilder line = new StringBuilder();
+            int c;
+            while ((c = _input.LA(1)) != -1) {
+                _input.consume();
+                if (c == '\n') {
+                    getInterpreter().setLine(getInterpreter().getLine() + 1);
+                    getInterpreter().setCharPositionInLine(0);
+                    if (line.toString().trim().equals(delim)) {
+                        break;
+                    }
+                    line = new StringBuilder();
+                } else if (c != '\r') {
+                    line.append((char) c);
+                    getInterpreter().setCharPositionInLine(
+                        getInterpreter().getCharPositionInLine() + 1);
+                }
+            }
+        }
+    }
+
+    @Override
+    public Token nextToken() {
+        Token t = super.nextToken();
+        if (t.getType() == NEWLINE && !pendingHeredocs.isEmpty()) {
+            consumePendingHeredocs();
+        }
+        return t;
+    }
+}
+
 // Keywords
 IF          : 'if';
 THEN        : 'then';
@@ -52,6 +98,7 @@ RBRACKET    : ']';
 
 // Redirection (multi-char first)
 TLESS       : '<<<';
+HEREDOC_OP  : ('<<-' | '<<') [ \t]* ([a-zA-Z_][a-zA-Z0-9_]* | '\'' ~[']* '\'' | '"' ~["]* '"') { queueHeredoc(); };
 DLESSDASH   : '<<-';
 DLESS       : '<<';
 DGREAT      : '>>';
@@ -69,7 +116,11 @@ EQUALS      : '=';
 // Dollar expansions (multi-char first)
 DOLLAR_DLPAREN : '$((';
 DOLLAR_LPAREN  : '$(';
+DOLLAR_LBRACE_HASH : '${#';
 DOLLAR_LBRACE  : '${';
+DOLLAR_SPECIAL : '$' [?@*!#$-];
+// Matches $VARNAME immediately followed by non-whitespace word chars (e.g. $HOME/.local)
+DOLLAR_NAME_WORD : '$' [a-zA-Z_] [a-zA-Z0-9_]* (~[ \t\r\n;|&<>(){}$`'"\\#=\u005B\u005D])+;
 DOLLAR       : '$';
 
 // Backtick command substitution
@@ -91,6 +142,9 @@ COMMENT     : '#' ~[\r\n]* -> skip;
 
 // Line continuation
 LINE_CONTINUATION : '\\' '\r'? '\n' -> skip;
+
+// Escaped character (must come after LINE_CONTINUATION)
+ESCAPED_CHAR : '\\' .;
 
 // Whitespace (not newlines)
 WS          : [ \t]+ -> skip;
