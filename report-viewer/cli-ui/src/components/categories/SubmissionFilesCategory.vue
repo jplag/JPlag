@@ -31,11 +31,11 @@
       :tooltip="CliToolTip.BASE_CODE"
     >
       <div>
-        {{ baseCodeDirectory }} 
+        {{ baseCodeDirectory }}
         <button>
-          <InteractableComponent class="py-0!" @click="setBaseCode()"
-            >{{baseCodeDirectory == '' ? 'Set' : 'Change'}}</InteractableComponent
-          >
+          <InteractableComponent class="py-0!" @click="setBaseCode()">{{
+            baseCodeDirectory == '' ? 'Set' : 'Change'
+          }}</InteractableComponent>
         </button>
         <button v-if="baseCodeDirectory != ''" class="ml-2">
           <InteractableComponent class="py-0!" @click="baseCodeDirectory = ''"
@@ -73,7 +73,7 @@ import { verifySubsmissionDirectories } from '@/model/verifier'
 import { CliToolTip } from '../../model/CliToolTip'
 import CliUiOption from '../CliUiOption.vue'
 import CliViewCategory from '../CliViewCategory.vue'
-import {InteractableComponent} from '@jplag/ui-components/base'
+import { InteractableComponent } from '@jplag/ui-components/base'
 
 defineProps({
   scrollOffsetY: {
