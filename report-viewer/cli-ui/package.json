@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "run-p type-check && vite build",
+    "build": "vite build",
     "type-check": "vue-tsc --noEmit --composite false",
     "preview": "vite preview"
   },

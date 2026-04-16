@@ -52,7 +52,7 @@
       <div class="flex flex-wrap gap-x-2 gap-y-1">
         <div
           v-for="[idx, dir] in oldDirectories.entries()"
-          :key="dir"
+          :key="idx"
           class="border-interactable-border-light dark:border-interactable-border-dark bg-interactable-light dark:bg-interactable-dark flex items-center gap-x-2 rounded-full border px-2 text-xs"
         >
           {{ dir }}
@@ -86,7 +86,6 @@ defineProps({
 const submissionDirectories = defineModel<string[]>('submissionDirectories', {
   default: () => []
 })
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const baseCodeDirectory = defineModel<string>('baseCodeDirectory', {
   default: ''
 })
@@ -105,7 +104,6 @@ async function addOldDirectory() {
   if (dir && dir.trim() !== '') {
     oldDirectories.value.push(dir.trim())
   }
-  console.log(dir, oldDirectories.value)
 }
 
 async function setBaseCode() {

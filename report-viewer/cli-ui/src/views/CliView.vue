@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col gap-1 overflow-hidden">
-    <div class="h-full max-h-full flex-1 overflow-hidden">
-      <div class="flex h-full max-h-full flex-col gap-5 overflow-hidden">
+    <div class="h-full max-h-full flex-1 overflow-hidden flex flex-col">
+      <div class="flex h-full max-h-full flex-col gap-5 flex-1 overflow-hidden">
         <ContainerComponent class="row-start-1 h-fit">
           <div class="grid grid-cols-[1fr_auto] grid-rows-[auto_1fr] gap-2">
             <h1 class="col-start-1 row-start-1 text-2xl">JPlag</h1>
@@ -52,7 +52,7 @@
 
           <SubmissionFilesCategory
             v-model:submission-directories="cliOptions.submissionDirectories"
-            v-model:old-submission-directories="cliOptions.oldSubmissionDirectories"
+            v-model:old-directories="cliOptions.oldSubmissionDirectories"
             v-model:base-code-submission-directory="cliOptions.baseCodeSubmissionDirectory"
             :scroll-offset-y="scrollOffsetY"
             class="col-span-2 row-start-2 h-fit"
@@ -161,6 +161,17 @@ const cliOptions = ref<ExpandedOptions>({
 })
 
 function run() {
-  console.info('Running with options:', cliOptions.value)
+  const json = JSON.stringify(cliOptions.value)
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'cli-options.json';
+  a.click();
+
+  URL.revokeObjectURL(url);
+
+
 }
 </script>
