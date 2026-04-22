@@ -14,7 +14,7 @@
   },
   "peerDependencies": {
     "@fortawesome/free-solid-svg-icons": "^7.1.0",
-    "@fortawesome/vue-fontawesome": "^3.1.1",
+    "@fortawesome/vue-fontawesome": "^3.2.0",
     "pinia": "^3.0.3",
     "tailwindcss": "^4.1.12",
     "vue": "^3.5.20"
@@ -23,7 +23,7 @@
     "test": "vitest"
   },
   "devDependencies": {
-    "jsdom": "^29.0.2",
-    "@vue/test-utils": "^2.4.6"
+    "@vue/test-utils": "^2.4.6",
+    "jsdom": "^29.0.2"
   }
 }
