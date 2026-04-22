@@ -75,7 +75,7 @@
         <!-- Dependency versions -->
         <version.antlr4>4.13.2</version.antlr4>
         <version.apache.commons.math>3.6.1</version.apache.commons.math>
-        <version.archunit>1.4.1</version.archunit>
+        <version.archunit>1.4.2</version.archunit>
         <version.argparser4j>0.9.0</version.argparser4j>
         <version.assertj>3.27.7</version.assertj>
         <version.auto-service>1.1.1</version.auto-service>
