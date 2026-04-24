@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 class PercentilePreprocessorTest extends PreprocessingTestBase {
 
-    PercentileThresholdProcessor preprocessor;
+    private PercentileThresholdProcessor preprocessor;
 
     @BeforeEach
     void init() {
@@ -21,7 +21,7 @@ class PercentilePreprocessorTest extends PreprocessingTestBase {
     void satisfiesInterface() {
         double[][] original = createTestData();
         double[][] result = preprocessor.preprocessSimilarities(original);
-        validPreprocessing(original, result, preprocessor::originalIndexOf);
+        isValidPreprocessing(original, result, preprocessor::originalIndexOf);
     }
 
     @Test

@@ -82,11 +82,14 @@ public class SubmissionSetBuilder {
 
         ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.LOADING, submissionFiles.size());
         Map<File, Submission> foundSubmissions = new HashMap<>();
-        for (SubmissionFileData submissionFile : submissionFiles) {
-            processSubmissionFile(submissionFile, multipleRoots, foundSubmissions);
-            progressBar.step();
+        try {
+            for (SubmissionFileData submissionFile : submissionFiles) {
+                processSubmissionFile(submissionFile, multipleRoots, foundSubmissions);
+                progressBar.step();
+            }
+        } finally {
+            progressBar.dispose();
         }
-        progressBar.dispose();
 
         Optional<Submission> baseCodeSubmission = loadBaseCode();
         baseCodeSubmission.ifPresent(baseSubmission -> foundSubmissions.remove(baseSubmission.getRoot()));

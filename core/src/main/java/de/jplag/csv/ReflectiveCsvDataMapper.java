@@ -29,6 +29,7 @@ public class ReflectiveCsvDataMapper<T> implements CsvDataMapper<T> {
      * @param type is the mapped type.
      * @param titles are the titles for the csv. Must be as many as @{@link CsvValue} annotation in the given type.
      * @throws IllegalArgumentException if the csv data is invalid.
+     * @throws IllegalStateException if the data can not be mapped.
      */
     public ReflectiveCsvDataMapper(Class<T> type, String[] titles) {
         this.values = new ArrayList<>();

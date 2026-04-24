@@ -11,7 +11,7 @@ class ThresholdPreprocessorTest extends PreprocessingTestBase {
 
     private static final double EPSILON = 0.0000001;
 
-    ThresholdPreprocessor preprocessor;
+    private ThresholdPreprocessor preprocessor;
 
     @BeforeEach
     void init() {
@@ -22,7 +22,7 @@ class ThresholdPreprocessorTest extends PreprocessingTestBase {
     void satisfiesInterface() {
         double[][] original = createTestData();
         double[][] result = preprocessor.preprocessSimilarities(original);
-        validPreprocessing(original, result, preprocessor::originalIndexOf);
+        isValidPreprocessing(original, result, preprocessor::originalIndexOf);
     }
 
     @Test

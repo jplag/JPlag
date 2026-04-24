@@ -19,6 +19,9 @@ import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
  */
 public class EmfLanguageTest extends LanguageModuleTest {
 
+    /**
+     * Creates the test suite.
+     */
     public EmfLanguageTest() {
         super(new EmfLanguage(), MetamodelTokenType.class);
     }

@@ -38,6 +38,12 @@ public class ClusteringFactory {
         // private constructor for non-instantiability.
     }
 
+    /**
+     * Performs clustering on the given comparisons using the specified options.
+     * @param comparisons the collection of comparisons to cluster.
+     * @param options the clustering configuration.
+     * @return a list containing the clustering result, or an empty list if clustering is disabled or input is empty.
+     */
     public static List<ClusteringResult<Submission>> getClusterings(Collection<JPlagComparison> comparisons, ClusteringOptions options) {
         if (comparisons.isEmpty()) {
             return Collections.emptyList();

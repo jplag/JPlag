@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Dummy writer, that does nothing
+ * Dummy writer, that does nothing.
  */
 public class DummyResultWriter implements JPlagResultWriter {
     private static final Logger logger = LoggerFactory.getLogger(DummyResultWriter.class);

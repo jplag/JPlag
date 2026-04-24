@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -21,6 +22,7 @@ import de.jplag.Submission;
 import de.jplag.SubmissionSet;
 import de.jplag.SubmissionSetBuilder;
 import de.jplag.TestBase;
+import de.jplag.Token;
 import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ComparisonException;
 import de.jplag.exceptions.ExitException;
@@ -184,6 +186,52 @@ class MatchMergingTest extends TestBase {
         List<Double> expectedSimilarities = List.of(0.8966, 0.5865, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
         for (int i = 0; i < expectedSimilarities.size(); i++) {
             assertEquals(expectedSimilarities.get(i), similarities.get(i), DELTA, "Mismatch at index " + i);
+        }
+    }
+
+    @Test
+    @DisplayName("Test for the absence of cross file matches.")
+    void testFileBoundaries() throws ExitException {
+        MergingOptions mergingOptions = new MergingOptions(true, MINIMUM_NEIGHBOR_LENGTH, MAXIMUM_GAP_SIZE, MINIMUM_REQUIRED_MERGES);
+        JPlagOptions customOptions = getDefaultOptions("crossFile").withMergingOptions(mergingOptions);
+        SubmissionSetBuilder builder = new SubmissionSetBuilder(customOptions);
+        SubmissionSet submissions = builder.buildSubmissionSet();
+        LongestCommonSubsequenceSearch search = new LongestCommonSubsequenceSearch(customOptions);
+        JPlagResult result = search.compareSubmissions(submissions);
+
+        assumeEquals(2, result.getNumberOfSubmissions());
+        assumeEquals(1, result.getAllComparisons().size());
+        JPlagComparison comparison = result.getAllComparisons().getFirst();
+        assumeEquals(2, comparison.matches().size());
+
+        checkForCrossFileMatches(comparison, comparison.matches());
+
+        JPlagResult mergedResult = new MatchMerging(customOptions).mergeMatchesOf(result);
+        JPlagComparison mergedComparison = mergedResult.getAllComparisons().getFirst();
+
+        assertEquals(2, mergedResult.getNumberOfSubmissions());
+        assertEquals(1, mergedResult.getAllComparisons().size());
+        assertEquals(2, mergedComparison.matches().size());
+
+        checkForCrossFileMatches(mergedComparison, mergedComparison.matches());
+    }
+
+    private void checkForCrossFileMatches(JPlagComparison comparison, List<Match> matches) {
+        for (Match match : matches) {
+            List<Token> leftTokens = comparison.firstSubmission().getTokenList().subList(match.startOfFirst(),
+                    match.startOfFirst() + match.lengthOfFirst());
+            List<Token> rightTokens = comparison.secondSubmission().getTokenList().subList(match.startOfSecond(),
+                    match.startOfSecond() + match.lengthOfSecond());
+            verifyTokensFromSingleFile(leftTokens);
+            verifyTokensFromSingleFile(rightTokens);
+        }
+
+    }
+
+    private void verifyTokensFromSingleFile(List<Token> tokens) {
+        List<File> files = tokens.stream().map(Token::getFile).toList();
+        for (File file : files) {
+            assertEquals(files.getFirst(), file, "Two different files in token sequence: " + files.getFirst().getName() + " and " + file.getName());
         }
     }
 

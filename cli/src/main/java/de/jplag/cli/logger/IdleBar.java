@@ -24,6 +24,10 @@ public class IdleBar extends LogDelayingProgressBar {
 
     private boolean running = false;
 
+    /**
+     * Constructs an IdleBar with the specified label text.
+     * @param text Label to display next to the idle bar.
+     */
     public IdleBar(String text) {
         super();
         this.output = System.out;
@@ -44,6 +48,9 @@ public class IdleBar extends LogDelayingProgressBar {
         }
     }
 
+    /**
+     * Starts the idle bar animation in a separate thread.
+     */
     public void start() {
         this.startTime = System.currentTimeMillis();
         this.running = true;

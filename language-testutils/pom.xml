@@ -8,12 +8,12 @@
         <version>${revision}</version>
     </parent>
     <artifactId>language-testutils</artifactId>
+    <name>JPlag: Utilities for Language Module Testing</name>
 
     <dependencies>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>language-api</artifactId>
-            <version>${revision}</version>
         </dependency>
     </dependencies>
 </project>

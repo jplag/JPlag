@@ -8,7 +8,6 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import de.jplag.JPlagComparison;
 import de.jplag.Match;
@@ -33,15 +32,11 @@ public class GreedyStringTiling {
 
     private final TokenSequenceMapper tokenSequenceMapper;
 
-    private static final String ERROR_INDEX_OUT_OF_BOUNDS = """
-                GST index out of bounds. This is probably a random issue caused by multithreading issues.
-                Length of the list that caused the exception (the list of marks for the relevant submission): %s, Index in that list: %s
-                TokenCount: %s, TokenList: %s
-                CachedTokenCount: %s
-                Submission (cause of error): %s
-                Submission (other): %s
-            """.trim().stripIndent();
-
+    /**
+     * Creates a instance of the Greedy String Tiling algorithm.
+     * @param options are the options, controlling algorithm parameters like minimum token match.
+     * @param tokenValueMapper provides integer mappings for token sequences.
+     */
     public GreedyStringTiling(JPlagOptions options, TokenSequenceMapper tokenValueMapper) {
         this.options = options;
         // Ensures 1 <= neighborLength <= minimumTokenMatch
@@ -104,7 +99,7 @@ public class GreedyStringTiling {
     }
 
     /**
-     * Compares two submissions. FILE_END is used as pivot
+     * Compares two submissions. FILE_END is used as pivot.
      * @param leftSubmission is the submission with the smaller sequence.
      * @param rightSubmission is the submission with the larger sequence.
      * @return the comparison results.
@@ -128,15 +123,13 @@ public class GreedyStringTiling {
             List<Match> iterationMatches = new ArrayList<>();
             for (int leftStartIndex = 0; leftStartIndex < leftTokens.length - maximumMatchLength; leftStartIndex++) {
                 int leftSubsequenceHash = leftLookupTable.getHashAt(leftStartIndex);
-                if (isTokenExcludedAt(leftExcludedTokens, leftStartIndex, leftSubmission, rightSubmission)
-                        || leftSubsequenceHash == RollingTokenHashTable.NO_HASH) {
+                if (leftExcludedTokens[leftStartIndex] || leftSubsequenceHash == RollingTokenHashTable.NO_HASH) {
                     continue;
                 }
                 List<Integer> rightStartIndices = rightLookupTable.getStartIndicesForHash(leftSubsequenceHash);
                 for (int rightStartIndex : rightStartIndices) { // possible matches
                     // comparison uses >= because it is assumed that the last token is a pivot (FILE_END)
-                    if (isTokenExcludedAt(rightExcludedTokens, rightStartIndex, rightSubmission, leftSubmission)
-                            || maximumMatchLength >= rightTokens.length - rightStartIndex) {
+                    if (rightExcludedTokens[rightStartIndex] || maximumMatchLength >= rightTokens.length - rightStartIndex) {
                         continue;
                     }
 
@@ -226,16 +219,5 @@ public class GreedyStringTiling {
     private RollingTokenHashTable getSubsequenceHashTableFor(Submission submission, boolean[] excludedTokens) {
         return cachedHashLookupTables.computeIfAbsent(submission,
                 key -> new RollingTokenHashTable(minimumMatchLength, this.tokenSequenceMapper.getTokenSequenceFor(submission), excludedTokens));
-    }
-
-    private boolean isTokenExcludedAt(boolean[] exclusionFlags, int tokenIndex, Submission submission, Submission otherSubmission) {
-        if (tokenIndex >= exclusionFlags.length) {
-            throw new IllegalStateException(
-                    String.format(ERROR_INDEX_OUT_OF_BOUNDS, exclusionFlags.length, tokenIndex, submission.getNumberOfTokens(),
-                            submission.getTokenList().stream().map(it -> it.getType().getDescription()).collect(Collectors.joining(", ")),
-                            this.tokenSequenceMapper.getTokenSequenceFor(submission).length, submission.getName(), otherSubmission.getName()));
-        }
-
-        return exclusionFlags[tokenIndex];
     }
 }

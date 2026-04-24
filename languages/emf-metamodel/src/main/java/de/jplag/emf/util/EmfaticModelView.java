@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.ENamedElement;
@@ -19,7 +18,7 @@ import org.eclipse.emf.emfatic.core.generator.emfatic.Writer;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.TokenTrace;
-import de.jplag.emf.MetamodelToken;
+import de.jplag.TokenType;
 import de.jplag.emf.MetamodelTokenType;
 
 /**
@@ -65,14 +64,9 @@ public final class EmfaticModelView extends AbstractModelView {
         rootPackageIndex = findIndexOfRootPackage(hashedLines);
     }
 
-    /**
-     * Creates a token with tracing information based on an existing one without.
-     * @param token is the existing token without tracing information.
-     * @return the enriched token, with the tracing information corresponding to this view.
-     */
     @Override
-    public MetamodelToken convertToMetadataEnrichedToken(MetamodelToken token) {
-        int lineIndex = calculateLineIndexOf(token);
+    public TokenTrace getTokenTrace(EObject modelElement, TokenType tokenType) {
+        int lineIndex = calculateLineIndexOf(modelElement, tokenType);
         String line = lines.get(lineIndex);
         int columnIndex = indentationOf(line);
         int length = line.length() - columnIndex;
@@ -81,8 +75,7 @@ public final class EmfaticModelView extends AbstractModelView {
         lineIndex++;
         columnIndex += columnIndex == Token.NO_VALUE ? 0 : 1;
 
-        TokenTrace trace = new TokenTrace(lineIndex, columnIndex, length);
-        return new MetamodelToken(token.getType(), token.getFile(), trace, token.getEObject());
+        return new TokenTrace(lineIndex, columnIndex, length);
     }
 
     /**
@@ -129,18 +122,16 @@ public final class EmfaticModelView extends AbstractModelView {
     /**
      * Calculates the line index of a metamodel token from the emfatic code. If it cannot be found, the last index is used.
      */
-    private int calculateLineIndexOf(MetamodelToken token) {
+    private int calculateLineIndexOf(EObject eObject, TokenType tokenType) {
         int line = Token.NO_VALUE;
-        Optional<EObject> optionalEObject = token.getEObject();
-        if (optionalEObject.isPresent()) {
-            EObject eObject = optionalEObject.get();
-            if (eObject instanceof ENamedElement element) {
-                line = lineIndexOf(element);
-                if (line != Token.NO_VALUE && isEndToken(token)) {
-                    line = findEndIndexOf(line);
-                }
+
+        if (eObject instanceof ENamedElement element) {
+            line = lineIndexOf(element);
+            if (line != Token.NO_VALUE && isEndToken(tokenType)) {
+                line = findEndIndexOf(line);
             }
         }
+
         if (line == Token.NO_VALUE) {
             return lastLineIndex;
         }
@@ -167,8 +158,8 @@ public final class EmfaticModelView extends AbstractModelView {
     /**
      * Checks if a token is representing a end of a block, e.g. a closing bracket.
      */
-    private boolean isEndToken(Token token) {
-        return token.getType() instanceof MetamodelTokenType type && type.isEndToken();
+    private boolean isEndToken(TokenType tokenType) {
+        return tokenType instanceof MetamodelTokenType type && type.isEndToken();
     }
 
     /**

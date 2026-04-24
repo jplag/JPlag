@@ -11,13 +11,13 @@ import de.jplag.cli.picocli.ParameterLabelRenderer;
 import picocli.CommandLine;
 
 /**
- * Tests for the {@link CustomHelp} class
+ * Tests for the {@link CustomHelp} class.
  */
 class CustomHelpTests {
     private CommandLine.Help help;
 
     /**
-     * Creates the help object
+     * Creates the help object.
      */
     @BeforeEach
     void setup() {
@@ -26,7 +26,7 @@ class CustomHelpTests {
     }
 
     /**
-     * Tests, that the custom help object returns the custom label renderer
+     * Tests, that the custom help object returns the custom label renderer.
      */
     @Test
     void testReturnsCustomRenderer() {

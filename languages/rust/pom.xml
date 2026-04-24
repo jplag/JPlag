@@ -8,6 +8,7 @@
         <version>${revision}</version>
     </parent>
     <artifactId>rust</artifactId>
+    <name>JPlag: Rust Language Module</name>
 
     <dependencies>
         <dependency>

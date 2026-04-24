@@ -7,7 +7,7 @@ import java.util.Scanner;
 import java.util.Set;
 
 /**
- * Identifier for a comparison. The order of the names does not matter
+ * Identifier for a comparison. The order of the names does not matter.
  * @param firstName The first name
  * @param secondName The second name
  */

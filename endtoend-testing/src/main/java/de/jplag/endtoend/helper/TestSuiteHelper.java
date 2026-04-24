@@ -12,7 +12,7 @@ import de.jplag.Submission;
 public final class TestSuiteHelper {
 
     /**
-     * private constructor to prevent instantiation
+     * private constructor to prevent instantiation.
      */
     private TestSuiteHelper() {
         // For Serialization

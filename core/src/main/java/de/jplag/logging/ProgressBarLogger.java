@@ -18,10 +18,10 @@ public class ProgressBarLogger {
     }
 
     /**
-     * Creates a new {@link ProgressBar}
-     * @param type The type of the progress bar
-     * @param totalSteps The total number of steps
-     * @return The newly created progress bar
+     * Creates a new {@link ProgressBar}.
+     * @param type The type of the progress bar.
+     * @param totalSteps The total number of steps.
+     * @return The newly created progress bar.
      */
     public static ProgressBar createProgressBar(ProgressBarType type, int totalSteps) {
         return progressBarProvider.initProgressBar(type, totalSteps);

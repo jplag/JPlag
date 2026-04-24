@@ -142,9 +142,10 @@ class ReportTokenPositionTestTest {
 
     Token createMockToken(int line, int column, int length) {
         Token token = mock(Token.class);
-        when(token.getLine()).thenReturn(line);
-        when(token.getColumn()).thenReturn(column);
-        when(token.getLength()).thenReturn(length);
+        when(token.getStartLine()).thenReturn(line);
+        when(token.getStartColumn()).thenReturn(column);
+        when(token.getEndLine()).thenReturn(line);
+        when(token.getEndColumn()).thenReturn(column + length);
         return token;
     }
 

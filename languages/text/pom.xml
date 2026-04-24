@@ -7,6 +7,7 @@
         <version>${revision}</version>
     </parent>
     <artifactId>text</artifactId>
+    <name>JPlag: Text Language Module</name>
 
     <dependencies>
         <dependency>

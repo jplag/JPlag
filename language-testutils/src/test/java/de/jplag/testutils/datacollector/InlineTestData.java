@@ -12,7 +12,7 @@ import de.jplag.testutils.TemporaryFileHolder;
 import de.jplag.util.FileUtils;
 
 /**
- * Provides test source from a string
+ * Provides test source from a string.
  */
 class InlineTestData implements TestData {
     private final String testData;
@@ -26,7 +26,7 @@ class InlineTestData implements TestData {
         File file = File.createTempFile("testSource", language.fileExtensions().getFirst());
         FileUtils.write(file, this.testData);
         List<Token> tokens = language.parse(Collections.singleton(file), false);
-        TemporaryFileHolder.temporaryFiles.add(file);
+        TemporaryFileHolder.addTemporaryFile(file);
         return tokens;
     }
 

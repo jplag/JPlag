@@ -13,7 +13,7 @@ class IdleBarTest {
     private static final int TARGET_FRAME_NUMBER = 5;
 
     /**
-     * Tests if the output of the idle bar looks plausible
+     * Tests if the output of the idle bar looks plausible.
      */
     @Test
     void testIdleBarPlausible() {
@@ -41,10 +41,10 @@ class IdleBarTest {
     }
 
     /**
-     * Checks that the given string matches the expected content of an animation frame
-     * @param output The animation frame
-     * @param frameIndex The index of the frame
-     * @param numberOfSpaces The number of spaces within the bar
+     * Checks that the given string matches the expected content of an animation frame.
+     * @param output The animation frame.
+     * @param frameIndex The index of the frame.
+     * @param numberOfSpaces The number of spaces within the bar.
      */
     private void checkIdleBarOutput(String output, int frameIndex, int numberOfSpaces) {
         int pass = frameIndex / numberOfSpaces;

@@ -12,7 +12,14 @@ import de.jplag.testutils.LanguageModuleTest;
 import de.jplag.testutils.datacollector.TestDataCollector;
 import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
 
+/**
+ * Test cases for the ANTLR parser.
+ */
 public class ParserTest extends LanguageModuleTest {
+
+    /**
+     * Creates the test suite.
+     */
     public ParserTest() {
         super(new TestLanguage(), TestTokenType.class);
     }
@@ -28,6 +35,6 @@ public class ParserTest extends LanguageModuleTest {
 
     @Override
     protected void configureIgnoredLines(TestSourceIgnoredLinesCollector collector) {
-
+        // No ignored lines.
     }
 }

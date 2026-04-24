@@ -2,6 +2,9 @@ package de.jplag;
 
 import java.time.Duration;
 
+/**
+ * Utility class for formating runtime values.
+ */
 public final class TimeUtil {
 
     private TimeUtil() {

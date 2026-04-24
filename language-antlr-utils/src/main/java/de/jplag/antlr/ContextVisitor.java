@@ -81,6 +81,7 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
      * Delegates calls to this visitor to a derived visitor. The mapper function is used to determine the delegated token.
      * This invalidated all mapping happening inside this visitor. You need to configure the new visitor to do so.
      * @param mapper The mapper function
+     * @return the delegation visitor.
      */
     public TerminalVisitor delegateTerminal(Function<T, TerminalNode> mapper) {
         TerminalVisitor delegateVisitor = new TerminalVisitor(ignore -> true);
@@ -91,8 +92,9 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
     /**
      * Delegates calls to this visitor to a derived visitor. The mapper function is used to determine the delegated token.
      * This invalidated all mapping happening inside this visitor. You need to configure the new visitor to do so. Visits
-     * the terminal upon exiting this context
+     * the terminal upon exiting this context.
      * @param mapper The mapper function
+     * @return the delegation visitor.
      */
     public TerminalVisitor delegateTerminalExit(Function<T, TerminalNode> mapper) {
         TerminalVisitor delegateVisitor = new TerminalVisitor(ignore -> true);
@@ -104,7 +106,9 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
     /**
      * Delegates calls to this visitor to a derived visitor. The mapper function is used to determine the delegated token.
      * This invalidated all mapping happening inside this visitor. You need to configure the new visitor to do so.
+     * @param <V> the type of {@link ParserRuleContext} to visit.
      * @param mapper The mapper function
+     * @return the delegation visitor.
      */
     public <V extends ParserRuleContext> ContextVisitor<V> delegateContext(Function<T, V> mapper) {
         ContextVisitor<V> visitor = new ContextVisitor<>(ignore -> true);
@@ -183,6 +187,7 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
 
     /**
      * Exit a given entity, injecting the needed dependencies.
+     * @param data is the data of the original visitor
      */
     void exit(HandlerData<T> data) {
         if (this.delegate != null) {

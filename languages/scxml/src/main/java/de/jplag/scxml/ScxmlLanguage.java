@@ -4,19 +4,20 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import org.kohsuke.MetaInfServices;
-
 import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.scxml.parser.ScxmlParserAdapter;
 
+import com.google.auto.service.AutoService;
+
 /**
  * Language for statecharts in the State Chart XML (SCXML) format.
  */
-@MetaInfServices(Language.class)
+@AutoService(Language.class)
 public class ScxmlLanguage implements Language {
 
+    /** File extension for the view files. **/
     public static final String VIEW_FILE_EXTENSION = ".scxmlview";
 
     @Override

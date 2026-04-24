@@ -5,6 +5,9 @@ import java.util.function.BinaryOperator;
 
 import org.apache.commons.math3.linear.RealMatrix;
 
+/**
+ * Enum representing different strategies for calculating similarity between two clusters, given a similarity matrix.
+ */
 public enum InterClusterSimilarity {
     MIN(Double.MAX_VALUE, Math::min),
     MAX(Double.MIN_VALUE, Math::max),

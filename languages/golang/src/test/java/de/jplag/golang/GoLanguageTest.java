@@ -44,5 +44,6 @@ class GoLanguageTest extends LanguageModuleTest {
 
     @Override
     protected void configureIgnoredLines(TestSourceIgnoredLinesCollector collector) {
+        // No ignored lines for go.
     }
 }

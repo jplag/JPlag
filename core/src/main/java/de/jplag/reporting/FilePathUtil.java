@@ -6,6 +6,10 @@ import java.util.function.Function;
 
 import de.jplag.Submission;
 
+/**
+ * Utility class for handling file paths related to submissions, including generating relative paths, enforcing relative
+ * paths, and formatting paths for ZIP archives.
+ */
 public final class FilePathUtil {
     private static final String ZIP_PATH_SEPARATOR = "/"; // Paths in zip files are always separated by a slash
 
@@ -14,7 +18,7 @@ public final class FilePathUtil {
     }
 
     /**
-     * Returns the files path relative to the root folder of the submission ID
+     * Returns the files path relative to the root folder of the submission ID.
      * @param file File that should be relativized
      * @param submission Submission file belongs to
      * @param submissionToIdFunction Function to map names to ids
@@ -40,7 +44,7 @@ public final class FilePathUtil {
     }
 
     /**
-     * Formats the path for usage with zip files. Returns the path segments separated by {@link #ZIP_PATH_SEPARATOR}
+     * Formats the path for usage with zip files. Returns the path segments separated by {@link #ZIP_PATH_SEPARATOR}.
      * @param path The path to format
      * @return The zip file path
      */

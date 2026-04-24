@@ -6,8 +6,10 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.misc.Interval;
 
-// Taken from https://github.com/antlr/grammars-v4/tree/master/swift/swift5 Commit
-// 2f6c19cc742c60541227b19c45ac2acc844d9b1a
+/**
+ * Utility class for supporting Swift language parsing using ANTLR, taken from
+ * https://github.com/antlr/grammars-v4/tree/master/swift/swift5 Commit 2f6c19cc742c60541227b19c45ac2acc844d9b1a.
+ */
 public class SwiftSupport {
     /*
      * TODO There is one caveat to the rules above. If the ! or ? predefined operator has no whitespace on the left, it is
@@ -22,10 +24,25 @@ public class SwiftSupport {
      * [\u2055-\u205E] | [\u2190-\u23FF] | [\u2500-\u2775] | [\u2794-\u2BFF] | [\u2E00-\u2E7F] | [\u3001-\u3003] |
      * [\u3008-\u3030] ;
      */
+    /**
+     * Set of valid characters that can appear as operator head.
+     */
     public static final BitSet operatorHead = new BitSet(0x10000);
+    /**
+     * Set of valid characters that can appear anywhere in a Swift operator. This typically includes characters from
+     * {@code operatorHead} plus additional trailing characters.
+     */
     public static final BitSet operatorCharacter;
 
+    /**
+     * BitSet representing valid whitespace characters allowed on the left side of certain operators, used to determine
+     * operator context (e.g., prefix/postfix).
+     */
     public static final BitSet leftWS = new BitSet(255);
+    /**
+     * BitSet representing valid whitespace characters allowed on the right side of certain operators, used to determine
+     * operator context (e.g., postfix/infix).
+     */
     public static final BitSet rightWS = new BitSet(255);
 
     static {
@@ -150,14 +167,29 @@ public class SwiftSupport {
         return bitSet.get(codepoint);
     }
 
+    /**
+     * Checks whether the given token is a valid operator head character.
+     * @param token The token to check.
+     * @return {@code true} if the token's character is in the operator head set; {@code false} otherwise.
+     */
     public static boolean isOperatorHead(Token token) {
         return isCharacterFromSet(token, operatorHead);
     }
 
+    /**
+     * Checks whether the given token is a valid operator character.
+     * @param token The token to check.
+     * @return {@code true} if the token's character is in the operator character set; {@code false} otherwise.
+     */
     public static boolean isOperatorCharacter(Token token) {
         return isCharacterFromSet(token, operatorCharacter);
     }
 
+    /**
+     * Determines whether the next sequence of tokens in the stream represents a valid operator.
+     * @param tokens The token stream to examine.
+     * @return {@code true} if there is a valid operator token sequence next; {@code false} otherwise.
+     */
     public static boolean isOpNext(TokenStream tokens) {
         tokens.index();
         int stop = getLastOpTokenIndex(tokens);
@@ -168,6 +200,8 @@ public class SwiftSupport {
 
     /**
      * Find stop token index of next operator; return -1 if not operator.
+     * @param tokens are the tokens search in.
+     * @return the token index.
      */
     public static int getLastOpTokenIndex(TokenStream tokens) {
         SwiftSupport.fillUp(tokens);
@@ -213,7 +247,9 @@ public class SwiftSupport {
 
     /**
      * "If an operator has whitespace around both sides or around neither side, it is treated as a binary operator. As an
-     * example, the + operator in a+b and a + b is treated as a binary operator."
+     * example, the + operator in a+b and a + b is treated as a binary operator.".
+     * @param tokens are the tokens check.
+     * @return true if it is one.
      */
     public static boolean isBinaryOp(TokenStream tokens) {
         SwiftSupport.fillUp(tokens);
@@ -241,7 +277,9 @@ public class SwiftSupport {
 
     /**
      * "If an operator has whitespace on the left side only, it is treated as a prefix unary operator. As an example, the ++
-     * operator in a ++b is treated as a prefix unary operator."
+     * operator in a ++b is treated as a prefix unary operator.".
+     * @param tokens are the tokens check.
+     * @return true if it is one.
      */
     public static boolean isPrefixOp(TokenStream tokens) {
         SwiftSupport.fillUp(tokens);
@@ -266,7 +304,9 @@ public class SwiftSupport {
      * <p>
      * "If an operator has no whitespace on the left but is followed immediately by a dot (.), it is treated as a postfix
      * unary operator. As an example, the ++ operator in a++.b is treated as a postfix unary operator (a++ .b rather than a
-     * ++ .b)."
+     * ++ .b).".
+     * @param tokens are the tokens check.
+     * @return true if it is one.
      */
     public static boolean isPostfixOp(TokenStream tokens) {
         SwiftSupport.fillUp(tokens);
@@ -285,6 +325,13 @@ public class SwiftSupport {
         return !prevIsWS && nextIsWS || !prevIsWS && nextToken.getType() == Swift5Parser.DOT;
     }
 
+    /**
+     * Checks whether the sequence of tokens at the current position in the {@link TokenStream} matches a specific Swift
+     * operator string.
+     * @param tokens The token stream from which to extract the operator text.
+     * @param op The expected operator string to match (e.g., {@code "??"}, {@code "==="}).
+     * @return {@code true} if the token text at the current position matches the given operator; {@code false} otherwise.
+     */
     public static boolean isOperator(TokenStream tokens, String op) {
         SwiftSupport.fillUp(tokens);
         int stop = getLastOpTokenIndex(tokens);
@@ -303,14 +350,32 @@ public class SwiftSupport {
         return text.equals(op);
     }
 
+    /**
+     * Determines whether the given token represents whitespace on the **left** side of an operator.
+     * @param t The token to examine.
+     * @return {@code true} if the token is considered whitespace to the left of an operator; {@code false} otherwise.
+     */
     public static boolean isLeftOperatorWS(Token t) {
         return leftWS.get(t.getType());
     }
 
+    /**
+     * Determines whether the given token represents whitespace on the **right** side of an operator.
+     * @param t The token to examine.
+     * @return {@code true} if the token is considered whitespace to the right of an operator or is EOF; {@code false}
+     * otherwise.
+     */
     public static boolean isRightOperatorWS(Token t) {
         return rightWS.get(t.getType()) || t.getType() == Token.EOF;
     }
 
+    /**
+     * Determines whether two Swift statements are separated by a newline or semicolon.
+     * @param tokens The token stream representing the parsed input.
+     * @param indexOfPreviousStatement The index (in the token stream) of the token that ended the previous statement.
+     * @return {@code true} if there is a newline or semicolon separating the previous statement from the current one;
+     * {@code false} otherwise.
+     */
     public static boolean isSeparatedStatement(TokenStream tokens, int indexOfPreviousStatement) {
         SwiftSupport.fillUp(tokens);
         // System.out.println("------");
@@ -343,6 +408,12 @@ public class SwiftSupport {
         // return text.contains("\n") || text.contains(";");
     }
 
+    /**
+     * Ensures that all tokens in the stream are fetched from the underlying source. This method is a no-op in terms of
+     * logic but forces the token stream to consume all remaining tokens, which is useful for lookahead or analysis
+     * operations.
+     * @param tokens The token stream to fully populate.
+     */
     public static void fillUp(TokenStream tokens) {
         for (int jj = 1;; ++jj) {
             int t = tokens.LA(jj);

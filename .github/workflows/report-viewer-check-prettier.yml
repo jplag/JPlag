@@ -1,0 +1,44 @@
+name: Report Viewer Prettier
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/report-viewer-check-prettier.yml"
+      - "report-viewer/**"
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - ".github/workflows/report-viewer-prettier.yml"
+      - "report-viewer/**"
+
+      
+jobs:
+  pre_job:
+    runs-on: ubuntu-latest
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@v5
+        with:
+          concurrent_skipping: 'same_content_newer'
+          skip_after_successful_duplicate: 'true'
+
+  check:
+    needs: pre_job
+    if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v6
+      
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "lts/*"
+
+      - name: Install and Check 🎨
+        working-directory: report-viewer
+        run: |
+          npm install
+          npx prettier --check .

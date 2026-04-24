@@ -34,7 +34,7 @@ public class DelegateVisitor<T, V> {
 
     /**
      * Makes this visitor map exit events to enter events. Used mostly for mapping exit events to terminal nodes, which only
-     * provide enter events
+     * provide enter events.
      */
     public void mapOnExit() {
         this.mapOnExit = true;

@@ -15,10 +15,19 @@ import de.jplag.reporting.reportobject.model.Cluster;
 public class ClusteringResultMapper {
     private final Function<Submission, String> submissionToIdFunction;
 
+    /**
+     * Constructs a ClusteringResultMapper with a function to map submissions to their IDs.
+     * @param submissionToIdFunction a function that converts a Submission to its ID string
+     */
     public ClusteringResultMapper(Function<Submission, String> submissionToIdFunction) {
         this.submissionToIdFunction = submissionToIdFunction;
     }
 
+    /**
+     * Maps the clustering results from a JPlagResult to a list of JSON DTO Clusters.
+     * @param result the JPlagResult containing clustering data
+     * @return a list of mapped Cluster objects
+     */
     public List<Cluster> map(JPlagResult result) {
         var clusteringResult = result.getClusteringResult();
         return clusteringResult.stream().map(ClusteringResult::getClusters).flatMap(Collection::stream).map(this::convertCluster).toList();

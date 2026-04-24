@@ -38,7 +38,7 @@ class ReportObjectFactoryTest extends TestBase {
     }
 
     /**
-     * Checks if the given file is a valid archive
+     * Checks if the given file is a valid archive.
      * @param file The file to check
      * @return True, if file is an archive
      */

@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
 /**
- * Deserialized a language from a json file
+ * Deserialized a language from a json file.
  */
 public class LanguageDeserializer extends JsonDeserializer<Language> {
     @Override

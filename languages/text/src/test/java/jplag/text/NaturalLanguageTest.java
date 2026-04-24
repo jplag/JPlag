@@ -66,7 +66,7 @@ class NaturalLanguageTest {
         File testFile = File.createTempFile("input", "txt");
         Files.writeString(testFile.toPath(), input);
         List<Token> result = language.parse(Set.of(testFile), false);
-        assertEquals(2, result.get(0).getLine());
+        assertEquals(2, result.get(0).getStartLine());
     }
 
 }

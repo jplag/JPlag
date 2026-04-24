@@ -1,17 +1,22 @@
 {
   "compilerOptions": {
-    "resolveJsonModule": true
+    "moduleResolution": "node",
+    "module": "esnext",
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "noEmit": false,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "types": []
   },
-  "files": [],
   "references": [
-    {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.vitest.json"
-    },
-    {
-      "path": "./tsconfig.node.json"
-    }
+    { "path": "model" },
+    { "path": "parser" },
+    { "path": "ui-components" },
+    { "path": "report-viewer" }
   ]
 }

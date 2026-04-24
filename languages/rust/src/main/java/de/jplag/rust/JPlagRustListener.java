@@ -97,12 +97,19 @@ import org.antlr.v4.runtime.tree.TerminalNodeImpl;
 import de.jplag.rust.grammar.RustParser;
 import de.jplag.rust.grammar.RustParserBaseListener;
 
+/**
+ * Listener for a Rust tree visitor.
+ */
 public class JPlagRustListener extends RustParserBaseListener implements ParseTreeListener {
 
     private final RustParserAdapter parserAdapter;
 
     private final ParserState<RustContext> state = new ParserState<>();
 
+    /**
+     * Creates the listener.
+     * @param parserAdapter the parser adapter which tracks tokens.
+     */
     public JPlagRustListener(RustParserAdapter parserAdapter) {
         this.parserAdapter = parserAdapter;
         state.enter(RustContext.FILE);
@@ -887,12 +894,12 @@ public class JPlagRustListener extends RustParserBaseListener implements ParseTr
     }
 
     /**
-     * Implementation of Context for the Rust language
+     * Implementation of Context for the Rust language.
      */
     enum RustContext implements ParserState.Context {
 
         /**
-         * This is used to make sure that the stack is not empty -> getCurrent() != null
+         * This is used to make sure that the stack is not empty -> getCurrent() != null.
          **/
         FILE(),
 

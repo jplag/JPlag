@@ -20,7 +20,7 @@ public class FileSerializer extends StdSerializer<File> {
     private static final long serialVersionUID = 5944655736767387268L; // generated
 
     /**
-     * Constructor used by the fasterxml.jackson
+     * Constructor used by the fasterxml.jackson.
      */
     public FileSerializer() {
         this(null);

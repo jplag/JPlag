@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 /**
- * An exception to throw if any error occurred while parsing files in a language frontend.
+ * An exception to throw if any error occurred while parsing files in a language module.
  */
 public class ParsingException extends Exception {
     @Serial

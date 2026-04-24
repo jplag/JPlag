@@ -29,6 +29,7 @@ public class ContainmentOrderNormalizer implements Comparator<EObject> {
     /**
      * Creates the normalizing comparator.
      * @param modelElementsToSort are all model elements to sort with the comparator (required for normalization process).
+     * @param tokenizer is the tokenizer that assigns tokens to model elements.
      */
     public ContainmentOrderNormalizer(List<EObject> modelElementsToSort, ModelingElementTokenizer tokenizer) {
         this.modelElementsToSort = modelElementsToSort;

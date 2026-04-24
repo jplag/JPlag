@@ -1,0 +1,21 @@
+/* see: https://github.com/vuejs/vitepress/blob/main/src/client/theme-default/styles/vars.css */
+
+:root {
+  --vp-c-brand-1: var(--vp-c-red-1);
+  --vp-c-brand-2: var(--vp-c-red-2);
+  --vp-c-brand-3: var(--vp-c-red-3);
+  --vp-c-brand-soft: var(--vp-c-red-soft);
+}
+
+.VPHomeHero .name.clip {
+    font-size: 55px;
+}
+
+.VPHomeHero .text {
+    font-size: 35px;
+    line-height: 50px;
+}
+
+.VPHomeHero .image-container {
+    transform: none;
+}
