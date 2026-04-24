@@ -452,7 +452,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
 
     @Override
     public Void visitAssignment(AssignmentTree node, Void unused) {
-        long start = positions.getStartPosition(ast, node);
+        long start = positions.getEndPosition(ast, node.getVariable()) + 1;
         long end = positions.getStartPosition(ast, node.getExpression()) - 1;
         addToken(JavaTokenType.J_ASSIGN, start, end, new CodeSemantics());
         variableRegistry.setNextVariableAccessType(VariableAccessType.WRITE);
