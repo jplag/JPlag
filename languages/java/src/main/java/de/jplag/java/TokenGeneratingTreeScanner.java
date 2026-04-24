@@ -330,9 +330,9 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         scan(node.getCatches(), null);
         if (node.getFinallyBlock() != null) {
             start = positions.getStartPosition(ast, node.getFinallyBlock());
-            addToken(JavaTokenType.J_FINALLY_BEGIN, start, 3, CodeSemantics.createControl());
+            addToken(JavaTokenType.J_FINALLY_BEGIN, start, 1, CodeSemantics.createControl());
             scan(node.getFinallyBlock(), null);
-            end = positions.getEndPosition(ast, node.getFinallyBlock());
+            end = positions.getEndPosition(ast, node.getFinallyBlock()) - 1;
             addToken(JavaTokenType.J_FINALLY_END, end, 1, CodeSemantics.createControl());
         }
         addToken(JavaTokenType.J_TRY_END, end - 1, 1, CodeSemantics.createControl());
@@ -424,8 +424,8 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     @Override
     public Void visitTypeParameter(TypeParameterTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        // This is odd, but also done like this in Java 1.7
-        addToken(JavaTokenType.J_GENERIC, start, 1, new CodeSemantics());
+        // This is odd, but also done like this in Javagg 1.7
+        addToken(JavaTokenType.J_GENERIC, start, node.getName().length(), new CodeSemantics());
         return super.visitTypeParameter(node, null);
     }
 
