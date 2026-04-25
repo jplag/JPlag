@@ -69,8 +69,8 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <!--suppress UnresolvedMavenProperty -->
         <sonar.coverage.jacoco.xmlReportPaths>${maven.multiModuleProjectDirectory}/coverage-report/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-        <maven.compiler.source>25</maven.compiler.source>
-        <maven.compiler.target>25</maven.compiler.target>
+        <maven.compiler.source>26</maven.compiler.source>
+        <maven.compiler.target>26</maven.compiler.target>
 
         <!-- Dependency versions -->
         <version.antlr4>4.13.2</version.antlr4>
@@ -689,7 +689,7 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${version.plugin.maven.surefire}</version>
                     <configuration>
-                        <argLine>@{argLine} -javaagent:"${settings.localRepository}/org/mockito/mockito-core/${version.mockito}/mockito-core-${version.mockito}.jar"</argLine>
+                        <argLine>@{argLine} -javaagent:"${settings.localRepository}/org/mockito/mockito-core/${version.mockito}/mockito-core-${version.mockito}.jar" --add-modules jdk.incubator.code --enable-preview</argLine>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -709,6 +709,19 @@
                                 <version>${version.record-builder}</version>
                             </path>
                         </annotationProcessorPaths>
+                        <compilerArgs>
+                            <arg>--add-modules</arg>
+                            <arg>jdk.incubator.code</arg>
+                            <arg>--enable-preview</arg>
+                            <arg>--add-exports</arg>
+                            <arg>jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</arg>
+                            <arg>--add-exports</arg>
+                            <arg>jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</arg>
+                            <arg>--add-exports</arg>
+                            <arg>jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
+                            <arg>--add-exports</arg>
+                            <arg>jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
+                        </compilerArgs>
                     </configuration>
                 </plugin>
                 <plugin>

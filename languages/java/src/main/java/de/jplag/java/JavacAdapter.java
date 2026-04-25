@@ -66,7 +66,7 @@ public class JavacAdapter {
             for (final CompilationUnitTree ast : executeCompilationTask(task)) {
                 File file = new File(ast.getSourceFile().toUri());
                 final LineMap map = ast.getLineMap();
-                var scanner = new TokenGeneratingTreeScanner(file, parser, map, positions, ast);
+                var scanner = new TokenGeneratingTreeScanner(file, parser, map, positions, ast, task);
                 ast.accept(scanner, null);
                 parser.add(Token.semanticFileEnd(file));
             }
@@ -83,6 +83,7 @@ public class JavacAdapter {
         Iterable<? extends CompilationUnitTree> abstractSyntaxTrees = Collections.emptyList();
         try {
             abstractSyntaxTrees = ((JavacTask) task).parse();
+            ((JavacTask) task).analyze(); // populates AST with references to Symbols - we need those!
         } catch (IOException exception) {
             logger.error(exception.getMessage(), exception);
         }
