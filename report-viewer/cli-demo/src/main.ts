@@ -1,7 +1,6 @@
 import { createApp } from 'vue'
 
 import App from './App.vue'
-import VueVirtualScroller from '@jplag/ui-components/widget/comparisonTable/VirtualScrollerReexport'
 
 import '@jplag/ui-components/style/style.css'
 import { router } from './router'
@@ -13,7 +12,6 @@ import reportUrl from './assets/results.jplag?url'
 const app = createApp(App)
 app.use(createPinia())
 app.use(router)
-app.use(VueVirtualScroller)
 
 fetch(reportUrl)
   .then((r) => r.blob())

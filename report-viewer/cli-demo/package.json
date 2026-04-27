@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "run-p type-check && vite build",
+    "build": "vite build",
     "build-dev": "run-p type-check && vite build --mode dev",
     "prebuild-dev": "node pre-build.js",
     "build-demo": "run-p type-check && vite build --mode demo",

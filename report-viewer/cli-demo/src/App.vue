@@ -32,13 +32,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import SideBar from './components/SideBar.vue'
 import SideTable from './components/SideTable.vue'
 import TopBar from './components/TopBar.vue'
 import { RouterView } from 'vue-router'
 import { LoadedSubmission } from './model/Submission'
 import { ParserLanguage, SubmissionState } from '@jplag/model'
+import { store } from './store'
 
 const tableExpanded = ref(false)
 
@@ -51,24 +52,30 @@ function random4Letters() {
   return result
 }
 
-const submissions: LoadedSubmission[] = Array.from({ length: 1200 }, (_, i) => ({
-  id: i + 1,
-  name: 'u' + random4Letters(),
-  encoding: 'utf-8',
-  linesOfCode: Math.floor(Math.random() * 3000),
-  languages: [
-    ParserLanguage.JAVA,
-    ...[ParserLanguage.PYTHON, ParserLanguage.CPP].filter(() => Math.random() > 0.4)
-  ],
-  tokenCount: Math.floor(Math.random() * 10000),
-  //state: SubmissionState.UNPARSED,
-  state: [
-    SubmissionState.VALID,
-    SubmissionState.VALID,
-    SubmissionState.VALID,
-    SubmissionState.CANNOT_PARSE,
-    SubmissionState.NOTHING_TO_PARSE,
-    SubmissionState.TOO_SMALL
-  ][Math.floor(Math.random() * 6)]
-}))
+const ids = Array.from({ length: 120 }, () => 'u' + random4Letters())
+const submissions = computed<LoadedSubmission[]>(() => {
+  if (store().cliOptions.submissionDirectories.length + store().cliOptions.oldSubmissionDirectories.length <= 0) {
+    return []
+  }
+  const simple = ids.map((id, i) => {
+    const loc = Math.floor(Math.random() * 500) + 750
+    return {
+      id: i+1,
+      name: id,
+      encoding: 'utf-8',
+      linesOfCode: loc,
+      state: SubmissionState.UNPARSED
+    }
+  })
+  if (store().cliOptions.language.length == 0) {
+    return simple
+  } else {
+    return simple.map(s => ({
+      ...s,
+      language: [ParserLanguage.PYTHON, ParserLanguage.PYTHON],
+      tokenCount: s.linesOfCode * 2,
+      state: SubmissionState.VALID
+    }))
+  }
+})
 </script>

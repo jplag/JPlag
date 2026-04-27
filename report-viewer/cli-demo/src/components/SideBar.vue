@@ -13,7 +13,7 @@
             </RouterLink></div>
 
         <div class="border-b-0!">
-            <div class="bg-accent border-accent-dark border rounded-md flex items-center justify-center text-white">
+            <div class="bg-accent border-accent-dark border rounded-md flex items-center justify-center text-white" @click="run">
                 Run
             </div>
         </div>
@@ -23,6 +23,10 @@
 <script setup lang="ts">
 import { router } from '../router';
 const paths = ['Submissions', 'Language', 'Comparison', 'Report Viewer']
+
+function run() {
+    router.push({ name: 'Report Viewer' })
+}
 </script>
 
 <style scoped>

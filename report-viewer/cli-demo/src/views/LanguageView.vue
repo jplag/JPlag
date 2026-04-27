@@ -7,24 +7,32 @@
                 class="flex items-center gap-8"
             >
                 <span>
-                    <OptionComponent class="min-w-32" :selected="l[2]" @click="l[2] = !l[2]">{{ l[0] }}</OptionComponent>
+                    <OptionComponent class="min-w-32" :selected="l[2]" @click="setLang(l[0])">{{ l[0] }}</OptionComponent>
                 </span>
-                <span class="float-right">{{ l[1] }} files in submission</span>
+                <span class="float-right">{{ l[1] }} files found in submissions</span>
             </div>
         </div>
 
         <ContainerComponent class="flex-1">
-            <div>
+            <div class="flex flex-col gap-2">
                 <DropDownSelector :options="selectedLanguages" :value="selectedLanguage" />
                 <div>
-                    Settings
+                    <h1 class="font-bold text-lg">Language Specific Settings</h1>
+                    <div class="grid gap-3 grid-cols-[auto_300px_10px_1fr]">
+                        <span>Minimum Match Length: </span>
+                        <NumberInput v-model="store().cliOptions.minimumTokenMatch[selectedLanguage]" />
+                        <ToolTipWrapper direction="top" :text="CliToolTip.MIN_TOKENS" />
+                        <span></span>
+                        <span>File Endings: </span>
+                        <InputWrapper v-model="store().cliOptions.fileSuffixes[selectedLanguage]" type="text" />
+                        <span></span>
+                        <span></span>
+                    </div>
                     <div>
-                        <span>Minimum Match Length</span>
-                        <input type="number" class="border rounded-md" :value="getDefaultTokenMatch(selectedLanguage)" />
+                        
                     </div> 
                     <div>
-                        <span>File Endings</span>
-                        <input type="text" class="border rounded-md" :value="getDefaultFileEndings(selectedLanguage)" />
+                        
                     </div>
                 </div>
             </div>
@@ -33,41 +41,42 @@
 </template>
 
 <script setup lang="ts">
-import { Language, ParserLanguage } from '@jplag/model';
+import { ParserLanguage } from '@jplag/model';
 import { ContainerComponent } from '@jplag/ui-components/base'
 import DropDownSelector from '@jplag/ui-components/base/DropDownSelector.vue';
 import { OptionComponent } from '@jplag/ui-components/widget'
 import { computed, ref } from 'vue';
+import InputWrapper from '../components/InputWrapper.vue';
+import NumberInput from '../components/NumberInput.vue';
+import ToolTipWrapper from '../components/ToolTipWrapper.vue';
+import { CliToolTip } from '../model/ToolTips';
+import { store } from '../store';
 
 type L = [ParserLanguage, number, boolean]
-const langs = ref<L[]>(Object.values(ParserLanguage).map(l => [l as ParserLanguage, 0, false] as L))
-langs.value[0][1] = 756
-langs.value[1][1] = 89
-langs.value[2][1] = 20
-langs.value[3][1] = 2
-for (const l of langs.value) {
-    if (l[1] > 0) l[2] = true
+const langs = computed({
+    get: () => {
+        return Object.values(ParserLanguage).map(l => [l as ParserLanguage, getFileCount(l), store().cliOptions.language.includes(l)] as L)
+    },
+    set: (newLangs: L[]) => {
+        store().cliOptions.language = newLangs.filter(l => l[2]).map(l => l[0])
+    }
+})
+function getFileCount(l: ParserLanguage) {
+    if (l == ParserLanguage.PYTHON) {
+        return 431
+    } else if (l == ParserLanguage.TEXT) {
+        return 120
+    }
+    return 0
+}
+function setLang(l: ParserLanguage) {
+    if (store().cliOptions.language.includes(l)) {
+        store().cliOptions.language = store().cliOptions.language.filter(lang => lang != l)
+    } else {
+        store().cliOptions.language.push(l)
+    }
 }
 
 const selectedLanguages = computed(() => langs.value.filter(l => l[2]).map(l => l[0]))
 const selectedLanguage = ref(selectedLanguages.value[0])
-function getDefaultTokenMatch(l: Language) {
-    switch (l) {
-        case ParserLanguage.JAVA:
-            return 9
-        case ParserLanguage.PYTHON:
-            return 15
-    }
-    return 12
-}
-
-function getDefaultFileEndings(l: Language) {
-    switch (l) {
-        case ParserLanguage.JAVA:
-            return '.java'
-        case ParserLanguage.PYTHON:
-            return '.py'
-    }
-    return '.something'
-}
 </script>
