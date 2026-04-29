@@ -86,7 +86,7 @@
         <version.emf.ecore>2.45.0</version.emf.ecore>
         <version.emf>2.42.0</version.emf>
         <version.icu-charset>78.3</version.icu-charset>
-        <version.jackson>2.21.2</version.jackson>
+        <version.jackson>2.21.3</version.jackson>
         <version.jaxen>2.0.1</version.jaxen>
         <version.jdom>2.0.6.1</version.jdom>
         <version.jgrapht>1.5.3</version.jgrapht>
