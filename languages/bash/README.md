@@ -1,11 +1,11 @@
 # JPlag Bash language module
 
 The JPlag Bash module allows the use of JPlag with submissions in Bash (shell scripts). <br>
-It is based on a custom ANTLR4 grammar written for this module. No established public ANTLR4 grammar for Bash exists in the [antlr/grammars-v4](https://github.com/antlr/grammars-v4) collection at this time.
+It is based on a custom AI-generated ANTLR4 grammar. No established public ANTLR4 grammar for Bash exists in the [antlr/grammars-v4](https://github.com/antlr/grammars-v4) collection at this time.
 
 ### Bash specification compatibility
 
-The grammar covers commonly used Bash constructs including functions, control flow (if/elif/else, for, while, until, case, select), variable assignments, command substitution, pipelines, redirections, and arithmetic expressions. It is not a complete implementation of the full POSIX shell or Bash specification.
+The grammar is supposed to cover most of the POSIX standard together with typical "bashisms" like command substition, associative arrays, etc. The full bash specification is considered out of scope, contributions are welcome.
 
 ### Token Extraction
 
@@ -18,7 +18,7 @@ The choice of tokens is intended to be similar to other language modules. Specif
 - Array and arithmetic expressions
 - Subshell and command substitution blocks
 
-Blocks are distinguished by their context, i.e. there are separate token types for `if` blocks, `for` blocks, `case` blocks, function bodies, and the like.
+The tokens should cover the POSIX standard as well as most common bash-specific features as of Bash 5.3
 
 ### Usage
 
@@ -27,3 +27,20 @@ To use the Bash module, add the `bash` module as a dependency and use the langua
 ### Supported File Extensions
 
 `.sh`, `.bash`
+
+### Tests
+
+To verify the implementation during development, the test cases of the upstream [GNU bash repository](https://cgit.git.savannah.gnu.org/cgit/bash.git) have been used. The following commands extract the syntactically valid shell scripts from the tests folder:
+
+```bash
+cd /path/to/gnu-bash/tests
+tmpdir=/tmp/bash-valid-tests
+rm -rf "$tmpdir"
+mkdir -p "$tmpdir"
+for f in ./*.sh; do
+    bash -n "$f" >/dev/null 2>&1 && cp --parents "$f" "$tmpdir"
+done
+
+# analyze syntactically valid tests
+java -jar cli/target/jplag-*-jar-with-dependencies.jar -l bash ${tmpdir}
+```
