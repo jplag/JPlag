@@ -1,137 +1,160 @@
 #!/bin/bash
-# Complete Bash test file covering all token types for JPlag
+# Complete Bash coverage fixture for the JPlag Bash language module.
 
-# Variable assignment
-greeting="Hello, World!"
-count=42
-test=(1 2 3 4 5)
-length=${#test}
+# Global assignments and parameter expansions.
+greeting="Hello, World"
+count=3
+accumulator=7
+accumulator+=5
+list=(one two three)
+list_len=${#list}
+home_path=$HOME/.local
+pid=$$
+last_status=$?
+arg_count=$#
+all_args=$@
+all_args_string=$*
+shell_flags=$-
+last_bg=$!
 
-# Local variable (inside function)
-# Export variable
-export PATH="/usr/local/bin:$PATH"
-
-# Readonly variable
-readonly MAX_RETRIES=3
-
-# Declare variable
-declare -i number=10
-
-# Function definition with 'function' keyword
-function say_hello() {
+# Function definitions in all supported forms.
+function with_keyword_and_parens() {
     local name="$1"
-    echo "$name says $greeting"
+    echo "hello ${name}"
     return 0
 }
 
-# Function definition without 'function' keyword
-greet() {
-    local target="$1"
-    echo "Greetings, $target!"
+function with_keyword_no_parens {
+    local alias_name=${1:-anon}
+    echo "alias ${alias_name}"
 }
 
-# If/elif/else
-if [ "$count" -gt 50 ]; then
-    echo "Count is greater than 50"
-elif [ "$count" -gt 25 ]; then
-    echo "Count is greater than 25"
+without_keyword() {
+    local value="$1"
+    echo "value=${value}"
+}
+
+# Builtin assignment forms.
+declare -i declared_number=10
+readonly MAX_RETRIES=4
+export PATH="/usr/local/bin:${PATH}"
+
+# If / elif / else with both [ ] and [[ ]].
+if [ "$count" -gt 10 ]; then
+    echo "gt10"
+elif [[ "$greeting" == *World* ]]; then
+    echo "world"
 else
-    echo "Count is 25 or less"
+    echo "fallback"
 fi
 
-# For loop with list
-for item in apple banana cherry; do
-    echo "Fruit: $item"
+# For loops: explicit list, implicit "$@", and C-style arithmetic for-loop.
+for item in alpha beta gamma; do
+    echo "item:${item}"
 done
 
-# For loop C-style
-for ((i = 0; i < 10; i++)); do
-    echo "Index: $i"
+for item; do
+    echo "arg:${item}"
 done
 
-# While loop
-counter=0
-while [ "$counter" -lt 5 ]; do
-    echo "Counter: $counter"
-    counter=$((counter + 1))
+for ((i = 0; i < 2; i++)); do
+    echo "i=${i}"
 done
 
-# Until loop
-value=0
-until [ "$value" -ge 3 ]; do
-    echo "Value: $value"
-    value=$((value + 1))
+# While / until loops.
+n=0
+while [ "$n" -lt 2 ]; do
+    n=$((n + 1))
 done
 
-# Case statement
-fruit="apple"
-case "$fruit" in
-    apple)
-        echo "It's an apple"
+m=0
+until [ "$m" -ge 2 ]; do
+    m=$((m + 1))
+done
+
+# Case items with all supported item terminators (;;, ;&, ;;&).
+mode="start"
+case "$mode" in
+    start)
+        echo "start"
         ;;
-    banana)
-        echo "It's a banana"
-        ;;
+    next)
+        echo "next"
+        ;&
+    fallback)
+        echo "fallback"
+        ;;&
     *)
-        echo "Unknown fruit"
+        echo "default"
         ;;
 esac
 
-# Select statement
-select option in "Option1" "Option2" "Quit"; do
+# Select with break / continue control-flow commands.
+select option in One Two Stop; do
     case "$option" in
-        Quit)
+        Stop)
             break
             ;;
-        *)
-            echo "You chose: $option"
+        One)
             continue
+            ;;
+        *)
+            echo "chosen:${option}"
+            break
             ;;
     esac
 done
 
-# Pipeline
-ls -la | grep ".sh" | wc -l
+# Command and argument coverage plus logical terminators.
+printf "%s\n" "a" | grep "a" | wc -l
+test -f "complete.sh" && echo "exists" || echo "missing"
+echo foo\ bar
 
-# Logical AND and OR
-test -f "complete.sh" && echo "File exists" || echo "File not found"
-
-# Redirection
-echo "log entry" >> output.log
-cat < input.txt > output.txt 2>&1
-
-# Subshell
-(cd /tmp && ls -la)
-
-# Brace group
+# Subshell and brace group.
+(cd /tmp && pwd)
 { echo "grouped"; echo "commands"; }
 
-# Arithmetic expression
-result=$((count + number))
+# Arithmetic and test expressions as compound commands.
 ((count++))
+result=$((count + declared_number))
 
-# Test expression with double brackets
-if [[ "$greeting" == *"World"* ]]; then
-    echo "Contains World"
+if [[ "$result" -ge 10 ]]; then
+    echo "arith-ok"
 fi
 
-# Command substitution with $()
-current_date=$(date +%Y-%m-%d)
+# Command substitution in both forms.
+today=$(date +%F)
+host=`hostname`
 
-# Command substitution with backticks
-hostname=`hostname`
+# Here-doc and here-string.
+cat <<EOF_BLOCK
+line 1
+line 2
+EOF_BLOCK
 
-# Special variables and escaped characters
-status=$?
-arg_count=$#
-find /tmp -name "*.log" -exec rm {} \;
+cat <<-'EOF_TABS'
+	indented
+EOF_TABS
 
-# Heredoc
-cat <<EOF
-This is heredoc content
-with multiple lines
-EOF
+grep "World" <<< "$greeting"
 
-# Nested function call
-say_hello "Alice"
-greet "Bob"
+# Redirection coverage.
+echo "append" >> append.log
+echo "overwrite" > out.log
+cat < in.log
+echo "stderr" >&2
+cat <&0
+cat <> duplex.log
+echo "force" >| force.log
+
+# Special words that are tokenized as words in this grammar.
+eval "echo eval"
+exec echo "exec"
+source ./complete.sh
+trap 'echo trapped' EXIT
+unset old_value
+
+# Nested calls.
+with_keyword_and_parens "Alice"
+with_keyword_no_parens "Bob"
+without_keyword "Charlie"

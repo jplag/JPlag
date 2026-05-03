@@ -30,7 +30,12 @@ To use the Bash module, add the `bash` module as a dependency and use the langua
 
 ### Tests
 
-To verify the implementation during development, the test cases of the upstream [GNU bash repository](https://cgit.git.savannah.gnu.org/cgit/bash.git) have been used. The following commands extract the syntactically valid shell scripts from the tests folder:
+There are two complementary test sources:
+
+- `src/test/resources/de/jplag/bash/complete.sh`: a focused coverage fixture that demonstrates all currently supported syntax categories.
+- Upstream [GNU bash repository](https://cgit.git.savannah.gnu.org/cgit/bash.git) tests: broad real-world corpus validation.
+
+When using upstream tests, extract syntactically valid scripts before running JPlag:
 
 ```bash
 cd /path/to/gnu-bash/tests
@@ -44,3 +49,5 @@ done
 # analyze syntactically valid tests
 java -jar cli/target/jplag-*-jar-with-dependencies.jar -l bash ${tmpdir}
 ```
+
+The upstream test cases still include unsupported syntax, therefore some ANTLR errors are expected.
