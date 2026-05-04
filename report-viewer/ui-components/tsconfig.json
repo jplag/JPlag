@@ -8,9 +8,11 @@
     "base/**/*",
     "base/**/*.vue",
     "base/**/*.ts",
+    "base/**/*.json",
     "widget/**/*",
     "widget/**/*.vue",
     "widget/**/*.ts",
+    "widget/**/*.json",
     "style/**/*",
     "style/**/*.vue",
     "style/**/*.ts"
