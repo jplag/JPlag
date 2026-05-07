@@ -424,7 +424,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     @Override
     public Void visitTypeParameter(TypeParameterTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        // This is odd, but also done like this in Javagg 1.7
+        // This is odd, but also done like this in Java 1.7
         addToken(JavaTokenType.J_GENERIC, start, node.getName().length(), new CodeSemantics());
         return super.visitTypeParameter(node, null);
     }
