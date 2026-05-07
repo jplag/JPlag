@@ -57,7 +57,8 @@ const testSets: DataSet[] = [
 ]
 
 // Add the tests for each language parameter test
-for (let i = 1; i <= 4; i++) {
+const LANGUAGE_PARAMETER_TEST_COUNT = 4
+for (let i = 1; i <= LANGUAGE_PARAMETER_TEST_COUNT; i++) {
   testSets.push({
     datasetName: `languageParameterTest${i}-report.jplag`,
     firstSubmissionName: '1.java',
