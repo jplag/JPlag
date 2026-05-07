@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import de.jplag.JPlag;
 import de.jplag.Language;
 import de.jplag.LanguageLoader;
 import de.jplag.cli.CliException;
@@ -76,12 +77,13 @@ public class CliInputHandler {
             }
             return it;
         }).collect(Collectors.joining(System.lineSeparator())) + System.lineSeparator());
-        cli.getHelpSectionMap().put(SECTION_KEY_COMMAND_LIST_HEADING, help -> "Languages:" + System.lineSeparator());
+        cli.getHelpSectionMap().put(SECTION_KEY_COMMAND_LIST_HEADING, _ -> "Languages:" + System.lineSeparator());
 
         buildSubcommands().forEach(cli::addSubcommand);
 
+        cli.getCommandSpec().version("JPlag version " + JPlag.JPLAG_VERSION.toString());
         cli.getHelpSectionMap().put(SECTION_KEY_SYNOPSIS, help -> help.synopsis(help.synopsisHeadingLength()) + generateDescription());
-        cli.getHelpSectionMap().put(SECTION_KEY_DESCRIPTION_HEADING, help -> OPTION_LIST_HEADING);
+        cli.getHelpSectionMap().put(SECTION_KEY_DESCRIPTION_HEADING, _ -> OPTION_LIST_HEADING);
         cli.setAllowSubcommandsAsOptionParameters(true);
 
         return cli;
@@ -96,6 +98,7 @@ public class CliInputHandler {
                         .description(option.getDescription()).build());
             }
             command.mixinStandardHelpOptions(true);
+            command.version(language.getVersionFlagInformation());
             command.addPositional(
                     CommandLine.Model.PositionalParamSpec.builder().type(List.class).auxiliaryTypes(File.class).hidden(true).required(false).build());
 
@@ -111,8 +114,9 @@ public class CliInputHandler {
     public boolean parse() throws CliException {
         try {
             this.parseResult = this.commandLine.parseArgs(args);
-            if (this.parseResult.isUsageHelpRequested()
-                    || this.parseResult.subcommand() != null && this.parseResult.subcommand().isUsageHelpRequested()) {
+            if (this.parseResult.isUsageHelpRequested() || this.parseResult.isVersionHelpRequested()
+                    || this.parseResult.subcommand() != null && this.parseResult.subcommand().isUsageHelpRequested()
+                    || this.parseResult.subcommand() != null && this.parseResult.subcommand().isVersionHelpRequested()) {
                 commandLine.getExecutionStrategy().execute(this.parseResult);
                 return true;
             }

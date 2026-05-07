@@ -54,6 +54,11 @@ public class EmfLanguage implements Language {
     }
 
     @Override
+    public String getVersionFlagInformation() {
+        return "emv 1.1.0";
+    }
+
+    @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
         return new EcoreParser().parse(files, normalize);
     }

@@ -2,6 +2,10 @@
 The EMF model language module allows the use of JPlag with EMF based modeling file submissions.
 It is based on the EMF API.
 
+## Version
+
+EMF 1.1.0
+
 ### EMF specification compatibility
 This module is based on the EMF dependencies available on maven central. These might not be the newest versions of EMF. For details, the [JPlag aggregator pom](https://github.com/jplag/JPlag/blob/263e85e544152cc8b0caa3399127debb7a458746/pom.xml#L84-L86).
 

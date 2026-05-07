@@ -39,6 +39,11 @@ public class TypeScriptLanguage implements Language {
     }
 
     @Override
+    public String getVersionFlagInformation() {
+        return "Mostly supports version 5";
+    }
+
+    @Override
     public TypeScriptLanguageOptions getOptions() {
         return options;
     }

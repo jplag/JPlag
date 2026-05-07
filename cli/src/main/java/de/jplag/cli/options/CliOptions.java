@@ -24,7 +24,7 @@ import picocli.CommandLine.Parameters;
 /**
  * CLI options for the JPlag command-line interface. Uses picocli annotations for arguments and options.
  */
-@CommandLine.Command(name = "jplag", description = "", usageHelpAutoWidth = true, abbreviateSynopsis = true)
+@CommandLine.Command(name = "jplag", description = "", usageHelpAutoWidth = true, abbreviateSynopsis = true, mixinStandardHelpOptions = true)
 public class CliOptions implements Runnable {
 
     /** Default language (Java). */
@@ -55,10 +55,6 @@ public class CliOptions implements Runnable {
     @Option(names = {"-t",
             "--min-tokens"}, description = "Tunes the comparison sensitivity by adjusting the minimum token required to be counted as a matching section. A smaller value increases the sensitivity but might lead to more false-positives.")
     public Integer minTokenMatch = null;
-
-    /** Show help and exit. */
-    @Option(names = {"-h", "--help"}, usageHelp = true, description = "Display this help text", hidden = true)
-    public boolean help;
 
     /** Maximum comparisons shown in the report (-1 means all). */
     @Option(names = {"-n",
