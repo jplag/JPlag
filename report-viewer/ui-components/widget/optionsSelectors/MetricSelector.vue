@@ -5,6 +5,8 @@
     :default-selected="metrics.indexOf(defaultSelected)"
     :max-tool-tip-width="maxToolTipWidth"
     :tooltip-direction="tooltipDirection"
+    :scroll-offset-x="scrollOffsetX"
+    :scroll-offset-y="scrollOffsetY"
     @selection-changed="(i) => $emit('selectionChanged', metrics[i])"
   >
     <template #average-similarity>
@@ -55,6 +57,17 @@ const props = defineProps({
     type: String as PropType<ToolTipDirection>,
     required: false,
     default: 'right'
+  },
+  /** Can be set if the element is inside a scrollable container */
+  scrollOffsetX: {
+    type: Number,
+    required: false,
+    default: 0
+  },
+  scrollOffsetY: {
+    type: Number,
+    required: false,
+    default: 0
   }
 })
 

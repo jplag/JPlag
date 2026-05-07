@@ -1,6 +1,6 @@
 <template>
   <div class="group pointer-events-none inline">
-    <div ref="contentRef" class="pointer-events-auto flex items-center gap-x-1">
+    <div ref="contentRef" class="pointer-events-auto flex w-fit items-center gap-x-1">
       <slot></slot>
       <InfoIcon v-if="showInfoSymbol && $slots.tooltip" class="ml-0!" />
     </div>

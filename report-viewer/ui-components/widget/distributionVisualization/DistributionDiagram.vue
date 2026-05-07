@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch, type PropType, type Ref } from 'vue'
-import { Chart, registerables } from 'chart.js'
+import { Chart, ChartDatasetCustomTypesPerDataset, registerables } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { graphColors } from '../../style/graphColor'
 import type { DistributionMap } from '@jplag/model'
@@ -91,23 +91,27 @@ const curveData = computed(() => {
 const isLogScale = computed(() => config.value.xScale === 'logarithmic')
 
 const chartData = computed(() => {
+  const dataSets: ChartDatasetCustomTypesPerDataset[] = [
+    {
+      ...dataSetStyle.value,
+      type: 'bar',
+      data: distributionData.value.map((v) => (isLogScale.value ? v + 1 : v))
+    }
+  ]
+  if (config.value.showDistributionLine) {
+    dataSets.push({
+      label: 'Binomial Curve',
+      backgroundColor: 'rgba(0, 0, 255, 1)',
+      borderWidth: 2,
+      borderColor: 'rgba(0, 0, 255, 1)',
+      type: 'line',
+      cubicInterpolationMode: 'monotone',
+      data: curveData.value.map((v) => (isLogScale.value ? v + 1 : v))
+    })
+  }
   return {
     labels: labels.value,
-    datasets: [
-      {
-        ...dataSetStyle.value,
-        data: distributionData.value.map((v) => (isLogScale.value ? v + 1 : v))
-      },
-      {
-        label: 'Binomial Curve',
-        backgroundColor: 'rgba(0, 0, 255, 1)',
-        borderWidth: 2,
-        borderColor: 'rgba(0, 0, 255, 1)',
-        type: 'line',
-        cubicInterpolationMode: 'monotone',
-        data: curveData.value.map((v) => (isLogScale.value ? v + 1 : v))
-      }
-    ]
+    datasets: dataSets.reverse()
   }
 })
 
@@ -204,9 +208,9 @@ const options = computed(() => {
         clamp: true,
         text: 'test',
         display: (context: any) => {
-          return context.datasetIndex === 0
+          return context.datasetIndex === chartData.value.datasets.length - 1
         },
-        formatter: (value) => {
+        formatter: (value: any) => {
           if (isLogScale.value) {
             return value - 1
           }
@@ -217,7 +221,12 @@ const options = computed(() => {
         display: true,
         position: 'bottom' as const,
         align: 'end' as const,
-        onClick: () => {}
+        onClick: () => {},
+        labels: {
+          filter: (legendItem: any) => {
+            return legendItem.datasetIndex === chartData.value.datasets.length - 1
+          }
+        }
       }
     },
     // @ts-expect-error As there is not type to satisfy both the getElementsAtEventForMode function and Chart creations we leave the type out
@@ -271,7 +280,6 @@ function drawGraph() {
     return
   }
   chart.value = new Chart(ctx, {
-    type: 'bar',
     data: chartData.value,
     options: options.value
   })
