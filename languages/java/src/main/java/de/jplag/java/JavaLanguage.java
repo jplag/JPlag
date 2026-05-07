@@ -40,6 +40,11 @@ public class JavaLanguage implements Language {
     }
 
     @Override
+    public String getVersionFlagInformation() {
+        return "Java 25";
+    }
+
+    @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
         return new Parser().parse(files);
     }

@@ -2,6 +2,10 @@
 
 Extracts token from CSharp source using the ANTRL Grammar from the official [ANTLR repository](https://github.com/antlr/grammars-v4/tree/master/csharp)
 
+## Version
+
+Targets C# 6
+
 ## Tokens
 
 - INVOCATION
