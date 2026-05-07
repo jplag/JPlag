@@ -39,6 +39,8 @@ export const reportStore = defineStore('reportStore', () => {
   const anonymizedSet = ref(new Set<string>())
   const anonymizedNumber = ref(new Map<string, number>())
 
+  const hasLoadedLocalReportBefore = ref(false)
+
   function loadReport(
     _files: File[],
     _submissionFiles: SubmissionFile[],
@@ -301,7 +303,8 @@ export const reportStore = defineStore('reportStore', () => {
     allAreAnonymized,
     setAnonymous,
     getBaseCodeReport,
-    getSubmissionIds
+    getSubmissionIds,
+    hasLoadedLocalReportBefore
   }
 })
 

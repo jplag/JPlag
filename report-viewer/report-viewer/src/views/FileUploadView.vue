@@ -35,6 +35,14 @@
           <div>Drag and Drop report file on this page</div>
           <div>Or click here to select a file</div>
         </div>
+        <!-- When we loaded a local report we can assume that a local report is present. If this is not the case we catch this with the localFileStatus -->
+        <ButtonComponent
+          v-if="reportStore().hasLoadedLocalReportBefore && localFileStatus !== 'notFound'"
+          class="mx-auto my-2 w-96"
+          @click="navigateToOverview()"
+        >
+          Open Local Report
+        </ButtonComponent>
         <div>(No files will be uploaded)</div>
         <a
           href="https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag"
@@ -63,13 +71,17 @@ import { canLoadFile } from '@/stores/fileLoading'
 import { uiStore } from '@/stores/uiStore'
 import { ReportFileHandler } from '@jplag/parser'
 import { LoadingCircle } from '@jplag/ui-components/base'
+import ButtonComponent from '@jplag/ui-components/base/ButtonComponent.vue'
 
 reportStore().reset()
+const localFileStatus = ref<'found' | 'notFound' | 'unknown'>('unknown')
 
 const exampleFiles = ref(import.meta.env.MODE == 'demo' || import.meta.env.MODE == 'dev-demo')
 
 canLoadFile().then((value) => {
-  if (value) {
+  localFileStatus.value = value ? 'found' : 'notFound'
+  if (value && !reportStore().hasLoadedLocalReportBefore) {
+    reportStore().hasLoadedLocalReportBefore = true
     navigateToOverview()
   }
 })
