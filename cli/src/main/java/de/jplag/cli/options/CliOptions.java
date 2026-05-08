@@ -44,7 +44,7 @@ public class CliOptions implements Runnable {
 
     /** Language of submissions (default: Java). */
     @Option(names = {"--language",
-            "-l"}, arity = "1", converter = LanguageConverter.class, completionCandidates = LanguageCandidates.class, description = "Select the language of the submissions (default: ${DEFAULT-VALUE}). See subcommands below.")
+            "-l"}, arity = "1", converter = LanguageConverter.class, completionCandidates = LanguageCandidates.class, description = "Select the language of the submissions (default: ${DEFAULT-VALUE}). A list of all languages can be found below.")
     public Language language = defaultLanguage;
 
     /** Path to base code directory (common framework for all submissions). */
