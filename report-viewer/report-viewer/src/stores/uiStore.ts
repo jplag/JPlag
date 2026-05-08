@@ -22,7 +22,8 @@ export const uiStore = defineStore('uiStore', () => {
   const distributionChartConfig = ref<DistributionChartConfig>({
     metric: MetricJsonIdentifier.AVERAGE_SIMILARITY,
     xScale: 'linear',
-    bucketCount: 10
+    bucketCount: 10,
+    showDistributionLine: false
   })
   const comparisonTableSorting = ref<ComparisonTableSorting>({
     column: Column.averageSimilarity,

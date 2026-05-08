@@ -1,11 +1,22 @@
-import { test, expect, Page } from '@playwright/test'
+import { test, expect, Page, Locator } from '@playwright/test'
 import { uploadFile } from './TestUtils'
 
 const testData: TestData[] = [
   {
     name: 'Distribution Diagram',
     tabName: 'Distribution',
-    options: getDistributionDiagramTestCombinations()
+    options: getDistributionDiagramTestCombinations(),
+    postFunction: async (page, lastImage, canvas) => {
+      // test distribution line showing
+      await page
+        .getByText('DistributionBoxplotOptions:')
+        .getByText('Show expected distribution line', { exact: true })
+        .click()
+      // This timeout is so that the screenshot is taken after the animation is finished
+      await page.waitForTimeout(100)
+      const newImage = await canvas.screenshot()
+      expect(newImage).not.toEqual(lastImage)
+    }
   },
   {
     name: 'Boxplot',
@@ -15,7 +26,7 @@ const testData: TestData[] = [
 ]
 
 for (const data of testData) {
-  test(`Test ${data.name}`, async ({ page }) => {
+  test.only(`Test ${data.name}`, async ({ page }) => {
     test.slow()
     await uploadFile('progpedia-report.jplag', page)
 
@@ -31,6 +42,10 @@ for (const data of testData) {
       const newImage = await canvas.screenshot()
       expect(newImage).not.toEqual(lastImage)
       lastImage = newImage
+    }
+
+    if (data.postFunction) {
+      await data.postFunction(page, lastImage, canvas)
     }
   })
 }
@@ -73,4 +88,5 @@ interface TestData {
   name: string
   tabName: string
   options: string[][]
+  postFunction?: (page: Page, lastImage: Buffer<ArrayBufferLike>, canvas: Locator) => Promise<void>
 }
