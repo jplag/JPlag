@@ -26,7 +26,7 @@ const testData: TestData[] = [
 ]
 
 for (const data of testData) {
-  test.only(`Test ${data.name}`, async ({ page }) => {
+  test(`Test ${data.name}`, async ({ page }) => {
     test.slow()
     await uploadFile('progpedia-report.jplag', page)
 
