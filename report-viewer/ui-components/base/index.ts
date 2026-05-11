@@ -10,6 +10,7 @@ import TabbedContainer from './TabbedContainer.vue'
 import TextInformation from './TextInformation.vue'
 import ToastComponent from './ToastComponent.vue'
 import ToolTipComponent from './ToolTipComponent.vue'
+import SwitchComponent from './SwitchComponent.vue'
 
 export * from './ToolTip'
 export {
@@ -24,5 +25,6 @@ export {
   TabbedContainer,
   TextInformation,
   ToastComponent,
-  ToolTipComponent
+  ToolTipComponent,
+  SwitchComponent
 }

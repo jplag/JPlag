@@ -13,12 +13,13 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch, type PropType, type Ref } from 'vue'
-import { Chart, registerables } from 'chart.js'
+import { Chart, ChartDatasetCustomTypesPerDataset, registerables } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { graphColors } from '../../style/graphColor'
 import type { DistributionMap } from '@jplag/model'
 import DistributionDiagramOptions from './DistributionDiagramOptions.vue'
 import { DistributionChartConfig } from './DistributionChartConfig'
+import { binomialCoefficients } from './BinomialCoefficients'
 
 Chart.register(...registerables)
 Chart.register(ChartDataLabels)
@@ -73,15 +74,44 @@ const dataSetStyle = computed(() => {
   }
 })
 
+const curveData = computed(() => {
+  const totalComparisons = distributionData.value.reduce((a, b) => a + b, 0)
+  const bucketSum = distributionData.value
+    .map((value, index) => value * index)
+    .reduce((a, b) => a + b, 0)
+  const E = bucketSum / totalComparisons
+  const p = E / config.value.bucketCount
+  const q = 1 - p
+  let binomialDistribution = binomialCoefficients[config.value.bucketCount].map(
+    (value, idx) => value * p ** idx * q ** (config.value.bucketCount - idx) * totalComparisons
+  )
+  return binomialDistribution
+})
+
+const isLogScale = computed(() => config.value.xScale === 'logarithmic')
+
 const chartData = computed(() => {
+  const dataSets: ChartDatasetCustomTypesPerDataset[] = [
+    {
+      ...dataSetStyle.value,
+      type: 'bar',
+      data: distributionData.value.map((v) => (isLogScale.value ? v + 1 : v))
+    }
+  ]
+  if (config.value.showDistributionLine) {
+    dataSets.push({
+      label: 'Binomial Curve',
+      backgroundColor: 'rgba(0, 0, 255, 1)',
+      borderWidth: 2,
+      borderColor: 'rgba(0, 0, 255, 1)',
+      type: 'line',
+      cubicInterpolationMode: 'monotone',
+      data: curveData.value.map((v) => (isLogScale.value ? v + 1 : v))
+    })
+  }
   return {
     labels: labels.value,
-    datasets: [
-      {
-        ...dataSetStyle.value,
-        data: distributionData.value
-      }
-    ]
+    datasets: dataSets.reverse()
   }
 })
 
@@ -90,6 +120,14 @@ const options = computed(() => {
     responsive: true,
     maintainAspectRatio: false,
     indexAxis: 'y' as const,
+    elements: {
+      line: {
+        tension: 0.4
+      },
+      point: {
+        radius: 0
+      }
+    },
     scales: {
       x: {
         //Highest count of submissions in a percentage range. We set the diagrams maximum shown value to maxVal + 5,
@@ -99,20 +137,32 @@ const options = computed(() => {
             ? maxVal.value + 5
             : 10 ** Math.ceil(Math.log10(maxVal.value + 5)),
         type: config.value.xScale,
+        suggestedMin: config.value.xScale === 'logarithmic' ? 1 : undefined,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        afterBuildTicks: (axis: any) => {
+          if (config.value.xScale === 'logarithmic') {
+            axis.ticks = []
+            let tickValue = 10
+            while (tickValue < axis.max) {
+              axis.ticks.push({ value: tickValue + 1 })
+              tickValue *= 10
+            }
+            axis.ticks.push({ value: tickValue + 1 })
+          }
+        },
         ticks: {
           // ensures that in log mode tick labels are not overlapping
           minRotation: config.value.xScale === 'logarithmic' ? 30 : 0,
           autoSkipPadding: 10,
+
           color: colors.value.ticksAndFont,
           // ensures that in log mode ticks are placed evenly apart
           /* eslint-disable @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in chart.js
           callback: function (value: any) {
-            if (config.value.xScale === 'logarithmic' && (value + '').match(/1(0)*[^1-9.]/)) {
-              return value
+            if (config.value.xScale === 'logarithmic') {
+              return value - 1
             }
-            if (config.value.xScale !== 'logarithmic') {
-              return value
-            }
+            return value
           }
         },
         grid: {
@@ -156,13 +206,27 @@ const options = computed(() => {
         anchor: 'end' as const,
         align: 'end' as const,
         clamp: true,
-        text: 'test'
+        text: 'test',
+        display: (context: any) => {
+          return context.datasetIndex === chartData.value.datasets.length - 1
+        },
+        formatter: (value: any) => {
+          if (isLogScale.value) {
+            return value - 1
+          }
+          return value
+        }
       },
       legend: {
         display: true,
         position: 'bottom' as const,
         align: 'end' as const,
-        onClick: () => {}
+        onClick: () => {},
+        labels: {
+          filter: (legendItem: any) => {
+            return legendItem.datasetIndex === chartData.value.datasets.length - 1
+          }
+        }
       }
     },
     // @ts-expect-error As there is not type to satisfy both the getElementsAtEventForMode function and Chart creations we leave the type out
@@ -216,7 +280,6 @@ function drawGraph() {
     return
   }
   chart.value = new Chart(ctx, {
-    type: 'bar',
     data: chartData.value,
     options: options.value
   })

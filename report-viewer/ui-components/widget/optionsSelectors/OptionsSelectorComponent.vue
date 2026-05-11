@@ -14,6 +14,8 @@
         :direction="tooltipDirection"
         :tool-tip-container-will-be-centered="true"
         :show-info-symbol="false"
+        :scroll-offset-x="scrollOffsetX"
+        :scroll-offset-y="scrollOffsetY"
       >
         <template #default>
           <OptionComponent
@@ -70,6 +72,17 @@ const props = defineProps({
     type: String as PropType<ToolTipDirection>,
     required: false,
     default: 'right'
+  },
+  /** Can be set if the selector is inside a scrollable container. Needed for tooltips */
+  scrollOffsetX: {
+    type: Number,
+    required: false,
+    default: 0
+  },
+  scrollOffsetY: {
+    type: Number,
+    required: false,
+    default: 0
   }
 })
 
