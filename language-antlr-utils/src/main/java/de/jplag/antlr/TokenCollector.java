@@ -49,8 +49,8 @@ public class TokenCollector {
         org.antlr.v4.runtime.Token antlrEndToken = extractEndToken.apply(entity);
         int startLine = antlrToken.getLine();
         int startColumn = antlrToken.getCharPositionInLine() + 1;
-        int endLine = antlrEndToken.getLine();
-        int endColumn = antlrEndToken.getCharPositionInLine() + 1;
+        int endLine = calculateEndLineNumber(antlrEndToken);
+        int endColumn = calculateEndColumnNumber(antlrEndToken);
         int length = antlrEndToken.getStopIndex() - antlrToken.getStartIndex() + 1;
         Token token;
         if (extractsSemantics) {
@@ -80,5 +80,19 @@ public class TokenCollector {
 
     private void addToken(Token token) {
         this.collected.add(token);
+    }
+
+    private int calculateEndLineNumber(org.antlr.v4.runtime.Token token) {
+        return token.getLine() + token.getText().split("\n").length - 1;
+    }
+
+    private int calculateEndColumnNumber(org.antlr.v4.runtime.Token token) {
+        String[] lines = token.getText().split("\n");
+
+        if (lines.length == 1) {
+            return token.getCharPositionInLine() + lines[0].length();
+        } else {
+            return lines[lines.length - 1].length();
+        }
     }
 }
