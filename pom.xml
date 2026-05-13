@@ -98,7 +98,7 @@
         <version.scala>3.8.3</version.scala>
         <version.scalameta.suffix>2.13</version.scalameta.suffix>
         <version.scalameta>4.16.1</version.scalameta>
-        <version.slf4j>2.0.17</version.slf4j>
+        <version.slf4j>2.0.18</version.slf4j>
         <version.metainf>1.11</version.metainf>
 
         <!-- Plugin versions -->
