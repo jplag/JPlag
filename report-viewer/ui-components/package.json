@@ -17,7 +17,7 @@
     "@fortawesome/vue-fontawesome": "^3.2.0",
     "pinia": "^3.0.3",
     "tailwindcss": "^4.2.4",
-    "vue": "^3.5.20"
+    "vue": "^3.5.34"
   },
   "scripts": {
     "test": "vitest"
