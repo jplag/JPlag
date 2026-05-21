@@ -2,6 +2,7 @@ package de.jplag.antlr;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
@@ -83,16 +84,24 @@ public class TokenCollector {
     }
 
     private int calculateEndLineNumber(org.antlr.v4.runtime.Token token) {
-        return token.getLine() + token.getText().split("\n").length - 1;
+        String[] lines = token.getText().split("\n", -1);
+        if (lines.length > 1 && lines[lines.length - 1].length() == 0) { // Ends on linebreak
+            lines = Arrays.copyOf(lines, lines.length - 1);
+        }
+
+        return token.getLine() + lines.length - 1;
     }
 
     private int calculateEndColumnNumber(org.antlr.v4.runtime.Token token) {
-        String[] lines = token.getText().split("\n");
+        String[] lines = token.getText().split("\n", -1);
+        if (lines.length > 1 && lines[lines.length - 1].length() == 0) { // Ends on linebreak
+            lines = Arrays.copyOf(lines, lines.length - 1);
+        }
 
         if (lines.length == 1) {
-            return token.getCharPositionInLine() + lines[0].length();
+            return Math.max(token.getCharPositionInLine() + lines[0].length(), 1);
         } else {
-            return lines[lines.length - 1].length();
+            return lines[lines.length - 1].length() + 1;
         }
     }
 }
