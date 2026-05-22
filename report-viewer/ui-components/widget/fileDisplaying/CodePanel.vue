@@ -18,16 +18,27 @@
 
       <span class="flex-1"></span>
 
-      <ToolTipComponent direction="left" class="font-normal">
+      <ToolTipComponent direction="left" :show-info-symbol="false" class="font-normal">
         <template #default
-          ><span class="text-gray-600 dark:text-gray-300"
+          ><span
+            class="text-gray-600 dark:text-gray-300"
+            :class="{ 'text-error/80!': hasLessTokensThanMinimumMatch }"
             >{{ Math.round((file.matchedTokenCount / (file.tokenCount - 1)) * 100) }}%</span
-          ></template
-        >
+          ><InfoIcon
+            class="ml-0!"
+            :class="{ 'text-error/80!': hasLessTokensThanMinimumMatch }"
+            :icon="hasLessTokensThanMinimumMatch ? faTriangleExclamation : undefined"
+        /></template>
         <template #tooltip
           ><p class="text-sm whitespace-nowrap">
-            The file has {{ file.tokenCount - 1 }} tokens. {{ file.matchedTokenCount }} are part of
-            a match.
+            The file has {{ file.tokenCount - 1 }} tokens. <br />
+            <span v-if="!hasLessTokensThanMinimumMatch"
+              >{{ file.matchedTokenCount }} are part of a match.</span
+            >
+            <span v-else
+              >This is less than the Minimum Match Length ({{ minimumTokenMatch }}).<br />Because of
+              this the content of the file can not be matched.</span
+            >
           </p></template
         >
       </ToolTipComponent>
@@ -78,9 +89,10 @@ import type {
   BaseCodeMatch
 } from '@jplag/model'
 import { ref, type PropType, computed, type Ref } from 'vue'
-import { InteractableComponent, ToolTipComponent } from '../../base'
+import { InteractableComponent, ToolTipComponent, InfoIcon } from '../../base'
 import { highlight } from './CodeHighlighter'
 import CodeLine from './CodeLine.vue'
+import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons'
 
 const props = defineProps({
   /**
@@ -107,6 +119,11 @@ const props = defineProps({
   highlightLanguage: {
     type: String as PropType<Language>,
     required: true
+  },
+  minimumTokenMatch: {
+    type: Number,
+    required: false,
+    default: 0
   }
 })
 
@@ -124,6 +141,10 @@ const codeLines: Ref<{ line: string; matches: MatchInSingleFile[] }[]> = compute
     matches.push(...baseCodeMatches)
     return { line, matches }
   })
+)
+
+const hasLessTokensThanMinimumMatch = computed(
+  () => props.file.tokenCount < props.minimumTokenMatch
 )
 
 function matchSelected(match: Match) {

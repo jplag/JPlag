@@ -39,6 +39,7 @@
           :file="file"
           :matches="matchesPerFile[file.fileName]"
           :highlight-language="highlightLanguage"
+          :minimum-token-match="minimumTokenMatch"
           class="mt-1 first:mt-0"
           :base-code-matches="baseCodeMatches.filter((match) => match.fileName === file.fileName)"
           @match-selected="(match: Match) => $emit('matchSelected', match)"
@@ -105,6 +106,11 @@ const props = defineProps({
   fileSorting: {
     type: Number as PropType<FileSortingOptions>,
     default: FileSortingOptions.ALPHABETICAL
+  },
+  minimumTokenMatch: {
+    type: Number,
+    required: false,
+    default: 0
   }
 })
 
