@@ -30,8 +30,8 @@ import de.jplag.endtoend.model.GoldStandard;
 import de.jplag.endtoend.model.ResultDescription;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
+import de.jplag.reporting.serialization.JacksonUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 /**
@@ -47,7 +47,7 @@ class EndToEndGeneratorTest {
     @Test
     @DisplayName("Generator test to produce new expected E2E results if behavior of JPlag changes.")
     void generateResultJson() throws ExitException, IOException {
-        DataSet dataSet = new ObjectMapper()
+        DataSet dataSet = JacksonUtils.createNewObjectMapper()
                 .readValue(new File(TestDirectoryConstants.BASE_PATH_TO_DATA_SET_DESCRIPTORS.toFile(), DATA_SET + ".json"), DataSet.class);
         List<ResultDescription> resultDescriptions = new ArrayList<>();
 
@@ -82,7 +82,7 @@ class EndToEndGeneratorTest {
      * exceptions produced by failed orinterrupted I/O operations.
      */
     private static File writeJsonModelsToJsonFile(List<ResultDescription> resultDescriptions, DataSet dataSet) throws IOException {
-        ObjectWriter writer = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        ObjectWriter writer = JacksonUtils.createNewObjectMapper().writer().withDefaultPrettyPrinter();
         File outputFile = dataSet.getResultFile();
 
         FileHelper.createDirectoryIfItDoesNotExist(outputFile.getParentFile());

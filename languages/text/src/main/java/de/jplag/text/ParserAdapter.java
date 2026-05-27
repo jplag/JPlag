@@ -18,6 +18,9 @@ import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.CoreDocument;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 
+/**
+ * Parser adapter for natural-language text. Delegates to the Stanford CoreNLP API.
+ */
 public class ParserAdapter {
     private static final Logger logger = LoggerFactory.getLogger(ParserAdapter.class);
 
@@ -31,16 +34,25 @@ public class ParserAdapter {
     private File currentFile;
     private int currentLine;
     /**
-     * The position of the current line break in the content string
+     * The position of the current line break in the content string.
      */
     private int currentLineBreakIndex;
 
+    /**
+     * Created the parser adapter.
+     */
     public ParserAdapter() {
         Properties properties = new Properties();
         properties.put(ANNOTATORS_KEY, ANNOTATORS_VALUE);
         this.pipeline = new StanfordCoreNLP(properties);
     }
 
+    /**
+     * Parses a set of files.
+     * @param files are the files to parse.
+     * @return the token sequence.
+     * @throws ParsingException is parsing fails.
+     */
     public List<Token> parse(Set<File> files) throws ParsingException {
         tokens = new ArrayList<>();
         for (File file : files) {

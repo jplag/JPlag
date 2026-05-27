@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import de.jplag.ParsingException;
 import de.jplag.SharedTokenType;
 import de.jplag.Token;
-import de.jplag.TokenPrinter;
+import de.jplag.TokenPrinterUtils;
 
 class RustLanguageTest {
 
@@ -39,6 +39,9 @@ class RustLanguageTest {
     private static final String COMPLETE_TEST_FILE = "complete.rs";
     private static final String RUST_SHEBANG = "#!.*$";
     private static final double EPSILON = 1E-6;
+    /**
+     * Minimum required source coverage for tests, represented as a fraction of lines covered by tokens.
+     */
     public static final double BASELINE_COVERAGE = 0.75;
 
     private final Logger logger = LoggerFactory.getLogger(RustLanguageTest.class);
@@ -55,7 +58,7 @@ class RustLanguageTest {
     void parseTestFiles() throws ParsingException {
         for (String fileName : testFiles) {
             List<Token> tokens = language.parse(Set.of(new File(testFileLocation, fileName)), false);
-            String output = TokenPrinter.printTokens(tokens, testFileLocation);
+            String output = TokenPrinterUtils.printTokensByFile(tokens);
             logger.info(output);
 
             testSourceCoverage(fileName, tokens);

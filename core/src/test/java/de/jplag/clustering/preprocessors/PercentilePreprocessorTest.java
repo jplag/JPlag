@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 class PercentilePreprocessorTest extends PreprocessingTestBase {
 
-    PercentileThresholdProcessor preprocessor;
+    private PercentileThresholdProcessor preprocessor;
 
     @BeforeEach
     void init() {

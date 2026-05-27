@@ -12,6 +12,7 @@ import de.jplag.cli.options.CliOptions;
 import de.jplag.cli.picocli.CliInputHandler;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.Preprocessing;
+import de.jplag.highlightextraction.FrequencyAnalysisOptions;
 import de.jplag.merging.MergingOptions;
 import de.jplag.options.JPlagOptions;
 
@@ -33,8 +34,8 @@ public class JPlagOptionsBuilder {
     }
 
     /**
-     * Builds the JPlag options
-     * @return The JPlag options
+     * Builds the JPlag options.
+     * @return The JPlag options.
      * @throws CliException If the input handler could properly parse everything.
      */
     public JPlagOptions buildOptions() throws CliException {
@@ -59,12 +60,13 @@ public class JPlagOptionsBuilder {
             throws CliException {
         ClusteringOptions clusteringOptions = getClusteringOptions();
         MergingOptions mergingOptions = getMergingOptions();
+        FrequencyAnalysisOptions frequencyAnalysisOptions = getFrequencyAnalysisOptions();
 
         return new JPlagOptions(this.cliInputHandler.getSelectedLanguage(), this.cliOptions.minTokenMatch, submissionDirectories,
                 oldSubmissionDirectories, null, this.cliOptions.advanced.subdirectory, suffixes, this.cliOptions.advanced.exclusionFileName,
                 JPlagOptions.DEFAULT_SIMILARITY_METRIC, this.cliOptions.advanced.similarityThreshold, this.cliOptions.shownComparisons,
                 clusteringOptions, this.cliOptions.advanced.debug, mergingOptions, this.cliOptions.normalize,
-                this.cliOptions.advanced.analyzeComments);
+                this.cliOptions.advanced.analyzeComments, frequencyAnalysisOptions);
     }
 
     private ClusteringOptions getClusteringOptions() {
@@ -101,5 +103,12 @@ public class JPlagOptionsBuilder {
     private MergingOptions getMergingOptions() {
         return new MergingOptions(this.cliOptions.merging.enabled, this.cliOptions.merging.minimumNeighborLength,
                 this.cliOptions.merging.maximumGapSize, this.cliOptions.merging.minimumRequiredMerges);
+    }
+
+    private FrequencyAnalysisOptions getFrequencyAnalysisOptions() {
+        CliOptions.FrequencyAnalysis frequencyOptions = this.cliOptions.highlightExtraction;
+        return new FrequencyAnalysisOptions().withEnabled(frequencyOptions.enabled)
+                .withAnalysisStrategy(frequencyOptions.frequencyStrategy.create(frequencyOptions.minimumSubsequenceLength))
+                .withWeightingFunction(frequencyOptions.weightingFunction.create()).withWeightingFactor(frequencyOptions.weightingFactor);
     }
 }

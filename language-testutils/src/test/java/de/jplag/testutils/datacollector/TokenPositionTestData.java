@@ -1,12 +1,12 @@
 package de.jplag.testutils.datacollector;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import org.junit.jupiter.api.Assertions;
 
 import de.jplag.Language;
 import de.jplag.ParsingException;
@@ -56,21 +56,13 @@ public class TokenPositionTestData implements TestData {
                         currentLine++;
                     }
 
-                    case TOKEN_LINE_PREFIX -> {
-                        this.extractTokenData(sourceLine, currentLine);
-                        int column = sourceLine.indexOf(TOKEN_COLUMN_MARKER);
-                        String[] tokenDescriptionParts = sourceLine.split(" ", 0);
-
-                        String typeName = tokenDescriptionParts[tokenDescriptionParts.length - 2];
-                        int length = Integer.parseInt(tokenDescriptionParts[tokenDescriptionParts.length - 1]);
-                        this.expectedTokens.add(new TokenData(typeName, currentLine, column, currentLine, column + length));
-                    }
+                    case TOKEN_LINE_PREFIX -> this.extractTokenData(sourceLine, currentLine);
 
                     case COMMENT_LINE_PREFIX -> {
                         // Line is considered a comment
                     }
 
-                    default -> Assertions.fail(String.format(INVALID_LINE_ERROR_MESSAGE, this.descriptor, sourceLine));
+                    default -> fail(String.format(INVALID_LINE_ERROR_MESSAGE, this.descriptor, sourceLine));
                 }
             }
         }
@@ -78,10 +70,10 @@ public class TokenPositionTestData implements TestData {
 
     private void extractTokenData(String line, int currentSourceLine) {
         if (!line.matches(TOKEN_DEFINITION_LINE_REGEX)) {
-            Assertions.fail("Invalid line for token position test " + this.descriptor + " at line: " + line);
+            fail("Invalid line for token position test " + this.descriptor + " at line: " + line);
         }
 
-        int column = line.indexOf('|');
+        int column = line.indexOf(TOKEN_COLUMN_MARKER);
         String[] tokenDescriptionParts = line.split(" ", 0);
 
         String typeName = tokenDescriptionParts[tokenDescriptionParts.length - 2];
@@ -94,7 +86,7 @@ public class TokenPositionTestData implements TestData {
         File file = File.createTempFile("testSource", language.fileExtensions().getFirst());
         FileUtils.write(file, String.join(System.lineSeparator(), sourceLines));
         List<Token> tokens = language.parse(Collections.singleton(file), false);
-        TemporaryFileHolder.temporaryFiles.add(file);
+        TemporaryFileHolder.addTemporaryFile(file);
         return tokens;
     }
 
@@ -116,7 +108,7 @@ public class TokenPositionTestData implements TestData {
     }
 
     /**
-     * Information about a single token
+     * Information about a single token.
      * @param typeName The name of the token type
      * @param startLine The line the token starts in (1 based)
      * @param startColumn The column the token starts (1 based)

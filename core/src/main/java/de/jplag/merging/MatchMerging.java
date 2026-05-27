@@ -74,7 +74,7 @@ public class MatchMerging {
     /**
      * Computes neighbors by sorting based on order of matches in the left and right submissions and then checking which are
      * next to each other in both.
-     * @param globalMatches
+     * @param globalMatches is list of all matches.
      * @return neighbors containing a list of pairs of neighboring matches
      */
     private static List<Neighbor> computeNeighbors(List<Match> globalMatches) {
@@ -122,7 +122,7 @@ public class MatchMerging {
     /**
      * This function iterates through the neighboring matches and checks which fit the merging criteria. Those who do are
      * merged and the original matches are removed. This is done, until there are either no neighbors left, or none fit the
-     * criteria
+     * criteria.
      * @return globalMatches containing merged matches.
      */
     private void mergeNeighbors(List<Match> globalMatches, Submission leftSubmission, Submission rightSubmission) {
@@ -181,9 +181,9 @@ public class MatchMerging {
     }
 
     /**
-     * This function checks whether a list of token contains FILE_END
-     * @param token is the list of token
-     * @return true if FILE_END is in token
+     * This function checks whether a list of token contains FILE_END.
+     * @param token is the list of token.
+     * @return true if FILE_END is in token.
      */
     private static boolean containsFileEndToken(List<Token> token) {
         return token.stream().map(Token::getType).anyMatch(TokenType::isExcludedFromMatching);

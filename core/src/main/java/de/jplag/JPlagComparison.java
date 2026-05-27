@@ -10,8 +10,12 @@ import java.util.List;
  * @param matches is the unmodifiable list of all subsequence matches between the two submissions.
  * @param ignoredMatches is the unmodifiable list of ignored matches whose length is below the minimum token match
  * threshold.
+ * @param frequencyWeightedSimilarity the similarity influenced by the isFrequencyAnalysisEnabled of a match
+ * @param isFrequencyAnalysisEnabled if the frequencyWeightedSimilarity shall be used or the similarity value without
+ * considering the match isFrequencyAnalysisEnabled
  */
-public record JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches, List<Match> ignoredMatches) {
+public record JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches, List<Match> ignoredMatches,
+        double frequencyWeightedSimilarity, boolean isFrequencyAnalysisEnabled) {
 
     /**
      * Constructs a new comparison between two submissions. The match lists are wrapped as unmodifiable to preserve
@@ -21,10 +25,18 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
      * @param matches is the list of all matches between the two submissions.
      */
     public JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches, List<Match> ignoredMatches) {
-        this.firstSubmission = firstSubmission;
-        this.secondSubmission = secondSubmission;
-        this.matches = Collections.unmodifiableList(matches);
-        this.ignoredMatches = Collections.unmodifiableList(ignoredMatches);
+        this(firstSubmission, secondSubmission, Collections.unmodifiableList(matches), Collections.unmodifiableList(ignoredMatches), -1, false);
+    }
+
+    /**
+     * Copy constructor to give the Comparisons an individual isFrequencyAnalysisEnabled.
+     * @param originalComparison the comparison without used isFrequencyAnalysisEnabled Analysis.
+     * @param frequencyWeightedSimilarity isFrequencyAnalysisEnabled Weighted similarity, that will replace standard
+     * similarity.
+     */
+    public JPlagComparison(JPlagComparison originalComparison, double frequencyWeightedSimilarity, boolean frequencyUsed) {
+        this(originalComparison.firstSubmission(), originalComparison.secondSubmission(), Collections.unmodifiableList(originalComparison.matches),
+                Collections.unmodifiableList(originalComparison.ignoredMatches), frequencyWeightedSimilarity, frequencyUsed);
     }
 
     /**
@@ -59,11 +71,15 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
 
     /**
      * Computes the average (or symmetric) similarity between the two submissions. The similarity is adjusted based on
-     * whether both submissions contain base code matches.
+     * whether both submissions contain base code matches. Checks if the frequency analysis is used, if it is then a
+     * frequency based similarity score will be returned.
      * @return Average similarity in interval [0, 1]. 0 means zero percent structural similarity, 1 means 100 percent
      * structural similarity.
      */
-    public final double similarity() {
+    public double similarity() {
+        if (isFrequencyAnalysisEnabled && frequencyWeightedSimilarity >= 0) {
+            return frequencyWeightedSimilarity;
+        }
         int divisor = firstSubmission.getSimilarityDivisor() + secondSubmission.getSimilarityDivisor();
         if (divisor == 0) {
             return 0;

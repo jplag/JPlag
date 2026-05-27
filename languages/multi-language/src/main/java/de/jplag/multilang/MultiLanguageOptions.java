@@ -9,6 +9,10 @@ import de.jplag.options.LanguageOption;
 import de.jplag.options.LanguageOptions;
 import de.jplag.options.OptionType;
 
+/**
+ * Options for multi-language support in JPlag. This class allows users to configure multiple supported languages either
+ * explicitly through a comma-separated list or implicitly by selecting all available multi-language-supported ones.
+ */
 public class MultiLanguageOptions extends LanguageOptions {
     private static final String ERROR_LANGUAGE_NOT_FOUND = "The selected language %s could not be found";
     private static final String ERROR_NOT_ENOUGH_LANGUAGES = "To use multi language specify at least 1 language";
@@ -18,6 +22,12 @@ public class MultiLanguageOptions extends LanguageOptions {
     private final LanguageOption<String> languageNames = createOption(OptionType.string(), "languages", OPTION_DESCRIPTION_LANGUAGES);
     private List<Language> languages = null;
 
+    /**
+     * Returns the list of languages selected for multi-language processing. If no languages were explicitly set, all
+     * supported languages are returned.
+     * @return list of {@link Language} instances
+     * @throws IllegalArgumentException if no valid languages are found
+     */
     public List<Language> getLanguages() {
         if (this.languages == null) {
             if (languageNames.getValue() == null) {
@@ -37,6 +47,10 @@ public class MultiLanguageOptions extends LanguageOptions {
         return this.languages;
     }
 
+    /**
+     * Returns the raw language names option, as a string.
+     * @return {@link LanguageOption} representing the input string
+     */
     public LanguageOption<String> getLanguageNames() {
         return this.languageNames;
     }

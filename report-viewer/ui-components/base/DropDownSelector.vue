@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 import Interactable from './InteractableComponent.vue'
-import { computed, PropType, ref } from 'vue'
+import { computed, PropType, ref, watch } from 'vue'
 
 const props = defineProps({
   options: {
@@ -43,4 +43,12 @@ const selectedOption = computed({
   },
   set: (value) => (_selectedOption.value = value)
 })
+
+watch(
+  () => props.getDisplayName,
+  () => {
+    // This is enough to trigger a reload
+  },
+  { immediate: true }
+)
 </script>

@@ -5,6 +5,10 @@ import java.util.function.ToDoubleFunction;
 import de.jplag.JPlagComparison;
 import de.jplag.Match;
 
+/**
+ * Similarity metrics supported by JPlag, computing a similarity value in percent for a set of matches between two
+ * programs.
+ */
 public enum SimilarityMetric implements ToDoubleFunction<JPlagComparison> {
     AVG("average similarity", JPlagComparison::similarity),
     /**
@@ -31,6 +35,13 @@ public enum SimilarityMetric implements ToDoubleFunction<JPlagComparison> {
         this.similarityFunction = similarityFunction;
     }
 
+    /**
+     * Checks whether the similarity of a comparison between two program submissions exceeds a threshold for the specific
+     * metric.
+     * @param comparison is the comparison between two submissions.
+     * @param similarityThreshold is the threshold to exceed.
+     * @return true if it exceeds the threshold.
+     */
     public boolean isAboveThreshold(JPlagComparison comparison, double similarityThreshold) {
         return similarityFunction.applyAsDouble(comparison) >= similarityThreshold;
     }

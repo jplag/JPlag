@@ -11,7 +11,7 @@ import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
  * <p>
  * - As the ANTLR grammar requires some workarounds to have the token extraction similar to the Java language module,
  * there are tests to cover the extraction of such tokens. - Ensures that all tokens are extracted at some point and
- * source files are suitably covered by testing a huge file (bc6h_enc.h)
+ * source files are suitably covered by testing a huge file (bc6h_enc.h).
  */
 public class CppLanguageTest extends LanguageModuleTest {
     private static final String[] assignSnippets = {"i = 10", "i += 10", "i -= 10", "i += 10", "i /= 10", "i %= 10", "i >>= 10", "i <<= 10",
@@ -32,6 +32,9 @@ public class CppLanguageTest extends LanguageModuleTest {
             }
             """;
 
+    /**
+     * Creates the test suite.
+     */
     public CppLanguageTest() {
         super(new CPPLanguage(), CPPTokenType.class);
     }

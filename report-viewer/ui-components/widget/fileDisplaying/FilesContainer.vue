@@ -14,14 +14,14 @@
         >
       </div>
       <ButtonComponent v-if="allCollapsed" class="space-x-2 print:hidden" @click="expandAll()"
-        ><FontAwesomeIcon :icon="['fas', 'expand-alt']" />
+        ><FontAwesomeIcon :icon="faExpandAlt" />
         <p>Expand All</p></ButtonComponent
       >
       <ButtonComponent
         v-else
         class="w-full space-x-2 md:max-w-fit print:hidden"
         @click="collapseAll()"
-        ><FontAwesomeIcon :icon="['fas', 'compress-alt']" />
+        ><FontAwesomeIcon :icon="faCompressAlt" />
         <p>Collapse All</p></ButtonComponent
       >
     </div>
@@ -31,7 +31,11 @@
         <CodePanel
           v-for="file in sortedFiles"
           :key="file.fileName"
-          ref="codePanels"
+          :ref="
+            (el) => {
+              codePanels[file.fileName] = el as CodePanelType
+            }
+          "
           :file="file"
           :matches="matchesPerFile[file.fileName]"
           :highlight-language="highlightLanguage"
@@ -59,12 +63,8 @@ import { VueDraggableNext } from 'vue-draggable-next'
 import { computed, nextTick, ref, type PropType, type Ref } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCompressAlt, faExpandAlt } from '@fortawesome/free-solid-svg-icons'
-import { library } from '@fortawesome/fontawesome-svg-core'
 import { FileSortingOptions } from './FileSortingOptions'
 import MetricIcon from '../MetricIcon.vue'
-
-library.add(faCompressAlt)
-library.add(faExpandAlt)
 
 const props = defineProps({
   /**
@@ -182,8 +182,9 @@ function emitFileMoving() {
   emit('filesMoved')
 }
 
-const codePanels: Ref<(typeof CodePanel)[]> = ref([])
-const scrollContainer: Ref<typeof ScrollableComponent | null> = ref(null)
+type CodePanelType = InstanceType<typeof CodePanel>
+const codePanels: Ref<Record<string, CodePanelType>> = ref({})
+const scrollContainer: Ref<InstanceType<typeof ScrollableComponent> | null> = ref(null)
 
 const tokenCount = computed(() => {
   return props.files.reduce((acc, file) => (file.tokenCount ?? 0) + acc - 1, 0)
@@ -195,15 +196,15 @@ const tokenCount = computed(() => {
  * @param line Line to scroll to.
  */
 function scrollTo(file: string, line: number) {
-  const fileIndex = sortedFiles.value.findIndex((f) => f.fileName === file)
-  if (fileIndex !== -1) {
-    codePanels.value[fileIndex].expand()
+  const codePanel = codePanels.value[file]
+  if (codePanel !== undefined) {
+    codePanel.expand()
     nextTick(() => {
       if (!scrollContainer.value) {
         return
       }
-      const childToScrollTo = codePanels.value[fileIndex].getLineRect(line) as DOMRect
-      const scrollBox = scrollContainer.value.getRoot() as HTMLElement
+      const childToScrollTo = codePanel.getLineRect(line)
+      const scrollBox = scrollContainer.value.getRoot()
       scrollBox.scrollTo({
         top: childToScrollTo.top + scrollBox.scrollTop - (scrollBox.clientHeight * 2) / 3
       })
@@ -215,18 +216,27 @@ function scrollTo(file: string, line: number) {
  * Collapses all the code panels.
  */
 function collapseAll() {
-  codePanels.value.forEach((panel) => panel.collapse())
+  for (const codePanel of Object.values(codePanels.value)) {
+    codePanel.collapse()
+  }
 }
 
 /**
  * Expands all the code panels.
  */
 function expandAll() {
-  codePanels.value.forEach((panel) => panel.expand())
+  for (const codePanel of Object.values(codePanels.value)) {
+    codePanel.expand()
+  }
 }
 
 const allCollapsed = computed(() => {
-  return codePanels.value.every((panel) => panel.isCollapsed())
+  for (const codePanel of Object.values(codePanels.value)) {
+    if (!codePanel.isCollapsed()) {
+      return false
+    }
+  }
+  return true
 })
 
 defineExpose({

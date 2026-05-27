@@ -10,29 +10,17 @@
     <artifactId>scala</artifactId>
     <name>JPlag: Scala Language Module</name>
 
-    <properties>
-        <scala.version>2.13.16</scala.version>
-        <scala.compat.version>2.13</scala.compat.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
-            <version>${scala.version}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.scalameta/scalameta -->
         <dependency>
             <groupId>org.scalameta</groupId>
-            <artifactId>scalameta_${scala.compat.version}</artifactId>
-            <version>4.13.8</version>
+            <artifactId>scalameta_${version.scalameta.suffix}</artifactId>
         </dependency>
     </dependencies>
-
-    <build>
-        <sourceDirectory>src/main/scala</sourceDirectory>
-        <testSourceDirectory>src/test/java</testSourceDirectory>
-    </build>
 
 </project>

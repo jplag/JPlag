@@ -9,14 +9,14 @@ import de.jplag.cli.CliException;
 import picocli.CommandLine;
 
 /**
- * Converts the string from the cli to a charset
+ * Converts the string from the cli to a charset.
  */
 public class CharsetConverter implements CommandLine.ITypeConverter<Charset> {
     @Override
     public Charset convert(String value) throws Exception {
         try {
             return Charset.forName(value);
-        } catch (UnsupportedCharsetException | IllegalCharsetNameException e) {
+        } catch (UnsupportedCharsetException | IllegalCharsetNameException _) {
             throw new CliException("Invalid charset name: " + value);
         }
     }

@@ -27,6 +27,7 @@ public class GenericEmfTreeView extends AbstractModelView {
     /**
      * Creates a tree view for a metamodel.
      * @param file is the path to the metamodel.
+     * @param modelResource is the EMF resource in which the model is loaded.
      */
     public GenericEmfTreeView(File file, Resource modelResource) {
         super(file);

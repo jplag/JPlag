@@ -15,7 +15,6 @@
         <dependency>
             <groupId>org.jgrapht</groupId>
             <artifactId>jgrapht-core</artifactId>
-            <version>1.5.2</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -24,25 +23,22 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
-            <version>3.6.1</version>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>language-api</artifactId>
-            <version>${revision}</version>
-        </dependency>
-        <!-- the core project only requires one language module for testing: -->
-        <dependency>
-            <groupId>de.jplag</groupId>
-            <artifactId>java</artifactId>
-            <version>${revision}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.soabase.record-builder</groupId>
             <artifactId>record-builder-processor</artifactId>
-            <version>47</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- the core project only requires one language module for testing: -->
+        <dependency>
+            <groupId>de.jplag</groupId>
+            <artifactId>java</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -53,15 +49,5 @@
                 <directory>src/main/resources</directory>
             </resource>
         </resources>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.11.2</version>
-                <configuration>
-                    <sourcepath>src/main/java;target/generated-sources/annotations</sourcepath>
-                </configuration>
-            </plugin>
-        </plugins>
     </build>
 </project>

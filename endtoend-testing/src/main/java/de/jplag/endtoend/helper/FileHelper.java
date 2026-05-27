@@ -34,7 +34,7 @@ public final class FileHelper {
     }
 
     /**
-     * Creates directory if it dose not exist
+     * Creates directory if it does not exist.
      * @param directory to be created
      * @throws IOException if the directory could not be created
      */
@@ -45,7 +45,7 @@ public final class FileHelper {
     }
 
     /**
-     * Creates file if it dose not exist
+     * Creates file if it does not exist.
      * @param file to be created
      * @throws IOException if the file could not be created
      */
@@ -68,6 +68,7 @@ public final class FileHelper {
      * @param zip The zip file to extract
      * @param targetDirectory The target directory
      * @throws IOException If io operations go wrong
+     * @throws IllegalStateException if the ZIP archive exceeds size or entry count thresholds.
      */
     public static void unzip(File zip, File targetDirectory) throws IOException {
         try (ZipFile zipFile = new ZipFile(zip)) {

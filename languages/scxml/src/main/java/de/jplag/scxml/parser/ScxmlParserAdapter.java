@@ -40,6 +40,9 @@ public class ScxmlParserAdapter {
     protected AbstractScxmlVisitor visitor;
     protected ScxmlView view;
 
+    /**
+     * Creates the adapter.
+     */
     public ScxmlParserAdapter() {
         this.visitor = new HandcraftedScxmlTokenGenerator(this);
     }
@@ -47,8 +50,8 @@ public class ScxmlParserAdapter {
     /**
      * Extracts all tokens from a set of files.
      * @param files the set of files
-     * @throws ParsingException if the statechart could not be parsed
      * @return the list of parsed tokens
+     * @throws ParsingException if the statechart could not be parsed
      */
     public List<Token> parse(Set<File> files) throws ParsingException {
         tokens = new ArrayList<>();

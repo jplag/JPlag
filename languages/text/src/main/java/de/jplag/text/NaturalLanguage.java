@@ -4,18 +4,18 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import org.kohsuke.MetaInfServices;
-
 import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
+
+import com.google.auto.service.AutoService;
 
 /**
  * Language class for parsing (natural language) text. This language module employs a primitive approach where
  * individual words are interpreted as token types. Whitespace and special characters are ignored. This approach works,
  * but there are better approaches for text plagiarism out there (based on NLP techniques).
  */
-@MetaInfServices(Language.class)
+@AutoService(Language.class)
 public class NaturalLanguage implements Language {
 
     @Override

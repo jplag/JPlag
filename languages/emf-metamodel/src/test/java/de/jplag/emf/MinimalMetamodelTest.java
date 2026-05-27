@@ -8,7 +8,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import de.jplag.ParsingException;
 import de.jplag.Token;
-import de.jplag.TokenPrinter;
+import de.jplag.TokenPrinterUtils;
 import de.jplag.TokenType;
 import de.jplag.testutils.TokenUtils;
 
@@ -30,7 +29,7 @@ class MinimalMetamodelTest extends AbstractEmfTest {
         List<File> testFiles = Arrays.stream(TEST_SUBJECTS).map(path -> new File(BASE_PATH.toFile(), path)).toList();
         List<Token> result = language.parse(new HashSet<>(testFiles), true);
 
-        logger.debug(TokenPrinter.printTokens(result, baseDirectory, Optional.of(EmfLanguage.VIEW_FILE_EXTENSION)));
+        logger.debug(TokenPrinterUtils.printTokensByFile(result, file -> new File(file.getAbsolutePath() + EmfLanguage.VIEW_FILE_EXTENSION)));
         List<TokenType> tokenTypes = result.stream().map(Token::getType).toList();
         logger.info("Parsed token types: " + tokenTypes.stream().map(TokenType::getDescription).toList());
         assertEquals(80, tokenTypes.size());

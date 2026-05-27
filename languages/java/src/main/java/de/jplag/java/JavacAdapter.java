@@ -28,6 +28,11 @@ import com.sun.source.util.JavacTask;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.Trees;
 
+/**
+ * The {@code JavacAdapter} class provides an adapter to the Java compiler for JPlag. It is responsible for compiling
+ * Java source files and handling any compiler-specific configuration or errors. This adapter abstracts the interaction
+ * with the underlying compiler, enabling JPlag to analyze Java code submissions.
+ */
 public class JavacAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(JavacAdapter.class);
@@ -38,6 +43,12 @@ public class JavacAdapter {
 
     private static final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 
+    /**
+     * Parses the given set of Java source files using JavaC.
+     * @param files is the Java source files to parse.
+     * @param parser is the parser to receive the tokens.
+     * @throws ParsingException if an error occurs during parsing.
+     */
     public void parseFiles(Set<File> files, final Parser parser) throws ParsingException {
         var listener = new DiagnosticCollector<>();
 

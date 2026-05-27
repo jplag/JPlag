@@ -1,4 +1,4 @@
-name: Check that all dependencies are in coverage report
+name: Check Coverage Report Dependencies
 
 on:
   workflow_dispatch:
@@ -20,7 +20,7 @@ jobs:
     
     steps:
     - name: Checkout 🛎️
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       
     - name: Run script
       working-directory: .github/workflows/scripts

@@ -21,6 +21,7 @@ interface AbstractOptions<L> {
   mergingOptions: CliMergingOptions
   normalize: boolean
   analyzeComments: boolean
+  frequencyAnalysisOptions: CliFrequencyOptions
 }
 
 export interface CliClusterOptions {
@@ -44,4 +45,11 @@ interface CliMergingOptions {
   minimumNeighborLength: number
   maximumGapSize: number
   minimumRequiredMerges: number
+}
+
+interface CliFrequencyOptions {
+  enabled: boolean
+  analysisStrategy: string
+  weightingFunction: string
+  weightingFactor: number
 }

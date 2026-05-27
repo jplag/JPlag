@@ -49,7 +49,7 @@ public class Submission implements Comparable<Submission> {
     private List<Token> tokenList; // list of tokens from all files, used for comparison
     private JPlagComparison baseCodeComparison; // Comparison of thus submission with the base code
     private Map<File, Integer> fileTokenCount;
-    private List<Comment> comments; // list of comments from all files
+    private final List<Comment> comments; // list of comments from all files
 
     /**
      * Creates a submission.
@@ -134,9 +134,11 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
+     * The similarity divisor is used for calculating the similarity of two submissions. It is based on the token length of
+     * a submission.
      * @return Similarity divisor for the submission.
      */
-    int getSimilarityDivisor() {
+    public int getSimilarityDivisor() {
         int divisor = getNumberOfTokens() - getFiles().size();
         if (baseCodeComparison != null) {
             divisor -= baseCodeComparison.getNumberOfMatchedTokens();
@@ -160,6 +162,8 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
+     * @return true if a comparison between the submission and the base code is available. Does not imply if there are
+     * matches to the base code.
      * @deprecated Use {@link #hasBaseCodeComparison()} instead.
      */
     @Deprecated(since = "6.1.0", forRemoval = true)
@@ -202,7 +206,7 @@ public class Submission implements Comparable<Submission> {
      * @return the annotated code as string.
      */
     public String getTokenAnnotatedSourceCode() {
-        return TokenPrinter.printTokens(tokenList, submissionRootFile);
+        return TokenPrinterUtils.printTokensByFile(tokenList);
     }
 
     @Override

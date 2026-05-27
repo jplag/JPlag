@@ -14,6 +14,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @param nonMatchAverage The average similarity of all submission outside the gold standard
  */
 public record GoldStandard(@JsonProperty double matchAverage, @JsonProperty double nonMatchAverage) {
+
+    /**
+     * Builds a GoldStandard object from a collection of comparisons.
+     * @param comparisonList the collection of JPlagComparison objects
+     * @param comparisonIdentifiers the set of comparison identifiers considered as matches
+     * @return a GoldStandard object containing average match and non-match similarities
+     */
     public static GoldStandard buildFromComparisons(Collection<JPlagComparison> comparisonList, Set<ComparisonIdentifier> comparisonIdentifiers) {
         DoubleSummaryStatistics match = new DoubleSummaryStatistics();
         DoubleSummaryStatistics nonMatch = new DoubleSummaryStatistics();

@@ -1,0 +1,52 @@
+name: Report Viewer Build
+
+on:
+ workflow_dispatch:
+ pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - ".github/workflows/report-viewer-build.yml"
+      - "report-viewer/**"
+      
+jobs:
+  pre_job:
+    runs-on: ubuntu-latest
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@v5
+        with:
+          concurrent_skipping: 'same_content_newer'
+          skip_after_successful_duplicate: 'true'
+
+  build:
+    needs: pre_job
+    if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v6
+      
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "lts/*"
+
+      - name: Set version of Report Viewer
+        shell: bash
+        run: |
+          VERSION=$(grep "<revision>" pom.xml | grep -oPm1 "(?<=<revision>)[^-|<]+")
+          MAJOR=$(echo $VERSION | cut -d '.' -f 1)
+          MINOR=$(echo $VERSION | cut -d '.' -f 2)
+          PATCH=$(echo $VERSION | cut -d '.' -f 3)
+          sed -i "/major/s/.*/    \"major\": $MAJOR,/" report-viewer/report-viewer/src/version/version.json
+          sed -i "/minor/s/.*/    \"minor\": $MINOR,/" report-viewer/report-viewer/src/version/version.json
+          sed -i "/patch/s/.*/    \"patch\": $PATCH/" report-viewer/report-viewer/src/version/version.json
+          echo "Version of Report Viewer:"
+          cat report-viewer/report-viewer/src/version/version.json
+
+      - name: Install and Build 🔧
+        working-directory: report-viewer/report-viewer
+        run: |
+          npm install
+          npm run build

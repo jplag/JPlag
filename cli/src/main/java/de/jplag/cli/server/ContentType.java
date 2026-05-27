@@ -1,7 +1,8 @@
 package de.jplag.cli.server;
 
 /**
- * Data types used by JPlag in the context of http. Contains the according mime type.
+ * Enum representing supported HTTP content types used by JPlag, each associated with its MIME type and optional file
+ * extension.
  */
 public enum ContentType {
     HTML("text/html; charset=utf-8", ".html"),
@@ -21,6 +22,10 @@ public enum ContentType {
         this.nameSuffix = nameSuffix;
     }
 
+    /**
+     * Returns the MIME type string for this content type.
+     * @return the MIME type
+     */
     public String getValue() {
         return value;
     }

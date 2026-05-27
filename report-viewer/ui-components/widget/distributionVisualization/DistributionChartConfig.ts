@@ -1,10 +1,10 @@
-import type { BucketOptions, MetricJsonIdentifier } from '@jplag/model'
+import type { BucketOptions, DistributionMetrics } from '@jplag/model'
 
 /**
  * Configuration for the distribution chart.
  */
 export interface DistributionChartConfig {
-  metric: MetricJsonIdentifier
+  metric: DistributionMetrics
   xScale: 'linear' | 'logarithmic'
   bucketCount: BucketOptions
 }

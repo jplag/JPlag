@@ -22,5 +22,8 @@ export class Distribution {
 }
 
 type BucketOptions = 10 | 20 | 25 | 50 | 100
-type DistributionMap = Record<MetricJsonIdentifier, Distribution>
+export type DistributionMetrics =
+  | MetricJsonIdentifier.AVERAGE_SIMILARITY
+  | MetricJsonIdentifier.MAXIMUM_SIMILARITY
+type DistributionMap = Record<DistributionMetrics, Distribution>
 export type { BucketOptions, DistributionMap }

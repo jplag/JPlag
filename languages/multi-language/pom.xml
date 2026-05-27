@@ -13,13 +13,11 @@
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>java</artifactId>
-            <version>${revision}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>cpp</artifactId>
-            <version>${revision}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

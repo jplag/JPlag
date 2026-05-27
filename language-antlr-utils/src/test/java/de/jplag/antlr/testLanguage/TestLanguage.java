@@ -8,6 +8,9 @@ import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
+/**
+ * Artificial ANTLR-based language for testing.
+ */
 public class TestLanguage implements Language {
 
     @Override

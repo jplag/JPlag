@@ -7,13 +7,15 @@ import java.util.Set;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.emf.EmfLanguage;
-import de.jplag.emf.dynamic.parser.DynamicEcoreParser;
 
 /**
  * Language for EMF metamodels from the Eclipse Modeling Framework (EMF). This language is based on a dynamically
  * created token set instead of a hand-picked one.
  * @author Timur Saglam
+ * @deprecated this language module was never available in JPlag as it was prototypical. It is now deprecated and should
+ * not be used, as it is non-functional and only serves as deprecation placeholder.
  */
+@Deprecated(since = "7.0.0", forRemoval = true)
 public class DynamicEmfLanguage extends EmfLanguage { // currently not included in the CLI
 
     @Override
@@ -27,12 +29,7 @@ public class DynamicEmfLanguage extends EmfLanguage { // currently not included 
     }
 
     @Override
-    public int minimumTokenMatch() {
-        return 10;
-    }
-
-    @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return new DynamicEcoreParser().parse(files, normalize);
+        throw new UnsupportedOperationException("Language module is deprecated and no longer supported!");
     }
 }

@@ -10,9 +10,13 @@ package de.jplag.merging;
  */
 public record MergingOptions(boolean enabled, int minimumNeighborLength, int maximumGapSize, int minimumRequiredMerges) {
 
+    /** default value merging being enabled. **/
     public static final boolean DEFAULT_ENABLED = false;
+    /** default value for the minimum neighbor length. **/
     public static final int DEFAULT_NEIGHBOR_LENGTH = 2;
+    /** default value for the maximum gap size. **/
     public static final int DEFAULT_GAP_SIZE = 6;
+    /** default value for the minimum number of required merges. **/
     public static final int DEFAULT_REQUIRED_MERGES = 6;
 
     /**

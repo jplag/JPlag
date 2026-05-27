@@ -3,7 +3,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
- * This is code from the Messages class of Jplag
+ * This is code from the Messages class of JPlag.
  */
 public class CertainlyNoDuplicate {
 

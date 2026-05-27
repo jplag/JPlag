@@ -15,7 +15,7 @@ import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 
 /**
- * Wraps the execution of the JPlag components
+ * Wraps the CLI-based execution of the JPlag components.
  */
 public final class JPlagRunner {
     private static final Logger logger = LoggerFactory.getLogger(JPlagRunner.class);

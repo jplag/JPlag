@@ -8,27 +8,25 @@
     </parent>
     <artifactId>emf-metamodel-dynamic</artifactId>
     <name>JPlag: EMF Metamodel (Dynamic) Language Module</name>
+    <description>DEPRECATED: This module has been removed as of v7.0.0.</description>
 
     <dependencies>
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>emf-metamodel</artifactId>
-            <version>${revision}</version>
         </dependency>
+
         <dependency>
             <groupId>org.eclipse.emf</groupId>
             <artifactId>org.eclipse.emf.ecore</artifactId>
-            <version>${emf.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.emf</groupId>
             <artifactId>org.eclipse.emf.common</artifactId>
-            <version>${emf.ecore.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.emf</groupId>
             <artifactId>org.eclipse.emf.ecore.xmi</artifactId>
-            <version>${emf.ecore.xmi.version}</version>
         </dependency>
     </dependencies>
 </project>
