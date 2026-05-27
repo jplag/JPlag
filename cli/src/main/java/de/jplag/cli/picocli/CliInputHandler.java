@@ -105,12 +105,12 @@ public class CliInputHandler {
     private CommandLine.Model.CommandSpec buildRootParametersForSubcommands() {
         CommandLine.Model.CommandSpec originalOptions = CommandLine.Model.CommandSpec.forAnnotatedObject(this.options);
         CommandLine.Model.CommandSpec hiddenOptions = CommandLine.Model.CommandSpec.create();
-        originalOptions.options().forEach(option -> {
+        for (CommandLine.Model.OptionSpec option : originalOptions.options()) {
             hiddenOptions.addOption(CommandLine.Model.OptionSpec.builder(option).hidden(true).required(false).build());
-        });
-        originalOptions.positionalParameters().forEach(parameter -> {
+        }
+        for (CommandLine.Model.PositionalParamSpec parameter : originalOptions.positionalParameters()) {
             hiddenOptions.addPositional(CommandLine.Model.PositionalParamSpec.builder(parameter).hidden(true).required(false).build());
-        });
+        }
         return hiddenOptions;
     }
 
