@@ -99,7 +99,10 @@ public class TokenCollector {
         }
 
         if (lines.length == 1) {
-            return Math.max(token.getCharPositionInLine() + lines[0].length(), 1);
+            if (lines[0].length() == 0) {
+                return token.getCharPositionInLine() + 1;
+            }
+            return token.getCharPositionInLine() + lines[0].length();
         } else {
             return lines[lines.length - 1].length() + 1;
         }
