@@ -49,7 +49,7 @@ public class Submission implements Comparable<Submission> {
     private List<Token> tokenList; // list of tokens from all files, used for comparison
     private JPlagComparison baseCodeComparison; // Comparison of thus submission with the base code
     private Map<File, Integer> fileTokenCount;
-    private List<Comment> comments; // list of comments from all files
+    private final List<Comment> comments; // list of comments from all files
 
     /**
      * Creates a submission.
@@ -206,7 +206,7 @@ public class Submission implements Comparable<Submission> {
      * @return the annotated code as string.
      */
     public String getTokenAnnotatedSourceCode() {
-        return TokenPrinter.printTokens(tokenList, submissionRootFile);
+        return TokenPrinterUtils.printTokensByFile(tokenList);
     }
 
     @Override
