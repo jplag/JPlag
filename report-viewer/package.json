@@ -6,7 +6,8 @@
   "workspaces": [
     "report-viewer/",
     "ui-components/",
-    "model/"
+    "model/",
+    "parser/"
   ],
   "scripts": {
     "format": "prettier --write .",
@@ -14,19 +15,19 @@
     "prepare": "git config --local core.hooksPath gitHooks/hooks"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.3",
-    "@eslint/js": "^9.39.1",
-    "@types/node": "^24.9.2",
+    "@eslint/eslintrc": "^3.3.5",
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^25.9.1",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.6.0",
-    "eslint": "^9.39.2",
-    "eslint-plugin-vue": "^10.6.2",
-    "globals": "^17.0.0",
-    "lint-staged": "^16.2.7",
-    "prettier": "^3.7.4",
-    "prettier-plugin-tailwindcss": "^0.7.2",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.52.0",
-    "vitest": "^4.0.16"
+    "eslint": "^10.3.0",
+    "eslint-plugin-vue": "^10.8.0",
+    "globals": "^17.6.0",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.8.3",
+    "prettier-plugin-tailwindcss": "^0.8.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.57.0",
+    "vitest": "^4.1.5"
   }
 }

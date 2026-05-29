@@ -28,7 +28,7 @@ public class ModelingElementIdentifierManager {
      * @return the identifier, that is unique for all elements of the same EClass.
      */
     public int getIdentifier(EObject element) {
-        Set<EObject> elements = elementToIdentifer.computeIfAbsent(element.eClass(), key -> new LinkedHashSet<>());
+        Set<EObject> elements = elementToIdentifer.computeIfAbsent(element.eClass(), _ -> new LinkedHashSet<>());
         int index = 0;
         for (EObject containedElement : elements) {
             if (containedElement.equals(element)) {

@@ -45,7 +45,7 @@ import de.jplag.regressiontest.model.ExpectedResult;
 import de.jplag.regressiontest.model.GoldStandard;
 import de.jplag.regressiontest.model.ResultDescription;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.jplag.reporting.serialization.JacksonUtils;
 
 /**
  * Main test suite for regression testing over all languages. The test suite aims to detect changes regarding the
@@ -69,7 +69,7 @@ class RegressionSuiteTest {
 
         Map<Language, List<DataSet>> dataSetsByLanguage = testDescriptorFiles.stream().map(testDescriptorFile -> {
             try {
-                return new ObjectMapper().readValue(testDescriptorFile, DataSet.class);
+                return JacksonUtils.createNewObjectMapper().readValue(testDescriptorFile, DataSet.class);
             } catch (IOException e) {
                 throw new IllegalStateException("The test descriptor " + testDescriptorFile.getName() + " is invalid.");
             }
@@ -107,7 +107,7 @@ class RegressionSuiteTest {
         List<DynamicContainer> testContainers = new LinkedList<>();
         Map<String, ResultDescription> results = new HashMap<>();
         try {
-            ResultDescription[] resultList = new ObjectMapper().readValue(dataSet.getResultFile(), ResultDescription[].class);
+            ResultDescription[] resultList = JacksonUtils.createNewObjectMapper().readValue(dataSet.getResultFile(), ResultDescription[].class);
             for (ResultDescription resultDescription : resultList) {
                 results.put(resultDescription.identifier(), resultDescription);
             }

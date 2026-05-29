@@ -1,25 +1,38 @@
 package de.jplag.emf.model;
 
 import java.io.File;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
 import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
-import de.jplag.emf.dynamic.DynamicEmfLanguage;
-import de.jplag.emf.model.parser.DynamicModelParser;
+import de.jplag.emf.EmfLanguage;
+import de.jplag.emf.model.parser.EmfModelParser;
+import de.jplag.options.LanguageOptions;
 
 import com.google.auto.service.AutoService;
 
 /**
- * Language for EMF metamodels from the Eclipse Modeling Framework (EMF). This language is based on a dynamically
- * created token set.
+ * Language for models conforming to the Eclipse Modeling Framework (EMF). This language is based on a dynamically
+ * created token set. When using the language, the metamodel files have to be passed via the language options.
  * @author Timur Saglam
  */
 @AutoService(Language.class)
-public class EmfModelLanguage extends DynamicEmfLanguage {
+public class EmfModelLanguage extends EmfLanguage {
+
+    /** File extension for the textual view. **/
+    public static final String VIEW_FILE_EXTENSION = ".treeview";
+
+    private static final String NO_METAMODEL_ERROR = "EMF model language module requires metamodel to be specified via language options!";
+    private final EmfLanguageOptions options;
+
+    /**
+     * Creates the language and its language options.
+     */
+    public EmfModelLanguage() {
+        options = new EmfLanguageOptions();
+    }
 
     @Override
     public List<String> fileExtensions() {
@@ -37,23 +50,26 @@ public class EmfModelLanguage extends DynamicEmfLanguage {
     }
 
     @Override
+    public int minimumTokenMatch() {
+        return 10;
+    }
+
+    @Override
     public String viewFileExtension() {
-        return ".treeview";
+        return VIEW_FILE_EXTENSION;
     }
 
     @Override
-    public boolean expectsSubmissionOrder() {
-        return true;
-    }
-
-    @Override
-    public List<File> customizeSubmissionOrder(List<File> sub) {
-        return sub.stream().sorted(Comparator.comparing(file -> file.getName().endsWith(FILE_ENDING) ? 0 : 1)).toList();
+    public LanguageOptions getOptions() {
+        return options;
     }
 
     @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return new DynamicModelParser().parse(files, normalize);
+        if (!options.getMetamodelPathOption().hasValue()) {
+            throw new ParsingException(files.iterator().next(), NO_METAMODEL_ERROR);
+        }
+        return new EmfModelParser().parse(files, normalize);
     }
 
     @Override

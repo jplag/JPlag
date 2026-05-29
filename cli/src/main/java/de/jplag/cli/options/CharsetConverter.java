@@ -16,7 +16,7 @@ public class CharsetConverter implements CommandLine.ITypeConverter<Charset> {
     public Charset convert(String value) throws Exception {
         try {
             return Charset.forName(value);
-        } catch (UnsupportedCharsetException | IllegalCharsetNameException e) {
+        } catch (UnsupportedCharsetException | IllegalCharsetNameException _) {
             throw new CliException("Invalid charset name: " + value);
         }
     }

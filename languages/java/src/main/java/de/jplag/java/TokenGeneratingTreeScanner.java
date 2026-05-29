@@ -1,6 +1,7 @@
 package de.jplag.java;
 
 import java.io.File;
+import java.util.Objects;
 import java.util.Set;
 
 import de.jplag.Token;
@@ -57,6 +58,7 @@ import com.sun.source.util.TreeScanner;
 
 final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     private final static String ANONYMOUS_VARIABLE_NAME = "";
+    private static final String ENUM_MARKER = "/*enum*/";
 
     private final File file;
     private final Parser parser;
@@ -148,7 +150,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         } else if (node.getKind() == Tree.Kind.INTERFACE) {
             addToken(JavaTokenType.J_INTERFACE_BEGIN, start, 9, semantics);
         } else if (node.getKind() == Tree.Kind.RECORD) {
-            addToken(JavaTokenType.J_RECORD_BEGIN, start, 1, semantics);
+            addToken(JavaTokenType.J_RECORD_BEGIN, start, 6, semantics);
         } else if (node.getKind() == Tree.Kind.ANNOTATION_TYPE) {
             long nameLength = node.getSimpleName().length();
             // The start position for the is calculated that way, because the @ is the final element in the modifier list for
@@ -187,7 +189,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     private long extractStartPosition(ClassTree node) {
         boolean hasModifiers = !node.getModifiers().getFlags().isEmpty();
         long endPosition = positions.getEndPosition(ast, node.getModifiers());
-        if (hasModifiers && endPosition != -1) { // Java 25 compact source files have implicit (final) classes.
+        if (hasModifiers && endPosition > 0) { // Java 25 compact source files have implicit (final) classes.
             return endPosition + 1;
         }
         return positions.getStartPosition(ast, node);
@@ -333,7 +335,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
             end = positions.getEndPosition(ast, node.getFinallyBlock());
             addToken(JavaTokenType.J_FINALLY_END, end, 1, CodeSemantics.createControl());
         }
-        addToken(JavaTokenType.J_TRY_END, end, 1, CodeSemantics.createControl());
+        addToken(JavaTokenType.J_TRY_END, end - 1, 1, CodeSemantics.createControl());
         return null;
     }
 
@@ -404,10 +406,15 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
 
     @Override
     public Void visitNewClass(NewClassTree node, Void unused) {
+        // NEWCLASS token should span the class name, not the arguments.
         long start = positions.getStartPosition(ast, node);
         long end = positions.getEndPosition(ast, node.getIdentifier());
         if (!node.getTypeArguments().isEmpty()) {
             addToken(JavaTokenType.J_GENERIC, start, 3 + node.getIdentifier().toString().length(), new CodeSemantics());
+        }
+        if (start > end) {
+            // implicit constructor call for ENUMS - identifier is not present in code, so end needs to be fixed.
+            end = positions.getEndPosition(ast, node) - 1;
         }
         addToken(JavaTokenType.J_NEWCLASS, start, end, new CodeSemantics());
         super.visitNewClass(node, null);
@@ -431,7 +438,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         scan(node.getDimensions(), null);
         boolean hasInit = node.getInitializers() != null && !node.getInitializers().isEmpty();
         if (hasInit) {
-            start = positions.getStartPosition(ast, node.getInitializers().get(0));
+            start = positions.getStartPosition(ast, node.getInitializers().getFirst());
             addToken(JavaTokenType.J_ARRAY_INIT_BEGIN, start, 1, new CodeSemantics());
         }
         scan(node.getInitializers(), null);
@@ -483,8 +490,15 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     public Void visitVariable(VariableTree node, Void unused) {
         if (!node.getName().contentEquals(ANONYMOUS_VARIABLE_NAME)) {
             long start = positions.getStartPosition(ast, node);
-            long end = positions.getEndPosition(ast, node) - 1;
-            end -= node.getInitializer() == null ? 0 : node.getInitializer().toString().length();
+            long end = positions.getEndPosition(ast, node);
+            if (Objects.isNull(node.getInitializer())) {
+                // VARDEF token should end before semicolon
+                end -= 1;
+            } else if (!node.toString().contains(ENUM_MARKER)) {
+                // VARDEF token should end before assigned value
+                end -= node.getInitializer().toString().length();
+            } // else: for enum constants, end is already correct.
+
             String name = node.getName().toString();
             boolean inLocalScope = variableRegistry.inLocalScope();
             // this presents a problem when classes are declared in local scopes, which can happen in ad-hoc implementations
@@ -572,8 +586,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     @Override
     public Void visitYield(YieldTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        long end = positions.getEndPosition(ast, node);
-        addToken(JavaTokenType.J_YIELD, start, end, CodeSemantics.createControl());
+        addToken(JavaTokenType.J_YIELD, start, 5, CodeSemantics.createControl());
         return super.visitYield(node, null);
     }
 

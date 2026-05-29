@@ -25,6 +25,8 @@ public class TestDataCollector {
     private final List<TokenListTest> tokenSequenceTest;
     private final List<TokenPositionTestData> tokenPositionTestData;
 
+    private final List<TestData> exceptionTestFile;
+
     private final List<TestData> allTestData;
 
     private final File testFileLocation;
@@ -41,6 +43,8 @@ public class TestDataCollector {
         this.containedTokenData = new ArrayList<>();
         this.tokenSequenceTest = new ArrayList<>();
         this.tokenPositionTestData = new ArrayList<>();
+
+        this.exceptionTestFile = new ArrayList<>();
 
         this.allTestData = new ArrayList<>();
     }
@@ -104,6 +108,18 @@ public class TestDataCollector {
     }
 
     /**
+     * Adds tests for invalid source files. No other tests will be run on these files
+     * @param exceptionTestsDirectory The directory containing the test data
+     */
+    public void addExceptionTests(String exceptionTestsDirectory) {
+        File directory = new File(this.testFileLocation, exceptionTestsDirectory);
+        assumeTrue(directory.exists() && directory.isDirectory());
+        for (File file : directory.listFiles()) {
+            this.exceptionTestFile.add(new FileTestData(file));
+        }
+    }
+
+    /**
      * @return The test data that should be checked for source coverage
      */
     public List<TestData> getSourceCoverageData() {
@@ -143,6 +159,13 @@ public class TestDataCollector {
      */
     public List<TestData> getAllTestData() {
         return Collections.unmodifiableList(allTestData);
+    }
+
+    /**
+     * @return The test data for invalid source files
+     */
+    public List<TestData> getExceptionTestFile() {
+        return exceptionTestFile;
     }
 
     /**

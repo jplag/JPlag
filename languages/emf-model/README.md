@@ -1,5 +1,5 @@
 # Dynamic EMF model language module
-The dynamic EMF model language module allows the use of JPlag with model submissions.
+The EMF model language module allows the use of JPlag with EMF based modeling file submissions.
 It is based on the EMF API.
 
 ### EMF specification compatibility
@@ -10,8 +10,13 @@ For the token extraction, we visit the containment tree of the model and extract
 
 ### Usage
 The input for this is an EMF metamodel and a set of corresponding instances.
-To ensure only the intended files are parsed, you can use `-p` to specify allowed file types: `-p ecore,xmi,mysuffix`.
-To use this module, add the `-l emf-model` flag in the CLI, or use a `JPlagOption` object with `new DynamicEmfLanguage()` as `language` in the Java API as described in the usage information in the [readme of the main project](https://github.com/jplag/JPlag#usage) and [in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).
+To use this module, add the `emf-model` subcommand in the CLI, or use a `JPlagOption` object with `new EmfModelLanguage()` as `language` in the Java API as described in the usage information in the [readme of the main project](https://github.com/jplag/JPlag#usage) and [in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).
+
+In order to correctly parse model instances, the required metamodel files need to be specified. This can be done via the language options of the `emf-model` language (see the language options via `jplag.jar emf-model -h`). Specify one or more metamodel files like this (multiple paths are comma-separated):
+
+`java -jar jplag.jar path/to/model/instances emf-model --metamodel path/to/metamodel/file.ecore`
+
+To ensure only the intended model files are parsed in the submissions, you can use `-p` to specify allowed file types, for example: `-p ecore,xmi,mysuffix`. Note: Normal JPlag parameters need to be specified before the `emf-model` language identifier.
 
 ### Report Viewer
 In the report viewer, a simple textual syntax is used to generate a tree-based model view.
