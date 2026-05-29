@@ -44,7 +44,6 @@ import de.jplag.regressiontest.model.DataSetRunConfiguration;
 import de.jplag.regressiontest.model.ExpectedResult;
 import de.jplag.regressiontest.model.GoldStandard;
 import de.jplag.regressiontest.model.ResultDescription;
-
 import de.jplag.reporting.serialization.JacksonUtils;
 
 /**
