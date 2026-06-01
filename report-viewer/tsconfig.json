@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "module": "esnext",
     "target": "ES2022",
     "lib": ["ES2022", "DOM"],
@@ -10,7 +10,6 @@
     "skipLibCheck": true,
     "noEmit": false,
     "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true,
     "types": []
   },
   "references": [

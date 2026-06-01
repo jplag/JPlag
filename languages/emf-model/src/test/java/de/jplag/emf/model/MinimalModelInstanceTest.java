@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import de.jplag.ParsingException;
 import de.jplag.Token;
-import de.jplag.TokenPrinter;
+import de.jplag.TokenPrinterUtils;
 import de.jplag.testutils.FileUtil;
 
 class MinimalModelInstanceTest {
@@ -52,7 +51,8 @@ class MinimalModelInstanceTest {
         try {
             List<Token> tokens = language.parse(new HashSet<>(baseFiles), true);
             assertNotEquals(0, tokens.size());
-            logger.debug(TokenPrinter.printTokens(tokens, baseDirectory, Optional.of(EmfModelLanguage.VIEW_FILE_EXTENSION)));
+            logger.debug(
+                    TokenPrinterUtils.printTokensByFile(tokens, file -> new File(file.getAbsolutePath() + EmfModelLanguage.VIEW_FILE_EXTENSION)));
             logger.info("Parsed tokens: " + tokens);
             assertEquals(7, tokens.size());
         } catch (ParsingException e) {

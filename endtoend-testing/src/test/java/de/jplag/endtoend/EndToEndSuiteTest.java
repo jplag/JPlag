@@ -44,8 +44,7 @@ import de.jplag.endtoend.model.ResultDescription;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.SimilarityMetric;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.jplag.reporting.serialization.JacksonUtils;
 
 /**
  * Main test suite for end-to-end testing over all languages. The test suite aims to detect changes regarding the
@@ -69,7 +68,7 @@ class EndToEndSuiteTest {
 
         Map<Language, List<DataSet>> dataSetsByLanguage = testDescriptorFiles.stream().map(testDescriptorFile -> {
             try {
-                return new ObjectMapper().readValue(testDescriptorFile, DataSet.class);
+                return JacksonUtils.createNewObjectMapper().readValue(testDescriptorFile, DataSet.class);
             } catch (IOException e) {
                 throw new IllegalStateException("The test descriptor " + testDescriptorFile.getName() + " is invalid.");
             }
@@ -107,7 +106,7 @@ class EndToEndSuiteTest {
         List<DynamicContainer> testContainers = new LinkedList<>();
         Map<String, ResultDescription> results = new HashMap<>();
         try {
-            ResultDescription[] resultList = new ObjectMapper().readValue(dataSet.getResultFile(), ResultDescription[].class);
+            ResultDescription[] resultList = JacksonUtils.createNewObjectMapper().readValue(dataSet.getResultFile(), ResultDescription[].class);
             for (ResultDescription resultDescription : resultList) {
                 results.put(resultDescription.identifier(), resultDescription);
             }
