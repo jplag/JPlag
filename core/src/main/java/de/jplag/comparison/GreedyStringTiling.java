@@ -13,6 +13,7 @@ import de.jplag.JPlagComparison;
 import de.jplag.Match;
 import de.jplag.Submission;
 import de.jplag.Token;
+import de.jplag.TokenEquivalenceModel;
 import de.jplag.options.JPlagOptions;
 
 /**
@@ -31,9 +32,10 @@ public class GreedyStringTiling {
     private final Map<Submission, RollingTokenHashTable> cachedHashLookupTables = Collections.synchronizedMap(new IdentityHashMap<>());
 
     private final TokenSequenceMapper tokenSequenceMapper;
+    private final TokenEquivalenceModel tokenEquivalenceModel;
 
     /**
-     * Creates a instance of the Greedy String Tiling algorithm.
+     * Creates an instance of the Greedy String Tiling algorithm.
      * @param options are the options, controlling algorithm parameters like minimum token match.
      * @param tokenValueMapper provides integer mappings for token sequences.
      */
@@ -43,6 +45,7 @@ public class GreedyStringTiling {
         int minimumNeighborLength = Math.clamp(options.mergingOptions().minimumNeighborLength(), 1, options.minimumTokenMatch());
 
         this.minimumMatchLength = options.mergingOptions().enabled() ? minimumNeighborLength : options.minimumTokenMatch();
+        this.tokenEquivalenceModel = options.language().getTokenEquivalenceModel();
 
         this.tokenSequenceMapper = tokenValueMapper;
     }
@@ -109,6 +112,10 @@ public class GreedyStringTiling {
         int[] leftTokens = this.tokenSequenceMapper.getTokenSequenceFor(leftSubmission);
         int[] rightTokens = this.tokenSequenceMapper.getTokenSequenceFor(rightSubmission);
 
+        if (!tokenEquivalenceModel.ensureTokenType(leftSubmission.getTokenList())
+                || !tokenEquivalenceModel.ensureTokenType(rightSubmission.getTokenList())) {
+            throw new IllegalStateException("Token equivalence model requires specific token types, but they are not given.");
+        }
         boolean[] leftExcludedTokens = calculateExcludedTokens(leftSubmission);
         boolean[] rightExcludedTokens = calculateExcludedTokens(rightSubmission);
 
@@ -134,7 +141,7 @@ public class GreedyStringTiling {
                     }
 
                     int subsequenceMatchLength = findLongestUnmarkedMatch(leftTokens, leftStartIndex, leftExcludedTokens, rightTokens,
-                            rightStartIndex, rightExcludedTokens, maximumMatchLength);
+                            rightStartIndex, rightExcludedTokens, maximumMatchLength, leftSubmission.getTokenList(), rightSubmission.getTokenList());
                     if (subsequenceMatchLength >= maximumMatchLength) {
                         if (subsequenceMatchLength > maximumMatchLength) {
                             iterationMatches.clear();
@@ -177,17 +184,21 @@ public class GreedyStringTiling {
      * length.
      */
     private int findLongestUnmarkedMatch(int[] leftValues, int leftStartIndex, boolean[] leftMarked, int[] rightValues, int rightStartIndex,
-            boolean[] rightMarked, int minimumSequenceLength) {
+            boolean[] rightMarked, int minimumSequenceLength, List<Token> leftTokens, List<Token> rightTokens) {
         for (int offset = minimumSequenceLength - 1; offset >= 0; offset--) {
             int leftIndex = leftStartIndex + offset;
             int rightIndex = rightStartIndex + offset;
-            if (leftValues[leftIndex] != rightValues[rightIndex] || leftMarked[leftIndex] || rightMarked[rightIndex]) {
+            if (!tokenEquivalenceModel.arePrimaryEquivalent(leftValues[leftIndex], rightValues[rightIndex])
+                    || !tokenEquivalenceModel.areSecondaryEquivalent(leftTokens.get(leftIndex).getType(), rightTokens.get(rightIndex).getType())
+                    || leftMarked[leftIndex] || rightMarked[rightIndex]) {
                 return 0;
             }
         }
         int offset = minimumSequenceLength;
-        while (leftValues[leftStartIndex + offset] == rightValues[rightStartIndex + offset] && !leftMarked[leftStartIndex + offset]
-                && !rightMarked[rightStartIndex + offset]) {
+        while (tokenEquivalenceModel.arePrimaryEquivalent(leftValues[leftStartIndex + offset], rightValues[rightStartIndex + offset])
+                && tokenEquivalenceModel.areSecondaryEquivalent(leftTokens.get(leftStartIndex + offset).getType(),
+                        rightTokens.get(rightStartIndex + offset).getType())
+                && !leftMarked[leftStartIndex + offset] && !rightMarked[rightStartIndex + offset]) {
             offset++;
         }
         return offset;

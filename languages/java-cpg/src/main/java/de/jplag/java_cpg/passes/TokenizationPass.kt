@@ -1,0 +1,66 @@
+package de.jplag.java_cpg.passes
+
+import de.fraunhofer.aisec.cpg.TranslationContext
+import de.fraunhofer.aisec.cpg.TranslationResult
+import de.fraunhofer.aisec.cpg.graph.Name
+import de.fraunhofer.aisec.cpg.passes.order.DependsOn
+import de.jplag.Token
+import de.jplag.TokenType
+import de.jplag.java_cpg.token.TokenizationCpgNodeListener
+import de.jplag.java_cpg.token.cpg.CpgToken
+import de.jplag.java_cpg.token.cpg.CpgTokenConsumer
+import de.jplag.java_cpg.visitor.NodeOrderStrategy
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import java.io.File
+import java.util.function.Consumer
+
+/**
+ * This pass tokenizes the [TranslationResult].
+ */
+@DependsOn(VectorCalculationPass::class)
+class TokenizationPass(ctx: TranslationContext) : AResultVisitingPass(ctx) {
+
+    private val tokenList = ArrayList<Token>()
+    private val consumer: CpgTokenConsumer
+    override val strategy = NodeOrderStrategy(false)
+
+    init {
+        this.consumer = ConcreteCpgTokenConsumer()
+    }
+
+    override fun cleanup() {
+        logger.info("Found %d tokens".format(tokenList.size))
+    }
+
+    override fun doBeforeTraversal() {
+        tokenList.clear()
+    }
+
+    override fun createListener(): TokenizationCpgNodeListener {
+        return TokenizationCpgNodeListener(consumer)
+    }
+
+    override fun doAfterTraversal() {
+        callback!!.accept(tokenList)
+    }
+
+    private inner class ConcreteCpgTokenConsumer : CpgTokenConsumer() {
+        override fun addToken(
+            type: TokenType,
+            file: File,
+            rowBegin: Int,
+            colBegin: Int,
+            length: Int,
+            name: Name
+        ) {
+            val token = CpgToken(type, file, rowBegin, colBegin, length, name)
+            tokenList.add(token)
+        }
+    }
+
+    companion object {
+        var callback: Consumer<List<Token>>? = null
+        val logger: Logger = LoggerFactory.getLogger(TokenizationPass::class.java)
+    }
+}

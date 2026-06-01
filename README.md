@@ -67,7 +67,7 @@ JPlag is released on [Maven Central](https://search.maven.org/search?q=de.jplag)
 </dependency>
 ```
 
-### Building from sources 
+### Building from sources
 1. Download or clone the code from this repository.
 2. Run `mvn clean package` from the repository root to compile and build all submodules.
    Run `mvn clean package assembly:single` instead if you need the full jar, which includes all dependencies.
@@ -107,7 +107,7 @@ Parameter descriptions:
                         Root-directories with submissions to check for
                           plagiarism (same as root).
       --normalize       Activate the normalization of tokens. Supported for
-                          languages: Java, C++.
+                          languages: Java, Java-CPG, C++.
       -old, --old=<oldDirectories>[,<oldDirectories>...]
                         Root-directories with prior submissions to compare
                           against.

@@ -100,6 +100,10 @@
         <version.scalameta>4.17.0</version.scalameta>
         <version.slf4j>2.0.18</version.slf4j>
         <version.metainf>1.11</version.metainf>
+        <!-- CPG -->
+        <version.cpg>8.0.0</version.cpg>
+        <cpg.groupId>de.fraunhofer.aisec</cpg.groupId>
+        <version.kotlin>2.3.10</version.kotlin>
 
         <!-- Plugin versions -->
         <version.plugin.antlr4>${version.antlr4}</version.plugin.antlr4>
@@ -121,6 +125,7 @@
         <version.plugin.maven.surefire>3.5.5</version.plugin.maven.surefire>
         <version.plugin.spotless>3.5.1</version.plugin.spotless>
 
+        <version.plugin.kotlin>${version.kotlin}</version.plugin.kotlin>
         <!-- ensure that this variable is initialized, even if it is empty -->
         <argLine/>
 
@@ -467,6 +472,44 @@
                 <artifactId>multi-language</artifactId>
                 <version>${revision}</version>
             </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>java-cpg</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>${cpg.groupId}</groupId>
+                <artifactId>cpg-core</artifactId>
+                <version>${version.cpg}</version>
+
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-slf4j2-impl</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>${cpg.groupId}</groupId>
+                <artifactId>cpg-language-java</artifactId>
+                <version>${version.cpg}</version>
+            </dependency>
+            <dependency>
+                <groupId>${cpg.groupId}</groupId>
+                <artifactId>cpg-analysis</artifactId>
+                <version>${version.cpg}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib-jdk8</artifactId>
+                <version>${version.kotlin}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-test</artifactId>
+                <version>${version.kotlin}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -746,6 +789,7 @@
                     <version>${version.plugin.maven.javadoc}</version>
                     <configuration>
                         <sourcepath>src/main/java;target/generated-sources/annotations;target/generated-sources/antlr4;target/generated-sources/javacc</sourcepath>
+                        <failOnError>false</failOnError>
                     </configuration>
                     <executions>
                         <execution>

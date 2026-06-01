@@ -9,6 +9,7 @@ import de.jplag.SharedTokenType;
 import de.jplag.Submission;
 import de.jplag.SubmissionSet;
 import de.jplag.Token;
+import de.jplag.TokenEquivalenceModel;
 import de.jplag.TokenType;
 import de.jplag.logging.ProgressBarLogger;
 import de.jplag.logging.ProgressBarType;
@@ -21,13 +22,16 @@ import de.jplag.logging.ProgressBarType;
 public class TokenSequenceMapper {
     private final Map<TokenType, Integer> tokenTypeToId;
     private final Map<Submission, int[]> submissionToTokenSequence;
+    private final TokenEquivalenceModel tokenEquivalenceModel;
 
     /**
      * Creates the submission to token ID mapping for a set of submissions. This will also show the progress to the user
      * using the {@link ProgressBarLogger}.
+     * @param tokenEquivalenceModel the model to use for token type equivalence.
      * @param submissionSet is the set of submissions to process.
      */
-    public TokenSequenceMapper(SubmissionSet submissionSet) {
+    public TokenSequenceMapper(TokenEquivalenceModel tokenEquivalenceModel, SubmissionSet submissionSet) {
+        this.tokenEquivalenceModel = tokenEquivalenceModel;
         tokenTypeToId = new HashMap<>();
         submissionToTokenSequence = new IdentityHashMap<>();
 
@@ -47,7 +51,7 @@ public class TokenSequenceMapper {
         List<Token> tokens = submission.getTokenList();
         int[] tokenSequence = new int[tokens.size()];
         for (int i = 0; i < tokens.size(); i++) {
-            TokenType type = tokens.get(i).getType();
+            TokenType type = tokenEquivalenceModel.getPrimaryType(tokens.get(i));
             tokenTypeToId.putIfAbsent(type, tokenTypeToId.size());
             tokenSequence[i] = tokenTypeToId.get(type);
         }

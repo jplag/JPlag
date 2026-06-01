@@ -101,7 +101,7 @@ public class LongestCommonSubsequenceSearch {
         long startTimeMillis = System.currentTimeMillis();
 
         // Set up data structures:
-        TokenSequenceMapper tokenSequenceMapper = new TokenSequenceMapper(submissionSet);
+        TokenSequenceMapper tokenSequenceMapper = new TokenSequenceMapper(options.language().getTokenEquivalenceModel(), submissionSet);
         GreedyStringTiling coreAlgorithm = new GreedyStringTiling(options, tokenSequenceMapper);
 
         // Prepare base code comparisons:

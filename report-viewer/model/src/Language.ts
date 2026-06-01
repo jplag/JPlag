@@ -11,6 +11,7 @@ enum ParserLanguage {
   EMF_METAMODEL = 'emf',
   EMF_MODEL = 'emf-model',
   GO = 'go',
+  JAVA_CPG = 'Java CPG Module',
   KOTLIN = 'kotlin',
   R_LANG = 'rlang',
   RUST = 'rust',
