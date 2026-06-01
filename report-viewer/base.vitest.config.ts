@@ -4,7 +4,7 @@ export default defineConfig({
   test: {
     coverage: {
       provider: 'v8',
-      reporter: ['text-summary', ['lcov', { file: 'coverage.lcov' }]],
+      reporter: ['text-summary', ['lcovonly', { file: 'coverage.lcov' }]],
       reportsDirectory: './coverage',
       exclude: ['**/tests/**']
     }

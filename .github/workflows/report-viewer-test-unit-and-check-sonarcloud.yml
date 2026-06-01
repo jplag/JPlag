@@ -1,12 +1,18 @@
-name: Report Viewer Unit Test
+name: Report Viewer Unit Test / SonarCloud
 
 on:
   workflow_dispatch:
-  pull_request:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - "report-viewer/**"
+      - ".github/workflows/report-viewer-test-unit-and-check-sonarcloud.yml"
     types: [opened, synchronize, reopened]
     paths:
-      - ".github/workflows/report-viewer-test-unit.yml"
       - "report-viewer/**"
+      - ".github/workflows/report-viewer-test-unit-and-check-sonarcloud.yml"
 
 jobs:
   pre_job:
@@ -20,12 +26,12 @@ jobs:
           concurrent_skipping: 'same_content_newer'
           skip_after_successful_duplicate: 'true'
 
-  test:
+  test_and_sonarcloud:
     needs: pre_job
     if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout 🛎️
+      - name: Checkout
         uses: actions/checkout@v6
 
       - uses: actions/setup-node@v6
@@ -52,3 +58,12 @@ jobs:
         working-directory: report-viewer/report-viewer
         run: |
           npm run test:unit
+      
+      - name: SonarCloud Scan
+        if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
+        uses: SonarSource/sonarqube-scan-action@v8.1.0
+        with:
+          projectBaseDir: report-viewer
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_REPORT_VIEWER }}
