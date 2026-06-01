@@ -152,6 +152,33 @@ describe('Test Report File Handling', () => {
       params: { version: '2.0.0' }
     })
   })
+
+  it('Test error when report not loaded', () => {
+    expect(reportStore().isReportLoaded()).toBeFalsy()
+    expect(() => reportStore().getSubmissionCount()).toThrow()
+    expect(() => reportStore().getReportFileName()).toThrow()
+    expect(() => reportStore().includedComparisonCount()).toThrow()
+    expect(() => reportStore().getCluster(0)).toThrow()
+    expect(() => reportStore().getCliOptions()).toThrow()
+    expect(() => reportStore().getDistributions()).toThrow()
+    expect(() => reportStore().getRunInformation()).toThrow()
+    expect(() => reportStore().getTopComparisons()).toThrow()
+    expect(() => reportStore().getAllClusters()).toThrow()
+    expect(() => reportStore().getSubmissionIds()).toThrow()
+  })
+
+  it('Test ids that are not in report', () => {
+    reportStore().loadReport(mockFiles, submissionFiles, 'test')
+    expect(reportStore().isReportLoaded()).toBeTruthy()
+
+    expect(reportStore().getComparison('test1', 'test2')).toBeDefined()
+    // We check that the error message includes the name of the unknown submission
+    expect(() => reportStore().getComparison('test1', 'Unknown2')).toThrow('Unknown2')
+    expect(() => reportStore().getComparison('Unknown1', 'test2')).toThrow('Unknown1')
+
+    expect(reportStore().getBaseCodeReport('test1')).toBeDefined()
+    expect(() => reportStore().getBaseCodeReport('Unknown')).toThrow('Unknown')
+  })
 })
 
 function buildOldVersionInfo(
