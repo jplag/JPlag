@@ -20,7 +20,7 @@
     "vue": "^3.5.34"
   },
   "scripts": {
-    "test": "vitest"
+    "test": "vitest --coverage"
   },
   "devDependencies": {
     "@vue/test-utils": "^2.4.10",
