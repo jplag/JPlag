@@ -9,6 +9,7 @@ on:
     paths:
       - "report-viewer/**"
       - ".github/workflows/report-viewer-test-unit-and-check-sonarcloud.yml"
+  pull_request:
     types: [opened, synchronize, reopened]
     paths:
       - "report-viewer/**"
