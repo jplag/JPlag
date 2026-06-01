@@ -1,11 +1,14 @@
 package de.jplag.cli;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Objects;
 
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 
 import de.jplag.JPlagResult;
@@ -27,7 +30,7 @@ class OutputFileGeneratorTest {
         options.advanced.csvExport = true;
         OutputFileGenerator.generateCsvOutput(testResult, dir, options);
 
-        Assertions.assertEquals(3, Objects.requireNonNull(dir.list()).length);
+        assertEquals(3, Objects.requireNonNull(dir.list()).length);
     }
 
     @Test
@@ -37,18 +40,18 @@ class OutputFileGeneratorTest {
         options.advanced.csvExport = false;
         OutputFileGenerator.generateCsvOutput(testResult, dir, options);
 
-        Assertions.assertEquals(0, Objects.requireNonNull(dir.list()).length);
+        assertEquals(0, Objects.requireNonNull(dir.list()).length);
     }
 
     @Test
     void testWriteCsvNonWritable() throws IOException {
         File dir = Files.createTempDirectory("jplagCsvTest").toFile();
-        dir.setWritable(false);
+        Assumptions.assumeTrue(dir.setWritable(false));
         CliOptions options = new CliOptions();
         options.advanced.csvExport = true;
         OutputFileGenerator.generateCsvOutput(testResult, dir, options);
 
-        Assertions.assertEquals(0, Objects.requireNonNull(dir.list()).length);
+        assertEquals(0, Objects.requireNonNull(dir.list()).length);
     }
 
     @Test
@@ -57,6 +60,6 @@ class OutputFileGeneratorTest {
 
         OutputFileGenerator.generateJPlagResultFile(testResult, resFile);
 
-        Assertions.assertTrue(resFile.length() > 0);
+        assertTrue(resFile.length() > 0);
     }
 }
