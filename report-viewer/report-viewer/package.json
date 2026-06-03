@@ -12,7 +12,7 @@
     "prebuild-dev-demo": "node pre-build.js",
     "type-check": "vue-tsc --noEmit --composite false",
     "test:e2e": "playwright test",
-    "test:unit": "vitest",
+    "test:unit": "vitest --coverage",
     "preview": "vite preview"
   },
   "dependencies": {

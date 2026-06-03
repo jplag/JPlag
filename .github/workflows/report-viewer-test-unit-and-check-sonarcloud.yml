@@ -1,0 +1,70 @@
+name: Report Viewer Unit Test / SonarCloud
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - "report-viewer/**"
+      - ".github/workflows/report-viewer-test-unit-and-check-sonarcloud.yml"
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "report-viewer/**"
+      - ".github/workflows/report-viewer-test-unit-and-check-sonarcloud.yml"
+
+jobs:
+  pre_job:
+    runs-on: ubuntu-latest
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@v5
+        with:
+          concurrent_skipping: 'same_content_newer'
+          skip_after_successful_duplicate: 'true'
+
+  test_and_sonarcloud:
+    needs: pre_job
+    if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "lts/*"
+
+      - name: Install
+        working-directory: report-viewer
+        run: |
+          npm install
+      - name: Test model
+        working-directory: report-viewer/model
+        run: |
+          npm run test
+      - name: Test parser
+        working-directory: report-viewer/parser
+        run: |
+          npm run test
+      - name: Test ui-components
+        working-directory: report-viewer/ui-components
+        run: |
+          npm run test
+      - name: Test report-viewer
+        working-directory: report-viewer/report-viewer
+        run: |
+          npm run test:unit
+      
+      - name: SonarCloud Scan
+        if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
+        uses: SonarSource/sonarqube-scan-action@v8.1.0
+        with:
+          projectBaseDir: report-viewer
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_REPORT_VIEWER }}

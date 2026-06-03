@@ -116,4 +116,12 @@ describe('Test Anonymization', () => {
     expect(reportStore().isAnonymized('test2')).toEqual(true)
     expect(reportStore().isAnonymized('test3')).toEqual(true)
   })
+
+  it('Test not loaded report', () => {
+    reportStore().reset()
+    expect(reportStore().isReportLoaded()).toBeFalsy()
+
+    expect(() => reportStore().getDisplayName('test1')).toThrow()
+    expect(() => reportStore().getPlainDisplayName('test1')).toThrow()
+  })
 })
