@@ -85,7 +85,7 @@ public class TokenCollector {
 
     private int calculateEndLineNumber(org.antlr.v4.runtime.Token token) {
         String[] lines = token.getText().split("\n", -1);
-        if (lines.length > 1 && lines[lines.length - 1].length() == 0) { // Ends on linebreak
+        if (lines.length > 1 && lines[lines.length - 1].isEmpty()) { // Ends on linebreak
             lines = Arrays.copyOf(lines, lines.length - 1);
         }
 
@@ -94,12 +94,12 @@ public class TokenCollector {
 
     private int calculateEndColumnNumber(org.antlr.v4.runtime.Token token) {
         String[] lines = token.getText().split("\n", -1);
-        if (lines.length > 1 && lines[lines.length - 1].length() == 0) { // Ends on linebreak
+        if (lines.length > 1 && lines[lines.length - 1].isEmpty()) { // Ends on linebreak
             lines = Arrays.copyOf(lines, lines.length - 1);
         }
 
         if (lines.length == 1) {
-            if (lines[0].length() == 0) {
+            if (lines[0].isEmpty()) {
                 return token.getCharPositionInLine() + 1;
             }
             return token.getCharPositionInLine() + lines[0].length();
