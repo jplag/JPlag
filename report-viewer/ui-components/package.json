@@ -10,20 +10,20 @@
     "highlight.js": "^11.11.1",
     "vue-chartjs": "^5.3.3",
     "vue-draggable-next": "^2.3.0",
-    "vue-virtual-scroller": "^2.0.0-beta.8"
+    "vue-virtual-scroller": "^3.0.3"
   },
   "peerDependencies": {
     "@fortawesome/free-solid-svg-icons": "^7.1.0",
     "@fortawesome/vue-fontawesome": "^3.2.0",
     "pinia": "^3.0.3",
-    "tailwindcss": "^4.2.4",
-    "vue": "^3.5.20"
+    "tailwindcss": "^4.3.0",
+    "vue": "^3.5.34"
   },
   "scripts": {
-    "test": "vitest"
+    "test": "vitest --coverage"
   },
   "devDependencies": {
-    "@vue/test-utils": "^2.4.6",
+    "@vue/test-utils": "^2.4.10",
     "jsdom": "^29.0.2"
   }
 }

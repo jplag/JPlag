@@ -178,7 +178,7 @@
                       class="tableCellCluster tableCell flex flex-col! items-center"
                     >
                       <RouterLink
-                        v-if="(item as ComparisonListElement).cluster"
+                        v-if="item.cluster"
                         :to="{
                           name: 'ClusterView',
                           params: { clusterIndex: item.cluster.index }
@@ -235,7 +235,7 @@ import NameElement from '../NameElement.vue'
 import ComparisonTableFilter from './ComparisonTableFilter.vue'
 import { Column, ComparisonTableSorting, Direction, type ColumnId } from './ComparisonSorting'
 import { MetricTypes } from '../MetricType'
-import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+import 'vue-virtual-scroller/index.css'
 
 const props = defineProps({
   topComparisons: {
