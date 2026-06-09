@@ -40,8 +40,8 @@ import static de.jplag.typescript.grammar.TypeScriptParser.Else;
 import static de.jplag.typescript.grammar.TypeScriptParser.Export;
 
 import de.jplag.antlr.AbstractAntlrListener;
+import de.jplag.typescript.grammar.TypeScriptParser;
 import de.jplag.typescript.grammar.TypeScriptParser.ArgumentsContext;
-import de.jplag.typescript.grammar.TypeScriptParser.ArrowFunctionDeclarationContext;
 import de.jplag.typescript.grammar.TypeScriptParser.AssignmentExpressionContext;
 import de.jplag.typescript.grammar.TypeScriptParser.BreakStatementContext;
 import de.jplag.typescript.grammar.TypeScriptParser.CaseClauseContext;
@@ -54,10 +54,11 @@ import de.jplag.typescript.grammar.TypeScriptParser.EnumDeclarationContext;
 import de.jplag.typescript.grammar.TypeScriptParser.EnumMemberContext;
 import de.jplag.typescript.grammar.TypeScriptParser.FinallyProductionContext;
 import de.jplag.typescript.grammar.TypeScriptParser.ForInStatementContext;
+import de.jplag.typescript.grammar.TypeScriptParser.ForOfStatementContext;
 import de.jplag.typescript.grammar.TypeScriptParser.ForStatementContext;
 import de.jplag.typescript.grammar.TypeScriptParser.ForVarStatementContext;
 import de.jplag.typescript.grammar.TypeScriptParser.FunctionDeclarationContext;
-import de.jplag.typescript.grammar.TypeScriptParser.FunctionExpressionDeclarationContext;
+import de.jplag.typescript.grammar.TypeScriptParser.FunctionExpressionContext;
 import de.jplag.typescript.grammar.TypeScriptParser.GetterSetterDeclarationExpressionContext;
 import de.jplag.typescript.grammar.TypeScriptParser.IfStatementContext;
 import de.jplag.typescript.grammar.TypeScriptParser.ImportStatementContext;
@@ -71,7 +72,6 @@ import de.jplag.typescript.grammar.TypeScriptParser.PreIncrementExpressionContex
 import de.jplag.typescript.grammar.TypeScriptParser.PropertyDeclarationExpressionContext;
 import de.jplag.typescript.grammar.TypeScriptParser.PropertySetterContext;
 import de.jplag.typescript.grammar.TypeScriptParser.PropertySignaturContext;
-import de.jplag.typescript.grammar.TypeScriptParser.ReturnStatementContext;
 import de.jplag.typescript.grammar.TypeScriptParser.SwitchStatementContext;
 import de.jplag.typescript.grammar.TypeScriptParser.ThrowStatementContext;
 import de.jplag.typescript.grammar.TypeScriptParser.TryStatementContext;
@@ -120,20 +120,21 @@ public class TypeScriptListener extends AbstractAntlrListener {
         visit(FunctionDeclarationContext.class).map(ASSIGNMENT);
         visit(FunctionDeclarationContext.class).map(METHOD_BEGIN, METHOD_END);
 
-        visit(ArrowFunctionDeclarationContext.class).map(METHOD_BEGIN, METHOD_END);
-        visit(FunctionExpressionDeclarationContext.class).map(METHOD_BEGIN, METHOD_END);
+        // visit(ArrowFunctionDeclarationContext.class).map(METHOD_BEGIN, METHOD_END);
+        visit(FunctionExpressionContext.class).map(METHOD_BEGIN, METHOD_END);
 
         visit(WhileStatementContext.class).map(WHILE_BEGIN, WHILE_END);
         visit(ForStatementContext.class).map(FOR_BEGIN, FOR_END);
         visit(ForVarStatementContext.class).map(FOR_BEGIN, FOR_END);
         visit(ForInStatementContext.class).map(FOR_BEGIN, FOR_END);
+        visit(ForOfStatementContext.class).map(FOR_BEGIN, FOR_END);
 
         visit(TryStatementContext.class).map(TRY_BEGIN);
         visit(CatchProductionContext.class).map(CATCH_BEGIN, CATCH_END);
         visit(FinallyProductionContext.class).map(FINALLY_BEGIN, FINALLY_END);
 
         visit(BreakStatementContext.class).map(BREAK);
-        visit(ReturnStatementContext.class).map(RETURN);
+        visit(TypeScriptParser.Return).map(RETURN);
         visit(ContinueStatementContext.class).map(CONTINUE);
         visit(ThrowStatementContext.class).map(THROW);
 
