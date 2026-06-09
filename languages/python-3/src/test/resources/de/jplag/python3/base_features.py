@@ -28,7 +28,7 @@ def isfuture(obj):
     See comment in Future for more details.
     """
     return (hasattr(obj.__class__, '_asyncio_future_blocking') and
-            obj._asyncio_future_blocking is not None)
+            obj._asyncio_future_blocking is not None) #test-ignore
 
 
 def _format_callbacks(cb):
