@@ -1,52 +1,53 @@
+//CHECKSTYLE:OFF
 package de.jplag.swift.grammar;
+
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.misc.Interval;
 
 import java.util.BitSet;
 
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.TokenStream;
-import org.antlr.v4.runtime.misc.Interval;
+public abstract class SwiftSupport extends Parser
+{
+    protected SwiftSupport(TokenStream input)
+    {
+        super(input);
+    }
 
-/**
- * Utility class for supporting Swift language parsing using ANTLR, taken from
- * https://github.com/antlr/grammars-v4/tree/master/swift/swift5 Commit 2f6c19cc742c60541227b19c45ac2acc844d9b1a.
- */
-public class SwiftSupport {
-    /*
-     * TODO There is one caveat to the rules above. If the ! or ? predefined operator has no whitespace on the left, it is
-     * treated as a postfix operator, regardless of whether it has whitespace on the right. To use the ? as the
-     * optional-chaining operator, it must not have whitespace on the left. To use it in the ternary conditional (? :)
-     * operator, it must have whitespace around both sides.
-     */
+    /* TODO
+    There is one caveat to the rules above. If the ! or ? predefined operator
+     has no whitespace on the left, it is treated as a postfix operator,
+     regardless of whether it has whitespace on the right. To use the ? as
+     the optional-chaining operator, it must not have whitespace on the left.
+      To use it in the ternary conditional (? :) operator, it must have
+      whitespace around both sides.
+    */
 
     /*
-     * operator-head : / = - + ! * % < > & | ^ ~ ? | [\u00A1-\u00A7] | [\u00A9\u00AB] | [\u00AC\u00AE] |
-     * [\u00B0-\u00B1\u00B6\u00BB\u00BF\u00D7\u00F7] | [\u2016-\u2017\u2020-\u2027] | [\u2030-\u203E] | [\u2041-\u2053] |
-     * [\u2055-\u205E] | [\u2190-\u23FF] | [\u2500-\u2775] | [\u2794-\u2BFF] | [\u2E00-\u2E7F] | [\u3001-\u3003] |
-     * [\u3008-\u3030] ;
-     */
-    /**
-     * Set of valid characters that can appear as operator head.
+    operator-head : /  =  -  +  !  *  %  <  >  &  |  ^  ~  ?
+      | [\u00A1-\u00A7]
+      | [\u00A9\u00AB]
+      | [\u00AC\u00AE]
+      | [\u00B0-\u00B1\u00B6\u00BB\u00BF\u00D7\u00F7]
+      | [\u2016-\u2017\u2020-\u2027]
+      | [\u2030-\u203E]
+      | [\u2041-\u2053]
+      | [\u2055-\u205E]
+      | [\u2190-\u23FF]
+      | [\u2500-\u2775]
+      | [\u2794-\u2BFF]
+      | [\u2E00-\u2E7F]
+      | [\u3001-\u3003]
+      | [\u3008-\u3030]
+      ;
      */
     public static final BitSet operatorHead = new BitSet(0x10000);
-    /**
-     * Set of valid characters that can appear anywhere in a Swift operator. This typically includes characters from
-     * {@code operatorHead} plus additional trailing characters.
-     */
     public static final BitSet operatorCharacter;
 
-    /**
-     * BitSet representing valid whitespace characters allowed on the left side of certain operators, used to determine
-     * operator context (e.g., prefix/postfix).
-     */
     public static final BitSet leftWS = new BitSet(255);
-    /**
-     * BitSet representing valid whitespace characters allowed on the right side of certain operators, used to determine
-     * operator context (e.g., postfix/infix).
-     */
     public static final BitSet rightWS = new BitSet(255);
 
     static {
-        // operator-head → / =­ -­ +­ !­ *­ %­ <­ >­ &­ |­ ^­ ~­ ?­
+        // operator-head → /  =­  -­  +­  !­  *­  %­  <­  >­  &­  |­  ^­  ~­  ?­
         operatorHead.set('/');
         operatorHead.set('=');
         operatorHead.set('-');
@@ -135,8 +136,8 @@ public class SwiftSupport {
 
         leftWS.set(Swift5Parser.WS);
         leftWS.set(Swift5Parser.LPAREN);
-        leftWS.set(Swift5Parser.Interpolataion_multi_line);
-        leftWS.set(Swift5Parser.Interpolataion_single_line);
+        leftWS.set(Swift5Parser.Interpolation_multi_line);
+        leftWS.set(Swift5Parser.Interpolation_single_line);
         leftWS.set(Swift5Parser.LBRACK);
         leftWS.set(Swift5Parser.LCURLY);
         leftWS.set(Swift5Parser.COMMA);
@@ -157,41 +158,29 @@ public class SwiftSupport {
     private static boolean isCharacterFromSet(Token token, BitSet bitSet) {
         if (token.getType() == Token.EOF) {
             return false;
+        } else {
+            String text = token.getText();
+            int codepoint = text.codePointAt(0);
+            if (Character.charCount(codepoint) != text.length()) {
+                // not a single character
+                return false;
+            } else {
+                return bitSet.get(codepoint);
+            }
         }
-        String text = token.getText();
-        int codepoint = text.codePointAt(0);
-        if (Character.charCount(codepoint) != text.length()) {
-            // not a single character
-            return false;
-        }
-        return bitSet.get(codepoint);
     }
 
-    /**
-     * Checks whether the given token is a valid operator head character.
-     * @param token The token to check.
-     * @return {@code true} if the token's character is in the operator head set; {@code false} otherwise.
-     */
     public static boolean isOperatorHead(Token token) {
         return isCharacterFromSet(token, operatorHead);
     }
 
-    /**
-     * Checks whether the given token is a valid operator character.
-     * @param token The token to check.
-     * @return {@code true} if the token's character is in the operator character set; {@code false} otherwise.
-     */
     public static boolean isOperatorCharacter(Token token) {
         return isCharacterFromSet(token, operatorCharacter);
     }
 
-    /**
-     * Determines whether the next sequence of tokens in the stream represents a valid operator.
-     * @param tokens The token stream to examine.
-     * @return {@code true} if there is a valid operator token sequence next; {@code false} otherwise.
-     */
     public static boolean isOpNext(TokenStream tokens) {
-        tokens.index();
+        int start = tokens.index();
+        Token lt = tokens.get(start);
         int stop = getLastOpTokenIndex(tokens);
         return stop != -1;
         // System.out.printf("isOpNext: i=%d t='%s'", start, lt.getText());
@@ -200,19 +189,19 @@ public class SwiftSupport {
 
     /**
      * Find stop token index of next operator; return -1 if not operator.
-     * @param tokens are the tokens search in.
-     * @return the token index.
      */
     public static int getLastOpTokenIndex(TokenStream tokens) {
         SwiftSupport.fillUp(tokens);
         int currentTokenIndex = tokens.index(); // current on-channel lookahead token index
         Token currentToken = tokens.get(currentTokenIndex);
 
-        // System.out.println("getLastOpTokenIndex: "+currentToken.getText());
+        //System.out.println("getLastOpTokenIndex: "+currentToken.getText());
+
 
         // operator → dot-operator-head­ dot-operator-characters
         if (currentToken.getType() == Swift5Parser.DOT && tokens.get(currentTokenIndex + 1).getType() == Swift5Parser.DOT) {
-            // System.out.println("DOT");
+            //System.out.println("DOT");
+
 
             // dot-operator
             currentTokenIndex += 2; // point at token after ".."
@@ -220,43 +209,43 @@ public class SwiftSupport {
 
             // dot-operator-character → .­ | operator-character­
             while (currentToken.getType() == Swift5Parser.DOT || isOperatorCharacter(currentToken)) {
-                // System.out.println("DOT");
+                //System.out.println("DOT");
                 currentTokenIndex++;
                 currentToken = tokens.get(currentTokenIndex);
             }
 
-            // System.out.println("result: "+(currentTokenIndex - 1));
+            //System.out.println("result: "+(currentTokenIndex - 1));
             return currentTokenIndex - 1;
         }
 
         // operator → operator-head­ operator-characters­?
 
-        if (!isOperatorHead(currentToken)) {
-            // System.out.println("result: "+(-1));
+        if (isOperatorHead(currentToken)) {
+            //System.out.println("isOperatorHead");
+
+            currentToken = tokens.get(currentTokenIndex);
+            while (isOperatorCharacter(currentToken)) {
+                //System.out.println("isOperatorCharacter");
+                currentTokenIndex++;
+                currentToken = tokens.get(currentTokenIndex);
+            }
+            //System.out.println("result: "+(currentTokenIndex - 1));
+            return currentTokenIndex - 1;
+        } else {
+            //System.out.println("result: "+(-1));
             return -1;
         }
-        currentToken = tokens.get(currentTokenIndex);
-        while (isOperatorCharacter(currentToken)) {
-            // System.out.println("isOperatorCharacter");
-            currentTokenIndex++;
-            currentToken = tokens.get(currentTokenIndex);
-        }
-        // System.out.println("result: "+(currentTokenIndex - 1));
-        return currentTokenIndex - 1;
     }
 
     /**
-     * "If an operator has whitespace around both sides or around neither side, it is treated as a binary operator. As an
-     * example, the + operator in a+b and a + b is treated as a binary operator.".
-     * @param tokens are the tokens check.
-     * @return true if it is one.
+     * "If an operator has whitespace around both sides or around neither side,
+     * it is treated as a binary operator. As an example, the + operator in a+b
+     * and a + b is treated as a binary operator."
      */
     public static boolean isBinaryOp(TokenStream tokens) {
         SwiftSupport.fillUp(tokens);
         int stop = getLastOpTokenIndex(tokens);
-        if (stop == -1) {
-            return false;
-        }
+        if (stop == -1) return false;
 
         int start = tokens.index();
         Token currentToken = tokens.get(start);
@@ -264,162 +253,132 @@ public class SwiftSupport {
         Token nextToken = tokens.get(stop + 1);
         boolean prevIsWS = isLeftOperatorWS(prevToken);
         boolean nextIsWS = isRightOperatorWS(nextToken);
-        // String text = tokens.getText(Interval.of(start, stop));
-        // System.out.println("isBinaryOp: '"+prevToken+"','"+text+"','"+nextToken+"' is "+result);
+        //String text = tokens.getText(Interval.of(start, stop));
+        //System.out.println("isBinaryOp: '"+prevToken+"','"+text+"','"+nextToken+"' is "+result);
+        // accept only '??'' as binary operator
+        if (currentToken.getType() == Swift5Lexer.QUESTION && start == stop) {
+            return false;
+        }
         if (prevIsWS) {
             return nextIsWS;
-        }
-        if (currentToken.getType() != Swift5Lexer.BANG && currentToken.getType() != Swift5Lexer.QUESTION && !nextIsWS) {
-            return nextToken.getType() != Swift5Lexer.DOT;
+        } else {
+            if (currentToken.getType() == Swift5Lexer.BANG || currentToken.getType() == Swift5Lexer.QUESTION) {
+                return false;
+            } else {
+                if (!nextIsWS) return nextToken.getType() != Swift5Lexer.DOT;
+            }
         }
         return false;
     }
 
     /**
-     * "If an operator has whitespace on the left side only, it is treated as a prefix unary operator. As an example, the ++
-     * operator in a ++b is treated as a prefix unary operator.".
-     * @param tokens are the tokens check.
-     * @return true if it is one.
+     * "If an operator has whitespace on the left side only, it is treated as a
+     * prefix unary operator. As an example, the ++ operator in a ++b is treated
+     * as a prefix unary operator."
      */
     public static boolean isPrefixOp(TokenStream tokens) {
         SwiftSupport.fillUp(tokens);
         int stop = getLastOpTokenIndex(tokens);
-        if (stop == -1) {
-            return false;
-        }
+        if (stop == -1) return false;
 
         int start = tokens.index();
         Token prevToken = tokens.get(start - 1); // includes hidden-channel tokens
         Token nextToken = tokens.get(stop + 1);
         boolean prevIsWS = isLeftOperatorWS(prevToken);
         boolean nextIsWS = isRightOperatorWS(nextToken);
-        // String text = tokens.getText(Interval.of(start, stop));
+        //String text = tokens.getText(Interval.of(start, stop));
         // System.out.println("isPrefixOp: '"+prevToken+"','"+text+"','"+nextToken+"' is "+result);
         return prevIsWS && !nextIsWS;
     }
 
     /**
-     * "If an operator has whitespace on the right side only, it is treated as a postfix unary operator. As an example, the
-     * ++ operator in a++ b is treated as a postfix unary operator."
+     * "If an operator has whitespace on the right side only, it is treated as a
+     * postfix unary operator. As an example, the ++ operator in a++ b is treated
+     * as a postfix unary operator."
      * <p>
-     * "If an operator has no whitespace on the left but is followed immediately by a dot (.), it is treated as a postfix
-     * unary operator. As an example, the ++ operator in a++.b is treated as a postfix unary operator (a++ .b rather than a
-     * ++ .b).".
-     * @param tokens are the tokens check.
-     * @return true if it is one.
+     * "If an operator has no whitespace on the left but is followed immediately
+     * by a dot (.), it is treated as a postfix unary operator. As an example,
+     * the ++ operator in a++.b is treated as a postfix unary operator (a++ .b
+     * rather than a ++ .b)."
      */
     public static boolean isPostfixOp(TokenStream tokens) {
         SwiftSupport.fillUp(tokens);
         int stop = getLastOpTokenIndex(tokens);
-        if (stop == -1) {
-            return false;
-        }
+        if (stop == -1) return false;
 
         int start = tokens.index();
         Token prevToken = tokens.get(start - 1); // includes hidden-channel tokens
         Token nextToken = tokens.get(stop + 1);
         boolean prevIsWS = isLeftOperatorWS(prevToken);
         boolean nextIsWS = isRightOperatorWS(nextToken);
-        // String text = tokens.getText(Interval.of(start, stop));
+        //String text = tokens.getText(Interval.of(start, stop));
         // System.out.println("isPostfixOp: '"+prevToken+"','"+text+"','"+nextToken+"' is "+result);
-        return !prevIsWS && nextIsWS || !prevIsWS && nextToken.getType() == Swift5Parser.DOT;
+        return !prevIsWS && nextIsWS ||
+                !prevIsWS && nextToken.getType() == Swift5Parser.DOT;
     }
 
-    /**
-     * Checks whether the sequence of tokens at the current position in the {@link TokenStream} matches a specific Swift
-     * operator string.
-     * @param tokens The token stream from which to extract the operator text.
-     * @param op The expected operator string to match (e.g., {@code "??"}, {@code "==="}).
-     * @return {@code true} if the token text at the current position matches the given operator; {@code false} otherwise.
-     */
     public static boolean isOperator(TokenStream tokens, String op) {
         SwiftSupport.fillUp(tokens);
         int stop = getLastOpTokenIndex(tokens);
-        if (stop == -1) {
-            return false;
-        }
+        if (stop == -1) return false;
 
         int start = tokens.index();
         String text = tokens.getText(Interval.of(start, stop));
         // System.out.println("text: '"+text+"', op: '"+op+"', text.equals(op): '"+text.equals(op)+"'");
 
         // for (int i = 0; i <= stop; i++) {
-        // System.out.println("token["+i+"] = '"+tokens.getText(Interval.of(i, i))+"'");
+        //     System.out.println("token["+i+"] = '"+tokens.getText(Interval.of(i, i))+"'");
         // }
 
         return text.equals(op);
     }
 
-    /**
-     * Determines whether the given token represents whitespace on the **left** side of an operator.
-     * @param t The token to examine.
-     * @return {@code true} if the token is considered whitespace to the left of an operator; {@code false} otherwise.
-     */
     public static boolean isLeftOperatorWS(Token t) {
         return leftWS.get(t.getType());
     }
 
-    /**
-     * Determines whether the given token represents whitespace on the **right** side of an operator.
-     * @param t The token to examine.
-     * @return {@code true} if the token is considered whitespace to the right of an operator or is EOF; {@code false}
-     * otherwise.
-     */
     public static boolean isRightOperatorWS(Token t) {
         return rightWS.get(t.getType()) || t.getType() == Token.EOF;
     }
 
-    /**
-     * Determines whether two Swift statements are separated by a newline or semicolon.
-     * @param tokens The token stream representing the parsed input.
-     * @param indexOfPreviousStatement The index (in the token stream) of the token that ended the previous statement.
-     * @return {@code true} if there is a newline or semicolon separating the previous statement from the current one;
-     * {@code false} otherwise.
-     */
     public static boolean isSeparatedStatement(TokenStream tokens, int indexOfPreviousStatement) {
         SwiftSupport.fillUp(tokens);
-        // System.out.println("------");
-        // System.out.println("indexOfPreviousStatement: " + indexOfPreviousStatement);
+        //System.out.println("------");
+        //System.out.println("indexOfPreviousStatement: " + indexOfPreviousStatement);
 
         int indexFrom = indexOfPreviousStatement - 1;
         int indexTo = tokens.index() - 1;
 
-        if (indexFrom < 0) {
+        if (indexFrom >= 0) {
+            // Stupid check for new line and semicolon, can be optimized
+            while (indexFrom >= 0 && tokens.get(indexFrom).getChannel() == Token.HIDDEN_CHANNEL) {
+                indexFrom--;
+            }
+
+            //System.out.println("from: '" + tokens.getText(Interval.of(indexFrom, indexFrom))+"', "+tokens.get(indexFrom));
+            //System.out.println("to: '" + tokens.getText(Interval.of(indexTo, indexTo))+"', "+tokens.get(indexTo));
+            //System.out.println("in_between: '" + tokens.getText(Interval.of(indexFrom, indexTo)));
+
+            //for (int i = previousIndex; i < currentIndex; i++)
+            for(int i =indexTo;i>= indexFrom;i--){
+                String t = tokens.get(i).getText();
+                if(t.contains("\n") || t.contains(";")){
+                    return true;
+                }
+            }
+            return false;
+            //String text = tokens.getText(Interval.of(indexFrom, indexTo));
+            //return text.contains("\n") || text.contains(";");
+        } else {
             return true;
         }
-        // Stupid check for new line and semicolon, can be optimized
-        while (indexFrom >= 0 && tokens.get(indexFrom).getChannel() == Token.HIDDEN_CHANNEL) {
-            indexFrom--;
-        }
-
-        // System.out.println("from: '" + tokens.getText(Interval.of(indexFrom, indexFrom))+"', "+tokens.get(indexFrom));
-        // System.out.println("to: '" + tokens.getText(Interval.of(indexTo, indexTo))+"', "+tokens.get(indexTo));
-        // System.out.println("in_between: '" + tokens.getText(Interval.of(indexFrom, indexTo)));
-
-        // for (int i = previousIndex; i < currentIndex; i++)
-        for (int i = indexTo; i >= indexFrom; i--) {
-            String t = tokens.get(i).getText();
-            if (t.contains("\n") || t.contains(";")) {
-                return true;
-            }
-        }
-        return false;
-        // String text = tokens.getText(Interval.of(indexFrom, indexTo));
-        // return text.contains("\n") || text.contains(";");
     }
-
-    /**
-     * Ensures that all tokens in the stream are fetched from the underlying source. This method is a no-op in terms of
-     * logic but forces the token stream to consume all remaining tokens, which is useful for lookahead or analysis
-     * operations.
-     * @param tokens The token stream to fully populate.
-     */
-    public static void fillUp(TokenStream tokens) {
-        for (int jj = 1;; ++jj) {
+    public static void fillUp(TokenStream tokens)
+    {
+        for (int jj = 1;;++jj)
+        {
             int t = tokens.LA(jj);
-            if (t == -1) {
-                break;
-            }
+            if (t == -1) break;
         }
     }
 }
