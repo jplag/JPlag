@@ -18,7 +18,6 @@ import de.jplag.exceptions.SubmissionException;
 import de.jplag.highlightextraction.MatchWeighting;
 import de.jplag.merging.MatchMerging;
 import de.jplag.options.JPlagOptions;
-import de.jplag.reporting.reportobject.model.Version;
 
 /**
  * Main class for JPlag. Manages the whole source code plagiarism detection pipeline. Provides methods to run

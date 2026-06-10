@@ -91,6 +91,8 @@ public class JavaLanguageTest extends LanguageModuleTest {
                 J_APPLY, J_METHOD_END, J_METHOD_BEGIN, J_APPLY, J_METHOD_END, J_CLASS_END);
 
         collector.addTokenPositionTests("tokenPositions");
+
+        collector.addExceptionTests("exceptions");
     }
 
     @Override

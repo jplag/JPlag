@@ -18,11 +18,8 @@ import de.jplag.clustering.ClusteringOptions;
 import de.jplag.exceptions.BasecodeException;
 import de.jplag.highlightextraction.FrequencyAnalysisOptions;
 import de.jplag.merging.MergingOptions;
-import de.jplag.reporting.jsonfactory.serializer.FileSerializer;
-import de.jplag.reporting.jsonfactory.serializer.LanguageSerializer;
 import de.jplag.util.FileUtils;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.soabase.recordbuilder.core.RecordBuilder;
 
 /**
@@ -53,12 +50,10 @@ import io.soabase.recordbuilder.core.RecordBuilder;
  * @param frequencyAnalysisOptions are the options related to highlight extraction.
  */
 @RecordBuilder()
-public record JPlagOptions(@JsonSerialize(using = LanguageSerializer.class) Language language, Integer minimumTokenMatch,
-        @JsonSerialize(contentUsing = FileSerializer.class) Set<File> submissionDirectories,
-        @JsonSerialize(contentUsing = FileSerializer.class) Set<File> oldSubmissionDirectories,
-        @JsonSerialize(using = FileSerializer.class) File baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes,
-        String exclusionFileName, SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons,
-        ClusteringOptions clusteringOptions, boolean debugParser, MergingOptions mergingOptions, boolean normalize, boolean analyzeComments,
+public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories,
+        File baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
+        SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
+        boolean debugParser, MergingOptions mergingOptions, boolean normalize, boolean analyzeComments,
         FrequencyAnalysisOptions frequencyAnalysisOptions) implements JPlagOptionsBuilder.With {
 
     /** Default value for the similarity threshold. **/

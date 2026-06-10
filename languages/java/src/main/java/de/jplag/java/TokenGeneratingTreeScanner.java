@@ -152,7 +152,7 @@ public class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         } else if (node.getKind() == Tree.Kind.INTERFACE) {
             addToken(JavaTokenType.J_INTERFACE_BEGIN, start, 9, semantics);
         } else if (node.getKind() == Tree.Kind.RECORD) {
-            addToken(JavaTokenType.J_RECORD_BEGIN, start, 1, semantics);
+            addToken(JavaTokenType.J_RECORD_BEGIN, start, 6, semantics);
         } else if (node.getKind() == Tree.Kind.ANNOTATION_TYPE) {
             long nameLength = node.getSimpleName().length();
             // The start position for the is calculated that way, because the @ is the final element in the modifier list for
@@ -337,7 +337,7 @@ public class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
             end = positions.getEndPosition(ast, node.getFinallyBlock());
             addToken(JavaTokenType.J_FINALLY_END, end, 1, CodeSemantics.createControl());
         }
-        addToken(JavaTokenType.J_TRY_END, end, 1, CodeSemantics.createControl());
+        addToken(JavaTokenType.J_TRY_END, end - 1, 1, CodeSemantics.createControl());
         return null;
     }
 
@@ -440,7 +440,7 @@ public class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         scan(node.getDimensions(), null);
         boolean hasInit = node.getInitializers() != null && !node.getInitializers().isEmpty();
         if (hasInit) {
-            start = positions.getStartPosition(ast, node.getInitializers().get(0));
+            start = positions.getStartPosition(ast, node.getInitializers().getFirst());
             addToken(JavaTokenType.J_ARRAY_INIT_BEGIN, start, 1, new CodeSemantics());
         }
         scan(node.getInitializers(), null);
@@ -588,8 +588,7 @@ public class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     @Override
     public Void visitYield(YieldTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        long end = positions.getEndPosition(ast, node);
-        addToken(JavaTokenType.J_YIELD, start, end, CodeSemantics.createControl());
+        addToken(JavaTokenType.J_YIELD, start, 5, CodeSemantics.createControl());
         return super.visitYield(node, null);
     }
 

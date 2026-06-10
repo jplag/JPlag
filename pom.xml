@@ -75,7 +75,7 @@
         <!-- Dependency versions -->
         <version.antlr4>4.13.2</version.antlr4>
         <version.apache.commons.math>3.6.1</version.apache.commons.math>
-        <version.archunit>1.4.1</version.archunit>
+        <version.archunit>1.4.2</version.archunit>
         <version.argparser4j>0.9.0</version.argparser4j>
         <version.assertj>3.27.7</version.assertj>
         <version.auto-service>1.1.1</version.auto-service>
@@ -86,25 +86,25 @@
         <version.emf.ecore>2.45.0</version.emf.ecore>
         <version.emf>2.42.0</version.emf>
         <version.icu-charset>78.3</version.icu-charset>
-        <version.jackson>2.21.2</version.jackson>
-        <version.jaxen>2.0.1</version.jaxen>
+        <version.jackson>2.21.3</version.jackson>
+        <version.jaxen>2.0.5</version.jaxen>
         <version.jdom>2.0.6.1</version.jdom>
         <version.jgrapht>1.5.3</version.jgrapht>
-        <version.junit>6.0.3</version.junit>
+        <version.junit>6.1.0</version.junit>
         <version.mockito>5.23.0</version.mockito>
         <version.picocli>4.7.7</version.picocli>
         <version.progressbar>0.10.2</version.progressbar>
         <version.record-builder>52</version.record-builder>
-        <version.scala>3.8.3</version.scala>
+        <version.scala>3.8.4</version.scala>
         <version.scalameta.suffix>2.13</version.scalameta.suffix>
-        <version.scalameta>4.16.1</version.scalameta>
-        <version.slf4j>2.0.17</version.slf4j>
+        <version.scalameta>4.17.0</version.scalameta>
+        <version.slf4j>2.0.18</version.slf4j>
         <version.metainf>1.11</version.metainf>
 
         <!-- Plugin versions -->
         <version.plugin.antlr4>${version.antlr4}</version.plugin.antlr4>
         <version.plugin.build-helper>3.6.1</version.plugin.build-helper>
-        <version.plugin.checkstyle-puppycrawl>13.4.0</version.plugin.checkstyle-puppycrawl>
+        <version.plugin.checkstyle-puppycrawl>13.4.2</version.plugin.checkstyle-puppycrawl>
         <version.plugin.checkstyle>3.6.0</version.plugin.checkstyle>
         <version.plugin.jacoco>0.8.14</version.plugin.jacoco>
         <version.plugin.javacc>5.0.1</version.plugin.javacc>
@@ -118,8 +118,8 @@
         <version.plugin.maven.jar>3.5.0</version.plugin.maven.jar>
         <version.plugin.maven.javadoc>3.12.0</version.plugin.maven.javadoc>
         <version.plugin.maven.source>3.4.0</version.plugin.maven.source>
-        <version.plugin.maven.surefire>3.5.5</version.plugin.maven.surefire>
-        <version.plugin.spotless>3.4.0</version.plugin.spotless>
+        <version.plugin.maven.surefire>3.5.6</version.plugin.maven.surefire>
+        <version.plugin.spotless>3.6.0</version.plugin.spotless>
 
         <!-- ensure that this variable is initialized, even if it is empty -->
         <argLine/>
@@ -338,7 +338,7 @@
             </dependency>
             <dependency>
                 <groupId>de.jplag</groupId>
-                <artifactId>endtoend-testing</artifactId>
+                <artifactId>regression-tests</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
@@ -356,6 +356,11 @@
                 <artifactId>language-testutils</artifactId>
                 <version>${revision}</version>
                 <type>test-jar</type>
+            </dependency>
+            <dependency>
+                <groupId>de.jplag</groupId>
+                <artifactId>reporting</artifactId>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>de.jplag</groupId>
@@ -806,11 +811,12 @@
                 <module>cli</module>
                 <module>core</module>
                 <module>coverage-report</module>
-                <module>endtoend-testing</module>
+                <module>regression-tests</module>
                 <module>languages</module>
                 <module>language-api</module>
                 <module>language-antlr-utils</module>
                 <module>language-testutils</module>
+                <module>reporting</module>
             </modules>
         </profile>
         <profile>

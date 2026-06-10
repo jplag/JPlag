@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 
 import App from './App.vue'
-import VueVirtualScroller from '@jplag/ui-components/widget/comparisonTable/VirtualScrollerReexport'
+import VueVirtualScroller from 'vue-virtual-scroller'
 
 import '@jplag/ui-components/style/style.css'
 import { router } from './router'

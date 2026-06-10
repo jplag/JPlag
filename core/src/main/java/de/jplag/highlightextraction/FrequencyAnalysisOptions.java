@@ -3,9 +3,7 @@ package de.jplag.highlightextraction;
 import de.jplag.highlightextraction.strategy.CompleteMatchesStrategy;
 import de.jplag.highlightextraction.strategy.FrequencyStrategy;
 import de.jplag.highlightextraction.weighting.SigmoidWeighting;
-import de.jplag.reporting.jsonfactory.serializer.AllCapsClassNameSerializer;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.soabase.recordbuilder.core.RecordBuilder;
 
 /**
@@ -16,8 +14,8 @@ import io.soabase.recordbuilder.core.RecordBuilder;
  * @param weightingFactor scales the impact of the weighting
  */
 @RecordBuilder
-public record FrequencyAnalysisOptions(boolean enabled, @JsonSerialize(using = AllCapsClassNameSerializer.class) FrequencyStrategy analysisStrategy,
-        @JsonSerialize(using = AllCapsClassNameSerializer.class) WeightingFunction weightingFunction, double weightingFactor) {
+public record FrequencyAnalysisOptions(boolean enabled, FrequencyStrategy analysisStrategy, WeightingFunction weightingFunction,
+        double weightingFactor) {
 
     /** Default value for the highlighting enabling. */
     public static final boolean DEFAULT_ENABLED = false;

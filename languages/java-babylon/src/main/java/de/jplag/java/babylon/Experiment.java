@@ -35,7 +35,7 @@ public class Experiment implements BabylonDSL {
     public static void main(String[] args) throws NoSuchMethodException, ParsingException {
         var files = Set.of(SOURCES.resolve("TryWithResource.java").toFile());
         var tokens = new JavaLanguage().parse(files, false);
-        IO.println(TokenPrinter.printTokens(tokens));
+        IO.println(new TokenPrinter(List.of(), tokens).printTokens());
     }
 
     public void addToken(TokenType type, File file, long startLine, long startColumn, long endLine, long endColumn, long length,
