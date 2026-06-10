@@ -18,6 +18,6 @@ public class JavacAdapterBabylon extends JavacAdapter {
 
     @Override
     protected TreeVisitor<?, ?> createTreeScanner(File file, Parser parser, LineMap map, SourcePositions positions, CompilationUnitTree ast, JavaCompiler.CompilationTask task) {
-        return super.createTreeScanner(file, parser, map, positions, ast, task);
+        return new TokenGeneratingTreeScannerBabylon(file, (ParserBabylon) parser, map, positions, ast, task);
     }
 }

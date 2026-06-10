@@ -3,9 +3,7 @@ package de.jplag.java.babylon;
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.MethodTree;
 import de.jplag.*;
-import de.jplag.java.JavaLanguage;
 import de.jplag.java.JavaTokenType;
-import de.jplag.java.Parser;
 import de.jplag.java.babylon.transformer.TryWithoutResourcesTransformer;
 import de.jplag.semantics.CodeSemantics;
 import jdk.incubator.code.*;
@@ -24,18 +22,18 @@ public class Experiment implements BabylonDSL {
             "languages", "java", "src", "test", "resources", "de", "jplag", "java"
     );
 
-    private final Parser parser;
+    private final ParserBabylon parser;
     private final File file;
 
-    public Experiment(Parser parser, File file) {
+    public Experiment(ParserBabylon parser, File file) {
         this.parser = parser;
         this.file = file;
     }
 
     public static void main(String[] args) throws NoSuchMethodException, ParsingException {
         var files = Set.of(SOURCES.resolve("TryWithResource.java").toFile());
-        var tokens = new JavaLanguage().parse(files, false);
-        IO.println(new TokenPrinter(List.of(), tokens).printTokens());
+        var tokens = new JavaBabylonLanguage().parse(files, false);
+        IO.println(TokenPrinterUtils.printTokensByFile(tokens));
     }
 
     public void addToken(TokenType type, File file, long startLine, long startColumn, long endLine, long endColumn, long length,

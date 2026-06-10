@@ -4,7 +4,6 @@ import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.LineMap;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.util.SourcePositions;
-import de.jplag.java.Parser;
 import de.jplag.java.TokenGeneratingTreeScanner;
 
 import javax.tools.JavaCompiler;
@@ -14,7 +13,7 @@ public class TokenGeneratingTreeScannerBabylon extends TokenGeneratingTreeScanne
     private final JavaCompiler.CompilationTask task;
     private final Experiment experiment;
 
-    public TokenGeneratingTreeScannerBabylon(File file, Parser parser, LineMap map, SourcePositions positions, CompilationUnitTree ast, JavaCompiler.CompilationTask task) {
+    public TokenGeneratingTreeScannerBabylon(File file, ParserBabylon parser, LineMap map, SourcePositions positions, CompilationUnitTree ast, JavaCompiler.CompilationTask task) {
         super(file, parser, map, positions, ast);
         this.task = task;
         this.experiment = new Experiment(parser, file);
