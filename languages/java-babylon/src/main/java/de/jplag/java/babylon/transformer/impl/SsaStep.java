@@ -5,6 +5,9 @@ import de.jplag.java.babylon.transformer.TransformationPipeline;
 import jdk.incubator.code.dialect.core.CoreOp;
 import jdk.incubator.code.dialect.core.SSA;
 
+/**
+ * {@link TransformationPipeline.Step} that performs a SSA transformation using SSABraun.
+ */
 @AutoService(TransformationPipeline.Step.class)
 public class SsaStep implements TransformationPipeline.Step {
     @Override

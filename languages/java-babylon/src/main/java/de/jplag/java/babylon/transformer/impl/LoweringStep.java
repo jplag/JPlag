@@ -5,6 +5,9 @@ import de.jplag.java.babylon.transformer.TransformationPipeline;
 import jdk.incubator.code.CodeTransformer;
 import jdk.incubator.code.dialect.core.CoreOp;
 
+/**
+ * A {@link TransformationPipeline.Step} that applies {@link CodeTransformer#LOWERING_TRANSFORMER}.
+ */
 @AutoService(TransformationPipeline.Step.class)
 public class LoweringStep implements TransformationPipeline.Step {
     @Override

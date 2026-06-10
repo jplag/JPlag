@@ -1,11 +1,11 @@
 package de.jplag.java.babylon;
 
-import de.jplag.*;
+import de.jplag.TokenPrinterUtils;
 
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Set;
 
-public class Experiment implements BabylonDSL {
+class Experiment implements BabylonDSL {
     private static final Path SOURCES = Path.of(
             "languages", "java", "src", "test", "resources", "de", "jplag", "java"
     );

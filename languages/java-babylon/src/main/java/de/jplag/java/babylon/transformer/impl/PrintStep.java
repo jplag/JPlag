@@ -4,6 +4,9 @@ import com.google.auto.service.AutoService;
 import de.jplag.java.babylon.transformer.TransformationPipeline;
 import jdk.incubator.code.dialect.core.CoreOp;
 
+/**
+ * {@link TransformationPipeline.Step} that prints the code model.
+ */
 @AutoService(TransformationPipeline.Step.class)
 public class PrintStep implements TransformationPipeline.Step {
     @Override

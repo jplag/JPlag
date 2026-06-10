@@ -6,6 +6,9 @@ import de.jplag.java.JavaLanguage;
 import de.jplag.java.Parser;
 import de.jplag.options.LanguageOptions;
 
+/**
+ * {@link Language} implementation for Java with support for {@link jdk.incubator.code.CodeTransformer}-based transformations.
+ */
 @AutoService(Language.class)
 public class JavaBabylonLanguage extends JavaLanguage {
     private final BabylonOptions options = new BabylonOptions();

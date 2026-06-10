@@ -18,6 +18,12 @@ public final class MulticastTreeVisitor extends SimpleTreeVisitor<Void, Void> {
         this.targets = targets;
     }
 
+    /**
+     * Create a new {@link MulticastTreeVisitor}.
+     *
+     * @param targets the targets to which to broadcast visits
+     * @return the visitor
+     */
     public static MulticastTreeVisitor create(List<TreeVisitor<?, ?>> targets) {
         // Copy the target list and replace multicast visitors with their constituent targets for efficiency
         var flatTargets = targets.stream()

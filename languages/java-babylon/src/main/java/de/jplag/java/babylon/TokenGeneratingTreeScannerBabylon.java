@@ -14,7 +14,7 @@ import jdk.incubator.code.dialect.core.CoreOp;
 import javax.tools.JavaCompiler;
 import java.io.File;
 
-public class TokenGeneratingTreeScannerBabylon extends TokenGeneratingTreeScanner {
+class TokenGeneratingTreeScannerBabylon extends TokenGeneratingTreeScanner {
     private final JavaCompiler.CompilationTask task;
     private final TransformationPipeline pipeline;
     private final BabylonTokenizer tokenizer;

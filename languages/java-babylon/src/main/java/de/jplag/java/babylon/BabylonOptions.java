@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class BabylonOptions extends LanguageOptions {
+class BabylonOptions extends LanguageOptions {
     private static final String ERROR_TRANSFORMATION_NOT_FOUND = "The selected transformation %s could not be found";
     private static final String ERROR_NOT_ENOUGH_TRANSFORMATIONS = "Specify at least 1 transformation";
     private static final char LIST_SEPARATOR = ',';

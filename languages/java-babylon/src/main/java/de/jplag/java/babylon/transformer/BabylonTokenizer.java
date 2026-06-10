@@ -5,7 +5,10 @@ import de.jplag.java.JavaTokenType;
 import de.jplag.java.babylon.BabylonDSL;
 import de.jplag.java.babylon.ParserBabylon;
 import de.jplag.semantics.CodeSemantics;
-import jdk.incubator.code.*;
+import jdk.incubator.code.Block;
+import jdk.incubator.code.Body;
+import jdk.incubator.code.Op;
+import jdk.incubator.code.Value;
 import jdk.incubator.code.dialect.core.CoreOp;
 import jdk.incubator.code.dialect.java.JavaOp;
 import org.slf4j.Logger;
@@ -13,37 +16,61 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
+/**
+ * Responsible for transforming a code model into a {@link de.jplag.Token} sequence by outputting it to a {@link ParserBabylon}.
+ */
 public class BabylonTokenizer implements BabylonDSL {
     private static final Logger logger = LoggerFactory.getLogger(BabylonTokenizer.class);
 
     private final ParserBabylon parser;
     private final File file;
 
+    /**
+     * Create a new instance.
+     *
+     * @param parser the parser to output to
+     * @param file the current file
+     */
     public BabylonTokenizer(ParserBabylon parser, File file) {
         this.parser = parser;
         this.file = file;
     }
 
-    public void addToken(TokenType type, Op.Location location, CodeSemantics semantics) {
+    private void addToken(TokenType type, Op.Location location, CodeSemantics semantics) {
         parser.add(type, file, location, semantics);
     }
 
-    public void addToken(TokenType type, CodeSemantics semantics) {
+    private void addToken(TokenType type, CodeSemantics semantics) {
         parser.add(type, file, semantics);
     }
 
+    /**
+     * Tokenize a single {@link Body}.
+     *
+     * @param body the body to tokenize
+     */
     public void handle(Body body) {
         for (Block block : body.blocks()) {
             handle(block);
         }
     }
 
+    /**
+     * Tokenize a single {@link Block}.
+     *
+     * @param block the block to tokenize
+     */
     public void handle(Block block) {
         for (Op op : block.ops()) {
             handle(op);
         }
     }
 
+    /**
+     * Tokenize a single {@link Value}.
+     *
+     * @param value the value to tokenize
+     */
     public void handle(Value value) {
         switch (value) {
             case null -> {}
@@ -52,6 +79,12 @@ public class BabylonTokenizer implements BabylonDSL {
         }
     }
 
+    /**
+     * Tokenize a single {@link Op}.
+     *
+     * @param op the op to tokenize
+     * @throws IllegalArgumentException if the op is invalid
+     */
     public void handle(Op op) {
         switch (op) {
             case CoreOp.FuncOp func -> {
@@ -80,7 +113,7 @@ public class BabylonTokenizer implements BabylonDSL {
                 addToken(JavaTokenType.J_TRY_BEGIN, tryOp.location(), CodeSemantics.createControl());
                 var rb = tryOp.resourcesBody();
                 if (rb != null) {
-                    throw new IllegalStateException("Try-with-resources should have been lowered out");
+                    throw new IllegalArgumentException("Try-with-resources should have been lowered out");
                 }
                 handle(tryOp.body());
                 addToken(JavaTokenType.J_TRY_END, CodeSemantics.createControl());

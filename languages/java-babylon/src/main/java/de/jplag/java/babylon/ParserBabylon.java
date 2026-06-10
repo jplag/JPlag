@@ -12,17 +12,33 @@ import jdk.incubator.code.Op;
 
 import javax.annotation.Nullable;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
+/**
+ * {@link Parser} with extensions for Babylon, including a Babylon-aligned API for adding tokens.
+ */
 public class ParserBabylon extends Parser {
     private final TransformationPipeline pipeline;
     private final VariableRegistry variableRegistry;
 
+    /**
+     * Crease a new instance.
+     *
+     * @param pipeline the pipeline to use for this parser
+     */
     public ParserBabylon(TransformationPipeline pipeline) {
         this.pipeline = pipeline;
         this.variableRegistry = new VariableRegistry();
     }
 
+    /**
+     * Returns the pipeline that is used for this parser.
+     *
+     * @return the pipeline used by this parser
+     */
     public TransformationPipeline getPipeline() {
         return pipeline;
     }
@@ -80,6 +96,19 @@ public class ParserBabylon extends Parser {
         }
     }
 
+    /**
+     * Add a new token to the current file.
+     * For internal use by the language module.
+     *
+     * @param type is the token type.
+     * @param file is the name of the source code file.
+     * @param startLine is the line index in the source code where the token starts. Index is 1-based.
+     * @param startColumn is the column index, meaning where the token starts in the line. Index is 1-based.
+     * @param endLine is the line index in the source code where the token ends. Index is 1-based.
+     * @param endColumn is the column index, meaning where the token ends in the line. Index is 1-based.
+     * @param length is the length of the token in the source code.
+     * @param semantics is a record containing semantic information about the token.
+     */
     public void add(TokenType type, File file, int startLine, int startColumn, int endLine, int endColumn, int length,
                     CodeSemantics semantics) {
         add(new Token(
@@ -91,6 +120,15 @@ public class ParserBabylon extends Parser {
         ));
     }
 
+    /**
+     * Add a new token to the current file.
+     * For internal use by the language module.
+     *
+     * @param type is the token type.
+     * @param file is the name of the source code file.
+     * @param location the location in the source code where the token resides.
+     * @param semantics is a record containing semantic information about the token.
+     */
     public void add(TokenType type, File file, @Nullable Op.Location location, CodeSemantics semantics) {
         if (location == null) {
             location = lastLocation;
@@ -101,6 +139,14 @@ public class ParserBabylon extends Parser {
         lastLocation = location;
     }
 
+    /**
+     * Add a new token to the current file.
+     * For internal use by the language module.
+     *
+     * @param type is the token type.
+     * @param file is the name of the source code file.
+     * @param semantics is a record containing semantic information about the token.
+     */
     public void add(TokenType type, File file, CodeSemantics semantics) {
         add(type, file, null, semantics);
     }

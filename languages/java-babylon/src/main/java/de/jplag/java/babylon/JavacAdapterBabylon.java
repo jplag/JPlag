@@ -13,7 +13,7 @@ import javax.tools.JavaCompiler;
 import java.io.File;
 import java.util.List;
 
-public class JavacAdapterBabylon extends JavacAdapter {
+class JavacAdapterBabylon extends JavacAdapter {
     private final TransformationPipeline pipeline;
     private final VariableRegistry variableRegistry;
 
