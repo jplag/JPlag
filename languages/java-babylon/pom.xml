@@ -6,7 +6,7 @@
         <artifactId>languages</artifactId>
         <version>${revision}</version>
     </parent>
-    <artifactId>java</artifactId>
+    <artifactId>java-babylon</artifactId>
     <name>JPlag: Java Language Module with transformations</name>
     <properties>
         <maven.compiler.source>26</maven.compiler.source>
