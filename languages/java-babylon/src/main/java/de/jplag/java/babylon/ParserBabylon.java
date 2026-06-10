@@ -7,6 +7,7 @@ import de.jplag.java.JavacAdapter;
 import de.jplag.java.Parser;
 import de.jplag.java.babylon.transformer.TransformationPipeline;
 import de.jplag.semantics.CodeSemantics;
+import de.jplag.semantics.VariableRegistry;
 import jdk.incubator.code.Op;
 
 import javax.annotation.Nullable;
@@ -15,9 +16,11 @@ import java.util.*;
 
 public class ParserBabylon extends Parser {
     private final TransformationPipeline pipeline;
+    private final VariableRegistry variableRegistry;
 
     public ParserBabylon(TransformationPipeline pipeline) {
         this.pipeline = pipeline;
+        this.variableRegistry = new VariableRegistry();
     }
 
     public TransformationPipeline getPipeline() {
@@ -26,7 +29,7 @@ public class ParserBabylon extends Parser {
 
     @Override
     protected JavacAdapter getJavacAdapter() {
-        return new JavacAdapterBabylon(pipeline);
+        return new JavacAdapterBabylon(pipeline, variableRegistry);
     }
 
     @Override
@@ -43,8 +46,13 @@ public class ParserBabylon extends Parser {
 
     @Override
     public void add(Token token) {
-        drainDeferredTokens(new Op.Location(token.getStartLine(), token.getStartColumn()));
+        Op.Location location = token.getStartLine() == Token.NO_VALUE || token.getStartColumn() == Token.NO_VALUE
+                ? null
+                : new Op.Location(token.getStartLine(), token.getStartColumn());
+        drainDeferredTokens(location);
         super.add(token);
+        this.variableRegistry.updateSemantics(token.getSemantics());
+        if (location != null) lastLocation = location;
     }
 
     private void drainDeferredTokens(@Nullable Op.Location nextLocation) {
@@ -68,6 +76,7 @@ public class ParserBabylon extends Parser {
                     length,
                     deferredToken.semantics
             ));
+            variableRegistry.updateSemantics(deferredToken.semantics);
         }
     }
 

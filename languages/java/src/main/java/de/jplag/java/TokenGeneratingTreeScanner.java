@@ -56,8 +56,9 @@ import com.sun.source.tree.YieldTree;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.TreeScanner;
 
-import javax.tools.JavaCompiler;
-
+/**
+ * A {@link TreeScanner} implementation that passes a {@link Token} sequence on to the {@link Parser}.
+ */
 public class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     private final static String ANONYMOUS_VARIABLE_NAME = "";
     private static final String ENUM_MARKER = "/*enum*/";
@@ -77,16 +78,29 @@ public class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
 
     private static final Set<String> CRITICAL_METHODS = Set.of("System.out.println", "System.out.print");
 
+    /**
+     * Create a new {@link TokenGeneratingTreeScanner}.
+     *
+     * @param file the file being scanned
+     * @param parser the parser to output tokens to
+     * @param map the line map for the current file
+     * @param positions the {@link SourcePositions} object for the current context
+     * @param ast the AST to scan
+     */
     public TokenGeneratingTreeScanner(File file, Parser parser, LineMap map, SourcePositions positions, CompilationUnitTree ast) {
+        this(file, parser, map, positions, ast, new VariableRegistry());
+    }
+
+    protected TokenGeneratingTreeScanner(File file, Parser parser, LineMap map, SourcePositions positions, CompilationUnitTree ast, VariableRegistry variableRegistry) {
         this.file = file;
         this.parser = parser;
         this.map = map;
         this.positions = positions;
         this.ast = ast;
-        this.variableRegistry = new VariableRegistry();
+        this.variableRegistry = variableRegistry;
     }
 
-    public void addToken(TokenType type, File file, long startLine, long startColumn, long endLine, long endColumn, long length,
+    private void addToken(TokenType type, File file, long startLine, long startColumn, long endLine, long endColumn, long length,
             CodeSemantics semantics) {
         parser.add(new Token(type, file, Math.toIntExact(startLine), Math.toIntExact(startColumn), Math.toIntExact(endLine),
                 Math.toIntExact(endColumn), Math.toIntExact(length), semantics));
