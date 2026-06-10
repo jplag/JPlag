@@ -9,12 +9,14 @@ import de.jplag.options.OptionType;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class BabylonOptions extends LanguageOptions {
     private static final String ERROR_TRANSFORMATION_NOT_FOUND = "The selected transformation %s could not be found";
     private static final String ERROR_NOT_ENOUGH_TRANSFORMATIONS = "Specify at least 1 transformation";
     private static final char LIST_SEPARATOR = ',';
     private static final String OPTION_DESCRIPTION_TRANSFORMATIONS = "The languages that should be used. This is a '" + LIST_SEPARATOR + "' separated list";
+    private static final Pattern LIST_SEPARATOR_PATTERN = Pattern.compile("\\s*" + Pattern.quote(String.valueOf(LIST_SEPARATOR)) + "\\s*");
 
     private final LanguageOption<String> transformations = createOption(OptionType.string(), "transformations", OPTION_DESCRIPTION_TRANSFORMATIONS);
 
@@ -24,7 +26,7 @@ public class BabylonOptions extends LanguageOptions {
             throw new IllegalArgumentException(ERROR_NOT_ENOUGH_TRANSFORMATIONS);
         }
 
-        return Arrays.asList(transformationNames.split(String.valueOf(LIST_SEPARATOR)));
+        return Arrays.asList(LIST_SEPARATOR_PATTERN.split(transformationNames));
     }
 
     public LanguageOption<String> getTransformationNames() {
