@@ -5,25 +5,33 @@ import com.sun.source.tree.LineMap;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.util.SourcePositions;
 import de.jplag.java.TokenGeneratingTreeScanner;
+import de.jplag.java.babylon.transformer.BabylonTokenizer;
+import de.jplag.java.babylon.transformer.TransformationPipeline;
+import jdk.incubator.code.Op;
+import jdk.incubator.code.dialect.core.CoreOp;
 
 import javax.tools.JavaCompiler;
 import java.io.File;
 
 public class TokenGeneratingTreeScannerBabylon extends TokenGeneratingTreeScanner {
     private final JavaCompiler.CompilationTask task;
-    private final Experiment experiment;
+    private final TransformationPipeline pipeline;
+    private final BabylonTokenizer tokenizer;
 
     public TokenGeneratingTreeScannerBabylon(File file, ParserBabylon parser, LineMap map, SourcePositions positions, CompilationUnitTree ast, JavaCompiler.CompilationTask task) {
         super(file, parser, map, positions, ast);
         this.task = task;
-        this.experiment = new Experiment(parser, file);
+        this.pipeline = parser.getPipeline();
+        this.tokenizer = new BabylonTokenizer(parser, file);
     }
 
     @Override
     public Void visitMethod(MethodTree node, Void unused) {
         variableRegistry.enterLocalScope();
 
-        experiment.handle(task, ast, node);
+        CoreOp.FuncOp op = Op.ofMethodTree(task, ast, node).orElseThrow(() -> new IllegalStateException("Can't resolve body of method: " + node.getName()));
+        CoreOp.FuncOp transformed = pipeline.transform(op);
+        tokenizer.handle(transformed);
 
         variableRegistry.addAllNonLocalVariablesAsReads();
         variableRegistry.exitLocalScope();

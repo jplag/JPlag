@@ -3,7 +3,8 @@ package de.jplag.java.babylon;
 import jdk.incubator.code.*;
 import jdk.incubator.code.dialect.core.CoreOp;
 
-import static de.jplag.java.babylon.Experiment.requireSingle;
+import java.util.SequencedCollection;
+
 import static jdk.incubator.code.dialect.java.JavaType.VOID;
 
 public interface BabylonDSL {
@@ -60,5 +61,12 @@ public interface BabylonDSL {
     default Op.Result place(Block.Builder bd, Op.Location location, Op op) {
         op.setLocation(location);
         return bd.op(op);
+    }
+
+    default <T> T requireSingle(SequencedCollection<T> list) {
+        if (list.size() != 1) {
+            throw new IllegalStateException("Expected exactly one element, but found: " + list.size());
+        }
+        return list.getFirst();
     }
 }

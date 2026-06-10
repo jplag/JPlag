@@ -5,6 +5,7 @@ import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.java.JavacAdapter;
 import de.jplag.java.Parser;
+import de.jplag.java.babylon.transformer.TransformationPipeline;
 import de.jplag.semantics.CodeSemantics;
 import jdk.incubator.code.Op;
 
@@ -13,9 +14,19 @@ import java.io.File;
 import java.util.*;
 
 public class ParserBabylon extends Parser {
+    private final TransformationPipeline pipeline;
+
+    public ParserBabylon(TransformationPipeline pipeline) {
+        this.pipeline = pipeline;
+    }
+
+    public TransformationPipeline getPipeline() {
+        return pipeline;
+    }
+
     @Override
     protected JavacAdapter getJavacAdapter() {
-        return new JavacAdapterBabylon();
+        return new JavacAdapterBabylon(pipeline);
     }
 
     @Override

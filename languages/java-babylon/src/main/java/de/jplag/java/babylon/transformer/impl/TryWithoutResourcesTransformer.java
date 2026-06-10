@@ -1,6 +1,8 @@
-package de.jplag.java.babylon.transformer;
+package de.jplag.java.babylon.transformer.impl;
 
+import com.google.auto.service.AutoService;
 import de.jplag.java.babylon.BabylonDSL;
+import de.jplag.java.babylon.transformer.SimpleTransformation;
 import jdk.incubator.code.*;
 import jdk.incubator.code.dialect.core.CoreOp;
 import jdk.incubator.code.dialect.core.CoreType;
@@ -11,11 +13,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static de.jplag.java.babylon.Experiment.requireSingle;
 import static jdk.incubator.code.dialect.java.JavaType.J_L_OBJECT;
 import static jdk.incubator.code.dialect.java.JavaType.VOID;
 
-public class TryWithoutResourcesTransformer implements CodeTransformer, BabylonDSL {
+@AutoService(SimpleTransformation.class)
+public class TryWithoutResourcesTransformer implements SimpleTransformation, BabylonDSL {
+    @Override
+    public String getIdentifier() {
+        return "tryWithoutResources";
+    }
+
     @Override
     public Block.Builder acceptOp(Block.Builder builder, Op op) {
         if (Objects.requireNonNull(op) instanceof JavaOp.TryOp tryOp) {

@@ -1,0 +1,54 @@
+package de.jplag.java.babylon;
+
+import de.jplag.java.babylon.transformer.TransformationPipeline;
+import de.jplag.java.babylon.transformer.TransformationStepLoader;
+import de.jplag.options.LanguageOption;
+import de.jplag.options.LanguageOptions;
+import de.jplag.options.OptionType;
+
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.List;
+
+public class BabylonOptions extends LanguageOptions {
+    private static final String ERROR_TRANSFORMATION_NOT_FOUND = "The selected transformation %s could not be found";
+    private static final String ERROR_NOT_ENOUGH_TRANSFORMATIONS = "Specify at least 1 transformation";
+    private static final char LIST_SEPARATOR = ',';
+    private static final String OPTION_DESCRIPTION_TRANSFORMATIONS = "The languages that should be used. This is a '" + LIST_SEPARATOR + "' separated list";
+
+    private final LanguageOption<String> transformations = createOption(OptionType.string(), "transformations", OPTION_DESCRIPTION_TRANSFORMATIONS);
+
+    public List<String> getTransformations() {
+        @Nullable String transformationNames = transformations.getValue();
+        if (transformationNames == null) {
+            throw new IllegalArgumentException(ERROR_NOT_ENOUGH_TRANSFORMATIONS);
+        }
+
+        return Arrays.asList(transformationNames.split(String.valueOf(LIST_SEPARATOR)));
+    }
+
+    public LanguageOption<String> getTransformationNames() {
+        return this.transformations;
+    }
+
+    private volatile @Nullable TransformationPipeline pipeline = null;
+    public TransformationPipeline getTransformationPipeline() {
+        if (this.pipeline == null) {
+            synchronized (this) {
+                if (this.pipeline == null) {
+                    List<TransformationPipeline.Step> steps = getTransformations().stream()
+                            .map(name -> TransformationStepLoader.getTransformationStep(name)
+                                    .orElseThrow(() -> new IllegalArgumentException(String.format(ERROR_TRANSFORMATION_NOT_FOUND, name))))
+                            .toList();
+
+                    if (steps.isEmpty()) {
+                        throw new IllegalArgumentException(ERROR_NOT_ENOUGH_TRANSFORMATIONS);
+                    }
+
+                    this.pipeline = new TransformationPipeline(steps);
+                }
+            }
+        }
+        return this.pipeline;
+    }
+}
