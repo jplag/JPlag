@@ -15,8 +15,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.*;
 
-import static de.jplag.Token.NO_VALUE;
-
 public class Experiment implements BabylonDSL {
     private static final Path SOURCES = Path.of(
             "languages", "java", "src", "test", "resources", "de", "jplag", "java"
@@ -36,22 +34,12 @@ public class Experiment implements BabylonDSL {
         IO.println(TokenPrinterUtils.printTokensByFile(tokens));
     }
 
-    public void addToken(TokenType type, File file, long startLine, long startColumn, long endLine, long endColumn, long length,
-                         CodeSemantics semantics) {
-        parser.add(new Token(type, file, Math.toIntExact(startLine), Math.toIntExact(startColumn), Math.toIntExact(endLine),
-                Math.toIntExact(endColumn), Math.toIntExact(length), semantics));
-    }
-
-    public void addToken(TokenType type, File file, Op.Location location, CodeSemantics semantics) {
-        addToken(type, file, location.line(), location.column(), NO_VALUE, NO_VALUE, NO_VALUE, semantics);
-    }
-
     public void addToken(TokenType type, Op.Location location, CodeSemantics semantics) {
-        addToken(type, file, location, semantics);
+        parser.add(type, file, location, semantics);
     }
 
     public void addToken(TokenType type, CodeSemantics semantics) {
-        addToken(type, file, NO_VALUE, NO_VALUE, NO_VALUE, NO_VALUE, NO_VALUE, semantics);
+        parser.add(type, file, semantics);
     }
 
     public static <T> T requireSingle(SequencedCollection<T> list) {
@@ -103,7 +91,7 @@ public class Experiment implements BabylonDSL {
             case CoreOp.FuncOp func -> {
                 addToken(JavaTokenType.J_METHOD_BEGIN, func.location(), CodeSemantics.createControl());
                 handle(func.body());
-                addToken(JavaTokenType.J_METHOD_END, func.location(), CodeSemantics.createControl());
+                addToken(JavaTokenType.J_METHOD_END, CodeSemantics.createControl());
             }
             case JavaOp.LambdaOp lambda -> {
                 addToken(JavaTokenType.J_METHOD_BEGIN, lambda.location(), CodeSemantics.createControl());
