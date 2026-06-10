@@ -3,6 +3,8 @@ package de.jplag.cli;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +67,8 @@ public final class CLI {
             // help text has been printed, do nothing else
             return;
         }
+
+        validateHostOption();
 
         CollectedLogger.setLogLevel(this.inputHandler.getCliOptions().advanced.logLevel);
         ProgressBarLogger.setProgressBarProvider(new CliProgressBarProvider());
@@ -139,7 +143,17 @@ public final class CLI {
      */
     public void runViewer(File resultFile) throws IOException {
         finalizeLogger(); // Prints the errors. The later finalizeLogger will print any errors logged after this point.
-        JPlagRunner.runInternalServer(resultFile, this.inputHandler.getCliOptions().advanced.port);
+        InetAddress bindAddress = InetAddress.getByName(this.inputHandler.getCliOptions().advanced.host);
+        JPlagRunner.runInternalServer(resultFile, this.inputHandler.getCliOptions().advanced.port, bindAddress);
+    }
+
+    private void validateHostOption() throws CliException {
+        String host = this.inputHandler.getCliOptions().advanced.host;
+        try {
+            InetAddress.getByName(host);
+        } catch (UnknownHostException e) {
+            throw new CliException("Invalid bind address: " + host);
+        }
     }
 
     private void selectModeAutomatically() throws IOException, ExitException {

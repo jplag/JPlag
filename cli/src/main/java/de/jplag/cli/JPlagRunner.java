@@ -3,6 +3,8 @@ package de.jplag.cli;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.net.Inet6Address;
+import java.net.InetAddress;
 import java.net.URI;
 
 import org.slf4j.Logger;
@@ -38,23 +40,61 @@ public final class JPlagRunner {
      * @param resultFile is the result file to pass to the server. May be null.
      * @param port is the port to open the server on.
      * @throws IOException if the internal server throws an exception
+     * @deprecated Use {@link #runInternalServer(File, int, InetAddress)} instead
      */
+    @Deprecated
     public static void runInternalServer(File resultFile, int port) throws IOException {
+        runInternalServer(resultFile, port, InetAddress.getLoopbackAddress());
+    }
+
+    /**
+     * Runs the internal server. Blocks until the server has stopped.
+     * @param resultFile is the result file to pass to the server. May be null.
+     * @param port is the port to open the server on.
+     * @param bindAddress is the address to bind the server to.
+     * @throws IOException if the internal server throws an exception
+     */
+    public static void runInternalServer(File resultFile, int port, InetAddress bindAddress) throws IOException {
         if (!ReportViewer.hasCompiledViewer()) {
             logger.warn("The report viewer is not available. Check whether you compiled JPlag with the report viewer.");
             return;
         }
-        ReportViewer reportViewer = new ReportViewer(resultFile, port);
+
+        if (bindAddress.isAnyLocalAddress()) {
+            logger.warn("Binding to all interfaces ({}). The report viewer will be accessible from any network interface.",
+                    bindAddress.getHostAddress());
+        }
+
+        ReportViewer reportViewer = new ReportViewer(resultFile, port, bindAddress);
         int actualPort = reportViewer.start();
-        logger.info("ReportViewer started on port http://localhost:{}", actualPort);
+
+        String displayHost = getDisplayHost(bindAddress);
+        String urlHost = getUrlHost(bindAddress);
+
+        logger.info("ReportViewer started on http://{}:{}", displayHost, actualPort);
         if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-            Desktop.getDesktop().browse(URI.create("http://localhost:" + actualPort + "/"));
+            Desktop.getDesktop().browse(URI.create("http://" + urlHost + ":" + actualPort + "/"));
         } else {
-            logger.info("Could not open browser. You can open the Report Viewer here: http://localhost:{}/", actualPort);
+            logger.info("Could not open browser. You can open the Report Viewer here: http://{}:{}/", displayHost, actualPort);
         }
 
         System.out.println("Press Enter key to exit...");
         System.in.read();
         reportViewer.stop();
+    }
+
+    private static String getDisplayHost(InetAddress bindAddress) {
+        if (bindAddress.isAnyLocalAddress()) {
+            return "localhost";
+        }
+        return bindAddress.getHostAddress();
+    }
+
+    private static String getUrlHost(InetAddress bindAddress) {
+        String hostAddress = bindAddress.getHostAddress();
+        if (bindAddress instanceof Inet6Address) {
+            return "[" + hostAddress + "]";
+        }
+        return hostAddress;
     }
 }

@@ -131,6 +131,10 @@ public class CliOptions implements Runnable {
         @Option(names = {"-P", "--port"}, description = "The port used for the internal report viewer (default: ${DEFAULT-VALUE}).")
         public int port = 1996;
 
+        /** Bind address for internal report viewer. */
+        @Option(names = {"-H", "--host"}, description = "The bind address for the internal report viewer (default: ${DEFAULT-VALUE}).")
+        public String host = "127.0.0.1";
+
         /** Export similarity as CSV. */
         @Option(names = "--csv-export", description = "Export pairwise similarity values as a CSV file.")
         public boolean csvExport = false;
