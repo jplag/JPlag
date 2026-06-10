@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>de.jplag</groupId>
+        <artifactId>languages</artifactId>
+        <version>${revision}</version>
+    </parent>
+    <artifactId>java</artifactId>
+    <name>JPlag: Java Language Module with transformations</name>
+    <properties>
+        <maven.compiler.source>26</maven.compiler.source>
+        <maven.compiler.target>26</maven.compiler.target>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>de.jplag</groupId>
+            <artifactId>java</artifactId>
+        </dependency>
+    </dependencies>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <compilerArgs>
+                            <arg>--add-modules</arg>
+                            <arg>jdk.incubator.code</arg>
+                            <arg>--enable-preview</arg>
+                            <arg>--add-exports</arg>
+                            <arg>jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</arg>
+                            <arg>--add-exports</arg>
+                            <arg>jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</arg>
+                            <arg>--add-exports</arg>
+                            <arg>jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
+                            <arg>--add-exports</arg>
+                            <arg>jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
+                        </compilerArgs>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

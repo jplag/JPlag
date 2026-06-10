@@ -1,9 +1,9 @@
-package de.jplag.java;
+package de.jplag.java.babylon;
 
 import jdk.incubator.code.*;
 import jdk.incubator.code.dialect.core.CoreOp;
 
-import static de.jplag.java.Experiment.requireSingle;
+import static de.jplag.java.babylon.Experiment.requireSingle;
 import static jdk.incubator.code.dialect.java.JavaType.VOID;
 
 public interface BabylonDSL {

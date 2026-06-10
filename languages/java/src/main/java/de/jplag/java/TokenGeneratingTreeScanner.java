@@ -58,7 +58,7 @@ import com.sun.source.util.TreeScanner;
 
 import javax.tools.JavaCompiler;
 
-final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
+public class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     private final static String ANONYMOUS_VARIABLE_NAME = "";
     private static final String ENUM_MARKER = "/*enum*/";
 
@@ -66,11 +66,9 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     private final Parser parser;
     private final LineMap map;
     private final SourcePositions positions;
-    private final CompilationUnitTree ast;
-    private final JavaCompiler.CompilationTask task;
-    private final Experiment experiment;
+    protected final CompilationUnitTree ast;
 
-    private final VariableRegistry variableRegistry;
+    protected final VariableRegistry variableRegistry;
 
     private static final Set<String> IMMUTABLES = Set.of(
             // from https://medium.com/@bpnorlander/java-understanding-primitive-types-and-wrapper-objects-a6798fb2afe9
@@ -79,14 +77,12 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
 
     private static final Set<String> CRITICAL_METHODS = Set.of("System.out.println", "System.out.print");
 
-    public TokenGeneratingTreeScanner(File file, Parser parser, LineMap map, SourcePositions positions, CompilationUnitTree ast, JavaCompiler.CompilationTask task) {
+    public TokenGeneratingTreeScanner(File file, Parser parser, LineMap map, SourcePositions positions, CompilationUnitTree ast) {
         this.file = file;
         this.parser = parser;
         this.map = map;
         this.positions = positions;
         this.ast = ast;
-        this.task = task;
-        this.experiment = new Experiment(parser, file);
         this.variableRegistry = new VariableRegistry();
     }
 
@@ -218,9 +214,11 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     @Override
     public Void visitMethod(MethodTree node, Void unused) {
         variableRegistry.enterLocalScope();
-
-        experiment.handle(task, ast, node);
-
+        long start = positions.getStartPosition(ast, node);
+        long end = positions.getEndPosition(ast, node) - 1;
+        addToken(JavaTokenType.J_METHOD_BEGIN, start, node.getName().length(), CodeSemantics.createControl());
+        super.visitMethod(node, null);
+        addToken(JavaTokenType.J_METHOD_END, end, 1, CodeSemantics.createControl());
         variableRegistry.addAllNonLocalVariablesAsReads();
         variableRegistry.exitLocalScope();
         return null;

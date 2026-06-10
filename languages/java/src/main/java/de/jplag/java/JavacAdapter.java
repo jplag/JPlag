@@ -15,6 +15,7 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import com.sun.source.tree.TreeVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,7 +67,7 @@ public class JavacAdapter {
             for (final CompilationUnitTree ast : executeCompilationTask(task)) {
                 File file = new File(ast.getSourceFile().toUri());
                 final LineMap map = ast.getLineMap();
-                var scanner = new TokenGeneratingTreeScanner(file, parser, map, positions, ast, task);
+                var scanner = createTreeScanner(file, parser, map, positions, ast, task);
                 ast.accept(scanner, null);
                 parser.add(Token.semanticFileEnd(file));
             }
@@ -83,7 +84,7 @@ public class JavacAdapter {
         Iterable<? extends CompilationUnitTree> abstractSyntaxTrees = Collections.emptyList();
         try {
             abstractSyntaxTrees = ((JavacTask) task).parse();
-            ((JavacTask) task).analyze(); // populates AST with references to Symbols - we need those!
+            if (shouldAnalyze(task)) ((JavacTask) task).analyze();
         } catch (IOException exception) {
             logger.error(exception.getMessage(), exception);
         }
@@ -100,4 +101,11 @@ public class JavacAdapter {
         }).toList();
     }
 
+    protected boolean shouldAnalyze(final CompilationTask task) {
+        return false;
+    }
+
+    protected TreeVisitor<?, ?> createTreeScanner(File file, Parser parser, LineMap map, SourcePositions positions, CompilationUnitTree ast, JavaCompiler.CompilationTask task) {
+        return new TokenGeneratingTreeScanner(file, parser, map, positions, ast);
+    }
 }

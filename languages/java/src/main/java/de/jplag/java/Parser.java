@@ -31,12 +31,16 @@ public class Parser {
     public List<Token> parse(Set<File> files) throws ParsingException {
         ensureJavacIsAvailable();
         tokens = new ArrayList<>();
-        new JavacAdapter().parseFiles(files, this);
+        getJavacAdapter().parseFiles(files, this);
         logger.debug("--- token semantics ---");
         for (Token token : tokens) {
             logger.debug("{} | {} | {}", token.getStartLine(), token.getType().getDescription(), token.getSemantics());
         }
         return tokens;
+    }
+
+    protected JavacAdapter getJavacAdapter() {
+        return new JavacAdapter();
     }
 
     private void ensureJavacIsAvailable() throws CriticalParsingException {
@@ -45,7 +49,7 @@ public class Parser {
         }
     }
 
-    /* package-private */ void add(Token token) {
+    public void add(Token token) {
         tokens.add(token);
     }
 }

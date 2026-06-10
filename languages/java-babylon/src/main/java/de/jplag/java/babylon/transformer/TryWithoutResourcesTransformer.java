@@ -1,6 +1,6 @@
-package de.jplag.java.transformer;
+package de.jplag.java.babylon.transformer;
 
-import de.jplag.java.BabylonDSL;
+import de.jplag.java.babylon.BabylonDSL;
 import jdk.incubator.code.*;
 import jdk.incubator.code.dialect.core.CoreOp;
 import jdk.incubator.code.dialect.core.CoreType;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static de.jplag.java.Experiment.requireSingle;
+import static de.jplag.java.babylon.Experiment.requireSingle;
 import static jdk.incubator.code.dialect.java.JavaType.J_L_OBJECT;
 import static jdk.incubator.code.dialect.java.JavaType.VOID;
 
