@@ -26,7 +26,7 @@ public interface BabylonDSL {
         // this implicitly clears out the parameters which we depend on
         for (Op op1 : requireSingle(from.blocks()).ops()) {
             if (isLocationMarker(op1)) continue;
-            to.op(op1);
+            to.add(op1);
         }
     }
 
@@ -120,7 +120,7 @@ public interface BabylonDSL {
      */
     default Op.Result place(Block.Builder bd, Op.Location location, Op op) {
         op.setLocation(location);
-        return bd.op(op);
+        return bd.add(op);
     }
 
     /**

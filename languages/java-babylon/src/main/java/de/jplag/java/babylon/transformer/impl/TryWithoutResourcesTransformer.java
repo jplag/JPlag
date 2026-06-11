@@ -5,6 +5,7 @@ import de.jplag.java.babylon.BabylonDSL;
 import de.jplag.java.babylon.transformer.SimpleTransformation;
 import jdk.incubator.code.Block;
 import jdk.incubator.code.Body;
+import jdk.incubator.code.CodeType;
 import jdk.incubator.code.Op;
 import jdk.incubator.code.Value;
 import jdk.incubator.code.dialect.core.CoreOp;
@@ -13,6 +14,7 @@ import jdk.incubator.code.dialect.java.JavaOp;
 import jdk.incubator.code.dialect.java.MethodRef;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,50 +34,63 @@ public class TryWithoutResourcesTransformer implements SimpleTransformation, Bab
     @Override
     public Block.Builder acceptOp(Block.Builder builder, Op op) {
         if (Objects.requireNonNull(op) instanceof JavaOp.TryOp tryOp) {
-            var resources = tryOp.resourcesBody();
-            if (resources == null) {
-                builder.op(op);
+            List<Body> resources = tryOp.resourceBodies();
+            if (resources.isEmpty()) {
+                builder.add(op);
                 return builder;
             }
-            var resourceBlock = requireSingle(resources.blocks());
-
-            var it = resourceBlock.children().reversed().iterator();
-            CoreOp.YieldOp resourceYield = (CoreOp.YieldOp) it.next();
-            CoreOp.TupleOp tupleOp = (CoreOp.TupleOp) it.next();
-            var initializeResources = resourceBlock.children().subList(0, resourceBlock.children().size() - 2);
 
             List<Value> liftedParameters = new ArrayList<>();
-            for (Value operand : tupleOp.operands()) {
-                liftedParameters.add(place(builder, location(operand), CoreOp.var(operand.type())));
+            for (Body resource : resources) {
+                Block resourceBlock = requireSingle(resource.blocks());
+                Iterator<Op> it = resourceBlock.children().reversed().iterator();
+                CoreOp.YieldOp resourceYield = (CoreOp.YieldOp) it.next();
+                CoreOp.VarOp varOp = (CoreOp.VarOp) it.next();
+                for (Value operand : varOp.operands()) {
+                    liftedParameters.add(place(builder, location(operand), CoreOp.var(varOp.varName(), operand.type())));
+                }
             }
 
-            var ancestorBody = builder.parentBody();
+            Body.Builder ancestorBody = builder.parentBody();
 
             Body.Builder tryBody = Body.Builder.of(ancestorBody, CoreType.FUNCTION_TYPE_VOID, builder.context());
             {
-                var bd = tryBody.entryBlock();
-                bd.context().mapBlock(resourceBlock, bd);
+                Block.Builder bd = tryBody.entryBlock();
                 bd.context().mapBlock(tryOp.body().entryBlock(), bd);
                 bd.context().mapValues(tryOp.body().entryBlock().parameters(), liftedParameters);
-                bd.context().mapValues(tupleOp.operands(), liftedParameters);
-                for (var initOp : initializeResources) {
-                    bd.op(initOp);
+                for (int i = 0, resourcesSize = resources.size(); i < resourcesSize; i++) {
+                    Body resource = resources.get(i);
+                    Block resourceBlock = requireSingle(resource.blocks());
+                    Iterator<Op> it = resourceBlock.children().reversed().iterator();
+                    CoreOp.YieldOp resourceYield = (CoreOp.YieldOp) it.next();
+                    CoreOp.VarOp varOp = (CoreOp.VarOp) it.next();
+
+                    bd.context().mapBlock(resourceBlock, bd);
+                    bd.context().mapValue(varOp.result(), liftedParameters.get(i));
+
+                    List<Op> initializeResources = resourceBlock.children().subList(0, resourceBlock.children().size() - 2);
+                    for (Op initOp : initializeResources) {
+                        bd.add(initOp);
+                    }
+
+                    Value initOperand = requireSingle(varOp.operands());
+                    place(bd, varOp.location(), CoreOp.varStore(liftedParameters.get(i), bd.context().getValue(initOperand)));
                 }
                 copy(tryOp.body(), bd);
             }
 
             List<Body.Builder> catchBodies = new ArrayList<>();
             for (Body catchBody : tryOp.catchBodies()) {
-                var t = catchBody.bodySignature().parameterTypes().getFirst();
-                var body = Body.Builder.of(ancestorBody, CoreType.functionType(VOID, t), builder.context());
-                var bd = body.entryBlock();
+                CodeType t = catchBody.bodySignature().parameterTypes().getFirst();
+                Body.Builder body = Body.Builder.of(ancestorBody, CoreType.functionType(VOID, t), builder.context());
+                Block.Builder bd = body.entryBlock();
 
                 // the first entry loads the exception which is located at the try
                 // this corrects that
-                var cbit = catchBody.entryBlock().ops().iterator();
+                Iterator<Op> cbit = catchBody.entryBlock().ops().iterator();
                 if (cbit.hasNext()) {
                     if (!(cbit.next() instanceof CoreOp.VarOp)) throw new IllegalStateException();
-                    if (cbit.hasNext()) bd.op(locationMarker(location(cbit.next())));
+                    if (cbit.hasNext()) bd.add(locationMarker(location(cbit.next())));
                 }
 
                 bd.context().mapValues(catchBody.entryBlock().parameters(), bd.parameters());
@@ -85,16 +100,16 @@ public class TryWithoutResourcesTransformer implements SimpleTransformation, Bab
 
             Body.Builder finallyBody = Body.Builder.of(ancestorBody, CoreType.FUNCTION_TYPE_VOID, builder.context());
             {
-                var bd = finallyBody.entryBlock();
+                Block.Builder bd = finallyBody.entryBlock();
 
-                var finloc = location(tryOp.finallyBody());
-                bd.op(locationMarker(finloc));
+                Op.Location finloc = location(tryOp.finallyBody());
+                bd.add(locationMarker(finloc));
 
-                for (var var : liftedParameters) {
-                    var loc = location(var);
+                for (Value var : liftedParameters) {
+                    Op.Location loc = location(var);
                     // technically not correct since this skips the extra exception handling
-                    bd.op(JavaOp.if_(bd.parentBody()).if_(bd1 -> {
-                        var nil = place(bd1, loc, CoreOp.constant(J_L_OBJECT, null));
+                    bd.add(JavaOp.if_(bd.parentBody()).if_(bd1 -> {
+                        Op.Result nil = place(bd1, loc, CoreOp.constant(J_L_OBJECT, null));
                         place(bd1, loc, CoreOp.core_yield(place(bd1, loc, JavaOp.neq(var, nil))));
                     }).then(bd1 -> {
                         place(bd1, loc, JavaOp.invoke(MethodRef.method(AutoCloseable.class, "close", void.class), var));
@@ -102,19 +117,18 @@ public class TryWithoutResourcesTransformer implements SimpleTransformation, Bab
                     }).else_());
                 }
 
-                bd.context().mapValues(finallyBody.entryBlock().parameters(), liftedParameters);
-                var fb = tryOp.finallyBody();
+                Body fb = tryOp.finallyBody();
                 if (fb != null) {
                     bd.context().mapBlock(fb.entryBlock(), bd);
                     copy(fb, bd);
                 }
             }
 
-            var newTry = JavaOp.try_(null, tryBody, catchBodies, finallyBody);
+            JavaOp.TryOp newTry = JavaOp.try_(List.of(), tryBody, catchBodies, finallyBody);
             newTry.setLocation(tryOp.location());
-            builder.op(newTry);
+            builder.add(newTry);
         } else {
-            builder.op(op);
+            builder.add(op);
         }
         return builder;
     }
