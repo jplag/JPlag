@@ -31,7 +31,7 @@ public class JavaBabylonLanguage extends JavaLanguage {
 
     @Override
     protected Parser createParser() {
-        return new ParserBabylon(options.getTransformationPipeline());
+        return new ParserBabylon(options.getTransformationPipeline(), options.getTokenizer());
     }
 
     @Override

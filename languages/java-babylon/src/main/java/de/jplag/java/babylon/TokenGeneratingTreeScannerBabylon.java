@@ -5,7 +5,7 @@ import com.sun.source.tree.LineMap;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.util.SourcePositions;
 import de.jplag.java.TokenGeneratingTreeScanner;
-import de.jplag.java.babylon.transformer.BabylonTokenizer;
+import de.jplag.java.babylon.tokenizer.BabylonTokenizer;
 import de.jplag.java.babylon.transformer.TransformationPipeline;
 import de.jplag.semantics.VariableRegistry;
 import jdk.incubator.code.Op;
@@ -17,7 +17,7 @@ import java.io.File;
 class TokenGeneratingTreeScannerBabylon extends TokenGeneratingTreeScanner {
     private final JavaCompiler.CompilationTask task;
     private final TransformationPipeline pipeline;
-    private final BabylonTokenizer tokenizer;
+    private final BabylonTokenizer.AtFile tokenizer;
 
     public TokenGeneratingTreeScannerBabylon(
             File file,
@@ -26,12 +26,13 @@ class TokenGeneratingTreeScannerBabylon extends TokenGeneratingTreeScanner {
             SourcePositions positions,
             CompilationUnitTree ast,
             JavaCompiler.CompilationTask task,
-            VariableRegistry variableRegistry
+            VariableRegistry variableRegistry,
+            BabylonTokenizer tokenizer
     ) {
         super(file, parser, map, positions, ast, variableRegistry);
         this.task = task;
         this.pipeline = parser.getPipeline();
-        this.tokenizer = new BabylonTokenizer(parser, file);
+        this.tokenizer = tokenizer.atFile(parser, file);
     }
 
     @Override

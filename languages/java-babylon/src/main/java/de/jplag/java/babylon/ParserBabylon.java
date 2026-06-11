@@ -5,6 +5,7 @@ import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.java.JavacAdapter;
 import de.jplag.java.Parser;
+import de.jplag.java.babylon.tokenizer.BabylonTokenizer;
 import de.jplag.java.babylon.transformer.TransformationPipeline;
 import de.jplag.semantics.CodeSemantics;
 import de.jplag.semantics.VariableRegistry;
@@ -23,14 +24,17 @@ import java.util.Set;
 public class ParserBabylon extends Parser {
     private final TransformationPipeline pipeline;
     private final VariableRegistry variableRegistry;
+    private final BabylonTokenizer tokenizer;
 
     /**
      * Crease a new instance.
      *
      * @param pipeline the pipeline to use for this parser
+     * @param tokenizer the tokenizer to use for extracting tokens from the model
      */
-    public ParserBabylon(TransformationPipeline pipeline) {
+    public ParserBabylon(TransformationPipeline pipeline, BabylonTokenizer tokenizer) {
         this.pipeline = pipeline;
+        this.tokenizer = tokenizer;
         this.variableRegistry = new VariableRegistry();
     }
 
@@ -45,7 +49,7 @@ public class ParserBabylon extends Parser {
 
     @Override
     protected JavacAdapter getJavacAdapter() {
-        return new JavacAdapterBabylon(pipeline, variableRegistry);
+        return new JavacAdapterBabylon(pipeline, variableRegistry, tokenizer);
     }
 
     @Override
@@ -78,7 +82,7 @@ public class ParserBabylon extends Parser {
             Op.Location startLocation = Objects.requireNonNullElse(deferredToken.location, lastLocation);
             Op.Location endLocation;
             int length;
-            if (nextLocation == null || startLocation.line() != nextLocation.line() || startLocation.column() == nextLocation.column()) {
+            if (nextLocation == null || startLocation.line() != nextLocation.line() || startLocation.column() >= nextLocation.column()) {
                 endLocation = new Op.Location(startLocation.line(), startLocation.column() + 1);
                 length = 1;
             } else {
