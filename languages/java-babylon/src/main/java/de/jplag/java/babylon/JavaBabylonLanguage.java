@@ -10,6 +10,7 @@ import de.jplag.java.Parser;
  * <br>
  * Does not use {@link AutoService} since the service is gated behind <a href="https://openjdk.org/jeps/238">MRJAR</a>.
  */
+@AutoService(Language.class)
 public class JavaBabylonLanguage extends JavaLanguage {
     private final BabylonOptions options = new BabylonOptions();
 
@@ -41,5 +42,10 @@ public class JavaBabylonLanguage extends JavaLanguage {
     @Override
     public boolean supportsNormalization() {
         return false; // for now
+    }
+
+    @Override
+    public boolean hasPriority() {
+        return false;
     }
 }

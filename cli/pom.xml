@@ -37,6 +37,10 @@
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
+            <artifactId>java-babylon</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.jplag</groupId>
             <artifactId>python-3</artifactId>
         </dependency>
         <dependency>
@@ -153,6 +157,9 @@
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                         </manifest>
+                        <manifestEntries>
+                            <Multi-Release>true</Multi-Release>
+                        </manifestEntries>
                     </archive>
                     <finalName>jplag-${project.version}</finalName>
                 </configuration>

@@ -23,13 +23,13 @@
             <plugins>
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <configuration>
+                    <configuration combine.self="merge">
                         <argLine>@{argLine} -javaagent:"${settings.localRepository}/org/mockito/mockito-core/${version.mockito}/mockito-core-${version.mockito}.jar" --add-modules jdk.incubator.code --enable-preview</argLine>
                     </configuration>
                 </plugin>
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
+                    <configuration combine.self="merge">
                         <compilerArgs>
                             <arg>--add-modules</arg>
                             <arg>jdk.incubator.code</arg>
@@ -47,7 +47,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <configuration>
+                    <configuration combine.self="merge">
                         <additionalOptions>
                             <option>--add-modules</option>
                             <option>jdk.incubator.code</option>
@@ -56,7 +56,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <configuration>
+                    <configuration combine.self="merge">
                         <archive>
                             <manifestEntries>
                                 <Multi-Release>true</Multi-Release>

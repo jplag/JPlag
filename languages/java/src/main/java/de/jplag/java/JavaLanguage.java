@@ -59,6 +59,11 @@ public class JavaLanguage implements Language {
     }
 
     @Override
+    public boolean hasPriority() {
+        return true;
+    }
+
+    @Override
     public String toString() {
         return this.getIdentifier();
     }
