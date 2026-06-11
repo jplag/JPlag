@@ -134,6 +134,9 @@
                             <mainClass>de.jplag.cli.CLI</mainClass>
                             <packageName>jplag</packageName>
                         </manifest>
+                        <manifestEntries>
+                            <Multi-Release>true</Multi-Release>
+                        </manifestEntries>
                     </archive>
                 </configuration>
             </plugin>
