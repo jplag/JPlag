@@ -78,8 +78,7 @@ public class HighLevelBabylonTokenizer extends AbstractBabylonTokenizer {
                 }
                 case JavaOp.TryOp tryOp -> {
                     addToken(JavaTokenType.J_TRY_BEGIN, tryOp.location(), CodeSemantics.createControl());
-                    var rb = tryOp.resourcesBody();
-                    if (rb != null) {
+                    if (!tryOp.resourceBodies().isEmpty()) {
                         throw new IllegalArgumentException("Try-with-resources should have been lowered out");
                     }
                     handle(tryOp.body());
@@ -89,7 +88,7 @@ public class HighLevelBabylonTokenizer extends AbstractBabylonTokenizer {
                         handle(catchBody);
                         addToken(JavaTokenType.J_CATCH_END, CodeSemantics.createControl());
                     }
-                    var fin = tryOp.finallyBody();
+                    Body fin = tryOp.finallyBody();
                     if (fin != null) {
                         addToken(JavaTokenType.J_FINALLY_BEGIN, location(fin), CodeSemantics.createControl());
                         handle(fin);
