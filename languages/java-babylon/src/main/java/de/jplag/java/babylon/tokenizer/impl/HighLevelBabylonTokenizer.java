@@ -1,7 +1,9 @@
 package de.jplag.java.babylon.tokenizer.impl;
 
 import com.google.auto.service.AutoService;
+import de.jplag.Token;
 import de.jplag.java.JavaTokenType;
+import de.jplag.java.TokenGeneratingTreeScanner;
 import de.jplag.java.babylon.ParserBabylon;
 import de.jplag.java.babylon.tokenizer.BabylonTokenizer;
 import de.jplag.semantics.CodeSemantics;
@@ -22,7 +24,7 @@ import java.util.Iterator;
 
 /**
  * {@link BabylonTokenizer} implementation intended for high-level code models.
- * Deliberately ignores smaller {@link Op}s, aiming for a similar abstraction level to {@link de.jplag.java.TokenGeneratingTreeScanner}.
+ * Deliberately ignores smaller {@link Op}s, aiming for a similar abstraction level to {@link TokenGeneratingTreeScanner}.
  */
 @AutoService(BabylonTokenizer.class)
 public class HighLevelBabylonTokenizer extends AbstractBabylonTokenizer {
@@ -46,7 +48,7 @@ public class HighLevelBabylonTokenizer extends AbstractBabylonTokenizer {
     }
 
     /**
-     * Tokenizer bound to a particular file, defaulting to that file for output {@link de.jplag.Token}s.
+     * Tokenizer bound to a particular file, defaulting to that file for output {@link Token}s.
      */
     public static class AtFile extends AbstractBabylonTokenizer.AtFile {
         /**
@@ -190,7 +192,10 @@ public class HighLevelBabylonTokenizer extends AbstractBabylonTokenizer {
                 case CoreOp.VarAccessOp.VarStoreOp varStoreOp -> {
                     boolean inLocalScope = parser.getVariableRegistry().inLocalScope();
                     parser.getVariableRegistry().setNextVariableAccessType(VariableAccessType.WRITE);
-                    parser.getVariableRegistry().registerVariableAccess(varStoreOp.varOp().varName(), !inLocalScope);
+                    parser.getVariableRegistry().registerVariableAccess(switch (varStoreOp.varOperand()) {
+                        case Block.Parameter parameter -> Integer.toString(parameter.index());
+                        case Op.Result result -> ((CoreOp.VarOp) result.op()).varName();
+                    }, !inLocalScope);
                     addToken(JavaTokenType.J_ASSIGN, location(varStoreOp), new CodeSemantics());
                 }
                 case JavaOp.AssertOp assertOp -> addToken(JavaTokenType.J_ASSERT, location(assertOp), CodeSemantics.createControl());
