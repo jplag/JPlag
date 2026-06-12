@@ -44,7 +44,7 @@ public class JavaLanguage implements Language {
         return createParser().parse(files);
     }
 
-    protected Parser createParser() {
+    protected Parser createParser() throws ParsingException {
         return new Parser();
     }
 

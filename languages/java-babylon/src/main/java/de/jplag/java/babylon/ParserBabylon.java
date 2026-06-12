@@ -10,6 +10,8 @@ import de.jplag.java.babylon.transformer.TransformationPipeline;
 import de.jplag.semantics.CodeSemantics;
 import de.jplag.semantics.VariableRegistry;
 import jdk.incubator.code.Op;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -22,6 +24,7 @@ import java.util.Set;
  * {@link Parser} with extensions for Babylon, including a Babylon-aligned API for adding tokens.
  */
 public class ParserBabylon extends Parser {
+    private static final Logger logger = LoggerFactory.getLogger(ParserBabylon.class);
     private final TransformationPipeline pipeline;
     private final VariableRegistry variableRegistry;
     private final BabylonTokenizer tokenizer;
@@ -65,7 +68,13 @@ public class ParserBabylon extends Parser {
     public List<Token> parse(Set<File> files) throws ParsingException {
         lastLocation = new Op.Location(1, 1);
         deferredTokens.clear();
-        List<Token> tokens = super.parse(files);
+        List<Token> tokens;
+        try {
+            tokens = super.parse(files);
+        } catch (Error | RuntimeException e) {
+            logger.error("Error while parsing", e);
+            throw e;
+        }
         drainDeferredTokens(lastLocation);
         return tokens;
     }
