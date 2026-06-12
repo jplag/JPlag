@@ -54,19 +54,6 @@ public interface BabylonTokenizer {
         }
 
         /**
-         * Tokenize a single {@link Value}.
-         *
-         * @param value the value to tokenize
-         */
-        default void handle(Value value) {
-            switch (value) {
-                case null -> {}
-                case Block.Parameter _ -> {}
-                case Op.Result result -> handle(result.op());
-            }
-        }
-
-        /**
          * Tokenize a single {@link Op}.
          *
          * @param op the op to tokenize

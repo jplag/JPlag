@@ -5,14 +5,20 @@ import de.jplag.java.JavaTokenType;
 import de.jplag.java.babylon.ParserBabylon;
 import de.jplag.java.babylon.tokenizer.BabylonTokenizer;
 import de.jplag.semantics.CodeSemantics;
+import de.jplag.semantics.VariableAccessType;
+import de.jplag.semantics.VariableScope;
+import jdk.incubator.code.Block;
 import jdk.incubator.code.Body;
 import jdk.incubator.code.Op;
 import jdk.incubator.code.dialect.core.CoreOp;
+import jdk.incubator.code.dialect.java.ArrayType;
+import jdk.incubator.code.dialect.java.ClassType;
 import jdk.incubator.code.dialect.java.JavaOp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.Iterator;
 
 /**
  * {@link BabylonTokenizer} implementation intended for high-level code models.
@@ -20,13 +26,18 @@ import java.io.File;
  */
 @AutoService(BabylonTokenizer.class)
 public class HighLevelBabylonTokenizer extends AbstractBabylonTokenizer {
+    /**
+     * Identifier of this tokenizer.
+     */
+    public static final String IDENTIFIER = "high-level";
+
     protected static final Logger logger = LoggerFactory.getLogger(HighLevelBabylonTokenizer.class);
 
     /**
      * Create a new instance.
      */
     public HighLevelBabylonTokenizer() {
-        super("high-level");
+        super(IDENTIFIER);
     }
 
     @Override
@@ -69,24 +80,52 @@ public class HighLevelBabylonTokenizer extends AbstractBabylonTokenizer {
                     handle(sync.blockBody());
                     addToken(JavaTokenType.J_SYNC_END, CodeSemantics.createControl());
                 }
-                case CoreOp.ReturnOp returnOp -> {
-                    addToken(JavaTokenType.J_RETURN, returnOp.location(), CodeSemantics.createControl());
-                    handle(returnOp.returnValue());
+                case JavaOp.DoWhileOp doWhileOp -> {
+                    addToken(JavaTokenType.J_LOOP_BEGIN, doWhileOp.location(), CodeSemantics.createLoopBegin());
+                    handle(doWhileOp.loopBody());
+                    addToken(JavaTokenType.J_LOOP_END, CodeSemantics.createLoopEnd());
+                    handle(doWhileOp.predicateBody());
                 }
-                case JavaOp.BreakOp breakOp -> {
-                    addToken(JavaTokenType.J_BREAK, breakOp.location(), CodeSemantics.createControl());
+                case JavaOp.WhileOp whileOp -> {
+                    addToken(JavaTokenType.J_LOOP_BEGIN, whileOp.location(), CodeSemantics.createLoopBegin());
+                    for (Body body : whileOp.bodies()) handle(body);
+                    addToken(JavaTokenType.J_LOOP_END, CodeSemantics.createLoopEnd());
+                }
+                case JavaOp.ForOp forOp -> {
+                    parser.getVariableRegistry().enterLocalScope();
+                    addToken(JavaTokenType.J_LOOP_BEGIN, forOp.location(), CodeSemantics.createLoopBegin());
+                    for (Body body : forOp.bodies()) handle(body);
+                    addToken(JavaTokenType.J_LOOP_END, CodeSemantics.createLoopEnd());
+                    parser.getVariableRegistry().exitLocalScope();
+                }
+                case JavaOp.EnhancedForOp enhancedForOp -> {
+                    parser.getVariableRegistry().enterLocalScope();
+                    addToken(JavaTokenType.J_LOOP_BEGIN, enhancedForOp.location(), CodeSemantics.createLoopBegin());
+                    for (Body body : enhancedForOp.bodies()) handle(body);
+                    addToken(JavaTokenType.J_LOOP_END, CodeSemantics.createLoopEnd());
+                    parser.getVariableRegistry().exitLocalScope();
+                }
+                case JavaOp.JavaSwitchOp javaSwitchOp -> {
+                    addToken(JavaTokenType.J_SWITCH_BEGIN, javaSwitchOp.location(), CodeSemantics.createControl());
+                    for (Iterator<Body> iterator = javaSwitchOp.bodies().iterator(); iterator.hasNext(); ) {
+                        Body predicateBody = iterator.next();
+                        Body actionBody = iterator.next();
+                        addToken(JavaTokenType.J_CASE, location(predicateBody), CodeSemantics.createControl());
+                        handle(predicateBody);
+                        handle(actionBody);
+                    }
+                    addToken(JavaTokenType.J_SWITCH_END, CodeSemantics.createControl());
                 }
                 case JavaOp.TryOp tryOp -> {
                     addToken(JavaTokenType.J_TRY_BEGIN, tryOp.location(), CodeSemantics.createControl());
-                    if (!tryOp.resourceBodies().isEmpty()) {
-                        throw new IllegalArgumentException("Try-with-resources should have been lowered out");
-                    }
+                    for (Body resourceBody : tryOp.resourceBodies()) handle(resourceBody);
                     handle(tryOp.body());
-                    addToken(JavaTokenType.J_TRY_END, CodeSemantics.createControl());
                     for (Body catchBody : tryOp.catchBodies()) {
+                        parser.getVariableRegistry().enterLocalScope();
                         addToken(JavaTokenType.J_CATCH_BEGIN, location(catchBody), CodeSemantics.createControl());
                         handle(catchBody);
                         addToken(JavaTokenType.J_CATCH_END, CodeSemantics.createControl());
+                        parser.getVariableRegistry().exitLocalScope();
                     }
                     Body fin = tryOp.finallyBody();
                     if (fin != null) {
@@ -94,8 +133,85 @@ public class HighLevelBabylonTokenizer extends AbstractBabylonTokenizer {
                         handle(fin);
                         addToken(JavaTokenType.J_FINALLY_END, CodeSemantics.createControl());
                     }
+                    addToken(JavaTokenType.J_TRY_END, CodeSemantics.createControl());
                 }
-                default -> logger.warn("Unsupported op: {} with content: {}", op.getClass(), op.toText());
+                case JavaOp.IfOp ifOp -> {
+                    for (Iterator<Body> iterator = ifOp.bodies().iterator(); iterator.hasNext(); ) {
+                        Body body = iterator.next();
+                        addToken(JavaTokenType.J_IF_BEGIN, ifOp.location(), CodeSemantics.createControl());
+                        // if there is just one body left, it is an else branch
+                        // if there are multiple, it is else-if
+                        if (iterator.hasNext()) {
+                            handle(body);
+                            handle(iterator.next());
+                        } else {
+                            handle(body);
+                        }
+                        addToken(JavaTokenType.J_IF_END, CodeSemantics.createControl());
+                    }
+                }
+                case JavaOp.BreakOp breakOp -> addToken(JavaTokenType.J_BREAK, breakOp.location(), CodeSemantics.createControl());
+                case JavaOp.ContinueOp continueOp -> addToken(JavaTokenType.J_CONTINUE, continueOp.location(), CodeSemantics.createControl());
+                case CoreOp.ReturnOp returnOp -> addToken(JavaTokenType.J_RETURN, returnOp.location(), CodeSemantics.createControl());
+                case JavaOp.ThrowOp throwOp -> addToken(JavaTokenType.J_THROW, throwOp.location(), CodeSemantics.createControl());
+                case JavaOp.NewOp newOp -> {
+                    switch (newOp.resultType()) {
+                        case ArrayType _:
+                            addToken(JavaTokenType.J_NEWARRAY, newOp.location(), new CodeSemantics());
+                            break;
+                        case ClassType ct when !ct.typeArguments().isEmpty():
+                            addToken(JavaTokenType.J_GENERIC, newOp.location(), new CodeSemantics());
+                            // fall-through
+                        default:
+                            addToken(JavaTokenType.J_NEWCLASS, newOp.location(), new CodeSemantics());
+                            break;
+                    }
+                }
+                case CoreOp.VarOp varOp -> {
+                    String name = varOp.varName();
+                    boolean inLocalScope = parser.getVariableRegistry().inLocalScope();
+                    // this presents a problem when classes are declared in local scopes, which can happen in ad-hoc implementations
+                    CodeSemantics semantics;
+                    if (inLocalScope) {
+                        boolean mutable = true; // final does not seem to get persisted into the code model
+                        parser.getVariableRegistry().registerVariable(name, VariableScope.LOCAL, mutable);
+                        semantics = new CodeSemantics();
+                    } else {
+                        semantics = CodeSemantics.createKeep();
+                    }
+                    addToken(JavaTokenType.J_VARDEF, location(varOp), semantics);
+                    if (!varOp.isUninitialized() && !(varOp.operands().getFirst() instanceof Block.Parameter)) {
+                        // manually add variable to semantics since identifier isn't visited
+                        parser.getVariableRegistry().setNextVariableAccessType(VariableAccessType.WRITE);
+                        parser.getVariableRegistry().registerVariableAccess(name, !inLocalScope);
+                        addToken(JavaTokenType.J_ASSIGN, location(varOp), new CodeSemantics());
+                    }
+                }
+                case CoreOp.VarAccessOp.VarStoreOp varStoreOp -> {
+                    boolean inLocalScope = parser.getVariableRegistry().inLocalScope();
+                    parser.getVariableRegistry().setNextVariableAccessType(VariableAccessType.WRITE);
+                    parser.getVariableRegistry().registerVariableAccess(varStoreOp.varOp().varName(), !inLocalScope);
+                    addToken(JavaTokenType.J_ASSIGN, location(varStoreOp), new CodeSemantics());
+                }
+                case JavaOp.AssertOp assertOp -> addToken(JavaTokenType.J_ASSERT, location(assertOp), CodeSemantics.createControl());
+                case JavaOp.ConditionalExpressionOp conditionalOp -> {
+                    addToken(JavaTokenType.J_COND, conditionalOp.location(), new CodeSemantics());
+                    for (Body body : conditionalOp.bodies()) handle(body);
+                }
+                case JavaOp.InvokeOp invokeOp -> addToken(JavaTokenType.J_APPLY, location(invokeOp), CodeSemantics.createControl());
+                case CoreOp.FuncCallOp funcCallOp -> addToken(JavaTokenType.J_APPLY, location(funcCallOp), CodeSemantics.createControl());
+                case JavaOp.YieldOp yieldOp -> addToken(JavaTokenType.J_YIELD, yieldOp.location(), CodeSemantics.createControl());
+                case CoreOp.ModuleOp moduleOp -> {
+                    parser.getVariableRegistry().enterClass();
+                    addToken(JavaTokenType.J_CLASS_BEGIN, moduleOp.location(), CodeSemantics.createControl());
+                    for (Body body : moduleOp.bodies()) handle(body);
+                    addToken(JavaTokenType.J_CLASS_END, moduleOp.location(), CodeSemantics.createControl());
+                    parser.getVariableRegistry().exitClass();
+                }
+                default -> {
+                    logger.debug("Unsupported op: {} with content: {}", op.getClass(), op.toText());
+                    for (Body body : op.bodies()) handle(body);
+                }
             }
         }
     }

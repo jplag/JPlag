@@ -47,6 +47,15 @@ public class ParserBabylon extends Parser {
         return pipeline;
     }
 
+    /**
+     * Returns the {@link VariableRegistry} that is used for this parser.
+     *
+     * @return the variable registry used by this parser
+     */
+    public VariableRegistry getVariableRegistry() {
+        return variableRegistry;
+    }
+
     @Override
     protected JavacAdapter getJavacAdapter() {
         return new JavacAdapterBabylon(pipeline, variableRegistry, tokenizer);
@@ -72,7 +81,14 @@ public class ParserBabylon extends Parser {
         drainDeferredTokens(location);
         super.add(token);
         this.variableRegistry.updateSemantics(token.getSemantics());
-        if (location != null) lastLocation = location;
+        updateLastLocation(location);
+    }
+
+    private void updateLastLocation(@Nullable Op.Location location) {
+        if (location == null) return;
+        if (location.line() < lastLocation.line()) return;
+        if (location.line() == lastLocation.line() && location.column() < lastLocation.column()) return;
+        this.lastLocation = location;
     }
 
     private void drainDeferredTokens(@Nullable Op.Location nextLocation) {
@@ -140,7 +156,7 @@ public class ParserBabylon extends Parser {
             drainDeferredTokens(location);
         }
         deferredTokens.add(new DeferredToken(type, file, semantics, location));
-        lastLocation = location;
+        updateLastLocation(location);
     }
 
     /**

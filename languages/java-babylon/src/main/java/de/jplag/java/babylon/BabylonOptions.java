@@ -61,6 +61,10 @@ class BabylonOptions extends LanguageOptions {
         return this.pipeline;
     }
 
+    public LanguageOption<String> getTokenizerName() {
+        return this.tokenizerName;
+    }
+
     private volatile @Nullable BabylonTokenizer tokenizer = null;
     public BabylonTokenizer getTokenizer() {
         if (tokenizer == null) {

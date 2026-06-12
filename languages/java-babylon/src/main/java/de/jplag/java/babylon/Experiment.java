@@ -2,6 +2,7 @@ package de.jplag.java.babylon;
 
 import de.jplag.LanguageLoader;
 import de.jplag.TokenPrinterUtils;
+import de.jplag.java.babylon.tokenizer.impl.HighLevelBabylonTokenizer;
 
 import java.nio.file.Path;
 import java.util.Set;
@@ -15,6 +16,7 @@ class Experiment implements BabylonDSL {
         var files = Set.of(SOURCES.resolve("TryWithResource.java").toFile());
         JavaBabylonLanguage language = (JavaBabylonLanguage) LanguageLoader.getLanguage("java-babylon").orElseThrow();
         language.getOptions().getTransformationNames().setValue("tryWithoutResources, print");
+        language.getOptions().getTokenizerName().setValue(HighLevelBabylonTokenizer.IDENTIFIER);
         var tokens = language.parse(files, false);
         IO.println(TokenPrinterUtils.printTokensByFile(tokens));
     }
