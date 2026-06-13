@@ -1,12 +1,13 @@
 package de.jplag.java.babylon.tokenizer.impl;
 
-import com.google.auto.service.AutoService;
+import java.io.File;
+
 import de.jplag.TokenType;
 import de.jplag.java.babylon.ParserBabylon;
 import de.jplag.java.babylon.tokenizer.BabylonTokenizer;
-import jdk.incubator.code.Op;
 
-import java.io.File;
+import com.google.auto.service.AutoService;
+import jdk.incubator.code.Op;
 
 /**
  * {@link BabylonTokenizer} implementation that fully outputs all {@link Op}s as tokens without further interpretation.
@@ -36,9 +37,8 @@ public class FullBabylonTokenizer extends FullTypedBabylonTokenizer {
     public static class AtFile extends FullTypedBabylonTokenizer.AtFile {
         /**
          * Create a new instance.
-         *
          * @param parser the parser to output to
-         * @param file   the current file
+         * @param file the current file
          */
         public AtFile(ParserBabylon parser, File file) {
             super(parser, file);

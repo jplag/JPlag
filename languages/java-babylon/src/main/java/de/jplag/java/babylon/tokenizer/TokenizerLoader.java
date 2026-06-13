@@ -1,8 +1,5 @@
 package de.jplag.java.babylon.tokenizer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -12,9 +9,12 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * Utility class for loading installed {@link BabylonTokenizer} implementations.
- * Based on {@link de.jplag.java.babylon.transformer.TransformationStepLoader}.
+ * Utility class for loading installed {@link BabylonTokenizer} implementations. Based on
+ * {@link de.jplag.java.babylon.transformer.TransformationStepLoader}.
  */
 public class TokenizerLoader {
     private static final Logger logger = LoggerFactory.getLogger(TokenizerLoader.class);
@@ -27,10 +27,8 @@ public class TokenizerLoader {
     }
 
     /**
-     * Get all tokenizers that are currently in the classpath.
-     * The result will be cached.
-     * Use {@link #clearCache()} to obtain new instances.
-     *
+     * Get all tokenizers that are currently in the classpath. The result will be cached. Use {@link #clearCache()} to
+     * obtain new instances.
      * @return the tokenizers as an unmodifiable map from identifiers to {@link BabylonTokenizer} instances
      */
     public static Map<String, BabylonTokenizer> getAllAvailableTokenizers() {
@@ -40,7 +38,8 @@ public class TokenizerLoader {
                     Map<String, BabylonTokenizer> tokenizers = new TreeMap<>();
                     Set<String> skipped = new HashSet<>();
 
-                    if (tokenizerLoader == null) tokenizerLoader = ServiceLoader.load(BabylonTokenizer.class);
+                    if (tokenizerLoader == null)
+                        tokenizerLoader = ServiceLoader.load(BabylonTokenizer.class);
 
                     for (BabylonTokenizer tokenizer : tokenizerLoader) {
                         String identifier = tokenizer.getIdentifier();
@@ -63,7 +62,6 @@ public class TokenizerLoader {
 
     /**
      * Load a tokenizer that is currently in the classpath by its identifier.
-     *
      * @param identifier the identifier of the tokenizer
      * @return the tokenizer or an empty optional if no corresponding tokenizer was found
      * @see BabylonTokenizer#getIdentifier()
@@ -78,7 +76,6 @@ public class TokenizerLoader {
 
     /**
      * Get an unmodifiable set of all available tokenizer identifiers.
-     *
      * @return identifiers of all available tokenizers
      * @see BabylonTokenizer#getIdentifier()
      */
@@ -92,7 +89,8 @@ public class TokenizerLoader {
     public static void clearCache() {
         synchronized (TokenizerLoader.class) {
             cachedStepInstances = null;
-            if (tokenizerLoader != null) tokenizerLoader.reload();
+            if (tokenizerLoader != null)
+                tokenizerLoader.reload();
         }
     }
 }

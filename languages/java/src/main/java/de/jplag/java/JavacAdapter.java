@@ -15,7 +15,6 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
-import com.sun.source.tree.TreeVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +24,7 @@ import de.jplag.util.FileUtils;
 
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.LineMap;
+import com.sun.source.tree.TreeVisitor;
 import com.sun.source.util.JavacTask;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.Trees;
@@ -84,7 +84,8 @@ public class JavacAdapter {
         Iterable<? extends CompilationUnitTree> abstractSyntaxTrees = Collections.emptyList();
         try {
             abstractSyntaxTrees = ((JavacTask) task).parse();
-            if (shouldAnalyze(task)) ((JavacTask) task).analyze();
+            if (shouldAnalyze(task))
+                ((JavacTask) task).analyze();
         } catch (IOException exception) {
             logger.error(exception.getMessage(), exception);
         }
@@ -105,7 +106,8 @@ public class JavacAdapter {
         return false;
     }
 
-    protected TreeVisitor<?, ?> createTreeScanner(File file, Parser parser, LineMap map, SourcePositions positions, CompilationUnitTree ast, JavaCompiler.CompilationTask task) {
+    protected TreeVisitor<?, ?> createTreeScanner(File file, Parser parser, LineMap map, SourcePositions positions, CompilationUnitTree ast,
+            JavaCompiler.CompilationTask task) {
         return new TokenGeneratingTreeScanner(file, parser, map, positions, ast);
     }
 }

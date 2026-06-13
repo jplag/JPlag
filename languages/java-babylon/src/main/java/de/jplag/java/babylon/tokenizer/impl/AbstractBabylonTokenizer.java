@@ -1,23 +1,24 @@
 package de.jplag.java.babylon.tokenizer.impl;
 
+import java.io.File;
+
 import de.jplag.TokenType;
 import de.jplag.java.babylon.BabylonDSL;
 import de.jplag.java.babylon.ParserBabylon;
 import de.jplag.java.babylon.tokenizer.BabylonTokenizer;
 import de.jplag.semantics.CodeSemantics;
+
 import jdk.incubator.code.Op;
 
-import java.io.File;
-
 /**
- * Responsible for transforming a code model into a {@link de.jplag.Token} sequence by outputting it to a {@link ParserBabylon}.
+ * Responsible for transforming a code model into a {@link de.jplag.Token} sequence by outputting it to a
+ * {@link ParserBabylon}.
  */
 public abstract class AbstractBabylonTokenizer implements BabylonTokenizer {
     private final String identifier;
 
     /**
      * Create a new instance.
-     *
      * @param identifier the identifier of this tokenizer for use in the CLI
      */
     public AbstractBabylonTokenizer(String identifier) {
@@ -38,7 +39,6 @@ public abstract class AbstractBabylonTokenizer implements BabylonTokenizer {
 
         /**
          * Create a new instance.
-         *
          * @param parser the parser to output to
          * @param file the current file
          */
@@ -57,7 +57,6 @@ public abstract class AbstractBabylonTokenizer implements BabylonTokenizer {
 
         /**
          * Tokenize a single {@link Op}.
-         *
          * @param op the op to tokenize
          * @throws IllegalArgumentException if the op is invalid
          */

@@ -3,7 +3,9 @@ package de.jplag.java.babylon.transformer;
 import jdk.incubator.code.CodeTransformer;
 
 /**
- * {@link CodeTransformer} with an identifier. Registered implementations automatically get picked up by {@link TransformationStepLoader} using the {@link java.util.ServiceLoader} mechanism.
+ * {@link CodeTransformer} with an identifier.<br>
+ * Registered implementations automatically get picked up by {@link TransformationStepLoader} using the
+ * {@link java.util.ServiceLoader} mechanism.
  */
 public interface SimpleTransformation extends CodeTransformer {
     /**

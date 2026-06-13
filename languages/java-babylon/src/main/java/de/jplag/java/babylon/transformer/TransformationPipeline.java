@@ -1,12 +1,14 @@
 package de.jplag.java.babylon.transformer;
 
-import com.sun.source.tree.TreeVisitor;
-import de.jplag.java.babylon.MulticastTreeVisitor;
-import jdk.incubator.code.dialect.core.CoreOp;
-
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.annotation.Nullable;
+
+import de.jplag.java.babylon.MulticastTreeVisitor;
+
+import com.sun.source.tree.TreeVisitor;
+import jdk.incubator.code.dialect.core.CoreOp;
 
 /**
  * Wraps the transformations to perform within the language module in a simplified API.
@@ -16,7 +18,6 @@ public final class TransformationPipeline {
 
     /**
      * Creates a new pipeline wrapping some steps.
-     *
      * @param steps the steps to wrap
      */
     public TransformationPipeline(List<Step> steps) {
@@ -25,7 +26,6 @@ public final class TransformationPipeline {
 
     /**
      * Returns a prepass to perform before beginning the tokenization.
-     *
      * @return the prepass visitor
      */
     public TreeVisitor<?, ?> prepass() {
@@ -41,7 +41,6 @@ public final class TransformationPipeline {
 
     /**
      * Transform a single {@link CoreOp.FuncOp} according to the transformations represented by this pipeline.
-     *
      * @param op the op to transform
      * @return the transformed op
      */
@@ -53,7 +52,9 @@ public final class TransformationPipeline {
     }
 
     /**
-     * A step in the transformation pipeline. Registered implementations automatically get picked up by {@link TransformationStepLoader} using the {@link java.util.ServiceLoader} mechanism.
+     * A step in the transformation pipeline.<br>
+     * Registered implementations automatically get picked up by {@link TransformationStepLoader} using the
+     * {@link java.util.ServiceLoader} mechanism.
      */
     public interface Step {
         /**
@@ -64,7 +65,6 @@ public final class TransformationPipeline {
 
         /**
          * Returns a prepass to perform before beginning the tokenization or null.
-         *
          * @return the prepass visitor or null
          */
         default @Nullable TreeVisitor<?, ?> beginPrepass() {
@@ -73,7 +73,6 @@ public final class TransformationPipeline {
 
         /**
          * Apply the transformation represented by this step to a single {@link CoreOp.FuncOp}.
-         *
          * @param op the op to apply the transformation to
          * @return the transformed op
          */

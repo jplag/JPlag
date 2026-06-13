@@ -80,7 +80,6 @@ public class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
 
     /**
      * Create a new {@link TokenGeneratingTreeScanner}.
-     *
      * @param file the file being scanned
      * @param parser the parser to output tokens to
      * @param map the line map for the current file
@@ -91,7 +90,8 @@ public class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         this(file, parser, map, positions, ast, new VariableRegistry());
     }
 
-    protected TokenGeneratingTreeScanner(File file, Parser parser, LineMap map, SourcePositions positions, CompilationUnitTree ast, VariableRegistry variableRegistry) {
+    protected TokenGeneratingTreeScanner(File file, Parser parser, LineMap map, SourcePositions positions, CompilationUnitTree ast,
+            VariableRegistry variableRegistry) {
         this.file = file;
         this.parser = parser;
         this.map = map;

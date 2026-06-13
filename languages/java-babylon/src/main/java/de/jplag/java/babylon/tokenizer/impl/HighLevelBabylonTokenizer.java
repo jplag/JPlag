@@ -1,6 +1,11 @@
 package de.jplag.java.babylon.tokenizer.impl;
 
-import com.google.auto.service.AutoService;
+import java.io.File;
+import java.util.Iterator;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.jplag.Token;
 import de.jplag.java.JavaTokenType;
 import de.jplag.java.TokenGeneratingTreeScanner;
@@ -9,6 +14,8 @@ import de.jplag.java.babylon.tokenizer.BabylonTokenizer;
 import de.jplag.semantics.CodeSemantics;
 import de.jplag.semantics.VariableAccessType;
 import de.jplag.semantics.VariableScope;
+
+import com.google.auto.service.AutoService;
 import jdk.incubator.code.Block;
 import jdk.incubator.code.Body;
 import jdk.incubator.code.Op;
@@ -16,15 +23,11 @@ import jdk.incubator.code.dialect.core.CoreOp;
 import jdk.incubator.code.dialect.java.ArrayType;
 import jdk.incubator.code.dialect.java.ClassType;
 import jdk.incubator.code.dialect.java.JavaOp;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.util.Iterator;
 
 /**
- * {@link BabylonTokenizer} implementation intended for high-level code models.
- * Deliberately ignores smaller {@link Op}s, aiming for a similar abstraction level to {@link TokenGeneratingTreeScanner}.
+ * {@link BabylonTokenizer} implementation intended for high-level code models.<br>
+ * Deliberately ignores smaller {@link Op}s, aiming for a similar abstraction level to
+ * {@link TokenGeneratingTreeScanner}.
  */
 @AutoService(BabylonTokenizer.class)
 public class HighLevelBabylonTokenizer extends AbstractBabylonTokenizer {
@@ -53,9 +56,8 @@ public class HighLevelBabylonTokenizer extends AbstractBabylonTokenizer {
     public static class AtFile extends AbstractBabylonTokenizer.AtFile {
         /**
          * Create a new instance.
-         *
          * @param parser the parser to output to
-         * @param file   the current file
+         * @param file the current file
          */
         public AtFile(ParserBabylon parser, File file) {
             super(parser, file);
@@ -90,26 +92,29 @@ public class HighLevelBabylonTokenizer extends AbstractBabylonTokenizer {
                 }
                 case JavaOp.WhileOp whileOp -> {
                     addToken(JavaTokenType.J_LOOP_BEGIN, whileOp.location(), CodeSemantics.createLoopBegin());
-                    for (Body body : whileOp.bodies()) handle(body);
+                    for (Body body : whileOp.bodies())
+                        handle(body);
                     addToken(JavaTokenType.J_LOOP_END, CodeSemantics.createLoopEnd());
                 }
                 case JavaOp.ForOp forOp -> {
                     parser.getVariableRegistry().enterLocalScope();
                     addToken(JavaTokenType.J_LOOP_BEGIN, forOp.location(), CodeSemantics.createLoopBegin());
-                    for (Body body : forOp.bodies()) handle(body);
+                    for (Body body : forOp.bodies())
+                        handle(body);
                     addToken(JavaTokenType.J_LOOP_END, CodeSemantics.createLoopEnd());
                     parser.getVariableRegistry().exitLocalScope();
                 }
                 case JavaOp.EnhancedForOp enhancedForOp -> {
                     parser.getVariableRegistry().enterLocalScope();
                     addToken(JavaTokenType.J_LOOP_BEGIN, enhancedForOp.location(), CodeSemantics.createLoopBegin());
-                    for (Body body : enhancedForOp.bodies()) handle(body);
+                    for (Body body : enhancedForOp.bodies())
+                        handle(body);
                     addToken(JavaTokenType.J_LOOP_END, CodeSemantics.createLoopEnd());
                     parser.getVariableRegistry().exitLocalScope();
                 }
                 case JavaOp.JavaSwitchOp javaSwitchOp -> {
                     addToken(JavaTokenType.J_SWITCH_BEGIN, javaSwitchOp.location(), CodeSemantics.createControl());
-                    for (Iterator<Body> iterator = javaSwitchOp.bodies().iterator(); iterator.hasNext(); ) {
+                    for (Iterator<Body> iterator = javaSwitchOp.bodies().iterator(); iterator.hasNext();) {
                         Body predicateBody = iterator.next();
                         Body actionBody = iterator.next();
                         addToken(JavaTokenType.J_CASE, location(predicateBody), CodeSemantics.createControl());
@@ -120,7 +125,8 @@ public class HighLevelBabylonTokenizer extends AbstractBabylonTokenizer {
                 }
                 case JavaOp.TryOp tryOp -> {
                     addToken(JavaTokenType.J_TRY_BEGIN, tryOp.location(), CodeSemantics.createControl());
-                    for (Body resourceBody : tryOp.resourceBodies()) handle(resourceBody);
+                    for (Body resourceBody : tryOp.resourceBodies())
+                        handle(resourceBody);
                     handle(tryOp.body());
                     for (Body catchBody : tryOp.catchBodies()) {
                         parser.getVariableRegistry().enterLocalScope();
@@ -138,7 +144,7 @@ public class HighLevelBabylonTokenizer extends AbstractBabylonTokenizer {
                     addToken(JavaTokenType.J_TRY_END, CodeSemantics.createControl());
                 }
                 case JavaOp.IfOp ifOp -> {
-                    for (Iterator<Body> iterator = ifOp.bodies().iterator(); iterator.hasNext(); ) {
+                    for (Iterator<Body> iterator = ifOp.bodies().iterator(); iterator.hasNext();) {
                         Body body = iterator.next();
                         addToken(JavaTokenType.J_IF_BEGIN, ifOp.location(), CodeSemantics.createControl());
                         // if there is just one body left, it is an else branch
@@ -201,7 +207,8 @@ public class HighLevelBabylonTokenizer extends AbstractBabylonTokenizer {
                 case JavaOp.AssertOp assertOp -> addToken(JavaTokenType.J_ASSERT, location(assertOp), CodeSemantics.createControl());
                 case JavaOp.ConditionalExpressionOp conditionalOp -> {
                     addToken(JavaTokenType.J_COND, conditionalOp.location(), new CodeSemantics());
-                    for (Body body : conditionalOp.bodies()) handle(body);
+                    for (Body body : conditionalOp.bodies())
+                        handle(body);
                 }
                 case JavaOp.InvokeOp invokeOp -> addToken(JavaTokenType.J_APPLY, location(invokeOp), CodeSemantics.createControl());
                 case CoreOp.FuncCallOp funcCallOp -> addToken(JavaTokenType.J_APPLY, location(funcCallOp), CodeSemantics.createControl());
@@ -209,13 +216,15 @@ public class HighLevelBabylonTokenizer extends AbstractBabylonTokenizer {
                 case CoreOp.ModuleOp moduleOp -> {
                     parser.getVariableRegistry().enterClass();
                     addToken(JavaTokenType.J_CLASS_BEGIN, moduleOp.location(), CodeSemantics.createControl());
-                    for (Body body : moduleOp.bodies()) handle(body);
+                    for (Body body : moduleOp.bodies())
+                        handle(body);
                     addToken(JavaTokenType.J_CLASS_END, moduleOp.location(), CodeSemantics.createControl());
                     parser.getVariableRegistry().exitClass();
                 }
                 default -> {
                     logger.debug("Unsupported op: {} with content: {}", op.getClass(), op.toText());
-                    for (Body body : op.bodies()) handle(body);
+                    for (Body body : op.bodies())
+                        handle(body);
                 }
             }
         }

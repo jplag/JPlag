@@ -1,16 +1,18 @@
 package de.jplag.java.babylon;
 
-import com.google.auto.service.AutoService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.java.JavaLanguage;
 import de.jplag.java.Parser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.google.auto.service.AutoService;
 
 /**
- * {@link Language} implementation for Java with support for {@link jdk.incubator.code.CodeTransformer}-based transformations.
- * <br>
+ * {@link Language} implementation for Java with support for {@link jdk.incubator.code.CodeTransformer}-based
+ * transformations. <br>
  * Does not use {@link AutoService} since the service is gated behind <a href="https://openjdk.org/jeps/238">MRJAR</a>.
  */
 @AutoService(Language.class)

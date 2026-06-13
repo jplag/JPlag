@@ -1,8 +1,17 @@
 package de.jplag.java.babylon.transformer.impl;
 
-import com.google.auto.service.AutoService;
+import static jdk.incubator.code.dialect.java.JavaType.J_L_OBJECT;
+import static jdk.incubator.code.dialect.java.JavaType.VOID;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+
 import de.jplag.java.babylon.BabylonDSL;
 import de.jplag.java.babylon.transformer.SimpleTransformation;
+
+import com.google.auto.service.AutoService;
 import jdk.incubator.code.Block;
 import jdk.incubator.code.Body;
 import jdk.incubator.code.CodeType;
@@ -12,14 +21,6 @@ import jdk.incubator.code.dialect.core.CoreOp;
 import jdk.incubator.code.dialect.core.CoreType;
 import jdk.incubator.code.dialect.java.JavaOp;
 import jdk.incubator.code.dialect.java.MethodRef;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-
-import static jdk.incubator.code.dialect.java.JavaType.J_L_OBJECT;
-import static jdk.incubator.code.dialect.java.JavaType.VOID;
 
 /**
  * {@link SimpleTransformation} that converts try-with-resources into regular try-finally statements.
@@ -89,8 +90,10 @@ public class TryWithoutResourcesTransformer implements SimpleTransformation, Bab
                 // this corrects that
                 Iterator<Op> cbit = catchBody.entryBlock().ops().iterator();
                 if (cbit.hasNext()) {
-                    if (!(cbit.next() instanceof CoreOp.VarOp)) throw new IllegalStateException();
-                    if (cbit.hasNext()) bd.add(locationMarker(location(cbit.next())));
+                    if (!(cbit.next() instanceof CoreOp.VarOp))
+                        throw new IllegalStateException();
+                    if (cbit.hasNext())
+                        bd.add(locationMarker(location(cbit.next())));
                 }
 
                 bd.context().mapValues(catchBody.entryBlock().parameters(), bd.parameters());

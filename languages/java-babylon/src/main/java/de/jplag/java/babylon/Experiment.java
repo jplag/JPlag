@@ -1,16 +1,14 @@
 package de.jplag.java.babylon;
 
+import java.nio.file.Path;
+import java.util.Set;
+
 import de.jplag.LanguageLoader;
 import de.jplag.TokenPrinterUtils;
 import de.jplag.java.babylon.tokenizer.impl.HighLevelBabylonTokenizer;
 
-import java.nio.file.Path;
-import java.util.Set;
-
 class Experiment implements BabylonDSL {
-    private static final Path SOURCES = Path.of(
-            "languages", "java", "src", "test", "resources", "de", "jplag", "java"
-    );
+    private static final Path SOURCES = Path.of("languages", "java", "src", "test", "resources", "de", "jplag", "java");
 
     static void main() throws Exception {
         var files = Set.of(SOURCES.resolve("TryWithResource.java").toFile());

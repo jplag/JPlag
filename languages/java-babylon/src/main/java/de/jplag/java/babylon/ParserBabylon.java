@@ -1,5 +1,16 @@
 package de.jplag.java.babylon;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
+import javax.annotation.Nullable;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.TokenType;
@@ -9,16 +20,8 @@ import de.jplag.java.babylon.tokenizer.BabylonTokenizer;
 import de.jplag.java.babylon.transformer.TransformationPipeline;
 import de.jplag.semantics.CodeSemantics;
 import de.jplag.semantics.VariableRegistry;
-import jdk.incubator.code.Op;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import jdk.incubator.code.Op;
 
 /**
  * {@link Parser} with extensions for Babylon, including a Babylon-aligned API for adding tokens.
@@ -31,7 +34,6 @@ public class ParserBabylon extends Parser {
 
     /**
      * Crease a new instance.
-     *
      * @param pipeline the pipeline to use for this parser
      * @param tokenizer the tokenizer to use for extracting tokens from the model
      */
@@ -43,7 +45,6 @@ public class ParserBabylon extends Parser {
 
     /**
      * Returns the pipeline that is used for this parser.
-     *
      * @return the pipeline used by this parser
      */
     public TransformationPipeline getPipeline() {
@@ -52,7 +53,6 @@ public class ParserBabylon extends Parser {
 
     /**
      * Returns the {@link VariableRegistry} that is used for this parser.
-     *
      * @return the variable registry used by this parser
      */
     public VariableRegistry getVariableRegistry() {
@@ -84,8 +84,7 @@ public class ParserBabylon extends Parser {
 
     @Override
     public void add(Token token) {
-        Op.Location location = token.getStartLine() == Token.NO_VALUE || token.getStartColumn() == Token.NO_VALUE
-                ? null
+        Op.Location location = token.getStartLine() == Token.NO_VALUE || token.getStartColumn() == Token.NO_VALUE ? null
                 : new Op.Location(token.getStartLine(), token.getStartColumn());
         drainDeferredTokens(location);
         super.add(token);
@@ -94,9 +93,12 @@ public class ParserBabylon extends Parser {
     }
 
     private void updateLastLocation(@Nullable Op.Location location) {
-        if (location == null) return;
-        if (location.line() < lastLocation.line()) return;
-        if (location.line() == lastLocation.line() && location.column() < lastLocation.column()) return;
+        if (location == null)
+            return;
+        if (location.line() < lastLocation.line())
+            return;
+        if (location.line() == lastLocation.line() && location.column() < lastLocation.column())
+            return;
         this.lastLocation = location;
     }
 
@@ -114,21 +116,14 @@ public class ParserBabylon extends Parser {
                 endLocation = new Op.Location(nextLocation.line(), nextLocation.column() - 1);
                 length = endLocation.column() - startLocation.column();
             }
-            super.add(new Token(
-                    deferredToken.type, deferredToken.file,
-                    startLocation.line(), startLocation.column(),
-                    endLocation.line(), endLocation.column(),
-                    length,
-                    deferredToken.semantics
-            ));
+            super.add(new Token(deferredToken.type, deferredToken.file, startLocation.line(), startLocation.column(), endLocation.line(),
+                    endLocation.column(), length, deferredToken.semantics));
             variableRegistry.updateSemantics(deferredToken.semantics);
         }
     }
 
     /**
-     * Add a new token to the current file.
-     * For internal use by the language module.
-     *
+     * Add a new token to the current file. For internal use by the language module.
      * @param type is the token type.
      * @param file is the name of the source code file.
      * @param startLine is the line index in the source code where the token starts. Index is 1-based.
@@ -138,21 +133,12 @@ public class ParserBabylon extends Parser {
      * @param length is the length of the token in the source code.
      * @param semantics is a record containing semantic information about the token.
      */
-    public void add(TokenType type, File file, int startLine, int startColumn, int endLine, int endColumn, int length,
-                    CodeSemantics semantics) {
-        add(new Token(
-                type, file,
-                startLine, startColumn,
-                endLine, endColumn,
-                length,
-                semantics
-        ));
+    public void add(TokenType type, File file, int startLine, int startColumn, int endLine, int endColumn, int length, CodeSemantics semantics) {
+        add(new Token(type, file, startLine, startColumn, endLine, endColumn, length, semantics));
     }
 
     /**
-     * Add a new token to the current file.
-     * For internal use by the language module.
-     *
+     * Add a new token to the current file. For internal use by the language module.
      * @param type is the token type.
      * @param file is the name of the source code file.
      * @param location the location in the source code where the token resides.
@@ -169,9 +155,7 @@ public class ParserBabylon extends Parser {
     }
 
     /**
-     * Add a new token to the current file.
-     * For internal use by the language module.
-     *
+     * Add a new token to the current file. For internal use by the language module.
      * @param type is the token type.
      * @param file is the name of the source code file.
      * @param semantics is a record containing semantic information about the token.
@@ -180,10 +164,6 @@ public class ParserBabylon extends Parser {
         add(type, file, null, semantics);
     }
 
-    private record DeferredToken(
-            TokenType type,
-            File file,
-            CodeSemantics semantics,
-            @Nullable Op.Location location
-    ) {}
+    private record DeferredToken(TokenType type, File file, CodeSemantics semantics, @Nullable Op.Location location) {
+    }
 }

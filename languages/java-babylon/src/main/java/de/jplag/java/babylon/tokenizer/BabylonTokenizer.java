@@ -1,12 +1,12 @@
 package de.jplag.java.babylon.tokenizer;
 
+import java.io.File;
+
 import de.jplag.java.babylon.ParserBabylon;
+
 import jdk.incubator.code.Block;
 import jdk.incubator.code.Body;
 import jdk.incubator.code.Op;
-import jdk.incubator.code.Value;
-
-import java.io.File;
 
 /**
  * Encapsulates the logic of converting code models into {@link de.jplag.Token}s passed to a {@link ParserBabylon}.
@@ -19,8 +19,8 @@ public interface BabylonTokenizer {
     String getIdentifier();
 
     /**
-     * Bind to a particular {@link File} and {@link ParserBabylon}, allowing {@link de.jplag.Token}s to be generated from just {@link Op}s.
-     *
+     * Bind to a particular {@link File} and {@link ParserBabylon}, allowing {@link de.jplag.Token}s to be generated from
+     * just {@link Op}s.
      * @param parser the parser to bind to
      * @param file the file to bind to
      * @return the bound tokenizer
@@ -33,7 +33,6 @@ public interface BabylonTokenizer {
     interface AtFile {
         /**
          * Tokenize a single {@link Body}.
-         *
          * @param body the body to tokenize
          */
         default void handle(Body body) {
@@ -44,7 +43,6 @@ public interface BabylonTokenizer {
 
         /**
          * Tokenize a single {@link Block}.
-         *
          * @param block the block to tokenize
          */
         default void handle(Block block) {
@@ -55,7 +53,6 @@ public interface BabylonTokenizer {
 
         /**
          * Tokenize a single {@link Op}.
-         *
          * @param op the op to tokenize
          */
         void handle(Op op);

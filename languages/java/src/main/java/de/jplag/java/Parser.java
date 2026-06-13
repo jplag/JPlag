@@ -50,9 +50,7 @@ public class Parser {
     }
 
     /**
-     * Add a new token to the current file.
-     * For internal use by the language module.
-     *
+     * Add a new token to the current file. For internal use by the language module.
      * @param token the token to add.
      */
     public void add(Token token) {
