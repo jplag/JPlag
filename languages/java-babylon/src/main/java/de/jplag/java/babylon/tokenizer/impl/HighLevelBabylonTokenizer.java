@@ -2,6 +2,7 @@ package de.jplag.java.babylon.tokenizer.impl;
 
 import java.io.File;
 import java.util.Iterator;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ import com.google.auto.service.AutoService;
 import jdk.incubator.code.Block;
 import jdk.incubator.code.Body;
 import jdk.incubator.code.Op;
+import jdk.incubator.code.Value;
 import jdk.incubator.code.dialect.core.CoreOp;
 import jdk.incubator.code.dialect.java.ArrayType;
 import jdk.incubator.code.dialect.java.ClassType;
@@ -146,16 +148,27 @@ public class HighLevelBabylonTokenizer extends AbstractBabylonTokenizer {
                 case JavaOp.IfOp ifOp -> {
                     for (Iterator<Body> iterator = ifOp.bodies().iterator(); iterator.hasNext();) {
                         Body body = iterator.next();
-                        addToken(JavaTokenType.J_IF_BEGIN, ifOp.location(), CodeSemantics.createControl());
                         // if there is just one body left, it is an else branch
                         // if there are multiple, it is else-if
                         if (iterator.hasNext()) {
+                            addToken(JavaTokenType.J_IF_BEGIN, ifOp.location(), CodeSemantics.createControl());
                             handle(body);
                             handle(iterator.next());
+                            addToken(JavaTokenType.J_IF_END, CodeSemantics.createControl());
                         } else {
+                            // if this is an implicit else branch (ie it consists only of yield),
+                            // do not emit a new IF{, }IF pair
+                            if (body.blocks().size() == 1) {
+                                List<Op> ops = body.blocks().getFirst().children();
+                                if (ops.size() == 1 && ops.getFirst() instanceof CoreOp.YieldOp) {
+                                    break;
+                                }
+                            }
+
+                            addToken(JavaTokenType.J_IF_BEGIN, ifOp.location(), CodeSemantics.createControl());
                             handle(body);
+                            addToken(JavaTokenType.J_IF_END, CodeSemantics.createControl());
                         }
-                        addToken(JavaTokenType.J_IF_END, CodeSemantics.createControl());
                     }
                 }
                 case JavaOp.BreakOp breakOp -> addToken(JavaTokenType.J_BREAK, breakOp.location(), CodeSemantics.createControl());
@@ -198,11 +211,18 @@ public class HighLevelBabylonTokenizer extends AbstractBabylonTokenizer {
                 case CoreOp.VarAccessOp.VarStoreOp varStoreOp -> {
                     boolean inLocalScope = parser.getVariableRegistry().inLocalScope();
                     parser.getVariableRegistry().setNextVariableAccessType(VariableAccessType.WRITE);
-                    parser.getVariableRegistry().registerVariableAccess(switch (varStoreOp.varOperand()) {
-                        case Block.Parameter parameter -> Integer.toString(parameter.index());
-                        case Op.Result result -> ((CoreOp.VarOp) result.op()).varName();
-                    }, !inLocalScope);
+                    parser.getVariableRegistry().registerVariableAccess(name(varStoreOp.varOperand()), !inLocalScope);
                     addToken(JavaTokenType.J_ASSIGN, location(varStoreOp), new CodeSemantics());
+                }
+                case JavaOp.FieldAccessOp.FieldStoreOp fieldStoreOp -> {
+                    parser.getVariableRegistry().setNextVariableAccessType(VariableAccessType.WRITE);
+                    parser.getVariableRegistry().registerVariableAccess(fieldStoreOp.fieldReference().name(), true);
+                    addToken(JavaTokenType.J_ASSIGN, location(fieldStoreOp), new CodeSemantics());
+                }
+                case JavaOp.ArrayAccessOp.ArrayStoreOp arrayStoreOp -> {
+                    parser.getVariableRegistry().setNextVariableAccessType(VariableAccessType.WRITE);
+                    parser.getVariableRegistry().registerVariableAccess(name(arrayStoreOp.arrayOperand()), true);
+                    addToken(JavaTokenType.J_ASSIGN, location(arrayStoreOp), new CodeSemantics());
                 }
                 case JavaOp.AssertOp assertOp -> addToken(JavaTokenType.J_ASSERT, location(assertOp), CodeSemantics.createControl());
                 case JavaOp.ConditionalExpressionOp conditionalOp -> {
@@ -210,7 +230,12 @@ public class HighLevelBabylonTokenizer extends AbstractBabylonTokenizer {
                     for (Body body : conditionalOp.bodies())
                         handle(body);
                 }
-                case JavaOp.InvokeOp invokeOp -> addToken(JavaTokenType.J_APPLY, location(invokeOp), CodeSemantics.createControl());
+                case JavaOp.InvokeOp invokeOp -> {
+                    boolean hasNoArguments = invokeOp.operands().size() == 1 && invokeOp.hasReceiver();
+                    boolean isImplicitSuper = hasNoArguments && invokeOp.invokeReference().name().equals("<init>");
+                    if (!isImplicitSuper)
+                        addToken(JavaTokenType.J_APPLY, location(invokeOp), CodeSemantics.createControl());
+                }
                 case CoreOp.FuncCallOp funcCallOp -> addToken(JavaTokenType.J_APPLY, location(funcCallOp), CodeSemantics.createControl());
                 case JavaOp.YieldOp yieldOp -> addToken(JavaTokenType.J_YIELD, yieldOp.location(), CodeSemantics.createControl());
                 case CoreOp.ModuleOp moduleOp -> {
@@ -227,6 +252,16 @@ public class HighLevelBabylonTokenizer extends AbstractBabylonTokenizer {
                         handle(body);
                 }
             }
+        }
+
+        private static String name(Value value) {
+            return switch (value) {
+                case Block.Parameter parameter -> Integer.toString(parameter.index());
+                case Op.Result result -> switch (result.op()) {
+                    case CoreOp.VarOp varOp -> varOp.varName();
+                    default -> result.op().toText();
+                };
+            };
         }
     }
 }
