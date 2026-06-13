@@ -36,12 +36,17 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v6
-      
+
+    - run: |
+        download_url="https://github.com/JFronny/jdk-babylon/releases/download/artifacts/bundles-linux-x64.zip"
+        wget -O $RUNNER_TEMP/java_bundle.zip $download_url
+        7z x $RUNNER_TEMP/java_bundle.zip -o$RUNNER_TEMP
     - name: Set up JDK
       uses: actions/setup-java@v5
       with:
-        java-version: 25
-        distribution: 'temurin'
+        distribution: jdkfile
+        jdkFile: ${{ runner.temp }}/jdk-linux-x64.tar.gz
+        java-version: 26
   
     - name: Build Assembly
       run: mvn -DskipTests clean package assembly:single
