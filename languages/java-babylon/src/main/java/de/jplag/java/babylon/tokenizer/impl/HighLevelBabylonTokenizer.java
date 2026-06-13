@@ -20,7 +20,6 @@ import com.google.auto.service.AutoService;
 import jdk.incubator.code.Block;
 import jdk.incubator.code.Body;
 import jdk.incubator.code.Op;
-import jdk.incubator.code.Value;
 import jdk.incubator.code.dialect.core.CoreOp;
 import jdk.incubator.code.dialect.java.ArrayType;
 import jdk.incubator.code.dialect.java.ClassType;
@@ -252,16 +251,6 @@ public class HighLevelBabylonTokenizer extends AbstractBabylonTokenizer {
                         handle(body);
                 }
             }
-        }
-
-        private static String name(Value value) {
-            return switch (value) {
-                case Block.Parameter parameter -> Integer.toString(parameter.index());
-                case Op.Result result -> switch (result.op()) {
-                    case CoreOp.VarOp varOp -> varOp.varName();
-                    default -> result.op().toText();
-                };
-            };
         }
     }
 }

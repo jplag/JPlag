@@ -135,4 +135,19 @@ public interface BabylonDSL {
         }
         return collection.getFirst();
     }
+
+    /**
+     * Obtains a string representing a value, for use in identifying store operations.
+     * @param value the {@link Value} to which something is stored
+     * @return a name representing the {@link Value}
+     */
+    default String name(Value value) {
+        return switch (value) {
+            case Block.Parameter parameter -> Integer.toString(parameter.index());
+            case Op.Result result -> switch (result.op()) {
+                case CoreOp.VarOp varOp -> varOp.varName();
+                default -> result.op().toText();
+            };
+        };
+    }
 }
