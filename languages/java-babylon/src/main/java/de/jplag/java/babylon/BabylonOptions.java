@@ -16,10 +16,10 @@ import de.jplag.options.LanguageOptions;
 import de.jplag.options.OptionType;
 
 class BabylonOptions extends LanguageOptions {
-    private static final String ERROR_TRANSFORMATION_NOT_FOUND = "The selected transformation %s could not be found";
-    private static final String ERROR_NOT_ENOUGH_TRANSFORMATIONS = "Specify at least 1 transformation";
-    private static final String ERROR_TOKENIZER_NOT_FOUND = "The selected tokenizer %s could not be found";
-    private static final String ERROR_NO_TOKENIZER = "Specify a tokenizer";
+    private static final String ERROR_TRANSFORMATION_NOT_FOUND = "The selected transformation %s could not be found. Available transformations: %s";
+    private static final String ERROR_NOT_ENOUGH_TRANSFORMATIONS = "Specify at least 1 transformation. Available transformations: %s";
+    private static final String ERROR_TOKENIZER_NOT_FOUND = "The selected tokenizer %s could not be found. Available tokenizers: %s";
+    private static final String ERROR_NO_TOKENIZER = "Specify a tokenizer. Available tokenizers: %s";
     private static final char LIST_SEPARATOR = ',';
     private static final String OPTION_DESCRIPTION_TRANSFORMATIONS = "The languages that should be used. This is a '" + LIST_SEPARATOR
             + "' separated list";
@@ -34,7 +34,8 @@ class BabylonOptions extends LanguageOptions {
         @Nullable
         String transformationNames = transformations.getValue();
         if (transformationNames == null) {
-            throw new IllegalArgumentException(ERROR_NOT_ENOUGH_TRANSFORMATIONS);
+            throw new IllegalArgumentException(
+                    String.format(ERROR_NOT_ENOUGH_TRANSFORMATIONS, TransformationStepLoader.getAllAvailableTransformationStepIdentifiers()));
         }
 
         return Arrays.asList(LIST_SEPARATOR_PATTERN.split(transformationNames));
@@ -52,11 +53,13 @@ class BabylonOptions extends LanguageOptions {
                 if (this.pipeline == null) {
                     List<TransformationPipeline.Step> steps = getTransformations().stream()
                             .map(name -> TransformationStepLoader.getTransformationStep(name)
-                                    .orElseThrow(() -> new IllegalArgumentException(String.format(ERROR_TRANSFORMATION_NOT_FOUND, name))))
+                                    .orElseThrow(() -> new IllegalArgumentException(String.format(ERROR_TRANSFORMATION_NOT_FOUND, name,
+                                            TransformationStepLoader.getAllAvailableTransformationStepIdentifiers()))))
                             .toList();
 
                     if (steps.isEmpty()) {
-                        throw new IllegalArgumentException(ERROR_NOT_ENOUGH_TRANSFORMATIONS);
+                        throw new IllegalArgumentException(String.format(ERROR_NOT_ENOUGH_TRANSFORMATIONS,
+                                TransformationStepLoader.getAllAvailableTransformationStepIdentifiers()));
                     }
 
                     this.pipeline = new TransformationPipeline(steps);
@@ -80,11 +83,11 @@ class BabylonOptions extends LanguageOptions {
                     String tokenizerName = this.tokenizerName.getValue();
 
                     if (tokenizerName == null) {
-                        throw new IllegalArgumentException(ERROR_NO_TOKENIZER);
+                        throw new IllegalArgumentException(String.format(ERROR_NO_TOKENIZER, TokenizerLoader.getAllAvailableTokenizerIdentifiers()));
                     }
 
-                    this.tokenizer = TokenizerLoader.getTokenizer(tokenizerName)
-                            .orElseThrow(() -> new IllegalArgumentException(String.format(ERROR_TOKENIZER_NOT_FOUND, tokenizerName)));
+                    this.tokenizer = TokenizerLoader.getTokenizer(tokenizerName).orElseThrow(() -> new IllegalArgumentException(
+                            String.format(ERROR_TOKENIZER_NOT_FOUND, tokenizerName, TokenizerLoader.getAllAvailableTokenizerIdentifiers())));
                 }
             }
         }
