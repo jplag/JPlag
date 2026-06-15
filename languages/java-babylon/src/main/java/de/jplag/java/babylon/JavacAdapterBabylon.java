@@ -19,9 +19,9 @@ import com.sun.source.util.SourcePositions;
 class JavacAdapterBabylon extends JavacAdapter {
     private final TransformationPipeline pipeline;
     private final VariableRegistry variableRegistry;
-    private final BabylonTokenizer tokenizer;
+    private final BabylonTokenizer.Provider tokenizer;
 
-    public JavacAdapterBabylon(TransformationPipeline pipeline, VariableRegistry variableRegistry, BabylonTokenizer tokenizer) {
+    public JavacAdapterBabylon(TransformationPipeline pipeline, VariableRegistry variableRegistry, BabylonTokenizer.Provider tokenizer) {
         this.pipeline = pipeline;
         this.variableRegistry = variableRegistry;
         this.tokenizer = tokenizer;

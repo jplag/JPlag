@@ -10,9 +10,9 @@ import com.google.auto.service.AutoService;
 import jdk.incubator.code.Op;
 
 /**
- * {@link BabylonTokenizer} implementation that fully outputs all {@link Op}s as tokens without further interpretation.
+ * {@link BabylonTokenizer.Provider} implementation that fully outputs all {@link Op}s as tokens without further
+ * interpretation.
  */
-@AutoService(BabylonTokenizer.class)
 public class FullBabylonTokenizer extends FullTypedBabylonTokenizer {
     /**
      * Identifier of this tokenizer.
@@ -21,32 +21,33 @@ public class FullBabylonTokenizer extends FullTypedBabylonTokenizer {
 
     /**
      * Create a new instance.
+     * @param parser the parser to output to
+     * @param file the current file
      */
-    public FullBabylonTokenizer() {
-        super(IDENTIFIER);
+    public FullBabylonTokenizer(ParserBabylon parser, File file) {
+        super(parser, file);
     }
 
     @Override
-    public BabylonTokenizer.AtFile atFile(ParserBabylon parser, File file) {
-        return new AtFile(parser, file);
+    protected TokenType getTokenType(Op op) {
+        return new UnknownTokenType(op.externalizeOpName());
     }
 
     /**
-     * Tokenizer bound to a particular file, defaulting to that file for output {@link de.jplag.Token}s.
+     * {@link BabylonTokenizer.Provider} for {@link FullBabylonTokenizer}.
      */
-    public static class AtFile extends FullTypedBabylonTokenizer.AtFile {
+    @AutoService(BabylonTokenizer.Provider.class)
+    public static class Provider extends FullTypedBabylonTokenizer.Provider {
         /**
          * Create a new instance.
-         * @param parser the parser to output to
-         * @param file the current file
          */
-        public AtFile(ParserBabylon parser, File file) {
-            super(parser, file);
+        public Provider() {
+            super(IDENTIFIER);
         }
 
         @Override
-        protected TokenType getTokenType(Op op) {
-            return new UnknownTokenType(op.externalizeOpName());
+        public BabylonTokenizer getTokenizer(ParserBabylon parser, File file) {
+            return new FullBabylonTokenizer(parser, file);
         }
     }
 }

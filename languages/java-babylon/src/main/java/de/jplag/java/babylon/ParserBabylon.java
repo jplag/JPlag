@@ -30,14 +30,14 @@ public class ParserBabylon extends Parser {
     private static final Logger logger = LoggerFactory.getLogger(ParserBabylon.class);
     private final TransformationPipeline pipeline;
     private final VariableRegistry variableRegistry;
-    private final BabylonTokenizer tokenizer;
+    private final BabylonTokenizer.Provider tokenizer;
 
     /**
      * Crease a new instance.
      * @param pipeline the pipeline to use for this parser
      * @param tokenizer the tokenizer to use for extracting tokens from the model
      */
-    public ParserBabylon(TransformationPipeline pipeline, BabylonTokenizer tokenizer) {
+    public ParserBabylon(TransformationPipeline pipeline, BabylonTokenizer.Provider tokenizer) {
         this.pipeline = pipeline;
         this.tokenizer = tokenizer;
         this.variableRegistry = new VariableRegistry();

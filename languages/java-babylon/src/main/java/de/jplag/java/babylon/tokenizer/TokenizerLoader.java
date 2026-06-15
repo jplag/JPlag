@@ -13,14 +13,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Utility class for loading installed {@link BabylonTokenizer} implementations. Based on
+ * Utility class for loading installed {@link BabylonTokenizer.Provider} implementations. Based on
  * {@link de.jplag.java.babylon.transformer.TransformationStepLoader}.
  */
 public class TokenizerLoader {
     private static final Logger logger = LoggerFactory.getLogger(TokenizerLoader.class);
 
-    private static volatile Map<String, BabylonTokenizer> cachedStepInstances = null;
-    private static volatile ServiceLoader<BabylonTokenizer> tokenizerLoader = null;
+    private static volatile Map<String, BabylonTokenizer.Provider> cachedStepInstances = null;
+    private static volatile ServiceLoader<BabylonTokenizer.Provider> tokenizerLoader = null;
 
     private TokenizerLoader() {
         throw new IllegalAccessError();
@@ -29,19 +29,19 @@ public class TokenizerLoader {
     /**
      * Get all tokenizers that are currently in the classpath. The result will be cached. Use {@link #clearCache()} to
      * obtain new instances.
-     * @return the tokenizers as an unmodifiable map from identifiers to {@link BabylonTokenizer} instances
+     * @return the tokenizers as an unmodifiable map from identifiers to {@link BabylonTokenizer.Provider} instances
      */
-    public static Map<String, BabylonTokenizer> getAllAvailableTokenizers() {
+    public static Map<String, BabylonTokenizer.Provider> getAllAvailableTokenizers() {
         if (cachedStepInstances == null) {
             synchronized (TokenizerLoader.class) {
                 if (cachedStepInstances == null) {
-                    Map<String, BabylonTokenizer> tokenizers = new TreeMap<>();
+                    Map<String, BabylonTokenizer.Provider> tokenizers = new TreeMap<>();
                     Set<String> skipped = new HashSet<>();
 
                     if (tokenizerLoader == null)
-                        tokenizerLoader = ServiceLoader.load(BabylonTokenizer.class);
+                        tokenizerLoader = ServiceLoader.load(BabylonTokenizer.Provider.class);
 
-                    for (BabylonTokenizer tokenizer : tokenizerLoader) {
+                    for (BabylonTokenizer.Provider tokenizer : tokenizerLoader) {
                         String identifier = tokenizer.getIdentifier();
                         if (tokenizers.remove(identifier) != null && skipped.add(identifier)) {
                             logger.error("Multiple implementations for a tokenizer '{}' are present in the classpath! Skipping ..", identifier);
@@ -64,9 +64,9 @@ public class TokenizerLoader {
      * Load a tokenizer that is currently in the classpath by its identifier.
      * @param identifier the identifier of the tokenizer
      * @return the tokenizer or an empty optional if no corresponding tokenizer was found
-     * @see BabylonTokenizer#getIdentifier()
+     * @see BabylonTokenizer.Provider#getIdentifier()
      */
-    public static Optional<BabylonTokenizer> getTokenizer(String identifier) {
+    public static Optional<BabylonTokenizer.Provider> getTokenizer(String identifier) {
         var tokenizer = getAllAvailableTokenizers().get(identifier);
         if (tokenizer == null) {
             logger.warn("Attempt to load tokenizer {} was not successful", identifier);
@@ -77,14 +77,14 @@ public class TokenizerLoader {
     /**
      * Get an unmodifiable set of all available tokenizer identifiers.
      * @return identifiers of all available tokenizers
-     * @see BabylonTokenizer#getIdentifier()
+     * @see BabylonTokenizer.Provider#getIdentifier()
      */
     public static Set<String> getAllAvailableTokenizerIdentifiers() {
         return new TreeSet<>(getAllAvailableTokenizers().keySet());
     }
 
     /**
-     * Clears the internal cache of {@link BabylonTokenizer} instances, allowing new tokenizers to be found.
+     * Clears the internal cache of {@link BabylonTokenizer.Provider} instances, allowing new tokenizers to be found.
      */
     public static void clearCache() {
         synchronized (TokenizerLoader.class) {

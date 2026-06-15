@@ -14,52 +14,52 @@ import jdk.incubator.code.Op;
  * Responsible for transforming a code model into a {@link de.jplag.Token} sequence by outputting it to a
  * {@link ParserBabylon}.
  */
-public abstract class AbstractBabylonTokenizer implements BabylonTokenizer {
-    private final String identifier;
+public abstract class AbstractBabylonTokenizer implements BabylonTokenizer, BabylonDSL {
+    protected final ParserBabylon parser;
+    protected final File file;
 
     /**
      * Create a new instance.
-     * @param identifier the identifier of this tokenizer for use in the CLI
+     * @param parser the parser to output to
+     * @param file the current file
      */
-    public AbstractBabylonTokenizer(String identifier) {
-        this.identifier = identifier;
+    public AbstractBabylonTokenizer(ParserBabylon parser, File file) {
+        this.parser = parser;
+        this.file = file;
     }
 
-    @Override
-    public final String getIdentifier() {
-        return identifier;
+    protected void addToken(TokenType type, Op.Location location, CodeSemantics semantics) {
+        parser.add(type, file, location, semantics);
+    }
+
+    protected void addToken(TokenType type, CodeSemantics semantics) {
+        parser.add(type, file, semantics);
     }
 
     /**
-     * Tokenizer bound to a particular file, defaulting to that file for output {@link de.jplag.Token}s.
+     * Tokenize a single {@link Op}.
+     * @param op the op to tokenize
+     * @throws IllegalArgumentException if the op is invalid
      */
-    public static abstract class AtFile implements BabylonTokenizer.AtFile, BabylonDSL {
-        protected final ParserBabylon parser;
-        protected final File file;
+    public abstract void handle(Op op);
+
+    /**
+     * Responsible for creating instances of {@link AbstractBabylonTokenizer} subclasses.
+     */
+    public static abstract class Provider implements BabylonTokenizer.Provider {
+        private final String identifier;
 
         /**
          * Create a new instance.
-         * @param parser the parser to output to
-         * @param file the current file
+         * @param identifier the identifier of this tokenizer for use in the CLI
          */
-        public AtFile(ParserBabylon parser, File file) {
-            this.parser = parser;
-            this.file = file;
+        public Provider(String identifier) {
+            this.identifier = identifier;
         }
 
-        protected void addToken(TokenType type, Op.Location location, CodeSemantics semantics) {
-            parser.add(type, file, location, semantics);
+        @Override
+        public final String getIdentifier() {
+            return identifier;
         }
-
-        protected void addToken(TokenType type, CodeSemantics semantics) {
-            parser.add(type, file, semantics);
-        }
-
-        /**
-         * Tokenize a single {@link Op}.
-         * @param op the op to tokenize
-         * @throws IllegalArgumentException if the op is invalid
-         */
-        public abstract void handle(Op op);
     }
 }

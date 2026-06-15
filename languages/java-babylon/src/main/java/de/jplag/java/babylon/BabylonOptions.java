@@ -73,9 +73,9 @@ class BabylonOptions extends LanguageOptions {
         return this.tokenizerName;
     }
 
-    private volatile @Nullable BabylonTokenizer tokenizer = null;
+    private volatile @Nullable BabylonTokenizer.Provider tokenizer = null;
 
-    public BabylonTokenizer getTokenizer() {
+    public BabylonTokenizer.Provider getTokenizer() {
         if (tokenizer == null) {
             synchronized (this) {
                 if (this.tokenizer == null) {

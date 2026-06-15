@@ -16,59 +16,59 @@ import jdk.incubator.code.dialect.java.JavaType;
  * {@link BabylonTokenizer} implementation that fully outputs all {@link Op}s as tokens without further interpretation.
  * Includes result types.
  */
-@AutoService(BabylonTokenizer.class)
 public class FullTypedBabylonTokenizer extends AbstractBabylonTokenizer {
     /**
      * Identifier of this tokenizer.
      */
     public static final String IDENTIFIER = "full-typed";
 
-    protected FullTypedBabylonTokenizer(String identifier) {
-        super(identifier);
-    }
-
     /**
      * Create a new instance.
+     * @param parser the parser to output to
+     * @param file the current file
      */
-    public FullTypedBabylonTokenizer() {
-        this(IDENTIFIER);
+    public FullTypedBabylonTokenizer(ParserBabylon parser, File file) {
+        super(parser, file);
     }
 
     @Override
-    public BabylonTokenizer.AtFile atFile(ParserBabylon parser, File file) {
-        return new AtFile(parser, file);
+    public void handle(Op op) {
+        addToken(getTokenType(op), op.location(), CodeSemantics.createControl());
+        for (Body body : op.bodies())
+            handle(body);
+    }
+
+    protected TokenType getTokenType(Op op) {
+        StringBuilder sb = new StringBuilder();
+        if (op.parent() != null) {
+            Op.Result opr = op.result();
+            if (!opr.type().equals(JavaType.VOID)) {
+                sb.append(opr.type().externalize()).append(" = ");
+            }
+        }
+        sb.append(op.externalizeOpName());
+        return new UnknownTokenType(sb.toString());
     }
 
     /**
-     * Tokenizer bound to a particular file, defaulting to that file for output {@link de.jplag.Token}s.
+     * {@link BabylonTokenizer.Provider} for {@link FullTypedBabylonTokenizer}.
      */
-    public static class AtFile extends AbstractBabylonTokenizer.AtFile {
+    @AutoService(BabylonTokenizer.Provider.class)
+    public static class Provider extends AbstractBabylonTokenizer.Provider {
         /**
          * Create a new instance.
-         * @param parser the parser to output to
-         * @param file the current file
          */
-        public AtFile(ParserBabylon parser, File file) {
-            super(parser, file);
+        public Provider() {
+            this(IDENTIFIER);
+        }
+
+        protected Provider(String identifier) {
+            super(identifier);
         }
 
         @Override
-        public void handle(Op op) {
-            addToken(getTokenType(op), op.location(), CodeSemantics.createControl());
-            for (Body body : op.bodies())
-                handle(body);
-        }
-
-        protected TokenType getTokenType(Op op) {
-            StringBuilder sb = new StringBuilder();
-            if (op.parent() != null) {
-                Op.Result opr = op.result();
-                if (!opr.type().equals(JavaType.VOID)) {
-                    sb.append(opr.type().externalize()).append(" = ");
-                }
-            }
-            sb.append(op.externalizeOpName());
-            return new UnknownTokenType(sb.toString());
+        public BabylonTokenizer getTokenizer(ParserBabylon parser, File file) {
+            return new FullTypedBabylonTokenizer(parser, file);
         }
     }
 }

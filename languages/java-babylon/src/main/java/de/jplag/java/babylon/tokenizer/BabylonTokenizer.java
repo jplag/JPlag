@@ -9,52 +9,54 @@ import jdk.incubator.code.Body;
 import jdk.incubator.code.Op;
 
 /**
- * Encapsulates the logic of converting code models into {@link de.jplag.Token}s passed to a {@link ParserBabylon}.
+ * Encapsulates the logic of converting code models into {@link de.jplag.Token}s passed to a {@link ParserBabylon}.<br>
+ * {@link Provider}s are loaded using {@link TokenizerLoader}.
  */
 public interface BabylonTokenizer {
     /**
-     * @return Identifier of the transformation used for CLI options and dynamic loading. You should use some name within
-     * {@code [a-z_-]+}
+     * Tokenize a single {@link Body}.
+     * @param body the body to tokenize
      */
-    String getIdentifier();
+    default void handle(Body body) {
+        for (Block block : body.blocks()) {
+            handle(block);
+        }
+    }
 
     /**
-     * Bind to a particular {@link File} and {@link ParserBabylon}, allowing {@link de.jplag.Token}s to be generated from
-     * just {@link Op}s.
-     * @param parser the parser to bind to
-     * @param file the file to bind to
-     * @return the bound tokenizer
+     * Tokenize a single {@link Block}.
+     * @param block the block to tokenize
      */
-    AtFile atFile(ParserBabylon parser, File file);
+    default void handle(Block block) {
+        for (Op op : block.ops()) {
+            handle(op);
+        }
+    }
 
     /**
-     * Tokenizer bound to a particular file, defaulting to that file for output {@link de.jplag.Token}s.
+     * Tokenize a single {@link Op}.
+     * @param op the op to tokenize
      */
-    interface AtFile {
+    void handle(Op op);
+
+    /**
+     * Encapsulates the logic of constructing {@link BabylonTokenizer}s for particular files.<br>
+     * Used by {@link TokenizerLoader} to load tokenizers while avoiding global mutable state.
+     */
+    interface Provider {
         /**
-         * Tokenize a single {@link Body}.
-         * @param body the body to tokenize
+         * @return Identifier of the transformation used for CLI options and dynamic loading. You should use some name within
+         * {@code [a-z_-]+}
          */
-        default void handle(Body body) {
-            for (Block block : body.blocks()) {
-                handle(block);
-            }
-        }
+        String getIdentifier();
 
         /**
-         * Tokenize a single {@link Block}.
-         * @param block the block to tokenize
+         * Obtain a {@link BabylonTokenizer} for a particular {@link File} and {@link ParserBabylon}, allowing
+         * {@link de.jplag.Token}s to be generated from just {@link Op}s.
+         * @param parser the parser to bind to
+         * @param file the file to bind to
+         * @return the bound tokenizer
          */
-        default void handle(Block block) {
-            for (Op op : block.ops()) {
-                handle(op);
-            }
-        }
-
-        /**
-         * Tokenize a single {@link Op}.
-         * @param op the op to tokenize
-         */
-        void handle(Op op);
+        BabylonTokenizer getTokenizer(ParserBabylon parser, File file);
     }
 }

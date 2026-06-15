@@ -19,14 +19,14 @@ import jdk.incubator.code.dialect.core.CoreOp;
 class TokenGeneratingTreeScannerBabylon extends TokenGeneratingTreeScanner {
     private final JavaCompiler.CompilationTask task;
     private final TransformationPipeline pipeline;
-    private final BabylonTokenizer.AtFile tokenizer;
+    private final BabylonTokenizer tokenizer;
 
     public TokenGeneratingTreeScannerBabylon(File file, ParserBabylon parser, LineMap map, SourcePositions positions, CompilationUnitTree ast,
-            JavaCompiler.CompilationTask task, VariableRegistry variableRegistry, BabylonTokenizer tokenizer) {
+            JavaCompiler.CompilationTask task, VariableRegistry variableRegistry, BabylonTokenizer.Provider tokenizer) {
         super(file, parser, map, positions, ast, variableRegistry);
         this.task = task;
         this.pipeline = parser.getPipeline();
-        this.tokenizer = tokenizer.atFile(parser, file);
+        this.tokenizer = tokenizer.getTokenizer(parser, file);
     }
 
     @Override
