@@ -1,9 +1,11 @@
 package de.jplag.java.babylon.transformer;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -18,9 +20,22 @@ public final class TransformationPipeline {
     /**
      * Creates a new pipeline wrapping some steps.
      * @param steps the steps to wrap
+     * @throws IllegalArgumentException if the sequence of steps is not well-formed
      */
     public TransformationPipeline(List<? extends Step<?>> steps) {
         this.steps = List.copyOf(steps);
+
+        // ensure all dependencies are fulfilled
+        Set<String> applied = new HashSet<>();
+        for (Step<?> step : steps) {
+            Set<String> difference = new HashSet<>(step.getDependencies());
+            difference.removeAll(applied);
+            if (!difference.isEmpty()) {
+                throw new IllegalArgumentException(String.format("The following steps were not applied: %s", difference));
+            }
+
+            applied.add(step.getIdentifier());
+        }
     }
 
     /**
@@ -73,6 +88,14 @@ public final class TransformationPipeline {
          * {@code [a-z_-]+}
          */
         String getIdentifier();
+
+        /**
+         * Set of identifiers for steps that must be applied before this one.
+         * @return the identifiers
+         */
+        default Set<String> getDependencies() {
+            return Set.of();
+        }
 
         /**
          * Returns a prepass to perform before beginning the tokenization or null.

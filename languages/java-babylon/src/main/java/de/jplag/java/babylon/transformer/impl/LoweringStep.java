@@ -11,9 +11,14 @@ import jdk.incubator.code.dialect.core.CoreOp;
  */
 @AutoService(TransformationPipeline.Step.class)
 public class LoweringStep implements TransformationPipeline.Step<Void> {
+    /**
+     * Identifier of this pipeline step.
+     */
+    public static final String IDENTIFIER = "lower";
+
     @Override
     public String getIdentifier() {
-        return "lower";
+        return IDENTIFIER;
     }
 
     @Override
