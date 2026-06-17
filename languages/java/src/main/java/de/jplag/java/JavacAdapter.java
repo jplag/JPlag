@@ -64,13 +64,7 @@ public class JavacAdapter {
             final CompilationTask task = compiler.getTask(null, fileManager, listener, options, null, javaFiles);
             final Trees trees = Trees.instance(task);
             final SourcePositions positions = new FixedSourcePositions(trees.getSourcePositions());
-            for (final CompilationUnitTree ast : executeCompilationTask(task)) {
-                File file = new File(ast.getSourceFile().toUri());
-                final LineMap map = ast.getLineMap();
-                var scanner = createTreeScanner(file, parser, map, positions, ast, task);
-                ast.accept(scanner, null);
-                parser.add(Token.semanticFileEnd(file));
-            }
+            handle(executeCompilationTask(task), parser, positions, task);
         } catch (Exception exception) {
             throw new ParsingException(null, exception.getMessage(), exception);
         }
@@ -104,6 +98,16 @@ public class JavacAdapter {
 
     protected boolean shouldAnalyze(final CompilationTask task) {
         return false;
+    }
+
+    protected void handle(Iterable<? extends CompilationUnitTree> trees, Parser parser, SourcePositions positions,
+            JavaCompiler.CompilationTask task) {
+        for (final CompilationUnitTree ast : trees) {
+            File file = new File(ast.getSourceFile().toUri());
+            final LineMap map = ast.getLineMap();
+            ast.accept(createTreeScanner(file, parser, map, positions, ast, task), null);
+            parser.add(Token.semanticFileEnd(file));
+        }
     }
 
     protected TreeVisitor<?, ?> createTreeScanner(File file, Parser parser, LineMap map, SourcePositions positions, CompilationUnitTree ast,

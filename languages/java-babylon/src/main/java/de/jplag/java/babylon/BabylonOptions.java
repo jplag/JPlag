@@ -51,7 +51,7 @@ class BabylonOptions extends LanguageOptions {
         if (this.pipeline == null) {
             synchronized (this) {
                 if (this.pipeline == null) {
-                    List<TransformationPipeline.Step> steps = getTransformations().stream()
+                    List<? extends TransformationPipeline.Step<?>> steps = getTransformations().stream()
                             .map(name -> TransformationStepLoader.getTransformationStep(name)
                                     .orElseThrow(() -> new IllegalArgumentException(String.format(ERROR_TRANSFORMATION_NOT_FOUND, name,
                                             TransformationStepLoader.getAllAvailableTransformationStepIdentifiers()))))

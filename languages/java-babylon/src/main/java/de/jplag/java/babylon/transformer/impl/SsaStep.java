@@ -10,14 +10,14 @@ import jdk.incubator.code.dialect.core.SSA;
  * {@link TransformationPipeline.Step} that performs a SSA transformation using SSABraun.
  */
 @AutoService(TransformationPipeline.Step.class)
-public class SsaStep implements TransformationPipeline.Step {
+public class SsaStep implements TransformationPipeline.Step<Void> {
     @Override
     public String getIdentifier() {
         return "ssa";
     }
 
     @Override
-    public CoreOp.FuncOp apply(CoreOp.FuncOp op) {
+    public CoreOp.FuncOp apply(CoreOp.FuncOp op, Void context) {
         System.setProperty("babylon.ssa", "braun"); // used internally. There is apparently no cleaner way to do this currently.
         return SSA.transform(op);
     }

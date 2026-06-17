@@ -11,22 +11,16 @@ import com.sun.source.util.SimpleTreeVisitor;
  * A simple {@link TreeVisitor} that broadcasts all visits to a list of other visitors.<br>
  * Deliberately does not support passing or returning data.
  */
-public final class MulticastTreeVisitor extends SimpleTreeVisitor<Void, Void> {
-    private final List<TreeVisitor<?, ?>> targets;
-
-    private MulticastTreeVisitor(List<TreeVisitor<?, ?>> targets) {
-        this.targets = targets;
-    }
+public class MulticastTreeVisitor extends SimpleTreeVisitor<Void, Void> {
+    protected final List<TreeVisitor<?, ?>> targets;
 
     /**
      * Create a new {@link MulticastTreeVisitor}.
      * @param targets the targets to which to broadcast visits
-     * @return the visitor
      */
-    public static MulticastTreeVisitor create(List<TreeVisitor<?, ?>> targets) {
+    public MulticastTreeVisitor(List<? extends TreeVisitor<?, ?>> targets) {
         // Copy the target list and replace multicast visitors with their constituent targets for efficiency
-        var flatTargets = targets.stream().flatMap(s -> s instanceof MulticastTreeVisitor mv ? mv.targets.stream() : Stream.of(s)).toList();
-        return new MulticastTreeVisitor(flatTargets);
+        this.targets = targets.stream().flatMap(s -> s instanceof MulticastTreeVisitor mv ? mv.targets.stream() : Stream.of(s)).toList();
     }
 
     @Override

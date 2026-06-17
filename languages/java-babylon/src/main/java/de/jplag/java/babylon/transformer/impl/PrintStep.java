@@ -9,14 +9,14 @@ import jdk.incubator.code.dialect.core.CoreOp;
  * {@link TransformationPipeline.Step} that prints the code model.
  */
 @AutoService(TransformationPipeline.Step.class)
-public class PrintStep implements TransformationPipeline.Step {
+public class PrintStep implements TransformationPipeline.Step<Void> {
     @Override
     public String getIdentifier() {
         return "print";
     }
 
     @Override
-    public CoreOp.FuncOp apply(CoreOp.FuncOp op) {
+    public CoreOp.FuncOp apply(CoreOp.FuncOp op, Void context) {
         IO.println(op.toText());
         return op;
     }

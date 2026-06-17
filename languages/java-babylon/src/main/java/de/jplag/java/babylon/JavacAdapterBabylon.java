@@ -1,13 +1,13 @@
 package de.jplag.java.babylon;
 
 import java.io.File;
-import java.util.List;
 
 import javax.tools.JavaCompiler;
 
 import de.jplag.java.JavacAdapter;
 import de.jplag.java.Parser;
 import de.jplag.java.babylon.tokenizer.BabylonTokenizer;
+import de.jplag.java.babylon.transformer.Prepass;
 import de.jplag.java.babylon.transformer.TransformationPipeline;
 import de.jplag.semantics.VariableRegistry;
 
@@ -21,6 +21,8 @@ class JavacAdapterBabylon extends JavacAdapter {
     private final VariableRegistry variableRegistry;
     private final BabylonTokenizer.Provider tokenizer;
 
+    private static final ScopedValue<Prepass.Multicast.Context> PREPASS_CONTEXT = ScopedValue.newInstance();
+
     public JavacAdapterBabylon(TransformationPipeline pipeline, VariableRegistry variableRegistry, BabylonTokenizer.Provider tokenizer) {
         this.pipeline = pipeline;
         this.variableRegistry = variableRegistry;
@@ -33,9 +35,20 @@ class JavacAdapterBabylon extends JavacAdapter {
     }
 
     @Override
+    protected void handle(Iterable<? extends CompilationUnitTree> trees, Parser parser, SourcePositions positions,
+            JavaCompiler.CompilationTask task) {
+        Prepass<Prepass.Multicast.Context> prepass = pipeline.prepass();
+        for (CompilationUnitTree tree : trees) {
+            tree.accept(prepass, null);
+        }
+        prepass.finalizeContext();
+        ScopedValue.where(PREPASS_CONTEXT, prepass.finalizeContext()).run(() -> super.handle(trees, parser, positions, task));
+    }
+
+    @Override
     protected TreeVisitor<?, ?> createTreeScanner(File file, Parser parser, LineMap map, SourcePositions positions, CompilationUnitTree ast,
             JavaCompiler.CompilationTask task) {
-        return MulticastTreeVisitor.create(List.of(pipeline.prepass(),
-                new TokenGeneratingTreeScannerBabylon(file, (ParserBabylon) parser, map, positions, ast, task, variableRegistry, tokenizer)));
+        return new TokenGeneratingTreeScannerBabylon(file, (ParserBabylon) parser, map, positions, ast, task, variableRegistry, tokenizer,
+                PREPASS_CONTEXT.get());
     }
 }

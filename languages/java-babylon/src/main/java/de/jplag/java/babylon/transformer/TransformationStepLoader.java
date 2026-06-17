@@ -72,14 +72,14 @@ public class TransformationStepLoader {
         return cachedStepInstances;
     }
 
-    private record SimpleTransformationStep(SimpleTransformation transformation) implements TransformationPipeline.Step {
+    private record SimpleTransformationStep(SimpleTransformation transformation) implements TransformationPipeline.Step<Void> {
         @Override
         public String getIdentifier() {
             return transformation.getIdentifier();
         }
 
         @Override
-        public CoreOp.FuncOp apply(CoreOp.FuncOp op) {
+        public CoreOp.FuncOp apply(CoreOp.FuncOp op, Void context) {
             return op.transform(transformation);
         }
     }
@@ -90,7 +90,7 @@ public class TransformationStepLoader {
      * @return the transformation step or an empty optional if no corresponding step was found
      * @see TransformationPipeline.Step#getIdentifier()
      */
-    public static Optional<TransformationPipeline.Step> getTransformationStep(String identifier) {
+    public static Optional<TransformationPipeline.Step<?>> getTransformationStep(String identifier) {
         var step = getAllAvailableTransformationSteps().get(identifier);
         if (step == null) {
             logger.warn("Attempt to load transformation step {} was not successful", identifier);

@@ -10,14 +10,14 @@ import jdk.incubator.code.dialect.core.SSA;
  * {@link TransformationPipeline.Step} that performs a SSA transformation using SSACytron.
  */
 @AutoService(TransformationPipeline.Step.class)
-public class SsaCytronStep implements TransformationPipeline.Step {
+public class SsaCytronStep implements TransformationPipeline.Step<Void> {
     @Override
     public String getIdentifier() {
         return "ssa-cytron";
     }
 
     @Override
-    public CoreOp.FuncOp apply(CoreOp.FuncOp op) {
+    public CoreOp.FuncOp apply(CoreOp.FuncOp op, Void context) {
         System.setProperty("babylon.ssa", "cytron"); // used internally. There is apparently no cleaner way to do this currently.
         return SSA.transform(op);
     }
