@@ -17,7 +17,7 @@ class Experiment implements BabylonDSL {
         var files = Set.of(DATASETS.resolve("Progpedia19/human/subm44/Sociologia.java").toFile());
 
         JavaBabylonLanguage language = (JavaBabylonLanguage) LanguageLoader.getLanguage("java-babylon").orElseThrow();
-        language.getOptions().getTransformationNames().setValue("tryWithoutResources, print");
+        language.getOptions().getTransformationNames().setValue("tryWithoutResources, lower, inline, print");
         language.getOptions().getTokenizerName().setValue(HighLevelBabylonTokenizer.IDENTIFIER);
         var tokens = language.parse(files, false);
         Files.writeString(Path.of("java-babylon.txt"), TokenPrinterUtils.printTokensByFile(tokens));

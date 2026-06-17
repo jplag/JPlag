@@ -8,7 +8,8 @@ import com.sun.source.tree.TreeVisitor;
 import com.sun.source.util.SimpleTreeVisitor;
 
 /**
- * Represents an operation to be performed before the main pass ({@link de.jplag.java.babylon.TokenGeneratingTreeScannerBabylon}) is performed.
+ * Represents an operation to be performed before the main pass
+ * ({@link de.jplag.java.babylon.TokenGeneratingTreeScannerBabylon}) is performed.
  * @param <Context> the type of the returned context
  */
 public interface Prepass<Context> extends TreeVisitor<Void, Void> {

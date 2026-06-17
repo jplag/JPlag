@@ -9,6 +9,8 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import de.jplag.java.babylon.CodeModelCreator;
+
 import jdk.incubator.code.dialect.core.CoreOp;
 
 /**
@@ -40,12 +42,13 @@ public final class TransformationPipeline {
 
     /**
      * Returns a prepass to perform before beginning the tokenization.
+     * @param context the context of the prepass
      * @return the prepass visitor
      */
-    public Prepass<Prepass.Multicast.Context> prepass() {
+    public Prepass<Prepass.Multicast.Context> prepass(PrepassConstructionContext context) {
         List<Prepass<?>> visitors = new ArrayList<>();
         for (Step<?> step : steps) {
-            Prepass<?> visitor = step.beginPrepass();
+            Prepass<?> visitor = step.beginPrepass(context);
             Prepass<?> visitorOrDefault = Objects.requireNonNullElse(visitor, Prepass.Unit.INSTANCE);
             visitors.add(visitorOrDefault);
         }
@@ -99,9 +102,10 @@ public final class TransformationPipeline {
 
         /**
          * Returns a prepass to perform before beginning the tokenization or null.
+         * @param context the context of the prepass
          * @return the prepass visitor or null
          */
-        default @Nullable Prepass<Context> beginPrepass() {
+        default @Nullable Prepass<Context> beginPrepass(PrepassConstructionContext context) {
             return null;
         }
 
@@ -112,5 +116,13 @@ public final class TransformationPipeline {
          * @return the transformed op
          */
         CoreOp.FuncOp apply(CoreOp.FuncOp op, Context context);
+    }
+
+    /**
+     * Context for creating prepasses.<br>
+     * Rather than a bunch of method parameters, this encapsulates all relevant objects in a single wrapper.
+     * @param codeModelCreator the current code model creator
+     */
+    public record PrepassConstructionContext(CodeModelCreator codeModelCreator) {
     }
 }

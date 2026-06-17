@@ -1,12 +1,12 @@
 package de.jplag.java.babylon.transformer.impl;
 
+import java.util.Set;
+
 import de.jplag.java.babylon.transformer.TransformationPipeline;
 
 import com.google.auto.service.AutoService;
 import jdk.incubator.code.dialect.core.CoreOp;
 import jdk.incubator.code.dialect.core.SSA;
-
-import java.util.Set;
 
 /**
  * {@link TransformationPipeline.Step} that performs a SSA transformation using SSACytron.

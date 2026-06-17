@@ -37,9 +37,11 @@ class JavacAdapterBabylon extends JavacAdapter {
     @Override
     protected void handle(Iterable<? extends CompilationUnitTree> trees, Parser parser, SourcePositions positions,
             JavaCompiler.CompilationTask task) {
-        Prepass<Prepass.Multicast.Context> prepass = pipeline.prepass();
-        for (CompilationUnitTree tree : trees) {
-            tree.accept(prepass, null);
+        CodeModelCreator cmc = new CodeModelCreator(task, null);
+        Prepass<Prepass.Multicast.Context> prepass = pipeline.prepass(new TransformationPipeline.PrepassConstructionContext(cmc));
+        for (CompilationUnitTree ast : trees) {
+            cmc.setAst(ast);
+            ast.accept(prepass, null);
         }
         prepass.finalizeContext();
         ScopedValue.where(PREPASS_CONTEXT, prepass.finalizeContext()).run(() -> super.handle(trees, parser, positions, task));
@@ -48,7 +50,7 @@ class JavacAdapterBabylon extends JavacAdapter {
     @Override
     protected TreeVisitor<?, ?> createTreeScanner(File file, Parser parser, LineMap map, SourcePositions positions, CompilationUnitTree ast,
             JavaCompiler.CompilationTask task) {
-        return new TokenGeneratingTreeScannerBabylon(file, (ParserBabylon) parser, map, positions, ast, task, variableRegistry, tokenizer,
-                PREPASS_CONTEXT.get());
+        return new TokenGeneratingTreeScannerBabylon(file, (ParserBabylon) parser, map, positions, ast, new CodeModelCreator(task, ast),
+                variableRegistry, tokenizer, PREPASS_CONTEXT.get());
     }
 }
