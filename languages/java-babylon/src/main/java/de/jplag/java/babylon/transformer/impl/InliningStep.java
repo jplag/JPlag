@@ -40,6 +40,8 @@ public class InliningStep implements TransformationPipeline.Step<InliningStep.Co
      */
     public static final String IDENTIFIER = "inline";
 
+    private final long maxComplexity = Long.parseLong(System.getProperty("jplag.java-babylon.inline.max-complexity", "10"));
+
     @Override
     public String getIdentifier() {
         return IDENTIFIER;
@@ -173,7 +175,7 @@ public class InliningStep implements TransformationPipeline.Step<InliningStep.Co
     }
 
     protected boolean heuristic(CoreOp.FuncOp func, JavaMethodId methodId) {
-        return complexity(func) < 10;
+        return complexity(func) <= maxComplexity;
     }
 
     protected long complexity(Op op) {
