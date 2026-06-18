@@ -28,9 +28,9 @@ THE SOFTWARE.
 
 // https://docs.python.org/3.13/reference/lexical_analysis.html
 
-lexer grammar PythonLexer;
+lexer grammar Python3Lexer;
 
-options { superClass=PythonLexerBase; }
+options { superClass=Python3LexerBase; }
 
 tokens {
     ENCODING // https://docs.python.org/3.13/reference/lexical_analysis.html#encoding-declarations
@@ -183,10 +183,10 @@ FSTRING_START : FSTRING_PREFIX ([']
                               | ["]
                               | [']['][']
                               | ["]["]["])
-                              ; // pushMode(????_FSTRING_MODE) will be called in PythonLexerBase class
+                              ; // pushMode(????_FSTRING_MODE) will be called in Python3LexerBase class
 
 // catch the unrecognized characters
-ERRORTOKEN : . ; // PythonLexerBase class will report an error about this (the ERRORTOKEN will also cause an error in the parser)
+ERRORTOKEN : . ; // Python3LexerBase class will report an error about this (the ERRORTOKEN will also cause an error in the parser)
 
 
 /*
@@ -194,85 +194,85 @@ ERRORTOKEN : . ; // PythonLexerBase class will report an error about this (the E
  */
 
 mode SQ1__FSTRING_MODE;
-     SQ1__FSTRING_END    : [']               -> type(FSTRING_END); // popMode will be called in PythonLexerBase class
+     SQ1__FSTRING_END    : [']               -> type(FSTRING_END); // popMode will be called in Python3LexerBase class
      SQ1__FSTRING_MIDDLE : SQ1__FSTRING_ITEM -> type(FSTRING_MIDDLE);
-     SQ1__FSTRING_LBRACE : '{'               -> type(LBRACE); // pushMode(SQ1__FORMAT_SPECIFICATION_MODE) will be called in PythonLexerBase class
+     SQ1__FSTRING_LBRACE : '{'               -> type(LBRACE); // pushMode(SQ1__FORMAT_SPECIFICATION_MODE) will be called in Python3LexerBase class
 
 mode SQ1R_FSTRING_MODE;
-     SQ1R_FSTRING_END    : [']               -> type(FSTRING_END); // popMode will be called in PythonLexerBase class
+     SQ1R_FSTRING_END    : [']               -> type(FSTRING_END); // popMode will be called in Python3LexerBase class
      SQ1R_FSTRING_MIDDLE : SQ1R_FSTRING_ITEM -> type(FSTRING_MIDDLE);
-     SQ1R_FSTRING_LBRACE : '{'               -> type(LBRACE); // pushMode(SQ1R_FORMAT_SPECIFICATION_MODE) will be called in PythonLexerBase class
+     SQ1R_FSTRING_LBRACE : '{'               -> type(LBRACE); // pushMode(SQ1R_FORMAT_SPECIFICATION_MODE) will be called in Python3LexerBase class
 
 mode DQ1__FSTRING_MODE;
-     DQ1__FSTRING_END    : ["]               -> type(FSTRING_END); // popMode will be called in PythonLexerBase class
+     DQ1__FSTRING_END    : ["]               -> type(FSTRING_END); // popMode will be called in Python3LexerBase class
      DQ1__FSTRING_MIDDLE : DQ1__FSTRING_ITEM -> type(FSTRING_MIDDLE);
-     DQ1__FSTRING_LBRACE : '{'               -> type(LBRACE); // pushMode(DQ1__FORMAT_SPECIFICATION_MODE) will be called in PythonLexerBase class
+     DQ1__FSTRING_LBRACE : '{'               -> type(LBRACE); // pushMode(DQ1__FORMAT_SPECIFICATION_MODE) will be called in Python3LexerBase class
 
 mode DQ1R_FSTRING_MODE;
-     DQ1R_FSTRING_END    : ["]               -> type(FSTRING_END); // popMode will be called in PythonLexerBase class
+     DQ1R_FSTRING_END    : ["]               -> type(FSTRING_END); // popMode will be called in Python3LexerBase class
      DQ1R_FSTRING_MIDDLE : DQ1R_FSTRING_ITEM -> type(FSTRING_MIDDLE);
-     DQ1R_FSTRING_LBRACE : '{'               -> type(LBRACE); // pushMode(DQ1R_FORMAT_SPECIFICATION_MODE) will be called in PythonLexerBase class
+     DQ1R_FSTRING_LBRACE : '{'               -> type(LBRACE); // pushMode(DQ1R_FORMAT_SPECIFICATION_MODE) will be called in Python3LexerBase class
 
 mode SQ3__FSTRING_MODE;
-     SQ3__FSTRING_END    : [']['][']         -> type(FSTRING_END); // popMode will be called in PythonLexerBase class
+     SQ3__FSTRING_END    : [']['][']         -> type(FSTRING_END); // popMode will be called in Python3LexerBase class
      SQ3__FSTRING_MIDDLE : SQ3__FSTRING_ITEM -> type(FSTRING_MIDDLE);
-     SQ3__FSTRING_LBRACE : '{'               -> type(LBRACE); // pushMode(SQ3__FORMAT_SPECIFICATION_MODE) will be called in PythonLexerBase class
+     SQ3__FSTRING_LBRACE : '{'               -> type(LBRACE); // pushMode(SQ3__FORMAT_SPECIFICATION_MODE) will be called in Python3LexerBase class
 
 mode SQ3R_FSTRING_MODE;
-     SQ3R_FSTRING_END    : [']['][']         -> type(FSTRING_END); // popMode will be called in PythonLexerBase class
+     SQ3R_FSTRING_END    : [']['][']         -> type(FSTRING_END); // popMode will be called in Python3LexerBase class
      SQ3R_FSTRING_MIDDLE : SQ3R_FSTRING_ITEM -> type(FSTRING_MIDDLE);
-     SQ3R_FSTRING_LBRACE : '{'               -> type(LBRACE); // pushMode(SQ3R_FORMAT_SPECIFICATION_MODE) will be called in PythonLexerBase class
+     SQ3R_FSTRING_LBRACE : '{'               -> type(LBRACE); // pushMode(SQ3R_FORMAT_SPECIFICATION_MODE) will be called in Python3LexerBase class
 
 mode DQ3__FSTRING_MODE;
-     DQ3__FSTRING_END    : ["]["]["]         -> type(FSTRING_END); // popMode will be called in PythonLexerBase class
+     DQ3__FSTRING_END    : ["]["]["]         -> type(FSTRING_END); // popMode will be called in Python3LexerBase class
      DQ3__FSTRING_MIDDLE : DQ3__FSTRING_ITEM -> type(FSTRING_MIDDLE);
-     DQ3__FSTRING_LBRACE : '{'               -> type(LBRACE); // pushMode(DQ3__FORMAT_SPECIFICATION_MODE) will be called in PythonLexerBase class
+     DQ3__FSTRING_LBRACE : '{'               -> type(LBRACE); // pushMode(DQ3__FORMAT_SPECIFICATION_MODE) will be called in Python3LexerBase class
 
 mode DQ3R_FSTRING_MODE;
-     DQ3R_FSTRING_END    : ["]["]["]         -> type(FSTRING_END); // popMode will be called in PythonLexerBase class
+     DQ3R_FSTRING_END    : ["]["]["]         -> type(FSTRING_END); // popMode will be called in Python3LexerBase class
      DQ3R_FSTRING_MIDDLE : DQ3R_FSTRING_ITEM -> type(FSTRING_MIDDLE);
-     DQ3R_FSTRING_LBRACE : '{'               -> type(LBRACE); // pushMode(DQ3R_FORMAT_SPECIFICATION_MODE) will be called in PythonLexerBase class
+     DQ3R_FSTRING_LBRACE : '{'               -> type(LBRACE); // pushMode(DQ3R_FORMAT_SPECIFICATION_MODE) will be called in Python3LexerBase class
 
 
 mode SQ1__FORMAT_SPECIFICATION_MODE; // it is only used after a format specifier colon
      SQ1__FORMAT_SPECIFICATION_FSTRING_MIDDLE : SQ1__FSTRING_PART+ -> type(FSTRING_MIDDLE);
-     SQ1__FORMAT_SPECIFICATION_LBRACE         : '{'                -> type(LBRACE); // will be closed in DEFAULT_MODE by PythonLexerBase class
-     SQ1__FORMAT_SPECIFICATION_RBRACE         : '}'                -> type(RBRACE); // popMode to SQ1__FSTRING_MODE by PythonLexerBase class
+     SQ1__FORMAT_SPECIFICATION_LBRACE         : '{'                -> type(LBRACE); // will be closed in DEFAULT_MODE by Python3LexerBase class
+     SQ1__FORMAT_SPECIFICATION_RBRACE         : '}'                -> type(RBRACE); // popMode to SQ1__FSTRING_MODE by Python3LexerBase class
 
 mode SQ1R_FORMAT_SPECIFICATION_MODE; // it is only used after a format specifier colon
      SQ1R_FORMAT_SPECIFICATION_FSTRING_MIDDLE : SQ1R_FSTRING_PART+ -> type(FSTRING_MIDDLE);
-     SQ1R_FORMAT_SPECIFICATION_LBRACE         : '{'                -> type(LBRACE); // will be closed in DEFAULT_MODE by PythonLexerBase class
-     SQ1R_FORMAT_SPECIFICATION_RBRACE         : '}'                -> type(RBRACE); // popMode to SQ1R_FSTRING_MODEby PythonLexerBase class
+     SQ1R_FORMAT_SPECIFICATION_LBRACE         : '{'                -> type(LBRACE); // will be closed in DEFAULT_MODE by Python3LexerBase class
+     SQ1R_FORMAT_SPECIFICATION_RBRACE         : '}'                -> type(RBRACE); // popMode to SQ1R_FSTRING_MODEby Python3LexerBase class
 
 mode DQ1__FORMAT_SPECIFICATION_MODE; // it is only used after a format specifier colon
      DQ1__FORMAT_SPECIFICATION_FSTRING_MIDDLE : DQ1__FSTRING_PART+ -> type(FSTRING_MIDDLE);
-     DQ1__FORMAT_SPECIFICATION_LBRACE         : '{'                -> type(LBRACE); // will be closed in DEFAULT_MODE by PythonLexerBase class
-     DQ1__FORMAT_SPECIFICATION_RBRACE         : '}'                -> type(RBRACE); // popMode to DQ1__FSTRING_MODE by PythonLexerBase class
+     DQ1__FORMAT_SPECIFICATION_LBRACE         : '{'                -> type(LBRACE); // will be closed in DEFAULT_MODE by Python3LexerBase class
+     DQ1__FORMAT_SPECIFICATION_RBRACE         : '}'                -> type(RBRACE); // popMode to DQ1__FSTRING_MODE by Python3LexerBase class
 
 mode DQ1R_FORMAT_SPECIFICATION_MODE; // it is only used after a format specifier colon
      DQ1R_FORMAT_SPECIFICATION_FSTRING_MIDDLE : DQ1R_FSTRING_PART+ -> type(FSTRING_MIDDLE);
-     DQ1R_FORMAT_SPECIFICATION_LBRACE         : '{'                -> type(LBRACE); // will be closed in DEFAULT_MODE by PythonLexerBase class
-     DQ1R_FORMAT_SPECIFICATION_RBRACE         : '}'                -> type(RBRACE); // popMode to DQ1R_FSTRING_MODE by PythonLexerBase class
+     DQ1R_FORMAT_SPECIFICATION_LBRACE         : '{'                -> type(LBRACE); // will be closed in DEFAULT_MODE by Python3LexerBase class
+     DQ1R_FORMAT_SPECIFICATION_RBRACE         : '}'                -> type(RBRACE); // popMode to DQ1R_FSTRING_MODE by Python3LexerBase class
 
 mode SQ3__FORMAT_SPECIFICATION_MODE; // it is only used after a format specifier colon
      SQ3__FORMAT_SPECIFICATION_FSTRING_MIDDLE : SQ3__FSTRING_PART+ -> type(FSTRING_MIDDLE);
-     SQ3__FORMAT_SPECIFICATION_LBRACE         : '{'                -> type(LBRACE); // will be closed in DEFAULT_MODE by PythonLexerBase class
-     SQ3__FORMAT_SPECIFICATION_RBRACE         : '}'                -> type(RBRACE); // popMode to SQ3__FSTRING_MODE by PythonLexerBase class
+     SQ3__FORMAT_SPECIFICATION_LBRACE         : '{'                -> type(LBRACE); // will be closed in DEFAULT_MODE by Python3LexerBase class
+     SQ3__FORMAT_SPECIFICATION_RBRACE         : '}'                -> type(RBRACE); // popMode to SQ3__FSTRING_MODE by Python3LexerBase class
 
 mode SQ3R_FORMAT_SPECIFICATION_MODE; // it is only used after a format specifier colon
      SQ3R_FORMAT_SPECIFICATION_FSTRING_MIDDLE : SQ3R_FSTRING_PART+ -> type(FSTRING_MIDDLE);
-     SQ3R_FORMAT_SPECIFICATION_LBRACE         : '{'                -> type(LBRACE); // will be closed in DEFAULT_MODE by PythonLexerBase class
-     SQ3R_FORMAT_SPECIFICATION_RBRACE         : '}'                -> type(RBRACE); // popMode to SQ3R_FSTRING_MODE by PythonLexerBase class
+     SQ3R_FORMAT_SPECIFICATION_LBRACE         : '{'                -> type(LBRACE); // will be closed in DEFAULT_MODE by Python3LexerBase class
+     SQ3R_FORMAT_SPECIFICATION_RBRACE         : '}'                -> type(RBRACE); // popMode to SQ3R_FSTRING_MODE by Python3LexerBase class
 
 mode DQ3__FORMAT_SPECIFICATION_MODE; // it is only used after a format specifier colon
      DQ3__FORMAT_SPECIFICATION_FSTRING_MIDDLE : DQ3__FSTRING_PART+ -> type(FSTRING_MIDDLE);
-     DQ3__FORMAT_SPECIFICATION_LBRACE         : '{'                -> type(LBRACE); // will be closed in DEFAULT_MODE by PythonLexerBase class
-     DQ3__FORMAT_SPECIFICATION_RBRACE         : '}'                -> type(RBRACE); // popMode to DQ3__FSTRING_MODE by PythonLexerBase class
+     DQ3__FORMAT_SPECIFICATION_LBRACE         : '{'                -> type(LBRACE); // will be closed in DEFAULT_MODE by Python3LexerBase class
+     DQ3__FORMAT_SPECIFICATION_RBRACE         : '}'                -> type(RBRACE); // popMode to DQ3__FSTRING_MODE by Python3LexerBase class
 
 mode DQ3R_FORMAT_SPECIFICATION_MODE; // it is only used after a format specifier colon
      DQ3R_FORMAT_SPECIFICATION_FSTRING_MIDDLE : DQ3R_FSTRING_PART+ -> type(FSTRING_MIDDLE);
-     DQ3R_FORMAT_SPECIFICATION_LBRACE         : '{'                -> type(LBRACE); // will be closed in DEFAULT_MODE by PythonLexerBase class
-     DQ3R_FORMAT_SPECIFICATION_RBRACE         : '}'                -> type(RBRACE); // popMode to DQ3R_FSTRING_MODE by PythonLexerBase class
+     DQ3R_FORMAT_SPECIFICATION_LBRACE         : '{'                -> type(LBRACE); // will be closed in DEFAULT_MODE by Python3LexerBase class
+     DQ3R_FORMAT_SPECIFICATION_RBRACE         : '}'                -> type(RBRACE); // popMode to DQ3R_FSTRING_MODE by Python3LexerBase class
 
 /*
  *  fragments
@@ -387,7 +387,7 @@ fragment FSTRING_ESCAPE_SEQ_RAW : ESCAPE_SEQ_NEWLINE | '\\' ~[{}];  // fr"\}" ca
 
 fragment ONE_OR_TWO_SQUOTE : ['][']?;
 fragment ONE_OR_TWO_DQUOTE : ["]["]?;
-fragment DOUBLE_BRACE : '{{' | '}}'; // will be replaced to single brace in PythonLexerBase class
+fragment DOUBLE_BRACE : '{{' | '}}'; // will be replaced to single brace in Python3LexerBase class
 
 fragment ESCAPE_SEQ_NAMED_CHAR : '\\N{' .*? '}'; // an escape sequence for a character by a name from the Unicode database
 fragment ESCAPE_SEQ_NEWLINE    : BACKSLASH_NEWLINE; // it is a kind of line continuation for string literals (backslash and newline will be ignored)

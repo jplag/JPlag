@@ -33,9 +33,9 @@ THE SOFTWARE.
 
 // Python 3.13.2  https://docs.python.org/3.13/reference/grammar.html#full-grammar-specification
 
-parser grammar PythonParser;
+parser grammar Python3Parser;
 
-options { tokenVocab=PythonLexer; }
+options { tokenVocab=Python3Lexer; }
 
 // STARTING RULES
 // ==============
