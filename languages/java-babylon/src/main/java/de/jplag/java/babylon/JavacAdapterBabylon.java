@@ -6,8 +6,8 @@ import javax.tools.JavaCompiler;
 
 import de.jplag.java.JavacAdapter;
 import de.jplag.java.Parser;
+import de.jplag.java.babylon.extractor.CodeModelExtractorImpl;
 import de.jplag.java.babylon.tokenizer.BabylonTokenizer;
-import de.jplag.java.babylon.transformer.Prepass;
 import de.jplag.java.babylon.transformer.TransformationPipeline;
 import de.jplag.semantics.VariableRegistry;
 
@@ -21,7 +21,7 @@ class JavacAdapterBabylon extends JavacAdapter {
     private final VariableRegistry variableRegistry;
     private final BabylonTokenizer.Provider tokenizer;
 
-    private static final ScopedValue<Prepass.Multicast.Context> PREPASS_CONTEXT = ScopedValue.newInstance();
+    private static final ScopedValue<TransformationPipeline.Context> PREPASS_CONTEXT = ScopedValue.newInstance();
 
     public JavacAdapterBabylon(TransformationPipeline pipeline, VariableRegistry variableRegistry, BabylonTokenizer.Provider tokenizer) {
         this.pipeline = pipeline;
@@ -37,20 +37,14 @@ class JavacAdapterBabylon extends JavacAdapter {
     @Override
     protected void handle(Iterable<? extends CompilationUnitTree> trees, Parser parser, SourcePositions positions,
             JavaCompiler.CompilationTask task) {
-        CodeModelCreator cmc = new CodeModelCreator(task, null);
-        Prepass<Prepass.Multicast.Context> prepass = pipeline.prepass(new TransformationPipeline.PrepassConstructionContext(cmc));
-        for (CompilationUnitTree ast : trees) {
-            cmc.setAst(ast);
-            ast.accept(prepass, null);
-        }
-        prepass.finalizeContext();
-        ScopedValue.where(PREPASS_CONTEXT, prepass.finalizeContext()).run(() -> super.handle(trees, parser, positions, task));
+        TransformationPipeline.Context prepassContext = pipeline.prepass(trees, new CodeModelExtractorImpl(task));
+        ScopedValue.where(PREPASS_CONTEXT, prepassContext).run(() -> super.handle(trees, parser, positions, task));
     }
 
     @Override
     protected TreeVisitor<?, ?> createTreeScanner(File file, Parser parser, LineMap map, SourcePositions positions, CompilationUnitTree ast,
             JavaCompiler.CompilationTask task) {
-        return new TokenGeneratingTreeScannerBabylon(file, (ParserBabylon) parser, map, positions, ast, new CodeModelCreator(task, ast),
-                variableRegistry, tokenizer, PREPASS_CONTEXT.get());
+        return new TokenGeneratingTreeScannerBabylon(file, (ParserBabylon) parser, map, positions, ast, variableRegistry, tokenizer,
+                PREPASS_CONTEXT.get());
     }
 }

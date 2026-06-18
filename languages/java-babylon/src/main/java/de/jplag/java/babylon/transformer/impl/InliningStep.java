@@ -7,11 +7,12 @@ import java.util.function.BiPredicate;
 
 import javax.annotation.Nullable;
 
-import de.jplag.java.babylon.CodeModelCreator;
+import de.jplag.java.babylon.extractor.CodeModelExtractor;
 import de.jplag.java.babylon.transformer.Prepass;
 import de.jplag.java.babylon.transformer.TransformationPipeline;
 
 import com.google.auto.service.AutoService;
+import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.util.TreeScanner;
 import com.sun.tools.javac.code.Flags;
@@ -50,7 +51,7 @@ public class InliningStep implements TransformationPipeline.Step<InliningStep.Co
     @Nullable
     @Override
     public Prepass<Context> beginPrepass(TransformationPipeline.PrepassConstructionContext context) {
-        return new FindCandidates(context.codeModelCreator(), this::heuristic);
+        return new FindCandidates(context.codeModelExtractor(), this::heuristic);
     }
 
     @Override
@@ -58,14 +59,14 @@ public class InliningStep implements TransformationPipeline.Step<InliningStep.Co
         return op.transform(new Apply(context));
     }
 
-    private static class FindCandidates extends TreeScanner<Void, Void> implements Prepass<Context> {
+    private static class FindCandidates extends TreeScanner<Void, CompilationUnitTree> implements Prepass<Context> {
         private final Map<String, CoreOp.FuncOp> core = new HashMap<>();
         private final Map<JavaMethodId, CoreOp.FuncOp> java = new HashMap<>();
-        private final CodeModelCreator codeModelCreator;
+        private final CodeModelExtractor codeModelExtractor;
         private final BiPredicate<CoreOp.FuncOp, JavaMethodId> heuristic;
 
-        public FindCandidates(CodeModelCreator codeModelCreator, BiPredicate<CoreOp.FuncOp, JavaMethodId> heuristic) {
-            this.codeModelCreator = codeModelCreator;
+        public FindCandidates(CodeModelExtractor codeModelExtractor, BiPredicate<CoreOp.FuncOp, JavaMethodId> heuristic) {
+            this.codeModelExtractor = codeModelExtractor;
             this.heuristic = heuristic;
         }
 
@@ -75,14 +76,14 @@ public class InliningStep implements TransformationPipeline.Step<InliningStep.Co
         }
 
         @Override
-        public Void visitMethod(MethodTree node, Void unused) {
+        public Void visitMethod(MethodTree node, CompilationUnitTree ast) {
             JavaMethodId id = JavaMethodId.of(((JCTree.JCMethodDecl) node).sym);
             if (id != null) {
-                CoreOp.FuncOp op = codeModelCreator.toFunc(node).orElse(null);
+                CoreOp.FuncOp op = codeModelExtractor.toOp(node, ast).orElse(null);
                 if (op != null && heuristic.test(op, id))
                     java.put(id, op);
             }
-            return super.visitMethod(node, unused);
+            return super.visitMethod(node, ast);
         }
     }
 

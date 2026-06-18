@@ -1,16 +1,17 @@
 package de.jplag.java.babylon.transformer;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.Nullable;
 
-import de.jplag.java.babylon.CodeModelCreator;
+import de.jplag.java.babylon.extractor.CodeModelExtractor;
+import de.jplag.java.babylon.extractor.TransformingCodeModelExtractor;
 
+import com.sun.source.tree.CompilationUnitTree;
+import com.sun.source.tree.MethodTree;
 import jdk.incubator.code.dialect.core.CoreOp;
 
 /**
@@ -42,41 +43,55 @@ public final class TransformationPipeline {
 
     /**
      * Returns a prepass to perform before beginning the tokenization.
-     * @param context the context of the prepass
+     * @param trees the input trees on which the prepass should be run
+     * @param extractor the extractor to use for obtaining code models
      * @return the prepass visitor
      */
-    public Prepass<Prepass.Multicast.Context> prepass(PrepassConstructionContext context) {
-        List<Prepass<?>> visitors = new ArrayList<>();
+    public Context prepass(Iterable<? extends CompilationUnitTree> trees, CodeModelExtractor extractor) {
+        CodeModelExtractor currentExtractor = extractor;
         for (Step<?> step : steps) {
-            Prepass<?> visitor = step.beginPrepass(context);
-            Prepass<?> visitorOrDefault = Objects.requireNonNullElse(visitor, Prepass.Unit.INSTANCE);
-            visitors.add(visitorOrDefault);
+            currentExtractor = prepass(trees, step, currentExtractor);
         }
-        return new Prepass.Multicast(visitors, steps);
+        return new Context(currentExtractor);
+    }
+
+    private <T> TransformingCodeModelExtractor prepass(Iterable<? extends CompilationUnitTree> trees, Step<T> step,
+            CodeModelExtractor currentExtractor) {
+        Prepass<T> prepass = step.beginPrepass(new PrepassConstructionContext(currentExtractor));
+        T context;
+        if (prepass != null) {
+            for (CompilationUnitTree tree : trees) {
+                tree.accept(prepass, tree);
+            }
+            context = prepass.finalizeContext();
+        } else {
+            context = null;
+        }
+        return new TransformingCodeModelExtractor(currentExtractor, op -> step.apply(op, context));
     }
 
     /**
-     * Transform a single {@link CoreOp.FuncOp} according to the transformations represented by this pipeline.
-     * @param op the op to transform
+     * Transform a single method according to the transformations represented by this pipeline.
+     * @param methodTree the method tree to transform
+     * @param ast the compilation unit in which the method is contained
      * @param context the context obtained from the prepass
      * @return the transformed op
      * @throws IllegalArgumentException if the context belongs to a different pipeline
      */
-    public CoreOp.FuncOp transform(CoreOp.FuncOp op, Prepass.Multicast.Context context) {
-        if (steps != context.tag() || steps.size() != context.contexts().size()) {
-            throw new IllegalArgumentException("Context does not match this pipeline");
-        }
-        Iterator<Step<?>> stepIterator = steps.iterator();
-        Iterator<?> contextIterator = context.contexts().iterator();
-        while (stepIterator.hasNext()) {
-            @SuppressWarnings("rawtypes")
-            Step step = stepIterator.next();
-            Object stepContext = contextIterator.next();
+    public Optional<CoreOp.FuncOp> transform(MethodTree methodTree, CompilationUnitTree ast, Context context) {
+        return context.finalExtractor.toOp(methodTree, ast);
+    }
 
-            // noinspection unchecked
-            op = step.apply(op, stepContext);
+    /**
+     * Context about the input code obtained from {@link #prepass}.<br>
+     * Only intended as the object to be passed to {@link #transform}, do not use this elsewhere.
+     */
+    public static class Context {
+        private final CodeModelExtractor finalExtractor;
+
+        private Context(CodeModelExtractor finalExtractor) {
+            this.finalExtractor = finalExtractor;
         }
-        return op;
     }
 
     /**
@@ -121,8 +136,8 @@ public final class TransformationPipeline {
     /**
      * Context for creating prepasses.<br>
      * Rather than a bunch of method parameters, this encapsulates all relevant objects in a single wrapper.
-     * @param codeModelCreator the current code model creator
+     * @param codeModelExtractor the current code model extractor
      */
-    public record PrepassConstructionContext(CodeModelCreator codeModelCreator) {
+    public record PrepassConstructionContext(CodeModelExtractor codeModelExtractor) {
     }
 }
