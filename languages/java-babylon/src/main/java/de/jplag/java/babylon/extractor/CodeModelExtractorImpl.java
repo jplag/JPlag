@@ -13,7 +13,7 @@ import jdk.incubator.code.dialect.core.CoreOp;
  * {@link CodeModelExtractor} implementation that simply creates a code model from input method or throws if that isn't
  * possible.
  */
-public class CodeModelExtractorImpl implements CodeModelExtractor {
+public final class CodeModelExtractorImpl implements CodeModelExtractor {
     private final JavaCompiler.CompilationTask task;
 
     /**

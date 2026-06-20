@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * Utility class for loading installed {@link BabylonTokenizer.Provider} implementations. Based on
  * {@link de.jplag.java.babylon.transformer.TransformationStepLoader}.
  */
-public class TokenizerLoader {
+public final class TokenizerLoader {
     private static final Logger logger = LoggerFactory.getLogger(TokenizerLoader.class);
 
     private static volatile Map<String, BabylonTokenizer.Provider> cachedStepInstances = null;

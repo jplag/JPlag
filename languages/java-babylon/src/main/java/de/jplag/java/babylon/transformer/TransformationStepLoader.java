@@ -20,7 +20,7 @@ import jdk.incubator.code.dialect.core.CoreOp;
  * Utility class for loading installed {@link TransformationPipeline.Step} implementations.<br>
  * Based on {@link de.jplag.LanguageLoader}.
  */
-public class TransformationStepLoader {
+public final class TransformationStepLoader {
     private static final Logger logger = LoggerFactory.getLogger(TransformationStepLoader.class);
 
     private static volatile Map<String, TransformationPipeline.Step> cachedStepInstances = null;
