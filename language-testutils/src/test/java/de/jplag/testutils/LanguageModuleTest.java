@@ -43,7 +43,10 @@ import de.jplag.testutils.datacollector.TokenPositionTestData;
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class LanguageModuleTest {
-    private static final Path DEFAULT_TEST_CODE_PATH_BASE = Path.of("src", "test", "resources", "de", "jplag");
+    /**
+     * Default base directory for test code.
+     */
+    public static final Path DEFAULT_TEST_CODE_PATH_BASE = Path.of("src", "test", "resources", "de", "jplag");
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
