@@ -11,10 +11,10 @@ import jdk.incubator.code.dialect.java.JavaOp;
  * {@link SimpleTransformation} that removes asserts for environments where asserts are disabled.
  */
 @AutoService(SimpleTransformation.class)
-public class RemoveAsserts implements SimpleTransformation {
+public class AssertRemoveTransformer implements SimpleTransformation {
     @Override
     public String getIdentifier() {
-        return "asserts-remove";
+        return "assert-remove";
     }
 
     @Override
