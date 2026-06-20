@@ -9,7 +9,8 @@ import jdk.incubator.code.dialect.core.CoreOp;
 import jdk.incubator.code.dialect.core.SSA;
 
 /**
- * {@link TransformationPipeline.Step} that performs a SSA transformation using SSABraun.
+ * {@link TransformationPipeline.Step} that performs a SSA transformation.<br>
+ * Set the system property {@code babylon.ssa} to {@code braun} or {@code cytron} to pick an implementation.
  */
 @AutoService(TransformationPipeline.Step.class)
 public class SsaStep implements TransformationPipeline.Step<Void> {
@@ -25,7 +26,6 @@ public class SsaStep implements TransformationPipeline.Step<Void> {
 
     @Override
     public CoreOp.FuncOp apply(CoreOp.FuncOp op, Void context) {
-        System.setProperty("babylon.ssa", "braun"); // used internally. There is apparently no cleaner way to do this currently.
         return SSA.transform(op);
     }
 }
