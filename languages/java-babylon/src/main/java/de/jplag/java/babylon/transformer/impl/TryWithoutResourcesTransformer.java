@@ -29,7 +29,7 @@ import jdk.incubator.code.dialect.java.MethodRef;
 public class TryWithoutResourcesTransformer implements SimpleTransformation, BabylonDSL {
     @Override
     public String getIdentifier() {
-        return "tryWithoutResources";
+        return "try-without-resources";
     }
 
     @Override
