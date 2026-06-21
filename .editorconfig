@@ -1,0 +1,3 @@
+[*.java]
+ij_java_use_single_class_imports = true
+ij_java_packages_to_use_import_on_demand =
