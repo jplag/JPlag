@@ -4,6 +4,7 @@ import static de.jplag.testutils.LanguageModuleTest.DEFAULT_TEST_CODE_PATH_BASE;
 
 import java.nio.file.Path;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.tools.JavaCompiler;
@@ -12,6 +13,7 @@ import de.jplag.ParsingException;
 import de.jplag.java.JavacAdapter;
 import de.jplag.java.Parser;
 import de.jplag.java.babylon.extractor.CodeModelExtractorImpl;
+import de.jplag.java.babylon.transformer.TransformationPipeline;
 
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.CompilationUnitTree;
@@ -67,12 +69,23 @@ public abstract class AbstractTransformerTest {
      */
     public record ParseResult(Iterable<? extends CompilationUnitTree> trees, JavaCompiler.CompilationTask task) {
         /**
-         * Asserts that the input is a simple source file containing only the main method and parses that method into a code
-         * model.
+         * Asserts that the input is a simple source file and parses the main method contained within into a code model.
          * @return the parsed code model
          * @throws IllegalArgumentException if the assertions fail
          */
         public CoreOp.FuncOp extractCodeModel() {
+            return extractCodeModel(new TransformationPipeline(List.of()));
+        }
+
+        /**
+         * Asserts that the input is a simple source file and parses the main method contained within into a code model.
+         * @param pipeline the transformation pipeline to apply
+         * @return the parsed code model
+         * @throws IllegalArgumentException if the assertions fail
+         */
+        public CoreOp.FuncOp extractCodeModel(TransformationPipeline pipeline) {
+            TransformationPipeline.Context context = pipeline.prepass(trees, new CodeModelExtractorImpl(task));
+
             CompilationUnitTree ast = requireSingle(trees);
             ClassTree clazz = (ClassTree) requireSingle(ast.getTypeDecls());
 
@@ -82,10 +95,8 @@ public abstract class AbstractTransformerTest {
             MethodTree method = (MethodTree) members.next();
             if (!method.getName().toString().equals("main"))
                 throw new IllegalArgumentException();
-            if (members.hasNext())
-                throw new IllegalArgumentException();
 
-            return new CodeModelExtractorImpl(task).toOp(method, ast).orElseThrow();
+            return pipeline.transform(method, ast, context).orElseThrow();
         }
 
         private <T> T requireSingle(Iterable<? extends T> iterable) {
