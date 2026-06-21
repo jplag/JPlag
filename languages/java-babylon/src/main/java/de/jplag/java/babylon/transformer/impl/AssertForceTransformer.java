@@ -4,12 +4,14 @@ import java.util.List;
 
 import de.jplag.java.babylon.BabylonDSL;
 import de.jplag.java.babylon.transformer.SimpleTransformation;
+import de.jplag.java.babylon.transformer.impl.util.YieldTransformer;
 
 import com.google.auto.service.AutoService;
 import jdk.incubator.code.Block;
 import jdk.incubator.code.Body;
 import jdk.incubator.code.CodeTransformer;
 import jdk.incubator.code.Op;
+import jdk.incubator.code.Value;
 import jdk.incubator.code.dialect.core.CoreOp;
 import jdk.incubator.code.dialect.core.CoreType;
 import jdk.incubator.code.dialect.java.JavaOp;
@@ -26,6 +28,9 @@ public class AssertForceTransformer implements SimpleTransformation, BabylonDSL 
         return "assert-force";
     }
 
+    private static final MethodRef ERROR_CREATE = MethodRef.constructor(AssertionError.class);
+    private static final MethodRef ERROR_CREATE_WITH_PARAM = MethodRef.constructor(AssertionError.class, Object.class);
+
     @Override
     public Block.Builder acceptOp(Block.Builder builder, Op op) {
         if (!(op instanceof JavaOp.AssertOp ao)) {
@@ -33,32 +38,23 @@ public class AssertForceTransformer implements SimpleTransformation, BabylonDSL 
             return builder;
         }
 
-        Body.Builder passBody = Body.Builder.of(builder.parentBody(), CoreType.FUNCTION_TYPE_VOID);
+        Body.Builder passBody = Body.Builder.of(builder.parentBody(), CoreType.FUNCTION_TYPE_VOID, builder.context());
         place(passBody.entryBlock(), op.location(), CoreOp.core_yield());
 
-        Body.Builder throwBody = Body.Builder.of(builder.parentBody(), CoreType.FUNCTION_TYPE_VOID);
+        Body.Builder throwBody = Body.Builder.of(builder.parentBody(), CoreType.FUNCTION_TYPE_VOID, builder.context());
         if (ao.detailsBody() != null) {
-            new DetailsTransformer().acceptBody(throwBody.entryBlock(), ao.detailsBody(), List.of());
+            throwBody.entryBlock().transformBody(ao.detailsBody(), List.of(), (YieldTransformer) (block, yield) -> {
+                Value result = block.context().getValue(yield.yieldValue());
+                Op.Result exception = place(block, yield.location(), JavaOp.new_(ERROR_CREATE_WITH_PARAM, result));
+                place(block, yield.location(), JavaOp.throw_(exception));
+                return block;
+            });
         } else {
-            Op.Result exception = place(throwBody.entryBlock(), ao.location(), JavaOp.new_(MethodRef.constructor(AssertionError.class)));
+            Op.Result exception = place(throwBody.entryBlock(), ao.location(), JavaOp.new_(ERROR_CREATE));
             place(throwBody.entryBlock(), ao.location(), JavaOp.throw_(exception));
         }
         place(builder, ao.location(),
                 JavaOp.if_(List.of(ao.predicateBody().transform(builder.context(), CodeTransformer.COPYING_TRANSFORMER), passBody, throwBody)));
         return builder;
-    }
-
-    private static final class DetailsTransformer implements CodeTransformer, BabylonDSL {
-        @Override
-        public Block.Builder acceptOp(Block.Builder builder, Op op) {
-            if (op instanceof CoreOp.YieldOp yield) {
-                Op.Result exception = place(builder, yield.location(),
-                        JavaOp.new_(MethodRef.constructor(AssertionError.class, Object.class), builder.context().getValue(yield.yieldValue())));
-                place(builder, op.location(), JavaOp.throw_(exception));
-            } else {
-                builder.add(op);
-            }
-            return builder;
-        }
     }
 }
