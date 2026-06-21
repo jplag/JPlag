@@ -34,11 +34,11 @@ public class InliningStepTest extends AbstractTransformerTest {
                 func @loc="1:1:Inline.java" @"main" (%0 : java.type:"Inline")java.type:"void" -> {
                     %1 : java.type:"java.lang.String" = constant @loc="2:25" @"Hello";
                     %2 : Var<java.type:"void"> = var;
-                    %3 : Var<java.type:"java.lang.String"> = var %1 @loc="5:1" @"parameter";
-                    %4 : java.type:"java.lang.String" = constant @loc="6:12" @"length: ";
-                    %5 : java.type:"java.lang.String" = var.load %3 @loc="6:25";
-                    %6 : java.type:"int" = invoke %5 @loc="6:25" @java.ref:"java.lang.String::length():int";
-                    %7 : java.type:"java.lang.String" = concat %4 %6 @loc="6:12";
+                    %3 : Var<java.type:"java.lang.String"> = var %1 @"parameter";
+                    %4 : java.type:"java.lang.String" = constant @"length: ";
+                    %5 : java.type:"java.lang.String" = var.load %3;
+                    %6 : java.type:"int" = invoke %5 @java.ref:"java.lang.String::length():int";
+                    %7 : java.type:"java.lang.String" = concat %4 %6;
                     var.store %2 %7;
                     %8 : java.type:"void" = var.load %2;
                     invoke %8 @loc="2:5" @java.ref:"java.lang.IO::println(java.lang.Object):void";

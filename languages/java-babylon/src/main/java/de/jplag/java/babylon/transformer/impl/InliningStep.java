@@ -41,7 +41,26 @@ public class InliningStep implements TransformationPipeline.Step<InliningStep.Co
      */
     public static final String IDENTIFIER = "inline";
 
-    private final long maxComplexity = Long.parseLong(System.getProperty("jplag.java-babylon.inline.max-complexity", "10"));
+    private final long maxComplexity;
+    private final boolean dropLocations;
+
+    /**
+     * Create a new instance with config options loaded from system properties.
+     */
+    public InliningStep() {
+        this(Long.parseLong(System.getProperty("jplag.java-babylon.inline.max-complexity", "10")),
+                Boolean.parseBoolean(System.getProperty("jplag.java-babylon.inline.drop-locations", "true")));
+    }
+
+    /**
+     * Create a new instance.
+     * @param maxComplexity the maximum complexity before methods are no longer inlined
+     * @param dropLocations whether locations should be dropped before inlining
+     */
+    public InliningStep(long maxComplexity, boolean dropLocations) {
+        this.maxComplexity = maxComplexity;
+        this.dropLocations = dropLocations;
+    }
 
     @Override
     public String getIdentifier() {
@@ -56,7 +75,7 @@ public class InliningStep implements TransformationPipeline.Step<InliningStep.Co
 
     @Override
     public CoreOp.FuncOp apply(CoreOp.FuncOp op, Context context) {
-        return op.transform(new Apply(context));
+        return op.transform(new Apply(context, dropLocations));
     }
 
     private static class FindCandidates extends TreeScanner<Void, CompilationUnitTree> implements Prepass<Context> {
@@ -89,9 +108,11 @@ public class InliningStep implements TransformationPipeline.Step<InliningStep.Co
 
     private static class Apply implements CodeTransformer {
         private final Context context;
+        private final boolean dropLocations;
 
-        public Apply(Context context) {
+        public Apply(Context context, boolean dropLocations) {
             this.context = context;
+            this.dropLocations = dropLocations;
         }
 
         @Override
@@ -103,7 +124,12 @@ public class InliningStep implements TransformationPipeline.Step<InliningStep.Co
             };
             if (candidate == null) {
                 builder.add(op);
-            } else if (op.resultType() == PrimitiveType.VOID) {
+                return builder;
+            }
+            if (dropLocations) {
+                candidate = candidate.transform(CodeTransformer.DROP_LOCATION_TRANSFORMER);
+            }
+            if (op.resultType() == PrimitiveType.VOID) {
                 Inliner.inline(builder, candidate, builder.context().getValues(op.operands()), (_, _) -> {
                 });
             } else {
