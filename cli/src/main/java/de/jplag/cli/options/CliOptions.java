@@ -273,6 +273,10 @@ public class CliOptions implements Runnable {
     @Option(names = {"--cluster-agglomerative-threshold"}, hidden = true)
     public double clusterAgglomerativeThreshold = new ClusteringOptions().agglomerativeThreshold();
 
+    /** Maximum number of iterations for Chinese Whispers clustering (hidden). */
+    @Option(names = {"--cluster-chinese-whispers-iterations"}, hidden = true)
+    public int clusterChineseWhispersMaxIterations = new ClusteringOptions().chineseWhispersMaxIterations();
+
     /** Similarity function for agglomerative clustering (hidden). */
     @Option(names = {"--cluster-agglomerative-inter-cluster-similarity"}, hidden = true)
     public InterClusterSimilarity clusterAgglomerativeInterClusterSimilarity = new ClusteringOptions().agglomerativeInterClusterSimilarity();

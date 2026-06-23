@@ -25,6 +25,7 @@ import de.jplag.options.SimilarityMetric;
  * clustering.
  * @param agglomerativeThreshold Agglomerative clustering will merge clusters that have a similarity higher than this
  * threshold.
+ * @param chineseWhispersMaxIterations The maximum number of iterations during Chinese Whispers clustering.
  * @param preprocessor Preprocessing for the similarity values before clustering. Preprocessing is mandatory for
  * spectral clustering and optional for agglomerative clustering.
  * @param enabled whether clustering should be performed
@@ -35,9 +36,9 @@ import de.jplag.options.SimilarityMetric;
  * similarities
  */
 public record ClusteringOptions(SimilarityMetric similarityMetric, double spectralKernelBandwidth, double spectralGaussianProcessVariance,
-        int spectralMinRuns, int spectralMaxRuns, int spectralMaxKMeansIterationPerRun, double agglomerativeThreshold, Preprocessing preprocessor,
-        boolean enabled, ClusteringAlgorithm algorithm, InterClusterSimilarity agglomerativeInterClusterSimilarity, double preprocessorThreshold,
-        double preprocessorPercentile) {
+        int spectralMinRuns, int spectralMaxRuns, int spectralMaxKMeansIterationPerRun, double agglomerativeThreshold,
+        int chineseWhispersMaxIterations, Preprocessing preprocessor, boolean enabled, ClusteringAlgorithm algorithm,
+        InterClusterSimilarity agglomerativeInterClusterSimilarity, double preprocessorThreshold, double preprocessorPercentile) {
 
     /**
      * Constructs clustering options with all configuration parameters.
@@ -56,9 +57,9 @@ public record ClusteringOptions(SimilarityMetric similarityMetric, double spectr
      * @param preprocessorPercentile percentile used by the preprocessor
      */
     public ClusteringOptions(SimilarityMetric similarityMetric, double spectralKernelBandwidth, double spectralGaussianProcessVariance,
-            int spectralMinRuns, int spectralMaxRuns, int spectralMaxKMeansIterationPerRun, double agglomerativeThreshold, Preprocessing preprocessor,
-            boolean enabled, ClusteringAlgorithm algorithm, InterClusterSimilarity agglomerativeInterClusterSimilarity, double preprocessorThreshold,
-            double preprocessorPercentile) {
+            int spectralMinRuns, int spectralMaxRuns, int spectralMaxKMeansIterationPerRun, double agglomerativeThreshold,
+            int chineseWhispersMaxIterations, Preprocessing preprocessor, boolean enabled, ClusteringAlgorithm algorithm,
+            InterClusterSimilarity agglomerativeInterClusterSimilarity, double preprocessorThreshold, double preprocessorPercentile) {
         this.similarityMetric = Objects.requireNonNull(similarityMetric);
         this.spectralKernelBandwidth = spectralKernelBandwidth;
         this.spectralGaussianProcessVariance = spectralGaussianProcessVariance;
@@ -66,6 +67,7 @@ public record ClusteringOptions(SimilarityMetric similarityMetric, double spectr
         this.spectralMaxRuns = spectralMaxRuns;
         this.spectralMaxKMeansIterationPerRun = spectralMaxKMeansIterationPerRun;
         this.agglomerativeThreshold = agglomerativeThreshold;
+        this.chineseWhispersMaxIterations = chineseWhispersMaxIterations;
         this.preprocessor = Objects.requireNonNull(preprocessor);
         this.enabled = enabled;
         this.algorithm = Objects.requireNonNull(algorithm);
@@ -78,7 +80,7 @@ public record ClusteringOptions(SimilarityMetric similarityMetric, double spectr
      * Constructs clustering options with default values.
      */
     public ClusteringOptions() {
-        this(SimilarityMetric.AVG, 20.f, 0.05 * 0.05, 5, 50, 200, 0.2, Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION, true,
+        this(SimilarityMetric.AVG, 20.f, 0.05 * 0.05, 5, 50, 200, 0.2, 30, Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION, true,
                 ClusteringAlgorithm.SPECTRAL, InterClusterSimilarity.AVERAGE, 0.2, 0.5);
     }
 
@@ -89,8 +91,8 @@ public record ClusteringOptions(SimilarityMetric similarityMetric, double spectr
      */
     public ClusteringOptions withSimilarityMetric(SimilarityMetric similarityMetric) {
         return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
-                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
-                preprocessorThreshold, preprocessorPercentile);
+                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, chineseWhispersMaxIterations, preprocessor, enabled, algorithm,
+                agglomerativeInterClusterSimilarity, preprocessorThreshold, preprocessorPercentile);
     }
 
     /**
@@ -100,8 +102,8 @@ public record ClusteringOptions(SimilarityMetric similarityMetric, double spectr
      */
     public ClusteringOptions withSpectralKernelBandwidth(double spectralKernelBandwidth) {
         return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
-                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
-                preprocessorThreshold, preprocessorPercentile);
+                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, chineseWhispersMaxIterations, preprocessor, enabled, algorithm,
+                agglomerativeInterClusterSimilarity, preprocessorThreshold, preprocessorPercentile);
     }
 
     /**
@@ -111,8 +113,8 @@ public record ClusteringOptions(SimilarityMetric similarityMetric, double spectr
      */
     public ClusteringOptions withSpectralGaussianProcessVariance(double spectralGaussianProcessVariance) {
         return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
-                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
-                preprocessorThreshold, preprocessorPercentile);
+                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, chineseWhispersMaxIterations, preprocessor, enabled, algorithm,
+                agglomerativeInterClusterSimilarity, preprocessorThreshold, preprocessorPercentile);
     }
 
     /**
@@ -122,8 +124,8 @@ public record ClusteringOptions(SimilarityMetric similarityMetric, double spectr
      */
     public ClusteringOptions withSpectralMinRuns(int spectralMinRuns) {
         return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
-                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
-                preprocessorThreshold, preprocessorPercentile);
+                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, chineseWhispersMaxIterations, preprocessor, enabled, algorithm,
+                agglomerativeInterClusterSimilarity, preprocessorThreshold, preprocessorPercentile);
     }
 
     /**
@@ -133,8 +135,8 @@ public record ClusteringOptions(SimilarityMetric similarityMetric, double spectr
      */
     public ClusteringOptions withSpectralMaxRuns(int spectralMaxRuns) {
         return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
-                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
-                preprocessorThreshold, preprocessorPercentile);
+                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, chineseWhispersMaxIterations, preprocessor, enabled, algorithm,
+                agglomerativeInterClusterSimilarity, preprocessorThreshold, preprocessorPercentile);
     }
 
     /**
@@ -144,8 +146,8 @@ public record ClusteringOptions(SimilarityMetric similarityMetric, double spectr
      */
     public ClusteringOptions withSpectralMaxKMeansIterationPerRun(int spectralMaxKMeansIterationPerRun) {
         return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
-                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
-                preprocessorThreshold, preprocessorPercentile);
+                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, chineseWhispersMaxIterations, preprocessor, enabled, algorithm,
+                agglomerativeInterClusterSimilarity, preprocessorThreshold, preprocessorPercentile);
     }
 
     /**
@@ -155,8 +157,19 @@ public record ClusteringOptions(SimilarityMetric similarityMetric, double spectr
      */
     public ClusteringOptions withAgglomerativeThreshold(double agglomerativeThreshold) {
         return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
-                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
-                preprocessorThreshold, preprocessorPercentile);
+                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, chineseWhispersMaxIterations, preprocessor, enabled, algorithm,
+                agglomerativeInterClusterSimilarity, preprocessorThreshold, preprocessorPercentile);
+    }
+
+    /**
+     * Returns a copy with an updated number of iterations for Chinese Whispers clustering.
+     * @param chineseWhispersMaxIterations new maximum number of iterations
+     * @return new ClusteringOptions with the updated value
+     */
+    public ClusteringOptions withChineseWhispersMaxIterations(int chineseWhispersMaxIterations) {
+        return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
+                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, chineseWhispersMaxIterations, preprocessor, enabled, algorithm,
+                agglomerativeInterClusterSimilarity, preprocessorThreshold, preprocessorPercentile);
     }
 
     /**
@@ -166,8 +179,8 @@ public record ClusteringOptions(SimilarityMetric similarityMetric, double spectr
      */
     public ClusteringOptions withPreprocessor(Preprocessing preprocessor) {
         return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
-                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
-                preprocessorThreshold, preprocessorPercentile);
+                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, chineseWhispersMaxIterations, preprocessor, enabled, algorithm,
+                agglomerativeInterClusterSimilarity, preprocessorThreshold, preprocessorPercentile);
     }
 
     /**
@@ -177,8 +190,8 @@ public record ClusteringOptions(SimilarityMetric similarityMetric, double spectr
      */
     public ClusteringOptions withEnabled(boolean enabled) {
         return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
-                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
-                preprocessorThreshold, preprocessorPercentile);
+                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, chineseWhispersMaxIterations, preprocessor, enabled, algorithm,
+                agglomerativeInterClusterSimilarity, preprocessorThreshold, preprocessorPercentile);
     }
 
     /**
@@ -188,8 +201,8 @@ public record ClusteringOptions(SimilarityMetric similarityMetric, double spectr
      */
     public ClusteringOptions withAlgorithm(ClusteringAlgorithm algorithm) {
         return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
-                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
-                preprocessorThreshold, preprocessorPercentile);
+                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, chineseWhispersMaxIterations, preprocessor, enabled, algorithm,
+                agglomerativeInterClusterSimilarity, preprocessorThreshold, preprocessorPercentile);
     }
 
     /**
@@ -199,8 +212,8 @@ public record ClusteringOptions(SimilarityMetric similarityMetric, double spectr
      */
     public ClusteringOptions withAgglomerativeInterClusterSimilarity(InterClusterSimilarity agglomerativeInterClusterSimilarity) {
         return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
-                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
-                preprocessorThreshold, preprocessorPercentile);
+                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, chineseWhispersMaxIterations, preprocessor, enabled, algorithm,
+                agglomerativeInterClusterSimilarity, preprocessorThreshold, preprocessorPercentile);
     }
 
     /**
@@ -210,8 +223,8 @@ public record ClusteringOptions(SimilarityMetric similarityMetric, double spectr
      */
     public ClusteringOptions withPreprocessorThreshold(double preprocessorThreshold) {
         return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
-                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
-                preprocessorThreshold, preprocessorPercentile);
+                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, chineseWhispersMaxIterations, preprocessor, enabled, algorithm,
+                agglomerativeInterClusterSimilarity, preprocessorThreshold, preprocessorPercentile);
     }
 
     /**
@@ -221,7 +234,7 @@ public record ClusteringOptions(SimilarityMetric similarityMetric, double spectr
      */
     public ClusteringOptions withPreprocessorPercentile(double preprocessorPercentile) {
         return new ClusteringOptions(similarityMetric, spectralKernelBandwidth, spectralGaussianProcessVariance, spectralMinRuns, spectralMaxRuns,
-                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, preprocessor, enabled, algorithm, agglomerativeInterClusterSimilarity,
-                preprocessorThreshold, preprocessorPercentile);
+                spectralMaxKMeansIterationPerRun, agglomerativeThreshold, chineseWhispersMaxIterations, preprocessor, enabled, algorithm,
+                agglomerativeInterClusterSimilarity, preprocessorThreshold, preprocessorPercentile);
     }
 }
