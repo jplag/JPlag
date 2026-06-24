@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jdk.incubator.code.dialect.core.CoreOp;
+import de.jplag.java.babylon.transformer.impl.util.DelegatePipelineStep;
 
 /**
  * Utility class for loading installed {@link TransformationPipeline.Step} implementations.<br>
@@ -23,8 +23,8 @@ import jdk.incubator.code.dialect.core.CoreOp;
 public final class TransformationStepLoader {
     private static final Logger logger = LoggerFactory.getLogger(TransformationStepLoader.class);
 
-    private static volatile Map<String, TransformationPipeline.Step> cachedStepInstances = null;
-    private static volatile ServiceLoader<TransformationPipeline.Step> stepLoader = null;
+    private static volatile Map<String, TransformationPipeline.Step<?>> cachedStepInstances = null;
+    private static volatile ServiceLoader<TransformationPipeline.Step<?>> stepLoader = null;
     private static volatile ServiceLoader<SimpleTransformation> simpleTransformationLoader = null;
 
     private TransformationStepLoader() {
@@ -37,22 +37,23 @@ public final class TransformationStepLoader {
      * @return the transformation steps as an unmodifiable map from identifiers to {@link TransformationPipeline.Step}
      * instances
      */
-    public static Map<String, TransformationPipeline.Step> getAllAvailableTransformationSteps() {
+    public static Map<String, TransformationPipeline.Step<?>> getAllAvailableTransformationSteps() {
         if (cachedStepInstances == null) {
             synchronized (TransformationStepLoader.class) {
                 if (cachedStepInstances == null) {
-                    Map<String, TransformationPipeline.Step> steps = new TreeMap<>();
+                    Map<String, TransformationPipeline.Step<?>> steps = new TreeMap<>();
                     Set<String> skipped = new HashSet<>();
 
                     if (stepLoader == null)
-                        stepLoader = ServiceLoader.load(TransformationPipeline.Step.class);
+                        // noinspection unchecked,rawtypes - unfortunately, this seems to be needed to use ServiceLoader with a generic class
+                        stepLoader = ServiceLoader.load((Class<TransformationPipeline.Step<?>>) (Class) TransformationPipeline.Step.class);
                     if (simpleTransformationLoader == null)
                         simpleTransformationLoader = ServiceLoader.load(SimpleTransformation.class);
 
-                    List<TransformationPipeline.Step> stepsList = Stream.concat(stepLoader.stream().map(ServiceLoader.Provider::get),
-                            simpleTransformationLoader.stream().map(ServiceLoader.Provider::get).map(SimpleTransformationStep::new)).toList();
+                    List<TransformationPipeline.Step<?>> stepsList = Stream.concat(stepLoader.stream().map(ServiceLoader.Provider::get),
+                            simpleTransformationLoader.stream().map(ServiceLoader.Provider::get).map(DelegatePipelineStep::new)).toList();
 
-                    for (TransformationPipeline.Step step : stepsList) {
+                    for (TransformationPipeline.Step<?> step : stepsList) {
                         String identifier = step.getIdentifier();
                         if (steps.remove(identifier) != null && skipped.add(identifier)) {
                             logger.error("Multiple implementations for a transformation step '{}' are present in the classpath! Skipping ..",
@@ -70,18 +71,6 @@ public final class TransformationStepLoader {
         }
 
         return cachedStepInstances;
-    }
-
-    private record SimpleTransformationStep(SimpleTransformation transformation) implements TransformationPipeline.Step<Void> {
-        @Override
-        public String getIdentifier() {
-            return transformation.getIdentifier();
-        }
-
-        @Override
-        public CoreOp.FuncOp apply(CoreOp.FuncOp op, Void context) {
-            return op.transform(transformation);
-        }
     }
 
     /**
