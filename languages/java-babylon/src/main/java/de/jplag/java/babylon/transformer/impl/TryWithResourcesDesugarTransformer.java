@@ -26,9 +26,14 @@ import jdk.incubator.code.dialect.java.MethodRef;
  */
 @AutoService(SimpleTransformation.class)
 public class TryWithResourcesDesugarTransformer implements SimpleTransformation, BabylonDSL {
+    /**
+     * Identifier of this transformer.
+     */
+    public static final String IDENTIFIER = "try-with-resources-desugar";
+
     @Override
     public String getIdentifier() {
-        return "try-with-resources-desugar";
+        return IDENTIFIER;
     }
 
     @Override

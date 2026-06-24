@@ -12,9 +12,14 @@ import jdk.incubator.code.dialect.java.JavaOp;
  */
 @AutoService(SimpleTransformation.class)
 public class AssertRemoveTransformer implements SimpleTransformation {
+    /**
+     * Identifier of this transformer.
+     */
+    public static final String IDENTIFIER = "assert-remove";
+
     @Override
     public String getIdentifier() {
-        return "assert-remove";
+        return IDENTIFIER;
     }
 
     @Override

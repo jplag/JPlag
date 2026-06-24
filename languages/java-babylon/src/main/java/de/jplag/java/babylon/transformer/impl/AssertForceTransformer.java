@@ -23,9 +23,14 @@ import jdk.incubator.code.dialect.java.MethodRef;
  */
 @AutoService(SimpleTransformation.class)
 public class AssertForceTransformer implements SimpleTransformation, BabylonDSL {
+    /**
+     * Identifier of this transformer.
+     */
+    public static final String IDENTIFIER = "assert-force";
+
     @Override
     public String getIdentifier() {
-        return "assert-force";
+        return IDENTIFIER;
     }
 
     private static final MethodRef ERROR_CREATE = MethodRef.constructor(AssertionError.class);

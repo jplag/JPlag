@@ -10,9 +10,14 @@ import jdk.incubator.code.dialect.core.CoreOp;
  */
 @AutoService(TransformationPipeline.Step.class)
 public class PrintStep implements TransformationPipeline.Step<Void> {
+    /**
+     * Identifier of this pipeline step.
+     */
+    public static final String IDENTIFIER = "print";
+
     @Override
     public String getIdentifier() {
-        return "print";
+        return IDENTIFIER;
     }
 
     @Override

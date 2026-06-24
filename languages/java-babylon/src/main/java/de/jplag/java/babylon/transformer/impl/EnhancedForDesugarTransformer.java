@@ -30,9 +30,14 @@ import jdk.incubator.code.dialect.java.MethodRef;
  */
 @AutoService(SimpleTransformation.class)
 public class EnhancedForDesugarTransformer implements SimpleTransformation, BabylonDSL {
+    /**
+     * Identifier of this transformer.
+     */
+    public static final String IDENTIFIER = "enhanced-for-desugar";
+
     @Override
     public String getIdentifier() {
-        return "enhanced-for-desugar";
+        return IDENTIFIER;
     }
 
     private sealed interface IterableDescriptor {

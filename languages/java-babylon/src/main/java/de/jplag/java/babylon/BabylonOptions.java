@@ -11,6 +11,12 @@ import de.jplag.java.babylon.tokenizer.TokenizerLoader;
 import de.jplag.java.babylon.tokenizer.impl.FullBabylonTokenizer;
 import de.jplag.java.babylon.transformer.TransformationPipeline;
 import de.jplag.java.babylon.transformer.TransformationStepLoader;
+import de.jplag.java.babylon.transformer.impl.AssertRemoveTransformer;
+import de.jplag.java.babylon.transformer.impl.ConstantPropagationStep;
+import de.jplag.java.babylon.transformer.impl.CopyElisionTransformer;
+import de.jplag.java.babylon.transformer.impl.EnhancedForDesugarTransformer;
+import de.jplag.java.babylon.transformer.impl.InliningStep;
+import de.jplag.java.babylon.transformer.impl.TryWithResourcesDesugarTransformer;
 import de.jplag.options.LanguageOption;
 import de.jplag.options.LanguageOptions;
 import de.jplag.options.OptionType;
@@ -26,7 +32,11 @@ class BabylonOptions extends LanguageOptions {
     private static final String OPTION_DESCRIPTION_TOKENIZER = "The tokenizer that should be used";
     private static final Pattern LIST_SEPARATOR_PATTERN = Pattern.compile("\\s*" + Pattern.quote(String.valueOf(LIST_SEPARATOR)) + "\\s*");
 
-    private final LanguageOption<String> transformations = createOption(OptionType.string(), "transformations", OPTION_DESCRIPTION_TRANSFORMATIONS);
+    private static final String DEFAULT_TRANSFORMATIONS = String.join(", ", AssertRemoveTransformer.IDENTIFIER,
+            TryWithResourcesDesugarTransformer.IDENTIFIER, EnhancedForDesugarTransformer.IDENTIFIER, InliningStep.IDENTIFIER, ConstantPropagationStep.IDENTIFIER, CopyElisionTransformer.IDENTIFIER, CopyElisionTransformer.IDENTIFIER, InliningStep.IDENTIFIER);
+
+    private final LanguageOption<String> transformations = createDefaultOption(OptionType.string(), "transformations",
+            OPTION_DESCRIPTION_TRANSFORMATIONS, DEFAULT_TRANSFORMATIONS);
     private final LanguageOption<String> tokenizerName = createDefaultOption(OptionType.string(), "tokenizer", OPTION_DESCRIPTION_TOKENIZER,
             FullBabylonTokenizer.IDENTIFIER);
 

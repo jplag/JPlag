@@ -14,9 +14,14 @@ import jdk.incubator.code.dialect.core.SSA;
  */
 @AutoService(TransformationPipeline.Step.class)
 public class SsaStep implements TransformationPipeline.Step<Void> {
+    /**
+     * Identifier of this pipeline step.
+     */
+    public static final String IDENTIFIER = "ssa";
+
     @Override
     public String getIdentifier() {
-        return "ssa";
+        return IDENTIFIER;
     }
 
     @Override
