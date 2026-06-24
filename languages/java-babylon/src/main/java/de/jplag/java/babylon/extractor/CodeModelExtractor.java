@@ -19,4 +19,13 @@ public interface CodeModelExtractor {
      * @return the code model, if it could be created
      */
     Optional<CoreOp.FuncOp> toOp(MethodTree methodTree, CompilationUnitTree ast);
+
+    /**
+     * Notifies this extractor that internal caches for a method tree can be evicted since it has been cached at a later
+     * stage.
+     * @param methodTree the method tree for which to evict caches
+     * @param ast the compilation unit in which the method is contained
+     */
+    default void evictCache(MethodTree methodTree, CompilationUnitTree ast) {
+    }
 }

@@ -8,7 +8,6 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import de.jplag.java.babylon.extractor.CodeModelExtractor;
-import de.jplag.java.babylon.extractor.TransformingCodeModelExtractor;
 
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.MethodTree;
@@ -19,6 +18,7 @@ import jdk.incubator.code.dialect.core.CoreOp;
  */
 public final class TransformationPipeline {
     private final List<Step<?>> steps;
+    private final PrepassExecutor prepassExecutor;
 
     /**
      * Creates a new pipeline wrapping some steps.
@@ -26,7 +26,18 @@ public final class TransformationPipeline {
      * @throws IllegalArgumentException if the sequence of steps is not well-formed
      */
     public TransformationPipeline(List<? extends Step<?>> steps) {
+        this(steps, PrepassExecutor.getDefault());
+    }
+
+    /**
+     * Creates a new pipeline wrapping some steps.
+     * @param steps the steps to wrap
+     * @param prepassExecutor the prepass executor for this pipeline
+     * @throws IllegalArgumentException if the sequence of steps is not well-formed
+     */
+    public TransformationPipeline(List<? extends Step<?>> steps, PrepassExecutor prepassExecutor) {
         this.steps = List.copyOf(steps);
+        this.prepassExecutor = prepassExecutor;
 
         // ensure all dependencies are fulfilled
         Set<String> applied = new HashSet<>();
@@ -42,32 +53,13 @@ public final class TransformationPipeline {
     }
 
     /**
-     * Returns a prepass to perform before beginning the tokenization.
+     * Performs a prepass to obtain the context required for tokenization.
      * @param trees the input trees on which the prepass should be run
      * @param extractor the extractor to use for obtaining code models
      * @return the prepass visitor
      */
     public Context prepass(Iterable<? extends CompilationUnitTree> trees, CodeModelExtractor extractor) {
-        CodeModelExtractor currentExtractor = extractor;
-        for (Step<?> step : steps) {
-            currentExtractor = prepass(trees, step, currentExtractor);
-        }
-        return new Context(currentExtractor);
-    }
-
-    private <T> TransformingCodeModelExtractor prepass(Iterable<? extends CompilationUnitTree> trees, Step<T> step,
-            CodeModelExtractor currentExtractor) {
-        Prepass<T> prepass = step.beginPrepass(new PrepassConstructionContext(currentExtractor));
-        T context;
-        if (prepass != null) {
-            for (CompilationUnitTree tree : trees) {
-                tree.accept(prepass, tree);
-            }
-            context = prepass.finalizeContext();
-        } else {
-            context = null;
-        }
-        return new TransformingCodeModelExtractor(currentExtractor, op -> step.apply(op, context));
+        return new Context(prepassExecutor.prepass(steps, trees, extractor));
     }
 
     /**

@@ -10,25 +10,19 @@ import javax.annotation.Nullable;
 import de.jplag.java.babylon.extractor.CodeModelExtractor;
 import de.jplag.java.babylon.transformer.Prepass;
 import de.jplag.java.babylon.transformer.TransformationPipeline;
+import de.jplag.java.babylon.transformer.impl.util.JavaMethodId;
 
 import com.google.auto.service.AutoService;
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.util.TreeScanner;
-import com.sun.tools.javac.code.Flags;
-import com.sun.tools.javac.code.Symbol;
-import com.sun.tools.javac.tree.JCTree;
 import jdk.incubator.code.Block;
 import jdk.incubator.code.Body;
 import jdk.incubator.code.CodeTransformer;
-import jdk.incubator.code.CodeType;
 import jdk.incubator.code.Op;
 import jdk.incubator.code.dialect.core.CoreOp;
-import jdk.incubator.code.dialect.core.FunctionType;
 import jdk.incubator.code.dialect.core.Inliner;
-import jdk.incubator.code.dialect.java.ClassType;
 import jdk.incubator.code.dialect.java.JavaOp;
-import jdk.incubator.code.dialect.java.MethodRef;
 import jdk.incubator.code.dialect.java.PrimitiveType;
 
 /**
@@ -96,7 +90,7 @@ public class InliningStep implements TransformationPipeline.Step<InliningStep.Co
 
         @Override
         public Void visitMethod(MethodTree node, CompilationUnitTree ast) {
-            JavaMethodId id = JavaMethodId.of(((JCTree.JCMethodDecl) node).sym);
+            JavaMethodId id = JavaMethodId.of(node);
             if (id != null) {
                 CoreOp.FuncOp op = codeModelExtractor.toOp(node, ast).orElse(null);
                 if (op != null && heuristic.test(op, id))
@@ -150,55 +144,6 @@ public class InliningStep implements TransformationPipeline.Step<InliningStep.Co
      * @param javaCandidates candidates for inlining from {@link JavaOp.InvokeOp}
      */
     public record Context(Map<String, CoreOp.FuncOp> coreCandidates, Map<JavaMethodId, CoreOp.FuncOp> javaCandidates) {
-    }
-
-    /**
-     * Uniquely identifies a java method within a single compilation unit.<br>
-     * Stringly typed since the contexts from which this is used use their own representations for type names and
-     * signatures.
-     * @param owner the owner of the method, eg the class in which it is declared
-     * @param name the name of the method
-     * @param signature the signature of the method, with the return type omitted (since that is not needed for a unique
-     * description)
-     */
-    public record JavaMethodId(String owner, String name, String signature) {
-        /**
-         * Create a new instance based on a method reference.
-         * @param from the method reference
-         * @return a new instance or null
-         */
-        public static @Nullable JavaMethodId of(MethodRef from) {
-            if (!(from.refType() instanceof ClassType jt))
-                return null;
-            return new JavaMethodId(jt.toString(), from.name(), signature(from.signature()));
-        }
-
-        private static String signature(FunctionType functionType) {
-            StringBuilder sb = new StringBuilder("(");
-            boolean first = true;
-            for (CodeType parameterType : functionType.parameterTypes()) {
-                if (first)
-                    first = false;
-                else
-                    sb.append(",");
-                sb.append(parameterType);
-            }
-            sb.append(")");
-            return sb.toString();
-        }
-
-        /**
-         * Create a new instance based on a symbol.
-         * @param symbol the symbol
-         * @return a new instance or null
-         */
-        public static @Nullable JavaMethodId of(Symbol.MethodSymbol symbol) {
-            return new JavaMethodId(symbol.owner.name.toString(), symbol.name.toString(), signature(symbol));
-        }
-
-        private static String signature(Symbol.MethodSymbol symbol) {
-            return "(" + symbol.type.argtypes((symbol.flags() & Flags.VARARGS) != 0) + ")";
-        }
     }
 
     /**

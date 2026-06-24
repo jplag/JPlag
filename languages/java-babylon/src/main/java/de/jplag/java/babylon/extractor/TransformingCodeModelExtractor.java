@@ -29,4 +29,9 @@ public final class TransformingCodeModelExtractor implements CodeModelExtractor 
     public Optional<CoreOp.FuncOp> toOp(MethodTree methodTree, CompilationUnitTree ast) {
         return delegate.toOp(methodTree, ast).flatMap(op -> Optional.ofNullable(transformation.apply(op)));
     }
+
+    @Override
+    public void evictCache(MethodTree methodTree, CompilationUnitTree ast) {
+        delegate.evictCache(methodTree, ast);
+    }
 }

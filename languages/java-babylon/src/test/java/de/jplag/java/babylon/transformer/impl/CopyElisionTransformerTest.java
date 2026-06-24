@@ -1,14 +1,16 @@
 package de.jplag.java.babylon.transformer.impl;
 
-import de.jplag.java.babylon.transformer.TransformationPipeline;
-import de.jplag.java.babylon.transformer.impl.util.DelegatePipelineStep;
-import jdk.incubator.code.dialect.core.CoreOp;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+
+import de.jplag.java.babylon.transformer.TransformationPipeline;
+import de.jplag.java.babylon.transformer.impl.util.DelegatePipelineStep;
+
+import jdk.incubator.code.dialect.core.CoreOp;
 
 /**
  * Unit test for {@link CopyElisionTransformer}.
@@ -22,7 +24,8 @@ public class CopyElisionTransformerTest extends AbstractTransformerTest {
         ParseResult parseResult = assertDoesNotThrow(() -> parseFile("CopyElision.java"));
         CoreOp.FuncOp op = parseResult.extractCodeModel();
         var copyElision = new DelegatePipelineStep(new CopyElisionTransformer());
-        CoreOp.FuncOp transformedOp = parseResult.extractCodeModel(new TransformationPipeline(List.of(new ConstantPropagationStep(), copyElision, copyElision)));
+        CoreOp.FuncOp transformedOp = parseResult
+                .extractCodeModel(new TransformationPipeline(List.of(new ConstantPropagationStep(), copyElision, copyElision)));
         assertEquals("""
                 func @loc="1:1:CopyElision.java" @"main" (%0 : java.type:"CopyElision")java.type:"void" -> {
                     %1 : java.type:"int" = constant @loc="2:13" @0;

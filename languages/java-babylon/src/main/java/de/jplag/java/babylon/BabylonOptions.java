@@ -33,7 +33,8 @@ class BabylonOptions extends LanguageOptions {
     private static final Pattern LIST_SEPARATOR_PATTERN = Pattern.compile("\\s*" + Pattern.quote(String.valueOf(LIST_SEPARATOR)) + "\\s*");
 
     private static final String DEFAULT_TRANSFORMATIONS = String.join(", ", AssertRemoveTransformer.IDENTIFIER,
-            TryWithResourcesDesugarTransformer.IDENTIFIER, EnhancedForDesugarTransformer.IDENTIFIER, InliningStep.IDENTIFIER, ConstantPropagationStep.IDENTIFIER, CopyElisionTransformer.IDENTIFIER, CopyElisionTransformer.IDENTIFIER, InliningStep.IDENTIFIER);
+            TryWithResourcesDesugarTransformer.IDENTIFIER, EnhancedForDesugarTransformer.IDENTIFIER, InliningStep.IDENTIFIER,
+            ConstantPropagationStep.IDENTIFIER, CopyElisionTransformer.IDENTIFIER, CopyElisionTransformer.IDENTIFIER, InliningStep.IDENTIFIER);
 
     private final LanguageOption<String> transformations = createDefaultOption(OptionType.string(), "transformations",
             OPTION_DESCRIPTION_TRANSFORMATIONS, DEFAULT_TRANSFORMATIONS);
@@ -55,12 +56,12 @@ class BabylonOptions extends LanguageOptions {
         return this.transformations;
     }
 
-    private volatile @Nullable TransformationPipeline pipeline = null;
+    private volatile @Nullable List<? extends TransformationPipeline.Step<?>> pipelineSteps = null;
 
-    public TransformationPipeline getTransformationPipeline() {
-        if (this.pipeline == null) {
+    public List<? extends TransformationPipeline.Step<?>> getPipelineSteps() {
+        if (this.pipelineSteps == null) {
             synchronized (this) {
-                if (this.pipeline == null) {
+                if (this.pipelineSteps == null) {
                     List<? extends TransformationPipeline.Step<?>> steps = getTransformations().stream()
                             .map(name -> TransformationStepLoader.getTransformationStep(name)
                                     .orElseThrow(() -> new IllegalArgumentException(String.format(ERROR_TRANSFORMATION_NOT_FOUND, name,
@@ -72,11 +73,15 @@ class BabylonOptions extends LanguageOptions {
                                 TransformationStepLoader.getAllAvailableTransformationStepIdentifiers()));
                     }
 
-                    this.pipeline = new TransformationPipeline(steps);
+                    this.pipelineSteps = steps;
                 }
             }
         }
-        return this.pipeline;
+        return this.pipelineSteps;
+    }
+
+    public TransformationPipeline getTransformationPipeline() {
+        return new TransformationPipeline(getPipelineSteps());
     }
 
     public LanguageOption<String> getTokenizerName() {

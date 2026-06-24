@@ -40,7 +40,7 @@ public class CopyElisionTransformer implements SimpleTransformation, BabylonDSL 
             }
             case CoreOp.VarAccessOp varAccessOp when builder.context().getProperty(varAccessOp) == IDENTIFIER -> {
                 if (varAccessOp.resultType() != JavaType.VOID) {
-                    builder.context().mapValue(varAccessOp.result(), varAccessOp.varOp().initOperand());
+                    builder.context().mapValue(varAccessOp.result(), builder.context().getValue(varAccessOp.varOp().initOperand()));
                 }
             }
             case CoreOp.VarOp varOp when !varOp.isUninitialized() && initialValueIsUnused(varOp) -> {

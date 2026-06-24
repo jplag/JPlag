@@ -32,8 +32,12 @@ public abstract class AbstractTransformerTest {
     }
 
     protected final ParseResult parseFile(String fileName) throws ParsingException {
+        return parseFile(getTestFileLocation().resolve(fileName));
+    }
+
+    protected final ParseResult parseFile(Path file) throws ParsingException {
         JavacAdapterTest adapter = new JavacAdapterTest();
-        adapter.parseFiles(Set.of(getTestFileLocation().resolve(fileName).toFile()), null);
+        adapter.parseFiles(Set.of(file.toFile()), null);
         return adapter.getResult();
     }
 
