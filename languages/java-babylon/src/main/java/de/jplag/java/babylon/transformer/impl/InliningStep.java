@@ -201,10 +201,22 @@ public class InliningStep implements TransformationPipeline.Step<InliningStep.Co
         }
     }
 
+    /**
+     * Heuristic to use for identifying methods to inline. Override this in a subclass to experiment with other heuristics.
+     * @param func the code model of the candidate
+     * @param methodId the identifier of the candidate
+     * @return true, if the method should be inlined into call sites
+     */
     protected boolean heuristic(CoreOp.FuncOp func, JavaMethodId methodId) {
         return complexity(func) <= maxComplexity;
     }
 
+    /**
+     * Corresponds (roughly) to the number of tokens emitted by
+     * {@link de.jplag.java.babylon.tokenizer.impl.FullBabylonTokenizer} for this op.
+     * @param op the op to analyze
+     * @return the complexity of this op
+     */
     protected long complexity(Op op) {
         long result = 1;
         for (Body body : op.bodies()) {
