@@ -94,7 +94,7 @@
         <version.mockito>5.23.0</version.mockito>
         <version.picocli>4.7.7</version.picocli>
         <version.progressbar>0.10.2</version.progressbar>
-        <version.record-builder>52</version.record-builder>
+        <version.record-builder>53</version.record-builder>
         <version.scala>3.8.4</version.scala>
         <version.scalameta.suffix>2.13</version.scalameta.suffix>
         <version.scalameta>4.17.0</version.scalameta>
