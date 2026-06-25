@@ -15,7 +15,6 @@ import de.jplag.cli.test.CliTest;
 import de.jplag.exceptions.ExitException;
 
 class HostOptionTest extends CliTest {
-    private static final String DEFAULT_HOST = "127.0.0.1";
     private static final String ANY_HOST = "0.0.0.0";
     private static final String LOCALHOST = "localhost";
     private static final String IPV6_LOOPBACK = "::1";
