@@ -42,7 +42,7 @@ public final class JPlagRunner {
      * @throws IOException if the internal server throws an exception
      * @deprecated Use {@link #runInternalServer(File, int, InetAddress)} instead
      */
-    @Deprecated
+    @Deprecated(since = "7.0.0", forRemoval = true)
     public static void runInternalServer(File resultFile, int port) throws IOException {
         runInternalServer(resultFile, port, InetAddress.getLoopbackAddress());
     }

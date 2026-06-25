@@ -44,7 +44,7 @@ public class ReportViewer implements HttpHandler {
      * @throws IOException If the result file cannot be read
      * @deprecated Use {@link #ReportViewer(File, int, InetAddress)} instead
      */
-    @Deprecated
+    @Deprecated(since = "7.0.0", forRemoval = true)
     public ReportViewer(File resultFile, int port) throws IOException {
         this(resultFile, port, InetAddress.getLoopbackAddress());
     }
