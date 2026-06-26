@@ -29,9 +29,7 @@ public class CopyElisionTransformer implements SimpleTransformation, BabylonDSL 
     @Override
     public Block.Builder acceptOp(Block.Builder builder, Op op) {
         switch (op) {
-            case CoreOp.ConstantOp constantOp when constantOp.result().uses().isEmpty() -> {
-            }
-            case CoreOp.VarOp varOp when neverRead(varOp) || neverWritten(varOp) -> {
+            case CoreOp.VarOp varOp when onlyWritten(varOp) || onlyRead(varOp) -> {
                 if (!varOp.isUninitialized()) {
                     for (Op.Result use : varOp.result().uses()) {
                         builder.context().putProperty(use.op(), IDENTIFIER);
@@ -53,11 +51,11 @@ public class CopyElisionTransformer implements SimpleTransformation, BabylonDSL 
         return builder;
     }
 
-    private boolean neverRead(CoreOp.VarOp varOp) {
+    private boolean onlyWritten(CoreOp.VarOp varOp) {
         return varOp.result().uses().stream().allMatch(use -> use.op() instanceof CoreOp.VarAccessOp.VarStoreOp);
     }
 
-    private boolean neverWritten(CoreOp.VarOp varOp) {
+    private boolean onlyRead(CoreOp.VarOp varOp) {
         return varOp.result().uses().stream().allMatch(use -> use.op() instanceof CoreOp.VarAccessOp.VarLoadOp);
     }
 

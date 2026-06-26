@@ -15,6 +15,7 @@ import de.jplag.java.babylon.transformer.impl.AssertRemoveTransformer;
 import de.jplag.java.babylon.transformer.impl.ConditionalExpressionDesugarTransformer;
 import de.jplag.java.babylon.transformer.impl.ConstantPropagationStep;
 import de.jplag.java.babylon.transformer.impl.CopyElisionTransformer;
+import de.jplag.java.babylon.transformer.impl.DeadCodeEliminationTransformer;
 import de.jplag.java.babylon.transformer.impl.EnhancedForDesugarTransformer;
 import de.jplag.java.babylon.transformer.impl.InliningStep;
 import de.jplag.java.babylon.transformer.impl.SwitchExpressionDesugarTransformer;
@@ -37,7 +38,8 @@ class BabylonOptions extends LanguageOptions {
     private static final String DEFAULT_TRANSFORMATIONS = String.join(", ", AssertRemoveTransformer.IDENTIFIER,
             TryWithResourcesDesugarTransformer.IDENTIFIER, EnhancedForDesugarTransformer.IDENTIFIER,
             ConditionalExpressionDesugarTransformer.IDENTIFIER, SwitchExpressionDesugarTransformer.IDENTIFIER, InliningStep.IDENTIFIER,
-            ConstantPropagationStep.IDENTIFIER, CopyElisionTransformer.IDENTIFIER, CopyElisionTransformer.IDENTIFIER, InliningStep.IDENTIFIER);
+            ConstantPropagationStep.IDENTIFIER, CopyElisionTransformer.IDENTIFIER, DeadCodeEliminationTransformer.IDENTIFIER,
+            CopyElisionTransformer.IDENTIFIER, DeadCodeEliminationTransformer.IDENTIFIER, InliningStep.IDENTIFIER);
 
     private final LanguageOption<String> transformations = createDefaultOption(OptionType.string(), "transformations",
             OPTION_DESCRIPTION_TRANSFORMATIONS, DEFAULT_TRANSFORMATIONS);

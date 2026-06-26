@@ -13,19 +13,22 @@ import de.jplag.java.babylon.transformer.impl.util.DelegatePipelineStep;
 import jdk.incubator.code.dialect.core.CoreOp;
 
 /**
- * Unit test for {@link CopyElisionTransformer}.
+ * Unit test for the combination of {@link ConstantPropagationStep}, {@link CopyElisionTransformer}, and
+ * {@link DeadCodeEliminationTransformer}.
  */
-public class CopyElisionTransformerTest extends AbstractTransformerTest {
+public class DeadCodeEliminationTest extends AbstractTransformerTest {
     /**
-     * Unit test for {@link CopyElisionTransformer}.
+     * Unit test for the combination of {@link ConstantPropagationStep}, {@link CopyElisionTransformer}, and
+     * {@link DeadCodeEliminationTransformer}.
      */
     @Test
     public void testTransformer() {
         ParseResult parseResult = assertDoesNotThrow(() -> parseFile("CopyElision.java"));
         CoreOp.FuncOp op = parseResult.extractCodeModel();
         var copyElision = new DelegatePipelineStep(new CopyElisionTransformer());
-        CoreOp.FuncOp transformedOp = parseResult
-                .extractCodeModel(new TransformationPipeline(List.of(new ConstantPropagationStep(), copyElision, copyElision)));
+        var deadCodeElimination = new DelegatePipelineStep(new DeadCodeEliminationTransformer());
+        CoreOp.FuncOp transformedOp = parseResult.extractCodeModel(new TransformationPipeline(
+                List.of(new ConstantPropagationStep(), copyElision, deadCodeElimination, copyElision, deadCodeElimination)));
         assertEquals("""
                 func @loc="1:1:CopyElision.java" @"main" (%0 : java.type:"CopyElision")java.type:"void" -> {
                     %1 : java.type:"int" = constant @loc="2:13" @0;
@@ -93,17 +96,16 @@ public class CopyElisionTransformerTest extends AbstractTransformerTest {
                             yield @loc="3:5";
                         }
                         (%11 : Var<java.type:"int">)java.type:"void" -> {
-                            %12 : java.type:"int" = var.load %11 @loc="4:13";
                             java.continue @loc="3:5";
                         };
-                    %13 : java.type:"int" = constant @0;
-                    %14 : java.type:"java.lang.Integer" = invoke %13 @loc="9:5" @java.ref:"java.lang.Integer::valueOf(int):java.lang.Integer";
-                    invoke %14 @loc="9:5" @java.ref:"java.lang.IO::println(java.lang.Object):void";
-                    %15 : java.type:"java.lang.Class" = constant @loc="11:13" @java.type:"java.lang.IO";
-                    %16 : java.type:"int" = invoke %15 @loc="11:13" @java.ref:"java.lang.Object::hashCode():int";
-                    %17 : java.type:"int" = constant @0;
-                    %18 : java.type:"java.lang.Integer" = invoke %17 @loc="13:5" @java.ref:"java.lang.Integer::valueOf(int):java.lang.Integer";
-                    invoke %18 @loc="13:5" @java.ref:"java.lang.IO::println(java.lang.Object):void";
+                    %12 : java.type:"int" = constant @0;
+                    %13 : java.type:"java.lang.Integer" = invoke %12 @loc="9:5" @java.ref:"java.lang.Integer::valueOf(int):java.lang.Integer";
+                    invoke %13 @loc="9:5" @java.ref:"java.lang.IO::println(java.lang.Object):void";
+                    %14 : java.type:"java.lang.Class" = constant @loc="11:13" @java.type:"java.lang.IO";
+                    %15 : java.type:"int" = invoke %14 @loc="11:13" @java.ref:"java.lang.Object::hashCode():int";
+                    %16 : java.type:"int" = constant @0;
+                    %17 : java.type:"java.lang.Integer" = invoke %16 @loc="13:5" @java.ref:"java.lang.Integer::valueOf(int):java.lang.Integer";
+                    invoke %17 @loc="13:5" @java.ref:"java.lang.IO::println(java.lang.Object):void";
                     return @loc="1:1";
                 };""", transformedOp.toText());
     }
