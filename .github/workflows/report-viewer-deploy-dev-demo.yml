@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - run: |
           download_url="https://github.com/JFronny/jdk-babylon/releases/download/artifacts/bundles-linux-x64.zip"
@@ -41,7 +41,7 @@ jobs:
 
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - run: |
           download_url="https://github.com/JFronny/jdk-babylon/releases/download/artifacts/bundles-linux-x64.zip"
@@ -80,7 +80,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
               
