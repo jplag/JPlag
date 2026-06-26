@@ -1,6 +1,7 @@
 package de.jplag.clustering.algorithm;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,7 +39,9 @@ public class ChineseWhispersClustering implements GenericClusteringAlgorithm {
 
         // Maps each node to a label
         int[] labels = new int[numberOfNodes];
+
         int[] newLabelsBuffer = new int[numberOfNodes];
+        int[] labelsFromPreviousIteration = new int[numberOfNodes];
 
         for (int i = 0; i < numberOfNodes; i++) {
             labels[i] = i;
@@ -56,28 +59,9 @@ public class ChineseWhispersClustering implements GenericClusteringAlgorithm {
                 int node = permutation.get(i);
 
                 // Maps labels to the "number of appearances" of that label
-                Map<Integer, Double> labelCounts = new HashMap<>();
-                for (int neighbor = 0; neighbor < numberOfNodes; neighbor++) {
-                    if (neighbor == node) {
-                        continue;
-                    }
-                    double weight = similarityMatrix.getEntry(node, neighbor);
-                    int labelOfThisNeighbor = labels[neighbor];
-                    if (labelCounts.containsKey(labelOfThisNeighbor)) {
-                        labelCounts.put(labelOfThisNeighbor, labelCounts.get(labelOfThisNeighbor) + weight);
-                    } else {
-                        labelCounts.put(labelOfThisNeighbor, weight);
-                    }
-                }
+                Map<Integer, Double> labelCounts = calculateLabelCounts(similarityMatrix, labels, numberOfNodes, node);
+                int newLabel = findLabelWithHighestCount(labelCounts);
 
-                int newLabel = -1;
-                double currentMaxCount = Double.NEGATIVE_INFINITY;
-                for (Map.Entry<Integer, Double> e : labelCounts.entrySet()) {
-                    if (e.getValue() > currentMaxCount) {
-                        currentMaxCount = e.getValue();
-                        newLabel = e.getKey();
-                    }
-                }
                 if (labels[node] != newLabel) {
                     if (options.chineseWhispersClusteringMode() == ChineseWhispersClusteringMode.UPDATE_IN_BATCHES) {
                         newLabelsBuffer[node] = newLabel;
@@ -87,7 +71,10 @@ public class ChineseWhispersClustering implements GenericClusteringAlgorithm {
                     isConverged = false;
                 }
             }
+
             if (options.chineseWhispersClusteringMode() == ChineseWhispersClusteringMode.UPDATE_IN_BATCHES) {
+                preventOscillations(labelsFromPreviousIteration, labels, newLabelsBuffer, numberOfNodes);
+                System.arraycopy(labels, 0, labelsFromPreviousIteration, 0, numberOfNodes);
                 System.arraycopy(newLabelsBuffer, 0, labels, 0, numberOfNodes);
             }
             numberOfIterations++;
@@ -105,6 +92,51 @@ public class ChineseWhispersClustering implements GenericClusteringAlgorithm {
             }
         }
         return clusters.values();
+    }
+
+    private Map<Integer, Double> calculateLabelCounts(RealMatrix similarityMatrix, int[] labels, int numberOfNodes, int node) {
+        Map<Integer, Double> labelCounts = new HashMap<>();
+        for (int neighbor = 0; neighbor < numberOfNodes; neighbor++) {
+            if (neighbor == node) {
+                continue;
+            }
+            double weight = similarityMatrix.getEntry(node, neighbor);
+            int labelOfThisNeighbor = labels[neighbor];
+            if (labelCounts.containsKey(labelOfThisNeighbor)) {
+                labelCounts.put(labelOfThisNeighbor, labelCounts.get(labelOfThisNeighbor) + weight);
+            } else {
+                labelCounts.put(labelOfThisNeighbor, weight);
+            }
+        }
+        return labelCounts;
+    }
+
+    private int findLabelWithHighestCount(Map<Integer, Double> labelCounts) {
+        int newLabel = -1;
+        double currentMaxCount = Double.NEGATIVE_INFINITY;
+        for (Map.Entry<Integer, Double> e : labelCounts.entrySet()) {
+            if (e.getValue() > currentMaxCount) {
+                currentMaxCount = e.getValue();
+                newLabel = e.getKey();
+            }
+        }
+        return newLabel;
+    }
+
+    /**
+     * The batch updating strategy tends to run into oscillations. This usually happens when, in a cluster (or what is
+     * supposed to be a cluster), two labels are equally "powerful". To still get a convergence, we force all oscillating
+     * labels to exactly one of the competing labels (the one represented by the smaller integer, though one could have also
+     * used any other decisive metric).
+     */
+    private void preventOscillations(int[] labelsFromPreviousIteration, int[] labels, int[] newLabelsBuffer, int numberOfNodes) {
+        if (Arrays.equals(labelsFromPreviousIteration, newLabelsBuffer)) {
+            for (int i = 0; i < numberOfNodes; i++) {
+                if (labels[i] < newLabelsBuffer[i]) {
+                    newLabelsBuffer[i] = labels[i];
+                }
+            }
+        }
     }
 
     private void logConvergence(boolean isConverged, int numberOfIterations) {
