@@ -14,6 +14,7 @@ import jdk.incubator.code.CodeType;
 import jdk.incubator.code.Op;
 import jdk.incubator.code.Value;
 import jdk.incubator.code.dialect.core.CoreOp;
+import jdk.incubator.code.dialect.java.JavaType;
 
 /**
  * A set of utility methods for working with Babylon code models. Designed to be used by "implementing" this interface
@@ -176,6 +177,16 @@ public interface BabylonDSL {
                 default -> result.op().toText();
             };
         };
+    }
+
+    /**
+     * Create a new comment op. Can be pruned later with
+     * {@link de.jplag.java.babylon.transformer.impl.DeadCodeEliminationTransformer}.
+     * @param comment the comment the op should wrap
+     * @return the op
+     */
+    default Op commentOp(String comment) {
+        return CoreOp.constant(JavaType.J_L_STRING, comment);
     }
 
     /**

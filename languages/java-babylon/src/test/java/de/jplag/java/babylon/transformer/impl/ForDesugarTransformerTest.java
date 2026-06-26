@@ -215,31 +215,26 @@ public class ForDesugarTransformerTest extends AbstractTransformerTest {
                                     var.store %27 %38 @loc="11:40";
                                     java.continue @loc="11:5";
                                 };
-                            %39 : java.type:"int[]" = var.load %25 @loc="15:22";
-                            %40 : Var<java.type:"int[]"> = var %39 @loc="15:5";
-                            %41 : java.type:"int" = constant @loc="15:5" @0;
-                            %42 : Var<java.type:"int"> = var %41 @loc="15:5";
-                            %43 : Tuple<Var<java.type:"int[]">, Var<java.type:"int">> = tuple %40 %42 @loc="15:5";
                             java.while @loc="15:5"
                                 ()java.type:"boolean" -> {
-                                    %44 : java.type:"int[]" = var.load %40 @loc="15:5";
-                                    %45 : java.type:"int" = var.load %42 @loc="15:5";
-                                    %46 : java.type:"int" = array.length %44 @loc="15:5";
-                                    %47 : java.type:"boolean" = lt %45 %46 @loc="15:5";
-                                    yield %47 @loc="15:5";
+                                    %39 : java.type:"int[]" = var.load %25 @loc="15:5";
+                                    %40 : java.type:"int[]" = var.load %25 @loc="15:5";
+                                    %41 : java.type:"int" = array.length %39 @loc="15:5";
+                                    %42 : java.type:"boolean" = lt %40 %41 @loc="15:5";
+                                    yield %42 @loc="15:5";
                                 }
                                 ()java.type:"void" -> {
-                                    %48 : java.type:"int[]" = var.load %40 @loc="15:5";
-                                    %49 : java.type:"int" = var.load %42 @loc="15:5";
-                                    %50 : java.type:"int" = array.load %48 %49 @loc="15:5";
-                                    %51 : Var<java.type:"int"> = var %50 @loc="15:5" @"value";
-                                    %52 : java.type:"int" = var.load %51 @loc="16:20";
-                                    %53 : java.type:"java.lang.Integer" = invoke %52 @loc="16:9" @java.ref:"java.lang.Integer::valueOf(int):java.lang.Integer";
-                                    invoke %53 @loc="16:9" @java.ref:"java.lang.IO::println(java.lang.Object):void";
-                                    %54 : java.type:"int" = var.load %42 @loc="15:5";
-                                    %55 : java.type:"int" = constant @loc="15:5" @1;
-                                    %56 : java.type:"int" = add %54 %55 @loc="15:5";
-                                    var.store %42 %56 @loc="15:5";
+                                    %43 : java.type:"int[]" = var.load %25 @loc="15:5";
+                                    %44 : java.type:"int[]" = var.load %25 @loc="15:5";
+                                    %45 : java.type:"int" = array.load %43 %44 @loc="15:5";
+                                    %46 : Var<java.type:"int"> = var %45 @loc="15:5" @"value";
+                                    %47 : java.type:"int" = var.load %46 @loc="16:20";
+                                    %48 : java.type:"java.lang.Integer" = invoke %47 @loc="16:9" @java.ref:"java.lang.Integer::valueOf(int):java.lang.Integer";
+                                    invoke %48 @loc="16:9" @java.ref:"java.lang.IO::println(java.lang.Object):void";
+                                    %49 : java.type:"int[]" = var.load %25 @loc="15:5";
+                                    %50 : java.type:"int" = constant @loc="15:5" @1;
+                                    %51 : java.type:"int[]" = add %49 %50 @loc="15:5";
+                                    var.store %25 %51 @loc="15:5";
                                     java.continue @loc="15:5";
                                 };
                             return @loc="1:1";
