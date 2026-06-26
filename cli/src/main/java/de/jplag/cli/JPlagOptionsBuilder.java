@@ -78,6 +78,7 @@ public class JPlagOptionsBuilder {
                 .withSpectralMaxKMeansIterationPerRun(this.cliOptions.clusterSpectralKMeansIterations)
                 .withAgglomerativeThreshold(this.cliOptions.clusterAgglomerativeThreshold)
                 .withChineseWhispersMaxIterations(this.cliOptions.clusterChineseWhispersMaxIterations)
+                .withChineseWhispersClusteringMode(this.cliOptions.chineseWhispersClusteringMode)
                 .withAgglomerativeInterClusterSimilarity(this.cliOptions.clusterAgglomerativeInterClusterSimilarity);
 
         if (this.cliOptions.clusterPreprocessingNone) {

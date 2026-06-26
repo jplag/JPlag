@@ -8,6 +8,7 @@ import org.slf4j.event.Level;
 import de.jplag.Language;
 import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
+import de.jplag.clustering.algorithm.ChineseWhispersClusteringMode;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
 import de.jplag.highlightextraction.FrequencyAnalysisOptions;
 import de.jplag.highlightextraction.strategy.FrequencyStrategySelector;
@@ -276,6 +277,10 @@ public class CliOptions implements Runnable {
     /** Maximum number of iterations for Chinese Whispers clustering (hidden). */
     @Option(names = {"--cluster-chinese-whispers-iterations"}, hidden = true)
     public int clusterChineseWhispersMaxIterations = new ClusteringOptions().chineseWhispersMaxIterations();
+
+    /** Chinese Whispers clustering mode (hidden). */
+    @Option(names = {"--cluster-chinese-whispers-mode"}, hidden = true)
+    public ChineseWhispersClusteringMode chineseWhispersClusteringMode = new ClusteringOptions().chineseWhispersClusteringMode();
 
     /** Similarity function for agglomerative clustering (hidden). */
     @Option(names = {"--cluster-agglomerative-inter-cluster-similarity"}, hidden = true)

@@ -2,11 +2,15 @@ package de.jplag.clustering.algorithm;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import org.apache.commons.math3.linear.RealMatrix;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.jplag.clustering.ClusteringOptions;
 
@@ -15,6 +19,8 @@ import de.jplag.clustering.ClusteringOptions;
  * iteration updating the label of each node to the label that is the most present among its neighbors.
  */
 public class ChineseWhispersClustering implements GenericClusteringAlgorithm {
+    private static final Logger logger = LoggerFactory.getLogger(ChineseWhispersClustering.class);
+
     private final ClusteringOptions options;
 
     /**
@@ -28,9 +34,11 @@ public class ChineseWhispersClustering implements GenericClusteringAlgorithm {
     @Override
     public Collection<Collection<Integer>> cluster(RealMatrix similarityMatrix) {
         int numberOfNodes = similarityMatrix.getRowDimension();
+        List<Integer> permutation = new ArrayList<>(IntStream.range(0, numberOfNodes).boxed().toList());
 
         // Maps each node to a label
         int[] labels = new int[numberOfNodes];
+        int[] newLabelsBuffer = new int[numberOfNodes];
 
         for (int i = 0; i < numberOfNodes; i++) {
             labels[i] = i;
@@ -39,9 +47,13 @@ public class ChineseWhispersClustering implements GenericClusteringAlgorithm {
         boolean isConverged = false;
         int numberOfIterations = 0;
         while (!isConverged && numberOfIterations < options.chineseWhispersMaxIterations()) {
+            if (options.chineseWhispersClusteringMode() == ChineseWhispersClusteringMode.UPDATE_IMMEDIATELY_RANDOMIZED) {
+                Collections.shuffle(permutation);
+            }
+
             isConverged = true;
             for (int i = 0; i < numberOfNodes; i++) {
-                int node = i;
+                int node = permutation.get(i);
 
                 // Maps labels to the "number of appearances" of that label
                 Map<Integer, Double> labelCounts = new HashMap<>();
@@ -67,12 +79,20 @@ public class ChineseWhispersClustering implements GenericClusteringAlgorithm {
                     }
                 }
                 if (labels[node] != newLabel) {
-                    labels[node] = newLabel;
+                    if (options.chineseWhispersClusteringMode() == ChineseWhispersClusteringMode.UPDATE_IN_BATCHES) {
+                        newLabelsBuffer[node] = newLabel;
+                    } else {
+                        labels[node] = newLabel;
+                    }
                     isConverged = false;
                 }
             }
+            if (options.chineseWhispersClusteringMode() == ChineseWhispersClusteringMode.UPDATE_IN_BATCHES) {
+                System.arraycopy(newLabelsBuffer, 0, labels, 0, numberOfNodes);
+            }
             numberOfIterations++;
         }
+        logConvergence(isConverged, numberOfIterations);
 
         // Maps from labels to a list of nodes that were assigned this label
         Map<Integer, Collection<Integer>> clusters = new HashMap<>();
@@ -85,5 +105,13 @@ public class ChineseWhispersClustering implements GenericClusteringAlgorithm {
             }
         }
         return clusters.values();
+    }
+
+    private void logConvergence(boolean isConverged, int numberOfIterations) {
+        if (isConverged) {
+            logger.info("Chinese Whispers clustering algorithm converged after {} iterations.", numberOfIterations);
+        } else {
+            logger.info("Chinese Whispers clustering algorithm failed to converge and was terminated after {} iterations.", numberOfIterations);
+        }
     }
 }
