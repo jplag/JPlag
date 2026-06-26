@@ -22,8 +22,7 @@ public interface YieldTransformer extends CodeTransformer, BabylonDSL {
         if (op instanceof CoreOp.YieldOp yield) {
             return acceptYield(Objects.requireNonNull(builder), yield);
         } else {
-            // builder.add(op.transform(builder.context(), CodeTransformer.COPYING_TRANSFORMER));
-            builder.add(op);
+            placeExact(builder, op.location(), op);
             return builder;
         }
     }

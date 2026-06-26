@@ -2,11 +2,15 @@ package de.jplag.java.babylon;
 
 import static jdk.incubator.code.dialect.java.JavaType.VOID;
 
+import java.util.List;
 import java.util.SequencedCollection;
 
 import jdk.incubator.code.Block;
 import jdk.incubator.code.Body;
+import jdk.incubator.code.CodeContext;
 import jdk.incubator.code.CodeElement;
+import jdk.incubator.code.CodeTransformer;
+import jdk.incubator.code.CodeType;
 import jdk.incubator.code.Op;
 import jdk.incubator.code.Value;
 import jdk.incubator.code.dialect.core.CoreOp;
@@ -118,8 +122,31 @@ public interface BabylonDSL {
      * @return operation result of the appended operation
      */
     default Op.Result place(Block.Builder bd, Op.Location location, Op op) {
-        op.setLocation(location);
+        if (location != null) {
+            op.setLocation(location);
+        }
         return bd.add(op);
+    }
+
+    /**
+     * Place an {@link Op} into a {@link Block.Builder} <b>without using transform-on-append</b> and set its
+     * {@link Op.Location}.
+     * @param bd builder to add the {@link Op} to
+     * @param location location of the {@link Op}
+     * @param op operation to add
+     * @return operation result of the appended operation
+     */
+    default Op.Result placeExact(Block.Builder bd, Op.Location location, Op op) {
+        // This logic mirrors the internal logic in builder.add, except for the fact that transformation is delegated to the
+        // copying transformer.
+        // This allows bodies of this op to have their contents processed normally rather than being handled by the transformer
+        // invoking this.
+        Op.Result result = place(bd, location,
+                op.isPlacedInBlock() || op.isRoot() ? op.transform(bd.context(), CodeTransformer.COPYING_TRANSFORMER) : op);
+        if (op.result() != null && bd.context().queryValue(op.result()).isEmpty()) {
+            bd.context().mapValue(op.result(), result);
+        }
+        return result;
     }
 
     /**
@@ -149,5 +176,37 @@ public interface BabylonDSL {
                 default -> result.op().toText();
             };
         };
+    }
+
+    /**
+     * Convert a body to a textual representation.<br>
+     * Since the real API for this is not public, this creates a wrapping Op and prints that.
+     * @param body the body to convert to text
+     * @return the textual representation
+     */
+    default String toText(Body body) {
+        String result = new Op(List.of()) {
+            @Override
+            public Op transform(CodeContext cc, CodeTransformer ct) {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public CodeType resultType() {
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public String externalizeOpName() {
+                return "";
+            }
+
+            @Override
+            public List<Body> bodies() {
+                return List.of(body);
+            }
+        }.toText();
+        assert result.charAt(0) == ' '; // this space is inserted by OpWriter after the externalizable name and before the actual body
+        return result.substring(1); // trim the space, obtaining a string representing exclusively the contained body
     }
 }
