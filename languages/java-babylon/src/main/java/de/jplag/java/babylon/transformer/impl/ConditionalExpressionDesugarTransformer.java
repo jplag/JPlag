@@ -4,13 +4,12 @@ import java.util.List;
 
 import de.jplag.java.babylon.BabylonDSL;
 import de.jplag.java.babylon.transformer.SimpleTransformation;
-import de.jplag.java.babylon.transformer.impl.util.YieldTransformer;
+import de.jplag.java.babylon.transformer.impl.util.YieldAssignTransformer;
 
 import com.google.auto.service.AutoService;
 import jdk.incubator.code.Block;
 import jdk.incubator.code.CodeTransformer;
 import jdk.incubator.code.Op;
-import jdk.incubator.code.Value;
 import jdk.incubator.code.dialect.core.CoreOp;
 import jdk.incubator.code.dialect.java.JavaOp;
 
@@ -46,15 +45,5 @@ public class ConditionalExpressionDesugarTransformer implements SimpleTransforma
         builder.context().mapValue(cExprOp.result(), result);
 
         return builder;
-    }
-
-    private record YieldAssignTransformer(Op.Result variable) implements YieldTransformer {
-        @Override
-        public Block.Builder acceptYield(Block.Builder builder, CoreOp.YieldOp yield) {
-            Value result = builder.context().getValue(yield.yieldValue());
-            place(builder, yield.location(), CoreOp.varStore(variable, result));
-            place(builder, yield.location(), CoreOp.core_yield());
-            return builder;
-        }
     }
 }
