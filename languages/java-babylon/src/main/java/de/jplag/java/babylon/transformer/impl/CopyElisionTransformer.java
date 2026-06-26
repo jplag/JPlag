@@ -47,6 +47,7 @@ public class CopyElisionTransformer implements SimpleTransformation, BabylonDSL 
                 Op.Result replacement = place(builder, varOp.location(), CoreOp.var(varOp.varName(), varOp.varValueType()));
                 builder.context().mapValue(varOp.result(), replacement);
             }
+            // TODO elide var x; ...; assign x; ...; var y = x; now only use y
             default -> builder.add(op);
         }
         return builder;
