@@ -9,12 +9,12 @@ import org.junit.jupiter.api.TestInstance;
 import jdk.incubator.code.dialect.core.CoreOp;
 
 /**
- * Unit test for {@link TryWithResourcesDesugarTransformer}.
+ * Unit test for {@link EnhancedForDesugarTransformer}.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class EnhancedForDesugarTransformerTest extends AbstractTransformerTest {
     /**
-     * Unit test for {@link TryWithResourcesDesugarTransformer}.
+     * Unit test for {@link EnhancedForDesugarTransformer}.
      */
     @Test
     public void testTransformer() {
