@@ -6,12 +6,14 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 
+import de.jplag.java.babylon.pipeline.TransformationPipeline;
 import de.jplag.java.babylon.tokenizer.BabylonTokenizer;
 import de.jplag.java.babylon.tokenizer.TokenizerLoader;
 import de.jplag.java.babylon.tokenizer.impl.FullBabylonTokenizer;
-import de.jplag.java.babylon.transformer.TransformationPipeline;
+import de.jplag.java.babylon.transformer.TransformationStep;
 import de.jplag.java.babylon.transformer.TransformationStepLoader;
 import de.jplag.java.babylon.transformer.impl.AssertRemoveTransformer;
+import de.jplag.java.babylon.transformer.impl.BlockNormalizeStep;
 import de.jplag.java.babylon.transformer.impl.ConditionalExpressionDesugarTransformer;
 import de.jplag.java.babylon.transformer.impl.ConstantPropagationStep;
 import de.jplag.java.babylon.transformer.impl.CopyElisionTransformer;
@@ -62,13 +64,13 @@ class BabylonOptions extends LanguageOptions {
         return this.transformations;
     }
 
-    private volatile @Nullable List<? extends TransformationPipeline.Step<?>> pipelineSteps = null;
+    private volatile @Nullable List<? extends TransformationStep<?>> pipelineSteps = null;
 
-    public List<? extends TransformationPipeline.Step<?>> getPipelineSteps() {
+    public List<? extends TransformationStep<?>> getPipelineSteps() {
         if (this.pipelineSteps == null) {
             synchronized (this) {
                 if (this.pipelineSteps == null) {
-                    List<? extends TransformationPipeline.Step<?>> steps = getTransformations().stream()
+                    List<? extends TransformationStep<?>> steps = getTransformations().stream()
                             .map(name -> TransformationStepLoader.getTransformationStep(name)
                                     .orElseThrow(() -> new IllegalArgumentException(String.format(ERROR_TRANSFORMATION_NOT_FOUND, name,
                                             TransformationStepLoader.getAllAvailableTransformationStepIdentifiers()))))

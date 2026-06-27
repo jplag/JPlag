@@ -4,6 +4,7 @@ import jdk.incubator.code.CodeTransformer;
 
 /**
  * {@link CodeTransformer} with an identifier.<br>
+ * Useful as a concise description of simple transformation steps.<br>
  * Registered implementations automatically get picked up by {@link TransformationStepLoader} using the
  * {@link java.util.ServiceLoader} mechanism.
  */

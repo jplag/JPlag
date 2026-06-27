@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import de.jplag.java.babylon.transformer.TransformationPipeline;
+import de.jplag.java.babylon.pipeline.TransformationPipeline;
 
 import jdk.incubator.code.dialect.core.CoreOp;
 

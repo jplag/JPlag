@@ -1,16 +1,16 @@
 package de.jplag.java.babylon.transformer.impl.util;
 
 import de.jplag.java.babylon.transformer.SimpleTransformation;
-import de.jplag.java.babylon.transformer.TransformationPipeline;
+import de.jplag.java.babylon.transformer.TransformationStep;
 
 import jdk.incubator.code.CodeTransformer;
 import jdk.incubator.code.dialect.core.CoreOp;
 
 /**
- * {@link TransformationPipeline.Step} that delegates transformation to a separate {@link CodeTransformer}
- * implementation. Intended to be overridden.
+ * {@link TransformationStep} that delegates transformation to a separate {@link CodeTransformer} implementation.<br>
+ * Intended to be overridden.
  */
-public class DelegatePipelineStep implements TransformationPipeline.Step<Void> {
+public class DelegatePipelineStep implements TransformationStep<Void> {
     private final CodeTransformer delegate;
     private final String identifier;
 

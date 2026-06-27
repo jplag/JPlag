@@ -1,16 +1,16 @@
 package de.jplag.java.babylon.transformer.impl;
 
-import de.jplag.java.babylon.transformer.TransformationPipeline;
+import de.jplag.java.babylon.transformer.TransformationStep;
 
 import com.google.auto.service.AutoService;
 import jdk.incubator.code.CodeTransformer;
 import jdk.incubator.code.dialect.core.CoreOp;
 
 /**
- * A {@link TransformationPipeline.Step} that applies {@link CodeTransformer#LOWERING_TRANSFORMER}.
+ * A {@link TransformationStep} that applies {@link CodeTransformer#LOWERING_TRANSFORMER}.
  */
-@AutoService(TransformationPipeline.Step.class)
-public class LoweringStep implements TransformationPipeline.Step<Void> {
+@AutoService(TransformationStep.class)
+public class LoweringStep implements TransformationStep<Void> {
     /**
      * Identifier of this pipeline step.
      */

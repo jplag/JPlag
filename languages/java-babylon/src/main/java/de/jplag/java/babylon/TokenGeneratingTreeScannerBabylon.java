@@ -5,8 +5,8 @@ import java.io.File;
 import de.jplag.Token;
 import de.jplag.java.Parser;
 import de.jplag.java.TokenGeneratingTreeScanner;
+import de.jplag.java.babylon.pipeline.TransformationPipeline;
 import de.jplag.java.babylon.tokenizer.BabylonTokenizer;
-import de.jplag.java.babylon.transformer.TransformationPipeline;
 import de.jplag.semantics.VariableRegistry;
 
 import com.sun.source.tree.CompilationUnitTree;

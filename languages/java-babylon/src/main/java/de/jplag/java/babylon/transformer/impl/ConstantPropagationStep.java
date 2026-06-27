@@ -2,17 +2,17 @@ package de.jplag.java.babylon.transformer.impl;
 
 import java.lang.invoke.MethodHandles;
 
-import de.jplag.java.babylon.transformer.TransformationPipeline;
+import de.jplag.java.babylon.transformer.TransformationStep;
 
 import com.google.auto.service.AutoService;
 import jdk.incubator.code.dialect.core.CoreOp;
 import jdk.incubator.code.dialect.java.ConstantExpressionTransformer;
 
 /**
- * {@link TransformationPipeline.Step} that precomputes constant values.
+ * {@link TransformationStep} that precomputes constant values.
  */
-@AutoService(TransformationPipeline.Step.class)
-public class ConstantPropagationStep implements TransformationPipeline.Step<Void> {
+@AutoService(TransformationStep.class)
+public class ConstantPropagationStep implements TransformationStep<Void> {
     /**
      * Identifier of this pipeline step.
      */

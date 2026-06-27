@@ -13,7 +13,7 @@ import de.jplag.ParsingException;
 import de.jplag.java.JavacAdapter;
 import de.jplag.java.Parser;
 import de.jplag.java.babylon.extractor.CodeModelExtractorImpl;
-import de.jplag.java.babylon.transformer.TransformationPipeline;
+import de.jplag.java.babylon.pipeline.TransformationPipeline;
 
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.CompilationUnitTree;

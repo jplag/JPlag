@@ -7,8 +7,8 @@ import javax.tools.JavaCompiler;
 import de.jplag.java.JavacAdapter;
 import de.jplag.java.Parser;
 import de.jplag.java.babylon.extractor.CodeModelExtractorImpl;
+import de.jplag.java.babylon.pipeline.TransformationPipeline;
 import de.jplag.java.babylon.tokenizer.BabylonTokenizer;
-import de.jplag.java.babylon.transformer.TransformationPipeline;
 import de.jplag.semantics.VariableRegistry;
 
 import com.sun.source.tree.CompilationUnitTree;

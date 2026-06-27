@@ -10,6 +10,11 @@ import org.junit.jupiter.api.Test;
 
 import de.jplag.ParsingException;
 import de.jplag.java.babylon.DefaultTransformations;
+import de.jplag.java.babylon.pipeline.EagerPrepassExecutor;
+import de.jplag.java.babylon.pipeline.HybridPrepassExecutor;
+import de.jplag.java.babylon.pipeline.LazyPrepassExecutor;
+import de.jplag.java.babylon.pipeline.PrepassExecutor;
+import de.jplag.java.babylon.pipeline.TransformationPipeline;
 import de.jplag.java.babylon.transformer.impl.AbstractTransformerTest;
 
 import jdk.incubator.code.dialect.core.CoreOp;
@@ -36,8 +41,8 @@ public class PrepassExecutorTest extends AbstractTransformerTest {
     }
 
     private List<TransformationPipeline> getPipelines() {
-        List<? extends TransformationPipeline.Step<?>> steps = DefaultTransformations.getDefaultSteps();
-        List<PrepassExecutor> prepassExecutors = List.of(new PrepassExecutor.Lazy(), new PrepassExecutor.Eager(), new PrepassExecutor.Hybrid());
+        List<? extends TransformationStep<?>> steps = DefaultTransformations.getDefaultSteps();
+        List<PrepassExecutor> prepassExecutors = List.of(new LazyPrepassExecutor(), new EagerPrepassExecutor(), new HybridPrepassExecutor());
         return prepassExecutors.stream().map(executor -> new TransformationPipeline(steps, executor)).toList();
     }
 

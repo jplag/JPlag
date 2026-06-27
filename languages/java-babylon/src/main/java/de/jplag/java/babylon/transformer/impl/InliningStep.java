@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 
 import de.jplag.java.babylon.extractor.CodeModelExtractor;
 import de.jplag.java.babylon.transformer.Prepass;
-import de.jplag.java.babylon.transformer.TransformationPipeline;
+import de.jplag.java.babylon.transformer.TransformationStep;
 import de.jplag.java.babylon.transformer.impl.util.JavaMethodId;
 
 import com.google.auto.service.AutoService;
@@ -26,10 +26,10 @@ import jdk.incubator.code.dialect.java.JavaOp;
 import jdk.incubator.code.dialect.java.PrimitiveType;
 
 /**
- * A {@link TransformationPipeline.Step} that inlines simple methods.
+ * A {@link TransformationStep} that inlines simple methods.
  */
-@AutoService(TransformationPipeline.Step.class)
-public class InliningStep implements TransformationPipeline.Step<InliningStep.Context> {
+@AutoService(TransformationStep.class)
+public class InliningStep implements TransformationStep<InliningStep.Context> {
     /**
      * Identifier of this pipeline step.
      */
@@ -63,7 +63,7 @@ public class InliningStep implements TransformationPipeline.Step<InliningStep.Co
 
     @Nullable
     @Override
-    public Prepass<Context> beginPrepass(TransformationPipeline.PrepassConstructionContext context) {
+    public Prepass<Context> beginPrepass(PrepassConstructionContext context) {
         return new FindCandidates(context.codeModelExtractor(), this::heuristic);
     }
 

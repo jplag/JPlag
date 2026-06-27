@@ -17,14 +17,14 @@ import org.slf4j.LoggerFactory;
 import de.jplag.java.babylon.transformer.impl.util.DelegatePipelineStep;
 
 /**
- * Utility class for loading installed {@link TransformationPipeline.Step} implementations.<br>
+ * Utility class for loading installed {@link TransformationStep} implementations.<br>
  * Based on {@link de.jplag.LanguageLoader}.
  */
 public final class TransformationStepLoader {
     private static final Logger logger = LoggerFactory.getLogger(TransformationStepLoader.class);
 
-    private static volatile Map<String, TransformationPipeline.Step<?>> cachedStepInstances = null;
-    private static volatile ServiceLoader<TransformationPipeline.Step<?>> stepLoader = null;
+    private static volatile Map<String, TransformationStep<?>> cachedStepInstances = null;
+    private static volatile ServiceLoader<TransformationStep<?>> stepLoader = null;
     private static volatile ServiceLoader<SimpleTransformation> simpleTransformationLoader = null;
 
     private TransformationStepLoader() {
@@ -34,26 +34,25 @@ public final class TransformationStepLoader {
     /**
      * Get all transformation steps that are currently in the classpath. The result will be cached.<br>
      * Use {@link #clearCache()} to obtain new instances.
-     * @return the transformation steps as an unmodifiable map from identifiers to {@link TransformationPipeline.Step}
-     * instances
+     * @return the transformation steps as an unmodifiable map from identifiers to {@link TransformationStep} instances
      */
-    public static Map<String, TransformationPipeline.Step<?>> getAllAvailableTransformationSteps() {
+    public static Map<String, TransformationStep<?>> getAllAvailableTransformationSteps() {
         if (cachedStepInstances == null) {
             synchronized (TransformationStepLoader.class) {
                 if (cachedStepInstances == null) {
-                    Map<String, TransformationPipeline.Step<?>> steps = new TreeMap<>();
+                    Map<String, TransformationStep<?>> steps = new TreeMap<>();
                     Set<String> skipped = new HashSet<>();
 
                     if (stepLoader == null)
                         // noinspection unchecked,rawtypes - unfortunately, this seems to be needed to use ServiceLoader with a generic class
-                        stepLoader = ServiceLoader.load((Class<TransformationPipeline.Step<?>>) (Class) TransformationPipeline.Step.class);
+                        stepLoader = ServiceLoader.load((Class<TransformationStep<?>>) (Class) TransformationStep.class);
                     if (simpleTransformationLoader == null)
                         simpleTransformationLoader = ServiceLoader.load(SimpleTransformation.class);
 
-                    List<TransformationPipeline.Step<?>> stepsList = Stream.concat(stepLoader.stream().map(ServiceLoader.Provider::get),
+                    List<TransformationStep<?>> stepsList = Stream.concat(stepLoader.stream().map(ServiceLoader.Provider::get),
                             simpleTransformationLoader.stream().map(ServiceLoader.Provider::get).map(DelegatePipelineStep::new)).toList();
 
-                    for (TransformationPipeline.Step<?> step : stepsList) {
+                    for (TransformationStep<?> step : stepsList) {
                         String identifier = step.getIdentifier();
                         if (steps.remove(identifier) != null && skipped.add(identifier)) {
                             logger.error("Multiple implementations for a transformation step '{}' are present in the classpath! Skipping ..",
@@ -77,9 +76,9 @@ public final class TransformationStepLoader {
      * Load a transformation step that is currently in the classpath by its identifier.
      * @param identifier the identifier of the transformation step
      * @return the transformation step or an empty optional if no corresponding step was found
-     * @see TransformationPipeline.Step#getIdentifier()
+     * @see TransformationStep#getIdentifier()
      */
-    public static Optional<TransformationPipeline.Step<?>> getTransformationStep(String identifier) {
+    public static Optional<TransformationStep<?>> getTransformationStep(String identifier) {
         var step = getAllAvailableTransformationSteps().get(identifier);
         if (step == null) {
             logger.warn("Attempt to load transformation step {} was not successful", identifier);
@@ -90,14 +89,14 @@ public final class TransformationStepLoader {
     /**
      * Get an unmodifiable set of all available transformation step identifiers.
      * @return identifiers of all available transformation steps
-     * @see TransformationPipeline.Step#getIdentifier()
+     * @see TransformationStep#getIdentifier()
      */
     public static Set<String> getAllAvailableTransformationStepIdentifiers() {
         return new TreeSet<>(getAllAvailableTransformationSteps().keySet());
     }
 
     /**
-     * Clears the internal cache of {@link TransformationPipeline.Step} instances, allowing new steps to be found.
+     * Clears the internal cache of {@link TransformationStep} instances, allowing new steps to be found.
      */
     public static void clearCache() {
         synchronized (TransformationStepLoader.class) {

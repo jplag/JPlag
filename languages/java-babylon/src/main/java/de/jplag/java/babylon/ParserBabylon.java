@@ -16,8 +16,8 @@ import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.java.JavacAdapter;
 import de.jplag.java.Parser;
+import de.jplag.java.babylon.pipeline.TransformationPipeline;
 import de.jplag.java.babylon.tokenizer.BabylonTokenizer;
-import de.jplag.java.babylon.transformer.TransformationPipeline;
 import de.jplag.semantics.CodeSemantics;
 import de.jplag.semantics.VariableRegistry;
 
