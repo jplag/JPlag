@@ -62,7 +62,7 @@ public class ForDesugarTransformer implements SimpleTransformation, BabylonDSL {
                                     return block1;
                                 });
                             } else {
-                                block.add(innerOp);
+                                placeExact(block, null, innerOp);
                             }
                             return block;
                         })));
