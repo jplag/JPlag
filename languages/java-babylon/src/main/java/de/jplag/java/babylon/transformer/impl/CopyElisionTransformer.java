@@ -9,7 +9,6 @@ import com.google.auto.service.AutoService;
 import jdk.incubator.code.Block;
 import jdk.incubator.code.Op;
 import jdk.incubator.code.dialect.core.CoreOp;
-import jdk.incubator.code.dialect.java.JavaType;
 
 /**
  * {@link SimpleTransformation} that removes unused constants or variable copies.
@@ -37,7 +36,7 @@ public class CopyElisionTransformer implements SimpleTransformation, BabylonDSL 
                 }
             }
             case CoreOp.VarAccessOp varAccessOp when builder.context().getProperty(varAccessOp) == IDENTIFIER -> {
-                if (varAccessOp.resultType() != JavaType.VOID) {
+                if (varAccessOp instanceof CoreOp.VarAccessOp.VarLoadOp) {
                     builder.context().mapValue(varAccessOp.result(), builder.context().getValue(varAccessOp.varOp().initOperand()));
                 }
             }
