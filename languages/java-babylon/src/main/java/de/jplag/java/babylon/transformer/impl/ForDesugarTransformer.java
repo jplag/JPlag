@@ -39,13 +39,14 @@ public class ForDesugarTransformer implements SimpleTransformation, BabylonDSL {
         List<Block.Parameter> loopVars = forOp.condBody().entryBlock().parameters();
 
         builder.transformBody(forOp.initBody(), List.of(), builder.context(), (YieldTransformer) (block, yield) -> {
-            List<Value> outputs;
-            if (loopVars.size() == 1) {
-                outputs = List.of(yield.yieldValue());
-            } else {
-                CoreOp.TupleOp tupleOp = (CoreOp.TupleOp) yield.yieldValue().asResult().op();
-                outputs = tupleOp.operands();
-            }
+            List<Value> outputs = switch (loopVars.size()) {
+                case 0 -> List.of();
+                case 1 -> List.of(yield.yieldValue());
+                default -> {
+                    CoreOp.TupleOp tupleOp = (CoreOp.TupleOp) yield.yieldValue().asResult().op();
+                    yield tupleOp.operands();
+                }
+            };
             builder.context().mapValues(loopVars, block.context().getValues(outputs));
             return block;
         });

@@ -8,7 +8,8 @@ void main() {
     }
 
     int[] values = {1, 2, 3, 4};
-    for (int i = 0; i < values.length; i++) {
+    int i = 0;
+    for (; i < values.length; i++) {
         IO.println(values[i]);
     }
 
