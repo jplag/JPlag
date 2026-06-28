@@ -66,7 +66,7 @@ public class MatchFrequencyWeighting {
             return comparison.similarity();
         }
 
-        int divisor = comparison.firstSubmission().getSimilarityDivisor() + comparison.secondSubmission().getSimilarityDivisor();
+        int divisor = comparison.similarityDivisor();
         if (divisor == 0) {
             return 0;
         }

@@ -69,6 +69,16 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
     }
 
     /**
+     * Returns the combined similarity divisor for both submissions, used as the denominator when computing average
+     * similarity. It represents the total number of tokens across both submissions that are candidates for structural
+     * matching, i.e. all tokens excluding file-boundary markers and any tokens already attributed to base code.
+     * @return sum of the similarity divisors of both submissions.
+     */
+    public int similarityDivisor() {
+        return firstSubmission.getSimilarityDivisor() + secondSubmission.getSimilarityDivisor();
+    }
+
+    /**
      * Computes the average (or symmetric) similarity between the two submissions. The similarity is adjusted based on
      * whether both submissions contain base code matches. If frequency weighting is enabled, the frequency-weighted
      * similarity score is returned instead.
@@ -79,7 +89,7 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
         if (useFrequencyWeighting && frequencyWeightedSimilarity >= 0) {
             return frequencyWeightedSimilarity;
         }
-        int divisor = firstSubmission.getSimilarityDivisor() + secondSubmission.getSimilarityDivisor();
+        int divisor = similarityDivisor();
         if (divisor == 0) {
             return 0;
         }
