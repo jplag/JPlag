@@ -29,9 +29,8 @@ import de.jplag.highlightextraction.TokenSequenceUtil;
 import de.jplag.options.JPlagOptions;
 
 /**
- * Test class to validate the FrequencyStrategies which determine how isFrequencyAnalysisEnabled certain token sequences
- * appear in matches of the comparisons. As the examples use testCode from "PartialPlagiarism" sample-folder and some
- * fictional data.
+ * Test class to validate the FrequencyStrategies which determine how often certain token sequences appear in matches of
+ * the comparisons. As the examples use testCode from "PartialPlagiarism" sample-folder and some fictional data.
  */
 class StrategyTest extends TestBase {
     private static final StrategyIntegrationTest STRATEGY_INTEGRATION_TEST = new StrategyIntegrationTest();

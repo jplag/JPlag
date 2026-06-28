@@ -17,7 +17,7 @@ public class MatchFrequencyWeighting {
     /**
      * All comparisons to calculate the similarity for.
      */
-    List<JPlagComparison> comparisons;
+    private final List<JPlagComparison> comparisons;
     /**
      * Chosen weighting function.
      */

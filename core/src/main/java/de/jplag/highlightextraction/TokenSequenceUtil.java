@@ -13,10 +13,14 @@ import de.jplag.TokenType;
  */
 public class TokenSequenceUtil {
 
+    private TokenSequenceUtil() {
+        // Utility class, not instantiable.
+    }
+
     /**
      * Extracts the token types for the given submission.
-     * @param submission is the submission.
-     * @return the token types.
+     * @param submission is the target submission.
+     * @return the list of token types that represent the submission.
      */
     public static List<TokenType> tokenTypesFor(Submission submission) {
         return submission.getTokenList().stream().map(Token::getType).toList();

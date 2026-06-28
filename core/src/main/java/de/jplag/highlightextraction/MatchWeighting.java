@@ -10,8 +10,7 @@ import de.jplag.highlightextraction.strategy.FrequencyStrategy;
 
 /**
  * Contains the logic of the frequency based weighting of the Matches in all Comparisons, influencing the similarity
- * between two comparisons according to the FrequencyStrategy and Similarity strategy. isFrequencyAnalysisEnabled =
- * false would use the old similarity.
+ * between two comparisons according to the FrequencyStrategy and WeightingFunction.
  */
 public class MatchWeighting {
 
