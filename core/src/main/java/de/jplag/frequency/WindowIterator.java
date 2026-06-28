@@ -2,6 +2,7 @@ package de.jplag.frequency;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Iterator for sublists of constant lengths.
@@ -31,6 +32,9 @@ public class WindowIterator<T> implements Iterator<List<T>> {
 
     @Override
     public List<T> next() {
+        if (!hasNext()) {
+            throw new NoSuchElementException();
+        }
         return items.subList(index, index++ + windowLength);
     }
 }

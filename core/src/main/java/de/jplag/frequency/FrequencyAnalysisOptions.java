@@ -8,7 +8,7 @@ import io.soabase.recordbuilder.core.RecordBuilder;
 
 /**
  * Options for Frequency Analysis.
- * @param enabled if false, highlight extraction is skipped.
+ * @param enabled if false, frequency analysis is skipped.
  * @param analysisStrategy the strategy used to determine the frequency of a Match
  * @param frequencyStrategyMinValue the minimum considered size of subsequences from matches in the frequency strategy
  * @param weightingFunction function used to determine the weight from the match rarity
@@ -18,7 +18,7 @@ import io.soabase.recordbuilder.core.RecordBuilder;
 public record FrequencyAnalysisOptions(boolean enabled, FrequencyStrategy analysisStrategy, int frequencyStrategyMinValue,
         MatchWeightingFunction weightingFunction, double weightingFactor) {
 
-    /** Default value for the highlighting enabling. */
+    /** Default value for the analysis being enabled. */
     public static final boolean DEFAULT_ENABLED = false;
     /** Default analysis strategy. */
     public static final FrequencyStrategy DEFAULT_ANALYSIS_STRATEGY = new CompleteMatchesStrategy();
@@ -56,6 +56,12 @@ public record FrequencyAnalysisOptions(boolean enabled, FrequencyStrategy analys
         return new FrequencyAnalysisOptions(enabled, strategy, frequencyStrategyMinValue, weightingFunction, weightingFactor);
     }
 
+    /**
+     * Creates a copy of this {@link FrequencyAnalysisOptions} using the given value for
+     * {@link FrequencyAnalysisOptions#frequencyStrategyMinValue}.
+     * @param frequencyStrategyMinValue the new value for frequencyStrategyMinValue
+     * @return the new frequency analysis options.
+     */
     public FrequencyAnalysisOptions withFrequencyStrategyMinValue(int frequencyStrategyMinValue) {
         return new FrequencyAnalysisOptions(enabled, analysisStrategy, frequencyStrategyMinValue, weightingFunction, weightingFactor);
     }
@@ -66,7 +72,7 @@ public record FrequencyAnalysisOptions(boolean enabled, FrequencyStrategy analys
      * @param weighting the new value for weightingFunction
      * @return the new frequency analysis options.
      */
-    public FrequencyAnalysisOptions withMatchWeightingFunction(MatchWeightingFunction weighting) {
+    public FrequencyAnalysisOptions withWeightingFunction(MatchWeightingFunction weighting) {
         return new FrequencyAnalysisOptions(enabled, analysisStrategy, frequencyStrategyMinValue, weighting, weightingFactor);
     }
 

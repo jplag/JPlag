@@ -36,13 +36,11 @@ class MatchFrequencyEvaluator {
         return matchWeights;
     }
 
-    private Map<List<TokenType>, Double> weightAllMatches(JPlagComparison comparison, Map<List<TokenType>, Double> matchWeights) {
+    private void weightAllMatches(JPlagComparison comparison, Map<List<TokenType>, Double> matchWeights) {
         for (Match match : comparison.matches()) {
             List<TokenType> matchTokens = FrequencyUtil.tokenTypesFor(comparison, match);
             matchWeights.computeIfAbsent(matchTokens, strategy::calculateMatchCount);
         }
-
-        return matchWeights;
     }
 
 }

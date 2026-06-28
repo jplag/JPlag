@@ -127,11 +127,10 @@ class FrequencyWeightingTest extends TestBase {
         matchFrequency.put(FrequencyUtil.tokenTypesFor(comparison, match2), 5.0);
         matchFrequency.put(FrequencyUtil.tokenTypesFor(comparison, matchShort), 1.0);
 
-        List<JPlagComparison> comparisons = List.of(comparison);
-        MatchFrequencyWeighting proportionalWeighting = new MatchFrequencyWeighting(comparisons, new ProportionalWeighting(), matchFrequency);
-        MatchFrequencyWeighting linearWeighting = new MatchFrequencyWeighting(comparisons, new LinearWeighting(), matchFrequency);
-        MatchFrequencyWeighting quadraticWeighting = new MatchFrequencyWeighting(comparisons, new QuadraticWeighting(), matchFrequency);
-        MatchFrequencyWeighting sigmoidWeighting = new MatchFrequencyWeighting(comparisons, new SigmoidWeighting(), matchFrequency);
+        MatchFrequencyWeighting proportionalWeighting = new MatchFrequencyWeighting(new ProportionalWeighting(), matchFrequency);
+        MatchFrequencyWeighting linearWeighting = new MatchFrequencyWeighting(new LinearWeighting(), matchFrequency);
+        MatchFrequencyWeighting quadraticWeighting = new MatchFrequencyWeighting(new QuadraticWeighting(), matchFrequency);
+        MatchFrequencyWeighting sigmoidWeighting = new MatchFrequencyWeighting(new SigmoidWeighting(), matchFrequency);
 
         double proportionalMatchLength = proportionalWeighting.getWeightedMatchLength(comparison, 1, true, new ProportionalWeighting());
         double linearMatchLength = linearWeighting.getWeightedMatchLength(comparison, 1, true, new LinearWeighting());

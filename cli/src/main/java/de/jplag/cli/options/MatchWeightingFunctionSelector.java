@@ -1,14 +1,13 @@
 package de.jplag.cli.options;
 
 import de.jplag.frequency.MatchWeightingFunction;
-import de.jplag.frequency.strategy.FrequencyStrategy;
 import de.jplag.frequency.weighting.LinearWeighting;
 import de.jplag.frequency.weighting.ProportionalWeighting;
 import de.jplag.frequency.weighting.QuadraticWeighting;
 import de.jplag.frequency.weighting.SigmoidWeighting;
 
 /**
- * Enum selector for {@link FrequencyStrategy} implementations for the picocli CLI.
+ * Enum selector for {@link MatchWeightingFunction} implementations for the picocli CLI.
  */
 public enum MatchWeightingFunctionSelector {
 

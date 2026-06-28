@@ -14,26 +14,17 @@ import de.jplag.frequency.strategy.FrequencyStrategy;
  * strategy.
  */
 public class MatchFrequencyWeighting {
-    /**
-     * All comparisons to calculate the similarity for.
-     */
-    private final List<JPlagComparison> comparisons;
-    /**
-     * Chosen weighting function.
-     */
     private final MatchWeightingFunction strategy;
     private final Map<List<TokenType>, Double> matchFrequency;
     private static final double DEFAULT_MAXIMUM_FREQUENCY = 1.0;
     private static final double DEFAULT_MINIMUM_FREQUENCY = 0.0;
 
     /**
-     * Constructor defines comparisons and strategy for the similarity calculation.
-     * @param comparisons considered comparisons to calculate the similarity score for
+     * Constructor defines strategy and match frequency for the similarity calculation.
      * @param strategy chosen weighting function
      * @param matchFrequency the matchFrequency containing the map that maps a match to its frequency
      */
-    public MatchFrequencyWeighting(List<JPlagComparison> comparisons, MatchWeightingFunction strategy, Map<List<TokenType>, Double> matchFrequency) {
-        this.comparisons = comparisons;
+    public MatchFrequencyWeighting(MatchWeightingFunction strategy, Map<List<TokenType>, Double> matchFrequency) {
         this.strategy = strategy;
         this.matchFrequency = matchFrequency;
     }
@@ -73,7 +64,7 @@ public class MatchFrequencyWeighting {
         double weightedMatchLengthLeft = getWeightedMatchLength(comparison, weightingFactor, true, strategy);
         double weightedMatchLengthRight = getWeightedMatchLength(comparison, weightingFactor, false, strategy);
 
-        return (weightedMatchLengthLeft + weightedMatchLengthRight) / (double) divisor;
+        return (weightedMatchLengthLeft + weightedMatchLengthRight) / divisor;
 
     }
 
