@@ -28,8 +28,7 @@ public final class CodeModelExtractorImpl implements CodeModelExtractor {
     public Optional<CoreOp.FuncOp> toOp(MethodTree methodTree, CompilationUnitTree ast) {
         // if no Op can be constructed, that is an error that should not be construed with deliberate omission
         // of a method
-        CoreOp.FuncOp op = Op.ofMethodTree(task, ast, methodTree)
-                .orElseThrow(() -> new IllegalStateException("Can't resolve body of method: " + methodTree.getName()));
+        CoreOp.FuncOp op = Op.ofMethodTree(task, methodTree).orElseThrow(() -> new ExtractionFailedException(methodTree));
         return Optional.of(op);
     }
 }

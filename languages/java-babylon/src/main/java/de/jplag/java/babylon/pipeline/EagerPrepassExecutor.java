@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import de.jplag.java.babylon.extractor.CachingCodeModelExtractor;
 import de.jplag.java.babylon.extractor.CodeModelExtractor;
+import de.jplag.java.babylon.extractor.ExtractionFailedException;
 import de.jplag.java.babylon.transformer.TransformationStep;
 
 import com.sun.source.tree.CompilationUnitTree;
@@ -21,15 +22,22 @@ public final class EagerPrepassExecutor implements PrepassExecutor {
     @Override
     public CodeModelExtractor prepass(List<TransformationStep<?>> steps, Iterable<? extends CompilationUnitTree> trees,
             CodeModelExtractor extractor) {
-        SwappablePair<Map<MethodTree, Optional<CoreOp.FuncOp>>> caches = new SwappablePair<>(new IdentityHashMap<>(), new IdentityHashMap<>());
+        SwappablePair<Cache> caches = new SwappablePair<>(new Cache(), new Cache());
         Map<MethodTree, CompilationUnitTree> parents = new IdentityHashMap<>();
         for (CompilationUnitTree tree : trees) {
             tree.accept(new TreeScanner<>() {
                 @Override
                 public Object visitMethod(MethodTree node, Object o) {
-                    var op = extractor.toOp(node, tree);
-                    caches.first.put(node, op);
-                    caches.second.put(node, op);
+                    Optional<CoreOp.FuncOp> op;
+                    try {
+                        op = extractor.toOp(node, tree);
+                    } catch (ExtractionFailedException e) {
+                        caches.first.failures.put(node, e);
+                        caches.second.failures.put(node, e);
+                        return super.visitMethod(node, o);
+                    }
+                    caches.first.caches.put(node, op);
+                    caches.second.caches.put(node, op);
                     parents.put(node, tree);
                     return super.visitMethod(node, o);
                 }
@@ -37,11 +45,17 @@ public final class EagerPrepassExecutor implements PrepassExecutor {
         }
 
         for (TransformationStep<?> step : steps) {
-            CodeModelExtractor extractor1 = prepass(step, trees, new CachingCodeModelExtractor(null, caches.first));
-            caches.second.replaceAll((key, _) -> extractor1.toOp(key, parents.get(key)));
+            CodeModelExtractor extractor1 = prepass(step, trees, new CachingCodeModelExtractor(null, caches.first.caches, caches.first.failures));
+            caches.second.caches.replaceAll((key, _) -> extractor1.toOp(key, parents.get(key)));
             caches.swap();
         }
-        return new CachingCodeModelExtractor(null, caches.first);
+        return new CachingCodeModelExtractor(null, caches.first.caches, caches.first.failures);
+    }
+
+    private record Cache(Map<MethodTree, Optional<CoreOp.FuncOp>> caches, Map<MethodTree, ExtractionFailedException> failures) {
+        public Cache() {
+            this(new IdentityHashMap<>(), new IdentityHashMap<>());
+        }
     }
 
     private static class SwappablePair<T> {

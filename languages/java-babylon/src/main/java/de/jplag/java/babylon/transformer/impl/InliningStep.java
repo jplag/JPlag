@@ -7,7 +7,11 @@ import java.util.function.BiPredicate;
 
 import javax.annotation.Nullable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.jplag.java.babylon.extractor.CodeModelExtractor;
+import de.jplag.java.babylon.extractor.ExtractionFailedException;
 import de.jplag.java.babylon.transformer.Prepass;
 import de.jplag.java.babylon.transformer.TransformationStep;
 import de.jplag.java.babylon.transformer.impl.util.JavaMethodId;
@@ -30,6 +34,8 @@ import jdk.incubator.code.dialect.java.PrimitiveType;
  */
 @AutoService(TransformationStep.class)
 public class InliningStep implements TransformationStep<InliningStep.Context> {
+    private static final Logger logger = LoggerFactory.getLogger(InliningStep.class);
+
     /**
      * Identifier of this pipeline step.
      */
@@ -92,9 +98,16 @@ public class InliningStep implements TransformationStep<InliningStep.Context> {
         public Void visitMethod(MethodTree node, CompilationUnitTree ast) {
             JavaMethodId id = JavaMethodId.of(node);
             if (id != null) {
-                CoreOp.FuncOp op = codeModelExtractor.toOp(node, ast).orElse(null);
-                if (op != null && heuristic.test(op, id))
+                CoreOp.FuncOp op;
+                try {
+                    op = codeModelExtractor.toOp(node, ast).orElse(null);
+                } catch (ExtractionFailedException e) {
+                    logger.debug("Could not extract possible inlining candidate", e);
+                    return super.visitMethod(node, ast);
+                }
+                if (op != null && heuristic.test(op, id)) {
                     java.put(id, op);
+                }
             }
             return super.visitMethod(node, ast);
         }
