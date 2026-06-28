@@ -2,8 +2,10 @@ package de.jplag.highlightextraction.frequencysimilarity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,9 +18,9 @@ import de.jplag.Submission;
 import de.jplag.SubmissionSet;
 import de.jplag.SubmissionSetBuilder;
 import de.jplag.TestBase;
+import de.jplag.TokenType;
 import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
-import de.jplag.highlightextraction.MatchFrequency;
 import de.jplag.highlightextraction.MatchFrequencyWeighting;
 import de.jplag.highlightextraction.TokenSequenceUtil;
 import de.jplag.highlightextraction.weighting.LinearWeighting;
@@ -120,7 +122,7 @@ class FrequencyWeightingTest extends TestBase {
     @Test
     @DisplayName("Test the weighting functions")
     void testWeightingFunction() {
-        MatchFrequency matchFrequency = new MatchFrequency();
+        Map<List<TokenType>, Double> matchFrequency = new HashMap<List<TokenType>, Double>();
         Match match2 = TEST_MATCHES.getFirst();
         matchFrequency.put(TokenSequenceUtil.tokenTypesFor(comparison, match2), 5.0);
         matchFrequency.put(TokenSequenceUtil.tokenTypesFor(comparison, matchShort), 1.0);
