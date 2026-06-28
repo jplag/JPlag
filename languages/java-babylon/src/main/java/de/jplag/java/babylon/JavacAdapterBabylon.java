@@ -21,7 +21,7 @@ class JavacAdapterBabylon extends JavacAdapter {
     private final VariableRegistry variableRegistry;
     private final BabylonTokenizer.Provider tokenizer;
 
-    private static final ScopedValue<TransformationPipeline.Context> PREPASS_CONTEXT = ScopedValue.newInstance();
+    private static final ScopedValue<TreeScannerConstructionContext> PREPASS_CONTEXT = ScopedValue.newInstance();
 
     public JavacAdapterBabylon(TransformationPipeline pipeline, VariableRegistry variableRegistry, BabylonTokenizer.Provider tokenizer) {
         this.pipeline = pipeline;
@@ -38,13 +38,19 @@ class JavacAdapterBabylon extends JavacAdapter {
     protected void handle(Iterable<? extends CompilationUnitTree> trees, Parser parser, SourcePositions positions,
             JavaCompiler.CompilationTask task) {
         TransformationPipeline.Context prepassContext = pipeline.prepass(trees, new CodeModelExtractorImpl(task));
-        ScopedValue.where(PREPASS_CONTEXT, prepassContext).run(() -> super.handle(trees, parser, positions, task));
+        TreeScannerConstructionContext context = new TreeScannerConstructionContext(prepassContext, trees);
+        ScopedValue.where(PREPASS_CONTEXT, context).run(() -> super.handle(trees, parser, positions, task));
     }
 
     @Override
     protected TreeVisitor<?, ?> createTreeScanner(File file, Parser parser, LineMap map, SourcePositions positions, CompilationUnitTree ast,
             JavaCompiler.CompilationTask task) {
-        return new TokenGeneratingTreeScannerBabylon(file, (ParserBabylon) parser, map, positions, ast, variableRegistry, tokenizer,
-                PREPASS_CONTEXT.get());
+        TreeScannerConstructionContext context = PREPASS_CONTEXT.get();
+        return new TokenGeneratingTreeScannerBabylon(file, (ParserBabylon) parser, map, positions, ast, context.codebaseAsts(), variableRegistry,
+                tokenizer, context.pipelineContext());
+    }
+
+    private record TreeScannerConstructionContext(TransformationPipeline.Context pipelineContext,
+            Iterable<? extends CompilationUnitTree> codebaseAsts) {
     }
 }

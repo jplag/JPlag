@@ -42,7 +42,7 @@ public class HighLevelBabylonTokenizer extends AbstractBabylonTokenizer {
      * @param parser the parser to output to
      * @param file the current file
      */
-    public HighLevelBabylonTokenizer(ParserBabylon parser, File file) {
+    protected HighLevelBabylonTokenizer(ParserBabylon parser, File file) {
         super(parser, file);
     }
 

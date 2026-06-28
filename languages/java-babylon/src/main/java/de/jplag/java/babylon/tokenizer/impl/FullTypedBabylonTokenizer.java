@@ -1,14 +1,21 @@
 package de.jplag.java.babylon.tokenizer.impl;
 
 import java.io.File;
+import java.lang.constant.ClassDesc;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import de.jplag.TokenType;
 import de.jplag.java.babylon.ParserBabylon;
 import de.jplag.java.babylon.tokenizer.BabylonTokenizer;
-import de.jplag.semantics.CodeSemantics;
 
 import com.google.auto.service.AutoService;
-import jdk.incubator.code.Body;
+import com.sun.source.tree.ClassTree;
+import com.sun.source.tree.CompilationUnitTree;
+import com.sun.source.util.TreeScanner;
+import com.sun.tools.javac.tree.JCTree;
+import jdk.incubator.code.CodeType;
 import jdk.incubator.code.Op;
 import jdk.incubator.code.dialect.java.JavaType;
 
@@ -16,7 +23,7 @@ import jdk.incubator.code.dialect.java.JavaType;
  * {@link BabylonTokenizer} implementation that fully outputs all {@link Op}s as tokens without further interpretation.
  * Includes result types.
  */
-public class FullTypedBabylonTokenizer extends AbstractBabylonTokenizer {
+public class FullTypedBabylonTokenizer extends FullBabylonTokenizer {
     /**
      * Identifier of this tokenizer.
      */
@@ -32,12 +39,6 @@ public class FullTypedBabylonTokenizer extends AbstractBabylonTokenizer {
     }
 
     @Override
-    public void handle(Op op) {
-        addToken(getTokenType(op), op.location(), CodeSemantics.createControl());
-        for (Body body : op.bodies())
-            handle(body);
-    }
-
     protected TokenType getTokenType(Op op) {
         StringBuilder sb = new StringBuilder();
         if (op.parent() != null) {
@@ -54,16 +55,12 @@ public class FullTypedBabylonTokenizer extends AbstractBabylonTokenizer {
      * {@link BabylonTokenizer.Provider} for {@link FullTypedBabylonTokenizer}.
      */
     @AutoService(BabylonTokenizer.Provider.class)
-    public static class Provider extends AbstractBabylonTokenizer.Provider {
+    public static class Provider extends FullBabylonTokenizer.Provider {
         /**
          * Create a new instance.
          */
         public Provider() {
-            this(IDENTIFIER);
-        }
-
-        protected Provider(String identifier) {
-            super(identifier);
+            super(IDENTIFIER);
         }
 
         @Override

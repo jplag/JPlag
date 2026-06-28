@@ -4,6 +4,7 @@ import java.io.File;
 
 import de.jplag.java.babylon.ParserBabylon;
 
+import com.sun.source.tree.CompilationUnitTree;
 import jdk.incubator.code.Block;
 import jdk.incubator.code.Body;
 import jdk.incubator.code.Op;
@@ -64,7 +65,8 @@ public interface BabylonTokenizer {
      * Rather than a bunch of method parameters, this encapsulates all relevant objects in a single wrapper.
      * @param parser the parser to bind to
      * @param file the file to bind to
+     * @param codebaseAsts the ASTs comprising the codebase which is to be tokenized
      */
-    record TokenizerConstructionContext(ParserBabylon parser, File file) {
+    record TokenizerConstructionContext(ParserBabylon parser, File file, Iterable<? extends CompilationUnitTree> codebaseAsts) {
     }
 }
