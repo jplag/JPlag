@@ -1,10 +1,10 @@
-package de.jplag.highlightextraction.strategy;
+package de.jplag.frequency.strategy;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import de.jplag.TokenType;
-import de.jplag.highlightextraction.WindowIterator;
+import de.jplag.frequency.WindowIterator;
 
 /**
  * Strategy that uses a fixed window size to create submatches of a match sequence in a comparison and calculates their

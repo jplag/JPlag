@@ -3,7 +3,7 @@ package de.jplag.reporting.serialization;
 import java.io.File;
 
 import de.jplag.Language;
-import de.jplag.highlightextraction.WeightingFunction;
+import de.jplag.frequency.WeightingFunction;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;

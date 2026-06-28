@@ -1,11 +1,11 @@
-package de.jplag.highlightextraction.strategy;
+package de.jplag.frequency.strategy;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
 import de.jplag.TokenType;
-import de.jplag.highlightextraction.SublistIterator;
+import de.jplag.frequency.SublistIterator;
 
 /**
  * Strategy that counts all occurrences of complete matches and contiguous submatches from the comparisons, if the

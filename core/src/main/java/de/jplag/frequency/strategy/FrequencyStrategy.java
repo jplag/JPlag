@@ -1,4 +1,4 @@
-package de.jplag.highlightextraction.strategy;
+package de.jplag.frequency.strategy;
 
 import java.util.HashMap;
 import java.util.List;
@@ -8,7 +8,7 @@ import java.util.Objects;
 import de.jplag.JPlagComparison;
 import de.jplag.Match;
 import de.jplag.TokenType;
-import de.jplag.highlightextraction.TokenSequenceUtil;
+import de.jplag.frequency.TokenSequenceUtil;
 
 /**
  * Interface for different frequency calculation strategies. Implementations define how submatches are considered in the

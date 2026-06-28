@@ -1,4 +1,4 @@
-package de.jplag.highlightextraction.strategy;
+package de.jplag.frequency.strategy;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 

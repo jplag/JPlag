@@ -1,4 +1,4 @@
-package de.jplag.highlightextraction;
+package de.jplag.frequency;
 
 /**
  * Strategy for calculating the weight of a match.

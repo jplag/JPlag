@@ -1,4 +1,4 @@
-package de.jplag.highlightextraction;
+package de.jplag.frequency;
 
 import java.util.HashMap;
 import java.util.List;
@@ -7,7 +7,7 @@ import java.util.Map;
 import de.jplag.JPlagComparison;
 import de.jplag.Match;
 import de.jplag.TokenType;
-import de.jplag.highlightextraction.strategy.FrequencyStrategy;
+import de.jplag.frequency.strategy.FrequencyStrategy;
 
 /**
  * Calculates weights of the matches and writes them into a map.

@@ -1,4 +1,4 @@
-package de.jplag.highlightextraction.frequencysimilarity;
+package de.jplag.frequency.frequencysimilarity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -21,12 +21,12 @@ import de.jplag.TestBase;
 import de.jplag.TokenType;
 import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
-import de.jplag.highlightextraction.MatchFrequencyWeighting;
-import de.jplag.highlightextraction.TokenSequenceUtil;
-import de.jplag.highlightextraction.weighting.LinearWeighting;
-import de.jplag.highlightextraction.weighting.ProportionalWeighting;
-import de.jplag.highlightextraction.weighting.QuadraticWeighting;
-import de.jplag.highlightextraction.weighting.SigmoidWeighting;
+import de.jplag.frequency.MatchFrequencyWeighting;
+import de.jplag.frequency.TokenSequenceUtil;
+import de.jplag.frequency.weighting.LinearWeighting;
+import de.jplag.frequency.weighting.ProportionalWeighting;
+import de.jplag.frequency.weighting.QuadraticWeighting;
+import de.jplag.frequency.weighting.SigmoidWeighting;
 import de.jplag.options.JPlagOptions;
 
 /**

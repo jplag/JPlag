@@ -1,11 +1,11 @@
 package de.jplag.cli.options;
 
-import de.jplag.highlightextraction.WeightingFunction;
-import de.jplag.highlightextraction.strategy.FrequencyStrategy;
-import de.jplag.highlightextraction.weighting.LinearWeighting;
-import de.jplag.highlightextraction.weighting.ProportionalWeighting;
-import de.jplag.highlightextraction.weighting.QuadraticWeighting;
-import de.jplag.highlightextraction.weighting.SigmoidWeighting;
+import de.jplag.frequency.WeightingFunction;
+import de.jplag.frequency.strategy.FrequencyStrategy;
+import de.jplag.frequency.weighting.LinearWeighting;
+import de.jplag.frequency.weighting.ProportionalWeighting;
+import de.jplag.frequency.weighting.QuadraticWeighting;
+import de.jplag.frequency.weighting.SigmoidWeighting;
 
 /**
  * Enum selector for {@link FrequencyStrategy} implementations for the picocli CLI.

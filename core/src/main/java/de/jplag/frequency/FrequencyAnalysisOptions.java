@@ -1,8 +1,8 @@
-package de.jplag.highlightextraction;
+package de.jplag.frequency;
 
-import de.jplag.highlightextraction.strategy.CompleteMatchesStrategy;
-import de.jplag.highlightextraction.strategy.FrequencyStrategy;
-import de.jplag.highlightextraction.weighting.SigmoidWeighting;
+import de.jplag.frequency.strategy.CompleteMatchesStrategy;
+import de.jplag.frequency.strategy.FrequencyStrategy;
+import de.jplag.frequency.weighting.SigmoidWeighting;
 
 import io.soabase.recordbuilder.core.RecordBuilder;
 

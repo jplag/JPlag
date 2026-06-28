@@ -1,6 +1,6 @@
-package de.jplag.highlightextraction.weighting;
+package de.jplag.frequency.weighting;
 
-import de.jplag.highlightextraction.WeightingFunction;
+import de.jplag.frequency.WeightingFunction;
 
 /**
  * Frequency weighting strategy which emphasizes the rarest matches with limited influence on more frequent matches.

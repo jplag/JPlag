@@ -1,4 +1,4 @@
-package de.jplag.highlightextraction;
+package de.jplag.frequency;
 
 import java.util.List;
 import java.util.Map;
@@ -7,7 +7,7 @@ import java.util.OptionalDouble;
 import de.jplag.JPlagComparison;
 import de.jplag.Match;
 import de.jplag.TokenType;
-import de.jplag.highlightextraction.strategy.FrequencyStrategy;
+import de.jplag.frequency.strategy.FrequencyStrategy;
 
 /**
  * Calculates the frequency dependent similarity for the comparisons according to the frequency similarity weighting
