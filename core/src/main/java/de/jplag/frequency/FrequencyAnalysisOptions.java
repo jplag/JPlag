@@ -10,12 +10,13 @@ import io.soabase.recordbuilder.core.RecordBuilder;
  * Options for Frequency Analysis.
  * @param enabled if false, highlight extraction is skipped.
  * @param analysisStrategy the strategy used to determine the frequency of a Match
+ * @param frequencyStrategyMinValue the minimum considered size of subsequences from matches in the frequency strategy
  * @param weightingFunction function used to determine the weight from the match rarity
  * @param weightingFactor scales the impact of the weighting
  */
 @RecordBuilder
-public record FrequencyAnalysisOptions(boolean enabled, FrequencyStrategy analysisStrategy, WeightingFunction weightingFunction,
-        double weightingFactor) {
+public record FrequencyAnalysisOptions(boolean enabled, FrequencyStrategy analysisStrategy, int frequencyStrategyMinValue,
+        WeightingFunction weightingFunction, double weightingFactor) {
 
     /** Default value for the highlighting enabling. */
     public static final boolean DEFAULT_ENABLED = false;
@@ -32,7 +33,7 @@ public record FrequencyAnalysisOptions(boolean enabled, FrequencyStrategy analys
      * Default options for frequency Analysis.
      */
     public FrequencyAnalysisOptions() {
-        this(DEFAULT_ENABLED, DEFAULT_ANALYSIS_STRATEGY, DEFAULT_WEIGHTING_FUNCTION, DEFAULT_WEIGHTING_FACTOR);
+        this(DEFAULT_ENABLED, DEFAULT_ANALYSIS_STRATEGY, DEFAULT_MINIMUM_SUBSEQUENCE_LENGTH, DEFAULT_WEIGHTING_FUNCTION, DEFAULT_WEIGHTING_FACTOR);
     }
 
     /**
@@ -42,7 +43,7 @@ public record FrequencyAnalysisOptions(boolean enabled, FrequencyStrategy analys
      * @return the new frequency analysis options.
      */
     public FrequencyAnalysisOptions withEnabled(boolean enabled) {
-        return new FrequencyAnalysisOptions(enabled, analysisStrategy, weightingFunction, weightingFactor);
+        return new FrequencyAnalysisOptions(enabled, analysisStrategy, frequencyStrategyMinValue, weightingFunction, weightingFactor);
     }
 
     /**
@@ -52,7 +53,11 @@ public record FrequencyAnalysisOptions(boolean enabled, FrequencyStrategy analys
      * @return the new frequency analysis options.
      */
     public FrequencyAnalysisOptions withAnalysisStrategy(FrequencyStrategy strategy) {
-        return new FrequencyAnalysisOptions(enabled, strategy, weightingFunction, weightingFactor);
+        return new FrequencyAnalysisOptions(enabled, strategy, frequencyStrategyMinValue, weightingFunction, weightingFactor);
+    }
+
+    public FrequencyAnalysisOptions withFrequencyStrategyMinValue(int frequencyStrategyMinValue) {
+        return new FrequencyAnalysisOptions(enabled, analysisStrategy, frequencyStrategyMinValue, weightingFunction, weightingFactor);
     }
 
     /**
@@ -62,7 +67,7 @@ public record FrequencyAnalysisOptions(boolean enabled, FrequencyStrategy analys
      * @return the new frequency analysis options.
      */
     public FrequencyAnalysisOptions withWeightingFunction(WeightingFunction weighting) {
-        return new FrequencyAnalysisOptions(enabled, analysisStrategy, weighting, weightingFactor);
+        return new FrequencyAnalysisOptions(enabled, analysisStrategy, frequencyStrategyMinValue, weighting, weightingFactor);
     }
 
     /**
@@ -72,6 +77,6 @@ public record FrequencyAnalysisOptions(boolean enabled, FrequencyStrategy analys
      * @return the new frequency analysis options.
      */
     public FrequencyAnalysisOptions withWeightingFactor(double weightingFactor) {
-        return new FrequencyAnalysisOptions(enabled, analysisStrategy, weightingFunction, weightingFactor);
+        return new FrequencyAnalysisOptions(enabled, analysisStrategy, frequencyStrategyMinValue, weightingFunction, weightingFactor);
     }
 }
