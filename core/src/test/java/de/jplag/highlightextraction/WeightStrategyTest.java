@@ -1,10 +1,8 @@
 package de.jplag.highlightextraction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
-import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +25,7 @@ import de.jplag.highlightextraction.strategy.WindowOfMatchesStrategy;
 import de.jplag.options.JPlagOptions;
 
 /**
- * Checks if the frequency value is calculated and written into the matches correctly.
+ * Checks if the frequency value is calculated correctly by each FrequencyStrategy.
  */
 class WeightStrategyTest extends TestBase {
     /**
@@ -39,26 +37,15 @@ class WeightStrategyTest extends TestBase {
     private JPlagComparison comparison;
 
     /**
-     * Creates Test data by running JPlag Methods to get JPlag result for building test data.
-     * @param options JPlag options used in this test
-     * @return JPlag result for test input
-     * @throws ExitException submission set builder can throw this exception
-     */
-    private JPlagResult getJPlagResult(JPlagOptions options) throws ExitException {
-        SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
-        SubmissionSet submissionSet = builder.buildSubmissionSet();
-        LongestCommonSubsequenceSearch subsequenceSearch = new LongestCommonSubsequenceSearch(options);
-        return subsequenceSearch.compareSubmissions(submissionSet);
-    }
-
-    /**
-     * Creates Test data to validate different match-frequency combinations.
-     * @throws ExitException if getJPlagResult fails to create the comparison result.
+     * Creates test data by running JPlag to produce a real comparison result.
+     * @throws ExitException if building the submission set fails.
      */
     @BeforeEach
     void prepareMatchResult() throws ExitException {
         JPlagOptions options = getDefaultOptions("PartialPlagiarism");
-        JPlagResult result = getJPlagResult(options);
+        SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
+        SubmissionSet submissionSet = builder.buildSubmissionSet();
+        JPlagResult result = new LongestCommonSubsequenceSearch(options).compareSubmissions(submissionSet);
         comparison = result.getAllComparisons().getFirst();
         match = comparison.matches().getFirst();
         submatch = new Match(match.startOfFirst(), match.startOfSecond(), match.lengthOfFirst() - 1, match.lengthOfSecond() - 1);
@@ -71,11 +58,13 @@ class WeightStrategyTest extends TestBase {
     @DisplayName("Match weighted correct completeMatchesStrategy")
     void testWeightMatch_setsCorrectWeight_completeMatchesStrategy() {
         FrequencyStrategy strategy = new CompleteMatchesStrategy();
-        Map<List<TokenType>, Double> matchCounts = setupMatchCounts(strategy);
-        assertWeight(matchCounts, match, 1.0);
+        strategy.processMatch(comparison, match);
+        strategy.processMatch(comparison, submatch);
+        assertMatchCount(strategy, match, 1.0);
 
-        matchCounts = setupMatchCounts(strategy);
-        assertWeight(matchCounts, match, 2.0);
+        strategy.processMatch(comparison, match);
+        strategy.processMatch(comparison, submatch);
+        assertMatchCount(strategy, match, 2.0);
     }
 
     /**
@@ -84,9 +73,11 @@ class WeightStrategyTest extends TestBase {
     @Test
     @DisplayName("Match weighted correct containedMatchesStrategy")
     void testWeightMatch_setsCorrectWeight_containedMatchesStrategy() {
-        Map<List<TokenType>, Double> matchWeights = setupMatchCounts(new ContainedMatchesStrategy(MIN_LENGTH));
-        assertWeight(matchWeights, match, 1.0);
-        assertWeight(matchWeights, submatch, 1.0);
+        FrequencyStrategy strategy = new ContainedMatchesStrategy(MIN_LENGTH);
+        strategy.processMatch(comparison, match);
+        strategy.processMatch(comparison, submatch);
+        assertMatchCount(strategy, match, 1.0);
+        assertMatchCount(strategy, submatch, 1.0);
     }
 
     /**
@@ -95,9 +86,11 @@ class WeightStrategyTest extends TestBase {
     @Test
     @DisplayName("Match weighted correct subMatchStrategy")
     void testWeightMatch_setsCorrectWeight_subMatchStrategy() {
-        Map<List<TokenType>, Double> matchCounts = setupMatchCounts(new SubmatchesStrategy(MIN_LENGTH));
-        assertWeight(matchCounts, match, 2.0);
-        assertWeight(matchCounts, submatch, 2.0);
+        FrequencyStrategy strategy = new SubmatchesStrategy(MIN_LENGTH);
+        strategy.processMatch(comparison, match);
+        strategy.processMatch(comparison, submatch);
+        assertMatchCount(strategy, match, 2.0);
+        assertMatchCount(strategy, submatch, 2.0);
     }
 
     /**
@@ -106,24 +99,15 @@ class WeightStrategyTest extends TestBase {
     @Test
     @DisplayName("Match weighted correct windowOfMatchesStrategy")
     void testWeightMatch_setsCorrectWeight_windowOfMatchesStrategy() {
-        Map<List<TokenType>, Double> matchCounts = setupMatchCounts(new WindowOfMatchesStrategy(MIN_LENGTH));
-        assertWeight(matchCounts, match, 2.0);
-        assertWeight(matchCounts, submatch, 2.0);
-    }
-
-    private Map<List<TokenType>, Double> setupMatchCounts(FrequencyStrategy strategy) {
+        FrequencyStrategy strategy = new WindowOfMatchesStrategy(MIN_LENGTH);
         strategy.processMatch(comparison, match);
         strategy.processMatch(comparison, submatch);
-        MatchWeightCalculator weighting = new MatchWeightCalculator(strategy);
-
-        JPlagComparison comparison1 = new JPlagComparison(comparison.firstSubmission(), comparison.secondSubmission(), List.of(match, submatch),
-                List.of());
-        return weighting.weightAllMatches(comparison1);
+        assertMatchCount(strategy, match, 2.0);
+        assertMatchCount(strategy, submatch, 2.0);
     }
 
-    private void assertWeight(Map<List<TokenType>, Double> matchWeights, Match match, double expected) {
+    private void assertMatchCount(FrequencyStrategy strategy, Match match, double expected) {
         List<TokenType> matchTokens = TokenSequenceUtil.tokenTypesFor(comparison, match);
-        assertTrue(matchWeights.containsKey(matchTokens));
-        assertEquals(expected, matchWeights.get(matchTokens), 0.01);
+        assertEquals(expected, strategy.calculateMatchCount(matchTokens), 0.01);
     }
 }

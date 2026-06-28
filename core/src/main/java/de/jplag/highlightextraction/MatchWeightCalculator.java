@@ -36,15 +36,6 @@ class MatchWeightCalculator {
         return matchWeights;
     }
 
-    /**
-     * Calculates the weights for all matches of the comparison.
-     * @param comparison is the comparison
-     * @return a map of the matches to their weights
-     */
-    Map<List<TokenType>, Double> weightAllMatches(JPlagComparison comparison) {
-        return weightAllMatches(comparison, new HashMap<>());
-    }
-
     private Map<List<TokenType>, Double> weightAllMatches(JPlagComparison comparison, Map<List<TokenType>, Double> matchWeights) {
         for (Match match : comparison.matches()) {
             List<TokenType> matchTokens = TokenSequenceUtil.tokenTypesFor(comparison, match);
