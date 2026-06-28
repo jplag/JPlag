@@ -116,4 +116,11 @@ class BabylonOptions extends LanguageOptions {
         }
         return this.tokenizer;
     }
+
+    public void clearCaches() {
+        synchronized (this) {
+            pipelineSteps = null;
+            tokenizer = null;
+        }
+    }
 }
