@@ -16,7 +16,7 @@ import io.soabase.recordbuilder.core.RecordBuilder;
  */
 @RecordBuilder
 public record FrequencyAnalysisOptions(boolean enabled, FrequencyStrategy analysisStrategy, int frequencyStrategyMinValue,
-        MatchWeightingFunction weightingFunction, double weightingFactor) {
+        MatchWeightingFunction weightingFunction, double weightingFactor) implements FrequencyAnalysisOptionsBuilder.With {
 
     /** Default value for the analysis being enabled. */
     public static final boolean DEFAULT_ENABLED = false;
@@ -34,55 +34,5 @@ public record FrequencyAnalysisOptions(boolean enabled, FrequencyStrategy analys
      */
     public FrequencyAnalysisOptions() {
         this(DEFAULT_ENABLED, DEFAULT_ANALYSIS_STRATEGY, DEFAULT_MINIMUM_SUBSEQUENCE_LENGTH, DEFAULT_WEIGHTING_FUNCTION, DEFAULT_WEIGHTING_FACTOR);
-    }
-
-    /**
-     * Creates a copy of this {@link FrequencyAnalysisOptions} using the given value for
-     * {@link FrequencyAnalysisOptions#enabled}.
-     * @param enabled the new value for enabled
-     * @return the new frequency analysis options.
-     */
-    public FrequencyAnalysisOptions withEnabled(boolean enabled) {
-        return new FrequencyAnalysisOptions(enabled, analysisStrategy, frequencyStrategyMinValue, weightingFunction, weightingFactor);
-    }
-
-    /**
-     * Creates a copy of this {@link FrequencyAnalysisOptions} using the given value for
-     * {@link FrequencyAnalysisOptions#analysisStrategy}.
-     * @param strategy the new value for analysisStrategy
-     * @return the new frequency analysis options.
-     */
-    public FrequencyAnalysisOptions withAnalysisStrategy(FrequencyStrategy strategy) {
-        return new FrequencyAnalysisOptions(enabled, strategy, frequencyStrategyMinValue, weightingFunction, weightingFactor);
-    }
-
-    /**
-     * Creates a copy of this {@link FrequencyAnalysisOptions} using the given value for
-     * {@link FrequencyAnalysisOptions#frequencyStrategyMinValue}.
-     * @param frequencyStrategyMinValue the new value for frequencyStrategyMinValue
-     * @return the new frequency analysis options.
-     */
-    public FrequencyAnalysisOptions withFrequencyStrategyMinValue(int frequencyStrategyMinValue) {
-        return new FrequencyAnalysisOptions(enabled, analysisStrategy, frequencyStrategyMinValue, weightingFunction, weightingFactor);
-    }
-
-    /**
-     * Creates a copy of this {@link FrequencyAnalysisOptions} using the given value for
-     * {@link FrequencyAnalysisOptions#weightingFunction}.
-     * @param weighting the new value for weightingFunction
-     * @return the new frequency analysis options.
-     */
-    public FrequencyAnalysisOptions withWeightingFunction(MatchWeightingFunction weighting) {
-        return new FrequencyAnalysisOptions(enabled, analysisStrategy, frequencyStrategyMinValue, weighting, weightingFactor);
-    }
-
-    /**
-     * Creates a copy of this {@link FrequencyAnalysisOptions} using the given value for
-     * {@link FrequencyAnalysisOptions#weightingFactor}.
-     * @param weightingFactor the new value for weightingFactor
-     * @return the new frequency analysis options.
-     */
-    public FrequencyAnalysisOptions withWeightingFactor(double weightingFactor) {
-        return new FrequencyAnalysisOptions(enabled, analysisStrategy, frequencyStrategyMinValue, weightingFunction, weightingFactor);
     }
 }
