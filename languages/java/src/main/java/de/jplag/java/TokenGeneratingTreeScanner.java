@@ -63,10 +63,10 @@ public class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     private final static String ANONYMOUS_VARIABLE_NAME = "";
     private static final String ENUM_MARKER = "/*enum*/";
 
-    private final File file;
-    private final Parser parser;
-    private final LineMap map;
-    private final SourcePositions positions;
+    protected final File file;
+    protected final Parser parser;
+    protected final LineMap map;
+    protected final SourcePositions positions;
     protected final CompilationUnitTree ast;
 
     protected final VariableRegistry variableRegistry;
