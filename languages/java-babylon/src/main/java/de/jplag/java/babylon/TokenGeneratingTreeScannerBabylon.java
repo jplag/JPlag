@@ -51,6 +51,15 @@ public class TokenGeneratingTreeScannerBabylon extends TokenGeneratingTreeScanne
 
         variableRegistry.addAllNonLocalVariablesAsReads();
         variableRegistry.exitLocalScope();
-        return null;
+
+        // unfortunately, Babylon does not seem to handle inner classes (for now), so this fallback is needed.
+        return new InnerClassScanner().visitMethod(node, unused);
+    }
+
+    private class InnerClassScanner extends TreeScanner<Void, Void> {
+        @Override
+        public Void visitClass(ClassTree node, Void unused) {
+            return TokenGeneratingTreeScannerBabylon.this.visitClass(node, unused);
+        }
     }
 }
