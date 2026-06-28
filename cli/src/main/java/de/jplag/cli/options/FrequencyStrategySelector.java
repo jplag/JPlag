@@ -3,7 +3,7 @@ package de.jplag.cli.options;
 import de.jplag.frequency.strategy.CompleteMatchesStrategy;
 import de.jplag.frequency.strategy.ContainedMatchesStrategy;
 import de.jplag.frequency.strategy.FrequencyStrategy;
-import de.jplag.frequency.strategy.SubmatchesStrategy;
+import de.jplag.frequency.strategy.SubMatchesStrategy;
 import de.jplag.frequency.strategy.WindowOfMatchesStrategy;
 
 /**
@@ -28,7 +28,7 @@ public enum FrequencyStrategySelector {
     SUBMATCHES {
         @Override
         public FrequencyStrategy create(int minimumLength) {
-            return new SubmatchesStrategy(minimumLength);
+            return new SubMatchesStrategy(minimumLength);
         }
     },
 

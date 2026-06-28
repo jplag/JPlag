@@ -202,7 +202,7 @@ public class CliOptions implements Runnable {
         /** Weighting function to combine with frequency Determination strategy. */
         @Option(names = {
                 "--weighting"}, description = "The function for frequency-based match weighting, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT-VALUE}).")
-        public WeightingFunctionSelector weightingFunction = WeightingFunctionSelector.DEFAULT_WEIGHTING_FUNCTION;
+        public MatchWeightingFunctionSelector weightingFunction = MatchWeightingFunctionSelector.DEFAULT_WEIGHTING_FUNCTION;
 
         /** How strong the weighting maximal influences a match length with up to double the length. */
         @Option(names = {

@@ -16,7 +16,7 @@ import io.soabase.recordbuilder.core.RecordBuilder;
  */
 @RecordBuilder
 public record FrequencyAnalysisOptions(boolean enabled, FrequencyStrategy analysisStrategy, int frequencyStrategyMinValue,
-        WeightingFunction weightingFunction, double weightingFactor) {
+        MatchWeightingFunction weightingFunction, double weightingFactor) {
 
     /** Default value for the highlighting enabling. */
     public static final boolean DEFAULT_ENABLED = false;
@@ -25,7 +25,7 @@ public record FrequencyAnalysisOptions(boolean enabled, FrequencyStrategy analys
     /** Default minimum subsequence length. */
     public static final int DEFAULT_MINIMUM_SUBSEQUENCE_LENGTH = 1;
     /** Default weighting function. */
-    public static final WeightingFunction DEFAULT_WEIGHTING_FUNCTION = new SigmoidWeighting();
+    public static final MatchWeightingFunction DEFAULT_WEIGHTING_FUNCTION = new SigmoidWeighting();
     /** Default minimum match weight factor. */
     public static final double DEFAULT_WEIGHTING_FACTOR = 0.25;
 
@@ -66,7 +66,7 @@ public record FrequencyAnalysisOptions(boolean enabled, FrequencyStrategy analys
      * @param weighting the new value for weightingFunction
      * @return the new frequency analysis options.
      */
-    public FrequencyAnalysisOptions withWeightingFunction(WeightingFunction weighting) {
+    public FrequencyAnalysisOptions withMatchWeightingFunction(MatchWeightingFunction weighting) {
         return new FrequencyAnalysisOptions(enabled, analysisStrategy, frequencyStrategyMinValue, weighting, weightingFactor);
     }
 

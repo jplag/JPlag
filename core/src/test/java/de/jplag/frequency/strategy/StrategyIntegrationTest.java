@@ -88,7 +88,7 @@ class StrategyIntegrationTest extends TestBase {
     @Test
     @DisplayName("Test match frequency with subMatches strategy")
     void testFrequencyAnalysisStrategiesSubMatches() {
-        FrequencyStrategy strategy = new SubmatchesStrategy(MIN_LENGTH);
+        FrequencyStrategy strategy = new SubMatchesStrategy(MIN_LENGTH);
         List<JPlagComparison> comparisons = result.getAllComparisons();
         strategy.processMatches(comparisons);
         Map<List<TokenType>, Integer> tokenFrequencyMap = strategy.getResult();

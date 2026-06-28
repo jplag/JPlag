@@ -11,9 +11,9 @@ import de.jplag.TokenType;
 /**
  * Utility class for extracting sequences of token types (token sequences for brevity) out of submissions.
  */
-public class TokenSequenceUtil {
+public class FrequencyUtil {
 
-    private TokenSequenceUtil() {
+    private FrequencyUtil() {
         // Utility class, not instantiable.
     }
 

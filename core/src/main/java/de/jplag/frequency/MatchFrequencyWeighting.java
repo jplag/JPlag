@@ -21,7 +21,7 @@ public class MatchFrequencyWeighting {
     /**
      * Chosen weighting function.
      */
-    private final WeightingFunction strategy;
+    private final MatchWeightingFunction strategy;
     private final Map<List<TokenType>, Double> matchFrequency;
     private static final double DEFAULT_MAXIMUM_FREQUENCY = 1.0;
     private static final double DEFAULT_MINIMUM_FREQUENCY = 0.0;
@@ -32,7 +32,7 @@ public class MatchFrequencyWeighting {
      * @param strategy chosen weighting function
      * @param matchFrequency the matchFrequency containing the map that maps a match to its frequency
      */
-    public MatchFrequencyWeighting(List<JPlagComparison> comparisons, WeightingFunction strategy, Map<List<TokenType>, Double> matchFrequency) {
+    public MatchFrequencyWeighting(List<JPlagComparison> comparisons, MatchWeightingFunction strategy, Map<List<TokenType>, Double> matchFrequency) {
         this.comparisons = comparisons;
         this.strategy = strategy;
         this.matchFrequency = matchFrequency;
@@ -50,13 +50,13 @@ public class MatchFrequencyWeighting {
     }
 
     private double getMatchCount(JPlagComparison comparison, Match match) {
-        List<TokenType> matchTokenTypes = TokenSequenceUtil.tokenTypesFor(comparison, match);
+        List<TokenType> matchTokenTypes = FrequencyUtil.tokenTypesFor(comparison, match);
         return matchFrequency.getOrDefault(matchTokenTypes, DEFAULT_MINIMUM_FREQUENCY);
     }
 
     /**
-     * Determines the similarity score for a comparison using the {@link FrequencyStrategy}, {@link WeightingFunction} and
-     * weighting factor.
+     * Determines the similarity score for a comparison using the {@link FrequencyStrategy}, {@link MatchWeightingFunction}
+     * and weighting factor.
      * @param comparison considered comparison to calculate the similarity score for
      * @param weightingFactor controls the influence of the weighting
      * @return the similarity score
@@ -88,7 +88,7 @@ public class MatchFrequencyWeighting {
      * @return the similarity score
      */
     public double getWeightedMatchLength(JPlagComparison comparison, double weightingFactor, boolean firstSubmission,
-            WeightingFunction weightingFunction) {
+            MatchWeightingFunction weightingFunction) {
 
         double finalMaximumFoundFrequency = getMaxFrequency();
         double weightedTotalMatchLength = 0;
@@ -126,7 +126,8 @@ public class MatchFrequencyWeighting {
      * @param maxFrequency highest frequency that occurred across all matches in all comparisons
      * @return the weight resulting from the frequency analysis for the given frequency
      */
-    private static double getWeightFactor(double matchFrequency, double weightingFactor, WeightingFunction weightingFunction, double maxFrequency) {
+    private static double getWeightFactor(double matchFrequency, double weightingFactor, MatchWeightingFunction weightingFunction,
+            double maxFrequency) {
         if (Double.isNaN(matchFrequency) || matchFrequency < DEFAULT_MINIMUM_FREQUENCY) {
             matchFrequency = DEFAULT_MINIMUM_FREQUENCY;
         }

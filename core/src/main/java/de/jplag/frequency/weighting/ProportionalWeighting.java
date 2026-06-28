@@ -1,11 +1,11 @@
 package de.jplag.frequency.weighting;
 
-import de.jplag.frequency.WeightingFunction;
+import de.jplag.frequency.MatchWeightingFunction;
 
 /**
  * Frequency weighting strategy which emphasizes or de-emphasizes matches proportionally in terms of their rarity.
  */
-public class ProportionalWeighting implements WeightingFunction {
+public class ProportionalWeighting implements MatchWeightingFunction {
 
     private static final int MINIMUM_WEIGHT = 0;
     private static final int MAXIMUM_WEIGHT = 2;

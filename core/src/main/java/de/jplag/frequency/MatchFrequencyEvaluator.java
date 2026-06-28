@@ -12,14 +12,14 @@ import de.jplag.frequency.strategy.FrequencyStrategy;
 /**
  * Calculates weights of the matches and writes them into a map.
  */
-class MatchWeightCalculator {
+class MatchFrequencyEvaluator {
     private final FrequencyStrategy strategy;
 
     /**
      * Constructor defining the used weighting strategy.
      * @param strategy is the strategy used to determine the frequency of a match
      */
-    public MatchWeightCalculator(FrequencyStrategy strategy) {
+    public MatchFrequencyEvaluator(FrequencyStrategy strategy) {
         this.strategy = strategy;
     }
 
@@ -38,7 +38,7 @@ class MatchWeightCalculator {
 
     private Map<List<TokenType>, Double> weightAllMatches(JPlagComparison comparison, Map<List<TokenType>, Double> matchWeights) {
         for (Match match : comparison.matches()) {
-            List<TokenType> matchTokens = TokenSequenceUtil.tokenTypesFor(comparison, match);
+            List<TokenType> matchTokens = FrequencyUtil.tokenTypesFor(comparison, match);
             matchWeights.computeIfAbsent(matchTokens, strategy::calculateMatchCount);
         }
 

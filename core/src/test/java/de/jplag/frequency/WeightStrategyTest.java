@@ -22,7 +22,7 @@ import de.jplag.exceptions.ExitException;
 import de.jplag.frequency.strategy.CompleteMatchesStrategy;
 import de.jplag.frequency.strategy.ContainedMatchesStrategy;
 import de.jplag.frequency.strategy.FrequencyStrategy;
-import de.jplag.frequency.strategy.SubmatchesStrategy;
+import de.jplag.frequency.strategy.SubMatchesStrategy;
 import de.jplag.frequency.strategy.WindowOfMatchesStrategy;
 import de.jplag.options.JPlagOptions;
 
@@ -51,7 +51,7 @@ class WeightStrategyTest extends TestBase {
     static Stream<Arguments> strategies() {
         return Stream.of(Arguments.of(new CompleteMatchesStrategy(), 1.0, 1.0), //
                 Arguments.of(new ContainedMatchesStrategy(MIN_LENGTH), 1.0, 1.0), //
-                Arguments.of(new SubmatchesStrategy(MIN_LENGTH), 2.0, 2.0), //
+                Arguments.of(new SubMatchesStrategy(MIN_LENGTH), 2.0, 2.0), //
                 Arguments.of(new WindowOfMatchesStrategy(MIN_LENGTH), 2.0, 2.0));
     }
 
@@ -65,7 +65,7 @@ class WeightStrategyTest extends TestBase {
     }
 
     private void assertMatchCount(FrequencyStrategy strategy, Match match, double expected) {
-        List<TokenType> matchTokens = TokenSequenceUtil.tokenTypesFor(comparison, match);
+        List<TokenType> matchTokens = FrequencyUtil.tokenTypesFor(comparison, match);
         assertEquals(expected, strategy.calculateMatchCount(matchTokens), 0.01);
     }
 }

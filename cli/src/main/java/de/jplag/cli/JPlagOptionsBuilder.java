@@ -110,6 +110,6 @@ public class JPlagOptionsBuilder {
         return new FrequencyAnalysisOptions().withEnabled(frequencyOptions.enabled)
                 .withAnalysisStrategy(frequencyOptions.frequencyStrategy.create(frequencyOptions.minimumSubsequenceLength))
                 .withFrequencyStrategyMinValue(frequencyOptions.minimumSubsequenceLength)
-                .withWeightingFunction(frequencyOptions.weightingFunction.create()).withWeightingFactor(frequencyOptions.weightingFactor);
+                .withMatchWeightingFunction(frequencyOptions.weightingFunction.create()).withWeightingFactor(frequencyOptions.weightingFactor);
     }
 }

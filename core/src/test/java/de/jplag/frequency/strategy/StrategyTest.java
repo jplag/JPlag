@@ -25,7 +25,7 @@ import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
-import de.jplag.frequency.TokenSequenceUtil;
+import de.jplag.frequency.FrequencyUtil;
 import de.jplag.options.JPlagOptions;
 
 /**
@@ -186,7 +186,7 @@ class StrategyTest extends TestBase {
      * @param tokenFrequencyMap Map of token sequence hashes for frequency count
      */
     private void assertTokenFrequencyAndContainsMatch(Match match, int expectedFrequency, Map<List<TokenType>, Integer> tokenFrequencyMap) {
-        List<TokenType> matchTokenTypes = TokenSequenceUtil.tokenTypesFor(testComparison, match);
+        List<TokenType> matchTokenTypes = FrequencyUtil.tokenTypesFor(testComparison, match);
         Integer matchFrequency = tokenFrequencyMap.get(matchTokenTypes);
         if (matchFrequency == null) {
             throw new AssertionError("Match key [" + matchTokenTypes + "] not found in tokenFrequencyMap.");
@@ -204,7 +204,7 @@ class StrategyTest extends TestBase {
         int windowSize = 5;
         FrequencyStrategy strategy = new WindowOfMatchesStrategy(windowSize);
 
-        List<TokenType> matchTokenTypes = TokenSequenceUtil.tokenTypesFor(testComparison, matchShort);
+        List<TokenType> matchTokenTypes = FrequencyUtil.tokenTypesFor(testComparison, matchShort);
         strategy.processMatchTokenTypes(matchTokenTypes);
         Map<List<TokenType>, Integer> windowCount = strategy.getResult();
 
@@ -241,10 +241,10 @@ class StrategyTest extends TestBase {
      * Tests if the Submatch strategy adds the expected submatches and their frequencies to the Hashmap.
      */
     @Test
-    void testSubmatchesStrategy() {
+    void testSubMatchesStrategy() {
         int wantedMatchLength = 5;
         int minSubSequenceSize = 3;
-        SubmatchesStrategy strategy = new SubmatchesStrategy(minSubSequenceSize);
+        SubMatchesStrategy strategy = new SubMatchesStrategy(minSubSequenceSize);
 
         List<Token> matchToken = testSubmission.getTokenList().subList(matchShort.startOfFirst(), matchShort.startOfFirst() + wantedMatchLength);
         List<TokenType> matchTokenTypes = matchToken.stream().map(Token::getType).toList();
@@ -287,7 +287,7 @@ class StrategyTest extends TestBase {
         Map<List<TokenType>, Integer> frequencyCount = new HashMap<>();
         for (JPlagComparison comparison : TEST_COMPARISONS) {
             for (Match match : comparison.matches()) {
-                List<TokenType> subSequence = TokenSequenceUtil.tokenTypesFor(comparison, match);
+                List<TokenType> subSequence = FrequencyUtil.tokenTypesFor(comparison, match);
                 frequencyCount.put(subSequence, frequencyCount.getOrDefault(subSequence, 0) + 1);
                 if (subSequence.size() >= minLength) {
                     assertTrue(matchFrequencyMap.containsKey(subSequence), "Should contain subSequence: " + subSequence);

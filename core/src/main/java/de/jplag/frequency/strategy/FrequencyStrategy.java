@@ -8,7 +8,7 @@ import java.util.Objects;
 import de.jplag.JPlagComparison;
 import de.jplag.Match;
 import de.jplag.TokenType;
-import de.jplag.frequency.TokenSequenceUtil;
+import de.jplag.frequency.FrequencyUtil;
 
 /**
  * Interface for different frequency calculation strategies. Implementations define how submatches are considered in the
@@ -40,7 +40,7 @@ public abstract class FrequencyStrategy {
      * @param match is the match.
      */
     public void processMatch(JPlagComparison comparison, Match match) {
-        List<TokenType> tokenTypes = TokenSequenceUtil.tokenTypesFor(comparison, match);
+        List<TokenType> tokenTypes = FrequencyUtil.tokenTypesFor(comparison, match);
         processMatchTokenTypes(tokenTypes);
     }
 

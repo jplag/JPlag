@@ -21,8 +21,8 @@ import de.jplag.TestBase;
 import de.jplag.TokenType;
 import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
+import de.jplag.frequency.FrequencyUtil;
 import de.jplag.frequency.MatchFrequencyWeighting;
-import de.jplag.frequency.TokenSequenceUtil;
 import de.jplag.frequency.weighting.LinearWeighting;
 import de.jplag.frequency.weighting.ProportionalWeighting;
 import de.jplag.frequency.weighting.QuadraticWeighting;
@@ -121,11 +121,11 @@ class FrequencyWeightingTest extends TestBase {
      */
     @Test
     @DisplayName("Test the weighting functions")
-    void testWeightingFunction() {
+    void testMatchWeightingFunction() {
         Map<List<TokenType>, Double> matchFrequency = new HashMap<List<TokenType>, Double>();
         Match match2 = TEST_MATCHES.getFirst();
-        matchFrequency.put(TokenSequenceUtil.tokenTypesFor(comparison, match2), 5.0);
-        matchFrequency.put(TokenSequenceUtil.tokenTypesFor(comparison, matchShort), 1.0);
+        matchFrequency.put(FrequencyUtil.tokenTypesFor(comparison, match2), 5.0);
+        matchFrequency.put(FrequencyUtil.tokenTypesFor(comparison, matchShort), 1.0);
 
         List<JPlagComparison> comparisons = List.of(comparison);
         MatchFrequencyWeighting proportionalWeighting = new MatchFrequencyWeighting(comparisons, new ProportionalWeighting(), matchFrequency);

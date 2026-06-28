@@ -1,11 +1,11 @@
 package de.jplag.frequency.weighting;
 
-import de.jplag.frequency.WeightingFunction;
+import de.jplag.frequency.MatchWeightingFunction;
 
 /**
  * Frequency weighting strategy which emphasizes rare matches and leaves frequent matches unchanged.
  */
-public class SigmoidWeighting implements WeightingFunction {
+public class SigmoidWeighting implements MatchWeightingFunction {
 
     private static final int MINIMUM_WEIGHT = 1;
     private static final int MAXIMUM_WEIGHT = 2;
