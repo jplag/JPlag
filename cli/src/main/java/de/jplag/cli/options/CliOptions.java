@@ -10,7 +10,6 @@ import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
 import de.jplag.highlightextraction.FrequencyAnalysisOptions;
-import de.jplag.highlightextraction.strategy.FrequencyStrategySelector;
 import de.jplag.java.JavaLanguage;
 import de.jplag.merging.MergingOptions;
 import de.jplag.options.JPlagOptions;

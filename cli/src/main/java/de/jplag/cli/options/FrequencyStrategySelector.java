@@ -1,4 +1,10 @@
-package de.jplag.highlightextraction.strategy;
+package de.jplag.cli.options;
+
+import de.jplag.highlightextraction.strategy.CompleteMatchesStrategy;
+import de.jplag.highlightextraction.strategy.ContainedMatchesStrategy;
+import de.jplag.highlightextraction.strategy.FrequencyStrategy;
+import de.jplag.highlightextraction.strategy.SubmatchesStrategy;
+import de.jplag.highlightextraction.strategy.WindowOfMatchesStrategy;
 
 /**
  * Enum selector for {@link FrequencyStrategy} implementations for the picocli CLI.
