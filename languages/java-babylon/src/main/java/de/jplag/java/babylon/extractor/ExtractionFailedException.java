@@ -3,7 +3,8 @@ package de.jplag.java.babylon.extractor;
 import com.sun.source.tree.MethodTree;
 
 /**
- * {@link RuntimeException} that signals that a {@link jdk.incubator.code.dialect.core.CoreOp.FuncOp} could not be extracted.
+ * {@link RuntimeException} that signals that a {@link jdk.incubator.code.dialect.core.CoreOp.FuncOp} could not be
+ * extracted.
  */
 public class ExtractionFailedException extends RuntimeException {
     /**
