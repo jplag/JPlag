@@ -9,8 +9,8 @@
     <artifactId>java-babylon</artifactId>
     <name>JPlag: Java Language Module with transformations</name>
     <properties>
-        <maven.compiler.source>26</maven.compiler.source>
-        <maven.compiler.target>26</maven.compiler.target>
+        <maven.compiler.source>28</maven.compiler.source>
+        <maven.compiler.target>28</maven.compiler.target>
     </properties>
     <dependencies>
         <dependency>
