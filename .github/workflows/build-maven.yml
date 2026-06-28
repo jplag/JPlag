@@ -40,9 +40,8 @@ jobs:
     - uses: actions/checkout@v7
 
     - run: |
-        download_url="https://github.com/JFronny/jdk-babylon/releases/download/artifacts/bundles-linux-x64.zip"
-        wget -O $RUNNER_TEMP/java_bundle.zip $download_url
-        7z x $RUNNER_TEMP/java_bundle.zip -o$RUNNER_TEMP
+        download_url="https://github.com/JFronny/jdk-babylon/releases/download/artifacts/jdk-linux-x64.tar.gz"
+        wget -O $RUNNER_TEMP/jdk-linux-x64.tar.gz $download_url
     - name: Set up JDK
       uses: actions/setup-java@v5
       with:
