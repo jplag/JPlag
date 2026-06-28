@@ -40,7 +40,7 @@ public class TokenGeneratingTreeScannerBabylon extends TokenGeneratingTreeScanne
         super(file, parser, map, positions, ast, variableRegistry);
         this.pipeline = parser.getPipeline();
         this.context = context;
-        this.tokenizer = tokenizer.getTokenizer(parser, file);
+        this.tokenizer = tokenizer.getTokenizer(new BabylonTokenizer.TokenizerConstructionContext(parser, file));
     }
 
     @Override

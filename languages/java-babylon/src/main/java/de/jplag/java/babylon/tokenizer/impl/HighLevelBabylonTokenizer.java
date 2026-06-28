@@ -248,8 +248,8 @@ public class HighLevelBabylonTokenizer extends AbstractBabylonTokenizer {
         }
 
         @Override
-        public BabylonTokenizer getTokenizer(ParserBabylon parser, File file) {
-            return new HighLevelBabylonTokenizer(parser, file);
+        public BabylonTokenizer getTokenizer(TokenizerConstructionContext context) {
+            return new HighLevelBabylonTokenizer(context.parser(), context.file());
         }
     }
 }

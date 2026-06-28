@@ -67,8 +67,8 @@ public class FullTypedBabylonTokenizer extends AbstractBabylonTokenizer {
         }
 
         @Override
-        public BabylonTokenizer getTokenizer(ParserBabylon parser, File file) {
-            return new FullTypedBabylonTokenizer(parser, file);
+        public BabylonTokenizer getTokenizer(TokenizerConstructionContext context) {
+            return new FullTypedBabylonTokenizer(context.parser(), context.file());
         }
     }
 }

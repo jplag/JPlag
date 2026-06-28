@@ -53,10 +53,18 @@ public interface BabylonTokenizer {
         /**
          * Obtain a {@link BabylonTokenizer} for a particular {@link File} and {@link ParserBabylon}, allowing
          * {@link de.jplag.Token}s to be generated from just {@link Op}s.
-         * @param parser the parser to bind to
-         * @param file the file to bind to
+         * @param context the context of the tokenizer
          * @return the bound tokenizer
          */
-        BabylonTokenizer getTokenizer(ParserBabylon parser, File file);
+        BabylonTokenizer getTokenizer(TokenizerConstructionContext context);
+    }
+
+    /**
+     * Context for creating tokenizers.<br>
+     * Rather than a bunch of method parameters, this encapsulates all relevant objects in a single wrapper.
+     * @param parser the parser to bind to
+     * @param file the file to bind to
+     */
+    record TokenizerConstructionContext(ParserBabylon parser, File file) {
     }
 }
