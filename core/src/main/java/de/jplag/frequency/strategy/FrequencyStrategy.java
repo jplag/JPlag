@@ -1,9 +1,9 @@
 package de.jplag.frequency.strategy;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 import de.jplag.JPlagComparison;
 import de.jplag.Match;
@@ -19,7 +19,7 @@ public abstract class FrequencyStrategy {
     private final Map<List<TokenType>, Integer> matchCounts;
 
     protected FrequencyStrategy() {
-        this.matchCounts = new HashMap<>();
+        this.matchCounts = new ConcurrentHashMap<>();
     }
 
     /**
@@ -27,11 +27,11 @@ public abstract class FrequencyStrategy {
      * @param comparisons are the comparisons.
      */
     public void processMatches(List<JPlagComparison> comparisons) {
-        for (JPlagComparison comparison : comparisons) {
+        comparisons.parallelStream().forEach(comparison -> {
             for (Match match : comparison.matches()) {
                 processMatch(comparison, match);
             }
-        }
+        });
     }
 
     /**
