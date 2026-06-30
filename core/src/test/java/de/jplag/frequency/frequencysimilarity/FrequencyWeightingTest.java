@@ -1,15 +1,19 @@
 package de.jplag.frequency.frequencysimilarity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
@@ -23,6 +27,7 @@ import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
 import de.jplag.frequency.FrequencyUtil;
 import de.jplag.frequency.MatchFrequencyWeighting;
+import de.jplag.frequency.MatchWeightingFunction;
 import de.jplag.frequency.weighting.LinearWeighting;
 import de.jplag.frequency.weighting.ProportionalWeighting;
 import de.jplag.frequency.weighting.QuadraticWeighting;
@@ -30,149 +35,144 @@ import de.jplag.frequency.weighting.SigmoidWeighting;
 import de.jplag.options.JPlagOptions;
 
 /**
- * Tests the Frequency Weighting class with different parameter combinations.
+ * Tests the {@link MatchFrequencyWeighting} class with different weighting functions and factor combinations.
  */
 class FrequencyWeightingTest extends TestBase {
     private static final double ORIGINAL_SIMILARITY = 0.31157;
-    private static Submission testSubmission;
-    private static Match match;
-    private static Match matchShort;
-    private static final List<Match> TEST_MATCHES = new LinkedList<>();
-    private static List<Match> ignoredMatches = new LinkedList<>();
-    private static JPlagComparison comparison;
+    private Submission testSubmission;
+    private Match match;
+    private Match matchShort;
+    private final List<Match> testMatches = new LinkedList<>();
+    private List<Match> ignoredMatches = new LinkedList<>();
+    private JPlagComparison comparison;
+    private Map<List<TokenType>, Double> matchFrequency;
 
     /**
-     * Creates Test data to validate different match-frequency combinations.
-     * @throws ExitException if getJPlagResult fails to create the comparison result.
+     * Creates test comparison and a frequency map from the PartialPlagiarism sample data.
      */
     @BeforeEach
-    void prepareMatchResult() throws ExitException {
+    void setUp() throws ExitException {
         JPlagOptions options = getDefaultOptions("PartialPlagiarism");
         JPlagResult result = getJPlagResult(options);
         JPlagComparison testComparison = result.getAllComparisons().getFirst();
-        buildTestMatches(testComparison);
-        buildTestComparisons(getTestSubmissions(options));
 
+        testSubmission = testComparison.firstSubmission();
+        match = testComparison.matches().getFirst();
+        matchShort = new Match(match.startOfFirst(), match.startOfSecond(), 10, 10);
+        ignoredMatches = testComparison.ignoredMatches();
+
+        Submission first = new Submission("W", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(), options.language());
+        Submission second = new Submission("X", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(), options.language());
+        first.setTokenList(testSubmission.getTokenList());
+        second.setTokenList(testSubmission.getTokenList());
+
+        testMatches.clear();
+        testMatches.add(match);
+        comparison = new JPlagComparison(first, second, testMatches, ignoredMatches);
+
+        matchFrequency = new HashMap<>();
+        matchFrequency.put(FrequencyUtil.tokenTypesFor(comparison, match), 5.0);
+        matchFrequency.put(FrequencyUtil.tokenTypesFor(comparison, matchShort), 1.0);
     }
 
     /**
-     * Creates Test data by running JPlag Methods to get JPlag result for building test data.
-     * @param options JPlag options used in this test
-     * @return JPlag result for test input
-     * @throws ExitException submission set builder can throw this exception
+     * Creates test comparison data by running JPlag on the PartialPlagiarism sample.
+     * @param options the JPlag options for the comparison
+     * @return the JPlag result
+     * @throws ExitException if creating the submission set fails
      */
     private JPlagResult getJPlagResult(JPlagOptions options) throws ExitException {
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
-        LongestCommonSubsequenceSearch subsequenceSearch = new LongestCommonSubsequenceSearch(options);
-        return subsequenceSearch.compareSubmissions(submissionSet);
+        return new LongestCommonSubsequenceSearch(options).compareSubmissions(submissionSet);
     }
 
-    /**
-     * Gets sample matches from the given test comparison to use in test cases. These matches will be used to create
-     * different combinations of Match-Frequency.
-     * @param testComparison first Comparison from the Test classes here used to get test matches.
-     */
-    private static void buildTestMatches(JPlagComparison testComparison) {
-        testSubmission = testComparison.firstSubmission();
-        match = testComparison.matches().getFirst();
-        matchShort = new Match(testComparison.matches().getFirst().startOfFirst(), testComparison.matches().getFirst().startOfSecond(), 10, 10);
-        ignoredMatches = testComparison.ignoredMatches();
+    private MatchFrequencyWeighting createWeighting(MatchWeightingFunction function) {
+        return new MatchFrequencyWeighting(function, matchFrequency);
     }
 
-    /**
-     * @param options the JPlag options for the test, to for the language
-     * @return multiple submissions with the same data but different names for testing
-     */
-    private static TestSubmissions getTestSubmissions(JPlagOptions options) {
-        Submission testSubmissionW = new Submission("W", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(),
-                options.language());
-        Submission testSubmissionX = new Submission("X", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(),
-                options.language());
-
-        testSubmissionW.setTokenList(testSubmission.getTokenList());
-        testSubmissionX.setTokenList(testSubmission.getTokenList());
-        return new TestSubmissions(testSubmissionX, testSubmissionW);
+    static Stream<Arguments> weightingFunctions() {
+        return Stream.of(Arguments.of(new ProportionalWeighting()), Arguments.of(new LinearWeighting()), Arguments.of(new QuadraticWeighting()),
+                Arguments.of(new SigmoidWeighting()));
     }
 
-    /**
-     * Represents four created submissions with identical code but different names, used to simulate various
-     * match-comparison combinations for frequency testing.
-     * @param testSubmissionW name of a test submission to Identify the testSubmissions
-     * @param testSubmissionX name of a test submission to Identify the testSubmissions
-     */
-    record TestSubmissions(Submission testSubmissionW, Submission testSubmissionX) {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("weightingFunctions")
+    @DisplayName("A weighting factor of zero returns the original similarity unchanged")
+    void factorZeroPreservesSimilarity(MatchWeightingFunction weightingFunction) {
+        MatchFrequencyWeighting weighting = createWeighting(weightingFunction);
+        assertEquals(ORIGINAL_SIMILARITY, weighting.frequencySimilarity(comparison, 0), 0.0001);
     }
 
-    /**
-     * Constructs comparisons using predefined matches and test submissions, creating different combinations of
-     * Match-Frequencies between Comparisons.
-     * @param testSubmissions multiple submissions with the same data but different names for testing
-     */
-    private void buildTestComparisons(TestSubmissions testSubmissions) {
-        TEST_MATCHES.clear();
-
-        TEST_MATCHES.add(match);
-        comparison = new JPlagComparison(testSubmissions.testSubmissionW(), testSubmissions.testSubmissionX(), TEST_MATCHES, ignoredMatches);
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("weightingFunctions")
+    @DisplayName("weightedComparisonSimilarity returns a comparison with the frequency flag set")
+    void producesWeightedComparison(MatchWeightingFunction weightingFunction) {
+        MatchFrequencyWeighting weighting = createWeighting(weightingFunction);
+        JPlagComparison weightedComparison = weighting.weightedComparisonSimilarity(comparison, 1);
+        assertTrue(weightedComparison.useFrequencyWeighting());
+        assertTrue(weightedComparison.frequencyWeightedSimilarity() >= 0);
     }
 
-    /**
-     * Tests the different weighting functions with different weights.
-     */
-    @Test
-    @DisplayName("Test the weighting functions")
-    void testMatchWeightingFunction() {
-        Map<List<TokenType>, Double> matchFrequency = new HashMap<List<TokenType>, Double>();
-        Match match2 = TEST_MATCHES.getFirst();
-        matchFrequency.put(FrequencyUtil.tokenTypesFor(comparison, match2), 5.0);
-        matchFrequency.put(FrequencyUtil.tokenTypesFor(comparison, matchShort), 1.0);
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("weightingFunctions")
+    @DisplayName("getWeightedMatchLength with factor=1 computes correctly for each weighting function")
+    void weightedMatchLengthFactorOne(MatchWeightingFunction weightingFunction) {
+        MatchFrequencyWeighting weighting = createWeighting(weightingFunction);
+        double result = weighting.getWeightedMatchLength(comparison, 1, true, weightingFunction);
 
-        MatchFrequencyWeighting proportionalWeighting = new MatchFrequencyWeighting(new ProportionalWeighting(), matchFrequency);
-        MatchFrequencyWeighting linearWeighting = new MatchFrequencyWeighting(new LinearWeighting(), matchFrequency);
-        MatchFrequencyWeighting quadraticWeighting = new MatchFrequencyWeighting(new QuadraticWeighting(), matchFrequency);
-        MatchFrequencyWeighting sigmoidWeighting = new MatchFrequencyWeighting(new SigmoidWeighting(), matchFrequency);
+        if (weightingFunction instanceof ProportionalWeighting) {
+            assertEquals(0, result, 0.0001);
+        } else {
+            assertEquals(315, result, 0.0001);
+        }
+    }
 
-        double proportionalMatchLength = proportionalWeighting.getWeightedMatchLength(comparison, 1, true, new ProportionalWeighting());
-        double linearMatchLength = linearWeighting.getWeightedMatchLength(comparison, 1, true, new LinearWeighting());
-        double quadraticMatchLength = quadraticWeighting.getWeightedMatchLength(comparison, 1, true, new QuadraticWeighting());
-        double sigmoidMatchLength = sigmoidWeighting.getWeightedMatchLength(comparison, 1, true, new SigmoidWeighting());
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("weightingFunctions")
+    @DisplayName("frequencySimilarity with factor=1 computes correctly for each weighting function")
+    void frequencySimilarityFactorOne(MatchWeightingFunction weightingFunction) {
+        MatchFrequencyWeighting weighting = createWeighting(weightingFunction);
+        double result = weighting.frequencySimilarity(comparison, 1);
 
-        // weight 0: weight down
-        assertEquals(0, proportionalMatchLength, 0.0001);
-        // weight 1: leave unchanged
-        assertEquals(315, linearMatchLength, 0.0001);
-        assertEquals(315, quadraticMatchLength, 0.0001);
-        assertEquals(315, sigmoidMatchLength, 0.0001);
+        if (weightingFunction instanceof ProportionalWeighting) {
+            assertEquals(0, result, 0.0001);
+        } else {
+            assertEquals(ORIGINAL_SIMILARITY, result, 0.0001);
+        }
+    }
 
-        proportionalMatchLength = proportionalWeighting.frequencySimilarity(comparison, 0);
-        linearMatchLength = linearWeighting.frequencySimilarity(comparison, 0);
-        quadraticMatchLength = quadraticWeighting.frequencySimilarity(comparison, 0);
-        sigmoidMatchLength = sigmoidWeighting.frequencySimilarity(comparison, 0);
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("weightingFunctions")
+    @DisplayName("frequencySimilarity with factor=0.5 computes correctly for each weighting function")
+    void frequencySimilarityFactorHalf(MatchWeightingFunction weightingFunction) {
+        MatchFrequencyWeighting weighting = createWeighting(weightingFunction);
+        double result = weighting.frequencySimilarity(comparison, 0.5);
 
-        // factor = 0 -> unchanged similarity
-        assertEquals(ORIGINAL_SIMILARITY, proportionalMatchLength, 0.0001);
-        assertEquals(ORIGINAL_SIMILARITY, linearMatchLength, 0.0001);
-        assertEquals(ORIGINAL_SIMILARITY, quadraticMatchLength, 0.0001);
-        assertEquals(ORIGINAL_SIMILARITY, sigmoidMatchLength, 0.0001);
+        if (weightingFunction instanceof ProportionalWeighting) {
+            assertEquals(ORIGINAL_SIMILARITY / 2, result, 0.0001);
+        } else {
+            assertEquals(ORIGINAL_SIMILARITY, result, 0.0001);
+        }
+    }
 
-        proportionalMatchLength = proportionalWeighting.frequencySimilarity(comparison, 1);
-        linearMatchLength = linearWeighting.frequencySimilarity(comparison, 1);
-        quadraticMatchLength = quadraticWeighting.frequencySimilarity(comparison, 1);
-        sigmoidMatchLength = sigmoidWeighting.frequencySimilarity(comparison, 1);
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("weightingFunctions")
+    @DisplayName("Rare matches contribute more to the weighted length than common matches")
+    void rareMatchesWeightMoreThanCommonOnes(MatchWeightingFunction weightingFunction) {
+        var rareMap = new HashMap<List<TokenType>, Double>();
+        rareMap.put(FrequencyUtil.tokenTypesFor(comparison, match), 1.0);
+        rareMap.put(FrequencyUtil.tokenTypesFor(comparison, matchShort), 5.0);
 
-        assertEquals(0, proportionalMatchLength, 0.0001);
-        assertEquals(ORIGINAL_SIMILARITY, linearMatchLength, 0.0001);
-        assertEquals(ORIGINAL_SIMILARITY, quadraticMatchLength, 0.0001);
-        assertEquals(ORIGINAL_SIMILARITY, sigmoidMatchLength, 0.0001);
+        var commonMap = new HashMap<List<TokenType>, Double>();
+        commonMap.put(FrequencyUtil.tokenTypesFor(comparison, match), 5.0);
+        commonMap.put(FrequencyUtil.tokenTypesFor(comparison, matchShort), 1.0);
 
-        proportionalMatchLength = proportionalWeighting.frequencySimilarity(comparison, 0.5);
-        linearMatchLength = linearWeighting.frequencySimilarity(comparison, 0.5);
-        quadraticMatchLength = quadraticWeighting.frequencySimilarity(comparison, 0.5);
-        sigmoidMatchLength = sigmoidWeighting.frequencySimilarity(comparison, 0.5);
+        double rareWeighted = new MatchFrequencyWeighting(weightingFunction, rareMap).getWeightedMatchLength(comparison, 1, true, weightingFunction);
+        double commonWeighted = new MatchFrequencyWeighting(weightingFunction, commonMap).getWeightedMatchLength(comparison, 1, true,
+                weightingFunction);
 
-        assertEquals(ORIGINAL_SIMILARITY, linearMatchLength, 0.0001);
-        assertEquals(ORIGINAL_SIMILARITY / 2, proportionalMatchLength, 0.0001);
-        assertEquals(ORIGINAL_SIMILARITY, quadraticMatchLength, 0.0001);
-        assertEquals(ORIGINAL_SIMILARITY, sigmoidMatchLength, 0.0001);
+        assertTrue(rareWeighted > commonWeighted,
+                () -> weightingFunction.getClass().getSimpleName() + ": rare=" + rareWeighted + " should exceed common=" + commonWeighted);
     }
 }

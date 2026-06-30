@@ -5,11 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,85 +31,38 @@ import de.jplag.options.JPlagOptions;
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class StrategyIntegrationTest extends TestBase {
-    /**
-     * Minimum length of a submatch or a match window.
-     */
+
     private static final int MIN_LENGTH = 300;
-    /**
-     * Stores the result of the pairwise comparison of submissions, used in all test methods.
-     */
-    private static JPlagResult result;
-    /**
-     * Logger for outputting test information.
-     */
+    private JPlagResult result;
     private static final Logger logger = LoggerFactory.getLogger(StrategyIntegrationTest.class);
 
     /**
-     * Prepares the comparison result before each test.
-     * @throws ExitException if building the submissionSet or the comparisons fails.
+     * Prepares the comparison result before running parameterized tests.
+     * @throws ExitException if building the submission set or performing comparisons fails
      */
     @BeforeAll
     void prepareMatchResult() throws ExitException {
         JPlagOptions options = getDefaultOptions("PartialPlagiarism");
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
-        LongestCommonSubsequenceSearch strategy = new LongestCommonSubsequenceSearch(options);
-        result = strategy.compareSubmissions(submissionSet);
+        result = new LongestCommonSubsequenceSearch(options).compareSubmissions(submissionSet);
     }
 
-    /**
-     * Tests frequency determination using the CompleteMatchesStrategy.
-     */
-    @Test
-    @DisplayName("Test match frequency completeMatches strategy")
-    void testFrequencyAnalysisStrategiesCompleteMatches() {
-        FrequencyStrategy strategy = new CompleteMatchesStrategy();
+    static Stream<Arguments> strategies() {
+        return Stream.of(Arguments.of(new CompleteMatchesStrategy(), "completeMatches"),
+                Arguments.of(new ContainedMatchesStrategy(MIN_LENGTH), "containedMatches"),
+                Arguments.of(new SubMatchesStrategy(MIN_LENGTH), "subMatches"),
+                Arguments.of(new WindowOfMatchesStrategy(MIN_LENGTH), "windowsOfMatches"));
+    }
+
+    @ParameterizedTest(name = "{1}")
+    @MethodSource("strategies")
+    @DisplayName("Each strategy produces a non-empty frequency map")
+    void producesNonEmptyFrequencyMap(FrequencyStrategy strategy, String name) {
         List<JPlagComparison> comparisons = result.getAllComparisons();
         strategy.processMatches(comparisons);
         Map<List<TokenType>, Integer> tokenFrequencyMap = strategy.getResult();
-        assertFalse(tokenFrequencyMap.isEmpty(), "Map should not be empty");
-        printTestResult(tokenFrequencyMap);
-    }
-
-    /**
-     * Tests frequency determination using the ContainedMatchesStrategy.
-     */
-    @Test
-    @DisplayName("Test match frequency with containedMatches strategy")
-    void testFrequencyAnalysisStrategiesContainedMatches() {
-        FrequencyStrategy strategy = new ContainedMatchesStrategy(MIN_LENGTH);
-        List<JPlagComparison> comparisons = result.getAllComparisons();
-        strategy.processMatches(comparisons);
-        Map<List<TokenType>, Integer> tokenFrequencyMap = strategy.getResult();
-        assertFalse(tokenFrequencyMap.isEmpty(), "Map should not be empty");
-        printTestResult(tokenFrequencyMap);
-    }
-
-    /**
-     * Tests frequency determination using the SubMatchesStrategy.
-     */
-    @Test
-    @DisplayName("Test match frequency with subMatches strategy")
-    void testFrequencyAnalysisStrategiesSubMatches() {
-        FrequencyStrategy strategy = new SubMatchesStrategy(MIN_LENGTH);
-        List<JPlagComparison> comparisons = result.getAllComparisons();
-        strategy.processMatches(comparisons);
-        Map<List<TokenType>, Integer> tokenFrequencyMap = strategy.getResult();
-        assertFalse(tokenFrequencyMap.isEmpty(), "Map should not be empty");
-        printTestResult(tokenFrequencyMap);
-    }
-
-    /**
-     * Tests frequency determination using the WindowOfMatchesStrategy.
-     */
-    @Test
-    @DisplayName("Test match frequency with windows of Matches strategy")
-    void testFrequencyAnalysisStrategiesWindowOfMatches() {
-        FrequencyStrategy strategy = new WindowOfMatchesStrategy(MIN_LENGTH);
-        List<JPlagComparison> comparisons = result.getAllComparisons();
-        strategy.processMatches(comparisons);
-        Map<List<TokenType>, Integer> tokenFrequencyMap = strategy.getResult();
-        assertFalse(tokenFrequencyMap.isEmpty(), "Map should not be empty");
+        assertFalse(tokenFrequencyMap.isEmpty(), name + ": frequency map should not be empty");
         printTestResult(tokenFrequencyMap);
     }
 
