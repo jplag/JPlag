@@ -13,10 +13,10 @@ import com.sun.source.tree.CompilationUnitTree;
 public final class LazyPrepassExecutor implements PrepassExecutor {
     @Override
     public CodeModelExtractor prepass(List<TransformationStep<?>> steps, Iterable<? extends CompilationUnitTree> trees,
-            CodeModelExtractor extractor) {
-        CodeModelExtractor currentExtractor = extractor;
+            TransformationStep.PrepassConstructionContext context) {
+        CodeModelExtractor currentExtractor = context.extractor();
         for (TransformationStep<?> step : steps) {
-            currentExtractor = prepass(step, trees, currentExtractor);
+            currentExtractor = prepass(step, trees, new TransformationStep.PrepassConstructionContext(currentExtractor, context.task()));
         }
         return currentExtractor;
     }

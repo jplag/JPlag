@@ -3,7 +3,6 @@ package de.jplag.java.babylon.extractor;
 import java.util.Optional;
 import java.util.function.UnaryOperator;
 
-import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.MethodTree;
 import jdk.incubator.code.dialect.core.CoreOp;
 
@@ -26,12 +25,12 @@ public final class TransformingCodeModelExtractor implements CodeModelExtractor 
     }
 
     @Override
-    public Optional<CoreOp.FuncOp> toOp(MethodTree methodTree, CompilationUnitTree ast) {
-        return delegate.toOp(methodTree, ast).flatMap(op -> Optional.ofNullable(transformation.apply(op)));
+    public Optional<CoreOp.FuncOp> toOp(MethodTree methodTree) {
+        return delegate.toOp(methodTree).flatMap(op -> Optional.ofNullable(transformation.apply(op)));
     }
 
     @Override
-    public void evictCache(MethodTree methodTree, CompilationUnitTree ast) {
-        delegate.evictCache(methodTree, ast);
+    public void evictCache(MethodTree methodTree) {
+        delegate.evictCache(methodTree);
     }
 }

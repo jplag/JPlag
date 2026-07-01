@@ -21,7 +21,7 @@ import jdk.incubator.code.dialect.core.CoreOp;
 public final class EagerPrepassExecutor implements PrepassExecutor {
     @Override
     public CodeModelExtractor prepass(List<TransformationStep<?>> steps, Iterable<? extends CompilationUnitTree> trees,
-            CodeModelExtractor extractor) {
+            TransformationStep.PrepassConstructionContext context) {
         SwappablePair<Cache> caches = new SwappablePair<>(new Cache(), new Cache());
         Map<MethodTree, CompilationUnitTree> parents = new IdentityHashMap<>();
         for (CompilationUnitTree tree : trees) {
@@ -30,7 +30,7 @@ public final class EagerPrepassExecutor implements PrepassExecutor {
                 public Object visitMethod(MethodTree node, Object o) {
                     Optional<CoreOp.FuncOp> op;
                     try {
-                        op = extractor.toOp(node, tree);
+                        op = context.extractor().toOp(node);
                     } catch (ExtractionFailedException e) {
                         caches.first.failures.put(node, e);
                         caches.second.failures.put(node, e);
@@ -45,8 +45,10 @@ public final class EagerPrepassExecutor implements PrepassExecutor {
         }
 
         for (TransformationStep<?> step : steps) {
-            CodeModelExtractor extractor1 = prepass(step, trees, new CachingCodeModelExtractor(null, caches.first.caches, caches.first.failures));
-            caches.second.caches.replaceAll((key, _) -> extractor1.toOp(key, parents.get(key)));
+            CodeModelExtractor previousExtractor = new CachingCodeModelExtractor(null, caches.first.caches, caches.first.failures);
+            CodeModelExtractor extractor1 = prepass(step, trees,
+                    new TransformationStep.PrepassConstructionContext(previousExtractor, context.task()));
+            caches.second.caches.replaceAll((key, _) -> extractor1.toOp(key));
             caches.swap();
         }
         return new CachingCodeModelExtractor(null, caches.first.caches, caches.first.failures);

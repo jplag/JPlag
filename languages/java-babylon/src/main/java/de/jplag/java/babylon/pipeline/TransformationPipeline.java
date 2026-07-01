@@ -54,23 +54,22 @@ public final class TransformationPipeline {
     /**
      * Performs a prepass to obtain the context required for tokenization.
      * @param trees the input trees on which the prepass should be run
-     * @param extractor the extractor to use for obtaining code models
+     * @param context the context to use for constructing step prepasses
      * @return the prepass visitor
      */
-    public Context prepass(Iterable<? extends CompilationUnitTree> trees, CodeModelExtractor extractor) {
-        return new Context(prepassExecutor.prepass(steps, trees, extractor));
+    public Context prepass(Iterable<? extends CompilationUnitTree> trees, TransformationStep.PrepassConstructionContext context) {
+        return new Context(prepassExecutor.prepass(steps, trees, context));
     }
 
     /**
      * Transform a single method according to the transformations represented by this pipeline.
      * @param methodTree the method tree to transform
-     * @param ast the compilation unit in which the method is contained
      * @param context the context obtained from the prepass
      * @return the transformed op
      * @throws IllegalArgumentException if the context belongs to a different pipeline
      */
-    public Optional<CoreOp.FuncOp> transform(MethodTree methodTree, CompilationUnitTree ast, Context context) {
-        return context.finalExtractor.toOp(methodTree, ast);
+    public Optional<CoreOp.FuncOp> transform(MethodTree methodTree, Context context) {
+        return context.finalExtractor.toOp(methodTree);
     }
 
     /**

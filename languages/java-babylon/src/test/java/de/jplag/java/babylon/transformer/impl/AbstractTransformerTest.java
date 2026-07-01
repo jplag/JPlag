@@ -100,7 +100,7 @@ public abstract class AbstractTransformerTest {
             if (!method.getName().toString().equals("main"))
                 throw new IllegalArgumentException();
 
-            return pipeline.transform(method, ast, context).orElseThrow();
+            return pipeline.transform(method, context).orElseThrow();
         }
 
         private <T> T requireSingle(Iterable<? extends T> iterable) {

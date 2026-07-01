@@ -3,6 +3,8 @@ package de.jplag.java.babylon;
 import java.io.File;
 import java.util.Optional;
 
+import javax.tools.JavaCompiler;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,21 +46,22 @@ public class TokenGeneratingTreeScannerBabylon extends TokenGeneratingTreeScanne
      * @param variableRegistry the registry of current variables for token sequence normalization
      * @param tokenizer the tokenizer for converting code models to tokens
      * @param context context obtained from the prepass for this pipeline
+     * @param task the compilation task
      */
     public TokenGeneratingTreeScannerBabylon(File file, ParserBabylon parser, LineMap map, SourcePositions positions, CompilationUnitTree ast,
             Iterable<? extends CompilationUnitTree> codebaseAsts, VariableRegistry variableRegistry, BabylonTokenizer.Provider tokenizer,
-            TransformationPipeline.Context context) {
+            TransformationPipeline.Context context, JavaCompiler.CompilationTask task) {
         super(file, parser, map, positions, ast, variableRegistry);
         this.pipeline = parser.getPipeline();
         this.context = context;
-        this.tokenizer = tokenizer.getTokenizer(new BabylonTokenizer.TokenizerConstructionContext(parser, file, codebaseAsts));
+        this.tokenizer = tokenizer.getTokenizer(new BabylonTokenizer.TokenizerConstructionContext(parser, file, codebaseAsts, task));
     }
 
     @Override
     public Void visitMethod(MethodTree node, Void unused) {
         Optional<CoreOp.FuncOp> transform;
         try {
-            transform = pipeline.transform(node, ast, context);
+            transform = pipeline.transform(node, context);
         } catch (ExtractionFailedException e) {
             logger.atWarn().setCause(e).log("Failed to extract code model for method {} in file {}. Falling back to normal Java tokenization",
                     node.getName(), file);

@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import javax.tools.JavaCompiler;
 
-import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.MethodTree;
 import jdk.incubator.code.Op;
 import jdk.incubator.code.dialect.core.CoreOp;
@@ -25,7 +24,7 @@ public final class CodeModelExtractorImpl implements CodeModelExtractor {
     }
 
     @Override
-    public Optional<CoreOp.FuncOp> toOp(MethodTree methodTree, CompilationUnitTree ast) {
+    public Optional<CoreOp.FuncOp> toOp(MethodTree methodTree) {
         // if no Op can be constructed, that is an error that should not be construed with deliberate omission
         // of a method
         CoreOp.FuncOp op = Op.ofMethodTree(task, methodTree).orElseThrow(() -> new ExtractionFailedException(methodTree));

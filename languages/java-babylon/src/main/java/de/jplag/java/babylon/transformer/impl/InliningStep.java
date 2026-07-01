@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.function.BiPredicate;
 
 import javax.annotation.Nullable;
+import javax.tools.JavaCompiler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,10 +15,8 @@ import de.jplag.java.babylon.extractor.CodeModelExtractor;
 import de.jplag.java.babylon.extractor.ExtractionFailedException;
 import de.jplag.java.babylon.transformer.Prepass;
 import de.jplag.java.babylon.transformer.TransformationStep;
-import de.jplag.java.babylon.transformer.impl.util.JavaMethodId;
 
 import com.google.auto.service.AutoService;
-import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.util.TreeScanner;
 import jdk.incubator.code.Block;
@@ -27,6 +26,7 @@ import jdk.incubator.code.Op;
 import jdk.incubator.code.dialect.core.CoreOp;
 import jdk.incubator.code.dialect.core.Inliner;
 import jdk.incubator.code.dialect.java.JavaOp;
+import jdk.incubator.code.dialect.java.MethodRef;
 import jdk.incubator.code.dialect.java.PrimitiveType;
 
 /**
@@ -70,7 +70,7 @@ public class InliningStep implements TransformationStep<InliningStep.Context> {
     @Nullable
     @Override
     public Prepass<Context> beginPrepass(PrepassConstructionContext context) {
-        return new FindCandidates(context.codeModelExtractor(), this::heuristic);
+        return new FindCandidates(context.extractor(), context.task(), this::heuristic);
     }
 
     @Override
@@ -78,14 +78,17 @@ public class InliningStep implements TransformationStep<InliningStep.Context> {
         return op.transform(new Apply(context, dropLocations));
     }
 
-    private static class FindCandidates extends TreeScanner<Void, CompilationUnitTree> implements Prepass<Context> {
+    private static class FindCandidates extends TreeScanner<Void, Void> implements Prepass<Context> {
         private final Map<String, CoreOp.FuncOp> core = new HashMap<>();
-        private final Map<JavaMethodId, CoreOp.FuncOp> java = new HashMap<>();
+        private final Map<MethodRef, CoreOp.FuncOp> java = new HashMap<>();
         private final CodeModelExtractor codeModelExtractor;
-        private final BiPredicate<CoreOp.FuncOp, JavaMethodId> heuristic;
+        private final BiPredicate<CoreOp.FuncOp, MethodRef> heuristic;
+        private final JavaCompiler.CompilationTask task;
 
-        public FindCandidates(CodeModelExtractor codeModelExtractor, BiPredicate<CoreOp.FuncOp, JavaMethodId> heuristic) {
+        public FindCandidates(CodeModelExtractor codeModelExtractor, JavaCompiler.CompilationTask task,
+                BiPredicate<CoreOp.FuncOp, MethodRef> heuristic) {
             this.codeModelExtractor = codeModelExtractor;
+            this.task = task;
             this.heuristic = heuristic;
         }
 
@@ -95,21 +98,19 @@ public class InliningStep implements TransformationStep<InliningStep.Context> {
         }
 
         @Override
-        public Void visitMethod(MethodTree node, CompilationUnitTree ast) {
-            JavaMethodId id = JavaMethodId.of(node);
-            if (id != null) {
-                CoreOp.FuncOp op;
-                try {
-                    op = codeModelExtractor.toOp(node, ast).orElse(null);
-                } catch (ExtractionFailedException e) {
-                    logger.debug("Could not extract possible inlining candidate", e);
-                    return super.visitMethod(node, ast);
-                }
-                if (op != null && heuristic.test(op, id)) {
-                    java.put(id, op);
-                }
+        public Void visitMethod(MethodTree node, Void unused) {
+            MethodRef id = MethodRef.method(task, node);
+            CoreOp.FuncOp op;
+            try {
+                op = codeModelExtractor.toOp(node).orElse(null);
+            } catch (ExtractionFailedException e) {
+                logger.debug("Could not extract possible inlining candidate", e);
+                return super.visitMethod(node, unused);
             }
-            return super.visitMethod(node, ast);
+            if (op != null && heuristic.test(op, id)) {
+                java.put(id, op);
+            }
+            return super.visitMethod(node, unused);
         }
     }
 
@@ -125,7 +126,7 @@ public class InliningStep implements TransformationStep<InliningStep.Context> {
         @Override
         public Block.Builder acceptOp(Block.Builder builder, Op op) {
             CoreOp.FuncOp candidate = switch (op) {
-                case JavaOp.InvokeOp invokeOp -> context.javaCandidates().get(JavaMethodId.of(invokeOp.invokeReference()));
+                case JavaOp.InvokeOp invokeOp -> context.javaCandidates().get(invokeOp.invokeReference());
                 case CoreOp.FuncCallOp funcCallOp -> context.coreCandidates().get(funcCallOp.funcName());
                 default -> null;
             };
@@ -156,7 +157,7 @@ public class InliningStep implements TransformationStep<InliningStep.Context> {
      * @param coreCandidates candidates for inlining from {@link CoreOp.FuncCallOp}
      * @param javaCandidates candidates for inlining from {@link JavaOp.InvokeOp}
      */
-    public record Context(Map<String, CoreOp.FuncOp> coreCandidates, Map<JavaMethodId, CoreOp.FuncOp> javaCandidates) {
+    public record Context(Map<String, CoreOp.FuncOp> coreCandidates, Map<MethodRef, CoreOp.FuncOp> javaCandidates) {
     }
 
     /**
@@ -165,7 +166,7 @@ public class InliningStep implements TransformationStep<InliningStep.Context> {
      * @param methodId the identifier of the candidate
      * @return true, if the method should be inlined into call sites
      */
-    protected boolean heuristic(CoreOp.FuncOp func, JavaMethodId methodId) {
+    protected boolean heuristic(CoreOp.FuncOp func, MethodRef methodId) {
         return complexity(func) <= maxComplexity;
     }
 

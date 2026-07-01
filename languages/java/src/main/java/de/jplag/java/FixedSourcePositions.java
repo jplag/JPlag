@@ -1,5 +1,6 @@
 package de.jplag.java;
 
+import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.util.SourcePositions;
 
@@ -18,13 +19,13 @@ public class FixedSourcePositions implements SourcePositions {
     }
 
     @Override
-    public long getStartPosition(Tree tree) {
-        return this.base.getStartPosition(tree);
+    public long getStartPosition(CompilationUnitTree compilationUnitTree, Tree tree) {
+        return this.base.getStartPosition(compilationUnitTree, tree);
     }
 
     @Override
-    public long getEndPosition(Tree tree) {
+    public long getEndPosition(CompilationUnitTree compilationUnitTree, Tree tree) {
         // Add one to assert start <= end (one is subtracted later)
-        return Math.max(this.getStartPosition(tree) + 1, this.base.getEndPosition(tree));
+        return Math.max(this.getStartPosition(compilationUnitTree, tree) + 1, this.base.getEndPosition(compilationUnitTree, tree));
     }
 }

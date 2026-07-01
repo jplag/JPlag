@@ -2,6 +2,8 @@ package de.jplag.java.babylon.tokenizer;
 
 import java.io.File;
 
+import javax.tools.JavaCompiler;
+
 import de.jplag.java.babylon.ParserBabylon;
 
 import com.sun.source.tree.CompilationUnitTree;
@@ -66,7 +68,9 @@ public interface BabylonTokenizer {
      * @param parser the parser to bind to
      * @param file the file to bind to
      * @param codebaseAsts the ASTs comprising the codebase which is to be tokenized
+     * @param task the compilation task in whose context this is being executed
      */
-    record TokenizerConstructionContext(ParserBabylon parser, File file, Iterable<? extends CompilationUnitTree> codebaseAsts) {
+    record TokenizerConstructionContext(ParserBabylon parser, File file, Iterable<? extends CompilationUnitTree> codebaseAsts,
+            JavaCompiler.CompilationTask task) {
     }
 }

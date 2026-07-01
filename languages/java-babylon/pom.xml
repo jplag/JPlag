@@ -9,8 +9,8 @@
     <artifactId>java-babylon</artifactId>
     <name>JPlag: Java Language Module with transformations</name>
     <properties>
-        <maven.compiler.source>28</maven.compiler.source>
-        <maven.compiler.target>28</maven.compiler.target>
+        <maven.compiler.source>26</maven.compiler.source>
+        <maven.compiler.target>26</maven.compiler.target>
     </properties>
     <dependencies>
         <dependency>
@@ -24,7 +24,7 @@
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <configuration combine.self="merge">
-                        <argLine>@{argLine} -javaagent:"${settings.localRepository}/org/mockito/mockito-core/${version.mockito}/mockito-core-${version.mockito}.jar" --add-modules jdk.incubator.code --enable-preview --add-exports jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</argLine>
+                        <argLine>@{argLine} -javaagent:"${settings.localRepository}/org/mockito/mockito-core/${version.mockito}/mockito-core-${version.mockito}.jar" --add-modules jdk.incubator.code --enable-preview</argLine>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -34,12 +34,6 @@
                             <arg>--add-modules</arg>
                             <arg>jdk.incubator.code</arg>
                             <arg>--enable-preview</arg>
-                            <arg>--add-exports</arg>
-                            <arg>jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
-                            <arg>--add-exports</arg>
-                            <arg>jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
-                            <arg>--add-exports</arg>
-                            <arg>jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
                         </compilerArgs>
                     </configuration>
                 </plugin>
@@ -50,12 +44,6 @@
                             <option>--add-modules</option>
                             <option>jdk.incubator.code</option>
                             <option>--enable-preview</option>
-                            <option>--add-exports</option>
-                            <option>jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</option>
-                            <option>--add-exports</option>
-                            <option>jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</option>
-                            <option>--add-exports</option>
-                            <option>jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</option>
                         </additionalOptions>
                     </configuration>
                 </plugin>

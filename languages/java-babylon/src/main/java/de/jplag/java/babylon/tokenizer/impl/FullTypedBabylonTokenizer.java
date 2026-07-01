@@ -1,10 +1,11 @@
 package de.jplag.java.babylon.tokenizer.impl;
 
 import java.io.File;
-import java.lang.constant.ClassDesc;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.tools.JavaCompiler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,9 +18,6 @@ import com.google.auto.service.AutoService;
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.util.TreeScanner;
-import com.sun.tools.javac.code.Symbol;
-import com.sun.tools.javac.tree.JCTree;
-import com.sun.tools.javac.util.Name;
 import jdk.incubator.code.CodeType;
 import jdk.incubator.code.Op;
 import jdk.incubator.code.dialect.core.CoreType;
@@ -120,34 +118,29 @@ public class FullTypedBabylonTokenizer extends FullBabylonTokenizer {
 
         @Override
         public BabylonTokenizer getTokenizer(TokenizerConstructionContext context) {
-            return new FullTypedBabylonTokenizer(context.parser(), context.file(), getCodebaseTypes(context.codebaseAsts()));
+            return new FullTypedBabylonTokenizer(context.parser(), context.file(), getCodebaseTypes(context.task(), context.codebaseAsts()));
         }
 
-        private Set<CodeType> getCodebaseTypes(Iterable<? extends CompilationUnitTree> codebaseAsts) {
+        private Set<CodeType> getCodebaseTypes(JavaCompiler.CompilationTask task, Iterable<? extends CompilationUnitTree> codebaseAsts) {
             Set<CodeType> result = new HashSet<>();
             for (CompilationUnitTree ast : codebaseAsts) {
-                ast.accept(new CodebaseTreeTypesScanner(), result);
+                ast.accept(new CodebaseTreeTypesScanner(task), result);
             }
             return Collections.unmodifiableSet(result);
         }
     }
 
     private static class CodebaseTreeTypesScanner extends TreeScanner<Void, Set<CodeType>> {
-        @Override
-        public Void visitClass(ClassTree node, Set<CodeType> codeTypes) {
-            JCTree.JCClassDecl classDecl = (JCTree.JCClassDecl) node;
-            codeTypes.add(convert(classDecl.sym));
-            return super.visitClass(node, codeTypes);
+        private final JavaCompiler.CompilationTask task;
+
+        private CodebaseTreeTypesScanner(JavaCompiler.CompilationTask task) {
+            this.task = task;
         }
 
-        private JavaType convert(Symbol.ClassSymbol s) {
-            Symbol.ClassSymbol enclosingClass = s.getEnclosingElement().enclClass();
-            if (enclosingClass != null) {
-                Name innerName = s.flatName().subName(enclosingClass.flatName().length() + 1);
-                return JavaType.qualified(convert(enclosingClass), innerName.toString());
-            } else {
-                return JavaType.type(ClassDesc.of(s.flatName().toString()));
-            }
+        @Override
+        public Void visitClass(ClassTree node, Set<CodeType> codeTypes) {
+            codeTypes.add(JavaType.type(task, node));
+            return super.visitClass(node, codeTypes);
         }
     }
 }

@@ -1,7 +1,5 @@
 package de.jplag.java.babylon.transformer;
 
-import com.sun.source.tree.CompilationUnitTree;
-
 import com.sun.source.tree.TreeVisitor;
 
 /**
@@ -9,7 +7,7 @@ import com.sun.source.tree.TreeVisitor;
  * ({@link de.jplag.java.babylon.TokenGeneratingTreeScannerBabylon}) is performed.
  * @param <Context> the type of the returned context
  */
-public interface Prepass<Context> extends TreeVisitor<Void, CompilationUnitTree> {
+public interface Prepass<Context> extends TreeVisitor<Void, Void> {
     /**
      * Build a final context object to be consumed by the main pass.
      * @return the built context

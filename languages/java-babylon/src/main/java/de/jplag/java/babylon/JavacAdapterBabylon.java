@@ -9,6 +9,7 @@ import de.jplag.java.Parser;
 import de.jplag.java.babylon.extractor.CodeModelExtractorImpl;
 import de.jplag.java.babylon.pipeline.TransformationPipeline;
 import de.jplag.java.babylon.tokenizer.BabylonTokenizer;
+import de.jplag.java.babylon.transformer.TransformationStep;
 import de.jplag.semantics.VariableRegistry;
 
 import com.sun.source.tree.CompilationUnitTree;
@@ -37,7 +38,8 @@ class JavacAdapterBabylon extends JavacAdapter {
     @Override
     protected void handle(Iterable<? extends CompilationUnitTree> trees, Parser parser, SourcePositions positions,
             JavaCompiler.CompilationTask task) {
-        TransformationPipeline.Context prepassContext = pipeline.prepass(trees, new CodeModelExtractorImpl(task));
+        TransformationPipeline.Context prepassContext = pipeline.prepass(trees,
+                new TransformationStep.PrepassConstructionContext(new CodeModelExtractorImpl(task), task));
         TreeScannerConstructionContext context = new TreeScannerConstructionContext(prepassContext, trees);
         ScopedValue.where(PREPASS_CONTEXT, context).run(() -> super.handle(trees, parser, positions, task));
     }
@@ -47,7 +49,7 @@ class JavacAdapterBabylon extends JavacAdapter {
             JavaCompiler.CompilationTask task) {
         TreeScannerConstructionContext context = PREPASS_CONTEXT.get();
         return new TokenGeneratingTreeScannerBabylon(file, (ParserBabylon) parser, map, positions, ast, context.codebaseAsts(), variableRegistry,
-                tokenizer, context.pipelineContext());
+                tokenizer, context.pipelineContext(), task);
     }
 
     private record TreeScannerConstructionContext(TransformationPipeline.Context pipelineContext,

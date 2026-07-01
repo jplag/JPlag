@@ -3,6 +3,7 @@ package de.jplag.java.babylon.transformer;
 import java.util.Set;
 
 import javax.annotation.Nullable;
+import javax.tools.JavaCompiler;
 
 import de.jplag.java.babylon.extractor.CodeModelExtractor;
 
@@ -49,8 +50,9 @@ public interface TransformationStep<Context> {
     /**
      * Context for creating prepasses.<br>
      * Rather than a bunch of method parameters, this encapsulates all relevant objects in a single wrapper.
-     * @param codeModelExtractor the current code model extractor
+     * @param extractor the current code model extractor
+     * @param task the compilation task in whose context the prepass is being executed
      */
-    record PrepassConstructionContext(CodeModelExtractor codeModelExtractor) {
+    record PrepassConstructionContext(CodeModelExtractor extractor, JavaCompiler.CompilationTask task) {
     }
 }

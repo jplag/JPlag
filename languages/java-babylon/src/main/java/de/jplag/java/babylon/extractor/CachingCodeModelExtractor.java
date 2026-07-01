@@ -4,7 +4,6 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.MethodTree;
 import jdk.incubator.code.dialect.core.CoreOp;
 
@@ -40,7 +39,7 @@ public final class CachingCodeModelExtractor implements CodeModelExtractor {
     }
 
     @Override
-    public Optional<CoreOp.FuncOp> toOp(MethodTree methodTree, CompilationUnitTree ast) {
+    public Optional<CoreOp.FuncOp> toOp(MethodTree methodTree) {
         Optional<CoreOp.FuncOp> result = cache.get(methodTree);
         if (result != null) {
             return result;
@@ -50,20 +49,20 @@ public final class CachingCodeModelExtractor implements CodeModelExtractor {
             throw new ExtractionFailedException(exception);
         }
         try {
-            result = delegate.toOp(methodTree, ast);
+            result = delegate.toOp(methodTree);
         } catch (ExtractionFailedException e) {
             extractionFailedCache.put(methodTree, e);
             throw e;
         }
         cache.put(methodTree, result);
-        delegate.evictCache(methodTree, ast);
+        delegate.evictCache(methodTree);
         return result;
     }
 
     @Override
-    public void evictCache(MethodTree methodTree, CompilationUnitTree ast) {
+    public void evictCache(MethodTree methodTree) {
         if (delegate != null)
-            delegate.evictCache(methodTree, ast);
+            delegate.evictCache(methodTree);
         cache.remove(methodTree);
     }
 }

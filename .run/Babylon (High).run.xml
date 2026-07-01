@@ -3,7 +3,7 @@
     <option name="MAIN_CLASS_NAME" value="de.jplag.cli.CLI" />
     <module name="cli" />
     <option name="PROGRAM_PARAMETERS" value="&quot;../SameSame repr/datasets/Progpedia19/human&quot; &quot;../SameSame repr/datasets/Progpedia19/insert&quot; --cluster-skip -r results-java-babylon-high-level java-babylon --tokenizer high-level" />
-    <option name="VM_PARAMETERS" value="--add-modules jdk.incubator.code --add-exports jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED" />
+    <option name="VM_PARAMETERS" value="--add-modules jdk.incubator.code" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="de.jplag.cli.*" />

@@ -32,30 +32,32 @@ public sealed interface PrepassExecutor permits EagerPrepassExecutor, HybridPrep
      * Performs a list of prepasses to obtain the context required for tokenization.
      * @param steps the steps comprising the pipeline that is to be executed
      * @param trees the input trees on which the prepass should be run
-     * @param extractor the extractor to use for obtaining code models
+     * @param context the context to use for constructing prepasses
      * @return the completed CodeModelExtractor containing the prepass context and all transformations
      */
-    CodeModelExtractor prepass(List<TransformationStep<?>> steps, Iterable<? extends CompilationUnitTree> trees, CodeModelExtractor extractor);
+    CodeModelExtractor prepass(List<TransformationStep<?>> steps, Iterable<? extends CompilationUnitTree> trees,
+            TransformationStep.PrepassConstructionContext context);
 
     /**
      * Performs a prepass to obtain the context required for tokenization.
      * @param <T> type of context returned by the prepass
      * @param step the step containing the prepass to be executed
      * @param trees the input trees on which the prepass should be run
-     * @param extractor the extractor to use for obtaining code models
+     * @param context the context to use for constructing the prepass
      * @return a CodeModelExtractor containing the prepass context and the transformation described by the step
      */
-    default <T> CodeModelExtractor prepass(TransformationStep<T> step, Iterable<? extends CompilationUnitTree> trees, CodeModelExtractor extractor) {
-        Prepass<T> prepass = step.beginPrepass(new TransformationStep.PrepassConstructionContext(extractor));
-        T context;
+    default <T> CodeModelExtractor prepass(TransformationStep<T> step, Iterable<? extends CompilationUnitTree> trees,
+            TransformationStep.PrepassConstructionContext context) {
+        Prepass<T> prepass = step.beginPrepass(context);
+        T prepassContext;
         if (prepass != null) {
             for (CompilationUnitTree tree : trees) {
-                tree.accept(prepass, tree);
+                tree.accept(prepass, null);
             }
-            context = prepass.finalizeContext();
+            prepassContext = prepass.finalizeContext();
         } else {
-            context = null;
+            prepassContext = null;
         }
-        return new TransformingCodeModelExtractor(extractor, op -> step.apply(op, context));
+        return new TransformingCodeModelExtractor(context.extractor(), op -> step.apply(op, prepassContext));
     }
 }
