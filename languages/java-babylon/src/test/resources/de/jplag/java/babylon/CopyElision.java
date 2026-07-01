@@ -9,6 +9,14 @@ void main() {
     IO.println(c);
 
     int d = IO.class.hashCode();
-    int e = b;
-    IO.println(c);
+    int e = d;
+    IO.println(e);
+
+    for (int i = 0; i < 10; i++) {
+        if (i < 5) {
+            b++;
+        } else {
+            e++;
+        }
+    }
 }

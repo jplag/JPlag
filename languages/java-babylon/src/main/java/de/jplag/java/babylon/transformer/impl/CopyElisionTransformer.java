@@ -44,6 +44,8 @@ public class CopyElisionTransformer implements SimpleTransformation, BabylonDSL 
                 Op.Result replacement = place(builder, varOp.location(), CoreOp.var(varOp.varName(), varOp.varValueType()));
                 builder.context().mapValue(varOp.result(), replacement);
             }
+            case CoreOp.VarAccessOp.VarStoreOp varStoreOp when storedValueUnused(varStoreOp) -> {
+            }
             // TODO elide var x; ...; assign x; ...; var y = x; now only use y
             default -> builder.add(op);
         }
@@ -56,6 +58,19 @@ public class CopyElisionTransformer implements SimpleTransformation, BabylonDSL 
 
     private boolean onlyRead(CoreOp.VarOp varOp) {
         return varOp.result().uses().stream().allMatch(use -> use.op() instanceof CoreOp.VarAccessOp.VarLoadOp);
+    }
+
+    private boolean storedValueUnused(CoreOp.VarAccessOp.VarStoreOp varStoreOp) {
+        if (!(varStoreOp.varOperand() instanceof Op.Result variable)) {
+            // Cannot be the variable declaration, so we can't check all loads
+            return false;
+        }
+        if (!(variable.op() instanceof CoreOp.VarOp)) {
+            // Maybe unpacked from a tuple? Either way, we can't check all loads
+            return false;
+        }
+        return variable.uses().stream().filter(use -> !(use.op() instanceof CoreOp.VarAccessOp.VarStoreOp))
+                .allMatch(use -> varStoreOp.result().isDominatedBy(use));
     }
 
     private boolean initialValueIsUnused(CoreOp.VarOp varOp) {
