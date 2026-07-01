@@ -21,13 +21,13 @@ import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
 import de.jplag.frequency.strategy.CompleteMatchesStrategy;
 import de.jplag.frequency.strategy.ContainedMatchesStrategy;
-import de.jplag.frequency.strategy.FrequencyStrategy;
+import de.jplag.frequency.strategy.FrequencyAnalysisStrategy;
 import de.jplag.frequency.strategy.SubMatchesStrategy;
 import de.jplag.frequency.strategy.WindowOfMatchesStrategy;
 import de.jplag.options.JPlagOptions;
 
 /**
- * Checks that each FrequencyStrategy calculates the correct match count after one round of processing.
+ * Checks that each FrequencyAnalysisStrategy calculates the correct match count after one round of processing.
  */
 class WeightStrategyTest extends TestBase {
 
@@ -57,14 +57,14 @@ class WeightStrategyTest extends TestBase {
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("strategies")
-    void testMatchCountAfterOneRound(FrequencyStrategy strategy, double expectedMatch, double expectedSubmatch) {
+    void testMatchCountAfterOneRound(FrequencyAnalysisStrategy strategy, double expectedMatch, double expectedSubmatch) {
         strategy.processMatch(comparison, match);
         strategy.processMatch(comparison, submatch);
         assertMatchCount(strategy, match, expectedMatch);
         assertMatchCount(strategy, submatch, expectedSubmatch);
     }
 
-    private void assertMatchCount(FrequencyStrategy strategy, Match match, double expected) {
+    private void assertMatchCount(FrequencyAnalysisStrategy strategy, Match match, double expected) {
         List<TokenType> matchTokens = FrequencyUtil.tokenTypesFor(comparison, match);
         assertEquals(expected, strategy.calculateMatchCount(matchTokens), 0.01);
     }

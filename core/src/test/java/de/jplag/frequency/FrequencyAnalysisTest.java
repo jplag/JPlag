@@ -18,7 +18,7 @@ import de.jplag.TokenType;
 import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
 import de.jplag.frequency.strategy.CompleteMatchesStrategy;
-import de.jplag.frequency.strategy.FrequencyStrategy;
+import de.jplag.frequency.strategy.FrequencyAnalysisStrategy;
 import de.jplag.frequency.weighting.SigmoidWeighting;
 import de.jplag.options.JPlagOptions;
 
@@ -40,7 +40,7 @@ class FrequencyAnalysisTest extends TestBase {
     @Test
     @DisplayName("The number of comparisons is preserved after frequency weighting")
     void preservesNumberOfComparisons() {
-        FrequencyAnalysisOptions options = new FrequencyAnalysisOptions().withEnabled(true).withAnalysisStrategy(new CompleteMatchesStrategy())
+        FrequencyAnalysisOptions options = new FrequencyAnalysisOptions().withEnabled(true).withFrequencyStrategy(new CompleteMatchesStrategy())
                 .withWeightingFunction(new SigmoidWeighting());
 
         JPlagResult weightedResult = FrequencyAnalysis.applyFrequencyWeighting(rawResult, options);
@@ -51,7 +51,7 @@ class FrequencyAnalysisTest extends TestBase {
     @Test
     @DisplayName("Every weighted comparison has the frequency weighting flag set and a non-negative score")
     void allComparisonsHaveFrequencyWeightingFlagSet() {
-        FrequencyAnalysisOptions options = new FrequencyAnalysisOptions().withEnabled(true).withAnalysisStrategy(new CompleteMatchesStrategy())
+        FrequencyAnalysisOptions options = new FrequencyAnalysisOptions().withEnabled(true).withFrequencyStrategy(new CompleteMatchesStrategy())
                 .withWeightingFunction(new SigmoidWeighting());
 
         JPlagResult weightedResult = FrequencyAnalysis.applyFrequencyWeighting(rawResult, options);
@@ -66,7 +66,7 @@ class FrequencyAnalysisTest extends TestBase {
     @Test
     @DisplayName("A weighting factor of zero leaves the weighted similarity identical to the original")
     void weightingFactorZeroPreservesSimilarity() {
-        FrequencyAnalysisOptions options = new FrequencyAnalysisOptions().withEnabled(true).withAnalysisStrategy(new CompleteMatchesStrategy())
+        FrequencyAnalysisOptions options = new FrequencyAnalysisOptions().withEnabled(true).withFrequencyStrategy(new CompleteMatchesStrategy())
                 .withWeightingFunction(new SigmoidWeighting()).withWeightingFactor(0.0);
 
         JPlagResult weightedResult = FrequencyAnalysis.applyFrequencyWeighting(rawResult, options);
@@ -82,7 +82,7 @@ class FrequencyAnalysisTest extends TestBase {
     @Test
     @DisplayName("A weighting factor of one produces valid non-negative weighted similarities for all comparisons")
     void weightingFactorOneProducesNonNegativeWeightedSimilarity() {
-        FrequencyAnalysisOptions options = new FrequencyAnalysisOptions().withEnabled(true).withAnalysisStrategy(new CompleteMatchesStrategy())
+        FrequencyAnalysisOptions options = new FrequencyAnalysisOptions().withEnabled(true).withFrequencyStrategy(new CompleteMatchesStrategy())
                 .withWeightingFunction(new SigmoidWeighting()).withWeightingFactor(1.0);
 
         JPlagResult weightedResult = FrequencyAnalysis.applyFrequencyWeighting(rawResult, options);
@@ -97,7 +97,7 @@ class FrequencyAnalysisTest extends TestBase {
     @Test
     @DisplayName("The pipeline accepts custom inline strategy and weighting function implementations")
     void respectsCustomStrategyAndWeightingFunction() {
-        FrequencyStrategy counting = new FrequencyStrategy() {
+        FrequencyAnalysisStrategy counting = new FrequencyAnalysisStrategy() {
             @Override
             protected void processMatchTokenTypes(List<TokenType> matchTokenTypes) {
                 incrementSequence(matchTokenTypes);
@@ -111,7 +111,7 @@ class FrequencyAnalysisTest extends TestBase {
 
         MatchWeightingFunction fixedWeight = rarity -> 0.5;
 
-        FrequencyAnalysisOptions options = new FrequencyAnalysisOptions().withEnabled(true).withAnalysisStrategy(counting)
+        FrequencyAnalysisOptions options = new FrequencyAnalysisOptions().withEnabled(true).withFrequencyStrategy(counting)
                 .withWeightingFunction(fixedWeight).withWeightingFactor(1.0);
 
         JPlagResult weightedResult = FrequencyAnalysis.applyFrequencyWeighting(rawResult, options);

@@ -58,7 +58,7 @@ class StrategyIntegrationTest extends TestBase {
     @ParameterizedTest(name = "{1}")
     @MethodSource("strategies")
     @DisplayName("Each strategy produces a non-empty frequency map")
-    void producesNonEmptyFrequencyMap(FrequencyStrategy strategy, String name) {
+    void producesNonEmptyFrequencyMap(FrequencyAnalysisStrategy strategy, String name) {
         List<JPlagComparison> comparisons = result.getAllComparisons();
         strategy.processMatches(comparisons);
         Map<List<TokenType>, Integer> tokenFrequencyMap = strategy.getResult();

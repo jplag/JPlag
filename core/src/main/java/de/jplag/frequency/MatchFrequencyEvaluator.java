@@ -7,19 +7,19 @@ import java.util.concurrent.ConcurrentHashMap;
 import de.jplag.JPlagComparison;
 import de.jplag.Match;
 import de.jplag.TokenType;
-import de.jplag.frequency.strategy.FrequencyStrategy;
+import de.jplag.frequency.strategy.FrequencyAnalysisStrategy;
 
 /**
  * Calculates weights of the matches and writes them into a map.
  */
 class MatchFrequencyEvaluator {
-    private final FrequencyStrategy strategy;
+    private final FrequencyAnalysisStrategy strategy;
 
     /**
      * Constructor defining the used weighting strategy.
      * @param strategy is the strategy used to determine the frequency of a match
      */
-    public MatchFrequencyEvaluator(FrequencyStrategy strategy) {
+    public MatchFrequencyEvaluator(FrequencyAnalysisStrategy strategy) {
         this.strategy = strategy;
     }
 

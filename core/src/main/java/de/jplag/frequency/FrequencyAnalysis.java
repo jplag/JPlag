@@ -6,11 +6,11 @@ import java.util.Map;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.TokenType;
-import de.jplag.frequency.strategy.FrequencyStrategy;
+import de.jplag.frequency.strategy.FrequencyAnalysisStrategy;
 
 /**
  * Applies frequency-based weighting to matches across all comparisons, influencing the similarity score according to
- * the configured {@link FrequencyStrategy} and {@link MatchWeightingFunction}.
+ * the configured {@link FrequencyAnalysisStrategy} and {@link MatchWeightingFunction}.
  */
 public final class FrequencyAnalysis {
 
@@ -26,9 +26,9 @@ public final class FrequencyAnalysis {
      */
     public static JPlagResult applyFrequencyWeighting(JPlagResult result, FrequencyAnalysisOptions options) {
         List<JPlagComparison> comparisons = result.getAllComparisons();
-        FrequencyStrategy frequencyStrategy = options.analysisStrategy();
-        frequencyStrategy.processMatches(comparisons);
-        MatchFrequencyEvaluator matchWeighting = new MatchFrequencyEvaluator(frequencyStrategy);
+        FrequencyAnalysisStrategy strategy = options.frequencyStrategy();
+        strategy.processMatches(comparisons);
+        MatchFrequencyEvaluator matchWeighting = new MatchFrequencyEvaluator(strategy);
         Map<List<TokenType>, Double> matchFrequency = matchWeighting.weightAllComparisons(comparisons);
         MatchFrequencyWeighting similarity = new MatchFrequencyWeighting(options.weightingFunction(), matchFrequency);
         List<JPlagComparison> weightedComparisons = comparisons.parallelStream()

@@ -7,7 +7,7 @@ import java.util.OptionalDouble;
 import de.jplag.JPlagComparison;
 import de.jplag.Match;
 import de.jplag.TokenType;
-import de.jplag.frequency.strategy.FrequencyStrategy;
+import de.jplag.frequency.strategy.FrequencyAnalysisStrategy;
 
 /**
  * Calculates the frequency dependent similarity for the comparisons according to the frequency similarity weighting
@@ -46,8 +46,8 @@ public class MatchFrequencyWeighting {
     }
 
     /**
-     * Determines the similarity score for a comparison using the {@link FrequencyStrategy}, {@link MatchWeightingFunction}
-     * and weighting factor.
+     * Determines the similarity score for a comparison using the {@link FrequencyAnalysisStrategy},
+     * {@link MatchWeightingFunction} and weighting factor.
      * @param comparison considered comparison to calculate the similarity score for
      * @param weightingFactor controls the influence of the weighting
      * @return the similarity score

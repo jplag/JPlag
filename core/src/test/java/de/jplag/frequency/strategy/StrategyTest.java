@@ -168,7 +168,7 @@ class StrategyTest extends TestBase {
     @Test
     @DisplayName("Test Complete Matches Strategy")
     void testCompleteMatchesStrategy() {
-        FrequencyStrategy strategy = new CompleteMatchesStrategy();
+        FrequencyAnalysisStrategy strategy = new CompleteMatchesStrategy();
         strategy.processMatches(TEST_COMPARISONS);
         Map<List<TokenType>, Integer> tokenFrequencyMap = strategy.getResult();
         STRATEGY_INTEGRATION_TEST.printTestResult(tokenFrequencyMap);
@@ -202,7 +202,7 @@ class StrategyTest extends TestBase {
     @DisplayName("Test check() of window strategy")
     void testWindowOfMatchesStrategy() {
         int windowSize = 5;
-        FrequencyStrategy strategy = new WindowOfMatchesStrategy(windowSize);
+        FrequencyAnalysisStrategy strategy = new WindowOfMatchesStrategy(windowSize);
 
         List<TokenType> matchTokenTypes = FrequencyUtil.tokenTypesFor(testComparison, matchShort);
         strategy.processMatchTokenTypes(matchTokenTypes);
@@ -281,7 +281,7 @@ class StrategyTest extends TestBase {
     @Test
     void testCompleteMatchesIncludedInContainedStrategyForMatchesLongerMin() {
         int minLength = 100;
-        FrequencyStrategy strategy = new ContainedMatchesStrategy(minLength);
+        FrequencyAnalysisStrategy strategy = new ContainedMatchesStrategy(minLength);
         strategy.processMatches(TEST_COMPARISONS);
         Map<List<TokenType>, Integer> matchFrequencyMap = strategy.getResult();
         Map<List<TokenType>, Integer> frequencyCount = new HashMap<>();

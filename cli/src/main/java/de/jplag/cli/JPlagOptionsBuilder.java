@@ -108,7 +108,7 @@ public class JPlagOptionsBuilder {
     private FrequencyAnalysisOptions getFrequencyAnalysisOptions() {
         CliOptions.FrequencyAnalysis frequencyOptions = this.cliOptions.highlightExtraction;
         return new FrequencyAnalysisOptions().withEnabled(frequencyOptions.enabled)
-                .withAnalysisStrategy(frequencyOptions.frequencyStrategy.create(frequencyOptions.minimumSubsequenceLength))
+                .withFrequencyStrategy(frequencyOptions.frequencyStrategy.create(frequencyOptions.minimumSubsequenceLength))
                 .withFrequencyStrategyMinValue(frequencyOptions.minimumSubsequenceLength)
                 .withWeightingFunction(frequencyOptions.weightingFunction.create()).withWeightingFactor(frequencyOptions.weightingFactor);
     }

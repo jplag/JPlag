@@ -14,11 +14,11 @@ import de.jplag.frequency.FrequencyUtil;
  * Interface for different frequency calculation strategies. Implementations define how submatches are considered in the
  * frequency calculation of matches.
  */
-public abstract class FrequencyStrategy {
+public abstract class FrequencyAnalysisStrategy {
 
     private final Map<List<TokenType>, Integer> matchCounts;
 
-    protected FrequencyStrategy() {
+    protected FrequencyAnalysisStrategy() {
         this.matchCounts = new ConcurrentHashMap<>();
     }
 
