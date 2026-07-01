@@ -13,7 +13,7 @@
     "vue-virtual-scroller": "^3.0.4"
   },
   "peerDependencies": {
-    "@fortawesome/free-solid-svg-icons": "^7.1.0",
+    "@fortawesome/free-solid-svg-icons": "^7.3.0",
     "@fortawesome/vue-fontawesome": "^3.2.0",
     "pinia": "^3.0.3",
     "tailwindcss": "^4.3.0",
