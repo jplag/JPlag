@@ -3,11 +3,7 @@ package de.jplag.java.babylon.transformer.impl;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
-import de.jplag.java.babylon.pipeline.TransformationPipeline;
 
 import jdk.incubator.code.dialect.core.CoreOp;
 
@@ -22,7 +18,8 @@ public class StringConcatDesugarStepTest extends AbstractTransformerTest {
     public void testTransformer() {
         AbstractTransformerTest.ParseResult parseResult = assertDoesNotThrow(() -> parseFile("StringConcat.java"));
         CoreOp.FuncOp op = parseResult.extractCodeModel();
-        CoreOp.FuncOp transformedOp = parseResult.extractCodeModel(new TransformationPipeline(List.of(new StringConcatDesugarStep())));
+        CoreOp.FuncOp transformedOp = parseResult.extractCodeModel(pipeline(new StringConcatDesugarStep()));
+
         assertEquals(
                 """
                         func @loc="1:1:StringConcat.java" @"main" (%0 : java.type:"StringConcat")java.type:"void" -> {
@@ -128,6 +125,7 @@ public class StringConcatDesugarStepTest extends AbstractTransformerTest {
                             return @loc="1:1";
                         };""",
                 op.toText());
+
         assertEquals(
                 """
                         func @loc="1:1:StringConcat.java" @"main" (%0 : java.type:"StringConcat")java.type:"void" -> {

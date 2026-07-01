@@ -18,8 +18,9 @@ public class TryWithResourcesDesugarTransformerTest extends AbstractTransformerT
      */
     @Test
     public void testTransformer() {
-        CoreOp.FuncOp op = assertDoesNotThrow(() -> parseFile("TryWithResources.java")).extractCodeModel();
-        CoreOp.FuncOp transformedOp = op.transform(new TryWithResourcesDesugarTransformer());
+        ParseResult parseResult = assertDoesNotThrow(() -> parseFile("TryWithResources.java"));
+        CoreOp.FuncOp op = parseResult.extractCodeModel();
+        CoreOp.FuncOp transformedOp = parseResult.extractCodeModel(pipeline(step(new TryWithResourcesDesugarTransformer())));
 
         assertEquals(
                 """
@@ -80,6 +81,7 @@ public class TryWithResourcesDesugarTransformerTest extends AbstractTransformerT
                             return @loc="1:1";
                         };""",
                 op.toText());
+
         assertEquals(
                 """
                         func @loc="1:1:TryWithResources.java" @"main" (%0 : java.type:"TryWithResources")java.type:"void" -> {

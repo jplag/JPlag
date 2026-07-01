@@ -16,8 +16,9 @@ public class SwitchExpressionDesugarTransformerTest extends AbstractTransformerT
      */
     @Test
     public void testTransformer() {
-        CoreOp.FuncOp op = assertDoesNotThrow(() -> parseFile("Switch.java")).extractCodeModel();
-        CoreOp.FuncOp transformedOp = op.transform(new SwitchExpressionDesugarTransformer());
+        ParseResult parseResult = assertDoesNotThrow(() -> parseFile("Switch.java"));
+        CoreOp.FuncOp op = parseResult.extractCodeModel();
+        CoreOp.FuncOp transformedOp = parseResult.extractCodeModel(pipeline(step(new SwitchExpressionDesugarTransformer())));
 
         assertEquals(
                 """
@@ -159,6 +160,7 @@ public class SwitchExpressionDesugarTransformerTest extends AbstractTransformerT
                             return @loc="1:1";
                         };""",
                 op.toText());
+
         assertEquals(
                 """
                         func @loc="1:1:Switch.java" @"main" (%0 : java.type:"Switch")java.type:"void" -> {

@@ -18,8 +18,9 @@ public class EnhancedForDesugarTransformerTest extends AbstractTransformerTest {
      */
     @Test
     public void testTransformer() {
-        CoreOp.FuncOp op = assertDoesNotThrow(() -> parseFile("EnhancedFor.java")).extractCodeModel();
-        CoreOp.FuncOp transformedOp = op.transform(new EnhancedForDesugarTransformer());
+        ParseResult parseResult = assertDoesNotThrow(() -> parseFile("EnhancedFor.java"));
+        CoreOp.FuncOp op = parseResult.extractCodeModel();
+        CoreOp.FuncOp transformedOp = parseResult.extractCodeModel(pipeline(step(new EnhancedForDesugarTransformer())));
 
         assertEquals(
                 """
@@ -142,6 +143,7 @@ public class EnhancedForDesugarTransformerTest extends AbstractTransformerTest {
                             return @loc="1:1";
                         };""",
                 op.toText());
+
         assertEquals(
                 """
                         func @loc="1:1:EnhancedFor.java" @"main" (%0 : java.type:"EnhancedFor")java.type:"void" -> {

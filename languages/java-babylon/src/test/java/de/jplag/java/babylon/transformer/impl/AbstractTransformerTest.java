@@ -14,7 +14,9 @@ import de.jplag.java.JavacAdapter;
 import de.jplag.java.Parser;
 import de.jplag.java.babylon.extractor.CodeModelExtractorImpl;
 import de.jplag.java.babylon.pipeline.TransformationPipeline;
+import de.jplag.java.babylon.transformer.SimpleTransformation;
 import de.jplag.java.babylon.transformer.TransformationStep;
+import de.jplag.java.babylon.transformer.impl.util.DelegatePipelineStep;
 
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.CompilationUnitTree;
@@ -40,6 +42,14 @@ public abstract class AbstractTransformerTest {
         JavacAdapterTest adapter = new JavacAdapterTest();
         adapter.parseFiles(Set.of(file.toFile()), null);
         return adapter.getResult();
+    }
+
+    protected final TransformationPipeline pipeline(TransformationStep<?>... steps) {
+        return new TransformationPipeline(List.of(steps));
+    }
+
+    protected final DelegatePipelineStep step(SimpleTransformation transformation) {
+        return new DelegatePipelineStep(transformation);
     }
 
     private static final class JavacAdapterTest extends JavacAdapter {

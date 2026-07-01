@@ -3,11 +3,7 @@ package de.jplag.java.babylon.transformer.impl;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
-import de.jplag.java.babylon.pipeline.TransformationPipeline;
 
 import jdk.incubator.code.dialect.core.CoreOp;
 
@@ -22,7 +18,8 @@ public class InliningStepTest extends AbstractTransformerTest {
     public void testTransformer() {
         ParseResult parseResult = assertDoesNotThrow(() -> parseFile("Inline.java"));
         CoreOp.FuncOp op = parseResult.extractCodeModel();
-        CoreOp.FuncOp transformedOp = parseResult.extractCodeModel(new TransformationPipeline(List.of(new InliningStep())));
+        CoreOp.FuncOp transformedOp = parseResult.extractCodeModel(pipeline(new InliningStep()));
+
         assertEquals("""
                 func @loc="1:1:Inline.java" @"main" (%0 : java.type:"Inline")java.type:"void" -> {
                     %1 : java.type:"java.lang.String" = constant @loc="2:25" @"Hello";
@@ -30,6 +27,7 @@ public class InliningStepTest extends AbstractTransformerTest {
                     invoke %2 @loc="2:5" @java.ref:"java.lang.IO::println(java.lang.Object):void";
                     return @loc="1:1";
                 };""", op.toText());
+
         assertEquals("""
                 func @loc="1:1:Inline.java" @"main" (%0 : java.type:"Inline")java.type:"void" -> {
                     %1 : java.type:"java.lang.String" = constant @loc="2:25" @"Hello";

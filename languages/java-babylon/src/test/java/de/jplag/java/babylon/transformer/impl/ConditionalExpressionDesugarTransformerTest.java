@@ -18,8 +18,9 @@ public class ConditionalExpressionDesugarTransformerTest extends AbstractTransfo
      */
     @Test
     public void testTransformer() {
-        CoreOp.FuncOp op = assertDoesNotThrow(() -> parseFile("ConditionalExpression.java")).extractCodeModel();
-        CoreOp.FuncOp transformedOp = op.transform(new ConditionalExpressionDesugarTransformer());
+        ParseResult parseResult = assertDoesNotThrow(() -> parseFile("ConditionalExpression.java"));
+        CoreOp.FuncOp op = parseResult.extractCodeModel();
+        CoreOp.FuncOp transformedOp = parseResult.extractCodeModel(pipeline(step(new ConditionalExpressionDesugarTransformer())));
 
         assertEquals("""
                 func @loc="1:1:ConditionalExpression.java" @"main" (%0 : java.type:"ConditionalExpression")java.type:"void" -> {
@@ -84,6 +85,7 @@ public class ConditionalExpressionDesugarTransformerTest extends AbstractTransfo
                     invoke %28 @loc="13:5" @java.ref:"java.lang.IO::println(java.lang.Object):void";
                     return @loc="1:1";
                 };""", op.toText());
+
         assertEquals("""
                 func @loc="1:1:ConditionalExpression.java" @"main" (%0 : java.type:"ConditionalExpression")java.type:"void" -> {
                     %1 : Var<java.type:"int"> = var @loc="2:18";

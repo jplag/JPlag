@@ -3,11 +3,8 @@ package de.jplag.java.babylon.transformer.impl;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 
-import de.jplag.java.babylon.pipeline.TransformationPipeline;
 import de.jplag.java.babylon.transformer.impl.util.DelegatePipelineStep;
 
 import jdk.incubator.code.dialect.core.CoreOp;
@@ -25,10 +22,11 @@ public class DeadCodeEliminationTest extends AbstractTransformerTest {
     public void testTransformer() {
         ParseResult parseResult = assertDoesNotThrow(() -> parseFile("CopyElision.java"));
         CoreOp.FuncOp op = parseResult.extractCodeModel();
-        DelegatePipelineStep copyElision = new DelegatePipelineStep(new CopyElisionTransformer());
-        DelegatePipelineStep deadCodeElimination = new DelegatePipelineStep(new DeadCodeEliminationTransformer());
-        CoreOp.FuncOp transformedOp = parseResult.extractCodeModel(new TransformationPipeline(
-                List.of(new ConstantPropagationStep(), copyElision, deadCodeElimination, copyElision, deadCodeElimination)));
+        DelegatePipelineStep copyElision = step(new CopyElisionTransformer());
+        DelegatePipelineStep deadCodeElimination = step(new DeadCodeEliminationTransformer());
+        CoreOp.FuncOp transformedOp = parseResult
+                .extractCodeModel(pipeline(new ConstantPropagationStep(), copyElision, deadCodeElimination, copyElision, deadCodeElimination));
+
         assertEquals("""
                 func @loc="1:1:CopyElision.java" @"main" (%0 : java.type:"CopyElision")java.type:"void" -> {
                     %1 : java.type:"int" = constant @loc="2:13" @0;
@@ -74,6 +72,7 @@ public class DeadCodeEliminationTest extends AbstractTransformerTest {
                     invoke %27 @loc="13:5" @java.ref:"java.lang.IO::println(java.lang.Object):void";
                     return @loc="1:1";
                 };""", op.toText());
+
         assertEquals("""
                 func @loc="1:1:CopyElision.java" @"main" (%0 : java.type:"CopyElision")java.type:"void" -> {
                     java.for @loc="3:5"

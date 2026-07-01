@@ -18,8 +18,9 @@ public class AssertRemoveTransformerTest extends AbstractTransformerTest {
      */
     @Test
     public void testTransformer() {
-        CoreOp.FuncOp op = assertDoesNotThrow(() -> parseFile("Asserts.java")).extractCodeModel();
-        CoreOp.FuncOp transformedOp = op.transform(new AssertRemoveTransformer());
+        ParseResult parseResult = assertDoesNotThrow(() -> parseFile("Asserts.java"));
+        CoreOp.FuncOp op = parseResult.extractCodeModel();
+        CoreOp.FuncOp transformedOp = parseResult.extractCodeModel(pipeline(step(new AssertRemoveTransformer())));
 
         assertEquals("""
                 func @loc="1:1:Asserts.java" @"main" (%0 : java.type:"Asserts")java.type:"void" -> {
@@ -45,6 +46,7 @@ public class AssertRemoveTransformerTest extends AbstractTransformerTest {
                         };
                     return @loc="1:1";
                 };""", op.toText());
+
         assertEquals("""
                 func @loc="1:1:Asserts.java" @"main" (%0 : java.type:"Asserts")java.type:"void" -> {
                     %1 : java.type:"java.lang.String" = constant @loc="2:19" @"Hello";
