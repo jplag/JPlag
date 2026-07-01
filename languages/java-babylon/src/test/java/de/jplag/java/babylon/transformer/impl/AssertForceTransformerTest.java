@@ -1,28 +1,28 @@
 package de.jplag.java.babylon.transformer.impl;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
-import jdk.incubator.code.dialect.core.CoreOp;
+import de.jplag.java.babylon.pipeline.TransformationPipeline;
+import de.jplag.java.babylon.transformer.TransformerTest;
 
 /**
  * Unit test for {@link AssertForceTransformer}.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class AssertForceTransformerTest extends AbstractTransformerTest {
-    /**
-     * Unit test for {@link AssertForceTransformer}.
-     */
-    @Test
-    public void testTransformer() {
-        ParseResult parseResult = assertDoesNotThrow(() -> parseFile("Asserts.java"));
-        CoreOp.FuncOp op = parseResult.extractCodeModel();
-        CoreOp.FuncOp transformedOp = parseResult.extractCodeModel(pipeline(step(new AssertForceTransformer())));
+public class AssertForceTransformerTest extends TransformerTest {
+    @Override
+    protected String getFileName() {
+        return "Asserts.java";
+    }
 
-        assertEquals("""
+    @Override
+    protected TransformationPipeline getPipeline() {
+        return pipeline(step(new AssertForceTransformer()));
+    }
+
+    @Override
+    protected String getExpectedOriginal() {
+        return """
                 func @loc="1:1:Asserts.java" @"main" (%0 : java.type:"Asserts")java.type:"void" -> {
                     %1 : java.type:"java.lang.String" = constant @loc="2:19" @"Hello";
                     %2 : Var<java.type:"java.lang.String"> = var %1 @loc="2:5" @"var1";
@@ -45,9 +45,12 @@ public class AssertForceTransformerTest extends AbstractTransformerTest {
                             yield %10 @loc="5:5";
                         };
                     return @loc="1:1";
-                };""", op.toText());
+                };""";
+    }
 
-        assertEquals("""
+    @Override
+    protected String getExpectedTransformed() {
+        return """
                 func @loc="1:1:Asserts.java" @"main" (%0 : java.type:"Asserts")java.type:"void" -> {
                     %1 : java.type:"java.lang.String" = constant @loc="2:19" @"Hello";
                     %2 : Var<java.type:"java.lang.String"> = var %1 @loc="2:5" @"var1";
@@ -82,6 +85,6 @@ public class AssertForceTransformerTest extends AbstractTransformerTest {
                             throw %12 @loc="5:5";
                         };
                     return @loc="1:1";
-                };""", transformedOp.toText());
+                };""";
     }
 }

@@ -10,19 +10,19 @@ import org.junit.jupiter.api.Test;
 
 import de.jplag.ParsingException;
 import de.jplag.java.babylon.DefaultTransformations;
+import de.jplag.java.babylon.TestWithResource;
 import de.jplag.java.babylon.pipeline.EagerPrepassExecutor;
 import de.jplag.java.babylon.pipeline.HybridPrepassExecutor;
 import de.jplag.java.babylon.pipeline.LazyPrepassExecutor;
 import de.jplag.java.babylon.pipeline.PrepassExecutor;
 import de.jplag.java.babylon.pipeline.TransformationPipeline;
-import de.jplag.java.babylon.transformer.impl.AbstractTransformerTest;
 
 import jdk.incubator.code.dialect.core.CoreOp;
 
 /**
  * Unit test for ensuring that the {@link PrepassExecutor} implementations are consistent.
  */
-public class PrepassExecutorTest extends AbstractTransformerTest {
+public class PrepassExecutorTest extends TestWithResource {
     /**
      * Unit test for ensuring that the {@link PrepassExecutor} implementations are consistent.
      */

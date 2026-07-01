@@ -1,34 +1,36 @@
 package de.jplag.java.babylon.transformer.impl;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import org.junit.jupiter.api.Test;
-
-import jdk.incubator.code.dialect.core.CoreOp;
+import de.jplag.java.babylon.pipeline.TransformationPipeline;
+import de.jplag.java.babylon.transformer.TransformerTest;
 
 /**
  * Unit test for {@link InliningStep}.
  */
-public class InliningStepTest extends AbstractTransformerTest {
-    /**
-     * Unit test for {@link InliningStep}.
-     */
-    @Test
-    public void testTransformer() {
-        ParseResult parseResult = assertDoesNotThrow(() -> parseFile("Inline.java"));
-        CoreOp.FuncOp op = parseResult.extractCodeModel();
-        CoreOp.FuncOp transformedOp = parseResult.extractCodeModel(pipeline(new InliningStep()));
+public class InliningStepTest extends TransformerTest {
+    @Override
+    protected String getFileName() {
+        return "Inline.java";
+    }
 
-        assertEquals("""
+    @Override
+    protected TransformationPipeline getPipeline() {
+        return pipeline(new InliningStep());
+    }
+
+    @Override
+    protected String getExpectedOriginal() {
+        return """
                 func @loc="1:1:Inline.java" @"main" (%0 : java.type:"Inline")java.type:"void" -> {
                     %1 : java.type:"java.lang.String" = constant @loc="2:25" @"Hello";
                     %2 : java.type:"java.lang.String" = invoke %0 %1 @loc="2:16" @java.ref:"Inline::toInline(java.lang.String):java.lang.String";
                     invoke %2 @loc="2:5" @java.ref:"java.lang.IO::println(java.lang.Object):void";
                     return @loc="1:1";
-                };""", op.toText());
+                };""";
+    }
 
-        assertEquals("""
+    @Override
+    protected String getExpectedTransformed() {
+        return """
                 func @loc="1:1:Inline.java" @"main" (%0 : java.type:"Inline")java.type:"void" -> {
                     %1 : java.type:"java.lang.String" = constant @loc="2:25" @"Hello";
                     %2 : Var<java.type:"void"> = var;
@@ -41,6 +43,6 @@ public class InliningStepTest extends AbstractTransformerTest {
                     %8 : java.type:"void" = var.load %2;
                     invoke %8 @loc="2:5" @java.ref:"java.lang.IO::println(java.lang.Object):void";
                     return @loc="1:1";
-                };""", transformedOp.toText());
+                };""";
     }
 }

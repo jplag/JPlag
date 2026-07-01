@@ -1,28 +1,28 @@
 package de.jplag.java.babylon.transformer.impl;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
-import jdk.incubator.code.dialect.core.CoreOp;
+import de.jplag.java.babylon.pipeline.TransformationPipeline;
+import de.jplag.java.babylon.transformer.TransformerTest;
 
 /**
  * Unit test for {@link ConditionalExpressionDesugarTransformer}.
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class ConditionalExpressionDesugarTransformerTest extends AbstractTransformerTest {
-    /**
-     * Unit test for {@link ConditionalExpressionDesugarTransformer}.
-     */
-    @Test
-    public void testTransformer() {
-        ParseResult parseResult = assertDoesNotThrow(() -> parseFile("ConditionalExpression.java"));
-        CoreOp.FuncOp op = parseResult.extractCodeModel();
-        CoreOp.FuncOp transformedOp = parseResult.extractCodeModel(pipeline(step(new ConditionalExpressionDesugarTransformer())));
+public class ConditionalExpressionDesugarTransformerTest extends TransformerTest {
+    @Override
+    protected String getFileName() {
+        return "ConditionalExpression.java";
+    }
 
-        assertEquals("""
+    @Override
+    protected TransformationPipeline getPipeline() {
+        return pipeline(step(new ConditionalExpressionDesugarTransformer()));
+    }
+
+    @Override
+    protected String getExpectedOriginal() {
+        return """
                 func @loc="1:1:ConditionalExpression.java" @"main" (%0 : java.type:"ConditionalExpression")java.type:"void" -> {
                     %1 : java.type:"int" = java.cexpression @loc="2:18"
                         ()java.type:"boolean" -> {
@@ -84,9 +84,12 @@ public class ConditionalExpressionDesugarTransformerTest extends AbstractTransfo
                     %28 : java.type:"java.lang.Integer" = invoke %27 @loc="13:5" @java.ref:"java.lang.Integer::valueOf(int):java.lang.Integer";
                     invoke %28 @loc="13:5" @java.ref:"java.lang.IO::println(java.lang.Object):void";
                     return @loc="1:1";
-                };""", op.toText());
+                };""";
+    }
 
-        assertEquals("""
+    @Override
+    protected String getExpectedTransformed() {
+        return """
                 func @loc="1:1:ConditionalExpression.java" @"main" (%0 : java.type:"ConditionalExpression")java.type:"void" -> {
                     %1 : Var<java.type:"int"> = var @loc="2:18";
                     java.if @loc="2:18"
@@ -156,6 +159,6 @@ public class ConditionalExpressionDesugarTransformerTest extends AbstractTransfo
                     %30 : java.type:"java.lang.Integer" = invoke %29 @loc="13:5" @java.ref:"java.lang.Integer::valueOf(int):java.lang.Integer";
                     invoke %30 @loc="13:5" @java.ref:"java.lang.IO::println(java.lang.Object):void";
                     return @loc="1:1";
-                };""", transformedOp.toText());
+                };""";
     }
 }

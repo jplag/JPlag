@@ -1,33 +1,29 @@
 package de.jplag.java.babylon.transformer.impl;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import org.junit.jupiter.api.Test;
-
+import de.jplag.java.babylon.pipeline.TransformationPipeline;
+import de.jplag.java.babylon.transformer.TransformerTest;
 import de.jplag.java.babylon.transformer.impl.util.DelegatePipelineStep;
-
-import jdk.incubator.code.dialect.core.CoreOp;
 
 /**
  * Unit test for the combination of {@link ConstantPropagationStep}, {@link CopyElisionTransformer}, and
  * {@link DeadCodeEliminationTransformer}.
  */
-public class DeadCodeEliminationTest extends AbstractTransformerTest {
-    /**
-     * Unit test for the combination of {@link ConstantPropagationStep}, {@link CopyElisionTransformer}, and
-     * {@link DeadCodeEliminationTransformer}.
-     */
-    @Test
-    public void testTransformer() {
-        ParseResult parseResult = assertDoesNotThrow(() -> parseFile("CopyElision.java"));
-        CoreOp.FuncOp op = parseResult.extractCodeModel();
+public class DeadCodeEliminationTest extends TransformerTest {
+    @Override
+    protected String getFileName() {
+        return "CopyElision.java";
+    }
+
+    @Override
+    protected TransformationPipeline getPipeline() {
         DelegatePipelineStep copyElision = step(new CopyElisionTransformer());
         DelegatePipelineStep deadCodeElimination = step(new DeadCodeEliminationTransformer());
-        CoreOp.FuncOp transformedOp = parseResult
-                .extractCodeModel(pipeline(new ConstantPropagationStep(), copyElision, deadCodeElimination, copyElision, deadCodeElimination));
+        return pipeline(new ConstantPropagationStep(), copyElision, deadCodeElimination, copyElision, deadCodeElimination);
+    }
 
-        assertEquals("""
+    @Override
+    protected String getExpectedOriginal() {
+        return """
                 func @loc="1:1:CopyElision.java" @"main" (%0 : java.type:"CopyElision")java.type:"void" -> {
                     %1 : java.type:"int" = constant @loc="2:13" @0;
                     %2 : Var<java.type:"int"> = var %1 @loc="2:5" @"a";
@@ -71,9 +67,12 @@ public class DeadCodeEliminationTest extends AbstractTransformerTest {
                     %27 : java.type:"java.lang.Integer" = invoke %26 @loc="13:5" @java.ref:"java.lang.Integer::valueOf(int):java.lang.Integer";
                     invoke %27 @loc="13:5" @java.ref:"java.lang.IO::println(java.lang.Object):void";
                     return @loc="1:1";
-                };""", op.toText());
+                };""";
+    }
 
-        assertEquals("""
+    @Override
+    protected String getExpectedTransformed() {
+        return """
                 func @loc="1:1:CopyElision.java" @"main" (%0 : java.type:"CopyElision")java.type:"void" -> {
                     java.for @loc="3:5"
                         ()Var<java.type:"int"> -> {
@@ -106,6 +105,6 @@ public class DeadCodeEliminationTest extends AbstractTransformerTest {
                     %17 : java.type:"java.lang.Integer" = invoke %16 @loc="13:5" @java.ref:"java.lang.Integer::valueOf(int):java.lang.Integer";
                     invoke %17 @loc="13:5" @java.ref:"java.lang.IO::println(java.lang.Object):void";
                     return @loc="1:1";
-                };""", transformedOp.toText());
+                };""";
     }
 }

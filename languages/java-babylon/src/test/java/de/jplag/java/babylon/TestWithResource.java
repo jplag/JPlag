@@ -1,4 +1,4 @@
-package de.jplag.java.babylon.transformer.impl;
+package de.jplag.java.babylon;
 
 import static de.jplag.testutils.LanguageModuleTest.DEFAULT_TEST_CODE_PATH_BASE;
 
@@ -26,10 +26,10 @@ import com.sun.source.util.SourcePositions;
 import jdk.incubator.code.dialect.core.CoreOp;
 
 /**
- * Base class for writing unit tests for transformers.<br>
- * Handles loading simple source files.
+ * Base class for writing unit tests that use resources.<br>
+ * Handles loading and transforming simple source files.
  */
-public abstract class AbstractTransformerTest {
+public abstract class TestWithResource {
     protected Path getTestFileLocation() {
         return DEFAULT_TEST_CODE_PATH_BASE.resolve("java/babylon");
     }
