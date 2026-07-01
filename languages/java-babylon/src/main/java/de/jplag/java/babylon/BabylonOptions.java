@@ -20,6 +20,7 @@ import de.jplag.java.babylon.transformer.impl.CopyElisionTransformer;
 import de.jplag.java.babylon.transformer.impl.DeadCodeEliminationTransformer;
 import de.jplag.java.babylon.transformer.impl.EnhancedForDesugarTransformer;
 import de.jplag.java.babylon.transformer.impl.ForDesugarTransformer;
+import de.jplag.java.babylon.transformer.impl.IfFuseTransformer;
 import de.jplag.java.babylon.transformer.impl.InliningStep;
 import de.jplag.java.babylon.transformer.impl.SwitchExpressionDesugarTransformer;
 import de.jplag.java.babylon.transformer.impl.TryWithResourcesDesugarTransformer;
@@ -40,8 +41,8 @@ class BabylonOptions extends LanguageOptions {
 
     private static final String DEFAULT_TRANSFORMATIONS = String.join(", ", AssertRemoveTransformer.IDENTIFIER,
             TryWithResourcesDesugarTransformer.IDENTIFIER, EnhancedForDesugarTransformer.IDENTIFIER, ForDesugarTransformer.IDENTIFIER,
-            ConditionalExpressionDesugarTransformer.IDENTIFIER, SwitchExpressionDesugarTransformer.IDENTIFIER, InliningStep.IDENTIFIER,
-            BlockNormalizeStep.IDENTIFIER, ConstantPropagationStep.IDENTIFIER, CopyElisionTransformer.IDENTIFIER,
+            ConditionalExpressionDesugarTransformer.IDENTIFIER, SwitchExpressionDesugarTransformer.IDENTIFIER, IfFuseTransformer.IDENTIFIER,
+            InliningStep.IDENTIFIER, BlockNormalizeStep.IDENTIFIER, ConstantPropagationStep.IDENTIFIER, CopyElisionTransformer.IDENTIFIER,
             DeadCodeEliminationTransformer.IDENTIFIER, CopyElisionTransformer.IDENTIFIER, DeadCodeEliminationTransformer.IDENTIFIER,
             InliningStep.IDENTIFIER);
 
