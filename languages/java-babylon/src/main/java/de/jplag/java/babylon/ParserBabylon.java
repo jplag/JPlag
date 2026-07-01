@@ -103,7 +103,7 @@ public class ParserBabylon extends Parser {
     }
 
     private void drainDeferredTokens(@Nullable Op.Location nextLocation) {
-        var copy = List.copyOf(deferredTokens);
+        List<DeferredToken> copy = List.copyOf(deferredTokens);
         deferredTokens.clear();
         for (DeferredToken deferredToken : copy) {
             Op.Location startLocation = Objects.requireNonNullElse(deferredToken.location, lastLocation);

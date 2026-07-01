@@ -42,7 +42,7 @@ public interface BabylonDSL {
      * @see #isLocationMarker(Op)
      */
     default Op locationMarker(Op.Location location) {
-        var op = CoreOp.constant(VOID, null);
+        CoreOp.ConstantOp op = CoreOp.constant(VOID, null);
         op.setLocation(location);
         return op;
     }
@@ -72,7 +72,7 @@ public interface BabylonDSL {
         if (body == null)
             return null;
         for (Block block : body.blocks()) {
-            var location = location(block);
+            Op.Location location = location(block);
             if (location != null)
                 return location;
         }
@@ -86,7 +86,7 @@ public interface BabylonDSL {
      */
     default Op.Location location(Block block) {
         for (Op op : block.ops()) {
-            var location = op.location();
+            Op.Location location = op.location();
             if (location != null)
                 return location;
         }

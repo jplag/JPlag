@@ -25,8 +25,8 @@ public class DeadCodeEliminationTest extends AbstractTransformerTest {
     public void testTransformer() {
         ParseResult parseResult = assertDoesNotThrow(() -> parseFile("CopyElision.java"));
         CoreOp.FuncOp op = parseResult.extractCodeModel();
-        var copyElision = new DelegatePipelineStep(new CopyElisionTransformer());
-        var deadCodeElimination = new DelegatePipelineStep(new DeadCodeEliminationTransformer());
+        DelegatePipelineStep copyElision = new DelegatePipelineStep(new CopyElisionTransformer());
+        DelegatePipelineStep deadCodeElimination = new DelegatePipelineStep(new DeadCodeEliminationTransformer());
         CoreOp.FuncOp transformedOp = parseResult.extractCodeModel(new TransformationPipeline(
                 List.of(new ConstantPropagationStep(), copyElision, deadCodeElimination, copyElision, deadCodeElimination)));
         assertEquals("""

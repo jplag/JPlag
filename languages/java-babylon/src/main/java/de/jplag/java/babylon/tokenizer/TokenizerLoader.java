@@ -67,7 +67,7 @@ public final class TokenizerLoader {
      * @see BabylonTokenizer.Provider#getIdentifier()
      */
     public static Optional<BabylonTokenizer.Provider> getTokenizer(String identifier) {
-        var tokenizer = getAllAvailableTokenizers().get(identifier);
+        BabylonTokenizer.Provider tokenizer = getAllAvailableTokenizers().get(identifier);
         if (tokenizer == null) {
             logger.warn("Attempt to load tokenizer {} was not successful", identifier);
         }

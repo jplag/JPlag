@@ -79,7 +79,7 @@ public final class TransformationStepLoader {
      * @see TransformationStep#getIdentifier()
      */
     public static Optional<TransformationStep<?>> getTransformationStep(String identifier) {
-        var step = getAllAvailableTransformationSteps().get(identifier);
+        TransformationStep<?> step = getAllAvailableTransformationSteps().get(identifier);
         if (step == null) {
             logger.warn("Attempt to load transformation step {} was not successful", identifier);
         }
