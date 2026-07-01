@@ -14,6 +14,7 @@ import de.jplag.java.JavacAdapter;
 import de.jplag.java.Parser;
 import de.jplag.java.babylon.extractor.CodeModelExtractorImpl;
 import de.jplag.java.babylon.pipeline.TransformationPipeline;
+import de.jplag.java.babylon.transformer.TransformationStep;
 
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.CompilationUnitTree;
@@ -88,7 +89,8 @@ public abstract class AbstractTransformerTest {
          * @throws IllegalArgumentException if the assertions fail
          */
         public CoreOp.FuncOp extractCodeModel(TransformationPipeline pipeline) {
-            TransformationPipeline.Context context = pipeline.prepass(trees, new CodeModelExtractorImpl(task));
+            TransformationPipeline.Context context = pipeline.prepass(trees,
+                    new TransformationStep.PrepassConstructionContext(new CodeModelExtractorImpl(task), task));
 
             CompilationUnitTree ast = requireSingle(trees);
             ClassTree clazz = (ClassTree) requireSingle(ast.getTypeDecls());
