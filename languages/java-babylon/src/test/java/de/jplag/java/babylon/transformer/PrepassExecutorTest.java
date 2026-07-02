@@ -2,6 +2,7 @@ package de.jplag.java.babylon.transformer;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,6 +34,9 @@ public class PrepassExecutorTest extends TestWithResource {
     public void testProduceSameResults() {
         List<TransformationPipeline> pipelines = getPipelines();
         List<ParseResult> files = assertDoesNotThrow(this::getFiles);
+
+        assertTrue(files.size() > 5, "Unexpectedly low test file number. Make sure you are running this in the correct directory!");
+        assertEquals(3, pipelines.size());
 
         for (ParseResult file : files) {
             Iterator<CoreOp.FuncOp> list = pipelines.stream().map(file::extractCodeModel).toList().iterator();
