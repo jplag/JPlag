@@ -141,7 +141,7 @@ public class InliningStep implements TransformationStep<InliningStep.Context> {
                 Inliner.inline(builder, candidate, builder.context().getValues(op.operands()), (_, _) -> {
                 });
             } else {
-                Op.Result variable = builder.add(CoreOp.var(candidate.resultType()));
+                Op.Result variable = builder.add(CoreOp.var(op.resultType()));
                 Inliner.inline(builder, candidate, builder.context().getValues(op.operands()), (b, value) -> {
                     b.add(CoreOp.varStore(variable, value));
                 });
