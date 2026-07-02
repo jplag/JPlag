@@ -45,8 +45,6 @@ import static de.jplag.cpp.CPPTokenType.WHILE_END;
 
 import java.util.function.Function;
 
-import de.jplag.cpp.grammar.CPP14Parser.MemberDeclarationContext;
-import de.jplag.cpp.grammar.CPP14Parser.NewExpression_Context;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
@@ -70,8 +68,10 @@ import de.jplag.cpp.grammar.CPP14Parser.InitDeclaratorContext;
 import de.jplag.cpp.grammar.CPP14Parser.IterationStatementContext;
 import de.jplag.cpp.grammar.CPP14Parser.JumpStatementContext;
 import de.jplag.cpp.grammar.CPP14Parser.LabeledStatementContext;
+import de.jplag.cpp.grammar.CPP14Parser.MemberDeclarationContext;
 import de.jplag.cpp.grammar.CPP14Parser.MemberDeclaratorContext;
 import de.jplag.cpp.grammar.CPP14Parser.MemberSpecificationContext;
+import de.jplag.cpp.grammar.CPP14Parser.NewExpression_Context;
 import de.jplag.cpp.grammar.CPP14Parser.NewTypeIdContext;
 import de.jplag.cpp.grammar.CPP14Parser.NoPointerDeclaratorContext;
 import de.jplag.cpp.grammar.CPP14Parser.ParameterDeclarationContext;

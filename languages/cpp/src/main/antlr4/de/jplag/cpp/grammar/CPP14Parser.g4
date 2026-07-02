@@ -1042,6 +1042,7 @@ theOperator
     | PlusAssign
     | MinusAssign
     | StarAssign
+    | DivAssign
     | ModAssign
     | XorAssign
     | AndAssign
@@ -1073,4 +1074,3 @@ literal
     | PointerLiteral
     | UserDefinedLiteral
     ;
-
