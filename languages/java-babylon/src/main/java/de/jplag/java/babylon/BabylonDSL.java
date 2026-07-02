@@ -2,7 +2,12 @@ package de.jplag.java.babylon;
 
 import static jdk.incubator.code.dialect.java.JavaType.VOID;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.UncheckedIOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.SequencedCollection;
 
 import jdk.incubator.code.Block;
@@ -14,7 +19,9 @@ import jdk.incubator.code.CodeType;
 import jdk.incubator.code.Op;
 import jdk.incubator.code.Value;
 import jdk.incubator.code.dialect.core.CoreOp;
+import jdk.incubator.code.dialect.java.JavaOp;
 import jdk.incubator.code.dialect.java.JavaType;
+import jdk.incubator.code.extern.OpWriter;
 
 /**
  * A set of utility methods for working with Babylon code models. Designed to be used by "implementing" this interface
@@ -219,5 +226,66 @@ public interface BabylonDSL {
         }.toText();
         assert result.charAt(0) == ' '; // this space is inserted by OpWriter after the externalizable name and before the actual body
         return result.substring(1); // trim the space, obtaining a string representing exclusively the contained body
+    }
+
+    /**
+     * Convert a block to a textual representation.
+     * @param block the block to convert to text
+     * @return the textual representation
+     * @throws UncheckedIOException if the internal string writer cannot be closed
+     */
+    default String toText(Block block) {
+        try (StringWriter sw = new StringWriter()) {
+            OpWriter opWriter = new OpWriter(sw);
+            for (Op op : block.ops()) {
+                opWriter.writeOp(op);
+            }
+            return sw.toString();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    /**
+     * Returns true if op1 strictly dominates op2.<br>
+     * This is NOT equivalent to {@link Value#isDominatedBy(Value)} in the case where op1 is in an inner block of the parent
+     * of op2.
+     * @param op1 the first op
+     * @param op2 the second op
+     * @return if op1 strictly dominates op2
+     */
+    default boolean dominates(Op op1, Op op2) {
+        // Fast path
+        if (op1.parent() == op2.parent()) {
+            List<Op> blockOps = op1.parent().ops();
+            return blockOps.indexOf(op1) < blockOps.indexOf(op2);
+        }
+
+        // Find all parents of op1 and save the ops in said parent that are parents of op1
+        Map<Block, Op> op1ParentBlocks = new HashMap<>();
+        Op currentOp = op1;
+        do {
+            Block parent = currentOp.parent();
+            op1ParentBlocks.put(parent, currentOp);
+            currentOp = parent.parent().parent();
+        } while (currentOp != null && !(currentOp instanceof CoreOp.FuncOp) && !(currentOp instanceof JavaOp.LambdaOp)); // dominates() is ill-defined
+                                                                                                                         // if this is a lambda passed
+                                                                                                                         // to somewhere else
+
+        // Find the first parent of op2 that is also a parent of op1, then compare within that parent
+        currentOp = op2;
+        do {
+            Block parent = currentOp.parent();
+            Op relevant1Parent = op1ParentBlocks.get(parent);
+            if (relevant1Parent != null) {
+                List<Op> ops = parent.ops();
+                return ops.indexOf(relevant1Parent) < ops.indexOf(currentOp);
+            }
+            currentOp = parent.parent().parent();
+        } while (currentOp != null && !(currentOp instanceof CoreOp.FuncOp) && !(currentOp instanceof JavaOp.LambdaOp)); // dominates() is ill-defined
+                                                                                                                         // if this is a lambda passed
+                                                                                                                         // to somewhere else
+        // No common ancestor block
+        return false;
     }
 }

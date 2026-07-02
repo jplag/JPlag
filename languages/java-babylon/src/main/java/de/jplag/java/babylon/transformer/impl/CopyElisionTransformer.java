@@ -70,7 +70,7 @@ public class CopyElisionTransformer implements SimpleTransformation, BabylonDSL 
             return false;
         }
         return variable.uses().stream().filter(use -> !(use.op() instanceof CoreOp.VarAccessOp.VarStoreOp))
-                .allMatch(use -> varStoreOp.result().isDominatedBy(use));
+                .allMatch(use -> dominates(use.op(), varStoreOp));
     }
 
     private boolean initialValueIsUnused(CoreOp.VarOp varOp) {
