@@ -33,6 +33,6 @@
     "npm-run-all": "^4.1.5",
     "tailwindcss": "^4.3.0",
     "vite": "^8.0.16",
-    "vue-tsc": "^3.3.2"
+    "vue-tsc": "^3.3.6"
   }
 }
