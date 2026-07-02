@@ -20,8 +20,6 @@ public record FrequencyAnalysisOptions(boolean enabled, FrequencyAnalysisStrateg
 
     /** Default value for the analysis being enabled. */
     public static final boolean DEFAULT_ENABLED = false;
-    /** Default analysis strategy. */
-    public static final FrequencyAnalysisStrategy DEFAULT_STRATEGY = new CompleteMatchesStrategy();
     /** Default minimum subsequence length. */
     public static final int DEFAULT_MINIMUM_SUBSEQUENCE_LENGTH = 1;
     /** Default weighting function. */
@@ -33,6 +31,7 @@ public record FrequencyAnalysisOptions(boolean enabled, FrequencyAnalysisStrateg
      * Default options for frequency Analysis.
      */
     public FrequencyAnalysisOptions() {
-        this(DEFAULT_ENABLED, DEFAULT_STRATEGY, DEFAULT_MINIMUM_SUBSEQUENCE_LENGTH, DEFAULT_WEIGHTING_FUNCTION, DEFAULT_WEIGHTING_FACTOR);
+        this(DEFAULT_ENABLED, new CompleteMatchesStrategy(), DEFAULT_MINIMUM_SUBSEQUENCE_LENGTH, DEFAULT_WEIGHTING_FUNCTION,
+                DEFAULT_WEIGHTING_FACTOR);
     }
 }
