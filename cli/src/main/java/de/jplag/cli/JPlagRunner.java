@@ -39,18 +39,6 @@ public final class JPlagRunner {
      * Runs the internal server. Blocks until the server has stopped.
      * @param resultFile is the result file to pass to the server. May be null.
      * @param port is the port to open the server on.
-     * @throws IOException if the internal server throws an exception
-     * @deprecated Use {@link #runInternalServer(File, int, InetAddress)} instead
-     */
-    @Deprecated(since = "7.0.0", forRemoval = true)
-    public static void runInternalServer(File resultFile, int port) throws IOException {
-        runInternalServer(resultFile, port, InetAddress.getLoopbackAddress());
-    }
-
-    /**
-     * Runs the internal server. Blocks until the server has stopped.
-     * @param resultFile is the result file to pass to the server. May be null.
-     * @param port is the port to open the server on.
      * @param bindAddress is the address to bind the server to.
      * @throws IOException if the internal server throws an exception
      */
@@ -60,9 +48,8 @@ public final class JPlagRunner {
             return;
         }
 
-        if (bindAddress.isAnyLocalAddress()) {
-            logger.warn("Binding to all interfaces ({}). The report viewer will be accessible from any network interface.",
-                    bindAddress.getHostAddress());
+        if (!bindAddress.isLoopbackAddress()) {
+            logger.warn("Binding to non-loopback address ({}). The report viewer may be accessible from any network.", bindAddress.getHostAddress());
         }
 
         ReportViewer reportViewer = new ReportViewer(resultFile, port, bindAddress);

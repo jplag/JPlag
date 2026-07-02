@@ -41,18 +41,6 @@ public class ReportViewer implements HttpHandler {
      * Launches a locally hosted report viewer.
      * @param resultFile The result file to use for the report viewer
      * @param port The port to use for the server. You can use 0 to use any free port.
-     * @throws IOException If the result file cannot be read
-     * @deprecated Use {@link #ReportViewer(File, int, InetAddress)} instead
-     */
-    @Deprecated(since = "7.0.0", forRemoval = true)
-    public ReportViewer(File resultFile, int port) throws IOException {
-        this(resultFile, port, InetAddress.getLoopbackAddress());
-    }
-
-    /**
-     * Launches a locally hosted report viewer.
-     * @param resultFile The result file to use for the report viewer
-     * @param port The port to use for the server. You can use 0 to use any free port.
      * @param bindAddress The address to bind the server to
      * @throws IOException If the result file cannot be read
      */
