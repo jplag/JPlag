@@ -194,5 +194,4 @@ public class SubmissionSet {
         }
         progressBar.step();
     }
-
 }

@@ -9,6 +9,7 @@ import de.jplag.ParsingException;
 import de.jplag.Token;
 
 import com.google.auto.service.AutoService;
+import de.jplag.inputs.SubmissionFolder;
 
 /**
  * Facade for the ANTLR-based Go language module.
@@ -37,7 +38,7 @@ public class GoLanguage implements Language {
     }
 
     @Override
-    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return new GoParserAdapter().parse(files);
+    public List<Token> parse(SubmissionFolder folder, boolean normalize) throws ParsingException {
+        return new GoParserAdapter().parse(folder);
     }
 }

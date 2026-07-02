@@ -16,20 +16,6 @@ public final class FilePathUtil {
     }
 
     /**
-     * Returns the files path relative to the root folder of the submission ID.
-     * @param file File that should be relativized
-     * @param submission Submission file belongs to
-     * @param submissionToIdFunction Function to map names to ids
-     * @return Relative path
-     */
-    public static Path getRelativeSubmissionPath(File file, Submission submission, Function<Submission, String> submissionToIdFunction) {
-        if (file.toPath().equals(submission.getRoot().toPath())) {
-            return Path.of(submissionToIdFunction.apply(submission), submissionToIdFunction.apply(submission));
-        }
-        return Path.of(submissionToIdFunction.apply(submission), submission.getRoot().toPath().relativize(file.toPath()).toString());
-    }
-
-    /**
      * Forces a path to be relative. If the path is absolute, the returned path will be relative to the root.
      * @param path The path to relativize
      * @return The relative path

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import de.jplag.inputs.SubmissionFile;
+import de.jplag.inputs.SubmissionFolder;
 import javax.xml.parsers.ParserConfigurationException;
 
 import de.jplag.ParsingException;
@@ -32,7 +34,7 @@ public class ScxmlParserAdapter {
     /**
      * The current statechart input file.
      */
-    protected File currentStatechartFile;
+    protected SubmissionFile currentStatechartFile;
 
     /**
      * The visitor to use for recursively iterating over the statechart to extract tokens.
@@ -53,9 +55,9 @@ public class ScxmlParserAdapter {
      * @return the list of parsed tokens
      * @throws ParsingException if the statechart could not be parsed
      */
-    public List<Token> parse(Set<File> files) throws ParsingException {
+    public List<Token> parse(SubmissionFolder folder) throws ParsingException {
         tokens = new ArrayList<>();
-        for (File file : files) {
+        for (SubmissionFile file : folder.getFiles()) {
             parseStatechartFile(file);
         }
         return tokens;
@@ -66,7 +68,7 @@ public class ScxmlParserAdapter {
      * @param file the statechart file
      * @throws ParsingException if the statechart could not be parsed
      */
-    protected void parseStatechartFile(File file) throws ParsingException {
+    protected void parseStatechartFile(SubmissionFile file) throws ParsingException {
         currentStatechartFile = file;
         Statechart statechart;
         view = new ScxmlView(file);

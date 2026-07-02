@@ -2,6 +2,7 @@ package de.jplag.emf.model.parser;
 
 import java.io.File;
 
+import de.jplag.inputs.SubmissionFile;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.slf4j.Logger;
@@ -42,11 +43,11 @@ public class EmfModelParser extends EcoreParser {
     }
 
     @Override
-    protected void parseModelFile(File file, boolean normalize) throws ParsingException {
-        if (file.getName().endsWith(EmfLanguage.FILE_ENDING)) {
-            logger.warn(METAMODEL_WARNING, file.getName());
-        } else if (file.getName().endsWith(EmfModelLanguage.VIEW_FILE_EXTENSION)) {
-            logger.warn(VIEW_FILE_WARNING, file.getName());
+    protected void parseModelFile(SubmissionFile file, boolean normalize) throws ParsingException {
+        if (file.name().endsWith(EmfLanguage.FILE_ENDING)) {
+            logger.warn(METAMODEL_WARNING, file.name());
+        } else if (file.name().endsWith(EmfModelLanguage.VIEW_FILE_EXTENSION)) {
+            logger.warn(VIEW_FILE_WARNING, file.name());
         } else {
             super.parseModelFile(file, normalize);
         }
@@ -58,7 +59,7 @@ public class EmfModelParser extends EcoreParser {
     }
 
     @Override
-    protected AbstractModelView createView(File file, Resource modelResource) {
+    protected AbstractModelView createView(SubmissionFile file, Resource modelResource) {
         return new GenericEmfTreeView(file, modelResource);
     }
 

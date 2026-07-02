@@ -23,21 +23,21 @@ import de.jplag.reporting.reportobject.writer.JPlagResultWriter;
 public class BaseCodeReportWriter {
 
     private final JPlagResultWriter resultWriter;
-    private final Function<Submission, String> submissionToIdFunction;
     private static final String BASEPATH = "basecode";
 
     /**
      * Creates a new BaseCodeReportWriter.
+     *
      * @param submissionToIdFunction Function for translating a submission to a unique id.
-     * @param resultWriter Writer used for writing the result.
+     * @param resultWriter           Writer used for writing the result.
      */
-    public BaseCodeReportWriter(Function<Submission, String> submissionToIdFunction, JPlagResultWriter resultWriter) {
-        this.submissionToIdFunction = submissionToIdFunction;
+    public BaseCodeReportWriter(JPlagResultWriter resultWriter) {
         this.resultWriter = resultWriter;
     }
 
     /**
      * Writes the basecode of each submission in the result into its own file in the result writer.
+     *
      * @param jPlagResult The result containing the submissions.
      */
     public void writeBaseCodeReport(JPlagResult jPlagResult) {
@@ -59,7 +59,7 @@ public class BaseCodeReportWriter {
             boolean takeLeft = baseCodeComparison.firstSubmission().equals(submission);
             matches = baseCodeComparison.matches().stream().map(match -> convertToBaseCodeMatch(submission, match, takeLeft)).toList();
         }
-        resultWriter.addJsonEntry(matches, Path.of(BASEPATH, submissionToIdFunction.apply(submission).concat(".json")));
+        resultWriter.addJsonEntry(matches, Path.of(BASEPATH, submission.getName() + ".json"));
     }
 
     private BaseCodeMatch convertToBaseCodeMatch(Submission submission, Match match, boolean takeLeft) {
@@ -77,7 +77,6 @@ public class BaseCodeReportWriter {
 
         int length = takeLeft ? match.lengthOfFirst() : match.lengthOfSecond();
 
-        return new BaseCodeMatch(FilePathUtil.getRelativeSubmissionPath(start.getFile(), submission, submissionToIdFunction).toString(),
-                startPosition, endPosition, length);
+        return new BaseCodeMatch(start.getFile().relativePath(), startPosition, endPosition, length);
     }
 }

@@ -1,5 +1,7 @@
 package de.jplag.commentextraction;
 
+import de.jplag.inputs.SubmissionFile;
+
 import java.io.File;
 
 /**
@@ -10,6 +12,6 @@ import java.io.File;
  * @param column Column of the comment (1-indexed)
  * @param type Type of the comment
  */
-public record Comment(File file, String content, int line, int column, CommentType type) {
+public record Comment(SubmissionFile file, String content, int line, int column, CommentType type) {
 
 }

@@ -1,10 +1,21 @@
 package de.jplag.cli;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 
+import de.jplag.FilePathUtil;
+import de.jplag.inputs.FileSystemSingleSubmissionDirectory;
+import de.jplag.inputs.FileSystemSubmissionDirectory;
+import de.jplag.inputs.SubmissionDirectory;
+import de.jplag.inputs.SubmissionIdentifier;
+import de.jplag.inputs.ZipFileSubmissionDirectory;
+import de.jplag.util.FileUtils;
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,24 +50,89 @@ public class JPlagOptionsBuilder {
      * @throws CliException If the input handler could properly parse everything.
      */
     public JPlagOptions buildOptions() throws CliException {
-        Set<File> submissionDirectories = new HashSet<>(List.of(this.cliOptions.rootDirectory));
-        Set<File> oldSubmissionDirectories = Set.of(this.cliOptions.oldDirectories);
+        Set<SubmissionDirectory> submissionDirectories = buildSubmissionDirectories(cliOptions.rootDirectory);
+        Set<SubmissionDirectory> oldSubmissionDirectories = buildSubmissionDirectories(cliOptions.oldDirectories);
+        submissionDirectories.addAll(buildSubmissionDirectories(this.cliOptions.newDirectories));
+        submissionDirectories.addAll(buildSubmissionDirectories(cliInputHandler.getSubcommandSubmissionDirectories().toArray(new String[0])));
         List<String> suffixes = List.of(this.cliOptions.advanced.suffixes);
-        submissionDirectories.addAll(List.of(this.cliOptions.newDirectories));
-        submissionDirectories.addAll(this.cliInputHandler.getSubcommandSubmissionDirectories());
+
+        Set<SubmissionDirectory> all = new HashSet<>();
+        all.addAll(submissionDirectories);
+        all.addAll(oldSubmissionDirectories);
+        de.jplag.inputs.SubmissionIdentifier baseCode = findBaseCodeName(all, oldSubmissionDirectories::add);
 
         JPlagOptions jPlagOptions = initializeJPlagOptions(submissionDirectories, oldSubmissionDirectories, suffixes);
-
-        String baseCodePath = this.cliOptions.baseCode;
-        File baseCodeDirectory = baseCodePath == null ? null : new File(baseCodePath);
-        if (baseCodeDirectory == null || baseCodeDirectory.exists()) {
-            return jPlagOptions.withBaseCodeSubmissionDirectory(baseCodeDirectory);
+        if(baseCode != null) {
+            return jPlagOptions.withBaseCodeSubmission(baseCode);
+        } else {
+            return jPlagOptions;
         }
-        logger.error("Using legacy partial base code API. Please migrate to new full path base code API.");
-        return jPlagOptions.withBaseCodeSubmissionDirectory(baseCodeDirectory);
     }
 
-    private JPlagOptions initializeJPlagOptions(Set<File> submissionDirectories, Set<File> oldSubmissionDirectories, List<String> suffixes)
+    public SubmissionIdentifier findBaseCodeName(Set<SubmissionDirectory> allSubmissionDirectories, Consumer<SubmissionDirectory> addSubmissionDirectory) throws CliException {
+        if (cliOptions.baseCodeName != null) {
+            return new SubmissionIdentifier(cliOptions.baseCodeName);
+        }
+
+        if(cliOptions.baseCode != null) {
+            File baseCodeFile = new File(cliOptions.baseCode);
+            if(!baseCodeFile.exists()) {
+                throw new CliException("Base code directory does not exist");
+            }
+            Optional<SubmissionDirectory> first = allSubmissionDirectories.stream().filter(submissionDirectory -> submissionDirectory.contains(baseCodeFile)).findFirst();
+            if(first.isPresent()) {
+                return new SubmissionIdentifier(first.get().name(), baseCodeFile.getName());
+            } else {
+                FileSystemSingleSubmissionDirectory dir = new FileSystemSingleSubmissionDirectory(baseCodeFile, "baseCode");
+                addSubmissionDirectory.accept(dir);
+                return dir.getSubmissionIdentifer();
+            }
+        }
+
+        return null;
+    }
+
+    private Set<SubmissionDirectory> buildSubmissionDirectories(String[] identifiers) throws CliException {
+        Set<SubmissionDirectory> result = new HashSet<>();
+        for (String identifier : identifiers) {
+            result.add(buildSubmissionDirectory(identifier));
+        }
+        return result;
+    }
+
+    private SubmissionDirectory buildSubmissionDirectory(String identifier) throws CliException {
+        String path = identifier;
+        String name = null;
+
+        if(identifier.matches(".*\\[[a-zA-Z0-9]+\\]")) { //has a name component at the end
+            int index = identifier.lastIndexOf('[');
+            name = identifier.substring(index + 1, identifier.length() - 1);
+            path = identifier.substring(0, index);
+        }
+
+        File submissionRoot = new File(path);
+        if (name == null) {
+            name = FilePathUtil.forceRelativePath(submissionRoot.toPath()).toString();
+        }
+
+        if(submissionRoot.isDirectory()) {
+            return new FileSystemSubmissionDirectory(submissionRoot, name);
+        }
+
+        if(submissionRoot.isFile()) {
+            try {
+                if(FileUtils.isZip(submissionRoot)) {
+                    return new ZipFileSubmissionDirectory(submissionRoot, name);
+                }
+            } catch (IOException e) {
+                throw new CliException("Root directory " + identifier + " is not a readable file");
+            }
+        }
+
+        throw new CliException("Root directory " + identifier + " is neither a zip nor a directory");
+    }
+
+    private JPlagOptions initializeJPlagOptions(Set<SubmissionDirectory> submissionDirectories, Set<SubmissionDirectory> oldSubmissionDirectories, List<String> suffixes)
             throws CliException {
         ClusteringOptions clusteringOptions = getClusteringOptions();
         MergingOptions mergingOptions = getMergingOptions();

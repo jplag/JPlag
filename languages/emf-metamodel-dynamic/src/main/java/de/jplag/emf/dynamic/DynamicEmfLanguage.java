@@ -7,6 +7,7 @@ import java.util.Set;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.emf.EmfLanguage;
+import de.jplag.inputs.SubmissionFolder;
 
 /**
  * Language for EMF metamodels from the Eclipse Modeling Framework (EMF). This language is based on a dynamically
@@ -29,7 +30,7 @@ public class DynamicEmfLanguage extends EmfLanguage { // currently not included 
     }
 
     @Override
-    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
+    public List<Token> parse(SubmissionFolder folder, boolean normalize) throws ParsingException {
         throw new UnsupportedOperationException("Language module is deprecated and no longer supported!");
     }
 }

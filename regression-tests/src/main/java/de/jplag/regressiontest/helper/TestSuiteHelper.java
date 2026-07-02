@@ -1,10 +1,12 @@
 package de.jplag.regressiontest.helper;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import de.jplag.JPlagComparison;
 import de.jplag.Submission;
+import de.jplag.inputs.SubmissionIdentifier;
 
 /**
  * Helper class to perform all necessary additional functions for the regression tests.
@@ -25,8 +27,8 @@ public final class TestSuiteHelper {
      * @return unique identifier for test case recognition
      */
     public static String getTestIdentifier(JPlagComparison jPlagComparison) {
-        return Stream.of(jPlagComparison.firstSubmission(), jPlagComparison.secondSubmission()).map(Submission::getRoot)
-                .map(FileHelper::getFileNameWithoutFileExtension).sorted().collect(Collectors.joining("-"));
+        return Stream.of(jPlagComparison.firstSubmission(), jPlagComparison.secondSubmission()).map(Submission::getSubmissionIdentifier)
+                .map(SubmissionIdentifier::getFullyQualified).sorted().collect(Collectors.joining("-"));
 
     }
 }

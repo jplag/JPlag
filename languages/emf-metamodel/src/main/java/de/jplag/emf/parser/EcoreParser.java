@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import de.jplag.inputs.SubmissionFile;
+import de.jplag.inputs.SubmissionFolder;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 
@@ -25,7 +27,7 @@ import de.jplag.emf.util.EmfaticModelView;
  */
 public class EcoreParser {
     protected List<Token> tokens;
-    protected File currentFile;
+    protected SubmissionFile currentFile;
     protected AbstractModelView treeView;
     protected AbstractMetamodelVisitor visitor;
 
@@ -36,9 +38,9 @@ public class EcoreParser {
      * @return the list of parsed tokens.
      * @throws ParsingException if parsing fails.
      */
-    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
+    public List<Token> parse(SubmissionFolder folder, boolean normalize) throws ParsingException {
         tokens = new ArrayList<>();
-        for (File file : files) {
+        for (SubmissionFile file : folder.getFiles()) {
             parseModelFile(file, normalize);
         }
         return tokens;
@@ -50,7 +52,7 @@ public class EcoreParser {
      * @param normalize specifies if the containment tree normalization should be executed or not.
      * @throws ParsingException if parsing fails.
      */
-    protected void parseModelFile(File file, boolean normalize) throws ParsingException {
+    protected void parseModelFile(SubmissionFile file, boolean normalize) throws ParsingException {
         currentFile = file;
         Resource model = EMFUtil.loadModelResource(file);
         if (model == null) {
@@ -82,7 +84,7 @@ public class EcoreParser {
      * @return the view implementation.
      * @throws ParsingException if view could not be created due to an invalid model.
      */
-    protected AbstractModelView createView(File file, Resource modelResource) throws ParsingException {
+    protected AbstractModelView createView(SubmissionFile file, Resource modelResource) throws ParsingException {
         return new EmfaticModelView(file, modelResource);
     }
 

@@ -32,15 +32,15 @@ public class CliOptions implements Runnable {
 
     /** Root directories with submissions to check or a report file if in VIEW mode. */
     @Parameters(paramLabel = "root-dirs", description = "Root-directory with submissions to check for plagiarism. If mode is set to VIEW, this parameter can be used to specify a report file to open. In that case only a single file may be specified.", split = ",")
-    public File[] rootDirectory = new File[0];
+    public String[] rootDirectory = new String[0];
 
     /** New submission directories to check for plagiarism. */
     @Option(names = {"--new", "-new"}, split = ",", description = "Root-directories with submissions to check for plagiarism (same as root).")
-    public File[] newDirectories = new File[0];
+    public String[] newDirectories = new String[0];
 
     /** Old submission directories to compare against. */
     @Option(names = {"--old", "-old"}, split = ",", description = "Root-directories with prior submissions to compare against.")
-    public File[] oldDirectories = new File[0];
+    public String[] oldDirectories = new String[0];
 
     /** Language of submissions (default: Java). */
     @Option(names = {"--language",
@@ -49,7 +49,10 @@ public class CliOptions implements Runnable {
 
     /** Path to base code directory (common framework for all submissions). */
     @Option(names = {"-bc", "--bc", "--base-code"}, description = "Path to the base code directory (common framework used in all submissions).")
-    public String baseCode;
+    public String baseCode; //TODO support
+
+    @Option(names = {"--bcn", "--base-code-name"}, description = "The name of the base-code submission")
+    public String baseCodeName;
 
     /** Minimum tokens to count as matching (affects sensitivity). */
     @Option(names = {"-t",

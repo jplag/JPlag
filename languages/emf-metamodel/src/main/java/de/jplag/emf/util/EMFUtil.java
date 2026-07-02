@@ -1,9 +1,11 @@
 package de.jplag.emf.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
+import de.jplag.inputs.SubmissionFile;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EObject;
@@ -53,6 +55,21 @@ public final class EMFUtil {
      */
     public static void registerEPackageURIs(Collection<EPackage> ePackages) {
         ePackages.forEach(it -> EPackage.Registry.INSTANCE.put(it.getNsURI(), it));
+    }
+
+    /**
+     * Loads a model or metamodel from a absolute file path.
+     * @param file is file path to the (meta)model.
+     * @return the resource of the loaded (meta)model or null if it could not be loaded.
+     */
+    public static Resource loadModelResource(SubmissionFile file) {
+        final ResourceSet resourceSet = new ResourceSetImpl();
+        try {
+            return resourceSet.getResource(URI.createURI(file.asUri().toString()), true);
+        } catch (WrappedException | IOException exception) {
+            logger.error("Could not load {}: {}", file, exception.getCause().getMessage());
+        }
+        return null;
     }
 
     /**

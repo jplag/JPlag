@@ -1,7 +1,5 @@
 package de.jplag.reporting.reportobject;
 
-import static de.jplag.reporting.reportobject.mapper.SubmissionNameToIdMapper.buildSubmissionNameToIdMap;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
@@ -11,13 +9,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import de.jplag.reporting.reportobject.model.SubmissionMappings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.FilePathUtil;
 import de.jplag.JPlag;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
@@ -34,7 +31,6 @@ import de.jplag.reporting.reportobject.model.FailedSubmission;
 import de.jplag.reporting.reportobject.model.RunInformation;
 import de.jplag.reporting.reportobject.model.SubmissionFile;
 import de.jplag.reporting.reportobject.model.SubmissionFileIndex;
-import de.jplag.reporting.reportobject.model.SubmissionMappings;
 import de.jplag.reporting.reportobject.model.TopComparison;
 import de.jplag.reporting.reportobject.writer.JPlagResultWriter;
 import de.jplag.reporting.reportobject.writer.ZipWriter;
@@ -62,8 +58,6 @@ public class ReportObjectFactory {
     public static final Version REPORT_VIEWER_VERSION = JPlag.JPLAG_VERSION;
     private static final Path SUBMISSIONS_ROOT_PATH = Path.of("files");
 
-    private Map<String, String> submissionNameToIdMap;
-    private Function<Submission, String> submissionToIdFunction;
     private Map<String, Map<String, String>> submissionNameToNameToComparisonFileName;
 
     private final JPlagResultWriter resultWriter;
@@ -91,7 +85,6 @@ public class ReportObjectFactory {
      */
     public void createAndSaveReport(JPlagResult result) {
         logger.info("Start writing report...");
-        buildSubmissionToIdMap(result);
 
         copySubmissionFilesToReport(result);
 
@@ -101,7 +94,7 @@ public class ReportObjectFactory {
         writeDistribution(result);
         writeTopComparisons(result);
         writeCluster(result);
-        writeSubmissionMappings();
+        writeSubmissionMappings(result);
 
         writeSubmissionIndexFile(result);
         writeReadMeFile();
@@ -111,38 +104,33 @@ public class ReportObjectFactory {
         this.resultWriter.close();
     }
 
-    private void buildSubmissionToIdMap(JPlagResult result) {
-        submissionNameToIdMap = buildSubmissionNameToIdMap(result);
-        submissionToIdFunction = (Submission submission) -> submissionNameToIdMap.get(submission.getName());
-    }
-
     private void copySubmissionFilesToReport(JPlagResult result) {
         logger.info("Start to export results...");
         List<JPlagComparison> comparisons = result.getComparisons(result.getOptions().maximumNumberOfComparisons());
         Set<Submission> submissions = getSubmissions(comparisons);
         Language language = result.getOptions().language();
         for (Submission submission : submissions) {
-            for (File file : submission.getFiles()) {
-                Path filePath = FilePathUtil.getRelativeSubmissionPath(file, submission, submissionToIdFunction);
+            for (de.jplag.inputs.SubmissionFile file : submission.getFiles()) {
+                Path filePath = Path.of(submission.getName()).resolve(file.relativePath());
                 Path resultPath = SUBMISSIONS_ROOT_PATH.resolve(filePath);
 
-                File fileToCopy = getFileToCopy(language, file);
+                de.jplag.inputs.SubmissionFile fileToCopy = getFileToCopy(language, file);
                 this.resultWriter.addFileContentEntry(resultPath, fileToCopy);
             }
         }
     }
 
-    private File getFileToCopy(Language language, File file) {
-        return language.useViewFiles() ? new File(file.getPath() + language.viewFileExtension()) : file;
+    private de.jplag.inputs.SubmissionFile getFileToCopy(Language language, de.jplag.inputs.SubmissionFile file) {
+        return language.useViewFiles() ? null /*(file.relativePath() + language.viewFileExtension())*/ : file; //TODO fix
     }
 
     private void writeComparisons(JPlagResult result) {
-        ComparisonReportWriter comparisonReportWriter = new ComparisonReportWriter(submissionToIdFunction, this.resultWriter);
+        ComparisonReportWriter comparisonReportWriter = new ComparisonReportWriter(this.resultWriter);
         submissionNameToNameToComparisonFileName = comparisonReportWriter.writeComparisonReports(result);
     }
 
     private void writeBaseCodeReport(JPlagResult result) {
-        BaseCodeReportWriter baseCodeReportWriter = new BaseCodeReportWriter(submissionToIdFunction, this.resultWriter);
+        BaseCodeReportWriter baseCodeReportWriter = new BaseCodeReportWriter(this.resultWriter);
         baseCodeReportWriter.writeBaseCodeReport(result);
     }
 
@@ -160,18 +148,18 @@ public class ReportObjectFactory {
     }
 
     private void writeTopComparisons(JPlagResult result) {
-        List<TopComparison> topComparison = new MetricMapper(submissionToIdFunction).getTopComparisons(result);
+        List<TopComparison> topComparison = new MetricMapper(Submission::getName).getTopComparisons(result);
         this.resultWriter.addJsonEntry(topComparison, TOP_COMPARISONS_FILE_NAME);
     }
 
     private void writeCluster(JPlagResult result) {
-        List<Cluster> cluster = new ClusteringResultMapper(submissionToIdFunction).map(result);
+        List<Cluster> cluster = new ClusteringResultMapper(Submission::getName).map(result);
         this.resultWriter.addJsonEntry(cluster, CLUSTER_FILE_NAME);
     }
 
-    private void writeSubmissionMappings() {
+    private void writeSubmissionMappings(JPlagResult result) {
         SubmissionMappings mappings = new SubmissionMappings(
-                submissionNameToIdMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey)),
+                result,
                 submissionNameToNameToComparisonFileName);
         this.resultWriter.addJsonEntry(mappings, SUBMISSION_MAPPINGS_FILE_NAME);
     }
@@ -187,11 +175,11 @@ public class ReportObjectFactory {
 
         List<Map<String, Map<String, SubmissionFile>>> submissionTokenCountList = submissions.stream().parallel().map(submission -> {
             Map<String, SubmissionFile> tokenCounts = new HashMap<>();
-            for (Map.Entry<File, Integer> entry : submission.getTokenCountPerFile().entrySet()) {
-                String key = FilePathUtil.getRelativeSubmissionPath(entry.getKey(), submission, submissionToIdFunction).toString();
+            for (Map.Entry<de.jplag.inputs.SubmissionFile, Integer> entry : submission.getTokenCountPerFile().entrySet()) {
+                String key = entry.getKey().relativePath();
                 tokenCounts.put(key, new SubmissionFile(entry.getValue()));
             }
-            return Map.of(submissionNameToIdMap.get(submission.getName()), tokenCounts);
+            return Map.of(submission.getName(), tokenCounts);
         }).toList();
 
         submissionTokenCountList.forEach(submission -> fileIndex.fileIndexes().putAll(submission));

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import de.jplag.inputs.SubmissionFile;
+import de.jplag.inputs.SubmissionFolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +21,7 @@ public class Parser {
     /** Shared logger. **/
     static final Logger logger = LoggerFactory.getLogger(Parser.class);
 
-    private File currentFile;
+    private SubmissionFile currentFile;
     private List<Token> tokens;
 
     /**
@@ -28,11 +30,11 @@ public class Parser {
      * @return the token sequence.
      * @throws ParsingException if parsing fails.
      */
-    public List<Token> parse(Set<File> files) throws ParsingException {
+    public List<Token> parse(SubmissionFolder folder) throws ParsingException {
         tokens = new ArrayList<>();
-        for (File file : files) {
+        for (SubmissionFile file: folder.getFiles()) {
             currentFile = file;
-            logger.trace("Parsing file {}", file.getName());
+            logger.trace("Parsing file {}", file.name());
             SchemeParser.parseFile(file, null, this);
             tokens.add(Token.fileEnd(currentFile));
         }

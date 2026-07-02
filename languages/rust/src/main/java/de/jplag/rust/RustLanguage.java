@@ -9,6 +9,7 @@ import de.jplag.ParsingException;
 import de.jplag.Token;
 
 import com.google.auto.service.AutoService;
+import de.jplag.inputs.SubmissionFolder;
 
 /**
  * This represents the Rust language as a language supported by JPlag.
@@ -37,7 +38,7 @@ public class RustLanguage implements Language {
     }
 
     @Override
-    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return new RustParserAdapter().parse(files);
+    public List<Token> parse(SubmissionFolder folder, boolean normalize) throws ParsingException {
+        return new RustParserAdapter().parse(folder);
     }
 }

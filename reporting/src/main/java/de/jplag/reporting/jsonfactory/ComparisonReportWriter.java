@@ -27,7 +27,6 @@ import de.jplag.reporting.reportobject.writer.JPlagResultWriter;
 public class ComparisonReportWriter {
 
     private final JPlagResultWriter resultWriter;
-    private final Function<Submission, String> submissionToIdFunction;
     private final Map<String, Map<String, String>> submissionIdToComparisonFileName = new ConcurrentHashMap<>();
     private final Map<String, AtomicInteger> fileNameCollisions = new ConcurrentHashMap<>();
     /**
@@ -43,8 +42,7 @@ public class ComparisonReportWriter {
      * @param submissionToIdFunction function to convert Submission objects to their unique string IDs
      * @param resultWriter the writer responsible for producing the JPlag result output
      */
-    public ComparisonReportWriter(Function<Submission, String> submissionToIdFunction, JPlagResultWriter resultWriter) {
-        this.submissionToIdFunction = submissionToIdFunction;
+    public ComparisonReportWriter(JPlagResultWriter resultWriter) {
         this.resultWriter = resultWriter;
     }
 
@@ -66,8 +64,8 @@ public class ComparisonReportWriter {
 
     private void writeComparisons(List<JPlagComparison> comparisons) {
         for (JPlagComparison comparison : comparisons) {
-            String firstSubmissionId = submissionToIdFunction.apply(comparison.firstSubmission());
-            String secondSubmissionId = submissionToIdFunction.apply(comparison.secondSubmission());
+            String firstSubmissionId = comparison.firstSubmission().getName();
+            String secondSubmissionId = comparison.secondSubmission().getName();
             String fileName = generateComparisonName(firstSubmissionId, secondSubmissionId);
             addToLookUp(firstSubmissionId, secondSubmissionId, fileName);
             var comparisonReport = new ComparisonReport(firstSubmissionId, secondSubmissionId, createSimilarityMap(comparison),
@@ -127,10 +125,8 @@ public class ComparisonReportWriter {
         Token startOfSecond = tokensSecond.stream().min(lineStartComparator).orElseThrow();
         Token endOfSecond = tokensSecond.stream().max(lineEndComparator).orElseThrow();
 
-        String firstFileName = FilePathUtil.getRelativeSubmissionPath(startOfFirst.getFile(), comparison.firstSubmission(), submissionToIdFunction)
-                .toString();
-        String secondFileName = FilePathUtil.getRelativeSubmissionPath(startOfSecond.getFile(), comparison.secondSubmission(), submissionToIdFunction)
-                .toString();
+        String firstFileName = startOfFirst.getFile().relativePath();
+        String secondFileName = startOfSecond.getFile().relativePath();
 
         CodePosition startInFirst = new CodePosition(startOfFirst.getStartLine(), startOfFirst.getStartColumn() - 1, match.startOfFirst());
         CodePosition endInFirst = new CodePosition(endOfFirst.getEndLine(), endOfFirst.getEndColumn() - 1, match.endOfFirst());

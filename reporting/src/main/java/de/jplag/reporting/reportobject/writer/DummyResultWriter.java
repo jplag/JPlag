@@ -3,6 +3,7 @@ package de.jplag.reporting.reportobject.writer;
 import java.io.File;
 import java.nio.file.Path;
 
+import de.jplag.inputs.SubmissionFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,8 +23,8 @@ public class DummyResultWriter implements JPlagResultWriter {
     }
 
     @Override
-    public void addFileContentEntry(Path path, File original) {
-        logger.info(MESSAGE_FILE, original.getAbsolutePath(), path);
+    public void addFileContentEntry(Path path, SubmissionFile original) {
+        logger.info(MESSAGE_FILE, original.relativePath(), path);
     }
 
     @Override

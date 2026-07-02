@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
+import de.jplag.inputs.SubmissionFile;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -65,9 +66,9 @@ public class ScxmlParser {
      * @return the statechart constructed from the input statechart file
      * @throws ParsingException when the statechart could not be parsed
      */
-    public Statechart parse(File file) throws ParsingException {
+    public Statechart parse(SubmissionFile file) throws ParsingException {
         try {
-            Document document = builder.parse(file);
+            Document document = builder.parse(file.open());
             Element element = document.getDocumentElement();
             resolveInitialStates(element);
             return visitRoot(element);

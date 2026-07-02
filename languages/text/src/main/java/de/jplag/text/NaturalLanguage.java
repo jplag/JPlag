@@ -9,6 +9,7 @@ import de.jplag.ParsingException;
 import de.jplag.Token;
 
 import com.google.auto.service.AutoService;
+import de.jplag.inputs.SubmissionFolder;
 
 /**
  * Language class for parsing (natural language) text. This language module employs a primitive approach where
@@ -39,8 +40,8 @@ public class NaturalLanguage implements Language {
     }
 
     @Override
-    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return new ParserAdapter().parse(files);
+    public List<Token> parse(SubmissionFolder folder, boolean normalize) throws ParsingException {
+        return new ParserAdapter().parse(folder);
     }
 
     @Override

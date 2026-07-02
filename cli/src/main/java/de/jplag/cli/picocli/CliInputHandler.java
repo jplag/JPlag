@@ -181,18 +181,18 @@ public class CliInputHandler {
      * @throws CliException If multiple options would be valid
      */
     public File getFileForViewMode() throws CliException {
-        List<File> validOptions = new ArrayList<>(List.of(this.options.rootDirectory));
+        List<String> validOptions = new ArrayList<>(List.of(this.options.rootDirectory));
 
         validOptions.addAll(List.of(this.options.newDirectories));
         validOptions.addAll(List.of(this.options.oldDirectories));
 
         if (this.parseResult.hasMatchedOption(RESULT_FILE_OPTION_NAME)) {
-            validOptions.add(new File(this.options.resultFile));
+            validOptions.add(this.options.resultFile);
         }
 
         return switch (validOptions.size()) {
             case 0 -> null;
-            case 1 -> validOptions.getFirst();
+            case 1 -> new File(validOptions.getFirst());
             default -> throw new CliException(AMBIGUOUS_VIEW_FILE);
         };
     }

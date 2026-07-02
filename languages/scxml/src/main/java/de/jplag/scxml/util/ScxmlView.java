@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Objects;
 
+import de.jplag.inputs.SubmissionFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +23,7 @@ public class ScxmlView {
 
     private static final String VIEW_INDENTATION = "  ";
     private static final String END_TOKEN_SYMBOL = "}";
-    private final File file;
+    private final SubmissionFile file;
     private final StringBuilder builder;
     private final Logger logger;
     private int line;
@@ -32,7 +33,7 @@ public class ScxmlView {
      * path of the output view file.
      * @param file the input file corresponding to this view
      */
-    public ScxmlView(File file) {
+    public ScxmlView(SubmissionFile file) {
         this.file = file;
         this.builder = new StringBuilder();
         this.logger = LoggerFactory.getLogger(this.getClass());

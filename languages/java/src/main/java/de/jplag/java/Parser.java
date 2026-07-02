@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import de.jplag.inputs.SubmissionFolder;
 import javax.tools.ToolProvider;
 
 import org.slf4j.Logger;
@@ -28,10 +29,10 @@ public class Parser {
      * @return the tokens sequence for the files.
      * @throws ParsingException if parsing fails.
      */
-    public List<Token> parse(Set<File> files) throws ParsingException {
+    public List<Token> parse(SubmissionFolder folder) throws ParsingException {
         ensureJavacIsAvailable();
         tokens = new ArrayList<>();
-        new JavacAdapter().parseFiles(files, this);
+        new JavacAdapter().parseFiles(folder.getFiles(), this);
         logger.debug("--- token semantics ---");
         for (Token token : tokens) {
             logger.debug("{} | {} | {}", token.getStartLine(), token.getType().getDescription(), token.getSemantics());

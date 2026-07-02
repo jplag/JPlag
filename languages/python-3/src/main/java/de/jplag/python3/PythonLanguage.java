@@ -9,6 +9,7 @@ import de.jplag.ParsingException;
 import de.jplag.Token;
 
 import com.google.auto.service.AutoService;
+import de.jplag.inputs.SubmissionFolder;
 
 /**
  * Language facade for Python 3.
@@ -37,7 +38,7 @@ public class PythonLanguage implements Language {
     }
 
     @Override
-    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return new PythonParserAdapter().parse(files);
+    public List<Token> parse(SubmissionFolder folder, boolean normalize) throws ParsingException {
+        return new PythonParserAdapter().parse(folder);
     }
 }

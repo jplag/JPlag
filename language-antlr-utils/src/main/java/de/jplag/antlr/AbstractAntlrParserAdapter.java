@@ -5,6 +5,8 @@ import java.io.Reader;
 import java.util.List;
 import java.util.Set;
 
+import de.jplag.inputs.SubmissionFile;
+import de.jplag.inputs.SubmissionFolder;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CodePointCharStream;
@@ -48,18 +50,18 @@ public abstract class AbstractAntlrParserAdapter<T extends Parser> {
      * @return The extracted tokens
      * @throws ParsingException If anything goes wrong
      */
-    public List<Token> parse(Set<File> files) throws ParsingException {
+    public List<Token> parse(SubmissionFolder folder) throws ParsingException {
         TokenCollector collector = new TokenCollector(extractsSemantics);
-        for (File file : files) {
+        for (SubmissionFile file : folder.getFiles()) {
             parseFile(file, collector);
         }
         return collector.getTokens();
     }
 
-    private void parseFile(File file, TokenCollector collector) throws ParsingException {
+    private void parseFile(SubmissionFile file, TokenCollector collector) throws ParsingException {
         collector.enterFile(file);
-        try (Reader reader = FileUtils.openFileReader(file, true)) {
-            CodePointCharStream stream = CharStreams.fromReader(reader, file.getAbsolutePath());  // Specify source to retain file in ANTLR errors.
+        try (Reader reader = FileUtils.openFileReader(file)) {
+            CodePointCharStream stream = CharStreams.fromReader(reader, file.relativePath());  // Specify source to retain file in ANTLR errors.
             Lexer lexer = this.createLexer(stream);
             CommonTokenStream tokenStream = new CommonTokenStream(lexer);
             T parser = this.createParser(tokenStream);

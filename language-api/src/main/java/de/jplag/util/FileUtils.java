@@ -9,6 +9,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -23,10 +25,12 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+import com.google.common.primitives.Chars;
 import de.jplag.ParsingException;
 
 import com.ibm.icu.text.CharsetDetector;
 import com.ibm.icu.text.CharsetMatch;
+import de.jplag.inputs.SubmissionFile;
 
 /**
  * Encapsulates various interactions with files to prevent issues with file encodings.
@@ -100,6 +104,37 @@ public final class FileUtils {
         return readFileContent(file, false);
     }
 
+    public static String readFileContent(SubmissionFile file) throws IOException {
+        try (BufferedReader reader = openFileReader(file)) {
+            return reader.lines().collect(Collectors.joining(System.lineSeparator()));
+        }
+    }
+
+    public static String readFileContent(SubmissionFile file, Charset charset) throws IOException {
+        try (BufferedReader reader = openFileReader(file, charset)) {
+            return reader.lines().collect(Collectors.joining(System.lineSeparator()));
+        }
+    }
+
+    public static BufferedReader openFileReader(SubmissionFile file) throws IOException {
+        Charset charset;
+        if (Objects.nonNull(userSpecifiedCharset)) {
+            charset = userSpecifiedCharset;
+        } else {
+            try (InputStream stream = new BufferedInputStream(file.open())) {
+                charset = detectCharset(stream);
+            }
+        }
+
+        return openFileReader(file, charset);
+    }
+
+    public static BufferedReader openFileReader(SubmissionFile file, Charset charset) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(file.open(), charset));
+        removeBom(reader, charset);
+        return reader;
+    }
+
     /**
      * Removes the byte order mark from the beginning of the stream, if it exists and the charset is a UTF* charset. For
      * details see: <a href="https://en.wikipedia.org/wiki/Byte_order_mark">Wikipedia</a>.
@@ -128,33 +163,22 @@ public final class FileUtils {
         }
     }
 
-    /**
-     * Detects the most probable charset over the whole set of files.
-     * @param files The files to check
-     * @param isSubmissionFile If true and a charset is set for submissions, that charset will be used always
-     * @return The most probable charset
-     * @throws ParsingException if reading the source files leads to an error.
-     */
-    public static Charset detectCharsetFromMultiple(Collection<File> files, boolean isSubmissionFile) throws ParsingException {
-        if (isSubmissionFile && userSpecifiedCharset != null) {
-            return userSpecifiedCharset;
-        } else {
-            return detectCharsetFromMultiple(files);
+    public static Charset detectCharset(SubmissionFile file) throws IOException {
+        try (InputStream stream = file.open()) {
+            return detectCharset(stream);
         }
     }
 
-    /**
-     * Detects the most probable charset over the whole set of files.
-     * @param files The files to check
-     * @return The most probable charset
-     * @throws ParsingException if reading the source files leads to an error.
-     */
-    public static Charset detectCharsetFromMultiple(Collection<File> files) throws ParsingException {
+    public static Charset detectCharsetFromSubmissionFiles(Collection<SubmissionFile> files) throws ParsingException {
+        if (userSpecifiedCharset != null) {
+            return userSpecifiedCharset;
+        }
+
         Map<String, List<Integer>> charsetValues = new HashMap<>();
 
         List<CharsetMatch[]> matchData = new ArrayList<>();
-        for (File file : files) {
-            try (InputStream stream = new BufferedInputStream(new FileInputStream(file))) {
+        for (SubmissionFile file : files) {
+            try (InputStream stream = new BufferedInputStream(file.open())) {
                 matchData.add(detectAllCharsets(stream));
             } catch (IOException e) {
                 throw new ParsingException(file, e);
@@ -256,5 +280,13 @@ public final class FileUtils {
      */
     public static void setOverrideSubmissionCharset(Charset userSpecifiedCharset) {
         FileUtils.userSpecifiedCharset = userSpecifiedCharset;
+    }
+
+    public static boolean isZip(File f) throws IOException {
+        int fileSignature = 0;
+        try (RandomAccessFile raf = new RandomAccessFile(f, "r")) {
+            fileSignature = raf.readInt();
+        }
+        return fileSignature == 0x504B0304 || fileSignature == 0x504B0506 || fileSignature == 0x504B0708;
     }
 }

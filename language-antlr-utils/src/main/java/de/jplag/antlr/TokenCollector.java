@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
+import de.jplag.inputs.SubmissionFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +24,7 @@ public class TokenCollector {
 
     private final List<Token> collected;
     private final boolean extractsSemantics;
-    private File file;
+    private SubmissionFile file;
 
     /**
      * @param extractsSemantics If semantics are extracted
@@ -70,7 +71,7 @@ public class TokenCollector {
         addToken(token);
     }
 
-    void enterFile(File newFile) {
+    void enterFile(SubmissionFile newFile) {
         this.file = newFile;
     }
 

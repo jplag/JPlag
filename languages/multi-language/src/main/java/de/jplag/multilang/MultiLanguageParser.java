@@ -12,6 +12,8 @@ import java.util.Set;
 import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
+import de.jplag.inputs.SubmissionFile;
+import de.jplag.inputs.SubmissionFolder;
 
 /**
  * Routes files to the appropriate {@link Language} parser in a multi-language context. Honors language priority and
@@ -40,12 +42,12 @@ public class MultiLanguageParser {
      * @return a list of parsed tokens
      * @throws ParsingException if parsing fails
      */
-    public List<Token> parseFiles(Set<File> files, boolean normalize) throws ParsingException {
+    public List<Token> parseFiles(SubmissionFolder folder, boolean normalize) throws ParsingException {
         List<Token> results = new ArrayList<>();
-        for (File file : files) {
+        for (SubmissionFile file : folder.getFiles()) {
             Optional<Language> language = findLanguageForFile(file);
             if (language.isPresent()) {
-                results.addAll(language.get().parse(Set.of(file), normalize));
+                results.addAll(language.get().parse(SubmissionFolder.makeVirtualRoot(file), normalize));
             }
         }
         return results;
@@ -75,8 +77,8 @@ public class MultiLanguageParser {
         map.put(suffix, language);
     }
 
-    private Optional<Language> findLanguageForFile(File file) {
-        String name = file.getName();
+    private Optional<Language> findLanguageForFile(SubmissionFile file) {
+        String name = file.name();
         String extension = name.substring(name.lastIndexOf('.')).toLowerCase();
 
         if (this.languageMapPriority.containsKey(extension)) {

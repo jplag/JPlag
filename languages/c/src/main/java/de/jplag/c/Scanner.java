@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import de.jplag.inputs.SubmissionFile;
+import de.jplag.inputs.SubmissionFolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +20,7 @@ public class Scanner {
     /** Logger used by the scanner and the ANTLR generated scanner. */
     static final Logger logger = LoggerFactory.getLogger(Scanner.class);
 
-    private File currentFile;
+    private SubmissionFile currentFile;
     private List<Token> tokens;
 
     /**
@@ -27,9 +29,9 @@ public class Scanner {
      * @return the token sequence.
      * @throws ParsingException if parsing fails.
      */
-    public List<Token> scan(Set<File> files) throws ParsingException {
+    public List<Token> scan(SubmissionFolder folder) throws ParsingException {
         tokens = new ArrayList<>();
-        for (File file : files) {
+        for (SubmissionFile file : folder.getFiles()) {
             this.currentFile = file;
             logger.trace("Scanning file {}", currentFile);
             try {

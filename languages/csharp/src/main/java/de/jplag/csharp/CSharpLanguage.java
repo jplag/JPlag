@@ -9,6 +9,7 @@ import de.jplag.ParsingException;
 import de.jplag.Token;
 
 import com.google.auto.service.AutoService;
+import de.jplag.inputs.SubmissionFolder;
 
 /**
  * C# language with full support of C# 6 features and below.
@@ -37,7 +38,7 @@ public class CSharpLanguage implements Language {
     }
 
     @Override
-    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return new CSharpParserAdapter().parse(files);
+    public List<Token> parse(SubmissionFolder folder, boolean normalize) throws ParsingException {
+        return new CSharpParserAdapter().parse(folder);
     }
 }

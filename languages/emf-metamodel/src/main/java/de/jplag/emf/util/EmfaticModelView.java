@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.jplag.inputs.SubmissionFile;
 import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
@@ -51,7 +52,7 @@ public final class EmfaticModelView extends AbstractModelView {
      * @param modelResource is the resource containing the metamodel.
      * @throws ParsingException if Emfatic crashes.
      */
-    public EmfaticModelView(File file, Resource modelResource) throws ParsingException {
+    public EmfaticModelView(SubmissionFile file, Resource modelResource) throws ParsingException {
         super(file);
         elementToLine = new HashMap<>();
         lines = generateEmfaticCode(viewBuilder, modelResource);

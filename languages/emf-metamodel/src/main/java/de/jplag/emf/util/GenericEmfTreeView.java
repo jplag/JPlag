@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
+import de.jplag.inputs.SubmissionFile;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -29,7 +30,7 @@ public class GenericEmfTreeView extends AbstractModelView {
      * @param file is the path to the metamodel.
      * @param modelResource is the EMF resource in which the model is loaded.
      */
-    public GenericEmfTreeView(File file, Resource modelResource) {
+    public GenericEmfTreeView(SubmissionFile file, Resource modelResource) {
         super(file);
         lines = new ArrayList<>();
         objectToLine = new HashMap<>();

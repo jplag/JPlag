@@ -15,7 +15,7 @@ import de.jplag.clustering.Cluster;
 import de.jplag.clustering.ClusteringResult;
 
 class ClusteringResultMapperTest {
-    private final ClusteringResultMapper clusteringResultMapper = new ClusteringResultMapper(Submission::getName);
+    private final ClusteringResultMapper clusteringResultMapper = new ClusteringResultMapper(Submission::getSimpleName);
 
     @Test
     void test() {
@@ -42,7 +42,7 @@ class ClusteringResultMapperTest {
 
     private Submission submissionWithId(String id) {
         Submission submission = mock(Submission.class);
-        when(submission.getName()).thenReturn(id);
+        when(submission.getSimpleName()).thenReturn(id);
         return submission;
     }
 }

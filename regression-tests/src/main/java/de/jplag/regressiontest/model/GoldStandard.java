@@ -26,8 +26,8 @@ public record GoldStandard(@JsonProperty double matchAverage, @JsonProperty doub
         DoubleSummaryStatistics nonMatch = new DoubleSummaryStatistics();
 
         for (JPlagComparison comparison : comparisonList) {
-            ComparisonIdentifier comparisonIdentifier = new ComparisonIdentifier(comparison.firstSubmission().getName(),
-                    comparison.secondSubmission().getName());
+            ComparisonIdentifier comparisonIdentifier = new ComparisonIdentifier(comparison.firstSubmission().getSubmissionIdentifier().getFullyQualified(),
+                    comparison.secondSubmission().getSubmissionIdentifier().getFullyQualified());
             if (comparisonIdentifiers.contains(comparisonIdentifier)) {
                 match.accept(comparison.similarity());
             } else {

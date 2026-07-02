@@ -48,7 +48,7 @@ class ReportTokenPositionTestTest {
 
         try (MockedStatic<FilePathUtil> mockedFilePathUtil = Mockito.mockStatic(FilePathUtil.class)) {
             mockedFilePathUtil.when(() -> FilePathUtil.getRelativeSubmissionPath(any(), any(), any())).thenReturn(Path.of("file.java"));
-            comparisonReportOutput = new ComparisonReportWriter(Submission::getName, resultWriter).writeComparisonReports(result);
+            comparisonReportOutput = new ComparisonReportWriter(result.getSubmissions().isMultiRoot(), resultWriter).writeComparisonReports(result);
         }
         ComparisonReport comparisonReport = (ComparisonReport) resultWriter
                 .getJsonEntry(Path.of(ComparisonReportWriter.BASEPATH, comparisonReportOutput.get(firstID).get(secondID)));
@@ -98,7 +98,7 @@ class ReportTokenPositionTestTest {
         TestableReportWriter resultWriter = new TestableReportWriter();
         try (MockedStatic<FilePathUtil> mockedFilePathUtil = Mockito.mockStatic(FilePathUtil.class)) {
             mockedFilePathUtil.when(() -> FilePathUtil.getRelativeSubmissionPath(any(), any(), any())).thenReturn(Path.of("file.java"));
-            new BaseCodeReportWriter(Submission::getName, resultWriter).writeBaseCodeReport(result);
+            new BaseCodeReportWriter(result.getSubmissions().isMultiRoot(), resultWriter).writeBaseCodeReport(result);
         }
 
         List<BaseCodeMatch> baseCodeMatches = (List<BaseCodeMatch>) resultWriter.getJsonEntry(Path.of("basecode", submissionID + ".json"));
@@ -125,7 +125,7 @@ class ReportTokenPositionTestTest {
 
     Submission createMockSubmission(String name) {
         Submission submission = mock(Submission.class);
-        when(submission.getName()).thenReturn(name);
+        when(submission.getSimpleName()).thenReturn(name);
         List<Token> tokens = List.of(createMockToken(1, 1, 10), createMockToken(2, 1, 10), createMockToken(2, 3, 2), createMockToken(2, 10, 2));
         when(submission.getTokenList()).thenReturn(tokens);
         return submission;

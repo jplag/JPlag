@@ -2,11 +2,13 @@ package de.jplag.reporting.serialization;
 
 import java.io.File;
 
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import de.jplag.Language;
 import de.jplag.highlightextraction.WeightingFunction;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import de.jplag.inputs.SubmissionDirectory;
 
 /**
  * Provides utility functions for Jackson.
@@ -26,6 +28,7 @@ public class JacksonUtils {
         module.addSerializer(Language.class, new LanguageSerializer());
         module.addSerializer(Enum.class, new EnumSerializer());
         module.addSerializer(WeightingFunction.class, new SimpleClassNameSerializer());
+        module.addSerializer(SubmissionDirectory.class, new ToStringSerializer());
         mapper.registerModule(module);
         return mapper;
     }

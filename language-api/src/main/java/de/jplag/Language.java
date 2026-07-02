@@ -6,6 +6,8 @@ import java.util.Optional;
 import java.util.Set;
 
 import de.jplag.commentextraction.CommentExtractorSettings;
+import de.jplag.inputs.SubmissionFile;
+import de.jplag.inputs.SubmissionFolder;
 import de.jplag.options.LanguageOptions;
 
 /**
@@ -53,8 +55,8 @@ public interface Language {
      * @deprecated Replaced by {@link #parse(Set, boolean)}
      */
     @Deprecated(forRemoval = true)
-    default List<Token> parse(Set<File> files) throws ParsingException {
-        return parse(files, false);
+    default List<Token> parse(SubmissionFolder folder) throws ParsingException {
+        return parse(folder, false);
     }
 
     /**
@@ -64,7 +66,7 @@ public interface Language {
      * @return the list of parsed JPlag tokens.
      * @throws ParsingException if an error during parsing the files occurred.
      */
-    List<Token> parse(Set<File> files, boolean normalize) throws ParsingException;
+    List<Token> parse(SubmissionFolder folder, boolean normalize) throws ParsingException;
 
     /**
      * @return Indicates whether the tokens returned by parse have semantic information added to them, i.e., whether the

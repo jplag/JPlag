@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import de.jplag.inputs.SubmissionFile;
 import org.eclipse.emf.ecore.EObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,11 +18,11 @@ import de.jplag.TokenType;
  */
 public abstract class AbstractModelView {
 
-    protected final File file;
+    protected final SubmissionFile file;
     protected final Logger logger;
     protected final StringBuilder viewBuilder;
 
-    protected AbstractModelView(File file) {
+    protected AbstractModelView(SubmissionFile file) {
         this.file = file;
         logger = LoggerFactory.getLogger(this.getClass());
         viewBuilder = new StringBuilder();

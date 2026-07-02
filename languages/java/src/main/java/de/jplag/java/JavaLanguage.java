@@ -12,6 +12,7 @@ import de.jplag.commentextraction.CommentExtractorSettings;
 import de.jplag.commentextraction.EnvironmentDelimiter;
 
 import com.google.auto.service.AutoService;
+import de.jplag.inputs.SubmissionFolder;
 
 /**
  * Language for Java programs. Supports the Java version with which is project is build with (see top-level pom.xml).
@@ -40,8 +41,8 @@ public class JavaLanguage implements Language {
     }
 
     @Override
-    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return new Parser().parse(files);
+    public List<Token> parse(SubmissionFolder folder, boolean normalize) throws ParsingException {
+        return new Parser().parse(folder);
     }
 
     @Override

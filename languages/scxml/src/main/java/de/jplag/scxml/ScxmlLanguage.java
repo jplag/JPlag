@@ -7,6 +7,7 @@ import java.util.Set;
 import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
+import de.jplag.inputs.SubmissionFolder;
 import de.jplag.scxml.parser.ScxmlParserAdapter;
 
 import com.google.auto.service.AutoService;
@@ -41,8 +42,8 @@ public class ScxmlLanguage implements Language {
     }
 
     @Override
-    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return new ScxmlParserAdapter().parse(files);
+    public List<Token> parse(SubmissionFolder folder, boolean normalize) throws ParsingException {
+        return new ScxmlParserAdapter().parse(folder);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package de.jplag.reporting.reportobject.writer;
 
+import de.jplag.inputs.SubmissionFile;
+
 import java.io.File;
 import java.nio.file.Path;
 
@@ -19,7 +21,7 @@ public interface JPlagResultWriter {
      * @param path The path to write to
      * @param original The original file
      */
-    void addFileContentEntry(Path path, File original);
+    void addFileContentEntry(Path path, SubmissionFile original);
 
     /**
      * Writes data from a string.

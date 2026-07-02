@@ -10,6 +10,8 @@ import java.util.StringJoiner;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import de.jplag.inputs.FileSystemSubmissionDirectory;
+import de.jplag.inputs.SubmissionDirectory;
 import org.junit.jupiter.api.Assumptions;
 import org.opentest4j.TestAbortedException;
 
@@ -137,9 +139,9 @@ public abstract class TestBase {
      * @param customization is a function that configures and returns the JPlagOptions for the run.
      * @return the options.
      */
-    protected JPlagOptions getOptions(List<String> newPaths, List<String> oldPaths, Function<JPlagOptions, JPlagOptions> customization) {
-        var newFiles = newPaths.stream().map(File::new).collect(Collectors.toSet());
-        var oldFiles = oldPaths.stream().map(File::new).collect(Collectors.toSet());
+    protected JPlagOptions getOptions(List<String> newPaths, List<String> oldPaths, Function<JPlagOptions, JPlagOptions> customization) { //TODO names?
+        var newFiles = newPaths.stream().map(path -> (SubmissionDirectory)new FileSystemSubmissionDirectory(new File(path), path)).collect(Collectors.toSet());
+        var oldFiles = oldPaths.stream().map(path -> (SubmissionDirectory)new FileSystemSubmissionDirectory(new File(path), path)).collect(Collectors.toSet());
         JPlagOptions options = new JPlagOptions(new JavaLanguage(), newFiles, oldFiles)
                 .withClusteringOptions(new ClusteringOptions().withEnabled(false));
         return customization.apply(options);

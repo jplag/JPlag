@@ -1,14 +1,13 @@
 package de.jplag.cpp;
 
-import java.io.File;
 import java.util.List;
-import java.util.Set;
 
 import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
 import com.google.auto.service.AutoService;
+import de.jplag.inputs.SubmissionFolder;
 
 /**
  * The entry point for the ANTLR parser based C++ language module.
@@ -47,8 +46,8 @@ public class CPPLanguage implements Language {
     }
 
     @Override
-    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return new CPPParserAdapter().parse(files);
+    public List<Token> parse(SubmissionFolder folder, boolean normalize) throws ParsingException {
+        return new CPPParserAdapter().parse(folder);
     }
 
     @Override

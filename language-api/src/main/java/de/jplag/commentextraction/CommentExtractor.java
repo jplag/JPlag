@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import de.jplag.inputs.SubmissionFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,14 +23,14 @@ public class CommentExtractor {
     private String lookBehind;
     private int currentCol;
     private int currentLine;
-    private final File file;
+    private final SubmissionFile file;
 
     /**
      * Creates a new CommentExtractor, reading the contents from the specified file.
      * @param file File to read
      * @param settings Settings for the comment extractor
      */
-    public CommentExtractor(File file, CommentExtractorSettings settings) {
+    public CommentExtractor(SubmissionFile file, CommentExtractorSettings settings) {
         this.settings = settings;
         this.comments = new ArrayList<>();
         this.lookBehind = "";
@@ -43,7 +44,7 @@ public class CommentExtractor {
         try {
             this.remainingContent = FileUtils.readFileContent(file);
         } catch (IOException e) {
-            logger.warn("Could not extract comments from {}: {}", file.getAbsolutePath(), e.getMessage());
+            logger.warn("Could not extract comments from {}: {}", file.relativePath(), e.getMessage()); //TODO add submission identifier
             this.remainingContent = "";
         }
     }

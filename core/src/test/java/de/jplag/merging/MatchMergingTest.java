@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 
+import de.jplag.inputs.SubmissionFile;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -229,15 +230,15 @@ class MatchMergingTest extends TestBase {
     }
 
     private void verifyTokensFromSingleFile(List<Token> tokens) {
-        List<File> files = tokens.stream().map(Token::getFile).toList();
-        for (File file : files) {
-            assertEquals(files.getFirst(), file, "Two different files in token sequence: " + files.getFirst().getName() + " and " + file.getName());
+        List<SubmissionFile> files = tokens.stream().map(Token::getFile).toList();
+        for (SubmissionFile file : files) {
+            assertEquals(files.getFirst(), file, "Two different files in token sequence: " + files.getFirst().name() + " and " + file.name());
         }
     }
 
     private static JPlagComparison findComparison(List<JPlagComparison> comparisons, String firstName, String secondName) {
         return comparisons.stream()
-                .filter(it -> firstName.equals(it.firstSubmission().getName()) && secondName.equals(it.secondSubmission().getName())) //
+                .filter(it -> firstName.equals(it.firstSubmission().getName()) && secondName.equals(it.secondSubmission().getName()))
                 .findAny().orElseThrow();
     }
 }

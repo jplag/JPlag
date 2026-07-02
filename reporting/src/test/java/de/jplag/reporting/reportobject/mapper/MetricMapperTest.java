@@ -29,7 +29,7 @@ class MetricMapperTest {
             70, 67, 64, 63, 59, 56, 52, 50, 50, 50, 49, 47, 43, 5, 6, 11, 4, 2, 3, 20, 37, 5, 0, 2, 33, 30, 19, 4, 5, 24, 40, 6, 3, 9, 2, 3, 18, 3, 5,
             1, 4, 1, 0, 0, 5, 5, 14, 5, 42, 4, 18, 0, 0, 10, 4, 3, 17, 33, 4, 4, 3, 4, 39, 0, 20, 2, 4, 9, 0, 5, 0, 8, 23, 4, 2, 39, 3, 4, 1, 0, 3,
             33, 2, 1);
-    private final MetricMapper metricMapper = new MetricMapper(Submission::getName);
+    private final MetricMapper metricMapper = new MetricMapper(Submission::getSimpleName);
 
     @Test
     void test_getDistributions() {
@@ -94,10 +94,10 @@ class MetricMapperTest {
         List<JPlagComparison> comparisonList = new ArrayList<>();
         for (Comparison comparisonDto : createComparisonsDto) {
             Submission submission1 = mock(Submission.class);
-            doReturn(comparisonDto.submission1.name).when(submission1).getName();
+            doReturn(comparisonDto.submission1.name).when(submission1).getSimpleName();
             doReturn(comparisonDto.submission1.tokenCount).when(submission1).getNumberOfTokens();
             Submission submission2 = mock(Submission.class);
-            doReturn(comparisonDto.submission2.name).when(submission2).getName();
+            doReturn(comparisonDto.submission2.name).when(submission2).getSimpleName();
             doReturn(comparisonDto.submission2.tokenCount).when(submission2).getNumberOfTokens();
 
             JPlagComparison mockedComparison = mock(JPlagComparison.class);

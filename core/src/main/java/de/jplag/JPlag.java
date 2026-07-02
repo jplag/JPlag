@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import de.jplag.inputs.SubmissionDirectory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -136,18 +137,24 @@ public class JPlag {
     }
 
     private static List<String> getDuplicateSubmissionFolderNames(JPlagOptions options) {
-        List<String> duplicateNames = new ArrayList<>();
-        Set<String> alreadyFoundNames = new HashSet<>();
-        for (File file : options.submissionDirectories()) {
-            if (!alreadyFoundNames.add(file.getName())) {
-                duplicateNames.add(file.getName());
+        List<String> duplicates = new ArrayList<>();
+        Set<SubmissionDirectory> visited = new HashSet<>();
+
+        for (SubmissionDirectory directory: options.submissionDirectories()) {
+            if (!visited.contains(directory)) {
+                visited.add(directory);
+            } else {
+                duplicates.add(directory.name());
             }
         }
-        for (File file : options.oldSubmissionDirectories()) {
-            if (!alreadyFoundNames.add(file.getName())) {
-                duplicateNames.add(file.getName());
+        for (SubmissionDirectory directory: options.oldSubmissionDirectories()) {
+            if (!visited.contains(directory)) {
+                visited.add(directory);
+            } else {
+                duplicates.add(directory.name());
             }
         }
-        return duplicateNames;
+
+        return duplicates;
     }
 }

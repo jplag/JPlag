@@ -74,6 +74,8 @@ import java.util.Set;
 
 import de.jplag.ParsingException;
 import de.jplag.Token;
+import de.jplag.inputs.SubmissionFile;
+import de.jplag.inputs.SubmissionFolder;
 import de.jplag.util.FileUtils;
 
 import scala.Option;
@@ -111,7 +113,7 @@ public class ScalaParser {
             "-=", "*=", "/=", "%=", "**=", "<<=", ">>=", ">>>=", "&=", "^=", "|=", "&", "|", "^", "<<", ">>", "~", ">>>", "++", "::", ":::", "<:",
             ">:", "#");
 
-    private File currentFile;
+    private SubmissionFile currentFile;
     private List<Token> tokens;
 
     private void handleDefinitionPattern(Pat pattern, Option<Term> optionalValue) {
@@ -406,9 +408,9 @@ public class ScalaParser {
      * @return The list of tokens
      * @throws ParsingException If the parsing fails
      */
-    public List<Token> parse(Set<File> files) throws ParsingException {
+    public List<Token> parse(SubmissionFolder folder) throws ParsingException {
         this.tokens = new ArrayList<>();
-        for (File file : files) {
+        for (SubmissionFile file : folder.getFiles()) {
             parseFile(file);
         }
         return tokens;
@@ -419,12 +421,12 @@ public class ScalaParser {
      * @param file The file to parse
      * @throws ParsingException If the parsing fails
      */
-    private void parseFile(File file) throws ParsingException {
+    private void parseFile(SubmissionFile file) throws ParsingException {
         currentFile = file;
 
         try {
-            String text = FileUtils.readFileContent(file, true);
-            Input.VirtualFile input = new Input.VirtualFile(file.getPath(), text);
+            String text = FileUtils.readFileContent(file);
+            Input.VirtualFile input = new Input.VirtualFile(file.relativePath(), text);
             Source source = new MyApi().parse(input);
             visit(source);
             tokens.add(Token.fileEnd(file));

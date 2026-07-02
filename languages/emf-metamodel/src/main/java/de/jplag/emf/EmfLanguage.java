@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
+import de.jplag.inputs.SubmissionFolder;
 import org.eclipse.emf.ecore.EcorePackage;
 
 import de.jplag.Language;
@@ -54,8 +55,8 @@ public class EmfLanguage implements Language {
     }
 
     @Override
-    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return new EcoreParser().parse(files, normalize);
+    public List<Token> parse(SubmissionFolder folder, boolean normalize) throws ParsingException {
+        return new EcoreParser().parse(folder, normalize);
     }
 
     @Override

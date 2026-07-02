@@ -9,6 +9,7 @@ import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.emf.EmfLanguage;
 import de.jplag.emf.model.parser.EmfModelParser;
+import de.jplag.inputs.SubmissionFolder;
 import de.jplag.options.LanguageOptions;
 
 import com.google.auto.service.AutoService;
@@ -65,11 +66,11 @@ public class EmfModelLanguage extends EmfLanguage {
     }
 
     @Override
-    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
+    public List<Token> parse(SubmissionFolder folder, boolean normalize) throws ParsingException {
         if (!options.getMetamodelPathOption().hasValue()) {
-            throw new ParsingException(files.iterator().next(), NO_METAMODEL_ERROR);
+            throw new ParsingException(folder.getFiles().getFirst(), NO_METAMODEL_ERROR);
         }
-        return new EmfModelParser().parse(files, normalize);
+        return new EmfModelParser().parse(folder, normalize);
     }
 
     @Override
