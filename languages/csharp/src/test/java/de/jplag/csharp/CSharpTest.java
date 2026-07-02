@@ -22,12 +22,12 @@ import static de.jplag.csharp.CSharpTokenType.METHOD_END;
 import static de.jplag.csharp.CSharpTokenType.PROPERTY;
 import static de.jplag.csharp.CSharpTokenType.RETURN;
 
+import java.util.List;
+
 import de.jplag.TokenType;
 import de.jplag.testutils.LanguageModuleTest;
 import de.jplag.testutils.datacollector.TestDataCollector;
 import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
-
-import java.util.List;
 
 /**
  * Unit test for the C# language module, verifying tokenization and source coverage. Extends {@link LanguageModuleTest}
