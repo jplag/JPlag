@@ -1,14 +1,17 @@
 package de.jplag.java.babylon.transformer;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 
-import de.jplag.ParsingException;
 import de.jplag.java.babylon.DefaultTransformations;
 import de.jplag.java.babylon.TestWithResource;
 import de.jplag.java.babylon.pipeline.EagerPrepassExecutor;
@@ -29,7 +32,7 @@ public class PrepassExecutorTest extends TestWithResource {
     @Test
     public void testProduceSameResults() {
         List<TransformationPipeline> pipelines = getPipelines();
-        List<ParseResult> files = getFiles();
+        List<ParseResult> files = assertDoesNotThrow(this::getFiles);
 
         for (ParseResult file : files) {
             Iterator<CoreOp.FuncOp> list = pipelines.stream().map(file::extractCodeModel).toList().iterator();
@@ -46,14 +49,9 @@ public class PrepassExecutorTest extends TestWithResource {
         return prepassExecutors.stream().map(executor -> new TransformationPipeline(steps, executor)).toList();
     }
 
-    private List<ParseResult> getFiles() {
-        return Stream.of("Asserts.java", "CopyElision.java", "EnhancedFor.java", "Inline.java", "StringConcat.java", "TryWithResources.java")
-                .map(path -> {
-                    try {
-                        return parseFile(path);
-                    } catch (ParsingException e) {
-                        throw new RuntimeException(e);
-                    }
-                }).toList();
+    private List<ParseResult> getFiles() throws IOException {
+        try (Stream<Path> children = Files.list(getTestFileLocation())) {
+            return children.map(path -> assertDoesNotThrow(() -> parseFile(path))).toList();
+        }
     }
 }

@@ -2,6 +2,7 @@ package de.jplag.java.babylon;
 
 import static de.jplag.testutils.LanguageModuleTest.DEFAULT_TEST_CODE_PATH_BASE;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.List;
@@ -39,6 +40,9 @@ public abstract class TestWithResource {
     }
 
     protected final ParseResult parseFile(Path file) throws ParsingException {
+        if (!Files.isRegularFile(file) || !file.getFileName().toString().endsWith(".java")) {
+            throw new IllegalArgumentException("Not a valid Java source file: " + file);
+        }
         JavacAdapterTest adapter = new JavacAdapterTest();
         adapter.parseFiles(Set.of(file.toFile()), null);
         return adapter.getResult();
