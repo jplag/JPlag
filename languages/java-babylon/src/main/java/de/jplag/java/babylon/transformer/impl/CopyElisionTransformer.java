@@ -2,6 +2,8 @@ package de.jplag.java.babylon.transformer.impl;
 
 import java.util.SequencedSet;
 
+import javax.annotation.Nullable;
+
 import de.jplag.java.babylon.BabylonDSL;
 import de.jplag.java.babylon.transformer.SimpleTransformation;
 
@@ -29,20 +31,32 @@ public class CopyElisionTransformer implements SimpleTransformation, BabylonDSL 
     public Block.Builder acceptOp(Block.Builder builder, Op op) {
         switch (op) {
             case CoreOp.VarOp varOp when onlyWritten(varOp) || onlyRead(varOp) -> {
-                if (!varOp.isUninitialized()) {
-                    for (Op.Result use : varOp.result().uses()) {
-                        builder.context().putProperty(use.op(), IDENTIFIER);
-                    }
+                for (Op.Result use : varOp.result().uses()) {
+                    builder.context().putProperty(use.op(), IDENTIFIER);
                 }
             }
             case CoreOp.VarAccessOp varAccessOp when builder.context().getProperty(varAccessOp) == IDENTIFIER -> {
-                if (varAccessOp instanceof CoreOp.VarAccessOp.VarLoadOp) {
-                    builder.context().mapValue(varAccessOp.result(), builder.context().getValue(varAccessOp.varOp().initOperand()));
+                if (!varAccessOp.result().uses().isEmpty()) {
+                    if (varAccessOp instanceof CoreOp.VarAccessOp.VarLoadOp) {
+                        builder.context().mapValue(varAccessOp.result(), builder.context().getValue(varAccessOp.varOp().initOperand()));
+                    } else {
+                        throw new IllegalStateException("Store ops should not have uses");
+                    }
                 }
             }
-            case CoreOp.VarOp varOp when !varOp.isUninitialized() && initialValueIsUnused(varOp) -> {
-                Op.Result replacement = place(builder, varOp.location(), CoreOp.var(varOp.varName(), varOp.varValueType()));
-                builder.context().mapValue(varOp.result(), replacement);
+            case CoreOp.VarOp varOp when initialValueReplacer(varOp) instanceof CoreOp.VarAccessOp.VarStoreOp varStoreOp -> {
+                if (varOp.isUninitialized()) {
+                    builder.context().putProperty(varStoreOp, new ReplaceWithVariable(varOp));
+                } else {
+                    Op.Result replacement = place(builder, varOp.location(), CoreOp.var(varOp.varName(), varOp.varValueType()));
+                    builder.context().mapValue(varOp.result(), replacement);
+                }
+            }
+            case CoreOp.VarAccessOp.VarStoreOp varStoreOp when builder.context()
+                    .getProperty(varStoreOp) instanceof ReplaceWithVariable(CoreOp.VarOp varOp) -> {
+                Op.Result result = place(builder, varStoreOp.location(),
+                        CoreOp.var(varOp.varName(), varOp.varValueType(), builder.context().getValue(varStoreOp.storeOperand())));
+                builder.context().mapValue(varOp.result(), result);
             }
             case CoreOp.VarAccessOp.VarStoreOp varStoreOp when storedValueUnused(varStoreOp) -> {
             }
@@ -50,6 +64,9 @@ public class CopyElisionTransformer implements SimpleTransformation, BabylonDSL 
             default -> builder.add(op);
         }
         return builder;
+    }
+
+    private record ReplaceWithVariable(CoreOp.VarOp varOp) {
     }
 
     private boolean onlyWritten(CoreOp.VarOp varOp) {
@@ -73,9 +90,11 @@ public class CopyElisionTransformer implements SimpleTransformation, BabylonDSL 
                 .allMatch(use -> dominates(use.op(), varStoreOp));
     }
 
-    private boolean initialValueIsUnused(CoreOp.VarOp varOp) {
+    private @Nullable CoreOp.VarAccessOp.VarStoreOp initialValueReplacer(CoreOp.VarOp varOp) {
         SequencedSet<Op.Result> uses = varOp.result().uses();
-        return uses.stream().anyMatch(use -> use.op() instanceof CoreOp.VarAccessOp.VarStoreOp
-                && uses.stream().allMatch(otherUse -> use == otherUse || otherUse.isDominatedBy(use)));
+        return uses.stream()
+                .filter(use -> use.op() instanceof CoreOp.VarAccessOp.VarStoreOp
+                        && uses.stream().allMatch(otherUse -> use == otherUse || dominates(use.op(), otherUse.op())))
+                .findFirst().map(use -> (CoreOp.VarAccessOp.VarStoreOp) use.op()).orElse(null);
     }
 }
