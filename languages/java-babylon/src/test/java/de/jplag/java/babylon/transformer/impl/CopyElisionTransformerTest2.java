@@ -14,7 +14,7 @@ public class CopyElisionTransformerTest2 extends TransformerTest {
 
     @Override
     protected TransformationPipeline getPipeline() {
-        return pipeline(step(new CopyElisionTransformer()));
+        return pipeline(step(new CopyElisionTransformer(3)));
     }
 
     @Override

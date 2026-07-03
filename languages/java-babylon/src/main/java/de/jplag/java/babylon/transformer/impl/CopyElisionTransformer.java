@@ -13,7 +13,7 @@ import jdk.incubator.code.Op;
 import jdk.incubator.code.dialect.core.CoreOp;
 
 /**
- * {@link SimpleTransformation} that removes unused constants or variable copies.
+ * {@link SimpleTransformation} that removes unused variable copies.
  */
 @AutoService(SimpleTransformation.class)
 public class CopyElisionTransformer implements SimpleTransformation, BabylonDSL {
@@ -21,6 +21,23 @@ public class CopyElisionTransformer implements SimpleTransformation, BabylonDSL 
      * Identifier of this transformer.
      */
     public static final String IDENTIFIER = "copy-elision";
+
+    private final int maxReadUses;
+
+    /**
+     * Create a new instance with config options loaded from system properties.
+     */
+    public CopyElisionTransformer() {
+        this(Integer.parseInt(System.getProperty("jplag.java-babylon.copy-elision.max-read-uses", "1")));
+    }
+
+    /**
+     * Create a new instance.
+     * @param maxReadUses the maximum number of reads before a variable is no longer elided
+     */
+    public CopyElisionTransformer(int maxReadUses) {
+        this.maxReadUses = maxReadUses;
+    }
 
     @Override
     public String getIdentifier() {
@@ -30,7 +47,7 @@ public class CopyElisionTransformer implements SimpleTransformation, BabylonDSL 
     @Override
     public Block.Builder acceptOp(Block.Builder builder, Op op) {
         switch (op) {
-            case CoreOp.VarOp varOp when onlyWritten(varOp) || onlyRead(varOp) -> {
+            case CoreOp.VarOp varOp when onlyWritten(varOp) || (onlyRead(varOp) && varOp.result().uses().size() <= maxReadUses) -> {
                 for (Op.Result use : varOp.result().uses()) {
                     builder.context().putProperty(use.op(), IDENTIFIER);
                 }
