@@ -187,43 +187,79 @@ public class StreamFuseTransformerTest extends TransformerTest {
                     %46 : java.type:"java.util.List<java.lang.Integer>" = var.load %26 @loc="6:16";
                     invoke %46 @loc="6:5" @java.ref:"java.lang.IO::println(java.lang.Object):void";
                     %47 : java.type:"int[]" = var.load %21 @loc="7:46";
-                    %48 : java.type:"java.util.stream.IntStream" = invoke %47 @loc="7:32" @java.ref:"java.util.Arrays::stream(int[]):java.util.stream.IntStream";
-                    %49 : java.type:"java.util.function.IntPredicate" = lambda @loc="7:62" @lambda.isReflectable=true (%50 : java.type:"int")java.type:"boolean" -> {
-                        %51 : Var<java.type:"int"> = var %50 @loc="7:62" @"i";
-                        %52 : java.type:"int" = var.load %51 @loc="7:67";
-                        %53 : java.type:"int" = constant @loc="7:71" @2;
-                        %54 : java.type:"int" = mod %52 %53 @loc="7:67";
-                        %55 : java.type:"int" = constant @loc="7:76" @0;
-                        %56 : java.type:"boolean" = eq %54 %55 @loc="7:67";
-                        return %56 @loc="7:62";
+                    %48 : java.type:"int" = constant @loc="7:32" @0;
+                    %49 : java.type:"int[]" = new %48 @loc="7:32" @java.ref:"int[]::(int)";
+                    %50 : Var<java.type:"int[]"> = var %49 @loc="7:32" @"streamResult";
+                    java.enhancedFor @loc="7:32"
+                        ()java.type:"int[]" -> {
+                            yield %47;
+                        }
+                        (%51 : java.type:"int")Var<java.type:"int"> -> {
+                            %52 : Var<java.type:"int"> = var %51 @"s";
+                            yield %52;
+                        }
+                        (%53 : Var<java.type:"int">)java.type:"void" -> {
+                            %54 : Var<java.type:"boolean"> = var @loc="7:32";
+                            %55 : java.type:"int" = var.load %53 @loc="7:32";
+                            %56 : Var<java.type:"int"> = var %55 @loc="7:62" @"i";
+                            %57 : java.type:"int" = var.load %56 @loc="7:67";
+                            %58 : java.type:"int" = constant @loc="7:71" @2;
+                            %59 : java.type:"int" = mod %57 %58 @loc="7:67";
+                            %60 : java.type:"int" = constant @loc="7:76" @0;
+                            %61 : java.type:"boolean" = eq %59 %60 @loc="7:67";
+                            var.store %54 %61 @loc="7:62";
+                            java.if
+                                ()java.type:"boolean" -> {
+                                    %62 : java.type:"boolean" = var.load %54 @loc="7:32";
+                                    yield %62 @loc="7:32";
+                                }
+                                ()java.type:"void" -> {
+                                    %63 : java.type:"int[]" = var.load %50 @loc="7:32";
+                                    %64 : java.type:"int" = array.length %63 @loc="7:32";
+                                    %65 : java.type:"int" = constant @loc="7:32" @1;
+                                    %66 : java.type:"int" = add %64 %65 @loc="7:32";
+                                    %67 : java.type:"int[]" = invoke %50 %66 @loc="7:32" @java.ref:"java.util.Arrays::copyOf(int[], int):int[]";
+                                    var.store %50 %67 @loc="7:32";
+                                    %68 : java.type:"int[]" = var.load %50 @loc="7:32";
+                                    %69 : java.type:"int" = array.length %68 @loc="7:32";
+                                    %70 : java.type:"int" = constant @loc="7:32" @1;
+                                    %71 : java.type:"int" = sub %69 %70 @loc="7:32";
+                                    %72 : java.type:"int[]" = var.load %50 @loc="7:32";
+                                    %73 : java.type:"int" = var.load %53 @loc="7:32";
+                                    array.store %72 %71 %73 @loc="7:32";
+                                    yield @loc="7:32";
+                                }
+                                ()java.type:"void" -> {
+                                    yield;
+                                };
+                            yield @loc="7:32";
+                        };
+                    %74 : java.type:"int[]" = var.load %50 @loc="7:32";
+                    %75 : java.type:"java.lang.String" = invoke %74 @loc="7:16" @java.ref:"java.util.Arrays::toString(int[]):java.lang.String";
+                    invoke %75 @loc="7:5" @java.ref:"java.lang.IO::println(java.lang.Object):void";
+                    %76 : java.type:"java.lang.String" = var.load %23 @loc="8:16";
+                    %77 : java.type:"java.util.stream.IntStream" = invoke %76 @loc="8:16" @java.ref:"java.lang.String::chars():java.util.stream.IntStream";
+                    %78 : java.type:"java.util.function.IntPredicate" = lambda @loc="8:39" @lambda.isReflectable=true (%79 : java.type:"int")java.type:"boolean" -> {
+                        %80 : Var<java.type:"int"> = var %79 @loc="8:39" @"i";
+                        %81 : java.type:"int" = var.load %80 @loc="8:44";
+                        %82 : java.type:"int" = constant @loc="8:48" @2;
+                        %83 : java.type:"int" = mod %81 %82 @loc="8:44";
+                        %84 : java.type:"int" = constant @loc="8:53" @0;
+                        %85 : java.type:"boolean" = eq %83 %84 @loc="8:44";
+                        return %85 @loc="8:39";
                     };
-                    %57 : java.type:"java.util.stream.IntStream" = invoke %48 %49 @loc="7:32" @java.ref:"java.util.stream.IntStream::filter(java.util.function.IntPredicate):java.util.stream.IntStream";
-                    %58 : java.type:"int[]" = invoke %57 @loc="7:32" @java.ref:"java.util.stream.IntStream::toArray():int[]";
-                    %59 : java.type:"java.lang.String" = invoke %58 @loc="7:16" @java.ref:"java.util.Arrays::toString(int[]):java.lang.String";
-                    invoke %59 @loc="7:5" @java.ref:"java.lang.IO::println(java.lang.Object):void";
-                    %60 : java.type:"java.lang.String" = var.load %23 @loc="8:16";
-                    %61 : java.type:"java.util.stream.IntStream" = invoke %60 @loc="8:16" @java.ref:"java.lang.String::chars():java.util.stream.IntStream";
-                    %62 : java.type:"java.util.function.IntPredicate" = lambda @loc="8:39" @lambda.isReflectable=true (%63 : java.type:"int")java.type:"boolean" -> {
-                        %64 : Var<java.type:"int"> = var %63 @loc="8:39" @"i";
-                        %65 : java.type:"int" = var.load %64 @loc="8:44";
-                        %66 : java.type:"int" = constant @loc="8:48" @2;
-                        %67 : java.type:"int" = mod %65 %66 @loc="8:44";
-                        %68 : java.type:"int" = constant @loc="8:53" @0;
-                        %69 : java.type:"boolean" = eq %67 %68 @loc="8:44";
-                        return %69 @loc="8:39";
+                    %86 : java.type:"java.util.stream.IntStream" = invoke %77 %78 @loc="8:16" @java.ref:"java.util.stream.IntStream::filter(java.util.function.IntPredicate):java.util.stream.IntStream";
+                    %87 : java.type:"java.util.function.IntFunction<java.lang.String>" = lambda @loc="8:65" @lambda.isReflectable=true (%88 : java.type:"int")java.type:"java.lang.String" -> {
+                        %89 : Var<java.type:"int"> = var %88 @loc="8:65" @"x$0";
+                        %90 : java.type:"int" = var.load %89 @loc="8:65";
+                        %91 : java.type:"java.lang.String" = invoke %90 @loc="8:65" @java.ref:"java.lang.Integer::toString(int):java.lang.String";
+                        return %91 @loc="8:65";
                     };
-                    %70 : java.type:"java.util.stream.IntStream" = invoke %61 %62 @loc="8:16" @java.ref:"java.util.stream.IntStream::filter(java.util.function.IntPredicate):java.util.stream.IntStream";
-                    %71 : java.type:"java.util.function.IntFunction<java.lang.String>" = lambda @loc="8:65" @lambda.isReflectable=true (%72 : java.type:"int")java.type:"java.lang.String" -> {
-                        %73 : Var<java.type:"int"> = var %72 @loc="8:65" @"x$0";
-                        %74 : java.type:"int" = var.load %73 @loc="8:65";
-                        %75 : java.type:"java.lang.String" = invoke %74 @loc="8:65" @java.ref:"java.lang.Integer::toString(int):java.lang.String";
-                        return %75 @loc="8:65";
-                    };
-                    %76 : java.type:"java.util.stream.Stream<java.lang.String>" = invoke %70 %71 @loc="8:16" @java.ref:"java.util.stream.IntStream::mapToObj(java.util.function.IntFunction):java.util.stream.Stream";
-                    %77 : java.type:"java.lang.String" = constant @loc="8:111" @",";
-                    %78 : java.type:"java.util.stream.Collector<java.lang.CharSequence, ?, java.lang.String>" = invoke %77 @loc="8:92" @java.ref:"java.util.stream.Collectors::joining(java.lang.CharSequence):java.util.stream.Collector";
-                    %79 : java.type:"java.lang.String" = invoke %76 %78 @loc="8:16" @java.ref:"java.util.stream.Stream::collect(java.util.stream.Collector):java.lang.Object";
-                    invoke %79 @loc="8:5" @java.ref:"java.lang.IO::println(java.lang.Object):void";
+                    %92 : java.type:"java.util.stream.Stream<java.lang.String>" = invoke %86 %87 @loc="8:16" @java.ref:"java.util.stream.IntStream::mapToObj(java.util.function.IntFunction):java.util.stream.Stream";
+                    %93 : java.type:"java.lang.String" = constant @loc="8:111" @",";
+                    %94 : java.type:"java.util.stream.Collector<java.lang.CharSequence, ?, java.lang.String>" = invoke %93 @loc="8:92" @java.ref:"java.util.stream.Collectors::joining(java.lang.CharSequence):java.util.stream.Collector";
+                    %95 : java.type:"java.lang.String" = invoke %92 %94 @loc="8:16" @java.ref:"java.util.stream.Stream::collect(java.util.stream.Collector):java.lang.Object";
+                    invoke %95 @loc="8:5" @java.ref:"java.lang.IO::println(java.lang.Object):void";
                     return @loc="1:1";
                 };""";
     }

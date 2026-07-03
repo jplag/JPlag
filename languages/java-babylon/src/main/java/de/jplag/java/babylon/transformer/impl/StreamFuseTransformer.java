@@ -6,7 +6,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.function.DoublePredicate;
 import java.util.function.Function;
+import java.util.function.IntPredicate;
+import java.util.function.LongPredicate;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
@@ -27,6 +30,7 @@ import jdk.incubator.code.Op;
 import jdk.incubator.code.Value;
 import jdk.incubator.code.dialect.core.CoreOp;
 import jdk.incubator.code.dialect.core.CoreType;
+import jdk.incubator.code.dialect.java.ArrayType;
 import jdk.incubator.code.dialect.java.ClassType;
 import jdk.incubator.code.dialect.java.JavaOp;
 import jdk.incubator.code.dialect.java.JavaType;
@@ -49,10 +53,10 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
 
     private static final Set<MethodRef> COLLECTION_STREAM = List.of(Iterable.class, Collection.class, List.class, Set.class).stream()
             .map(receiver -> MethodRef.method(receiver, "stream", Stream.class)).collect(Collectors.toSet());
-    private static final MethodRef ARRAY_STREAM = MethodRef.method(Arrays.class, "stream", Stream.class);
-    private static final MethodRef ARRAY_STREAM_I = MethodRef.method(Arrays.class, "stream", IntStream.class);
-    private static final MethodRef ARRAY_STREAM_L = MethodRef.method(Arrays.class, "stream", LongStream.class);
-    private static final MethodRef ARRAY_STREAM_D = MethodRef.method(Arrays.class, "stream", DoubleStream.class);
+    private static final MethodRef ARRAY_STREAM = MethodRef.method(Arrays.class, "stream", Stream.class, Object[].class);
+    private static final MethodRef ARRAY_STREAM_I = MethodRef.method(Arrays.class, "stream", IntStream.class, int[].class);
+    private static final MethodRef ARRAY_STREAM_L = MethodRef.method(Arrays.class, "stream", LongStream.class, long[].class);
+    private static final MethodRef ARRAY_STREAM_D = MethodRef.method(Arrays.class, "stream", DoubleStream.class, double[].class);
     private static final MethodRef STRING_STREAM = MethodRef.method(String.class, "chars", IntStream.class);
 
     @Override
@@ -91,15 +95,21 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
     }
 
     private static final MethodRef STREAM_MAP = MethodRef.method(Stream.class, "map", Stream.class, Function.class);
-    private static final MethodRef STREAM_FILTER = MethodRef.method(Stream.class, "filter", Stream.class, Predicate.class);
+    private static final Set<MethodRef> STREAM_FILTER = Set.of(MethodRef.method(Stream.class, "filter", Stream.class, Predicate.class),
+            MethodRef.method(IntStream.class, "filter", IntStream.class, IntPredicate.class),
+            MethodRef.method(LongStream.class, "filter", LongStream.class, LongPredicate.class),
+            MethodRef.method(DoubleStream.class, "filter", DoubleStream.class, DoublePredicate.class));
     private static final MethodRef STREAM_TO_LIST = MethodRef.method(Stream.class, "toList", List.class);
+    private static final Set<MethodRef> STREAM_TO_ARRAY = Set.of(MethodRef.method(Stream.class, "toArray", Object[].class),
+            MethodRef.method(IntStream.class, "toArray", int[].class), MethodRef.method(LongStream.class, "toArray", long[].class),
+            MethodRef.method(DoubleStream.class, "toArray", double[].class));
 
     private boolean handle(Block.Builder builder, Step pipeline) {
         Op.Result beginResult = pipeline.source().result();
         if (beginResult.uses().size() != 1 || !(requireSingle(beginResult.uses()).op() instanceof JavaOp.InvokeOp invokeOp)) {
             return false;
         }
-        if (invokeOp.invokeReference().equals(STREAM_FILTER) && argOperands(invokeOp).size() == 1
+        if (STREAM_FILTER.contains(invokeOp.invokeReference()) && argOperands(invokeOp).size() == 1
                 && requireSingle(argOperands(invokeOp)) instanceof Op.Result predicate && predicate.op() instanceof JavaOp.LambdaOp lambda) {
             if (handle(builder, new Step.Intermediate.Filter(invokeOp, pipeline, lambda))) {
                 builder.context().putProperty(invokeOp, IDENTIFIER);
@@ -119,6 +129,9 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
                 && ct.typeArguments().size() == 1) {
             builder.context().putProperty(invokeOp, new Collect.ToList(invokeOp, pipeline, requireSingle(ct.typeArguments())));
             return true;
+        } else if (STREAM_TO_ARRAY.contains(invokeOp.invokeReference()) && invokeOp.resultType() instanceof ArrayType at) {
+            builder.context().putProperty(invokeOp, new Collect.ToArray(invokeOp, pipeline, at.componentType()));
+            return true;
         } else {
             return false;
         }
@@ -129,15 +142,36 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
     private static final MethodRef LIST_ADD = MethodRef.method(List.class, "add", boolean.class, Object.class);
 
     private Block.Builder addAll(Block.Builder builder, Collect pipeline) {
+        Op.Location location = pipeline.source().location();
         switch (pipeline) {
             case Collect.ToList toList -> {
-                Value newHolder = place(builder, pipeline.source().location(), JavaOp.new_(LIST_NEW));
-                Value holderVariable = place(builder, pipeline.source().location(),
+                Value newHolder = place(builder, location, JavaOp.new_(LIST_NEW));
+                Value holderVariable = place(builder, location,
                         CoreOp.var("streamResult", JavaType.parameterized(LIST, toList.elementType()), newHolder));
                 builder = addAll(builder, builder.context(), pipeline.from(), (value, inner) -> {
-                    place(inner, pipeline.source().location(), JavaOp.invoke(LIST_ADD, holderVariable, value.apply(inner)));
+                    place(inner, location, JavaOp.invoke(LIST_ADD, holderVariable, value.apply(inner)));
                 });
-                Value holder = place(builder, pipeline.source().location(), CoreOp.varLoad(holderVariable));
+                Value holder = place(builder, location, CoreOp.varLoad(holderVariable));
+                builder.context().mapValue(pipeline.source().result(), holder);
+            }
+            case Collect.ToArray toArray -> {
+                // TODO there is almost certainly a more common way to do this (note that it needs to support primitive arrays!)
+                JavaType arrayType = JavaType.array(toArray.elementType());
+                Value initialArraySize = place(builder, location, CoreOp.constant(JavaType.INT, 0));
+                Value newHolder = place(builder, location, JavaOp.newArray(arrayType, initialArraySize));
+                Value holderVariable = place(builder, location, CoreOp.var("streamResult", arrayType, newHolder));
+                builder = addAll(builder, builder.context(), pipeline.from(), (value, inner) -> {
+                    Value oldSize = place(inner, location, JavaOp.arrayLength(place(inner, location, CoreOp.varLoad(holderVariable))));
+                    Value newSize = place(inner, location, JavaOp.add(oldSize, place(inner, location, CoreOp.constant(JavaType.INT, 1))));
+                    Op.Result modifiedHolder = place(inner, location,
+                            JavaOp.invoke(MethodRef.method(JavaType.type(Arrays.class), "copyOf", arrayType, List.of(arrayType, JavaType.INT)),
+                                    holderVariable, newSize));
+                    place(inner, location, CoreOp.varStore(holderVariable, modifiedHolder));
+                    newSize = place(inner, location, JavaOp.arrayLength(place(inner, location, CoreOp.varLoad(holderVariable))));
+                    Value index = place(inner, location, JavaOp.sub(newSize, place(inner, location, CoreOp.constant(JavaType.INT, 1))));
+                    place(inner, location, JavaOp.arrayStoreOp(place(inner, location, CoreOp.varLoad(holderVariable)), index, value.apply(inner)));
+                });
+                Value holder = place(builder, location, CoreOp.varLoad(holderVariable));
                 builder.context().mapValue(pipeline.source().result(), holder);
             }
         }
