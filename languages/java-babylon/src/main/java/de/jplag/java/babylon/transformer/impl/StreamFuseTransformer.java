@@ -283,6 +283,15 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
             }
             case Step.Intermediate intermediate -> addAll(builder, context, intermediate.from(), (value, b) -> {
                 switch (intermediate) {
+                    case Step.Intermediate.Filter filter when !containsStatement(filter.predicate.body()) -> b.add(if_(b.parentBody()).if_(b2 -> {
+                        Value predicateVariable = place(b, location, var(BOOLEAN));
+                        b2.transformBody(filter.predicate().body(), List.of(value.apply(b)), context, new ReturnAssignTransformer(predicateVariable));
+                        Value predicateValue = place(b2, location, varLoad(predicateVariable));
+                        place(b2, location, core_yield(predicateValue));
+                    }).then(b2 -> {
+                        inner.accept(value, b2);
+                        place(b2, location, core_yield());
+                    }).else_());
                     case Step.Intermediate.Filter filter -> {
                         Value predicateVariable = place(b, location, var(BOOLEAN));
                         b.transformBody(filter.predicate().body(), List.of(value.apply(b)), context, new ReturnAssignTransformer(predicateVariable));
@@ -302,6 +311,17 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
                 }
             });
         };
+    }
+
+    private boolean containsStatement(Body body) {
+        for (Block block : body.blocks()) {
+            for (Op op : block.ops()) {
+                if (op instanceof JavaOp.JavaStatement && !(op instanceof CoreOp.ReturnOp)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private record ReturnAssignTransformer(Value variable) implements CodeTransformer, BabylonDSL {
