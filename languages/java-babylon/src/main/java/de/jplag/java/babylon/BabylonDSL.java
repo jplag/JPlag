@@ -288,4 +288,19 @@ public interface BabylonDSL {
         // No common ancestor block
         return false;
     }
+
+    /**
+     * Arguments of the invoke operation. Unlike {@link JavaOp.InvokeOp#argOperands()}, this omits the receiver.
+     * @param invokeOp the operation
+     * @return the argument list
+     */
+    default List<Value> argOperands(JavaOp.InvokeOp invokeOp) {
+        List<Value> result = invokeOp.argOperands();
+        if (invokeOp.hasReceiver()) {
+            assert result.getFirst() == invokeOp.receiverOperand();
+            return result.subList(1, result.size());
+        } else {
+            return result;
+        }
+    }
 }

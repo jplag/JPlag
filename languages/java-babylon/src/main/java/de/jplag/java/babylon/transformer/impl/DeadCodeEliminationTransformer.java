@@ -41,7 +41,7 @@ public class DeadCodeEliminationTransformer implements SimpleTransformation, Bab
     private boolean canBeSkipped(Op op) {
         // tuple ops do not occur naturally, so we can safely assume that they are correct
         return switch (op) {
-            case Op.Pure _,CoreOp.TupleOp _,CoreOp.TupleLoadOp _,CoreOp.TupleWithOp _,CoreOp.VarOp _,CoreOp.VarAccessOp.VarLoadOp _ when unused(
+            case Op.Pure _,CoreOp.TupleOp _,CoreOp.TupleLoadOp _,CoreOp.TupleWithOp _,CoreOp.VarOp _,CoreOp.VarAccessOp.VarLoadOp _,JavaOp.LambdaOp _ when unused(
                     op) -> true;
             case JavaOp.ForOp forOp when canBeSkipped(forOp) -> true;
             case Op.Loop loop when op.bodies().stream()
@@ -71,7 +71,7 @@ public class DeadCodeEliminationTransformer implements SimpleTransformation, Bab
         for (Block block : body.blocks()) {
             for (Op op : block.ops()) {
                 switch (op) {
-                    case Op.Pure _,CoreOp.TupleOp _,CoreOp.TupleLoadOp _,CoreOp.TupleWithOp _,CoreOp.VarOp _,CoreOp.VarAccessOp.VarLoadOp _,CoreOp.YieldOp _ -> {
+                    case Op.Pure _,CoreOp.TupleOp _,CoreOp.TupleLoadOp _,CoreOp.TupleWithOp _,CoreOp.VarOp _,CoreOp.VarAccessOp.VarLoadOp _,JavaOp.LambdaOp _,CoreOp.YieldOp _ -> {
                     }
                     case CoreOp.VarAccessOp.VarStoreOp varStoreOp -> {
                         switch (varStoreOp.varOperand()) {
