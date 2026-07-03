@@ -13,4 +13,8 @@ void main() {
     for (int value : List.of(1, 2, 3)) {
         IO.println(value);
     }
+
+    for (int value : values) {
+        values = new int[0];
+    }
 }

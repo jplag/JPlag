@@ -76,7 +76,7 @@ public class EnhancedForDesugarTransformer implements SimpleTransformation, Baby
         IterableDescriptor descriptor = switch (forOp.exprBody().bodySignature().returnType()) {
             case null -> throw new NullPointerException();
             case ArrayType at -> {
-                Value variable = sourceVarIfSimple(forOp.exprBody());
+                Value variable = sourceVarIfSimple(forOp);
                 if (variable == null) {
                     variable = place(builder, forOp.location(), CoreOp.var(at));
                     builder.transformBody(forOp.exprBody(), List.of(), new YieldAssignTransformer(variable, false));
@@ -98,26 +98,27 @@ public class EnhancedForDesugarTransformer implements SimpleTransformation, Baby
         return builder;
     }
 
-    private @Nullable Value sourceVarIfSimple(Body exprBody) {
-        // Note that this transformation is not correct in the case where the source variable is reassigned while the loop is
-        // running.
-        // Unfortunately, simply checking whether the variable is reassigned during the body is insufficient,
-        // since it could, for example, be packed inside a tuple before the loop, unpacked inside, and only written thereafter.
-        // Even worse, simply creating a new variable in every case will almost certainly decrease quality,
-        // since that would bloat up the token count for even simple loops.
-        // Fortunately, that should not be a problem for our use case.
-
-        if (exprBody.blocks().size() != 1)
+    private @Nullable Value sourceVarIfSimple(JavaOp.EnhancedForOp forOp) {
+        if (forOp.exprBody().blocks().size() != 1)
             return null;
-        Block block = exprBody.entryBlock();
+        Block block = forOp.exprBody().entryBlock();
         Iterator<Op> iterator = block.ops().iterator();
         if (!(iterator.next() instanceof CoreOp.VarAccessOp.VarLoadOp varLoadOp))
             return null;
         Value result = varLoadOp.varOperand();
-        if (iterator.next() instanceof CoreOp.YieldOp)
-            return result;
-        else
+        if (!(iterator.next() instanceof CoreOp.YieldOp))
             return null;
+        for (Op.Result use : result.uses()) {
+            if (use.op() == varLoadOp)
+                continue;
+            if (use.op() instanceof CoreOp.VarAccessOp.VarLoadOp)
+                continue;
+            // Use is either a writing use or could enable a writing use (eg by storing in a tuple)
+            // If the use does not dominate the loop and the loop does not dominate the use, we have to use a duplicate variable
+            if (!dominates(use.op(), forOp) && !dominates(forOp, use.op()))
+                return null;
+        }
+        return result;
     }
 
     private static final MethodRef ITERATOR_CREATE = MethodRef.method(Iterable.class, "iterator", Iterator.class);

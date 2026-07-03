@@ -139,6 +139,21 @@ public class EnhancedForDesugarTransformerTest extends TransformerTest {
                             invoke %71 @loc="14:9" @java.ref:"java.lang.IO::println(java.lang.Object):void";
                             java.continue @loc="13:5";
                         };
+                    java.enhancedFor @loc="17:5"
+                        ()java.type:"int[]" -> {
+                            %72 : java.type:"int[]" = var.load %9 @loc="17:22";
+                            yield %72 @loc="17:5";
+                        }
+                        (%73 : java.type:"int")Var<java.type:"int"> -> {
+                            %74 : Var<java.type:"int"> = var %73 @loc="17:5" @"value";
+                            yield %74 @loc="17:5";
+                        }
+                        (%75 : Var<java.type:"int">)java.type:"void" -> {
+                            %76 : java.type:"int" = constant @loc="18:26" @0;
+                            %77 : java.type:"int[]" = new %76 @loc="18:18" @java.ref:"int[]::(int)";
+                            var.store %9 %77 @loc="18:9";
+                            java.continue @loc="17:5";
+                        };
                     return @loc="1:1";
                 };""";
     }
@@ -283,6 +298,37 @@ public class EnhancedForDesugarTransformerTest extends TransformerTest {
                             %88 : java.type:"java.lang.Integer" = invoke %87 @loc="14:9" @java.ref:"java.lang.Integer::valueOf(int):java.lang.Integer";
                             invoke %88 @loc="14:9" @java.ref:"java.lang.IO::println(java.lang.Object):void";
                             java.continue @loc="13:5";
+                        };
+                    %89 : Var<java.type:"int[]"> = var @loc="17:5";
+                    %90 : java.type:"int[]" = var.load %9 @loc="17:22";
+                    var.store %89 %90 @loc="17:5";
+                    java.for @loc="17:5"
+                        ()Var<java.type:"int"> -> {
+                            yield %89 @loc="17:22";
+                        }
+                        (%91 : Var<java.type:"int">)java.type:"boolean" -> {
+                            %92 : java.type:"int[]" = var.load %89 @loc="17:5";
+                            %93 : java.type:"int" = var.load %91 @loc="17:5";
+                            %94 : java.type:"int" = array.length %92 @loc="17:5";
+                            %95 : java.type:"boolean" = lt %93 %94 @loc="17:5";
+                            yield %95 @loc="17:5";
+                        }
+                        (%96 : Var<java.type:"int">)java.type:"void" -> {
+                            %97 : java.type:"int" = var.load %96 @loc="17:5";
+                            %98 : java.type:"int" = constant @loc="17:5" @1;
+                            %99 : java.type:"int" = add %97 %98 @loc="17:5";
+                            var.store %96 %99 @loc="17:5";
+                            yield @loc="17:5";
+                        }
+                        (%100 : Var<java.type:"int">)java.type:"void" -> {
+                            %101 : java.type:"int[]" = var.load %89 @loc="17:5";
+                            %102 : java.type:"int" = var.load %100 @loc="17:5";
+                            %103 : java.type:"int" = array.load %101 %102 @loc="17:5";
+                            %104 : Var<java.type:"int"> = var %103 @loc="17:5" @"value";
+                            %105 : java.type:"int" = constant @loc="18:26" @0;
+                            %106 : java.type:"int[]" = new %105 @loc="18:18" @java.ref:"int[]::(int)";
+                            var.store %9 %106 @loc="18:9";
+                            java.continue @loc="17:5";
                         };
                     return @loc="1:1";
                 };""";
