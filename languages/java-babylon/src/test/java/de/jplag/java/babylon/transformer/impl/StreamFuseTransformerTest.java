@@ -103,10 +103,17 @@ public class StreamFuseTransformerTest extends TransformerTest {
                         return %70 @loc="8:65";
                     };
                     %71 : java.type:"java.util.stream.Stream<java.lang.String>" = invoke %65 %66 @loc="8:16" @java.ref:"java.util.stream.IntStream::mapToObj(java.util.function.IntFunction):java.util.stream.Stream";
-                    %72 : java.type:"java.lang.String" = constant @loc="8:111" @",";
-                    %73 : java.type:"java.util.stream.Collector<java.lang.CharSequence, ?, java.lang.String>" = invoke %72 @loc="8:92" @java.ref:"java.util.stream.Collectors::joining(java.lang.CharSequence):java.util.stream.Collector";
-                    %74 : java.type:"java.lang.String" = invoke %71 %73 @loc="8:16" @java.ref:"java.util.stream.Stream::collect(java.util.stream.Collector):java.lang.Object";
-                    invoke %74 @loc="8:5" @java.ref:"java.lang.IO::println(java.lang.Object):void";
+                    %72 : java.type:"java.util.function.ToLongFunction<java.lang.String>" = lambda @loc="8:94" @lambda.isReflectable=true (%73 : java.type:"java.lang.String")java.type:"long" -> {
+                        %74 : Var<java.type:"java.lang.String"> = var %73 @loc="8:94" @"rec$";
+                        %75 : java.type:"java.lang.String" = var.load %74 @loc="8:94";
+                        %76 : java.type:"int" = invoke %75 @loc="8:94" @java.ref:"java.lang.Object::hashCode():int";
+                        %77 : java.type:"long" = conv %76 @loc="8:94";
+                        return %77 @loc="8:94";
+                    };
+                    %78 : java.type:"java.util.stream.LongStream" = invoke %71 %72 @loc="8:16" @java.ref:"java.util.stream.Stream::mapToLong(java.util.function.ToLongFunction):java.util.stream.LongStream";
+                    %79 : java.type:"long" = invoke %78 @loc="8:16" @java.ref:"java.util.stream.LongStream::sum():long";
+                    %80 : java.type:"java.lang.Long" = invoke %79 @loc="8:5" @java.ref:"java.lang.Long::valueOf(long):java.lang.Long";
+                    invoke %80 @loc="8:5" @java.ref:"java.lang.IO::println(java.lang.Object):void";
                     return @loc="1:1";
                 };""";
     }
@@ -238,28 +245,60 @@ public class StreamFuseTransformerTest extends TransformerTest {
                     %75 : java.type:"java.lang.String" = invoke %74 @loc="7:16" @java.ref:"java.util.Arrays::toString(int[]):java.lang.String";
                     invoke %75 @loc="7:5" @java.ref:"java.lang.IO::println(java.lang.Object):void";
                     %76 : java.type:"java.lang.String" = var.load %23 @loc="8:16";
-                    %77 : java.type:"java.util.stream.IntStream" = invoke %76 @loc="8:16" @java.ref:"java.lang.String::chars():java.util.stream.IntStream";
-                    %78 : java.type:"java.util.function.IntPredicate" = lambda @loc="8:39" @lambda.isReflectable=true (%79 : java.type:"int")java.type:"boolean" -> {
-                        %80 : Var<java.type:"int"> = var %79 @loc="8:39" @"i";
-                        %81 : java.type:"int" = var.load %80 @loc="8:44";
-                        %82 : java.type:"int" = constant @loc="8:48" @2;
-                        %83 : java.type:"int" = mod %81 %82 @loc="8:44";
-                        %84 : java.type:"int" = constant @loc="8:53" @0;
-                        %85 : java.type:"boolean" = eq %83 %84 @loc="8:44";
-                        return %85 @loc="8:39";
-                    };
-                    %86 : java.type:"java.util.stream.IntStream" = invoke %77 %78 @loc="8:16" @java.ref:"java.util.stream.IntStream::filter(java.util.function.IntPredicate):java.util.stream.IntStream";
-                    %87 : java.type:"java.util.function.IntFunction<java.lang.String>" = lambda @loc="8:65" @lambda.isReflectable=true (%88 : java.type:"int")java.type:"java.lang.String" -> {
-                        %89 : Var<java.type:"int"> = var %88 @loc="8:65" @"x$0";
-                        %90 : java.type:"int" = var.load %89 @loc="8:65";
-                        %91 : java.type:"java.lang.String" = invoke %90 @loc="8:65" @java.ref:"java.lang.Integer::toString(int):java.lang.String";
-                        return %91 @loc="8:65";
-                    };
-                    %92 : java.type:"java.util.stream.Stream<java.lang.String>" = invoke %86 %87 @loc="8:16" @java.ref:"java.util.stream.IntStream::mapToObj(java.util.function.IntFunction):java.util.stream.Stream";
-                    %93 : java.type:"java.lang.String" = constant @loc="8:111" @",";
-                    %94 : java.type:"java.util.stream.Collector<java.lang.CharSequence, ?, java.lang.String>" = invoke %93 @loc="8:92" @java.ref:"java.util.stream.Collectors::joining(java.lang.CharSequence):java.util.stream.Collector";
-                    %95 : java.type:"java.lang.String" = invoke %92 %94 @loc="8:16" @java.ref:"java.util.stream.Stream::collect(java.util.stream.Collector):java.lang.Object";
-                    invoke %95 @loc="8:5" @java.ref:"java.lang.IO::println(java.lang.Object):void";
+                    %77 : java.type:"long" = constant @loc="8:16" @0;
+                    %78 : Var<java.type:"long"> = var %77 @loc="8:16" @"sum";
+                    java.enhancedFor @loc="8:16"
+                        ()java.type:"char[]" -> {
+                            %79 : java.type:"char[]" = invoke %76 @java.ref:"java.lang.String::toCharArray():char[]";
+                            yield %79;
+                        }
+                        (%80 : java.type:"int")Var<java.type:"int"> -> {
+                            %81 : Var<java.type:"int"> = var %80 @"s";
+                            yield %81;
+                        }
+                        (%82 : Var<java.type:"int">)java.type:"void" -> {
+                            %83 : Var<java.type:"boolean"> = var @loc="8:16";
+                            %84 : java.type:"int" = var.load %82 @loc="8:16";
+                            %85 : Var<java.type:"int"> = var %84 @loc="8:39" @"i";
+                            %86 : java.type:"int" = var.load %85 @loc="8:44";
+                            %87 : java.type:"int" = constant @loc="8:48" @2;
+                            %88 : java.type:"int" = mod %86 %87 @loc="8:44";
+                            %89 : java.type:"int" = constant @loc="8:53" @0;
+                            %90 : java.type:"boolean" = eq %88 %89 @loc="8:44";
+                            var.store %83 %90 @loc="8:39";
+                            java.if
+                                ()java.type:"boolean" -> {
+                                    %91 : java.type:"boolean" = var.load %83 @loc="8:16";
+                                    yield %91 @loc="8:16";
+                                }
+                                ()java.type:"void" -> {
+                                    %92 : Var<java.type:"java.lang.String"> = var @loc="8:16";
+                                    %93 : java.type:"int" = var.load %82 @loc="8:16";
+                                    %94 : Var<java.type:"int"> = var %93 @loc="8:65" @"x$0";
+                                    %95 : java.type:"int" = var.load %94 @loc="8:65";
+                                    %96 : java.type:"java.lang.String" = invoke %95 @loc="8:65" @java.ref:"java.lang.Integer::toString(int):java.lang.String";
+                                    var.store %92 %96 @loc="8:65";
+                                    %97 : Var<java.type:"long"> = var @loc="8:16";
+                                    %98 : java.type:"java.lang.String" = var.load %92 @loc="8:16";
+                                    %99 : Var<java.type:"java.lang.String"> = var %98 @loc="8:94" @"rec$";
+                                    %100 : java.type:"java.lang.String" = var.load %99 @loc="8:94";
+                                    %101 : java.type:"int" = invoke %100 @loc="8:94" @java.ref:"java.lang.Object::hashCode():int";
+                                    %102 : java.type:"long" = conv %101 @loc="8:94";
+                                    var.store %97 %102 @loc="8:94";
+                                    %103 : java.type:"long" = var.load %78 @loc="8:16";
+                                    %104 : java.type:"long" = var.load %97 @loc="8:16";
+                                    %105 : java.type:"long" = add %103 %104 @loc="8:16";
+                                    var.store %78 %105 @loc="8:16";
+                                    yield @loc="8:16";
+                                }
+                                ()java.type:"void" -> {
+                                    yield;
+                                };
+                            yield @loc="8:16";
+                        };
+                    %106 : java.type:"long" = var.load %78 @loc="8:16";
+                    %107 : java.type:"java.lang.Long" = invoke %106 @loc="8:5" @java.ref:"java.lang.Long::valueOf(long):java.lang.Long";
+                    invoke %107 @loc="8:5" @java.ref:"java.lang.IO::println(java.lang.Object):void";
                     return @loc="1:1";
                 };""";
     }

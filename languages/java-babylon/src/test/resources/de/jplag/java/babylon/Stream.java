@@ -5,5 +5,5 @@ void main() {
 
     IO.println(source1.stream().filter(i -> i % 2 == 0).map(i -> i).toList());
     IO.println(Arrays.toString(Arrays.stream(source2).filter(i -> i % 2 == 0).toArray()));
-    IO.println(source3.chars().filter(i -> i % 2 == 0).mapToObj(Integer::toString).collect(Collectors.joining(",")));
+    IO.println(source3.chars().filter(i -> i % 2 == 0).mapToObj(Integer::toString).mapToLong(Object::hashCode).sum());
 }

@@ -1,16 +1,53 @@
 package de.jplag.java.babylon.transformer.impl;
 
+import static jdk.incubator.code.dialect.core.CoreOp.constant;
+import static jdk.incubator.code.dialect.core.CoreOp.core_yield;
+import static jdk.incubator.code.dialect.core.CoreOp.var;
+import static jdk.incubator.code.dialect.core.CoreOp.varLoad;
+import static jdk.incubator.code.dialect.core.CoreOp.varStore;
+import static jdk.incubator.code.dialect.core.CoreType.functionType;
+import static jdk.incubator.code.dialect.java.JavaOp.add;
+import static jdk.incubator.code.dialect.java.JavaOp.arrayLength;
+import static jdk.incubator.code.dialect.java.JavaOp.arrayStoreOp;
+import static jdk.incubator.code.dialect.java.JavaOp.if_;
+import static jdk.incubator.code.dialect.java.JavaOp.invoke;
+import static jdk.incubator.code.dialect.java.JavaOp.newArray;
+import static jdk.incubator.code.dialect.java.JavaOp.new_;
+import static jdk.incubator.code.dialect.java.JavaOp.sub;
+import static jdk.incubator.code.dialect.java.JavaType.BOOLEAN;
+import static jdk.incubator.code.dialect.java.JavaType.INT;
+import static jdk.incubator.code.dialect.java.JavaType.LONG;
+import static jdk.incubator.code.dialect.java.JavaType.array;
+import static jdk.incubator.code.dialect.java.JavaType.parameterized;
+import static jdk.incubator.code.dialect.java.JavaType.type;
+import static jdk.incubator.code.dialect.java.MethodRef.method;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiConsumer;
+import java.util.function.DoubleFunction;
 import java.util.function.DoublePredicate;
+import java.util.function.DoubleToIntFunction;
+import java.util.function.DoubleToLongFunction;
+import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.function.IntPredicate;
+import java.util.function.IntToDoubleFunction;
+import java.util.function.IntToLongFunction;
+import java.util.function.IntUnaryOperator;
+import java.util.function.LongFunction;
 import java.util.function.LongPredicate;
+import java.util.function.LongToDoubleFunction;
+import java.util.function.LongToIntFunction;
+import java.util.function.LongUnaryOperator;
 import java.util.function.Predicate;
+import java.util.function.ToDoubleFunction;
+import java.util.function.ToIntFunction;
+import java.util.function.ToLongFunction;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
@@ -51,13 +88,13 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
         return IDENTIFIER;
     }
 
-    private static final Set<MethodRef> COLLECTION_STREAM = List.of(Iterable.class, Collection.class, List.class, Set.class).stream()
-            .map(receiver -> MethodRef.method(receiver, "stream", Stream.class)).collect(Collectors.toSet());
-    private static final MethodRef ARRAY_STREAM = MethodRef.method(Arrays.class, "stream", Stream.class, Object[].class);
-    private static final MethodRef ARRAY_STREAM_I = MethodRef.method(Arrays.class, "stream", IntStream.class, int[].class);
-    private static final MethodRef ARRAY_STREAM_L = MethodRef.method(Arrays.class, "stream", LongStream.class, long[].class);
-    private static final MethodRef ARRAY_STREAM_D = MethodRef.method(Arrays.class, "stream", DoubleStream.class, double[].class);
-    private static final MethodRef STRING_STREAM = MethodRef.method(String.class, "chars", IntStream.class);
+    private static final Set<MethodRef> COLLECTION_STREAM = Stream.of(Iterable.class, Collection.class, List.class, Set.class)
+            .map(receiver -> method(receiver, "stream", Stream.class)).collect(Collectors.toSet());
+    private static final MethodRef ARRAY_STREAM = method(Arrays.class, "stream", Stream.class, Object[].class);
+    private static final MethodRef ARRAY_STREAM_I = method(Arrays.class, "stream", IntStream.class, int[].class);
+    private static final MethodRef ARRAY_STREAM_L = method(Arrays.class, "stream", LongStream.class, long[].class);
+    private static final MethodRef ARRAY_STREAM_D = method(Arrays.class, "stream", DoubleStream.class, double[].class);
+    private static final MethodRef STRING_STREAM = method(String.class, "chars", IntStream.class);
 
     @Override
     public Block.Builder acceptOp(Block.Builder builder, Op op) {
@@ -75,13 +112,13 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
                 && ct.typeArguments().size() == 1) {
             return handle(builder, new Step.Begin.Array(invokeOp, ct.typeArguments().getFirst()));
         } else if (invokeOp.invokeReference().equals(ARRAY_STREAM_I)) {
-            return handle(builder, new Step.Begin.Array(invokeOp, JavaType.INT));
+            return handle(builder, new Step.Begin.Array(invokeOp, INT));
         } else if (invokeOp.invokeReference().equals(ARRAY_STREAM_L)) {
-            return handle(builder, new Step.Begin.Array(invokeOp, JavaType.LONG));
+            return handle(builder, new Step.Begin.Array(invokeOp, LONG));
         } else if (invokeOp.invokeReference().equals(ARRAY_STREAM_D)) {
             return handle(builder, new Step.Begin.Array(invokeOp, JavaType.DOUBLE));
         } else if (invokeOp.invokeReference().equals(STRING_STREAM)) {
-            return handle(builder, new Step.Begin.Array(invokeOp, JavaType.INT));
+            return handle(builder, new Step.Begin.String(invokeOp));
         } else {
             builder.add(op);
             return builder;
@@ -94,15 +131,34 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
         return builder;
     }
 
-    private static final MethodRef STREAM_MAP = MethodRef.method(Stream.class, "map", Stream.class, Function.class);
-    private static final Set<MethodRef> STREAM_FILTER = Set.of(MethodRef.method(Stream.class, "filter", Stream.class, Predicate.class),
-            MethodRef.method(IntStream.class, "filter", IntStream.class, IntPredicate.class),
-            MethodRef.method(LongStream.class, "filter", LongStream.class, LongPredicate.class),
-            MethodRef.method(DoubleStream.class, "filter", DoubleStream.class, DoublePredicate.class));
-    private static final MethodRef STREAM_TO_LIST = MethodRef.method(Stream.class, "toList", List.class);
-    private static final Set<MethodRef> STREAM_TO_ARRAY = Set.of(MethodRef.method(Stream.class, "toArray", Object[].class),
-            MethodRef.method(IntStream.class, "toArray", int[].class), MethodRef.method(LongStream.class, "toArray", long[].class),
-            MethodRef.method(DoubleStream.class, "toArray", double[].class));
+    private static final Set<MethodRef> STREAM_MAP = Set.of(method(Stream.class, "map", Stream.class, Function.class),
+            method(Stream.class, "mapToInt", IntStream.class, ToIntFunction.class),
+            method(Stream.class, "mapToLong", LongStream.class, ToLongFunction.class),
+            method(Stream.class, "mapToDouble", DoubleStream.class, ToDoubleFunction.class),
+            method(IntStream.class, "map", IntStream.class, IntUnaryOperator.class),
+            method(IntStream.class, "mapToObj", Stream.class, IntFunction.class),
+            method(IntStream.class, "mapToLong", LongStream.class, IntToLongFunction.class),
+            method(IntStream.class, "mapToDouble", DoubleStream.class, IntToDoubleFunction.class),
+            method(LongStream.class, "map", LongStream.class, LongUnaryOperator.class),
+            method(LongStream.class, "mapToObj", Stream.class, LongFunction.class),
+            method(LongStream.class, "mapToInt", IntStream.class, LongToIntFunction.class),
+            method(LongStream.class, "mapToDouble", DoubleStream.class, LongToDoubleFunction.class),
+            method(DoubleStream.class, "map", DoubleStream.class, DoubleUnaryOperator.class),
+            method(DoubleStream.class, "mapToObj", Stream.class, DoubleFunction.class),
+            method(DoubleStream.class, "mapToInt", IntStream.class, DoubleToIntFunction.class),
+            method(DoubleStream.class, "mapToLong", LongStream.class, DoubleToLongFunction.class));
+    private static final Set<MethodRef> STREAM_FILTER = Set.of(method(Stream.class, "filter", Stream.class, Predicate.class),
+            method(IntStream.class, "filter", IntStream.class, IntPredicate.class),
+            method(LongStream.class, "filter", LongStream.class, LongPredicate.class),
+            method(DoubleStream.class, "filter", DoubleStream.class, DoublePredicate.class));
+    private static final MethodRef STREAM_TO_LIST = method(Stream.class, "toList", List.class);
+    private static final Set<MethodRef> STREAM_TO_ARRAY = Set.of(method(Stream.class, "toArray", Object[].class),
+            method(IntStream.class, "toArray", int[].class), method(LongStream.class, "toArray", long[].class),
+            method(DoubleStream.class, "toArray", double[].class));
+    private static final Set<MethodRef> STREAM_COUNT = Set.of(method(Stream.class, "count", long.class), method(IntStream.class, "count", long.class),
+            method(LongStream.class, "count", long.class), method(DoubleStream.class, "count", long.class));
+    private static final Set<MethodRef> STREAM_SUM = Set.of(method(IntStream.class, "sum", int.class), method(LongStream.class, "sum", long.class),
+            method(DoubleStream.class, "sum", double.class));
 
     private boolean handle(Block.Builder builder, Step pipeline) {
         Op.Result beginResult = pipeline.source().result();
@@ -117,7 +173,7 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
             } else {
                 return false;
             }
-        } else if (invokeOp.invokeReference().equals(STREAM_MAP) && argOperands(invokeOp).size() == 1
+        } else if (STREAM_MAP.contains(invokeOp.invokeReference()) && argOperands(invokeOp).size() == 1
                 && requireSingle(argOperands(invokeOp)) instanceof Op.Result predicate && predicate.op() instanceof JavaOp.LambdaOp lambda) {
             if (handle(builder, new Step.Intermediate.Map(invokeOp, pipeline, lambda, lambda.body().yieldType()))) {
                 builder.context().putProperty(invokeOp, IDENTIFIER);
@@ -132,6 +188,12 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
         } else if (STREAM_TO_ARRAY.contains(invokeOp.invokeReference()) && invokeOp.resultType() instanceof ArrayType at) {
             builder.context().putProperty(invokeOp, new Collect.ToArray(invokeOp, pipeline, at.componentType()));
             return true;
+        } else if (STREAM_COUNT.contains(invokeOp.invokeReference())) {
+            builder.context().putProperty(invokeOp, new Collect.Count(invokeOp, pipeline));
+            return true;
+        } else if (STREAM_SUM.contains(invokeOp.invokeReference())) {
+            builder.context().putProperty(invokeOp, new Collect.Sum(invokeOp, pipeline, invokeOp.resultType()));
+            return true;
         } else {
             return false;
         }
@@ -139,89 +201,103 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
 
     private static final ClassType LIST = ClassType.J_U_LIST;
     private static final MethodRef LIST_NEW = MethodRef.constructor(ArrayList.class);
-    private static final MethodRef LIST_ADD = MethodRef.method(List.class, "add", boolean.class, Object.class);
+    private static final MethodRef LIST_ADD = method(List.class, "add", boolean.class, Object.class);
 
     private Block.Builder addAll(Block.Builder builder, Collect pipeline) {
         Op.Location location = pipeline.source().location();
-        switch (pipeline) {
+        Value resultVariable = switch (pipeline) {
             case Collect.ToList toList -> {
-                Value newHolder = place(builder, location, JavaOp.new_(LIST_NEW));
-                Value holderVariable = place(builder, location,
-                        CoreOp.var("streamResult", JavaType.parameterized(LIST, toList.elementType()), newHolder));
+                Value newHolder = place(builder, location, new_(LIST_NEW));
+                Value holderVariable = place(builder, location, var("streamResult", parameterized(LIST, toList.elementType()), newHolder));
                 builder = addAll(builder, builder.context(), pipeline.from(), (value, inner) -> {
-                    place(inner, location, JavaOp.invoke(LIST_ADD, holderVariable, value.apply(inner)));
+                    place(inner, location, invoke(LIST_ADD, holderVariable, value.apply(inner)));
                 });
-                Value holder = place(builder, location, CoreOp.varLoad(holderVariable));
-                builder.context().mapValue(pipeline.source().result(), holder);
+                yield holderVariable;
             }
             case Collect.ToArray toArray -> {
                 // TODO there is almost certainly a more common way to do this (note that it needs to support primitive arrays!)
-                JavaType arrayType = JavaType.array(toArray.elementType());
-                Value initialArraySize = place(builder, location, CoreOp.constant(JavaType.INT, 0));
-                Value newHolder = place(builder, location, JavaOp.newArray(arrayType, initialArraySize));
-                Value holderVariable = place(builder, location, CoreOp.var("streamResult", arrayType, newHolder));
+                JavaType arrayType = array(toArray.elementType());
+                Value initialArraySize = place(builder, location, constant(INT, 0));
+                Value newHolder = place(builder, location, newArray(arrayType, initialArraySize));
+                Value holderVariable = place(builder, location, var("streamResult", arrayType, newHolder));
                 builder = addAll(builder, builder.context(), pipeline.from(), (value, inner) -> {
-                    Value oldSize = place(inner, location, JavaOp.arrayLength(place(inner, location, CoreOp.varLoad(holderVariable))));
-                    Value newSize = place(inner, location, JavaOp.add(oldSize, place(inner, location, CoreOp.constant(JavaType.INT, 1))));
+                    Value oldSize = place(inner, location, arrayLength(place(inner, location, varLoad(holderVariable))));
+                    Value newSize = place(inner, location, add(oldSize, place(inner, location, constant(INT, 1))));
                     Op.Result modifiedHolder = place(inner, location,
-                            JavaOp.invoke(MethodRef.method(JavaType.type(Arrays.class), "copyOf", arrayType, List.of(arrayType, JavaType.INT)),
-                                    holderVariable, newSize));
-                    place(inner, location, CoreOp.varStore(holderVariable, modifiedHolder));
-                    newSize = place(inner, location, JavaOp.arrayLength(place(inner, location, CoreOp.varLoad(holderVariable))));
-                    Value index = place(inner, location, JavaOp.sub(newSize, place(inner, location, CoreOp.constant(JavaType.INT, 1))));
-                    place(inner, location, JavaOp.arrayStoreOp(place(inner, location, CoreOp.varLoad(holderVariable)), index, value.apply(inner)));
+                            invoke(method(type(Arrays.class), "copyOf", arrayType, List.of(arrayType, INT)), holderVariable, newSize));
+                    place(inner, location, varStore(holderVariable, modifiedHolder));
+                    newSize = place(inner, location, arrayLength(place(inner, location, varLoad(holderVariable))));
+                    Value index = place(inner, location, sub(newSize, place(inner, location, constant(INT, 1))));
+                    place(inner, location, arrayStoreOp(place(inner, location, varLoad(holderVariable)), index, value.apply(inner)));
                 });
-                Value holder = place(builder, location, CoreOp.varLoad(holderVariable));
-                builder.context().mapValue(pipeline.source().result(), holder);
+                yield holderVariable;
             }
-        }
+            case Collect.Count count -> {
+                Value countVariable = place(builder, location, var("count", LONG, place(builder, location, constant(LONG, 0))));
+                builder = addAll(builder, builder.context(), pipeline.from(), (value, inner) -> {
+                    Value newCount = place(inner, location,
+                            add(place(inner, location, varLoad(countVariable)), place(inner, location, constant(INT, 1))));
+                    place(inner, location, varStore(countVariable, newCount));
+                });
+                yield countVariable;
+            }
+            case Collect.Sum sum -> {
+                Value sumVariable = place(builder, location, var("sum", sum.elementType(), place(builder, location, constant(sum.elementType(), 0))));
+                builder = addAll(builder, builder.context(), pipeline.from(), (value, inner) -> {
+                    Value newSum = place(inner, location, add(place(inner, location, varLoad(sumVariable)), value.apply(inner)));
+                    place(inner, location, varStore(sumVariable, newSum));
+                });
+                yield sumVariable;
+            }
+        };
+        Value holder = place(builder, location, varLoad(resultVariable));
+        builder.context().mapValue(pipeline.source().result(), holder);
         return builder;
     }
 
-    private static final MethodRef STRING_TO_CHAR_ARRAY = MethodRef.method(String.class, "toCharArray", char[].class);
+    private static final MethodRef STRING_TO_CHAR_ARRAY = method(String.class, "toCharArray", char[].class);
 
     private Block.Builder addAll(Block.Builder builder, CodeContext context, Step pipeline,
             BiConsumer<Function<Block.Builder, Value>, Block.Builder> inner) {
         Op.Location location = pipeline.source().location();
         return switch (pipeline) {
             case Step.Begin begin -> {
-                Body.Builder exprBody = Body.Builder.of(builder.parentBody(), CoreType.functionType(begin.collectionType()), context);
+                Body.Builder exprBody = Body.Builder.of(builder.parentBody(), functionType(begin.collectionType()), context);
                 switch (begin) {
-                    case Step.Begin.Array _,Step.Begin.Collection _ -> exprBody.entryBlock().add(CoreOp.core_yield(context.getValue(begin.from())));
+                    case Step.Begin.Array _,Step.Begin.Collection _ -> exprBody.entryBlock().add(core_yield(context.getValue(begin.from())));
                     case Step.Begin.String string -> {
-                        Op.Result charArray = exprBody.entryBlock().add(JavaOp.invoke(STRING_TO_CHAR_ARRAY, context.getValue(string.from())));
-                        exprBody.entryBlock().add(CoreOp.core_yield(charArray));
+                        Op.Result charArray = exprBody.entryBlock().add(invoke(STRING_TO_CHAR_ARRAY, context.getValue(string.from())));
+                        exprBody.entryBlock().add(core_yield(charArray));
                     }
                 }
                 Body.Builder initBody = Body.Builder.of(builder.parentBody(),
-                        CoreType.functionType(CoreType.varType(begin.elementType()), begin.elementType()), context);
-                Op.Result initVariable = initBody.entryBlock()
-                        .add(CoreOp.var("s", begin.elementType(), initBody.entryBlock().parameters().getFirst()));
-                initBody.entryBlock().add(CoreOp.core_yield(initVariable));
-                Body.Builder loopBody = Body.Builder.of(builder.parentBody(),
-                        CoreType.functionType(JavaType.VOID, CoreType.varType(begin.elementType())), context);
-                inner.accept(b -> place(b, location, CoreOp.varLoad(loopBody.entryBlock().parameters().getFirst())), loopBody.entryBlock());
-                place(loopBody.entryBlock(), location, CoreOp.core_yield());
+                        functionType(CoreType.varType(begin.elementType()), begin.elementType()), context);
+                Op.Result initVariable = initBody.entryBlock().add(var("s", begin.elementType(), initBody.entryBlock().parameters().getFirst()));
+                initBody.entryBlock().add(core_yield(initVariable));
+                Body.Builder loopBody = Body.Builder.of(builder.parentBody(), functionType(JavaType.VOID, CoreType.varType(begin.elementType())),
+                        context);
+                inner.accept(b -> place(b, location, varLoad(loopBody.entryBlock().parameters().getFirst())), loopBody.entryBlock());
+                place(loopBody.entryBlock(), location, core_yield());
                 place(builder, location, JavaOp.enhancedFor(exprBody, initBody, loopBody));
                 yield builder;
             }
             case Step.Intermediate intermediate -> addAll(builder, context, intermediate.from(), (value, b) -> {
                 switch (intermediate) {
                     case Step.Intermediate.Filter filter -> {
-                        Value predicateVariable = place(b, location, CoreOp.var(JavaType.BOOLEAN));
+                        Value predicateVariable = place(b, location, var(BOOLEAN));
                         b.transformBody(filter.predicate().body(), List.of(value.apply(b)), context, new ReturnAssignTransformer(predicateVariable));
-                        b.add(JavaOp.if_(b.parentBody()).if_(b2 -> {
-                            Value predicateValue = place(b2, location, CoreOp.varLoad(predicateVariable));
-                            place(b2, location, CoreOp.core_yield(predicateValue));
+                        b.add(if_(b.parentBody()).if_(b2 -> {
+                            Value predicateValue = place(b2, location, varLoad(predicateVariable));
+                            place(b2, location, core_yield(predicateValue));
                         }).then(b2 -> {
                             inner.accept(value, b2);
-                            place(b2, location, CoreOp.core_yield());
+                            place(b2, location, core_yield());
                         }).else_());
                     }
                     case Step.Intermediate.Map map -> {
-                        Value mappedVariable = place(b, location, CoreOp.var(map.elementType()));
+                        Value mappedVariable = place(b, location, var(map.elementType()));
                         b.transformBody(map.mapping().body(), List.of(value.apply(b)), context, new ReturnAssignTransformer(mappedVariable));
-                        inner.accept(b2 -> place(b2, location, CoreOp.varLoad(mappedVariable)), b);
+                        inner.accept(b2 -> place(b2, location, varLoad(mappedVariable)), b);
                     }
                 }
             });
@@ -234,7 +310,7 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
             switch (op) {
                 case CoreOp.ReturnOp returnOp -> {
                     Value result = builder.context().getValue(returnOp.returnValue());
-                    place(builder, returnOp.location(), CoreOp.varStore(variable, result));
+                    place(builder, returnOp.location(), varStore(variable, result));
                 }
                 case JavaOp.LambdaOp _ -> placeExact(builder, null, op);
                 default -> builder.add(op);
@@ -265,7 +341,7 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
 
                 @Override
                 public JavaType collectionType() {
-                    return JavaType.parameterized(JavaType.type(java.util.Collection.class), elementType);
+                    return parameterized(type(java.util.Collection.class), elementType);
                 }
             }
 
@@ -277,7 +353,7 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
 
                 @Override
                 public JavaType collectionType() {
-                    return JavaType.array(elementType);
+                    return array(elementType);
                 }
             }
 
@@ -289,7 +365,7 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
 
                 @Override
                 public JavaType elementType() {
-                    return JavaType.INT;
+                    return INT;
                 }
 
                 @Override
@@ -329,6 +405,15 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
         }
 
         record ToList(JavaOp.InvokeOp source, Step from, JavaType elementType) implements Collect {
+        }
+
+        record ToArray(JavaOp.InvokeOp source, Step from, JavaType elementType) implements Collect {
+        }
+
+        record Count(JavaOp.InvokeOp source, Step from) implements Collect {
+        }
+
+        record Sum(JavaOp.InvokeOp source, Step from, CodeType elementType) implements Collect {
         }
     }
 }
