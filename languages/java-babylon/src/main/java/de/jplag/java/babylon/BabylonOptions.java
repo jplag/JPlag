@@ -41,11 +41,11 @@ class BabylonOptions extends LanguageOptions {
     private static final Pattern LIST_SEPARATOR_PATTERN = Pattern.compile("\\s*" + Pattern.quote(String.valueOf(LIST_SEPARATOR)) + "\\s*");
 
     private static final String DEFAULT_TRANSFORMATIONS = String.join(", ", AssertRemoveTransformer.IDENTIFIER,
-            TryWithResourcesDesugarTransformer.IDENTIFIER, CopyElisionTransformer.IDENTIFIER, StreamFuseTransformer.IDENTIFIER, EnhancedForDesugarTransformer.IDENTIFIER,
-            ForDesugarTransformer.IDENTIFIER, ConditionalExpressionDesugarTransformer.IDENTIFIER, SwitchExpressionDesugarTransformer.IDENTIFIER,
-            IfFuseTransformer.IDENTIFIER, InliningStep.IDENTIFIER, BlockNormalizeStep.IDENTIFIER, ConstantPropagationStep.IDENTIFIER,
-            CopyElisionTransformer.IDENTIFIER, DeadCodeEliminationTransformer.IDENTIFIER, CopyElisionTransformer.IDENTIFIER,
-            DeadCodeEliminationTransformer.IDENTIFIER, InliningStep.IDENTIFIER);
+            TryWithResourcesDesugarTransformer.IDENTIFIER, CopyElisionTransformer.IDENTIFIER, StreamFuseTransformer.IDENTIFIER,
+            EnhancedForDesugarTransformer.IDENTIFIER, ForDesugarTransformer.IDENTIFIER, ConditionalExpressionDesugarTransformer.IDENTIFIER,
+            SwitchExpressionDesugarTransformer.IDENTIFIER, IfFuseTransformer.IDENTIFIER, InliningStep.IDENTIFIER, BlockNormalizeStep.IDENTIFIER,
+            ConstantPropagationStep.IDENTIFIER, CopyElisionTransformer.IDENTIFIER, DeadCodeEliminationTransformer.IDENTIFIER,
+            CopyElisionTransformer.IDENTIFIER, DeadCodeEliminationTransformer.IDENTIFIER, InliningStep.IDENTIFIER);
 
     private final LanguageOption<String> transformations = createDefaultOption(OptionType.string(), "transformations",
             OPTION_DESCRIPTION_TRANSFORMATIONS, DEFAULT_TRANSFORMATIONS);

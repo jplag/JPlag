@@ -6,9 +6,12 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UncheckedIOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.SequencedCollection;
+
+import javax.annotation.Nullable;
 
 import jdk.incubator.code.Block;
 import jdk.incubator.code.Body;
@@ -19,6 +22,7 @@ import jdk.incubator.code.CodeType;
 import jdk.incubator.code.Op;
 import jdk.incubator.code.Value;
 import jdk.incubator.code.dialect.core.CoreOp;
+import jdk.incubator.code.dialect.core.Inliner;
 import jdk.incubator.code.dialect.java.JavaOp;
 import jdk.incubator.code.dialect.java.JavaType;
 import jdk.incubator.code.extern.OpWriter;
@@ -158,6 +162,22 @@ public interface BabylonDSL {
     }
 
     /**
+     * Inline an {@link Op.Invokable} into a {@link Block.Builder}, optionally storing the result in a variable.
+     * @param bd the block builder
+     * @param target the op to inline
+     * @param args the arguments to pass to the inlined op
+     * @param resultVariable the variable to store the result in
+     * @param <O> the type of operation to inline
+     */
+    default <O extends Op & Op.Invokable> void inline(Block.Builder bd, O target, List<Value> args, @Nullable Value resultVariable) {
+        Inliner.inline(bd, target, args, (b, value) -> {
+            if (resultVariable != null) {
+                b.add(CoreOp.varStore(resultVariable, value));
+            }
+        });
+    }
+
+    /**
      * Obtains the single element of a {@link SequencedCollection} and ensures no others exist.
      * @param collection the collection to take the element from
      * @param <T> type of elements in the collection
@@ -165,10 +185,15 @@ public interface BabylonDSL {
      * @throws IllegalStateException if there is not exactly one element
      */
     default <T> T requireSingle(SequencedCollection<T> collection) {
-        if (collection.size() != 1) {
-            throw new IllegalStateException("Expected exactly one element, but found: " + collection.size());
+        Iterator<T> iterator = collection.iterator();
+        if (!iterator.hasNext()) {
+            throw new IllegalStateException("Expected exactly one element but got empty");
         }
-        return collection.getFirst();
+        T result = iterator.next();
+        if (iterator.hasNext()) {
+            throw new IllegalStateException("Expected exactly one element but found more");
+        }
+        return result;
     }
 
     /**

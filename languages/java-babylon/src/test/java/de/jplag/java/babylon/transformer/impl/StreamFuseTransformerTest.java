@@ -170,7 +170,7 @@ public class StreamFuseTransformerTest extends TransformerTest {
                             %36 : java.type:"int" = mod %34 %35 @loc="6:45";
                             %37 : java.type:"int" = constant @loc="6:54" @0;
                             %38 : java.type:"boolean" = eq %36 %37 @loc="6:45";
-                            var.store %30 %38 @loc="6:40";
+                            var.store %30 %38;
                             java.if
                                 ()java.type:"boolean" -> {
                                     %39 : java.type:"boolean" = var.load %30 @loc="6:16";
@@ -181,7 +181,7 @@ public class StreamFuseTransformerTest extends TransformerTest {
                                     %41 : java.type:"java.lang.Integer" = var.load %29 @loc="6:16";
                                     %42 : Var<java.type:"java.lang.Integer"> = var %41 @loc="6:61" @"i";
                                     %43 : java.type:"java.lang.Integer" = var.load %42 @loc="6:66";
-                                    var.store %40 %43 @loc="6:61";
+                                    var.store %40 %43;
                                     %44 : java.type:"java.lang.Integer" = var.load %40 @loc="6:16";
                                     %45 : java.type:"boolean" = invoke %26 %44 @loc="6:16" @java.ref:"java.util.List::add(java.lang.Object):boolean";
                                     yield @loc="6:16";
@@ -214,7 +214,7 @@ public class StreamFuseTransformerTest extends TransformerTest {
                             %59 : java.type:"int" = mod %57 %58 @loc="7:67";
                             %60 : java.type:"int" = constant @loc="7:76" @0;
                             %61 : java.type:"boolean" = eq %59 %60 @loc="7:67";
-                            var.store %54 %61 @loc="7:62";
+                            var.store %54 %61;
                             java.if
                                 ()java.type:"boolean" -> {
                                     %62 : java.type:"boolean" = var.load %54 @loc="7:32";
@@ -265,7 +265,7 @@ public class StreamFuseTransformerTest extends TransformerTest {
                             %88 : java.type:"int" = mod %86 %87 @loc="8:44";
                             %89 : java.type:"int" = constant @loc="8:53" @0;
                             %90 : java.type:"boolean" = eq %88 %89 @loc="8:44";
-                            var.store %83 %90 @loc="8:39";
+                            var.store %83 %90;
                             java.if
                                 ()java.type:"boolean" -> {
                                     %91 : java.type:"boolean" = var.load %83 @loc="8:16";
@@ -277,14 +277,14 @@ public class StreamFuseTransformerTest extends TransformerTest {
                                     %94 : Var<java.type:"int"> = var %93 @loc="8:65" @"x$0";
                                     %95 : java.type:"int" = var.load %94 @loc="8:65";
                                     %96 : java.type:"java.lang.String" = invoke %95 @loc="8:65" @java.ref:"java.lang.Integer::toString(int):java.lang.String";
-                                    var.store %92 %96 @loc="8:65";
+                                    var.store %92 %96;
                                     %97 : Var<java.type:"long"> = var @loc="8:16";
                                     %98 : java.type:"java.lang.String" = var.load %92 @loc="8:16";
                                     %99 : Var<java.type:"java.lang.String"> = var %98 @loc="8:94" @"rec$";
                                     %100 : java.type:"java.lang.String" = var.load %99 @loc="8:94";
                                     %101 : java.type:"int" = invoke %100 @loc="8:94" @java.ref:"java.lang.Object::hashCode():int";
                                     %102 : java.type:"long" = conv %101 @loc="8:94";
-                                    var.store %97 %102 @loc="8:94";
+                                    var.store %97 %102;
                                     %103 : java.type:"long" = var.load %78 @loc="8:16";
                                     %104 : java.type:"long" = var.load %97 @loc="8:16";
                                     %105 : java.type:"long" = add %103 %104 @loc="8:16";

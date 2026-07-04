@@ -61,7 +61,6 @@ import com.google.auto.service.AutoService;
 import jdk.incubator.code.Block;
 import jdk.incubator.code.Body;
 import jdk.incubator.code.CodeContext;
-import jdk.incubator.code.CodeTransformer;
 import jdk.incubator.code.CodeType;
 import jdk.incubator.code.Op;
 import jdk.incubator.code.Value;
@@ -284,8 +283,8 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
             case Step.Intermediate intermediate -> addAll(builder, context, intermediate.from(), (value, b) -> {
                 switch (intermediate) {
                     case Step.Intermediate.Filter filter when !containsStatement(filter.predicate.body()) -> b.add(if_(b.parentBody()).if_(b2 -> {
-                        Value predicateVariable = place(b, location, var(BOOLEAN));
-                        b2.transformBody(filter.predicate().body(), List.of(value.apply(b)), context, new ReturnAssignTransformer(predicateVariable));
+                        Value predicateVariable = place(b2, location, var(BOOLEAN));
+                        inline(b2, filter.predicate(), List.of(value.apply(b2)), predicateVariable);
                         Value predicateValue = place(b2, location, varLoad(predicateVariable));
                         place(b2, location, core_yield(predicateValue));
                     }).then(b2 -> {
@@ -294,7 +293,7 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
                     }).else_());
                     case Step.Intermediate.Filter filter -> {
                         Value predicateVariable = place(b, location, var(BOOLEAN));
-                        b.transformBody(filter.predicate().body(), List.of(value.apply(b)), context, new ReturnAssignTransformer(predicateVariable));
+                        inline(b, filter.predicate(), List.of(value.apply(b)), predicateVariable);
                         b.add(if_(b.parentBody()).if_(b2 -> {
                             Value predicateValue = place(b2, location, varLoad(predicateVariable));
                             place(b2, location, core_yield(predicateValue));
@@ -305,7 +304,7 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
                     }
                     case Step.Intermediate.Map map -> {
                         Value mappedVariable = place(b, location, var(map.elementType()));
-                        b.transformBody(map.mapping().body(), List.of(value.apply(b)), context, new ReturnAssignTransformer(mappedVariable));
+                        inline(b, map.mapping(), List.of(value.apply(b)), mappedVariable);
                         inner.accept(b2 -> place(b2, location, varLoad(mappedVariable)), b);
                     }
                 }
@@ -322,21 +321,6 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
             }
         }
         return false;
-    }
-
-    private record ReturnAssignTransformer(Value variable) implements CodeTransformer, BabylonDSL {
-        @Override
-        public Block.Builder acceptOp(Block.Builder builder, Op op) {
-            switch (op) {
-                case CoreOp.ReturnOp returnOp -> {
-                    Value result = builder.context().getValue(returnOp.returnValue());
-                    place(builder, returnOp.location(), varStore(variable, result));
-                }
-                case JavaOp.LambdaOp _ -> placeExact(builder, null, op);
-                default -> builder.add(op);
-            }
-            return builder;
-        }
     }
 
     private sealed interface Step {

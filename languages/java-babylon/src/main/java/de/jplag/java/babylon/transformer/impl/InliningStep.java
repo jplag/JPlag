@@ -11,6 +11,7 @@ import javax.tools.JavaCompiler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.jplag.java.babylon.BabylonDSL;
 import de.jplag.java.babylon.extractor.CodeModelExtractor;
 import de.jplag.java.babylon.extractor.ExtractionFailedException;
 import de.jplag.java.babylon.transformer.Prepass;
@@ -24,7 +25,6 @@ import jdk.incubator.code.Body;
 import jdk.incubator.code.CodeTransformer;
 import jdk.incubator.code.Op;
 import jdk.incubator.code.dialect.core.CoreOp;
-import jdk.incubator.code.dialect.core.Inliner;
 import jdk.incubator.code.dialect.java.JavaOp;
 import jdk.incubator.code.dialect.java.MethodRef;
 import jdk.incubator.code.dialect.java.PrimitiveType;
@@ -114,7 +114,7 @@ public class InliningStep implements TransformationStep<InliningStep.Context> {
         }
     }
 
-    private static class Apply implements CodeTransformer {
+    private static class Apply implements CodeTransformer, BabylonDSL {
         private final Context context;
         private final boolean dropLocations;
 
@@ -137,14 +137,9 @@ public class InliningStep implements TransformationStep<InliningStep.Context> {
             if (dropLocations) {
                 candidate = candidate.transform(CodeTransformer.DROP_LOCATION_TRANSFORMER);
             }
-            if (op.resultType() == PrimitiveType.VOID) {
-                Inliner.inline(builder, candidate, builder.context().getValues(op.operands()), (_, _) -> {
-                });
-            } else {
-                Op.Result variable = builder.add(CoreOp.var(op.resultType()));
-                Inliner.inline(builder, candidate, builder.context().getValues(op.operands()), (b, value) -> {
-                    b.add(CoreOp.varStore(variable, value));
-                });
+            Op.Result variable = op.resultType() == PrimitiveType.VOID ? null : builder.add(CoreOp.var(op.resultType()));
+            inline(builder, candidate, builder.context().getValues(op.operands()), variable);
+            if (variable != null) {
                 Op.Result load = builder.add(CoreOp.varLoad(variable));
                 builder.context().mapValue(op.result(), load);
             }
