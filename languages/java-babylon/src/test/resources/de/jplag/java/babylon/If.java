@@ -10,7 +10,8 @@ void main() {
     }
 
     if (a > b) {
-
+        if (true) {
+        }
     } else {
         if (b < c) {
             IO.println("A < C");

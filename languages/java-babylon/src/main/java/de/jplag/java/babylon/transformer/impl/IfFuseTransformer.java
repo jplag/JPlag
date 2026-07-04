@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
+import javax.annotation.Nullable;
+
 import de.jplag.java.babylon.BabylonDSL;
 import de.jplag.java.babylon.transformer.SimpleTransformation;
 import de.jplag.java.babylon.transformer.impl.util.YieldTransformer;
@@ -16,6 +18,7 @@ import jdk.incubator.code.CodeTransformer;
 import jdk.incubator.code.Op;
 import jdk.incubator.code.dialect.core.CoreOp;
 import jdk.incubator.code.dialect.java.JavaOp;
+import jdk.incubator.code.dialect.java.JavaType;
 
 /**
  * {@link SimpleTransformation} that fuses unneeded if statements into their parent.
@@ -41,10 +44,15 @@ public class IfFuseTransformer implements SimpleTransformation, BabylonDSL {
 
         Iterator<Body> iterator = ifOp.bodies().iterator();
         Body condition = iterator.next();
+        @Nullable
+        Boolean constantCondition = constantBooleanValue(condition);
         Body ifTrue = iterator.next();
         Body ifFalse = iterator.next();
 
-        if (isEmpty(ifTrue)) {
+        if (constantCondition != null) {
+            builder.transformBody(constantCondition ? ifTrue : ifFalse, List.of(), (YieldTransformer) (block, _) -> block);
+            return builder;
+        } else if (isEmpty(ifTrue)) {
             if (isEmpty(ifFalse)) {
                 builder.transformBody(condition, List.of(), (YieldTransformer) (block, _) -> block);
                 return builder;
@@ -122,10 +130,35 @@ public class IfFuseTransformer implements SimpleTransformation, BabylonDSL {
             return false;
         }
         Block block = body.entryBlock();
-        if (block.ops().size() != 1) {
-            return false;
+        for (Op op : block.ops()) {
+            if (op instanceof Op.Pure) {
+                continue;
+            } else if (op instanceof CoreOp.YieldOp yieldOp) {
+                return yieldOp.operands().isEmpty();
+            } else {
+                return false;
+            }
         }
-        return block.ops().getFirst() instanceof CoreOp.YieldOp yieldOp && yieldOp.operands().isEmpty();
+        throw new IllegalArgumentException("Block does not end in a finishing op");
+    }
+
+    private @Nullable Boolean constantBooleanValue(Body body) {
+        if (body.blocks().size() != 1) {
+            return null;
+        }
+        Block block = body.entryBlock();
+        if (block.ops().size() != 1) {
+            return null;
+        }
+        Iterator<Op> iterator = block.ops().iterator();
+        if (!(iterator.next() instanceof CoreOp.ConstantOp constantOp) || constantOp.resultType() != JavaType.BOOLEAN) {
+            return null;
+        }
+        if (!(iterator.next() instanceof CoreOp.YieldOp yieldOp) || yieldOp.operands().size() != 1
+                || !yieldOp.operands().getFirst().equals(constantOp.result())) {
+            return null;
+        }
+        return (Boolean) constantOp.value();
     }
 
     private boolean isJustIf(Body body) {

@@ -14,7 +14,7 @@ public class IfFuseTransformerTest extends TransformerTest {
 
     @Override
     protected TransformationPipeline getPipeline() {
-        return pipeline(step(new IfFuseTransformer()));
+        return pipeline(step(new IfFuseTransformer()), step(new IfFuseTransformer()));
     }
 
     @Override
@@ -72,109 +72,120 @@ public class IfFuseTransformerTest extends TransformerTest {
                             yield %25 @loc="12:5";
                         }
                         ()java.type:"void" -> {
+                            java.if @loc="13:9"
+                                ()java.type:"boolean" -> {
+                                    %26 : java.type:"boolean" = constant @loc="13:13" @true;
+                                    yield %26 @loc="13:9";
+                                }
+                                ()java.type:"void" -> {
+                                    yield @loc="13:9";
+                                }
+                                ()java.type:"void" -> {
+                                    yield;
+                                };
                             yield @loc="12:5";
                         }
                         ()java.type:"void" -> {
-                            java.if @loc="15:9"
+                            java.if @loc="16:9"
                                 ()java.type:"boolean" -> {
-                                    %26 : java.type:"int" = var.load %10 @loc="15:13";
-                                    %27 : java.type:"int" = var.load %15 @loc="15:17";
-                                    %28 : java.type:"boolean" = lt %26 %27 @loc="15:13";
-                                    yield %28 @loc="15:9";
+                                    %27 : java.type:"int" = var.load %10 @loc="16:13";
+                                    %28 : java.type:"int" = var.load %15 @loc="16:17";
+                                    %29 : java.type:"boolean" = lt %27 %28 @loc="16:13";
+                                    yield %29 @loc="16:9";
                                 }
                                 ()java.type:"void" -> {
-                                    %29 : java.type:"java.lang.String" = constant @loc="16:24" @"A < C";
-                                    invoke %29 @loc="16:13" @java.ref:"java.lang.IO::println(java.lang.Object):void";
-                                    yield @loc="15:9";
+                                    %30 : java.type:"java.lang.String" = constant @loc="17:24" @"A < C";
+                                    invoke %30 @loc="17:13" @java.ref:"java.lang.IO::println(java.lang.Object):void";
+                                    yield @loc="16:9";
                                 }
                                 ()java.type:"void" -> {
                                     yield;
                                 };
                             yield @loc="12:5";
                         };
-                    java.if @loc="21:5"
+                    java.if @loc="22:5"
                         ()java.type:"boolean" -> {
-                            %30 : java.type:"int" = var.load %5 @loc="21:9";
-                            %31 : java.type:"int" = var.load %10 @loc="21:13";
-                            %32 : java.type:"boolean" = gt %30 %31 @loc="21:9";
-                            yield %32 @loc="21:5";
+                            %31 : java.type:"int" = var.load %5 @loc="22:9";
+                            %32 : java.type:"int" = var.load %10 @loc="22:13";
+                            %33 : java.type:"boolean" = gt %31 %32 @loc="22:9";
+                            yield %33 @loc="22:5";
                         }
                         ()java.type:"void" -> {
-                            java.if @loc="22:9"
+                            java.if @loc="23:9"
                                 ()java.type:"boolean" -> {
-                                    %33 : java.type:"int" = var.load %10 @loc="22:13";
-                                    %34 : java.type:"int" = var.load %15 @loc="22:17";
-                                    %35 : java.type:"boolean" = gt %33 %34 @loc="22:13";
-                                    yield %35 @loc="22:9";
+                                    %34 : java.type:"int" = var.load %10 @loc="23:13";
+                                    %35 : java.type:"int" = var.load %15 @loc="23:17";
+                                    %36 : java.type:"boolean" = gt %34 %35 @loc="23:13";
+                                    yield %36 @loc="23:9";
                                 }
                                 ()java.type:"void" -> {
-                                    yield @loc="22:9";
+                                    yield @loc="23:9";
                                 }
                                 ()java.type:"void" -> {
                                     yield;
                                 };
-                            yield @loc="21:5";
+                            yield @loc="22:5";
                         }
                         ()java.type:"void" -> {
-                            java.if @loc="25:9"
+                            java.if @loc="26:9"
                                 ()java.type:"boolean" -> {
-                                    %36 : java.type:"int" = var.load %10 @loc="25:13";
-                                    %37 : java.type:"int" = var.load %15 @loc="25:17";
-                                    %38 : java.type:"boolean" = lt %36 %37 @loc="25:13";
-                                    yield %38 @loc="25:9";
+                                    %37 : java.type:"int" = var.load %10 @loc="26:13";
+                                    %38 : java.type:"int" = var.load %15 @loc="26:17";
+                                    %39 : java.type:"boolean" = lt %37 %38 @loc="26:13";
+                                    yield %39 @loc="26:9";
                                 }
                                 ()java.type:"void" -> {
-                                    %39 : java.type:"java.lang.String" = constant @loc="26:24" @"A < C";
-                                    invoke %39 @loc="26:13" @java.ref:"java.lang.IO::println(java.lang.Object):void";
-                                    yield @loc="25:9";
+                                    %40 : java.type:"java.lang.String" = constant @loc="27:24" @"A < C";
+                                    invoke %40 @loc="27:13" @java.ref:"java.lang.IO::println(java.lang.Object):void";
+                                    yield @loc="26:9";
                                 }
                                 ()java.type:"void" -> {
                                     yield;
                                 };
-                            yield @loc="21:5";
+                            yield @loc="22:5";
                         };
-                    java.if @loc="30:5"
+                    java.if @loc="31:5"
                         ()java.type:"boolean" -> {
-                            %40 : java.type:"int" = var.load %5 @loc="30:9";
-                            %41 : java.type:"int" = var.load %10 @loc="30:13";
-                            %42 : java.type:"boolean" = gt %40 %41 @loc="30:9";
-                            yield %42 @loc="30:5";
+                            %41 : java.type:"int" = var.load %5 @loc="31:9";
+                            %42 : java.type:"int" = var.load %10 @loc="31:13";
+                            %43 : java.type:"boolean" = gt %41 %42 @loc="31:9";
+                            yield %43 @loc="31:5";
                         }
                         ()java.type:"void" -> {
-                            java.if @loc="31:9"
+                            java.if @loc="32:9"
                                 ()java.type:"boolean" -> {
-                                    %43 : java.type:"int" = var.load %10 @loc="31:13";
-                                    %44 : java.type:"int" = var.load %15 @loc="31:17";
-                                    %45 : java.type:"boolean" = gt %43 %44 @loc="31:13";
-                                    yield %45 @loc="31:9";
+                                    %44 : java.type:"int" = var.load %10 @loc="32:13";
+                                    %45 : java.type:"int" = var.load %15 @loc="32:17";
+                                    %46 : java.type:"boolean" = gt %44 %45 @loc="32:13";
+                                    yield %46 @loc="32:9";
                                 }
                                 ()java.type:"void" -> {
-                                    %46 : java.type:"java.lang.String" = constant @loc="32:24" @"A > C";
-                                    invoke %46 @loc="32:13" @java.ref:"java.lang.IO::println(java.lang.Object):void";
-                                    yield @loc="31:9";
+                                    %47 : java.type:"java.lang.String" = constant @loc="33:24" @"A > C";
+                                    invoke %47 @loc="33:13" @java.ref:"java.lang.IO::println(java.lang.Object):void";
+                                    yield @loc="32:9";
                                 }
                                 ()java.type:"void" -> {
                                     yield;
                                 };
-                            yield @loc="30:5";
+                            yield @loc="31:5";
                         }
                         ()java.type:"void" -> {
-                            java.if @loc="35:9"
+                            java.if @loc="36:9"
                                 ()java.type:"boolean" -> {
-                                    %47 : java.type:"int" = var.load %10 @loc="35:13";
-                                    %48 : java.type:"int" = var.load %15 @loc="35:17";
-                                    %49 : java.type:"boolean" = lt %47 %48 @loc="35:13";
-                                    yield %49 @loc="35:9";
+                                    %48 : java.type:"int" = var.load %10 @loc="36:13";
+                                    %49 : java.type:"int" = var.load %15 @loc="36:17";
+                                    %50 : java.type:"boolean" = lt %48 %49 @loc="36:13";
+                                    yield %50 @loc="36:9";
                                 }
                                 ()java.type:"void" -> {
-                                    %50 : java.type:"java.lang.String" = constant @loc="36:24" @"A < C";
-                                    invoke %50 @loc="36:13" @java.ref:"java.lang.IO::println(java.lang.Object):void";
-                                    yield @loc="35:9";
+                                    %51 : java.type:"java.lang.String" = constant @loc="37:24" @"A < C";
+                                    invoke %51 @loc="37:13" @java.ref:"java.lang.IO::println(java.lang.Object):void";
+                                    yield @loc="36:9";
                                 }
                                 ()java.type:"void" -> {
                                     yield;
                                 };
-                            yield @loc="30:5";
+                            yield @loc="31:5";
                         };
                     return @loc="1:1";
                 };""";
@@ -226,7 +237,7 @@ public class IfFuseTransformerTest extends TransformerTest {
                         };
                     java.if @loc="12:5"
                         ()java.type:"boolean" -> {
-                            %24 : java.type:"boolean" = java.cand @loc="15:9"
+                            %24 : java.type:"boolean" = java.cand @loc="16:9"
                                 ()java.type:"boolean" -> {
                                     %25 : java.type:"int" = var.load %5 @loc="12:9";
                                     %26 : java.type:"int" = var.load %10 @loc="12:13";
@@ -235,94 +246,94 @@ public class IfFuseTransformerTest extends TransformerTest {
                                     yield %28 @loc="12:5";
                                 }
                                 ()java.type:"boolean" -> {
-                                    %29 : java.type:"int" = var.load %10 @loc="15:13";
-                                    %30 : java.type:"int" = var.load %15 @loc="15:17";
-                                    %31 : java.type:"boolean" = lt %29 %30 @loc="15:13";
-                                    yield %31 @loc="15:9";
+                                    %29 : java.type:"int" = var.load %10 @loc="16:13";
+                                    %30 : java.type:"int" = var.load %15 @loc="16:17";
+                                    %31 : java.type:"boolean" = lt %29 %30 @loc="16:13";
+                                    yield %31 @loc="16:9";
                                 };
-                            yield %24 @loc="15:9";
+                            yield %24 @loc="16:9";
                         }
                         ()java.type:"void" -> {
-                            %32 : java.type:"java.lang.String" = constant @loc="16:24" @"A < C";
-                            invoke %32 @loc="16:13" @java.ref:"java.lang.IO::println(java.lang.Object):void";
-                            yield @loc="15:9";
+                            %32 : java.type:"java.lang.String" = constant @loc="17:24" @"A < C";
+                            invoke %32 @loc="17:13" @java.ref:"java.lang.IO::println(java.lang.Object):void";
+                            yield @loc="16:9";
                         }
                         ()java.type:"void" -> {
                             yield;
                         };
-                    java.if @loc="21:5"
+                    java.if @loc="22:5"
                         ()java.type:"boolean" -> {
-                            %33 : java.type:"int" = var.load %5 @loc="21:9";
-                            %34 : java.type:"int" = var.load %10 @loc="21:13";
-                            %35 : java.type:"boolean" = gt %33 %34 @loc="21:9";
-                            yield %35 @loc="21:5";
+                            %33 : java.type:"int" = var.load %5 @loc="22:9";
+                            %34 : java.type:"int" = var.load %10 @loc="22:13";
+                            %35 : java.type:"boolean" = gt %33 %34 @loc="22:9";
+                            yield %35 @loc="22:5";
                         }
                         ()java.type:"void" -> {
-                            %36 : java.type:"int" = var.load %10 @loc="22:13";
-                            %37 : java.type:"int" = var.load %15 @loc="22:17";
-                            %38 : java.type:"boolean" = gt %36 %37 @loc="22:13";
-                            yield @loc="21:5";
+                            %36 : java.type:"int" = var.load %10 @loc="23:13";
+                            %37 : java.type:"int" = var.load %15 @loc="23:17";
+                            %38 : java.type:"boolean" = gt %36 %37 @loc="23:13";
+                            yield @loc="22:5";
                         }
                         ()java.type:"void" -> {
-                            java.if @loc="25:9"
+                            java.if @loc="26:9"
                                 ()java.type:"boolean" -> {
-                                    %39 : java.type:"int" = var.load %10 @loc="25:13";
-                                    %40 : java.type:"int" = var.load %15 @loc="25:17";
-                                    %41 : java.type:"boolean" = lt %39 %40 @loc="25:13";
-                                    yield %41 @loc="25:9";
+                                    %39 : java.type:"int" = var.load %10 @loc="26:13";
+                                    %40 : java.type:"int" = var.load %15 @loc="26:17";
+                                    %41 : java.type:"boolean" = lt %39 %40 @loc="26:13";
+                                    yield %41 @loc="26:9";
                                 }
                                 ()java.type:"void" -> {
-                                    %42 : java.type:"java.lang.String" = constant @loc="26:24" @"A < C";
-                                    invoke %42 @loc="26:13" @java.ref:"java.lang.IO::println(java.lang.Object):void";
-                                    yield @loc="25:9";
+                                    %42 : java.type:"java.lang.String" = constant @loc="27:24" @"A < C";
+                                    invoke %42 @loc="27:13" @java.ref:"java.lang.IO::println(java.lang.Object):void";
+                                    yield @loc="26:9";
                                 }
                                 ()java.type:"void" -> {
                                     yield;
                                 };
-                            yield @loc="21:5";
+                            yield @loc="22:5";
                         };
-                    java.if @loc="30:5"
+                    java.if @loc="31:5"
                         ()java.type:"boolean" -> {
-                            %43 : java.type:"int" = var.load %5 @loc="30:9";
-                            %44 : java.type:"int" = var.load %10 @loc="30:13";
-                            %45 : java.type:"boolean" = gt %43 %44 @loc="30:9";
-                            yield %45 @loc="30:5";
+                            %43 : java.type:"int" = var.load %5 @loc="31:9";
+                            %44 : java.type:"int" = var.load %10 @loc="31:13";
+                            %45 : java.type:"boolean" = gt %43 %44 @loc="31:9";
+                            yield %45 @loc="31:5";
                         }
                         ()java.type:"void" -> {
-                            java.if @loc="31:9"
+                            java.if @loc="32:9"
                                 ()java.type:"boolean" -> {
-                                    %46 : java.type:"int" = var.load %10 @loc="31:13";
-                                    %47 : java.type:"int" = var.load %15 @loc="31:17";
-                                    %48 : java.type:"boolean" = gt %46 %47 @loc="31:13";
-                                    yield %48 @loc="31:9";
+                                    %46 : java.type:"int" = var.load %10 @loc="32:13";
+                                    %47 : java.type:"int" = var.load %15 @loc="32:17";
+                                    %48 : java.type:"boolean" = gt %46 %47 @loc="32:13";
+                                    yield %48 @loc="32:9";
                                 }
                                 ()java.type:"void" -> {
-                                    %49 : java.type:"java.lang.String" = constant @loc="32:24" @"A > C";
-                                    invoke %49 @loc="32:13" @java.ref:"java.lang.IO::println(java.lang.Object):void";
-                                    yield @loc="31:9";
+                                    %49 : java.type:"java.lang.String" = constant @loc="33:24" @"A > C";
+                                    invoke %49 @loc="33:13" @java.ref:"java.lang.IO::println(java.lang.Object):void";
+                                    yield @loc="32:9";
                                 }
                                 ()java.type:"void" -> {
                                     yield;
                                 };
-                            yield @loc="30:5";
+                            yield @loc="31:5";
                         }
                         ()java.type:"void" -> {
-                            java.if @loc="35:9"
+                            java.if @loc="36:9"
                                 ()java.type:"boolean" -> {
-                                    %50 : java.type:"int" = var.load %10 @loc="35:13";
-                                    %51 : java.type:"int" = var.load %15 @loc="35:17";
-                                    %52 : java.type:"boolean" = lt %50 %51 @loc="35:13";
-                                    yield %52 @loc="35:9";
+                                    %50 : java.type:"int" = var.load %10 @loc="36:13";
+                                    %51 : java.type:"int" = var.load %15 @loc="36:17";
+                                    %52 : java.type:"boolean" = lt %50 %51 @loc="36:13";
+                                    yield %52 @loc="36:9";
                                 }
                                 ()java.type:"void" -> {
-                                    %53 : java.type:"java.lang.String" = constant @loc="36:24" @"A < C";
-                                    invoke %53 @loc="36:13" @java.ref:"java.lang.IO::println(java.lang.Object):void";
-                                    yield @loc="35:9";
+                                    %53 : java.type:"java.lang.String" = constant @loc="37:24" @"A < C";
+                                    invoke %53 @loc="37:13" @java.ref:"java.lang.IO::println(java.lang.Object):void";
+                                    yield @loc="36:9";
                                 }
                                 ()java.type:"void" -> {
                                     yield;
                                 };
-                            yield @loc="30:5";
+                            yield @loc="31:5";
                         };
                     return @loc="1:1";
                 };""";
