@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
@@ -36,7 +35,7 @@ public abstract class AbstractAntlrListener {
      */
     @SuppressWarnings("unchecked")
     public <T extends ParserRuleContext> ContextVisitor<T> visit(Class<T> antlrType, Predicate<T> condition) {
-        Predicate<T> typeCheck = rule -> rule.getClass() == antlrType;
+        Predicate<T> typeCheck = rule -> antlrType.isAssignableFrom(rule.getClass());
         ContextVisitor<T> visitor = new ContextVisitor<>(typeCheck.and(condition));
         contextVisitors.add((ContextVisitor<ParserRuleContext>) visitor);
         return visitor;
@@ -58,8 +57,8 @@ public abstract class AbstractAntlrListener {
      * @param condition An additional condition for the visit.
      * @return A visitor for the node.
      */
-    public TerminalVisitor visit(int terminalType, Predicate<Token> condition) {
-        Predicate<Token> typeCheck = rule -> rule.getType() == terminalType;
+    public TerminalVisitor visit(int terminalType, Predicate<TerminalNode> condition) {
+        Predicate<TerminalNode> typeCheck = rule -> rule.getSymbol().getType() == terminalType;
         TerminalVisitor visitor = new TerminalVisitor(typeCheck.and(condition));
         terminalVisitors.add(visitor);
         return visitor;
@@ -78,7 +77,7 @@ public abstract class AbstractAntlrListener {
      * Called by {@link InternalListener#visitTerminal(TerminalNode)} as part of antlr framework.
      * @param data is the data passed to the listeners.
      */
-    void visitTerminal(HandlerData<Token> data) {
+    void visitTerminal(HandlerData<TerminalNode> data) {
         this.terminalVisitors.stream().filter(visitor -> visitor.matches(data.entity())).forEach(visitor -> visitor.enter(data));
     }
 

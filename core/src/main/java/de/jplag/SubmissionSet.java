@@ -159,13 +159,7 @@ public class SubmissionSet {
 
         ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.PARSING, submissions.size());
 
-        if (options.language().expectsSubmissionOrder()) {
-            for (Submission submission : submissions) {
-                parseSingleSubmission(progressBar, submission);
-            }
-        } else {
-            parseSubmissionsInParallel(submissions, progressBar);
-        }
+        parseSubmissionsInParallel(submissions, progressBar);
 
         progressBar.dispose();
 

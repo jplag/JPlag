@@ -126,13 +126,13 @@
         <TextInformation label="Missing Comparisons" class="pb-1">{{
           missingComparisons
         }}</TextInformation>
-        <TextInformation label="Failed Submissions" class="pb-1">{{
-          runInformation.failedSubmissions.length > 0
-            ? runInformation.failedSubmissions
-                .map((s) => `${s.submissionId} (${stringifySubmissionState(s.submissionState)})`)
-                .join(', ')
-            : 'None'
-        }}</TextInformation>
+        <TextInformation label="Failed Submissions" class="pb-1">
+          <FailedSubmissionsDisplay
+            v-if="runInformation.failedSubmissions.length > 0"
+            :submissions="runInformation.failedSubmissions"
+          />
+          <span v-else>None</span>
+        </TextInformation>
       </ScrollableComponent>
     </ContainerComponent>
   </div>
@@ -140,8 +140,7 @@
 
 <script setup lang="ts">
 import { ContainerComponent, TextInformation, ScrollableComponent } from '@jplag/ui-components/base'
-import { MetricTypes } from '@jplag/ui-components/widget'
-import { SubmissionState } from '@jplag/model'
+import { FailedSubmissionsDisplay, MetricTypes } from '@jplag/ui-components/widget'
 import { reportStore } from '@/stores/reportStore'
 import { computed, onErrorCaptured } from 'vue'
 import { redirectOnError } from '@/router'
@@ -152,10 +151,6 @@ const options = computed(() => reportStore().getCliOptions())
 const missingComparisons = computed(
   () => runInformation.value.totalComparisons - reportStore().includedComparisonCount()
 )
-
-function stringifySubmissionState(reason: SubmissionState) {
-  return reason.toString().replace(/_/g, ' ').toLowerCase()
-}
 
 onErrorCaptured((error) => {
   redirectOnError(error, 'Error displaying information:\n', 'OverviewView', 'Back to overview')

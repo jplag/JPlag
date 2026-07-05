@@ -13,7 +13,7 @@
         class="text-link-dark dark:text-link underline"
         target="_blank"
         :href="`https://github.com/jplag/JPlag/commit/${commitHash}`"
-        >{{ commitHash }}</a
+        >{{ commitHash.substring(0, 7) }}</a
       >
     </span>
     <span>

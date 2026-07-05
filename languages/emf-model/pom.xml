@@ -12,7 +12,7 @@
     <dependencies>
         <dependency>
             <groupId>de.jplag</groupId>
-            <artifactId>emf-metamodel-dynamic</artifactId>
+            <artifactId>emf-metamodel</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.emf</groupId>

@@ -108,7 +108,7 @@ public class CliArgumentBuilder {
             case String[] array -> String.join(",", array);
             case String string -> string;
             case Number number -> number.toString();
-            case Boolean ignored -> "";
+            case Boolean _ -> "";
             default -> Assumptions.abort("Missing formatter for given type.");
         };
     }
