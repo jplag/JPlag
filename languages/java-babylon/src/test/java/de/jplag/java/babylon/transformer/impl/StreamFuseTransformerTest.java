@@ -151,13 +151,13 @@ public class StreamFuseTransformerTest extends TransformerTest {
                     %23 : Var<java.type:"java.lang.String"> = var %22 @loc="4:5" @"source3";
                     %24 : java.type:"java.util.List<java.lang.Integer>" = var.load %10 @loc="6:16";
                     %25 : java.type:"java.util.ArrayList" = new @loc="6:16" @java.ref:"java.util.ArrayList::()";
-                    %26 : Var<java.type:"java.util.List<java.lang.Integer>"> = var %25 @loc="6:16" @"streamResult";
+                    %26 : Var<java.type:"java.util.List<java.lang.Integer>"> = var %25 @loc="6:16";
                     java.enhancedFor @loc="6:16"
                         ()java.type:"java.util.Collection<java.lang.Integer>" -> {
                             yield %24;
                         }
                         (%27 : java.type:"java.lang.Integer")Var<java.type:"java.lang.Integer"> -> {
-                            %28 : Var<java.type:"java.lang.Integer"> = var %27 @"s";
+                            %28 : Var<java.type:"java.lang.Integer"> = var %27;
                             yield %28;
                         }
                         (%29 : Var<java.type:"java.lang.Integer">)java.type:"void" -> {
@@ -196,13 +196,13 @@ public class StreamFuseTransformerTest extends TransformerTest {
                     %47 : java.type:"int[]" = var.load %21 @loc="7:46";
                     %48 : java.type:"int" = constant @loc="7:32" @0;
                     %49 : java.type:"int[]" = new %48 @loc="7:32" @java.ref:"int[]::(int)";
-                    %50 : Var<java.type:"int[]"> = var %49 @loc="7:32" @"streamResult";
+                    %50 : Var<java.type:"int[]"> = var %49 @loc="7:32";
                     java.enhancedFor @loc="7:32"
                         ()java.type:"int[]" -> {
                             yield %47;
                         }
                         (%51 : java.type:"int")Var<java.type:"int"> -> {
-                            %52 : Var<java.type:"int"> = var %51 @"s";
+                            %52 : Var<java.type:"int"> = var %51;
                             yield %52;
                         }
                         (%53 : Var<java.type:"int">)java.type:"void" -> {
@@ -246,14 +246,14 @@ public class StreamFuseTransformerTest extends TransformerTest {
                     invoke %75 @loc="7:5" @java.ref:"java.lang.IO::println(java.lang.Object):void";
                     %76 : java.type:"java.lang.String" = var.load %23 @loc="8:16";
                     %77 : java.type:"long" = constant @loc="8:16" @0;
-                    %78 : Var<java.type:"long"> = var %77 @loc="8:16" @"sum";
+                    %78 : Var<java.type:"long"> = var %77 @loc="8:16";
                     java.enhancedFor @loc="8:16"
                         ()java.type:"char[]" -> {
                             %79 : java.type:"char[]" = invoke %76 @java.ref:"java.lang.String::toCharArray():char[]";
                             yield %79;
                         }
                         (%80 : java.type:"int")Var<java.type:"int"> -> {
-                            %81 : Var<java.type:"int"> = var %80 @"s";
+                            %81 : Var<java.type:"int"> = var %80;
                             yield %81;
                         }
                         (%82 : Var<java.type:"int">)java.type:"void" -> {

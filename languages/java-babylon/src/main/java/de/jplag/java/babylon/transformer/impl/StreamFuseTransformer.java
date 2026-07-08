@@ -207,7 +207,7 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
         Value resultVariable = switch (pipeline) {
             case Collect.ToList toList -> {
                 Value newHolder = place(builder, location, new_(LIST_NEW));
-                Value holderVariable = place(builder, location, var("streamResult", parameterized(LIST, toList.elementType()), newHolder));
+                Value holderVariable = place(builder, location, var(null, parameterized(LIST, toList.elementType()), newHolder));
                 builder = addAll(builder, builder.context(), pipeline.from(), (value, inner) -> {
                     place(inner, location, invoke(LIST_ADD, holderVariable, value.apply(inner)));
                 });
@@ -218,7 +218,7 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
                 JavaType arrayType = array(toArray.elementType());
                 Value initialArraySize = place(builder, location, constant(INT, 0));
                 Value newHolder = place(builder, location, newArray(arrayType, initialArraySize));
-                Value holderVariable = place(builder, location, var("streamResult", arrayType, newHolder));
+                Value holderVariable = place(builder, location, var(null, arrayType, newHolder));
                 builder = addAll(builder, builder.context(), pipeline.from(), (value, inner) -> {
                     Value oldSize = place(inner, location, arrayLength(place(inner, location, varLoad(holderVariable))));
                     Value newSize = place(inner, location, add(oldSize, place(inner, location, constant(INT, 1))));
@@ -232,7 +232,7 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
                 yield holderVariable;
             }
             case Collect.Count count -> {
-                Value countVariable = place(builder, location, var("count", LONG, place(builder, location, constant(LONG, 0))));
+                Value countVariable = place(builder, location, var(null, LONG, place(builder, location, constant(LONG, 0))));
                 builder = addAll(builder, builder.context(), pipeline.from(), (value, inner) -> {
                     Value newCount = place(inner, location,
                             add(place(inner, location, varLoad(countVariable)), place(inner, location, constant(INT, 1))));
@@ -241,7 +241,7 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
                 yield countVariable;
             }
             case Collect.Sum sum -> {
-                Value sumVariable = place(builder, location, var("sum", sum.elementType(), place(builder, location, constant(sum.elementType(), 0))));
+                Value sumVariable = place(builder, location, var(null, sum.elementType(), place(builder, location, constant(sum.elementType(), 0))));
                 builder = addAll(builder, builder.context(), pipeline.from(), (value, inner) -> {
                     Value newSum = place(inner, location, add(place(inner, location, varLoad(sumVariable)), value.apply(inner)));
                     place(inner, location, varStore(sumVariable, newSum));
@@ -271,7 +271,7 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
                 }
                 Body.Builder initBody = Body.Builder.of(builder.parentBody(),
                         functionType(CoreType.varType(begin.elementType()), begin.elementType()), context);
-                Op.Result initVariable = initBody.entryBlock().add(var("s", begin.elementType(), initBody.entryBlock().parameters().getFirst()));
+                Op.Result initVariable = initBody.entryBlock().add(var(null, begin.elementType(), initBody.entryBlock().parameters().getFirst()));
                 initBody.entryBlock().add(core_yield(initVariable));
                 Body.Builder loopBody = Body.Builder.of(builder.parentBody(), functionType(JavaType.VOID, CoreType.varType(begin.elementType())),
                         context);
