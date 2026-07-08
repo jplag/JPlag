@@ -1,6 +1,6 @@
 package de.jplag.java.babylon;
 
-import static de.jplag.testutils.LanguageModuleTest.DEFAULT_TEST_CODE_PATH_BASE;
+import static de.jplag.testutils.TestDataPaths.DEFAULT_TEST_CODE_PATH_BASE;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,6 +14,7 @@ import de.jplag.ParsingException;
 import de.jplag.java.JavacAdapter;
 import de.jplag.java.Parser;
 import de.jplag.java.babylon.extractor.CodeModelExtractorImpl;
+import de.jplag.java.babylon.extractor.ExtractionFailedException;
 import de.jplag.java.babylon.pipeline.TransformationPipeline;
 import de.jplag.java.babylon.transformer.SimpleTransformation;
 import de.jplag.java.babylon.transformer.TransformationStep;
@@ -65,7 +66,7 @@ public abstract class TestWithResource {
         }
 
         @Override
-        protected void handle(Iterable<? extends CompilationUnitTree> trees, Parser parser, SourcePositions positions,
+        protected void scanCompilationUnits(Iterable<? extends CompilationUnitTree> trees, Parser parser, SourcePositions positions,
                 JavaCompiler.CompilationTask task) {
             if (result != null) {
                 throw new IllegalStateException();
@@ -116,7 +117,11 @@ public abstract class TestWithResource {
             if (!method.getName().toString().equals("main"))
                 throw new IllegalArgumentException();
 
-            return pipeline.transform(method, context).orElseThrow();
+            try {
+                return pipeline.transform(method, context).orElseThrow();
+            } catch (ExtractionFailedException e) {
+                throw new IllegalArgumentException(e);
+            }
         }
 
         private <T> T requireSingle(Iterable<? extends T> iterable) {

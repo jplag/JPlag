@@ -69,7 +69,7 @@ public class TokenGeneratingTreeScannerBabylon extends TokenGeneratingTreeScanne
         }
 
         variableRegistry.enterLocalScope();
-        transform.ifPresent(tokenizer::handle);
+        transform.ifPresent(tokenizer::tokenize);
         variableRegistry.addAllNonLocalVariablesAsReads();
         variableRegistry.exitLocalScope();
 

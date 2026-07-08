@@ -25,7 +25,7 @@ public final class TransformingCodeModelExtractor implements CodeModelExtractor 
     }
 
     @Override
-    public Optional<CoreOp.FuncOp> toOp(MethodTree methodTree) {
+    public Optional<CoreOp.FuncOp> toOp(MethodTree methodTree) throws ExtractionFailedException {
         return delegate.toOp(methodTree).flatMap(op -> Optional.ofNullable(transformation.apply(op)));
     }
 

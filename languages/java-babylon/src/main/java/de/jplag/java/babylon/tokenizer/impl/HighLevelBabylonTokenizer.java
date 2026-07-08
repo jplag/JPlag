@@ -50,40 +50,40 @@ public class HighLevelBabylonTokenizer extends AbstractBabylonTokenizer {
      * {@inheritDoc}
      */
     @Override
-    public void handle(Op op) {
+    public void tokenize(Op op) {
         switch (op) {
             case CoreOp.FuncOp func -> {
                 addToken(JavaTokenType.J_METHOD_BEGIN, func.location(), CodeSemantics.createControl());
-                handle(func.body());
+                tokenize(func.body());
                 addToken(JavaTokenType.J_METHOD_END, CodeSemantics.createControl());
             }
             case JavaOp.LambdaOp lambda -> {
                 addToken(JavaTokenType.J_METHOD_BEGIN, lambda.location(), CodeSemantics.createControl());
-                handle(lambda.body());
+                tokenize(lambda.body());
                 addToken(JavaTokenType.J_METHOD_END, CodeSemantics.createControl());
             }
             case JavaOp.SynchronizedOp sync -> {
                 addToken(JavaTokenType.J_SYNC_BEGIN, sync.location(), CodeSemantics.createControl());
-                handle(sync.blockBody());
+                tokenize(sync.blockBody());
                 addToken(JavaTokenType.J_SYNC_END, CodeSemantics.createControl());
             }
             case JavaOp.DoWhileOp doWhileOp -> {
                 addToken(JavaTokenType.J_LOOP_BEGIN, doWhileOp.location(), CodeSemantics.createLoopBegin());
-                handle(doWhileOp.loopBody());
+                tokenize(doWhileOp.loopBody());
                 addToken(JavaTokenType.J_LOOP_END, CodeSemantics.createLoopEnd());
-                handle(doWhileOp.predicateBody());
+                tokenize(doWhileOp.predicateBody());
             }
             case JavaOp.WhileOp whileOp -> {
                 addToken(JavaTokenType.J_LOOP_BEGIN, whileOp.location(), CodeSemantics.createLoopBegin());
                 for (Body body : whileOp.bodies())
-                    handle(body);
+                    tokenize(body);
                 addToken(JavaTokenType.J_LOOP_END, CodeSemantics.createLoopEnd());
             }
             case JavaOp.ForOp forOp -> {
                 parser.getVariableRegistry().enterLocalScope();
                 addToken(JavaTokenType.J_LOOP_BEGIN, forOp.location(), CodeSemantics.createLoopBegin());
                 for (Body body : forOp.bodies())
-                    handle(body);
+                    tokenize(body);
                 addToken(JavaTokenType.J_LOOP_END, CodeSemantics.createLoopEnd());
                 parser.getVariableRegistry().exitLocalScope();
             }
@@ -91,7 +91,7 @@ public class HighLevelBabylonTokenizer extends AbstractBabylonTokenizer {
                 parser.getVariableRegistry().enterLocalScope();
                 addToken(JavaTokenType.J_LOOP_BEGIN, enhancedForOp.location(), CodeSemantics.createLoopBegin());
                 for (Body body : enhancedForOp.bodies())
-                    handle(body);
+                    tokenize(body);
                 addToken(JavaTokenType.J_LOOP_END, CodeSemantics.createLoopEnd());
                 parser.getVariableRegistry().exitLocalScope();
             }
@@ -101,27 +101,27 @@ public class HighLevelBabylonTokenizer extends AbstractBabylonTokenizer {
                     Body predicateBody = iterator.next();
                     Body actionBody = iterator.next();
                     addToken(JavaTokenType.J_CASE, location(predicateBody), CodeSemantics.createControl());
-                    handle(predicateBody);
-                    handle(actionBody);
+                    tokenize(predicateBody);
+                    tokenize(actionBody);
                 }
                 addToken(JavaTokenType.J_SWITCH_END, CodeSemantics.createControl());
             }
             case JavaOp.TryOp tryOp -> {
                 addToken(JavaTokenType.J_TRY_BEGIN, tryOp.location(), CodeSemantics.createControl());
                 for (Body resourceBody : tryOp.resourceBodies())
-                    handle(resourceBody);
-                handle(tryOp.body());
+                    tokenize(resourceBody);
+                tokenize(tryOp.body());
                 for (Body catchBody : tryOp.catchBodies()) {
                     parser.getVariableRegistry().enterLocalScope();
                     addToken(JavaTokenType.J_CATCH_BEGIN, location(catchBody), CodeSemantics.createControl());
-                    handle(catchBody);
+                    tokenize(catchBody);
                     addToken(JavaTokenType.J_CATCH_END, CodeSemantics.createControl());
                     parser.getVariableRegistry().exitLocalScope();
                 }
                 Body fin = tryOp.finallyBody();
                 if (fin != null) {
                     addToken(JavaTokenType.J_FINALLY_BEGIN, location(fin), CodeSemantics.createControl());
-                    handle(fin);
+                    tokenize(fin);
                     addToken(JavaTokenType.J_FINALLY_END, CodeSemantics.createControl());
                 }
                 addToken(JavaTokenType.J_TRY_END, CodeSemantics.createControl());
@@ -133,8 +133,8 @@ public class HighLevelBabylonTokenizer extends AbstractBabylonTokenizer {
                     // if there are multiple, it is else-if
                     if (iterator.hasNext()) {
                         addToken(JavaTokenType.J_IF_BEGIN, ifOp.location(), CodeSemantics.createControl());
-                        handle(body);
-                        handle(iterator.next());
+                        tokenize(body);
+                        tokenize(iterator.next());
                         addToken(JavaTokenType.J_IF_END, CodeSemantics.createControl());
                     } else {
                         // if this is an implicit else branch (ie it consists only of yield),
@@ -147,7 +147,7 @@ public class HighLevelBabylonTokenizer extends AbstractBabylonTokenizer {
                         }
 
                         addToken(JavaTokenType.J_IF_BEGIN, ifOp.location(), CodeSemantics.createControl());
-                        handle(body);
+                        tokenize(body);
                         addToken(JavaTokenType.J_IF_END, CodeSemantics.createControl());
                     }
                 }
@@ -209,7 +209,7 @@ public class HighLevelBabylonTokenizer extends AbstractBabylonTokenizer {
             case JavaOp.ConditionalExpressionOp conditionalOp -> {
                 addToken(JavaTokenType.J_COND, conditionalOp.location(), new CodeSemantics());
                 for (Body body : conditionalOp.bodies())
-                    handle(body);
+                    tokenize(body);
             }
             case JavaOp.InvokeOp invokeOp -> {
                 boolean hasNoArguments = invokeOp.operands().size() == 1 && invokeOp.hasReceiver();
@@ -223,14 +223,14 @@ public class HighLevelBabylonTokenizer extends AbstractBabylonTokenizer {
                 parser.getVariableRegistry().enterClass();
                 addToken(JavaTokenType.J_CLASS_BEGIN, moduleOp.location(), CodeSemantics.createControl());
                 for (Body body : moduleOp.bodies())
-                    handle(body);
+                    tokenize(body);
                 addToken(JavaTokenType.J_CLASS_END, moduleOp.location(), CodeSemantics.createControl());
                 parser.getVariableRegistry().exitClass();
             }
             default -> {
                 logger.debug("Unsupported op: {} with content: {}", op.getClass(), op.toText());
                 for (Body body : op.bodies())
-                    handle(body);
+                    tokenize(body);
             }
         }
     }

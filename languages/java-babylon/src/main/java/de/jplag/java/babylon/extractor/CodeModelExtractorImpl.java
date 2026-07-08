@@ -24,9 +24,9 @@ public final class CodeModelExtractorImpl implements CodeModelExtractor {
     }
 
     @Override
-    public Optional<CoreOp.FuncOp> toOp(MethodTree methodTree) {
-        // if no Op can be constructed, that is an error that should not be construed with deliberate omission
-        // of a method
+    public Optional<CoreOp.FuncOp> toOp(MethodTree methodTree) throws ExtractionFailedException {
+        // Other extractors may wish to hide methods, which is why CodeModelExtractor.toOp returns Optional.
+        // However, if ofMethodTree fails, the method shouldn't silently disappear.
         CoreOp.FuncOp op = Op.ofMethodTree(task, methodTree).orElseThrow(() -> new ExtractionFailedException(methodTree));
         return Optional.of(op);
     }

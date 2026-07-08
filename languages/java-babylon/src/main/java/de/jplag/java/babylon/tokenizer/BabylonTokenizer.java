@@ -20,9 +20,9 @@ public interface BabylonTokenizer {
      * Tokenize a single {@link Body}.
      * @param body the body to tokenize
      */
-    default void handle(Body body) {
+    default void tokenize(Body body) {
         for (Block block : body.blocks()) {
-            handle(block);
+            tokenize(block);
         }
     }
 
@@ -30,9 +30,9 @@ public interface BabylonTokenizer {
      * Tokenize a single {@link Block}.
      * @param block the block to tokenize
      */
-    default void handle(Block block) {
+    default void tokenize(Block block) {
         for (Op op : block.ops()) {
-            handle(op);
+            tokenize(op);
         }
     }
 
@@ -40,7 +40,7 @@ public interface BabylonTokenizer {
      * Tokenize a single {@link Op}.
      * @param op the op to tokenize
      */
-    void handle(Op op);
+    void tokenize(Op op);
 
     /**
      * Encapsulates the logic of constructing {@link BabylonTokenizer}s for particular files.<br>

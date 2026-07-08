@@ -88,15 +88,15 @@ public class OptionalElisionTransformer implements SimpleTransformation, Babylon
             if (constructed.type() instanceof PrimitiveType) {
                 constructed = place(builder, op.location(), invoke(method(elementType, "valueOf", elementType, constructed.type()), constructed));
             }
-            return handleSource(builder, invokeOp.result(), constructed, elementType);
+            return markSourceReplaced(builder, invokeOp.result(), new Replacement.Modified(constructed, elementType));
         } else if (OPTIONAL_EMPTY.equals(invokeOp.invokeReference()) && invokeOp.resultType() instanceof ClassType ct
                 && elementType(ct) instanceof JavaType elementType && shouldTransform(builder.context(), invokeOp)) {
             Op.Result constructed = place(builder, op.location(), constant(elementType, null));
-            return handleSource(builder, invokeOp.result(), constructed, elementType);
+            return markSourceReplaced(builder, invokeOp.result(), new Replacement.Modified(constructed, elementType));
         } else if (invokeOp.invokeReference().equals(OPTIONAL_OF_NULLABLE) && invokeOp.resultType() instanceof ClassType ct
                 && elementType(ct) instanceof JavaType elementType && shouldTransform(builder.context(), invokeOp)) {
             Value constructed = builder.context().getValue(requireSingle(argOperands(invokeOp)));
-            return handleSource(builder, invokeOp.result(), constructed, elementType);
+            return markSourceReplaced(builder, invokeOp.result(), new Replacement.Modified(constructed, elementType));
         } else {
             builder.add(op);
             return builder;
@@ -174,8 +174,8 @@ public class OptionalElisionTransformer implements SimpleTransformation, Babylon
         };
     }
 
-    private Block.Builder handleSource(Block.Builder builder, Value source, Value constructed, JavaType elementType) {
-        builder.context().putProperty(source, new Replacement.Modified(constructed, elementType));
+    private Block.Builder markSourceReplaced(Block.Builder builder, Value source, Replacement.Modified modified) {
+        builder.context().putProperty(source, modified);
         for (Op.Result use : source.uses()) {
             builder.context().putProperty(use.op(), new Replacement.NeedsModification());
         }
@@ -199,7 +199,7 @@ public class OptionalElisionTransformer implements SimpleTransformation, Babylon
             }
             case JavaOp.InvokeOp invokeOp when OPTIONAL_OR_ELSE.equals(invokeOp.invokeReference())
                     && builder.context().getProperty(invokeOp.receiverOperand()) instanceof Replacement.Modified replacedReceiver -> {
-                List<Value> operands = handleOperands(builder, op.location(), argOperands(invokeOp));
+                List<Value> operands = boxReplacedOperands(builder, op.location(), argOperands(invokeOp));
                 Value result;
                 if (operands.getLast() instanceof Op.Result result1 && result1.op() instanceof CoreOp.ConstantOp constantOp
                         && constantOp.value() == null) {
@@ -212,7 +212,7 @@ public class OptionalElisionTransformer implements SimpleTransformation, Babylon
             }
             case JavaOp.InvokeOp invokeOp when OPTIONAL_OR_ELSE_GET.equals(invokeOp.invokeReference())
                     && builder.context().getProperty(invokeOp.receiverOperand()) instanceof Replacement.Modified replacedReceiver -> {
-                List<Value> operands = handleOperands(builder, op.location(), argOperands(invokeOp));
+                List<Value> operands = boxReplacedOperands(builder, op.location(), argOperands(invokeOp));
                 Op.Result result = place(builder, op.location(),
                         invoke(replacedReceiver.elementType(), OBJECTS_REQUIRE_NON_NULL_ELSE_GET, prepend(replacedReceiver.constructed(), operands)));
                 builder.context().mapValue(op.result(), result);
@@ -249,7 +249,7 @@ public class OptionalElisionTransformer implements SimpleTransformation, Babylon
                 place(falseBody.entryBlock(), op.location(), core_yield(place(falseBody.entryBlock(), op.location(), constant(resultType, null))));
 
                 Op.Result result = place(builder, op.location(), conditionalExpression(resultType, List.of(predicateBody, trueBody, falseBody)));
-                handleSource(builder, invokeOp.result(), result, resultType);
+                markSourceReplaced(builder, invokeOp.result(), new Replacement.Modified(result, resultType));
             }
             case JavaOp.InvokeOp invokeOp when OPTIONAL_FILTER.equals(invokeOp.invokeReference())
                     && builder.context().getProperty(invokeOp.receiverOperand()) instanceof Replacement.Modified replacedReceiver
@@ -278,7 +278,7 @@ public class OptionalElisionTransformer implements SimpleTransformation, Babylon
 
                 Op.Result filterResult = place(builder, op.location(),
                         conditionalExpression(replacedReceiver.elementType(), List.of(predicateBody, trueBody, falseBody)));
-                handleSource(builder, invokeOp.result(), filterResult, replacedReceiver.elementType());
+                markSourceReplaced(builder, invokeOp.result(), new Replacement.Modified(filterResult, replacedReceiver.elementType()));
             }
             case CoreOp.VarOp varOp when elementType(varOp.varValueType()) instanceof JavaType elementType
                     && shouldTransform(builder.context(), varOp) -> {
@@ -299,14 +299,14 @@ public class OptionalElisionTransformer implements SimpleTransformation, Babylon
                     && builder.context().getProperty(variableOperand) instanceof Replacement.ModifiedVar(var variable, var elementType) -> {
                 Value loaded = place(builder, op.location(), varLoad(variable));
                 if (shouldTransform(builder.context(), varLoadOp)) {
-                    handleSource(builder, varLoadOp.result(), loaded, elementType);
+                    markSourceReplaced(builder, varLoadOp.result(), new Replacement.Modified(loaded, elementType));
                 } else {
                     loaded = wrap(builder, op.location(), new Replacement.Modified(loaded, elementType));
                     builder.context().mapValue(varLoadOp.result(), loaded);
                 }
             }
             default -> {
-                handleOperands(builder, op.location(), op.operands());
+                boxReplacedOperands(builder, op.location(), op.operands());
                 builder.add(op);
             }
         }
@@ -321,7 +321,7 @@ public class OptionalElisionTransformer implements SimpleTransformation, Babylon
         }
     }
 
-    private List<Value> handleOperands(Block.Builder builder, Op.Location location, Iterable<? extends Value> operands) {
+    private List<Value> boxReplacedOperands(Block.Builder builder, Op.Location location, Iterable<? extends Value> operands) {
         List<Value> results = new ArrayList<>();
         for (Value operand : operands) {
             if (operand instanceof Op.Result result && builder.context().getProperty(result) instanceof Replacement.Modified modified) {

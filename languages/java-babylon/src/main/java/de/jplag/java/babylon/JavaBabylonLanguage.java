@@ -52,7 +52,7 @@ public class JavaBabylonLanguage extends JavaLanguage {
 
     @Override
     public boolean supportsNormalization() {
-        return false; // for now
+        return false;
     }
 
     @Override

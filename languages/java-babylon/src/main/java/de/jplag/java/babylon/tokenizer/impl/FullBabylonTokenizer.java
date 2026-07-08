@@ -26,10 +26,10 @@ public class FullBabylonTokenizer extends AbstractBabylonTokenizer {
     }
 
     @Override
-    public void handle(Op op) {
+    public void tokenize(Op op) {
         addToken(getTokenType(op), op.location(), CodeSemantics.createControl());
         for (Body body : op.bodies())
-            handle(body);
+            tokenize(body);
     }
 
     protected TokenType getTokenType(Op op) {

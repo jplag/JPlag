@@ -32,12 +32,12 @@ public final class EagerPrepassExecutor implements PrepassExecutor {
                     try {
                         op = context.extractor().toOp(node);
                     } catch (ExtractionFailedException e) {
-                        caches.first.failures.put(node, e);
-                        caches.second.failures.put(node, e);
+                        caches.first.failed.put(node, e);
+                        caches.second.failed.put(node, e);
                         return super.visitMethod(node, o);
                     }
-                    caches.first.caches.put(node, op);
-                    caches.second.caches.put(node, op);
+                    caches.first.success.put(node, op);
+                    caches.second.success.put(node, op);
                     parents.put(node, tree);
                     return super.visitMethod(node, o);
                 }
@@ -45,16 +45,23 @@ public final class EagerPrepassExecutor implements PrepassExecutor {
         }
 
         for (TransformationStep<?> step : steps) {
-            CodeModelExtractor previousExtractor = new CachingCodeModelExtractor(null, caches.first.caches, caches.first.failures);
+            CodeModelExtractor previousExtractor = new CachingCodeModelExtractor(null, caches.first.success, caches.first.failed);
             CodeModelExtractor extractor1 = prepass(step, trees,
                     new TransformationStep.PrepassConstructionContext(previousExtractor, context.task()));
-            caches.second.caches.replaceAll((key, _) -> extractor1.toOp(key));
+            for (MethodTree key : caches.first.success.keySet()) {
+                try {
+                    caches.second.success.put(key, extractor1.toOp(key));
+                } catch (ExtractionFailedException e) {
+                    caches.second.success.remove(key);
+                    caches.second.failed.put(key, e);
+                }
+            }
             caches.swap();
         }
-        return new CachingCodeModelExtractor(null, caches.first.caches, caches.first.failures);
+        return new CachingCodeModelExtractor(null, caches.first.success, caches.first.failed);
     }
 
-    private record Cache(Map<MethodTree, Optional<CoreOp.FuncOp>> caches, Map<MethodTree, ExtractionFailedException> failures) {
+    private record Cache(Map<MethodTree, Optional<CoreOp.FuncOp>> success, Map<MethodTree, ExtractionFailedException> failed) {
         public Cache() {
             this(new IdentityHashMap<>(), new IdentityHashMap<>());
         }

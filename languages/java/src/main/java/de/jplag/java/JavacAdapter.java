@@ -64,7 +64,7 @@ public class JavacAdapter {
             final CompilationTask task = compiler.getTask(null, fileManager, listener, options, null, javaFiles);
             final Trees trees = Trees.instance(task);
             final SourcePositions positions = new FixedSourcePositions(trees.getSourcePositions());
-            handle(executeCompilationTask(task), parser, positions, task);
+            scanCompilationUnits(executeCompilationTask(task), parser, positions, task);
         } catch (Exception exception) {
             throw new ParsingException(null, exception.getMessage(), exception);
         }
@@ -100,7 +100,7 @@ public class JavacAdapter {
         return false;
     }
 
-    protected void handle(Iterable<? extends CompilationUnitTree> trees, Parser parser, SourcePositions positions,
+    protected void scanCompilationUnits(Iterable<? extends CompilationUnitTree> trees, Parser parser, SourcePositions positions,
             JavaCompiler.CompilationTask task) {
         for (final CompilationUnitTree ast : trees) {
             File file = new File(ast.getSourceFile().toUri());

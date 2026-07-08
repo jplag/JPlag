@@ -57,14 +57,14 @@ public class IfFuseTransformer implements SimpleTransformation, BabylonDSL {
                 builder.transformBody(condition, List.of(), (YieldTransformer) (block, _) -> block);
                 return builder;
             } else if (isJustIf(ifFalse)) {
-                handle(builder, condition, true, ifOp, (JavaOp.IfOp) ifFalse.entryBlock().ops().getFirst());
+                placeFusedIf(builder, condition, true, ifOp, (JavaOp.IfOp) ifFalse.entryBlock().ops().getFirst());
                 return builder;
             } else {
                 builder.add(op);
                 return builder;
             }
         } else if (isEmpty(ifFalse) && isJustIf(ifTrue)) {
-            handle(builder, condition, false, ifOp, (JavaOp.IfOp) ifTrue.entryBlock().ops().getFirst());
+            placeFusedIf(builder, condition, false, ifOp, (JavaOp.IfOp) ifTrue.entryBlock().ops().getFirst());
             return builder;
         } else {
             builder.add(op);
@@ -72,7 +72,7 @@ public class IfFuseTransformer implements SimpleTransformation, BabylonDSL {
         }
     }
 
-    private void handle(Block.Builder builder, Body outerCond, boolean flipOuter, JavaOp.IfOp outer, JavaOp.IfOp inner) {
+    private void placeFusedIf(Block.Builder builder, Body outerCond, boolean flipOuter, JavaOp.IfOp outer, JavaOp.IfOp inner) {
         if (inner.bodies().size() != 3) {
             builder.add(outer);
             return;

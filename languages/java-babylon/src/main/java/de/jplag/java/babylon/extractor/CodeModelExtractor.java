@@ -15,8 +15,9 @@ public interface CodeModelExtractor {
      * Converts a method obtained from a {@link com.sun.source.tree.TreeVisitor} into a code model.
      * @param methodTree the method from the visitor
      * @return the code model, if it could be created
+     * @throws ExtractionFailedException if an unrecoverable error occurs during extraction
      */
-    Optional<CoreOp.FuncOp> toOp(MethodTree methodTree);
+    Optional<CoreOp.FuncOp> toOp(MethodTree methodTree) throws ExtractionFailedException;
 
     /**
      * Notifies this extractor that internal caches for a method tree can be evicted since it has been cached at a later

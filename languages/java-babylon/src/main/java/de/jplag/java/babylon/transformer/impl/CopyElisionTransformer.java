@@ -48,6 +48,7 @@ public class CopyElisionTransformer implements SimpleTransformation, BabylonDSL 
     public Block.Builder acceptOp(Block.Builder builder, Op op) {
         switch (op) {
             case CoreOp.VarOp varOp when onlyWritten(varOp) || (onlyRead(varOp) && varOp.result().uses().size() <= maxReadUses) -> {
+                // This varOp is either only written or only read a few times. Remove it (and adjust/replace usages)
                 for (Op.Result use : varOp.result().uses()) {
                     builder.context().putProperty(use.op(), IDENTIFIER);
                 }
@@ -61,13 +62,10 @@ public class CopyElisionTransformer implements SimpleTransformation, BabylonDSL 
                     }
                 }
             }
+
             case CoreOp.VarOp varOp when initialValueReplacer(varOp) instanceof CoreOp.VarAccessOp.VarStoreOp varStoreOp -> {
-                if (varOp.isUninitialized()) {
-                    builder.context().putProperty(varStoreOp, new ReplaceWithVariable(varOp));
-                } else {
-                    Op.Result replacement = place(builder, varOp.location(), CoreOp.var(varOp.varName(), varOp.varValueType()));
-                    builder.context().mapValue(varOp.result(), replacement);
-                }
+                // This varOp is assigned a new value before it is ever read. Move the variable down to the store.
+                builder.context().putProperty(varStoreOp, new ReplaceWithVariable(varOp));
             }
             case CoreOp.VarAccessOp.VarStoreOp varStoreOp when builder.context()
                     .getProperty(varStoreOp) instanceof ReplaceWithVariable(CoreOp.VarOp varOp) -> {
@@ -75,7 +73,10 @@ public class CopyElisionTransformer implements SimpleTransformation, BabylonDSL 
                         CoreOp.var(varOp.varName(), varOp.varValueType(), builder.context().getValue(varStoreOp.storeOperand())));
                 builder.context().mapValue(varOp.result(), result);
             }
+
             case CoreOp.VarAccessOp.VarStoreOp varStoreOp when storedValueUnused(varStoreOp) -> {
+                // A value is stored but never read, so the store can be removed (and later DCE can potentially evaluate the
+                // computation)
             }
             // TODO elide var x; ...; assign x; ...; var y = x; now only use y
             default -> builder.add(op);
@@ -107,11 +108,16 @@ public class CopyElisionTransformer implements SimpleTransformation, BabylonDSL 
                 .allMatch(use -> dominates(use.op(), varStoreOp));
     }
 
+    /**
+     * Returns the {@link CoreOp.VarAccessOp.VarStoreOp} that is the first use of the variable, if any.<br>
+     * Returns null if any operation could potentially access the variable before the store.
+     * @param varOp the variable to check
+     * @return the replacer, if any
+     */
     private @Nullable CoreOp.VarAccessOp.VarStoreOp initialValueReplacer(CoreOp.VarOp varOp) {
         SequencedSet<Op.Result> uses = varOp.result().uses();
-        return uses.stream()
-                .filter(use -> use.op() instanceof CoreOp.VarAccessOp.VarStoreOp
-                        && uses.stream().allMatch(otherUse -> use == otherUse || dominates(use.op(), otherUse.op())))
-                .findFirst().map(use -> (CoreOp.VarAccessOp.VarStoreOp) use.op()).orElse(null);
+        return uses.stream().filter(use -> use.op() instanceof CoreOp.VarAccessOp.VarStoreOp).map(use -> (CoreOp.VarAccessOp.VarStoreOp) use.op())
+                .filter(use -> uses.stream().allMatch(otherUse -> use.result() == otherUse || dominates(use, otherUse.op()))).findFirst()
+                .orElse(null);
     }
 }

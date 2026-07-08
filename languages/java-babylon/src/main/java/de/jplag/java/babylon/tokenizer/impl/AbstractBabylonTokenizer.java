@@ -41,7 +41,7 @@ public abstract class AbstractBabylonTokenizer implements BabylonTokenizer, Baby
      * @param op the op to tokenize
      * @throws IllegalArgumentException if the op is invalid
      */
-    public abstract void handle(Op op);
+    public abstract void tokenize(Op op);
 
     /**
      * Responsible for creating instances of {@link AbstractBabylonTokenizer} subclasses.

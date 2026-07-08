@@ -106,26 +106,33 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
             return addAll(builder, collect);
         } else if (COLLECTION_STREAM.contains(invokeOp.invokeReference()) && invokeOp.resultType() instanceof ClassType ct
                 && ct.typeArguments().size() == 1) {
-            return handle(builder, new Step.Begin.Collection(invokeOp, ct.typeArguments().getFirst()));
+            return markBeginningIfPipeline(builder, new Step.Begin.Collection(invokeOp, ct.typeArguments().getFirst()));
         } else if (invokeOp.invokeReference().equals(ARRAY_STREAM) && invokeOp.resultType() instanceof ClassType ct
                 && ct.typeArguments().size() == 1) {
-            return handle(builder, new Step.Begin.Array(invokeOp, ct.typeArguments().getFirst()));
+            return markBeginningIfPipeline(builder, new Step.Begin.Array(invokeOp, ct.typeArguments().getFirst()));
         } else if (invokeOp.invokeReference().equals(ARRAY_STREAM_I)) {
-            return handle(builder, new Step.Begin.Array(invokeOp, INT));
+            return markBeginningIfPipeline(builder, new Step.Begin.Array(invokeOp, INT));
         } else if (invokeOp.invokeReference().equals(ARRAY_STREAM_L)) {
-            return handle(builder, new Step.Begin.Array(invokeOp, LONG));
+            return markBeginningIfPipeline(builder, new Step.Begin.Array(invokeOp, LONG));
         } else if (invokeOp.invokeReference().equals(ARRAY_STREAM_D)) {
-            return handle(builder, new Step.Begin.Array(invokeOp, JavaType.DOUBLE));
+            return markBeginningIfPipeline(builder, new Step.Begin.Array(invokeOp, JavaType.DOUBLE));
         } else if (invokeOp.invokeReference().equals(STRING_STREAM)) {
-            return handle(builder, new Step.Begin.String(invokeOp));
+            return markBeginningIfPipeline(builder, new Step.Begin.String(invokeOp));
         } else {
             builder.add(op);
             return builder;
         }
     }
 
-    private Block.Builder handle(Block.Builder builder, Step.Begin begin) {
-        if (!handle(builder, (Step) begin))
+    /**
+     * Marks {@code begin} as the beginning of a stream pipeline if the result is used in a complete, supported, stream
+     * pipeline definition.
+     * @param builder the parent block builder
+     * @param begin the potential pipeline beginning
+     * @return the block builder to continue with
+     */
+    private Block.Builder markBeginningIfPipeline(Block.Builder builder, Step.Begin begin) {
+        if (!markStepIfPipeline(builder, begin))
             builder.add(begin.source());
         return builder;
     }
@@ -159,14 +166,22 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
     private static final Set<MethodRef> STREAM_SUM = Set.of(method(IntStream.class, "sum", int.class), method(LongStream.class, "sum", long.class),
             method(DoubleStream.class, "sum", double.class));
 
-    private boolean handle(Block.Builder builder, Step pipeline) {
+    /**
+     * Marks {@code pipeline} as a step of a stream pipeline if the result is used in a complete, supported, stream pipeline
+     * definition.<br>
+     * Recursively calls this method to validate the next pipeline step.
+     * @param builder the parent block builder
+     * @param pipeline the potential pipeline step
+     * @return true if the pipeline step was marked, false otherwise
+     */
+    private boolean markStepIfPipeline(Block.Builder builder, Step pipeline) {
         Op.Result beginResult = pipeline.source().result();
         if (beginResult.uses().size() != 1 || !(requireSingle(beginResult.uses()).op() instanceof JavaOp.InvokeOp invokeOp)) {
             return false;
         }
         if (STREAM_FILTER.contains(invokeOp.invokeReference()) && argOperands(invokeOp).size() == 1
                 && requireSingle(argOperands(invokeOp)) instanceof Op.Result predicate && predicate.op() instanceof JavaOp.LambdaOp lambda) {
-            if (handle(builder, new Step.Intermediate.Filter(invokeOp, pipeline, lambda))) {
+            if (markStepIfPipeline(builder, new Step.Intermediate.Filter(invokeOp, pipeline, lambda))) {
                 builder.context().putProperty(invokeOp, IDENTIFIER);
                 return true;
             } else {
@@ -174,7 +189,7 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
             }
         } else if (STREAM_MAP.contains(invokeOp.invokeReference()) && argOperands(invokeOp).size() == 1
                 && requireSingle(argOperands(invokeOp)) instanceof Op.Result predicate && predicate.op() instanceof JavaOp.LambdaOp lambda) {
-            if (handle(builder, new Step.Intermediate.Map(invokeOp, pipeline, lambda, lambda.body().yieldType()))) {
+            if (markStepIfPipeline(builder, new Step.Intermediate.Map(invokeOp, pipeline, lambda, lambda.body().yieldType()))) {
                 builder.context().putProperty(invokeOp, IDENTIFIER);
                 return true;
             } else {
@@ -202,6 +217,14 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
     private static final MethodRef LIST_NEW = MethodRef.constructor(ArrayList.class);
     private static final MethodRef LIST_ADD = method(List.class, "add", boolean.class, Object.class);
 
+    /**
+     * Writes the loop-based reimplementation of the {@code pipeline} to the {@code builder}.<br>
+     * This method handles the final collect step and delegates previous steps to
+     * {@link #addAll(Block.Builder, CodeContext, Step, BiConsumer)}.
+     * @param builder the builder to write the pipeline to
+     * @param pipeline the pipeline to write
+     * @return the builder to continue with
+     */
     private Block.Builder addAll(Block.Builder builder, Collect pipeline) {
         Op.Location location = pipeline.source().location();
         Value resultVariable = switch (pipeline) {
@@ -231,9 +254,9 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
                 });
                 yield holderVariable;
             }
-            case Collect.Count count -> {
+            case Collect.Count _ -> {
                 Value countVariable = place(builder, location, var(null, LONG, place(builder, location, constant(LONG, 0))));
-                builder = addAll(builder, builder.context(), pipeline.from(), (value, inner) -> {
+                builder = addAll(builder, builder.context(), pipeline.from(), (_, inner) -> {
                     Value newCount = place(inner, location,
                             add(place(inner, location, varLoad(countVariable)), place(inner, location, constant(INT, 1))));
                     place(inner, location, varStore(countVariable, newCount));
@@ -256,6 +279,15 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
 
     private static final MethodRef STRING_TO_CHAR_ARRAY = method(String.class, "toCharArray", char[].class);
 
+    /**
+     * Writes the loop-based reimplementation of the {@code pipeline} to the {@code builder}.<br>
+     * Assumes that the collection (and, potentially, other downstream steps) are already handled in {@code inner}.
+     * @param builder the builder to write the pipeline to
+     * @param context the current context for resolving values
+     * @param pipeline the remaining pipeline steps
+     * @param inner the downstream of the current pipeline steps, to be inserted into the handling of this step
+     * @return the builder to continue with
+     */
     private Block.Builder addAll(Block.Builder builder, CodeContext context, Step pipeline,
             BiConsumer<Function<Block.Builder, Value>, Block.Builder> inner) {
         Op.Location location = pipeline.source().location();
@@ -312,6 +344,12 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
         };
     }
 
+    /**
+     * Checks whether a {@link Body} contains any {@link JavaOp.JavaStatement}.<br>
+     * Does NOT search bodies of operations.
+     * @param body the body to search
+     * @return true if a statement was found
+     */
     private boolean containsStatement(Body body) {
         for (Block block : body.blocks()) {
             for (Op op : block.ops()) {

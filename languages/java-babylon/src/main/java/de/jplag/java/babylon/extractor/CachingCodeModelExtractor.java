@@ -39,7 +39,7 @@ public final class CachingCodeModelExtractor implements CodeModelExtractor {
     }
 
     @Override
-    public Optional<CoreOp.FuncOp> toOp(MethodTree methodTree) {
+    public Optional<CoreOp.FuncOp> toOp(MethodTree methodTree) throws ExtractionFailedException {
         Optional<CoreOp.FuncOp> result = cache.get(methodTree);
         if (result != null) {
             return result;

@@ -6,7 +6,7 @@ import com.sun.source.tree.MethodTree;
  * {@link RuntimeException} that signals that a {@link jdk.incubator.code.dialect.core.CoreOp.FuncOp} could not be
  * extracted.
  */
-public class ExtractionFailedException extends RuntimeException {
+public class ExtractionFailedException extends Exception {
     /**
      * The source of the attempted extraction.
      */
@@ -23,10 +23,10 @@ public class ExtractionFailedException extends RuntimeException {
 
     /**
      * Create a new instance.
-     * @param source the exception that caused this
+     * @param cause the exception that caused this
      */
-    public ExtractionFailedException(ExtractionFailedException source) {
-        super(source);
-        this.source = source.source;
+    public ExtractionFailedException(ExtractionFailedException cause) {
+        super(cause);
+        this.source = cause.source;
     }
 }

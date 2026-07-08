@@ -36,12 +36,12 @@ class JavacAdapterBabylon extends JavacAdapter {
     }
 
     @Override
-    protected void handle(Iterable<? extends CompilationUnitTree> trees, Parser parser, SourcePositions positions,
+    protected void scanCompilationUnits(Iterable<? extends CompilationUnitTree> trees, Parser parser, SourcePositions positions,
             JavaCompiler.CompilationTask task) {
         TransformationPipeline.Context prepassContext = pipeline.prepass(trees,
                 new TransformationStep.PrepassConstructionContext(new CodeModelExtractorImpl(task), task));
         TreeScannerConstructionContext context = new TreeScannerConstructionContext(prepassContext, trees);
-        ScopedValue.where(PREPASS_CONTEXT, context).run(() -> super.handle(trees, parser, positions, task));
+        ScopedValue.where(PREPASS_CONTEXT, context).run(() -> super.scanCompilationUnits(trees, parser, positions, task));
     }
 
     @Override

@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import de.jplag.java.babylon.extractor.CodeModelExtractor;
+import de.jplag.java.babylon.extractor.ExtractionFailedException;
 import de.jplag.java.babylon.transformer.TransformationStep;
 
 import com.sun.source.tree.CompilationUnitTree;
@@ -37,8 +38,10 @@ public final class TransformationPipeline {
     public TransformationPipeline(List<? extends TransformationStep<?>> steps, PrepassExecutor prepassExecutor) {
         this.steps = List.copyOf(steps);
         this.prepassExecutor = prepassExecutor;
+        ensureDependenciesFulfilled(this.steps);
+    }
 
-        // ensure all dependencies are fulfilled
+    private static void ensureDependenciesFulfilled(List<? extends TransformationStep<?>> steps) {
         Set<String> applied = new HashSet<>();
         for (TransformationStep<?> step : steps) {
             Set<String> difference = new HashSet<>(step.getDependencies());
@@ -58,7 +61,7 @@ public final class TransformationPipeline {
      * @return the prepass visitor
      */
     public Context prepass(Iterable<? extends CompilationUnitTree> trees, TransformationStep.PrepassConstructionContext context) {
-        return new Context(prepassExecutor.prepass(steps, trees, context));
+        return new Context(this, prepassExecutor.prepass(steps, trees, context));
     }
 
     /**
@@ -67,8 +70,12 @@ public final class TransformationPipeline {
      * @param context the context obtained from the prepass
      * @return the transformed op
      * @throws IllegalArgumentException if the context belongs to a different pipeline
+     * @throws ExtractionFailedException if the transformation is unsuccessful
      */
-    public Optional<CoreOp.FuncOp> transform(MethodTree methodTree, Context context) {
+    public Optional<CoreOp.FuncOp> transform(MethodTree methodTree, Context context) throws ExtractionFailedException {
+        if (context.source != this) {
+            throw new IllegalArgumentException("Context belongs to a different pipeline");
+        }
         return context.finalExtractor.toOp(methodTree);
     }
 
@@ -77,9 +84,11 @@ public final class TransformationPipeline {
      * Only intended as the object to be passed to {@link #transform}, do not use this elsewhere.
      */
     public static class Context {
+        private final TransformationPipeline source;
         private final CodeModelExtractor finalExtractor;
 
-        private Context(CodeModelExtractor finalExtractor) {
+        private Context(TransformationPipeline source, CodeModelExtractor finalExtractor) {
+            this.source = source;
             this.finalExtractor = finalExtractor;
         }
     }
