@@ -32,7 +32,6 @@ import de.jplag.options.OptionType;
 
 class BabylonOptions extends LanguageOptions {
     private static final String ERROR_TRANSFORMATION_NOT_FOUND = "The selected transformation %s could not be found. Available transformations: %s";
-    private static final String ERROR_NOT_ENOUGH_TRANSFORMATIONS = "Specify at least 1 transformation. Available transformations: %s";
     private static final String ERROR_TOKENIZER_NOT_FOUND = "The selected tokenizer %s could not be found. Available tokenizers: %s";
     private static final String ERROR_NO_TOKENIZER = "Specify a tokenizer. Available tokenizers: %s";
     private static final char LIST_SEPARATOR = ',';
@@ -59,7 +58,7 @@ class BabylonOptions extends LanguageOptions {
         String transformationNames = transformations.getValue();
         if (transformationNames == null) {
             throw new IllegalArgumentException(
-                    String.format(ERROR_NOT_ENOUGH_TRANSFORMATIONS, TransformationStepLoader.getAllAvailableTransformationStepIdentifiers()));
+                    String.format(ERROR_TRANSFORMATION_NOT_FOUND, "null", TransformationStepLoader.getAllAvailableTransformationStepIdentifiers()));
         }
 
         return Arrays.asList(LIST_SEPARATOR_PATTERN.split(transformationNames));
@@ -75,18 +74,11 @@ class BabylonOptions extends LanguageOptions {
         if (this.pipelineSteps == null) {
             synchronized (this) {
                 if (this.pipelineSteps == null) {
-                    List<? extends TransformationStep<?>> steps = getTransformations().stream()
+                    this.pipelineSteps = getTransformations().stream()
                             .map(name -> TransformationStepLoader.getTransformationStep(name)
                                     .orElseThrow(() -> new IllegalArgumentException(String.format(ERROR_TRANSFORMATION_NOT_FOUND, name,
                                             TransformationStepLoader.getAllAvailableTransformationStepIdentifiers()))))
                             .toList();
-
-                    if (steps.isEmpty()) {
-                        throw new IllegalArgumentException(String.format(ERROR_NOT_ENOUGH_TRANSFORMATIONS,
-                                TransformationStepLoader.getAllAvailableTransformationStepIdentifiers()));
-                    }
-
-                    this.pipelineSteps = steps;
                 }
             }
         }
