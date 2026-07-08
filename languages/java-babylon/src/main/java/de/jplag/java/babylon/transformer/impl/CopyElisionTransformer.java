@@ -67,8 +67,13 @@ public class CopyElisionTransformer implements SimpleTransformation {
             }
 
             case CoreOp.VarOp varOp when initialValueReplacer(varOp) instanceof CoreOp.VarAccessOp.VarStoreOp varStoreOp -> {
-                // This varOp is assigned a new value before it is ever read. Move the variable down to the store.
-                builder.context().putProperty(varStoreOp, new ReplaceWithVariable(varOp));
+                // This varOp is assigned a new value before it is ever read. Remove the init and possibly move it down.
+                if (varStoreOp.parent().equals(varOp.parent())) {
+                    builder.context().putProperty(varStoreOp, new ReplaceWithVariable(varOp));
+                } else {
+                    Op.Result replacement = place(builder, varOp.location(), var(varOp.varName(), varOp.varValueType()));
+                    builder.context().mapValue(varOp.result(), replacement);
+                }
             }
             case CoreOp.VarAccessOp.VarStoreOp varStoreOp when builder.context()
                     .getProperty(varStoreOp) instanceof ReplaceWithVariable(CoreOp.VarOp varOp) -> {
