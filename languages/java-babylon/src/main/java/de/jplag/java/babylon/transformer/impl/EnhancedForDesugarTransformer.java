@@ -1,11 +1,15 @@
 package de.jplag.java.babylon.transformer.impl;
 
+import static de.jplag.java.babylon.BabylonUtils.dominates;
+import static de.jplag.java.babylon.BabylonUtils.location;
+import static de.jplag.java.babylon.BabylonUtils.place;
+import static de.jplag.java.babylon.BabylonUtils.requireSingle;
+
 import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.Nullable;
 
-import de.jplag.java.babylon.BabylonDSL;
 import de.jplag.java.babylon.transformer.SimpleTransformation;
 import de.jplag.java.babylon.transformer.impl.util.YieldAssignTransformer;
 import de.jplag.java.babylon.transformer.impl.util.YieldTransformer;
@@ -31,7 +35,7 @@ import jdk.incubator.code.dialect.java.MethodRef;
  * {@link SimpleTransformation} that desugars enhanced for loops to normal for loops.
  */
 @AutoService(SimpleTransformation.class)
-public class EnhancedForDesugarTransformer implements SimpleTransformation, BabylonDSL {
+public class EnhancedForDesugarTransformer implements SimpleTransformation {
     /**
      * Identifier of this transformer.
      */

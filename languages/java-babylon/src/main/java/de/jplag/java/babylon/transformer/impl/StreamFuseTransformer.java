@@ -1,5 +1,9 @@
 package de.jplag.java.babylon.transformer.impl;
 
+import static de.jplag.java.babylon.BabylonUtils.argOperands;
+import static de.jplag.java.babylon.BabylonUtils.inline;
+import static de.jplag.java.babylon.BabylonUtils.place;
+import static de.jplag.java.babylon.BabylonUtils.requireSingle;
 import static jdk.incubator.code.dialect.core.CoreOp.constant;
 import static jdk.incubator.code.dialect.core.CoreOp.core_yield;
 import static jdk.incubator.code.dialect.core.CoreOp.var;
@@ -54,7 +58,6 @@ import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-import de.jplag.java.babylon.BabylonDSL;
 import de.jplag.java.babylon.transformer.SimpleTransformation;
 
 import com.google.auto.service.AutoService;
@@ -76,7 +79,7 @@ import jdk.incubator.code.dialect.java.MethodRef;
  * {@link SimpleTransformation} that fuses simple stream operations into loops.
  */
 @AutoService(SimpleTransformation.class)
-public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
+public class StreamFuseTransformer implements SimpleTransformation {
     /**
      * Identifier of this transformer.
      */

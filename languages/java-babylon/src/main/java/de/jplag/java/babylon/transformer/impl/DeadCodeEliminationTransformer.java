@@ -1,6 +1,5 @@
 package de.jplag.java.babylon.transformer.impl;
 
-import de.jplag.java.babylon.BabylonDSL;
 import de.jplag.java.babylon.transformer.SimpleTransformation;
 
 import com.google.auto.service.AutoService;
@@ -15,7 +14,7 @@ import jdk.incubator.code.dialect.java.JavaOp;
  * {@link SimpleTransformation} that eliminates ops that are not used.
  */
 @AutoService(SimpleTransformation.class)
-public class DeadCodeEliminationTransformer implements SimpleTransformation, BabylonDSL {
+public class DeadCodeEliminationTransformer implements SimpleTransformation {
     /**
      * Identifier of this transformer.
      */

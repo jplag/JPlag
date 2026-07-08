@@ -1,8 +1,9 @@
 package de.jplag.java.babylon.transformer.impl;
 
+import static de.jplag.java.babylon.BabylonUtils.place;
+
 import java.util.List;
 
-import de.jplag.java.babylon.BabylonDSL;
 import de.jplag.java.babylon.transformer.SimpleTransformation;
 import de.jplag.java.babylon.transformer.impl.util.YieldTransformer;
 
@@ -22,7 +23,7 @@ import jdk.incubator.code.dialect.java.MethodRef;
  * enabled.
  */
 @AutoService(SimpleTransformation.class)
-public class AssertForceTransformer implements SimpleTransformation, BabylonDSL {
+public class AssertForceTransformer implements SimpleTransformation {
     /**
      * Identifier of this transformer.
      */

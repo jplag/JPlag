@@ -1,8 +1,9 @@
 package de.jplag.java.babylon.transformer.impl;
 
+import static de.jplag.java.babylon.BabylonUtils.place;
+
 import java.util.List;
 
-import de.jplag.java.babylon.BabylonDSL;
 import de.jplag.java.babylon.transformer.SimpleTransformation;
 import de.jplag.java.babylon.transformer.impl.util.YieldAssignTransformer;
 
@@ -17,7 +18,7 @@ import jdk.incubator.code.dialect.java.JavaOp;
  * {@link SimpleTransformation} that desugars {@link JavaOp.ConditionalExpressionOp} into an if statement.
  */
 @AutoService(SimpleTransformation.class)
-public class ConditionalExpressionDesugarTransformer implements SimpleTransformation, BabylonDSL {
+public class ConditionalExpressionDesugarTransformer implements SimpleTransformation {
     /**
      * Identifier of this transformer.
      */

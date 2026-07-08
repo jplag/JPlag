@@ -1,5 +1,8 @@
 package de.jplag.java.babylon.transformer.impl;
 
+import static de.jplag.java.babylon.BabylonUtils.argOperands;
+import static de.jplag.java.babylon.BabylonUtils.place;
+import static de.jplag.java.babylon.BabylonUtils.requireSingle;
 import static jdk.incubator.code.dialect.core.CoreOp.Result;
 import static jdk.incubator.code.dialect.core.CoreOp.constant;
 import static jdk.incubator.code.dialect.core.CoreOp.core_yield;
@@ -28,7 +31,6 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
-import de.jplag.java.babylon.BabylonDSL;
 import de.jplag.java.babylon.transformer.SimpleTransformation;
 
 import com.google.auto.service.AutoService;
@@ -52,7 +54,7 @@ import jdk.incubator.code.dialect.java.PrimitiveType;
  * Deliberately does not handle primitive variants of {@link Optional} as those lack {@link Optional#ofNullable}.
  */
 @AutoService(SimpleTransformation.class)
-public class OptionalElisionTransformer implements SimpleTransformation, BabylonDSL {
+public class OptionalElisionTransformer implements SimpleTransformation {
     /**
      * Identifier of this transformer.
      */

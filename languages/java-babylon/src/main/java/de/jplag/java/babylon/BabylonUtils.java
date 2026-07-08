@@ -1,5 +1,7 @@
 package de.jplag.java.babylon;
 
+import static jdk.incubator.code.dialect.core.CoreOp.constant;
+import static jdk.incubator.code.dialect.core.CoreOp.varStore;
 import static jdk.incubator.code.dialect.java.JavaType.VOID;
 
 import java.io.IOException;
@@ -28,16 +30,18 @@ import jdk.incubator.code.dialect.java.JavaType;
 import jdk.incubator.code.extern.OpWriter;
 
 /**
- * A set of utility methods for working with Babylon code models. Designed to be used by "implementing" this interface
- * (inspired by ASM).
+ * A set of utility methods for working with Babylon code models.
  */
-public interface BabylonDSL {
+public final class BabylonUtils {
+    private BabylonUtils() {
+    }
+
     /**
      * Copy the contents of a {@link Body} to a {@link Block.Builder}.
      * @param from the source body
      * @param to the target block builder
      */
-    default void copy(Body from, Block.Builder to) {
+    public static void copy(Body from, Block.Builder to) {
         // this implicitly clears out the parameters which we depend on
         for (Op op1 : requireSingle(from.blocks()).ops()) {
             if (isLocationMarker(op1))
@@ -52,8 +56,8 @@ public interface BabylonDSL {
      * @return the new op
      * @see #isLocationMarker(Op)
      */
-    default Op locationMarker(Op.Location location) {
-        CoreOp.ConstantOp op = CoreOp.constant(VOID, null);
+    public static Op locationMarker(Op.Location location) {
+        CoreOp.ConstantOp op = constant(VOID, null);
         op.setLocation(location);
         return op;
     }
@@ -64,7 +68,7 @@ public interface BabylonDSL {
      * @return true if it is a location marker
      * @see #locationMarker(Op.Location)
      */
-    default boolean isLocationMarker(Op op) {
+    public static boolean isLocationMarker(Op op) {
         if (!(op instanceof CoreOp.ConstantOp cnst))
             return false;
         if (cnst.resultType() != VOID)
@@ -79,7 +83,7 @@ public interface BabylonDSL {
      * @param body the body
      * @return the location of the body
      */
-    default Op.Location location(Body body) {
+    public static Op.Location location(Body body) {
         if (body == null)
             return null;
         for (Block block : body.blocks()) {
@@ -95,7 +99,7 @@ public interface BabylonDSL {
      * @param block the block
      * @return the location of the block
      */
-    default Op.Location location(Block block) {
+    public static Op.Location location(Block block) {
         for (Op op : block.ops()) {
             Op.Location location = op.location();
             if (location != null)
@@ -109,7 +113,7 @@ public interface BabylonDSL {
      * @param ce the code element
      * @return the location of the code element
      */
-    default Op.Location location(CodeElement<?, ?> ce) {
+    public static Op.Location location(CodeElement<?, ?> ce) {
         return switch (ce) {
             case Block block -> location(block);
             case Body body -> location(body);
@@ -122,7 +126,7 @@ public interface BabylonDSL {
      * @param value the value
      * @return the location of the value
      */
-    default Op.Location location(Value value) {
+    public static Op.Location location(Value value) {
         return location(value.declaringElement());
     }
 
@@ -133,7 +137,7 @@ public interface BabylonDSL {
      * @param op operation to add
      * @return operation result of the appended operation
      */
-    default Op.Result place(Block.Builder bd, Op.Location location, Op op) {
+    public static Op.Result place(Block.Builder bd, Op.Location location, Op op) {
         if (location != null) {
             op.setLocation(location);
         }
@@ -148,7 +152,7 @@ public interface BabylonDSL {
      * @param op operation to add
      * @return operation result of the appended operation
      */
-    default Op.Result placeExact(Block.Builder bd, Op.Location location, Op op) {
+    public static Op.Result placeExact(Block.Builder bd, Op.Location location, Op op) {
         // This logic mirrors the internal logic in builder.add, except for the fact that transformation is delegated to the
         // copying transformer.
         // This allows bodies of this op to have their contents processed normally rather than being handled by the transformer
@@ -170,14 +174,14 @@ public interface BabylonDSL {
      * @param resultVariable the variable to store the result in
      * @param <O> the type of operation to inline
      */
-    default <O extends Op & Op.Invokable> void inline(Block.Builder bd, Op.Location location, O target, List<Value> args,
+    public static <O extends Op & Op.Invokable> void inline(Block.Builder bd, Op.Location location, O target, List<Value> args,
             @Nullable Value resultVariable) {
         if (resultVariable == null && location != null) {
             bd.add(locationMarker(location));
         }
         Inliner.inline(bd, target, args, (b, value) -> {
             if (resultVariable != null) {
-                place(b, location, CoreOp.varStore(resultVariable, value));
+                place(b, location, varStore(resultVariable, value));
             }
         });
     }
@@ -189,7 +193,7 @@ public interface BabylonDSL {
      * @return the single element
      * @throws IllegalStateException if there is not exactly one element
      */
-    default <T> T requireSingle(SequencedCollection<T> collection) {
+    public static <T> T requireSingle(SequencedCollection<T> collection) {
         Iterator<T> iterator = collection.iterator();
         if (!iterator.hasNext()) {
             throw new IllegalStateException("Expected exactly one element but got empty");
@@ -206,7 +210,7 @@ public interface BabylonDSL {
      * @param value the {@link Value} to which something is stored
      * @return a name representing the {@link Value}
      */
-    default String name(Value value) {
+    public static String name(Value value) {
         return switch (value) {
             case Block.Parameter parameter -> Integer.toString(parameter.index());
             case Op.Result result -> switch (result.op()) {
@@ -222,8 +226,8 @@ public interface BabylonDSL {
      * @param comment the comment the op should wrap
      * @return the op
      */
-    default Op commentOp(String comment) {
-        return CoreOp.constant(JavaType.J_L_STRING, comment);
+    public static Op commentOp(String comment) {
+        return constant(JavaType.J_L_STRING, comment);
     }
 
     /**
@@ -232,7 +236,7 @@ public interface BabylonDSL {
      * @param body the body to convert to text
      * @return the textual representation
      */
-    default String toText(Body body) {
+    public static String toText(Body body) {
         String result = new Op(List.of()) {
             @Override
             public Op transform(CodeContext cc, CodeTransformer ct) {
@@ -264,7 +268,7 @@ public interface BabylonDSL {
      * @return the textual representation
      * @throws UncheckedIOException if the internal string writer cannot be closed
      */
-    default String toText(Block block) {
+    public static String toText(Block block) {
         try (StringWriter sw = new StringWriter()) {
             OpWriter opWriter = new OpWriter(sw);
             for (Op op : block.ops()) {
@@ -284,7 +288,7 @@ public interface BabylonDSL {
      * @param op2 the second op
      * @return if op1 strictly dominates op2
      */
-    default boolean dominates(Op op1, Op op2) {
+    public static boolean dominates(Op op1, Op op2) {
         // Fast path
         if (op1.parent() == op2.parent()) {
             List<Op> blockOps = op1.parent().ops();
@@ -324,7 +328,7 @@ public interface BabylonDSL {
      * @param invokeOp the operation
      * @return the argument list
      */
-    default List<Value> argOperands(JavaOp.InvokeOp invokeOp) {
+    public static List<Value> argOperands(JavaOp.InvokeOp invokeOp) {
         List<Value> result = invokeOp.argOperands();
         if (invokeOp.hasReceiver()) {
             assert result.getFirst() == invokeOp.receiverOperand();

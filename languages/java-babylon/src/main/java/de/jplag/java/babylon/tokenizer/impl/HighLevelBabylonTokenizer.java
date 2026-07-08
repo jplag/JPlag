@@ -1,5 +1,8 @@
 package de.jplag.java.babylon.tokenizer.impl;
 
+import static de.jplag.java.babylon.BabylonUtils.location;
+import static de.jplag.java.babylon.BabylonUtils.name;
+
 import java.io.File;
 import java.util.Iterator;
 import java.util.List;

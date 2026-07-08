@@ -1,5 +1,7 @@
 package de.jplag.java.babylon.transformer.impl;
 
+import static de.jplag.java.babylon.BabylonUtils.inline;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +13,6 @@ import javax.tools.JavaCompiler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.java.babylon.BabylonDSL;
 import de.jplag.java.babylon.extractor.CodeModelExtractor;
 import de.jplag.java.babylon.extractor.ExtractionFailedException;
 import de.jplag.java.babylon.transformer.Prepass;
@@ -114,7 +115,7 @@ public class InliningStep implements TransformationStep<InliningStep.Context> {
         }
     }
 
-    private static class Apply implements CodeTransformer, BabylonDSL {
+    private static class Apply implements CodeTransformer {
         private final Context context;
         private final boolean dropLocations;
 

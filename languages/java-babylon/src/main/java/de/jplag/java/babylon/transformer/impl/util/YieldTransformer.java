@@ -1,9 +1,9 @@
 package de.jplag.java.babylon.transformer.impl.util;
 
+import static de.jplag.java.babylon.BabylonUtils.placeExact;
+
 import java.util.List;
 import java.util.Objects;
-
-import de.jplag.java.babylon.BabylonDSL;
 
 import jdk.incubator.code.Block;
 import jdk.incubator.code.Body;
@@ -16,7 +16,7 @@ import jdk.incubator.code.dialect.core.CoreOp;
  * Use {@link Block.Builder#transformBody(Body, List, CodeTransformer)} to use this, see
  * {@link de.jplag.java.babylon.transformer.impl.AssertForceTransformer} for an example.
  */
-public interface YieldTransformer extends CodeTransformer, BabylonDSL {
+public interface YieldTransformer extends CodeTransformer {
     @Override
     default Block.Builder acceptOp(Block.Builder builder, Op op) {
         if (op instanceof CoreOp.YieldOp yield) {

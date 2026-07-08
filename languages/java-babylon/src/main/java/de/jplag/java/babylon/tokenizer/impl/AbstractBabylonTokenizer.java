@@ -3,7 +3,6 @@ package de.jplag.java.babylon.tokenizer.impl;
 import java.io.File;
 
 import de.jplag.TokenType;
-import de.jplag.java.babylon.BabylonDSL;
 import de.jplag.java.babylon.ParserBabylon;
 import de.jplag.java.babylon.tokenizer.BabylonTokenizer;
 import de.jplag.semantics.CodeSemantics;
@@ -14,7 +13,7 @@ import jdk.incubator.code.Op;
  * Responsible for transforming a code model into a {@link de.jplag.Token} sequence by outputting it to a
  * {@link ParserBabylon}.
  */
-public abstract class AbstractBabylonTokenizer implements BabylonTokenizer, BabylonDSL {
+public abstract class AbstractBabylonTokenizer implements BabylonTokenizer {
     protected final ParserBabylon parser;
     protected final File file;
 

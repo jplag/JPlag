@@ -1,10 +1,13 @@
 package de.jplag.java.babylon.transformer.impl;
 
+import static de.jplag.java.babylon.BabylonUtils.dominates;
+import static de.jplag.java.babylon.BabylonUtils.place;
+import static jdk.incubator.code.dialect.core.CoreOp.var;
+
 import java.util.SequencedSet;
 
 import javax.annotation.Nullable;
 
-import de.jplag.java.babylon.BabylonDSL;
 import de.jplag.java.babylon.transformer.SimpleTransformation;
 
 import com.google.auto.service.AutoService;
@@ -16,7 +19,7 @@ import jdk.incubator.code.dialect.core.CoreOp;
  * {@link SimpleTransformation} that removes unused variable copies.
  */
 @AutoService(SimpleTransformation.class)
-public class CopyElisionTransformer implements SimpleTransformation, BabylonDSL {
+public class CopyElisionTransformer implements SimpleTransformation {
     /**
      * Identifier of this transformer.
      */
@@ -70,7 +73,7 @@ public class CopyElisionTransformer implements SimpleTransformation, BabylonDSL 
             case CoreOp.VarAccessOp.VarStoreOp varStoreOp when builder.context()
                     .getProperty(varStoreOp) instanceof ReplaceWithVariable(CoreOp.VarOp varOp) -> {
                 Op.Result result = place(builder, varStoreOp.location(),
-                        CoreOp.var(varOp.varName(), varOp.varValueType(), builder.context().getValue(varStoreOp.storeOperand())));
+                        var(varOp.varName(), varOp.varValueType(), builder.context().getValue(varStoreOp.storeOperand())));
                 builder.context().mapValue(varOp.result(), result);
             }
 

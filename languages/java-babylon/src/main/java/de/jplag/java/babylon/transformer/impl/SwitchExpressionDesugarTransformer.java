@@ -1,12 +1,14 @@
 package de.jplag.java.babylon.transformer.impl;
 
+import static de.jplag.java.babylon.BabylonUtils.place;
+import static de.jplag.java.babylon.BabylonUtils.requireSingle;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
-import de.jplag.java.babylon.BabylonDSL;
 import de.jplag.java.babylon.transformer.SimpleTransformation;
 import de.jplag.java.babylon.transformer.impl.util.YieldAssignTransformer;
 
@@ -24,7 +26,7 @@ import jdk.incubator.code.dialect.java.JavaType;
  * {@link SimpleTransformation} that desugars {@link JavaOp.JavaSwitchOp}.
  */
 @AutoService(SimpleTransformation.class)
-public class SwitchExpressionDesugarTransformer implements SimpleTransformation, BabylonDSL {
+public class SwitchExpressionDesugarTransformer implements SimpleTransformation {
     /**
      * Identifier of this transformer.
      */

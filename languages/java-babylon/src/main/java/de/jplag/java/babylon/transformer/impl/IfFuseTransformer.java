@@ -1,12 +1,14 @@
 package de.jplag.java.babylon.transformer.impl;
 
+import static de.jplag.java.babylon.BabylonUtils.place;
+import static jdk.incubator.code.dialect.core.CoreOp.core_yield;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
-import de.jplag.java.babylon.BabylonDSL;
 import de.jplag.java.babylon.transformer.SimpleTransformation;
 import de.jplag.java.babylon.transformer.impl.util.YieldTransformer;
 
@@ -24,7 +26,7 @@ import jdk.incubator.code.dialect.java.JavaType;
  * {@link SimpleTransformation} that fuses unneeded if statements into their parent.
  */
 @AutoService(SimpleTransformation.class)
-public class IfFuseTransformer implements SimpleTransformation, BabylonDSL {
+public class IfFuseTransformer implements SimpleTransformation {
     /**
      * Identifier of this transformer.
      */
@@ -92,7 +94,7 @@ public class IfFuseTransformer implements SimpleTransformation, BabylonDSL {
                 place(builder, outer.location(), JavaOp.if_(builder.parentBody()).if_(b -> {
                     Op.Result and = place(b, inner.location(),
                             JavaOp.conditionalAnd(b.parentBody(), outerCondBuilder, maybeFlip(builder.context(), condition, true)).build());
-                    place(b, inner.location(), CoreOp.core_yield(and));
+                    place(b, inner.location(), core_yield(and));
                 }).then(b -> {
                     b.transformBody(ifFalse, List.of(), builder.context(), CodeTransformer.COPYING_TRANSFORMER);
                 }).else_());
@@ -101,7 +103,7 @@ public class IfFuseTransformer implements SimpleTransformation, BabylonDSL {
             place(builder, outer.location(), JavaOp.if_(builder.parentBody()).if_(b -> {
                 Op.Result and = place(b, inner.location(),
                         JavaOp.conditionalAnd(b.parentBody(), outerCondBuilder, maybeFlip(builder.context(), condition, false)).build());
-                place(b, inner.location(), CoreOp.core_yield(and));
+                place(b, inner.location(), core_yield(and));
             }).then(b -> {
                 b.transformBody(ifTrue, List.of(), builder.context(), CodeTransformer.COPYING_TRANSFORMER);
             }).else_());
@@ -116,11 +118,11 @@ public class IfFuseTransformer implements SimpleTransformation, BabylonDSL {
         };
     }
 
-    private static class FlipBoolean implements YieldTransformer, BabylonDSL {
+    private static class FlipBoolean implements YieldTransformer {
         @Override
         public Block.Builder acceptYield(Block.Builder builder, CoreOp.YieldOp yield) {
             Op.Result flipped = place(builder, yield.location(), JavaOp.not(builder.context().getValue(yield.yieldValue())));
-            place(builder, yield.location(), CoreOp.core_yield(flipped));
+            place(builder, yield.location(), core_yield(flipped));
             return builder;
         }
     }

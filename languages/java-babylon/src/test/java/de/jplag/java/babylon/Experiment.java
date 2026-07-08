@@ -14,7 +14,7 @@ import de.jplag.java.JavaLanguage;
 import de.jplag.java.babylon.tokenizer.impl.FullTypedBabylonTokenizer;
 import de.jplag.java.babylon.tokenizer.impl.HighLevelBabylonTokenizer;
 
-class Experiment implements BabylonDSL {
+class Experiment {
     private static final Path JAVA_SOURCES = Path.of("languages", "java", "src", "test", "resources", "de", "jplag", "java");
     private static final Path JAVA_BABYLON_SOURCES = Path.of("languages", "java-babylon", "src", "test", "resources", "de", "jplag", "java",
             "babylon");

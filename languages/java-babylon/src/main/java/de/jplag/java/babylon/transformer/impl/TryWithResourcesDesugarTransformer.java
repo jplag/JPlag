@@ -1,5 +1,10 @@
 package de.jplag.java.babylon.transformer.impl;
 
+import static de.jplag.java.babylon.BabylonUtils.copy;
+import static de.jplag.java.babylon.BabylonUtils.location;
+import static de.jplag.java.babylon.BabylonUtils.locationMarker;
+import static de.jplag.java.babylon.BabylonUtils.place;
+import static de.jplag.java.babylon.BabylonUtils.requireSingle;
 import static jdk.incubator.code.dialect.java.JavaType.J_L_OBJECT;
 import static jdk.incubator.code.dialect.java.JavaType.VOID;
 
@@ -9,7 +14,6 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import de.jplag.java.babylon.BabylonDSL;
 import de.jplag.java.babylon.transformer.SimpleTransformation;
 
 import com.google.auto.service.AutoService;
@@ -28,7 +32,7 @@ import jdk.incubator.code.dialect.java.MethodRef;
  * {@link SimpleTransformation} that converts try-with-resources into regular try-finally statements.
  */
 @AutoService(SimpleTransformation.class)
-public class TryWithResourcesDesugarTransformer implements SimpleTransformation, BabylonDSL {
+public class TryWithResourcesDesugarTransformer implements SimpleTransformation {
     /**
      * Identifier of this transformer.
      */

@@ -1,8 +1,10 @@
 package de.jplag.java.babylon.transformer.impl;
 
+import static de.jplag.java.babylon.BabylonUtils.place;
+import static de.jplag.java.babylon.BabylonUtils.placeExact;
+
 import java.util.List;
 
-import de.jplag.java.babylon.BabylonDSL;
 import de.jplag.java.babylon.transformer.SimpleTransformation;
 import de.jplag.java.babylon.transformer.impl.util.YieldTransformer;
 
@@ -18,7 +20,7 @@ import jdk.incubator.code.dialect.java.JavaOp;
  * {@link SimpleTransformation} that desugars {@link JavaOp.ForOp} to a while loop.
  */
 @AutoService(SimpleTransformation.class)
-public class ForDesugarTransformer implements SimpleTransformation, BabylonDSL {
+public class ForDesugarTransformer implements SimpleTransformation {
     /**
      * Identifier of this transformer.
      */
