@@ -20,7 +20,7 @@
     "@types/node": "^25.9.1",
     "@vitest/coverage-v8": "^4.0.18",
     "@vue/eslint-config-prettier": "^10.2.0",
-    "@vue/eslint-config-typescript": "^14.6.0",
+    "@vue/eslint-config-typescript": "^14.9.0",
     "eslint": "^10.3.0",
     "eslint-plugin-vue": "^10.9.2",
     "globals": "^17.6.0",
