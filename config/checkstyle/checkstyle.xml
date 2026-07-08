@@ -7,6 +7,7 @@
     <module name="InvalidJavadocPosition"/>
     <module name="JavadocBlockTagLocation"/>
     <module name="JavadocContentLocation"/>
+    <module name="SuppressionCommentFilter"/>
     <module name="JavadocLeadingAsteriskAlign"/>
     <module name="JavadocMethod">
       <property name="accessModifiers" value="public, protected, package"/>
