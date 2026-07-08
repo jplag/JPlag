@@ -61,7 +61,7 @@ class BabylonOptions extends LanguageOptions {
                     String.format(ERROR_TRANSFORMATION_NOT_FOUND, "null", TransformationStepLoader.getAllAvailableTransformationStepIdentifiers()));
         }
 
-        return Arrays.asList(LIST_SEPARATOR_PATTERN.split(transformationNames));
+        return LIST_SEPARATOR_PATTERN.splitAsStream(transformationNames).filter(s -> !s.isBlank()).map(String::trim).toList();
     }
 
     public LanguageOption<String> getTransformationNames() {
