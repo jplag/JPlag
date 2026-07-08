@@ -164,15 +164,20 @@ public interface BabylonDSL {
     /**
      * Inline an {@link Op.Invokable} into a {@link Block.Builder}, optionally storing the result in a variable.
      * @param bd the block builder
+     * @param location the location of the invocation
      * @param target the op to inline
      * @param args the arguments to pass to the inlined op
      * @param resultVariable the variable to store the result in
      * @param <O> the type of operation to inline
      */
-    default <O extends Op & Op.Invokable> void inline(Block.Builder bd, O target, List<Value> args, @Nullable Value resultVariable) {
+    default <O extends Op & Op.Invokable> void inline(Block.Builder bd, Op.Location location, O target, List<Value> args,
+            @Nullable Value resultVariable) {
+        if (resultVariable == null && location != null) {
+            bd.add(locationMarker(location));
+        }
         Inliner.inline(bd, target, args, (b, value) -> {
             if (resultVariable != null) {
-                b.add(CoreOp.varStore(resultVariable, value));
+                place(b, location, CoreOp.varStore(resultVariable, value));
             }
         });
     }

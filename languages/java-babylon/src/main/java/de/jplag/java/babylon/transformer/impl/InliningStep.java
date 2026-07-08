@@ -138,7 +138,7 @@ public class InliningStep implements TransformationStep<InliningStep.Context> {
                 candidate = candidate.transform(CodeTransformer.DROP_LOCATION_TRANSFORMER);
             }
             Op.Result variable = op.resultType() == PrimitiveType.VOID ? null : builder.add(CoreOp.var(op.resultType()));
-            inline(builder, candidate, builder.context().getValues(op.operands()), variable);
+            inline(builder, op.location(), candidate, builder.context().getValues(op.operands()), variable);
             if (variable != null) {
                 Op.Result load = builder.add(CoreOp.varLoad(variable));
                 builder.context().mapValue(op.result(), load);

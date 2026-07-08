@@ -39,7 +39,7 @@ public class InliningStepTest extends TransformerTest {
                     %5 : java.type:"java.lang.String" = var.load %3;
                     %6 : java.type:"int" = invoke %5 @java.ref:"java.lang.String::length():int";
                     %7 : java.type:"java.lang.String" = concat %4 %6;
-                    var.store %2 %7;
+                    var.store %2 %7 @loc="2:16";
                     %8 : java.type:"java.lang.String" = var.load %2;
                     invoke %8 @loc="2:5" @java.ref:"java.lang.IO::println(java.lang.Object):void";
                     return @loc="1:1";

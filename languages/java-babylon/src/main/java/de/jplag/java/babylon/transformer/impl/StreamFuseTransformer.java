@@ -284,7 +284,7 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
                 switch (intermediate) {
                     case Step.Intermediate.Filter filter when !containsStatement(filter.predicate.body()) -> b.add(if_(b.parentBody()).if_(b2 -> {
                         Value predicateVariable = place(b2, location, var(BOOLEAN));
-                        inline(b2, filter.predicate(), List.of(value.apply(b2)), predicateVariable);
+                        inline(b2, location, filter.predicate(), List.of(value.apply(b2)), predicateVariable);
                         Value predicateValue = place(b2, location, varLoad(predicateVariable));
                         place(b2, location, core_yield(predicateValue));
                     }).then(b2 -> {
@@ -293,7 +293,7 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
                     }).else_());
                     case Step.Intermediate.Filter filter -> {
                         Value predicateVariable = place(b, location, var(BOOLEAN));
-                        inline(b, filter.predicate(), List.of(value.apply(b)), predicateVariable);
+                        inline(b, location, filter.predicate(), List.of(value.apply(b)), predicateVariable);
                         b.add(if_(b.parentBody()).if_(b2 -> {
                             Value predicateValue = place(b2, location, varLoad(predicateVariable));
                             place(b2, location, core_yield(predicateValue));
@@ -304,7 +304,7 @@ public class StreamFuseTransformer implements SimpleTransformation, BabylonDSL {
                     }
                     case Step.Intermediate.Map map -> {
                         Value mappedVariable = place(b, location, var(map.elementType()));
-                        inline(b, map.mapping(), List.of(value.apply(b)), mappedVariable);
+                        inline(b, location, map.mapping(), List.of(value.apply(b)), mappedVariable);
                         inner.accept(b2 -> place(b2, location, varLoad(mappedVariable)), b);
                     }
                 }
