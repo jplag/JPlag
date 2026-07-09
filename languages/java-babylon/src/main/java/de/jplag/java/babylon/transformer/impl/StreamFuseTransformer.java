@@ -1,9 +1,11 @@
 package de.jplag.java.babylon.transformer.impl;
 
 import static de.jplag.java.babylon.BabylonUtils.argOperands;
+import static de.jplag.java.babylon.BabylonUtils.canBeInlined;
 import static de.jplag.java.babylon.BabylonUtils.inline;
 import static de.jplag.java.babylon.BabylonUtils.place;
 import static de.jplag.java.babylon.BabylonUtils.requireSingle;
+import static java.util.Map.entry;
 import static jdk.incubator.code.dialect.core.CoreOp.constant;
 import static jdk.incubator.code.dialect.core.CoreOp.core_yield;
 import static jdk.incubator.code.dialect.core.CoreOp.var;
@@ -30,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.DoubleFunction;
@@ -57,6 +60,8 @@ import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
+
+import javax.annotation.Nullable;
 
 import de.jplag.java.babylon.transformer.SimpleTransformation;
 
@@ -319,7 +324,7 @@ public class StreamFuseTransformer implements SimpleTransformation {
                 switch (intermediate) {
                     case Step.Intermediate.Filter filter when !containsStatement(filter.predicate.body()) -> b.add(if_(b.parentBody()).if_(b2 -> {
                         Value predicateVariable = place(b2, location, var(BOOLEAN));
-                        inline(b2, location, filter.predicate(), List.of(value.apply(b2)), predicateVariable);
+                        inlineOrCall(b2, context, location, filter.predicate(), List.of(value.apply(b2)), predicateVariable);
                         Value predicateValue = place(b2, location, varLoad(predicateVariable));
                         place(b2, location, core_yield(predicateValue));
                     }).then(b2 -> {
@@ -328,7 +333,7 @@ public class StreamFuseTransformer implements SimpleTransformation {
                     }).else_());
                     case Step.Intermediate.Filter filter -> {
                         Value predicateVariable = place(b, location, var(BOOLEAN));
-                        inline(b, location, filter.predicate(), List.of(value.apply(b)), predicateVariable);
+                        inlineOrCall(b, context, location, filter.predicate(), List.of(value.apply(b)), predicateVariable);
                         b.add(if_(b.parentBody()).if_(b2 -> {
                             Value predicateValue = place(b2, location, varLoad(predicateVariable));
                             place(b2, location, core_yield(predicateValue));
@@ -339,12 +344,50 @@ public class StreamFuseTransformer implements SimpleTransformation {
                     }
                     case Step.Intermediate.Map map -> {
                         Value mappedVariable = place(b, location, var(map.elementType()));
-                        inline(b, location, map.mapping(), List.of(value.apply(b)), mappedVariable);
+                        inlineOrCall(b, context, location, map.mapping(), List.of(value.apply(b)), mappedVariable);
                         inner.accept(b2 -> place(b2, location, varLoad(mappedVariable)), b);
                     }
                 }
             });
         };
+    }
+
+    private static final Map<CodeType, MethodRef> FUNCTION_APPLY = Map.ofEntries(
+            entry(type(Function.class), method(Function.class, "apply", Object.class, Object.class)),
+            entry(type(ToIntFunction.class), method(ToIntFunction.class, "applyAsInt", int.class, Object.class)),
+            entry(type(ToLongFunction.class), method(ToLongFunction.class, "applyAsLong", long.class, Object.class)),
+            entry(type(ToDoubleFunction.class), method(ToDoubleFunction.class, "applyAsDouble", double.class, Object.class)),
+            entry(type(IntUnaryOperator.class), method(IntUnaryOperator.class, "applyAsInt", int.class, int.class)),
+            entry(type(IntFunction.class), method(IntFunction.class, "apply", Object.class, int.class)),
+            entry(type(IntToLongFunction.class), method(IntToLongFunction.class, "applyAsLong", long.class, int.class)),
+            entry(type(IntToDoubleFunction.class), method(IntToDoubleFunction.class, "applyAsDouble", double.class, int.class)),
+            entry(type(LongUnaryOperator.class), method(LongUnaryOperator.class, "applyAsLong", long.class, long.class)),
+            entry(type(LongFunction.class), method(LongFunction.class, "apply", Object.class, long.class)),
+            entry(type(LongToIntFunction.class), method(LongToIntFunction.class, "applyAsInt", int.class, long.class)),
+            entry(type(LongToDoubleFunction.class), method(LongToDoubleFunction.class, "applyAsDouble", double.class, long.class)),
+            entry(type(DoubleUnaryOperator.class), method(DoubleUnaryOperator.class, "applyAsDouble", double.class, double.class)),
+            entry(type(DoubleFunction.class), method(DoubleFunction.class, "apply", Object.class, double.class)),
+            entry(type(DoubleToIntFunction.class), method(DoubleToIntFunction.class, "applyAsInt", int.class, double.class)),
+            entry(type(DoubleToLongFunction.class), method(DoubleToLongFunction.class, "applyAsLong", long.class, double.class)),
+            entry(type(Predicate.class), method(Predicate.class, "test", boolean.class, Object.class)),
+            entry(type(IntPredicate.class), method(IntPredicate.class, "test", boolean.class, int.class)),
+            entry(type(LongPredicate.class), method(LongPredicate.class, "test", boolean.class, long.class)),
+            entry(type(DoublePredicate.class), method(DoublePredicate.class, "test", boolean.class, double.class)));
+
+    private void inlineOrCall(Block.Builder bd, CodeContext context, Op.Location location, JavaOp.LambdaOp target, List<Value> args,
+            @Nullable Value resultVariable) {
+        if (canBeInlined(target)) {
+            inline(bd, location, target, args, resultVariable);
+            return;
+        }
+        MethodRef ref = FUNCTION_APPLY.get(target.functionalInterface() instanceof ClassType ct ? ct.erasure() : target.functionalInterface());
+        if (ref == null) {
+            throw new IllegalArgumentException("Unsupported functional interface: " + target.functionalInterface());
+        }
+        Value result = place(bd, location, invoke(ref, context.getValue(target.result()), args.getFirst()));
+        if (resultVariable != null) {
+            place(bd, location, varStore(resultVariable, result));
+        }
     }
 
     /**

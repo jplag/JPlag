@@ -166,6 +166,40 @@ public final class BabylonUtils {
     }
 
     /**
+     * Checks whether an {@link Op.Invokable} can be inlined using {@link #inline}.<br>
+     * Necessary since a complex control flow may prevent this.
+     * @param target the op to check
+     * @param <O> the type of operation to inline
+     * @return true if the op can be inlined
+     */
+    public static <O extends Op & Op.Invokable> boolean canBeInlined(O target) {
+        for (Block block : target.body().blocks()) {
+            for (Op op : block.ops()) {
+                if (containsReturn(op)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean containsReturn(Op op) {
+        if (op instanceof Op.Invokable) {
+            return false;
+        }
+        for (Body body : op.bodies()) {
+            for (Block block : body.blocks()) {
+                for (Op op1 : block.ops()) {
+                    if (op1 instanceof CoreOp.ReturnOp || containsReturn(op1)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Inline an {@link Op.Invokable} into a {@link Block.Builder}, optionally storing the result in a variable.
      * @param bd the block builder
      * @param location the location of the invocation
@@ -181,6 +215,7 @@ public final class BabylonUtils {
         }
         Inliner.inline(bd, target, args, (b, value) -> {
             if (resultVariable != null) {
+                assert value != null;
                 place(b, location, varStore(resultVariable, value));
             }
         });
@@ -273,6 +308,7 @@ public final class BabylonUtils {
             OpWriter opWriter = new OpWriter(sw);
             for (Op op : block.ops()) {
                 opWriter.writeOp(op);
+                sw.write('\n');
             }
             return sw.toString();
         } catch (IOException e) {

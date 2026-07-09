@@ -1,6 +1,9 @@
 package de.jplag.java.babylon.transformer.impl;
 
+import static de.jplag.java.babylon.BabylonUtils.canBeInlined;
 import static de.jplag.java.babylon.BabylonUtils.inline;
+import static jdk.incubator.code.dialect.core.CoreOp.var;
+import static jdk.incubator.code.dialect.core.CoreOp.varLoad;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,7 +52,7 @@ public class InliningStep implements TransformationStep<InliningStep.Context> {
      * Create a new instance with config options loaded from system properties.
      */
     public InliningStep() {
-        this(Long.parseLong(System.getProperty("jplag.java-babylon.inline.max-complexity", "10")),
+        this(Long.parseLong(System.getProperty("jplag.java-babylon.inline.max-complexity", "15")),
                 Boolean.parseBoolean(System.getProperty("jplag.java-babylon.inline.drop-locations", "true")));
     }
 
@@ -131,17 +134,17 @@ public class InliningStep implements TransformationStep<InliningStep.Context> {
                 case CoreOp.FuncCallOp funcCallOp -> context.coreCandidates().get(funcCallOp.funcName());
                 default -> null;
             };
-            if (candidate == null) {
+            if (candidate == null || !canBeInlined(candidate)) {
                 builder.add(op);
                 return builder;
             }
             if (dropLocations) {
                 candidate = candidate.transform(CodeTransformer.DROP_LOCATION_TRANSFORMER);
             }
-            Op.Result variable = op.resultType() == PrimitiveType.VOID ? null : builder.add(CoreOp.var(op.resultType()));
+            Op.Result variable = op.resultType() == PrimitiveType.VOID ? null : builder.add(var(op.resultType()));
             inline(builder, op.location(), candidate, builder.context().getValues(op.operands()), variable);
             if (variable != null) {
-                Op.Result load = builder.add(CoreOp.varLoad(variable));
+                Op.Result load = builder.add(varLoad(variable));
                 builder.context().mapValue(op.result(), load);
             }
             return builder;

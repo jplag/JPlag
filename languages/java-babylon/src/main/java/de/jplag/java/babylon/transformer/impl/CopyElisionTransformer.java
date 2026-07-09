@@ -50,7 +50,8 @@ public class CopyElisionTransformer implements SimpleTransformation {
     @Override
     public Block.Builder acceptOp(Block.Builder builder, Op op) {
         switch (op) {
-            case CoreOp.VarOp varOp when onlyWritten(varOp) || (onlyRead(varOp) && varOp.result().uses().size() <= maxReadUses) -> {
+            case CoreOp.VarOp varOp when onlyWritten(varOp)
+                    || (onlyRead(varOp) && !varOp.isUninitialized() && varOp.result().uses().size() <= maxReadUses) -> {
                 // This varOp is either only written or only read a few times. Remove it (and adjust/replace usages)
                 for (Op.Result use : varOp.result().uses()) {
                     builder.context().putProperty(use.op(), IDENTIFIER);
