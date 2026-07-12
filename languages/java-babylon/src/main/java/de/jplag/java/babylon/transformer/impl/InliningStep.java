@@ -26,6 +26,7 @@ import com.sun.source.tree.MethodTree;
 import com.sun.source.util.TreeScanner;
 import jdk.incubator.code.Block;
 import jdk.incubator.code.Body;
+import jdk.incubator.code.CodeElement;
 import jdk.incubator.code.CodeTransformer;
 import jdk.incubator.code.Op;
 import jdk.incubator.code.dialect.core.CoreOp;
@@ -83,7 +84,6 @@ public class InliningStep implements TransformationStep<InliningStep.Context> {
     }
 
     private static class FindCandidates extends TreeScanner<Void, Void> implements Prepass<Context> {
-        private final Map<String, CoreOp.FuncOp> core = new HashMap<>();
         private final Map<MethodRef, CoreOp.FuncOp> java = new HashMap<>();
         private final CodeModelExtractor codeModelExtractor;
         private final BiPredicate<CoreOp.FuncOp, MethodRef> heuristic;
@@ -98,7 +98,7 @@ public class InliningStep implements TransformationStep<InliningStep.Context> {
 
         @Override
         public Context finalizeContext() {
-            return new Context(Collections.unmodifiableMap(core), Collections.unmodifiableMap(java));
+            return new Context(Collections.unmodifiableMap(java));
         }
 
         @Override
@@ -131,7 +131,7 @@ public class InliningStep implements TransformationStep<InliningStep.Context> {
         public Block.Builder acceptOp(Block.Builder builder, Op op) {
             CoreOp.FuncOp candidate = switch (op) {
                 case JavaOp.InvokeOp invokeOp -> context.javaCandidates().get(invokeOp.invokeReference());
-                case CoreOp.FuncCallOp funcCallOp -> context.coreCandidates().get(funcCallOp.funcName());
+                case CoreOp.FuncCallOp funcCallOp -> getModuleFunction(op, funcCallOp.funcName());
                 default -> null;
             };
             if (candidate == null || !canInline(candidate)) {
@@ -149,14 +149,26 @@ public class InliningStep implements TransformationStep<InliningStep.Context> {
             }
             return builder;
         }
+
+        private CoreOp.FuncOp getModuleFunction(CodeElement<?, ?> start, String name) {
+            while (start != null) {
+                if (start instanceof CoreOp.ModuleOp moduleOp) {
+                    CoreOp.FuncOp candidate = moduleOp.functionTable().get(name);
+                    if (candidate != null) {
+                        return candidate;
+                    }
+                }
+                start = start.parent();
+            }
+            return null;
+        }
     }
 
     /**
      * Contains discovered inlining candidates.
-     * @param coreCandidates candidates for inlining from {@link CoreOp.FuncCallOp}
      * @param javaCandidates candidates for inlining from {@link JavaOp.InvokeOp}
      */
-    public record Context(Map<String, CoreOp.FuncOp> coreCandidates, Map<MethodRef, CoreOp.FuncOp> javaCandidates) {
+    public record Context(Map<MethodRef, CoreOp.FuncOp> javaCandidates) {
     }
 
     /**
