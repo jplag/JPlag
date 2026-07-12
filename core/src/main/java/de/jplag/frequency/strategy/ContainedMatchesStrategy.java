@@ -1,17 +1,17 @@
-package de.jplag.highlightextraction.strategy;
+package de.jplag.frequency.strategy;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.IntStream;
 
 import de.jplag.TokenType;
-import de.jplag.highlightextraction.SublistIterator;
+import de.jplag.frequency.SublistIterator;
 
 /**
  * Strategy that counts all occurrences of complete matches inside all complete matches and contiguous submatches from
  * the comparisons, if the submatches are longer than minLength.
  */
-public final class ContainedMatchesStrategy extends FrequencyStrategy {
+public final class ContainedMatchesStrategy extends FrequencyAnalysisStrategy {
     /**
      * Minimum considered subsequence length.
      */

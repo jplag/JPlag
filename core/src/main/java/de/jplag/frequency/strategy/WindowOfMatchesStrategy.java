@@ -1,17 +1,17 @@
-package de.jplag.highlightextraction.strategy;
+package de.jplag.frequency.strategy;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import de.jplag.TokenType;
-import de.jplag.highlightextraction.WindowIterator;
+import de.jplag.frequency.WindowIterator;
 
 /**
  * Strategy that uses a fixed window size to create submatches of a match sequence in a comparison and calculates their
  * frequencies over all submissions. So the Strategy counts all occurrences of the contiguous windows inside all the
  * contiguous windows of the matches from the comparisons.
  */
-public final class WindowOfMatchesStrategy extends FrequencyStrategy {
+public final class WindowOfMatchesStrategy extends FrequencyAnalysisStrategy {
     /**
      * The window size for the considered window sequences.
      */

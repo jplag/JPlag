@@ -1,7 +1,8 @@
-package de.jplag.highlightextraction;
+package de.jplag.frequency;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Iterator for all sublists down to a minimum length.
@@ -33,7 +34,9 @@ public class SublistIterator<T> implements Iterator<List<T>> {
 
     @Override
     public List<T> next() {
-
+        if (!hasNext()) {
+            throw new NoSuchElementException();
+        }
         List<T> next = items.subList(index, index + length);
         if (index > 0) {
             index--;

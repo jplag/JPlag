@@ -1,25 +1,25 @@
-package de.jplag.highlightextraction.strategy;
+package de.jplag.frequency.strategy;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 import de.jplag.JPlagComparison;
 import de.jplag.Match;
 import de.jplag.TokenType;
-import de.jplag.highlightextraction.TokenSequenceUtil;
+import de.jplag.frequency.FrequencyUtil;
 
 /**
  * Interface for different frequency calculation strategies. Implementations define how submatches are considered in the
  * frequency calculation of matches.
  */
-public abstract class FrequencyStrategy {
+public abstract class FrequencyAnalysisStrategy {
 
     private final Map<List<TokenType>, Integer> matchCounts;
 
-    protected FrequencyStrategy() {
-        this.matchCounts = new HashMap<>();
+    protected FrequencyAnalysisStrategy() {
+        this.matchCounts = new ConcurrentHashMap<>();
     }
 
     /**
@@ -27,11 +27,11 @@ public abstract class FrequencyStrategy {
      * @param comparisons are the comparisons.
      */
     public void processMatches(List<JPlagComparison> comparisons) {
-        for (JPlagComparison comparison : comparisons) {
+        comparisons.parallelStream().forEach(comparison -> {
             for (Match match : comparison.matches()) {
                 processMatch(comparison, match);
             }
-        }
+        });
     }
 
     /**
@@ -40,7 +40,7 @@ public abstract class FrequencyStrategy {
      * @param match is the match.
      */
     public void processMatch(JPlagComparison comparison, Match match) {
-        List<TokenType> tokenTypes = TokenSequenceUtil.tokenTypesFor(comparison, match);
+        List<TokenType> tokenTypes = FrequencyUtil.tokenTypesFor(comparison, match);
         processMatchTokenTypes(tokenTypes);
     }
 

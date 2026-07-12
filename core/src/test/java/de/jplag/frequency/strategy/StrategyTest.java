@@ -1,4 +1,4 @@
-package de.jplag.highlightextraction.strategy;
+package de.jplag.frequency.strategy;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -25,13 +25,12 @@ import de.jplag.Token;
 import de.jplag.TokenType;
 import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
-import de.jplag.highlightextraction.TokenSequenceUtil;
+import de.jplag.frequency.FrequencyUtil;
 import de.jplag.options.JPlagOptions;
 
 /**
- * Test class to validate the FrequencyStrategies which determine how isFrequencyAnalysisEnabled certain token sequences
- * appear in matches of the comparisons. As the examples use testCode from "PartialPlagiarism" sample-folder and some
- * fictional data.
+ * Test class to validate the FrequencyStrategies which determine how often certain token sequences appear in matches of
+ * the comparisons. As the examples use testCode from "PartialPlagiarism" sample-folder and some fictional data.
  */
 class StrategyTest extends TestBase {
     private static final StrategyIntegrationTest STRATEGY_INTEGRATION_TEST = new StrategyIntegrationTest();
@@ -169,7 +168,7 @@ class StrategyTest extends TestBase {
     @Test
     @DisplayName("Test Complete Matches Strategy")
     void testCompleteMatchesStrategy() {
-        FrequencyStrategy strategy = new CompleteMatchesStrategy();
+        FrequencyAnalysisStrategy strategy = new CompleteMatchesStrategy();
         strategy.processMatches(TEST_COMPARISONS);
         Map<List<TokenType>, Integer> tokenFrequencyMap = strategy.getResult();
         STRATEGY_INTEGRATION_TEST.printTestResult(tokenFrequencyMap);
@@ -187,7 +186,7 @@ class StrategyTest extends TestBase {
      * @param tokenFrequencyMap Map of token sequence hashes for frequency count
      */
     private void assertTokenFrequencyAndContainsMatch(Match match, int expectedFrequency, Map<List<TokenType>, Integer> tokenFrequencyMap) {
-        List<TokenType> matchTokenTypes = TokenSequenceUtil.tokenTypesFor(testComparison, match);
+        List<TokenType> matchTokenTypes = FrequencyUtil.tokenTypesFor(testComparison, match);
         Integer matchFrequency = tokenFrequencyMap.get(matchTokenTypes);
         if (matchFrequency == null) {
             throw new AssertionError("Match key [" + matchTokenTypes + "] not found in tokenFrequencyMap.");
@@ -203,9 +202,9 @@ class StrategyTest extends TestBase {
     @DisplayName("Test check() of window strategy")
     void testWindowOfMatchesStrategy() {
         int windowSize = 5;
-        FrequencyStrategy strategy = new WindowOfMatchesStrategy(windowSize);
+        FrequencyAnalysisStrategy strategy = new WindowOfMatchesStrategy(windowSize);
 
-        List<TokenType> matchTokenTypes = TokenSequenceUtil.tokenTypesFor(testComparison, matchShort);
+        List<TokenType> matchTokenTypes = FrequencyUtil.tokenTypesFor(testComparison, matchShort);
         strategy.processMatchTokenTypes(matchTokenTypes);
         Map<List<TokenType>, Integer> windowCount = strategy.getResult();
 
@@ -242,10 +241,10 @@ class StrategyTest extends TestBase {
      * Tests if the Submatch strategy adds the expected submatches and their frequencies to the Hashmap.
      */
     @Test
-    void testSubmatchesStrategy() {
+    void testSubMatchesStrategy() {
         int wantedMatchLength = 5;
         int minSubSequenceSize = 3;
-        SubmatchesStrategy strategy = new SubmatchesStrategy(minSubSequenceSize);
+        SubMatchesStrategy strategy = new SubMatchesStrategy(minSubSequenceSize);
 
         List<Token> matchToken = testSubmission.getTokenList().subList(matchShort.startOfFirst(), matchShort.startOfFirst() + wantedMatchLength);
         List<TokenType> matchTokenTypes = matchToken.stream().map(Token::getType).toList();
@@ -282,13 +281,13 @@ class StrategyTest extends TestBase {
     @Test
     void testCompleteMatchesIncludedInContainedStrategyForMatchesLongerMin() {
         int minLength = 100;
-        FrequencyStrategy strategy = new ContainedMatchesStrategy(minLength);
+        FrequencyAnalysisStrategy strategy = new ContainedMatchesStrategy(minLength);
         strategy.processMatches(TEST_COMPARISONS);
         Map<List<TokenType>, Integer> matchFrequencyMap = strategy.getResult();
         Map<List<TokenType>, Integer> frequencyCount = new HashMap<>();
         for (JPlagComparison comparison : TEST_COMPARISONS) {
             for (Match match : comparison.matches()) {
-                List<TokenType> subSequence = TokenSequenceUtil.tokenTypesFor(comparison, match);
+                List<TokenType> subSequence = FrequencyUtil.tokenTypesFor(comparison, match);
                 frequencyCount.put(subSequence, frequencyCount.getOrDefault(subSequence, 0) + 1);
                 if (subSequence.size() >= minLength) {
                     assertTrue(matchFrequencyMap.containsKey(subSequence), "Should contain subSequence: " + subSequence);

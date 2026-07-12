@@ -9,8 +9,7 @@ import de.jplag.Language;
 import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
-import de.jplag.highlightextraction.FrequencyAnalysisOptions;
-import de.jplag.highlightextraction.strategy.FrequencyStrategySelector;
+import de.jplag.frequency.FrequencyAnalysisOptions;
 import de.jplag.java.JavaLanguage;
 import de.jplag.merging.MergingOptions;
 import de.jplag.options.JPlagOptions;
@@ -203,7 +202,7 @@ public class CliOptions implements Runnable {
         /** Weighting function to combine with frequency Determination strategy. */
         @Option(names = {
                 "--weighting"}, description = "The function for frequency-based match weighting, one of: ${COMPLETION-CANDIDATES} (default: ${DEFAULT-VALUE}).")
-        public WeightingFunctionSelector weightingFunction = WeightingFunctionSelector.DEFAULT_WEIGHTING_FUNCTION;
+        public MatchWeightingFunctionSelector weightingFunction = MatchWeightingFunctionSelector.DEFAULT_WEIGHTING_FUNCTION;
 
         /** How strong the weighting maximal influences a match length with up to double the length. */
         @Option(names = {

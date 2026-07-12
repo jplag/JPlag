@@ -1,11 +1,11 @@
-package de.jplag.highlightextraction.weighting;
+package de.jplag.frequency.weighting;
 
-import de.jplag.highlightextraction.WeightingFunction;
+import de.jplag.frequency.MatchWeightingFunction;
 
 /**
  * Frequency weighting strategy which emphasizes matches linearly in terms of their rarity.
  */
-public class LinearWeighting implements WeightingFunction {
+public class LinearWeighting implements MatchWeightingFunction {
 
     private static final int MINIMUM_WEIGHT = 1;
     private static final int MAXIMUM_WEIGHT = 2;

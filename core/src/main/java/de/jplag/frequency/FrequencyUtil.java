@@ -1,4 +1,4 @@
-package de.jplag.highlightextraction;
+package de.jplag.frequency;
 
 import java.util.List;
 
@@ -11,12 +11,16 @@ import de.jplag.TokenType;
 /**
  * Utility class for extracting sequences of token types (token sequences for brevity) out of submissions.
  */
-public class TokenSequenceUtil {
+public class FrequencyUtil {
+
+    private FrequencyUtil() {
+        // Utility class, not instantiable.
+    }
 
     /**
      * Extracts the token types for the given submission.
-     * @param submission is the submission.
-     * @return the token types.
+     * @param submission is the target submission.
+     * @return the list of token types that represent the submission.
      */
     public static List<TokenType> tokenTypesFor(Submission submission) {
         return submission.getTokenList().stream().map(Token::getType).toList();
