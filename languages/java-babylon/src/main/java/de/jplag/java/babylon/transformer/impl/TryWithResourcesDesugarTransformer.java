@@ -5,6 +5,7 @@ import static de.jplag.java.babylon.BabylonUtils.location;
 import static de.jplag.java.babylon.BabylonUtils.locationMarker;
 import static de.jplag.java.babylon.BabylonUtils.place;
 import static de.jplag.java.babylon.BabylonUtils.requireSingle;
+import static jdk.incubator.code.dialect.core.CoreOp.core_yield;
 import static jdk.incubator.code.dialect.java.JavaType.J_L_OBJECT;
 import static jdk.incubator.code.dialect.java.JavaType.VOID;
 
@@ -150,6 +151,8 @@ public class TryWithResourcesDesugarTransformer implements SimpleTransformation 
         if (finallyBody != null) {
             bodyBuilder.entryBlock().context().mapBlock(finallyBody.entryBlock(), bodyBuilder.entryBlock());
             copy(finallyBody, bodyBuilder.entryBlock());
+        } else {
+            place(bodyBuilder.entryBlock(), null, core_yield());
         }
         return bodyBuilder;
     }

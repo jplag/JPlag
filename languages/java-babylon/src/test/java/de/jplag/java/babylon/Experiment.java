@@ -21,13 +21,13 @@ class Experiment {
     static void main() throws Exception {
         System.setProperty("jplag.java-babylon.pipeline.executor", "lazy");
 
-        Set<File> files = Set.of(DATASETS.resolve("Progpedia56/human/subm5/Prob21.java").toFile());
+        Set<File> files = Set.of(DATASETS.resolve("Progpedia56/gptobf/gpt0-subm63/0_63.java").toFile());
 
         JavaLanguage java = (JavaLanguage) LanguageLoader.getLanguage("java").orElseThrow();
         JavaBabylonLanguage babylon = (JavaBabylonLanguage) LanguageLoader.getLanguage("java-babylon").orElseThrow();
 
         babylon.getOptions().getTransformationNames().setValue(
-                "lower,ssa,inline,block-normalize,constant-propagation,copy-elision,dead-code-elimination,copy-elision,dead-code-elimination,inline,copy-elision,dead-code-elimination");
+                "assert-remove,try-with-resources-desugar,copy-elision,stream-fuse,enhanced-for-desugar,for-desugar,optional-elision,conditional-expression-desugar,switch-expression-desugar,constant-propagation,if-fuse,inline,block-normalize,constant-propagation,copy-elision,dead-code-elimination,copy-elision,dead-code-elimination,inline");
         babylon.getOptions().getTokenizerName().setValue("full");
         babylon.getOptions().clearCaches();
         babylon.parse(files, false);
