@@ -343,7 +343,7 @@ public class OptionalElisionTransformer implements SimpleTransformation {
 
     private Value unwrap(Block.Builder builder, Op.Location location, Value wrapped, CodeType elementType) {
         Op.Result initNull = place(builder, location, constant(elementType, null));
-        return place(builder, location, invoke(elementType, OPTIONAL_OR_ELSE, builder.context().getValue(wrapped), initNull));
+        return place(builder, location, invoke(elementType, OPTIONAL_OR_ELSE, wrapped, initNull));
     }
 
     private <T> List<T> prepend(T previous, List<T> after) {

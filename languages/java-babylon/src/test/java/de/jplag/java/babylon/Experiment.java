@@ -6,6 +6,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import de.jplag.LanguageLoader;
 import de.jplag.Token;
@@ -21,7 +23,7 @@ class Experiment {
     static void main() throws Exception {
         System.setProperty("jplag.java-babylon.pipeline.executor", "lazy");
 
-        Set<File> files = Set.of(DATASETS.resolve("Progpedia56/gptobf/gpt0-subm63/0_63.java").toFile());
+        Set<File> files = listFiles(DATASETS.resolve("Progpedia56/refactor/plag-subm63"));
 
         JavaLanguage java = (JavaLanguage) LanguageLoader.getLanguage("java").orElseThrow();
         JavaBabylonLanguage babylon = (JavaBabylonLanguage) LanguageLoader.getLanguage("java-babylon").orElseThrow();
@@ -43,6 +45,12 @@ class Experiment {
         // babylon.getOptions().getTokenizerName().setValue(FullTypedBabylonTokenizer.IDENTIFIER);
         // babylon.getOptions().clearCaches();
         // write(Path.of("java-babylon-ft.txt"), babylon.parse(files, false));
+    }
+
+    private static Set<File> listFiles(Path directory) throws IOException {
+        try (Stream<Path> stream = Files.list(directory)) {
+            return stream.map(Path::toFile).collect(Collectors.toSet());
+        }
     }
 
     private static void write(Path path, List<Token> tokens) throws IOException {
