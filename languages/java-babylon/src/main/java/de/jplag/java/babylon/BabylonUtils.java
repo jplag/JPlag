@@ -215,26 +215,16 @@ public final class BabylonUtils {
         if (resultVariable == null && location != null) {
             bd.add(locationMarker(location));
         }
-        if (target.body().entryBlock().ops().getLast() instanceof CoreOp.ReturnOp) {
-            Inliner.inline(bd, target, args, (b, value) -> {
-                if (resultVariable != null) {
-                    assert value != null;
-                    place(b, location, varStore(resultVariable, value));
-                }
-            });
-            return bd;
-        } else {
-            // This should only be possible in lowered form, so it should be safe
-            Block.Builder next = bd.block();
-            Inliner.inline(bd, target, args, (b, value) -> {
-                if (resultVariable != null) {
-                    assert value != null;
-                    place(b, location, varStore(resultVariable, value));
-                }
-                place(b, location, branch(next.reference()));
-            });
-            return next;
-        }
+        boolean requiresNewBlock = !(target.body().entryBlock().ops().getLast() instanceof CoreOp.ReturnOp);
+        Block.Builder next = requiresNewBlock ? bd.block() : bd;
+        Inliner.inline(bd, target, args, (b, value) -> {
+            if (resultVariable != null) {
+                assert value != null;
+                place(b, location, varStore(resultVariable, value));
+            }
+            if (requiresNewBlock) place(b, location, branch(next.reference()));
+        });
+        return next;
     }
 
     /**
