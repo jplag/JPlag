@@ -1,5 +1,6 @@
 package de.jplag.java.babylon;
 
+import static jdk.incubator.code.dialect.core.CoreOp.branch;
 import static jdk.incubator.code.dialect.core.CoreOp.constant;
 import static jdk.incubator.code.dialect.core.CoreOp.varStore;
 import static jdk.incubator.code.dialect.java.JavaType.VOID;
@@ -172,7 +173,7 @@ public final class BabylonUtils {
      * @param <O> the type of operation to inline
      * @return true if the op can be inlined
      */
-    public static <O extends Op & Op.Invokable> boolean canBeInlined(O target) {
+    public static <O extends Op & Op.Invokable> boolean canInline(O target) {
         for (Block block : target.body().blocks()) {
             for (Op op : block.ops()) {
                 if (containsReturn(op)) {
@@ -207,18 +208,33 @@ public final class BabylonUtils {
      * @param args the arguments to pass to the inlined op
      * @param resultVariable the variable to store the result in
      * @param <O> the type of operation to inline
+     * @return the block builder to continue with
      */
-    public static <O extends Op & Op.Invokable> void inline(Block.Builder bd, Op.Location location, O target, List<Value> args,
+    public static <O extends Op & Op.Invokable> Block.Builder inline(Block.Builder bd, Op.Location location, O target, List<Value> args,
             @Nullable Value resultVariable) {
         if (resultVariable == null && location != null) {
             bd.add(locationMarker(location));
         }
-        Inliner.inline(bd, target, args, (b, value) -> {
-            if (resultVariable != null) {
-                assert value != null;
-                place(b, location, varStore(resultVariable, value));
-            }
-        });
+        if (target.body().entryBlock().ops().getLast() instanceof CoreOp.ReturnOp) {
+            Inliner.inline(bd, target, args, (b, value) -> {
+                if (resultVariable != null) {
+                    assert value != null;
+                    place(b, location, varStore(resultVariable, value));
+                }
+            });
+            return bd;
+        } else {
+            // This should only be possible in lowered form, so it should be safe
+            Block.Builder next = bd.block();
+            Inliner.inline(bd, target, args, (b, value) -> {
+                if (resultVariable != null) {
+                    assert value != null;
+                    place(b, location, varStore(resultVariable, value));
+                }
+                place(b, location, branch(next.reference()));
+            });
+            return next;
+        }
     }
 
     /**

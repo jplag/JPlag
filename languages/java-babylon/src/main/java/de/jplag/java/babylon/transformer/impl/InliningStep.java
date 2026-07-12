@@ -1,6 +1,6 @@
 package de.jplag.java.babylon.transformer.impl;
 
-import static de.jplag.java.babylon.BabylonUtils.canBeInlined;
+import static de.jplag.java.babylon.BabylonUtils.canInline;
 import static de.jplag.java.babylon.BabylonUtils.inline;
 import static jdk.incubator.code.dialect.core.CoreOp.var;
 import static jdk.incubator.code.dialect.core.CoreOp.varLoad;
@@ -134,7 +134,7 @@ public class InliningStep implements TransformationStep<InliningStep.Context> {
                 case CoreOp.FuncCallOp funcCallOp -> context.coreCandidates().get(funcCallOp.funcName());
                 default -> null;
             };
-            if (candidate == null || !canBeInlined(candidate)) {
+            if (candidate == null || !canInline(candidate)) {
                 builder.add(op);
                 return builder;
             }
@@ -142,7 +142,7 @@ public class InliningStep implements TransformationStep<InliningStep.Context> {
                 candidate = candidate.transform(CodeTransformer.DROP_LOCATION_TRANSFORMER);
             }
             Op.Result variable = op.resultType() == PrimitiveType.VOID ? null : builder.add(var(op.resultType()));
-            inline(builder, op.location(), candidate, builder.context().getValues(op.operands()), variable);
+            builder = inline(builder, op.location(), candidate, builder.context().getValues(op.operands()), variable);
             if (variable != null) {
                 Op.Result load = builder.add(varLoad(variable));
                 builder.context().mapValue(op.result(), load);

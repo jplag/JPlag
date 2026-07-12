@@ -1,7 +1,7 @@
 package de.jplag.java.babylon.transformer.impl;
 
 import static de.jplag.java.babylon.BabylonUtils.argOperands;
-import static de.jplag.java.babylon.BabylonUtils.canBeInlined;
+import static de.jplag.java.babylon.BabylonUtils.canInline;
 import static de.jplag.java.babylon.BabylonUtils.inline;
 import static de.jplag.java.babylon.BabylonUtils.place;
 import static de.jplag.java.babylon.BabylonUtils.requireSingle;
@@ -324,7 +324,7 @@ public class StreamFuseTransformer implements SimpleTransformation {
                 switch (intermediate) {
                     case Step.Intermediate.Filter filter when !containsStatement(filter.predicate.body()) -> b.add(if_(b.parentBody()).if_(b2 -> {
                         Value predicateVariable = place(b2, location, var(BOOLEAN));
-                        inlineOrCall(b2, context, location, filter.predicate(), List.of(value.apply(b2)), predicateVariable);
+                        b2 = inlineOrCall(b2, context, location, filter.predicate(), List.of(value.apply(b2)), predicateVariable);
                         Value predicateValue = place(b2, location, varLoad(predicateVariable));
                         place(b2, location, core_yield(predicateValue));
                     }).then(b2 -> {
@@ -333,7 +333,7 @@ public class StreamFuseTransformer implements SimpleTransformation {
                     }).else_());
                     case Step.Intermediate.Filter filter -> {
                         Value predicateVariable = place(b, location, var(BOOLEAN));
-                        inlineOrCall(b, context, location, filter.predicate(), List.of(value.apply(b)), predicateVariable);
+                        b = inlineOrCall(b, context, location, filter.predicate(), List.of(value.apply(b)), predicateVariable);
                         b.add(if_(b.parentBody()).if_(b2 -> {
                             Value predicateValue = place(b2, location, varLoad(predicateVariable));
                             place(b2, location, core_yield(predicateValue));
@@ -344,7 +344,7 @@ public class StreamFuseTransformer implements SimpleTransformation {
                     }
                     case Step.Intermediate.Map map -> {
                         Value mappedVariable = place(b, location, var(map.elementType()));
-                        inlineOrCall(b, context, location, map.mapping(), List.of(value.apply(b)), mappedVariable);
+                        b = inlineOrCall(b, context, location, map.mapping(), List.of(value.apply(b)), mappedVariable);
                         inner.accept(b2 -> place(b2, location, varLoad(mappedVariable)), b);
                     }
                 }
@@ -374,11 +374,10 @@ public class StreamFuseTransformer implements SimpleTransformation {
             entry(type(LongPredicate.class), method(LongPredicate.class, "test", boolean.class, long.class)),
             entry(type(DoublePredicate.class), method(DoublePredicate.class, "test", boolean.class, double.class)));
 
-    private void inlineOrCall(Block.Builder bd, CodeContext context, Op.Location location, JavaOp.LambdaOp target, List<Value> args,
+    private Block.Builder inlineOrCall(Block.Builder bd, CodeContext context, Op.Location location, JavaOp.LambdaOp target, List<Value> args,
             @Nullable Value resultVariable) {
-        if (canBeInlined(target)) {
-            inline(bd, location, target, args, resultVariable);
-            return;
+        if (canInline(target)) {
+            return inline(bd, location, target, args, resultVariable);
         }
         MethodRef ref = FUNCTION_APPLY.get(target.functionalInterface() instanceof ClassType ct ? ct.erasure() : target.functionalInterface());
         if (ref == null) {
@@ -388,6 +387,7 @@ public class StreamFuseTransformer implements SimpleTransformation {
         if (resultVariable != null) {
             place(bd, location, varStore(resultVariable, result));
         }
+        return bd;
     }
 
     /**
