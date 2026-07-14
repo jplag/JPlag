@@ -1,7 +1,7 @@
 <template>
   <div
     :class="{
-      'space-x-2 pb-1 text-xs text-black dark:text-white print:hidden': overrideStyle
+      'text-font space-x-2 pb-1 text-xs print:hidden': overrideStyle
     }"
   >
     <span
@@ -10,7 +10,7 @@
     >
     <span v-else-if="reportViewerVersion.isDevVersion() && showVersion && commitHash !== undefined">
       <a
-        class="text-link-dark dark:text-link underline"
+        class="text-link underline"
         target="_blank"
         :href="`https://github.com/jplag/JPlag/commit/${commitHash}`"
         >{{ commitHash.substring(0, 7) }}</a
@@ -18,9 +18,7 @@
     </span>
     <span>
       JPlag is open source. Bug reports and feature requests can be submitted on
-      <a
-        href="https://github.com/jplag/JPlag/issues"
-        class="text-link-dark dark:text-link underline"
+      <a href="https://github.com/jplag/JPlag/issues" class="text-link underline"
         ><FontAwesomeIcon :icon="faGithub" /> GitHub</a
       >
     </span>
