@@ -222,7 +222,9 @@ public final class BabylonUtils {
                 assert value != null;
                 place(b, location, varStore(resultVariable, value));
             }
-            if (requiresNewBlock) place(b, location, branch(next.reference()));
+            if (requiresNewBlock) {
+                place(b, location, branch(next.reference()));
+            }
         });
         return next;
     }
