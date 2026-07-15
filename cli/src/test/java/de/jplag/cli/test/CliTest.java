@@ -154,7 +154,8 @@ public abstract class CliTest {
     protected CliResult runCli(Consumer<CliArgumentBuilder> additionalOptionsBuilder) throws ExitException, IOException {
         try (MockedStatic<JPlagRunner> runnerMock = Mockito.mockStatic(JPlagRunner.class);
                 MockedStatic<OutputFileGenerator> generatorMock = Mockito.mockStatic(OutputFileGenerator.class)) {
-            runnerMock.when(() -> JPlagRunner.runJPlag(ArgumentMatchers.any())).thenReturn(new JPlagResult(Collections.emptyList(), null, 1, 1, null));
+            runnerMock.when(() -> JPlagRunner.runJPlag(ArgumentMatchers.any()))
+                    .thenReturn(new JPlagResult(Collections.emptyList(), null, 1, 1, null));
             generatorMock.when(() -> OutputFileGenerator.generateJPlagResultFile(ArgumentMatchers.any(), ArgumentMatchers.any())).then(_ -> null);
 
             CliArgumentBuilder copy = this.defaultArgumentBuilder.copy();
