@@ -103,7 +103,7 @@ public class JPlag {
         }
 
         if (logger.isInfoEnabled()) {
-            logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getDuration()));
+            logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getComparisonDuration()));
         }
         result.setClusteringResult(ClusteringFactory.getClusterings(result.getAllComparisons(), options.clusteringOptions()));
 
