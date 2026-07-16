@@ -11,9 +11,9 @@ import de.jplag.Version;
  * @param failedSubmissions A list of submissions that failed during processing.
  * @param dateOfExecution The date and time the run was executed, formatted as a string.
  * @param tokenizationTime the time taken for tokenization in milliseconds.
- * @param executionTime The time taken for comparison in milliseconds.
+ * @param comparisonTime The time taken for comparison in milliseconds.
  * @param totalComparisons The total number of comparisons performed during the run.
  */
 public record RunInformation(Version version, List<FailedSubmission> failedSubmissions, String dateOfExecution, long tokenizationTime,
-        long executionTime, int totalComparisons) {
+        long comparisonTime, int totalComparisons) {
 }
