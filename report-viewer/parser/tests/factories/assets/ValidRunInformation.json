@@ -5,7 +5,7 @@
     { "submissionId": "failedTest", "submissionState": "CANNOT_PARSE" }
   ],
   "dateOfExecution": "06/05/25",
-  "tokenizationTime": 471,
+  "tokenizationTime": 999,
   "comparisonTime": 471,
   "totalComparisons": 2145
 }

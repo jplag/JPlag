@@ -125,7 +125,7 @@ const mockRunInformation = new RunInformation(
     { submissionId: 'failedTest', submissionState: SubmissionState.CANNOT_PARSE }
   ],
   '06/05/25',
-  471,
+  999,
   471,
   3
 )
