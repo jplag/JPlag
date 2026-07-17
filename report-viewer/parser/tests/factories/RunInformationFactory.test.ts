@@ -20,7 +20,8 @@ describe('Test JSON to Run Information', () => {
         }
       ],
       _dateOfExecution: '06/05/25',
-      _executionTime: 471,
+      _tokenizationTime: 471,
+      _comparisonTime: 471,
       _totalComparisons: 2145
     })
   })
