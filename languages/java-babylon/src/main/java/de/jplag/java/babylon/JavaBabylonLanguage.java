@@ -7,13 +7,14 @@ import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.java.JavaLanguage;
 import de.jplag.java.Parser;
+import de.jplag.java.babylon.tokenizer.impl.HighLevelBabylonTokenizer;
+import de.jplag.java.babylon.transformer.impl.LoweringStep;
 
 import com.google.auto.service.AutoService;
 
 /**
  * {@link Language} implementation for Java with support for {@link jdk.incubator.code.CodeTransformer}-based
  * transformations. <br>
- * Does not use {@link AutoService} since the service is gated behind <a href="https://openjdk.org/jeps/238">MRJAR</a>.
  */
 @AutoService(Language.class)
 public class JavaBabylonLanguage extends JavaLanguage {
@@ -32,7 +33,13 @@ public class JavaBabylonLanguage extends JavaLanguage {
 
     @Override
     public int minimumTokenMatch() {
-        return super.minimumTokenMatch();
+        if (options.getTransformations().contains(LoweringStep.IDENTIFIER)) {
+            return 7;
+        } else if (options.getTokenizerName().getValue().equals(HighLevelBabylonTokenizer.IDENTIFIER)) {
+            return 11;
+        } else {
+            return 8;
+        }
     }
 
     @Override
