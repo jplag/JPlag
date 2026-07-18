@@ -56,7 +56,8 @@ class MatchMergingTest extends TestBase {
 
         comparisonStrategy = new LongestCommonSubsequenceSearch(options);
 
-        // Largest two single-file submissions provide token lists big enough for hand-built match indices; token content is never inspected.
+        // Largest two single-file submissions provide token lists big enough for hand-built match indices; token content is
+        // never inspected.
         List<Submission> singleFileSubmissions = submissionSet.getSubmissions().stream().filter(submission -> submission.getFiles().size() == 1)
                 .sorted(Comparator.comparingInt(Submission::getNumberOfTokens).reversed().thenComparing(Submission::getName)).toList();
         leftSubmission = singleFileSubmissions.get(0);
