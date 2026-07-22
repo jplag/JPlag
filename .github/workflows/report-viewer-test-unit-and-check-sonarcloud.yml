@@ -15,6 +15,9 @@ on:
       - "report-viewer/**"
       - ".github/workflows/report-viewer-test-unit-and-check-sonarcloud.yml"
 
+
+
+
 jobs:
   pre_job:
     runs-on: ubuntu-latest
