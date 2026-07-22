@@ -18,7 +18,7 @@
     "@eslint/eslintrc": "^3.3.5",
     "@eslint/js": "^10.0.1",
     "@types/node": "^25.9.1",
-    "@vitest/coverage-v8": "^4.0.18",
+    "@vitest/coverage-v8": "^4.1.10",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.9.0",
     "eslint": "^10.7.0",
