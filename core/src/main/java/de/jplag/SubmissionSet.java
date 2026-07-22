@@ -115,18 +115,18 @@ public class SubmissionSet {
      * a deterministic order.
      */
     public void normalizeSubmissions() {
+        long startTimeMillis = System.currentTimeMillis();
         if (baseCodeSubmission != null) {
             baseCodeSubmission.normalize();
         }
         ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.TOKEN_SEQUENCE_NORMALIZATION, submissions.size());
         submissions.parallelStream().forEach(submission -> {
-            long startTimeMillis = System.currentTimeMillis();
             submission.normalize();
-            long durationInMilliseconds = System.currentTimeMillis() - startTimeMillis;
-            tokenizationDuration.addAndGet(durationInMilliseconds);
             progressBar.step();
         });
         progressBar.dispose();
+        long durationInMilliseconds = System.currentTimeMillis() - startTimeMillis;
+        tokenizationDuration.addAndGet(durationInMilliseconds);
     }
 
     private List<Submission> filterValidSubmissions() {
@@ -178,6 +178,7 @@ public class SubmissionSet {
 
     private void parseSubmissionsInParallel(List<Submission> submissions, ProgressBar progressBar) throws SubmissionException {
         try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            long startTimeMillis = System.currentTimeMillis();
             for (Submission submission : submissions) {
                 executor.submit(() -> {
                     parseSingleSubmission(progressBar, submission);
@@ -186,6 +187,8 @@ public class SubmissionSet {
             }
             executor.shutdown();
             executor.awaitTermination(24, TimeUnit.HOURS); // Maximum time all processing can take.
+            long durationInMilliseconds = System.currentTimeMillis() - startTimeMillis;
+            tokenizationDuration.addAndGet(durationInMilliseconds);
         } catch (InterruptedException exception) {
             throw new SubmissionException("Error while parsing the submissions.", exception);
         }
@@ -195,10 +198,7 @@ public class SubmissionSet {
      * Parses a single submission (thread safe).
      */
     private void parseSingleSubmission(ProgressBar progressBar, Submission submission) throws LanguageException {
-        long startTimeMillis = System.currentTimeMillis();
         boolean successful = submission.parse(options.debugParser(), options.normalize(), options.minimumTokenMatch(), options.analyzeComments());
-        long durationInMilliseconds = System.currentTimeMillis() - startTimeMillis;
-        tokenizationDuration.addAndGet(durationInMilliseconds);
         if (!successful) {
             errors.incrementAndGet();
             logger.debug("ERROR -> Submission {} removed with reason {}", submission.getName(), submission.getState());
