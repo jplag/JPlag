@@ -62,7 +62,7 @@ jobs:
       
       - name: SonarCloud Scan
         if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' && github.event.pull_request.head.repo.owner.login == 'jplag' }}
-        uses: SonarSource/sonarqube-scan-action@v8.2.0
+        uses: SonarSource/sonarqube-scan-action@v8.2.1
         with:
           projectBaseDir: report-viewer
         env:
