@@ -2,7 +2,6 @@ package de.jplag.emf.dynamic;
 
 import java.io.File;
 import java.util.List;
-import java.util.Set;
 
 import de.jplag.ParsingException;
 import de.jplag.Token;
@@ -29,7 +28,7 @@ public class DynamicEmfLanguage extends EmfLanguage { // currently not included 
     }
 
     @Override
-    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
+    public List<Token> parse(List<File> files, boolean normalize) throws ParsingException {
         throw new UnsupportedOperationException("Language module is deprecated and no longer supported!");
     }
 }

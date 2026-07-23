@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Set;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -63,7 +62,7 @@ class ScxmlTokenGeneratorTest {
     private final File baseDirectory = BASE_PATH.toFile();
 
     private List<TokenType> getTokenTypes(ScxmlParserAdapter adapter, File testFile) throws ParsingException {
-        return adapter.parse(Set.of(testFile)).stream().map(Token::getType).toList();
+        return adapter.parse(List.of(testFile)).stream().map(Token::getType).toList();
     }
 
     @Test
@@ -101,7 +100,7 @@ class ScxmlTokenGeneratorTest {
     void testViewFile() throws ParsingException, IOException {
         File testFile = new File(baseDirectory, TestSubjects.COMPLEX.fileName);
         ScxmlParserAdapter adapter = new ScxmlParserAdapter();
-        adapter.parse(Set.of(testFile));
+        adapter.parse(List.of(testFile));
 
         File viewFile = new File(testFile.getPath() + ScxmlLanguage.VIEW_FILE_EXTENSION);
         File expectedViewFile = new File(baseDirectory, TestSubjects.COMPLEX_VIEW_FILE.fileName);

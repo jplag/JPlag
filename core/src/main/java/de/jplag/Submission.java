@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -42,7 +41,7 @@ public class Submission implements Comparable<Submission> {
     private final String name; // identifier for the submission (a directory or file name).
     private final File submissionRootFile; // Root of the submission, a director or file (including the subdir if used).
     private final boolean isNew; // old submissions are only checked against new ones.
-    private final Collection<File> files;
+    private final List<File> files;
     private final Language language;
 
     private SubmissionState state; // whether an error occurred during parsing or not
@@ -60,7 +59,7 @@ public class Submission implements Comparable<Submission> {
      * @param files are the files of the submissions, if the root is a single file it should just contain one file.
      * @param language is the language of the submission.
      */
-    public Submission(String name, File submissionRootFile, boolean isNew, Collection<File> files, Language language) {
+    public Submission(String name, File submissionRootFile, boolean isNew, List<File> files, Language language) {
         this.name = name;
         this.submissionRootFile = submissionRootFile;
         this.isNew = isNew;
@@ -102,9 +101,9 @@ public class Submission implements Comparable<Submission> {
 
     /**
      * Provided all source code files.
-     * @return a collection of files this submission consists of.
+     * @return a list of files this submission consists of.
      */
-    public Collection<File> getFiles() {
+    public List<File> getFiles() {
         return files;
     }
 
@@ -198,7 +197,7 @@ public class Submission implements Comparable<Submission> {
      * @param tokenList is the list of these tokens.
      */
     public void setTokenList(List<Token> tokenList) {
-        this.tokenList = Collections.unmodifiableList(new ArrayList<>(tokenList));
+        this.tokenList = List.copyOf(tokenList);
     }
 
     /**
@@ -254,7 +253,7 @@ public class Submission implements Comparable<Submission> {
         }
 
         try {
-            tokenList = language.parse(new HashSet<>(files), normalize);
+            tokenList = language.parse(files, normalize);
         } catch (CriticalParsingException e) {
             throw new LanguageException(e.getMessage(), e.getCause());
         } catch (ParsingException e) {
@@ -312,7 +311,7 @@ public class Submission implements Comparable<Submission> {
 
     private List<Integer> getOrder(List<Token> tokenList) {
         List<Integer> order = new ArrayList<>(tokenList.size());  // a little too big
-        int currentLineNumber = tokenList.get(0).getStartLine();
+        int currentLineNumber = tokenList.getFirst().getStartLine();
         order.add(currentLineNumber);
         for (Token token : tokenList) {
             if (token.getStartLine() != currentLineNumber) {

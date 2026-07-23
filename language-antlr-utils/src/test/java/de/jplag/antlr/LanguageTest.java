@@ -1,6 +1,6 @@
 package de.jplag.antlr;
 
-import java.util.Set;
+import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -16,6 +16,6 @@ class LanguageTest {
     @Test
     void testLanguageWithStaticParser() throws ParsingException {
         TestLanguage lang = new TestLanguage();
-        Assertions.assertEquals(0, lang.parse(Set.of(), false).size());
+        Assertions.assertEquals(0, lang.parse(List.of(), false).size());
     }
 }

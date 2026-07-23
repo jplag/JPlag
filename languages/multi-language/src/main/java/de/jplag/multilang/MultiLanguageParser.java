@@ -2,12 +2,14 @@ package de.jplag.multilang;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
+
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 import de.jplag.Language;
 import de.jplag.ParsingException;
@@ -40,12 +42,12 @@ public class MultiLanguageParser {
      * @return a list of parsed tokens
      * @throws ParsingException if parsing fails
      */
-    public List<Token> parseFiles(Set<File> files, boolean normalize) throws ParsingException {
+    public List<Token> parseFiles(@MonotonicNonNull Collection<File> files, boolean normalize) throws ParsingException {
         List<Token> results = new ArrayList<>();
         for (File file : files) {
             Optional<Language> language = findLanguageForFile(file);
             if (language.isPresent()) {
-                results.addAll(language.get().parse(Set.of(file), normalize));
+                results.addAll(language.get().parse(List.of(file), normalize));
             }
         }
         return results;

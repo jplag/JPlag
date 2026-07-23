@@ -8,7 +8,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
@@ -49,7 +48,7 @@ class MinimalModelInstanceTest {
         List<File> baseFiles = new ArrayList<>(Arrays.asList(baseFile.listFiles()));
         options.getMetamodelPathOption().setValue(METAMODEL_PATH.toString());
         try {
-            List<Token> tokens = language.parse(new HashSet<>(baseFiles), true);
+            List<Token> tokens = language.parse(baseFiles, true);
             assertNotEquals(0, tokens.size());
             logger.debug(
                     TokenPrinterUtils.printTokensByFile(tokens, file -> new File(file.getAbsolutePath() + EmfModelLanguage.VIEW_FILE_EXTENSION)));

@@ -4,9 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import javax.tools.DiagnosticCollector;
 import javax.tools.JavaCompiler;
@@ -49,7 +49,7 @@ public class JavacAdapter {
      * @param parser is the parser to receive the tokens.
      * @throws ParsingException if an error occurs during parsing.
      */
-    public void parseFiles(Set<File> files, final Parser parser) throws ParsingException {
+    public void parseFiles(Collection<File> files, final Parser parser) throws ParsingException {
         var listener = new DiagnosticCollector<>();
 
         List<ParsingException> parsingExceptions = new ArrayList<>();

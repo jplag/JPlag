@@ -2,7 +2,6 @@ package de.jplag.rlang;
 
 import java.io.File;
 import java.util.List;
-import java.util.Set;
 
 import de.jplag.Language;
 import de.jplag.ParsingException;
@@ -37,7 +36,7 @@ public class RLanguage implements Language {
     }
 
     @Override
-    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
+    public List<Token> parse(List<File> files, boolean normalize) throws ParsingException {
         return new RParserAdapter().parse(files);
     }
 }

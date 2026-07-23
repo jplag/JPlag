@@ -2,9 +2,10 @@ package de.jplag.emf.parser;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 
@@ -36,7 +37,7 @@ public class EcoreParser {
      * @return the list of parsed tokens.
      * @throws ParsingException if parsing fails.
      */
-    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
+    public List<Token> parse(@MonotonicNonNull Collection<File> files, boolean normalize) throws ParsingException {
         tokens = new ArrayList<>();
         for (File file : files) {
             parseModelFile(file, normalize);

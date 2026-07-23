@@ -27,7 +27,7 @@ class MinimalMetamodelTest extends AbstractEmfTest {
     @DisplayName("Test tokens generated from example metamodels")
     void testBookstoreMetamodels() throws ParsingException {
         List<File> testFiles = Arrays.stream(TEST_SUBJECTS).map(path -> new File(BASE_PATH.toFile(), path)).toList();
-        List<Token> result = language.parse(new HashSet<>(testFiles), true);
+        List<Token> result = language.parse(testFiles, true);
 
         logger.debug(TokenPrinterUtils.printTokensByFile(result, file -> new File(file.getAbsolutePath() + EmfLanguage.VIEW_FILE_EXTENSION)));
         List<TokenType> tokenTypes = result.stream().map(Token::getType).toList();

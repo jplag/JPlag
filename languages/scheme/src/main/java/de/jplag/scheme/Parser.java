@@ -3,7 +3,6 @@ package de.jplag.scheme;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +27,7 @@ public class Parser {
      * @return the token sequence.
      * @throws ParsingException if parsing fails.
      */
-    public List<Token> parse(Set<File> files) throws ParsingException {
+    public List<Token> parse(List<File> files) throws ParsingException {
         tokens = new ArrayList<>();
         for (File file : files) {
             currentFile = file;

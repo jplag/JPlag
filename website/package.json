@@ -13,6 +13,6 @@
   "license": "GPL-3.0",
   "devDependencies": {
     "bibtex": "^0.9.0",
-    "vitepress": "^1.6.3"
+    "vitepress": "^1.6.4"
   }
 }

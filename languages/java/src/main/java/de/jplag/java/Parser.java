@@ -3,7 +3,6 @@ package de.jplag.java;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.tools.ToolProvider;
 
@@ -28,7 +27,7 @@ public class Parser {
      * @return the tokens sequence for the files.
      * @throws ParsingException if parsing fails.
      */
-    public List<Token> parse(Set<File> files) throws ParsingException {
+    public List<Token> parse(List<File> files) throws ParsingException {
         ensureJavacIsAvailable();
         tokens = new ArrayList<>();
         new JavacAdapter().parseFiles(files, this);

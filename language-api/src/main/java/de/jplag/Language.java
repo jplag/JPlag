@@ -3,7 +3,6 @@ package de.jplag;
 import java.io.File;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import de.jplag.commentextraction.CommentExtractorSettings;
 import de.jplag.options.LanguageOptions;
@@ -46,25 +45,13 @@ public interface Language {
     int minimumTokenMatch();
 
     /**
-     * Parses a set of files. Override this method if you do not require normalization.
-     * @param files are the files to parse.
-     * @return the list of parsed JPlag tokens.
-     * @throws ParsingException if an error during parsing the files occurred.
-     * @deprecated Replaced by {@link #parse(Set, boolean)}
-     */
-    @Deprecated(forRemoval = true)
-    default List<Token> parse(Set<File> files) throws ParsingException {
-        return parse(files, false);
-    }
-
-    /**
      * Parses a set of files. Override this method if you require normalization within the language module.
      * @param files are the files to parse.
      * @param normalize True, if the tokens should be normalized
      * @return the list of parsed JPlag tokens.
      * @throws ParsingException if an error during parsing the files occurred.
      */
-    List<Token> parse(Set<File> files, boolean normalize) throws ParsingException;
+    List<Token> parse(List<File> files, boolean normalize) throws ParsingException;
 
     /**
      * @return Indicates whether the tokens returned by parse have semantic information added to them, i.e., whether the

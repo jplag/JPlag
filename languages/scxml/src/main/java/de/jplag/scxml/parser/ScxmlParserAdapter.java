@@ -3,7 +3,6 @@ package de.jplag.scxml.parser;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -53,7 +52,7 @@ public class ScxmlParserAdapter {
      * @return the list of parsed tokens
      * @throws ParsingException if the statechart could not be parsed
      */
-    public List<Token> parse(Set<File> files) throws ParsingException {
+    public List<Token> parse(List<File> files) throws ParsingException {
         tokens = new ArrayList<>();
         for (File file : files) {
             parseStatechartFile(file);

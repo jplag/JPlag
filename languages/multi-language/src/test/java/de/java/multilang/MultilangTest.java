@@ -7,8 +7,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -28,8 +26,8 @@ class MultilangTest {
     private static File javaCode;
     private static File cppCode;
 
-    private static final List<TokenType> expectedTokens = List.of(CPPTokenType.FUNCTION_BEGIN, CPPTokenType.RETURN, CPPTokenType.FUNCTION_END,
-            FILE_END, JavaTokenType.J_CLASS_BEGIN, JavaTokenType.J_CLASS_END, FILE_END);
+    private static final List<TokenType> expectedTokens = List.of(JavaTokenType.J_CLASS_BEGIN, JavaTokenType.J_CLASS_END, FILE_END,
+            CPPTokenType.FUNCTION_BEGIN, CPPTokenType.RETURN, CPPTokenType.FUNCTION_END, FILE_END);
 
     @BeforeAll
     static void setUp() throws IOException {
@@ -47,7 +45,7 @@ class MultilangTest {
 
         ((MultiLanguageOptions) languageModule.getOptions()).getLanguageNames().setValue("java,cpp");
 
-        Set<File> sources = new TreeSet<>(List.of(javaCode, cppCode)); // Using TreeSet to ensure order of entries
+        List<File> sources = List.of(javaCode, cppCode); // Using TreeSet to ensure order of entries
         List<Token> tokens = languageModule.parse(sources, false);
 
         Assertions.assertEquals(expectedTokens, tokens.stream().map(Token::getType).toList());
@@ -59,7 +57,7 @@ class MultilangTest {
         ((MultiLanguageOptions) languageModule.getOptions()).getLanguageNames().setValue("thisIsNotALanguage");
 
         Assertions.assertThrowsExactly(IllegalArgumentException.class, () -> {
-            languageModule.parse(Set.of(javaCode, cppCode), false);
+            languageModule.parse(List.of(javaCode, cppCode), false);
         });
     }
 

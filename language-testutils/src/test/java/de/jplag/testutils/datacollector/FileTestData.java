@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import de.jplag.Language;
 import de.jplag.ParsingException;
@@ -23,7 +22,7 @@ class FileTestData implements TestData {
 
     @Override
     public List<Token> parseTokens(Language language) throws ParsingException {
-        return language.parse(Set.of(file), false);
+        return language.parse(List.of(file), false);
     }
 
     @Override

@@ -2,7 +2,6 @@ package de.jplag.scala;
 
 import java.io.File;
 import java.util.List;
-import java.util.Set;
 
 import de.jplag.Language;
 import de.jplag.ParsingException;
@@ -36,7 +35,7 @@ public class ScalaLanguage implements Language {
     }
 
     @Override
-    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
+    public List<Token> parse(List<File> files, boolean normalize) throws ParsingException {
         return new ScalaParser().parse(files);
     }
 }

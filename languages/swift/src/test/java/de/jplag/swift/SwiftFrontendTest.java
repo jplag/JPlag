@@ -10,7 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -64,7 +63,7 @@ class SwiftFrontendTest {
     @Test
     void parseTestFiles() throws ParsingException {
         for (String fileName : testFiles) {
-            List<Token> tokens = language.parse(Set.of(new File(testFileLocation, fileName)), false);
+            List<Token> tokens = language.parse(List.of(new File(testFileLocation, fileName)), false);
             String output = TokenPrinterUtils.printTokensByFile(tokens);
             logger.info(output);
 

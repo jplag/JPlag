@@ -69,8 +69,11 @@ import static de.jplag.scala.ScalaTokenType.YIELD;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+
+import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
 import de.jplag.ParsingException;
 import de.jplag.Token;
@@ -406,7 +409,7 @@ public class ScalaParser {
      * @return The list of tokens
      * @throws ParsingException If the parsing fails
      */
-    public List<Token> parse(Set<File> files) throws ParsingException {
+    public List<Token> parse(@MonotonicNonNull Collection<File> files) throws ParsingException {
         this.tokens = new ArrayList<>();
         for (File file : files) {
             parseFile(file);

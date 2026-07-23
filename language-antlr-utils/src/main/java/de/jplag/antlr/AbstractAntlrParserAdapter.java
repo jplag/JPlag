@@ -3,7 +3,6 @@ package de.jplag.antlr;
 import java.io.File;
 import java.io.Reader;
 import java.util.List;
-import java.util.Set;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -48,7 +47,7 @@ public abstract class AbstractAntlrParserAdapter<T extends Parser> {
      * @return The extracted tokens
      * @throws ParsingException If anything goes wrong
      */
-    public List<Token> parse(Set<File> files) throws ParsingException {
+    public List<Token> parse(List<File> files) throws ParsingException {
         TokenCollector collector = new TokenCollector(extractsSemantics);
         for (File file : files) {
             parseFile(file, collector);

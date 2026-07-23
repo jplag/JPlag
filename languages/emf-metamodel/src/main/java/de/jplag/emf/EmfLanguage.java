@@ -2,7 +2,6 @@ package de.jplag.emf;
 
 import java.io.File;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.emf.ecore.EcorePackage;
 
@@ -54,7 +53,7 @@ public class EmfLanguage implements Language {
     }
 
     @Override
-    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
+    public List<Token> parse(List<File> files, boolean normalize) throws ParsingException {
         return new EcoreParser().parse(files, normalize);
     }
 

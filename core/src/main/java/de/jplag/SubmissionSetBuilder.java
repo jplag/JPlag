@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -269,7 +268,7 @@ public class SubmissionSetBuilder {
      * @param file - File to start the scan from.
      * @return a list of nested files.
      */
-    private Collection<File> parseFilesRecursively(File file) {
+    private List<File> parseFilesRecursively(File file) {
         if (isFileExcluded(file)) {
             return Collections.emptyList();
         }
@@ -284,7 +283,7 @@ public class SubmissionSetBuilder {
             return Collections.emptyList();
         }
 
-        Collection<File> files = new ArrayList<>();
+        List<File> files = new ArrayList<>();
 
         for (String fileName : nestedFileNames) {
             files.addAll(parseFilesRecursively(new File(file, fileName)));
