@@ -13,7 +13,6 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -129,13 +128,13 @@ public final class FileUtils {
     }
 
     /**
-     * Detects the most probable charset over the whole set of files.
+     * Detects the most probable charset over the whole list of files.
      * @param files The files to check
      * @param isSubmissionFile If true and a charset is set for submissions, that charset will be used always
      * @return The most probable charset
      * @throws ParsingException if reading the source files leads to an error.
      */
-    public static Charset detectCharsetFromMultiple(Collection<File> files, boolean isSubmissionFile) throws ParsingException {
+    public static Charset detectCharsetFromMultiple(List<File> files, boolean isSubmissionFile) throws ParsingException {
         if (isSubmissionFile && userSpecifiedCharset != null) {
             return userSpecifiedCharset;
         } else {
@@ -144,12 +143,12 @@ public final class FileUtils {
     }
 
     /**
-     * Detects the most probable charset over the whole set of files.
+     * Detects the most probable charset over the whole list of files.
      * @param files The files to check
      * @return The most probable charset
      * @throws ParsingException if reading the source files leads to an error.
      */
-    public static Charset detectCharsetFromMultiple(Collection<File> files) throws ParsingException {
+    public static Charset detectCharsetFromMultiple(List<File> files) throws ParsingException {
         Map<String, List<Integer>> charsetValues = new HashMap<>();
 
         List<CharsetMatch[]> matchData = new ArrayList<>();

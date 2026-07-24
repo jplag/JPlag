@@ -45,7 +45,7 @@ public interface Language {
     int minimumTokenMatch();
 
     /**
-     * Parses a set of files. Override this method if you require normalization within the language module.
+     * Parses a list of files. Override this method if you require normalization within the language module.
      * @param files are the files to parse.
      * @param normalize True, if the tokens should be normalized
      * @return the list of parsed JPlag tokens.

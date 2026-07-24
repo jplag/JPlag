@@ -23,7 +23,7 @@ public class Parser {
 
     /**
      * Parses a set of scheme files.
-     * @param files is the set of files.
+     * @param files is the list of files.
      * @return the token sequence.
      * @throws ParsingException if parsing fails.
      */

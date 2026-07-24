@@ -47,8 +47,8 @@ public class ScxmlParserAdapter {
     }
 
     /**
-     * Extracts all tokens from a set of files.
-     * @param files the set of files
+     * Extracts all tokens from a list of files.
+     * @param files the list of files
      * @return the list of parsed tokens
      * @throws ParsingException if the statechart could not be parsed
      */

@@ -22,7 +22,7 @@ public class Scanner {
 
     /**
      * Scans a set of C files.
-     * @param files is the set of files.
+     * @param files is the list of files.
      * @return the token sequence.
      * @throws ParsingException if parsing fails.
      */

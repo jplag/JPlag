@@ -2,10 +2,8 @@ package de.jplag.emf.parser;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 
@@ -31,13 +29,13 @@ public class EcoreParser {
     protected AbstractMetamodelVisitor visitor;
 
     /**
-     * Parses all tokens from a set of files.
-     * @param files is the set of files.
+     * Parses all tokens from a list of files.
+     * @param files is the list of files.
      * @param normalize specifies if the containment tree normalization should be executed or not.
      * @return the list of parsed tokens.
      * @throws ParsingException if parsing fails.
      */
-    public List<Token> parse(@MonotonicNonNull Collection<File> files, boolean normalize) throws ParsingException {
+    public List<Token> parse(List<File> files, boolean normalize) throws ParsingException {
         tokens = new ArrayList<>();
         for (File file : files) {
             parseModelFile(file, normalize);

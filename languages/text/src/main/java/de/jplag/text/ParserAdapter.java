@@ -47,7 +47,7 @@ public class ParserAdapter {
     }
 
     /**
-     * Parses a set of files.
+     * Parses a list of files.
      * @param files are the files to parse.
      * @return the token sequence.
      * @throws ParsingException is parsing fails.
