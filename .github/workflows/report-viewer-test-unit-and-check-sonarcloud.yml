@@ -35,7 +35,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: "lts/*"
 
@@ -61,7 +61,7 @@ jobs:
           npm run test:unit
       
       - name: SonarCloud Scan
-        if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
+        if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' && github.event.pull_request.head.repo.owner.login == 'jplag' }}
         uses: SonarSource/sonarqube-scan-action@v8.2.0
         with:
           projectBaseDir: report-viewer
