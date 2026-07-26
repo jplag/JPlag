@@ -3,9 +3,7 @@ package de.jplag.clustering;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.ToDoubleFunction;
 
-import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 
 import de.jplag.JPlagComparison;
@@ -28,24 +26,15 @@ public class ClusteringAdapter {
      * Creates the clustering adapter. Only submissions that appear in those similarities might also appear in
      * {@link ClusteringResult}s obtained from this adapter.
      * @param comparisons that should be included in the process of clustering
-     * @param metric function that assigns a similarity to each comparison
+     * @param matrixCreator the matrix creator that should be used for creating the similarity matrix
      */
-    public ClusteringAdapter(Collection<JPlagComparison> comparisons, ToDoubleFunction<JPlagComparison> metric) {
+    public ClusteringAdapter(Collection<JPlagComparison> comparisons, SimilarityMatrixCreator matrixCreator) {
         mapping = new IntegerMapping<>(comparisons.size());
         for (JPlagComparison comparison : comparisons) {
             mapping.map(comparison.firstSubmission());
             mapping.map(comparison.secondSubmission());
         }
-        int size = mapping.size();
-
-        similarityMatrix = new Array2DRowRealMatrix(size, size);
-        for (JPlagComparison comparison : comparisons) {
-            int firstIndex = mapping.map(comparison.firstSubmission());
-            int secondIndex = mapping.map(comparison.secondSubmission());
-            double similarity = metric.applyAsDouble(comparison);
-            similarityMatrix.setEntry(firstIndex, secondIndex, similarity);
-            similarityMatrix.setEntry(secondIndex, firstIndex, similarity);
-        }
+        similarityMatrix = matrixCreator.createSimilarityMatrix(comparisons, mapping);
     }
 
     /**
@@ -63,5 +52,4 @@ public class ClusteringAdapter {
                 .toList();
         return new ClusteringResult<>(mappedClusters, modularityClusterResult.getCommunityStrength());
     }
-
 }

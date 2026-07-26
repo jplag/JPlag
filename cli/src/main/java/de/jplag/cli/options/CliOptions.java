@@ -8,6 +8,7 @@ import org.slf4j.event.Level;
 import de.jplag.Language;
 import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
+import de.jplag.clustering.MatchGroupWeightingMode;
 import de.jplag.clustering.algorithm.ChineseWhispersClusteringMode;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
 import de.jplag.highlightextraction.FrequencyAnalysisOptions;
@@ -164,7 +165,7 @@ public class CliOptions implements Runnable {
         public boolean disable;
 
         /** Clustering enabled options. */
-        @ArgGroup
+        @ArgGroup(exclusive = false)
         public ClusteringEnabled enabled = new ClusteringEnabled();
 
         /** Enabled clustering settings. */
@@ -178,6 +179,16 @@ public class CliOptions implements Runnable {
             @Option(names = {
                     "--cluster-metric"}, description = "The similarity metric used for clustering. Available metrics: ${COMPLETION-CANDIDATES} (default: ${DEFAULT-VALUE}).")
             public SimilarityMetric metric = new ClusteringOptions().similarityMetric();
+
+            /** Setting to enable advanced similarity preprocessing. */
+            @Option(names = {
+                    "--use-advanced-similarity-preprocessing"}, description = "Enables advanced similarity preprocessing (default: ${DEFAULT-VALUE}).")
+            public boolean useAdvancedSimilarityPreprocessing = new ClusteringOptions().useAdvancedSimilarityPreprocessing();
+
+            /** The Mode for weighting groups of matches in the advanced similarity preprocessing. */
+            @Option(names = {
+                    "--match-group-weigthing-mode"}, description = "The Mode for weighting groups of matches in the advanced similarity preprocessing. Available modes: ${COMPLETION-CANDIDATES} (default: ${DEFAULT-VALUE}).")
+            public MatchGroupWeightingMode matchGroupWeightingMode = new ClusteringOptions().matchGroupWeightingMode();
         }
     }
 

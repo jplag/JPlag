@@ -26,5 +26,10 @@ public enum ChineseWhispersClusteringMode {
      * This has the advantage, that the clustering result is independent of the order in which we visit the nodes to update
      * their label, does however result in slower convergence.
      */
-    UPDATE_IN_BATCHES
+    UPDATE_IN_BATCHES;
+
+    @Override
+    public String toString() {
+        return super.toString().toLowerCase().replace('_', ' ');
+    }
 }

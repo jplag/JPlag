@@ -79,6 +79,8 @@ public class JPlagOptionsBuilder {
                 .withAgglomerativeThreshold(this.cliOptions.clusterAgglomerativeThreshold)
                 .withChineseWhispersMaxIterations(this.cliOptions.clusterChineseWhispersMaxIterations)
                 .withChineseWhispersClusteringMode(this.cliOptions.chineseWhispersClusteringMode)
+                .withUseAdvancedSimilarityPreprocessing(this.cliOptions.clustering.enabled.useAdvancedSimilarityPreprocessing)
+                .withMatchGroupWeightingMode(this.cliOptions.clustering.enabled.matchGroupWeightingMode)
                 .withAgglomerativeInterClusterSimilarity(this.cliOptions.clusterAgglomerativeInterClusterSimilarity);
 
         if (this.cliOptions.clusterPreprocessingNone) {
