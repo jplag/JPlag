@@ -3,11 +3,6 @@ package de.jplag.comparison;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,28 +104,17 @@ public class LongestCommonSubsequenceSearch {
             compareSubmissionsToBaseCode(coreAlgorithm, submissionSet);
         }
 
-        // Compare all submission pairs in parallel:
         List<SubmissionTuple> tuples = buildComparisonTuples(submissionSet.getSubmissions());
-        List<JPlagComparison> comparisons = new ArrayList<>();
+
+        // Compare all submission pairs in parallel:
+        List<JPlagComparison> comparisons;
         ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.COMPARING, tuples.size());
-        try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
-            List<Future<Optional<JPlagComparison>>> futures = tuples.stream().map(tuple -> executor.submit(() -> {
+        try {
+            comparisons = tuples.stream().parallel().map(tuple -> {
                 Optional<JPlagComparison> result = compareSubmissions(coreAlgorithm, tuple.left(), tuple.right());
                 progressBar.step();
                 return result;
-            })).toList();
-
-            executor.shutdown();
-            if (!executor.awaitTermination(24, TimeUnit.HOURS)) {
-                throw new ComparisonException("Comparison timed out.");
-            }
-
-            for (Future<Optional<JPlagComparison>> future : futures) {
-                future.get().ifPresent(comparisons::add);
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            Thread.currentThread().interrupt();
-            throw new ComparisonException("Error during comparison algorithm.", e);
+            }).filter(Optional::isPresent).map(Optional::get).toList();
         } finally {
             progressBar.dispose();
         }
