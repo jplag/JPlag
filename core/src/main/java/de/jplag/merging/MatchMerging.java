@@ -50,7 +50,8 @@ public class MatchMerging {
         progressBar.dispose();
 
         long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
-        return new JPlagResult(comparisonsMerged, result.getSubmissions(), result.getDuration() + durationInMillis, options);
+        return new JPlagResult(comparisonsMerged, result.getSubmissions(), result.getTokenizationDuration(),
+                result.getComparisonDuration() + durationInMillis, options);
     }
 
     private JPlagComparison mergeMatchesOf(JPlagComparison comparison, ProgressBar progressBar) {

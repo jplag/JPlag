@@ -22,7 +22,9 @@ public class JPlagResult {
 
     private final JPlagOptions options;
 
-    private final long durationInMillis;
+    private final long tokenizationDurationInMillis;
+
+    private final long comparisonDurationInMillis;
 
     private final int[] similarityDistribution; // 10-element array representing the similarity distribution of the detected matches.
 
@@ -34,14 +36,17 @@ public class JPlagResult {
      * Creates a new JPlag analysis result.
      * @param comparisons are the analyzed comparisons for all pairs of submissions.
      * @param submissions are the source code submissions analyzed.
-     * @param durationInMillis is the duration of the comparison.
+     * @param tokenizationDurationInMillis is the duration of the tokenization
+     * @param comparisonDurationInMillis is the duration of the comparison.
      * @param options are the corresponding options for the result.
      */
-    public JPlagResult(List<JPlagComparison> comparisons, SubmissionSet submissions, long durationInMillis, JPlagOptions options) {
+    public JPlagResult(List<JPlagComparison> comparisons, SubmissionSet submissions, long tokenizationDurationInMillis,
+            long comparisonDurationInMillis, JPlagOptions options) {
         // sort by similarity (descending)
         this.comparisons = comparisons.stream().sorted(Comparator.comparing(JPlagComparison::similarity).reversed()).toList();
         this.submissions = submissions;
-        this.durationInMillis = durationInMillis;
+        this.tokenizationDurationInMillis = tokenizationDurationInMillis;
+        this.comparisonDurationInMillis = comparisonDurationInMillis;
         this.options = options;
         similarityDistribution = calculateSimilarityDistribution(comparisons);
     }
@@ -86,10 +91,17 @@ public class JPlagResult {
     }
 
     /**
+     * @return the duration of the tokenization in milliseconds.
+     */
+    public long getTokenizationDuration() {
+        return tokenizationDurationInMillis;
+    }
+
+    /**
      * @return the duration of the comparison in milliseconds.
      */
-    public long getDuration() {
-        return durationInMillis;
+    public long getComparisonDuration() {
+        return comparisonDurationInMillis;
     }
 
     /**
@@ -158,8 +170,8 @@ public class JPlagResult {
 
     @Override
     public String toString() {
-        return String.format("JPlagResult { comparisons: %d, duration: %d ms, language: %s, submissions: %d }", getAllComparisons().size(),
-                getDuration(), getOptions().language().getName(), submissions.numberOfSubmissions());
+        return String.format("JPlagResult { comparisons: %d, duration: %d ms + %d ms, language: %s, submissions: %d }", getAllComparisons().size(),
+                getTokenizationDuration(), getComparisonDuration(), getOptions().language().getName(), submissions.numberOfSubmissions());
     }
 
     /**
