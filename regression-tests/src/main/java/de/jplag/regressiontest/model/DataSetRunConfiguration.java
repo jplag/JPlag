@@ -3,10 +3,12 @@ package de.jplag.regressiontest.model;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import de.jplag.exceptions.RootDirectoryException;
 import de.jplag.inputs.FileSystemSingleSubmissionDirectory;
 import de.jplag.inputs.FileSystemSubmissionDirectory;
 import de.jplag.inputs.SubmissionDirectory;
@@ -27,12 +29,15 @@ public record DataSetRunConfiguration(JPlagOptions jPlagOptions, String identifi
      * @param dataSet The data set
      * @return The configurations
      */
-    public static List<DataSetRunConfiguration> generateRunConfigurations(DataSet dataSet) throws IOException {
+    public static List<DataSetRunConfiguration> generateRunConfigurations(DataSet dataSet) throws IOException, RootDirectoryException {
         Options configuredOptions = dataSet.getOptions();
         List<DataSetRunConfiguration> result = new ArrayList<>();
 
         for (int minimumTokenMatch : configuredOptions.getMinimumTokenMatches()) {
-            Set<SubmissionDirectory> directories = dataSet.getSourceDirectories().stream().map(it -> (SubmissionDirectory) new FileSystemSubmissionDirectory(it, it.getPath())).collect(Collectors.toSet());
+            Set<SubmissionDirectory> directories = new HashSet<>();
+            for (File it : dataSet.getSourceDirectories()) {
+                directories.add(new FileSystemSubmissionDirectory(it, it.getPath()));
+            }
             JPlagOptions options = new JPlagOptions(dataSet.language(), directories, Set.of());
             options = options.withMinimumTokenMatch(minimumTokenMatch);
             if (configuredOptions.baseCodeDirectory() != null) {

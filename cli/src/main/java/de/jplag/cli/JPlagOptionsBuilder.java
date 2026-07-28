@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import de.jplag.FilePathUtil;
+import de.jplag.exceptions.RootDirectoryException;
 import de.jplag.inputs.FileSystemSingleSubmissionDirectory;
 import de.jplag.inputs.FileSystemSubmissionDirectory;
 import de.jplag.inputs.SubmissionDirectory;
@@ -100,7 +101,7 @@ public class JPlagOptionsBuilder {
         return result;
     }
 
-    private SubmissionDirectory buildSubmissionDirectory(String identifier) throws CliException {
+    private SubmissionDirectory buildSubmissionDirectory(String identifier) throws CliException, RootDirectoryException {
         String path = identifier;
         String name = null;
 

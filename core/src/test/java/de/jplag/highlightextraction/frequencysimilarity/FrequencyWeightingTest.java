@@ -5,6 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.jplag.Language;
+import de.jplag.SubmissionUtils;
+import de.jplag.inputs.SubmissionFolder;
+import de.jplag.inputs.SubmissionInputData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -83,10 +87,8 @@ class FrequencyWeightingTest extends TestBase {
      * @return multiple submissions with the same data but different names for testing
      */
     private static TestSubmissions getTestSubmissions(JPlagOptions options) {
-        Submission testSubmissionW = new Submission("W", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(),
-                options.language());
-        Submission testSubmissionX = new Submission("X", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(),
-                options.language());
+        Submission testSubmissionW = SubmissionUtils.cloneWithNewSubmissionName(testSubmission, "W", options.language());
+        Submission testSubmissionX = SubmissionUtils.cloneWithNewSubmissionName(testSubmission, "X", options.language());
 
         testSubmissionW.setTokenList(testSubmission.getTokenList());
         testSubmissionX.setTokenList(testSubmission.getTokenList());

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import de.jplag.SubmissionUtils;
 import de.jplag.inputs.SubmissionInputData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -109,14 +110,10 @@ class StrategyTest extends TestBase {
      * @return multiple submissions with the same data but different names for testing
      */
     private static TestSubmissions getTestSubmissions(JPlagOptions options) {
-        Submission testSubmissionW = new Submission("W", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(),
-                options.language());
-        Submission testSubmissionX = new Submission("X", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(),
-                options.language());
-        Submission testSubmissionY = new Submission("Y", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(),
-                options.language());
-        Submission testSubmissionZ = new Submission("Z", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(),
-                options.language());
+        Submission testSubmissionW = SubmissionUtils.cloneWithNewSubmissionName(testSubmission, "W", options.language());
+        Submission testSubmissionX = SubmissionUtils.cloneWithNewSubmissionName(testSubmission, "X", options.language());
+        Submission testSubmissionY = SubmissionUtils.cloneWithNewSubmissionName(testSubmission, "Y", options.language());
+        Submission testSubmissionZ = SubmissionUtils.cloneWithNewSubmissionName(testSubmission, "Z", options.language());
 
         testSubmissionW.setTokenList(testSubmission.getTokenList());
         testSubmissionX.setTokenList(testSubmission.getTokenList());

@@ -3,6 +3,7 @@ package de.jplag;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.io.File;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,7 @@ class LegacyRootFolderTest extends TestBase {
     void testMultiRootDirSeparateBasecode() throws ExitException {
         String basecodePath = getBasePath("basecode-base");
         List<String> paths = List.of(getBasePath("basecode"), getBasePath("SimpleDuplicate")); // 3 + 2 submissions.
-        JPlagResult result = runJPlag(paths, it -> it.withBaseCodeSubmissionName(basecodePath));
+        JPlagResult result = runJPlag(paths, it -> it.withBaseCodeSubmissionDirectory(new File(basecodePath)));
         assertEquals(5, result.getNumberOfSubmissions());
     }
 
@@ -26,7 +27,7 @@ class LegacyRootFolderTest extends TestBase {
     void testMultiRootDirBasecodeInSubmissionDir() throws ExitException {
         String basecodePath = getBasePath("basecode", "base");
         List<String> paths = List.of(getBasePath("basecode"), getBasePath("SimpleDuplicate")); // 2 + 2 submissions.
-        JPlagResult result = runJPlag(paths, it -> it.withBaseCodeSubmissionName(basecodePath));
+        JPlagResult result = runJPlag(paths, it -> it.withBaseCodeSubmissionDirectory(new File(basecodePath)));
         assertEquals(4, result.getNumberOfSubmissions());
     }
 
@@ -34,7 +35,7 @@ class LegacyRootFolderTest extends TestBase {
     void testMultiRootDirBasecodeName() {
         List<String> paths = List.of(getBasePath("basecode"), getBasePath("SimpleDuplicate"));
         String basecodePath = "base"; // Should *not* find basecode/base
-        assertThrows(IllegalArgumentException.class, () -> runJPlag(paths, it -> it.withBaseCodeSubmissionName(basecodePath)));
+        assertThrows(IllegalArgumentException.class, () -> runJPlag(paths, it -> it.withBaseCodeSubmissionDirectory(new File(basecodePath))));
     }
 
     @Test
@@ -42,7 +43,7 @@ class LegacyRootFolderTest extends TestBase {
         String basecodePath = getBasePath("basecode", "base");
         List<String> newDirectories = List.of(getBasePath("SimpleDuplicate")); // 2 submissions
         List<String> oldDirectories = List.of(getBasePath("basecode")); // 3 - 1 submissions
-        JPlagResult result = runJPlag(newDirectories, oldDirectories, it -> it.withBaseCodeSubmissionName(basecodePath));
+        JPlagResult result = runJPlag(newDirectories, oldDirectories, it -> it.withBaseCodeSubmissionDirectory(new File(basecodePath)));
         int numberOfExpectedComparison = 1 + 2 * 2;
         assertEquals(numberOfExpectedComparison, result.getAllComparisons().size());
     }

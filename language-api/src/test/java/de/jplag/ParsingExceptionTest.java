@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.io.File;
 
+import de.jplag.inputs.SubmissionFile;
 import org.junit.jupiter.api.Test;
 
 class ParsingExceptionTest {
@@ -11,7 +12,7 @@ class ParsingExceptionTest {
     @Test
     void testParsingExceptionAcceptsNullReason() {
         // placeholder exception to have a non-null argument
-        File file = new File("myFile");
+        SubmissionFile file = new DummySubmissionFile(new File("myFile"), "myFile");
         // placeholder exception to have a non-null argument
         Exception exception = new RuntimeException();
 

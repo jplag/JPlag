@@ -26,7 +26,11 @@ public class SubmissionInputData {
 
     public void useSubdirectory(String path) {
         //TODO separator
-        folder = folder.resolveAsRoot(List.of(path.split("/")));
+        try {
+            folder = folder.resolveAsRoot(List.of(path.split("/")));
+        } catch (Exception e) {
+            //TODO ignore
+        }
     }
 
     public boolean isNew() {
@@ -57,5 +61,13 @@ public class SubmissionInputData {
 
     public String getName() {
         return getSubmissionIdentifier().getName(isMultiRoot);
+    }
+
+    public SubmissionDirectory getSource() {
+        return source;
+    }
+
+    public boolean isMultiRoot() {
+        return isMultiRoot;
     }
 }

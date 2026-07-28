@@ -5,8 +5,12 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import de.jplag.DummySubmissionFile;
+import de.jplag.inputs.SubmissionFile;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -40,8 +44,8 @@ class FileUtilTest {
 
     @Test
     void testDetectFromFileSet() throws ParsingException {
-        Set<File> files = Set.of(TEST_FILE_SET_LOCATION.toFile().listFiles());
-        Charset encoding = FileUtils.detectCharsetFromMultiple(files);
+        Set<SubmissionFile> files = Arrays.stream(TEST_FILE_SET_LOCATION.toFile().listFiles()).map(it -> new DummySubmissionFile(it, it.getName())).collect(Collectors.toSet());
+        Charset encoding = FileUtils.detectCharsetFromSubmissionFiles(files);
         Assertions.assertEquals(StandardCharsets.ISO_8859_1, encoding);
     }
 

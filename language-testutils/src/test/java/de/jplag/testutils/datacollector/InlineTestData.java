@@ -8,6 +8,8 @@ import java.util.List;
 import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
+import de.jplag.inputs.FileSystemSingleSubmissionDirectory;
+import de.jplag.inputs.SubmissionDirectory;
 import de.jplag.testutils.TemporaryFileHolder;
 import de.jplag.util.FileUtils;
 
@@ -24,8 +26,9 @@ class InlineTestData implements TestData {
     @Override
     public List<Token> parseTokens(Language language) throws ParsingException, IOException {
         File file = File.createTempFile("testSource", language.fileExtensions().getFirst());
+        SubmissionDirectory directory = new FileSystemSingleSubmissionDirectory(file, "_");
         FileUtils.write(file, this.testData);
-        List<Token> tokens = language.parse(Collections.singleton(file), false);
+        List<Token> tokens = language.parse(directory.resolveSubmissions().get(0), false);
         TemporaryFileHolder.addTemporaryFile(file);
         return tokens;
     }

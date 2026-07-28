@@ -260,6 +260,9 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Sub
         allDirectories.addAll(submissionDirectories);
         allDirectories.addAll(oldSubmissionDirectories);
 
+        if(!baseCodeDirectory.exists()) {
+            throw new IllegalArgumentException("Basecode directory does not exist");
+        }
         Optional<SubmissionDirectory> matchingDirectory = allDirectories.stream().filter(it -> it.contains(baseCodeDirectory)).findFirst();
 
         if(matchingDirectory.isPresent()) {

@@ -6,6 +6,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 
+import de.jplag.inputs.SubmissionFile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +33,9 @@ class CommentExtractorTest {
                 List.of("\\") // Escape characters
         );
 
-        File input = new File(TEST_FILE_LOCATION.toFile(), TEST_FILE_NAME);
+        File inputFile = new File(TEST_FILE_LOCATION.toFile(), TEST_FILE_NAME);
+        SubmissionFile input = new DummySubmissionFile(inputFile, inputFile.getName());
+
 
         CommentExtractor extractor = new CommentExtractor(input, settings);
 

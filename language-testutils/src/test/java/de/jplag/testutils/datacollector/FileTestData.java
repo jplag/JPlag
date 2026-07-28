@@ -9,6 +9,7 @@ import java.util.Set;
 import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
+import de.jplag.inputs.FileSystemSingleSubmissionDirectory;
 import de.jplag.util.FileUtils;
 
 /**
@@ -23,7 +24,7 @@ class FileTestData implements TestData {
 
     @Override
     public List<Token> parseTokens(Language language) throws ParsingException {
-        return language.parse(Set.of(file), false);
+        return language.parse(new FileSystemSingleSubmissionDirectory(file, "_").resolveSubmissions().get(0), false);
     }
 
     @Override

@@ -9,8 +9,8 @@ public class StringSourceFile extends  SimpleJavaFileObject {
     private String source;
     private String name;
 
-    public StringSourceFile(String name, String source) {
-        super(URI.create("string:///" + name + Kind.SOURCE.extension), Kind.SOURCE);
+    public StringSourceFile(String name, String source) { //TODO pass actual path
+        super(URI.create("string:///" + name), Kind.SOURCE);
 
         this.name = name;
         this.source = source;

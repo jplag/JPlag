@@ -1,5 +1,7 @@
 package de.jplag.inputs;
 
+import de.jplag.exceptions.RootDirectoryException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -15,10 +17,14 @@ public class FileSystemSubmissionDirectory implements SubmissionDirectory {
     private SubmissionFolder root;
     private String name;
 
-    public FileSystemSubmissionDirectory(File rootFile, String name) {
+    public FileSystemSubmissionDirectory(File rootFile, String name) throws RootDirectoryException {
         this.rootFile = rootFile;
         this.root = new SubmissionFolder("root", "");
         this.name = name;
+
+        if(!rootFile.exists()) {
+            throw new RootDirectoryException("Root directory (" + rootFile.getPath() + ") doesn't exist.");
+        }
 
         addContents(Collections.emptyList(), rootFile);
     }
@@ -50,7 +56,7 @@ public class FileSystemSubmissionDirectory implements SubmissionDirectory {
 
     @Override
     public boolean contains(File file) {
-        return file.getParentFile().equals(rootFile);
+        return file.getAbsoluteFile().getParentFile().equals(rootFile.getAbsoluteFile());
     }
 
     static class FileSystemSubmissionFile implements SubmissionFile {

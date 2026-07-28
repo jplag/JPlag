@@ -1,6 +1,7 @@
 package de.jplag.inputs;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -13,7 +14,21 @@ public class FileSystemSingleSubmissionDirectory implements SubmissionDirectory 
         this.directoryFile = directoryFile;
         this.name = name;
         folder = new SubmissionFolder(name, "");
-        folder.add(Collections.emptyList(), new FileSystemSubmissionDirectory.FileSystemSubmissionFile(directoryFile, directoryFile.getName()));
+        addContents(Collections.emptyList(), directoryFile, directoryFile);
+    }
+
+    private void addContents(List<String> path, File file, File rootDirectory) {
+        if (file.isDirectory()) {
+            List<String> subPath = new ArrayList<>(path);
+            subPath.add(rootDirectory.getName());
+            for (File subFile : file.listFiles()) {
+                addContents(subPath, subFile, rootDirectory);
+            }
+        }
+
+        if (file.isFile()) {
+            folder.add(path, new FileSystemSubmissionDirectory.FileSystemSubmissionFile(file, String.join("/", path)));
+        }
     }
 
     @Override

@@ -4,12 +4,14 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.StringJoiner;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import de.jplag.exceptions.RootDirectoryException;
 import de.jplag.inputs.FileSystemSubmissionDirectory;
 import de.jplag.inputs.SubmissionDirectory;
 import org.junit.jupiter.api.Assumptions;
@@ -98,7 +100,7 @@ public abstract class TestBase {
         return JPlag.run(getOptions(newPaths, oldPaths, customization));
     }
 
-    protected JPlagOptions getOptionsWithExclusionFile(String testSampleName, String exclusionFileName) {
+    protected JPlagOptions getOptionsWithExclusionFile(String testSampleName, String exclusionFileName) throws RootDirectoryException {
         String blackList = Path.of(BASE_PATH, testSampleName, exclusionFileName).toString();
         return getOptions(testSampleName, options -> options.withExclusionFileName(blackList));
     }
@@ -108,7 +110,7 @@ public abstract class TestBase {
      * @param testSampleName is the name of the test sample directory in the resources.
      * @return the options.
      */
-    protected JPlagOptions getDefaultOptions(String testSampleName) {
+    protected JPlagOptions getDefaultOptions(String testSampleName) throws RootDirectoryException {
         return getOptions(List.of(getBasePath(testSampleName)), List.of(), options -> options);
     }
 
@@ -118,7 +120,7 @@ public abstract class TestBase {
      * @param customization is a function that configures and returns the JPlagOptions for the run.
      * @return the options.
      */
-    protected JPlagOptions getOptions(String testSampleName, Function<JPlagOptions, JPlagOptions> customization) {
+    protected JPlagOptions getOptions(String testSampleName, Function<JPlagOptions, JPlagOptions> customization) throws RootDirectoryException {
         return getOptions(List.of(getBasePath(testSampleName)), List.of(), customization);
     }
 
@@ -128,7 +130,7 @@ public abstract class TestBase {
      * @param customization is a function that configures and returns the JPlagOptions for the run.
      * @return the options.
      */
-    protected JPlagOptions getOptions(List<String> newPaths, Function<JPlagOptions, JPlagOptions> customization) {
+    protected JPlagOptions getOptions(List<String> newPaths, Function<JPlagOptions, JPlagOptions> customization) throws RootDirectoryException {
         return getOptions(newPaths, List.of(), customization);
     }
 
@@ -139,9 +141,15 @@ public abstract class TestBase {
      * @param customization is a function that configures and returns the JPlagOptions for the run.
      * @return the options.
      */
-    protected JPlagOptions getOptions(List<String> newPaths, List<String> oldPaths, Function<JPlagOptions, JPlagOptions> customization) { //TODO names?
-        var newFiles = newPaths.stream().map(path -> (SubmissionDirectory)new FileSystemSubmissionDirectory(new File(path), path)).collect(Collectors.toSet());
-        var oldFiles = oldPaths.stream().map(path -> (SubmissionDirectory)new FileSystemSubmissionDirectory(new File(path), path)).collect(Collectors.toSet());
+    protected JPlagOptions getOptions(List<String> newPaths, List<String> oldPaths, Function<JPlagOptions, JPlagOptions> customization) throws RootDirectoryException { //TODO names?
+        HashSet<SubmissionDirectory> newFiles = new HashSet<>();
+        for (String newPath : newPaths) {
+            newFiles.add(new FileSystemSubmissionDirectory(new File(newPath), newPath));
+        }
+        HashSet<SubmissionDirectory> oldFiles = new HashSet<>();
+        for (String path : oldPaths) {
+            oldFiles.add(new FileSystemSubmissionDirectory(new File(path), path));
+        }
         JPlagOptions options = new JPlagOptions(new JavaLanguage(), newFiles, oldFiles)
                 .withClusteringOptions(new ClusteringOptions().withEnabled(false));
         return customization.apply(options);

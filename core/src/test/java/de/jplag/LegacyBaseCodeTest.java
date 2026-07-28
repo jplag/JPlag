@@ -37,14 +37,14 @@ class LegacyBaseCodeTest extends BaseCodeTest {
 
     @Test
     void testAutoTrimFileSeparators() throws ExitException {
-        JPlagResult result = runJPlag("basecode", it -> it.withBaseCodeSubmissionName(File.separator + "base" + File.separator));
+        JPlagResult result = runJPlag("basecode", it -> it.withBaseCodeSubmissionDirectory(new File(File.separator + "base" + File.separator)));
         verifyResults(result);
     }
 
     @Override
     @Test
     void testBasecodePathComparison() throws ExitException {
-        JPlagResult result = runJPlag("basecode", it -> it.withBaseCodeSubmissionName(getBasePath("basecode-base")));
+        JPlagResult result = runJPlag("basecode", it -> it.withBaseCodeSubmissionDirectory(new File(getBasePath("basecode-base"))));
         assertEquals(3, result.getNumberOfSubmissions()); // "basecode/base" is now a user submission.
     }
 
@@ -56,7 +56,7 @@ class LegacyBaseCodeTest extends BaseCodeTest {
 
     @Test
     void testBasecodeUserSubmissionWithDots() {
-        assertThrows(IllegalArgumentException.class, () -> runJPlag("basecode", it -> it.withBaseCodeSubmissionName("base.ext")));
+        assertThrows(BasecodeException.class, () -> runJPlag("basecode", it -> it.withBaseCodeSubmissionName("base.ext")));
     }
 
     /**
@@ -66,7 +66,7 @@ class LegacyBaseCodeTest extends BaseCodeTest {
     @Test
     void testSubdirectoryGlobalBasecode() throws ExitException {
         String basecode = getBasePath("SubdirectoryBase");
-        JPlagResult result = runJPlag("SubdirectoryDuplicate", it -> it.withSubdirectoryName("src").withBaseCodeSubmissionName(basecode));
+        JPlagResult result = runJPlag("SubdirectoryDuplicate", it -> it.withSubdirectoryName("src").withBaseCodeSubmissionDirectory(new File(basecode)));
         verifySimpleSubdirectoryDuplicate(result, 3, 3);
     }
 

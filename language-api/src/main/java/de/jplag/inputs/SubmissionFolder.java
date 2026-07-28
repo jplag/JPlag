@@ -28,7 +28,7 @@ public class SubmissionFolder implements SubmissionDirectoryComponent {
             files.add(file);
         } else {
             String path;
-            if(this.path.isEmpty()) {
+            if (this.path.isEmpty()) {
                 path = pathElements.get(0);
             } else {
                 path = this.path + "/" + pathElements.get(0);
@@ -40,7 +40,7 @@ public class SubmissionFolder implements SubmissionDirectoryComponent {
     }
 
     public SubmissionFolder resolveAsRoot(List<String> path) {
-        if(path.isEmpty()) {
+        if (path.isEmpty()) {
             return this.asRoot();
         }
 
@@ -136,5 +136,22 @@ public class SubmissionFolder implements SubmissionDirectoryComponent {
         SubmissionFolder virtualRoot = new SubmissionFolder("virtualRoot", "");
         virtualRoot.add(Collections.emptyList(), file);
         return virtualRoot;
+    }
+
+    public SubmissionFolder asRootWithNewName(String name) {
+        SubmissionFolder copy = withNewRelativePath("");
+        copy.name = name;
+        return copy;
+    }
+
+    public SubmissionFolder withNewRelativePath(String relativePath) {
+        SubmissionFolder copy = new SubmissionFolder(name, relativePath);
+        for (SubmissionFile file : files) {
+            copy.files.add(file.clone(relativePath + "/" + file.name()));
+        }
+        for (SubmissionFolder folder: directories.values()) {
+            copy.directories.put(folder.name, folder.withNewRelativePath(relativePath + "/" + folder.name));
+        }
+        return copy;
     }
 }

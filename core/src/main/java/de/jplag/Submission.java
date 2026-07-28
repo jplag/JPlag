@@ -336,4 +336,8 @@ public class Submission implements Comparable<Submission> {
     public boolean matchesIdentifier(SubmissionIdentifier identifier) {
         return inputData.matchesIdentifier(identifier);
     }
+
+    public SubmissionInputData getInputData() {
+        return this.inputData;
+    }
 }

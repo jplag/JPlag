@@ -90,7 +90,7 @@ public class SubmissionSetBuilder {
         return new SubmissionSet(submissions, baseCode.orElse(null), options);
     }
 
-    public Optional<Submission> findBaseCodeSubmission(List<Submission> submissions, JPlagOptions options) {
+    public Optional<Submission> findBaseCodeSubmission(List<Submission> submissions, JPlagOptions options) throws BasecodeException {
         if (!options.hasBaseCode()) {
             return Optional.empty();
         }
@@ -98,10 +98,14 @@ public class SubmissionSetBuilder {
         List<Submission> matchingSubmissions = submissions.stream().filter(submission -> submission.matchesIdentifier(options.baseCodeSubmission())).toList();
 
         if (matchingSubmissions.size() != 1) {
-            //TODO exception
+            throw new BasecodeException("Cannot find basecode submission (" + options.baseCodeSubmission() + ")");
         }
 
-        return Optional.ofNullable(matchingSubmissions.getFirst());
+        if(matchingSubmissions.size() == 1) {
+            return Optional.ofNullable(matchingSubmissions.getFirst());
+        } else {
+            return Optional.empty();
+        }
     }
 
     private boolean isFileValid(SubmissionFile file) {

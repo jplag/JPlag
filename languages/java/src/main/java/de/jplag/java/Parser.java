@@ -32,7 +32,7 @@ public class Parser {
     public List<Token> parse(SubmissionFolder folder) throws ParsingException {
         ensureJavacIsAvailable();
         tokens = new ArrayList<>();
-        new JavacAdapter().parseFiles(folder.getFiles(), this);
+        new JavacAdapter().parseFiles(folder.listAllFiles(), this);
         logger.debug("--- token semantics ---");
         for (Token token : tokens) {
             logger.debug("{} | {} | {}", token.getStartLine(), token.getType().getDescription(), token.getSemantics());
