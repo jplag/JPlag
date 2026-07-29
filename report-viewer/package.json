@@ -23,7 +23,7 @@
     "@vue/eslint-config-typescript": "^14.9.0",
     "eslint": "^10.7.0",
     "eslint-plugin-vue": "^10.9.2",
-    "globals": "^17.7.0",
+    "globals": "^17.8.0",
     "istanbul-lib-coverage": "^3.2.2",
     "istanbul-lib-report": "^3.0.1",
     "istanbul-reports": "^3.2.0",
