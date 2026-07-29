@@ -2,6 +2,7 @@ package de.jplag.merging;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -13,6 +14,8 @@ import java.util.function.Function;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
@@ -38,6 +41,8 @@ class MatchMergingTest extends TestBase {
     private List<JPlagComparison> comparisonsAfter;
     private final LongestCommonSubsequenceSearch comparisonStrategy;
     private final SubmissionSet submissionSet;
+    private final Submission leftSubmission;
+    private final Submission rightSubmission;
     private static final int MINIMUM_NEIGHBOR_LENGTH = 1;
     private static final int MAXIMUM_GAP_SIZE = 10;
     private static final int MINIMUM_REQUIRED_MERGES = 0;
@@ -50,6 +55,13 @@ class MatchMergingTest extends TestBase {
         submissionSet = builder.buildSubmissionSet();
 
         comparisonStrategy = new LongestCommonSubsequenceSearch(options);
+
+        // Largest two single-file submissions provide token lists big enough for hand-built match indices; token content is
+        // never inspected.
+        List<Submission> singleFileSubmissions = submissionSet.getSubmissions().stream().filter(submission -> submission.getFiles().size() == 1)
+                .sorted(Comparator.comparingInt(Submission::getNumberOfTokens).reversed().thenComparing(Submission::getName)).toList();
+        leftSubmission = singleFileSubmissions.get(0);
+        rightSubmission = singleFileSubmissions.get(1);
     }
 
     @BeforeEach
@@ -233,6 +245,61 @@ class MatchMergingTest extends TestBase {
         for (File file : files) {
             assertEquals(files.getFirst(), file, "Two different files in token sequence: " + files.getFirst().getName() + " and " + file.getName());
         }
+    }
+
+    @DisplayName("Neighbors merge iff the average gap does not exceed the maximum gap size.")
+    @ParameterizedTest(name = "gap of 5, maximumGapSize={0} -> {1} match(es)")
+    @CsvSource({"4, 2", "5, 1", "6, 1"})
+    void testGapSizeBoundary(int maximumGapSize, int expectedMatchCount) {
+        // Two length-3 matches separated by a symmetric gap of 5 tokens.
+        List<Match> handBuiltMatches = List.of(new Match(0, 0, 3, 3), new Match(8, 8, 3, 3));
+        List<Match> merged = mergeHandBuilt(new MergingOptions(true, 1, maximumGapSize, 0), handBuiltMatches);
+        assertEquals(expectedMatchCount, merged.size());
+    }
+
+    @Test
+    @DisplayName("Matches whose order differs between the two submissions are not neighbors and are not merged.")
+    void testReorderedMatchesAreNotMerged() {
+        // Matches in opposite order: A then B on the left, B then A on the right.
+        Match matchA = new Match(0, 8, 3, 3);
+        Match matchB = new Match(4, 0, 3, 3);
+        List<Match> merged = mergeHandBuilt(new MergingOptions(true, 1, 10, 0), List.of(matchA, matchB));
+
+        List<Match> sortedResult = merged.stream().sorted(Comparator.comparingInt(Match::startOfFirst)).toList();
+        assertIterableEquals(List.of(matchA, matchB), sortedResult, "Reordered matches must remain unmerged");
+    }
+
+    @DisplayName("A comparison is only rewritten when the number of merges reaches minimumRequiredMerges.")
+    @ParameterizedTest(name = "{0} contiguous matches, minimumRequiredMerges=3 -> {1} match(es)")
+    @CsvSource({"4, 1", "3, 3"})
+    void testMinimumRequiredMergesBoundary(int chainLength, int expectedMatchCount) {
+        // A chain of N contiguous length-2 matches produces N-1 merges. Threshold=3: needs chain of 4 to rewrite.
+        List<Match> handBuiltMatches = new ArrayList<>();
+        for (int i = 0; i < chainLength; i++) {
+            handBuiltMatches.add(new Match(2 * i, 2 * i, 2, 2));
+        }
+        List<Match> merged = mergeHandBuilt(new MergingOptions(true, 1, 6, 3), handBuiltMatches);
+        assertEquals(expectedMatchCount, merged.size());
+    }
+
+    @Test
+    @DisplayName("An insertion on one side produces an asymmetric merged match that subsumes the gap per side.")
+    void testAsymmetricGapMerge() {
+        // No gap on the left, four inserted tokens on the right: average gap 2, so the matches merge.
+        List<Match> handBuiltMatches = List.of(new Match(0, 0, 3, 3), new Match(3, 7, 3, 3));
+        List<Match> merged = mergeHandBuilt(new MergingOptions(true, 1, 6, 0), handBuiltMatches);
+
+        assertEquals(1, merged.size());
+        Match mergedMatch = merged.getFirst();
+        assertEquals(new Match(0, 0, 6, 10), mergedMatch);
+        assertNotEquals(mergedMatch.lengthOfFirst(), mergedMatch.lengthOfSecond(), "The merged match must keep asymmetric side lengths");
+    }
+
+    private List<Match> mergeHandBuilt(MergingOptions mergingOptions, List<Match> handBuiltMatches) {
+        JPlagOptions unitOptions = options.withMinimumTokenMatch(1).withMergingOptions(mergingOptions);
+        JPlagComparison comparison = new JPlagComparison(leftSubmission, rightSubmission, new ArrayList<>(handBuiltMatches), new ArrayList<>());
+        JPlagResult result = new JPlagResult(List.of(comparison), submissionSet, 0L, unitOptions);
+        return new MatchMerging(unitOptions).mergeMatchesOf(result).getAllComparisons().getFirst().matches();
     }
 
     private static JPlagComparison findComparison(List<JPlagComparison> comparisons, String firstName, String secondName) {

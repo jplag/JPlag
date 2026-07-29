@@ -2,7 +2,9 @@ package de.jplag.merging;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
@@ -20,9 +22,12 @@ import de.jplag.options.JPlagOptions;
  * Based on configurable parameters MinimumNeighborLength and MaximumGapSize, it alters prior results from pairwise
  * submission comparisons and merges all neighboring matches that fit the specified thresholds. Submissions are referred
  * to as left and right and neighboring matches as upper and lower. When neighboring matches get merged they become one
- * and the tokens separating them get removed from the submission clone. MinimumNeighborLength describes how short a
- * match can be and MaximumGapSize describes how many tokens can be between two neighboring matches. Both are set in
- * {@link JPlagOptions} as {@link MergingOptions} and default to (2,6).
+ * and the tokens separating them (the gap) are subsumed into the length of the merged match rather than being removed
+ * from any token sequence. MinimumNeighborLength describes how short a match can be and MaximumGapSize describes how
+ * many tokens can be between two neighboring matches. Both are set in {@link JPlagOptions} as {@link MergingOptions}
+ * and default to (2,6). Note that MinimumNeighborLength is not enforced here: it is applied upstream in
+ * {@code GreedyStringTiling}, which lowers its minimum match length accordingly when merging is enabled, so that
+ * shorter matches are available as merge candidates.
  */
 public class MatchMerging {
     private final JPlagOptions options;
@@ -55,8 +60,9 @@ public class MatchMerging {
     }
 
     private JPlagComparison mergeMatchesOf(JPlagComparison comparison, ProgressBar progressBar) {
-        Submission leftSubmission = comparison.firstSubmission().copy();
-        Submission rightSubmission = comparison.secondSubmission().copy();
+        // Submissions are never mutated during merging; reuse originals instead of copying.
+        Submission leftSubmission = comparison.firstSubmission();
+        Submission rightSubmission = comparison.secondSubmission();
         List<Match> globalMatches = new ArrayList<>(comparison.matches());
         globalMatches.addAll(comparison.ignoredMatches());
 
@@ -86,9 +92,14 @@ public class MatchMerging {
         sortedByLeft.sort(Comparator.comparingInt(Match::startOfFirst));
         sortedByRight.sort(Comparator.comparingInt(Match::startOfSecond));
 
-        for (int i = 0; i < sortedByLeft.size() - 1; i++) {
+        // Position of each match in the right-order, by object identity, to avoid a quadratic indexOf scan below.
+        Map<Match, Integer> rightPosition = new IdentityHashMap<>();
+        for (int i = 0; i < sortedByRight.size(); i++) {
+            rightPosition.put(sortedByRight.get(i), i);
+        }
 
-            if (sortedByRight.indexOf(sortedByLeft.get(i)) == sortedByRight.indexOf(sortedByLeft.get(i + 1)) - 1) {
+        for (int i = 0; i < sortedByLeft.size() - 1; i++) {
+            if (rightPosition.get(sortedByLeft.get(i)).intValue() == rightPosition.get(sortedByLeft.get(i + 1)).intValue() - 1) {
                 neighbors.add(new Neighbor(sortedByLeft.get(i), sortedByLeft.get(i + 1)));
             }
         }
@@ -172,11 +183,10 @@ public class MatchMerging {
             return false;
         }
 
-        List<Token> tokenLeft = new ArrayList<>(leftSubmission.getTokenList());
-        List<Token> tokenRight = new ArrayList<>(rightSubmission.getTokenList());
-
-        tokenLeft = tokenLeft.subList(upperMatch.endOfFirst() + 1, upperMatch.endOfFirst() + tokensBetweenLeft + 1);
-        tokenRight = tokenRight.subList(upperMatch.endOfSecond() + 1, upperMatch.endOfSecond() + tokensBetweenRight + 1);
+        // subList returns a view, so no copy of the (potentially large) token lists is made per merge attempt.
+        List<Token> tokenLeft = leftSubmission.getTokenList().subList(upperMatch.endOfFirst() + 1, upperMatch.endOfFirst() + tokensBetweenLeft + 1);
+        List<Token> tokenRight = rightSubmission.getTokenList().subList(upperMatch.endOfSecond() + 1,
+                upperMatch.endOfSecond() + tokensBetweenRight + 1);
 
         return containsFileEndToken(tokenLeft) || containsFileEndToken(tokenRight);
     }
