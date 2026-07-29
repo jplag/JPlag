@@ -4,18 +4,21 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import org.kohsuke.MetaInfServices;
-
 import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
-@MetaInfServices(Language.class)
+import com.google.auto.service.AutoService;
+
+/**
+ * Facade for the ANTLR-based Go language module.
+ */
+@AutoService(Language.class)
 public class GoLanguage implements Language {
 
     @Override
-    public String[] suffixes() {
-        return new String[] {".go"};
+    public List<String> fileExtensions() {
+        return List.of(".go");
     }
 
     @Override

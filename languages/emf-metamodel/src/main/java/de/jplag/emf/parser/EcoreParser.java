@@ -8,9 +8,9 @@ import java.util.Set;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 
-import de.jplag.AbstractParser;
 import de.jplag.ParsingException;
 import de.jplag.Token;
+import de.jplag.TokenTrace;
 import de.jplag.TokenType;
 import de.jplag.emf.EmfLanguage;
 import de.jplag.emf.MetamodelToken;
@@ -23,23 +23,18 @@ import de.jplag.emf.util.EmfaticModelView;
 /**
  * Parser for EMF metamodels.
  */
-public class EcoreParser extends AbstractParser {
+public class EcoreParser {
     protected List<Token> tokens;
     protected File currentFile;
     protected AbstractModelView treeView;
     protected AbstractMetamodelVisitor visitor;
 
     /**
-     * Creates the parser.
-     */
-    public EcoreParser() {
-        EMFUtil.registerEcoreExtension();
-    }
-
-    /**
      * Parses all tokens from a set of files.
      * @param files is the set of files.
+     * @param normalize specifies if the containment tree normalization should be executed or not.
      * @return the list of parsed tokens.
+     * @throws ParsingException if parsing fails.
      */
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
         tokens = new ArrayList<>();
@@ -52,6 +47,8 @@ public class EcoreParser extends AbstractParser {
     /**
      * Loads a metamodel from a file and parses it.
      * @param file is the metamodel file.
+     * @param normalize specifies if the containment tree normalization should be executed or not.
+     * @throws ParsingException if parsing fails.
      */
     protected void parseModelFile(File file, boolean normalize) throws ParsingException {
         currentFile = file;
@@ -68,14 +65,14 @@ public class EcoreParser extends AbstractParser {
             visitor.visit(root);
         }
         tokens.add(Token.fileEnd(currentFile));
-        treeView.writeToFile(getCorrespondingViewFileSuffix());
+        treeView.writeToFile(getCorrespondingViewFileExtension());
     }
 
     /**
-     * @return the correct view file suffix for the model view. Can be overriden in subclasses for alternative views.
+     * @return the correct view file extension for the model view. Can be overriden in subclasses for alternative views.
      */
-    protected String getCorrespondingViewFileSuffix() {
-        return EmfLanguage.VIEW_FILE_SUFFIX;
+    protected String getCorrespondingViewFileExtension() {
+        return EmfLanguage.VIEW_FILE_EXTENSION;
     }
 
     /**
@@ -91,6 +88,7 @@ public class EcoreParser extends AbstractParser {
 
     /**
      * Extension point for subclasses to employ different normalization.
+     * @param modelResource is the EMF resource in which the model is loaded.
      */
     protected void normalizeOrder(Resource modelResource) {
         ModelSorter.sort(modelResource, new MetamodelElementTokenizer());
@@ -110,7 +108,7 @@ public class EcoreParser extends AbstractParser {
      * @param source is the corresponding {@link EObject} for which the token is added.
      */
     protected void addToken(TokenType type, EObject source) {
-        MetamodelToken token = new MetamodelToken(type, currentFile, source);
-        tokens.add(treeView.convertToMetadataEnrichedToken(token));
+        TokenTrace trace = treeView.getTokenTrace(source, type);
+        tokens.add(new MetamodelToken(type, currentFile, trace, source));
     }
 }

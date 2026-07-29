@@ -4,18 +4,21 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import org.kohsuke.MetaInfServices;
-
 import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
-@MetaInfServices(Language.class)
+import com.google.auto.service.AutoService;
+
+/**
+ * Language facade for Python 3.
+ */
+@AutoService(Language.class)
 public class PythonLanguage implements Language {
 
     @Override
-    public String[] suffixes() {
-        return new String[] {".py"};
+    public List<String> fileExtensions() {
+        return List.of(".py");
     }
 
     @Override

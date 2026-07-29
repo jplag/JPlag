@@ -10,7 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -23,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import de.jplag.ParsingException;
 import de.jplag.SharedTokenType;
 import de.jplag.Token;
-import de.jplag.TokenPrinter;
+import de.jplag.TokenPrinterUtils;
 
 class SwiftFrontendTest {
 
@@ -53,7 +52,7 @@ class SwiftFrontendTest {
     private static final String DELIMITED_COMMENT_END = ".*\\*/\\s*$";
 
     private final Logger logger = LoggerFactory.getLogger(SwiftFrontendTest.class);
-    private final String[] testFiles = new String[] {COMPLETE_TEST_FILE};
+    private final String[] testFiles = {COMPLETE_TEST_FILE};
     private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "swift").toFile();
     private SwiftLanguage language;
 
@@ -65,8 +64,8 @@ class SwiftFrontendTest {
     @Test
     void parseTestFiles() throws ParsingException {
         for (String fileName : testFiles) {
-            List<Token> tokens = language.parse(Set.of(new File(testFileLocation, fileName)));
-            String output = TokenPrinter.printTokens(tokens, testFileLocation, Optional.empty());
+            List<Token> tokens = language.parse(Set.of(new File(testFileLocation, fileName)), false);
+            String output = TokenPrinterUtils.printTokensByFile(tokens);
             logger.info(output);
 
             testSourceCoverage(fileName, tokens);
@@ -91,7 +90,7 @@ class SwiftFrontendTest {
             // All lines that contain code
             var codeLines = getCodeLines(lines);
             // All lines that contain token
-            var tokenLines = tokens.stream().mapToInt(Token::getLine).filter(line -> line != Token.NO_VALUE).distinct().toArray();
+            var tokenLines = tokens.stream().mapToInt(Token::getStartLine).filter(line -> line != Token.NO_VALUE).distinct().toArray();
 
             if (codeLines.length > tokenLines.length) {
                 var diffLine = IntStream.range(0, codeLines.length)
@@ -125,7 +124,8 @@ class SwiftFrontendTest {
             if (line.matches(DELIMITED_COMMENT_START)) {
                 state.insideComment = true;
                 return false;
-            } else if (state.insideComment) {
+            }
+            if (state.insideComment) {
                 // This fails if code follows after '*/'. If the code is formatted well, this should not happen.
                 if (line.matches(DELIMITED_COMMENT_END)) {
                     state.insideComment = false;

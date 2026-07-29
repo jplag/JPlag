@@ -18,8 +18,8 @@ public class DelayablePrinter {
     }
 
     /**
-     * Threadsafe singleton getter
-     * @return The singleton instance
+     * Threadsafe singleton getter.
+     * @return The singleton instance.
      */
     public static DelayablePrinter getInstance() {
         return InstanceHolder.instance;
@@ -32,8 +32,8 @@ public class DelayablePrinter {
     }
 
     /**
-     * Prints the given string to the terminal appending a line-break
-     * @param output The string to print
+     * Prints the given string to the terminal appending a line-break.
+     * @param output The string to print.
      */
     public synchronized void println(String output) {
         this.outputQueue.offer(output);
@@ -41,14 +41,14 @@ public class DelayablePrinter {
     }
 
     /**
-     * Stops printing to the terminal until {@link #resume()} is called
+     * Stops printing to the terminal until {@link #resume()} is called.
      */
     public synchronized void delay() {
         this.isDelayed = true;
     }
 
     /**
-     * Resumes printing if {@link #delay()} was called
+     * Resumes printing if {@link #delay()} was called.
      */
     public synchronized void resume() {
         this.isDelayed = false;
@@ -56,7 +56,8 @@ public class DelayablePrinter {
     }
 
     /**
-     * Changes the output stream messages are written to
+     * Changes the output stream messages are written to.
+     * @param printStream is the new output stream.
      */
     public void setOutputStream(PrintStream printStream) {
         this.targetStream = printStream;

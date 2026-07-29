@@ -31,12 +31,12 @@ public final class FileUtil {
     }
 
     /**
-     * Clears all files from a directory that whose names end in a certain suffix.
+     * Clears all files from a directory that whose names end in a certain extension.
      * @param directory is the target directory.
-     * @param suffix is the file suffix of the files to clear.
+     * @param extension is the file extension of the files to clear.
      */
-    public static void clearFiles(File directory, String suffix) {
-        Arrays.stream(directory.listFiles()).filter(file -> file.getName().endsWith(suffix)).forEach(File::delete);
+    public static void clearFiles(File directory, String extension) {
+        Arrays.stream(directory.listFiles()).filter(file -> file.getName().endsWith(extension)).forEach(File::delete);
     }
 
 }

@@ -14,21 +14,21 @@ import org.junit.jupiter.api.Test;
 import com.sun.net.httpserver.HttpExchange;
 
 class RoutingTreeTest {
-    private static final String firstRoutingPath = "/content/image.png";
-    private static final String secondRoutingPath = "/index.html";
+    private static final String FIRST_ROUTING_PATH = "/content/image.png";
+    private static final String SECOND_ROUTING_PATH = "/index.html";
     private RoutingTree routingTree;
 
     @BeforeEach
     void setUp() {
         this.routingTree = new RoutingTree();
-        this.routingTree.insertRouting(firstRoutingPath, new TestRouting(firstRoutingPath));
-        this.routingTree.insertRouting(secondRoutingPath, new TestRouting(secondRoutingPath));
+        this.routingTree.insertRouting(FIRST_ROUTING_PATH, new TestRouting(FIRST_ROUTING_PATH));
+        this.routingTree.insertRouting(SECOND_ROUTING_PATH, new TestRouting(SECOND_ROUTING_PATH));
     }
 
     @Test
     void testAccessRoutingTree() {
-        Pair<RoutingPath, Routing> firstRouting = this.routingTree.resolveRouting(new RoutingPath(firstRoutingPath));
-        Pair<RoutingPath, Routing> secondRouting = this.routingTree.resolveRouting(new RoutingPath(secondRoutingPath + "/suffix"));
+        Pair<RoutingPath, Routing> firstRouting = this.routingTree.resolveRouting(new RoutingPath(FIRST_ROUTING_PATH));
+        Pair<RoutingPath, Routing> secondRouting = this.routingTree.resolveRouting(new RoutingPath(SECOND_ROUTING_PATH + "/suffix"));
 
         assertTrue(firstRouting.getLeft().isEmpty());
         assertFalse(secondRouting.getLeft().isEmpty());
@@ -37,8 +37,8 @@ class RoutingTreeTest {
         assertInstanceOf(TestRouting.class, firstRouting.getRight());
         assertInstanceOf(TestRouting.class, secondRouting.getRight());
 
-        assertEquals(firstRoutingPath, ((TestRouting) firstRouting.getRight()).path);
-        assertEquals(secondRoutingPath, ((TestRouting) secondRouting.getRight()).path);
+        assertEquals(FIRST_ROUTING_PATH, ((TestRouting) firstRouting.getRight()).path);
+        assertEquals(SECOND_ROUTING_PATH, ((TestRouting) secondRouting.getRight()).path);
     }
 
     @Test

@@ -4,21 +4,21 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import org.kohsuke.MetaInfServices;
-
 import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
+import com.google.auto.service.AutoService;
+
 /**
  * The entry point for the ANTLR parser based LLVM IR language module.
  */
-@MetaInfServices(Language.class)
+@AutoService(Language.class)
 public class LLVMIRLanguage implements Language {
 
     @Override
-    public String[] suffixes() {
-        return new String[] {".ll"};
+    public List<String> fileExtensions() {
+        return List.of(".ll");
     }
 
     @Override

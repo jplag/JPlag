@@ -2,6 +2,9 @@ package de.jplag.python3;
 
 import de.jplag.TokenType;
 
+/**
+ * Python 3 token types.
+ */
 public enum Python3TokenType implements TokenType {
     IMPORT("IMPORT"),
     CLASS_BEGIN("CLASS{"),
@@ -31,7 +34,7 @@ public enum Python3TokenType implements TokenType {
     ASSERT("ASSERT"),
     YIELD("YIELD"),
     DEL("DEL"),
-    WITH_BEGIN("WITH}"),
+    WITH_BEGIN("WITH{"),
     WITH_END("}WITH"),
     ASYNC("ASYNC"),
     AWAIT("AWAIT");

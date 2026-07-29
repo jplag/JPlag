@@ -95,7 +95,7 @@ import de.jplag.semantics.VariableScope;
  * Extracts tokens from the ANTLR parse tree. Token extraction is built to be similar to the Java language module. In
  * some cases, the grammar is ambiguous and requires surrounding context to extract the correct token.
  * <p>
- * Those cases are covered by {@link SimpleTypeSpecifierContext} and {@link SimpleDeclarationContext}
+ * Those cases are covered by {@link SimpleTypeSpecifierContext} and {@link SimpleDeclarationContext}.
  */
 class CPPListener extends AbstractAntlrListener {
 

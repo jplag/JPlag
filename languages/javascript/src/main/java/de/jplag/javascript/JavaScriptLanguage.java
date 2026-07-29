@@ -1,14 +1,17 @@
 package de.jplag.javascript;
 
-import org.kohsuke.MetaInfServices;
+import java.util.List;
 
 import de.jplag.Language;
 import de.jplag.typescript.TypeScriptLanguage;
 
+import com.google.auto.service.AutoService;
+
 /**
- * Represents the JavaScript Language as a variance of TypeScript
+ * Represents the JavaScript Language as a variance of TypeScript. Delegates all responsibility to the TypeScript
+ * language.
  */
-@MetaInfServices(Language.class)
+@AutoService(Language.class)
 public class JavaScriptLanguage extends TypeScriptLanguage {
 
     @Override
@@ -17,12 +20,17 @@ public class JavaScriptLanguage extends TypeScriptLanguage {
     }
 
     @Override
-    public String[] suffixes() {
-        return new String[] {".js"};
+    public List<String> fileExtensions() {
+        return List.of(".js");
     }
 
     @Override
     public String getName() {
         return "JavaScript";
+    }
+
+    @Override
+    public boolean hasPriority() {
+        return false; // Since this module extends Typescript, it has no priority.
     }
 }

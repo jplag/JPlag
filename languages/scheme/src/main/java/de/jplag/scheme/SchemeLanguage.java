@@ -4,18 +4,21 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import org.kohsuke.MetaInfServices;
-
 import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
-@MetaInfServices(Language.class)
+import com.google.auto.service.AutoService;
+
+/**
+ * Scheme language module facade.
+ */
+@AutoService(Language.class)
 public class SchemeLanguage implements Language {
 
     @Override
-    public String[] suffixes() {
-        return new String[] {".scm", ".SCM", ".ss", ".SS"};
+    public List<String> fileExtensions() {
+        return List.of(".scm", ".ss");
     }
 
     @Override

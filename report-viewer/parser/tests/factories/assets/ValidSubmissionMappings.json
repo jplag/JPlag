@@ -1,0 +1,21 @@
+{
+  "submissionIds": {
+    "Submission01": "submission 01",
+    "Test123": "Test123",
+    "MaxMustermann": "max_mustermann"
+  },
+  "submissionIdsToComparisonFileName": {
+    "Submission01": {
+      "Test123": "submission01-test123.json",
+      "MaxMustermann": "submission01-max_mustermann.json"
+    },
+    "Test123": {
+      "Submission01": "submission01-test123.json",
+      "MaxMustermann": "test123-max_mustermann.json"
+    },
+    "MaxMustermann": {
+      "Submission01": "submission01-max_mustermann.json",
+      "Test123": "test123-max_mustermann.json"
+    }
+  }
+}

@@ -13,7 +13,7 @@ class JPlagOptionsTest {
     void testWithLanguageOption() {
         JavaLanguage lang = new JavaLanguage();
         JPlagOptions options = new JPlagOptions(null, Set.of(), Set.of());
-        options = options.withLanguageOption(lang);
+        options = options.withLanguage(lang);
 
         assertEquals(lang, options.language());
     }

@@ -14,6 +14,9 @@ import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
  * </ul>
  */
 public class PythonLanguageTest extends LanguageModuleTest {
+    /**
+     * Creates the test suite.
+     */
     public PythonLanguageTest() {
         super(new PythonLanguage(), Python3TokenType.class);
     }

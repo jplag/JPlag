@@ -90,7 +90,7 @@ public abstract class AbstractVisitor<T> {
     /**
      * Tell the visitor that if it generates a token upon entering the entity, it should have semantics.
      * @param semanticsSupplier A function that returns the semantics.
-     * @return Self
+     * @return a self reference.
      */
     public AbstractVisitor<T> withSemantics(Supplier<CodeSemantics> semanticsSupplier) {
         withSemantics(ignore -> semanticsSupplier.get());
@@ -116,6 +116,7 @@ public abstract class AbstractVisitor<T> {
 
     /**
      * Enter a given entity, injecting the needed dependencies.
+     * @param data is the data passed to the visitors.
      */
     void enter(HandlerData<T> data) {
         handleEnter(data, this::extractEnterToken, this::extractEnterToken);

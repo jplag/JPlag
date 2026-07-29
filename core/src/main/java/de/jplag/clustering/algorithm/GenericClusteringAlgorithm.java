@@ -9,5 +9,11 @@ import org.apache.commons.math3.linear.RealMatrix;
  * the returned collection of integer collections denote the rows / columns of the similarity matrix.
  */
 public interface GenericClusteringAlgorithm {
+    /**
+     * Performs clustering on the given similarity matrix.
+     * @param similarityMatrix a symmetric matrix representing pairwise similarities
+     * @return a collection of clusters, each being a collection of integer indices corresponding to rows/columns of the
+     * similarity matrix
+     */
     Collection<Collection<Integer>> cluster(RealMatrix similarityMatrix);
 }

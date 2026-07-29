@@ -15,6 +15,10 @@ public class PercentileThresholdProcessor implements ClusteringPreprocessor {
     private final double percentile;
     private ThresholdPreprocessor thresholdPreprocessor;
 
+    /**
+     * Constructs a new preprocessor with the given percentile value.
+     * @param percentile The percentile used to determine the similarity threshold.
+     */
     public PercentileThresholdProcessor(double percentile) {
         this.percentile = percentile;
     }

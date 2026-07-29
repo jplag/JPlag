@@ -4,21 +4,21 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import org.kohsuke.MetaInfServices;
-
 import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
+import com.google.auto.service.AutoService;
+
 /**
  * C# language with full support of C# 6 features and below.
  */
-@MetaInfServices(Language.class)
+@AutoService(Language.class)
 public class CSharpLanguage implements Language {
 
     @Override
-    public String[] suffixes() {
-        return new String[] {".cs", ".CS"};
+    public List<String> fileExtensions() {
+        return List.of(".cs");
     }
 
     @Override

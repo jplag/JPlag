@@ -5,26 +5,37 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EcorePackage;
-import org.kohsuke.MetaInfServices;
 
 import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.emf.parser.EcoreParser;
+import de.jplag.emf.util.EMFUtil;
+
+import com.google.auto.service.AutoService;
 
 /**
  * Language for EMF metamodels from the Eclipse Modeling Framework (EMF).
  * @author Timur Saglam
  */
-@MetaInfServices(Language.class)
+@AutoService(Language.class)
 public class EmfLanguage implements Language {
 
-    public static final String VIEW_FILE_SUFFIX = ".emfatic";
+    /**
+     * Creates the language facade.
+     */
+    public EmfLanguage() {
+        EMFUtil.registerEcoreExtension();
+    }
+
+    /** File extension for the textual view. **/
+    public static final String VIEW_FILE_EXTENSION = ".emfatic";
+    /** File extension for model files. **/
     public static final String FILE_ENDING = "." + EcorePackage.eNAME;
 
     @Override
-    public String[] suffixes() {
-        return new String[] {FILE_ENDING};
+    public List<String> fileExtensions() {
+        return List.of(FILE_ENDING);
     }
 
     @Override
@@ -53,7 +64,7 @@ public class EmfLanguage implements Language {
     }
 
     @Override
-    public String viewFileSuffix() {
-        return VIEW_FILE_SUFFIX;
+    public String viewFileExtension() {
+        return VIEW_FILE_EXTENSION;
     }
 }

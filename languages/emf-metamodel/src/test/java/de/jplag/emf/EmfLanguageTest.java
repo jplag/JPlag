@@ -19,6 +19,9 @@ import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
  */
 public class EmfLanguageTest extends LanguageModuleTest {
 
+    /**
+     * Creates the test suite.
+     */
     public EmfLanguageTest() {
         super(new EmfLanguage(), MetamodelTokenType.class);
     }
@@ -36,7 +39,7 @@ public class EmfLanguageTest extends LanguageModuleTest {
 
     @AfterEach
     protected void tearDown() {
-        FileUtil.clearFiles(getTestFileLocation(), EmfLanguage.VIEW_FILE_SUFFIX); // clean up the view files.
+        FileUtil.clearFiles(getTestFileLocation(), EmfLanguage.VIEW_FILE_EXTENSION); // clean up the view files.
     }
 
 }

@@ -8,6 +8,7 @@
         <version>${revision}</version>
     </parent>
     <artifactId>typescript</artifactId>
+    <name>JPlag: TypeScript Language Module</name>
 
     <dependencies>
         <dependency>
@@ -17,7 +18,6 @@
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>language-antlr-utils</artifactId>
-            <version>${revision}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

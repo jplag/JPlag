@@ -12,7 +12,7 @@ import de.jplag.Token;
 import de.jplag.util.FileUtils;
 
 /**
- * Provides test source from a file
+ * Provides test source from a file.
  */
 class FileTestData implements TestData {
     private final File file;
@@ -23,7 +23,7 @@ class FileTestData implements TestData {
 
     @Override
     public List<Token> parseTokens(Language language) throws ParsingException {
-        return language.parse(Set.of(file));
+        return language.parse(Set.of(file), false);
     }
 
     @Override

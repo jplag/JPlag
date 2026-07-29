@@ -2,6 +2,7 @@ import pluginVue from 'eslint-plugin-vue'
 import js from '@eslint/js'
 import tseslint from 'typescript-eslint'
 import vueParser from 'vue-eslint-parser'
+import globals from 'globals'
 import eslintConfigPrettier from 'eslint-config-prettier'
 
 export default [
@@ -10,7 +11,14 @@ export default [
   ...tseslint.configs.recommended,
   eslintConfigPrettier,
   {
-    ignores: ['**/*.config.ts', 'node_modules/**', 'dist/**', '**/playwright-report/**']
+    ignores: [
+      '**/*.config.ts',
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/playwright-report/**',
+      './scripts/**',
+      '**/coverage/**'
+    ]
   },
   {
     files: ['**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx', '**/*.vue'],
@@ -20,6 +28,9 @@ export default [
       parser: vueParser,
       parserOptions: {
         parser: tseslint.parser
+      },
+      globals: {
+        ...globals.browser
       }
     },
     rules: {

@@ -4,19 +4,21 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import org.kohsuke.MetaInfServices;
-
 import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
-@MetaInfServices(Language.class)
+import com.google.auto.service.AutoService;
+
+/**
+ * Facade for the C language.
+ */
+@AutoService(Language.class)
 public class CLanguage implements Language {
 
     @Override
-    public String[] suffixes() {
-        return new String[] {".cpp", ".CPP", ".cxx", ".CXX", ".c++", ".C++", ".c", ".C", ".cc", ".CC", ".h", ".H", ".hpp", ".HPP", ".hh", ".HH",
-                ".hxx", ".HXX"};
+    public List<String> fileExtensions() {
+        return List.of(".cpp", ".cxx", ".c++", ".c", ".cc", ".h", ".hpp", ".hh", ".hxx");
     }
 
     @Override

@@ -10,6 +10,9 @@ import de.jplag.antlr.AbstractAntlrParserAdapter;
 import de.jplag.python3.grammar.Python3Lexer;
 import de.jplag.python3.grammar.Python3Parser;
 
+/**
+ * ANTLR-based parser adapter for Python 3.
+ */
 public class PythonParserAdapter extends AbstractAntlrParserAdapter<Python3Parser> {
     @Override
     protected Lexer createLexer(CharStream input) {

@@ -11,20 +11,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.clustering.ClusteringFactory;
-import de.jplag.comparison.LongestCommonSubsquenceSearch;
+import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.RootDirectoryException;
 import de.jplag.exceptions.SubmissionException;
+import de.jplag.frequency.FrequencyAnalysis;
 import de.jplag.merging.MatchMerging;
 import de.jplag.options.JPlagOptions;
-import de.jplag.reporting.reportobject.model.Version;
 
 /**
- * This class coordinates the whole errorConsumer flow.
+ * Main class for JPlag. Manages the whole source code plagiarism detection pipeline. Provides methods to run
+ * comparisons on source code submissions, manage options, and log results. *
+ * <p>
+ * <b>Acknowledgments:</b> JPlag was originally created by Guido Malpohl and others (IPD Tichy) at Karlsruhe Institute
+ * of Technology and revived by Timur Saglam and Sebastian Hahner. See <a href="https://jplag.de/">jplag.de</a> for more
+ * information.
+ * </p>
  */
 public class JPlag {
     private static final Logger logger = LoggerFactory.getLogger(JPlag.class);
 
+    /**
+     * Version identifier of JPlag.
+     */
     public static final Version JPLAG_VERSION = loadVersion();
 
     private static Version loadVersion() {
@@ -71,7 +80,7 @@ public class JPlag {
         SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
         SubmissionSet submissionSet = builder.buildSubmissionSet();
 
-        LongestCommonSubsquenceSearch comparisonStrategy = new LongestCommonSubsquenceSearch(options);
+        LongestCommonSubsequenceSearch comparisonStrategy = new LongestCommonSubsequenceSearch(options);
 
         if (options.normalize() && options.language().supportsNormalization() && options.language().requiresCoreNormalization()) {
             submissionSet.normalizeSubmissions();
@@ -87,6 +96,10 @@ public class JPlag {
         // Use Match Merging against obfuscation
         if (options.mergingOptions().enabled()) {
             result = new MatchMerging(options).mergeMatchesOf(result);
+        }
+
+        if (options.frequencyAnalysisOptions().enabled()) {
+            result = FrequencyAnalysis.applyFrequencyWeighting(result, options.frequencyAnalysisOptions());
         }
 
         if (logger.isInfoEnabled()) {
@@ -111,7 +124,7 @@ public class JPlag {
 
     private static void checkForConfigurationConsistency(JPlagOptions options) throws RootDirectoryException {
         if (options.normalize() && !options.language().supportsNormalization()) {
-            logger.error(String.format("The language %s cannot be used with normalization.", options.language().getName()));
+            logger.error("The language {} cannot be used with normalization.", options.language().getName());
         }
 
         List<String> duplicateNames = getDuplicateSubmissionFolderNames(options);

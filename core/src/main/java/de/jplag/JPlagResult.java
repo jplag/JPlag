@@ -10,7 +10,9 @@ import de.jplag.options.JPlagOptions;
 import de.jplag.options.SimilarityMetric;
 
 /**
- * Encapsulates the results of a comparison of a set of source code submissions.
+ * Encapsulates the results of a pairwise comparison of program structure among a set of source code submissions.
+ * Provides access to pairwise comparison results sorted by similarity, similarity distribution data, clustering results
+ * over submissions, execution duration, and configuration options.
  */
 public class JPlagResult {
 
@@ -25,8 +27,16 @@ public class JPlagResult {
     private final int[] similarityDistribution; // 10-element array representing the similarity distribution of the detected matches.
 
     private List<ClusteringResult<Submission>> clusteringResult;
-    private final int SIMILARITY_DISTRIBUTION_SIZE = 100;
 
+    private static final int SIMILARITY_DISTRIBUTION_SIZE = 100;
+
+    /**
+     * Creates a new JPlag analysis result.
+     * @param comparisons are the analyzed comparisons for all pairs of submissions.
+     * @param submissions are the source code submissions analyzed.
+     * @param durationInMillis is the duration of the comparison.
+     * @param options are the corresponding options for the result.
+     */
     public JPlagResult(List<JPlagComparison> comparisons, SubmissionSet submissions, long durationInMillis, JPlagOptions options) {
         // sort by similarity (descending)
         this.comparisons = comparisons.stream().sorted(Comparator.comparing(JPlagComparison::similarity).reversed()).toList();
@@ -45,7 +55,12 @@ public class JPlagResult {
         this.comparisons = this.getComparisons(limit);
     }
 
-    public void setClusteringResult(List<ClusteringResult<Submission>> clustering) {
+    /**
+     * Sets the clustering results for the current set of submissions. This can be used to attach the output of one or more
+     * clustering algorithms to this result object.
+     * @param clustering is the list of clustering results.
+     */
+    /* package-private */ void setClusteringResult(List<ClusteringResult<Submission>> clustering) {
         this.clusteringResult = clustering;
     }
 
@@ -93,7 +108,7 @@ public class JPlagResult {
     }
 
     /**
-     * Provides access the the options.
+     * Provides access to the options.
      * @return the JPlag options with which the JPlag run was configured.
      */
     public JPlagOptions getOptions() {
@@ -102,8 +117,8 @@ public class JPlagResult {
 
     /**
      * For the {@link SimilarityMetric} JPlag was run with, this returns the similarity distribution of detected matches in
-     * a 100-element array. Each entry represents the absolute frequency of matches whose similarity lies within the
-     * respective interval. Intervals: 0: [0% - 1%), 1: [1% - 2%), 2: [2% - 3%), ..., 99: [99% - 100%]
+     * a 100-element array. Each entry represents the absolute count of matches whose similarity lies within the respective
+     * interval. Intervals: 0: [0% - 1%), 1: [1% - 2%), 2: [2% - 3%), ..., 99: [99% - 100%].
      * @return the similarity distribution array.
      */
     public int[] getSimilarityDistribution() {
@@ -112,9 +127,9 @@ public class JPlagResult {
 
     /**
      * For the {@link SimilarityMetric#MAX} that is built in to every {@link JPlagComparison}, this returns the similarity
-     * distribution of detected matches in a 100-element array. Each entry represents the absolute frequency of matches
-     * whose similarity lies within the respective interval. Intervals: 0: [0% - 1%), 1: [1% - 20%), 2: [2% - 3%), ..., 99:
-     * [99% - 100%].
+     * distribution of detected matches in a 100-element array. Each entry represents the absolute count of matches whose
+     * similarity lies within the respective interval. Intervals: 0: [0% - 1%), 1: [1% - 2%), 2: [2% - 3%), ..., 99: [99% -
+     * 100%].
      * @return the similarity distribution array. When JPlag was run with the {@link SimilarityMetric#MAX}, this will return
      * the same distribution as {@link JPlagResult#getSimilarityDistribution()}.
      */
@@ -122,6 +137,11 @@ public class JPlagResult {
         return calculateDistributionFor(comparisons, JPlagComparison::maximalSimilarity);
     }
 
+    /**
+     * Returns the clustering results associated with this comparison run, if any. This may include results from one or more
+     * clustering algorithms.
+     * @return the list of clustering results, or {@code null} if no clustering has been performed or set.
+     */
     public List<ClusteringResult<Submission>> getClusteringResult() {
         return this.clusteringResult;
     }
@@ -143,7 +163,11 @@ public class JPlagResult {
     }
 
     /**
-     * Note: Before, comparisons with a similarity below the given threshold were also included in the similarity matrix.
+     * Calculates the similarity distribution across all provided comparisons using the default similarity metric. The
+     * distribution is a 100-element array where each index {@code i} corresponds to the number of comparisons with
+     * similarity in the range [i%, i+1%).
+     * @param comparisons the list of comparisons to analyze.
+     * @return an array of size 100 representing the similarity distribution.
      */
     private int[] calculateSimilarityDistribution(List<JPlagComparison> comparisons) {
         return calculateDistributionFor(comparisons, JPlagComparison::similarity);
@@ -160,4 +184,5 @@ public class JPlagResult {
         }
         return similarityDistribution;
     }
+
 }

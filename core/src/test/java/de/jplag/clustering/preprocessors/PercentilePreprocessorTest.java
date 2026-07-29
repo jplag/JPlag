@@ -8,24 +8,24 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class PercentilePreprocessorTest extends PreprocessingTestBase {
+class PercentilePreprocessorTest extends PreprocessingTestBase {
 
-    PercentileThresholdProcessor preprocessor;
+    private PercentileThresholdProcessor preprocessor;
 
     @BeforeEach
-    public void init() {
+    void init() {
         preprocessor = new PercentileThresholdProcessor(0.5);
     }
 
     @Test
-    public void satisfiesInterface() {
+    void satisfiesInterface() {
         double[][] original = createTestData();
         double[][] result = preprocessor.preprocessSimilarities(original);
-        validPreprocessing(original, result, preprocessor::originalIndexOf);
+        isValidPreprocessing(original, result, preprocessor::originalIndexOf);
     }
 
     @Test
-    public void removedBelowPercentile() {
+    void removedBelowPercentile() {
         double[][] original = createTestData();
         double[][] result = preprocessor.preprocessSimilarities(original);
         withAllValues(preprocessor, original, result, (originalValue, preprocessed) -> {

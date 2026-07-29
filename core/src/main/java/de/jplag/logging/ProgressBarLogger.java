@@ -18,10 +18,10 @@ public class ProgressBarLogger {
     }
 
     /**
-     * Creates a new {@link ProgressBar}
-     * @param type The type of the progress bar
-     * @param totalSteps The total number of steps
-     * @return The newly created progress bar
+     * Creates a new {@link ProgressBar}.
+     * @param type The type of the progress bar.
+     * @param totalSteps The total number of steps.
+     * @return The newly created progress bar.
      */
     public static ProgressBar createProgressBar(ProgressBarType type, int totalSteps) {
         return progressBarProvider.initProgressBar(type, totalSteps);
@@ -65,10 +65,12 @@ public class ProgressBarLogger {
 
     private static class DummyBar implements ProgressBar {
         private static final Logger logger = LoggerFactory.getLogger(DummyBar.class);
+        private final ProgressBarType type;
         private int currentStep;
 
         public DummyBar(ProgressBarType type, int totalSteps) {
-            this.currentStep = 0;
+            this.type = type;
+            currentStep = 0;
             if (type.isIdleBar()) {
                 logger.info("{} - started", type.getDefaultText());
             } else {
@@ -78,7 +80,7 @@ public class ProgressBarLogger {
 
         @Override
         public void step() {
-            logger.info("Now at step {}", this.currentStep++);
+            logger.info("{} - step {}", type.getDefaultText(), this.currentStep++);
         }
 
         @Override

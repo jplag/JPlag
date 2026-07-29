@@ -6,26 +6,26 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class CumulativeDistributionFunctionPreprocessorTest extends PreprocessingTestBase {
+class CumulativeDistributionFunctionPreprocessorTest extends PreprocessingTestBase {
 
     private static final double EPSILON = 0.0000001;
 
-    CumulativeDistributionFunctionPreprocessor preprocessor;
+    private CumulativeDistributionFunctionPreprocessor preprocessor;
 
     @BeforeEach
-    public void init() {
+    void init() {
         preprocessor = new CumulativeDistributionFunctionPreprocessor();
     }
 
     @Test
-    public void satisfiesInterface() {
+    void satisfiesInterface() {
         double[][] original = createTestData();
         double[][] result = preprocessor.preprocessSimilarities(original);
-        validPreprocessing(original, result, preprocessor::originalIndexOf);
+        isValidPreprocessing(original, result, preprocessor::originalIndexOf);
     }
 
     @Test
-    public void mayDecreaseOnly() {
+    void mayDecreaseOnly() {
         double[][] original = createTestData();
         double[][] result = preprocessor.preprocessSimilarities(original);
         withAllValues(preprocessor, original, result, (originalValue, preprocessed) -> {

@@ -68,7 +68,7 @@ class RootFolderTest extends TestBase {
 
     @Test
     @DisplayName("test multiple overlapping root directories, one marked with as old")
-    void testOverlappingNewAndOldDirectoriesOverlap() throws ExitException {
+    void testOverlappingNewAndOldDirectoriesOverlap() {
         List<String> newDirectories = List.of(getBasePath(ROOT_2));
         List<String> oldDirectories = List.of(getBasePath(ROOT_2));
         assertThrows(RootDirectoryException.class, () -> runJPlag(newDirectories, oldDirectories, it -> it));
