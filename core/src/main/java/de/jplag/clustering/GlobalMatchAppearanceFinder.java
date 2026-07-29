@@ -49,20 +49,38 @@ public class GlobalMatchAppearanceFinder {
      */
     public List<TreeNode> findGlobalMatchAppearances(Collection<JPlagComparison> comparisons) {
         Map<Submission, Map<Submission, JPlagComparison>> comparisonsMap = new HashMap<>();
+        Set<Submission> allSubmissions = new HashSet<>();
         for (JPlagComparison comparison : comparisons) {
             addComparisonToMap(comparisonsMap, comparison.firstSubmission(), comparison.secondSubmission(), comparison);
-            addComparisonToMap(comparisonsMap, comparison.secondSubmission(), comparison.firstSubmission(), comparison);
+            allSubmissions.add(comparison.firstSubmission());
+            allSubmissions.add(comparison.secondSubmission());
         }
 
         // We need to manually iterate over all pairs of submissions, instead of just directly iterating over all comparisons,
         // as the algorithm assumes that all matches having a certain first sumbission get added together as a group.
         List<TreeNode> trees = new ArrayList<>();
-        Set<Submission> remainingSubmissions = new HashSet<>(comparisonsMap.keySet());
-        for (Submission firstSubmission : comparisonsMap.keySet()) {
+        Map<Submission, Map<Submission, JPlagComparison>> comparisonsToHandleLater = new HashMap<>();
+        Set<Submission> remainingSubmissions = new HashSet<>(allSubmissions);
+        for (Submission firstSubmission : allSubmissions) {
+            if (comparisonsToHandleLater.containsKey(firstSubmission)) {
+                for (Map.Entry<Submission, JPlagComparison> entry : comparisonsToHandleLater.get(firstSubmission).entrySet()) {
+                    for (Match match : entry.getValue().matches()) {
+                        addOrExtend(trees, match, firstSubmission, entry.getKey());
+                    }
+                }
+            }
+
             remainingSubmissions.remove(firstSubmission);
             for (Submission secondSubmission : remainingSubmissions) {
-                for (Match match : comparisonsMap.get(firstSubmission).get(secondSubmission).matches()) {
-                    addOrExtend(trees, match, firstSubmission, secondSubmission);
+                if (comparisonsMap.containsKey(firstSubmission) && comparisonsMap.get(firstSubmission).containsKey(secondSubmission)) {
+                    for (Match match : comparisonsMap.get(firstSubmission).get(secondSubmission).matches()) {
+                        addOrExtend(trees, match, firstSubmission, secondSubmission);
+                    }
+                } else {
+                    // This ensures the invariant mentioned above,
+                    // that all comparisons with a certain first submission get handled together.
+                    JPlagComparison comparisonInOtherDirection = comparisonsMap.get(secondSubmission).get(firstSubmission);
+                    addComparisonToMap(comparisonsToHandleLater, secondSubmission, firstSubmission, comparisonInOtherDirection);
                 }
             }
         }
@@ -174,7 +192,7 @@ public class GlobalMatchAppearanceFinder {
      * Represents a node in the trees found by the {@link GlobalMatchAppearanceFinder}.
      * <p>
      * Each node represents a certain reappearing section of code, and stores the length of that code section, where that
-     * code section starts in each the submissions it appears in, and potentially what child nodes it has.
+     * code section starts in each of the submissions it appears in, and potentially what child nodes it has.
      */
     public static class TreeNode {
         private final Map<Submission, Integer> startInSubmission = new HashMap<>();
