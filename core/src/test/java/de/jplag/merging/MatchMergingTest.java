@@ -298,7 +298,7 @@ class MatchMergingTest extends TestBase {
     private List<Match> mergeHandBuilt(MergingOptions mergingOptions, List<Match> handBuiltMatches) {
         JPlagOptions unitOptions = options.withMinimumTokenMatch(1).withMergingOptions(mergingOptions);
         JPlagComparison comparison = new JPlagComparison(leftSubmission, rightSubmission, new ArrayList<>(handBuiltMatches), new ArrayList<>());
-        JPlagResult result = new JPlagResult(List.of(comparison), submissionSet, 0L, unitOptions);
+        JPlagResult result = new JPlagResult(List.of(comparison), submissionSet, 0L, 0L, unitOptions);
         return new MatchMerging(unitOptions).mergeMatchesOf(result).getAllComparisons().getFirst().matches();
     }
 
