@@ -55,7 +55,7 @@ public class EmfLanguage implements Language {
 
     @Override
     public String getVersionFlagInformation() {
-        return "emv 1.1.0";
+        return "EMF 2.45.0";
     }
 
     @Override
