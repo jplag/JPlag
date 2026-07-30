@@ -18,8 +18,16 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   pre_job:
+    # skip-duplicate-actions documents actions:write + contents:read
+    # as its minimum.
+    permissions:
+      actions: write
+      contents: read
     runs-on: ubuntu-latest
     outputs:
       should_skip: ${{ steps.skip_check.outputs.should_skip }}

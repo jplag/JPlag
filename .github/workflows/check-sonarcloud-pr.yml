@@ -12,6 +12,12 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+# This workflow checks out fork-controlled code under workflow_run,
+# so the token is restricted to reads.
+permissions:
+  contents: read
+  actions: read
+
 jobs:
   get-info:
     name: "Get information about the source run"

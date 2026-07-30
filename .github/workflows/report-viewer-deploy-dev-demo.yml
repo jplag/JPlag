@@ -6,6 +6,9 @@ on:
     branches:
       - develop
       
+permissions:
+  contents: read
+
 jobs:
   build-jar:
     runs-on: ubuntu-latest
@@ -66,6 +69,9 @@ jobs:
             
 
   build-and-deploy:
+    # The pages deploy pushes to a branch.
+    permissions:
+      contents: write
     needs: run-example
     runs-on: ubuntu-latest
     steps:

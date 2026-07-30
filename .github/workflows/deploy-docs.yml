@@ -10,6 +10,10 @@ on:
       - '.github/workflows/deploy-docs.yml'
   workflow_dispatch:
 
+# The last step commits the regenerated docs back.
+permissions:
+  contents: write
+
 jobs:
   docs:
     runs-on: ubuntu-latest

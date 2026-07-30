@@ -5,6 +5,10 @@ on:
     types:
       - closed
 
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   close_issues:
     if: github.event.pull_request.merged == true && github.base_ref == 'develop'
