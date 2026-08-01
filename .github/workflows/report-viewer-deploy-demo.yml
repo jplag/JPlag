@@ -56,7 +56,7 @@ jobs:
         run: mv *.jar ./jplag.jar
 
       - name: Run JPlag
-        run: java -jar jplag.jar ACCEPTED -bc base -r example
+        run: java -jar jplag.jar ACCEPTED -bc base -r example --frequency
 
       - name: Upload Result
         uses: actions/upload-artifact@v7
