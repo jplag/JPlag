@@ -87,6 +87,7 @@ const emit = defineEmits<{
 
 const secondaryMetricOptions = [
   MetricJsonIdentifier.MAXIMUM_SIMILARITY,
+  MetricJsonIdentifier.WEIGHTED_SIMILARITY,
   MetricJsonIdentifier.LONGEST_MATCH,
   MetricJsonIdentifier.MAXIMUM_LENGTH
 ]
