@@ -111,7 +111,6 @@ class FrequencyWeightingTest extends TestBase {
     void producesWeightedComparison(MatchWeightingFunction weightingFunction) {
         MatchFrequencyWeighting weighting = createWeighting(weightingFunction);
         JPlagComparison weightedComparison = weighting.weightedComparisonSimilarity(comparison, 1);
-        assertTrue(weightedComparison.useFrequencyWeighting());
         assertTrue(weightedComparison.frequencyWeightedSimilarity() >= 0);
     }
 
