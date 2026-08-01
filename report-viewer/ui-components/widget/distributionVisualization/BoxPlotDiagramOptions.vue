@@ -24,6 +24,7 @@ const model = defineModel<MetricJsonIdentifier>('metric', {
 
 const metricOptions = [
   MetricJsonIdentifier.AVERAGE_SIMILARITY,
-  MetricJsonIdentifier.MAXIMUM_SIMILARITY
+  MetricJsonIdentifier.MAXIMUM_SIMILARITY,
+  MetricJsonIdentifier.WEIGHTED_SIMILARITY
 ]
 </script>

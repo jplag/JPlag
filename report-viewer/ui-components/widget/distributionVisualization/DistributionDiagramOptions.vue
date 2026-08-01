@@ -46,6 +46,7 @@ const resolutionOptions = [10, 20, 25, 50, 100] as BucketOptions[]
 
 const metricOptions: DistributionMetrics[] = [
   MetricJsonIdentifier.AVERAGE_SIMILARITY,
-  MetricJsonIdentifier.MAXIMUM_SIMILARITY
+  MetricJsonIdentifier.MAXIMUM_SIMILARITY,
+  MetricJsonIdentifier.WEIGHTED_SIMILARITY
 ]
 </script>

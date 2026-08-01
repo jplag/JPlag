@@ -14,7 +14,8 @@ export class DistributionFactory {
     const distributions = {} as DistributionMap
     for (const metric of [
       MetricJsonIdentifier.AVERAGE_SIMILARITY,
-      MetricJsonIdentifier.MAXIMUM_SIMILARITY
+      MetricJsonIdentifier.MAXIMUM_SIMILARITY,
+      MetricJsonIdentifier.WEIGHTED_SIMILARITY
     ] as DistributionMetrics[]) {
       distributions[metric] = new Distribution(json[metric])
     }
