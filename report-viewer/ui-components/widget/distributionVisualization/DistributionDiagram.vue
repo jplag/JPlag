@@ -7,7 +7,11 @@
       <canvas ref="graphCanvas"></canvas>
     </div>
 
-    <DistributionDiagramOptions v-model="config" class="grow print:grow-0" />
+    <DistributionDiagramOptions
+      v-model="config"
+      :show-weighted-metric="showWeightedMetric"
+      class="grow print:grow-0"
+    />
   </div>
 </template>
 
@@ -31,6 +35,10 @@ const props = defineProps({
   useDarkMode: {
     type: Boolean,
     default: false
+  },
+  showWeightedMetric: {
+    type: Boolean,
+    default: true
   }
 })
 

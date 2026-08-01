@@ -14,6 +14,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import MetricSelector from '../optionsSelectors/MetricSelector.vue'
 import { ScrollableComponent } from '../../base'
 import { MetricJsonIdentifier } from '@jplag/model'
@@ -22,9 +23,22 @@ const model = defineModel<MetricJsonIdentifier>('metric', {
   default: MetricJsonIdentifier.AVERAGE_SIMILARITY
 })
 
-const metricOptions = [
-  MetricJsonIdentifier.AVERAGE_SIMILARITY,
-  MetricJsonIdentifier.MAXIMUM_SIMILARITY,
-  MetricJsonIdentifier.WEIGHTED_SIMILARITY
-]
+const props = defineProps({
+  showWeightedMetric: {
+    type: Boolean,
+    default: true
+  }
+})
+
+const metricOptions = computed(() => {
+  const options = [
+    MetricJsonIdentifier.AVERAGE_SIMILARITY,
+    MetricJsonIdentifier.MAXIMUM_SIMILARITY,
+    MetricJsonIdentifier.WEIGHTED_SIMILARITY
+  ]
+  if (!props.showWeightedMetric) {
+    return options.filter((m) => m !== MetricJsonIdentifier.WEIGHTED_SIMILARITY)
+  }
+  return options
+})
 </script>

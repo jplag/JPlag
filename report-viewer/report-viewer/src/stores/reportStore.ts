@@ -263,6 +263,10 @@ export const reportStore = defineStore('reportStore', () => {
     }
   }
 
+  function isFrequencyAnalysisEnabled() {
+    return cliOptions.value?.frequencyAnalysisOptions?.enabled ?? false
+  }
+
   function reset() {
     cliOptions.value = null
     cluster.value = null
@@ -301,7 +305,8 @@ export const reportStore = defineStore('reportStore', () => {
     allAreAnonymized,
     setAnonymous,
     getBaseCodeReport,
-    getSubmissionIds
+    getSubmissionIds,
+    isFrequencyAnalysisEnabled
   }
 })
 

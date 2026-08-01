@@ -107,6 +107,7 @@
           v-model:config="uiStore().distributionChartConfig"
           :distributions="reportStore().getDistributions()"
           :use-dark-mode="uiStore().useDarkMode"
+          :show-weighted-metric="reportStore().isFrequencyAnalysisEnabled()"
           class="grow print:flex-none"
           @click:upper-percentile="onBarClicked"
         />
@@ -116,6 +117,7 @@
           v-model:metric="uiStore().distributionChartConfig.metric"
           :distributions="reportStore().getDistributions()"
           :use-dark-mode="uiStore().useDarkMode"
+          :show-weighted-metric="reportStore().isFrequencyAnalysisEnabled()"
           class="grow print:flex-none"
         />
       </template>

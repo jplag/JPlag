@@ -28,6 +28,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { DistributionMetrics, MetricJsonIdentifier, type BucketOptions } from '@jplag/model'
 import MetricSelector from '../optionsSelectors/MetricSelector.vue'
 import OptionsSelector from '../optionsSelectors/OptionsSelectorComponent.vue'
@@ -42,11 +43,24 @@ const config = defineModel<DistributionChartConfig>({
   }
 })
 
+const props = defineProps({
+  showWeightedMetric: {
+    type: Boolean,
+    default: true
+  }
+})
+
 const resolutionOptions = [10, 20, 25, 50, 100] as BucketOptions[]
 
-const metricOptions: DistributionMetrics[] = [
-  MetricJsonIdentifier.AVERAGE_SIMILARITY,
-  MetricJsonIdentifier.MAXIMUM_SIMILARITY,
-  MetricJsonIdentifier.WEIGHTED_SIMILARITY
-]
+const metricOptions = computed<DistributionMetrics[]>(() => {
+  const options: DistributionMetrics[] = [
+    MetricJsonIdentifier.AVERAGE_SIMILARITY,
+    MetricJsonIdentifier.MAXIMUM_SIMILARITY,
+    MetricJsonIdentifier.WEIGHTED_SIMILARITY
+  ]
+  if (!props.showWeightedMetric) {
+    return options.filter((m) => m !== MetricJsonIdentifier.WEIGHTED_SIMILARITY)
+  }
+  return options
+})
 </script>

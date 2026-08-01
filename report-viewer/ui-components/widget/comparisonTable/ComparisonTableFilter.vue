@@ -59,11 +59,12 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { SearchBarComponent, ToolTipComponent, ButtonComponent } from '../../base'
 import { MetricJsonIdentifier } from '@jplag/model'
 import MetricSelector from '../optionsSelectors/MetricSelector.vue'
 
-defineProps({
+const props = defineProps({
   header: {
     type: String,
     default: 'Top Comparisons:'
@@ -71,6 +72,10 @@ defineProps({
   allAreAnonymized: {
     type: Boolean,
     default: false
+  },
+  showWeightedMetric: {
+    type: Boolean,
+    default: true
   }
 })
 
@@ -85,10 +90,16 @@ const emit = defineEmits<{
   (event: 'changeAnonymousForAll'): void
 }>()
 
-const secondaryMetricOptions = [
-  MetricJsonIdentifier.MAXIMUM_SIMILARITY,
-  MetricJsonIdentifier.WEIGHTED_SIMILARITY,
-  MetricJsonIdentifier.LONGEST_MATCH,
-  MetricJsonIdentifier.MAXIMUM_LENGTH
-]
+const secondaryMetricOptions = computed(() => {
+  const options = [
+    MetricJsonIdentifier.MAXIMUM_SIMILARITY,
+    MetricJsonIdentifier.WEIGHTED_SIMILARITY,
+    MetricJsonIdentifier.LONGEST_MATCH,
+    MetricJsonIdentifier.MAXIMUM_LENGTH
+  ]
+  if (!props.showWeightedMetric) {
+    return options.filter((m) => m !== MetricJsonIdentifier.WEIGHTED_SIMILARITY)
+  }
+  return options
+})
 </script>

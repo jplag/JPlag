@@ -12,6 +12,7 @@
     :get-plain-display-name="reportStore().getPlainDisplayName"
     :is-anonymous="reportStore().isAnonymized"
     :all-are-anonymized="reportStore().allAreAnonymized()"
+    :show-weighted-metric="reportStore().isFrequencyAnalysisEnabled()"
     class="min-h-0 max-w-full flex-1 print:min-h-full print:grow"
     @change-anonymous="(id) => reportStore().toggleAnonymous(id)"
     @change-anonymous-for-all="reportStore().toggleAnonymousForAll()"
