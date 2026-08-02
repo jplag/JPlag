@@ -345,7 +345,7 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
     .map((s) => s.substring(6))
     .map((s) => parseInt(s))
 
-  const metricSearches = searches.filter((s) => /((avg|max|long|len|wavg):)?([<>])=?[0-9]+%?/.test(s))
+  const metricSearches = searches.filter((s) => /((avg|max|long|len|wavg):)?([<>])=?\d+%?/.test(s))
 
   return comparisons.filter((c) => {
     // name search
@@ -383,7 +383,7 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
       searchPerMetric[m] = []
     })
     metricSearches.forEach((s) => {
-      const regexResult = /^(?:(avg|max|long|len|wavg):)([<>]=?[0-9]+%?$)/.exec(s)
+      const regexResult = /^(?:(avg|max|long|len|wavg):)([<>]=?\d+%?$)/.exec(s)
       if (regexResult) {
         const metricName = regexResult[1]
         let metric = MetricTypes.AVERAGE_SIMILARITY
