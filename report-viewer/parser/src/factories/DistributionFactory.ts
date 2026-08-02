@@ -17,7 +17,7 @@ export class DistributionFactory {
       MetricJsonIdentifier.MAXIMUM_SIMILARITY,
       MetricJsonIdentifier.WEIGHTED_SIMILARITY
     ] as DistributionMetrics[]) {
-      distributions[metric] = new Distribution(json[metric])
+      distributions[metric] = new Distribution(json[metric] ?? new Array(100).fill(0))
     }
     return distributions
   }

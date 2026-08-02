@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import MetricSelector from '../optionsSelectors/MetricSelector.vue'
 import { ScrollableComponent } from '../../base'
 import { MetricJsonIdentifier } from '@jplag/model'
@@ -41,4 +41,13 @@ const metricOptions = computed(() => {
   }
   return options
 })
+
+watch(
+  () => props.showWeightedMetric,
+  (shown) => {
+    if (!shown && model.value === MetricJsonIdentifier.WEIGHTED_SIMILARITY) {
+      model.value = MetricJsonIdentifier.AVERAGE_SIMILARITY
+    }
+  }
+)
 </script>

@@ -59,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { SearchBarComponent, ToolTipComponent, ButtonComponent } from '../../base'
 import { MetricJsonIdentifier } from '@jplag/model'
 import MetricSelector from '../optionsSelectors/MetricSelector.vue'
@@ -102,4 +102,13 @@ const secondaryMetricOptions = computed(() => {
   }
   return options
 })
+
+watch(
+  () => props.showWeightedMetric,
+  (shown) => {
+    if (!shown && secondaryMetric.value === MetricJsonIdentifier.WEIGHTED_SIMILARITY) {
+      secondaryMetric.value = MetricJsonIdentifier.MAXIMUM_SIMILARITY
+    }
+  }
+)
 </script>

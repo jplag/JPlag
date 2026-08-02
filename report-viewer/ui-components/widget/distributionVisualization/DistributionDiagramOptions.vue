@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { DistributionMetrics, MetricJsonIdentifier, type BucketOptions } from '@jplag/model'
 import MetricSelector from '../optionsSelectors/MetricSelector.vue'
 import OptionsSelector from '../optionsSelectors/OptionsSelectorComponent.vue'
@@ -63,4 +63,13 @@ const metricOptions = computed<DistributionMetrics[]>(() => {
   }
   return options
 })
+
+watch(
+  () => props.showWeightedMetric,
+  (shown) => {
+    if (!shown && config.value.metric === MetricJsonIdentifier.WEIGHTED_SIMILARITY) {
+      config.value.metric = MetricJsonIdentifier.AVERAGE_SIMILARITY
+    }
+  }
+)
 </script>
