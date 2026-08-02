@@ -48,6 +48,7 @@ watch(
     if (!shown && model.value === MetricJsonIdentifier.WEIGHTED_SIMILARITY) {
       model.value = MetricJsonIdentifier.AVERAGE_SIMILARITY
     }
-  }
+  },
+  { immediate: true }
 )
 </script>

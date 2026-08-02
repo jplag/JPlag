@@ -109,6 +109,7 @@ watch(
     if (!shown && secondaryMetric.value === MetricJsonIdentifier.WEIGHTED_SIMILARITY) {
       secondaryMetric.value = MetricJsonIdentifier.MAXIMUM_SIMILARITY
     }
-  }
+  },
+  { immediate: true }
 )
 </script>

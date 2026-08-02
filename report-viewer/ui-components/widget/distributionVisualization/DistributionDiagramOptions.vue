@@ -70,6 +70,7 @@ watch(
     if (!shown && config.value.metric === MetricJsonIdentifier.WEIGHTED_SIMILARITY) {
       config.value.metric = MetricJsonIdentifier.AVERAGE_SIMILARITY
     }
-  }
+  },
+  { immediate: true }
 )
 </script>
