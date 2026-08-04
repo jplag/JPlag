@@ -2,6 +2,7 @@ package de.jplag.pdf.pdfComponents;
 
 import java.util.Arrays;
 
+import com.itextpdf.layout.element.Text;
 import de.jplag.JPlagResult;
 import de.jplag.pdf.utils.MathUtils;
 
@@ -25,14 +26,14 @@ public class DistributionDiagram {
         int maxBucketValue = Arrays.stream(buckets).max().getAsInt();
         int diagramMaxValue = MathUtils.roundUpTwoSignificantDigits(maxBucketValue);
 
-        UnitValue[] sizes = {new UnitValue(UnitValue.PERCENT, 10), new UnitValue(UnitValue.PERCENT, 80), new UnitValue(UnitValue.PERCENT, 10)};
+        UnitValue[] sizes = {new UnitValue(UnitValue.PERCENT, 10), new UnitValue(UnitValue.PERCENT, 40), new UnitValue(UnitValue.PERCENT, 40), new UnitValue(UnitValue.PERCENT, 10)};
         Table table = new Table(sizes);
         for (int i = buckets.length - 1; i >= 0; i--) {
             addRowForBucket(table, buckets[i], i, diagramMaxValue);
         }
 
         table.addCell(new Cell().setBorder(null));
-        table.addCell(new Cell().setBorder(null).setBorderTop(new SolidBorder(1f)));
+        table.addCell(new Cell(1, 2).setBorder(null).setBorderTop(new SolidBorder(1f)));
         doc.add(table.useAllAvailableWidth());
 
         addAxis(doc, diagramMaxValue);
@@ -43,15 +44,28 @@ public class DistributionDiagram {
         table.addCell(new Cell().add(new Paragraph(label)).setTextAlignment(TextAlignment.RIGHT).setBorder(Border.NO_BORDER)
                 .setBorderRight(new SolidBorder(1f)).setVerticalAlignment(VerticalAlignment.MIDDLE));
 
-        Paragraph bar = new Paragraph(String.valueOf(bucketValue));
-        bar.setTextAlignment(TextAlignment.RIGHT);
         float width = (((float) bucketValue) / diagramMaxValue) * 100;
+
+        Paragraph bar = new Paragraph();
         bar.setHeight(20);
         bar.setWidth(new UnitValue(UnitValue.PERCENT, width));
         bar.setBackgroundColor(ColorConstants.RED);
-        bar.setFontColor(ColorConstants.WHITE);
+        Paragraph postText = new Paragraph();
 
-        table.addCell(new Cell().add(bar).setBorder(Border.NO_BORDER));
+        if(width > 30) {
+            bar.setTextAlignment(TextAlignment.RIGHT);
+            bar.setFontColor(ColorConstants.WHITE);
+            bar.add(String.valueOf(bucketValue));
+            table.addCell(new Cell(1, 2).add(bar).setBorder(Border.NO_BORDER));
+        } else {
+            bar.setWidth(new UnitValue(UnitValue.PERCENT, width * 2));
+            postText.add(String.valueOf(bucketValue));
+            postText.setRelativePosition((width * 4) - 200,1, 0,0);
+            table.addCell(new Cell(1, 1).add(bar).setBorder(Border.NO_BORDER));
+            table.addCell(new Cell(1, 1).add(postText).setBorder(Border.NO_BORDER));
+        }
+
+
         table.addCell(new Cell().setBorder(null));
     }
 

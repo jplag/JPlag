@@ -1,14 +1,21 @@
 package de.jplag.pdf;
 
+import com.itextpdf.kernel.pdf.action.PdfAction;
+import com.itextpdf.layout.element.Link;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.properties.HorizontalAlignment;
+import com.itextpdf.layout.properties.TextAlignment;
 import de.jplag.JPlagComparison;
 import de.jplag.JPlagResult;
 import de.jplag.Submission;
 import de.jplag.clustering.Cluster;
 import de.jplag.pdf.pdfComponents.DistributionDiagram;
+import de.jplag.pdf.pdfComponents.Links;
+import de.jplag.pdf.pdfComponents.Spacer;
 import de.jplag.pdf.pdfComponents.Tables;
 import de.jplag.pdf.pdfComponents.Texts;
+import de.jplag.pdf.utils.JPlagLinkType;
 import de.jplag.pdf.utils.MathUtils;
 
 import com.itextpdf.layout.Document;
@@ -31,7 +38,8 @@ public class OverviewPrinter {
         Texts.addSubtitle(doc, "Comparison table:");
         createComparisonsTable(result, doc, clusterMap);
 
-        if(clusters != null) {
+        if (clusters != null) {
+            Spacer.addSpacer(doc, 100);
             printClustersPage(doc, clusters);
         }
     }
@@ -60,7 +68,8 @@ public class OverviewPrinter {
             if (clusterMap != null) {
                 if (clusterMap.containsKey(comparison.firstSubmission()) && clusterMap.containsKey(comparison.secondSubmission()) &&
                         clusterMap.get(comparison.firstSubmission()) == clusterMap.get(comparison.secondSubmission())) {
-                    Tables.addTextCell(fullTable, clusterMap.get(comparison.firstSubmission()));
+                    int clusterNumber = clusterMap.get(comparison.firstSubmission());
+                    Tables.addCell(fullTable, Links.createTextLink(String.valueOf(clusterNumber), JPlagLinkType.CLUSTER, clusterNumber, (p) -> p.setTextAlignment(TextAlignment.CENTER)));
                 } else {
                     Tables.addTextCell(fullTable, "-");
                 }
@@ -76,14 +85,16 @@ public class OverviewPrinter {
         for (int i = 0; i < clusters.size(); i++) {
             Cluster<Submission> cluster = clusters.get(i);
 
-            Texts.addSubSubTitle(doc, "Cluster number " + i + ":");
+            final String link = JPlagLinkType.CLUSTER.resolve(i);
+            Texts.addSubSubTitle(doc, "Cluster number " + i + ":", (p) -> p.setDestination(link));
 
             Paragraph items = new Paragraph();
-            items.setMarginLeft(10);
+            items.setMarginLeft(50);
             for (Submission member : cluster.getMembers()) {
-                items.add(new Text(member.getName()));
+                items.add(new Text(member.getName() + "\n"));
             }
             doc.add(items);
+            Spacer.addSpacer(doc, 20);
         }
     }
 

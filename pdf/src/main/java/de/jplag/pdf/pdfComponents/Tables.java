@@ -2,6 +2,7 @@ package de.jplag.pdf.pdfComponents;
 
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.properties.TextAlignment;
@@ -23,5 +24,13 @@ public class Tables {
 
     public static void addTextCell(Table table, Object text) {
         addTextCell(table, text, 1, 1);
+    }
+
+    public static void addCell(Table table, int rowSpan, int colSpan, IBlockElement content) {
+        table.addCell(new Cell(rowSpan, colSpan).add(content));
+    }
+
+    public static void addCell(Table table, IBlockElement content) {
+        addCell(table, 1, 1, content);
     }
 }

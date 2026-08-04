@@ -137,12 +137,14 @@ public final class CLI {
         directory.mkdirs();
 
         PdfPrinter printer = new PdfPrinter(result, new File(directory, "overview.pdf"));
+        printer.printTitle("Overview");
         printer.printOverview();
         printer.save();
 
         for (JPlagComparison comparison : result.getComparisons(10)) {
             PdfPrinter comparisonPrinter = new PdfPrinter(result,
                     new File(directory, "comparison_" + comparison.firstSubmission() + "-" + comparison.secondSubmission() + ".pdf"));
+            comparisonPrinter.printTitle("Comparison: \n" + comparison.firstSubmission() + "\n" + comparison.secondSubmission());
             comparisonPrinter.printComparison(comparison);
             comparisonPrinter.save();
         }
