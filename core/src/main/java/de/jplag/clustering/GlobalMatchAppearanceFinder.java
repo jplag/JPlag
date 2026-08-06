@@ -20,6 +20,21 @@ import de.jplag.Submission;
  */
 public class GlobalMatchAppearanceFinder {
     /**
+     * Additionally to matches sometimes describing contradicting situations, another problem that should in theory not
+     * happen, but still does in practice, is the fact that the matches are sometimes incomplete. This means, that for
+     * example when submissions A, B, C and D all share some section of code, in theory we would expect a match for that
+     * section of code between all pairs. However in reality, we might only get the matches A-D, B-C and B-D. If we add them
+     * in this order, we first create a node for A and D, then another one for B and C, and then we would add D to the node
+     * with B and C. Since the trees however have the invariant, that for each child case they have at most one child with a
+     * certain submission, we either have to discard the match B-D, or, what this boolean toggles, merge the two nodes
+     * together. Merging them would obviously create the more correct result, however it does typically also result in many
+     * more inconsistencies being found, and can therefor change the content and structure of a tree by a considerable
+     * amount. Because of this, there is already this toggle implemented, as one might want to turn that into a real setting
+     * in the future.
+     */
+    private static final boolean NODE_MERGING_IS_ENABLED = true;
+
+    /**
      * Groups all the matches in the provided comparisons into a tree structure, summarizing what code is shared by which
      * submissions.
      * <p>
@@ -113,42 +128,47 @@ public class GlobalMatchAppearanceFinder {
         }
         for (TreeNode superRoot : treesToAddTo) {
             TreeNode currentNode = superRoot.getActualTreeFromSuperRoot();
-            TreeNode parentNode = superRoot;
             boolean isAdded;
-            do {
-                TreeNode currentNodeBuffer = currentNode;
-                int startInNode = currentNode.getStartInSub(firstSubmission);
-                int endInNode = currentNode.getEndInSub(firstSubmission);
-                if (startInNode == match.startOfFirst() && endInNode == match.endOfFirst()) {
-                    currentNode.addAppearanceIn(secondSubmission, match.startOfSecond());
-                    isAdded = true;
-                } else if (startInNode > match.startOfFirst() && endInNode == match.endOfFirst()) {
-                    currentNode = handleChildCase(currentNode, match, firstSubmission, secondSubmission, ChildCase.UP);
-                    isAdded = currentNode == null;
-                } else if (startInNode == match.startOfFirst() && endInNode < match.endOfFirst()) {
-                    currentNode = handleChildCase(currentNode, match, firstSubmission, secondSubmission, ChildCase.DOWN);
-                    isAdded = currentNode == null;
-                } else if (startInNode > match.startOfFirst() && endInNode < match.endOfFirst()) {
-                    currentNode = handleChildCase(currentNode, match, firstSubmission, secondSubmission, ChildCase.BOTH);
-                    isAdded = currentNode == null;
-                } else {
-                    TreeNode newInBetweenNode = currentNode.createCopyIntersectedWithMatch(match, firstSubmission);
-                    newInBetweenNode.addAppearanceIn(secondSubmission, match.startOfSecond());
+            try {
+                do {
+                    int startInNode = currentNode.getStartInSub(firstSubmission);
+                    int endInNode = currentNode.getEndInSub(firstSubmission);
+                    if (startInNode == match.startOfFirst() && endInNode == match.endOfFirst()) {
+                        currentNode.addAppearanceInWithCheck(secondSubmission, match.startOfSecond());
+                        isAdded = true;
+                    } else if (startInNode > match.startOfFirst() && endInNode == match.endOfFirst()) {
+                        currentNode = handleChildCase(currentNode, match, firstSubmission, secondSubmission, ChildCase.UP);
+                        isAdded = currentNode == null;
+                    } else if (startInNode == match.startOfFirst() && endInNode < match.endOfFirst()) {
+                        currentNode = handleChildCase(currentNode, match, firstSubmission, secondSubmission, ChildCase.DOWN);
+                        isAdded = currentNode == null;
+                    } else if (startInNode > match.startOfFirst() && endInNode < match.endOfFirst()) {
+                        currentNode = handleChildCase(currentNode, match, firstSubmission, secondSubmission, ChildCase.BOTH);
+                        isAdded = currentNode == null;
+                    } else { // remaining: == > , > > , < < , < == , < >
+                        TreeNode newInBetweenNode = currentNode.createCopyIntersectedWithMatch(match, firstSubmission);
 
-                    // fix pointers
-                    parentNode.removeChild(currentNode);
-                    parentNode.addChild(newInBetweenNode, firstSubmission);
-                    newInBetweenNode.addChild(currentNode, firstSubmission);
+                        TreeNode parentNode = currentNode.parent;
+                        parentNode.removeChild(currentNode);
+                        parentNode.addChildAsCorrectCase(newInBetweenNode, firstSubmission);
+                        newInBetweenNode.addChildAsCorrectCase(currentNode, firstSubmission);
 
-                    if (newInBetweenNode.getStartInSub(firstSubmission) != match.startOfFirst()
-                            || newInBetweenNode.getEndInSub(firstSubmission) != match.endOfFirst()) {
-                        TreeNode newNodeForMatch = TreeNode.createNewNodeOf(match, firstSubmission, secondSubmission);
-                        newInBetweenNode.addChild(newNodeForMatch, firstSubmission);
-                    } // or else, the match is equal to the in-between node, and is therefor already added
-                    isAdded = true;
-                }
-                parentNode = currentNodeBuffer;
-            } while (!isAdded);
+                        int difference = Math.max(match.startOfFirst(), newInBetweenNode.getStartInSub(firstSubmission)) - match.startOfFirst();
+                        newInBetweenNode.addAppearanceInWithCheck(secondSubmission, match.startOfSecond() + difference);
+                        ensureAddingProcessIsStillValid(newInBetweenNode, firstSubmission);
+
+                        if (newInBetweenNode.getStartInSub(firstSubmission) != match.startOfFirst()
+                                || newInBetweenNode.getEndInSub(firstSubmission) != match.endOfFirst()) {
+                            TreeNode newNodeForMatch = TreeNode.createNewNodeOf(match, firstSubmission, secondSubmission);
+                            newInBetweenNode.addChildAsCorrectCase(newNodeForMatch, firstSubmission);
+                        } // or else, the match is equal to the in-between node, and is therefor already added
+                        isAdded = true;
+                    }
+                } while (!isAdded);
+            } catch (InconsistentMatchException _) {
+                // The situation described by this match was inconsistent with the state of the tree, and its inclusion was therefor
+                // canceled.
+            }
         }
     }
 
@@ -164,16 +184,32 @@ public class GlobalMatchAppearanceFinder {
 
     private TreeNode handleChildCase(TreeNode currentNode, Match match, Submission firstSubmission, Submission secondSubmission,
             ChildCase childCase) {
-        Optional<TreeNode> nextNode = currentNode.getChildForSubOfCase(firstSubmission, childCase);
         int startDifference = currentNode.getStartInSub(firstSubmission) - match.startOfFirst();
-        currentNode.addAppearanceIn(secondSubmission, match.startOfSecond() + startDifference);
+        currentNode.addAppearanceInWithCheck(secondSubmission, match.startOfSecond() + startDifference);
+        ensureAddingProcessIsStillValid(currentNode, firstSubmission);
+        Optional<TreeNode> nextNode = currentNode.getChildForSubOfCase(firstSubmission, childCase);
         if (nextNode.isPresent()) {
             return nextNode.get();
         } else {
             TreeNode newNode = TreeNode.createNewNodeOf(match, firstSubmission, secondSubmission);
-            currentNode.addChild(newNode, childCase);
+            currentNode.addChildWithCheck(newNode, childCase);
             return null;
         }
+    }
+
+    private static void ensureAddingProcessIsStillValid(TreeNode currentlyRelevantNode, Submission neededSubmission) {
+        if (!currentlyRelevantNode.startInSubmission.containsKey(neededSubmission)) {
+            // This is a somewhat rare case that can happen, after calling addAppearanceInWithCheck or addChildWithCheck.
+            // What happens is that while calling them, we realize that we now have two children describing the same case, which
+            // leads to them getting merged. However while merging, we might realize that the needed submission was involved in an
+            // inconsistency, which would lead to it not being added to the merged node. Since the places that call this check
+            // method need that submission to be present though, we can not continue, and must therefor cancel the inclusion of this
+            // match into this tree.
+            throw new InconsistentMatchException();
+        }
+    }
+
+    private static class InconsistentMatchException extends RuntimeException {
     }
 
     /**
@@ -202,6 +238,7 @@ public class GlobalMatchAppearanceFinder {
         private final List<TreeNode> childDown = new ArrayList<>();
         private final List<TreeNode> childBoth = new ArrayList<>();
 
+        private TreeNode parent;
         private ChildCase childCaseInParent;
 
         /* package-private */ TreeNode(int length) {
@@ -232,10 +269,16 @@ public class GlobalMatchAppearanceFinder {
         }
 
         private TreeNode createCopyIntersectedWithMatch(Match match, Submission firstSubmission) {
-            int intersectionStart = Math.max(getStartInSub(firstSubmission), match.startOfFirst());
-            int intersectionEnd = Math.min(getEndInSub(firstSubmission), match.endOfFirst());
+            TreeNode wrapperNode = new TreeNode(match.minimumLength());
+            wrapperNode.addAppearanceIn(firstSubmission, match.startOfFirst());
+            return createCopyIntersectedWithNode(wrapperNode, firstSubmission);
+        }
+
+        private TreeNode createCopyIntersectedWithNode(TreeNode otherNode, Submission submissionInBoth) {
+            int intersectionStart = Math.max(getStartInSub(submissionInBoth), otherNode.getStartInSub(submissionInBoth));
+            int intersectionEnd = Math.min(getEndInSub(submissionInBoth), otherNode.getEndInSub(submissionInBoth));
             int intersectionLength = intersectionEnd - intersectionStart + 1;
-            int startDifference = intersectionStart - getStartInSub(firstSubmission);
+            int startDifference = intersectionStart - getStartInSub(submissionInBoth);
             TreeNode newCopy = new TreeNode(intersectionLength);
             for (Map.Entry<Submission, Integer> e : startInSubmission.entrySet()) {
                 newCopy.addAppearanceIn(e.getKey(), e.getValue() + startDifference);
@@ -243,11 +286,201 @@ public class GlobalMatchAppearanceFinder {
             return newCopy;
         }
 
+        /**
+         * Checks if the invariants of the tree are fulfilled. These include, that a child always contains at least the tokens
+         * described by the parent, that a child also only extends into the direction according to its child type, and that for
+         * each type, there can be at most one child containing the same submission.
+         * <p>
+         * Checks recursively for this entire subtree.
+         * @return true, if the tree is valid, false otherwise
+         */
+        /* package-private */ boolean checkIfConsistent() {
+            for (Submission submission : startInSubmission.keySet()) {
+                for (ChildCase childCase : ChildCase.values()) {
+                    if (getChildrenOfCase(childCase).stream().filter(n -> n.startInSubmission.containsKey(submission)).count() > 1) {
+                        return false;
+                    }
+                    if (getChildForSubOfCase(submission, childCase).isPresent()) {
+                        TreeNode child = getChildForSubOfCase(submission, childCase).get();
+                        if (!boundsAreConsistent(child, childCase, submission)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            for (ChildCase childCase : ChildCase.values()) {
+                for (TreeNode child : getChildrenOfCase(childCase)) {
+                    if (length != -1) {
+                        for (Submission submission : child.getSubmissions()) {
+                            if (!startInSubmission.containsKey(submission)) {
+                                return false;
+                            }
+                        }
+                    }
+                    if (!child.checkIfConsistent()) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        /**
+         * Note: This method can result in a reorganization of the tree. This process can result in additional inconsistencies
+         * being found, meaning some submissions that were in this node before calling this method might not be in it anymore
+         * after it returns.
+         */
+        private void addAppearanceInWithCheck(Submission appearingInSubmission, int startInThatSubmission) {
+            if (startInSubmission.containsKey(appearingInSubmission)) {
+                if (startInThatSubmission != startInSubmission.get(appearingInSubmission)) {
+                    // If we are currently adding a match where both submissions are already part of this tree, we have to careful, since
+                    // sometimes matches can describe contradicting situations. Such contradictions result in the tree becoming invalid by a
+                    // parent having a child that does not at least cover all the tokens the parent covers.
+                    // To prevent this, we must cancel the inclusion of this match into this tree.
+                    throw new InconsistentMatchException();
+                } else {
+                    // Nothing to do, submission is already added.
+                    return;
+                }
+            }
+            if (parent.length != -1 && (!parent.startInSubmission.containsKey(appearingInSubmission) || !parent
+                    .boundsAreConsistent(startInThatSubmission, startInThatSubmission + length - 1, childCaseInParent, appearingInSubmission))) {
+                // The current match also describes a contradiction, if the range does not align with the one defined by the parent, in
+                // which case we again, must cancel the inclusion of this match into this tree.
+                throw new InconsistentMatchException();
+            }
+
+            if (parent.getChildForSubOfCase(appearingInSubmission, childCaseInParent).isPresent()) {
+                if (NODE_MERGING_IS_ENABLED) {
+                    // In this case, the parent already has a child of the same type as this node that contains the submission to add.
+                    // Therefor this node and the other child describe the same code and have to be merged.
+                    TreeNode nodeToMergeWith = parent.getChildForSubOfCase(appearingInSubmission, childCaseInParent).get();
+                    addAppearanceIn(appearingInSubmission, startInThatSubmission);
+                    mergeWith(nodeToMergeWith, appearingInSubmission);
+                } else {
+                    // If we are not merging, then this match must be interpreted as a contradiction (as the fact that there are two
+                    // separate nodes implies that the two nodes describe different code, while this match, which would result in both nodes
+                    // containing the same submissions, implies that the two nodes describe the same section of code), and we therefor have
+                    // to cancel adding it.
+                    throw new InconsistentMatchException();
+                }
+            } else {
+                addAppearanceIn(appearingInSubmission, startInThatSubmission);
+            }
+        }
+
         /* package-private */ void addAppearanceIn(Submission appearingInSubmission, int startInThatSubmission) {
             startInSubmission.put(appearingInSubmission, startInThatSubmission);
         }
 
-        private void addChild(TreeNode childNode, Submission aSubmissionInBoth) {
+        /**
+         * For some explanations, see {@link #NODE_MERGING_IS_ENABLED}.
+         */
+        private void mergeWith(TreeNode nodeToMergeWith, Submission submissionInBoth) {
+            TreeNode shorterNode;
+            TreeNode longerNode;
+            if (getStartInSub(submissionInBoth) == nodeToMergeWith.getStartInSub(submissionInBoth)
+                    && getEndInSub(submissionInBoth) == nodeToMergeWith.getEndInSub(submissionInBoth)) {
+                parent.removeChild(nodeToMergeWith);
+                mergeWithDirectly(nodeToMergeWith);
+                checkForAdditionalMerges();
+                return;
+            } else if (childCaseInParent == ChildCase.UP || childCaseInParent == ChildCase.DOWN) {
+                shorterNode = length < nodeToMergeWith.length ? this : nodeToMergeWith;
+                longerNode = length < nodeToMergeWith.length ? nodeToMergeWith : this;
+            } else {
+                TreeNode smallerStart = getStartInSub(submissionInBoth) <= nodeToMergeWith.getStartInSub(submissionInBoth) ? this : nodeToMergeWith;
+                TreeNode largerEnd = getEndInSub(submissionInBoth) >= nodeToMergeWith.getEndInSub(submissionInBoth) ? this : nodeToMergeWith;
+                if (smallerStart == largerEnd) {
+                    shorterNode = smallerStart == this ? nodeToMergeWith : this;
+                    longerNode = smallerStart == this ? this : nodeToMergeWith;
+                } else {
+                    // None is a superset of the other; we need an additional node in between.
+                    TreeNode intersection = createCopyIntersectedWithNode(nodeToMergeWith, submissionInBoth);
+                    TreeNode parent = this.parent;
+                    parent.removeChild(this);
+                    parent.removeChild(nodeToMergeWith);
+                    parent.addChildAsCorrectCase(intersection, submissionInBoth);
+                    ensureAddingProcessIsStillValid(intersection, submissionInBoth);
+                    intersection.addChildAsCorrectCase(this, submissionInBoth);
+                    intersection.addAllSubmissionsFromNodeAndRemoveInconsistencies(nodeToMergeWith);
+                    ensureAddingProcessIsStillValid(nodeToMergeWith, submissionInBoth);
+                    intersection.addChildAsCorrectCase(nodeToMergeWith, submissionInBoth);
+                    intersection.checkForAdditionalMerges();
+                    return;
+                }
+            }
+            parent.removeChild(longerNode);
+            shorterNode.addAllSubmissionsFromNodeAndRemoveInconsistencies(longerNode);
+            shorterNode.addChildWithCheck(longerNode, childCaseInParent);
+            shorterNode.checkForAdditionalMerges();
+        }
+
+        /**
+         * Directly adds all the information from the nodeToMerge to this node.
+         * <p>
+         * Note: The nodeToMerge becomes invalid after calling this method, make sure you do not keep using its reference!
+         */
+        private void mergeWithDirectly(TreeNode nodeToMerge) {
+            addAllSubmissionsFromNodeAndRemoveInconsistencies(nodeToMerge);
+            for (ChildCase childCase : ChildCase.values()) {
+                for (TreeNode child : nodeToMerge.getChildrenOfCase(childCase)) {
+                    try {
+                        addChildWithCheck(child, childCase);
+                    } catch (InconsistentMatchException _) {
+                        // It can happen, that adding the child fails, however we catch this exception here, since every child successfully
+                        // being added is not actually crucial for merging, meaning we can still continue normally.
+                    }
+                }
+            }
+        }
+
+        private void addAllSubmissionsFromNodeAndRemoveInconsistencies(TreeNode nodeToAddAllSubmissionsFrom) {
+            for (Submission submission : new HashSet<>(nodeToAddAllSubmissionsFrom.getSubmissions())) {
+                try {
+                    addAppearanceInWithCheck(submission, nodeToAddAllSubmissionsFrom.getStartInSub(submission));
+                } catch (InconsistentMatchException _) {
+                    // If a submission introduces an inconsistency we just do not add it, but we still want to continue with the merge
+                    // process, therefor we catch this exception already here.
+                    // Additionally, we also remove the invalid submission, so the node can be merged without any issues.
+                    nodeToAddAllSubmissionsFrom.removeInvalidSubmissionFromSubtree(submission);
+                }
+            }
+        }
+
+        private void removeInvalidSubmissionFromSubtree(Submission invalidSubmission) {
+            startInSubmission.remove(invalidSubmission);
+            for (ChildCase childCase : ChildCase.values()) {
+                for (TreeNode child : getChildrenOfCase(childCase)) {
+                    child.removeInvalidSubmissionFromSubtree(invalidSubmission);
+                }
+            }
+        }
+
+        private void checkForAdditionalMerges() {
+            // Very rarely, a merge can result in an illegal state where the parent of this node now has two children in this child
+            // case that share a submission. In this case, we need to merge again.
+            for (Submission submission : getSubmissions()) {
+                Optional<TreeNode> potentialOtherChildToMergeWith = parent.getChildrenOfCase(childCaseInParent).stream()
+                        .filter(c -> c != this && c.startInSubmission.containsKey(submission)).findFirst();
+                if (potentialOtherChildToMergeWith.isPresent()) {
+                    mergeWith(potentialOtherChildToMergeWith.get(), submission);
+                    return;
+                }
+            }
+        }
+
+        private boolean boundsAreConsistent(TreeNode proposedChild, ChildCase proposedChildCase, Submission submission) {
+            return boundsAreConsistent(proposedChild.getStartInSub(submission), proposedChild.getEndInSub(submission), proposedChildCase, submission);
+        }
+
+        private boolean boundsAreConsistent(int startInChild, int endInChild, ChildCase childCase, Submission submission) {
+            return !(startInChild > getStartInSub(submission) || endInChild < getEndInSub(submission)
+                    || (childCase == ChildCase.UP && endInChild != getEndInSub(submission))
+                    || (childCase == ChildCase.DOWN && startInChild != getStartInSub(submission)));
+        }
+
+        private void addChildAsCorrectCase(TreeNode childNode, Submission aSubmissionInBoth) {
             if (length == -1) {
                 addChild(childNode, ChildCase.BOTH);
                 return;
@@ -260,16 +493,50 @@ public class GlobalMatchAppearanceFinder {
             } else {
                 childCase = ChildCase.BOTH;
             }
+            addChildWithCheck(childNode, childCase);
+        }
+
+        private void addChildWithCheck(TreeNode childNode, ChildCase childCase) {
+            if (length != -1) {
+                for (Submission submission : childNode.startInSubmission.keySet()) {
+                    if (!startInSubmission.containsKey(submission)) {
+                        // This is a very rare case, where due to a merge, and the submission being inconsistent with the parent, it was not
+                        // added to the parent. Therefor we can also not add this child.
+                        return;
+                    }
+                    if (!boundsAreConsistent(childNode, childCase, submission)) {
+                        // This is a somewhat rare case, where the child directly contains a contradiction, and we therefor have to cancel the
+                        // addition of this match into this tree.
+                        throw new InconsistentMatchException();
+                    }
+                }
+                for (Submission submission : childNode.startInSubmission.keySet()) {
+                    if (getChildForSubOfCase(submission, childCase).isPresent()) {
+                        if (NODE_MERGING_IS_ENABLED) {
+                            TreeNode nodeToMerge = getChildForSubOfCase(submission, childCase).get();
+                            addChild(childNode, childCase);
+                            childNode.mergeWith(nodeToMerge, submission);
+                            return;
+                        } else {
+                            // If we are not merging, we can not add this match without breaking the invariants of this tree, and must therefor
+                            // cancel the inclusion of this match.
+                            throw new InconsistentMatchException();
+                        }
+                    }
+                }
+            }
             addChild(childNode, childCase);
         }
 
         /* package-private */ void addChild(TreeNode childNode, ChildCase childCase) {
             getChildrenOfCase(childCase).add(childNode);
+            childNode.parent = this;
             childNode.childCaseInParent = childCase;
         }
 
         private void removeChild(TreeNode childToRemove) {
             getChildrenOfCase(childToRemove.childCaseInParent).remove(childToRemove);
+            childToRemove.parent = null;
         }
 
         private Optional<TreeNode> getChildForSubOfCase(Submission submission, ChildCase childCase) {
