@@ -2,6 +2,8 @@ package de.jplag.clustering;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -33,6 +35,11 @@ public class GlobalMatchAppearanceFinder {
      * in the future.
      */
     private static final boolean NODE_MERGING_IS_ENABLED = true;
+
+    /**
+     * Compares trees (super-roots) by the appearance of the current first submission (index to first token) in the root.
+     */
+    private Comparator<TreeNode> currentComparator;
 
     /**
      * Groups all the matches in the provided comparisons into a tree structure, summarizing what code is shared by which
@@ -73,14 +80,18 @@ public class GlobalMatchAppearanceFinder {
 
         // We need to manually iterate over all pairs of submissions, instead of just directly iterating over all comparisons,
         // as the algorithm assumes that all matches having a certain first sumbission get added together as a group.
-        List<TreeNode> trees = new ArrayList<>();
+        Set<TreeNode> trees = new HashSet<>();
         Map<Submission, Map<Submission, JPlagComparison>> comparisonsToHandleLater = new HashMap<>();
         Set<Submission> remainingSubmissions = new HashSet<>(allSubmissions);
         for (Submission firstSubmission : allSubmissions) {
+            List<TreeNode> relevantTrees = findAllRelevantTrees(trees, firstSubmission);
+            currentComparator = Comparator.comparingInt(t -> t.getActualTreeFromSuperRoot().getStartInSub(firstSubmission));
+            relevantTrees.sort(currentComparator);
+            int longestLengthOfATree = relevantTrees.stream().map(TreeNode::getActualTreeFromSuperRoot).mapToInt(TreeNode::getLength).max().orElse(0);
             if (comparisonsToHandleLater.containsKey(firstSubmission)) {
                 for (Map.Entry<Submission, JPlagComparison> entry : comparisonsToHandleLater.get(firstSubmission).entrySet()) {
                     for (Match match : entry.getValue().matches()) {
-                        addOrExtend(trees, match, firstSubmission, entry.getKey());
+                        longestLengthOfATree = addOrExtend(relevantTrees, longestLengthOfATree, match, firstSubmission, entry.getKey());
                     }
                 }
             }
@@ -89,7 +100,7 @@ public class GlobalMatchAppearanceFinder {
             for (Submission secondSubmission : remainingSubmissions) {
                 if (comparisonsMap.containsKey(firstSubmission) && comparisonsMap.get(firstSubmission).containsKey(secondSubmission)) {
                     for (Match match : comparisonsMap.get(firstSubmission).get(secondSubmission).matches()) {
-                        addOrExtend(trees, match, firstSubmission, secondSubmission);
+                        longestLengthOfATree = addOrExtend(relevantTrees, longestLengthOfATree, match, firstSubmission, secondSubmission);
                     }
                 } else {
                     // This ensures the invariant mentioned above,
@@ -98,6 +109,8 @@ public class GlobalMatchAppearanceFinder {
                     addComparisonToMap(comparisonsToHandleLater, secondSubmission, firstSubmission, comparisonInOtherDirection);
                 }
             }
+            // Add any new trees back to the main set.
+            trees.addAll(relevantTrees);
         }
 
         List<TreeNode> treesWithoutSuperRoot = new ArrayList<>();
@@ -118,16 +131,32 @@ public class GlobalMatchAppearanceFinder {
         }
     }
 
-    private void addOrExtend(List<TreeNode> trees, Match match, Submission firstSubmission, Submission secondSubmission) {
-        List<TreeNode> treesToAddTo = findAllRelevantTrees(trees, match, firstSubmission);
+    private List<TreeNode> findAllRelevantTrees(Set<TreeNode> allTrees, Submission submissionThatMustAppear) {
+        List<TreeNode> relevantTrees = new ArrayList<>();
+        for (TreeNode superRoot : allTrees) {
+            if (superRoot.getActualTreeFromSuperRoot().startInSubmission.containsKey(submissionThatMustAppear)) {
+                relevantTrees.add(superRoot);
+            }
+        }
+        return relevantTrees;
+    }
+
+    private int addOrExtend(List<TreeNode> relevantTrees, int longestLengthOfATree, Match match, Submission firstSubmission,
+            Submission secondSubmission) {
+        List<TreeNode> treesToAddTo = findAllTreesToAddMatchTo(relevantTrees, longestLengthOfATree, match, firstSubmission);
         if (treesToAddTo.isEmpty()) {
             TreeNode newTree = TreeNode.createNewNodeOf(match, firstSubmission, secondSubmission);
             TreeNode superRoot = TreeNode.createNewTreeOf(newTree);
-            trees.add(superRoot);
-            return;
+            int indexToAddAt = Collections.binarySearch(relevantTrees, superRoot, currentComparator);
+            if (indexToAddAt < 0) {
+                indexToAddAt = -(indexToAddAt + 1);
+            }
+            relevantTrees.add(indexToAddAt, superRoot);
+            return Math.max(longestLengthOfATree, newTree.length);
         }
         for (TreeNode superRoot : treesToAddTo) {
             TreeNode currentNode = superRoot.getActualTreeFromSuperRoot();
+            int startIndexBeforeAdding = currentNode.getStartInSub(firstSubmission);
             boolean isAdded;
             try {
                 do {
@@ -169,17 +198,64 @@ public class GlobalMatchAppearanceFinder {
                 // The situation described by this match was inconsistent with the state of the tree, and its inclusion was therefor
                 // canceled.
             }
-        }
-    }
-
-    private List<TreeNode> findAllRelevantTrees(List<TreeNode> allTrees, Match match, Submission firstSubmission) {
-        List<TreeNode> relevantTrees = new ArrayList<>();
-        for (TreeNode superRoot : allTrees) {
-            if (superRoot.getActualTreeFromSuperRoot().overlaps(match, firstSubmission)) {
-                relevantTrees.add(superRoot);
+            if (superRoot.getActualTreeFromSuperRoot().getStartInSub(firstSubmission) != startIndexBeforeAdding) {
+                // If the root of the current tree changed, then the ordering of the trees might now not be correct anymore.
+                // To fix this, we just sort the list again, which does not have any significant performance impact as this case is
+                // quite rare (and the sort method is also fairly fast on an almost sorted list).
+                relevantTrees.sort(currentComparator);
             }
         }
-        return relevantTrees;
+        return longestLengthOfATree;
+    }
+
+    private List<TreeNode> findAllTreesToAddMatchTo(List<TreeNode> allRelevantTrees, int longestLengthOfATree, Match match,
+            Submission firstSubmission) {
+        // We create a dummy node that wraps our match and returns the end of the match as its "start".
+        // That way, binary searching for it gives us one of the furthest back trees whose root still overlaps with the match.
+        int largestMatchingTokenIndex = match.endOfFirst();
+        TreeNode wrapperNode = new TreeNode(-1);
+        wrapperNode.addAppearanceIn(firstSubmission, largestMatchingTokenIndex);
+        int lastMatchingTreeIndex = Collections.binarySearch(allRelevantTrees, TreeNode.createNewTreeOf(wrapperNode), currentComparator);
+        if (lastMatchingTreeIndex < 0) {
+            int insertionPoint = -(lastMatchingTreeIndex + 1);
+            lastMatchingTreeIndex = insertionPoint - 1;
+        } else {
+            // The binary search only gives us any match, we still need to manually walk to the last match.
+            while (lastMatchingTreeIndex + 1 < allRelevantTrees.size() && allRelevantTrees.get(lastMatchingTreeIndex + 1).getActualTreeFromSuperRoot()
+                    .getStartInSub(firstSubmission) == largestMatchingTokenIndex) {
+                lastMatchingTreeIndex++;
+            }
+        }
+
+        // Same thing for the finding the index to the first tree that is still guaranteed to overlap with the match.
+        // All trees before that might, but might also not, overlap with the match, depending on their length.
+        int smallestGuaranteedMatchingTokenIndex = match.startOfFirst();
+        wrapperNode = new TreeNode(-1);
+        wrapperNode.addAppearanceIn(firstSubmission, smallestGuaranteedMatchingTokenIndex);
+        int firstGuaranteedMatchingTreeIndex = Collections.binarySearch(allRelevantTrees, TreeNode.createNewTreeOf(wrapperNode), currentComparator);
+        if (firstGuaranteedMatchingTreeIndex < 0) {
+            firstGuaranteedMatchingTreeIndex = -(firstGuaranteedMatchingTreeIndex + 1);
+        } else {
+            while (firstGuaranteedMatchingTreeIndex - 1 >= 0 && allRelevantTrees.get(firstGuaranteedMatchingTreeIndex - 1)
+                    .getActualTreeFromSuperRoot().getStartInSub(firstSubmission) == smallestGuaranteedMatchingTokenIndex) {
+                firstGuaranteedMatchingTreeIndex--;
+            }
+        }
+
+        // Get all guaranteed matching trees.
+        List<TreeNode> treesToAddTo = new ArrayList<>(allRelevantTrees.subList(firstGuaranteedMatchingTreeIndex, lastMatchingTreeIndex + 1));
+
+        // Add all remaining matching trees from the potential ones in the front.
+        int currentTreeIndex = firstGuaranteedMatchingTreeIndex - 1;
+        while (currentTreeIndex >= 0 && allRelevantTrees.get(currentTreeIndex).getActualTreeFromSuperRoot().getStartInSub(firstSubmission)
+                + longestLengthOfATree > match.startOfFirst()) {
+            if (allRelevantTrees.get(currentTreeIndex).getActualTreeFromSuperRoot().overlaps(match, firstSubmission)) {
+                // The order of the resulting trees is not relevant, so we can just add these at the back.
+                treesToAddTo.add(allRelevantTrees.get(currentTreeIndex));
+            }
+            currentTreeIndex--;
+        }
+        return treesToAddTo;
     }
 
     private TreeNode handleChildCase(TreeNode currentNode, Match match, Submission firstSubmission, Submission secondSubmission,
@@ -582,9 +658,6 @@ public class GlobalMatchAppearanceFinder {
         }
 
         private boolean overlaps(Match match, Submission firstSubmission) {
-            if (!startInSubmission.containsKey(firstSubmission)) {
-                return false;
-            }
             return getStartInSub(firstSubmission) <= match.endOfFirst() && getEndInSub(firstSubmission) >= match.startOfFirst();
         }
 
