@@ -8,7 +8,6 @@
       v-model:secondary-metric="secondaryMetricModel"
       :header="header"
       :all-are-anonymized="allAreAnonymized"
-      :show-weighted-metric="showWeightedMetric"
       :secondary-metrics="secondaryMetrics"
       @change-anonymous-for-all="emit('changeAnonymousForAll')"
     />
@@ -286,11 +285,6 @@ const props = defineProps({
     type: Boolean,
     required: false,
     default: false
-  },
-  showWeightedMetric: {
-    type: Boolean,
-    required: false,
-    default: true
   },
   secondaryMetrics: {
     type: Object as PropType<Set<MetricJsonIdentifier>>,

@@ -36,10 +36,6 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  showWeightedMetric: {
-    type: Boolean,
-    default: true
-  },
   secondaryMetrics: {
     type: Object as PropType<Set<MetricJsonIdentifier>>,
     default: () => new Set()
