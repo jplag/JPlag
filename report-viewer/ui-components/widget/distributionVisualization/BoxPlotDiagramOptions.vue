@@ -41,7 +41,9 @@ const metricOptions = computed(() => {
     MetricJsonIdentifier.MAXIMUM_SIMILARITY,
     MetricJsonIdentifier.WEIGHTED_SIMILARITY
   ]
-  return allOptions.filter((m) => props.secondaryMetrics.has(m))
+  return allOptions.filter(
+    (m) => m === MetricJsonIdentifier.AVERAGE_SIMILARITY || props.secondaryMetrics.has(m)
+  )
 })
 
 watch(
