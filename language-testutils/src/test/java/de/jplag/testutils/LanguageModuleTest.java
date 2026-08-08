@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -354,8 +353,8 @@ public abstract class LanguageModuleTest {
      * Returns the default directory structure by default.
      * @return The test file location
      */
-    protected File getTestFileLocation() {
-        return new File(DEFAULT_TEST_CODE_PATH_BASE.toFile(), this.language.getIdentifier());
+    protected Path getTestFileLocation() {
+        return DEFAULT_TEST_CODE_PATH_BASE.resolve(language.getIdentifier());
     }
 
     protected List<TokenType> getIgnoredTokensForMonotoneTokenOrder() {

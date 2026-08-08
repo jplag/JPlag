@@ -1,6 +1,6 @@
 package de.jplag.reporting.reportobject.writer;
 
-import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 
 /**
@@ -18,8 +18,9 @@ public interface JPlagResultWriter {
      * Writes data from a file.
      * @param path The path to write to
      * @param original The original file
+     * @throws IOException If the file handling fails
      */
-    void addFileContentEntry(Path path, File original);
+    void addFileContentEntry(Path path, Path original) throws IOException;
 
     /**
      * Writes data from a string.

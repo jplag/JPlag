@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
 
@@ -44,7 +45,7 @@ class LegacyBaseCodeTest extends BaseCodeTest {
     @Override
     @Test
     void testBasecodePathComparison() throws ExitException {
-        JPlagResult result = runJPlag("basecode", it -> it.withBaseCodeSubmissionName(getBasePath("basecode-base")));
+        JPlagResult result = runJPlag("basecode", it -> it.withBaseCodeSubmissionDirectory(getBasePath("basecode-base")));
         assertEquals(3, result.getNumberOfSubmissions()); // "basecode/base" is now a user submission.
     }
 
@@ -65,8 +66,8 @@ class LegacyBaseCodeTest extends BaseCodeTest {
     @Override
     @Test
     void testSubdirectoryGlobalBasecode() throws ExitException {
-        String basecode = getBasePath("SubdirectoryBase");
-        JPlagResult result = runJPlag("SubdirectoryDuplicate", it -> it.withSubdirectoryName("src").withBaseCodeSubmissionName(basecode));
+        Path basecode = getBasePath("SubdirectoryBase");
+        JPlagResult result = runJPlag("SubdirectoryDuplicate", it -> it.withSubdirectoryName("src").withBaseCodeSubmissionDirectory(basecode));
         verifySimpleSubdirectoryDuplicate(result, 3, 3);
     }
 

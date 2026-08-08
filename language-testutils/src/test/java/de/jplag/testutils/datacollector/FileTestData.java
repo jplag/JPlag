@@ -1,7 +1,7 @@
 package de.jplag.testutils.datacollector;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -15,9 +15,9 @@ import de.jplag.util.FileUtils;
  * Provides test source from a file.
  */
 class FileTestData implements TestData {
-    private final File file;
+    private final Path file;
 
-    FileTestData(File file) {
+    FileTestData(Path file) {
         this.file = file;
     }
 
@@ -33,7 +33,7 @@ class FileTestData implements TestData {
 
     @Override
     public String describeTestSource() {
-        return "(File: " + this.file.getName() + ")";
+        return "(File: " + this.file.getFileName() + ")";
     }
 
     @Override
@@ -55,6 +55,6 @@ class FileTestData implements TestData {
 
     @Override
     public String toString() {
-        return this.file.getName();
+        return this.file.getFileName().toString();
     }
 }

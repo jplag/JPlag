@@ -1,6 +1,6 @@
 package de.jplag.reporting.reportobject.writer;
 
-import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 
 import org.slf4j.Logger;
@@ -22,8 +22,8 @@ public class DummyResultWriter implements JPlagResultWriter {
     }
 
     @Override
-    public void addFileContentEntry(Path path, File original) {
-        logger.info(MESSAGE_FILE, original.getAbsolutePath(), path);
+    public void addFileContentEntry(Path path, Path original) throws IOException {
+        logger.info(MESSAGE_FILE, original.toRealPath(), path);
     }
 
     @Override

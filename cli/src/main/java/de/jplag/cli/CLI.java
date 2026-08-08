@@ -3,6 +3,7 @@ package de.jplag.cli;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,7 +119,7 @@ public final class CLI {
         JPlagResult result = JPlagRunner.runJPlag(options);
 
         OutputFileGenerator.generateJPlagResultFile(result, target);
-        OutputFileGenerator.generateCsvOutput(result, new File(getResultFileBaseName()), this.inputHandler.getCliOptions());
+        OutputFileGenerator.generateCsvOutput(result, Path.of(getResultFileBaseName()), this.inputHandler.getCliOptions());
 
         return target;
     }

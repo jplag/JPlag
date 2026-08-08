@@ -1,11 +1,12 @@
 package de.jplag.reporting.reportobject.writer;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -54,12 +55,12 @@ public class ZipWriter implements JPlagResultWriter {
     }
 
     @Override
-    public void addFileContentEntry(Path path, File original) {
-        try (FileInputStream inputStream = new FileInputStream(original)) {
+    public void addFileContentEntry(Path path, Path original) {
+        try (InputStream inputStream = Files.newInputStream(original)) {
             this.file.putNextEntry(new ZipEntry(FilePathUtil.pathAsZipPath(path)));
             inputStream.transferTo(this.file);
         } catch (IOException e) {
-            logger.error(String.format(COPY_FILE_ERROR, original.getAbsolutePath(), path), e);
+            logger.error(String.format(COPY_FILE_ERROR, original, path), e);
         }
     }
 

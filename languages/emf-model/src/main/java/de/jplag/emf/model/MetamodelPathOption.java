@@ -1,6 +1,7 @@
 package de.jplag.emf.model;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,17 +71,17 @@ public class MetamodelPathOption implements LanguageOption<String> {
     }
 
     private void parseMetamodelFileIfValid(String path) {
-        File file = new File(path.trim());
-        if (!file.exists() || !file.isFile()) {
+        Path file = Path.of(path.trim());
+        if (!(Files.exists(file) && Files.isRegularFile(file))) {
             logger.error(NOT_A_FILE_ERROR, file);
-        } else if (!file.getName().endsWith(EmfLanguage.FILE_ENDING)) {
+        } else if (!file.getFileName().toString().endsWith(EmfLanguage.FILE_ENDING)) {
             logger.error(NOT_A_METAMODEL_ERROR, file);
         } else {
             parseMetamodelFile(file);
         }
     }
 
-    private void parseMetamodelFile(File file) {
+    private void parseMetamodelFile(Path file) {
         List<EPackage> metapackages = new ArrayList<>();
         Resource modelResource = EMFUtil.loadModelResource(file);
         if (modelResource == null) {

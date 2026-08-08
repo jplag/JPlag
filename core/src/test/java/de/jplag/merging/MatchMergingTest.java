@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -229,9 +229,10 @@ class MatchMergingTest extends TestBase {
     }
 
     private void verifyTokensFromSingleFile(List<Token> tokens) {
-        List<File> files = tokens.stream().map(Token::getFile).toList();
-        for (File file : files) {
-            assertEquals(files.getFirst(), file, "Two different files in token sequence: " + files.getFirst().getName() + " and " + file.getName());
+        List<Path> files = tokens.stream().map(Token::getFile).toList();
+        for (Path file : files) {
+            assertEquals(files.getFirst(), file,
+                    "Two different files in token sequence: " + files.getFirst().getFileName() + " and " + file.getFileName());
         }
     }
 

@@ -3,7 +3,6 @@ package de.jplag.rust;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -46,7 +45,7 @@ class RustLanguageTest {
 
     private final Logger logger = LoggerFactory.getLogger(RustLanguageTest.class);
     private final String[] testFiles = {"deno_core_runtime.rs", COMPLETE_TEST_FILE};
-    private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "rust").toFile();
+    private final Path testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "rust");
     private RustLanguage language;
 
     @BeforeEach
@@ -57,7 +56,7 @@ class RustLanguageTest {
     @Test
     void parseTestFiles() throws ParsingException {
         for (String fileName : testFiles) {
-            List<Token> tokens = language.parse(Set.of(new File(testFileLocation, fileName)), false);
+            List<Token> tokens = language.parse(Set.of(testFileLocation.resolve(fileName)), false);
             String output = TokenPrinterUtils.printTokensByFile(tokens);
             logger.info(output);
 
@@ -74,10 +73,10 @@ class RustLanguageTest {
      * @param tokens the list of tokens generated from the sample
      */
     private void testSourceCoverage(String fileName, List<Token> tokens) {
-        File testFile = new File(testFileLocation, fileName);
+        Path testFile = testFileLocation.resolve(fileName);
 
         try {
-            List<String> lines = Files.readAllLines(testFile.toPath());
+            List<String> lines = Files.readAllLines(testFile);
 
             // All lines that contain code
             var codeLines = new ArrayList<>(getCodeLines(lines));

@@ -1,6 +1,6 @@
 package de.jplag.emf.util;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +51,7 @@ public final class EmfaticModelView extends AbstractModelView {
      * @param modelResource is the resource containing the metamodel.
      * @throws ParsingException if Emfatic crashes.
      */
-    public EmfaticModelView(File file, Resource modelResource) throws ParsingException {
+    public EmfaticModelView(Path file, Resource modelResource) throws ParsingException {
         super(file);
         elementToLine = new HashMap<>();
         lines = generateEmfaticCode(viewBuilder, modelResource);

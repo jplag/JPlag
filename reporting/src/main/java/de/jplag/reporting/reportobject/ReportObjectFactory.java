@@ -4,6 +4,7 @@ import static de.jplag.reporting.reportobject.mapper.SubmissionNameToIdMapper.bu
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,6 +25,7 @@ import de.jplag.JPlagResult;
 import de.jplag.Language;
 import de.jplag.Submission;
 import de.jplag.Version;
+import de.jplag.exceptions.FileException;
 import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.jsonfactory.BaseCodeReportWriter;
 import de.jplag.reporting.jsonfactory.ComparisonReportWriter;
@@ -88,8 +90,9 @@ public class ReportObjectFactory {
     /**
      * Creates all necessary report viewer files, writes them to the disk as ZIP file with a <code>.jplag</code> extension.
      * @param result The JPlagResult to be converted into a report.
+     * @throws FileException If the file handling fails
      */
-    public void createAndSaveReport(JPlagResult result) {
+    public void createAndSaveReport(JPlagResult result) throws FileException {
         logger.info("Start writing report...");
         buildSubmissionToIdMap(result);
 
@@ -116,24 +119,28 @@ public class ReportObjectFactory {
         submissionToIdFunction = (Submission submission) -> submissionNameToIdMap.get(submission.getName());
     }
 
-    private void copySubmissionFilesToReport(JPlagResult result) {
+    private void copySubmissionFilesToReport(JPlagResult result) throws FileException {
         logger.info("Start to export results...");
         List<JPlagComparison> comparisons = result.getComparisons(result.getOptions().maximumNumberOfComparisons());
         Set<Submission> submissions = getSubmissions(comparisons);
         Language language = result.getOptions().language();
         for (Submission submission : submissions) {
-            for (File file : submission.getFiles()) {
+            for (Path file : submission.getFiles()) {
                 Path filePath = FilePathUtil.getRelativeSubmissionPath(file, submission, submissionToIdFunction);
                 Path resultPath = SUBMISSIONS_ROOT_PATH.resolve(filePath);
 
-                File fileToCopy = getFileToCopy(language, file);
-                this.resultWriter.addFileContentEntry(resultPath, fileToCopy);
+                Path fileToCopy = getFileToCopy(language, file);
+                try {
+                    this.resultWriter.addFileContentEntry(resultPath, fileToCopy);
+                } catch (IOException e) {
+                    throw new FileException(e);
+                }
             }
         }
     }
 
-    private File getFileToCopy(Language language, File file) {
-        return language.useViewFiles() ? new File(file.getPath() + language.viewFileExtension()) : file;
+    private Path getFileToCopy(Language language, Path file) {
+        return language.useViewFiles() ? Path.of(file.toString() + language.viewFileExtension()) : file;
     }
 
     private void writeComparisons(JPlagResult result) {
@@ -187,7 +194,7 @@ public class ReportObjectFactory {
 
         List<Map<String, Map<String, SubmissionFile>>> submissionTokenCountList = submissions.stream().parallel().map(submission -> {
             Map<String, SubmissionFile> tokenCounts = new HashMap<>();
-            for (Map.Entry<File, Integer> entry : submission.getTokenCountPerFile().entrySet()) {
+            for (Map.Entry<Path, Integer> entry : submission.getTokenCountPerFile().entrySet()) {
                 String key = FilePathUtil.getRelativeSubmissionPath(entry.getKey(), submission, submissionToIdFunction).toString();
                 tokenCounts.put(key, new SubmissionFile(entry.getValue()));
             }

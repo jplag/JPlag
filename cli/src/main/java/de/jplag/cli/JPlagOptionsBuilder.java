@@ -1,9 +1,13 @@
 package de.jplag.cli;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,18 +49,25 @@ public class JPlagOptionsBuilder {
         submissionDirectories.addAll(List.of(this.cliOptions.newDirectories));
         submissionDirectories.addAll(this.cliInputHandler.getSubcommandSubmissionDirectories());
 
-        JPlagOptions jPlagOptions = initializeJPlagOptions(submissionDirectories, oldSubmissionDirectories, suffixes);
+        JPlagOptions jPlagOptions = initializeJPlagOptions(mapCliSubmissionDirectoriesToPaths(submissionDirectories),
+                mapCliSubmissionDirectoriesToPaths(oldSubmissionDirectories), suffixes);
 
         String baseCodePath = this.cliOptions.baseCode;
-        File baseCodeDirectory = baseCodePath == null ? null : new File(baseCodePath);
-        if (baseCodeDirectory == null || baseCodeDirectory.exists()) {
+        Path baseCodeDirectory = baseCodePath == null ? null : Path.of(baseCodePath);
+        if (baseCodeDirectory == null || Files.exists(baseCodeDirectory)) {
             return jPlagOptions.withBaseCodeSubmissionDirectory(baseCodeDirectory);
         }
         logger.error("Using legacy partial base code API. Please migrate to new full path base code API.");
         return jPlagOptions.withBaseCodeSubmissionDirectory(baseCodeDirectory);
     }
 
-    private JPlagOptions initializeJPlagOptions(Set<File> submissionDirectories, Set<File> oldSubmissionDirectories, List<String> suffixes)
+    private Set<Path> mapCliSubmissionDirectoriesToPaths(Collection<File> submissionDirectory) {
+        return submissionDirectory.stream().map(it -> {
+            return it.toPath();
+        }).collect(Collectors.toSet());
+    }
+
+    private JPlagOptions initializeJPlagOptions(Set<Path> submissionDirectories, Set<Path> oldSubmissionDirectories, List<String> suffixes)
             throws CliException {
         ClusteringOptions clusteringOptions = getClusteringOptions();
         MergingOptions mergingOptions = getMergingOptions();

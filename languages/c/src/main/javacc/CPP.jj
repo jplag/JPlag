@@ -21,6 +21,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import java.nio.file.Path;
+import java.nio.file.Files;
+
 import de.jplag.ParsingException;
 
 import static de.jplag.c.CTokenType.*;
@@ -28,22 +31,22 @@ import static de.jplag.c.CTokenType.*;
 public class CPPScanner {
     private Scanner delegatingScanner;
 
-    public static void scanFile(File file, Scanner delegatingScanner) throws ParsingException {
+    public static void scanFile(Path file, Scanner delegatingScanner) throws ParsingException {
         CPPScanner scanner;
-        try (InputStream input = new NewlineStream(new FileInputStream(file))) {
+        try (InputStream input = new NewlineStream(Files.newInputStream(file))) {
             scanner = new CPPScanner(input, "UTF-8");
             scanner.delegatingScanner = delegatingScanner;
         } catch (IOException e) {
-            System.out.println("C/C++ Scanner: File " + file.getName() + " not found.");
+            System.out.println("C/C++ Scanner: File " + file.getFileName() + " not found.");
             throw new ParsingException(file, e.getMessage(), e);
         }
         try {
             scanner.scan();
         } catch (ParseException e) {
-            delegatingScanner.logger.error("Parsing Error in '" + file.getName() + "': " + e.getMessage());
+            delegatingScanner.logger.error("Parsing Error in '" + file.getFileName() + "': " + e.getMessage());
             throw new ParsingException(file, e.getMessage(), e);
         } catch (TokenMgrException e) {
-            delegatingScanner.logger.error("Scanning Error in '" + file.getName() + "': " + e.getMessage());
+            delegatingScanner.logger.error("Scanning Error in '" + file.getFileName() + "': " + e.getMessage());
             throw new ParsingException(file, e.getMessage(), e);
         }
     }

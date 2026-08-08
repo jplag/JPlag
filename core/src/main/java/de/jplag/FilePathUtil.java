@@ -1,6 +1,5 @@
 package de.jplag;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.function.Function;
 
@@ -22,11 +21,11 @@ public final class FilePathUtil {
      * @param submissionToIdFunction Function to map names to ids
      * @return Relative path
      */
-    public static Path getRelativeSubmissionPath(File file, Submission submission, Function<Submission, String> submissionToIdFunction) {
-        if (file.toPath().equals(submission.getRoot().toPath())) {
+    public static Path getRelativeSubmissionPath(Path file, Submission submission, Function<Submission, String> submissionToIdFunction) {
+        if (file.equals(submission.getRoot())) {
             return Path.of(submissionToIdFunction.apply(submission), submissionToIdFunction.apply(submission));
         }
-        return Path.of(submissionToIdFunction.apply(submission), submission.getRoot().toPath().relativize(file.toPath()).toString());
+        return Path.of(submissionToIdFunction.apply(submission), submission.getRoot().relativize(file).toString());
     }
 
     /**

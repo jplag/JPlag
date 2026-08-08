@@ -1,7 +1,7 @@
 package de.jplag.text;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -31,7 +31,7 @@ public class ParserAdapter {
     private final StanfordCoreNLP pipeline;
 
     private List<Token> tokens;
-    private File currentFile;
+    private Path currentFile;
     private int currentLine;
     /**
      * The position of the current line break in the content string.
@@ -53,9 +53,9 @@ public class ParserAdapter {
      * @return the token sequence.
      * @throws ParsingException is parsing fails.
      */
-    public List<Token> parse(Set<File> files) throws ParsingException {
+    public List<Token> parse(Set<Path> files) throws ParsingException {
         tokens = new ArrayList<>();
-        for (File file : files) {
+        for (Path file : files) {
             logger.trace("Parsing file {}", file);
             parseFile(file);
             tokens.add(Token.fileEnd(file));
@@ -63,7 +63,7 @@ public class ParserAdapter {
         return tokens;
     }
 
-    private void parseFile(File file) throws ParsingException {
+    private void parseFile(Path file) throws ParsingException {
         this.currentFile = file;
         this.currentLine = 1; // lines start at 1
         this.currentLineBreakIndex = -1;
@@ -115,7 +115,7 @@ public class ParserAdapter {
         tokens.add(new Token(new TextTokenType(text), currentFile, currentLine, startColumn, currentLine, endColumn, length));
     }
 
-    private String readFile(File file) throws ParsingException {
+    private String readFile(Path file) throws ParsingException {
         try {
             return FileUtils.readFileContent(file, true);
         } catch (IOException e) {
