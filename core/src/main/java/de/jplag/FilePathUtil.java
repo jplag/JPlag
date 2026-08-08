@@ -30,13 +30,18 @@ public final class FilePathUtil {
     }
 
     /**
-     * Forces a path to be relative. If the path is absolute, the returned path will be relative to the root.
+     * Forces a path to be relative. If the path is absolute, the returned path will be relative to the root. If a relative
+     * path does not exist, it returns the absolute path.
      * @param path The path to relativize
      * @return The relative path
      */
     public static Path forceRelativePath(Path path) {
         if (path.isAbsolute()) {
-            return Path.of("./").toAbsolutePath().relativize(path);
+            try {
+                return Path.of("./").toAbsolutePath().relativize(path);
+            } catch (IllegalArgumentException _) {
+                return path.toAbsolutePath();
+            }
         }
         return path;
     }

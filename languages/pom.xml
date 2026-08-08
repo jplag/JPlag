@@ -45,4 +45,15 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/antlr4</directory>
+                <includes>
+                    <include>**/*LICENSE*</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
 </project>

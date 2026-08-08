@@ -35,7 +35,7 @@
           <p class="text-error text-center font-bold">
             The cluster has too many members to be displayed as a graph or radar chart.
           </p>
-          <p class="text-center font-bold text-gray-500 dark:text-gray-400">
+          <p class="text-gray text-center font-bold">
             Consider whether this is an actual cluster or a false positive.
           </p>
         </div>
