@@ -88,6 +88,7 @@ public class GlobalMatchAppearanceFinder {
             currentComparator = Comparator.comparingInt(t -> t.getActualTreeFromSuperRoot().getStartInSub(firstSubmission));
             relevantTrees.sort(currentComparator);
             int longestLengthOfATree = relevantTrees.stream().map(TreeNode::getActualTreeFromSuperRoot).mapToInt(TreeNode::getLength).max().orElse(0);
+
             if (comparisonsToHandleLater.containsKey(firstSubmission)) {
                 for (Map.Entry<Submission, JPlagComparison> entry : comparisonsToHandleLater.get(firstSubmission).entrySet()) {
                     for (Match match : entry.getValue().matches()) {
@@ -109,6 +110,7 @@ public class GlobalMatchAppearanceFinder {
                     addComparisonToMap(comparisonsToHandleLater, secondSubmission, firstSubmission, comparisonInOtherDirection);
                 }
             }
+
             // Add any new trees back to the main set.
             trees.addAll(relevantTrees);
         }
