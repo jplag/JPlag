@@ -10,14 +10,18 @@ on:
       - '.github/workflows/deploy-docs.yml'
   workflow_dispatch:
 
+# The last step commits the regenerated docs back.
+permissions:
+  contents: write
+
 jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           token: ${{ secrets.SDQ_DEV_DEPLOY_TOKEN }}
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: ${{ github.repository }}.wiki
           path: wiki
@@ -31,6 +35,6 @@ jobs:
         run: cp -r ./docs/. ./wiki
 
       - name: Deploy 🚀
-        uses: stefanzweifel/git-auto-commit-action@v7
+        uses: stefanzweifel/git-auto-commit-action@4a55954c782fc1ea30b9056cd3e7a2b40ca8887d # v7.2.0
         with:
           repository: wiki
