@@ -25,7 +25,7 @@
             name: to
           }"
         >
-          <InteractableComponent class="border-accent-dark! bg-accent/50! mx-auto mt-2 w-fit">
+          <InteractableComponent class="border-accent-dark! bg-accent-light/50! mx-auto mt-2 w-fit">
             {{ routerInfo }}
           </InteractableComponent>
         </RouterLink>

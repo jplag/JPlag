@@ -1,6 +1,7 @@
 package de.jplag.cli.options;
 
 import java.io.File;
+import java.net.InetAddress;
 import java.nio.charset.Charset;
 
 import org.slf4j.event.Level;
@@ -129,6 +130,11 @@ public class CliOptions implements Runnable {
         /** Port for internal report viewer. */
         @Option(names = {"-P", "--port"}, description = "The port used for the internal report viewer (default: ${DEFAULT-VALUE}).")
         public int port = 1996;
+
+        /** Bind address for internal report viewer. */
+        @Option(names = {"-H",
+                "--host"}, description = "The bind address for the internal report viewer (default: 127.0.0.1).", converter = InetAddressConverter.class)
+        public InetAddress host = InetAddress.getLoopbackAddress();
 
         /** Export similarity as CSV. */
         @Option(names = "--csv-export", description = "Export pairwise similarity values as a CSV file.")

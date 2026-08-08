@@ -223,7 +223,7 @@ public class SubmissionSetBuilder {
         }
 
         file = makeCanonical(file, it -> new SubmissionException("Cannot create submission: " + submissionName, it));
-        return new Submission(submissionName, file, isNew, parseFilesRecursively(file), options.language());
+        return new Submission(submissionName, file, isNew, listFilesRecursively(file), options.language());
     }
 
     private void processSubmissionFile(SubmissionFileData file, boolean multipleRoots, Map<Path, Submission> foundSubmissions) throws ExitException {
@@ -269,7 +269,7 @@ public class SubmissionSetBuilder {
      * @param file - File to start the scan from.
      * @return a list of nested files.
      */
-    private Collection<Path> parseFilesRecursively(Path file) {
+    private Collection<Path> listFilesRecursively(Path file) {
         if (isFileExcluded(file)) {
             return Collections.emptyList();
         }
@@ -287,7 +287,7 @@ public class SubmissionSetBuilder {
             Collection<Path> files = new ArrayList<>();
 
             for (Path fileName : nestedFileNames.toList()) {
-                files.addAll(parseFilesRecursively(file.resolve(fileName)));
+                files.addAll(listFilesRecursively(file.resolve(fileName)));
             }
 
             return files;
