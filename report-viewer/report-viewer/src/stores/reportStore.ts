@@ -78,12 +78,15 @@ export const reportStore = defineStore('reportStore', () => {
       const raw = JSON.parse(getFile('secondaryMetrics.json').data) as string[]
       secondaryMetrics.value = new Set(raw.map((m) => m as MetricJsonIdentifier))
     } catch {
-      secondaryMetrics.value = new Set([
+      const metrics: MetricJsonIdentifier[] = [
         MetricJsonIdentifier.MAXIMUM_SIMILARITY,
         MetricJsonIdentifier.LONGEST_MATCH,
-        MetricJsonIdentifier.MAXIMUM_LENGTH,
-        MetricJsonIdentifier.WEIGHTED_SIMILARITY
-      ] as MetricJsonIdentifier[])
+        MetricJsonIdentifier.MAXIMUM_LENGTH
+      ]
+      if (cliOptions.value?.frequencyAnalysisOptions?.enabled) {
+        metrics.push(MetricJsonIdentifier.WEIGHTED_SIMILARITY)
+      }
+      secondaryMetrics.value = new Set(metrics)
     }
     runInformation.value = RunInformationFactory.getRunInformation(
       getFile('runInformation.json').data
