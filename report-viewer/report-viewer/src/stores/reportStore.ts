@@ -6,6 +6,7 @@ import {
   ComparisonListElement,
   DistributionMap,
   File,
+  MetricJsonIdentifier,
   RunInformation,
   SubmissionFile,
   Version
@@ -31,6 +32,7 @@ export const reportStore = defineStore('reportStore', () => {
   const topComparisons: Ref<ComparisonListElement[] | null> = ref(null)
   const idToDisplayNameMap: Ref<Map<string, string> | null> = ref(null)
   const comparisonFilesLookup: Ref<Map<string, Map<string, string>> | null> = ref(null)
+  const secondaryMetrics: Ref<Set<MetricJsonIdentifier>> = ref(new Set())
 
   const reportFileName = ref<string | null>(null)
   const files = ref(new Map<string, File>())
@@ -72,6 +74,17 @@ export const reportStore = defineStore('reportStore', () => {
     cluster.value = ClusterFactory.getClusters(getFile('cluster.json').data)
     distribution.value = DistributionFactory.getDistributions(getFile('distribution.json').data)
     cliOptions.value = OptionsFactory.getCliOptions(getFile('options.json').data)
+    try {
+      const raw = JSON.parse(getFile('secondaryMetrics.json').data) as string[]
+      secondaryMetrics.value = new Set(raw.map((m) => m as MetricJsonIdentifier))
+    } catch {
+      secondaryMetrics.value = new Set([
+        MetricJsonIdentifier.MAXIMUM_SIMILARITY,
+        MetricJsonIdentifier.LONGEST_MATCH,
+        MetricJsonIdentifier.MAXIMUM_LENGTH,
+        MetricJsonIdentifier.WEIGHTED_SIMILARITY
+      ] as MetricJsonIdentifier[])
+    }
     runInformation.value = RunInformationFactory.getRunInformation(
       getFile('runInformation.json').data
     )
@@ -263,8 +276,8 @@ export const reportStore = defineStore('reportStore', () => {
     }
   }
 
-  function isFrequencyAnalysisEnabled() {
-    return cliOptions.value?.frequencyAnalysisOptions?.enabled ?? false
+  function hasSecondaryMetric(metric: MetricJsonIdentifier) {
+    return secondaryMetrics.value.has(metric)
   }
 
   function reset() {
@@ -306,7 +319,8 @@ export const reportStore = defineStore('reportStore', () => {
     setAnonymous,
     getBaseCodeReport,
     getSubmissionIds,
-    isFrequencyAnalysisEnabled
+    hasSecondaryMetric,
+    secondaryMetrics
   }
 })
 

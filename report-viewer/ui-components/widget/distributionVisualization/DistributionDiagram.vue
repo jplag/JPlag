@@ -9,7 +9,7 @@
 
     <DistributionDiagramOptions
       v-model="config"
-      :show-weighted-metric="showWeightedMetric"
+      :secondary-metrics="secondaryMetrics"
       class="grow print:grow-0"
     />
   </div>
@@ -20,7 +20,7 @@ import { computed, onMounted, ref, watch, type PropType, type Ref } from 'vue'
 import { Chart, registerables } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { graphColors } from '../../style/graphColor'
-import type { DistributionMap } from '@jplag/model'
+import { DistributionMap, type MetricJsonIdentifier } from '@jplag/model'
 import DistributionDiagramOptions from './DistributionDiagramOptions.vue'
 import { DistributionChartConfig } from './DistributionChartConfig'
 
@@ -39,6 +39,10 @@ const props = defineProps({
   showWeightedMetric: {
     type: Boolean,
     default: true
+  },
+  secondaryMetrics: {
+    type: Object as PropType<Set<MetricJsonIdentifier>>,
+    default: () => new Set()
   }
 })
 

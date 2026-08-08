@@ -7,7 +7,7 @@
 
     <BoxPlotDiagramOptions
       v-model:metric="metric"
-      :show-weighted-metric="showWeightedMetric"
+      :secondary-metrics="secondaryMetrics"
       class="grow print:grow-0"
     />
   </div>
@@ -40,6 +40,10 @@ const props = defineProps({
   showWeightedMetric: {
     type: Boolean,
     default: true
+  },
+  secondaryMetrics: {
+    type: Object as PropType<Set<MetricJsonIdentifier>>,
+    default: () => new Set()
   }
 })
 

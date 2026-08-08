@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from 'vue'
+import { computed, watch, type PropType } from 'vue'
 import MetricSelector from '../optionsSelectors/MetricSelector.vue'
 import { ScrollableComponent } from '../../base'
 import { MetricJsonIdentifier } from '@jplag/model'
@@ -24,31 +24,33 @@ const model = defineModel<MetricJsonIdentifier>('metric', {
 })
 
 const props = defineProps({
-  showWeightedMetric: {
-    type: Boolean,
-    default: true
+  secondaryMetrics: {
+    type: Object as PropType<Set<MetricJsonIdentifier>>,
+    default: () =>
+      new Set([
+        MetricJsonIdentifier.AVERAGE_SIMILARITY,
+        MetricJsonIdentifier.MAXIMUM_SIMILARITY,
+        MetricJsonIdentifier.WEIGHTED_SIMILARITY
+      ])
   }
 })
 
 const metricOptions = computed(() => {
-  const options = [
+  const allOptions = [
     MetricJsonIdentifier.AVERAGE_SIMILARITY,
     MetricJsonIdentifier.MAXIMUM_SIMILARITY,
     MetricJsonIdentifier.WEIGHTED_SIMILARITY
   ]
-  if (!props.showWeightedMetric) {
-    return options.filter((m) => m !== MetricJsonIdentifier.WEIGHTED_SIMILARITY)
-  }
-  return options
+  return allOptions.filter((m) => props.secondaryMetrics.has(m))
 })
 
 watch(
-  () => props.showWeightedMetric,
-  (shown) => {
-    if (!shown && model.value === MetricJsonIdentifier.WEIGHTED_SIMILARITY) {
+  () => props.secondaryMetrics,
+  (metrics) => {
+    if (!metrics.has(model.value)) {
       model.value = MetricJsonIdentifier.AVERAGE_SIMILARITY
     }
   },
-  { immediate: true }
+  { immediate: true, deep: true }
 )
 </script>

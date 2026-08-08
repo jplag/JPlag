@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from 'vue'
+import { computed, watch, type PropType } from 'vue'
 import { DistributionMetrics, MetricJsonIdentifier, type BucketOptions } from '@jplag/model'
 import MetricSelector from '../optionsSelectors/MetricSelector.vue'
 import OptionsSelector from '../optionsSelectors/OptionsSelectorComponent.vue'
@@ -44,33 +44,35 @@ const config = defineModel<DistributionChartConfig>({
 })
 
 const props = defineProps({
-  showWeightedMetric: {
-    type: Boolean,
-    default: true
+  secondaryMetrics: {
+    type: Object as PropType<Set<MetricJsonIdentifier>>,
+    default: () =>
+      new Set([
+        MetricJsonIdentifier.AVERAGE_SIMILARITY,
+        MetricJsonIdentifier.MAXIMUM_SIMILARITY,
+        MetricJsonIdentifier.WEIGHTED_SIMILARITY
+      ])
   }
 })
 
 const resolutionOptions = [10, 20, 25, 50, 100] as BucketOptions[]
 
 const metricOptions = computed<DistributionMetrics[]>(() => {
-  const options: DistributionMetrics[] = [
+  const allOptions: DistributionMetrics[] = [
     MetricJsonIdentifier.AVERAGE_SIMILARITY,
     MetricJsonIdentifier.MAXIMUM_SIMILARITY,
     MetricJsonIdentifier.WEIGHTED_SIMILARITY
   ]
-  if (!props.showWeightedMetric) {
-    return options.filter((m) => m !== MetricJsonIdentifier.WEIGHTED_SIMILARITY)
-  }
-  return options
+  return allOptions.filter((m) => props.secondaryMetrics.has(m))
 })
 
 watch(
-  () => props.showWeightedMetric,
-  (shown) => {
-    if (!shown && config.value.metric === MetricJsonIdentifier.WEIGHTED_SIMILARITY) {
+  () => props.secondaryMetrics,
+  (metrics) => {
+    if (!metrics.has(config.value.metric)) {
       config.value.metric = MetricJsonIdentifier.AVERAGE_SIMILARITY
     }
   },
-  { immediate: true }
+  { immediate: true, deep: true }
 )
 </script>

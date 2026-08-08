@@ -63,6 +63,7 @@ import { computed, watch } from 'vue'
 import { SearchBarComponent, ToolTipComponent, ButtonComponent } from '../../base'
 import { MetricJsonIdentifier } from '@jplag/model'
 import MetricSelector from '../optionsSelectors/MetricSelector.vue'
+import type { PropType } from 'vue'
 
 const props = defineProps({
   header: {
@@ -73,9 +74,15 @@ const props = defineProps({
     type: Boolean,
     default: false
   },
-  showWeightedMetric: {
-    type: Boolean,
-    default: true
+  secondaryMetrics: {
+    type: Object as PropType<Set<MetricJsonIdentifier>>,
+    default: () =>
+      new Set([
+        MetricJsonIdentifier.MAXIMUM_SIMILARITY,
+        MetricJsonIdentifier.LONGEST_MATCH,
+        MetricJsonIdentifier.MAXIMUM_LENGTH,
+        MetricJsonIdentifier.WEIGHTED_SIMILARITY
+      ])
   }
 })
 
@@ -91,25 +98,22 @@ const emit = defineEmits<{
 }>()
 
 const secondaryMetricOptions = computed(() => {
-  const options = [
+  const allOptions = [
     MetricJsonIdentifier.MAXIMUM_SIMILARITY,
     MetricJsonIdentifier.WEIGHTED_SIMILARITY,
     MetricJsonIdentifier.LONGEST_MATCH,
     MetricJsonIdentifier.MAXIMUM_LENGTH
   ]
-  if (!props.showWeightedMetric) {
-    return options.filter((m) => m !== MetricJsonIdentifier.WEIGHTED_SIMILARITY)
-  }
-  return options
+  return allOptions.filter((m) => props.secondaryMetrics.has(m))
 })
 
 watch(
-  () => props.showWeightedMetric,
-  (shown) => {
-    if (!shown && secondaryMetric.value === MetricJsonIdentifier.WEIGHTED_SIMILARITY) {
+  () => props.secondaryMetrics,
+  (metrics) => {
+    if (!metrics.has(secondaryMetric.value)) {
       secondaryMetric.value = MetricJsonIdentifier.MAXIMUM_SIMILARITY
     }
   },
-  { immediate: true }
+  { immediate: true, deep: true }
 )
 </script>
