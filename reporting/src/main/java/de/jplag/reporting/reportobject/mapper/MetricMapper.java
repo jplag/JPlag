@@ -17,8 +17,9 @@ import de.jplag.reporting.reportobject.model.TopComparison;
 public class MetricMapper {
     private final Function<Submission, String> submissionToIdFunction;
     private static final SimilarityMetric[] EXPORTED_COMPARISON_METRICS = new SimilarityMetric[] {SimilarityMetric.AVG, SimilarityMetric.MAX,
-            SimilarityMetric.LONGEST_MATCH, SimilarityMetric.MAXIMUM_LENGTH};
-    private static final SimilarityMetric[] EXPORTED_DISTRIBUTION_METRICS = new SimilarityMetric[] {SimilarityMetric.AVG, SimilarityMetric.MAX};
+            SimilarityMetric.LONGEST_MATCH, SimilarityMetric.MAXIMUM_LENGTH, SimilarityMetric.WEIGHTED_SIMILARITY};
+    private static final SimilarityMetric[] EXPORTED_DISTRIBUTION_METRICS = new SimilarityMetric[] {SimilarityMetric.AVG, SimilarityMetric.MAX,
+            SimilarityMetric.WEIGHTED_SIMILARITY};
 
     /**
      * Constructs a new {@code MetricMapper} using the given function to map {@link Submission} objects to their string
