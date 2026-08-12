@@ -43,6 +43,7 @@ public enum Python3TokenType implements TokenType {
     CASE("CASE"),
     WALRUS("WALRUS"),
     COMPREHENSION("COMPREHENSION");
+
     private final String description;
 
     @Override

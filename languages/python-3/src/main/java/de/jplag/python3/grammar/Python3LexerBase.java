@@ -1,36 +1,25 @@
 package de.jplag.python3.grammar;
 /*
-The MIT License (MIT)
-Copyright (c) 2021 Robert Einhorn
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
+ * The MIT License (MIT) Copyright (c) 2021 Robert Einhorn Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software
+ * without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so,
+ * subject to the following conditions: The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE
+ * AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
 /*
- *
- * Project      : Python Indent/Dedent handler for ANTLR4 grammars
- *
- * Developed by : Robert Einhorn, robert.einhorn.hu@gmail.com
- *
+ * Project : Python Indent/Dedent handler for ANTLR4 grammars Developed by : Robert Einhorn, robert.einhorn.hu@gmail.com
  */
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.antlr.v4.runtime.*;
 
 public abstract class Python3LexerBase extends Lexer {
@@ -51,7 +40,7 @@ public abstract class Python3LexerBase extends Lexer {
     private Deque<String> braceExpressionStack;
     private String prevBraceExpression;
 
-    // Instead of this._mode      (_mode is not implemented in each ANTLR4 runtime)
+    // Instead of this._mode (_mode is not implemented in each ANTLR4 runtime)
     private int curLexerMode;
     // Instead of this._modeStack (_modeStack is not implemented in each ANTLR4 runtime)
     private Deque<Integer> lexerModeStack;
@@ -150,15 +139,11 @@ public abstract class Python3LexerBase extends Lexer {
     }
 
     private void setCurrentAndFollowingTokens() {
-        this.curToken = this.ffgToken == null ?
-                        super.nextToken() :
-                        this.ffgToken;
+        this.curToken = this.ffgToken == null ? super.nextToken() : this.ffgToken;
 
         this.checkCurToken(); // ffgToken cannot be used in this method and its sub methods (ffgToken is not yet set)!
 
-        this.ffgToken = this.curToken.getType() == Token.EOF ?
-                        this.curToken :
-                        super.nextToken();
+        this.ffgToken = this.curToken.getType() == Token.EOF ? this.curToken : super.nextToken();
     }
 
     private void insertENCODINGtoken() { // https://peps.python.org/pep-0263/
@@ -267,9 +252,7 @@ public abstract class Python3LexerBase extends Lexer {
                 default:
                     this.addPendingToken(nlToken);
                     if (isLookingAhead) { // We're on a whitespace(s) followed by a statement
-                        final int indentationLength = this.ffgToken.getType() == Token.EOF ?
-                                                      0 :
-                                                      this.getIndentationLength(this.curToken.getText());
+                        final int indentationLength = this.ffgToken.getType() == Token.EOF ? 0 : this.getIndentationLength(this.curToken.getText());
 
                         if (indentationLength != this.INVALID_LENGTH) {
                             this.addPendingToken(this.curToken); // WS token
@@ -482,7 +465,7 @@ public abstract class Python3LexerBase extends Lexer {
     }
 
     private void handleFSTRING_MIDDLEtokenWithQuoteAndLBrace() {
-        // replace the trailing     quote + left_brace with a quote     and insert an LBRACE token
+        // replace the trailing quote + left_brace with a quote and insert an LBRACE token
         // replace the trailing backslash + left_brace with a backslash and insert an LBRACE token
         switch (this.getLastTwoCharsOfTheCurTokenText()) {
             case "\"{":
@@ -511,8 +494,7 @@ public abstract class Python3LexerBase extends Lexer {
     }
 
     private void handleCOLONEQUALtokenInFString() {
-        if (!this.lexerModeStack.isEmpty() &&
-            this.paren_or_bracket_openedStack.peek() == 0) {
+        if (!this.lexerModeStack.isEmpty() && this.paren_or_bracket_openedStack.peek() == 0) {
 
             // In fstring a colonequal (walrus operator) can only be used in parentheses
             // Not in parentheses, replace COLONEQUAL token with COLON as format specifier
@@ -559,8 +541,7 @@ public abstract class Python3LexerBase extends Lexer {
     }
 
     private void handleFORMAT_SPECIFICATION_MODE() {
-        if (!this.lexerModeStack.isEmpty() &&
-            this.ffgToken.getType() == Python3Lexer.RBRACE) {
+        if (!this.lexerModeStack.isEmpty() && this.ffgToken.getType() == Python3Lexer.RBRACE) {
 
             // insert an empty FSTRING_MIDDLE token instead of the missing format specification
             switch (this.curToken.getType()) {
@@ -589,7 +570,7 @@ public abstract class Python3LexerBase extends Lexer {
 
         parser.dictcomp(); // Try parsing as dictionary comprehension
         if (parser.getNumberOfSyntaxErrors() == 0)
-            return  true;
+            return true;
 
         parser = new Python3Parser(tokenStream);
         tokenStream.seek(0);
@@ -628,9 +609,7 @@ public abstract class Python3LexerBase extends Lexer {
         ctkn.setType(ttype);
         ctkn.setChannel(channel);
         ctkn.setStopIndex(sampleToken.getStartIndex() - 1);
-        ctkn.setText(text == null ?
-                     "<" + this.getVocabulary().getDisplayName(ttype) + ">" :
-                     text);
+        ctkn.setText(text == null ? "<" + this.getVocabulary().getDisplayName(ttype) + ">" : text);
 
         this.addPendingToken(ctkn);
     }
@@ -673,7 +652,8 @@ public abstract class Python3LexerBase extends Lexer {
     }
 
     private void reportLexerError(final String errMsg) {
-        this.getErrorListenerDispatch().syntaxError(this, this.curToken, this.curToken.getLine(), this.curToken.getCharPositionInLine(), " LEXER" + this.ERR_TXT + errMsg, null);
+        this.getErrorListenerDispatch().syntaxError(this, this.curToken, this.curToken.getLine(), this.curToken.getCharPositionInLine(),
+                " LEXER" + this.ERR_TXT + errMsg, null);
     }
 
     private void reportError(final String errMsg) {
