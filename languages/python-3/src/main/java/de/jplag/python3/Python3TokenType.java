@@ -41,7 +41,8 @@ public enum Python3TokenType implements TokenType {
     MATCH_BEGIN("MATCH{"),
     MATCH_END("}MATCH"),
     CASE("CASE"),
-    WALRUS("WALRUS");
+    WALRUS("WALRUS"),
+    COMPREHENSION("COMPREHENSION");
     private final String description;
 
     @Override
