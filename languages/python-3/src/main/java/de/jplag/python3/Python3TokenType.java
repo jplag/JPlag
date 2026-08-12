@@ -37,8 +37,11 @@ public enum Python3TokenType implements TokenType {
     WITH_BEGIN("WITH{"),
     WITH_END("}WITH"),
     ASYNC("ASYNC"),
-    AWAIT("AWAIT");
-
+    AWAIT("AWAIT"),
+    MATCH_BEGIN("MATCH{"),
+    MATCH_END("}MATCH"),
+    CASE("CASE"),
+    WALRUS("WALRUS");
     private final String description;
 
     @Override

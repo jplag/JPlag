@@ -32,6 +32,19 @@ from . import tasks
 from .coroutines import coroutine
 from .log import logger
 
+def match_test(x):
+    match x:
+        case 1:
+            return "one"
+        case 2 | 3:
+            return "two or three"
+        case [a, b]:
+            return a + b
+        case {"key": value}:
+            return value
+        case _:
+            return "default"
+
 
 if sys.platform == 'win32':  # pragma: no cover
     from .windows_utils import socketpair
