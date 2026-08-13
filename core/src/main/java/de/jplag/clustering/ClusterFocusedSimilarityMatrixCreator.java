@@ -3,6 +3,7 @@ package de.jplag.clustering;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
@@ -64,7 +65,7 @@ public class ClusterFocusedSimilarityMatrixCreator implements SimilarityMatrixCr
             IntegerMapping<Submission> submissionsMap) {
         int points = node.getLength() - lengthOfParent;
         double weightedPoints = points * weightingMode.getWeight(node.getSubmissions().size());
-        increaseAllPairs(matrix, node.getSubmissions(), weightedPoints, submissionsMap);
+        increaseAllPairs(matrix, node.getDuplicateCounts(), node.getSubmissions(), weightedPoints, submissionsMap);
         for (GlobalMatchAppearanceFinder.ChildCase childCase : GlobalMatchAppearanceFinder.ChildCase.values()) {
             for (GlobalMatchAppearanceFinder.TreeNode child : node.getChildrenOfCase(childCase)) {
                 assignPoints(matrix, child, node.getLength(), submissionsMap);
@@ -72,8 +73,8 @@ public class ClusterFocusedSimilarityMatrixCreator implements SimilarityMatrixCr
         }
     }
 
-    private void increaseAllPairs(RealMatrix matrix, Set<Submission> submissions, double valueToIncreaseBy,
-            IntegerMapping<Submission> submissionsMap) {
+    private void increaseAllPairs(RealMatrix matrix, Map<Submission, GlobalMatchAppearanceFinder.CountReference> duplicateCounts,
+            Set<Submission> submissions, double valueToIncreaseBy, IntegerMapping<Submission> submissionsMap) {
         if (weightingMode.skipGroupOfSize(submissions.size())) {
             return;
         }
@@ -81,7 +82,15 @@ public class ClusterFocusedSimilarityMatrixCreator implements SimilarityMatrixCr
         for (Submission submission : submissions) {
             remainingSubmissions.remove(submission);
             for (Submission otherSubmission : remainingSubmissions) {
-                increaseSimilarity(matrix, submissionsMap.map(submission), submissionsMap.map(otherSubmission), valueToIncreaseBy);
+                double averageCount = (duplicateCounts.get(submission).getCount() + duplicateCounts.get(otherSubmission).getCount()) / 2.0;
+                if (averageCount == 0) {
+                    // The count being zero means that this never officially got added, likely because adding the match got canceled while
+                    // we were already part way in a tree. Therefor we can safely skip this pair.
+                    continue;
+                }
+                double antiDuplicateWeight = 1.0 / averageCount;
+                double correctedValue = valueToIncreaseBy * antiDuplicateWeight;
+                increaseSimilarity(matrix, submissionsMap.map(submission), submissionsMap.map(otherSubmission), correctedValue);
             }
         }
     }

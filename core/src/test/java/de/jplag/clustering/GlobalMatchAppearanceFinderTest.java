@@ -35,6 +35,7 @@ class GlobalMatchAppearanceFinderTest {
 
         assertEquals(List.of(root), trees);
         assertTrue(trees.getFirst().checkIfConsistent());
+        ensureAllDuplicateCountsAreOne(trees.getFirst());
     }
 
     @Test
@@ -59,6 +60,7 @@ class GlobalMatchAppearanceFinderTest {
 
         assertEquals(List.of(root), trees);
         assertTrue(trees.getFirst().checkIfConsistent());
+        ensureAllDuplicateCountsAreOne(trees.getFirst());
     }
 
     private List<JPlagComparison> getSharedComparisons() {
@@ -129,6 +131,61 @@ class GlobalMatchAppearanceFinderTest {
         addAll(up, List.of(new Pair<>(subA, 0), new Pair<>(subC, 0)));
         addAll(down, List.of(new Pair<>(subA, 1), new Pair<>(subB, 20)));
         assertEquals(List.of(root), trees);
+    }
+
+    private void ensureAllDuplicateCountsAreOne(GlobalMatchAppearanceFinder.TreeNode root) {
+        for (GlobalMatchAppearanceFinder.CountReference countReference : root.getDuplicateCounts().values()) {
+            assertEquals(1, countReference.getCount());
+        }
+        for (GlobalMatchAppearanceFinder.ChildCase childCase : GlobalMatchAppearanceFinder.ChildCase.values()) {
+            for (GlobalMatchAppearanceFinder.TreeNode child : root.getChildrenOfCase(childCase)) {
+                ensureAllDuplicateCountsAreOne(child);
+            }
+        }
+    }
+
+    @Test
+    void testAntiDuplicateWeights() {
+        List<JPlagComparison> comparisons = new ArrayList<>();
+        Match m1 = new Match(0, 0, 10, 10);
+        Match m2 = new Match(20, 20, 10, 10);
+        comparisons.add(new JPlagComparison(subA, subB, List.of(m1, m2), List.of()));
+        comparisons.add(new JPlagComparison(subA, subC, List.of(new Match(0, 0, 30, 30)), List.of()));
+        comparisons.add(new JPlagComparison(subB, subC, List.of(), List.of()));
+        GlobalMatchAppearanceFinder finder = new GlobalMatchAppearanceFinder();
+        List<GlobalMatchAppearanceFinder.TreeNode> trees = finder.findGlobalMatchAppearances(comparisons);
+
+        // roots
+        assertEquals(2, trees.size());
+
+        assertEquals(3, trees.getFirst().getDuplicateCounts().size());
+        assertEquals(1, trees.getFirst().getDuplicateCounts().get(subA).getCount());
+        assertEquals(1, trees.getFirst().getDuplicateCounts().get(subB).getCount());
+        assertEquals(2, trees.getFirst().getDuplicateCounts().get(subC).getCount());
+
+        assertEquals(3, trees.get(1).getDuplicateCounts().size());
+        assertEquals(1, trees.get(1).getDuplicateCounts().get(subA).getCount());
+        assertEquals(1, trees.get(1).getDuplicateCounts().get(subB).getCount());
+        assertEquals(2, trees.get(1).getDuplicateCounts().get(subC).getCount());
+
+        // children
+        GlobalMatchAppearanceFinder.TreeNode child1;
+        GlobalMatchAppearanceFinder.TreeNode child2;
+        // One tree has the up, and the other has the down child, but we do not know which one has which.
+        if (!trees.getFirst().getChildrenOfCase(GlobalMatchAppearanceFinder.ChildCase.UP).isEmpty()) {
+            child1 = trees.getFirst().getChildrenOfCase(GlobalMatchAppearanceFinder.ChildCase.UP).getFirst();
+            child2 = trees.get(1).getChildrenOfCase(GlobalMatchAppearanceFinder.ChildCase.DOWN).getFirst();
+        } else {
+            child1 = trees.getFirst().getChildrenOfCase(GlobalMatchAppearanceFinder.ChildCase.DOWN).getFirst();
+            child2 = trees.get(1).getChildrenOfCase(GlobalMatchAppearanceFinder.ChildCase.UP).getFirst();
+        }
+        assertEquals(2, child1.getDuplicateCounts().size());
+        assertEquals(2, child1.getDuplicateCounts().get(subA).getCount());
+        assertEquals(2, child1.getDuplicateCounts().get(subC).getCount());
+
+        assertEquals(2, child2.getDuplicateCounts().size());
+        assertEquals(2, child2.getDuplicateCounts().get(subA).getCount());
+        assertEquals(2, child2.getDuplicateCounts().get(subC).getCount());
     }
 
     private Submission createSubmission(String name) {

@@ -147,7 +147,7 @@ public class GlobalMatchAppearanceFinder {
             Submission secondSubmission) {
         List<TreeNode> treesToAddTo = findAllTreesToAddMatchTo(relevantTrees, longestLengthOfATree, match, firstSubmission);
         if (treesToAddTo.isEmpty()) {
-            TreeNode newTree = TreeNode.createNewNodeOf(match, firstSubmission, secondSubmission);
+            TreeNode newTree = TreeNode.createNewNodeOf(match, firstSubmission, secondSubmission, new CountReference(1));
             TreeNode superRoot = TreeNode.createNewTreeOf(newTree);
             int indexToAddAt = Collections.binarySearch(relevantTrees, superRoot, currentComparator);
             if (indexToAddAt < 0) {
@@ -156,6 +156,7 @@ public class GlobalMatchAppearanceFinder {
             relevantTrees.add(indexToAddAt, superRoot);
             return Math.max(longestLengthOfATree, newTree.length);
         }
+        CountReference duplicateCount = new CountReference(treesToAddTo.size());
         for (TreeNode superRoot : treesToAddTo) {
             TreeNode currentNode = superRoot.getActualTreeFromSuperRoot();
             int startIndexBeforeAdding = currentNode.getStartInSub(firstSubmission);
@@ -165,16 +166,16 @@ public class GlobalMatchAppearanceFinder {
                     int startInNode = currentNode.getStartInSub(firstSubmission);
                     int endInNode = currentNode.getEndInSub(firstSubmission);
                     if (startInNode == match.startOfFirst() && endInNode == match.endOfFirst()) {
-                        currentNode.addAppearanceInWithCheck(secondSubmission, match.startOfSecond());
+                        currentNode.addAppearanceInWithCheck(secondSubmission, match.startOfSecond(), duplicateCount);
                         isAdded = true;
                     } else if (startInNode > match.startOfFirst() && endInNode == match.endOfFirst()) {
-                        currentNode = handleChildCase(currentNode, match, firstSubmission, secondSubmission, ChildCase.UP);
+                        currentNode = handleChildCase(currentNode, match, firstSubmission, secondSubmission, ChildCase.UP, duplicateCount);
                         isAdded = currentNode == null;
                     } else if (startInNode == match.startOfFirst() && endInNode < match.endOfFirst()) {
-                        currentNode = handleChildCase(currentNode, match, firstSubmission, secondSubmission, ChildCase.DOWN);
+                        currentNode = handleChildCase(currentNode, match, firstSubmission, secondSubmission, ChildCase.DOWN, duplicateCount);
                         isAdded = currentNode == null;
                     } else if (startInNode > match.startOfFirst() && endInNode < match.endOfFirst()) {
-                        currentNode = handleChildCase(currentNode, match, firstSubmission, secondSubmission, ChildCase.BOTH);
+                        currentNode = handleChildCase(currentNode, match, firstSubmission, secondSubmission, ChildCase.BOTH, duplicateCount);
                         isAdded = currentNode == null;
                     } else { // remaining: == > , > > , < < , < == , < >
                         TreeNode newInBetweenNode = currentNode.createCopyIntersectedWithMatch(match, firstSubmission);
@@ -185,12 +186,12 @@ public class GlobalMatchAppearanceFinder {
                         newInBetweenNode.addChildAsCorrectCase(currentNode, firstSubmission);
 
                         int difference = Math.max(match.startOfFirst(), newInBetweenNode.getStartInSub(firstSubmission)) - match.startOfFirst();
-                        newInBetweenNode.addAppearanceInWithCheck(secondSubmission, match.startOfSecond() + difference);
+                        newInBetweenNode.addAppearanceInWithCheck(secondSubmission, match.startOfSecond() + difference, duplicateCount);
                         ensureAddingProcessIsStillValid(newInBetweenNode, firstSubmission);
 
                         if (newInBetweenNode.getStartInSub(firstSubmission) != match.startOfFirst()
                                 || newInBetweenNode.getEndInSub(firstSubmission) != match.endOfFirst()) {
-                            TreeNode newNodeForMatch = TreeNode.createNewNodeOf(match, firstSubmission, secondSubmission);
+                            TreeNode newNodeForMatch = TreeNode.createNewNodeOf(match, firstSubmission, secondSubmission, duplicateCount);
                             newInBetweenNode.addChildAsCorrectCase(newNodeForMatch, firstSubmission);
                         } // or else, the match is equal to the in-between node, and is therefor already added
                         isAdded = true;
@@ -199,6 +200,8 @@ public class GlobalMatchAppearanceFinder {
             } catch (InconsistentMatchException _) {
                 // The situation described by this match was inconsistent with the state of the tree, and its inclusion was therefor
                 // canceled.
+                // Therefor we also need to decrease the count of how many trees this match was added to.
+                duplicateCount.count--;
             }
             if (superRoot.getActualTreeFromSuperRoot().getStartInSub(firstSubmission) != startIndexBeforeAdding) {
                 // If the root of the current tree changed, then the ordering of the trees might now not be correct anymore.
@@ -260,16 +263,16 @@ public class GlobalMatchAppearanceFinder {
         return treesToAddTo;
     }
 
-    private TreeNode handleChildCase(TreeNode currentNode, Match match, Submission firstSubmission, Submission secondSubmission,
-            ChildCase childCase) {
+    private TreeNode handleChildCase(TreeNode currentNode, Match match, Submission firstSubmission, Submission secondSubmission, ChildCase childCase,
+            CountReference duplicateCount) {
         int startDifference = currentNode.getStartInSub(firstSubmission) - match.startOfFirst();
-        currentNode.addAppearanceInWithCheck(secondSubmission, match.startOfSecond() + startDifference);
+        currentNode.addAppearanceInWithCheck(secondSubmission, match.startOfSecond() + startDifference, duplicateCount);
         ensureAddingProcessIsStillValid(currentNode, firstSubmission);
         Optional<TreeNode> nextNode = currentNode.getChildForSubOfCase(firstSubmission, childCase);
         if (nextNode.isPresent()) {
             return nextNode.get();
         } else {
-            TreeNode newNode = TreeNode.createNewNodeOf(match, firstSubmission, secondSubmission);
+            TreeNode newNode = TreeNode.createNewNodeOf(match, firstSubmission, secondSubmission, duplicateCount);
             currentNode.addChildWithCheck(newNode, childCase);
             return null;
         }
@@ -291,6 +294,26 @@ public class GlobalMatchAppearanceFinder {
     }
 
     /**
+     * This is a wrapper of an int, which enables storing a reference during the adding process, and updating the count of
+     * how many trees a match was added to, whenever it might change.
+     */
+    public static class CountReference {
+        private int count;
+
+        /* package-private */ CountReference(int count) {
+            this.count = count;
+        }
+
+        /**
+         * Gets the current count.
+         * @return the count
+         */
+        public int getCount() {
+            return count;
+        }
+    }
+
+    /**
      * The different cases a node can extend its parent by.
      * <p>
      * An extension can either have a smaller upper bound and the same lower bound, the same upper bound and a greater lower
@@ -306,11 +329,16 @@ public class GlobalMatchAppearanceFinder {
      * Represents a node in the trees found by the {@link GlobalMatchAppearanceFinder}.
      * <p>
      * Each node represents a certain reappearing section of code, and stores the length of that code section, where that
-     * code section starts in each of the submissions it appears in, and potentially what child nodes it has.
+     * code section starts in each of the submissions it appears in, and potentially what child nodes it has. Additionally,
+     * it also stores for each submission, to how many trees the match, that added the submission to this node, got added
+     * to. This will later allow us to make sure that we do not count matches multiple times that got added to multiple
+     * trees.
      */
     public static class TreeNode {
         private final Map<Submission, Integer> startInSubmission = new HashMap<>();
         private final int length;
+
+        private final Map<Submission, CountReference> duplicateCounts = new HashMap<>();
 
         private final List<TreeNode> childUp = new ArrayList<>();
         private final List<TreeNode> childDown = new ArrayList<>();
@@ -323,10 +351,10 @@ public class GlobalMatchAppearanceFinder {
             this.length = length;
         }
 
-        private static TreeNode createNewNodeOf(Match match, Submission firstSubmission, Submission secondSubmission) {
+        private static TreeNode createNewNodeOf(Match match, Submission firstSubmission, Submission secondSubmission, CountReference duplicateCount) {
             TreeNode node = new TreeNode(match.minimumLength());
-            node.addAppearanceIn(firstSubmission, match.startOfFirst());
-            node.addAppearanceIn(secondSubmission, match.startOfSecond());
+            node.addAppearanceIn(firstSubmission, match.startOfFirst(), duplicateCount);
+            node.addAppearanceIn(secondSubmission, match.startOfSecond(), duplicateCount);
             return node;
         }
 
@@ -359,7 +387,7 @@ public class GlobalMatchAppearanceFinder {
             int startDifference = intersectionStart - getStartInSub(submissionInBoth);
             TreeNode newCopy = new TreeNode(intersectionLength);
             for (Map.Entry<Submission, Integer> e : startInSubmission.entrySet()) {
-                newCopy.addAppearanceIn(e.getKey(), e.getValue() + startDifference);
+                newCopy.addAppearanceIn(e.getKey(), e.getValue() + startDifference, duplicateCounts.get(e.getKey()));
             }
             return newCopy;
         }
@@ -408,7 +436,7 @@ public class GlobalMatchAppearanceFinder {
          * being found, meaning some submissions that were in this node before calling this method might not be in it anymore
          * after it returns.
          */
-        private void addAppearanceInWithCheck(Submission appearingInSubmission, int startInThatSubmission) {
+        private void addAppearanceInWithCheck(Submission appearingInSubmission, int startInThatSubmission, CountReference duplicateCount) {
             if (startInSubmission.containsKey(appearingInSubmission)) {
                 if (startInThatSubmission != startInSubmission.get(appearingInSubmission)) {
                     // If we are currently adding a match where both submissions are already part of this tree, we have to careful, since
@@ -433,7 +461,7 @@ public class GlobalMatchAppearanceFinder {
                     // In this case, the parent already has a child of the same type as this node that contains the submission to add.
                     // Therefor this node and the other child describe the same code and have to be merged.
                     TreeNode nodeToMergeWith = parent.getChildForSubOfCase(appearingInSubmission, childCaseInParent).get();
-                    addAppearanceIn(appearingInSubmission, startInThatSubmission);
+                    addAppearanceIn(appearingInSubmission, startInThatSubmission, duplicateCount);
                     mergeWith(nodeToMergeWith, appearingInSubmission);
                 } else {
                     // If we are not merging, then this match must be interpreted as a contradiction (as the fact that there are two
@@ -443,8 +471,13 @@ public class GlobalMatchAppearanceFinder {
                     throw new InconsistentMatchException();
                 }
             } else {
-                addAppearanceIn(appearingInSubmission, startInThatSubmission);
+                addAppearanceIn(appearingInSubmission, startInThatSubmission, duplicateCount);
             }
+        }
+
+        /* package-private */ void addAppearanceIn(Submission appearingInSubmission, int startInThatSubmission, CountReference duplicateCount) {
+            duplicateCounts.put(appearingInSubmission, duplicateCount);
+            addAppearanceIn(appearingInSubmission, startInThatSubmission);
         }
 
         /* package-private */ void addAppearanceIn(Submission appearingInSubmission, int startInThatSubmission) {
@@ -516,7 +549,8 @@ public class GlobalMatchAppearanceFinder {
         private void addAllSubmissionsFromNodeAndRemoveInconsistencies(TreeNode nodeToAddAllSubmissionsFrom) {
             for (Submission submission : new HashSet<>(nodeToAddAllSubmissionsFrom.getSubmissions())) {
                 try {
-                    addAppearanceInWithCheck(submission, nodeToAddAllSubmissionsFrom.getStartInSub(submission));
+                    addAppearanceInWithCheck(submission, nodeToAddAllSubmissionsFrom.getStartInSub(submission),
+                            nodeToAddAllSubmissionsFrom.duplicateCounts.get(submission));
                 } catch (InconsistentMatchException _) {
                     // If a submission introduces an inconsistency we just do not add it, but we still want to continue with the merge
                     // process, therefor we catch this exception already here.
@@ -649,6 +683,15 @@ public class GlobalMatchAppearanceFinder {
          */
         public int getLength() {
             return length;
+        }
+
+        /**
+         * Returns the duplicate counts of this node, meaning, for each submission that contains the section of code described
+         * by this node, in how many other nodes the match, that added it to this node, got added to.
+         * @return the duplicate counts
+         */
+        public Map<Submission, CountReference> getDuplicateCounts() {
+            return duplicateCounts;
         }
 
         private int getStartInSub(Submission submission) {

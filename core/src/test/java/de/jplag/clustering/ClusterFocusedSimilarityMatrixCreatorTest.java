@@ -45,13 +45,32 @@ class ClusterFocusedSimilarityMatrixCreatorTest {
         }
     }
 
+    @Test
+    void testAntiDuplicateWeights() {
+        Submission subA = createSubmission("A");
+        Submission subB = createSubmission("B");
+        GlobalMatchAppearanceFinder.TreeNode root = new GlobalMatchAppearanceFinder.TreeNode(10);
+        root.addAppearanceIn(subA, 0, new GlobalMatchAppearanceFinder.CountReference(2));
+        root.addAppearanceIn(subB, 0, new GlobalMatchAppearanceFinder.CountReference(2));
+
+        IntegerMapping<Submission> submissionsMap = new IntegerMapping<>(2);
+        submissionsMap.map(subA);
+        submissionsMap.map(subB);
+
+        ClusterFocusedSimilarityMatrixCreator matrixCreator = new ClusterFocusedSimilarityMatrixCreator(MatchGroupWeightingMode.NO_WEIGHTING);
+        RealMatrix matrix = matrixCreator.createMatrixFromTrees(List.of(root), submissionsMap);
+
+        RealMatrix expected = new Array2DRowRealMatrix(new double[][] {new double[] {0, 5}, new double[] {5, 0}});
+        assertEquals(expected, matrix);
+    }
+
     private Submission createSubmission(String name) {
         return new Submission(name, null, true, null, null);
     }
 
     private void addAll(GlobalMatchAppearanceFinder.TreeNode node, List<Submission> submissions) {
         for (Submission submission : submissions) {
-            node.addAppearanceIn(submission, 0);
+            node.addAppearanceIn(submission, 0, new GlobalMatchAppearanceFinder.CountReference(1));
         }
     }
 
