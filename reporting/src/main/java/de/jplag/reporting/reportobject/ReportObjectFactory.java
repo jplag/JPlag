@@ -83,9 +83,9 @@ public class ReportObjectFactory {
     /**
      * Creates a new report object factory, that can be used to write a report file.
      * @param targetFile The file to write the report to.
-     * @throws FileNotFoundException If the file cannot be opened for writing
+     * @throws IOException If the file cannot be opened for writing
      */
-    public ReportObjectFactory(File targetFile) throws FileNotFoundException {
+    public ReportObjectFactory(Path targetFile) throws IOException {
         this(new ZipWriter(targetFile));
     }
 

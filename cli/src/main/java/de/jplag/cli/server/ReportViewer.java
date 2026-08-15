@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.net.BindException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.nio.file.Path;
 import java.util.Objects;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -44,7 +45,7 @@ public class ReportViewer implements HttpHandler {
      * @param bindAddress The address to bind the server to
      * @throws IOException If the result file cannot be read
      */
-    public ReportViewer(File resultFile, int port, InetAddress bindAddress) throws IOException {
+    public ReportViewer(Path resultFile, int port, InetAddress bindAddress) throws IOException {
         Objects.requireNonNull(bindAddress, "bindAddress must not be null");
 
         this.routingTree = new RoutingTree();

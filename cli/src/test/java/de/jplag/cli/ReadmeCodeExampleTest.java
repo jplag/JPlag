@@ -2,6 +2,7 @@ package de.jplag.cli;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Set;
 
@@ -38,11 +39,11 @@ class ReadmeCodeExampleTest {
             JPlagResult result = JPlag.run(options);
 
             // Optional
-            ReportObjectFactory reportObjectFactory = new ReportObjectFactory(new File("/path/to/output"));
+            ReportObjectFactory reportObjectFactory = new ReportObjectFactory(Path.of("path", "to", "output"));
             reportObjectFactory.createAndSaveReport(result);
         } catch (ExitException e) {
             // error handling here
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             // handle IO exception here
         }
     }

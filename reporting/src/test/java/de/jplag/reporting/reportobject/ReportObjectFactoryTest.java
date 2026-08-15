@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
 
@@ -36,7 +37,7 @@ class ReportObjectFactoryTest {
         Path basecodeDir = BASE_PATH.resolve(BASECODE_BASE);
         JPlagOptions options = new JPlagOptions(new JavaLanguage(), Set.of(submissionDir), Set.of()).withBaseCodeSubmissionDirectory(basecodeDir);
         JPlagResult result = JPlag.run(options);
-        File testResult = File.createTempFile("result", ".jplag");
+        Path testResult = Files.createTempFile("result", ".jplag");
 
         ReportObjectFactory reportObjectFactory = new ReportObjectFactory(testResult);
         reportObjectFactory.createAndSaveReport(result);
@@ -50,9 +51,9 @@ class ReportObjectFactoryTest {
      * @param file The file to check
      * @return True, if file is an archive
      */
-    private static boolean isArchive(File file) throws IOException {
+    private static boolean isArchive(Path file) throws IOException {
         int fileSignature;
-        try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r")) {
+        try (RandomAccessFile randomAccessFile = new RandomAccessFile(file.toFile(), "r")) {
             fileSignature = randomAccessFile.readInt();
         }
         return fileSignature == 0x504B0304 || fileSignature == 0x504B0506 || fileSignature == 0x504B0708;

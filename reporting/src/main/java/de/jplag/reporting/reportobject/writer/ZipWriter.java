@@ -6,12 +6,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import de.jplag.util.FileUtils;
 import de.jplag.util.RelativePath;
+import javax.print.attribute.standard.OutputBin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * Writes JPlag result data as a zip.
  */
-public class ZipWriter implements JPlagResultWriter { //TODO replace by java nio
+public class ZipWriter implements JPlagResultWriter {
     private static final Logger logger = LoggerFactory.getLogger(ZipWriter.class);
     private static final ObjectMapper objectMapper = JacksonUtils.createNewObjectMapper();
 
@@ -32,24 +36,24 @@ public class ZipWriter implements JPlagResultWriter { //TODO replace by java nio
     private static final String WRITE_STRING_ERROR = "Failed to write string entry %s";
     private static final String CLOSE_FILE_ERROR = "Failed to close zip file properly";
 
-    private final ZipOutputStream file;
+    private Path root;
 
     /**
      * The zip file to write to.
+     *
      * @param zipFile The file
-     * @throws FileNotFoundException If the file cannot be opened for writing
+     * @throws IOException If the file cannot be opened for writing
      */
-    public ZipWriter(File zipFile) throws FileNotFoundException {
-        zipFile.getAbsoluteFile().getParentFile().mkdirs();
-        this.file = new ZipOutputStream(new FileOutputStream(zipFile));
+    public ZipWriter(Path zipFile) throws IOException {
+        Files.createDirectories(zipFile.getParent());
+        FileSystem fileSystem = FileSystems.newFileSystem(zipFile);
+        root = fileSystem.getRootDirectories().iterator().next();
     }
 
     @Override
     public void addJsonEntry(Object jsonContent, RelativePath path) {
         try {
-            this.file.putNextEntry(new ZipEntry(FilePathUtil.pathAsZipPath(path)));
-            this.file.write(objectMapper.writeValueAsBytes(jsonContent));
-            this.file.closeEntry();
+            FileUtils.write(path.resolveAgainst(root), objectMapper.writeValueAsString(jsonContent));
         } catch (IOException e) {
             logger.error(String.format(WRITE_JSON_ERROR, path), e);
         }
@@ -57,9 +61,8 @@ public class ZipWriter implements JPlagResultWriter { //TODO replace by java nio
 
     @Override
     public void addFileContentEntry(RelativePath path, Path original) {
-        try (InputStream inputStream = Files.newInputStream(original)) {
-            this.file.putNextEntry(new ZipEntry(FilePathUtil.pathAsZipPath(path)));
-            inputStream.transferTo(this.file);
+        try {
+            Files.copy(original, path.resolveAgainst(root));
         } catch (IOException e) {
             logger.error(String.format(COPY_FILE_ERROR, original, path), e);
         }
@@ -68,8 +71,7 @@ public class ZipWriter implements JPlagResultWriter { //TODO replace by java nio
     @Override
     public void writeStringEntry(String entry, RelativePath path) {
         try {
-            this.file.putNextEntry(new ZipEntry(FilePathUtil.pathAsZipPath(path)));
-            this.file.write(entry.getBytes(StandardCharsets.UTF_8));
+            FileUtils.write(path.resolveAgainst(root), entry);
         } catch (IOException e) {
             logger.error(String.format(WRITE_STRING_ERROR, path), e);
         }
@@ -78,7 +80,7 @@ public class ZipWriter implements JPlagResultWriter { //TODO replace by java nio
     @Override
     public void close() {
         try {
-            this.file.close();
+            root.getFileSystem().close();
         } catch (IOException e) {
             logger.error(CLOSE_FILE_ERROR, e);
         }

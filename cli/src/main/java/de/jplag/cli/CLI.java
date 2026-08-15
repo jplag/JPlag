@@ -109,10 +109,10 @@ public final class CLI {
      * Runs JPlag and returns the file the result has been written to.
      * @return The file containing the result
      * @throws ExitException If JPlag threw an exception
-     * @throws FileNotFoundException If the file could not be written
+     * @throws IOException If the file could not be written
      */
-    public File runJPlag() throws ExitException, FileNotFoundException {
-        File target = new File(getWritableFileName());
+    public Path runJPlag() throws ExitException, IOException {
+        Path target = Path.of(getWritableFileName());
 
         JPlagOptionsBuilder optionsBuilder = new JPlagOptionsBuilder(this.inputHandler);
         JPlagOptions options = optionsBuilder.buildOptions();
@@ -138,7 +138,7 @@ public final class CLI {
      * @param resultFile is the result file to pass to the viewer. Can be null, if no result should be opened by default
      * @throws IOException If something went wrong with the internal server
      */
-    public void runViewer(File resultFile) throws IOException {
+    public void runViewer(Path resultFile) throws IOException {
         finalizeLogger(); // Prints the errors. The later finalizeLogger will print any errors logged after this point.
         JPlagRunner.runInternalServer(resultFile, this.inputHandler.getCliOptions().advanced.port, this.inputHandler.getCliOptions().advanced.host);
     }

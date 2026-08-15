@@ -59,7 +59,7 @@ class OutputFileGeneratorTest {
 
     @Test
     void testWriteNormalResultFile() throws IOException, FileException {
-        File resFile = Files.createTempFile("jplagTestResult", ".jplag").toFile();
+        Path resFile = Files.createTempFile("jplagTestResult", ".jplag");
 
         OutputFileGenerator.generateJPlagResultFile(testResult, resFile);
 
