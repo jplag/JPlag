@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
 
+import de.jplag.util.PathUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -47,7 +48,7 @@ class MinimalModelInstanceTest {
         try {
             List<Token> tokens = language.parse(new HashSet<>(baseFiles), true);
             assertNotEquals(0, tokens.size());
-            logger.debug(TokenPrinterUtils.printTokensByFile(tokens, file -> Path.of(file.toString() + EmfModelLanguage.VIEW_FILE_EXTENSION)));
+            logger.debug(TokenPrinterUtils.printTokensByFile(tokens, file -> PathUtils.appendSuffix(file, EmfModelLanguage.VIEW_FILE_EXTENSION)));
             logger.info("Parsed tokens: " + tokens);
             assertEquals(7, tokens.size());
         } catch (ParsingException e) {

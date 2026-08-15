@@ -3,6 +3,7 @@ package de.jplag.reporting.reportobject.writer;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import de.jplag.util.RelativePath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,17 +18,17 @@ public class DummyResultWriter implements JPlagResultWriter {
     private static final String MESSAGE_CLOSE = "DummyWriter closed.";
 
     @Override
-    public void addJsonEntry(Object jsonContent, Path path) {
+    public void addJsonEntry(Object jsonContent, RelativePath path) {
         logger.info(MESSAGE_JSON, jsonContent, path);
     }
 
     @Override
-    public void addFileContentEntry(Path path, Path original) throws IOException {
+    public void addFileContentEntry(RelativePath path, Path original) throws IOException {
         logger.info(MESSAGE_FILE, original.toRealPath(), path);
     }
 
     @Override
-    public void writeStringEntry(String entry, Path path) {
+    public void writeStringEntry(String entry, RelativePath path) {
         logger.info(MESSAGE_STRING, entry, path);
     }
 

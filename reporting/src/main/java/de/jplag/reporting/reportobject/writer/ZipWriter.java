@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import de.jplag.util.RelativePath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * Writes JPlag result data as a zip.
  */
-public class ZipWriter implements JPlagResultWriter {
+public class ZipWriter implements JPlagResultWriter { //TODO replace by java nio
     private static final Logger logger = LoggerFactory.getLogger(ZipWriter.class);
     private static final ObjectMapper objectMapper = JacksonUtils.createNewObjectMapper();
 
@@ -44,7 +45,7 @@ public class ZipWriter implements JPlagResultWriter {
     }
 
     @Override
-    public void addJsonEntry(Object jsonContent, Path path) {
+    public void addJsonEntry(Object jsonContent, RelativePath path) {
         try {
             this.file.putNextEntry(new ZipEntry(FilePathUtil.pathAsZipPath(path)));
             this.file.write(objectMapper.writeValueAsBytes(jsonContent));
@@ -55,7 +56,7 @@ public class ZipWriter implements JPlagResultWriter {
     }
 
     @Override
-    public void addFileContentEntry(Path path, Path original) {
+    public void addFileContentEntry(RelativePath path, Path original) {
         try (InputStream inputStream = Files.newInputStream(original)) {
             this.file.putNextEntry(new ZipEntry(FilePathUtil.pathAsZipPath(path)));
             inputStream.transferTo(this.file);
@@ -65,7 +66,7 @@ public class ZipWriter implements JPlagResultWriter {
     }
 
     @Override
-    public void writeStringEntry(String entry, Path path) {
+    public void writeStringEntry(String entry, RelativePath path) {
         try {
             this.file.putNextEntry(new ZipEntry(FilePathUtil.pathAsZipPath(path)));
             this.file.write(entry.getBytes(StandardCharsets.UTF_8));

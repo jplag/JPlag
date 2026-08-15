@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
+import de.jplag.util.PathUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -100,7 +101,7 @@ class ScxmlTokenGeneratorTest {
         ScxmlParserAdapter adapter = new ScxmlParserAdapter();
         adapter.parse(Set.of(testFile));
 
-        Path viewFile = Path.of(testFile.toString() + ScxmlLanguage.VIEW_FILE_EXTENSION);
+        Path viewFile = PathUtils.appendSuffix(testFile, ScxmlLanguage.VIEW_FILE_EXTENSION);
         Path expectedViewFile = BASE_PATH.resolve(TestSubjects.COMPLEX_VIEW_FILE.fileName);
         assertTrue(Files.exists(viewFile));
         assertEquals(Files.readAllLines(expectedViewFile), Files.readAllLines(viewFile));
