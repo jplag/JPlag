@@ -78,7 +78,7 @@ public class TokenPositionTestData implements TestData {
 
         String typeName = tokenDescriptionParts[tokenDescriptionParts.length - 2];
         int length = Integer.parseInt(tokenDescriptionParts[tokenDescriptionParts.length - 1]);
-        this.expectedTokens.add(new TokenData(typeName, currentSourceLine, column, currentSourceLine, column + length));
+        this.expectedTokens.add(new TokenData(typeName, currentSourceLine, column, currentSourceLine, column + length - 1));
     }
 
     @Override

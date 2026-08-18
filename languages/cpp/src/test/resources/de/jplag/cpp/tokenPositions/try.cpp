@@ -1,9 +1,9 @@
 > void main() {
 >     try {
-$     | TRY_BEGIN 2
+$     | TRY_BEGIN 3
 >     } catch(Exception e) {
-$       | CATCH_BEGIN 4
+$       | CATCH_BEGIN 5
 >     }
-$     | CATCH_END 0
-$     | TRY_END 0
+$     | CATCH_END 1
+$     | TRY_END 1
 > }

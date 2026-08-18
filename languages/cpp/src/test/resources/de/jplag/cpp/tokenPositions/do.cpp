@@ -1,6 +1,6 @@
 > void main() {
 >     do {
-$     | DO_BEGIN 1
+$     | DO_BEGIN 2
 >     } while(true)
-$                 | DO_END 0
+$                 | DO_END 1
 > }
