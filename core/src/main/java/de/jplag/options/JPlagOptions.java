@@ -291,6 +291,6 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Pat
             throw new BasecodeException(
                     "The basecode directory name \"" + normalizedName + "\" cannot contain dots! Please migrate to the path-based API.");
         }
-        return submissionDirectory.resolve(baseCodeSubmissionName);
+        return submissionDirectory.resolve(normalizedName);
     }
 }

@@ -1,25 +1,19 @@
 package de.jplag.reporting.reportobject.writer;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+import java.net.URI;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.zip.ZipEntry;
+import java.util.Map;
 import java.util.zip.ZipOutputStream;
 
 import de.jplag.util.FileUtils;
 import de.jplag.util.RelativePath;
-import javax.print.attribute.standard.OutputBin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.FilePathUtil;
 import de.jplag.reporting.serialization.JacksonUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,7 +40,11 @@ public class ZipWriter implements JPlagResultWriter {
      */
     public ZipWriter(Path zipFile) throws IOException {
         Files.createDirectories(zipFile.getParent());
-        FileSystem fileSystem = FileSystems.newFileSystem(zipFile);
+        if(Files.exists(zipFile)) {
+            try (ZipOutputStream os = new ZipOutputStream(Files.newOutputStream(zipFile))) {
+            }
+        }
+        FileSystem fileSystem = FileSystems.newFileSystem(URI.create("jar:" + zipFile.toUri()), Map.of("create", true));
         root = fileSystem.getRootDirectories().iterator().next();
     }
 
@@ -62,6 +60,7 @@ public class ZipWriter implements JPlagResultWriter {
     @Override
     public void addFileContentEntry(RelativePath path, Path original) {
         try {
+            Files.createDirectories(path.resolveAgainst(root).getParent());
             Files.copy(original, path.resolveAgainst(root));
         } catch (IOException e) {
             logger.error(String.format(COPY_FILE_ERROR, original, path), e);

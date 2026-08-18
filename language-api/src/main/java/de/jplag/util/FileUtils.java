@@ -223,6 +223,7 @@ public final class FileUtils {
      * @throws IOException If any error occurs
      */
     public static void write(Path file, String content) throws IOException {
+        Files.createDirectories(file.getParent());
         Writer writer = openFileWriter(file);
         writer.write(content);
         writer.close();

@@ -48,7 +48,7 @@ class ReportTokenPositionTestTest {
         Map<String, Map<String, String>> comparisonReportOutput;
 
         try (MockedStatic<FilePathUtil> mockedFilePathUtil = Mockito.mockStatic(FilePathUtil.class)) {
-            mockedFilePathUtil.when(() -> FilePathUtil.getRelativeSubmissionPath(any(), any(), any())).thenReturn(Path.of("file.java"));
+            mockedFilePathUtil.when(() -> FilePathUtil.getRelativeSubmissionPath(any(), any(), any())).thenReturn(RelativePath.of("file.java"));
             comparisonReportOutput = new ComparisonReportWriter(Submission::getName, resultWriter).writeComparisonReports(result);
         }
         ComparisonReport comparisonReport = (ComparisonReport) resultWriter
@@ -98,7 +98,7 @@ class ReportTokenPositionTestTest {
 
         TestableReportWriter resultWriter = new TestableReportWriter();
         try (MockedStatic<FilePathUtil> mockedFilePathUtil = Mockito.mockStatic(FilePathUtil.class)) {
-            mockedFilePathUtil.when(() -> FilePathUtil.getRelativeSubmissionPath(any(), any(), any())).thenReturn(Path.of("file.java"));
+            mockedFilePathUtil.when(() -> FilePathUtil.getRelativeSubmissionPath(any(), any(), any())).thenReturn(RelativePath.of("file.java"));
             new BaseCodeReportWriter(Submission::getName, resultWriter).writeBaseCodeReport(result);
         }
 

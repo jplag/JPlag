@@ -144,7 +144,7 @@ public final class CLI {
     }
 
     private void selectModeAutomatically() throws IOException, ExitException {
-        List<File> inputs = this.getAllInputs();
+        List<Path> inputs = this.getAllInputs();
 
         if (inputs.isEmpty()) {
             this.runViewer(null);
@@ -153,7 +153,7 @@ public final class CLI {
 
         // if the selected mode is auto and there is exactly one result file specified it is opened in the report viewer
         if (inputs.size() == 1
-                && (inputs.getFirst().getName().endsWith(ZIP_FILE_EXTENSION) || inputs.getFirst().getName().endsWith(DEFAULT_FILE_EXTENSION))) {
+                && (inputs.getFirst().getFileSystem().toString().endsWith(ZIP_FILE_EXTENSION) || inputs.getFirst().getFileName().endsWith(DEFAULT_FILE_EXTENSION))) {
             this.runViewer(inputs.getFirst());
             return;
         }
@@ -161,12 +161,12 @@ public final class CLI {
         this.runAndView();
     }
 
-    private List<File> getAllInputs() {
+    private List<Path> getAllInputs() {
         List<File> inputs = new ArrayList<>();
         inputs.addAll(List.of(this.inputHandler.getCliOptions().rootDirectory));
         inputs.addAll(List.of(this.inputHandler.getCliOptions().newDirectories));
         inputs.addAll(List.of(this.inputHandler.getCliOptions().oldDirectories));
-        return inputs;
+        return inputs.stream().map(File::toPath).toList();
     }
 
     private void finalizeLogger() {
