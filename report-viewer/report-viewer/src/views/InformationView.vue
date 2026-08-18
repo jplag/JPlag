@@ -111,8 +111,11 @@
         <TextInformation label="Date of Execution" class="pb-1">{{
           runInformation.dateOfExecution
         }}</TextInformation>
-        <TextInformation label="Execution Duration" class="pb-1"
-          >{{ runInformation.executionTime }} ms</TextInformation
+        <TextInformation label="Tokenization Duration" class="pb-1"
+          >{{ runInformation.tokenizationTime }} ms</TextInformation
+        >
+        <TextInformation label="Comparison Duration" class="pb-1"
+          >{{ runInformation.comparisonTime }} ms</TextInformation
         >
         <TextInformation label="Total Submissions" class="pb-1">{{
           reportStore().getSubmissionCount()

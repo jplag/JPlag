@@ -149,8 +149,8 @@ public class ReportObjectFactory {
     private void writeRunInformation(JPlagResult result) {
         List<FailedSubmission> failedSubmissions = result.getSubmissions().getInvalidSubmissions().stream()
                 .map(submission -> new FailedSubmission(submission.getName(), submission.getState())).toList();
-        RunInformation runInformation = new RunInformation(REPORT_VIEWER_VERSION, failedSubmissions, getDate(), result.getDuration(),
-                result.getAllComparisons().size());
+        RunInformation runInformation = new RunInformation(REPORT_VIEWER_VERSION, failedSubmissions, getDate(), result.getTokenizationDuration(),
+                result.getComparisonDuration(), result.getAllComparisons().size());
         this.resultWriter.addJsonEntry(runInformation, RUN_INFORMATION_FILE_NAME);
     }
 

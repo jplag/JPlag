@@ -18,7 +18,7 @@ jobs:
         with:
           persist-credentials: false
       
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: "lts/*"
 
@@ -29,7 +29,7 @@ jobs:
           npm run build-dev
 
       - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@v4.8.0
+        uses: JamesIves/github-pages-deploy-action@v4.9.0
         with:
           branch: gh-pages
           folder: report-viewer/report-viewer/dist

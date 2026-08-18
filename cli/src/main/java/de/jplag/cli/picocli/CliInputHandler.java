@@ -9,7 +9,6 @@ import java.io.File;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -80,7 +79,9 @@ public class CliInputHandler {
         }).collect(Collectors.joining(System.lineSeparator())) + System.lineSeparator());
         cli.getHelpSectionMap().put(SECTION_KEY_COMMAND_LIST_HEADING, _ -> "Languages:" + System.lineSeparator());
 
-        buildSubcommands().forEach(cli::addSubcommand);
+        for (CommandLine.Model.CommandSpec subcommand : buildSubcommands()) {
+            cli.addSubcommand(subcommand).setHelpFactory(new HelpFactory());
+        }
 
         cli.getCommandSpec().version("JPlag version " + JPlag.JPLAG_VERSION.toString());
         cli.getHelpSectionMap().put(SECTION_KEY_SYNOPSIS, help -> help.synopsis(help.synopsisHeadingLength()) + generateDescription());
@@ -98,13 +99,23 @@ public class CliInputHandler {
                 command.addOption(CommandLine.Model.OptionSpec.builder(option.getNameAsUnixParameter()).type(option.getType().getJavaType())
                         .description(option.getDescription()).build());
             }
-            command.mixinStandardHelpOptions(true);
             command.version(language.getVersionFlagInformation());
-            command.addPositional(
-                    CommandLine.Model.PositionalParamSpec.builder().type(List.class).auxiliaryTypes(File.class).hidden(true).required(false).build());
+            command.addMixin("root", buildRootParametersForSubcommands());
 
             return command;
         }).toList();
+    }
+
+    private CommandLine.Model.CommandSpec buildRootParametersForSubcommands() {
+        CommandLine.Model.CommandSpec originalOptions = CommandLine.Model.CommandSpec.forAnnotatedObject(this.options);
+        CommandLine.Model.CommandSpec hiddenOptions = CommandLine.Model.CommandSpec.create();
+        for (CommandLine.Model.OptionSpec option : originalOptions.options()) {
+            hiddenOptions.addOption(CommandLine.Model.OptionSpec.builder(option).hidden(true).required(false).build());
+        }
+        for (CommandLine.Model.PositionalParamSpec parameter : originalOptions.positionalParameters()) {
+            hiddenOptions.addPositional(CommandLine.Model.PositionalParamSpec.builder(parameter).hidden(true).required(false).build());
+        }
+        return hiddenOptions;
     }
 
     /**
@@ -179,16 +190,6 @@ public class CliInputHandler {
             }
         });
         return language;
-    }
-
-    /**
-     * @return The submission directories configured for the subcommand, if one has been given.
-     */
-    public List<File> getSubcommandSubmissionDirectories() {
-        if (this.parseResult.subcommand() != null && this.parseResult.subcommand().hasMatchedPositional(0)) {
-            return this.parseResult.subcommand().matchedPositional(0).getValue();
-        }
-        return Collections.emptyList();
     }
 
     private String generateDescription() {

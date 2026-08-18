@@ -18,12 +18,12 @@
     "@eslint/eslintrc": "^3.3.5",
     "@eslint/js": "^10.0.1",
     "@types/node": "^25.9.1",
-    "@vitest/coverage-v8": "^4.0.18",
+    "@vitest/coverage-v8": "^4.1.10",
     "@vue/eslint-config-prettier": "^10.2.0",
-    "@vue/eslint-config-typescript": "^14.6.0",
-    "eslint": "^10.3.0",
+    "@vue/eslint-config-typescript": "^14.9.0",
+    "eslint": "^10.7.0",
     "eslint-plugin-vue": "^10.9.2",
-    "globals": "^17.6.0",
+    "globals": "^17.8.0",
     "istanbul-lib-coverage": "^3.2.2",
     "istanbul-lib-report": "^3.0.1",
     "istanbul-reports": "^3.2.0",
@@ -31,7 +31,7 @@
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.60.1",
+    "typescript-eslint": "^8.64.0",
     "vitest": "^4.1.5"
   }
 }
