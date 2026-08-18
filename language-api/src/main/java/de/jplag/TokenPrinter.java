@@ -217,7 +217,7 @@ public class TokenPrinter {
             lineBuilder.append(" ".repeat(offsetMap.getOffsettedPosition(token.getStartColumn()) - this.lineBuilder.length() - 1));
             lineBuilder.append(TOKEN_START);
             lineBuilder.append(token.getType().getDescription());
-            int remainingSpaces = maxLineLength - lineBuilder.length();
+            int remainingSpaces = Math.max(0, maxLineLength - lineBuilder.length());
             lineBuilder.append(TOKEN_CONT.repeat(remainingSpaces));
         }
 

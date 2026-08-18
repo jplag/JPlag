@@ -211,7 +211,7 @@ public class ScalaParser {
                     int elseStart = ifTerm.pos().text().indexOf("else", ifTerm.thenp().pos().end() - ifTerm.pos().start());
                     Position.Range elsePosition = new Position.Range(ifTerm.pos().input(), ifTerm.pos().start() + elseStart,
                             ifTerm.pos().start() + elseStart + 4);
-                    addToken(ELSE, elsePosition.startLine() + 1, elsePosition.startColumn() + 1, elsePosition.text().length());
+                    addToken(ELSE, elsePosition);
                     encloseAndAppy(ifTerm.elsep(), new TraverserRecord(ELSE_BEGIN, ELSE_END));
                 }
             });
@@ -382,22 +382,23 @@ public class ScalaParser {
     private void addToken(ScalaTokenType tokenType, Tree node, boolean fromEnd) {
         if (!node.pos().text().isEmpty()) {
             if (fromEnd) {
-                tokens.add(new Token(tokenType, currentFile, node.pos().endLine() + 1, node.pos().endColumn() + 1, 0));
+                tokens.add(new Token(tokenType, currentFile, node.pos().endLine() + 1, node.pos().endColumn() + 1, node.pos().endLine() + 1,
+                        node.pos().endColumn() + 1, 0));
             } else {
-                tokens.add(new Token(tokenType, currentFile, node.pos().startLine() + 1, node.pos().startColumn() + 1, node.pos().text().length()));
+                tokens.add(new Token(tokenType, currentFile, node.pos().startLine() + 1, node.pos().startColumn() + 1, node.pos().endLine() + 1,
+                        node.pos().endColumn() + 1, node.pos().text().length()));
             }
         }
     }
 
     /**
      * Adds a token with the given data.
-     * @param tokenType The type of token
-     * @param line The start line
-     * @param column The start column
-     * @param length The length of the token
+     * @param tokenType The token type
+     * @param tokenPosition the position data of the token
      */
-    private void addToken(ScalaTokenType tokenType, int line, int column, int length) {
-        tokens.add(new Token(tokenType, currentFile, line, column, length));
+    private void addToken(ScalaTokenType tokenType, Position.Range tokenPosition) {
+        tokens.add(new Token(tokenType, currentFile, tokenPosition.startLine() + 1, tokenPosition.startColumn() + 1, tokenPosition.endLine() + 1,
+                tokenPosition.endColumn() + 1, tokenPosition.text().length()));
     }
 
     /**
