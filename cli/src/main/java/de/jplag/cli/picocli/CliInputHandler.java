@@ -58,7 +58,6 @@ public class CliInputHandler {
 
     /**
      * Creates a new handler. Before using it you need to call {@link #parse()}.
-     *
      * @param args The arguments.
      */
     public CliInputHandler(String[] args) {
@@ -120,17 +119,16 @@ public class CliInputHandler {
 
     /**
      * Parses the cli parameters and prints the usage help if requested.
-     *
      * @return true, if the usage help has been requested. In this case the program should stop.
      * @throws CliException If something went wrong during parsing.
      */
     public boolean parse() throws CliException {
         try {
             this.parseResult = this.commandLine.parseArgs(args);
-            boolean usageHelpRequested = parseResult.isUsageHelpRequested() ||
-                    (parseResult.subcommand() != null && parseResult.subcommand().isUsageHelpRequested());
-            boolean versionHelpRequested = parseResult.isVersionHelpRequested() ||
-                    (parseResult.subcommand() != null && parseResult.subcommand().isVersionHelpRequested());
+            boolean usageHelpRequested = parseResult.isUsageHelpRequested()
+                    || (parseResult.subcommand() != null && parseResult.subcommand().isUsageHelpRequested());
+            boolean versionHelpRequested = parseResult.isVersionHelpRequested()
+                    || (parseResult.subcommand() != null && parseResult.subcommand().isVersionHelpRequested());
             if (usageHelpRequested || versionHelpRequested) {
                 CommandLine target = commandLine;
                 if (parseResult.subcommand() != null) {
@@ -161,7 +159,6 @@ public class CliInputHandler {
 
     /**
      * If {@link #parse()} has not been called yet, this will be empty, otherwise it will be a valid object.
-     *
      * @return The parsed cli options.
      */
     public CliOptions getCliOptions() {
@@ -170,7 +167,6 @@ public class CliInputHandler {
 
     /**
      * Resolves the language selected by the cli arguments.
-     *
      * @return The selected language
      * @throws CliException In the event the language cannot be resolved. Should not happen under normal circumstances.
      */
@@ -199,7 +195,6 @@ public class CliInputHandler {
 
     /**
      * Returns the file to display when using --move VIEW. The result can be null, if no file was selected.
-     *
      * @return The file to show
      * @throws CliException If multiple options would be valid
      */
