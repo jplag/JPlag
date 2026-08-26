@@ -1,6 +1,6 @@
 # C# language module
 
-Extracts token from C# source using the ANTRL Grammar from the official [ANTLR repository](https://github.com/antlr/grammars-v4/tree/master/csharp)
+Extracts tokens from C# source using the ANTLR Grammar from the official [ANTLR repository](https://github.com/antlr/grammars-v4/tree/master/csharp).
 
 ## Tokens
 
