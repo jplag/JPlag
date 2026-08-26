@@ -5,7 +5,7 @@
   <Interactable class="cursor-default! p-0">
     <select
       v-model="selectedOption"
-      class="bg-interactable-light dark:bg-interactable-dark m-0 w-full cursor-pointer"
+      class="bg-interactable m-0 w-full cursor-pointer"
       @change="$emit('selectionChanged', selectedOption)"
     >
       <option v-for="option in options" :key="option" :value="option">
