@@ -32,7 +32,7 @@ class ReadmeCodeExampleTest {
     void testReadmeCodeExample() {
         Language language = new JavaLanguage();
         Set<Path> submissionDirectories = Set.of(Path.of("path", "to", "rootDir"));
-        Path baseCode = Path.of("path", "to", "baseCode"); // TODO readme adapt
+        Path baseCode = Path.of("path", "to", "baseCode");
         JPlagOptions options = new JPlagOptions(language, submissionDirectories, Set.of()).withBaseCodeSubmissionDirectory(baseCode);
 
         try {
