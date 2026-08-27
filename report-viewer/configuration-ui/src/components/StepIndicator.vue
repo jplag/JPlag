@@ -8,7 +8,7 @@
   >
     <div class="flex items-center gap-2">
       <FontAwesomeIcon
-        :icon="state === 'done' ? faCircleCheck : faCircle"
+        :icon="validity ? faCircleCheck : faCircle"
         :class="{
           'text-accent': state === 'active'
         }"
@@ -38,7 +38,11 @@ defineProps({
     default: undefined
   },
   state: {
-    type: String as PropType<'done' | 'active' | 'future'>,
+    type: String as PropType<'choosable' | 'active' | 'future'>,
+    required: true
+  },
+  validity: {
+    type: Boolean,
     required: true
   }
 })

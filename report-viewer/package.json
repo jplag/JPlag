@@ -7,7 +7,8 @@
     "report-viewer/",
     "ui-components/",
     "model/",
-    "parser/"
+    "parser/",
+    "configuration-ui/"
   ],
   "scripts": {
     "format": "prettier --write .",
