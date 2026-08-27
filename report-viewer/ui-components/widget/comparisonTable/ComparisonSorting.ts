@@ -9,11 +9,7 @@ interface Direction {
 }
 
 export type ColumnId =
-  | 'averageSimilarity'
-  | 'maximumSimilarity'
-  | 'cluster'
-  | 'longestMatch'
-  | 'maximumLength'
+  'averageSimilarity' | 'maximumSimilarity' | 'cluster' | 'longestMatch' | 'maximumLength'
 
 export interface ColumnSorting {
   id: ColumnId
