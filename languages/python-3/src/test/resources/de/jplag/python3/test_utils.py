@@ -106,7 +106,7 @@ class SilentWSGIServer(WSGIServer):
 
 class SSLWSGIServerMixin:
 
-    def finish_request(self, request, client_address):
+    def finish_request(self, request, client_address): # Ignored because method start token occurs below the comment block #test-ignore
         # The relative location of our test directory (which
         # contains the ssl key and certificate files) differs
         # between the stdlib and stand-alone asyncio.
@@ -334,9 +334,9 @@ class TestLoop(base_events.BaseEventLoop):
         assert fd in self.readers, 'fd {} is not registered'.format(fd)
         handle = self.readers[fd]
         assert handle._callback == callback, '{!r} != {!r}'.format(
-            handle._callback, callback)
+            handle._callback, callback) #test-ignore
         assert handle._args == args, '{!r} != {!r}'.format(
-            handle._args, args)
+            handle._args, args) #test-ignore
 
     def _add_writer(self, fd, callback, *args):
         self.writers[fd] = events.Handle(callback, args, self)
@@ -353,9 +353,9 @@ class TestLoop(base_events.BaseEventLoop):
         assert fd in self.writers, 'fd {} is not registered'.format(fd)
         handle = self.writers[fd]
         assert handle._callback == callback, '{!r} != {!r}'.format(
-            handle._callback, callback)
+            handle._callback, callback) #test-ignore
         assert handle._args == args, '{!r} != {!r}'.format(
-            handle._args, args)
+            handle._args, args) #test-ignore
 
     def _ensure_fd_no_transport(self, fd):
         try:

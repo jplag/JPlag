@@ -228,10 +228,10 @@ class StreamReaderProtocol(FlowControlMixin, protocols.Protocol):
         self._over_ssl = transport.get_extra_info('sslcontext') is not None
         if self._client_connected_cb is not None:
             self._stream_writer = StreamWriter(transport, self,
-                                               self._stream_reader,
-                                               self._loop)
+                                               self._stream_reader, #test-ignore
+                                               self._loop) #test-ignore
             res = self._client_connected_cb(self._stream_reader,
-                                            self._stream_writer)
+                                            self._stream_writer) #test-ignore
             if coroutines.iscoroutine(res):
                 self._loop.create_task(res)
 
@@ -415,7 +415,7 @@ class StreamReader:
         self._wakeup_waiter()
 
         if (self._transport is not None and
-                not self._paused and
+                not self._paused and #test-ignore
                 len(self._buffer) > 2 * self._limit):
             try:
                 self._transport.pause_reading()

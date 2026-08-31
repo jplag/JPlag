@@ -7,25 +7,25 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 import de.jplag.antlr.AbstractAntlrListener;
 import de.jplag.antlr.AbstractAntlrParserAdapter;
-import de.jplag.python3.grammar.Python3Lexer;
-import de.jplag.python3.grammar.Python3Parser;
+import de.jplag.python3.grammar.PythonLexer;
+import de.jplag.python3.grammar.PythonParser;
 
 /**
  * ANTLR-based parser adapter for Python 3.
  */
-public class PythonParserAdapter extends AbstractAntlrParserAdapter<Python3Parser> {
+public class PythonParserAdapter extends AbstractAntlrParserAdapter<PythonParser> {
     @Override
     protected Lexer createLexer(CharStream input) {
-        return new Python3Lexer(input);
+        return new PythonLexer(input);
     }
 
     @Override
-    protected Python3Parser createParser(CommonTokenStream tokenStream) {
-        return new Python3Parser(tokenStream);
+    protected PythonParser createParser(CommonTokenStream tokenStream) {
+        return new PythonParser(tokenStream);
     }
 
     @Override
-    protected ParserRuleContext getEntryContext(Python3Parser parser) {
+    protected ParserRuleContext getEntryContext(PythonParser parser) {
         return parser.file_input();
     }
 
