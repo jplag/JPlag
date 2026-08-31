@@ -1,6 +1,6 @@
-# CSharp langauge module
+# C# language module
 
-Extracts token from CSharp source using the ANTRL Grammar from the official [ANTLR repository](https://github.com/antlr/grammars-v4/tree/master/csharp)
+Extracts tokens from C# source using the ANTLR Grammar from the official [ANTLR repository](https://github.com/antlr/grammars-v4/tree/master/csharp).
 
 ## Tokens
 
@@ -66,3 +66,7 @@ Extracts token from CSharp source using the ANTRL Grammar from the official [ANT
 - ACCESSORS_END
 - ACCESSOR_BEGIN
 - ACCESSOR_END
+
+# Grammar
+
+The grammar is taken from the [antlr/grammars-v4 repository](https://github.com/antlr/grammars-v4/tree/master/csharp/v8-spec) (Commit: a763144). It targets C# version 8
