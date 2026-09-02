@@ -24,7 +24,7 @@
     "@jplag/ui-components": "../ui-components",
     "pinia": "^4.0.3",
     "vue": "^3.5.34",
-    "vue-router": "^5.0.7"
+    "vue-router": "^5.3.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",
