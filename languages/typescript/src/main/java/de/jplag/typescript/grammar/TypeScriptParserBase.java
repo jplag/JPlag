@@ -1,65 +1,53 @@
+// CHECKSTYLE:OFF
 package de.jplag.typescript.grammar;
 
-import org.antlr.v4.runtime.Lexer;
-import org.antlr.v4.runtime.Parser;
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.*;
 
 /**
  * All parser methods that used in grammar (p, prev, notLineTerminator, etc.) should start with lower case char similar
- * to parser rules. Copied from https://github.com/antlr/grammars-v4/tree/master/javascript/typescript/Java. Slightly
- * modified to fit JPlag code style.
+ * to parser rules.
  */
 public abstract class TypeScriptParserBase extends Parser {
-    protected TypeScriptParserBase(TokenStream input) {
+    public TypeScriptParserBase(TokenStream input) {
         super(input);
     }
 
     /**
-     * Short form for {@link TypeScriptParserBase#prev(String)}. Checks whether the previous token's text matches the given
-     * string.
-     * @param text the token text to compare with the previous token's text
-     * @return {@code true} if the previous token's text matches the specified text, otherwise {@code false}
+     * Short form for prev(String str)
      */
-    protected boolean p(String text) {
-        return prev(text);
+    protected boolean p(String str) {
+        return prev(str);
     }
 
     /**
-     * Checks whether the previous token's text matches the given string.
-     * @param text the token text to compare with the previous token's text
-     * @return {@code true} if the previous token's text equals the specified text, otherwise {@code false}
+     * Whether the previous token value equals to @param str
      */
-    protected boolean prev(String text) {
-        return _input.LT(-1).getText().equals(text);
+    protected boolean prev(String str) {
+        return _input.LT(-1).getText().equals(str);
     }
 
     /**
-     * Short form for {@link TypeScriptParserBase#next(String)}. Checks whether the next token's text matches the given
-     * string.
-     * @param text the token text to compare with the next token's text
-     * @return {@code true} if the next token's text matches the specified text, otherwise {@code false}
+     * Short form for next(String str)
      */
-    protected boolean n(String text) {
-        return next(text);
+    protected boolean n(String str) {
+        return next(str);
     }
 
     /**
-     * Checks whether the next token's text matches the given string.
-     * @param text the token text to compare with the next token's text
-     * @return {@code true} if the next token's text equals the specified text, otherwise {@code false}
+     * Whether the next token value equals to @param str
      */
-    protected boolean next(String text) {
-        return _input.LT(1).getText().equals(text);
+    protected boolean next(String str) {
+        return _input.LT(1).getText().equals(str);
     }
 
     protected boolean notLineTerminator() {
         return !here(TypeScriptParser.LineTerminator);
     }
 
-    protected boolean notOpenBraceAndNotFunction() {
+    protected boolean notOpenBraceAndNotFunctionAndNotInterface() {
         int nextTokenType = _input.LT(1).getType();
-        return nextTokenType != TypeScriptParser.OpenBrace && nextTokenType != TypeScriptParser.Function_;
+        return nextTokenType != TypeScriptParser.OpenBrace && nextTokenType != TypeScriptParser.Function_
+                && nextTokenType != TypeScriptParser.Interface;
     }
 
     protected boolean closeBrace() {
@@ -81,7 +69,7 @@ public abstract class TypeScriptParserBase extends Parser {
 
         // Check if the token resides on the HIDDEN channel and if it's of the
         // provided type.
-        return ahead.getChannel() == Lexer.HIDDEN && ahead.getType() == type;
+        return (ahead.getChannel() == Lexer.HIDDEN) && (ahead.getType() == type);
     }
 
     /**
@@ -117,6 +105,7 @@ public abstract class TypeScriptParserBase extends Parser {
         int type = ahead.getType();
 
         // Check if the token is, or contains a line terminator.
-        return type == TypeScriptParser.MultiLineComment && (text.contains("\r") || text.contains("\n")) || type == TypeScriptParser.LineTerminator;
+        return (type == TypeScriptParser.MultiLineComment && (text.contains("\r") || text.contains("\n")))
+                || (type == TypeScriptParser.LineTerminator);
     }
 }
