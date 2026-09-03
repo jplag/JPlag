@@ -68,10 +68,10 @@ import de.jplag.cpp.grammar.CPP14Parser.InitDeclaratorContext;
 import de.jplag.cpp.grammar.CPP14Parser.IterationStatementContext;
 import de.jplag.cpp.grammar.CPP14Parser.JumpStatementContext;
 import de.jplag.cpp.grammar.CPP14Parser.LabeledStatementContext;
+import de.jplag.cpp.grammar.CPP14Parser.MemberDeclarationContext;
 import de.jplag.cpp.grammar.CPP14Parser.MemberDeclaratorContext;
 import de.jplag.cpp.grammar.CPP14Parser.MemberSpecificationContext;
-import de.jplag.cpp.grammar.CPP14Parser.MemberdeclarationContext;
-import de.jplag.cpp.grammar.CPP14Parser.NewExpressionContext;
+import de.jplag.cpp.grammar.CPP14Parser.NewExpression_Context;
 import de.jplag.cpp.grammar.CPP14Parser.NewTypeIdContext;
 import de.jplag.cpp.grammar.CPP14Parser.NoPointerDeclaratorContext;
 import de.jplag.cpp.grammar.CPP14Parser.ParameterDeclarationContext;
@@ -115,8 +115,8 @@ class CPPListener extends AbstractAntlrListener {
 
         visit(ThrowExpressionContext.class).map(THROW).withSemantics(CodeSemantics::createControl);
 
-        visit(NewExpressionContext.class, rule -> rule.newInitializer() != null).map(NEWCLASS).withSemantics(CodeSemantics::new);
-        visit(NewExpressionContext.class, rule -> rule.newInitializer() == null).map(NEWARRAY).withSemantics(CodeSemantics::new);
+        visit(NewExpression_Context.class, rule -> rule.newInitializer_() != null).map(NEWCLASS).withSemantics(CodeSemantics::new);
+        visit(NewExpression_Context.class, rule -> rule.newInitializer_() == null).map(NEWARRAY).withSemantics(CodeSemantics::new);
 
         visit(TemplateDeclarationContext.class).map(GENERIC).withSemantics(CodeSemantics::new);
 
@@ -160,7 +160,7 @@ class CPPListener extends AbstractAntlrListener {
 
     private void typeSpecifierRule() {
         visit(SimpleTypeSpecifierContext.class, rule -> {
-            if (hasAncestor(rule, MemberdeclarationContext.class, FunctionDefinitionContext.class)) {
+            if (hasAncestor(rule, MemberDeclarationContext.class, FunctionDefinitionContext.class)) {
                 return true;
             }
             SimpleDeclarationContext parent = getAncestor(rule, SimpleDeclarationContext.class, TemplateArgumentContext.class,
@@ -260,7 +260,7 @@ class CPPListener extends AbstractAntlrListener {
     private void registerClassVariables(ClassSpecifierContext context, VariableRegistry variableRegistry) {
         MemberSpecificationContext members = context.memberSpecification();
         if (members != null) { // is null if class has no members
-            for (MemberdeclarationContext member : members.memberdeclaration()) {
+            for (MemberDeclarationContext member : members.memberDeclaration()) {
                 if (member.memberDeclaratorList() != null) {
                     for (MemberDeclaratorContext memberDec : member.memberDeclaratorList().memberDeclarator()) {
                         DeclaratorContext dec = memberDec.declarator();
