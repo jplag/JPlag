@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+import de.jplag.JPlag;
 import de.jplag.Language;
 import de.jplag.LanguageLoader;
 import de.jplag.cli.CliException;
@@ -75,14 +76,15 @@ public class CliInputHandler {
             }
             return it;
         }).collect(Collectors.joining(System.lineSeparator())) + System.lineSeparator());
-        cli.getHelpSectionMap().put(SECTION_KEY_COMMAND_LIST_HEADING, help -> "Languages:" + System.lineSeparator());
+        cli.getHelpSectionMap().put(SECTION_KEY_COMMAND_LIST_HEADING, _ -> "Languages:" + System.lineSeparator());
 
         for (CommandLine.Model.CommandSpec subcommand : buildSubcommands()) {
             cli.addSubcommand(subcommand).setHelpFactory(new HelpFactory());
         }
 
+        cli.getCommandSpec().version("JPlag version " + JPlag.JPLAG_VERSION.toString());
         cli.getHelpSectionMap().put(SECTION_KEY_SYNOPSIS, help -> help.synopsis(help.synopsisHeadingLength()) + generateDescription());
-        cli.getHelpSectionMap().put(SECTION_KEY_DESCRIPTION_HEADING, help -> OPTION_LIST_HEADING);
+        cli.getHelpSectionMap().put(SECTION_KEY_DESCRIPTION_HEADING, _ -> OPTION_LIST_HEADING);
         cli.setAllowSubcommandsAsOptionParameters(true);
 
         return cli;
@@ -96,6 +98,7 @@ public class CliInputHandler {
                 command.addOption(CommandLine.Model.OptionSpec.builder(option.getNameAsUnixParameter()).type(option.getType().getJavaType())
                         .description(option.getDescription()).build());
             }
+            command.version(language.getVersionFlagInformation());
             command.addMixin("root", buildRootParametersForSubcommands());
 
             return command;
@@ -122,9 +125,23 @@ public class CliInputHandler {
     public boolean parse() throws CliException {
         try {
             this.parseResult = this.commandLine.parseArgs(args);
-            if (this.parseResult.isUsageHelpRequested()
-                    || this.parseResult.subcommand() != null && this.parseResult.subcommand().isUsageHelpRequested()) {
-                commandLine.getExecutionStrategy().execute(this.parseResult);
+            boolean usageHelpRequested = parseResult.isUsageHelpRequested()
+                    || (parseResult.subcommand() != null && parseResult.subcommand().isUsageHelpRequested());
+            boolean versionHelpRequested = parseResult.isVersionHelpRequested()
+                    || (parseResult.subcommand() != null && parseResult.subcommand().isVersionHelpRequested());
+            if (usageHelpRequested || versionHelpRequested) {
+                CommandLine target = commandLine;
+                if (parseResult.subcommand() != null) {
+                    target = parseResult.subcommand().asCommandLineList().get(0);
+                } else if (parseResult.hasMatchedOption(CliOptions.LANG_FULL_NAME)) {
+                    target = commandLine.getSubcommands().get(options.language.getIdentifier());
+                }
+                if (usageHelpRequested) {
+                    target.usage(commandLine.getOut(), commandLine.getColorScheme());
+                }
+                if (versionHelpRequested) {
+                    target.printVersionHelp(commandLine.getOut(), commandLine.getColorScheme().ansi());
+                }
                 return true;
             }
         } catch (CommandLine.ParameterException e) {
