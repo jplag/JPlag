@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Java" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="de.jplag.cli.CLI" />
+    <module name="cli" />
+    <option name="PROGRAM_PARAMETERS" value="&quot;../SameSame repr/datasets/Progpedia19/human&quot; &quot;../SameSame repr/datasets/Progpedia19/insert&quot; --cluster-skip -r results-java java" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="de.jplag.cli.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

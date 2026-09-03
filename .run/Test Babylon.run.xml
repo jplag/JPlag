@@ -1,0 +1,18 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Test Babylon" type="JUnit" factoryName="JUnit">
+    <module name="java-babylon" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="de.jplag.java.babylon.transformer.impl.jdk.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <option name="PACKAGE_NAME" value="de.jplag.java.babylon" />
+    <option name="MAIN_CLASS_NAME" value="" />
+    <option name="METHOD_NAME" value="" />
+    <option name="TEST_OBJECT" value="package" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

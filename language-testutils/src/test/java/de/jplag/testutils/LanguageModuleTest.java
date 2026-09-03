@@ -9,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -43,8 +42,6 @@ import de.jplag.testutils.datacollector.TokenPositionTestData;
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public abstract class LanguageModuleTest {
-    private static final Path DEFAULT_TEST_CODE_PATH_BASE = Path.of("src", "test", "resources", "de", "jplag");
-
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final TestDataCollector collector;
@@ -355,7 +352,7 @@ public abstract class LanguageModuleTest {
      * @return The test file location
      */
     protected File getTestFileLocation() {
-        return new File(DEFAULT_TEST_CODE_PATH_BASE.toFile(), this.language.getIdentifier());
+        return new File(TestDataPaths.DEFAULT_TEST_CODE_PATH_BASE.toFile(), this.language.getIdentifier());
     }
 
     protected List<TokenType> getIgnoredTokensForMonotoneTokenOrder() {
