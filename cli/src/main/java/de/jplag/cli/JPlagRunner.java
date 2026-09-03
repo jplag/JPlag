@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.URI;
+import java.nio.file.Path;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +43,7 @@ public final class JPlagRunner {
      * @param bindAddress is the address to bind the server to.
      * @throws IOException if the internal server throws an exception
      */
-    public static void runInternalServer(File resultFile, int port, InetAddress bindAddress) throws IOException {
+    public static void runInternalServer(Path resultFile, int port, InetAddress bindAddress) throws IOException {
         if (!ReportViewer.hasCompiledViewer()) {
             logger.warn("The report viewer is not available. Check whether you compiled JPlag with the report viewer.");
             return;

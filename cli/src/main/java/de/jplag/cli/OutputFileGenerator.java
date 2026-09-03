@@ -3,12 +3,14 @@ package de.jplag.cli;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.JPlagResult;
 import de.jplag.cli.options.CliOptions;
+import de.jplag.exceptions.FileException;
 import de.jplag.reporting.csv.comparisons.CsvComparisonOutput;
 import de.jplag.reporting.reportobject.ReportObjectFactory;
 
@@ -28,7 +30,7 @@ public final class OutputFileGenerator {
      * @param outputRoot The root folder for the output
      * @param options The cli options
      */
-    public static void generateCsvOutput(JPlagResult result, File outputRoot, CliOptions options) {
+    public static void generateCsvOutput(JPlagResult result, Path outputRoot, CliOptions options) {
         if (options.advanced.csvExport) {
             try {
                 CsvComparisonOutput.writeCsvResults(result.getAllComparisons(), false, outputRoot, "results");
@@ -43,12 +45,13 @@ public final class OutputFileGenerator {
      * Generates the JPLag result file out of a given {@link JPlagResult}.
      * @param result is the JPlag result to export.
      * @param outputFile is the target for the result file.
-     * @throws FileNotFoundException if the file cannot be written-
+     * @throws IOException if the file cannot be written-
+     * @throws FileException If the file handling fails
      */
-    public static void generateJPlagResultFile(JPlagResult result, File outputFile) throws FileNotFoundException {
+    public static void generateJPlagResultFile(JPlagResult result, Path outputFile) throws IOException, FileException {
         ReportObjectFactory reportObjectFactory = new ReportObjectFactory(outputFile);
         reportObjectFactory.createAndSaveReport(result);
-        logger.info("Successfully written the result: {}", outputFile.getPath());
+        logger.info("Successfully written the result: {}", outputFile);
         logger.info("View the result using --mode");
     }
 }

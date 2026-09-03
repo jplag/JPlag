@@ -4,11 +4,10 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.StringJoiner;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Assumptions;
 import org.opentest4j.TestAbortedException;
@@ -26,7 +25,7 @@ public abstract class TestBase {
     /**
      * The base path where the test samples reside.
      */
-    protected static final String BASE_PATH = Path.of("src", "test", "resources", "de", "jplag", "samples").toString();
+    protected static final Path BASE_PATH = Path.of("src", "test", "resources", "de", "jplag", "samples");
 
     /**
      * Delta for similarity comparison.
@@ -37,13 +36,12 @@ public abstract class TestBase {
      * @param subdirectories list of directories that form a path relative to the base path.
      * @return the base path where the test samples reside concatenated with any number of subdirectories.
      */
-    protected String getBasePath(String... subdirectories) {
-        StringJoiner path = new StringJoiner(File.separator);
-        path.add(BASE_PATH);
+    protected Path getBasePath(String... subdirectories) {
+        Path path = BASE_PATH;
         for (String directory : subdirectories) {
-            path.add(directory);
+            path = path.resolve(directory);
         }
-        return path.toString();
+        return path;
     }
 
     protected JPlagResult runJPlagWithExclusionFile(String testSampleName, String exclusionFileName) throws ExitException {
@@ -79,7 +77,7 @@ public abstract class TestBase {
      * @return the result of the JPlag run.
      * @throws ExitException if JPlag fails.
      */
-    protected JPlagResult runJPlag(List<String> newPaths, Function<JPlagOptions, JPlagOptions> customization) throws ExitException {
+    protected JPlagResult runJPlag(List<Path> newPaths, Function<JPlagOptions, JPlagOptions> customization) throws ExitException {
         return JPlag.run(getOptions(newPaths, customization));
     }
 
@@ -91,13 +89,13 @@ public abstract class TestBase {
      * @return the result of the JPlag run.
      * @throws ExitException if JPlag fails.
      */
-    protected JPlagResult runJPlag(List<String> newPaths, List<String> oldPaths, Function<JPlagOptions, JPlagOptions> customization)
+    protected JPlagResult runJPlag(List<Path> newPaths, List<Path> oldPaths, Function<JPlagOptions, JPlagOptions> customization)
             throws ExitException {
         return JPlag.run(getOptions(newPaths, oldPaths, customization));
     }
 
     protected JPlagOptions getOptionsWithExclusionFile(String testSampleName, String exclusionFileName) {
-        String blackList = Path.of(BASE_PATH, testSampleName, exclusionFileName).toString();
+        String blackList = BASE_PATH.resolve(testSampleName, exclusionFileName).toString();
         return getOptions(testSampleName, options -> options.withExclusionFileName(blackList));
     }
 
@@ -126,7 +124,7 @@ public abstract class TestBase {
      * @param customization is a function that configures and returns the JPlagOptions for the run.
      * @return the options.
      */
-    protected JPlagOptions getOptions(List<String> newPaths, Function<JPlagOptions, JPlagOptions> customization) {
+    protected JPlagOptions getOptions(List<Path> newPaths, Function<JPlagOptions, JPlagOptions> customization) {
         return getOptions(newPaths, List.of(), customization);
     }
 
@@ -137,9 +135,9 @@ public abstract class TestBase {
      * @param customization is a function that configures and returns the JPlagOptions for the run.
      * @return the options.
      */
-    protected JPlagOptions getOptions(List<String> newPaths, List<String> oldPaths, Function<JPlagOptions, JPlagOptions> customization) {
-        var newFiles = newPaths.stream().map(File::new).collect(Collectors.toSet());
-        var oldFiles = oldPaths.stream().map(File::new).collect(Collectors.toSet());
+    protected JPlagOptions getOptions(List<Path> newPaths, List<Path> oldPaths, Function<JPlagOptions, JPlagOptions> customization) {
+        var newFiles = new HashSet<>(newPaths);
+        var oldFiles = new HashSet<>(oldPaths);
         JPlagOptions options = new JPlagOptions(new JavaLanguage(), newFiles, oldFiles)
                 .withClusteringOptions(new ClusteringOptions().withEnabled(false));
         return customization.apply(options);

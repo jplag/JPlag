@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +15,7 @@ class RoutingFallbackTest {
     private final Routing contentRouting;
 
     RoutingFallbackTest() throws IOException {
-        File testFile = File.createTempFile("content", ".any");
+        Path testFile = Files.createTempFile("content", ".any");
         this.nullRouting = new RoutingStaticFile(null, ContentType.PLAIN);
         this.contentRouting = new RoutingStaticFile(testFile, ContentType.PLAIN);
     }

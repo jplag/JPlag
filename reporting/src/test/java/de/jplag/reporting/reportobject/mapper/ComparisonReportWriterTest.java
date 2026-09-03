@@ -1,6 +1,5 @@
 package de.jplag.reporting.reportobject.mapper;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Set;
@@ -20,11 +19,11 @@ import de.jplag.reporting.reportobject.writer.JPlagResultWriter;
 
 class ComparisonReportWriterTest {
     private final JPlagResultWriter fileWriter = new DummyResultWriter();
-    protected static final String BASE_PATH = Path.of("..", "core", "src", "test", "resources", "de", "jplag", "samples").toString();
+    protected static final Path BASE_PATH = Path.of("..", "core", "src", "test", "resources", "de", "jplag", "samples");
 
     @Test
     void firsLevelOfLookupMapComplete() throws ExitException {
-        File submissionDir = new File(BASE_PATH, "PartialPlagiarism");
+        Path submissionDir = BASE_PATH.resolve("PartialPlagiarism");
         JPlagResult result = JPlag.run(new JPlagOptions(new JavaLanguage(), Set.of(submissionDir), Set.of()));
         var mapper = new ComparisonReportWriter(Submission::getName, fileWriter);
 
@@ -35,7 +34,7 @@ class ComparisonReportWriterTest {
 
     @Test
     void secondLevelOfLookupMapComplete() throws ExitException {
-        File submissionDir = new File(BASE_PATH, "PartialPlagiarism");
+        Path submissionDir = BASE_PATH.resolve("PartialPlagiarism");
         JPlagResult result = JPlag.run(new JPlagOptions(new JavaLanguage(), Set.of(submissionDir), Set.of()));
         var mapper = new ComparisonReportWriter(Submission::getName, fileWriter);
 

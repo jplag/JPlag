@@ -1,19 +1,19 @@
 package de.jplag.reporting.reportobject.writer;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.net.URI;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.zip.ZipEntry;
+import java.util.Map;
 import java.util.zip.ZipOutputStream;
 
+import de.jplag.util.FileUtils;
+import de.jplag.util.RelativePath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.FilePathUtil;
 import de.jplag.reporting.serialization.JacksonUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,44 +30,47 @@ public class ZipWriter implements JPlagResultWriter {
     private static final String WRITE_STRING_ERROR = "Failed to write string entry %s";
     private static final String CLOSE_FILE_ERROR = "Failed to close zip file properly";
 
-    private final ZipOutputStream file;
+    private Path root;
 
     /**
      * The zip file to write to.
+     *
      * @param zipFile The file
-     * @throws FileNotFoundException If the file cannot be opened for writing
+     * @throws IOException If the file cannot be opened for writing
      */
-    public ZipWriter(File zipFile) throws FileNotFoundException {
-        zipFile.getAbsoluteFile().getParentFile().mkdirs();
-        this.file = new ZipOutputStream(new FileOutputStream(zipFile));
+    public ZipWriter(Path zipFile) throws IOException {
+        Files.createDirectories(zipFile.getParent());
+        if(Files.exists(zipFile)) {
+            try (ZipOutputStream os = new ZipOutputStream(Files.newOutputStream(zipFile))) {
+            }
+        }
+        FileSystem fileSystem = FileSystems.newFileSystem(URI.create("jar:" + zipFile.toUri()), Map.of("create", true));
+        root = fileSystem.getRootDirectories().iterator().next();
     }
 
     @Override
-    public void addJsonEntry(Object jsonContent, Path path) {
+    public void addJsonEntry(Object jsonContent, RelativePath path) {
         try {
-            this.file.putNextEntry(new ZipEntry(FilePathUtil.pathAsZipPath(path)));
-            this.file.write(objectMapper.writeValueAsBytes(jsonContent));
-            this.file.closeEntry();
+            FileUtils.write(path.resolveAgainst(root), objectMapper.writeValueAsString(jsonContent));
         } catch (IOException e) {
             logger.error(String.format(WRITE_JSON_ERROR, path), e);
         }
     }
 
     @Override
-    public void addFileContentEntry(Path path, File original) {
-        try (FileInputStream inputStream = new FileInputStream(original)) {
-            this.file.putNextEntry(new ZipEntry(FilePathUtil.pathAsZipPath(path)));
-            inputStream.transferTo(this.file);
+    public void addFileContentEntry(RelativePath path, Path original) {
+        try {
+            Files.createDirectories(path.resolveAgainst(root).getParent());
+            Files.copy(original, path.resolveAgainst(root));
         } catch (IOException e) {
-            logger.error(String.format(COPY_FILE_ERROR, original.getAbsolutePath(), path), e);
+            logger.error(String.format(COPY_FILE_ERROR, original, path), e);
         }
     }
 
     @Override
-    public void writeStringEntry(String entry, Path path) {
+    public void writeStringEntry(String entry, RelativePath path) {
         try {
-            this.file.putNextEntry(new ZipEntry(FilePathUtil.pathAsZipPath(path)));
-            this.file.write(entry.getBytes(StandardCharsets.UTF_8));
+            FileUtils.write(path.resolveAgainst(root), entry);
         } catch (IOException e) {
             logger.error(String.format(WRITE_STRING_ERROR, path), e);
         }
@@ -76,7 +79,7 @@ public class ZipWriter implements JPlagResultWriter {
     @Override
     public void close() {
         try {
-            this.file.close();
+            root.getFileSystem().close();
         } catch (IOException e) {
             logger.error(CLOSE_FILE_ERROR, e);
         }

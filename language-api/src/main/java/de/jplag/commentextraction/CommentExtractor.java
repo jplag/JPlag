@@ -1,7 +1,7 @@
 package de.jplag.commentextraction;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,14 +22,14 @@ public class CommentExtractor {
     private String lookBehind;
     private int currentCol;
     private int currentLine;
-    private final File file;
+    private final Path file;
 
     /**
      * Creates a new CommentExtractor, reading the contents from the specified file.
      * @param file File to read
      * @param settings Settings for the comment extractor
      */
-    public CommentExtractor(File file, CommentExtractorSettings settings) {
+    public CommentExtractor(Path file, CommentExtractorSettings settings) {
         this.settings = settings;
         this.comments = new ArrayList<>();
         this.lookBehind = "";
@@ -43,7 +43,7 @@ public class CommentExtractor {
         try {
             this.remainingContent = FileUtils.readFileContent(file);
         } catch (IOException e) {
-            logger.warn("Could not extract comments from {}: {}", file.getAbsolutePath(), e.getMessage());
+            logger.warn("Could not extract comments from {}: {}", file.toString(), e.getMessage());
             this.remainingContent = "";
         }
     }

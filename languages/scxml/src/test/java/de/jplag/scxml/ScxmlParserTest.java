@@ -4,7 +4,6 @@ import static de.jplag.scxml.parser.model.executable_content.SimpleExecutableCon
 import static de.jplag.scxml.parser.model.executable_content.SimpleExecutableContent.Type.SCRIPT;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -34,7 +33,6 @@ import de.jplag.testutils.FileUtil;
 class ScxmlParserTest {
 
     private static final Path BASE_PATH = Path.of("src", "test", "resources", "de", "jplag", "statecharts");
-    private final File baseDirectory = BASE_PATH.toFile();
 
     private static final String[] TEST_SUBJECTS = {"simple.scxml", "timed_transition.scxml", "conditional.scxml", "complex.scxml"};
 
@@ -61,8 +59,8 @@ class ScxmlParserTest {
     }
 
     @Test
-    void canParseSimpleStatechart() throws ParsingException, ParserConfigurationException, SAXException, IOException {
-        File testFile = new File(baseDirectory, TEST_SUBJECTS[0]);
+    void canParseSimpleStatechart() throws ParsingException, ParserConfigurationException {
+        Path testFile = BASE_PATH.resolve(TEST_SUBJECTS[0]);
         Statechart actual = new ScxmlParser().parse(testFile);
 
         State start = new StateBuilder("Start").setInitial().addTransitions(transition("Blinking", "user.press_button")).build();
@@ -72,8 +70,8 @@ class ScxmlParserTest {
     }
 
     @Test
-    void canParseTimedTransition() throws ParsingException, ParserConfigurationException, SAXException, IOException {
-        File testFile = new File(baseDirectory, TEST_SUBJECTS[1]);
+    void canParseTimedTransition() throws ParsingException, ParserConfigurationException {
+        Path testFile = BASE_PATH.resolve(TEST_SUBJECTS[1]);
         Statechart actual = new ScxmlParser().parse(testFile);
 
         State start = new StateBuilder("Start").addTransitions(Transition.makeTimed(transition("Next", List.of(new SimpleExecutableContent(SCRIPT)))))
@@ -84,7 +82,7 @@ class ScxmlParserTest {
 
     @Test
     void canParseConditional() throws ParserConfigurationException, ParsingException, IOException, SAXException {
-        File testFile = new File(baseDirectory, TEST_SUBJECTS[2]);
+        Path testFile = BASE_PATH.resolve(TEST_SUBJECTS[2]);
         Statechart actual = new ScxmlParser().parse(testFile);
         ElseIf elseIf = new ElseIf(List.of(new SimpleExecutableContent(SimpleExecutableContent.Type.RAISE)));
         Else _else = new Else(List.of(new SimpleExecutableContent(SimpleExecutableContent.Type.RAISE)));
@@ -98,7 +96,7 @@ class ScxmlParserTest {
 
     @Test
     void canParseComplexStatechart() throws ParsingException, ParserConfigurationException, SAXException, IOException {
-        File testFile = new File(baseDirectory, TEST_SUBJECTS[3]);
+        Path testFile = BASE_PATH.resolve(TEST_SUBJECTS[3]);
         Statechart actual = new ScxmlParser().parse(testFile);
 
         State start = new StateBuilder("Start").setInitial()
@@ -120,6 +118,6 @@ class ScxmlParserTest {
 
     @AfterEach
     void tearDown() {
-        FileUtil.clearFiles(new File(BASE_PATH.toString()), ScxmlLanguage.VIEW_FILE_EXTENSION);
+        FileUtil.clearFiles(BASE_PATH, ScxmlLanguage.VIEW_FILE_EXTENSION);
     }
 }

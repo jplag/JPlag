@@ -2,6 +2,8 @@ package de.jplag.cli;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Set;
 
 import org.junit.jupiter.api.Disabled;
@@ -29,19 +31,19 @@ class ReadmeCodeExampleTest {
     @SuppressWarnings("java:S2699")
     void testReadmeCodeExample() {
         Language language = new JavaLanguage();
-        Set<File> submissionDirectories = Set.of(new File("/path/to/rootDir"));
-        File baseCode = new File("/path/to/baseCode");
+        Set<Path> submissionDirectories = Set.of(Path.of("path", "to", "rootDir"));
+        Path baseCode = Path.of("path", "to", "baseCode");
         JPlagOptions options = new JPlagOptions(language, submissionDirectories, Set.of()).withBaseCodeSubmissionDirectory(baseCode);
 
         try {
             JPlagResult result = JPlag.run(options);
 
             // Optional
-            ReportObjectFactory reportObjectFactory = new ReportObjectFactory(new File("/path/to/output"));
+            ReportObjectFactory reportObjectFactory = new ReportObjectFactory(Path.of("path", "to", "output"));
             reportObjectFactory.createAndSaveReport(result);
         } catch (ExitException e) {
             // error handling here
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             // handle IO exception here
         }
     }

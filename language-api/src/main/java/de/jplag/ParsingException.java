@@ -2,6 +2,7 @@ package de.jplag;
 
 import java.io.File;
 import java.io.Serial;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -17,7 +18,7 @@ public class ParsingException extends Exception {
      * @param file the file in which a parsing error occurred. (A null value is permitted, and indicates that the file is
      * nonexistent or unknown.)
      */
-    public ParsingException(File file) {
+    public ParsingException(Path file) {
         this(file, (String) null);
     }
 
@@ -27,7 +28,7 @@ public class ParsingException extends Exception {
      * nonexistent or unknown.)
      * @param reason the reason the parsing failed. A null value is permitted.)
      */
-    public ParsingException(File file, String reason) {
+    public ParsingException(Path file, String reason) {
         super(constructMessage(file, reason));
     }
 
@@ -37,7 +38,7 @@ public class ParsingException extends Exception {
      * nonexistent or unknown.)
      * @param cause the cause. (A null value is permitted, and indicates that the cause is nonexistent or unknown.)
      */
-    public ParsingException(File file, Throwable cause) {
+    public ParsingException(Path file, Throwable cause) {
         this(file, null, cause);
     }
 
@@ -48,7 +49,7 @@ public class ParsingException extends Exception {
      * @param reason the reason the parsing failed. A null value is permitted.)
      * @param cause the cause. (A null value is permitted, and indicates that the cause is nonexistent or unknown.)
      */
-    public ParsingException(File file, String reason, Throwable cause) {
+    public ParsingException(Path file, String reason, Throwable cause) {
         super(constructMessage(file, reason), cause);
     }
 
@@ -74,7 +75,20 @@ public class ParsingException extends Exception {
         };
     }
 
+    @Deprecated(forRemoval = true)
     private static String constructMessage(File file, String reason) {
+        StringBuilder messageBuilder = new StringBuilder();
+        String fileName = file == null ? "<null>" : file.toString();
+        if (reason == null || !reason.contains(fileName)) {
+            messageBuilder.append("failed to parse '%s'".formatted(fileName));
+        }
+        if (reason != null && !reason.isBlank()) {
+            messageBuilder.append(reason);
+        }
+        return messageBuilder.toString();
+    }
+
+    private static String constructMessage(Path file, String reason) {
         StringBuilder messageBuilder = new StringBuilder();
         String fileName = file == null ? "<null>" : file.toString();
         if (reason == null || !reason.contains(fileName)) {

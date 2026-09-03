@@ -2,11 +2,11 @@ package de.jplag;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,8 +64,8 @@ public class SubmissionSetBuilder {
      * @throws ExitException if the directory cannot be read.
      */
     public SubmissionSet buildSubmissionSet() throws ExitException {
-        Set<File> submissionDirectories = verifyRootDirectories(options.submissionDirectories(), true);
-        Set<File> oldSubmissionDirectories = verifyRootDirectories(options.oldSubmissionDirectories(), false);
+        Set<Path> submissionDirectories = verifyRootDirectories(options.submissionDirectories(), true);
+        Set<Path> oldSubmissionDirectories = verifyRootDirectories(options.oldSubmissionDirectories(), false);
         checkForNonOverlappingRootDirectories(submissionDirectories, oldSubmissionDirectories);
 
         // For backward compatibility, don't prefix submission names with their root directory
@@ -73,15 +74,15 @@ public class SubmissionSetBuilder {
         boolean multipleRoots = numberOfRootDirectories > 1;
 
         List<SubmissionFileData> submissionFiles = new ArrayList<>();
-        for (File submissionDirectory : submissionDirectories) {
+        for (Path submissionDirectory : submissionDirectories) {
             submissionFiles.addAll(listSubmissionFiles(submissionDirectory, true));
         }
-        for (File submissionDirectory : oldSubmissionDirectories) {
+        for (Path submissionDirectory : oldSubmissionDirectories) {
             submissionFiles.addAll(listSubmissionFiles(submissionDirectory, false));
         }
 
         ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.LOADING, submissionFiles.size());
-        Map<File, Submission> foundSubmissions = new HashMap<>();
+        Map<Path, Submission> foundSubmissions = new HashMap<>();
         try {
             for (SubmissionFileData submissionFile : submissionFiles) {
                 processSubmissionFile(submissionFile, multipleRoots, foundSubmissions);
@@ -103,21 +104,21 @@ public class SubmissionSetBuilder {
     /**
      * Verify that the given root directories exist and have no duplicate entries.
      */
-    private Set<File> verifyRootDirectories(Set<File> rootDirectoryNames, boolean areNewDirectories) throws ExitException {
+    private Set<Path> verifyRootDirectories(Set<Path> rootDirectoryNames, boolean areNewDirectories) throws ExitException {
         if (areNewDirectories && rootDirectoryNames.isEmpty()) {
             throw new RootDirectoryException("No root directories specified with submissions to check for plagiarism!");
         }
 
-        Set<File> canonicalRootDirectories = HashSet.newHashSet(rootDirectoryNames.size());
-        for (final File rootDirectory : rootDirectoryNames) {
-            if (!rootDirectory.exists()) {
+        Set<Path> canonicalRootDirectories = HashSet.newHashSet(rootDirectoryNames.size());
+        for (final Path rootDirectory : rootDirectoryNames) {
+            if (!Files.exists(rootDirectory)) {
                 throw new RootDirectoryException(String.format("Root directory \"%s\" does not exist!", rootDirectory));
             }
-            if (!rootDirectory.isDirectory()) {
+            if (!Files.exists(rootDirectory)) {
                 throw new RootDirectoryException(String.format("Root directory \"%s\" is not a directory!", rootDirectory));
             }
 
-            File canonicalRootDirectory = makeCanonical(rootDirectory,
+            Path canonicalRootDirectory = makeCanonical(rootDirectory,
                     it -> new RootDirectoryException("Cannot read root directory: " + rootDirectory, it));
             if (!canonicalRootDirectories.add(canonicalRootDirectory)) {
                 // Root directory was already added, report a warning.
@@ -132,9 +133,9 @@ public class SubmissionSetBuilder {
      * @param submissionDirectories directories of submissions which should be checked for plagiarism
      * @param oldSubmissionDirectories directories of submissions which are considered possible sources of plagiarism
      */
-    private void checkForNonOverlappingRootDirectories(Set<File> submissionDirectories, Set<File> oldSubmissionDirectories) {
+    private void checkForNonOverlappingRootDirectories(Set<Path> submissionDirectories, Set<Path> oldSubmissionDirectories) {
 
-        Set<File> commonRootdirectories = new HashSet<>(submissionDirectories);
+        Set<Path> commonRootdirectories = new HashSet<>(submissionDirectories);
         commonRootdirectories.retainAll(oldSubmissionDirectories);
         if (commonRootdirectories.isEmpty()) {
             return;
@@ -143,7 +144,7 @@ public class SubmissionSetBuilder {
         // As old submission directories are only read while new submission directories are both read and checked, the
         // former use can be removed without affecting the result of the checks.
         oldSubmissionDirectories.removeAll(commonRootdirectories);
-        for (File rootDirectory : commonRootdirectories) {
+        for (Path rootDirectory : commonRootdirectories) {
             logger.warn(
                     "Root directory \"{}\" is specified both for plagiarism checking and for prior submissions, will perform plagiarism checking only.",
                     rootDirectory);
@@ -155,19 +156,19 @@ public class SubmissionSetBuilder {
             return Optional.empty();
         }
 
-        File baseCodeSubmissionDirectory = options.baseCodeSubmissionDirectory();
-        if (!baseCodeSubmissionDirectory.exists()) {
+        Path baseCodeSubmissionDirectory = options.baseCodeSubmissionDirectory();
+        if (!Files.exists(baseCodeSubmissionDirectory)) {
             throw new BasecodeException("Basecode directory \"%s\" does not exist".formatted(baseCodeSubmissionDirectory));
         }
 
         if (isFileExcluded(baseCodeSubmissionDirectory)) { // Stating an excluded path as basecode isn't very useful.
-            throw new BasecodeException("Exclude submission: " + baseCodeSubmissionDirectory.getName());
+            throw new BasecodeException("Exclude submission: " + baseCodeSubmissionDirectory.getFileName());
         }
-        if (baseCodeSubmissionDirectory.isFile() && !hasValidSuffix(baseCodeSubmissionDirectory)) {
-            throw new BasecodeException("Ignore submission with invalid extension or suffix: " + baseCodeSubmissionDirectory.getName());
+        if (Files.isRegularFile(baseCodeSubmissionDirectory) && !hasValidSuffix(baseCodeSubmissionDirectory)) {
+            throw new BasecodeException("Ignore submission with invalid extension or suffix: " + baseCodeSubmissionDirectory.getFileName());
         }
 
-        Submission baseCodeSubmission = processSubmission(baseCodeSubmissionDirectory.getName(), baseCodeSubmissionDirectory, false);
+        Submission baseCodeSubmission = processSubmission(baseCodeSubmissionDirectory.getFileName().toString(), baseCodeSubmissionDirectory, false);
         logger.info("Basecode directory \"{}\" will be used.", baseCodeSubmission.getName());
         return Optional.of(baseCodeSubmission);
     }
@@ -180,20 +181,19 @@ public class SubmissionSetBuilder {
      * @return the submission file data for each single-file submission
      * @throws RootDirectoryException if #rootDirectory is not a valid path or an I/O error occurs.
      */
-    private List<SubmissionFileData> listSubmissionFiles(File rootDirectory, boolean isNew) throws RootDirectoryException {
-        if (!rootDirectory.isDirectory()) {
+    private List<SubmissionFileData> listSubmissionFiles(Path rootDirectory, boolean isNew) throws RootDirectoryException {
+        if (!Files.isDirectory(rootDirectory)) {
             throw new AssertionError("Given root is not a directory.");
         }
 
         try {
-            File[] files = rootDirectory.listFiles();
+            Stream<Path> files = Files.list(rootDirectory);
             if (files == null) {
                 throw new RootDirectoryException("Cannot list files of the root directory!");
             }
 
-            return Arrays.stream(files).sorted(Comparator.comparing(File::getName)).map(it -> new SubmissionFileData(it, rootDirectory, isNew))
-                    .toList();
-        } catch (SecurityException exception) {
+            return files.map(it -> new SubmissionFileData(it, rootDirectory, isNew)).toList();
+        } catch (SecurityException | IOException exception) {
             throw new RootDirectoryException("Cannot list files of the root directory! " + exception.getMessage(), exception);
         }
     }
@@ -206,18 +206,18 @@ public class SubmissionSetBuilder {
      * @return The entry converted to a submission.
      * @throws ExitException when an error has been found while processing the entry.
      */
-    private Submission processSubmission(String submissionName, File submissionFile, boolean isNew) throws ExitException {
-        File file = submissionFile;
-        if (file.isDirectory() && options.subdirectoryName() != null) {
+    private Submission processSubmission(String submissionName, Path submissionFile, boolean isNew) throws ExitException {
+        Path file = submissionFile;
+        if (Files.isDirectory(file) && options.subdirectoryName() != null) {
             // Use subdirectory instead
-            file = new File(file, options.subdirectoryName());
+            file = file.resolve(options.subdirectoryName());
 
-            if (!file.exists()) {
+            if (!Files.exists(file)) {
                 throw new SubmissionException(
                         String.format("Submission %s does not contain the given subdirectory '%s'", submissionName, options.subdirectoryName()));
             }
 
-            if (!file.isDirectory()) {
+            if (!Files.isDirectory(file)) {
                 throw new SubmissionException(String.format("The given subdirectory '%s' is not a directory!", options.subdirectoryName()));
             }
         }
@@ -226,14 +226,14 @@ public class SubmissionSetBuilder {
         return new Submission(submissionName, file, isNew, listFilesRecursively(file), options.language());
     }
 
-    private void processSubmissionFile(SubmissionFileData file, boolean multipleRoots, Map<File, Submission> foundSubmissions) throws ExitException {
+    private void processSubmissionFile(SubmissionFileData file, boolean multipleRoots, Map<Path, Submission> foundSubmissions) throws ExitException {
         if (isFileExcluded(file.submissionFile())) {
-            logger.error("Exclude submission: {}", file.submissionFile().getName());
-        } else if (file.submissionFile().isFile() && !hasValidSuffix(file.submissionFile())) {
-            logger.error("Ignore submission with invalid extension or suffix: {}", file.submissionFile().getName());
+            logger.error("Exclude submission: {}", file.submissionFile().getFileName());
+        } else if (Files.isRegularFile(file.submissionFile()) && !hasValidSuffix(file.submissionFile())) {
+            logger.error("Ignore submission with invalid extension or suffix: {}", file.submissionFile().getFileName());
         } else {
-            String rootDirectoryPrefix = multipleRoots ? file.rootDirectory().getName() + File.separator : "";
-            String submissionName = rootDirectoryPrefix + file.submissionFile().getName();
+            String rootDirectoryPrefix = multipleRoots ? file.rootDirectory().getFileName() + File.separator : "";
+            String submissionName = rootDirectoryPrefix + file.submissionFile().getFileName();
             Submission submission = processSubmission(submissionName, file.submissionFile(), file.isNew());
             foundSubmissions.put(submission.getRoot(), submission);
         }
@@ -244,21 +244,21 @@ public class SubmissionSetBuilder {
      * @param file is the file to check.
      * @return true if the file matches the file extension or suffix.
      */
-    private boolean hasValidSuffix(File file) {
+    private boolean hasValidSuffix(Path file) {
         List<String> validSuffixes = options.fileSuffixes();
 
         // This is the case if either the language modules or the CLI did not set the valid suffixes array in options
         if (validSuffixes == null || validSuffixes.isEmpty()) {
             return true;
         }
-        return validSuffixes.stream().anyMatch(suffix -> file.getName().toLowerCase().endsWith(suffix.toLowerCase()));
+        return validSuffixes.stream().anyMatch(suffix -> file.getFileName().toString().toLowerCase().endsWith(suffix.toLowerCase()));
     }
 
     /**
      * Checks if a file is excluded or not.
      */
-    private boolean isFileExcluded(File file) {
-        return options.excludedFiles().stream().anyMatch(excludedName -> file.getName().endsWith(excludedName));
+    private boolean isFileExcluded(Path file) {
+        return options.excludedFiles().stream().anyMatch(excludedName -> file.getFileName().toString().endsWith(excludedName));
     }
 
     /**
@@ -269,36 +269,39 @@ public class SubmissionSetBuilder {
      * @param file - File to start the scan from.
      * @return a list of nested files.
      */
-    private Collection<File> listFilesRecursively(File file) {
+    private Collection<Path> listFilesRecursively(Path file) {
         if (isFileExcluded(file)) {
             return Collections.emptyList();
         }
 
-        if (file.isFile() && hasValidSuffix(file)) {
+        if (Files.isRegularFile(file) && hasValidSuffix(file)) {
             return Collections.singletonList(file);
         }
+        try {
+            Stream<Path> nestedFileNames = Files.list(file);
 
-        String[] nestedFileNames = file.list();
+            if (nestedFileNames == null) {
+                return Collections.emptyList();
+            }
 
-        if (nestedFileNames == null) {
+            Collection<Path> files = new ArrayList<>();
+
+            for (Path fileName : nestedFileNames.toList()) {
+                files.addAll(listFilesRecursively(file.resolve(fileName)));
+            }
+
+            return files;
+        } catch (IOException _) {
             return Collections.emptyList();
         }
-
-        Collection<File> files = new ArrayList<>();
-
-        for (String fileName : nestedFileNames) {
-            files.addAll(listFilesRecursively(new File(file, fileName)));
-        }
-
-        return files;
     }
 
     /**
      * Computes the canonical file of a file, if an exception is thrown it is wrapped accordingly and re-thrown.
      */
-    private File makeCanonical(File file, Function<Exception, ExitException> exceptionWrapper) throws ExitException {
+    private Path makeCanonical(Path file, Function<Exception, ExitException> exceptionWrapper) throws ExitException {
         try {
-            return file.getCanonicalFile();
+            return file.toRealPath();
         } catch (IOException exception) {
             throw exceptionWrapper.apply(exception);
         }
