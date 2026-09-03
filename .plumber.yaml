@@ -1,0 +1,38 @@
+# Plumber overlay: inherits every control from the CLI's built-in
+# baseline, only the differences for this repo are written here.
+# Run 'plumber config resolve' to see the full effective config.
+extends: plumber:default
+version: "2.0"
+
+github:
+  controls:
+    githubActionMustComeFromAuthorizedSources:
+      # Keep the curated default list and trust the actions this repo
+      # already uses on top of it.
+      includePlumberDefaults: true
+      trustedGithubActions:
+        - fkirc/skip-duplicate-actions
+        - JamesIves/github-pages-deploy-action
+        - stefanzweifel/git-auto-commit-action
+        - softprops/action-gh-release
+        - crazy-max/ghaction-import-gpg
+        - whelk-io/maven-settings-xml-action
+        - potiuk/get-workflow-origin
+
+    # Off in CI: reading branch protection settings needs an admin-read
+    # token, the default GITHUB_TOKEN cannot see them.
+    branchMustBeProtected:
+      enabled: false
+
+    # Off for now: get-workflow-origin and maven-settings-xml-action are
+    # archived upstream. They are pinned to commits in the meantime;
+    # enable this once they are replaced.
+    actionsMustNotBeArchived:
+      enabled: false
+
+    # Off for now: check-sonarcloud-pr analyzes fork PRs under
+    # workflow_run by design so Sonar can see the code. Its token is
+    # restricted to reads; moving that analysis to a safer pattern is a
+    # bigger change than this PR.
+    workflowMustNotUseDangerousTriggers:
+      enabled: false
