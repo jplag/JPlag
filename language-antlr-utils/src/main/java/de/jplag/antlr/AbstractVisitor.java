@@ -110,7 +110,7 @@ public abstract class AbstractVisitor<T> {
      * @param entity The entity to check.
      * @return Whether to visit the entity.
      */
-    boolean matches(T entity) {
+    public boolean matches(T entity) {
         return this.condition.test(entity);
     }
 
@@ -118,7 +118,7 @@ public abstract class AbstractVisitor<T> {
      * Enter a given entity, injecting the needed dependencies.
      * @param data is the data passed to the visitors.
      */
-    void enter(HandlerData<T> data) {
+    public void enter(HandlerData<T> data) {
         handleEnter(data, this::extractEnterToken, this::extractEnterToken);
     }
 
