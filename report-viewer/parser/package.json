@@ -9,6 +9,6 @@
     "slash": "^5.1.0"
   },
   "scripts": {
-    "test": "vitest"
+    "test": "vitest --coverage"
   }
 }

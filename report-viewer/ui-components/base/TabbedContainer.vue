@@ -1,14 +1,14 @@
 <template>
   <ContainerComponent class="flex flex-col overflow-hidden p-0!">
-    <div class="bg-container-secondary-light dark:bg-container-secondary-dark flex w-full">
+    <div class="bg-container-secondary flex w-full">
       <div
         v-for="index in Array(props.tabs.length).keys()"
         :key="index"
-        class="border-container-border-light dark:border-container-border-dark cursor-pointer border-r"
+        class="border-container-border cursor-pointer border-r"
         :class="
           tabNames[index] == selectedTab
-            ? 'bg-container-light dark:bg-container-dark border-b-0'
-            : 'bg-container-secondary-light dark:bg-container-secondary-dark border-b'
+            ? 'bg-container border-b-0'
+            : 'bg-container-secondary border-b'
         "
         @click="selectedTab = tabNames[index]"
       >
@@ -29,9 +29,7 @@
         </ToolTipComponent>
         <p v-else class="p-2 px-5">{{ tabNames[index] }}</p>
       </div>
-      <div
-        class="border-container-border-light dark:border-container-border-dark flex-1 border-b"
-      ></div>
+      <div class="border-container-border flex-1 border-b"></div>
     </div>
     <div class="flex flex-1 flex-col overflow-hidden p-2">
       <slot :name="selectedTab.replace(/\s/g, '-')"></slot>

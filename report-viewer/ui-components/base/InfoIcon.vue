@@ -1,6 +1,6 @@
 <template>
   <span
-    class="t-0 relative ml-0 hidden h-full items-center text-[0.6rem] text-slate-300 md:ml-1 md:flex dark:text-slate-600"
+    class="t-0 text-gray-low-contrast relative ml-0 hidden h-full items-center text-[0.6rem] md:ml-1 md:flex"
   >
     <FontAwesomeIcon :icon="faInfoCircle" />
   </span>

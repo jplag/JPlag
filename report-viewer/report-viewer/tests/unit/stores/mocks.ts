@@ -110,6 +110,12 @@ const mockOptions: CliOptions = {
     minimumNeighborLength: 0,
     maximumGapSize: 0,
     minimumRequiredMerges: 3
+  },
+  frequencyAnalysisOptions: {
+    enabled: false,
+    analysisStrategy: '',
+    weightingFunction: '',
+    weightingFactor: 0
   }
 }
 const mockRunInformation = new RunInformation(
@@ -119,6 +125,7 @@ const mockRunInformation = new RunInformation(
     { submissionId: 'failedTest', submissionState: SubmissionState.CANNOT_PARSE }
   ],
   '06/05/25',
+  999,
   471,
   3
 )

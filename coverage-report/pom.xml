@@ -19,7 +19,7 @@
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
-            <artifactId>endtoend-testing</artifactId>
+            <artifactId>regression-tests</artifactId>
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>

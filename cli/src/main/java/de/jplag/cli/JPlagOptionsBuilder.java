@@ -12,7 +12,7 @@ import de.jplag.cli.options.CliOptions;
 import de.jplag.cli.picocli.CliInputHandler;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.Preprocessing;
-import de.jplag.highlightextraction.FrequencyAnalysisOptions;
+import de.jplag.frequency.FrequencyAnalysisOptions;
 import de.jplag.merging.MergingOptions;
 import de.jplag.options.JPlagOptions;
 
@@ -43,7 +43,6 @@ public class JPlagOptionsBuilder {
         Set<File> oldSubmissionDirectories = Set.of(this.cliOptions.oldDirectories);
         List<String> suffixes = List.of(this.cliOptions.advanced.suffixes);
         submissionDirectories.addAll(List.of(this.cliOptions.newDirectories));
-        submissionDirectories.addAll(this.cliInputHandler.getSubcommandSubmissionDirectories());
 
         JPlagOptions jPlagOptions = initializeJPlagOptions(submissionDirectories, oldSubmissionDirectories, suffixes);
 
@@ -108,7 +107,8 @@ public class JPlagOptionsBuilder {
     private FrequencyAnalysisOptions getFrequencyAnalysisOptions() {
         CliOptions.FrequencyAnalysis frequencyOptions = this.cliOptions.highlightExtraction;
         return new FrequencyAnalysisOptions().withEnabled(frequencyOptions.enabled)
-                .withAnalysisStrategy(frequencyOptions.frequencyStrategy.create(frequencyOptions.minimumSubsequenceLength))
+                .withFrequencyStrategy(frequencyOptions.frequencyStrategy.create(frequencyOptions.minimumSubsequenceLength))
+                .withFrequencyStrategyMinValue(frequencyOptions.minimumSubsequenceLength)
                 .withWeightingFunction(frequencyOptions.weightingFunction.create()).withWeightingFactor(frequencyOptions.weightingFactor);
     }
 }

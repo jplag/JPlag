@@ -11,7 +11,8 @@ export class RunInformationFactory {
       jplagVersion,
       json.failedSubmissions,
       json.dateOfExecution,
-      json.executionTime,
+      json.tokenizationTime,
+      json.comparisonTime,
       json.totalComparisons
     )
   }
@@ -21,7 +22,8 @@ interface ReportFormatRunInformation {
   version: ReportFormatVersion
   failedSubmissions: FailedSubmission[]
   dateOfExecution: string
-  executionTime: number
+  tokenizationTime: number
+  comparisonTime: number
   totalComparisons: number
 }
 

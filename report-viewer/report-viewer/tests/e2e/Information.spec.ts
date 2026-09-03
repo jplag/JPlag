@@ -25,7 +25,8 @@ test('Test information page', async ({ page }) => {
 
   const runData = await page.getByText('Run Data:Date of Execution:').textContent()
   expect(runData).toMatch(/Date of Execution:[0-9]{2}\/[0-9]{2}\/[0-9]{2}/)
-  expect(runData).toMatch(/Execution Duration:[0-9]+ ms/)
+  expect(runData).toMatch(/Tokenization Duration:[0-9]+ ms/)
+  expect(runData).toMatch(/Comparison Duration:[0-9]+ ms/)
   expect(runData).toMatch(/Total Submissions:[0-9]+/)
   expect(runData).toMatch(/Total Comparisons:[0-9]+/)
   expect(runData).toMatch(/Shown Comparisons:[0-9]+/)

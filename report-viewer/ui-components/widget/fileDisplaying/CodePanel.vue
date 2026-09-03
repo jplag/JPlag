@@ -20,7 +20,7 @@
 
       <ToolTipComponent direction="left" class="font-normal">
         <template #default
-          ><span class="text-gray-600 dark:text-gray-300"
+          ><span class="text-gray-high-contrast"
             >{{ Math.round((file.matchedTokenCount / (file.tokenCount - 1)) * 100) }}%</span
           ></template
         >

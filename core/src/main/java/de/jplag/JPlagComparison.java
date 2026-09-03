@@ -10,12 +10,11 @@ import java.util.List;
  * @param matches is the unmodifiable list of all subsequence matches between the two submissions.
  * @param ignoredMatches is the unmodifiable list of ignored matches whose length is below the minimum token match
  * threshold.
- * @param frequencyWeightedSimilarity the similarity influenced by the isFrequencyAnalysisEnabled of a match
- * @param isFrequencyAnalysisEnabled if the frequencyWeightedSimilarity shall be used or the similarity value without
- * considering the match isFrequencyAnalysisEnabled
+ * @param frequencyWeightedSimilarity the similarity score adjusted by match frequency weighting.
+ * @param useFrequencyWeighting whether to use the frequency-weighted similarity instead of the standard similarity.
  */
 public record JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches, List<Match> ignoredMatches,
-        double frequencyWeightedSimilarity, boolean isFrequencyAnalysisEnabled) {
+        double frequencyWeightedSimilarity, boolean useFrequencyWeighting) {
 
     /**
      * Constructs a new comparison between two submissions. The match lists are wrapped as unmodifiable to preserve
@@ -29,14 +28,14 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
     }
 
     /**
-     * Copy constructor to give the Comparisons an individual isFrequencyAnalysisEnabled.
-     * @param originalComparison the comparison without used isFrequencyAnalysisEnabled Analysis.
-     * @param frequencyWeightedSimilarity isFrequencyAnalysisEnabled Weighted similarity, that will replace standard
-     * similarity.
+     * Copy constructor that replaces the similarity with a frequency-weighted value.
+     * @param originalComparison the original comparison whose matches are reused.
+     * @param frequencyWeightedSimilarity the new similarity score adjusted by match frequency weighting.
+     * @param useFrequencyWeighting whether to use the frequency-weighted similarity.
      */
-    public JPlagComparison(JPlagComparison originalComparison, double frequencyWeightedSimilarity, boolean frequencyUsed) {
+    public JPlagComparison(JPlagComparison originalComparison, double frequencyWeightedSimilarity, boolean useFrequencyWeighting) {
         this(originalComparison.firstSubmission(), originalComparison.secondSubmission(), Collections.unmodifiableList(originalComparison.matches),
-                Collections.unmodifiableList(originalComparison.ignoredMatches), frequencyWeightedSimilarity, frequencyUsed);
+                Collections.unmodifiableList(originalComparison.ignoredMatches), frequencyWeightedSimilarity, useFrequencyWeighting);
     }
 
     /**
@@ -70,17 +69,27 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
     }
 
     /**
+     * Returns the combined similarity divisor for both submissions, used as the denominator when computing average
+     * similarity. It represents the total number of tokens across both submissions that are candidates for structural
+     * matching, i.e. all tokens excluding file-boundary markers and any tokens already attributed to base code.
+     * @return sum of the similarity divisors of both submissions.
+     */
+    public int similarityDivisor() {
+        return firstSubmission.getSimilarityDivisor() + secondSubmission.getSimilarityDivisor();
+    }
+
+    /**
      * Computes the average (or symmetric) similarity between the two submissions. The similarity is adjusted based on
-     * whether both submissions contain base code matches. Checks if the frequency analysis is used, if it is then a
-     * frequency based similarity score will be returned.
+     * whether both submissions contain base code matches. If frequency weighting is enabled, the frequency-weighted
+     * similarity score is returned instead.
      * @return Average similarity in interval [0, 1]. 0 means zero percent structural similarity, 1 means 100 percent
      * structural similarity.
      */
     public double similarity() {
-        if (isFrequencyAnalysisEnabled && frequencyWeightedSimilarity >= 0) {
+        if (useFrequencyWeighting && frequencyWeightedSimilarity >= 0) {
             return frequencyWeightedSimilarity;
         }
-        int divisor = firstSubmission.getSimilarityDivisor() + secondSubmission.getSimilarityDivisor();
+        int divisor = similarityDivisor();
         if (divisor == 0) {
             return 0;
         }

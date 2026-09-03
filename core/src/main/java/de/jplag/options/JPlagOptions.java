@@ -16,7 +16,7 @@ import de.jplag.JPlag;
 import de.jplag.Language;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.exceptions.BasecodeException;
-import de.jplag.highlightextraction.FrequencyAnalysisOptions;
+import de.jplag.frequency.FrequencyAnalysisOptions;
 import de.jplag.merging.MergingOptions;
 import de.jplag.util.FileUtils;
 

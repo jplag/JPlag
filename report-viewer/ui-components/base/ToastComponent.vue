@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="timePassed < timeToLive && visible"
-    class="border-accent-dark bg-container-light dark:bg-container-dark absolute bottom-5 left-5 max-w-96 rounded-md border-2"
+    class="border-accent-dark bg-container absolute bottom-5 left-5 max-w-96 rounded-md border-2"
   >
     <div class="flex">
       <div class="grow p-2">
@@ -12,7 +12,7 @@
       </div>
     </div>
     <div
-      class="bg-accent h-1"
+      class="bg-accent-light h-1"
       :style="{ width: `${100 - (timePassed / timeToLive) * 100}%` }"
     ></div>
   </div>

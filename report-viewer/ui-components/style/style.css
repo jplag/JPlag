@@ -5,38 +5,92 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-@theme {
-  --color-font-light: #ffffff;
-  --color-font-dark: #000000;
-
+:root {
+  /* Color definitions for both light and dark mode */
+  --color-font-light: #000000;
+  --color-font-dark: #ffffff;
   --color-background-light: hsl(0, 0%, 97%);
   --color-background-dark: hsl(230, 10%, 8%);
-
   --color-container-light: hsl(0, 0%, 98%);
   --color-container-dark: hsl(250, 10%, 15%);
   --color-container-border-light: hsl(0, 0%, 80%);
   --color-container-border-dark: hsl(0, 0%, 25%);
   --color-container-secondary-light: hsl(0, 0%, 95%);
   --color-container-secondary-dark: hsl(250, 10%, 20%);
-
   --color-interactable-light: hsl(0, 0%, 100%);
   --color-interactable-dark: hsl(250, 10%, 20%);
   --color-interactable-border-light: hsl(0, 0%, 75%);
   --color-interactable-border-dark: hsl(0, 0%, 25%);
-
   --color-scrollbar-background-light: var(--color-slate-100);
   --color-scrollbar-background-dark: #30363d;
   --color-scrollbar-thumb-light: var(--color-slate-400);
   --color-scrollbar-thumb-dark: #505a66;
-
-  --color-accent: #be1622;
+  --color-accent-light: #be1622;
   --color-accent-dark: #7f0f18;
+  --color-link:#00c;
+  --color-link-dark: #0070f3;
+  --color-gray: var(--color-gray-500);
+  --color-gray-dark: var(--color-gray-400);
+  --color-gray-darker: var(--color-gray-600);
+  --color-gray-lighter: var(--color-gray-300);
 
-  --color-link: #0070f3;
-  --color-link-dark: #00c;
+  /* runtime variables, defaulting to light */
+  --font: var(--color-font-light);
+  --background: var(--color-background-light);
+  --container: var(--color-container-light);
+  --container-border: var(--color-container-border-light);
+  --container-secondary: var(--color-container-secondary-light);
+  --interactable: var(--color-interactable-light);
+  --interactable-border: var(--color-interactable-border-light);
+  --scrollbar-background: var(--color-scrollbar-background-light);
+  --scrollbar-thumb: var(--color-scrollbar-thumb-light);
+  --accent: var(--color-accent-light);
+  --link: var(--color-link);
+  --gray: var(--color-gray);
+  --gray-low-contrast: var(--color-gray-lighter);
+  --gray-high-contrast: var(--color-gray-darker);
+}
+
+.dark {
+  --font: var(--color-font-dark);
+  --background: var(--color-background-dark);
+  --container: var(--color-container-dark);
+  --container-border: var(--color-container-border-dark);
+  --container-secondary: var(--color-container-secondary-dark);
+  --interactable: var(--color-interactable-dark);
+  --interactable-border: var(--color-interactable-border-dark);
+  --scrollbar-background: var(--color-scrollbar-background-dark);
+  --scrollbar-thumb: var(--color-scrollbar-thumb-dark);
+  --accent: var(--color-accent-dark);
+  --link: var(--color-link-dark);
+  --gray: var(--color-gray-dark);
+  --gray-low-contrast: var(--color-gray-darker);
+  --gray-high-contrast: var(--color-gray-lighter);
+}
+
+/* inline is needed, so tailwind actually uses the variable and not its value directly at startup */
+@theme inline {
+  --color-font: var(--font);
+  --color-background: var(--background);
+  --color-container: var(--container);
+  --color-container-border: var(--container-border);
+  --color-container-secondary: var(--container-secondary);
+  --color-interactable: var(--interactable);
+  --color-interactable-border: var(--interactable-border);
+  --color-scrollbar-background: var(--scrollbar-background);
+  --color-scrollbar-thumb: var(--scrollbar-thumb);
+  --color-accent: var(--accent);
+  --color-link: var(--link);
+
+  --color-gray: var(--gray);
+  --color-gray-low-contrast: var(--gray-low-contrast);
+  --color-gray-high-contrast: var(--gray-high-contrast);
+
+
+  --color-accent-light: var(--color-accent-light);
+  --color-accent-dark: var(--color-accent-dark);
 
   --color-error: #dc322f;
-
   --color-tooltip: rgba(0, 0, 0, 0.8);
 }
 
@@ -67,9 +121,9 @@
     @apply h-[6px] w-[6px] cursor-pointer;
   }
   *::-webkit-scrollbar-track {
-    @apply bg-scrollbar-background-light dark:bg-scrollbar-background-dark rounded-full border-2;
+    @apply bg-scrollbar-background rounded-full border-2;
   }
   *::-webkit-scrollbar-thumb {
-    @apply bg-scrollbar-thumb-light dark:bg-scrollbar-thumb-dark rounded-full border-2;
+    @apply bg-scrollbar-thumb rounded-full border-2;
   }
 }

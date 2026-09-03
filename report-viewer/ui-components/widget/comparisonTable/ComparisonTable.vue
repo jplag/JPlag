@@ -111,9 +111,8 @@
                   <div
                     class="tableRow min-w-fit"
                     :class="{
-                      'bg-container-secondary-light dark:bg-container-secondary-dark':
-                        item.id % 2 == 1,
-                      'bg-accent/30!': isHighlightedRow(item)
+                      'bg-container-secondary': item.id % 2 == 1,
+                      'bg-accent-light/30!': isHighlightedRow(item)
                     }"
                     @mouseover="
                       () =>

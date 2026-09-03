@@ -136,7 +136,7 @@ public class LongestCommonSubsequenceSearch {
         }
 
         long durationInMilliseconds = System.currentTimeMillis() - startTimeMillis;
-        return new JPlagResult(comparisons, submissionSet, durationInMilliseconds, options);
+        return new JPlagResult(comparisons, submissionSet, submissionSet.getTokenizationDuration(), durationInMilliseconds, options);
     }
 
 }

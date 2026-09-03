@@ -17,20 +17,23 @@ export class RunInformation {
   _version: Version
   _failedSubmissions: FailedSubmission[]
   _dateOfExecution: string
-  _executionTime: number
+  _tokenizationTime: number
+  _comparisonTime: number
   _totalComparisons: number
 
   constructor(
     version: Version,
     failedSubmissions: FailedSubmission[],
     dateOfExecution: string,
-    executionTime: number,
+    tokenizationTime: number,
+    comparisonTime: number,
     totalComparisons: number
   ) {
     this._version = version
     this._failedSubmissions = failedSubmissions
     this._dateOfExecution = dateOfExecution
-    this._executionTime = executionTime
+    this._tokenizationTime = tokenizationTime
+    this._comparisonTime = comparisonTime
     this._totalComparisons = totalComparisons
   }
 
@@ -43,8 +46,11 @@ export class RunInformation {
   get dateOfExecution(): string {
     return this._dateOfExecution
   }
-  get executionTime(): number {
-    return this._executionTime
+  get tokenizationTime(): number {
+    return this._tokenizationTime
+  }
+  get comparisonTime(): number {
+    return this._comparisonTime
   }
   get totalComparisons(): number {
     return this._totalComparisons

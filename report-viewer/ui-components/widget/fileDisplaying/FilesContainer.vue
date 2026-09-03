@@ -8,7 +8,7 @@
         Files of
         {{ fileOwnerDisplayName }}:
       </h3>
-      <div class="flex items-center gap-x-1 text-gray-600 dark:text-gray-300">
+      <div class="text-gray-high-contrast flex items-center gap-x-1">
         <MetricIcon class="h-4" :metric="MetricJsonIdentifier.MAXIMUM_LENGTH" /><span
           >{{ tokenCount }} total tokens</span
         >

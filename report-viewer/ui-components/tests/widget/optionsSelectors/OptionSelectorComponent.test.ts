@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { OptionComponent, OptionsSelectorComponent } from '../../../widget'
 
+const SELECTED_OPTION_CLASS = 'bg-accent-light/40!'
+
 describe('OptionSelectorComponent', () => {
   it('renders all options', async () => {
     const wrapper = mount(OptionsSelectorComponent, {
@@ -22,7 +24,7 @@ describe('OptionSelectorComponent', () => {
         .findAllComponents(OptionComponent)
         .find((e) => e.text() === 'Option 2')
         ?.classes()
-    ).toContain('bg-accent/40!')
+    ).toContain(SELECTED_OPTION_CLASS)
   })
 
   it('switch selection', async () => {
@@ -39,13 +41,13 @@ describe('OptionSelectorComponent', () => {
         .findAllComponents(OptionComponent)
         .find((e) => e.text() === 'Option 1')
         ?.classes()
-    ).toContain('bg-accent/40!')
+    ).toContain(SELECTED_OPTION_CLASS)
     expect(
       wrapper
         .findAllComponents(OptionComponent)
         .find((e) => e.text() === 'Option 2')
         ?.classes()
-    ).not.toContain('bg-accent/40!')
+    ).not.toContain(SELECTED_OPTION_CLASS)
 
     await wrapper.findAllComponents({ name: 'OptionComponent' })[1].trigger('click')
 
@@ -58,12 +60,12 @@ describe('OptionSelectorComponent', () => {
         .findAllComponents(OptionComponent)
         .find((e) => e.text() === 'Option 1')
         ?.classes()
-    ).not.toContain('bg-accent/40!')
+    ).not.toContain(SELECTED_OPTION_CLASS)
     expect(
       wrapper
         .findAll('.cursor-pointer')
         .find((e) => e.text() === 'Option 2')
         ?.classes()
-    ).toContain('bg-accent/40!')
+    ).toContain(SELECTED_OPTION_CLASS)
   })
 })
