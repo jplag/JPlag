@@ -1,6 +1,6 @@
 > void test() {
 >     while(true) {
 >         continue;
-$         | CONTINUE 7
+$         | CONTINUE 8
 >     }
 > }
