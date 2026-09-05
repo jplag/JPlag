@@ -183,6 +183,7 @@ public class GlobalMatchAppearanceFinder {
                         TreeNode parentNode = currentNode.parent;
                         parentNode.removeChild(currentNode);
                         parentNode.addChildAsCorrectCase(newInBetweenNode, firstSubmission);
+                        ensureAddingProcessIsStillValid(newInBetweenNode, firstSubmission);
                         newInBetweenNode.addChildAsCorrectCase(currentNode, firstSubmission);
 
                         int difference = Math.max(match.startOfFirst(), newInBetweenNode.getStartInSub(firstSubmission)) - match.startOfFirst();
@@ -449,8 +450,8 @@ public class GlobalMatchAppearanceFinder {
                     return;
                 }
             }
-            if (parent.length != -1 && (!parent.startInSubmission.containsKey(appearingInSubmission) || !parent
-                    .boundsAreConsistent(startInThatSubmission, startInThatSubmission + length - 1, childCaseInParent, appearingInSubmission))) {
+            if (parent == null || (parent.length != -1 && (!parent.startInSubmission.containsKey(appearingInSubmission) || !parent
+                    .boundsAreConsistent(startInThatSubmission, startInThatSubmission + length - 1, childCaseInParent, appearingInSubmission)))) {
                 // The current match also describes a contradiction, if the range does not align with the one defined by the parent, in
                 // which case we again, must cancel the inclusion of this match into this tree.
                 throw new InconsistentMatchException();
@@ -570,6 +571,9 @@ public class GlobalMatchAppearanceFinder {
         }
 
         private void checkForAdditionalMerges() {
+            if (parent == null) {
+                throw new InconsistentMatchException();
+            }
             // Very rarely, a merge can result in an illegal state where the parent of this node now has two children in this child
             // case that share a submission. In this case, we need to merge again.
             for (Submission submission : getSubmissions()) {
