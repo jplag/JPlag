@@ -24,6 +24,6 @@
   },
   "devDependencies": {
     "@vue/test-utils": "^2.4.11",
-    "jsdom": "^29.0.2"
+    "jsdom": "^30.0.1"
   }
 }
