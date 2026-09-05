@@ -75,8 +75,12 @@ export const reportStore = defineStore('reportStore', () => {
     distribution.value = DistributionFactory.getDistributions(getFile('distribution.json').data)
     cliOptions.value = OptionsFactory.getCliOptions(getFile('options.json').data)
     try {
-      const raw = JSON.parse(getFile('secondaryMetrics.json').data) as string[]
-      secondaryMetrics.value = new Set(raw.map((m) => m as MetricJsonIdentifier))
+      const reportInformation = JSON.parse(getFile('reportInformation.json').data) as {
+        secondaryMetrics: string[]
+      }
+      secondaryMetrics.value = new Set(
+        reportInformation.secondaryMetrics.map((m) => m as MetricJsonIdentifier)
+      )
     } catch {
       const metrics: MetricJsonIdentifier[] = [
         MetricJsonIdentifier.MAXIMUM_SIMILARITY,
