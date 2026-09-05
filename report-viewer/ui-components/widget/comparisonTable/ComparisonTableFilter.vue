@@ -80,8 +80,7 @@ const props = defineProps({
       new Set([
         MetricJsonIdentifier.MAXIMUM_SIMILARITY,
         MetricJsonIdentifier.LONGEST_MATCH,
-        MetricJsonIdentifier.MAXIMUM_LENGTH,
-        MetricJsonIdentifier.WEIGHTED_SIMILARITY
+        MetricJsonIdentifier.MAXIMUM_LENGTH
       ])
   }
 })

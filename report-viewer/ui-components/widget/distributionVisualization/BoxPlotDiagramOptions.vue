@@ -27,11 +27,7 @@ const props = defineProps({
   secondaryMetrics: {
     type: Object as PropType<Set<MetricJsonIdentifier>>,
     default: () =>
-      new Set([
-        MetricJsonIdentifier.AVERAGE_SIMILARITY,
-        MetricJsonIdentifier.MAXIMUM_SIMILARITY,
-        MetricJsonIdentifier.WEIGHTED_SIMILARITY
-      ])
+      new Set([MetricJsonIdentifier.AVERAGE_SIMILARITY, MetricJsonIdentifier.MAXIMUM_SIMILARITY])
   }
 })
 
