@@ -29,7 +29,8 @@ public class ClusteringFactory {
 
     private static final String CLUSTER_PATTERN = "avg similarity: {}, strength: {}, {} members: {}";
     private static final String CLUSTERING_RESULT = "{} clusters were found:";
-    private static final String CLUSTERING_PARAMETERS = "Calculating clusters via {} clustering with {} pre-processing...";
+    private static final String CLUSTERING_PARAMETERS = "Calculating clusters via {} clustering with {} pre-processing{}...";
+    private static final String ADVANCED_PREPROCESSING = " and advanced similarity pre-processing in %s mode";
     private static final String CLUSTERING_DISABLED = "Cluster calculation disabled (as requested)!";
 
     private static final Logger logger = LoggerFactory.getLogger(ClusteringFactory.class);
@@ -53,7 +54,9 @@ public class ClusteringFactory {
             logger.warn(CLUSTERING_DISABLED);
             return Collections.emptyList();
         }
-        logger.info(CLUSTERING_PARAMETERS, options.algorithm(), options.preprocessor());
+        String advancedPreprocessingFormatted = ADVANCED_PREPROCESSING.formatted(options.matchGroupWeightingMode());
+        String advancedSimilarityPreprocessingString = options.useAdvancedSimilarityPreprocessing() ? advancedPreprocessingFormatted : "";
+        logger.info(CLUSTERING_PARAMETERS, options.algorithm(), options.preprocessor(), advancedSimilarityPreprocessingString);
 
         ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.CLUSTERING, 0);
 
@@ -68,8 +71,14 @@ public class ClusteringFactory {
             clusteringAlgorithm = new PreprocessedClusteringAlgorithm(clusteringAlgorithm, preprocessor.orElseThrow());
         }
 
+        // init similarity matrix creator
+        SimilarityMatrixCreator similarityMatrixCreator = new DefaultSimilarityMatrixCreator(options.similarityMetric());
+        if (options.useAdvancedSimilarityPreprocessing()) {
+            similarityMatrixCreator = new ClusterFocusedSimilarityMatrixCreator(options.matchGroupWeightingMode());
+        }
+
         // init adapter
-        ClusteringAdapter adapter = new ClusteringAdapter(comparisons, options.similarityMetric());
+        ClusteringAdapter adapter = new ClusteringAdapter(comparisons, similarityMatrixCreator);
 
         // run clustering
         ClusteringResult<Submission> result = adapter.doClustering(clusteringAlgorithm);
