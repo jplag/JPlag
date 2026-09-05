@@ -29,13 +29,15 @@ class MetricMapperTest {
             70, 67, 64, 63, 59, 56, 52, 50, 50, 50, 49, 47, 43, 5, 6, 11, 4, 2, 3, 20, 37, 5, 0, 2, 33, 30, 19, 4, 5, 24, 40, 6, 3, 9, 2, 3, 18, 3, 5,
             1, 4, 1, 0, 0, 5, 5, 14, 5, 42, 4, 18, 0, 0, 10, 4, 3, 17, 33, 4, 4, 3, 4, 39, 0, 20, 2, 4, 9, 0, 5, 0, 8, 23, 4, 2, 39, 3, 4, 1, 0, 3,
             33, 2, 1);
+    private static final List<Integer> EXPECTED_WEIGHTED_DISTRIBUTION = EXPECTED_AVG_DISTRIBUTION;
     private final MetricMapper metricMapper = new MetricMapper(Submission::getName);
 
     @Test
     void test_getDistributions() {
         // given
         JPlagResult jPlagResult = createJPlagResult(distribution(EXPECTED_AVG_DISTRIBUTION), distribution(EXPECTED_MAX_DISTRIBUTION),
-                comparison(submission("1"), submission("2"), .7, .8), comparison(submission("3"), submission("4"), .3, .9));
+                distribution(EXPECTED_WEIGHTED_DISTRIBUTION), comparison(submission("1"), submission("2"), .7, .8),
+                comparison(submission("3"), submission("4"), .3, .9));
 
         // when
         Map<String, List<Integer>> result = MetricMapper.getDistributions(jPlagResult);
@@ -43,21 +45,25 @@ class MetricMapperTest {
         // then
         Assertions.assertEquals(EXPECTED_AVG_DISTRIBUTION, result.get("AVG"));
         Assertions.assertEquals(EXPECTED_MAX_DISTRIBUTION, result.get("MAX"));
+        Assertions.assertEquals(EXPECTED_WEIGHTED_DISTRIBUTION, result.get("WEIGHTED_SIMILARITY"));
     }
 
     @Test
     void test_getTopComparisons() {
         // given
         JPlagResult jPlagResult = createJPlagResult(distribution(EXPECTED_AVG_DISTRIBUTION), distribution(EXPECTED_MAX_DISTRIBUTION),
-                comparison(submission("1", 22), submission("2", 30), .7, .8, new int[] {9, 3, 1}),
+                distribution(EXPECTED_WEIGHTED_DISTRIBUTION), comparison(submission("1", 22), submission("2", 30), .7, .8, new int[] {9, 3, 1}),
                 comparison(submission("3", 202), submission("4", 134), .3, .9, new int[] {1, 15, 23, 3}));
 
         // when
         List<TopComparison> result = metricMapper.getTopComparisons(jPlagResult);
 
         // then
-        Assertions.assertEquals(List.of(new TopComparison("1", "2", Map.of("AVG", .7, "MAX", .8, "LONGEST_MATCH", 9.0, "MAXIMUM_LENGTH", 30.0)),
-                new TopComparison("3", "4", Map.of("AVG", .3, "MAX", .9, "LONGEST_MATCH", 23.0, "MAXIMUM_LENGTH", 202.0))), result);
+        Assertions.assertEquals(List.of(
+                new TopComparison("1", "2", Map.of("AVG", .7, "MAX", .8, "LONGEST_MATCH", 9.0, "MAXIMUM_LENGTH", 30.0, "WEIGHTED_SIMILARITY", 0.0)),
+                new TopComparison("3", "4",
+                        Map.of("AVG", .3, "MAX", .9, "LONGEST_MATCH", 23.0, "MAXIMUM_LENGTH", 202.0, "WEIGHTED_SIMILARITY", 0.0))),
+                result);
     }
 
     private int[] distribution(List<Integer> expectedDistribution) {
@@ -82,10 +88,13 @@ class MetricMapperTest {
         return comparison(submission1, submission2, similarity, maxSimilarity, new int[0]);
     }
 
-    private JPlagResult createJPlagResult(int[] avgDistribution, int[] maxDistribution, Comparison... createComparisonsDto) {
+    private JPlagResult createJPlagResult(int[] avgDistribution, int[] maxDistribution, int[] weightedDistribution,
+            Comparison... createComparisonsDto) {
         JPlagResult jPlagResult = mock(JPlagResult.class);
         doReturn(Arrays.stream(avgDistribution).boxed().toList()).when(jPlagResult).calculateDistributionFor(SimilarityMetric.AVG);
         doReturn(Arrays.stream(maxDistribution).boxed().toList()).when(jPlagResult).calculateDistributionFor(SimilarityMetric.MAX);
+        doReturn(Arrays.stream(weightedDistribution).boxed().toList()).when(jPlagResult)
+                .calculateDistributionFor(SimilarityMetric.WEIGHTED_SIMILARITY);
 
         JPlagOptions options = mock(JPlagOptions.class);
         doReturn(createComparisonsDto.length).when(options).maximumNumberOfComparisons();

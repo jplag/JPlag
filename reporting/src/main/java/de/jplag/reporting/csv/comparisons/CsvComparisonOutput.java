@@ -16,7 +16,7 @@ import de.jplag.reporting.csv.ReflectiveCsvDataMapper;
  * Frontend for writing the result comparisons as a csv.
  */
 public class CsvComparisonOutput {
-    private static final String[] titles = {"submissionName1", "submissionName2", "averageSimilarity", "maxSimilarity"};
+    private static final String[] titles = {"submissionName1", "submissionName2", "averageSimilarity", "maxSimilarity", "weightedSimilarity"};
 
     private CsvComparisonOutput() {
     }
@@ -43,9 +43,10 @@ public class CsvComparisonOutput {
         for (JPlagComparison comparison : comparisons) {
             double average = SimilarityMetric.AVG.applyAsDouble(comparison);
             double max = SimilarityMetric.MAX.applyAsDouble(comparison);
+            double weighted = SimilarityMetric.WEIGHTED_SIMILARITY.applyAsDouble(comparison);
             String firstName = mapper.map(comparison.firstSubmission().getName());
             String secondName = mapper.map(comparison.secondSubmission().getName());
-            printer.addRow(new CsvComparisonData(firstName, secondName, average, max));
+            printer.addRow(new CsvComparisonData(firstName, secondName, average, max, weighted));
         }
 
         printer.printToFile(new File(directory, fileName + ".csv"));

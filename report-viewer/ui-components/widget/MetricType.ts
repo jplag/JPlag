@@ -100,6 +100,18 @@ class PercentageMetricType extends MetricType {
   }
 }
 
+/**
+ * Metric type for frequency-weighted similarity that displays N/A for uncomputed values.
+ */
+class WeightedSimilarityMetricType extends PercentageMetricType {
+  format(value: number): string {
+    return value < 0 ? 'N/A' : `${(value * 100).toFixed(2)}%`
+  }
+  getTableFilterValue(value: number): number {
+    return value < 0 ? -1 : value * 100
+  }
+}
+
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace MetricTypes {
   export const AVERAGE_SIMILARITY = new PercentageMetricType(
@@ -130,12 +142,20 @@ export namespace MetricTypes {
     MetricJsonIdentifier.MAXIMUM_LENGTH,
     Column.maximumLength
   )
+  export const WEIGHTED_SIMILARITY = new WeightedSimilarityMetricType(
+    'WAVG',
+    'Weighted Avg Similarity',
+    'The frequency-weighted similarity score. Adjusts similarity by how rare each matched token sequence is across all submissions. Shows N/A when frequency analysis was not enabled.',
+    MetricJsonIdentifier.WEIGHTED_SIMILARITY,
+    Column.weightedSimilarity
+  )
 
   export const METRIC_LIST: MetricType[] = [
     AVERAGE_SIMILARITY,
     MAXIMUM_SIMILARITY,
     LONGEST_MATCH,
-    MAXIMUM_LENGTH
+    MAXIMUM_LENGTH,
+    WEIGHTED_SIMILARITY
   ]
 
   export const METRIC_MAP: Record<MetricJsonIdentifier, MetricType> = {} as Record<
@@ -149,6 +169,7 @@ export namespace MetricTypes {
     MetricJsonIdentifier.AVERAGE_SIMILARITY,
     MetricJsonIdentifier.MAXIMUM_SIMILARITY,
     MetricJsonIdentifier.LONGEST_MATCH,
-    MetricJsonIdentifier.MAXIMUM_LENGTH
+    MetricJsonIdentifier.MAXIMUM_LENGTH,
+    MetricJsonIdentifier.WEIGHTED_SIMILARITY
   ]
 }
