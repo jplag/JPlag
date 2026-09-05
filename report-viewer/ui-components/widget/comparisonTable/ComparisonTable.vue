@@ -316,6 +316,19 @@ const tableSorting = defineModel<ComparisonTableSorting>('sorting', {
 
 const secondaryMetric = computed(() => MetricTypes.METRIC_MAP[secondaryMetricModel.value])
 
+watch(
+  () => props.secondaryMetrics,
+  (metrics) => {
+    if (
+      tableSorting.value.column.id == Column.weightedSimilarity.id &&
+      !metrics.has(MetricJsonIdentifier.WEIGHTED_SIMILARITY)
+    ) {
+      tableSorting.value = { column: Column.averageSimilarity, direction: Direction.descending }
+    }
+  },
+  { immediate: true, deep: true }
+)
+
 const displayedComparisons = computed(() => {
   const comparisons = getFilteredComparisons(getSortedComparisons(Array.from(props.topComparisons)))
   let index = 1
