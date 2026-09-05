@@ -82,6 +82,9 @@ export const reportStore = defineStore('reportStore', () => {
         reportInformation.secondaryMetrics.map((m) => m as MetricJsonIdentifier)
       )
     } catch {
+      if (files.value.has('reportInformation.json')) {
+        console.warn('Could not read reportInformation.json, falling back to the options flag.')
+      }
       const metrics: MetricJsonIdentifier[] = [
         MetricJsonIdentifier.MAXIMUM_SIMILARITY,
         MetricJsonIdentifier.LONGEST_MATCH,
