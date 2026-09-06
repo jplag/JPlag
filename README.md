@@ -193,6 +193,7 @@ Languages:
   emf-model
   go
   java
+  java-babylon
   javascript
   kotlin
   llvmir
