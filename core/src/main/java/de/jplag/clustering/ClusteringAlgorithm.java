@@ -3,6 +3,7 @@ package de.jplag.clustering;
 import java.util.Objects;
 
 import de.jplag.clustering.algorithm.AgglomerativeClustering;
+import de.jplag.clustering.algorithm.ChineseWhispersClustering;
 import de.jplag.clustering.algorithm.GenericClusteringAlgorithm;
 import de.jplag.clustering.algorithm.SpectralClustering;
 
@@ -17,7 +18,11 @@ public enum ClusteringAlgorithm {
     /**
      * {@link SpectralClustering}.
      */
-    SPECTRAL(SpectralClustering::new);
+    SPECTRAL(SpectralClustering::new),
+    /**
+     * {@link ChineseWhispersClustering}.
+     */
+    CHINESE_WHISPERS(ChineseWhispersClustering::new);
 
     private final ClusteringAlgorithmSupplier constructor;
 
