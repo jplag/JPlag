@@ -59,11 +59,13 @@
 </template>
 
 <script setup lang="ts">
+import { computed, watch } from 'vue'
 import { SearchBarComponent, ToolTipComponent, ButtonComponent } from '../../base'
 import { MetricJsonIdentifier } from '@jplag/model'
 import MetricSelector from '../optionsSelectors/MetricSelector.vue'
+import type { PropType } from 'vue'
 
-defineProps({
+const props = defineProps({
   header: {
     type: String,
     default: 'Top Comparisons:'
@@ -71,6 +73,15 @@ defineProps({
   allAreAnonymized: {
     type: Boolean,
     default: false
+  },
+  secondaryMetrics: {
+    type: Object as PropType<Set<MetricJsonIdentifier>>,
+    default: () =>
+      new Set([
+        MetricJsonIdentifier.MAXIMUM_SIMILARITY,
+        MetricJsonIdentifier.LONGEST_MATCH,
+        MetricJsonIdentifier.MAXIMUM_LENGTH
+      ])
   }
 })
 
@@ -85,9 +96,23 @@ const emit = defineEmits<{
   (event: 'changeAnonymousForAll'): void
 }>()
 
-const secondaryMetricOptions = [
-  MetricJsonIdentifier.MAXIMUM_SIMILARITY,
-  MetricJsonIdentifier.LONGEST_MATCH,
-  MetricJsonIdentifier.MAXIMUM_LENGTH
-]
+const secondaryMetricOptions = computed(() => {
+  const allOptions = [
+    MetricJsonIdentifier.MAXIMUM_SIMILARITY,
+    MetricJsonIdentifier.WEIGHTED_SIMILARITY,
+    MetricJsonIdentifier.LONGEST_MATCH,
+    MetricJsonIdentifier.MAXIMUM_LENGTH
+  ]
+  return allOptions.filter((m) => props.secondaryMetrics.has(m))
+})
+
+watch(
+  () => props.secondaryMetrics,
+  (metrics) => {
+    if (!metrics.has(secondaryMetric.value)) {
+      secondaryMetric.value = MetricJsonIdentifier.MAXIMUM_SIMILARITY
+    }
+  },
+  { immediate: true, deep: true }
+)
 </script>

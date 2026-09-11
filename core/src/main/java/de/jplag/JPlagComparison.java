@@ -10,11 +10,11 @@ import java.util.List;
  * @param matches is the unmodifiable list of all subsequence matches between the two submissions.
  * @param ignoredMatches is the unmodifiable list of ignored matches whose length is below the minimum token match
  * threshold.
- * @param frequencyWeightedSimilarity the similarity score adjusted by match frequency weighting.
- * @param useFrequencyWeighting whether to use the frequency-weighted similarity instead of the standard similarity.
+ * @param frequencyWeightedSimilarity the similarity score adjusted by match frequency weighting. Defaults to {@code -1}
+ * when frequency analysis is not enabled.
  */
 public record JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches, List<Match> ignoredMatches,
-        double frequencyWeightedSimilarity, boolean useFrequencyWeighting) {
+        double frequencyWeightedSimilarity) {
 
     /**
      * Constructs a new comparison between two submissions. The match lists are wrapped as unmodifiable to preserve
@@ -24,18 +24,17 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
      * @param matches is the list of all matches between the two submissions.
      */
     public JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches, List<Match> ignoredMatches) {
-        this(firstSubmission, secondSubmission, Collections.unmodifiableList(matches), Collections.unmodifiableList(ignoredMatches), -1, false);
+        this(firstSubmission, secondSubmission, Collections.unmodifiableList(matches), Collections.unmodifiableList(ignoredMatches), -1);
     }
 
     /**
-     * Copy constructor that replaces the similarity with a frequency-weighted value.
+     * Copy constructor that adds a frequency-weighted similarity score.
      * @param originalComparison the original comparison whose matches are reused.
-     * @param frequencyWeightedSimilarity the new similarity score adjusted by match frequency weighting.
-     * @param useFrequencyWeighting whether to use the frequency-weighted similarity.
+     * @param frequencyWeightedSimilarity the similarity score adjusted by match frequency weighting.
      */
-    public JPlagComparison(JPlagComparison originalComparison, double frequencyWeightedSimilarity, boolean useFrequencyWeighting) {
+    public JPlagComparison(JPlagComparison originalComparison, double frequencyWeightedSimilarity) {
         this(originalComparison.firstSubmission(), originalComparison.secondSubmission(), Collections.unmodifiableList(originalComparison.matches),
-                Collections.unmodifiableList(originalComparison.ignoredMatches), frequencyWeightedSimilarity, useFrequencyWeighting);
+                Collections.unmodifiableList(originalComparison.ignoredMatches), frequencyWeightedSimilarity);
     }
 
     /**
@@ -80,15 +79,11 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
 
     /**
      * Computes the average (or symmetric) similarity between the two submissions. The similarity is adjusted based on
-     * whether both submissions contain base code matches. If frequency weighting is enabled, the frequency-weighted
-     * similarity score is returned instead.
+     * whether both submissions contain base code matches.
      * @return Average similarity in interval [0, 1]. 0 means zero percent structural similarity, 1 means 100 percent
      * structural similarity.
      */
     public double similarity() {
-        if (useFrequencyWeighting && frequencyWeightedSimilarity >= 0) {
-            return frequencyWeightedSimilarity;
-        }
         int divisor = similarityDivisor();
         if (divisor == 0) {
             return 0;
