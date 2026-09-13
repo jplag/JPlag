@@ -1,0 +1,69 @@
+package de.jplag.pdf;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.events.PdfDocumentEvent;
+import com.itextpdf.kernel.geom.Rectangle;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.layout.Canvas;
+import com.itextpdf.layout.element.Paragraph;
+import de.jplag.JPlagComparison;
+import de.jplag.JPlagResult;
+
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+
+public class PdfPrinter {
+    private JPlagResult result;
+    private Document document;
+    private FooterHandler footerHandler;
+
+    public PdfPrinter(JPlagResult result, File target) throws FileNotFoundException {
+        this.result = result;
+        PdfDocument pdfDocument = new PdfDocument(new PdfWriter(target));
+        footerHandler = new FooterHandler(pdfDocument);
+        InputStream licenseStream = this.getClass().getResourceAsStream("/JetBrainsMono-License.txt");
+        this.document = new Document(pdfDocument);
+        document.setBottomMargin(50);
+        try {
+            this.document.getPdfDocument().getDocumentInfo().setMoreInfo("JetBrainsMono-License", readInputStreamToString(licenseStream));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void printTitle(String subText) {
+        TitlePage.addTitlePage(document, subText);
+    }
+
+    public void printOverview() {
+        OverviewPrinter.printOverview(this.document, this.result);
+    }
+
+    public void printComparison(JPlagComparison comparison) throws IOException {
+        new ComparisonPrinter(this.document, comparison, this.result.getOptions().language()).printComparison();
+    }
+
+    public void save() {
+        this.footerHandler.end();
+        this.document.close();
+    }
+
+    private static String readInputStreamToString(InputStream inputStream) throws IOException {
+        StringBuilder stringBuilder = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                stringBuilder.append(line).append(System.lineSeparator());
+            }
+        }
+        return stringBuilder.toString();
+    }
+}
