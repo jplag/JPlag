@@ -33,4 +33,7 @@ public class KotlinLanguageTest extends LanguageModuleTest {
     protected void configureIgnoredLines(TestSourceIgnoredLinesCollector collector) {
         collector.ignoreMultipleLines("/*", "*/");
     }
+
+    void test() {
+    }
 }
