@@ -31,18 +31,16 @@ public abstract class AbstractEmfTest {
             "bookStoreRenamed.ecore"}; // base metamodel with renamed elements
 
     protected de.jplag.Language language;
-    protected File baseDirectory;
 
     @BeforeEach
-    protected void setUp() {
+    protected void setUp() throws IOException {
         language = new EmfLanguage();
-        baseDirectory = BASE_PATH.toFile();
-        FileUtil.assertDirectory(baseDirectory, TEST_SUBJECTS);
+        FileUtil.assertDirectory(BASE_PATH, TEST_SUBJECTS);
     }
 
     @AfterEach
     protected void tearDown() {
-        FileUtil.clearFiles(new File(BASE_PATH.toString()), EmfLanguage.VIEW_FILE_EXTENSION);
+        FileUtil.clearFiles(BASE_PATH, EmfLanguage.VIEW_FILE_EXTENSION);
     }
 
     /**
@@ -50,8 +48,8 @@ public abstract class AbstractEmfTest {
      * @param modelFile is the file to load.
      * @return the loaded resource.
      */
-    protected Resource loadAndVerifyModel(File modelFile) {
-        assertTrue(modelFile.exists());
+    protected Resource loadAndVerifyModel(Path modelFile) {
+        assertTrue(Files.exists(modelFile));
         Resource modelResource = EMFUtil.loadModelResource(modelFile);
         assertNotNull(modelResource);
         return modelResource;
@@ -63,8 +61,8 @@ public abstract class AbstractEmfTest {
      * @param viewFileSuffix is the suffix of the view file.
      * @param directoryOfExpectedViews is the name of the folder where the expected view files are located.
      */
-    protected void assertViewFilesMatch(File modelFile, String viewFileSuffix, String directoryOfExpectedViews) {
-        File viewFile = new File(modelFile.getPath() + viewFileSuffix);
+    protected void assertViewFilesMatch(Path modelFile, String viewFileSuffix, String directoryOfExpectedViews) {
+        File viewFile = new File(modelFile.toString() + viewFileSuffix);
         File expectedViewFile = BASE_PATH.resolveSibling(Path.of(directoryOfExpectedViews, viewFile.getName())).toFile();
         assertTrue(viewFile.exists());
         assertTrue(expectedViewFile.exists());

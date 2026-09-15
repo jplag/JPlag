@@ -1,6 +1,6 @@
 package de.jplag.python3;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
@@ -37,7 +37,7 @@ public class PythonLanguage implements Language {
     }
 
     @Override
-    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
+    public List<Token> parse(Set<Path> files, boolean normalize) throws ParsingException {
         return new PythonParserAdapter().parse(files);
     }
 }

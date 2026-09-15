@@ -1,7 +1,7 @@
 package de.jplag.regressiontest.model;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -29,7 +29,7 @@ public record DataSetRunConfiguration(JPlagOptions jPlagOptions, String identifi
             JPlagOptions options = new JPlagOptions(dataSet.language(), dataSet.getSourceDirectories(), Set.of());
             options = options.withMinimumTokenMatch(minimumTokenMatch);
             if (configuredOptions.baseCodeDirectory() != null) {
-                File baseCode = dataSet.format().getBaseCodeDirectory(dataSet, configuredOptions.baseCodeDirectory());
+                Path baseCode = dataSet.format().getBaseCodeDirectory(dataSet, configuredOptions.baseCodeDirectory());
                 options = options.withBaseCodeSubmissionDirectory(baseCode);
             }
             result.add(new DataSetRunConfiguration(options, String.format(IDENTIFIER_FORMAT, minimumTokenMatch)));

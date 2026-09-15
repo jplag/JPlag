@@ -17,13 +17,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
+import de.jplag.util.PathUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -60,15 +60,13 @@ class ScxmlTokenGeneratorTest {
         }
     }
 
-    private final File baseDirectory = BASE_PATH.toFile();
-
-    private List<TokenType> getTokenTypes(ScxmlParserAdapter adapter, File testFile) throws ParsingException {
+    private List<TokenType> getTokenTypes(ScxmlParserAdapter adapter, Path testFile) throws ParsingException {
         return adapter.parse(Set.of(testFile)).stream().map(Token::getType).toList();
     }
 
     @Test
     void testRecursiveSorter() throws ParsingException {
-        File originalTestFile = new File(baseDirectory, TestSubjects.COMPLEX.fileName);
+        Path originalTestFile = BASE_PATH.resolve(TestSubjects.COMPLEX.fileName);
         ConfigurableScxmlParserAdapter adapter = new ConfigurableScxmlParserAdapter();
         AbstractScxmlVisitor visitor = new SimpleScxmlTokenGenerator(adapter);
         adapter.configure(visitor, new NoOpSortingStrategy());
@@ -82,7 +80,7 @@ class ScxmlTokenGeneratorTest {
         assertEquals(expectedTokenTypes, originalTokenTypes);
         adapter.setSorter(new RecursiveSortingStrategy(visitor));
 
-        File reorderedTestFile = new File(baseDirectory, TestSubjects.COMPLEX_REORDERED.fileName);
+        Path reorderedTestFile = BASE_PATH.resolve(TestSubjects.COMPLEX_REORDERED.fileName);
         List<TokenType> reorderedTokenTypes = getTokenTypes(adapter, reorderedTestFile);
         // Check that the token sequences is the same when applying the recursive sorting strategy on the reordered file
         assertEquals(expectedTokenTypes, reorderedTokenTypes);
@@ -90,7 +88,7 @@ class ScxmlTokenGeneratorTest {
 
     @Test
     void testCoverage() throws ParsingException {
-        File testFile = new File(baseDirectory, TestSubjects.COVERAGE.fileName);
+        Path testFile = BASE_PATH.resolve(TestSubjects.COVERAGE.fileName);
         ScxmlParserAdapter adapter = new ScxmlParserAdapter();
         List<TokenType> actualUniqueTokenTypes = getTokenTypes(adapter, testFile).stream().filter(x -> x != FILE_END).distinct().toList();
 
@@ -99,18 +97,18 @@ class ScxmlTokenGeneratorTest {
 
     @Test
     void testViewFile() throws ParsingException, IOException {
-        File testFile = new File(baseDirectory, TestSubjects.COMPLEX.fileName);
+        Path testFile = BASE_PATH.resolve(TestSubjects.COMPLEX.fileName);
         ScxmlParserAdapter adapter = new ScxmlParserAdapter();
         adapter.parse(Set.of(testFile));
 
-        File viewFile = new File(testFile.getPath() + ScxmlLanguage.VIEW_FILE_EXTENSION);
-        File expectedViewFile = new File(baseDirectory, TestSubjects.COMPLEX_VIEW_FILE.fileName);
-        assertTrue(viewFile.exists());
-        assertEquals(Files.readAllLines(expectedViewFile.toPath()), Files.readAllLines(viewFile.toPath()));
+        Path viewFile = PathUtils.appendSuffix(testFile, ScxmlLanguage.VIEW_FILE_EXTENSION);
+        Path expectedViewFile = BASE_PATH.resolve(TestSubjects.COMPLEX_VIEW_FILE.fileName);
+        assertTrue(Files.exists(viewFile));
+        assertEquals(Files.readAllLines(expectedViewFile), Files.readAllLines(viewFile));
     }
 
     @AfterEach
     void tearDown() {
-        FileUtil.clearFiles(new File(BASE_PATH.toString()), ScxmlLanguage.VIEW_FILE_EXTENSION);
+        FileUtil.clearFiles(BASE_PATH, ScxmlLanguage.VIEW_FILE_EXTENSION);
     }
 }

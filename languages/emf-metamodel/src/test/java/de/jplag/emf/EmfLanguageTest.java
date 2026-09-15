@@ -29,7 +29,6 @@ public class EmfLanguageTest extends LanguageModuleTest {
     @Override
     protected void collectTestData(TestDataCollector collector) {
         collector.testAllOfType(EmfLanguage.FILE_ENDING).testContainedTokens(PACKAGE, PACKAGE_END, CLASS, CLASS_END, ATTRIBUTE, CONTAINMENT_MULT);
-
     }
 
     @Override

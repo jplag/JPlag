@@ -2,6 +2,7 @@ package de.jplag.special;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.io.IOException;
 import java.util.function.Function;
 
 import org.junit.jupiter.api.Disabled;
@@ -27,7 +28,7 @@ class TokenPrinterTest extends TestBase {
 
     @Disabled("Not a meaningful test, used for designing the token set. Can be implemented for other languages.")
     @Test
-    void printJavaFiles() {
+    void printJavaFiles() throws IOException {
         printSubmissions(options -> options.withMinimumTokenMatch(MIN_TOKEN_MATCH));
     }
 

@@ -2,16 +2,15 @@ package de.jplag.util;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -49,17 +48,17 @@ public final class FileUtils {
      * @return The reader, configured with the best matching charset
      * @throws IOException If the file does not exist for is not readable
      */
-    public static BufferedReader openFileReader(File file, boolean isSubmissionFile) throws IOException {
+    public static BufferedReader openFileReader(Path file, boolean isSubmissionFile) throws IOException {
         Charset charset;
         if (isSubmissionFile && Objects.nonNull(userSpecifiedCharset)) {
             charset = userSpecifiedCharset;
         } else {
-            try (InputStream stream = new BufferedInputStream(new FileInputStream(file))) {
+            try (InputStream stream = new BufferedInputStream(Files.newInputStream(file))) {
                 charset = detectCharset(stream);
             }
         }
 
-        BufferedReader reader = new BufferedReader(new FileReader(file, charset));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(Files.newInputStream(file), charset));
         removeBom(reader, charset);
         return reader;
     }
@@ -71,7 +70,7 @@ public final class FileUtils {
      * @return The reader, configured with the best matching charset
      * @throws IOException If the file does not exist for is not readable
      */
-    public static BufferedReader openFileReader(File file) throws IOException {
+    public static BufferedReader openFileReader(Path file) throws IOException {
         return openFileReader(file, false);
     }
 
@@ -81,9 +80,9 @@ public final class FileUtils {
      * @param isSubmissionFile If true and a charset is set for submissions, that charset will be used always
      * @return The files content as a string
      * @throws IOException If an IO error occurs
-     * @see FileUtils#openFileReader(File)
+     * @see FileUtils#openFileReader(Path)
      */
-    public static String readFileContent(File file, boolean isSubmissionFile) throws IOException {
+    public static String readFileContent(Path file, boolean isSubmissionFile) throws IOException {
         try (BufferedReader reader = openFileReader(file, isSubmissionFile)) {
             return reader.lines().collect(Collectors.joining(System.lineSeparator()));
         }
@@ -94,9 +93,9 @@ public final class FileUtils {
      * @param file The file to read
      * @return The files content as a string
      * @throws IOException If an IO error occurs
-     * @see FileUtils#openFileReader(File)
+     * @see FileUtils#openFileReader(Path)
      */
-    public static String readFileContent(File file) throws IOException {
+    public static String readFileContent(Path file) throws IOException {
         return readFileContent(file, false);
     }
 
@@ -116,26 +115,26 @@ public final class FileUtils {
     }
 
     /**
-     * Detects the charset of a file. Prefer using {@link #openFileReader(File)} or {@link #readFileContent(File)} if you
+     * Detects the charset of a file. Prefer using {@link #openFileReader(Path)} or {@link #readFileContent(Path)} if you
      * are only interested in the content.
      * @param file The file to detect
      * @return The most probable charset
      * @throws IOException If an IO error occurs
      */
-    public static Charset detectCharset(File file) throws IOException {
-        try (InputStream stream = new BufferedInputStream(new FileInputStream(file))) {
+    public static Charset detectCharset(Path file) throws IOException {
+        try (InputStream stream = new BufferedInputStream(Files.newInputStream(file))) {
             return detectCharset(stream);
         }
     }
 
     /**
-     * Detects the most probable charset over the whole set of files.
+     * Detected the charset that is most likely to fit all the given files.
      * @param files The files to check
-     * @param isSubmissionFile If true and a charset is set for submissions, that charset will be used always
-     * @return The most probable charset
-     * @throws ParsingException if reading the source files leads to an error.
+     * @param isSubmissionFile true if the files are submission files
+     * @return The most likely charset
+     * @throws ParsingException If the charset cannot be detected
      */
-    public static Charset detectCharsetFromMultiple(Collection<File> files, boolean isSubmissionFile) throws ParsingException {
+    public static Charset detectCharsetFromMultiple(Collection<Path> files, boolean isSubmissionFile) throws ParsingException {
         if (isSubmissionFile && userSpecifiedCharset != null) {
             return userSpecifiedCharset;
         } else {
@@ -149,12 +148,12 @@ public final class FileUtils {
      * @return The most probable charset
      * @throws ParsingException if reading the source files leads to an error.
      */
-    public static Charset detectCharsetFromMultiple(Collection<File> files) throws ParsingException {
+    public static Charset detectCharsetFromMultiple(Collection<Path> files) throws ParsingException {
         Map<String, List<Integer>> charsetValues = new HashMap<>();
 
         List<CharsetMatch[]> matchData = new ArrayList<>();
-        for (File file : files) {
-            try (InputStream stream = new BufferedInputStream(new FileInputStream(file))) {
+        for (Path file : files) {
+            try (InputStream stream = new BufferedInputStream(Files.newInputStream(file))) {
                 matchData.add(detectAllCharsets(stream));
             } catch (IOException e) {
                 throw new ParsingException(file, e);
@@ -213,8 +212,8 @@ public final class FileUtils {
      * @return The file writer, configured with the default charset
      * @throws IOException If the file does not exist or is not writable
      */
-    public static Writer openFileWriter(File file) throws IOException {
-        return new BufferedWriter(new FileWriter(file, DEFAULT_OUTPUT_CHARSET));
+    public static Writer openFileWriter(Path file) throws IOException {
+        return Files.newBufferedWriter(file, DEFAULT_OUTPUT_CHARSET);
     }
 
     /**
@@ -223,7 +222,8 @@ public final class FileUtils {
      * @param content The content
      * @throws IOException If any error occurs
      */
-    public static void write(File file, String content) throws IOException {
+    public static void write(Path file, String content) throws IOException {
+        Files.createDirectories(file.getParent());
         Writer writer = openFileWriter(file);
         writer.write(content);
         writer.close();

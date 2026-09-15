@@ -4,6 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import com.sun.net.httpserver.HttpExchange;
 
@@ -19,9 +22,9 @@ public class RoutingStaticFile implements Routing {
      * @param contentType The type of content in the file
      * @throws IOException If the file cannot be read
      */
-    public RoutingStaticFile(File file, ContentType contentType) throws IOException {
+    public RoutingStaticFile(Path file, ContentType contentType) throws IOException {
         if (file != null) {
-            try (FileInputStream inputStream = new FileInputStream(file)) {
+            try (InputStream inputStream = Files.newInputStream(file)) {
                 this.data = inputStream.readAllBytes();
 
                 this.contentType = contentType;
