@@ -1,6 +1,6 @@
 package de.jplag.emf.util;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,7 +26,7 @@ class EmfaticModelViewTest extends AbstractEmfTest {
     @MethodSource("provideModelNames")
     void testEmfaticViewFiles(String modelName) throws ParsingException {
         // Load model:
-        File modelFile = new File(baseDirectory, modelName);
+        Path modelFile = BASE_PATH.resolve(modelName);
         Resource modelResource = loadAndVerifyModel(modelFile);
 
         // Generate emfatic view:

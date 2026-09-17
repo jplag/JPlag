@@ -1,6 +1,6 @@
 package de.jplag.scheme;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -19,7 +19,7 @@ public class Parser {
     /** Shared logger. **/
     static final Logger logger = LoggerFactory.getLogger(Parser.class);
 
-    private File currentFile;
+    private Path currentFile;
     private List<Token> tokens;
 
     /**
@@ -28,11 +28,11 @@ public class Parser {
      * @return the token sequence.
      * @throws ParsingException if parsing fails.
      */
-    public List<Token> parse(Set<File> files) throws ParsingException {
+    public List<Token> parse(Set<Path> files) throws ParsingException {
         tokens = new ArrayList<>();
-        for (File file : files) {
+        for (Path file : files) {
             currentFile = file;
-            logger.trace("Parsing file {}", file.getName());
+            logger.trace("Parsing file {}", file.getFileName());
             SchemeParser.parseFile(file, null, this);
             tokens.add(Token.fileEnd(currentFile));
         }

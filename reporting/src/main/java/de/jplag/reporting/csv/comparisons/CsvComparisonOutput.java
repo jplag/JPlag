@@ -1,7 +1,8 @@
 package de.jplag.reporting.csv.comparisons;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -29,9 +30,9 @@ public class CsvComparisonOutput {
      * @param fileName The base name for the file without ".csv"
      * @throws IOException if the output cannot be written.
      */
-    public static void writeCsvResults(List<JPlagComparison> comparisons, boolean anonymize, File directory, String fileName) throws IOException {
+    public static void writeCsvResults(List<JPlagComparison> comparisons, boolean anonymize, Path directory, String fileName) throws IOException {
         NameMapper mapper = new NameMapper.IdentityMapper();
-        directory.mkdirs();
+        Files.createDirectories(directory);
 
         if (anonymize) {
             mapper = new NameMapperIncrementalIds();
@@ -48,7 +49,7 @@ public class CsvComparisonOutput {
             printer.addRow(new CsvComparisonData(firstName, secondName, average, max));
         }
 
-        printer.printToFile(new File(directory, fileName + ".csv"));
+        printer.printToFile(directory.resolve(fileName + ".csv"));
 
         if (anonymize) {
             List<Map.Entry<String, String>> nameMap = mapper.getNameMap();
@@ -56,7 +57,7 @@ public class CsvComparisonOutput {
                     new String[] {"id", "realName"});
             CsvPrinter<Map.Entry<String, String>> namesPrinter = new CsvPrinter<>(namesMapMapper);
             namesPrinter.addRows(nameMap);
-            namesPrinter.printToFile(new File(directory, fileName + "-names.csv"));
+            namesPrinter.printToFile(directory.resolve(fileName + "-names.csv"));
         }
     }
 }

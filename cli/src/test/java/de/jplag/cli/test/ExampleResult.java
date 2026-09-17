@@ -1,8 +1,8 @@
 package de.jplag.cli.test;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Set;
 
 import de.jplag.JPlag;
@@ -30,9 +30,9 @@ public class ExampleResult {
      */
     public static JPlagResult getExampleResult() throws IOException, ExitException {
         if (result == null) {
-            File dir = Files.createTempDirectory("jplagCode").toFile();
-            FileUtils.write(new File(dir, "A.java"), EXAMPLE_CODE);
-            FileUtils.write(new File(dir, "B.java"), EXAMPLE_CODE);
+            Path dir = Files.createTempDirectory("jplagCode");
+            FileUtils.write(dir.resolve("A.java"), EXAMPLE_CODE);
+            FileUtils.write(dir.resolve("B.java"), EXAMPLE_CODE);
 
             result = JPlag.run(new JPlagOptions(new JavaLanguage(), Set.of(dir), Set.of()).withMinimumTokenMatch(0));
         }

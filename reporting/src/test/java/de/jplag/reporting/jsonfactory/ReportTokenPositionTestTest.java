@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
+import de.jplag.util.RelativePath;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -47,11 +48,11 @@ class ReportTokenPositionTestTest {
         Map<String, Map<String, String>> comparisonReportOutput;
 
         try (MockedStatic<FilePathUtil> mockedFilePathUtil = Mockito.mockStatic(FilePathUtil.class)) {
-            mockedFilePathUtil.when(() -> FilePathUtil.getRelativeSubmissionPath(any(), any(), any())).thenReturn(Path.of("file.java"));
+            mockedFilePathUtil.when(() -> FilePathUtil.getRelativeSubmissionPath(any(), any(), any())).thenReturn(RelativePath.of("file.java"));
             comparisonReportOutput = new ComparisonReportWriter(Submission::getName, resultWriter).writeComparisonReports(result);
         }
         ComparisonReport comparisonReport = (ComparisonReport) resultWriter
-                .getJsonEntry(Path.of(ComparisonReportWriter.BASEPATH, comparisonReportOutput.get(firstID).get(secondID)));
+                .getJsonEntry(RelativePath.of(ComparisonReportWriter.BASEPATH, comparisonReportOutput.get(firstID).get(secondID)));
 
         assertEquals(1, comparisonReport.matches().size());
 
@@ -97,11 +98,11 @@ class ReportTokenPositionTestTest {
 
         TestableReportWriter resultWriter = new TestableReportWriter();
         try (MockedStatic<FilePathUtil> mockedFilePathUtil = Mockito.mockStatic(FilePathUtil.class)) {
-            mockedFilePathUtil.when(() -> FilePathUtil.getRelativeSubmissionPath(any(), any(), any())).thenReturn(Path.of("file.java"));
+            mockedFilePathUtil.when(() -> FilePathUtil.getRelativeSubmissionPath(any(), any(), any())).thenReturn(RelativePath.of("file.java"));
             new BaseCodeReportWriter(Submission::getName, resultWriter).writeBaseCodeReport(result);
         }
 
-        List<BaseCodeMatch> baseCodeMatches = (List<BaseCodeMatch>) resultWriter.getJsonEntry(Path.of("basecode", submissionID + ".json"));
+        List<BaseCodeMatch> baseCodeMatches = (List<BaseCodeMatch>) resultWriter.getJsonEntry(RelativePath.of("basecode", submissionID + ".json"));
 
         assertEquals(1, baseCodeMatches.size());
 

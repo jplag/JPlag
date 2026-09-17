@@ -3,6 +3,7 @@ package de.jplag.cli;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -108,17 +109,17 @@ public final class CLI {
      * Runs JPlag and returns the file the result has been written to.
      * @return The file containing the result
      * @throws ExitException If JPlag threw an exception
-     * @throws FileNotFoundException If the file could not be written
+     * @throws IOException If the file could not be written
      */
-    public File runJPlag() throws ExitException, FileNotFoundException {
-        File target = new File(getWritableFileName());
+    public Path runJPlag() throws ExitException, IOException {
+        Path target = Path.of(getWritableFileName());
 
         JPlagOptionsBuilder optionsBuilder = new JPlagOptionsBuilder(this.inputHandler);
         JPlagOptions options = optionsBuilder.buildOptions();
         JPlagResult result = JPlagRunner.runJPlag(options);
 
         OutputFileGenerator.generateJPlagResultFile(result, target);
-        OutputFileGenerator.generateCsvOutput(result, new File(getResultFileBaseName()), this.inputHandler.getCliOptions());
+        OutputFileGenerator.generateCsvOutput(result, Path.of(getResultFileBaseName()), this.inputHandler.getCliOptions());
 
         return target;
     }
@@ -137,13 +138,13 @@ public final class CLI {
      * @param resultFile is the result file to pass to the viewer. Can be null, if no result should be opened by default
      * @throws IOException If something went wrong with the internal server
      */
-    public void runViewer(File resultFile) throws IOException {
+    public void runViewer(Path resultFile) throws IOException {
         finalizeLogger(); // Prints the errors. The later finalizeLogger will print any errors logged after this point.
         JPlagRunner.runInternalServer(resultFile, this.inputHandler.getCliOptions().advanced.port, this.inputHandler.getCliOptions().advanced.host);
     }
 
     private void selectModeAutomatically() throws IOException, ExitException {
-        List<File> inputs = this.getAllInputs();
+        List<Path> inputs = this.getAllInputs();
 
         if (inputs.isEmpty()) {
             this.runViewer(null);
@@ -152,7 +153,7 @@ public final class CLI {
 
         // if the selected mode is auto and there is exactly one result file specified it is opened in the report viewer
         if (inputs.size() == 1
-                && (inputs.getFirst().getName().endsWith(ZIP_FILE_EXTENSION) || inputs.getFirst().getName().endsWith(DEFAULT_FILE_EXTENSION))) {
+                && (inputs.getFirst().getFileSystem().toString().endsWith(ZIP_FILE_EXTENSION) || inputs.getFirst().getFileName().endsWith(DEFAULT_FILE_EXTENSION))) {
             this.runViewer(inputs.getFirst());
             return;
         }
@@ -160,12 +161,12 @@ public final class CLI {
         this.runAndView();
     }
 
-    private List<File> getAllInputs() {
+    private List<Path> getAllInputs() {
         List<File> inputs = new ArrayList<>();
         inputs.addAll(List.of(this.inputHandler.getCliOptions().rootDirectory));
         inputs.addAll(List.of(this.inputHandler.getCliOptions().newDirectories));
         inputs.addAll(List.of(this.inputHandler.getCliOptions().oldDirectories));
-        return inputs;
+        return inputs.stream().map(File::toPath).toList();
     }
 
     private void finalizeLogger() {

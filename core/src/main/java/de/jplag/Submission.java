@@ -40,15 +40,15 @@ public class Submission implements Comparable<Submission> {
     private static final Logger logger = LoggerFactory.getLogger(Submission.class);
 
     private final String name; // identifier for the submission (a directory or file name).
-    private final File submissionRootFile; // Root of the submission, a director or file (including the subdir if used).
+    private final Path submissionRootFile; // Root of the submission, a director or file (including the subdir if used).
     private final boolean isNew; // old submissions are only checked against new ones.
-    private final Collection<File> files;
+    private final Collection<Path> files;
     private final Language language;
 
     private SubmissionState state; // whether an error occurred during parsing or not
     private List<Token> tokenList; // list of tokens from all files, used for comparison
     private JPlagComparison baseCodeComparison; // Comparison of thus submission with the base code
-    private Map<File, Integer> fileTokenCount;
+    private Map<Path, Integer> fileTokenCount;
     private final List<Comment> comments; // list of comments from all files
 
     /**
@@ -60,7 +60,7 @@ public class Submission implements Comparable<Submission> {
      * @param files are the files of the submissions, if the root is a single file it should just contain one file.
      * @param language is the language of the submission.
      */
-    public Submission(String name, File submissionRootFile, boolean isNew, Collection<File> files, Language language) {
+    public Submission(String name, Path submissionRootFile, boolean isNew, Collection<Path> files, Language language) {
         this.name = name;
         this.submissionRootFile = submissionRootFile;
         this.isNew = isNew;
@@ -104,7 +104,7 @@ public class Submission implements Comparable<Submission> {
      * Provided all source code files.
      * @return a collection of files this submission consists of.
      */
-    public Collection<File> getFiles() {
+    public Collection<Path> getFiles() {
         return files;
     }
 
@@ -129,7 +129,7 @@ public class Submission implements Comparable<Submission> {
      * @return the unique root of the submission, which is either in a root folder or a subfolder of root folder when the
      * subdirectory option is used.
      */
-    public File getRoot() {
+    public Path getRoot() {
         return submissionRootFile;
     }
 
@@ -220,9 +220,9 @@ public class Submission implements Comparable<Submission> {
     private void copySubmission() {
         File errorDirectory = createErrorDirectory(language.getIdentifier(), name);
         logger.info("Copying erroneous submission to {}", errorDirectory.getAbsolutePath());
-        for (File file : files) {
+        for (Path file : files) {
             try {
-                Files.copy(file.toPath(), new File(errorDirectory, file.getName()).toPath());
+                Files.copy(file, new File(errorDirectory, file.getFileName().toString()).toPath());
             } catch (IOException exception) {
                 logger.error("Error copying file: " + exception.getMessage(), exception);
             }
@@ -286,7 +286,7 @@ public class Submission implements Comparable<Submission> {
     private void extractAndParseComments() {
         Optional<CommentExtractorSettings> commentExtractorSettings = language.getCommentExtractorSettings();
         if (commentExtractorSettings.isPresent()) {
-            for (File file : files) {
+            for (Path file : files) {
                 CommentExtractor extractor = new CommentExtractor(file, commentExtractorSettings.get());
                 comments.addAll(extractor.extract());
             }
@@ -337,14 +337,14 @@ public class Submission implements Comparable<Submission> {
     /**
      * @return A mapping of each file in the submission to the number of tokens in the file
      */
-    public Map<File, Integer> getTokenCountPerFile() {
+    public Map<Path, Integer> getTokenCountPerFile() {
         if (this.tokenList == null) {
             return Collections.emptyMap();
         }
 
         if (fileTokenCount == null) {
             fileTokenCount = new HashMap<>();
-            for (File file : this.files) {
+            for (Path file : this.files) {
                 fileTokenCount.put(file, 0);
             }
             for (Token token : this.tokenList) {

@@ -1,7 +1,7 @@
 package de.jplag.regressiontest.model;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Set;
 
@@ -15,13 +15,13 @@ public enum DataSetFormat {
      */
     PROGPEDIA {
         @Override
-        public Set<File> getSourceDirectories(DataSet dataSet) throws IOException {
-            return Collections.singleton(new File(dataSet.actualSourceDirectory(), "ACCEPTED"));
+        public Set<Path> getSourceDirectories(DataSet dataSet) throws IOException {
+            return Collections.singleton(dataSet.actualSourceDirectory().resolve("ACCEPTED"));
         }
 
         @Override
-        public File getBaseCodeDirectory(DataSet dataSet, String directoryName) throws IOException {
-            return new File(dataSet.actualSourceDirectory(), directoryName);
+        public Path getBaseCodeDirectory(DataSet dataSet, String directoryName) throws IOException {
+            return dataSet.actualSourceDirectory().resolve(directoryName);
         }
     },
     /**
@@ -29,12 +29,12 @@ public enum DataSetFormat {
      */
     PLAIN {
         @Override
-        public Set<File> getSourceDirectories(DataSet dataSet) throws IOException {
+        public Set<Path> getSourceDirectories(DataSet dataSet) throws IOException {
             return Collections.singleton(dataSet.actualSourceDirectory());
         }
 
         @Override
-        public File getBaseCodeDirectory(DataSet dataSet, String directoryName) {
+        public Path getBaseCodeDirectory(DataSet dataSet, String directoryName) {
             throw new IllegalStateException("Plain formatted data sets cannot include base code.");
         }
     };
@@ -45,7 +45,7 @@ public enum DataSetFormat {
      * @return The source directories
      * @throws IOException if retrieving the sources fails.
      */
-    public abstract Set<File> getSourceDirectories(DataSet dataSet) throws IOException;
+    public abstract Set<Path> getSourceDirectories(DataSet dataSet) throws IOException;
 
     /**
      * Resolves the base code directory.
@@ -54,5 +54,5 @@ public enum DataSetFormat {
      * @return The base code directory
      * @throws IOException if retrieving the base code fails.
      */
-    public abstract File getBaseCodeDirectory(DataSet dataSet, String directoryName) throws IOException;
+    public abstract Path getBaseCodeDirectory(DataSet dataSet, String directoryName) throws IOException;
 }

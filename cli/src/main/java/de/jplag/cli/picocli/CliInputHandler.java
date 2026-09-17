@@ -6,6 +6,7 @@ import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_OPTION_LIST
 import static picocli.CommandLine.Model.UsageMessageSpec.SECTION_KEY_SYNOPSIS;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -181,7 +182,7 @@ public class CliInputHandler {
      * @return The file to show
      * @throws CliException If multiple options would be valid
      */
-    public File getFileForViewMode() throws CliException {
+    public Path getFileForViewMode() throws CliException {
         List<File> validOptions = new ArrayList<>(List.of(this.options.rootDirectory));
 
         validOptions.addAll(List.of(this.options.newDirectories));
@@ -193,7 +194,7 @@ public class CliInputHandler {
 
         return switch (validOptions.size()) {
             case 0 -> null;
-            case 1 -> validOptions.getFirst();
+            case 1 -> validOptions.getFirst().toPath();
             default -> throw new CliException(AMBIGUOUS_VIEW_FILE);
         };
     }
