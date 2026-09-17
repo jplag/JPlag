@@ -39,11 +39,15 @@ jobs:
     steps:
     - uses: actions/checkout@v7
 
+    - run: |
+        download_url="https://github.com/JFronny/jdk-babylon/releases/download/artifacts/jdk-linux-x64.tar.gz"
+        wget -O $RUNNER_TEMP/jdk-linux-x64.tar.gz $download_url
     - name: Set up JDK
       uses: actions/setup-java@v5
       with:
-        java-version: 25
-        distribution: 'temurin'
+        distribution: jdkfile
+        jdkFile: ${{ runner.temp }}/jdk-linux-x64.tar.gz
+        java-version: 26
 
     - uses: actions/setup-node@v7
       with:
