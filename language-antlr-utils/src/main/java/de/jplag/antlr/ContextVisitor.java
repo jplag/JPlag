@@ -189,7 +189,7 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
      * Exit a given entity, injecting the needed dependencies.
      * @param data is the data of the original visitor
      */
-    void exit(HandlerData<T> data) {
+    public void exit(HandlerData<T> data) {
         if (this.delegate != null) {
             this.delegate.delegateExit(data);
             return;
@@ -200,7 +200,7 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
     }
 
     @Override
-    void enter(HandlerData<T> data) {
+    public void enter(HandlerData<T> data) {
         if (this.delegate != null) {
             this.delegate.delegateEnter(data);
             return;
@@ -219,7 +219,7 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
     }
 
     @Override
-    boolean matches(T entity) {
+    public boolean matches(T entity) {
         if (this.delegate != null && !this.delegate.isPresent(entity)) {
             return false;
         }

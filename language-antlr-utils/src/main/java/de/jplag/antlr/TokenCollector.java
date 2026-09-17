@@ -28,7 +28,7 @@ public class TokenCollector {
     /**
      * @param extractsSemantics If semantics are extracted
      */
-    TokenCollector(boolean extractsSemantics) {
+    public TokenCollector(boolean extractsSemantics) {
         this.collected = new ArrayList<>();
         this.extractsSemantics = extractsSemantics;
     }
@@ -36,7 +36,7 @@ public class TokenCollector {
     /**
      * @return All collected tokens
      */
-    List<Token> getTokens() {
+    public List<Token> getTokens() {
         return Collections.unmodifiableList(this.collected);
     }
 
