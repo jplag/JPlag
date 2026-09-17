@@ -37,6 +37,11 @@ public class RustLanguage implements Language {
     }
 
     @Override
+    public String getVersionFlagInformation() {
+        return "Supports version 1.60.0";
+    }
+
+    @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
         return new RustParserAdapter().parse(files);
     }

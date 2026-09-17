@@ -37,6 +37,11 @@ public class CSharpLanguage implements Language {
     }
 
     @Override
+    public String getVersionFlagInformation() {
+        return "Targets C# 6";
+    }
+
+    @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
         return new CSharpParserAdapter().parse(files);
     }
