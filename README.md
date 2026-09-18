@@ -10,6 +10,7 @@
 [![GitHub commit activity](https://img.shields.io/github/commit-activity/y/jplag/JPlag)](https://github.com/jplag/JPlag/pulse)
 [![SonarCloud Coverage](https://sonarcloud.io/api/project_badges/measure?project=jplag_JPlag&metric=coverage)](https://sonarcloud.io/component_measures?metric=Coverage&view=list&id=jplag_JPlag)
 [![Java Version](https://img.shields.io/badge/java-SE%2025-yellowgreen)](#download-and-installation)
+[![Plumber Score](https://score.getplumber.io/github.com/jplag/JPlag.svg)](https://score.getplumber.io/github.com/jplag/JPlag)
 
 
 JPlag finds pairwise similarities among a set of multiple programs. It can reliably detect software plagiarism and collusion in software development, even when obfuscated. All similarities are calculated locally; no source code or plagiarism results are ever uploaded online. JPlag supports a large number of languages.
