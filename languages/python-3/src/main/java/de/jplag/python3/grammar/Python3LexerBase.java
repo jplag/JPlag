@@ -13,57 +13,94 @@ package de.jplag.python3.grammar;
  */
 
 /*
- * Project : Python Indent/Dedent handler for ANTLR4 grammars Developed by : Robert Einhorn, robert.einhorn.hu@gmail.com
+ * Project : A helper class for an ANTLR4 Python lexer grammar that assists in tokenizing indentation, interpolated
+ * strings, and encoding declaration. Developed by : Robert Einhorn, robert.einhorn.hu@gmail.com
  */
 
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+// **** Implemented in Java 8 for compatibility with ANTLR4 Java runtime ****
+
+import java.util.ArrayDeque;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.misc.Pair;
 
 public abstract class Python3LexerBase extends Lexer {
-    // A stack that keeps track of the indentation lengths
-    private Deque<Integer> indentLengthStack;
-    // A list where tokens are waiting to be loaded into the token stream
-    private Deque<Token> pendingTokens;
+    private static final int INVALID_LENGTH = -1;
+    private static final String ERR_TXT = " ERROR: ";
+    private static final int TAB_LENGTH = 8;
+    private static final Map<String, Integer> LEXER_MODES_FOR_ISTRING_START;
+    static {
+        Map<String, Integer> m = new HashMap<>();
 
-    // last pending token type
+        // f-strings
+        m.put("f'", Python3Lexer.SQ1__FSTRING_MODE);
+        m.put("rf'", Python3Lexer.SQ1R_FSTRING_MODE);
+        m.put("fr'", Python3Lexer.SQ1R_FSTRING_MODE);
+        m.put("f\"", Python3Lexer.DQ1__FSTRING_MODE);
+        m.put("rf\"", Python3Lexer.DQ1R_FSTRING_MODE);
+        m.put("fr\"", Python3Lexer.DQ1R_FSTRING_MODE);
+        m.put("f'''", Python3Lexer.SQ3__FSTRING_MODE);
+        m.put("rf'''", Python3Lexer.SQ3R_FSTRING_MODE);
+        m.put("fr'''", Python3Lexer.SQ3R_FSTRING_MODE);
+        m.put("f\"\"\"", Python3Lexer.DQ3__FSTRING_MODE);
+        m.put("rf\"\"\"", Python3Lexer.DQ3R_FSTRING_MODE);
+        m.put("fr\"\"\"", Python3Lexer.DQ3R_FSTRING_MODE);
+
+        // t-strings
+        m.put("t'", Python3Lexer.SQ1__TSTRING_MODE);
+        m.put("rt'", Python3Lexer.SQ1R_TSTRING_MODE);
+        m.put("tr'", Python3Lexer.SQ1R_TSTRING_MODE);
+        m.put("t\"", Python3Lexer.DQ1__TSTRING_MODE);
+        m.put("rt\"", Python3Lexer.DQ1R_TSTRING_MODE);
+        m.put("tr\"", Python3Lexer.DQ1R_TSTRING_MODE);
+        m.put("t'''", Python3Lexer.SQ3__TSTRING_MODE);
+        m.put("rt'''", Python3Lexer.SQ3R_TSTRING_MODE);
+        m.put("tr'''", Python3Lexer.SQ3R_TSTRING_MODE);
+        m.put("t\"\"\"", Python3Lexer.DQ3__TSTRING_MODE);
+        m.put("rt\"\"\"", Python3Lexer.DQ3R_TSTRING_MODE);
+        m.put("tr\"\"\"", Python3Lexer.DQ3R_TSTRING_MODE);
+
+        LEXER_MODES_FOR_ISTRING_START = Collections.unmodifiableMap(m);
+    }
+
+    private String encodingName;
+
+    // Indentation handling
+    private Deque<Integer> indentationLengthStack;
+    private Deque<Token> pendingTokenQueue;
+
     private int previousPendingTokenType;
     private int lastPendingTokenTypeFromDefaultChannel;
 
-    // The amount of opened parentheses, square brackets or curly braces
-    private int opened;
-    // The amount of opened parentheses and square brackets in the current lexer mode
-    private Deque<Integer> paren_or_bracket_openedStack;
-    // A stack that stores expression(s) between braces in fstring
+    // Parenthesis / bracket / brace counts
+    private int openParenBracketBraceCount;
+    private Deque<Integer> parenOrBracketOpenedStack;
     private Deque<String> braceExpressionStack;
-    private String prevBraceExpression;
+    private String lastClosedBraceExpression;
 
-    // Instead of this._mode (_mode is not implemented in each ANTLR4 runtime)
+    // Current interpolated STRING_MIDDLE token type (FSTRING_MIDDLE or TSTRING_MIDDLE)
+    private int activeInterpolatedStringMiddleTokenType;
+
+    // We reimplement mode/stack because not all runtimes expose _mode/_modeStack
     private int curLexerMode;
-    // Instead of this._modeStack (_modeStack is not implemented in each ANTLR4 runtime)
     private Deque<Integer> lexerModeStack;
 
+    // Indentation diagnostics
     private boolean wasSpaceIndentation;
     private boolean wasTabIndentation;
-    private boolean wasIndentationMixedWithSpacesAndTabs;
+    private boolean hasMixedIndentationBeenReported;
 
-    private Token curToken; // current (under processing) token
-    private Token ffgToken; // following (look ahead) token
-
-    private final int INVALID_LENGTH = -1;
-    private final String ERR_TXT = " ERROR: ";
+    // Current / lookahead tokens
+    private Token curToken;
+    private Token laToken;
 
     protected Python3LexerBase(CharStream input) {
         super(input);
         this.init();
-    }
-
-    @Override
-    public Token nextToken() { // reading the input stream until a return EOF
-        this.checkNextToken();
-        return this.pendingTokens.pollFirst(); // add the queued token to the token stream
     }
 
     @Override
@@ -73,33 +110,47 @@ public abstract class Python3LexerBase extends Lexer {
     }
 
     private void init() {
-        this.indentLengthStack = new ArrayDeque<>();
-        this.pendingTokens = new ArrayDeque<>();
+        this.encodingName = "";
+        this.indentationLengthStack = new ArrayDeque<>();
+        this.pendingTokenQueue = new ArrayDeque<>();
         this.previousPendingTokenType = 0;
         this.lastPendingTokenTypeFromDefaultChannel = 0;
-        this.opened = 0;
-        this.paren_or_bracket_openedStack = new ArrayDeque<>();
+        this.openParenBracketBraceCount = 0;
+        this.parenOrBracketOpenedStack = new ArrayDeque<>();
         this.braceExpressionStack = new ArrayDeque<>();
-        this.prevBraceExpression = "";
-        this.curLexerMode = 0;
+        this.lastClosedBraceExpression = "";
+        this.activeInterpolatedStringMiddleTokenType = 0;
+        this.curLexerMode = Lexer.DEFAULT_MODE;
         this.lexerModeStack = new ArrayDeque<>();
         this.wasSpaceIndentation = false;
         this.wasTabIndentation = false;
-        this.wasIndentationMixedWithSpacesAndTabs = false;
+        this.hasMixedIndentationBeenReported = false;
         this.curToken = null;
-        this.ffgToken = null;
+        this.laToken = null;
     }
 
-    private void checkNextToken() {
+    /**
+     * Sets the encoding name to emit an ENCODING token at the start of the token stream. Leave empty if not needed (e.g.,
+     * when parsing from string).
+     * @param encodingName the encoding name (e.g., "utf-8"), or empty string to disable ENCODING token
+     */
+    public void setEncodingName(final String encodingName) {
+        this.encodingName = encodingName;
+    }
+
+    @Override
+    public Token nextToken() { // Reading the input stream until EOF is reached
+        this.processCurrentToken();
+        return this.pendingTokenQueue.pollFirst(); // Add the queued token to the token stream
+    }
+
+    private void processCurrentToken() {
         if (this.previousPendingTokenType == Token.EOF)
             return;
 
-        if (this.indentLengthStack.isEmpty()) { // We're at the first token
-            this.insertENCODINGtoken();
-            this.setCurrentAndFollowingTokens();
+        this.setCurrentAndFollowingTokens();
+        if (this.indentationLengthStack.isEmpty()) { // We're at the first token
             this.handleStartOfInput();
-        } else {
-            this.setCurrentAndFollowingTokens();
         }
 
         switch (this.curToken.getType()) {
@@ -109,21 +160,22 @@ public abstract class Python3LexerBase extends Lexer {
             case Python3Lexer.LPAR:
             case Python3Lexer.LSQB:
             case Python3Lexer.LBRACE:
-                this.opened++;
+                this.openParenBracketBraceCount++;
                 this.addPendingToken(this.curToken);
                 break;
             case Python3Lexer.RPAR:
             case Python3Lexer.RSQB:
             case Python3Lexer.RBRACE:
-                this.opened--;
+                this.openParenBracketBraceCount--;
                 this.addPendingToken(this.curToken);
                 break;
             case Python3Lexer.FSTRING_MIDDLE:
-                this.handleFSTRING_MIDDLEtokenWithDoubleBrace(); // does not affect the opened field
+            case Python3Lexer.TSTRING_MIDDLE:
+                this.handleISTRING_MIDDLEtokenWithDoubleBrace(); // does not affect the opened field
                 this.addPendingToken(this.curToken);
                 break;
             case Python3Lexer.COLONEQUAL:
-                this.handleCOLONEQUALtokenInFString();
+                this.handleCOLONEQUALtokenInIString();
                 break;
             case Python3Lexer.ERRORTOKEN:
                 this.reportLexerError("token recognition error at: '" + this.curToken.getText() + "'");
@@ -139,67 +191,31 @@ public abstract class Python3LexerBase extends Lexer {
     }
 
     private void setCurrentAndFollowingTokens() {
-        this.curToken = this.ffgToken == null ? super.nextToken() : this.ffgToken;
+        this.curToken = this.laToken == null ? super.nextToken() : this.laToken;
 
-        this.checkCurToken(); // ffgToken cannot be used in this method and its sub methods (ffgToken is not yet set)!
+        this.normalizeCurToken(); // Do not use laToken in this method or any of its submethods — it hasn't been set yet!
 
-        this.ffgToken = this.curToken.getType() == Token.EOF ? this.curToken : super.nextToken();
+        this.laToken = this.curToken.getType() == Token.EOF ? this.curToken : super.nextToken();
     }
 
-    private void insertENCODINGtoken() { // https://peps.python.org/pep-0263/
-        StringBuilder lineBuilder = new StringBuilder();
-        String encodingName = "";
-        int lineCount = 0;
-        final Pattern ws_commentPattern = Pattern.compile("^[ \\t\\f]*(#.*)?$");
-        final CharStream charStream = this.getInputStream();
-        final int size = charStream.size();
+    // ===================== Leading‑Token Preprocessing =====================
+    // Handles BOM skipping, ENCODING token insertion, suppression of leading
+    // NEWLINE tokens, and validation of the first INDENT before normal token
+    // processing begins.
 
-        charStream.seek(0);
-        for (int i = 0; i < size; i++) {
-            char c = (char) charStream.LA(i + 1);
-            lineBuilder.append(c);
-
-            if (c == '\n' || i == size - 1) {
-                String line = lineBuilder.toString().replace("\r", "").replace("\n", "");
-                if (ws_commentPattern.matcher(line).find()) { // WS* + COMMENT? found
-                    encodingName = getEncodingName(line);
-                    if (!encodingName.isEmpty()) {
-                        break; // encoding found
-                    }
-                } else {
-                    break; // statement or backslash found (line is not empty, not whitespace(s), not comment)
-                }
-
-                lineCount++;
-                if (lineCount >= 2) {
-                    break; // check only the first two lines
-                }
-                lineBuilder = new StringBuilder();
-            }
-        }
-
-        if (encodingName.isEmpty()) {
-            encodingName = "utf-8"; // default Python source code encoding
-        }
-
-        final CommonToken encodingToken = new CommonToken(Python3Lexer.ENCODING, encodingName);
-        encodingToken.setChannel(Token.HIDDEN_CHANNEL);
-        this.addPendingToken(encodingToken);
-    }
-
-    private String getEncodingName(final String commentText) { // https://peps.python.org/pep-0263/#defining-the-encoding
-        final Pattern encodingCommentPattern = Pattern.compile("^[ \\t\\f]*#.*?coding[:=][ \\t]*([-_.a-zA-Z0-9]+)");
-        final Matcher matcher = encodingCommentPattern.matcher(commentText);
-        return matcher.find() ? matcher.group(1) : "";
-    }
-
-    // initialize the indentLengthStack
-    // hide the leading NEWLINE token(s)
-    // if exists, find the first statement (not NEWLINE, not EOF token) that comes from the default channel
-    // insert a leading INDENT token if necessary
     private void handleStartOfInput() {
-        // initialize the stack with a default 0 indentation length
-        this.indentLengthStack.push(0); // this will never be popped off
+        // - initialize indent stack with a default 0 indentation length
+        // - skip BOM token
+        // - insert ENCODING token (if any)
+        // - hide leading NEWLINE(s)
+        // - insert leading INDENT if first statement is indented
+        this.indentationLengthStack.push(0); // this will never be popped off
+
+        if (this.curToken.getType() == Python3Lexer.BOM) {
+            this.setCurrentAndFollowingTokens();
+        }
+        this.insertENCODINGtoken();
+
         while (this.curToken.getType() != Token.EOF) {
             if (this.curToken.getChannel() == Token.DEFAULT_CHANNEL) {
                 if (this.curToken.getType() == Python3Lexer.NEWLINE) {
@@ -207,114 +223,183 @@ public abstract class Python3LexerBase extends Lexer {
                     this.hideAndAddPendingToken(this.curToken);
                 } else { // We're at the first statement
                     this.insertLeadingIndentToken();
-                    return; // continue the processing of the current token with checkNextToken()
+                    return; // continue the processing of the current token with processCurrentToken()
                 }
             } else {
                 this.addPendingToken(this.curToken); // it can be WS, EXPLICIT_LINE_JOINING or COMMENT token
             }
             this.setCurrentAndFollowingTokens();
         }
-        // continue the processing of the EOF token with checkNextToken()
+        // continue the processing of the EOF token with processCurrentToken()
+    }
+
+    private void insertENCODINGtoken() { // https://peps.python.org/pep-0263/
+        if (this.encodingName.isEmpty())
+            return;
+
+        final Pair<TokenSource, CharStream> sourcePair = this._tokenFactorySourcePair;
+        final CommonToken encodingToken = new CommonToken(sourcePair, Python3Lexer.ENCODING, Token.HIDDEN_CHANNEL, 0, 0);
+        encodingToken.setText(this.encodingName);
+        encodingToken.setLine(0);
+        encodingToken.setCharPositionInLine(-1);
+        this.addPendingToken(encodingToken);
     }
 
     private void insertLeadingIndentToken() {
         if (this.previousPendingTokenType == Python3Lexer.WS) {
-            Token prevToken = this.pendingTokens.peekLast(); // WS token
+            Token prevToken = this.pendingTokenQueue.peekLast(); // WS token
             if (this.getIndentationLength(prevToken.getText()) != 0) { // there is an "indentation" before the first statement
                 final String errMsg = "first statement indented";
                 this.reportLexerError(errMsg);
-                // insert an INDENT token before the first statement to raise an 'unexpected indent' error later by the parser
-                this.createAndAddPendingToken(Python3Lexer.INDENT, Token.DEFAULT_CHANNEL, this.ERR_TXT + errMsg, this.curToken);
+                // insert an INDENT token before the first statement to trigger an 'unexpected indent' error later in the parser
+                this.createAndAddPendingToken(Python3Lexer.INDENT, ERR_TXT + errMsg, this.curToken);
             }
         }
     }
 
+    // ===================== Indentation Handling =====================
+    // Processes NEWLINE tokens, computes indentation length from leading
+    // whitespace, manages the INDENT/DEDENT stack, emits the appropriate
+    // indentation tokens, and detects inconsistent mixing of tabs and spaces
+
     private void handleNEWLINEtoken() {
-        if (!this.lexerModeStack.isEmpty()) { // for multi line fstring literals
+        if (!this.lexerModeStack.isEmpty()) { // for multi line f/t-string literals
             this.addPendingToken(this.curToken);
-        } else if (this.opened > 0) { // We're in an implicit line joining, ignore the current NEWLINE token
+            return;
+        }
+
+        if (this.openParenBracketBraceCount > 0) { // We're in an implicit line joining, ignore the current NEWLINE token
             this.hideAndAddPendingToken(this.curToken);
-        } else {
-            final Token nlToken = new CommonToken(this.curToken); // save the current NEWLINE token
-            final boolean isLookingAhead = this.ffgToken.getType() == Python3Lexer.WS;
-            if (isLookingAhead) {
-                this.setCurrentAndFollowingTokens(); // set the next two tokens
-            }
+            return;
+        }
 
-            switch (this.ffgToken.getType()) {
-                case Python3Lexer.NEWLINE: // We're before a blank line
-                case Python3Lexer.COMMENT: // We're before a comment
-                    this.hideAndAddPendingToken(nlToken);
-                    if (isLookingAhead) {
+        final Token nlToken = new CommonToken(this.curToken); // save the current NEWLINE token
+        final boolean isLookingAhead = this.laToken.getType() == Python3Lexer.WS;
+        if (isLookingAhead) {
+            this.setCurrentAndFollowingTokens(); // set the next two tokens
+        }
+
+        switch (this.laToken.getType()) {
+            case Python3Lexer.NEWLINE: // We're before a blank line
+            case Python3Lexer.COMMENT: // We're before a comment
+                this.hideAndAddPendingToken(nlToken);
+                if (isLookingAhead) {
+                    this.addPendingToken(this.curToken); // WS token
+                }
+                break;
+            default:
+                this.addPendingToken(nlToken);
+                if (isLookingAhead) { // We're on a whitespace(s) followed by a statement
+                    final int indentationLength = this.laToken.getType() == Token.EOF ? 0 : this.getIndentationLength(this.curToken.getText());
+
+                    if (indentationLength != Python3LexerBase.INVALID_LENGTH) {
                         this.addPendingToken(this.curToken); // WS token
+                        this.insertIndentOrDedentToken(indentationLength); // may insert INDENT token or DEDENT token(s)
+                    } else {
+                        this.reportError("inconsistent use of tabs and spaces in indentation");
                     }
-                    break;
-                default:
-                    this.addPendingToken(nlToken);
-                    if (isLookingAhead) { // We're on a whitespace(s) followed by a statement
-                        final int indentationLength = this.ffgToken.getType() == Token.EOF ? 0 : this.getIndentationLength(this.curToken.getText());
-
-                        if (indentationLength != this.INVALID_LENGTH) {
-                            this.addPendingToken(this.curToken); // WS token
-                            this.insertIndentOrDedentToken(indentationLength); // may insert INDENT token or DEDENT token(s)
-                        } else {
-                            this.reportError("inconsistent use of tabs and spaces in indentation");
-                        }
-                    } else { // We're at a newline followed by a statement (there is no whitespace before the statement)
-                        this.insertIndentOrDedentToken(0); // may insert DEDENT token(s)
-                    }
-            }
+                } else { // We're at a newline followed by a statement (there is no whitespace before the statement)
+                    this.insertIndentOrDedentToken(0); // may insert DEDENT token(s)
+                }
         }
     }
 
     private void insertIndentOrDedentToken(final int indentLength) {
-        int prevIndentLength = this.indentLengthStack.peek();
+        int prevIndentLength = this.indentationLengthStack.peek();
         if (indentLength > prevIndentLength) {
-            this.createAndAddPendingToken(Python3Lexer.INDENT, Token.DEFAULT_CHANNEL, null, this.ffgToken);
-            this.indentLengthStack.push(indentLength);
-        } else {
-            while (indentLength < prevIndentLength) { // more than 1 DEDENT token may be inserted to the token stream
-                this.indentLengthStack.pop();
-                prevIndentLength = this.indentLengthStack.peek();
-                if (indentLength <= prevIndentLength) {
-                    this.createAndAddPendingToken(Python3Lexer.DEDENT, Token.DEFAULT_CHANNEL, null, this.ffgToken);
-                } else {
-                    this.reportError("inconsistent dedent");
-                }
+            this.createAndAddPendingToken(Python3Lexer.INDENT, null, this.laToken);
+            this.indentationLengthStack.push(indentLength);
+            return;
+        }
+
+        while (indentLength < prevIndentLength) { // more than 1 DEDENT token may be inserted to the token stream
+            this.indentationLengthStack.pop();
+            prevIndentLength = this.indentationLengthStack.peek();
+            if (indentLength <= prevIndentLength) {
+                this.createAndAddPendingToken(Python3Lexer.DEDENT, null, this.laToken);
+            } else {
+                this.reportError("inconsistent dedent");
             }
         }
     }
 
-    private void checkCurToken() {
+    private int getIndentationLength(final String indentText) { // the indentText may contain spaces, tabs or form feeds
+        int length = 0;
+        for (char ch : indentText.toCharArray()) {
+            switch (ch) {
+                case ' ':
+                    this.wasSpaceIndentation = true;
+                    length += 1;
+                    break;
+                case '\t':
+                    this.wasTabIndentation = true;
+                    length += Python3LexerBase.TAB_LENGTH - (length % Python3LexerBase.TAB_LENGTH);
+                    break;
+                case '\f': // form feed
+                    length = 0;
+                    break;
+            }
+        }
+
+        if (this.wasTabIndentation && this.wasSpaceIndentation) {
+            if (!(this.hasMixedIndentationBeenReported)) {
+                this.hasMixedIndentationBeenReported = true;
+                length = Python3LexerBase.INVALID_LENGTH; // only for the first inconsistent indent
+            }
+        }
+        return length;
+    }
+
+    // ===================== IString Processing =====================
+    // Handles f- and t-string interpolation, including prefix detection,
+    // ISTRING_MIDDLE token rewriting, escaped brace handling ({{ and }}),
+    // quote+brace boundary cases, format-specifier mode transitions,
+    // and brace-expression accumulation inside interpolated segments.
+
+    private void normalizeCurToken() {
         switch (this.curToken.getType()) {
             case Python3Lexer.FSTRING_START:
-                this.setLexerModeByFSTRING_STARTtoken();
+                this.activeInterpolatedStringMiddleTokenType = Python3Lexer.FSTRING_MIDDLE;
+                this.setLexerModeByISTRING_STARTtoken();
+                return;
+            case Python3Lexer.TSTRING_START:
+                this.activeInterpolatedStringMiddleTokenType = Python3Lexer.TSTRING_MIDDLE;
+                this.setLexerModeByISTRING_STARTtoken();
                 return;
             case Python3Lexer.FSTRING_MIDDLE:
-                this.handleFSTRING_MIDDLEtokenWithQuoteAndLBrace(); // affect the opened field
-                if (this.curToken.getType() == Python3Lexer.FSTRING_MIDDLE)
-                    return; // No curToken exchange happened
+            case Python3Lexer.TSTRING_MIDDLE:
+                this.handleISTRING_MIDDLEtokenWithQuoteAndLBrace(); // affect the opened field
+                switch (this.curToken.getType()) {
+                    case Python3Lexer.FSTRING_MIDDLE:
+                    case Python3Lexer.TSTRING_MIDDLE:
+                        return; // No curToken exchange happened
+                }
                 break;
             case Python3Lexer.FSTRING_END:
+            case Python3Lexer.TSTRING_END:
                 this.popLexerMode();
                 return;
             default:
-                if (this.lexerModeStack.isEmpty())
-                    return; // Not in fstring mode
+                if (this.lexerModeStack.isEmpty()) {
+                    return; // Not in f/t-string mode
+                }
         }
+        this.processBraceExpression();
+    }
 
-        switch (this.curToken.getType()) { // the following tokens can only come from default mode (after an LBRACE in fstring)
+    private void processBraceExpression() {
+        switch (this.curToken.getType()) { // the following tokens can only come from default mode (after an LBRACE in f/t-string)
             case Python3Lexer.NEWLINE:
                 // append the current brace expression with the current newline
                 this.appendToBraceExpression(this.curToken.getText());
-                final CommonToken ctkn = new CommonToken(this.curToken);
-                ctkn.setChannel(Token.HIDDEN_CHANNEL);
-                this.curToken = ctkn;
+                final CommonToken nlToken = new CommonToken(this.curToken);
+                nlToken.setChannel(Token.HIDDEN_CHANNEL);
+                this.curToken = nlToken;
                 break;
             case Python3Lexer.LBRACE:
                 // the outermost brace expression cannot be a dictionary comprehension or a set comprehension
                 this.braceExpressionStack.push("{");
-                this.paren_or_bracket_openedStack.push(0);
+                this.parenOrBracketOpenedStack.push(0);
                 this.pushLexerMode(Lexer.DEFAULT_MODE);
                 break;
             case Python3Lexer.LPAR:
@@ -322,13 +407,13 @@ public abstract class Python3LexerBase extends Lexer {
                 // append the current brace expression with a "(" or a "["
                 this.appendToBraceExpression(this.curToken.getText());
                 // https://peps.python.org/pep-0498/#lambdas-inside-expressions
-                this.incrementBraceStack();
+                this.incrementBraceDepth();
                 break;
             case Python3Lexer.RPAR:
             case Python3Lexer.RSQB:
                 // append the current brace expression with a ")" or a "]"
                 this.appendToBraceExpression(this.curToken.getText());
-                this.decrementBraceStack();
+                this.decrementBraceDepth();
                 break;
             case Python3Lexer.COLON:
             case Python3Lexer.COLONEQUAL:
@@ -345,16 +430,17 @@ public abstract class Python3LexerBase extends Lexer {
         }
     }
 
-    private void appendToBraceExpression(String text) {
-        this.braceExpressionStack.push(this.braceExpressionStack.pop() + text);
+    private void appendToBraceExpression(final String text) {
+        final String top = this.braceExpressionStack.pop();
+        this.braceExpressionStack.push(top + text);
     }
 
-    private void incrementBraceStack() { // increment the last element (peek() + 1)
-        this.paren_or_bracket_openedStack.push(this.paren_or_bracket_openedStack.pop() + 1);
+    private void incrementBraceDepth() { // increment the last element
+        this.parenOrBracketOpenedStack.push(this.parenOrBracketOpenedStack.pop() + 1);
     }
 
-    private void decrementBraceStack() { // decrement the last element (peek() - 1)
-        this.paren_or_bracket_openedStack.push(this.paren_or_bracket_openedStack.pop() - 1);
+    private void decrementBraceDepth() { // decrement the last element
+        this.parenOrBracketOpenedStack.push(this.parenOrBracketOpenedStack.pop() - 1);
     }
 
     private void setLexerModeAfterRBRACEtoken() {
@@ -363,14 +449,22 @@ public abstract class Python3LexerBase extends Lexer {
                 this.popLexerMode();
                 this.popByBRACE();
                 break;
-            case Python3Lexer.SQ1__FORMAT_SPECIFICATION_MODE:
-            case Python3Lexer.SQ1R_FORMAT_SPECIFICATION_MODE:
-            case Python3Lexer.DQ1__FORMAT_SPECIFICATION_MODE:
-            case Python3Lexer.DQ1R_FORMAT_SPECIFICATION_MODE:
-            case Python3Lexer.SQ3__FORMAT_SPECIFICATION_MODE:
-            case Python3Lexer.SQ3R_FORMAT_SPECIFICATION_MODE:
-            case Python3Lexer.DQ3__FORMAT_SPECIFICATION_MODE:
-            case Python3Lexer.DQ3R_FORMAT_SPECIFICATION_MODE:
+            case Python3Lexer.SQ1__FSTRING_FORMAT_SPECIFICATION_MODE:
+            case Python3Lexer.SQ1__TSTRING_FORMAT_SPECIFICATION_MODE:
+            case Python3Lexer.SQ1R_FSTRING_FORMAT_SPECIFICATION_MODE:
+            case Python3Lexer.SQ1R_TSTRING_FORMAT_SPECIFICATION_MODE:
+            case Python3Lexer.DQ1__FSTRING_FORMAT_SPECIFICATION_MODE:
+            case Python3Lexer.DQ1__TSTRING_FORMAT_SPECIFICATION_MODE:
+            case Python3Lexer.DQ1R_FSTRING_FORMAT_SPECIFICATION_MODE:
+            case Python3Lexer.DQ1R_TSTRING_FORMAT_SPECIFICATION_MODE:
+            case Python3Lexer.SQ3__FSTRING_FORMAT_SPECIFICATION_MODE:
+            case Python3Lexer.SQ3__TSTRING_FORMAT_SPECIFICATION_MODE:
+            case Python3Lexer.SQ3R_FSTRING_FORMAT_SPECIFICATION_MODE:
+            case Python3Lexer.SQ3R_TSTRING_FORMAT_SPECIFICATION_MODE:
+            case Python3Lexer.DQ3__FSTRING_FORMAT_SPECIFICATION_MODE:
+            case Python3Lexer.DQ3__TSTRING_FORMAT_SPECIFICATION_MODE:
+            case Python3Lexer.DQ3R_FSTRING_FORMAT_SPECIFICATION_MODE:
+            case Python3Lexer.DQ3R_TSTRING_FORMAT_SPECIFICATION_MODE:
                 this.popLexerMode();
                 this.popLexerMode();
                 this.popByBRACE();
@@ -380,81 +474,107 @@ public abstract class Python3LexerBase extends Lexer {
         }
     }
 
-    private void setLexerModeByFSTRING_STARTtoken() {
-        final String text = this.curToken.getText().toLowerCase();
-        Map<String, Integer> modeMap = new HashMap<>();
-        modeMap.put("f'", Python3Lexer.SQ1__FSTRING_MODE);
-        modeMap.put("rf'", Python3Lexer.SQ1R_FSTRING_MODE);
-        modeMap.put("fr'", Python3Lexer.SQ1R_FSTRING_MODE);
-        modeMap.put("f\"", Python3Lexer.DQ1__FSTRING_MODE);
-        modeMap.put("rf\"", Python3Lexer.DQ1R_FSTRING_MODE);
-        modeMap.put("fr\"", Python3Lexer.DQ1R_FSTRING_MODE);
-        modeMap.put("f'''", Python3Lexer.SQ3__FSTRING_MODE);
-        modeMap.put("rf'''", Python3Lexer.SQ3R_FSTRING_MODE);
-        modeMap.put("fr'''", Python3Lexer.SQ3R_FSTRING_MODE);
-        modeMap.put("f\"\"\"", Python3Lexer.DQ3__FSTRING_MODE);
-        modeMap.put("rf\"\"\"", Python3Lexer.DQ3R_FSTRING_MODE);
-        modeMap.put("fr\"\"\"", Python3Lexer.DQ3R_FSTRING_MODE);
-
-        Integer mode = modeMap.get(text);
-        if (mode != null) {
-            this.pushLexerMode(mode);
+    private void setLexerModeByISTRING_STARTtoken() { // ISTRING = interpolated string (FSTRING or TSTRING)
+        final String interpolatedStringPrefix = this.curToken.getText().toLowerCase();
+        final Integer newLexerMode = Python3LexerBase.LEXER_MODES_FOR_ISTRING_START.get(interpolatedStringPrefix);
+        if (newLexerMode != null) {
+            this.pushLexerMode(newLexerMode);
+        } else {
+            this.reportLexerError("internal error: unknown interpolated string literal prefix: " + this.curToken.getText());
         }
     }
 
     private void setLexerModeByCOLONorCOLONEQUALtoken() {
-        if (this.paren_or_bracket_openedStack.peek() == 0) {
-            // COLONEQUAL token will be replaced with a COLON token in checkNextToken()
-            switch (this.lexerModeStack.peek()) { // check the previous lexer mode (the current is DEFAULT_MODE)
-                case Python3Lexer.SQ1__FSTRING_MODE:
-                case Python3Lexer.SQ1__FORMAT_SPECIFICATION_MODE:
-                    this.pushLexerMode(Python3Lexer.SQ1__FORMAT_SPECIFICATION_MODE); // continue in format spec. mode
-                    break;
-                case Python3Lexer.SQ1R_FSTRING_MODE:
-                case Python3Lexer.SQ1R_FORMAT_SPECIFICATION_MODE:
-                    this.pushLexerMode(Python3Lexer.SQ1R_FORMAT_SPECIFICATION_MODE); // continue in format spec. mode
-                    break;
-                case Python3Lexer.DQ1__FSTRING_MODE:
-                case Python3Lexer.DQ1__FORMAT_SPECIFICATION_MODE:
-                    this.pushLexerMode(Python3Lexer.DQ1__FORMAT_SPECIFICATION_MODE); // continue in format spec. mode
-                    break;
-                case Python3Lexer.DQ1R_FSTRING_MODE:
-                case Python3Lexer.DQ1R_FORMAT_SPECIFICATION_MODE:
-                    this.pushLexerMode(Python3Lexer.DQ1R_FORMAT_SPECIFICATION_MODE); // continue in format spec. mode
-                    break;
-                case Python3Lexer.SQ3__FSTRING_MODE:
-                case Python3Lexer.SQ3__FORMAT_SPECIFICATION_MODE:
-                    this.pushLexerMode(Python3Lexer.SQ3__FORMAT_SPECIFICATION_MODE); // continue in format spec. mode
-                    break;
-                case Python3Lexer.SQ3R_FSTRING_MODE:
-                case Python3Lexer.SQ3R_FORMAT_SPECIFICATION_MODE:
-                    this.pushLexerMode(Python3Lexer.SQ3R_FORMAT_SPECIFICATION_MODE); // continue in format spec. mode
-                    break;
-                case Python3Lexer.DQ3__FSTRING_MODE:
-                case Python3Lexer.DQ3__FORMAT_SPECIFICATION_MODE:
-                    this.pushLexerMode(Python3Lexer.DQ3__FORMAT_SPECIFICATION_MODE); // continue in format spec. mode
-                    break;
-                case Python3Lexer.DQ3R_FSTRING_MODE:
-                case Python3Lexer.DQ3R_FORMAT_SPECIFICATION_MODE:
-                    this.pushLexerMode(Python3Lexer.DQ3R_FORMAT_SPECIFICATION_MODE); // continue in format spec. mode
-                    break;
-            }
+        // Exit early when the current lexer mode indicates an open parenthesis/bracket
+        final boolean opened = this.parenOrBracketOpenedStack.peek() != 0;
+        if (opened)
+            return;
+
+        // COLONEQUAL token will be replaced with a COLON token in processCurrentToken()
+        final int prevLexerMode = lexerModeStack.peek();
+        switch (prevLexerMode) { // check the previous lexer mode (the current is DEFAULT_MODE)
+            case Python3Lexer.SQ1__FSTRING_MODE:
+            case Python3Lexer.SQ1__FSTRING_FORMAT_SPECIFICATION_MODE:
+                this.pushLexerMode(Python3Lexer.SQ1__FSTRING_FORMAT_SPECIFICATION_MODE); // continue in format spec. mode
+                break;
+            case Python3Lexer.SQ1__TSTRING_MODE:
+            case Python3Lexer.SQ1__TSTRING_FORMAT_SPECIFICATION_MODE:
+                this.pushLexerMode(Python3Lexer.SQ1__TSTRING_FORMAT_SPECIFICATION_MODE); // continue in format spec. mode
+                break;
+            case Python3Lexer.SQ1R_FSTRING_MODE:
+            case Python3Lexer.SQ1R_FSTRING_FORMAT_SPECIFICATION_MODE:
+                this.pushLexerMode(Python3Lexer.SQ1R_FSTRING_FORMAT_SPECIFICATION_MODE); // continue in format spec. mode
+                break;
+            case Python3Lexer.SQ1R_TSTRING_MODE:
+            case Python3Lexer.SQ1R_TSTRING_FORMAT_SPECIFICATION_MODE:
+                this.pushLexerMode(Python3Lexer.SQ1R_TSTRING_FORMAT_SPECIFICATION_MODE); // continue in format spec. mode
+                break;
+            case Python3Lexer.DQ1__FSTRING_MODE:
+            case Python3Lexer.DQ1__FSTRING_FORMAT_SPECIFICATION_MODE:
+                this.pushLexerMode(Python3Lexer.DQ1__FSTRING_FORMAT_SPECIFICATION_MODE); // continue in format spec. mode
+                break;
+            case Python3Lexer.DQ1__TSTRING_MODE:
+            case Python3Lexer.DQ1__TSTRING_FORMAT_SPECIFICATION_MODE:
+                this.pushLexerMode(Python3Lexer.DQ1__TSTRING_FORMAT_SPECIFICATION_MODE); // continue in format spec. mode
+                break;
+            case Python3Lexer.DQ1R_FSTRING_MODE:
+            case Python3Lexer.DQ1R_FSTRING_FORMAT_SPECIFICATION_MODE:
+                this.pushLexerMode(Python3Lexer.DQ1R_FSTRING_FORMAT_SPECIFICATION_MODE); // continue in format spec. mode
+                break;
+            case Python3Lexer.DQ1R_TSTRING_MODE:
+            case Python3Lexer.DQ1R_TSTRING_FORMAT_SPECIFICATION_MODE:
+                this.pushLexerMode(Python3Lexer.DQ1R_TSTRING_FORMAT_SPECIFICATION_MODE); // continue in format spec. mode
+                break;
+            case Python3Lexer.SQ3__FSTRING_MODE:
+            case Python3Lexer.SQ3__FSTRING_FORMAT_SPECIFICATION_MODE:
+                this.pushLexerMode(Python3Lexer.SQ3__FSTRING_FORMAT_SPECIFICATION_MODE); // continue in format spec. mode
+                break;
+            case Python3Lexer.SQ3__TSTRING_MODE:
+            case Python3Lexer.SQ3__TSTRING_FORMAT_SPECIFICATION_MODE:
+                this.pushLexerMode(Python3Lexer.SQ3__TSTRING_FORMAT_SPECIFICATION_MODE); // continue in format spec. mode
+                break;
+            case Python3Lexer.SQ3R_FSTRING_MODE:
+            case Python3Lexer.SQ3R_FSTRING_FORMAT_SPECIFICATION_MODE:
+                this.pushLexerMode(Python3Lexer.SQ3R_FSTRING_FORMAT_SPECIFICATION_MODE); // continue in format spec. mode
+                break;
+            case Python3Lexer.SQ3R_TSTRING_MODE:
+            case Python3Lexer.SQ3R_TSTRING_FORMAT_SPECIFICATION_MODE:
+                this.pushLexerMode(Python3Lexer.SQ3R_TSTRING_FORMAT_SPECIFICATION_MODE); // continue in format spec. mode
+                break;
+            case Python3Lexer.DQ3__FSTRING_MODE:
+            case Python3Lexer.DQ3__FSTRING_FORMAT_SPECIFICATION_MODE:
+                this.pushLexerMode(Python3Lexer.DQ3__FSTRING_FORMAT_SPECIFICATION_MODE); // continue in format spec. mode
+                break;
+            case Python3Lexer.DQ3__TSTRING_MODE:
+            case Python3Lexer.DQ3__TSTRING_FORMAT_SPECIFICATION_MODE:
+                this.pushLexerMode(Python3Lexer.DQ3__TSTRING_FORMAT_SPECIFICATION_MODE); // continue in format spec. mode
+                break;
+            case Python3Lexer.DQ3R_FSTRING_MODE:
+            case Python3Lexer.DQ3R_FSTRING_FORMAT_SPECIFICATION_MODE:
+                this.pushLexerMode(Python3Lexer.DQ3R_FSTRING_FORMAT_SPECIFICATION_MODE); // continue in format spec. mode
+                break;
+            case Python3Lexer.DQ3R_TSTRING_MODE:
+            case Python3Lexer.DQ3R_TSTRING_FORMAT_SPECIFICATION_MODE:
+                this.pushLexerMode(Python3Lexer.DQ3R_TSTRING_FORMAT_SPECIFICATION_MODE); // continue in format spec. mode
+                break;
         }
     }
 
     private void popByBRACE() {
-        this.paren_or_bracket_openedStack.pop();
-        this.prevBraceExpression = this.braceExpressionStack.pop() + "}";
+        this.parenOrBracketOpenedStack.pop();
+        String curBraceExpression = this.braceExpressionStack.pop();
+        this.lastClosedBraceExpression = curBraceExpression + "}";
         if (!this.braceExpressionStack.isEmpty()) {
-            // append the current brace expression with the previous brace expression
-            this.braceExpressionStack.push(this.braceExpressionStack.pop() + this.prevBraceExpression);
+            // Extend the current brace expression by adding the previous expression
+            curBraceExpression = this.braceExpressionStack.pop();
+            this.braceExpressionStack.push(curBraceExpression + this.lastClosedBraceExpression);
         }
-
     }
 
-    private void handleFSTRING_MIDDLEtokenWithDoubleBrace() {
+    private void handleISTRING_MIDDLEtokenWithDoubleBrace() { // ISTRING = interpolated string (FSTRING or TSTRING)
         // replace the trailing double brace with a single brace and insert a hidden brace token
-        switch (this.getLastTwoCharsOfTheCurTokenText()) {
+        final String lastTwoChars = this.getLastTwoCharsOfTheCurTokenText();
+        switch (lastTwoChars) {
             case "{{":
                 this.trimLastCharAddPendingTokenSetCurToken(Python3Lexer.LBRACE, "{", Token.HIDDEN_CHANNEL);
                 break;
@@ -464,10 +584,11 @@ public abstract class Python3LexerBase extends Lexer {
         }
     }
 
-    private void handleFSTRING_MIDDLEtokenWithQuoteAndLBrace() {
+    private void handleISTRING_MIDDLEtokenWithQuoteAndLBrace() { // ISTRING = interpolated string (FSTRING or TSTRING)
         // replace the trailing quote + left_brace with a quote and insert an LBRACE token
         // replace the trailing backslash + left_brace with a backslash and insert an LBRACE token
-        switch (this.getLastTwoCharsOfTheCurTokenText()) {
+        final String lastTwoChars = this.getLastTwoCharsOfTheCurTokenText();
+        switch (lastTwoChars) {
             case "\"{":
             case "'{":
             case "\\{":
@@ -477,57 +598,67 @@ public abstract class Python3LexerBase extends Lexer {
     }
 
     private String getLastTwoCharsOfTheCurTokenText() {
-        final String curTokenText = this.curToken.getText();
-        return curTokenText.length() >= 2 ? curTokenText.substring(curTokenText.length() - 2) : curTokenText;
+        final String text = this.curToken.getText();
+        return text.length() >= 2 ? text.substring(text.length() - 2) : text;
     }
 
     private void trimLastCharAddPendingTokenSetCurToken(final int type, final String text, final int channel) {
-        // trim the last char and add the modified curToken to the pendingTokens stack
+        // trim the last char and add the modified curToken to the pendingTokenQueue
         final String curTokenText = this.curToken.getText();
         final String tokenTextWithoutLastChar = curTokenText.substring(0, curTokenText.length() - 1);
-        final CommonToken ctkn = new CommonToken(this.curToken);
-        ctkn.setText(tokenTextWithoutLastChar);
-        ctkn.setStopIndex(ctkn.getStopIndex() - 1);
-        this.addPendingToken(ctkn);
+        final CommonToken token = new CommonToken(this.curToken);
+        token.setText(tokenTextWithoutLastChar);
+        token.setStopIndex(token.getStopIndex() - 1);
+        this.addPendingToken(token);
 
-        this.createNewCurToken(type, text, channel); // set curToken
+        this.replaceCurrentToken(type, text, channel); // set curToken
     }
 
-    private void handleCOLONEQUALtokenInFString() {
-        if (!this.lexerModeStack.isEmpty() && this.paren_or_bracket_openedStack.peek() == 0) {
+    private void handleCOLONEQUALtokenInIString() { // ISTRING = interpolated string (FSTRING or TSTRING)
+        if (!this.lexerModeStack.isEmpty() && this.parenOrBracketOpenedStack.peek() == 0) {
 
-            // In fstring a colonequal (walrus operator) can only be used in parentheses
-            // Not in parentheses, replace COLONEQUAL token with COLON as format specifier
-            // and insert the equal symbol to the following FSTRING_MIDDLE token
-            CommonToken ctkn = new CommonToken(this.curToken);
-            ctkn.setType(Python3Lexer.COLON);
-            ctkn.setText(":");
-            ctkn.setStopIndex(ctkn.getStartIndex());
-            this.curToken = ctkn;
-            if (this.ffgToken.getType() == Python3Lexer.FSTRING_MIDDLE) {
-                ctkn = new CommonToken(this.ffgToken);
-                ctkn.setText("=" + ctkn.getText());
-                ctkn.setStartIndex(ctkn.getStartIndex() - 1);
-                ctkn.setCharPositionInLine(ctkn.getCharPositionInLine() - 1);
-                this.ffgToken = ctkn;
-            } else {
-                this.addPendingToken(this.curToken);
-                this.createNewCurToken(Python3Lexer.FSTRING_MIDDLE, "=", Token.DEFAULT_CHANNEL);
+            // In an f/t-string, the walrus operator (:=) is only allowed inside parentheses.
+            // If used outside, split the COLONEQUAL token into a COLON
+            // (used as a format specifier instead of a walrus operator),
+            // and move the equal sign to the beginning of the next token (FSTRING_MIDDLE or TSTRING_MIDDLE).
+            CommonToken colonequalToken = new CommonToken(this.curToken);
+            colonequalToken.setType(Python3Lexer.COLON);
+            colonequalToken.setText(":");
+            colonequalToken.setStopIndex(colonequalToken.getStartIndex());
+            this.curToken = colonequalToken;
+
+            switch (this.laToken.getType()) {
+                case Python3Lexer.FSTRING_MIDDLE:
+                case Python3Lexer.TSTRING_MIDDLE:
+                    colonequalToken = new CommonToken(this.laToken);
+                    colonequalToken.setText("=" + colonequalToken.getText());
+                    colonequalToken.setStartIndex(colonequalToken.getStartIndex() - 1);
+                    colonequalToken.setCharPositionInLine(colonequalToken.getCharPositionInLine() - 1);
+                    this.laToken = colonequalToken;
+                    break;
+                default:
+                    this.addPendingToken(this.curToken);
+                    this.replaceCurrentToken(this.activeInterpolatedStringMiddleTokenType, "=", Token.DEFAULT_CHANNEL);
             }
         }
         this.addPendingToken(this.curToken);
     }
 
-    private void createNewCurToken(final int type, final String text, final int channel) {
-        final CommonToken ctkn = new CommonToken(this.curToken);
-        ctkn.setType(type);
-        ctkn.setText(text);
-        ctkn.setChannel(channel);
-        ctkn.setCharPositionInLine(ctkn.getCharPositionInLine() + 1);
-        ctkn.setStartIndex(ctkn.getStartIndex() + 1);
-        ctkn.setStopIndex(ctkn.getStartIndex());
-        this.curToken = ctkn;
+    private void replaceCurrentToken(final int type, final String text, final int channel) {
+        final CommonToken token = new CommonToken(this.curToken);
+        token.setType(type);
+        token.setText(text);
+        token.setChannel(channel);
+        token.setCharPositionInLine(token.getCharPositionInLine() + 1);
+        token.setStartIndex(token.getStartIndex() + 1);
+        token.setStopIndex(token.getStartIndex());
+        this.curToken = token;
     }
+
+    // ===================== Lexer‑Mode Management =====================
+    // Manages the custom lexer mode stack used for interpolated strings.
+    // Provides controlled push/pop operations independent of ANTLR’s
+    // internal mode stack to ensure correct behavior in complex IString flows.
 
     private void pushLexerMode(final int mode) {
         this.pushMode(mode);
@@ -540,25 +671,33 @@ public abstract class Python3LexerBase extends Lexer {
         this.curLexerMode = this.lexerModeStack.pop();
     }
 
-    private void handleFORMAT_SPECIFICATION_MODE() {
-        if (!this.lexerModeStack.isEmpty() && this.ffgToken.getType() == Python3Lexer.RBRACE) {
+    // ===================== Format‑Specifier Handling =====================
 
-            // insert an empty FSTRING_MIDDLE token instead of the missing format specification
-            switch (this.curToken.getType()) {
-                case Python3Lexer.COLON:
-                    this.createAndAddPendingToken(Python3Lexer.FSTRING_MIDDLE, Token.DEFAULT_CHANNEL, "", this.ffgToken);
-                    break;
-                case Python3Lexer.RBRACE:
-                    // only if the previous brace expression is not a dictionary comprehension or set comprehension
-                    if (!isDictionaryComprehensionOrSetComprehension(this.prevBraceExpression)) {
-                        this.createAndAddPendingToken(Python3Lexer.FSTRING_MIDDLE, Token.DEFAULT_CHANNEL, "", this.ffgToken);
-                    }
-                    break;
-            }
+    private void handleFORMAT_SPECIFICATION_MODE() {
+        if (this.lexerModeStack.isEmpty() || this.laToken.getType() != Python3Lexer.RBRACE) {
+            return;
+        }
+
+        // insert an empty FSTRING_MIDDLE or TSTRING_MIDDLE token instead of the missing format specification
+        switch (this.curToken.getType()) {
+            case Python3Lexer.COLON:
+                this.createAndAddPendingToken(this.activeInterpolatedStringMiddleTokenType, "", this.laToken);
+                break;
+            case Python3Lexer.RBRACE:
+                // only when the previous brace expression is not a dictionary comprehension or set comprehension
+                if (!isValid_DictionaryOrSet_ComprehensionExpression(this.lastClosedBraceExpression)) {
+                    this.createAndAddPendingToken(this.activeInterpolatedStringMiddleTokenType, "", this.laToken);
+                }
+                break;
+            default:
+                break;
         }
     }
 
-    private boolean isDictionaryComprehensionOrSetComprehension(final String code) {
+    // Determines whether the collected brace expression forms a dictionary or set
+    // comprehension. Used to enforce Python’s rule that outermost f-string brace
+    // expressions cannot be comprehensions.
+    private boolean isValid_DictionaryOrSet_ComprehensionExpression(final String code) {
         final CharStream inputStream = CharStreams.fromString(code);
         final Python3Lexer lexer = new Python3Lexer(inputStream);
         final CommonTokenStream tokenStream = new CommonTokenStream(lexer);
@@ -579,13 +718,18 @@ public abstract class Python3LexerBase extends Lexer {
         return parser.getNumberOfSyntaxErrors() == 0;
     }
 
+    // ===================== Trailing‑Token Finalization =====================
+    // Handles end-of-input cleanup, including emission of remaining DEDENT tokens,
+    // final NEWLINE normalization, and generation of the EOF token to properly
+    // terminate the logical token stream.
+
     private void insertTrailingTokens() {
         switch (this.lastPendingTokenTypeFromDefaultChannel) {
             case Python3Lexer.NEWLINE:
             case Python3Lexer.DEDENT:
                 break; // no trailing NEWLINE token is needed
             default: // insert an extra trailing NEWLINE token that serves as the end of the last statement
-                this.createAndAddPendingToken(Python3Lexer.NEWLINE, Token.DEFAULT_CHANNEL, null, this.ffgToken); // ffgToken is EOF
+                this.createAndAddPendingToken(Python3Lexer.NEWLINE, null, this.laToken); // laToken is EOF
         }
         this.insertIndentOrDedentToken(0); // Now insert as much trailing DEDENT tokens as needed
     }
@@ -598,68 +742,49 @@ public abstract class Python3LexerBase extends Lexer {
         this.addPendingToken(this.curToken);
     }
 
-    private void hideAndAddPendingToken(final Token tkn) {
-        final CommonToken ctkn = new CommonToken(tkn);
-        ctkn.setChannel(Token.HIDDEN_CHANNEL);
-        this.addPendingToken(ctkn);
+    // ===================== Pending‑Token Management =====================
+    // Manages the queue of pending tokens, including emission of normal and hidden
+    // tokens, preserving correct output order for the token stream.
+
+    private void hideAndAddPendingToken(final Token originalToken) {
+        final CommonToken token = new CommonToken(originalToken);
+        token.setChannel(Token.HIDDEN_CHANNEL);
+        this.addPendingToken(token);
     }
 
-    private void createAndAddPendingToken(final int ttype, final int channel, final String text, final Token sampleToken) {
-        final CommonToken ctkn = new CommonToken(sampleToken);
-        ctkn.setType(ttype);
-        ctkn.setChannel(channel);
-        ctkn.setStopIndex(sampleToken.getStartIndex() - 1);
-        ctkn.setText(text == null ? "<" + this.getVocabulary().getDisplayName(ttype) + ">" : text);
+    private void createAndAddPendingToken(final int tokenType, final String text, final Token originalToken) {
+        final CommonToken token = new CommonToken(originalToken);
+        token.setType(tokenType);
+        token.setChannel(Token.DEFAULT_CHANNEL);
+        token.setStopIndex(originalToken.getStartIndex() - 1);
+        token.setText(text == null ? "<" + this.getVocabulary().getSymbolicName(tokenType) + ">" : text);
 
-        this.addPendingToken(ctkn);
+        this.addPendingToken(token);
     }
 
-    private void addPendingToken(final Token tkn) {
-        // save the last pending token type because the pendingTokens list can be empty by the nextToken()
-        this.previousPendingTokenType = tkn.getType();
-        if (tkn.getChannel() == Token.DEFAULT_CHANNEL) {
+    private void addPendingToken(final Token token) {
+        // save the last pending token type because the pendingTokenQueue can be empty by the nextToken()
+        this.previousPendingTokenType = token.getType();
+        if (token.getChannel() == Token.DEFAULT_CHANNEL) {
             this.lastPendingTokenTypeFromDefaultChannel = this.previousPendingTokenType;
         }
-        this.pendingTokens.addLast(tkn);
+        this.pendingTokenQueue.addLast(token);
     }
 
-    private int getIndentationLength(final String indentText) { // the indentText may contain spaces, tabs or form feeds
-        final int TAB_LENGTH = 8; // the standard number of spaces to replace a tab with spaces
-        int length = 0;
-        for (char ch : indentText.toCharArray()) {
-            switch (ch) {
-                case ' ':
-                    this.wasSpaceIndentation = true;
-                    length += 1;
-                    break;
-                case '\t':
-                    this.wasTabIndentation = true;
-                    length += TAB_LENGTH - (length % TAB_LENGTH);
-                    break;
-                case '\f': // form feed
-                    length = 0;
-                    break;
-            }
-        }
-
-        if (this.wasTabIndentation && this.wasSpaceIndentation) {
-            if (!(this.wasIndentationMixedWithSpacesAndTabs)) {
-                this.wasIndentationMixedWithSpacesAndTabs = true;
-                length = this.INVALID_LENGTH; // only for the first inconsistent indent
-            }
-        }
-        return length;
-    }
+    // ===================== Error Reporting & Diagnostics =====================
+    // Provides consistent lexer-level error reporting, including generation of
+    // ERRORTOKEN instances, construction of human-readable diagnostic messages,
+    // and insertion of error markers into the token stream to ensure that the
+    // parser receives accurate context for recovery.
 
     private void reportLexerError(final String errMsg) {
-        this.getErrorListenerDispatch().syntaxError(this, this.curToken, this.curToken.getLine(), this.curToken.getCharPositionInLine(),
-                " LEXER" + this.ERR_TXT + errMsg, null);
+        this.getErrorListenerDispatch().syntaxError(this, this.curToken.getType(), this.curToken.getLine(), this.curToken.getCharPositionInLine(),
+                " LEXER" + ERR_TXT + errMsg, null);
     }
 
     private void reportError(final String errMsg) {
         this.reportLexerError(errMsg);
-
-        // the ERRORTOKEN will raise an error in the parser
-        this.createAndAddPendingToken(Python3Lexer.ERRORTOKEN, Token.DEFAULT_CHANNEL, this.ERR_TXT + errMsg, this.ffgToken);
+        this.createAndAddPendingToken(Python3Lexer.ERRORTOKEN, ERR_TXT + errMsg, this.laToken);
+        // the ERRORTOKEN also triggers a parser error
     }
 }
