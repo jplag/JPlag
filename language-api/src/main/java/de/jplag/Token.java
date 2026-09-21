@@ -67,15 +67,21 @@ public class Token {
      * @param length is the length of the token in the source code.
      */
     public Token(TokenType type, File file, int startLine, int startColumn, int endLine, int endColumn, int length) {
-        if (startLine == 0 || endLine == 0) {
-            logger.warn("Creating a token with line index 0 while index is 1-based");
+        if (logger.isWarnEnabled()) {
+            if (startLine == 0 || endLine == 0) {
+                logger.warn("Creating a token with line index 0 while index is 1-based. {}",
+                        generateErrorPosition(type, file, startLine, startColumn, endLine, endColumn));
+            }
+            if (startColumn == 0 || endColumn == 0) {
+                logger.warn("Creating a token with column index 0 while index is 1-based. {}",
+                        generateErrorPosition(type, file, startLine, startColumn, endLine, endColumn));
+            }
+            if (startLine > endLine || startLine == endLine && startColumn > endColumn) {
+                logger.warn("Creating a token that ends before it starts. {}",
+                        generateErrorPosition(type, file, startLine, startColumn, endLine, endColumn));
+            }
         }
-        if (startColumn == 0 || endColumn == 0) {
-            logger.warn("Creating a token with column index 0 while index is 1-based");
-        }
-        if (startLine > endLine || startLine == endLine && startColumn > endColumn) {
-            logger.warn("Creating a token that ends earlier than it start. Start: {}:{}; End: {}:{}", startLine, startColumn, endLine, endColumn);
-        }
+
         this.type = type;
         this.file = file;
         this.startLine = startLine;
@@ -217,5 +223,9 @@ public class Token {
      */
     public CodeSemantics getSemantics() {
         return semantics;
+    }
+
+    private static String generateErrorPosition(TokenType type, File file, int startLine, int startColumn, int endLine, int endColumn) {
+        return String.format("Type: %s; File: %s; Start: %d:%d; End: %d:%d", type, file, startLine, startColumn, endLine, endColumn);
     }
 }

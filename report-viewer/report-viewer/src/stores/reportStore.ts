@@ -6,6 +6,7 @@ import {
   ComparisonListElement,
   DistributionMap,
   File,
+  MetricJsonIdentifier,
   RunInformation,
   SubmissionFile,
   Version
@@ -31,6 +32,7 @@ export const reportStore = defineStore('reportStore', () => {
   const topComparisons: Ref<ComparisonListElement[] | null> = ref(null)
   const idToDisplayNameMap: Ref<Map<string, string> | null> = ref(null)
   const comparisonFilesLookup: Ref<Map<string, Map<string, string>> | null> = ref(null)
+  const secondaryMetrics: Ref<Set<MetricJsonIdentifier>> = ref(new Set())
 
   const reportFileName = ref<string | null>(null)
   const files = ref(new Map<string, File>())
@@ -72,6 +74,27 @@ export const reportStore = defineStore('reportStore', () => {
     cluster.value = ClusterFactory.getClusters(getFile('cluster.json').data)
     distribution.value = DistributionFactory.getDistributions(getFile('distribution.json').data)
     cliOptions.value = OptionsFactory.getCliOptions(getFile('options.json').data)
+    try {
+      const reportInformation = JSON.parse(getFile('reportInformation.json').data) as {
+        secondaryMetrics: string[]
+      }
+      secondaryMetrics.value = new Set(
+        reportInformation.secondaryMetrics.map((m) => m as MetricJsonIdentifier)
+      )
+    } catch {
+      if (files.value.has('reportInformation.json')) {
+        console.warn('Could not read reportInformation.json, falling back to the options flag.')
+      }
+      const metrics: MetricJsonIdentifier[] = [
+        MetricJsonIdentifier.MAXIMUM_SIMILARITY,
+        MetricJsonIdentifier.LONGEST_MATCH,
+        MetricJsonIdentifier.MAXIMUM_LENGTH
+      ]
+      if (cliOptions.value?.frequencyAnalysisOptions?.enabled) {
+        metrics.push(MetricJsonIdentifier.WEIGHTED_SIMILARITY)
+      }
+      secondaryMetrics.value = new Set(metrics)
+    }
     runInformation.value = RunInformationFactory.getRunInformation(
       getFile('runInformation.json').data
     )
@@ -263,6 +286,10 @@ export const reportStore = defineStore('reportStore', () => {
     }
   }
 
+  function hasSecondaryMetric(metric: MetricJsonIdentifier) {
+    return secondaryMetrics.value.has(metric)
+  }
+
   function reset() {
     cliOptions.value = null
     cluster.value = null
@@ -301,7 +328,9 @@ export const reportStore = defineStore('reportStore', () => {
     allAreAnonymized,
     setAnonymous,
     getBaseCodeReport,
-    getSubmissionIds
+    getSubmissionIds,
+    hasSecondaryMetric,
+    secondaryMetrics
   }
 })
 

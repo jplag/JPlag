@@ -34,10 +34,12 @@ All supported languages and their supported versions are listed below.
 | [C++](https://isocpp.org)                              |                                                                                     14 | cpp               |                               mature                                |  ANTLR 4  |
 | [C#](https://docs.microsoft.com/en-us/dotnet/csharp/)  |                                                                                      6 | csharp            |                               mature                                |  ANTLR 4  |
 | [Python](https://www.python.org)                       |                                                                                    3.14.6 | python3           |                               mature                                |  ANTLR 4  |
+| [C#](https://docs.microsoft.com/en-us/dotnet/csharp/)  |                                                                                      8 | csharp            |                               mature                                |  ANTLR 4  |
+| [Python](https://www.python.org)                       |                                                                                    3.6 | python3           |                               mature                                |  ANTLR 4  |
 | [JavaScript](https://www.javascript.com/)              |                                                                                    ES6 | javascript        |                                beta                                 |  ANTLR 4  |
 | [TypeScript](https://www.typescriptlang.org/)          | [~5](https://github.com/antlr/grammars-v4/tree/master/javascript/typescript/README.md) | typescript        |                                beta                                 |  ANTLR 4  |
 | [Go](https://go.dev)                                   |                                                                                   1.17 | golang            |                                beta                                 |  ANTLR 4  |
-| [Kotlin](https://kotlinlang.org)                       |                                                                                    1.3 | kotlin            |                               mature                                |  ANTLR 4  |
+| [Kotlin](https://kotlinlang.org)                       |                                                                                    1.4 | kotlin            |                               mature                                |  ANTLR 4  |
 | [R](https://www.r-project.org/)                        |                                                                                  3.5.0 | rlang             |                               mature                                |  ANTLR 4  |
 | [Rust](https://www.rust-lang.org/)                     |                                                                                 1.60.0 | rust              |                               mature                                |  ANTLR 4  |
 | [Swift](https://www.swift.org)                         |                                                                                    5.4 | swift             |                                beta                                 |  ANTLR 4  |
@@ -127,6 +129,8 @@ Advanced
       --encoding=<submissionCharsetOverride>
                         Specifies the charset of the submissions. This disables
                           the automatic charset detection
+      -H, --host=<host>     The bind address for the internal report viewer
+                          (default: 127.0.0.1).
       --log-level=<{ERROR, WARN, INFO, DEBUG, TRACE}>
                         Set the log level for the cli.
       -m, --similarity-threshold=<similarityThreshold>
@@ -151,12 +155,13 @@ Clustering
                           algorithms: agglomerative, spectral (default:
                           spectral).
       --cluster-metric=<{AVG, MIN, MAX, INTERSECTION, LONGEST_MATCH,
-        MAXIMUM_LENGTH}>
+        MAXIMUM_LENGTH, WEIGHTED_SIMILARITY}>
                         The similarity metric used for clustering. Available
                           metrics: average similarity, minimum similarity,
                           maximal similarity, matched tokens, number of tokens
-                          in the longest match, length of the longer submission
-                          (default: average similarity).
+                          in the longest match, length of the longer
+                          submission, frequency-weighted similarity (default:
+                          average similarity).
       --cluster-skip    Skips the cluster calculation.
 
 Subsequence Match Merging

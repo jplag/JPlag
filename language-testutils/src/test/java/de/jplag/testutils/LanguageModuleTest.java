@@ -3,6 +3,7 @@ package de.jplag.testutils;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertLinesMatch;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -282,6 +283,17 @@ public abstract class LanguageModuleTest {
         assertEquals(SharedTokenType.FILE_END, tokens.getLast().getType(), "Last token in " + data.describeTestSource() + " is not file end.");
     }
 
+    @ParameterizedTest
+    @MethodSource("getExceptionTestFiles")
+    @DisplayName("Tests that the given test data leads to exceptions when parsing")
+    final void testExceptionFiles(TestData data) {
+        assertThrows(ParsingException.class, () -> parseTokens(data));
+    }
+
+    private List<TestData> getExceptionTestFiles() {
+        return ignoreEmptyTestType(this.collector.getExceptionTestFile());
+    }
+
     /**
      * Returns all configured test sources.
      * @return The test sources
@@ -305,7 +317,7 @@ public abstract class LanguageModuleTest {
 
     private List<Token> parseTokens(TestData source) throws ParsingException, IOException {
         List<Token> tokens = source.parseTokens(this.language);
-        logger.info(TokenPrinter.printTokens(tokens));
+        logger.info("{}{}", System.lineSeparator(), new TokenPrinter(List.of(source.getSourceLines()), tokens).printTokens());
         return tokens;
     }
 

@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import de.jplag.ParsingException;
 import de.jplag.SharedTokenType;
 import de.jplag.Token;
-import de.jplag.TokenPrinter;
+import de.jplag.TokenPrinterUtils;
 
 class RustLanguageTest {
 
@@ -58,7 +58,7 @@ class RustLanguageTest {
     void parseTestFiles() throws ParsingException {
         for (String fileName : testFiles) {
             List<Token> tokens = language.parse(Set.of(new File(testFileLocation, fileName)), false);
-            String output = TokenPrinter.printTokens(tokens, testFileLocation);
+            String output = TokenPrinterUtils.printTokensByFile(tokens);
             logger.info(output);
 
             testSourceCoverage(fileName, tokens);

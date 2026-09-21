@@ -8,6 +8,7 @@
       v-model:secondary-metric="secondaryMetricModel"
       :header="header"
       :all-are-anonymized="allAreAnonymized"
+      :secondary-metrics="secondaryMetrics"
       @change-anonymous-for-all="emit('changeAnonymousForAll')"
     />
 
@@ -111,9 +112,8 @@
                   <div
                     class="tableRow min-w-fit"
                     :class="{
-                      'bg-container-secondary-light dark:bg-container-secondary-dark':
-                        item.id % 2 == 1,
-                      'bg-accent/30!': isHighlightedRow(item)
+                      'bg-container-secondary': item.id % 2 == 1,
+                      'bg-accent-light/30!': isHighlightedRow(item)
                     }"
                     @mouseover="
                       () =>
@@ -178,7 +178,7 @@
                       class="tableCellCluster tableCell flex flex-col! items-center"
                     >
                       <RouterLink
-                        v-if="(item as ComparisonListElement).cluster"
+                        v-if="item.cluster"
                         :to="{
                           name: 'ClusterView',
                           params: { clusterIndex: item.cluster.index }
@@ -235,7 +235,7 @@ import NameElement from '../NameElement.vue'
 import ComparisonTableFilter from './ComparisonTableFilter.vue'
 import { Column, ComparisonTableSorting, Direction, type ColumnId } from './ComparisonSorting'
 import { MetricTypes } from '../MetricType'
-import 'vue-virtual-scroller/dist/vue-virtual-scroller.css'
+import 'vue-virtual-scroller/index.css'
 
 const props = defineProps({
   topComparisons: {
@@ -285,6 +285,16 @@ const props = defineProps({
     type: Boolean,
     required: false,
     default: false
+  },
+  secondaryMetrics: {
+    type: Object as PropType<Set<MetricJsonIdentifier>>,
+    required: false,
+    default: () =>
+      new Set([
+        MetricJsonIdentifier.MAXIMUM_SIMILARITY,
+        MetricJsonIdentifier.LONGEST_MATCH,
+        MetricJsonIdentifier.MAXIMUM_LENGTH
+      ])
   }
 })
 
@@ -305,6 +315,19 @@ const tableSorting = defineModel<ComparisonTableSorting>('sorting', {
 })
 
 const secondaryMetric = computed(() => MetricTypes.METRIC_MAP[secondaryMetricModel.value])
+
+watch(
+  () => props.secondaryMetrics,
+  (metrics) => {
+    if (
+      tableSorting.value.column.id == Column.weightedSimilarity.id &&
+      !metrics.has(MetricJsonIdentifier.WEIGHTED_SIMILARITY)
+    ) {
+      tableSorting.value = { column: Column.averageSimilarity, direction: Direction.descending }
+    }
+  },
+  { immediate: true, deep: true }
+)
 
 const displayedComparisons = computed(() => {
   const comparisons = getFilteredComparisons(getSortedComparisons(Array.from(props.topComparisons)))
@@ -340,7 +363,7 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
     .map((s) => s.substring(6))
     .map((s) => parseInt(s))
 
-  const metricSearches = searches.filter((s) => /((avg|max|long|len):)?([<>])=?[0-9]+%?/.test(s))
+  const metricSearches = searches.filter((s) => /((avg|max|long|len|wavg):)?([<>])=?\d+%?/.test(s))
 
   return comparisons.filter((c) => {
     // name search
@@ -378,7 +401,7 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
       searchPerMetric[m] = []
     })
     metricSearches.forEach((s) => {
-      const regexResult = /^(?:(avg|max|long|len):)([<>]=?[0-9]+%?$)/.exec(s)
+      const regexResult = /^(?:(avg|max|long|len|wavg):)([<>]=?\d+%?$)/.exec(s)
       if (regexResult) {
         const metricName = regexResult[1]
         let metric = MetricTypes.AVERAGE_SIMILARITY

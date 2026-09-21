@@ -2,9 +2,7 @@
   Styled Base Component for all things a user can interact with 
 -->
 <template>
-  <Container
-    class="border-interactable-border-light bg-interactable-light dark:border-interactable-border-dark dark:bg-interactable-dark cursor-pointer shadow-none!"
-  >
+  <Container class="border-interactable-border bg-interactable cursor-pointer shadow-none!">
     <slot></slot>
   </Container>
 </template>

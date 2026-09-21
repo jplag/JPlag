@@ -11,7 +11,14 @@ export default [
   ...tseslint.configs.recommended,
   eslintConfigPrettier,
   {
-    ignores: ['**/*.config.ts', '**/node_modules/**', '**/dist/**', '**/playwright-report/**']
+    ignores: [
+      '**/*.config.ts',
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/playwright-report/**',
+      './scripts/**',
+      '**/coverage/**'
+    ]
   },
   {
     files: ['**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx', '**/*.vue'],

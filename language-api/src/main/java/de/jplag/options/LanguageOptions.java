@@ -76,6 +76,14 @@ public abstract class LanguageOptions {
     }
 
     /**
+     * Adds an option to the list of language options.
+     * @param option is the language option to add.
+     */
+    protected void addOption(LanguageOption<?> option) {
+        options.add(option);
+    }
+
+    /**
      * @return The list of all options.
      */
     public List<LanguageOption<?>> getOptionsAsList() {

@@ -43,7 +43,7 @@ class NewJavaFeaturesTest extends TestBase {
         JPlagResult result = runJPlagWithExclusionFile(ROOT_DIRECTORY, EXCLUSION_FILE_NAME);
 
         for (Submission submission : result.getSubmissions().getSubmissions()) {
-            logger.info(TokenPrinter.printTokens(submission.getTokenList(), submission.getRoot()));
+            logger.info(TokenPrinterUtils.printTokensByFile(submission.getTokenList()));
         }
 
         // Ensure test input did not change:

@@ -80,4 +80,7 @@ public record CliArgument<T>(String name, boolean isPositional) {
     /** Required number of merges. */
     public static CliArgument<Integer> REQUIRED_MERGES = new CliArgument<>("required-merges", false);
 
+    /** Bind address for report viewer. */
+    public static CliArgument<String> HOST = new CliArgument<>("host", false);
+
 }

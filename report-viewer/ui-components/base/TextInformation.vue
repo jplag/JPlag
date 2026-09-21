@@ -6,7 +6,7 @@
     <ToolTipComponent :direction="tooltipSide">
       <template #default>
         <div class="flex items-start gap-x-1">
-          <span>{{ label }}:</span>
+          <span class="whitespace-nowrap">{{ label }}:</span>
           <i><slot name="default"></slot></i>
         </div>
       </template>

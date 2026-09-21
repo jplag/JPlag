@@ -10,6 +10,7 @@ import OptionComponent from './optionsSelectors/OptionComponent.vue'
 import OptionsSelectorComponent from './optionsSelectors/OptionsSelectorComponent.vue'
 import MetricIcon from './MetricIcon.vue'
 import NameElement from './NameElement.vue'
+import FailedSubmissionsDisplay from './failedSubmissions/FailedSubmissionsDisplay.vue'
 
 export * from './distributionVisualization/DistributionChartConfig'
 export * from './fileDisplaying/FileSortingOptions'
@@ -27,5 +28,6 @@ export {
   OptionComponent,
   OptionsSelectorComponent,
   MetricIcon,
-  NameElement
+  NameElement,
+  FailedSubmissionsDisplay
 }

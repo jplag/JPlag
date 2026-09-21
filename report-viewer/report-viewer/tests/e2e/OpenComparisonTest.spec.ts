@@ -56,6 +56,16 @@ const testSets: DataSet[] = [
   }
 ]
 
+// Add the tests for each language parameter test
+const LANGUAGE_PARAMETER_TEST_COUNT = 4
+for (let i = 1; i <= LANGUAGE_PARAMETER_TEST_COUNT; i++) {
+  testSets.push({
+    datasetName: `languageParameterTest${i}-report.jplag`,
+    firstSubmissionName: '1.java',
+    secondSubmissionName: '2.java'
+  })
+}
+
 for (const testSet of testSets) {
   test(`Can open ${testSet.datasetName}`, async ({ page }) => {
     await uploadFile(testSet.datasetName, page)

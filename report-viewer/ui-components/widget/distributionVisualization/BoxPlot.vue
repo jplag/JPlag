@@ -5,7 +5,11 @@
       <div v-if="!loaded">Could not display boxplot</div>
     </div>
 
-    <BoxPlotDiagramOptions v-model:metric="metric" class="grow print:grow-0" />
+    <BoxPlotDiagramOptions
+      v-model:metric="metric"
+      :secondary-metrics="secondaryMetrics"
+      class="grow print:grow-0"
+    />
   </div>
 </template>
 
@@ -32,6 +36,10 @@ const props = defineProps({
   useDarkMode: {
     type: Boolean,
     default: false
+  },
+  secondaryMetrics: {
+    type: Object as PropType<Set<MetricJsonIdentifier>>,
+    default: () => new Set()
   }
 })
 

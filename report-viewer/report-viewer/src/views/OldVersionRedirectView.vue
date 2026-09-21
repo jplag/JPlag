@@ -32,7 +32,7 @@
           </p>
         </div>
         <a v-if="requestedVersion !== null" :href="buildOldVersionLink()">
-          <InteractableComponent class="border-accent-dark! bg-accent/50! mx-auto mt-2">
+          <InteractableComponent class="border-accent-dark! bg-accent-light/50! mx-auto mt-2">
             Open with old report viewer
           </InteractableComponent>
         </a>

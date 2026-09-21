@@ -24,7 +24,7 @@ class InternalListener implements ParseTreeListener {
 
     @Override
     public void visitTerminal(TerminalNode terminalNode) {
-        listener.visitTerminal(getHandlerData(terminalNode.getSymbol()));
+        listener.visitTerminal(getHandlerData(terminalNode));
     }
 
     @Override

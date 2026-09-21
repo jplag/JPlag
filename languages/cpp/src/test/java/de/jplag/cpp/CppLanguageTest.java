@@ -87,6 +87,8 @@ public class CppLanguageTest extends LanguageModuleTest {
                 }
                 }
                 """);
+
+        collector.addTokenPositionTests("tokenPositions");
     }
 
     @Override

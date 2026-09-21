@@ -139,7 +139,7 @@ public final class CLI {
      */
     public void runViewer(File resultFile) throws IOException {
         finalizeLogger(); // Prints the errors. The later finalizeLogger will print any errors logged after this point.
-        JPlagRunner.runInternalServer(resultFile, this.inputHandler.getCliOptions().advanced.port);
+        JPlagRunner.runInternalServer(resultFile, this.inputHandler.getCliOptions().advanced.port, this.inputHandler.getCliOptions().advanced.host);
     }
 
     private void selectModeAutomatically() throws IOException, ExitException {

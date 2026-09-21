@@ -7,7 +7,7 @@
         <span v-if="commitHash">
           (commit:
           <a
-            class="text-link-dark dark:text-link underline"
+            class="text-link underline"
             :href="`https://github.com/jplag/JPlag/commit/${commitHash}`"
             target="_blank"
             >{{ commitHash.substring(0, 7) }}</a

@@ -76,6 +76,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 import de.jplag.antlr.AbstractAntlrListener;
 import de.jplag.antlr.ContextVisitor;
+import de.jplag.golang.grammar.GoParser;
 import de.jplag.golang.grammar.GoParser.ArgumentsContext;
 import de.jplag.golang.grammar.GoParser.ArrayTypeContext;
 import de.jplag.golang.grammar.GoParser.AssignmentContext;
@@ -252,7 +253,8 @@ public class GoListener extends AbstractAntlrListener {
 
         visitCompositeLitChild(TypeNameContext.class).map(NAMED_TYPE_CONSTRUCTOR);
         visitCompositeLitDelegate(TypeNameContext.class).map(NAMED_TYPE_BODY_BEGIN, NAMED_TYPE_BODY_END);
-        visit(TypeNameContext.class, context -> context.parent instanceof InterfaceTypeContext).mapRange(TYPE_CONSTRAINT);
+        visit(TypeNameContext.class, context -> hasAncestor(context, InterfaceTypeContext.class, GoParser.TypeDefContext.class,
+                MethodSpecContext.class, FieldDeclContext.class)).mapRange(TYPE_CONSTRAINT);
 
         visit(TypeAssertionContext.class).mapRange(TYPE_ASSERTION);
         visit(MethodSpecContext.class).mapRange(INTERFACE_METHOD);

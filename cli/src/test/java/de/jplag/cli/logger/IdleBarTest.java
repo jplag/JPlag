@@ -1,10 +1,18 @@
 package de.jplag.cli.logger;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.slf4j.event.Level;
+
+import de.jplag.logging.ProgressBar;
+import de.jplag.logging.ProgressBarType;
 
 class IdleBarTest {
     private static final String TEST_BAR_TEXT = "Test";
@@ -40,6 +48,19 @@ class IdleBarTest {
         }
     }
 
+    @Test
+    void testInitIdleBar() {
+        Level originalLogLevel = CollectedLogger.getLogLevel();
+        CollectedLogger.setLogLevel(Level.INFO);
+
+        ProgressBarType type = Mockito.mock(ProgressBarType.class);
+        Mockito.when(type.isIdleBar()).thenReturn(true);
+        ProgressBar progressBar = new CliProgressBarProvider().initProgressBar(type, 10);
+        assertInstanceOf(IdleBar.class, progressBar);
+
+        CollectedLogger.setLogLevel(originalLogLevel);
+    }
+
     /**
      * Checks that the given string matches the expected content of an animation frame.
      * @param output The animation frame.
@@ -59,12 +80,12 @@ class IdleBarTest {
         String predictableOutput = output.substring(0, endOfPredictableOutput);
         String time = output.substring(endOfPredictableOutput + 1).trim();
 
-        Assertions.assertEquals(expectedOutput, predictableOutput);
-        Assertions.assertTrue(time.matches("[0-9]:[0-9]{2}:[0-9]{2}"), "Invalid format for time");
+        assertEquals(expectedOutput, predictableOutput);
+        assertTrue(time.matches("[0-9]:[0-9]{2}:[0-9]{2}"), "Invalid format for time");
 
         String[] timeParts = time.split(":");
         int seconds = Integer.parseInt(timeParts[0]) * 60 * 60 + Integer.parseInt(timeParts[1]) * 60 + Integer.parseInt(timeParts[2]);
         int expectedTime = (int) (IDLE_BAR_ANIMATION_DELAY * frameIndex / 1000);
-        Assertions.assertTrue(Math.abs(seconds - expectedTime) < 1, "Frame time of by more than one second");
+        assertTrue(Math.abs(seconds - expectedTime) < 1, "Frame time of by more than one second");
     }
 }

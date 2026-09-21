@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -49,8 +50,15 @@ public final class FileUtils {
      * @throws IOException If the file does not exist for is not readable
      */
     public static BufferedReader openFileReader(File file, boolean isSubmissionFile) throws IOException {
-        InputStream stream = new BufferedInputStream(new FileInputStream(file));
-        Charset charset = isSubmissionFile && userSpecifiedCharset != null ? userSpecifiedCharset : detectCharset(stream);
+        Charset charset;
+        if (isSubmissionFile && Objects.nonNull(userSpecifiedCharset)) {
+            charset = userSpecifiedCharset;
+        } else {
+            try (InputStream stream = new BufferedInputStream(new FileInputStream(file))) {
+                charset = detectCharset(stream);
+            }
+        }
+
         BufferedReader reader = new BufferedReader(new FileReader(file, charset));
         removeBom(reader, charset);
         return reader;

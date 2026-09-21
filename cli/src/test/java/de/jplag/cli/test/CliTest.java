@@ -154,9 +154,9 @@ public abstract class CliTest {
     protected CliResult runCli(Consumer<CliArgumentBuilder> additionalOptionsBuilder) throws ExitException, IOException {
         try (MockedStatic<JPlagRunner> runnerMock = Mockito.mockStatic(JPlagRunner.class);
                 MockedStatic<OutputFileGenerator> generatorMock = Mockito.mockStatic(OutputFileGenerator.class)) {
-            runnerMock.when(() -> JPlagRunner.runJPlag(ArgumentMatchers.any())).thenReturn(new JPlagResult(Collections.emptyList(), null, 1, null));
-            generatorMock.when(() -> OutputFileGenerator.generateJPlagResultFile(ArgumentMatchers.any(), ArgumentMatchers.any()))
-                    .then(invocationOnMock -> null);
+            runnerMock.when(() -> JPlagRunner.runJPlag(ArgumentMatchers.any()))
+                    .thenReturn(new JPlagResult(Collections.emptyList(), null, 1, 1, null));
+            generatorMock.when(() -> OutputFileGenerator.generateJPlagResultFile(ArgumentMatchers.any(), ArgumentMatchers.any())).then(_ -> null);
 
             CliArgumentBuilder copy = this.defaultArgumentBuilder.copy();
             additionalOptionsBuilder.accept(copy);
@@ -170,7 +170,7 @@ public abstract class CliTest {
             String targetPath = (String) getWritableFileMethod.invoke(cli);
 
             return new CliResult(optionsBuilder.buildOptions(), targetPath, CollectedLogger.getLogLevel(), inputHandler);
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException _) {
             Assumptions.abort("Could not access private field in CLI for test.");
             return null; // will not be executed
         }

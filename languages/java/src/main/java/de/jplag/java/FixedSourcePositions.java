@@ -25,6 +25,7 @@ public class FixedSourcePositions implements SourcePositions {
 
     @Override
     public long getEndPosition(CompilationUnitTree compilationUnitTree, Tree tree) {
-        return Math.max(this.getStartPosition(compilationUnitTree, tree), this.base.getEndPosition(compilationUnitTree, tree));
+        // Add one to assert start <= end (one is subtracted later)
+        return Math.max(this.getStartPosition(compilationUnitTree, tree) + 1, this.base.getEndPosition(compilationUnitTree, tree));
     }
 }

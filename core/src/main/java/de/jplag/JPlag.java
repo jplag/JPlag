@@ -15,10 +15,9 @@ import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.RootDirectoryException;
 import de.jplag.exceptions.SubmissionException;
-import de.jplag.highlightextraction.MatchWeighting;
+import de.jplag.frequency.FrequencyAnalysis;
 import de.jplag.merging.MatchMerging;
 import de.jplag.options.JPlagOptions;
-import de.jplag.reporting.reportobject.model.Version;
 
 /**
  * Main class for JPlag. Manages the whole source code plagiarism detection pipeline. Provides methods to run
@@ -100,13 +99,11 @@ public class JPlag {
         }
 
         if (options.frequencyAnalysisOptions().enabled()) {
-            MatchWeighting matchWeighter = new MatchWeighting(options.frequencyAnalysisOptions());
-            List<JPlagComparison> frequencyWeightedComparisons = matchWeighter.useMatchFrequencyToInfluenceSimilarity(result);
-            result = new JPlagResult(frequencyWeightedComparisons, submissionSet, result.getDuration(), options);
+            result = FrequencyAnalysis.applyFrequencyWeighting(result, options.frequencyAnalysisOptions());
         }
 
         if (logger.isInfoEnabled()) {
-            logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getDuration()));
+            logger.info("Total time for comparing submissions: {}", TimeUtil.formatDuration(result.getComparisonDuration()));
         }
         result.setClusteringResult(ClusteringFactory.getClusterings(result.getAllComparisons(), options.clusteringOptions()));
 

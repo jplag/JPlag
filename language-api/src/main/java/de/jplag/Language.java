@@ -117,7 +117,9 @@ public interface Language {
     /**
      * Specifies if the submission order is relevant for this language.
      * @return defaults to false.
+     * @deprecated No longer used (replaced by language option) and will be removed.
      */
+    @Deprecated(since = "7.0.0", forRemoval = true)
     default boolean expectsSubmissionOrder() {
         return false;
     }
@@ -126,7 +128,9 @@ public interface Language {
      * Reorders the provided submission according the requirements of the language.
      * @param submissions is the list of submissions.
      * @return the reordered list.
+     * @deprecated No longer used (replaced by language option) and will be removed.
      */
+    @Deprecated(since = "7.0.0", forRemoval = true)
     default List<File> customizeSubmissionOrder(List<File> submissions) {
         return submissions;
     }

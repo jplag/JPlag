@@ -8,6 +8,7 @@
     </parent>
     <artifactId>emf-metamodel-dynamic</artifactId>
     <name>JPlag: EMF Metamodel (Dynamic) Language Module</name>
+    <description>DEPRECATED: This module has been removed as of v7.0.0.</description>
 
     <dependencies>
         <dependency>

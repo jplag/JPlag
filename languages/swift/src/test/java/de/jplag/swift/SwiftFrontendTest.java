@@ -10,7 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -23,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import de.jplag.ParsingException;
 import de.jplag.SharedTokenType;
 import de.jplag.Token;
-import de.jplag.TokenPrinter;
+import de.jplag.TokenPrinterUtils;
 
 class SwiftFrontendTest {
 
@@ -66,7 +65,7 @@ class SwiftFrontendTest {
     void parseTestFiles() throws ParsingException {
         for (String fileName : testFiles) {
             List<Token> tokens = language.parse(Set.of(new File(testFileLocation, fileName)), false);
-            String output = TokenPrinter.printTokens(tokens, testFileLocation, Optional.empty());
+            String output = TokenPrinterUtils.printTokensByFile(tokens);
             logger.info(output);
 
             testSourceCoverage(fileName, tokens);
