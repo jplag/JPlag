@@ -23,7 +23,7 @@ public class FrequencyUtil {
      * @return the token types.
      */
     public static List<TokenType> tokenTypesFor(JPlagComparison comparison, Match match) {
-        return comparison.firstSubmission().getTokenList().subList(match.startOfFirst(), match.endOfFirst() + 1)
-                .stream().map(Token::getType).toList();
+        return comparison.firstSubmission().getTokenList().subList(match.startOfFirst(), match.endOfFirst() + 1).stream().map(Token::getType)
+                .toList();
     }
 }

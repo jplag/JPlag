@@ -28,7 +28,6 @@ public abstract class FrequencyAnalysisStrategy {
 
     /**
      * Count the frequency of all matches in the given list of comparisons.
-     *
      * @param comparisons are the comparisons.
      */
     public void processMatches(List<JPlagComparison> comparisons) {
@@ -41,9 +40,8 @@ public abstract class FrequencyAnalysisStrategy {
 
     /**
      * Count the frequency of the match in the given comparison.
-     *
      * @param comparison is the comparison.
-     * @param match      is the match.
+     * @param match is the match.
      */
     public void processMatch(JPlagComparison comparison, Match match) {
         List<TokenType> tokenTypes = FrequencyUtil.tokenTypesFor(comparison, match);
@@ -53,14 +51,12 @@ public abstract class FrequencyAnalysisStrategy {
 
     /**
      * Updates the frequency map with token subsequences and their Counts according to the implemented strategy.
-     *
      * @param matchTokenTypes List of match token types representing the match.
      */
     protected abstract void processMatchTokenTypes(List<TokenType> matchTokenTypes);
 
     /**
      * Returns weight factor, as frequency value for the matches.
-     *
      * @param matchTokens tokenType sequence of the match
      * @return a weight for the match
      */
@@ -72,7 +68,6 @@ public abstract class FrequencyAnalysisStrategy {
 
     /**
      * Updates the frequency of the given sequence in the frequency map.
-     *
      * @param sequence The token sequence whose frequency will be updated.
      */
     protected void incrementSequence(List<TokenType> sequence) {
@@ -85,7 +80,6 @@ public abstract class FrequencyAnalysisStrategy {
 
     /**
      * Gets the count of all considered token sequences.
-     *
      * @return the count map.
      */
     public Map<List<TokenType>, Integer> getResult() {
@@ -94,7 +88,6 @@ public abstract class FrequencyAnalysisStrategy {
 
     /**
      * Gets a set of all matches of all comparisons combined.
-     *
      * @return the match set.
      */
     public Set<List<TokenType>> getAllMatches() {
