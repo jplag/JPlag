@@ -14,6 +14,7 @@ mockParser()
 import { reportStore } from '../../../src/stores/reportStore'
 import { setActivePinia, createPinia } from 'pinia'
 import { router } from '../../../src/router'
+import { MetricJsonIdentifier } from '@jplag/model'
 
 describe('Test Report File Handling', () => {
   beforeEach(() => {
@@ -32,6 +33,33 @@ describe('Test Report File Handling', () => {
     expect(reportStore().getRunInformation()).toBeDefined()
     expect(reportStore().getTopComparisons()).toBeDefined()
     expect(reportStore().getTopComparisons().length).toBeGreaterThan(0)
+  })
+
+  it('Reads secondary metrics from reportInformation', () => {
+    reportStore().loadReport(mockFiles, [], 'test')
+
+    expect(reportStore().secondaryMetrics).toEqual(
+      new Set([
+        MetricJsonIdentifier.MAXIMUM_SIMILARITY,
+        MetricJsonIdentifier.LONGEST_MATCH,
+        MetricJsonIdentifier.MAXIMUM_LENGTH
+      ])
+    )
+  })
+
+  it('Falls back to the options flag for old reports without reportInformation', () => {
+    const filesWithoutReportInformation = mockFiles.filter(
+      (file) => file.fileName !== 'reportInformation.json'
+    )
+    reportStore().loadReport(filesWithoutReportInformation, [], 'test')
+
+    expect(reportStore().secondaryMetrics).toEqual(
+      new Set([
+        MetricJsonIdentifier.MAXIMUM_SIMILARITY,
+        MetricJsonIdentifier.LONGEST_MATCH,
+        MetricJsonIdentifier.MAXIMUM_LENGTH
+      ])
+    )
   })
 
   it('Check loaded report and reset', () => {

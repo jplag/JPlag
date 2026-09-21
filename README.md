@@ -153,12 +153,13 @@ Clustering
                           algorithms: agglomerative, spectral (default:
                           spectral).
       --cluster-metric=<{AVG, MIN, MAX, INTERSECTION, LONGEST_MATCH,
-        MAXIMUM_LENGTH}>
+        MAXIMUM_LENGTH, WEIGHTED_SIMILARITY}>
                         The similarity metric used for clustering. Available
                           metrics: average similarity, minimum similarity,
                           maximal similarity, matched tokens, number of tokens
-                          in the longest match, length of the longer submission
-                          (default: average similarity).
+                          in the longest match, length of the longer
+                          submission, frequency-weighted similarity (default:
+                          average similarity).
       --cluster-skip    Skips the cluster calculation.
 
 Subsequence Match Merging

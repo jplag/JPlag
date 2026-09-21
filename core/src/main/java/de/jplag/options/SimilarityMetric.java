@@ -25,7 +25,8 @@ public enum SimilarityMetric implements ToDoubleFunction<JPlagComparison> {
     LONGEST_MATCH("number of tokens in the longest match", it -> it.matches().stream().mapToInt(Match::minimumLength).max().orElse(0)),
     MAXIMUM_LENGTH(
             "length of the longer submission",
-            it -> Math.max(it.firstSubmission().getNumberOfTokens(), it.secondSubmission().getNumberOfTokens()));
+            it -> Math.max(it.firstSubmission().getNumberOfTokens(), it.secondSubmission().getNumberOfTokens())),
+    WEIGHTED_SIMILARITY("frequency-weighted similarity", JPlagComparison::frequencyWeightedSimilarity);
 
     private final ToDoubleFunction<JPlagComparison> similarityFunction;
     private final String description;
