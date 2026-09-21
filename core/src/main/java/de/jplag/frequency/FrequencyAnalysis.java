@@ -29,7 +29,7 @@ public final class FrequencyAnalysis {
         FrequencyAnalysisStrategy strategy = options.frequencyStrategy();
         strategy.processMatches(comparisons);
         MatchFrequencyEvaluator matchWeighting = new MatchFrequencyEvaluator(strategy);
-        Map<List<TokenType>, Double> matchFrequency = matchWeighting.weightAllComparisons(comparisons);
+        Map<List<TokenType>, Double> matchFrequency = matchWeighting.getWeightMatches();
         MatchFrequencyWeighting similarity = new MatchFrequencyWeighting(options.weightingFunction(), matchFrequency);
         List<JPlagComparison> weightedComparisons = comparisons.parallelStream()
                 .map(comparison -> similarity.weightedComparisonSimilarity(comparison, options.weightingFactor())).toList();

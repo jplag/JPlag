@@ -4,7 +4,6 @@ import java.util.List;
 
 import de.jplag.JPlagComparison;
 import de.jplag.Match;
-import de.jplag.Submission;
 import de.jplag.Token;
 import de.jplag.TokenType;
 
@@ -18,21 +17,13 @@ public class FrequencyUtil {
     }
 
     /**
-     * Extracts the token types for the given submission.
-     * @param submission is the target submission.
-     * @return the list of token types that represent the submission.
-     */
-    public static List<TokenType> tokenTypesFor(Submission submission) {
-        return submission.getTokenList().stream().map(Token::getType).toList();
-    }
-
-    /**
      * Extracts the token types for the given match of the given comparison.
      * @param comparison is the comparison.
      * @param match is the match.
      * @return the token types.
      */
     public static List<TokenType> tokenTypesFor(JPlagComparison comparison, Match match) {
-        return tokenTypesFor(comparison.firstSubmission()).subList(match.startOfFirst(), match.endOfFirst() + 1);
+        return comparison.firstSubmission().getTokenList().subList(match.startOfFirst(), match.endOfFirst() + 1)
+                .stream().map(Token::getType).toList();
     }
 }
