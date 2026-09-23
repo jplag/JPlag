@@ -85,7 +85,7 @@
         <version.eclipse.emfatic>1.1.0</version.eclipse.emfatic>
         <version.emf.ecore>2.46.0</version.emf.ecore>
         <version.emf.ecore-xmi>2.41.0</version.emf.ecore-xmi>
-        <version.emf>2.42.0</version.emf>
+        <version.emf>2.43.0</version.emf>
         <version.icu-charset>78.3</version.icu-charset>
         <version.jaxen>2.0.6</version.jaxen>
         <version.jackson>2.22.2</version.jackson>
