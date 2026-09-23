@@ -99,7 +99,7 @@
         <version.scala>3.9.0</version.scala>
         <version.scalameta.suffix>2.13</version.scalameta.suffix>
         <version.scalameta>4.17.3</version.scalameta>
-        <version.slf4j>2.0.18</version.slf4j>
+        <version.slf4j>2.0.19</version.slf4j>
         <version.metainf>1.11</version.metainf>
 
         <!-- Plugin versions -->
