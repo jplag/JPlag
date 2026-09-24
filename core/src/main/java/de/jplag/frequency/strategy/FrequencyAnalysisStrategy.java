@@ -1,8 +1,10 @@
 package de.jplag.frequency.strategy;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import de.jplag.JPlagComparison;
@@ -17,9 +19,11 @@ import de.jplag.frequency.FrequencyUtil;
 public abstract class FrequencyAnalysisStrategy {
 
     private final Map<List<TokenType>, Integer> matchCounts;
+    private final Set<List<TokenType>> matchRegistry;
 
     protected FrequencyAnalysisStrategy() {
         this.matchCounts = new ConcurrentHashMap<>();
+        matchRegistry = new HashSet<>();
     }
 
     /**
@@ -41,6 +45,7 @@ public abstract class FrequencyAnalysisStrategy {
      */
     public void processMatch(JPlagComparison comparison, Match match) {
         List<TokenType> tokenTypes = FrequencyUtil.tokenTypesFor(comparison, match);
+        matchRegistry.add(tokenTypes);
         processMatchTokenTypes(tokenTypes);
     }
 
@@ -79,5 +84,13 @@ public abstract class FrequencyAnalysisStrategy {
      */
     public Map<List<TokenType>, Integer> getResult() {
         return matchCounts;
+    }
+
+    /**
+     * Gets a set of all matches of all comparisons combined.
+     * @return the match set.
+     */
+    public Set<List<TokenType>> getAllMatches() {
+        return Set.copyOf(matchRegistry);
     }
 }
