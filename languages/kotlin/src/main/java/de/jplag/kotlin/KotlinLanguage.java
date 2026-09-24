@@ -37,6 +37,11 @@ public class KotlinLanguage implements Language {
     }
 
     @Override
+    public String getVersionFlagInformation() {
+        return "Compatible with code for kotlin 1.3";
+    }
+
+    @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
         return new KotlinParserAdapter().parse(files);
     }

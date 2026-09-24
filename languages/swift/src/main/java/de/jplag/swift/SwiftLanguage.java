@@ -37,6 +37,11 @@ public class SwiftLanguage implements Language {
     }
 
     @Override
+    public String getVersionFlagInformation() {
+        return "Supports version 5.4";
+    }
+
+    @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
         return new SwiftParserAdapter().parse(files);
     }

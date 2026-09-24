@@ -37,6 +37,13 @@ public class GoLanguage implements Language {
     }
 
     @Override
+    public String getVersionFlagInformation() {
+        return "Number literal prefixes, a feature of go1.13, are included." + System.lineSeparator()
+                + "Generics, a feature of go1.18, are _not_ included." + System.lineSeparator()
+                + "Between go1.13 and go1.18, there were no changes to the syntax. So, the grammar should be fully compatible with go1.17, released in mid-2021.";
+    }
+
+    @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
         return new GoParserAdapter().parse(files);
     }

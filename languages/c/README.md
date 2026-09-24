@@ -2,6 +2,10 @@
 
 This module allows the use of JPlag with submissions in c.
 
+## Version
+
+This language module can parse code up to C99
+
 ## Usage
 
 To parse C submissions run JPlag with: `<jplag> <options> c` or use the `-l c` options.
@@ -9,4 +13,4 @@ To use the module from the API configure your `JPlagOption` object with `new CLa
 
 ## C++
 
-This module might work with C++ submissions. However you should use the [cpp module](https://github.com/jplag/JPlag/tree/main/languages/cpp) for that.
+This module might work with C++ submissions. However, you should use the [cpp module](https://github.com/jplag/JPlag/tree/main/languages/cpp) for that.

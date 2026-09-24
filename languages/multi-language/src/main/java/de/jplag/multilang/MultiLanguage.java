@@ -56,6 +56,11 @@ public class MultiLanguage implements Language {
     }
 
     @Override
+    public String getVersionFlagInformation() {
+        return "See individual languages for version information";
+    }
+
+    @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
         this.printWarning();
         MultiLanguageParser parser = new MultiLanguageParser(this.options);

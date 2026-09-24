@@ -37,6 +37,11 @@ public class PythonLanguage implements Language {
     }
 
     @Override
+    public String getVersionFlagInformation() {
+        return "Supports python 3.6";
+    }
+
+    @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
         return new PythonParserAdapter().parse(files);
     }
