@@ -31,6 +31,7 @@
         <module>javascript</module>
         <module>llvmir</module>
         <module>multi-language</module>
+        <module>x86_64-assembly</module>
     </modules>
     <dependencies>
         <dependency>
