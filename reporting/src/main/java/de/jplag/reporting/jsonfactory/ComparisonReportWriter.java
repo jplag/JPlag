@@ -35,7 +35,7 @@ public class ComparisonReportWriter {
      */
     public static final String BASEPATH = "comparisons";
     private static final SimilarityMetric[] EXPORTED_SIMILARITY_METRICS = new SimilarityMetric[] {SimilarityMetric.AVG, SimilarityMetric.MAX,
-            SimilarityMetric.LONGEST_MATCH, SimilarityMetric.MAXIMUM_LENGTH};
+            SimilarityMetric.LONGEST_MATCH, SimilarityMetric.MAXIMUM_LENGTH, SimilarityMetric.WEIGHTED_SIMILARITY};
 
     /**
      * Constructs a ComparisonReportWriter with the specified submission ID mapping function and a result writer to handle

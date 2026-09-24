@@ -60,7 +60,7 @@ import de.jplag.swift.grammar.Swift5Parser.Constant_declarationContext;
 import de.jplag.swift.grammar.Swift5Parser.Continue_statementContext;
 import de.jplag.swift.grammar.Swift5Parser.Defer_statementContext;
 import de.jplag.swift.grammar.Swift5Parser.DidSet_clauseContext;
-import de.jplag.swift.grammar.Swift5Parser.Do_blockContext;
+import de.jplag.swift.grammar.Swift5Parser.Do_statementContext;
 import de.jplag.swift.grammar.Swift5Parser.Else_clauseContext;
 import de.jplag.swift.grammar.Swift5Parser.Enum_nameContext;
 import de.jplag.swift.grammar.Swift5Parser.Fallthrough_statementContext;
@@ -180,7 +180,7 @@ public class SwiftListener extends AbstractAntlrListener {
         this.visit(Repeat_while_statementContext.class).map(REPEAT_WHILE_BODY_BEGIN, REPEAT_WHILE_BODY_END);
         this.visit(Defer_statementContext.class).map(DEFER_BODY_BEGIN, DEFER_BODY_END);
 
-        this.visit(Do_blockContext.class).map(DO_TRY_BODY_BEGIN, DO_TRY_BODY_END);
+        this.visit(Code_blockContext.class, block -> block.parent instanceof Do_statementContext).map(DO_TRY_BODY_BEGIN, DO_TRY_BODY_END);
         this.visit(Catch_clauseContext.class).map(CATCH_BODY_BEGIN, CATCH_BODY_END);
         this.visit(Throw_statementContext.class).mapRange(THROW);
         this.visit(Return_statementContext.class).mapRange(RETURN);

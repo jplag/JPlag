@@ -14,6 +14,7 @@ export type ColumnId =
   | 'cluster'
   | 'longestMatch'
   | 'maximumLength'
+  | 'weightedSimilarity'
 
 export interface ColumnSorting {
   id: ColumnId
@@ -62,6 +63,11 @@ export namespace Column {
     value: (c: ComparisonListElement) =>
       buildComparisonValues(c, MetricJsonIdentifier.MAXIMUM_LENGTH)
   }
+  export const weightedSimilarity: ColumnSorting = {
+    id: 'weightedSimilarity',
+    value: (c: ComparisonListElement) =>
+      buildComparisonValues(c, MetricJsonIdentifier.WEIGHTED_SIMILARITY)
+  }
 
   export const cluster: ColumnSorting = {
     id: 'cluster',
@@ -81,6 +87,7 @@ export namespace Column {
     maximumSimilarity,
     longestMatch,
     maximumLength,
+    weightedSimilarity,
     cluster
   }
 
@@ -88,7 +95,8 @@ export namespace Column {
     MetricJsonIdentifier.AVERAGE_SIMILARITY,
     MetricJsonIdentifier.MAXIMUM_SIMILARITY,
     MetricJsonIdentifier.LONGEST_MATCH,
-    MetricJsonIdentifier.MAXIMUM_LENGTH
+    MetricJsonIdentifier.MAXIMUM_LENGTH,
+    MetricJsonIdentifier.WEIGHTED_SIMILARITY
   ]
 
   function buildComparisonValues(c: ComparisonListElement, metric: MetricJsonIdentifier): number[] {
@@ -116,6 +124,8 @@ export namespace Column {
         return Column.longestMatch
       case MetricJsonIdentifier.MAXIMUM_LENGTH:
         return Column.maximumLength
+      case MetricJsonIdentifier.WEIGHTED_SIMILARITY:
+        return Column.weightedSimilarity
       default:
         throw new Error(`Unknown metric: ${metric}`)
     }
