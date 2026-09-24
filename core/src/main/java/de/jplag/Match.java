@@ -10,8 +10,10 @@ package de.jplag;
  * @param lengthOfSecond is the length of these similar sections (number of tokens) in the second submission.
  */
 public record Match(int startOfFirst, int startOfSecond, int lengthOfFirst, int lengthOfSecond) {
+
     /**
      * Checks if two matches overlap.
+     * @param other the match that is compared against the given.
      * @return true if they do.
      */
     public boolean overlaps(Match other) {
@@ -53,9 +55,9 @@ public record Match(int startOfFirst, int startOfSecond, int lengthOfFirst, int 
 
     /**
      * @return length is the length of these similar sections (number of tokens).
+     * @see Match#minimumLength()
      * @deprecated matches are no longer required to be symmetrical. Thus, both sides can have different lengths. This
      * method now returns the minimal length.
-     * @see Match#minimumLength()
      */
     @Deprecated(since = "6.2.0", forRemoval = true)
     public int length() {

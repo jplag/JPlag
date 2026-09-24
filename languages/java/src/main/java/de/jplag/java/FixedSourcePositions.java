@@ -11,8 +11,8 @@ public class FixedSourcePositions implements SourcePositions {
     private final SourcePositions base;
 
     /**
-     * New instance
-     * @param base The source positions to use as the base
+     * New instance.
+     * @param base The source positions to use as the base.
      */
     public FixedSourcePositions(SourcePositions base) {
         this.base = base;
@@ -25,6 +25,7 @@ public class FixedSourcePositions implements SourcePositions {
 
     @Override
     public long getEndPosition(CompilationUnitTree compilationUnitTree, Tree tree) {
-        return Math.max(this.getStartPosition(compilationUnitTree, tree), this.base.getEndPosition(compilationUnitTree, tree));
+        // Add one to assert start <= end (one is subtracted later)
+        return Math.max(this.getStartPosition(compilationUnitTree, tree) + 1, this.base.getEndPosition(compilationUnitTree, tree));
     }
 }

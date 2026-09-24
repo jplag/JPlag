@@ -5,18 +5,20 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-import de.jplag.AbstractParser;
 import de.jplag.antlr.AbstractAntlrListener;
 import de.jplag.antlr.AbstractAntlrParserAdapter;
 import de.jplag.cpp.grammar.CPP14Lexer;
 import de.jplag.cpp.grammar.CPP14Parser;
 
 /**
- * The adapter between {@link AbstractParser} and the ANTLR based parser of this language module.
+ * The adapter for the ANTLR-based parser of this language module.
  */
 public class CPPParserAdapter extends AbstractAntlrParserAdapter<CPP14Parser> {
     private static final CPPListener listener = new CPPListener();
 
+    /**
+     * Creates the parser adapter.
+     */
     public CPPParserAdapter() {
         super(true);
     }

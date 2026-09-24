@@ -5,23 +5,39 @@ package de.jplag.semantics;
  */
 public enum VariableAccessType {
     /**
-     * The variable is read from.
+     * Read-only variable.
      */
     READ(true, false),
+
     /**
-     * The variable is written to.
+     * Write-only variable.
      */
     WRITE(false, true),
+
     /**
-     * The variable is read from and written to.
+     * Read and write variable.
      */
     READ_WRITE(true, true);
 
-    final boolean isRead;
-    final boolean isWrite;
+    private final boolean isRead;
+    private final boolean isWrite;
 
     VariableAccessType(boolean isRead, boolean isWrite) {
         this.isRead = isRead;
         this.isWrite = isWrite;
+    }
+
+    /**
+     * @return true if the variable is read from.
+     */
+    public boolean isRead() {
+        return isRead;
+    }
+
+    /**
+     * @return if the variable is written to.
+     */
+    public boolean isWrite() {
+        return isWrite;
     }
 }

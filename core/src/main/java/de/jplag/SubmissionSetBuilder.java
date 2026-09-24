@@ -82,11 +82,14 @@ public class SubmissionSetBuilder {
 
         ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.LOADING, submissionFiles.size());
         Map<File, Submission> foundSubmissions = new HashMap<>();
-        for (SubmissionFileData submissionFile : submissionFiles) {
-            processSubmissionFile(submissionFile, multipleRoots, foundSubmissions);
-            progressBar.step();
+        try {
+            for (SubmissionFileData submissionFile : submissionFiles) {
+                processSubmissionFile(submissionFile, multipleRoots, foundSubmissions);
+                progressBar.step();
+            }
+        } finally {
+            progressBar.dispose();
         }
-        progressBar.dispose();
 
         Optional<Submission> baseCodeSubmission = loadBaseCode();
         baseCodeSubmission.ifPresent(baseSubmission -> foundSubmissions.remove(baseSubmission.getRoot()));
@@ -94,12 +97,6 @@ public class SubmissionSetBuilder {
         // Merge everything in a submission set.
         List<Submission> submissions = new ArrayList<>(foundSubmissions.values());
 
-        // Some languages expect a certain order, which is ensured here:
-        if (options.language().expectsSubmissionOrder()) {
-            List<File> rootFiles = foundSubmissions.values().stream().map(Submission::getRoot).toList();
-            rootFiles = options.language().customizeSubmissionOrder(rootFiles);
-            submissions = new ArrayList<>(rootFiles.stream().map(foundSubmissions::get).toList());
-        }
         return new SubmissionSet(submissions, baseCodeSubmission.orElse(null), options);
     }
 
@@ -226,7 +223,7 @@ public class SubmissionSetBuilder {
         }
 
         file = makeCanonical(file, it -> new SubmissionException("Cannot create submission: " + submissionName, it));
-        return new Submission(submissionName, file, isNew, parseFilesRecursively(file), options.language());
+        return new Submission(submissionName, file, isNew, listFilesRecursively(file), options.language());
     }
 
     private void processSubmissionFile(SubmissionFileData file, boolean multipleRoots, Map<File, Submission> foundSubmissions) throws ExitException {
@@ -272,7 +269,7 @@ public class SubmissionSetBuilder {
      * @param file - File to start the scan from.
      * @return a list of nested files.
      */
-    private Collection<File> parseFilesRecursively(File file) {
+    private Collection<File> listFilesRecursively(File file) {
         if (isFileExcluded(file)) {
             return Collections.emptyList();
         }
@@ -290,7 +287,7 @@ public class SubmissionSetBuilder {
         Collection<File> files = new ArrayList<>();
 
         for (String fileName : nestedFileNames) {
-            files.addAll(parseFilesRecursively(new File(file, fileName)));
+            files.addAll(listFilesRecursively(new File(file, fileName)));
         }
 
         return files;

@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.Set;
 
 /**
- * Strategy for analyzing source code for unused variables querying the corresponding lines
+ * Strategy for analyzing source code for unused variables querying the corresponding lines.
  */
 public interface SourceAnalysis {
 
@@ -21,6 +21,7 @@ public interface SourceAnalysis {
     /**
      * Executes the source analysis on the files of a submission.
      * @param files Set of the files contained in the submission
+     * @throws InterruptedException if the analysis cannot be completed.
      */
     void findUnusedVariableLines(Set<File> files) throws InterruptedException;
 }

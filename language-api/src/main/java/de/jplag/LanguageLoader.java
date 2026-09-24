@@ -76,7 +76,7 @@ public final class LanguageLoader {
     }
 
     /**
-     * Resets the internal cache of all loaded languages
+     * Resets the internal cache of all loaded languages.
      */
     public static synchronized void clearCache() {
         cachedLanguageInstances = null;

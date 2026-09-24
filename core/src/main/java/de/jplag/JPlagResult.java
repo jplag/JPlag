@@ -14,7 +14,6 @@ import de.jplag.options.SimilarityMetric;
  * Provides access to pairwise comparison results sorted by similarity, similarity distribution data, clustering results
  * over submissions, execution duration, and configuration options.
  */
-
 public class JPlagResult {
 
     private List<JPlagComparison> comparisons; // comparisons whose similarity was about the specified threshold
@@ -23,7 +22,9 @@ public class JPlagResult {
 
     private final JPlagOptions options;
 
-    private final long durationInMillis;
+    private final long tokenizationDurationInMillis;
+
+    private final long comparisonDurationInMillis;
 
     private final int[] similarityDistribution; // 10-element array representing the similarity distribution of the detected matches.
 
@@ -31,11 +32,21 @@ public class JPlagResult {
 
     private static final int SIMILARITY_DISTRIBUTION_SIZE = 100;
 
-    public JPlagResult(List<JPlagComparison> comparisons, SubmissionSet submissions, long durationInMillis, JPlagOptions options) {
+    /**
+     * Creates a new JPlag analysis result.
+     * @param comparisons are the analyzed comparisons for all pairs of submissions.
+     * @param submissions are the source code submissions analyzed.
+     * @param tokenizationDurationInMillis is the duration of the tokenization
+     * @param comparisonDurationInMillis is the duration of the comparison.
+     * @param options are the corresponding options for the result.
+     */
+    public JPlagResult(List<JPlagComparison> comparisons, SubmissionSet submissions, long tokenizationDurationInMillis,
+            long comparisonDurationInMillis, JPlagOptions options) {
         // sort by similarity (descending)
         this.comparisons = comparisons.stream().sorted(Comparator.comparing(JPlagComparison::similarity).reversed()).toList();
         this.submissions = submissions;
-        this.durationInMillis = durationInMillis;
+        this.tokenizationDurationInMillis = tokenizationDurationInMillis;
+        this.comparisonDurationInMillis = comparisonDurationInMillis;
         this.options = options;
         similarityDistribution = calculateSimilarityDistribution(comparisons);
     }
@@ -80,10 +91,17 @@ public class JPlagResult {
     }
 
     /**
+     * @return the duration of the tokenization in milliseconds.
+     */
+    public long getTokenizationDuration() {
+        return tokenizationDurationInMillis;
+    }
+
+    /**
      * @return the duration of the comparison in milliseconds.
      */
-    public long getDuration() {
-        return durationInMillis;
+    public long getComparisonDuration() {
+        return comparisonDurationInMillis;
     }
 
     /**
@@ -102,7 +120,7 @@ public class JPlagResult {
     }
 
     /**
-     * Provides access the the options.
+     * Provides access to the options.
      * @return the JPlag options with which the JPlag run was configured.
      */
     public JPlagOptions getOptions() {
@@ -111,8 +129,8 @@ public class JPlagResult {
 
     /**
      * For the {@link SimilarityMetric} JPlag was run with, this returns the similarity distribution of detected matches in
-     * a 100-element array. Each entry represents the absolute frequency of matches whose similarity lies within the
-     * respective interval. Intervals: 0: [0% - 1%), 1: [1% - 2%), 2: [2% - 3%), ..., 99: [99% - 100%]
+     * a 100-element array. Each entry represents the absolute count of matches whose similarity lies within the respective
+     * interval. Intervals: 0: [0% - 1%), 1: [1% - 2%), 2: [2% - 3%), ..., 99: [99% - 100%].
      * @return the similarity distribution array.
      */
     public int[] getSimilarityDistribution() {
@@ -121,9 +139,9 @@ public class JPlagResult {
 
     /**
      * For the {@link SimilarityMetric#MAX} that is built in to every {@link JPlagComparison}, this returns the similarity
-     * distribution of detected matches in a 100-element array. Each entry represents the absolute frequency of matches
-     * whose similarity lies within the respective interval. Intervals: 0: [0% - 1%), 1: [1% - 20%), 2: [2% - 3%), ..., 99:
-     * [99% - 100%].
+     * distribution of detected matches in a 100-element array. Each entry represents the absolute count of matches whose
+     * similarity lies within the respective interval. Intervals: 0: [0% - 1%), 1: [1% - 2%), 2: [2% - 3%), ..., 99: [99% -
+     * 100%].
      * @return the similarity distribution array. When JPlag was run with the {@link SimilarityMetric#MAX}, this will return
      * the same distribution as {@link JPlagResult#getSimilarityDistribution()}.
      */
@@ -152,8 +170,8 @@ public class JPlagResult {
 
     @Override
     public String toString() {
-        return String.format("JPlagResult { comparisons: %d, duration: %d ms, language: %s, submissions: %d }", getAllComparisons().size(),
-                getDuration(), getOptions().language().getName(), submissions.numberOfSubmissions());
+        return String.format("JPlagResult { comparisons: %d, duration: %d ms + %d ms, language: %s, submissions: %d }", getAllComparisons().size(),
+                getTokenizationDuration(), getComparisonDuration(), getOptions().language().getName(), submissions.numberOfSubmissions());
     }
 
     /**
@@ -172,10 +190,12 @@ public class JPlagResult {
         for (JPlagComparison comparison : comparisons) {
             double similarity = similarityExtractor.applyAsDouble(comparison); // extract similarity: 0.0 <= similarity <= 1.0
             int index = (int) (similarity * SIMILARITY_DISTRIBUTION_SIZE); // divide similarity by bucket size to find index of correct bucket.
+            index = Math.max(index, 0);
             index = Math.min(index, SIMILARITY_DISTRIBUTION_SIZE - 1); // index is out of bounds when similarity is 1.0. decrease by one to count
                                                                        // towards the highest value bucket
             similarityDistribution[index]++; // count comparison towards its determined bucket.
         }
         return similarityDistribution;
     }
+
 }

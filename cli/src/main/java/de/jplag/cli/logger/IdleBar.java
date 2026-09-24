@@ -24,6 +24,10 @@ public class IdleBar extends LogDelayingProgressBar {
 
     private boolean running = false;
 
+    /**
+     * Constructs an IdleBar with the specified label text.
+     * @param text Label to display next to the idle bar.
+     */
     public IdleBar(String text) {
         super();
         this.output = System.out;
@@ -36,7 +40,7 @@ public class IdleBar extends LogDelayingProgressBar {
             Terminal terminal = TerminalBuilder.terminal();
             this.length = Math.min(terminal.getWidth() / 2, terminal.getWidth() - 50);
             terminal.close();
-        } catch (IOException ignore) {
+        } catch (IOException _) {
             // ignore exceptions here. If we cannot access the terminal, we guess a width
         }
         if (this.length < 10) {
@@ -44,6 +48,9 @@ public class IdleBar extends LogDelayingProgressBar {
         }
     }
 
+    /**
+     * Starts the idle bar animation in a separate thread.
+     */
     public void start() {
         this.startTime = System.currentTimeMillis();
         this.running = true;
@@ -55,7 +62,7 @@ public class IdleBar extends LogDelayingProgressBar {
         this.running = false;
         try {
             this.runner.join();
-        } catch (InterruptedException ignored) {
+        } catch (InterruptedException _) {
             Thread.currentThread().interrupt();
         }
         this.output.print('\r');
@@ -72,7 +79,7 @@ public class IdleBar extends LogDelayingProgressBar {
             }
             try {
                 Thread.sleep(200);
-            } catch (InterruptedException ignore) {
+            } catch (InterruptedException _) {
                 Thread.currentThread().interrupt();
             }
             currentPos += currentDirection;

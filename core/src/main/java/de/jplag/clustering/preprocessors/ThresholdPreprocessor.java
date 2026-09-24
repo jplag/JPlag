@@ -15,6 +15,10 @@ public class ThresholdPreprocessor implements ClusteringPreprocessor {
     private final double threshold;
     private final PreprocessorHelper helper = new PreprocessorHelper();
 
+    /**
+     * Constructs a ThresholdPreprocessor with the specified threshold value.
+     * @param threshold The similarity threshold to suppress similarities.
+     */
     public ThresholdPreprocessor(double threshold) {
         this.threshold = threshold;
     }
@@ -36,6 +40,9 @@ public class ThresholdPreprocessor implements ClusteringPreprocessor {
         return helper.postProcessResult(result);
     }
 
+    /**
+     * @return similarity threshold to suppress similarities.
+     */
     public double getThreshold() {
         return threshold;
     }

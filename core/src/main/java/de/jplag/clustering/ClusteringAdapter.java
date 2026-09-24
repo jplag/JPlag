@@ -13,10 +13,10 @@ import de.jplag.Submission;
 import de.jplag.clustering.algorithm.GenericClusteringAlgorithm;
 
 /**
- * This class acts as an adapter between
+ * This class acts as an adapter between:
  * <ul>
- * <li>the clustering algorithms (that operate on collections of integers)</li>
- * <li>and the rest of the code base (that operates on {@link ClusteringResult}s of {@link Submission}s)</li>
+ * <li>the clustering algorithms (that operate on collections of integers).</li>
+ * <li>and the rest of the code base (that operates on {@link ClusteringResult}s of {@link Submission}s).</li>
  * </ul>
  */
 public class ClusteringAdapter {

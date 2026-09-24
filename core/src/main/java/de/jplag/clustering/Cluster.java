@@ -42,7 +42,7 @@ public class Cluster<T> {
     }
 
     /**
-     * See {@link ClusteringResult#getCommunityStrength}
+     * See {@link ClusteringResult#getCommunityStrength}.
      * @return community strength of the cluster
      */
     public double getCommunityStrength() {
@@ -87,7 +87,9 @@ public class Cluster<T> {
     }
 
     /**
-     * How much this cluster is worth during optimization.
+     * Calculates the worth of this cluster based on community strength and average similarity.
+     * @param similarity function to compute similarity between two members
+     * @return the computed worth score
      */
     public double getWorth(BiFunction<T, T, Double> similarity) {
         double communityStrength = getCommunityStrength();

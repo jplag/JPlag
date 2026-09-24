@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Writes error messages from ANTLR to a logger
+ * Writes error messages from ANTLR to a logger.
  */
 public class AntlrLoggerErrorListener extends BaseErrorListener {
     private static final Logger logger = LoggerFactory.getLogger(AntlrLoggerErrorListener.class);

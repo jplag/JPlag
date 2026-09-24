@@ -2,6 +2,9 @@ package de.jplag.antlr.testLanguage;
 
 import de.jplag.TokenType;
 
+/**
+ * Artificial token types for testing.
+ */
 public enum TestTokenType implements TokenType {
     ADDITION("PLUS("),
     SUBTRACTION("MINUS("),

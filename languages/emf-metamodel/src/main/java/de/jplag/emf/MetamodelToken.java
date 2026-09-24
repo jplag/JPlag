@@ -1,7 +1,6 @@
 package de.jplag.emf;
 
 import java.io.File;
-import java.util.Optional;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -15,7 +14,7 @@ import de.jplag.TokenType;
  */
 public class MetamodelToken extends Token {
 
-    private final Optional<EObject> eObject;
+    private final EObject eObject;
 
     /**
      * Creates an Ecore metamodel token that corresponds to an EObject.
@@ -24,16 +23,7 @@ public class MetamodelToken extends Token {
      * @param eObject is the corresponding eObject in the model from which this token was extracted.
      */
     public MetamodelToken(TokenType type, File file, EObject eObject) {
-        this(type, file, new TokenTrace(), Optional.of(eObject));
-    }
-
-    /**
-     * Creates an Ecore metamodel token.
-     * @param type is the type of the token.
-     * @param file is the source model file.
-     */
-    public MetamodelToken(TokenType type, File file) {
-        this(type, file, new TokenTrace(), Optional.empty());
+        this(type, file, new TokenTrace(), eObject);
     }
 
     /**
@@ -43,15 +33,15 @@ public class MetamodelToken extends Token {
      * @param trace is the tracing information of the token, meaning line, column, and length.
      * @param eObject is the corresponding eObject in the model from which this token was extracted
      */
-    public MetamodelToken(TokenType type, File file, TokenTrace trace, Optional<EObject> eObject) {
+    public MetamodelToken(TokenType type, File file, TokenTrace trace, EObject eObject) {
         super(type, file, trace);
         this.eObject = eObject;
     }
 
     /**
-     * @return the optional corresponding EObject of the token.
+     * @return the corresponding EObject of the token.
      */
-    public Optional<EObject> getEObject() {
+    public EObject getEObject() {
         return eObject;
     }
 }

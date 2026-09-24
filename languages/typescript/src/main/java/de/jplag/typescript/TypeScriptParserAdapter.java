@@ -11,14 +11,14 @@ import de.jplag.typescript.grammar.TypeScriptLexer;
 import de.jplag.typescript.grammar.TypeScriptParser;
 
 /**
- * The Antlr adapter used for the TypeScript language module
+ * The Antlr adapter used for the TypeScript language module.
  */
 public class TypeScriptParserAdapter extends AbstractAntlrParserAdapter<TypeScriptParser> {
     private static final TypeScriptListener listener = new TypeScriptListener();
     private final boolean useStrictDefault;
 
     /**
-     * Creates a new Parser adapter for the Typescript Antlr Grammar
+     * Creates a new Parser adapter for the Typescript Antlr Grammar.
      * @param useStrictDefault True if the grammars should parse the files using the JavaScript strict syntax
      */
     public TypeScriptParserAdapter(boolean useStrictDefault) {

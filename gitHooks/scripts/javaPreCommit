@@ -8,12 +8,24 @@ fi
 
 #prevents the shell from aborting if maven returns a non zero exit code
 set +e
+
 echo Checking spotless
 mvn spotless:check &> /dev/null
-exitCode=$?
+result=0
 
-if [ $exitCode -gt 0 ]
+if [ $? -gt 0 ]
 then
 	echo "Spotless failed. Please run 'mvn spotless:apply' to fix."
+	result=1
 fi
-exit $exitCode
+
+echo Running Checkstyle
+mvn checkstyle:check &> /dev/null
+
+if [ $? -gt 0 ]
+then
+  echo "Checkstyle failed. Please run 'mvn checkstyle:check' to get a list of issues."
+	result=1
+fi
+
+exit $result

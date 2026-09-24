@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -44,6 +45,7 @@ public class SubmissionSet {
 
     private final JPlagOptions options;
     private final AtomicInteger errors = new AtomicInteger(0);
+    private final AtomicLong tokenizationDuration = new AtomicLong(0);
 
     /**
      * Creates a submissions set and parses all submissions.
@@ -92,8 +94,7 @@ public class SubmissionSet {
     }
 
     /**
-     * Obtain the valid submissions.<br>
-     * <b>Changes in the list are reflected in this instance.</b>
+     * Obtain the valid submissions. Changes in the list are reflected in this instance.
      * @return the valid submissions.
      */
     public List<Submission> getSubmissions() {
@@ -101,8 +102,7 @@ public class SubmissionSet {
     }
 
     /**
-     * Obtain the invalid submissions.<br>
-     * <b>Changes in the list are reflected in this instance.</b>
+     * Obtain the invalid submissions. Changes in the list are reflected in this instance.
      * @return the invalid submissions.
      */
     public List<Submission> getInvalidSubmissions() {
@@ -115,6 +115,7 @@ public class SubmissionSet {
      * a deterministic order.
      */
     public void normalizeSubmissions() {
+        long startTimeMillis = System.currentTimeMillis();
         if (baseCodeSubmission != null) {
             baseCodeSubmission.normalize();
         }
@@ -124,6 +125,8 @@ public class SubmissionSet {
             progressBar.step();
         });
         progressBar.dispose();
+        long durationInMilliseconds = System.currentTimeMillis() - startTimeMillis;
+        tokenizationDuration.addAndGet(durationInMilliseconds);
     }
 
     private List<Submission> filterValidSubmissions() {
@@ -139,13 +142,16 @@ public class SubmissionSet {
      */
     private void parseBaseCodeSubmission(Submission baseCode) throws BasecodeException, LanguageException {
         logger.trace("----- Parsing basecode submission: {}", baseCode.getName());
-        if (!baseCode.parse(options.debugParser(), options.normalize(), options.minimumTokenMatch(), options.analyzeComments())) {
+        long startTimeMillis = System.currentTimeMillis();
+        boolean successful = baseCode.parse(options.debugParser(), options.normalize(), options.minimumTokenMatch(), options.analyzeComments());
+        long durationInMilliseconds = System.currentTimeMillis() - startTimeMillis;
+        tokenizationDuration.addAndGet(durationInMilliseconds);
+        if (!successful) {
             if (baseCode.getState() == SubmissionState.TOO_SMALL) {
                 throw new BasecodeException("Basecode contains %d token(s), which is below the minimum match length (%d)!"
                         .formatted(baseCode.getNumberOfTokens(), options.minimumTokenMatch()));
             }
             throw new BasecodeException("Error while parsing the basecode submission!");
-
         }
     }
 
@@ -161,13 +167,7 @@ public class SubmissionSet {
 
         ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.PARSING, submissions.size());
 
-        if (options.language().expectsSubmissionOrder()) {
-            for (Submission submission : submissions) {
-                parseSingleSubmission(progressBar, submission);
-            }
-        } else {
-            parseSubmissionsInParallel(submissions, progressBar);
-        }
+        parseSubmissionsInParallel(submissions, progressBar);
 
         progressBar.dispose();
 
@@ -178,6 +178,7 @@ public class SubmissionSet {
 
     private void parseSubmissionsInParallel(List<Submission> submissions, ProgressBar progressBar) throws SubmissionException {
         try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            long startTimeMillis = System.currentTimeMillis();
             for (Submission submission : submissions) {
                 executor.submit(() -> {
                     parseSingleSubmission(progressBar, submission);
@@ -186,6 +187,8 @@ public class SubmissionSet {
             }
             executor.shutdown();
             executor.awaitTermination(24, TimeUnit.HOURS); // Maximum time all processing can take.
+            long durationInMilliseconds = System.currentTimeMillis() - startTimeMillis;
+            tokenizationDuration.addAndGet(durationInMilliseconds);
         } catch (InterruptedException exception) {
             throw new SubmissionException("Error while parsing the submissions.", exception);
         }
@@ -203,4 +206,11 @@ public class SubmissionSet {
         progressBar.step();
     }
 
+    /**
+     * Returns the total time taken during the parsing/tokenization stage.
+     * @return the tokenization time in milliseconds
+     */
+    public long getTokenizationDuration() {
+        return tokenizationDuration.get();
+    }
 }

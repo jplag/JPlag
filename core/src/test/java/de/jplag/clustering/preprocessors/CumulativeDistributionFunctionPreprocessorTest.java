@@ -10,7 +10,7 @@ class CumulativeDistributionFunctionPreprocessorTest extends PreprocessingTestBa
 
     private static final double EPSILON = 0.0000001;
 
-    CumulativeDistributionFunctionPreprocessor preprocessor;
+    private CumulativeDistributionFunctionPreprocessor preprocessor;
 
     @BeforeEach
     void init() {

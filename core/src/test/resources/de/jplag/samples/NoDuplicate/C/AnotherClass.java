@@ -1,5 +1,5 @@
 /**
- * This is so pointless, I hope nobody looks at test cases, e.g., in 25 years from now
+ * This is so pointless, I hope nobody looks at test cases, e.g., in 25 years from now.
  */
 public class AnotherClass {
 

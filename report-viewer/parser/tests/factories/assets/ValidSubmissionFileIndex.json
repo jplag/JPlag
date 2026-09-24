@@ -1,0 +1,20 @@
+{
+  "fileIndexes": {
+    "root1": {
+      "root1\\Structure.java": {
+        "tokenCount": 139
+      },
+      "root1\\Submission.java": {
+        "tokenCount": 100
+      }
+    },
+    "root2": {
+      "root2\\Structure.java": {
+        "tokenCount": 139
+      },
+      "root2\\Submission.java": {
+        "tokenCount": 100
+      }
+    }
+  }
+}

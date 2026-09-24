@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 class ClusterTest {
 
     private static final double EPSILON = 0.00001;
-    Cluster<Character> cluster;
+    private Cluster<Character> cluster;
 
     @Test
     void testCommunityStrengthPerConnectionOneMember() {

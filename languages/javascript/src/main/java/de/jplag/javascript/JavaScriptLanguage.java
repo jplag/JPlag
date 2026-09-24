@@ -2,15 +2,16 @@ package de.jplag.javascript;
 
 import java.util.List;
 
-import org.kohsuke.MetaInfServices;
-
 import de.jplag.Language;
 import de.jplag.typescript.TypeScriptLanguage;
 
+import com.google.auto.service.AutoService;
+
 /**
- * Represents the JavaScript Language as a variance of TypeScript
+ * Represents the JavaScript Language as a variance of TypeScript. Delegates all responsibility to the TypeScript
+ * language.
  */
-@MetaInfServices(Language.class)
+@AutoService(Language.class)
 public class JavaScriptLanguage extends TypeScriptLanguage {
 
     @Override

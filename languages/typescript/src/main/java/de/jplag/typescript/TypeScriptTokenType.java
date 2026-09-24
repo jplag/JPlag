@@ -3,7 +3,7 @@ package de.jplag.typescript;
 import de.jplag.TokenType;
 
 /**
- * Tokens extracted by the TypeScript language module
+ * Tokens extracted by the TypeScript language module.
  */
 public enum TypeScriptTokenType implements TokenType {
 

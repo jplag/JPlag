@@ -2,6 +2,7 @@ package de.jplag.antlr;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
@@ -47,8 +48,10 @@ public class TokenCollector {
         }
         org.antlr.v4.runtime.Token antlrToken = extractStartToken.apply(entity);
         org.antlr.v4.runtime.Token antlrEndToken = extractEndToken.apply(entity);
-        int line = antlrToken.getLine();
-        int column = antlrToken.getCharPositionInLine() + 1;
+        int startLine = antlrToken.getLine();
+        int startColumn = antlrToken.getCharPositionInLine() + 1;
+        int endLine = calculateEndLineNumber(antlrEndToken);
+        int endColumn = calculateEndColumnNumber(antlrEndToken);
         int length = antlrEndToken.getStopIndex() - antlrToken.getStartIndex() + 1;
         Token token;
         if (extractsSemantics) {
@@ -56,13 +59,13 @@ public class TokenCollector {
                 throw new IllegalStateException(String.format("Expected semantics bud did not receive any for token %s", jplagType.getDescription()));
             }
             CodeSemantics semantics = semanticsSupplier.apply(entity);
-            token = new Token(jplagType, this.file, line, column, length, semantics);
+            token = new Token(jplagType, this.file, startLine, startColumn, endLine, endColumn, length, semantics);
             variableRegistry.updateSemantics(semantics);
         } else {
             if (semanticsSupplier != null) {
                 logger.warn("Received semantics for token {} despite not expecting any", jplagType.getDescription());
             }
-            token = new Token(jplagType, this.file, line, column, length);
+            token = new Token(jplagType, this.file, startLine, startColumn, endLine, endColumn, length);
         }
         addToken(token);
     }
@@ -78,5 +81,30 @@ public class TokenCollector {
 
     private void addToken(Token token) {
         this.collected.add(token);
+    }
+
+    private int calculateEndLineNumber(org.antlr.v4.runtime.Token token) {
+        String[] lines = token.getText().split("\n", -1);
+        if (lines.length > 1 && lines[lines.length - 1].length() == 0) { // Ends on linebreak
+            lines = Arrays.copyOf(lines, lines.length - 1);
+        }
+
+        return token.getLine() + lines.length - 1;
+    }
+
+    private int calculateEndColumnNumber(org.antlr.v4.runtime.Token token) {
+        String[] lines = token.getText().split("\n", -1);
+        if (lines.length > 1 && lines[lines.length - 1].length() == 0) { // Ends on linebreak
+            lines = Arrays.copyOf(lines, lines.length - 1);
+        }
+
+        if (lines.length == 1) {
+            if (lines[0].length() == 0) {
+                return token.getCharPositionInLine() + 1;
+            }
+            return token.getCharPositionInLine() + lines[0].length();
+        } else {
+            return lines[lines.length - 1].length() + 1;
+        }
     }
 }

@@ -1,12 +1,15 @@
 package de.jplag.cli.logger;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mockito;
 import org.slf4j.event.Level;
 
 import de.jplag.logging.ProgressBar;
@@ -26,7 +29,7 @@ class VoidProgressBarTest {
 
         System.setOut(originalOutput);
 
-        Assertions.assertEquals("", outputStream.toString());
+        assertEquals("", outputStream.toString());
     }
 
     @ParameterizedTest
@@ -35,10 +38,12 @@ class VoidProgressBarTest {
         Level originalLogLevel = CollectedLogger.getLogLevel();
         CollectedLogger.setLogLevel(logLevel);
 
-        ProgressBar progressBar = new CliProgressBarProvider().initProgressBar(ProgressBarType.CLUSTERING, 10);
+        ProgressBarType type = Mockito.mock(ProgressBarType.class);
+        Mockito.when(type.isIdleBar()).thenReturn(false);
+        ProgressBar progressBar = new CliProgressBarProvider().initProgressBar(type, 10);
         progressBar.dispose();
 
-        Assertions.assertInstanceOf(VoidProgressBar.class, progressBar);
+        assertInstanceOf(VoidProgressBar.class, progressBar);
 
         CollectedLogger.setLogLevel(originalLogLevel);
     }

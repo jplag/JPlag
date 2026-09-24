@@ -1,0 +1,12 @@
+[
+  {
+    "averageSimilarity": 0.85,
+    "strength": 0.1,
+    "members": ["test1", "test2", "test3"]
+  },
+  {
+    "averageSimilarity": 0.75,
+    "strength": 0.2,
+    "members": ["test1", "test4", "test5"]
+  }
+]

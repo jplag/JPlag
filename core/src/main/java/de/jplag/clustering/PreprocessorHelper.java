@@ -38,7 +38,7 @@ public class PreprocessorHelper {
     }
 
     /**
-     * Implements the logic for {@link ClusteringPreprocessor#originalIndexOf}
+     * Implements the logic for {@link ClusteringPreprocessor#originalIndexOf}.
      * @param index after preprocessing
      * @return corresponding index before preprocessing
      */

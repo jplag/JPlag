@@ -56,7 +56,8 @@ class BasicFunctionalityTest extends TestBase {
     /**
      * This case is more complex and consists out of 5 submissions with different plagiarism. A is the original code (coming
      * from an older JPlag version) B is a partial copy of that code C is a full copy of that code D is dumb plagiarism,
-     * e.g., changed variable names, additional unneeded code, ... E is just a Hello World Java errorConsumer
+     * e.g., changed variable names, additional unneeded code, ... E is just a Hello World Java errorConsumer.
+     * @throws ExitException when JPlag causes an error.
      */
     @Test
     @DisplayName("test multiple submissions with varying degree of plagiarism")

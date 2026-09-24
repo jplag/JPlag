@@ -33,6 +33,10 @@ public class SpectralClustering implements GenericClusteringAlgorithm {
     private static final double MULTIPLICITY_EPSILON = 0.05;
     private final ClusteringOptions options;
 
+    /**
+     * Constructs a new instance of the SpectralClustering algorithm with the specified clustering options.
+     * @param options The clustering options that configure the behavior of the spectral clustering algorithm.
+     */
     public SpectralClustering(ClusteringOptions options) {
         this.options = options;
     }

@@ -7,4 +7,5 @@
         <version>${revision}</version>
     </parent>
     <artifactId>java</artifactId>
+    <name>JPlag: Java Language Module</name>
 </project>

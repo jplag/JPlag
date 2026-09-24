@@ -1,0 +1,52 @@
+[
+  {
+    "firstSubmission": "Sub01",
+    "secondSubmission": "Sub02",
+    "similarities": {
+      "AVG": 0.41,
+      "MAX": 0.81,
+      "LONGEST_MATCH": 29,
+      "MAXIMUM_LENGTH": 35
+    }
+  },
+  {
+    "firstSubmission": "Sub02",
+    "secondSubmission": "Sub03",
+    "similarities": {
+      "AVG": 0.22,
+      "MAX": 0.34,
+      "LONGEST_MATCH": 15,
+      "MAXIMUM_LENGTH": 40
+    }
+  },
+  {
+    "firstSubmission": "Sub01",
+    "secondSubmission": "Sub03",
+    "similarities": {
+      "AVG": 0.21,
+      "MAX": 0.25,
+      "LONGEST_MATCH": 10,
+      "MAXIMUM_LENGTH": 50
+    }
+  },
+  {
+    "firstSubmission": "Sub01",
+    "secondSubmission": "Sub04",
+    "similarities": {
+      "AVG": 0.02,
+      "MAX": 0.35,
+      "LONGEST_MATCH": 5,
+      "MAXIMUM_LENGTH": 60
+    }
+  },
+  {
+    "firstSubmission": "Sub04",
+    "secondSubmission": "Sub03",
+    "similarities": {
+      "AVG": 0.01,
+      "MAX": 0.46,
+      "LONGEST_MATCH": 3,
+      "MAXIMUM_LENGTH": 47
+    }
+  }
+]

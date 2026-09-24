@@ -2,6 +2,9 @@ package de.jplag.scheme;
 
 import de.jplag.TokenType;
 
+/**
+ * Scheme token types.
+ */
 public enum SchemeTokenType implements TokenType {
     S_BOOL("BOOL"),
     S_NUMBER("NUMBER"),

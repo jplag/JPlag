@@ -19,11 +19,18 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMLResourceFactoryImpl;
 
+/**
+ * Utility class for the creation of test models.
+ */
 public class BookStoreFactory {
 
     private static final String MODEL_NAME = "bookStore.xml";
     private static final String METAMODEL_NAME = "bookStore.ecore";
 
+    /**
+     * Generates all models to a given directory.
+     * @param filePath is the directory path.
+     */
     public static void generateAll(String filePath) {
         File file = new File(filePath);
         if (!file.exists()) {

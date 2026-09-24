@@ -12,11 +12,11 @@ import de.jplag.clustering.preprocessors.ThresholdPreprocessor;
  */
 public enum Preprocessing {
     NONE(options -> null),
-    /** {@link CumulativeDistributionFunctionPreprocessor} */
+    /** {@link CumulativeDistributionFunctionPreprocessor}. */
     CUMULATIVE_DISTRIBUTION_FUNCTION(options -> new CumulativeDistributionFunctionPreprocessor()),
-    /** {@link ThresholdPreprocessor} */
+    /** {@link ThresholdPreprocessor}. */
     THRESHOLD(options -> new ThresholdPreprocessor(options.preprocessorThreshold())),
-    /** {@link PercentileThresholdProcessor} */
+    /** {@link PercentileThresholdProcessor}. */
     PERCENTILE(options -> new PercentileThresholdProcessor(options.preprocessorPercentile()));
 
     private final Function<ClusteringOptions, ClusteringPreprocessor> constructor;
@@ -25,6 +25,11 @@ public enum Preprocessing {
         this.constructor = constructor;
     }
 
+    /**
+     * Constructs an optional {@link ClusteringPreprocessor} instance using the provided {@link ClusteringOptions}.
+     * @param options Clustering options to configure the preprocessor
+     * @return An {@link Optional} containing the constructed preprocessor, or empty if none was constructed
+     */
     public Optional<ClusteringPreprocessor> constructPreprocessor(ClusteringOptions options) {
         return Optional.ofNullable(constructor.apply(options));
     }

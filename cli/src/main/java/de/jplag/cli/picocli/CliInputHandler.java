@@ -9,7 +9,6 @@ import java.io.File;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -38,9 +37,10 @@ public class CliInputHandler {
     private static final String[] DESCRIPTIONS = {"Detecting Software Plagiarism", "Software-Archaeological Playground", "Since 1996",
             "Scientifically Published", "Maintained by SDQ", "RIP Structure and Table", "What else?", "You have been warned!", "Since Java 1.0",
             "More Abstract than Tree", "Students Nightmare", "No, changing variable names does not work...", "The tech is out there!",
-            "Developed by plagiarism experts.", "State of the Art Obfuscation Resilience", "www.helmholtz.software/software/jplag"};
+            "Developed by Plagiarism Experts.", "State of the Art Obfuscation Resilience", "helmholtz.software/software/jplag", "jplag.de",
+            "Created by Guido Malpohl and others", "Revived by Timur Saglam and Sebastian Hahner", "Created at KIT"};
     private static final String DESCRIPTION_PATTERN = "%nJPlag - %s%n%s%n%n";
-    private static final String CREDITS = "Created by IPD Tichy, Guido Malpohl, and others. Maintained by Timur Saglam and Sebastian Hahner. Logo by Sandro Koch.";
+    private static final String CREDITS = "Created by IPD Tichy, Guido Malpohl, and others. Revived by Timur Saglam and Sebastian Hahner. Maintained by Robin Maisch and Nils Niehues.";
 
     private static final String PARAMETER_SHORT_PREFIX = "  -";
     private static final String PARAMETER_SHORT_ADDITIONAL_INDENT = "    ";
@@ -56,7 +56,7 @@ public class CliInputHandler {
     private ParseResult parseResult;
 
     /**
-     * Creates a new handler. Before using it you need to call {@link #parse()}
+     * Creates a new handler. Before using it you need to call {@link #parse()}.
      * @param args The arguments.
      */
     public CliInputHandler(String[] args) {
@@ -77,7 +77,9 @@ public class CliInputHandler {
         }).collect(Collectors.joining(System.lineSeparator())) + System.lineSeparator());
         cli.getHelpSectionMap().put(SECTION_KEY_COMMAND_LIST_HEADING, help -> "Languages:" + System.lineSeparator());
 
-        buildSubcommands().forEach(cli::addSubcommand);
+        for (CommandLine.Model.CommandSpec subcommand : buildSubcommands()) {
+            cli.addSubcommand(subcommand).setHelpFactory(new HelpFactory());
+        }
 
         cli.getHelpSectionMap().put(SECTION_KEY_SYNOPSIS, help -> help.synopsis(help.synopsisHeadingLength()) + generateDescription());
         cli.getHelpSectionMap().put(SECTION_KEY_DESCRIPTION_HEADING, help -> OPTION_LIST_HEADING);
@@ -94,12 +96,22 @@ public class CliInputHandler {
                 command.addOption(CommandLine.Model.OptionSpec.builder(option.getNameAsUnixParameter()).type(option.getType().getJavaType())
                         .description(option.getDescription()).build());
             }
-            command.mixinStandardHelpOptions(true);
-            command.addPositional(
-                    CommandLine.Model.PositionalParamSpec.builder().type(List.class).auxiliaryTypes(File.class).hidden(true).required(false).build());
+            command.addMixin("root", buildRootParametersForSubcommands());
 
             return command;
         }).toList();
+    }
+
+    private CommandLine.Model.CommandSpec buildRootParametersForSubcommands() {
+        CommandLine.Model.CommandSpec originalOptions = CommandLine.Model.CommandSpec.forAnnotatedObject(this.options);
+        CommandLine.Model.CommandSpec hiddenOptions = CommandLine.Model.CommandSpec.create();
+        for (CommandLine.Model.OptionSpec option : originalOptions.options()) {
+            hiddenOptions.addOption(CommandLine.Model.OptionSpec.builder(option).hidden(true).required(false).build());
+        }
+        for (CommandLine.Model.PositionalParamSpec parameter : originalOptions.positionalParameters()) {
+            hiddenOptions.addPositional(CommandLine.Model.PositionalParamSpec.builder(parameter).hidden(true).required(false).build());
+        }
+        return hiddenOptions;
     }
 
     /**
@@ -159,23 +171,13 @@ public class CliInputHandler {
         return language;
     }
 
-    /**
-     * @return The submission directories configured for the subcommand, if one has been given.
-     */
-    public List<File> getSubcommandSubmissionDirectories() {
-        if (this.parseResult.subcommand() != null && this.parseResult.subcommand().hasMatchedPositional(0)) {
-            return this.parseResult.subcommand().matchedPositional(0).getValue();
-        }
-        return Collections.emptyList();
-    }
-
     private String generateDescription() {
         var randomDescription = DESCRIPTIONS[RANDOM.nextInt(DESCRIPTIONS.length)];
         return String.format(DESCRIPTION_PATTERN, randomDescription, CREDITS);
     }
 
     /**
-     * Returns the file to display when using --move VIEW. The result can be null, if no file was selected
+     * Returns the file to display when using --move VIEW. The result can be null, if no file was selected.
      * @return The file to show
      * @throws CliException If multiple options would be valid
      */

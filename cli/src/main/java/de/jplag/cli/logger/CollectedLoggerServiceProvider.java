@@ -1,6 +1,5 @@
 package de.jplag.cli.logger;
 
-import org.kohsuke.MetaInfServices;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.IMarkerFactory;
 import org.slf4j.helpers.BasicMarkerFactory;
@@ -8,8 +7,17 @@ import org.slf4j.helpers.NOPMDCAdapter;
 import org.slf4j.spi.MDCAdapter;
 import org.slf4j.spi.SLF4JServiceProvider;
 
-@MetaInfServices(SLF4JServiceProvider.class)
+import com.google.auto.service.AutoService;
+
+/**
+ * SLF4J service provider for integrating the CollectedLogger with SLF4J API.
+ */
+@AutoService(SLF4JServiceProvider.class)
 public class CollectedLoggerServiceProvider implements SLF4JServiceProvider {
+
+    /**
+     * SLF4J API version requested by this provider.
+     */
     public static final String REQUESTED_API_VERSION = "2.0.99";
     private ILoggerFactory loggerFactory;
     private IMarkerFactory markerFactory;

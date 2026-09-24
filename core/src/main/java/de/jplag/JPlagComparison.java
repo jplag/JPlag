@@ -10,8 +10,11 @@ import java.util.List;
  * @param matches is the unmodifiable list of all subsequence matches between the two submissions.
  * @param ignoredMatches is the unmodifiable list of ignored matches whose length is below the minimum token match
  * threshold.
+ * @param frequencyWeightedSimilarity the similarity score adjusted by match frequency weighting. Defaults to {@code -1}
+ * when frequency analysis is not enabled.
  */
-public record JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches, List<Match> ignoredMatches) {
+public record JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches, List<Match> ignoredMatches,
+        double frequencyWeightedSimilarity) {
 
     /**
      * Constructs a new comparison between two submissions. The match lists are wrapped as unmodifiable to preserve
@@ -21,10 +24,17 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
      * @param matches is the list of all matches between the two submissions.
      */
     public JPlagComparison(Submission firstSubmission, Submission secondSubmission, List<Match> matches, List<Match> ignoredMatches) {
-        this.firstSubmission = firstSubmission;
-        this.secondSubmission = secondSubmission;
-        this.matches = Collections.unmodifiableList(matches);
-        this.ignoredMatches = Collections.unmodifiableList(ignoredMatches);
+        this(firstSubmission, secondSubmission, Collections.unmodifiableList(matches), Collections.unmodifiableList(ignoredMatches), -1);
+    }
+
+    /**
+     * Copy constructor that adds a frequency-weighted similarity score.
+     * @param originalComparison the original comparison whose matches are reused.
+     * @param frequencyWeightedSimilarity the similarity score adjusted by match frequency weighting.
+     */
+    public JPlagComparison(JPlagComparison originalComparison, double frequencyWeightedSimilarity) {
+        this(originalComparison.firstSubmission(), originalComparison.secondSubmission(), Collections.unmodifiableList(originalComparison.matches),
+                Collections.unmodifiableList(originalComparison.ignoredMatches), frequencyWeightedSimilarity);
     }
 
     /**
@@ -58,13 +68,23 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
     }
 
     /**
+     * Returns the combined similarity divisor for both submissions, used as the denominator when computing average
+     * similarity. It represents the total number of tokens across both submissions that are candidates for structural
+     * matching, i.e. all tokens excluding file-boundary markers and any tokens already attributed to base code.
+     * @return sum of the similarity divisors of both submissions.
+     */
+    public int similarityDivisor() {
+        return firstSubmission.getSimilarityDivisor() + secondSubmission.getSimilarityDivisor();
+    }
+
+    /**
      * Computes the average (or symmetric) similarity between the two submissions. The similarity is adjusted based on
      * whether both submissions contain base code matches.
      * @return Average similarity in interval [0, 1]. 0 means zero percent structural similarity, 1 means 100 percent
      * structural similarity.
      */
-    public final double similarity() {
-        int divisor = firstSubmission.getSimilarityDivisor() + secondSubmission.getSimilarityDivisor();
+    public double similarity() {
+        int divisor = similarityDivisor();
         if (divisor == 0) {
             return 0;
         }

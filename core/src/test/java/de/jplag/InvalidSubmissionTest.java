@@ -21,6 +21,7 @@ class InvalidSubmissionTest extends TestBase {
     /**
      * Tests if invalid submissions are correctly filtered, leading to no valid submissions. The debug options lead to the
      * invalid submissions being stored.
+     * @throws ExitException when JPlag causes an error.
      */
     @Test
     @DisplayName("test filtering and copying of invalid submissions with debug mode")

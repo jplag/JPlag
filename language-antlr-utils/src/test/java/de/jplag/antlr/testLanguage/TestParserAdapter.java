@@ -10,6 +10,9 @@ import de.jplag.antlr.AbstractAntlrParserAdapter;
 import de.jplag.antlr.TestLexer;
 import de.jplag.antlr.TestParser;
 
+/**
+ * Artificial ANTLR parser adapter for testing.
+ */
 public class TestParserAdapter extends AbstractAntlrParserAdapter<TestParser> {
     private static final TestListener listener = new TestListener();
 

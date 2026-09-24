@@ -8,6 +8,7 @@
         <version>${revision}</version>
     </parent>
     <artifactId>kotlin</artifactId>
+    <name>JPlag: Kotlin Language Module</name>
 
     <dependencies>
         <dependency>
@@ -17,7 +18,6 @@
         <dependency>
             <groupId>de.jplag</groupId>
             <artifactId>language-antlr-utils</artifactId>
-            <version>${revision}</version>
         </dependency>
     </dependencies>
 

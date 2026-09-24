@@ -19,6 +19,10 @@ public class TokenVectorGenerator {
 
     private final ModelingElementTokenizer tokenizer;
 
+    /**
+     * Creates the generator.
+     * @param tokenizer is the tokenizer that assigns tokens to model elements.
+     */
     public TokenVectorGenerator(ModelingElementTokenizer tokenizer) {
         this.tokenizer = tokenizer;
     }
@@ -42,7 +46,7 @@ public class TokenVectorGenerator {
         return new TokenOccurenceVector(normalize(occurenceVector));
     }
 
-    public static List<Double> normalize(List<Integer> vector) {
+    private static List<Double> normalize(List<Integer> vector) {
         double magnitude = Math.sqrt(vector.stream().mapToInt(it -> it * it).sum());
         if (magnitude == 0) {
             return Collections.nCopies(vector.size(), 0.0);

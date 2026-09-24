@@ -48,7 +48,7 @@ class ScxmlTokenGeneratorTest {
         COMPLEX_VIEW_FILE("complex_expected_scxmlview"),
         COVERAGE("coverage.scxml");
 
-        final String fileName;
+        private final String fileName;
 
         TestSubjects(String fileName) {
             this.fileName = fileName;

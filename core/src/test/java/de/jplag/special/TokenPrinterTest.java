@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import de.jplag.JPlagResult;
 import de.jplag.Submission;
 import de.jplag.TestBase;
-import de.jplag.TokenPrinter;
+import de.jplag.TokenPrinterUtils;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
 
@@ -49,7 +49,7 @@ class TokenPrinterTest extends TestBase {
         System.out.println(LINE);
         System.out.println(LARGE_SPACE + submission.getName());
         System.out.println(LINE);
-        System.out.println(TokenPrinter.printTokens(submission.getTokenList(), submission.getRoot()));
+        System.out.println(TokenPrinterUtils.printTokensByFile(submission.getTokenList()));
     }
 
 }

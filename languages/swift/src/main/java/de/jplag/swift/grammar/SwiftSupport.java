@@ -1,14 +1,16 @@
+// CHECKSTYLE:OFF
 package de.jplag.swift.grammar;
 
 import java.util.BitSet;
 
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.Interval;
 
-// Taken from https://github.com/antlr/grammars-v4/tree/master/swift/swift5 Commit
-// 2f6c19cc742c60541227b19c45ac2acc844d9b1a
-public class SwiftSupport {
+public abstract class SwiftSupport extends Parser {
+    protected SwiftSupport(TokenStream input) {
+        super(input);
+    }
+
     /*
      * TODO There is one caveat to the rules above. If the ! or ? predefined operator has no whitespace on the left, it is
      * treated as a postfix operator, regardless of whether it has whitespace on the right. To use the ? as the
@@ -118,8 +120,8 @@ public class SwiftSupport {
 
         leftWS.set(Swift5Parser.WS);
         leftWS.set(Swift5Parser.LPAREN);
-        leftWS.set(Swift5Parser.Interpolataion_multi_line);
-        leftWS.set(Swift5Parser.Interpolataion_single_line);
+        leftWS.set(Swift5Parser.Interpolation_multi_line);
+        leftWS.set(Swift5Parser.Interpolation_single_line);
         leftWS.set(Swift5Parser.LBRACK);
         leftWS.set(Swift5Parser.LCURLY);
         leftWS.set(Swift5Parser.COMMA);
@@ -140,14 +142,16 @@ public class SwiftSupport {
     private static boolean isCharacterFromSet(Token token, BitSet bitSet) {
         if (token.getType() == Token.EOF) {
             return false;
+        } else {
+            String text = token.getText();
+            int codepoint = text.codePointAt(0);
+            if (Character.charCount(codepoint) != text.length()) {
+                // not a single character
+                return false;
+            } else {
+                return bitSet.get(codepoint);
+            }
         }
-        String text = token.getText();
-        int codepoint = text.codePointAt(0);
-        if (Character.charCount(codepoint) != text.length()) {
-            // not a single character
-            return false;
-        }
-        return bitSet.get(codepoint);
     }
 
     public static boolean isOperatorHead(Token token) {
@@ -159,7 +163,8 @@ public class SwiftSupport {
     }
 
     public static boolean isOpNext(TokenStream tokens) {
-        tokens.index();
+        int start = tokens.index();
+        Token lt = tokens.get(start);
         int stop = getLastOpTokenIndex(tokens);
         return stop != -1;
         // System.out.printf("isOpNext: i=%d t='%s'", start, lt.getText());
@@ -197,18 +202,21 @@ public class SwiftSupport {
 
         // operator → operator-head­ operator-characters­?
 
-        if (!isOperatorHead(currentToken)) {
+        if (isOperatorHead(currentToken)) {
+            // System.out.println("isOperatorHead");
+
+            currentToken = tokens.get(currentTokenIndex);
+            while (isOperatorCharacter(currentToken)) {
+                // System.out.println("isOperatorCharacter");
+                currentTokenIndex++;
+                currentToken = tokens.get(currentTokenIndex);
+            }
+            // System.out.println("result: "+(currentTokenIndex - 1));
+            return currentTokenIndex - 1;
+        } else {
             // System.out.println("result: "+(-1));
             return -1;
         }
-        currentToken = tokens.get(currentTokenIndex);
-        while (isOperatorCharacter(currentToken)) {
-            // System.out.println("isOperatorCharacter");
-            currentTokenIndex++;
-            currentToken = tokens.get(currentTokenIndex);
-        }
-        // System.out.println("result: "+(currentTokenIndex - 1));
-        return currentTokenIndex - 1;
     }
 
     /**
@@ -218,9 +226,8 @@ public class SwiftSupport {
     public static boolean isBinaryOp(TokenStream tokens) {
         SwiftSupport.fillUp(tokens);
         int stop = getLastOpTokenIndex(tokens);
-        if (stop == -1) {
+        if (stop == -1)
             return false;
-        }
 
         int start = tokens.index();
         Token currentToken = tokens.get(start);
@@ -230,11 +237,19 @@ public class SwiftSupport {
         boolean nextIsWS = isRightOperatorWS(nextToken);
         // String text = tokens.getText(Interval.of(start, stop));
         // System.out.println("isBinaryOp: '"+prevToken+"','"+text+"','"+nextToken+"' is "+result);
+        // accept only '??'' as binary operator
+        if (currentToken.getType() == Swift5Lexer.QUESTION && start == stop) {
+            return false;
+        }
         if (prevIsWS) {
             return nextIsWS;
-        }
-        if (currentToken.getType() != Swift5Lexer.BANG && currentToken.getType() != Swift5Lexer.QUESTION && !nextIsWS) {
-            return nextToken.getType() != Swift5Lexer.DOT;
+        } else {
+            if (currentToken.getType() == Swift5Lexer.BANG || currentToken.getType() == Swift5Lexer.QUESTION) {
+                return false;
+            } else {
+                if (!nextIsWS)
+                    return nextToken.getType() != Swift5Lexer.DOT;
+            }
         }
         return false;
     }
@@ -246,9 +261,8 @@ public class SwiftSupport {
     public static boolean isPrefixOp(TokenStream tokens) {
         SwiftSupport.fillUp(tokens);
         int stop = getLastOpTokenIndex(tokens);
-        if (stop == -1) {
+        if (stop == -1)
             return false;
-        }
 
         int start = tokens.index();
         Token prevToken = tokens.get(start - 1); // includes hidden-channel tokens
@@ -271,9 +285,8 @@ public class SwiftSupport {
     public static boolean isPostfixOp(TokenStream tokens) {
         SwiftSupport.fillUp(tokens);
         int stop = getLastOpTokenIndex(tokens);
-        if (stop == -1) {
+        if (stop == -1)
             return false;
-        }
 
         int start = tokens.index();
         Token prevToken = tokens.get(start - 1); // includes hidden-channel tokens
@@ -288,9 +301,8 @@ public class SwiftSupport {
     public static boolean isOperator(TokenStream tokens, String op) {
         SwiftSupport.fillUp(tokens);
         int stop = getLastOpTokenIndex(tokens);
-        if (stop == -1) {
+        if (stop == -1)
             return false;
-        }
 
         int start = tokens.index();
         String text = tokens.getText(Interval.of(start, stop));
@@ -319,36 +331,36 @@ public class SwiftSupport {
         int indexFrom = indexOfPreviousStatement - 1;
         int indexTo = tokens.index() - 1;
 
-        if (indexFrom < 0) {
+        if (indexFrom >= 0) {
+            // Stupid check for new line and semicolon, can be optimized
+            while (indexFrom >= 0 && tokens.get(indexFrom).getChannel() == Token.HIDDEN_CHANNEL) {
+                indexFrom--;
+            }
+
+            // System.out.println("from: '" + tokens.getText(Interval.of(indexFrom, indexFrom))+"', "+tokens.get(indexFrom));
+            // System.out.println("to: '" + tokens.getText(Interval.of(indexTo, indexTo))+"', "+tokens.get(indexTo));
+            // System.out.println("in_between: '" + tokens.getText(Interval.of(indexFrom, indexTo)));
+
+            // for (int i = previousIndex; i < currentIndex; i++)
+            for (int i = indexTo; i >= indexFrom; i--) {
+                String t = tokens.get(i).getText();
+                if (t.contains("\n") || t.contains(";")) {
+                    return true;
+                }
+            }
+            return false;
+            // String text = tokens.getText(Interval.of(indexFrom, indexTo));
+            // return text.contains("\n") || text.contains(";");
+        } else {
             return true;
         }
-        // Stupid check for new line and semicolon, can be optimized
-        while (indexFrom >= 0 && tokens.get(indexFrom).getChannel() == Token.HIDDEN_CHANNEL) {
-            indexFrom--;
-        }
-
-        // System.out.println("from: '" + tokens.getText(Interval.of(indexFrom, indexFrom))+"', "+tokens.get(indexFrom));
-        // System.out.println("to: '" + tokens.getText(Interval.of(indexTo, indexTo))+"', "+tokens.get(indexTo));
-        // System.out.println("in_between: '" + tokens.getText(Interval.of(indexFrom, indexTo)));
-
-        // for (int i = previousIndex; i < currentIndex; i++)
-        for (int i = indexTo; i >= indexFrom; i--) {
-            String t = tokens.get(i).getText();
-            if (t.contains("\n") || t.contains(";")) {
-                return true;
-            }
-        }
-        return false;
-        // String text = tokens.getText(Interval.of(indexFrom, indexTo));
-        // return text.contains("\n") || text.contains(";");
     }
 
     public static void fillUp(TokenStream tokens) {
         for (int jj = 1;; ++jj) {
             int t = tokens.LA(jj);
-            if (t == -1) {
+            if (t == -1)
                 break;
-            }
         }
     }
 }

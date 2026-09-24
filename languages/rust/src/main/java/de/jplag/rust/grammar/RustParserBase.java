@@ -1,14 +1,18 @@
+// CHECKSTYLE:OFF
 package de.jplag.rust.grammar;
 
-import org.antlr.v4.runtime.Parser;
-import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.*;
 
 public abstract class RustParserBase extends Parser {
-    protected RustParserBase(TokenStream input) {
+    public RustParserBase(TokenStream input) {
         super(input);
     }
 
-    public boolean next(char expect) {
-        return _input.LA(1) == expect;
+    public boolean NextGT() {
+        return _input.LA(1) == RustParser.GT;
+    }
+
+    public boolean NextLT() {
+        return _input.LA(1) == RustParser.LT;
     }
 }
