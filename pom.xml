@@ -92,7 +92,7 @@
         <version.jdom>2.0.6.1</version.jdom>
         <version.jgrapht>1.5.3</version.jgrapht>
         <version.junit>6.1.3</version.junit>
-        <version.mockito>5.23.0</version.mockito>
+        <version.mockito>5.24.0</version.mockito>
         <version.picocli>4.7.7</version.picocli>
         <version.progressbar>0.10.2</version.progressbar>
         <version.record-builder>53</version.record-builder>
