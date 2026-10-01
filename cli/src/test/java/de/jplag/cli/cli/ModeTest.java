@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +22,7 @@ class ModeTest extends CliTest {
         CliInputHandler inputHandler = this
                 .runCli(args -> args.with(CliArgument.MODE, "view").with(CliArgument.SUBMISSION_DIRECTORIES, new String[] {"result.jplag"}))
                 .inputHandler();
-        assertEquals(new File("result.jplag"), inputHandler.getFileForViewMode());
+        assertEquals(Path.of("result.jplag"), inputHandler.getFileForViewMode());
     }
 
     @Test
@@ -29,7 +30,7 @@ class ModeTest extends CliTest {
         CliInputHandler inputHandler = this
                 .runCli(args -> args.with(CliArgument.MODE, "view").with(CliArgument.OLD_SUBMISSION_DIRECTORIES, new String[] {"result.jplag"}))
                 .inputHandler();
-        assertEquals(new File("result.jplag"), inputHandler.getFileForViewMode());
+        assertEquals(Path.of("result.jplag"), inputHandler.getFileForViewMode());
     }
 
     @Test
@@ -37,14 +38,14 @@ class ModeTest extends CliTest {
         CliInputHandler inputHandler = this
                 .runCli(args -> args.with(CliArgument.MODE, "view").with(CliArgument.NEW_SUBMISSION_DIRECTORIES, new String[] {"result.jplag"}))
                 .inputHandler();
-        assertEquals(new File("result.jplag"), inputHandler.getFileForViewMode());
+        assertEquals(Path.of("result.jplag"), inputHandler.getFileForViewMode());
     }
 
     @Test
     void testViewWithResultFile() throws IOException, ExitException {
         CliInputHandler inputHandler = this.runCli(args -> args.with(CliArgument.MODE, "view").with(CliArgument.RESULT_FILE, "result.jplag"))
                 .inputHandler();
-        assertEquals(new File("result.jplag"), inputHandler.getFileForViewMode());
+        assertEquals(Path.of("result.jplag"), inputHandler.getFileForViewMode());
     }
 
     @Test
@@ -58,7 +59,7 @@ class ModeTest extends CliTest {
     @Test
     void testImplicitView() throws IOException, ExitException {
         CliInputHandler inputHandler = this.runCli(args -> args.with(CliArgument.RESULT_FILE, "result.jplag")).inputHandler();
-        assertEquals(new File("result.jplag"), inputHandler.getFileForViewMode());
+        assertEquals(Path.of("result.jplag"), inputHandler.getFileForViewMode());
     }
 
     @Test

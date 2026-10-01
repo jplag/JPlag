@@ -63,6 +63,6 @@ class OutputFileGeneratorTest {
 
         OutputFileGenerator.generateJPlagResultFile(testResult, resFile);
 
-        assertTrue(resFile.length() > 0);
+        assertTrue(Files.size(resFile) > 0);
     }
 }
