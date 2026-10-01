@@ -1,7 +1,6 @@
 package de.jplag.cli;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -152,8 +151,8 @@ public final class CLI {
         }
 
         // if the selected mode is auto and there is exactly one result file specified it is opened in the report viewer
-        if (inputs.size() == 1
-                && (inputs.getFirst().getFileSystem().toString().endsWith(ZIP_FILE_EXTENSION) || inputs.getFirst().getFileName().endsWith(DEFAULT_FILE_EXTENSION))) {
+        if (inputs.size() == 1 && (inputs.getFirst().getFileSystem().toString().endsWith(ZIP_FILE_EXTENSION)
+                || inputs.getFirst().getFileName().endsWith(DEFAULT_FILE_EXTENSION))) {
             this.runViewer(inputs.getFirst());
             return;
         }

@@ -1,6 +1,5 @@
 package de.jplag.reporting.jsonfactory;
 
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 

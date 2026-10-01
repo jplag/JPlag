@@ -1,6 +1,5 @@
 package de.jplag.reporting.jsonfactory;
 
-import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;

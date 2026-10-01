@@ -9,12 +9,12 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.zip.ZipOutputStream;
 
-import de.jplag.util.FileUtils;
-import de.jplag.util.RelativePath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.reporting.serialization.JacksonUtils;
+import de.jplag.util.FileUtils;
+import de.jplag.util.RelativePath;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -34,13 +34,12 @@ public class ZipWriter implements JPlagResultWriter {
 
     /**
      * The zip file to write to.
-     *
      * @param zipFile The file
      * @throws IOException If the file cannot be opened for writing
      */
     public ZipWriter(Path zipFile) throws IOException {
         Files.createDirectories(zipFile.getParent());
-        if(Files.exists(zipFile)) {
+        if (Files.exists(zipFile)) {
             try (ZipOutputStream os = new ZipOutputStream(Files.newOutputStream(zipFile))) {
             }
         }

@@ -10,7 +10,6 @@ import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
 
-import de.jplag.util.PathUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,6 +21,7 @@ import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.TokenPrinterUtils;
 import de.jplag.testutils.FileUtil;
+import de.jplag.util.PathUtils;
 
 class MinimalModelInstanceTest {
     private final Logger logger = LoggerFactory.getLogger(MinimalModelInstanceTest.class);

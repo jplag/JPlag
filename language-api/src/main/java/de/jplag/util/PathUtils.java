@@ -9,7 +9,6 @@ public class PathUtils {
     /**
      * Returns the path with the same parent as the given path and the same filename, except that the suffix is appended.
      * For example: a/b/c.java, .bak -> a/b/c.java.bak
-     *
      * @param path The path to modify
      * @param suffix The suffix to append
      * @return The modified path

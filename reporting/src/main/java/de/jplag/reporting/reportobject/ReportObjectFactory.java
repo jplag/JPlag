@@ -2,8 +2,6 @@ package de.jplag.reporting.reportobject;
 
 import static de.jplag.reporting.reportobject.mapper.SubmissionNameToIdMapper.buildSubmissionNameToIdMap;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -15,8 +13,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import de.jplag.util.PathUtils;
-import de.jplag.util.RelativePath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +38,8 @@ import de.jplag.reporting.reportobject.model.SubmissionMappings;
 import de.jplag.reporting.reportobject.model.TopComparison;
 import de.jplag.reporting.reportobject.writer.JPlagResultWriter;
 import de.jplag.reporting.reportobject.writer.ZipWriter;
+import de.jplag.util.PathUtils;
+import de.jplag.util.RelativePath;
 
 /**
  * Factory class, responsible for converting a JPlagResult object to Overview and Comparison DTO classes and writing it

@@ -18,7 +18,6 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
-import org.checkerframework.framework.qual.PurityUnqualified;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

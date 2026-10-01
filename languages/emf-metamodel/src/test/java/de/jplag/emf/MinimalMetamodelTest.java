@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import de.jplag.util.PathUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -21,6 +20,7 @@ import de.jplag.Token;
 import de.jplag.TokenPrinterUtils;
 import de.jplag.TokenType;
 import de.jplag.testutils.TokenUtils;
+import de.jplag.util.PathUtils;
 
 class MinimalMetamodelTest extends AbstractEmfTest {
     private final Logger logger = LoggerFactory.getLogger(MinimalMetamodelTest.class);

@@ -5,11 +5,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
-import de.jplag.util.RelativePath;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -24,6 +22,7 @@ import de.jplag.options.JPlagOptions;
 import de.jplag.reporting.reportobject.model.BaseCodeMatch;
 import de.jplag.reporting.reportobject.model.CodePosition;
 import de.jplag.reporting.reportobject.model.ComparisonReport;
+import de.jplag.util.RelativePath;
 
 class ReportTokenPositionTestTest {
 

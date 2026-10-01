@@ -23,7 +23,6 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
-import de.jplag.util.PathUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,6 +35,7 @@ import de.jplag.scxml.sorting.NoOpSortingStrategy;
 import de.jplag.scxml.sorting.RecursiveSortingStrategy;
 import de.jplag.scxml.util.AbstractScxmlVisitor;
 import de.jplag.testutils.FileUtil;
+import de.jplag.util.PathUtils;
 
 class ScxmlTokenGeneratorTest {
 

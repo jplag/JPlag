@@ -7,7 +7,9 @@ import java.util.Objects;
 /**
  * Represents a sequence of names, similar to {@link Path}, but is independent of an underlying file system.
  * <p>
- * Use this to represent relative paths independent of the file system. This class does not handle any separators ('/') or special files ('.', '..'). If these are used the behavior will change depending on the file system this is applied to.
+ * Use this to represent relative paths independent of the file system. This class does not handle any separators ('/')
+ * or special files ('.', '..'). If these are used the behavior will change depending on the file system this is applied
+ * to.
  */
 public class RelativePath {
     private static final String TO_STRING_SEPARATOR = "/";
@@ -15,7 +17,6 @@ public class RelativePath {
 
     /**
      * Builds a new {@link RelativePath} with the given names
-     *
      * @param names The names of the path
      */
     public RelativePath(String... names) {
@@ -24,7 +25,6 @@ public class RelativePath {
 
     /**
      * Builds a new {@link RelativePath} with the given names
-     *
      * @param names The names of the path
      * @return The constructed relative path
      */
@@ -33,9 +33,8 @@ public class RelativePath {
     }
 
     /**
-     * Builds a new relative path containing all names of the actual path.
-     * This can be used to transfer a relative path from one file system to another.
-     *
+     * Builds a new relative path containing all names of the actual path. This can be used to transfer a relative path from
+     * one file system to another.
      * @param realPath The path to convert
      * @return The {@link RelativePath}
      */
@@ -48,8 +47,8 @@ public class RelativePath {
     }
 
     /**
-     * Creates a new path that contains the names of this path first and then all the given names. Similar to {@link Path#resolve}.
-     *
+     * Creates a new path that contains the names of this path first and then all the given names. Similar to
+     * {@link Path#resolve}.
      * @param parts The names to append
      * @return The new path
      */
@@ -59,7 +58,6 @@ public class RelativePath {
 
     /**
      * Creates a new path that concatenates this path and the given one.
-     *
      * @param other The path to concatenate with
      * @return The concatenated path
      */
@@ -106,7 +104,8 @@ public class RelativePath {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass())
+            return false;
         RelativePath that = (RelativePath) o;
         return Objects.deepEquals(segments, that.segments);
     }

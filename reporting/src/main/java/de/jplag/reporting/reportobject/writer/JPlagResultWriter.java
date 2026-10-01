@@ -1,9 +1,9 @@
 package de.jplag.reporting.reportobject.writer;
 
-import de.jplag.util.RelativePath;
-
 import java.io.IOException;
 import java.nio.file.Path;
+
+import de.jplag.util.RelativePath;
 
 /**
  * Writer for JPlag result data. The way paths are resolved depends on the implementation.

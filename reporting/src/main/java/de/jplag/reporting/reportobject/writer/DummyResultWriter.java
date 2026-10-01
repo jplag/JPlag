@@ -3,9 +3,10 @@ package de.jplag.reporting.reportobject.writer;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import de.jplag.util.RelativePath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.jplag.util.RelativePath;
 
 /**
  * Dummy writer, that does nothing.
