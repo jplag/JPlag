@@ -2,6 +2,7 @@ package de.jplag.util;
 
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Represents a sequence of names, similar to {@link Path}, but is independent of an underlying file system.
@@ -103,5 +104,15 @@ public class RelativePath {
         return String.join(TO_STRING_SEPARATOR, segments);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        RelativePath that = (RelativePath) o;
+        return Objects.deepEquals(segments, that.segments);
+    }
 
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(segments);
+    }
 }
