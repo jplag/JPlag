@@ -57,17 +57,17 @@ public final class LanguageLoader {
         }
         logger.debug("Available languages: '{}'", languages.values().stream().map(Language::getName).toList());
 
-        if(loadModules) {
+        if (loadModules) {
             logger.debug("Attempting to load modules from external jar files");
             Path path = getModulesPath();
-            if(path != null) {
+            if (path != null) {
                 try {
                     Files.list(path).filter(it -> it.getFileName().toString().endsWith(".jar")).forEach(moduleFile -> {
                         logger.debug("Loading module file: {}", moduleFile.getFileName());
                         try {
-                            ClassLoader moduleClassLoader = new URLClassLoader(new URL[]{moduleFile.toUri().toURL()});
+                            ClassLoader moduleClassLoader = new URLClassLoader(new URL[] {moduleFile.toUri().toURL()});
                             for (Language language : ServiceLoader.load(Language.class, moduleClassLoader)) {
-                                if(!languages.containsKey(language.getIdentifier())) {
+                                if (!languages.containsKey(language.getIdentifier())) {
                                     logger.debug("Loading language {} from module {}", language.getName(), moduleFile.getFileName());
                                     languages.put(language.getIdentifier(), language);
                                 }
@@ -89,7 +89,7 @@ public final class LanguageLoader {
     private static Path getModulesPath() {
         Path path = null;
 
-        if(modulePath.isBlank()) {
+        if (modulePath.isBlank()) {
             try {
                 Path jarLocation = Path.of(LanguageLoader.class.getProtectionDomain().getCodeSource().getLocation().toURI());
                 path = jarLocation.toRealPath().getParent().resolve("modules");
@@ -100,7 +100,7 @@ public final class LanguageLoader {
             path = Path.of(modulePath);
         }
 
-        if(!(Files.exists(path) && Files.isDirectory(path))) {
+        if (!(Files.exists(path) && Files.isDirectory(path))) {
             logger.error("Failed to find location of external modules");
             return null;
         }

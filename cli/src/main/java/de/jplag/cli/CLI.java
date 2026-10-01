@@ -6,13 +6,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.jplag.LanguageLoader;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.jplag.JPlag;
 import de.jplag.JPlagResult;
+import de.jplag.LanguageLoader;
 import de.jplag.cli.logger.CliProgressBarProvider;
 import de.jplag.cli.logger.CollectedLogger;
 import de.jplag.cli.logger.CollectedLoggerFactory;
@@ -232,7 +232,7 @@ public final class CLI {
         // connections.
         System.setProperty("java.net.preferIPv4Stack", "true");
 
-        if(System.getenv().containsKey(JPLAG_MODULES_KEY)) {
+        if (System.getenv().containsKey(JPLAG_MODULES_KEY)) {
             LanguageLoader.loadModulesFromPath(System.getenv().get(JPLAG_MODULES_KEY));
         }
 
