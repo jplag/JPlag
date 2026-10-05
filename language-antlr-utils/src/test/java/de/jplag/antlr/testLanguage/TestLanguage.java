@@ -34,6 +34,11 @@ public class TestLanguage implements Language {
     }
 
     @Override
+    public String getVersionFlagInformation() {
+        return "No version";
+    }
+
+    @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
         return new TestParserAdapter().parse(files);
     }

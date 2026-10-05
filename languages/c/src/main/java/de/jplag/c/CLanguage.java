@@ -37,6 +37,11 @@ public class CLanguage implements Language {
     }
 
     @Override
+    public String getVersionFlagInformation() {
+        return "Can parse code up to C99";
+    }
+
+    @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
         return new Scanner().scan(files);
     }
