@@ -1,8 +1,10 @@
 package de.jplag;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
+import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.TreeMap;
@@ -36,7 +38,15 @@ public final class LanguageLoader {
 
         Map<String, Language> languages = new TreeMap<>();
 
-        for (Language language : ServiceLoader.load(Language.class)) {
+        Iterator<Language> iterator = ServiceLoader.load(Language.class).iterator();
+        while (tryHasNext(iterator)) {
+            Language language;
+            try {
+                language = iterator.next();
+            } catch (ServiceConfigurationError e) {
+                logger.error("Could not load a language implementation", e);
+                continue;
+            }
             String languageIdentifier = language.getIdentifier();
             if (languages.containsKey(languageIdentifier)) {
                 logger.error("Multiple implementations for a language '{}' are present in the classpath! Skipping ..", languageIdentifier);
@@ -50,6 +60,15 @@ public final class LanguageLoader {
 
         cachedLanguageInstances = Collections.unmodifiableMap(languages);
         return cachedLanguageInstances;
+    }
+
+    private static boolean tryHasNext(Iterator<Language> iterator) {
+        try {
+            return iterator.hasNext();
+        } catch (UnsupportedClassVersionError e) {
+            logger.debug("Language implementation requires a newer JVM version", e);
+            return tryHasNext(iterator);
+        }
     }
 
     /**
