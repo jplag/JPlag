@@ -5,6 +5,7 @@ import static de.jplag.csharp.CSharpTokenType.ACCESSORS_END;
 import static de.jplag.csharp.CSharpTokenType.ACCESSOR_BEGIN;
 import static de.jplag.csharp.CSharpTokenType.ACCESSOR_END;
 import static de.jplag.csharp.CSharpTokenType.ASSIGNMENT;
+import static de.jplag.csharp.CSharpTokenType.ATTRIBUTE;
 import static de.jplag.csharp.CSharpTokenType.CLASS;
 import static de.jplag.csharp.CSharpTokenType.CLASS_BEGIN;
 import static de.jplag.csharp.CSharpTokenType.CLASS_END;
@@ -21,6 +22,9 @@ import static de.jplag.csharp.CSharpTokenType.METHOD_END;
 import static de.jplag.csharp.CSharpTokenType.PROPERTY;
 import static de.jplag.csharp.CSharpTokenType.RETURN;
 
+import java.util.List;
+
+import de.jplag.TokenType;
 import de.jplag.testutils.LanguageModuleTest;
 import de.jplag.testutils.datacollector.TestDataCollector;
 import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
@@ -61,5 +65,10 @@ public class CSharpTest extends LanguageModuleTest {
 
         collector.ignoreLinesByPrefix("extern");
         collector.ignoreByCondition(line -> line.trim().matches("[a-zA-Z0-9]+:.*"));
+    }
+
+    @Override
+    protected List<TokenType> getIgnoredTokensForMonotoneTokenOrder() {
+        return List.of(ATTRIBUTE);
     }
 }

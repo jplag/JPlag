@@ -8,6 +8,7 @@
       v-model:secondary-metric="secondaryMetricModel"
       :header="header"
       :all-are-anonymized="allAreAnonymized"
+      :secondary-metrics="secondaryMetrics"
       @change-anonymous-for-all="emit('changeAnonymousForAll')"
     />
 
@@ -284,6 +285,16 @@ const props = defineProps({
     type: Boolean,
     required: false,
     default: false
+  },
+  secondaryMetrics: {
+    type: Object as PropType<Set<MetricJsonIdentifier>>,
+    required: false,
+    default: () =>
+      new Set([
+        MetricJsonIdentifier.MAXIMUM_SIMILARITY,
+        MetricJsonIdentifier.LONGEST_MATCH,
+        MetricJsonIdentifier.MAXIMUM_LENGTH
+      ])
   }
 })
 
@@ -304,6 +315,19 @@ const tableSorting = defineModel<ComparisonTableSorting>('sorting', {
 })
 
 const secondaryMetric = computed(() => MetricTypes.METRIC_MAP[secondaryMetricModel.value])
+
+watch(
+  () => props.secondaryMetrics,
+  (metrics) => {
+    if (
+      tableSorting.value.column.id == Column.weightedSimilarity.id &&
+      !metrics.has(MetricJsonIdentifier.WEIGHTED_SIMILARITY)
+    ) {
+      tableSorting.value = { column: Column.averageSimilarity, direction: Direction.descending }
+    }
+  },
+  { immediate: true, deep: true }
+)
 
 const displayedComparisons = computed(() => {
   const comparisons = getFilteredComparisons(getSortedComparisons(Array.from(props.topComparisons)))
@@ -339,7 +363,7 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
     .map((s) => s.substring(6))
     .map((s) => parseInt(s))
 
-  const metricSearches = searches.filter((s) => /((avg|max|long|len):)?([<>])=?[0-9]+%?/.test(s))
+  const metricSearches = searches.filter((s) => /((avg|max|long|len|wavg):)?([<>])=?\d+%?/.test(s))
 
   return comparisons.filter((c) => {
     // name search
@@ -377,7 +401,7 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
       searchPerMetric[m] = []
     })
     metricSearches.forEach((s) => {
-      const regexResult = /^(?:(avg|max|long|len):)([<>]=?[0-9]+%?$)/.exec(s)
+      const regexResult = /^(?:(avg|max|long|len|wavg):)([<>]=?\d+%?$)/.exec(s)
       if (regexResult) {
         const metricName = regexResult[1]
         let metric = MetricTypes.AVERAGE_SIMILARITY

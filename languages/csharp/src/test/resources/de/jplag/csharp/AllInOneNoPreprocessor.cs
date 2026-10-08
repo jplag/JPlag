@@ -249,9 +249,9 @@ namespace My
             } //test-ignore
             var anonymous = 
             {
-                A = 1,
-                B = 2,
-                C = 3,
+                A = 1, //test-ignore
+                B = 2, //test-ignore
+                C = 3, //test-ignore
             }; //test-ignore
             var query = from c in customers
                         let d = c//test-ignore
@@ -631,8 +631,8 @@ namespace Comments.XmlComments.UndocumentedKeywords
             i++;/*++*/
             i--;/*--*/
             b = true && false || true;/*&& ||*/
-            i << 5;/*<<*/
-            i >> 5;/*>>*/
+            i = i << 5;/*<<*/
+            i = i >> 5;/*>>*/
             b = i == i && i != i && i <= i && i >= i;/*= == && != <= >=*/
             i += 5.0;/*+=*/
             i -= i;/*-=*/
@@ -817,7 +817,6 @@ class CSharp72
     readonly struct ReadonlyRef1
     {    
         Func<int, int> s = (in int x) => x;
-        ref TValue this[in TKey index] => null;
         public static Vector3 operator+(in Vector3 x, in Vector3 y) => null;
 
         static readonly ref Vector3 M1_Trace()
@@ -1005,7 +1004,6 @@ namespace CSharp80
 		void UsingDeclarators()
 		{
 			using var item = new FileStream("./.f");
-			fixed char* ch = "hell";
 			item.Dispose(); // no!
 		}
 

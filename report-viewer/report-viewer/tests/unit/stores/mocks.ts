@@ -367,6 +367,10 @@ export const mockFiles: File[] = [
     data: ''
   },
   {
+    fileName: 'reportInformation.json',
+    data: '{"secondaryMetrics":["MAX","LONGEST_MATCH","MAXIMUM_LENGTH"]}'
+  },
+  {
     fileName: 'runInformation.json',
     // the version check uses the raw string, so we need a version here
     data: '{"version":{"major":6,"minor":2,"patch":0}}'

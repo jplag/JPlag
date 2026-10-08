@@ -82,6 +82,10 @@ fun main(args : Array<String>) {
         println("Now, let's carry on.")
     }
 
+    val functionLiteral = {
+        println("test")
+    }
+
     val weekday = "Friday"
     val message = when (weekday) {
         "Monday", "Tuesday" -> "Oh no :c"
