@@ -66,8 +66,8 @@ import static de.jplag.scala.ScalaTokenType.WHILE_BODY_BEGIN;
 import static de.jplag.scala.ScalaTokenType.WHILE_BODY_END;
 import static de.jplag.scala.ScalaTokenType.YIELD;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -111,7 +111,7 @@ public class ScalaParser {
             "-=", "*=", "/=", "%=", "**=", "<<=", ">>=", ">>>=", "&=", "^=", "|=", "&", "|", "^", "<<", ">>", "~", ">>>", "++", "::", ":::", "<:",
             ">:", "#");
 
-    private File currentFile;
+    private Path currentFile;
     private List<Token> tokens;
 
     private void handleDefinitionPattern(Pat pattern, Option<Term> optionalValue) {
@@ -211,7 +211,7 @@ public class ScalaParser {
                     int elseStart = ifTerm.pos().text().indexOf("else", ifTerm.thenp().pos().end() - ifTerm.pos().start());
                     Position.Range elsePosition = new Position.Range(ifTerm.pos().input(), ifTerm.pos().start() + elseStart,
                             ifTerm.pos().start() + elseStart + 4);
-                    addToken(ELSE, elsePosition.startLine() + 1, elsePosition.startColumn() + 1, elsePosition.text().length());
+                    addToken(ELSE, elsePosition);
                     encloseAndAppy(ifTerm.elsep(), new TraverserRecord(ELSE_BEGIN, ELSE_END));
                 }
             });
@@ -382,9 +382,11 @@ public class ScalaParser {
     private void addToken(ScalaTokenType tokenType, Tree node, boolean fromEnd) {
         if (!node.pos().text().isEmpty()) {
             if (fromEnd) {
-                tokens.add(new Token(tokenType, currentFile, node.pos().endLine() + 1, node.pos().endColumn() + 1, 0));
+                tokens.add(new Token(tokenType, currentFile, node.pos().endLine() + 1, node.pos().endColumn() + 1, node.pos().endLine() + 1,
+                        node.pos().endColumn() + 1, 0));
             } else {
-                tokens.add(new Token(tokenType, currentFile, node.pos().startLine() + 1, node.pos().startColumn() + 1, node.pos().text().length()));
+                tokens.add(new Token(tokenType, currentFile, node.pos().startLine() + 1, node.pos().startColumn() + 1, node.pos().endLine() + 1,
+                        node.pos().endColumn() + 1, node.pos().text().length()));
             }
         }
     }
@@ -392,12 +394,11 @@ public class ScalaParser {
     /**
      * Adds a token with the given data.
      * @param tokenType The type of token
-     * @param line The start line
-     * @param column The start column
-     * @param length The length of the token
+     * @param range The range of characters in the file the token represents
      */
-    private void addToken(ScalaTokenType tokenType, int line, int column, int length) {
-        tokens.add(new Token(tokenType, currentFile, line, column, length));
+    private void addToken(ScalaTokenType tokenType, Position.Range range) {
+        tokens.add(new Token(tokenType, currentFile, range.startLine() + 1, range.startColumn() + 1, range.endLine() + 1, range.endColumn() + 1,
+                range.text().length()));
     }
 
     /**
@@ -406,9 +407,9 @@ public class ScalaParser {
      * @return The list of tokens
      * @throws ParsingException If the parsing fails
      */
-    public List<Token> parse(Set<File> files) throws ParsingException {
+    public List<Token> parse(Set<Path> files) throws ParsingException {
         this.tokens = new ArrayList<>();
-        for (File file : files) {
+        for (Path file : files) {
             parseFile(file);
         }
         return tokens;
@@ -419,12 +420,12 @@ public class ScalaParser {
      * @param file The file to parse
      * @throws ParsingException If the parsing fails
      */
-    private void parseFile(File file) throws ParsingException {
+    private void parseFile(Path file) throws ParsingException {
         currentFile = file;
 
         try {
             String text = FileUtils.readFileContent(file, true);
-            Input.VirtualFile input = new Input.VirtualFile(file.getPath(), text);
+            Input input = Input.nioPathToInput().apply(file);
             Source source = new MyApi().parse(input);
             visit(source);
             tokens.add(Token.fileEnd(file));
@@ -437,11 +438,11 @@ public class ScalaParser {
      * Wrapper to call the scala methods from java.
      */
     private static class MyApi implements Api {
-        public Source parse(Input.VirtualFile virtualFile) {
+        public Source parse(Input virtualFile) {
             // All the casts are necessary to make the java compiler accept this line. There is no way to make this more concise, as
             // it is a scala method
             return new XtensionParseInputLike<>(virtualFile)
-                    .parse((Convert<Input.VirtualFile, Input>) (Object) Convert.trivial(), Parse.parseSource(), Dialect.current()).get();
+                    .parse((Convert<Input, Input>) (Object) Convert.trivial(), Parse.parseSource(), Dialect.current()).get();
         }
     }
 

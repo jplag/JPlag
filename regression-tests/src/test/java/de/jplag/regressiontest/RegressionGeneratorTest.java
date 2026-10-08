@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -67,10 +69,10 @@ class RegressionGeneratorTest {
             resultDescriptions.add(new ResultDescription(runConfiguration.identifier(), expectedResults, goldStandard));
         }
 
-        File outputFile = writeJsonModelsToJsonFile(resultDescriptions, dataSet);
+        Path outputFile = writeJsonModelsToJsonFile(resultDescriptions, dataSet);
         logger.info("result JSON written to file '{}'", outputFile);
 
-        assertTrue(outputFile.exists(), "Output JSON file was not created");
+        assertTrue(Files.exists(outputFile), "Output JSON file was not created");
         assertFalse(resultDescriptions.isEmpty(), "No result descriptions generated");
     }
 
@@ -81,14 +83,14 @@ class RegressionGeneratorTest {
      * @throws IOException Signals that an I/O exception, of some sort, has occurred. Thisclass is the general class of
      * exceptions produced by failed orinterrupted I/O operations.
      */
-    private static File writeJsonModelsToJsonFile(List<ResultDescription> resultDescriptions, DataSet dataSet) throws IOException {
+    private static Path writeJsonModelsToJsonFile(List<ResultDescription> resultDescriptions, DataSet dataSet) throws IOException {
         ObjectWriter writer = JacksonUtils.createNewObjectMapper().writer().withDefaultPrettyPrinter();
-        File outputFile = dataSet.getResultFile();
+        Path outputFile = dataSet.getResultFile();
 
-        FileHelper.createDirectoryIfItDoesNotExist(outputFile.getParentFile());
+        FileHelper.createDirectoryIfItDoesNotExist(outputFile.getParent());
         FileHelper.createFileIfItDoesNotExist(outputFile);
 
-        writer.writeValue(outputFile, resultDescriptions.toArray());
+        writer.writeValue(Files.newOutputStream(outputFile), resultDescriptions.toArray());
         return outputFile;
 
     }

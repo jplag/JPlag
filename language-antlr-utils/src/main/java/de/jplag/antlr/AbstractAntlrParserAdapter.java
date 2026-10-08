@@ -1,7 +1,7 @@
 package de.jplag.antlr;
 
-import java.io.File;
 import java.io.Reader;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
@@ -48,18 +48,19 @@ public abstract class AbstractAntlrParserAdapter<T extends Parser> {
      * @return The extracted tokens
      * @throws ParsingException If anything goes wrong
      */
-    public List<Token> parse(Set<File> files) throws ParsingException {
+    public List<Token> parse(Set<Path> files) throws ParsingException {
         TokenCollector collector = new TokenCollector(extractsSemantics);
-        for (File file : files) {
+        for (Path file : files) {
             parseFile(file, collector);
         }
         return collector.getTokens();
     }
 
-    private void parseFile(File file, TokenCollector collector) throws ParsingException {
+    private void parseFile(Path file, TokenCollector collector) throws ParsingException {
         collector.enterFile(file);
         try (Reader reader = FileUtils.openFileReader(file, true)) {
-            CodePointCharStream stream = CharStreams.fromReader(reader, file.getAbsolutePath());  // Specify source to retain file in ANTLR errors.
+            CodePointCharStream stream = CharStreams.fromReader(reader, file.toRealPath().toString());  // Specify source to retain file in ANTLR
+                                                                                                        // errors.
             Lexer lexer = this.createLexer(stream);
             CommonTokenStream tokenStream = new CommonTokenStream(lexer);
             T parser = this.createParser(tokenStream);

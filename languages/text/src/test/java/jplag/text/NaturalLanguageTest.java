@@ -43,7 +43,7 @@ class NaturalLanguageTest {
     @Test
     void testParsingJavaDoc() throws ParsingException {
         // Parse test input
-        List<Token> result = language.parse(Set.of(new File(BASE_PATH.toFile(), TEST_SUBJECT)), false);
+        List<Token> result = language.parse(Set.of(BASE_PATH.resolve(TEST_SUBJECT)), false);
         logger.info(TokenPrinterUtils.printTokensByFile(result));
 
         List<TokenType> tokenTypes = result.stream().map(Token::getType).toList();
@@ -54,8 +54,8 @@ class NaturalLanguageTest {
     @ParameterizedTest
     @ValueSource(strings = {"\n", "\r", "\r\n",})
     void testLineBreakInputs(String input) throws IOException, ParsingException {
-        File testFile = File.createTempFile("input", "txt");
-        Files.writeString(testFile.toPath(), input);
+        Path testFile = Files.createTempFile("input", "txt");
+        Files.writeString(testFile, input);
         List<Token> result = language.parse(Set.of(testFile), false);
         assertEquals(1, result.size());
     }
@@ -63,8 +63,8 @@ class NaturalLanguageTest {
     @ParameterizedTest
     @ValueSource(strings = {"\ntoken", "\rtoken", "\r\ntoken",})
     void testTokenAfterLineBreak(String input) throws IOException, ParsingException {
-        File testFile = File.createTempFile("input", "txt");
-        Files.writeString(testFile.toPath(), input);
+        Path testFile = Files.createTempFile("input", "txt");
+        Files.writeString(testFile, input);
         List<Token> result = language.parse(Set.of(testFile), false);
         assertEquals(2, result.get(0).getStartLine());
     }

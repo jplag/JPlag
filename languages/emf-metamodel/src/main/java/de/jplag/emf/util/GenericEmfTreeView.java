@@ -1,6 +1,6 @@
 package de.jplag.emf.util;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -29,7 +29,7 @@ public class GenericEmfTreeView extends AbstractModelView {
      * @param file is the path to the metamodel.
      * @param modelResource is the EMF resource in which the model is loaded.
      */
-    public GenericEmfTreeView(File file, Resource modelResource) {
+    public GenericEmfTreeView(Path file, Resource modelResource) {
         super(file);
         lines = new ArrayList<>();
         objectToLine = new HashMap<>();

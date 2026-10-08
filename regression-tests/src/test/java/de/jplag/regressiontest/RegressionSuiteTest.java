@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -106,7 +107,8 @@ class RegressionSuiteTest {
         List<DynamicContainer> testContainers = new LinkedList<>();
         Map<String, ResultDescription> results = new HashMap<>();
         try {
-            ResultDescription[] resultList = JacksonUtils.createNewObjectMapper().readValue(dataSet.getResultFile(), ResultDescription[].class);
+            ResultDescription[] resultList = JacksonUtils.createNewObjectMapper().readValue(Files.newInputStream(dataSet.getResultFile()),
+                    ResultDescription[].class);
             for (ResultDescription resultDescription : resultList) {
                 results.put(resultDescription.identifier(), resultDescription);
             }

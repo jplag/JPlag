@@ -1,6 +1,5 @@
 package de.jplag.reporting.jsonfactory;
 
-import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -16,6 +15,7 @@ import de.jplag.Token;
 import de.jplag.reporting.reportobject.model.BaseCodeMatch;
 import de.jplag.reporting.reportobject.model.CodePosition;
 import de.jplag.reporting.reportobject.writer.JPlagResultWriter;
+import de.jplag.util.RelativePath;
 
 /**
  * Writes the comparisons of each Submission to the basecode in its own file.
@@ -59,7 +59,7 @@ public class BaseCodeReportWriter {
             boolean takeLeft = baseCodeComparison.firstSubmission().equals(submission);
             matches = baseCodeComparison.matches().stream().map(match -> convertToBaseCodeMatch(submission, match, takeLeft)).toList();
         }
-        resultWriter.addJsonEntry(matches, Path.of(BASEPATH, submissionToIdFunction.apply(submission).concat(".json")));
+        resultWriter.addJsonEntry(matches, RelativePath.of(BASEPATH, submissionToIdFunction.apply(submission).concat(".json")));
     }
 
     private BaseCodeMatch convertToBaseCodeMatch(Submission submission, Match match, boolean takeLeft) {

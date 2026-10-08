@@ -4,7 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -19,17 +20,18 @@ import de.jplag.Token;
 import de.jplag.TokenPrinterUtils;
 import de.jplag.TokenType;
 import de.jplag.testutils.TokenUtils;
+import de.jplag.util.PathUtils;
 
 class MinimalMetamodelTest extends AbstractEmfTest {
     private final Logger logger = LoggerFactory.getLogger(MinimalMetamodelTest.class);
 
     @Test
     @DisplayName("Test tokens generated from example metamodels")
-    void testBookstoreMetamodels() throws ParsingException {
-        List<File> testFiles = Arrays.stream(TEST_SUBJECTS).map(path -> new File(BASE_PATH.toFile(), path)).toList();
+    void testBookstoreMetamodels() throws ParsingException, IOException {
+        List<Path> testFiles = Arrays.stream(TEST_SUBJECTS).map(path -> BASE_PATH.resolve(path)).toList();
         List<Token> result = language.parse(new HashSet<>(testFiles), true);
 
-        logger.debug(TokenPrinterUtils.printTokensByFile(result, file -> new File(file.getAbsolutePath() + EmfLanguage.VIEW_FILE_EXTENSION)));
+        logger.debug(TokenPrinterUtils.printTokensByFile(result, file -> PathUtils.appendSuffix(file, EmfLanguage.VIEW_FILE_EXTENSION)));
         List<TokenType> tokenTypes = result.stream().map(Token::getType).toList();
         logger.info("Parsed token types: " + tokenTypes.stream().map(TokenType::getDescription).toList());
         assertEquals(80, tokenTypes.size());

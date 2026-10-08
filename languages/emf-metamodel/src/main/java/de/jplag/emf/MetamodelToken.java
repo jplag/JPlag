@@ -1,6 +1,6 @@
 package de.jplag.emf;
 
-import java.io.File;
+import java.nio.file.Path;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -22,7 +22,7 @@ public class MetamodelToken extends Token {
      * @param file is the source model file.
      * @param eObject is the corresponding eObject in the model from which this token was extracted.
      */
-    public MetamodelToken(TokenType type, File file, EObject eObject) {
+    public MetamodelToken(TokenType type, Path file, EObject eObject) {
         this(type, file, new TokenTrace(), eObject);
     }
 
@@ -33,7 +33,7 @@ public class MetamodelToken extends Token {
      * @param trace is the tracing information of the token, meaning line, column, and length.
      * @param eObject is the corresponding eObject in the model from which this token was extracted
      */
-    public MetamodelToken(TokenType type, File file, TokenTrace trace, EObject eObject) {
+    public MetamodelToken(TokenType type, Path file, TokenTrace trace, EObject eObject) {
         super(type, file, trace);
         this.eObject = eObject;
     }

@@ -2,8 +2,9 @@ package de.jplag.testutils.datacollector;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -36,15 +37,15 @@ public class TokenPositionTestData implements TestData {
      * @param testFile The file containing the test specifications
      * @throws IOException If the file cannot be read
      */
-    public TokenPositionTestData(File testFile) throws IOException {
+    public TokenPositionTestData(Path testFile) throws IOException {
         this.sourceLines = new ArrayList<>();
         this.expectedTokens = new ArrayList<>();
-        this.descriptor = "(Token position file: " + testFile.getName() + ")";
-        this.fileName = testFile.getName();
+        this.descriptor = "(Token position file: " + testFile.getFileName() + ")";
+        this.fileName = testFile.getFileName().toString();
         this.readFile(testFile);
     }
 
-    private void readFile(File testFile) throws IOException {
+    private void readFile(Path testFile) throws IOException {
         List<String> testFileLines = FileUtils.readFileContent(testFile).lines().toList();
         int currentLine = 0;
 
@@ -83,7 +84,7 @@ public class TokenPositionTestData implements TestData {
 
     @Override
     public List<Token> parseTokens(Language language) throws ParsingException, IOException {
-        File file = File.createTempFile("testSource", language.fileExtensions().getFirst());
+        Path file = Files.createTempFile("testSource", language.fileExtensions().getFirst());
         FileUtils.write(file, String.join(System.lineSeparator(), sourceLines));
         List<Token> tokens = language.parse(Collections.singleton(file), false);
         TemporaryFileHolder.addTemporaryFile(file);

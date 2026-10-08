@@ -1,10 +1,10 @@
 package de.jplag.reporting.csv;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -79,7 +79,7 @@ public class CsvPrinter<T> {
      * @param file The file to write.
      * @throws IOException on io errors.
      */
-    public void printToFile(File file) throws IOException {
+    public void printToFile(Path file) throws IOException {
         try (Writer writer = FileUtils.openFileWriter(file)) {
             this.printCsv(writer);
         }

@@ -1,6 +1,6 @@
 package de.jplag.multilang;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
@@ -56,7 +56,7 @@ public class MultiLanguage implements Language {
     }
 
     @Override
-    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
+    public List<Token> parse(Set<Path> files, boolean normalize) throws ParsingException {
         this.printWarning();
         MultiLanguageParser parser = new MultiLanguageParser(this.options);
         return parser.parseFiles(files, normalize);
