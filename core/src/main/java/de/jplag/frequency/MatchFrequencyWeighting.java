@@ -2,7 +2,6 @@ package de.jplag.frequency;
 
 import java.util.List;
 import java.util.Map;
-import java.util.OptionalDouble;
 
 import de.jplag.JPlagComparison;
 import de.jplag.Match;
@@ -105,8 +104,7 @@ public class MatchFrequencyWeighting {
      * @return the max occurrence.
      */
     private double getMaxFrequency() {
-        OptionalDouble maxFrequency = matchFrequency.values().stream().mapToDouble(Double::doubleValue).max();
-        return maxFrequency.orElse(DEFAULT_MAXIMUM_FREQUENCY);
+        return matchFrequency.values().stream().mapToDouble(Double::doubleValue).max().orElse(DEFAULT_MAXIMUM_FREQUENCY);
     }
 
     /**
