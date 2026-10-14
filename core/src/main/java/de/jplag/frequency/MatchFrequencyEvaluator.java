@@ -2,7 +2,8 @@ package de.jplag.frequency;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import de.jplag.TokenType;
 import de.jplag.frequency.strategy.FrequencyAnalysisStrategy;
@@ -25,9 +26,8 @@ class MatchFrequencyEvaluator {
      * Calculates the weight of each match.
      * @return the weights of the matches
      */
-    Map<List<TokenType>, Double> getWeightMatches() {
-        return strategy.getAllMatches().parallelStream().collect(ConcurrentHashMap::new,
-                (map, match) -> map.put(match, strategy.calculateMatchCount(match)), ConcurrentHashMap::putAll);
+    Map<List<TokenType>, Double> calculateMatchWeights() {
+        return strategy.getAllMatches().parallelStream().collect(Collectors.toConcurrentMap(Function.identity(), strategy::calculateMatchCount));
     }
 
 }

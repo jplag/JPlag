@@ -1,6 +1,5 @@
 package de.jplag.frequency.strategy;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -23,7 +22,7 @@ public abstract class FrequencyAnalysisStrategy {
 
     protected FrequencyAnalysisStrategy() {
         this.matchCounts = new ConcurrentHashMap<>();
-        matchRegistry = new HashSet<>();
+        matchRegistry = ConcurrentHashMap.newKeySet();
     }
 
     /**
