@@ -177,7 +177,7 @@ public class JPlagResult {
     /**
      * Calculates the similarity distribution across all provided comparisons using the default similarity metric. The
      * distribution is a 100-element array where each index {@code i} corresponds to the number of comparisons with
-     * similarity in the range [i%, i+1%).
+     * similarity in the range [i%, i+1%). Index 99 includes comparisons with 100% similarity.
      * @param comparisons the list of comparisons to analyze.
      * @return an array of size 100 representing the similarity distribution.
      */
@@ -188,10 +188,11 @@ public class JPlagResult {
     private int[] calculateDistributionFor(List<JPlagComparison> comparisons, ToDoubleFunction<JPlagComparison> similarityExtractor) {
         int[] similarityDistribution = new int[SIMILARITY_DISTRIBUTION_SIZE];
         for (JPlagComparison comparison : comparisons) {
-            double similarity = similarityExtractor.applyAsDouble(comparison); // extract similarity: 0.0 <= similarity <= 1.0
-            int index = (int) (similarity * SIMILARITY_DISTRIBUTION_SIZE); // divide similarity by bucket size to find index of correct bucket.
-            index = Math.clamp(index, 0, SIMILARITY_DISTRIBUTION_SIZE - 1); // keep index within array bounds
-            similarityDistribution[index]++; // count comparison towards its determined bucket.
+            double similarity = similarityExtractor.applyAsDouble(comparison);
+            int index = (int) (similarity * SIMILARITY_DISTRIBUTION_SIZE);
+            index = Math.clamp(index, 0, SIMILARITY_DISTRIBUTION_SIZE - 1); // index exceeds size if similarity == 1 or similarity > 1 due to
+                                                                            // weighting.
+            similarityDistribution[index]++;
         }
         return similarityDistribution;
     }
