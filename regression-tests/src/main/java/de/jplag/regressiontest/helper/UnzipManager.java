@@ -1,8 +1,8 @@
 package de.jplag.regressiontest.helper;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
@@ -21,7 +21,7 @@ import de.jplag.regressiontest.model.DataSet;
  */
 public final class UnzipManager {
     private static UnzipManager instance;
-    private final Map<DataSet, File> unzippedFiles;
+    private final Map<DataSet, Path> unzippedFiles;
     private final Logger logger = LoggerFactory.getLogger(UnzipManager.class);
 
     private static synchronized UnzipManager getInstance() {
@@ -43,21 +43,24 @@ public final class UnzipManager {
      * @return the directory with unzipped contents
      * @throws IOException if an I/O error occurs during unzipping
      */
-    public static File unzipOrCache(DataSet dataSet, File zip) throws IOException {
+    public static Path unzipOrCache(DataSet dataSet, Path zip) throws IOException {
         return getInstance().unzipOrCacheInternal(dataSet, zip);
     }
 
-    private File unzipOrCacheInternal(DataSet dataSet, File zip) throws IOException {
+    private Path unzipOrCacheInternal(DataSet dataSet, Path zip) throws IOException {
         if (!unzippedFiles.containsKey(dataSet)) {
-            File target;
+            Path target;
 
             if (SystemUtils.IS_OS_UNIX) {
                 FileAttribute<Set<PosixFilePermission>> attr = PosixFilePermissions.asFileAttribute(PosixFilePermissions.fromString("rwx------"));
-                target = Files.createTempDirectory(zip.getName(), attr).toFile();
+                target = Files.createTempDirectory(zip.getFileName().toString(), attr);
             } else {
-                target = Files.createTempDirectory(zip.getName()).toFile();
-                if (!(target.setReadable(true, true) && target.setWritable(true, true) && target.setExecutable(true, true))) {
-                    logger.warn("Could not set permissions for temp directory ({}).", target.getAbsolutePath());
+                target = Files.createTempDirectory(zip.getFileName().toString());
+                try {
+                    Files.setPosixFilePermissions(target,
+                            Set.of(PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_WRITE, PosixFilePermission.OWNER_EXECUTE));
+                } catch (IOException e) {
+                    logger.warn("Could not set permissions for temp directory ({}).", target.toRealPath());
                 }
             }
 

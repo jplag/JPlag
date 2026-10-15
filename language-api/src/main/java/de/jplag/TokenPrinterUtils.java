@@ -1,7 +1,7 @@
 package de.jplag;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,14 +33,14 @@ public class TokenPrinterUtils {
      * the source file
      * @return The files with token annotations
      */
-    public static String printTokensByFile(List<Token> tokens, UnaryOperator<File> fileMapper) {
-        Map<File, List<Token>> groups = groupByFile(tokens);
+    public static String printTokensByFile(List<Token> tokens, UnaryOperator<Path> fileMapper) {
+        Map<Path, List<Token>> groups = groupByFile(tokens);
 
         StringBuilder outputBuilder = new StringBuilder();
 
-        for (Map.Entry<File, List<Token>> entry : groups.entrySet()) {
-            outputBuilder.append(entry.getKey().getAbsolutePath()).append(":").append(System.lineSeparator());
+        for (Map.Entry<Path, List<Token>> entry : groups.entrySet()) {
             try {
+                outputBuilder.append(entry.getKey().toRealPath()).append(":").append(System.lineSeparator());
                 outputBuilder.append(printTokensForFile(entry.getValue(), fileMapper.apply(entry.getKey()))).append(System.lineSeparator())
                         .append(System.lineSeparator());
             } catch (IOException e) {
@@ -59,12 +59,12 @@ public class TokenPrinterUtils {
      * @return The printed tokens
      * @throws IOException If the file cannot be read
      */
-    public static String printTokensForFile(List<Token> tokens, File file) throws IOException {
+    public static String printTokensForFile(List<Token> tokens, Path file) throws IOException {
         return new TokenPrinter(List.of(FileUtils.readFileContent(file).split(System.lineSeparator())), tokens).printTokens();
     }
 
-    private static Map<File, List<Token>> groupByFile(List<Token> tokens) {
-        Map<File, List<Token>> groups = new HashMap<>();
+    private static Map<Path, List<Token>> groupByFile(List<Token> tokens) {
+        Map<Path, List<Token>> groups = new HashMap<>();
 
         for (Token token : tokens) {
             groups.computeIfAbsent(token.getFile(), _ -> new ArrayList<>());

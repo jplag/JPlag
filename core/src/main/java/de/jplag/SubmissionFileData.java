@@ -1,6 +1,6 @@
 package de.jplag;
 
-import java.io.File;
+import java.nio.file.Path;
 
 /**
  * Captures file information for a specific submission.
@@ -9,5 +9,5 @@ import java.io.File;
  * @param isNew indicates whether this submission is marked as new or old. Old submissions are only compared to new
  * ones, not to each other.
  */
-public record SubmissionFileData(File submissionFile, File rootDirectory, boolean isNew) {
+public record SubmissionFileData(Path submissionFile, Path rootDirectory, boolean isNew) {
 }

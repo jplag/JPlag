@@ -19,10 +19,10 @@ public final class TestDirectoryConstants {
     /**
      * Base path to the saved results.
      */
-    public static final Path BASE_PATH_TO_RESULT_JSON = BASE_PATH_TO_RESOURCES.resolve(Path.of("results"));
+    public static final Path BASE_PATH_TO_RESULT_JSON = BASE_PATH_TO_RESOURCES.resolve("results");
 
     /**
      * Base path to the data set descriptors.
      */
-    public static final Path BASE_PATH_TO_DATA_SET_DESCRIPTORS = BASE_PATH_TO_RESOURCES.resolve(Path.of("dataSets"));
+    public static final Path BASE_PATH_TO_DATA_SET_DESCRIPTORS = BASE_PATH_TO_RESOURCES.resolve("dataSets");
 }
