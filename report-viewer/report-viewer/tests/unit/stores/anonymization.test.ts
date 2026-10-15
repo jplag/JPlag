@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { mockFiles, mockParser, mockSessionStorage, registerMockRouter } from './mocks'
 
-registerMockRouter()
-mockSessionStorage()
-mockParser()
+import '../mocks/router'
+import '../mocks/parser'
+import '../mocks/sessionStorage'
 
 import { reportStore } from '../../../src/stores/reportStore'
 import { setActivePinia, createPinia } from 'pinia'
+import { mockFiles } from '../mocks/files'
 
 describe('Test Anonymization', () => {
   beforeEach(() => {

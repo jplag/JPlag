@@ -1,20 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import {
-  mockFiles,
-  mockParser,
-  mockSessionStorage,
-  registerMockRouter,
-  submissionFiles
-} from './mocks'
 
-registerMockRouter()
-mockSessionStorage()
-mockParser()
+import '../mocks/router'
+import '../mocks/parser'
+import '../mocks/sessionStorage'
 
 import { reportStore } from '../../../src/stores/reportStore'
 import { setActivePinia, createPinia } from 'pinia'
 import { router } from '../../../src/router'
 import { MetricJsonIdentifier } from '@jplag/model'
+import { mockFiles, submissionFiles } from '../mocks/files'
 
 describe('Test Report File Handling', () => {
   beforeEach(() => {
