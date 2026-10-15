@@ -23,6 +23,9 @@ describe('Test JSON to Distribution', () => {
           0, 3, 1, 2, 1, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 2, 0, 1, 0, 1, 0, 1, 1, 1, 0,
           0, 0, 10, 1, 1, 0, 0, 1, 1, 0, 0, 0, 10, 1, 2, 0, 0, 0, 2, 1, 0, 70
         ]
+      },
+      [MetricJsonIdentifier.WEIGHTED_SIMILARITY]: {
+        _distribution: new Array(100).fill(0)
       }
     })
   })

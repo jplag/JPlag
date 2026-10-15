@@ -58,7 +58,6 @@ class FrequencyAnalysisTest extends TestBase {
 
         for (int i = 0; i < weightedResult.getAllComparisons().size(); i++) {
             JPlagComparison comparison = weightedResult.getAllComparisons().get(i);
-            assertTrue(comparison.useFrequencyWeighting(), "comparison " + i + " missing flag");
             assertTrue(comparison.frequencyWeightedSimilarity() >= 0, "comparison " + i + " has negative weighted similarity");
         }
     }
@@ -88,7 +87,6 @@ class FrequencyAnalysisTest extends TestBase {
         JPlagResult weightedResult = FrequencyAnalysis.applyFrequencyWeighting(rawResult, options);
 
         for (JPlagComparison comparison : weightedResult.getAllComparisons()) {
-            assertTrue(comparison.useFrequencyWeighting());
             assertTrue(comparison.frequencyWeightedSimilarity() >= 0,
                     "weighted similarity should be non-negative, got " + comparison.frequencyWeightedSimilarity());
         }
@@ -117,7 +115,6 @@ class FrequencyAnalysisTest extends TestBase {
         JPlagResult weightedResult = FrequencyAnalysis.applyFrequencyWeighting(rawResult, options);
 
         for (JPlagComparison comparison : weightedResult.getAllComparisons()) {
-            assertTrue(comparison.useFrequencyWeighting());
             assertTrue(comparison.frequencyWeightedSimilarity() >= 0);
         }
     }

@@ -7,7 +7,11 @@
       <canvas ref="graphCanvas"></canvas>
     </div>
 
-    <DistributionDiagramOptions v-model="config" class="grow print:grow-0" />
+    <DistributionDiagramOptions
+      v-model="config"
+      :secondary-metrics="secondaryMetrics"
+      class="grow print:grow-0"
+    />
   </div>
 </template>
 
@@ -16,7 +20,7 @@ import { computed, onMounted, ref, watch, type PropType, type Ref } from 'vue'
 import { Chart, registerables } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { graphColors } from '../../style/graphColor'
-import type { DistributionMap } from '@jplag/model'
+import { DistributionMap, type MetricJsonIdentifier } from '@jplag/model'
 import DistributionDiagramOptions from './DistributionDiagramOptions.vue'
 import { DistributionChartConfig } from './DistributionChartConfig'
 
@@ -31,6 +35,10 @@ const props = defineProps({
   useDarkMode: {
     type: Boolean,
     default: false
+  },
+  secondaryMetrics: {
+    type: Object as PropType<Set<MetricJsonIdentifier>>,
+    default: () => new Set()
   }
 })
 

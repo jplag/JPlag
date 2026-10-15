@@ -18,7 +18,7 @@ defineProps({
   }
 })
 
-const svgMap: Record<MetricJsonIdentifier, string> = {
+const svgMap: Partial<Record<MetricJsonIdentifier, string>> = {
   [MetricJsonIdentifier.AVERAGE_SIMILARITY]: avgSvg,
   [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: maxSvg,
   [MetricJsonIdentifier.LONGEST_MATCH]: longSvg,

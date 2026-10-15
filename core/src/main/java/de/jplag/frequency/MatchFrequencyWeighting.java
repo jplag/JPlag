@@ -37,7 +37,7 @@ public class MatchFrequencyWeighting {
      */
     public JPlagComparison weightedComparisonSimilarity(JPlagComparison comparison, double weightingFactor) {
         double frequencyWeightedSimilarity = frequencySimilarity(comparison, weightingFactor);
-        return new JPlagComparison(comparison, frequencyWeightedSimilarity, true);
+        return new JPlagComparison(comparison, frequencyWeightedSimilarity);
     }
 
     private double getMatchCount(JPlagComparison comparison, Match match) {
