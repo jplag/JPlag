@@ -1,4 +1,4 @@
 > void main() {
 >     int x = false? 1: 2
-$             | QUESTIONMARK 4
+$             | QUESTIONMARK 5
 > }
