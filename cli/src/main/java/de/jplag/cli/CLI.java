@@ -111,7 +111,7 @@ public final class CLI {
      * @throws IOException If the file could not be written
      */
     public Path runJPlag() throws ExitException, IOException {
-        Path target = Path.of(getWritableFileName());
+        Path target = Path.of(getWritableFileName()).toAbsolutePath();
 
         JPlagOptionsBuilder optionsBuilder = new JPlagOptionsBuilder(this.inputHandler);
         JPlagOptions options = optionsBuilder.buildOptions();
