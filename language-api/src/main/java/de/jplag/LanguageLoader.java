@@ -58,32 +58,40 @@ public final class LanguageLoader {
         logger.debug("Available languages: '{}'", languages.values().stream().map(Language::getName).toList());
 
         if (loadModules) {
-            logger.debug("Attempting to load modules from external jar files");
-            Path path = getModulesPath();
-            if (path != null) {
-                try {
-                    Files.list(path).filter(it -> it.getFileName().toString().endsWith(".jar")).forEach(moduleFile -> {
-                        logger.debug("Loading module file: {}", moduleFile.getFileName());
-                        try {
-                            ClassLoader moduleClassLoader = new URLClassLoader(new URL[] {moduleFile.toUri().toURL()});
-                            for (Language language : ServiceLoader.load(Language.class, moduleClassLoader)) {
-                                if (!languages.containsKey(language.getIdentifier())) {
-                                    logger.debug("Loading language {} from module {}", language.getName(), moduleFile.getFileName());
-                                    languages.put(language.getIdentifier(), language);
-                                }
-                            }
-                        } catch (MalformedURLException e) {
-                            logger.error("Failed to load module: {}", moduleFile.getFileName());
-                        }
-                    });
-                } catch (IOException _) {
-                    logger.error("Failed to load modules");
-                }
-            }
+            loadExternalModules(languages);
         }
 
         cachedLanguageInstances = Collections.unmodifiableMap(languages);
         return cachedLanguageInstances;
+    }
+
+    private static void loadExternalModules(Map<String, Language> languages) {
+        logger.debug("Attempting to load modules from external jar files");
+        Path path = getModulesPath();
+        if (path != null) {
+            try {
+                Files.list(path).filter(it -> it.getFileName().toString().endsWith(".jar")).forEach(moduleFile -> {
+                    loadExternalModule(languages, moduleFile);
+                });
+            } catch (IOException _) {
+                logger.error("Failed to load modules");
+            }
+        }
+    }
+
+    private static void loadExternalModule(Map<String, Language> languages, Path languageJarFile) {
+        logger.debug("Loading module file: {}", languageJarFile.getFileName());
+        try {
+            ClassLoader moduleClassLoader = new URLClassLoader(new URL[] {languageJarFile.toUri().toURL()});
+            for (Language language : ServiceLoader.load(Language.class, moduleClassLoader)) {
+                if (!languages.containsKey(language.getIdentifier())) {
+                    logger.debug("Loading language {} from module {}", language.getName(), languageJarFile.getFileName());
+                    languages.put(language.getIdentifier(), language);
+                }
+            }
+        } catch (MalformedURLException e) {
+            logger.error("Failed to load module: {}", languageJarFile.getFileName());
+        }
     }
 
     private static Path getModulesPath() {
