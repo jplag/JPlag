@@ -1,12 +1,25 @@
 package de.jplag.cli;
 
+import static java.nio.file.attribute.AclEntryPermission.EXECUTE;
+import static java.nio.file.attribute.AclEntryPermission.READ_ACL;
+import static java.nio.file.attribute.AclEntryPermission.READ_ATTRIBUTES;
+import static java.nio.file.attribute.AclEntryPermission.READ_DATA;
+import static java.nio.file.attribute.AclEntryPermission.READ_NAMED_ATTRS;
+import static java.nio.file.attribute.AclEntryPermission.SYNCHRONIZE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.nio.file.FileStore;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.AclEntry;
+import java.nio.file.attribute.AclEntryType;
+import java.nio.file.attribute.AclFileAttributeView;
+import java.nio.file.attribute.PosixFileAttributeView;
 import java.nio.file.attribute.PosixFilePermission;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -48,7 +61,15 @@ class OutputFileGeneratorTest {
     @Test
     void testWriteCsvNonWritable() throws IOException {
         Path dir = Files.createTempDirectory("jplagCsvTest");
-        Files.setPosixFilePermissions(dir, Set.of(PosixFilePermission.OWNER_READ));
+        FileStore fs = Files.getFileStore(dir);
+        if (fs.supportsFileAttributeView(PosixFileAttributeView.class)) {
+            Files.setPosixFilePermissions(dir, Set.of(PosixFilePermission.OWNER_READ));
+        } else if (fs.supportsFileAttributeView(AclFileAttributeView.class)) {
+            AclFileAttributeView aclView = Files.getFileAttributeView(dir, AclFileAttributeView.class);
+            AclEntry entry = AclEntry.newBuilder().setType(AclEntryType.ALLOW).setPrincipal(aclView.getOwner())
+                    .setPermissions(EnumSet.of(EXECUTE, READ_DATA, READ_ATTRIBUTES, READ_ACL, READ_NAMED_ATTRS, SYNCHRONIZE)).build();
+            aclView.setAcl(Collections.singletonList(entry));
+        }
         CliOptions options = new CliOptions();
         options.advanced.csvExport = true;
         OutputFileGenerator.generateCsvOutput(testResult, dir, options);

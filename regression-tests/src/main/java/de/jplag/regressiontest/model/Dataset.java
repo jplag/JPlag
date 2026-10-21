@@ -27,9 +27,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  * @param storageFormat optional storage format
  * @param options The options for the JPlag runs, may be null
  */
-public record DataSet(@JsonProperty(required = true) String name,
+public record Dataset(@JsonProperty(required = true) String name,
         @JsonDeserialize(using = LanguageDeserializer.class) @JsonProperty(required = true) Language language,
-        @JsonProperty(required = true) DataSetFormat format, @JsonProperty String sourceLocation, @JsonProperty StorageFormat storageFormat,
+        @JsonProperty(required = true) DatasetFormat format, @JsonProperty String sourceLocation, @JsonProperty StorageFormat storageFormat,
         @JsonProperty String resultFile, @JsonProperty String goldStandardFile, @JsonProperty String goldStandardDelimiter,
         @JsonProperty Options options) {
 
@@ -76,10 +76,8 @@ public record DataSet(@JsonProperty(required = true) String name,
      * @return The result file
      */
     public Path getResultFile() {
-        if (resultFile == null) {
-            return TestDirectoryConstants.BASE_PATH_TO_RESULT_JSON.resolve(String.format(DEFAULT_RESULT_FILE_NAME, name));
-        }
-        return TestDirectoryConstants.BASE_PATH_TO_RESULT_JSON.resolve(resultFile);
+        String targetFile = Objects.requireNonNullElseGet(resultFile, () -> String.format(DEFAULT_RESULT_FILE_NAME, name));
+        return TestDirectoryConstants.BASE_PATH_TO_RESULT_JSON.resolve(targetFile);
     }
 
     /**
@@ -87,7 +85,7 @@ public record DataSet(@JsonProperty(required = true) String name,
      */
     public Optional<Path> getGoldStandardFile() throws IOException {
         Path actualSourceDirectory = this.actualSourceDirectory();
-        return Optional.ofNullable(this.goldStandardFile).map(name -> actualSourceDirectory.resolve(name));
+        return Optional.ofNullable(this.goldStandardFile).map(actualSourceDirectory::resolve);
     }
 
     /**

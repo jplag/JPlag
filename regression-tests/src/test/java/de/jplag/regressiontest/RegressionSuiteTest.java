@@ -40,8 +40,8 @@ import de.jplag.regressiontest.helper.DeltaSummaryStatistics;
 import de.jplag.regressiontest.helper.FileHelper;
 import de.jplag.regressiontest.helper.TestSuiteHelper;
 import de.jplag.regressiontest.model.ComparisonIdentifier;
-import de.jplag.regressiontest.model.DataSet;
 import de.jplag.regressiontest.model.DataSetRunConfiguration;
+import de.jplag.regressiontest.model.Dataset;
 import de.jplag.regressiontest.model.ExpectedResult;
 import de.jplag.regressiontest.model.GoldStandard;
 import de.jplag.regressiontest.model.ResultDescription;
@@ -67,13 +67,13 @@ class RegressionSuiteTest {
         List<File> testDescriptorFiles = Arrays.asList(Objects.requireNonNull(descriptorDirectory.listFiles()));
         List<DynamicContainer> allTests = new ArrayList<>();
 
-        Map<Language, List<DataSet>> dataSetsByLanguage = testDescriptorFiles.stream().map(testDescriptorFile -> {
+        Map<Language, List<Dataset>> dataSetsByLanguage = testDescriptorFiles.stream().map(testDescriptorFile -> {
             try {
-                return JacksonUtils.createNewObjectMapper().readValue(testDescriptorFile, DataSet.class);
+                return JacksonUtils.createNewObjectMapper().readValue(testDescriptorFile, Dataset.class);
             } catch (IOException e) {
                 throw new IllegalStateException("The test descriptor " + testDescriptorFile.getName() + " is invalid.");
             }
-        }).collect(Collectors.groupingBy(DataSet::language));
+        }).collect(Collectors.groupingBy(Dataset::language));
 
         for (Language language : dataSetsByLanguage.keySet()) {
             allTests.add(generateTestForLanguage(language, dataSetsByLanguage.get(language)));
@@ -85,13 +85,13 @@ class RegressionSuiteTest {
     /**
      * Generates the tests for the given language.
      * @param language The language
-     * @param dataSets The data sets for this language
+     * @param datasets The data sets for this language
      * @return The dynamic container containing the tests
      * @throws ExitException If JPlag throws an error
      */
-    private DynamicContainer generateTestForLanguage(Language language, List<DataSet> dataSets) throws ExitException, IOException {
+    private DynamicContainer generateTestForLanguage(Language language, List<Dataset> datasets) throws ExitException, IOException {
         List<DynamicContainer> languageTests = new LinkedList<>();
-        for (DataSet dataSet : dataSets) {
+        for (Dataset dataSet : datasets) {
             languageTests.add(generateTestsForDataSet(dataSet));
         }
         return DynamicContainer.dynamicContainer(language.getIdentifier(), languageTests);
@@ -103,7 +103,7 @@ class RegressionSuiteTest {
      * @return The dynamic container containing the tests
      * @throws ExitException If JPlag throws an error
      */
-    private DynamicContainer generateTestsForDataSet(DataSet dataSet) throws ExitException, IOException {
+    private DynamicContainer generateTestsForDataSet(Dataset dataSet) throws ExitException, IOException {
         List<DynamicContainer> testContainers = new LinkedList<>();
         Map<String, ResultDescription> results = new HashMap<>();
         try {
@@ -135,7 +135,7 @@ class RegressionSuiteTest {
      * counterpart
      * @throws ExitException If JPlag throw an error
      */
-    private DynamicContainer generateTestsForResultDescription(ResultDescription result, DataSet dataSet, DataSetRunConfiguration runConfiguration)
+    private DynamicContainer generateTestsForResultDescription(ResultDescription result, Dataset dataSet, DataSetRunConfiguration runConfiguration)
             throws ExitException, IOException {
         JPlagOptions options = runConfiguration.jPlagOptions();
         JPlagResult jplagResult = JPlag.run(options);
@@ -193,7 +193,7 @@ class RegressionSuiteTest {
      * @param goldStandard The gold standard previously saved
      * @return The node containing the tests
      */
-    private DynamicNode generateGoldStandardTest(DataSet dataSet, Map<String, JPlagComparison> comparisonMap, GoldStandard goldStandard)
+    private DynamicNode generateGoldStandardTest(Dataset dataSet, Map<String, JPlagComparison> comparisonMap, GoldStandard goldStandard)
             throws IOException {
         if (goldStandard != null) {
             Set<ComparisonIdentifier> goldStandardIdentifiers = ComparisonIdentifier

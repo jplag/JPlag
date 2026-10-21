@@ -21,7 +21,7 @@ public record DataSetRunConfiguration(JPlagOptions jPlagOptions, String identifi
      * @param dataSet The data set
      * @return The configurations
      */
-    public static List<DataSetRunConfiguration> generateRunConfigurations(DataSet dataSet) throws IOException {
+    public static List<DataSetRunConfiguration> generateRunConfigurations(Dataset dataSet) throws IOException {
         Options configuredOptions = dataSet.getOptions();
         List<DataSetRunConfiguration> result = new ArrayList<>();
 

@@ -27,8 +27,8 @@ import de.jplag.regressiontest.constants.TestDirectoryConstants;
 import de.jplag.regressiontest.helper.FileHelper;
 import de.jplag.regressiontest.helper.TestSuiteHelper;
 import de.jplag.regressiontest.model.ComparisonIdentifier;
-import de.jplag.regressiontest.model.DataSet;
 import de.jplag.regressiontest.model.DataSetRunConfiguration;
+import de.jplag.regressiontest.model.Dataset;
 import de.jplag.regressiontest.model.ExpectedResult;
 import de.jplag.regressiontest.model.GoldStandard;
 import de.jplag.regressiontest.model.ResultDescription;
@@ -49,8 +49,8 @@ class RegressionGeneratorTest {
     @Test
     @DisplayName("Generator test to produce new expected E2E results if behavior of JPlag changes.")
     void generateResultJson() throws ExitException, IOException {
-        DataSet dataSet = JacksonUtils.createNewObjectMapper()
-                .readValue(new File(TestDirectoryConstants.BASE_PATH_TO_DATA_SET_DESCRIPTORS.toFile(), DATA_SET + ".json"), DataSet.class);
+        Dataset dataSet = JacksonUtils.createNewObjectMapper()
+                .readValue(new File(TestDirectoryConstants.BASE_PATH_TO_DATA_SET_DESCRIPTORS.toFile(), DATA_SET + ".json"), Dataset.class);
         List<ResultDescription> resultDescriptions = new ArrayList<>();
 
         for (DataSetRunConfiguration runConfiguration : DataSetRunConfiguration.generateRunConfigurations(dataSet)) {
@@ -83,7 +83,7 @@ class RegressionGeneratorTest {
      * @throws IOException Signals that an I/O exception, of some sort, has occurred. Thisclass is the general class of
      * exceptions produced by failed orinterrupted I/O operations.
      */
-    private static Path writeJsonModelsToJsonFile(List<ResultDescription> resultDescriptions, DataSet dataSet) throws IOException {
+    private static Path writeJsonModelsToJsonFile(List<ResultDescription> resultDescriptions, Dataset dataSet) throws IOException {
         ObjectWriter writer = JacksonUtils.createNewObjectMapper().writer().withDefaultPrettyPrinter();
         Path outputFile = dataSet.getResultFile();
 
