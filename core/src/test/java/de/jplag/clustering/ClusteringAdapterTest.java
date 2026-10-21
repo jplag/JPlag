@@ -40,12 +40,11 @@ class ClusteringAdapterTest {
             return List.of(IntStream.range(0, arg.getRowDimension()).boxed().toList());
         });
 
-        ClusteringAdapter clustering = new ClusteringAdapter(comparisons, x -> 0.0);
+        ClusteringAdapter clustering = new ClusteringAdapter(comparisons, new DefaultSimilarityMatrixCreator(_ -> 0.0));
         ClusteringResult<Submission> clusteringResult = clustering.doClustering(algorithm);
 
         Collection<Collection<Submission>> expectedResult = List.of(submissions);
 
         assertEquals(expectedResult, clusteringResult.getClusters().stream().map(Cluster::getMembers).toList());
     }
-
 }
