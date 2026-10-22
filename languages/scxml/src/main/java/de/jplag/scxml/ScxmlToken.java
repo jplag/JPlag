@@ -1,6 +1,6 @@
 package de.jplag.scxml;
 
-import java.io.File;
+import java.nio.file.Path;
 
 import de.jplag.Token;
 import de.jplag.TokenTrace;
@@ -21,7 +21,7 @@ public class ScxmlToken extends Token {
      * @param trace is the token trace, containing line, column, and token length in the SCXMl view.
      * @param element the corresponding StatechartElement this token was extracted from
      */
-    public ScxmlToken(TokenType type, File file, TokenTrace trace, StatechartElement element) {
+    public ScxmlToken(TokenType type, Path file, TokenTrace trace, StatechartElement element) {
         super(type, file, trace.line(), trace.column(), trace.line(), trace.column() + trace.length(), trace.length());
         this.element = element;
     }

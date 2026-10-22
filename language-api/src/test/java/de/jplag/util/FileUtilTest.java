@@ -1,11 +1,11 @@
 package de.jplag.util;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Set;
+import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -25,27 +25,27 @@ class FileUtilTest {
 
     @ParameterizedTest
     @MethodSource("searchTestFiles")
-    void testReadFile(File file) throws IOException {
+    void testReadFile(Path file) throws IOException {
         String found = FileUtils.readFileContent(file);
 
-        Assertions.assertEquals(expectedFileContent, found, "File contains unexpected content: " + file.getAbsolutePath());
+        Assertions.assertEquals(expectedFileContent, found, "File contains unexpected content: " + file.toRealPath());
     }
 
     @ParameterizedTest
     @MethodSource("searchTestFiles")
-    void testCharsetDetection(File file) throws IOException {
-        Assertions.assertEquals(Charset.forName(file.getName()), FileUtils.detectCharset(file),
-                "Wrong charset assumed for: " + file.getAbsolutePath());
+    void testCharsetDetection(Path file) throws IOException {
+        Assertions.assertEquals(Charset.forName(file.getFileName().toString()), FileUtils.detectCharset(file),
+                "Wrong charset assumed for: " + file.toRealPath());
     }
 
     @Test
-    void testDetectFromFileSet() throws ParsingException {
-        Set<File> files = Set.of(TEST_FILE_SET_LOCATION.toFile().listFiles());
+    void testDetectFromFileSet() throws ParsingException, IOException {
+        List<Path> files = Files.list(TEST_FILE_LOCATION).toList();
         Charset encoding = FileUtils.detectCharsetFromMultiple(files);
         Assertions.assertEquals(StandardCharsets.ISO_8859_1, encoding);
     }
 
-    private static File[] searchTestFiles() {
-        return TEST_FILE_LOCATION.toFile().listFiles();
+    private static Path[] searchTestFiles() throws IOException {
+        return Files.list(TEST_FILE_LOCATION).toArray(Path[]::new);
     }
 }

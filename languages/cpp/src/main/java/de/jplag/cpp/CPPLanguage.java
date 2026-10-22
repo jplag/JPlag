@@ -1,6 +1,6 @@
 package de.jplag.cpp;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
@@ -47,7 +47,7 @@ public class CPPLanguage implements Language {
     }
 
     @Override
-    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
+    public List<Token> parse(Set<Path> files, boolean normalize) throws ParsingException {
         return new CPPParserAdapter().parse(files);
     }
 

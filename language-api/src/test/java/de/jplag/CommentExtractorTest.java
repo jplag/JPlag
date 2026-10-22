@@ -2,7 +2,6 @@ package de.jplag;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -32,7 +31,7 @@ class CommentExtractorTest {
                 List.of("\\") // Escape characters
         );
 
-        File input = new File(TEST_FILE_LOCATION.toFile(), TEST_FILE_NAME);
+        Path input = TEST_FILE_LOCATION.resolve(TEST_FILE_NAME);
 
         CommentExtractor extractor = new CommentExtractor(input, settings);
 

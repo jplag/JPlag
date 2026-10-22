@@ -1,4 +1,4 @@
-# JPlag - Regression tests
+# JPlag – Regression tests
 
 The regression-tests module contains tests that report any chance in the similarities reported by JPlag.
 There are two kinds of tests:
@@ -35,11 +35,11 @@ The test data should be placed under [data](src/test/resources/data). It can eit
 
 ### Defining the data set for the tests
 
-This is done in [dataSets](src/test/resources/dataSets). To add a new data set a new json file needs to be placed here.
+This is done in [datasets](src/test/resources/datasets). To add a new data set a new json file needs to be placed here.
 
-A minimum example for a configuration can be found in [progpedia.json](src/test/resources/dataSets/progpedia.json). A full example using all options in [sortAlgo.json](src/test/resources/dataSets/sortAlgo.json).
+A minimum example for a configuration can be found in [progpedia.json](src/test/resources/datasets/progpedia.json). A full example using all options in [sortAlgo.json](src/test/resources/datasets/sortAlgo.json).
 
-For available options look at [dataSetTemplate.json](src/test/resources/dataSetTemplate.json).
+For available options look at [datasetTemplate.json](src/test/resources/datasetTemplate.json).
 
 ### Generating the reference results
 
