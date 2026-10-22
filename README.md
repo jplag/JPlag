@@ -92,9 +92,10 @@ Parameter descriptions:
       -bc, --bc, --base-code=<baseCode>
                         Path to the base code directory (common framework used
                           in all submissions).
+      -h, --help            Show this help message and exit.
       -l, --language=<language>
                         Select the language of the submissions (default: java).
-                          See subcommands below.
+                          A list of all languages can be found below.
       -M, --mode=<{RUN, VIEW, RUN_AND_VIEW, AUTO}>
                         The mode of JPlag. One of: RUN, VIEW, RUN_AND_VIEW,
                           AUTO (default: null). If VIEW is chosen, you can
@@ -120,6 +121,7 @@ Parameter descriptions:
                           minimum token required to be counted as a matching
                           section. A smaller value increases the sensitivity
                           but might lead to more false-positives.
+      -V, --version         Print version information and exit.
 
 Advanced
       --csv-export      Export pairwise similarity values as a CSV file.

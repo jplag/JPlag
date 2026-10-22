@@ -33,4 +33,9 @@ public class JavaScriptLanguage extends TypeScriptLanguage {
     public boolean hasPriority() {
         return false; // Since this module extends Typescript, it has no priority.
     }
+
+    @Override
+    public String getVersionFlagInformation() {
+        return "Version ES6";
+    }
 }

@@ -39,6 +39,11 @@ public class NaturalLanguage implements Language {
     }
 
     @Override
+    public String getVersionFlagInformation() {
+        return "No version information";
+    }
+
+    @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
         return new ParserAdapter().parse(files);
     }
