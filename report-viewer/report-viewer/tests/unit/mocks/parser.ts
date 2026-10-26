@@ -6,62 +6,41 @@ import {
   ComparisonSubmissionFile,
   Distribution,
   DistributionMap,
-  File,
   Match,
   MetricJsonIdentifier,
   ParserLanguage,
   RunInformation,
-  SubmissionFile,
   SubmissionState,
   Version
 } from '@jplag/model'
 import { vi } from 'vitest'
 
-export function registerMockRouter() {
-  vi.mock('../../../src/router', () => ({
-    router: {
-      push: vi.fn()
-    }
-  }))
-}
-
-export function mockSessionStorage() {
-  vi.stubGlobal('sessionStorage', {
-    getItem: vi.fn(),
-    setItem: vi.fn(),
-    removeItem: vi.fn(),
-    clear: vi.fn()
-  })
-}
-
-export function mockParser() {
-  vi.mock('@jplag/parser', () => ({
-    BaseCodeReportFactory: {
-      getReport: vi.fn().mockReturnValue([])
-    },
-    ClusterFactory: {
-      getClusters: vi.fn().mockReturnValue(mockClusters)
-    },
-    ComparisonFactory: {
-      getComparison: vi.fn().mockReturnValue(mockComparison)
-    },
-    DistributionFactory: {
-      getDistributions: vi.fn().mockReturnValue(mockDistributions)
-    },
-    OptionsFactory: {
-      getCliOptions: vi.fn().mockReturnValue(mockOptions)
-    },
-    RunInformationFactory: {
-      getRunInformation: vi.fn().mockReturnValue(mockRunInformation)
-    },
-    SubmissionMappingsFactory: {
-      getSubmissionMappings: vi.fn().mockReturnValue(mockSubmissionMappings)
-    },
-    TopComparisonFactory: {
-      getTopComparisons: vi.fn().mockReturnValue(mockTopComparisons)
-    }
-  }))
-}
+vi.mock('@jplag/parser', () => ({
+  BaseCodeReportFactory: {
+    getReport: vi.fn().mockReturnValue([])
+  },
+  ClusterFactory: {
+    getClusters: vi.fn().mockReturnValue(mockClusters)
+  },
+  ComparisonFactory: {
+    getComparison: vi.fn().mockReturnValue(mockComparison)
+  },
+  DistributionFactory: {
+    getDistributions: vi.fn().mockReturnValue(mockDistributions)
+  },
+  OptionsFactory: {
+    getCliOptions: vi.fn().mockReturnValue(mockOptions)
+  },
+  RunInformationFactory: {
+    getRunInformation: vi.fn().mockReturnValue(mockRunInformation)
+  },
+  SubmissionMappingsFactory: {
+    getSubmissionMappings: vi.fn().mockReturnValue(mockSubmissionMappings)
+  },
+  TopComparisonFactory: {
+    getTopComparisons: vi.fn().mockReturnValue(mockTopComparisons)
+  }
+}))
 
 const mockClusters: Cluster[] = [
   {
@@ -73,7 +52,8 @@ const mockClusters: Cluster[] = [
 ]
 const mockDistributions: DistributionMap = {
   [MetricJsonIdentifier.AVERAGE_SIMILARITY]: new Distribution([]),
-  [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: new Distribution([])
+  [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: new Distribution([]),
+  [MetricJsonIdentifier.WEIGHTED_SIMILARITY]: new Distribution([])
 }
 const mockOptions: CliOptions = {
   language: ParserLanguage.JAVA,
@@ -332,7 +312,8 @@ function buildSimilarityMap(
     [MetricJsonIdentifier.AVERAGE_SIMILARITY]: avg,
     [MetricJsonIdentifier.MAXIMUM_SIMILARITY]: max,
     [MetricJsonIdentifier.LONGEST_MATCH]: long,
-    [MetricJsonIdentifier.MAXIMUM_LENGTH]: len
+    [MetricJsonIdentifier.MAXIMUM_LENGTH]: len,
+    [MetricJsonIdentifier.WEIGHTED_SIMILARITY]: avg
   }
 }
 
@@ -353,89 +334,3 @@ function buildMockTopComparison(
     similarities: buildSimilarityMap(avg, max, long, len)
   }
 }
-export const mockFiles: File[] = [
-  {
-    fileName: 'cluster.json',
-    data: ''
-  },
-  {
-    fileName: 'distribution.json',
-    data: ''
-  },
-  {
-    fileName: 'options.json',
-    data: ''
-  },
-  {
-    fileName: 'reportInformation.json',
-    data: '{"secondaryMetrics":["MAX","LONGEST_MATCH","MAXIMUM_LENGTH"]}'
-  },
-  {
-    fileName: 'runInformation.json',
-    // the version check uses the raw string, so we need a version here
-    data: '{"version":{"major":6,"minor":2,"patch":0}}'
-  },
-  {
-    fileName: 'submissionMappings.json',
-    data: ''
-  },
-  {
-    fileName: 'topComparisons.json',
-    data: ''
-  },
-
-  {
-    fileName: 'basecode/test1.json',
-    data: ''
-  },
-  {
-    fileName: 'basecode/test2.json',
-    data: ''
-  },
-  {
-    fileName: 'basecode/test3.json',
-    data: ''
-  },
-
-  {
-    fileName: 'submissionFileIndex.json',
-    data: ''
-  },
-  {
-    fileName: 'comparisons/test1-test2.json',
-    data: ''
-  }
-]
-
-export const submissionFiles: SubmissionFile[] = [
-  {
-    submissionId: 'test1',
-    fileName: 'test1/Submission.java',
-    data: ''
-  },
-  {
-    submissionId: 'test1',
-    fileName: 'test1/Structure.java',
-    data: ''
-  },
-  {
-    submissionId: 'test2',
-    fileName: 'test2/Submission.java',
-    data: ''
-  },
-  {
-    submissionId: 'test2',
-    fileName: 'test2/Structure.java',
-    data: ''
-  },
-  {
-    submissionId: 'test3',
-    fileName: 'test3/Submission.java',
-    data: ''
-  },
-  {
-    submissionId: 'test3',
-    fileName: 'test3/Structure.java',
-    data: ''
-  }
-]
