@@ -61,7 +61,7 @@ public class JPlagOptionsBuilder {
     }
 
     private Set<Path> mapCliSubmissionDirectoriesToPaths(Collection<File> submissionDirectory) {
-        return submissionDirectory.stream().map(it -> it.toPath()).collect(Collectors.toSet());
+        return submissionDirectory.stream().map(File::toPath).collect(Collectors.toSet());
     }
 
     private JPlagOptions initializeJPlagOptions(Set<Path> submissionDirectories, Set<Path> oldSubmissionDirectories, List<String> suffixes)

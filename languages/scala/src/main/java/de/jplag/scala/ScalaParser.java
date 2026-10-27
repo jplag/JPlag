@@ -152,7 +152,7 @@ public class ScalaParser {
                 encloseAndAppy(doBlock.body(), new TraverserRecord(DO_BODY_BEGIN, DO_BODY_END));
                 visit(doBlock.cond());
             });
-            case Term.Assign ignored -> new TraverserRecord(ASSIGN);
+            case Term.Assign _ -> new TraverserRecord(ASSIGN);
             case Term.While whileBlock -> new TraverserRecord(WHILE).traverse(() -> {
                 visit(whileBlock.cond());
                 encloseAndAppy(whileBlock.body(), new TraverserRecord(WHILE_BODY_BEGIN, WHILE_BODY_END));
@@ -184,15 +184,15 @@ public class ScalaParser {
                     return null;
                 });
             });
-            case Term.NewAnonymous ignored -> new TraverserRecord(NEW_CREATION_BEGIN, NEW_CREATION_END);
-            case Term.Return ignored -> new TraverserRecord(RETURN);
+            case Term.NewAnonymous _ -> new TraverserRecord(NEW_CREATION_BEGIN, NEW_CREATION_END);
+            case Term.Return _ -> new TraverserRecord(RETURN);
             case Term.Match match -> new TraverserRecord(MATCH_BEGIN, MATCH_END).traverse(() -> {
                 visit(match.expr());
                 visit(match.casesBlock());
             });
-            case Term.Throw ignored -> new TraverserRecord(THROW);
-            case Term.Function ignored -> new TraverserRecord(FUNCTION_BEGIN, FUNCTION_END);
-            case Term.PartialFunction ignored -> new TraverserRecord(PARTIAL_FUNCTION_BEGIN, PARTIAL_FUNCTION_END);
+            case Term.Throw _ -> new TraverserRecord(THROW);
+            case Term.Function _ -> new TraverserRecord(FUNCTION_BEGIN, FUNCTION_END);
+            case Term.PartialFunction _ -> new TraverserRecord(PARTIAL_FUNCTION_BEGIN, PARTIAL_FUNCTION_END);
             case Term.ForYield forYield -> new TraverserRecord().traverse(() -> {
                 visit(forYield.enumsBlock());
                 addToken(FOR_BODY_BEGIN, forYield.body(), false);
@@ -214,8 +214,8 @@ public class ScalaParser {
                 }
             });
 
-            case Pkg ignored -> new TraverserRecord(PACKAGE);
-            case Import ignored -> new TraverserRecord(IMPORT);
+            case Pkg _ -> new TraverserRecord(PACKAGE);
+            case Import _ -> new TraverserRecord(IMPORT);
 
             case Defn.Def definition -> new TraverserRecord().traverse(() -> {
                 visitAll(definition.mods());
@@ -231,10 +231,10 @@ public class ScalaParser {
                 visitAll(getPParamsLists(macroDef.paramClauseGroups()));
                 encloseAndAppy(macroDef.body(), new TraverserRecord(MACRO_BEGIN, MACRO_END));
             });
-            case Defn.Class ignored -> new TraverserRecord(CLASS_BEGIN, CLASS_END);
-            case Defn.Object ignored -> new TraverserRecord(OBJECT_BEGIN, OBJECT_END);
-            case Defn.Trait ignored -> new TraverserRecord(TRAIT_BEGIN, TRAIT_END);
-            case Defn.Type ignored -> new TraverserRecord(TYPE);
+            case Defn.Class _ -> new TraverserRecord(CLASS_BEGIN, CLASS_END);
+            case Defn.Object _ -> new TraverserRecord(OBJECT_BEGIN, OBJECT_END);
+            case Defn.Trait _ -> new TraverserRecord(TRAIT_BEGIN, TRAIT_END);
+            case Defn.Type _ -> new TraverserRecord(TYPE);
             case Defn.Var varDef -> new TraverserRecord().traverse(() -> {
                 visitAll(varDef.mods());
                 varDef.pats().foreach(pattern -> {
@@ -253,17 +253,17 @@ public class ScalaParser {
                 });
             });
 
-            case Decl.Var ignored -> new TraverserRecord(VARIABLE_DEFINITION);
-            case Decl.Val ignored -> new TraverserRecord(VARIABLE_DEFINITION);
-            case Decl.Def ignored -> new TraverserRecord(METHOD_BEGIN, METHOD_END);
-            case Decl.Type ignored -> new TraverserRecord(TYPE);
+            case Decl.Var _ -> new TraverserRecord(VARIABLE_DEFINITION);
+            case Decl.Val _ -> new TraverserRecord(VARIABLE_DEFINITION);
+            case Decl.Def _ -> new TraverserRecord(METHOD_BEGIN, METHOD_END);
+            case Decl.Type _ -> new TraverserRecord(TYPE);
 
-            case Ctor.Secondary ignored -> new TraverserRecord(CONSTRUCTOR_BEGIN, CONSTRUCTOR_END);
+            case Ctor.Secondary _ -> new TraverserRecord(CONSTRUCTOR_BEGIN, CONSTRUCTOR_END);
 
             case Init init -> new TraverserRecord().traverse(() -> addTokenForAll(getArgList(init.argClauses()), ARGUMENT, true));
-            case Enumerator.Guard ignored -> new TraverserRecord(GUARD);
+            case Enumerator.Guard _ -> new TraverserRecord(GUARD);
 
-            case Term.Param ignored -> new TraverserRecord().traverse(() -> addToken(PARAMETER, tree, false));
+            case Term.Param _ -> new TraverserRecord().traverse(() -> addToken(PARAMETER, tree, false));
             case Term.ApplyInfix term when term.op().value().contains("=") && !List.of("==", "!=").contains(term.op().value()) -> new TraverserRecord(
                     ASSIGN);
             case Term.ApplyInfix term when !isStandardOperator(term.op().value()) -> new TraverserRecord().traverse(() -> {
@@ -283,8 +283,8 @@ public class ScalaParser {
                 addToken(APPLY, term, false);
                 addTokenForAll(term.targClause().values(), TYPE_ARGUMENT, false);
             });
-            case Term.New ignored -> new TraverserRecord(NEW_OBJECT);
-            case Self ignored -> new TraverserRecord(SELF_TYPE);
+            case Term.New _ -> new TraverserRecord(NEW_OBJECT);
+            case Self _ -> new TraverserRecord(SELF_TYPE);
             case Term.Block block -> {
                 if (block.parent().get().parent() instanceof Some<?> && ((Some<?>) block.parent().get().parent()).get() instanceof Term.Apply) {
                     yield new TraverserRecord(BLOCK_START, BLOCK_END);
@@ -292,8 +292,8 @@ public class ScalaParser {
                     yield new TraverserRecord();
                 }
             }
-            case Enumerator.Generator ignored -> new TraverserRecord(ENUM_GENERATOR);
-            case Type.Param ignored -> new TraverserRecord(TYPE_PARAMETER);
+            case Enumerator.Generator _ -> new TraverserRecord(ENUM_GENERATOR);
+            case Type.Param _ -> new TraverserRecord(TYPE_PARAMETER);
 
             case Case caseBlock -> new TraverserRecord(CASE_STATEMENT).traverse(() -> {
                 visit(caseBlock.pat());
@@ -418,7 +418,7 @@ public class ScalaParser {
      * @param file The file to parse
      * @throws ParsingException If the parsing fails
      */
-    private void parseFile(Path file) throws ParsingException {
+    private void parseFile(Path file) {
         currentFile = file;
 
         Input input = Input.nioPathToInput().apply(file);
