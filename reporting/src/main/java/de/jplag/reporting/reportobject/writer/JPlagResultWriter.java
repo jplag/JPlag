@@ -8,7 +8,7 @@ import de.jplag.util.RelativePath;
 /**
  * Writer for JPlag result data. The way paths are resolved depends on the implementation.
  */
-public interface JPlagResultWriter {
+public interface JPlagResultWriter extends AutoCloseable {
     /**
      * Writes data as json.
      * @param jsonContent The json content
@@ -34,5 +34,6 @@ public interface JPlagResultWriter {
     /**
      * Closes the writer.
      */
+    @Override
     void close();
 }

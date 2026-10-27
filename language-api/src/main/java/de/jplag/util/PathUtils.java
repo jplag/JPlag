@@ -6,6 +6,10 @@ import java.nio.file.Path;
  * Utility functions for {@link Path}
  */
 public class PathUtils {
+    private PathUtils() {
+        // private construction to prevent instances from being created
+    }
+
     /**
      * Returns the path with the same parent as the given path and the same filename, except that the suffix is appended.
      * For example: a/b/c.java, .bak -> a/b/c.java.bak

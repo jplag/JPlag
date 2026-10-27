@@ -43,7 +43,7 @@ public class CommentExtractor {
         try {
             this.remainingContent = FileUtils.readFileContent(file);
         } catch (IOException e) {
-            logger.warn("Could not extract comments from {}: {}", file.toString(), e.getMessage());
+            logger.warn("Could not extract comments from {}: {}", file, e.getMessage());
             this.remainingContent = "";
         }
     }

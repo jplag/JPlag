@@ -73,7 +73,7 @@ public class TestDataCollector {
         try {
             data = Files.list(testFileLocation).filter(it -> it.endsWith(fileExtension)).map(testFileLocation::resolve).map(FileTestData::new)
                     .collect(Collectors.toSet());
-        } catch (IOException e) {
+        } catch (IOException _) {
             Assumptions.abort("Could not list content of: " + testFileLocation);
         }
         return new TestDataContext(data);
@@ -111,7 +111,7 @@ public class TestDataCollector {
                     throw new RuntimeException(e);
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException _) {
             Assumptions.abort("Failed to list contents of: " + directory);
         }
         return new TestDataContext(allTestsInDirectory);
@@ -128,7 +128,7 @@ public class TestDataCollector {
             for (Path file : Files.list(directory).toList()) {
                 this.exceptionTestFile.add(new FileTestData(file));
             }
-        } catch (IOException e) {
+        } catch (IOException _) {
             Assumptions.abort("Failed to list contents of: " + directory);
         }
     }

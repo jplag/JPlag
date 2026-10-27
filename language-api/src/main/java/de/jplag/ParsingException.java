@@ -1,6 +1,5 @@
 package de.jplag;
 
-import java.io.File;
 import java.io.Serial;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -73,19 +72,6 @@ public class ParsingException extends Exception {
                 yield new ParsingException(message);
             }
         };
-    }
-
-    @Deprecated(forRemoval = true)
-    private static String constructMessage(File file, String reason) {
-        StringBuilder messageBuilder = new StringBuilder();
-        String fileName = file == null ? "<null>" : file.toString();
-        if (reason == null || !reason.contains(fileName)) {
-            messageBuilder.append("failed to parse '%s'".formatted(fileName));
-        }
-        if (reason != null && !reason.isBlank()) {
-            messageBuilder.append(reason);
-        }
-        return messageBuilder.toString();
     }
 
     private static String constructMessage(Path file, String reason) {

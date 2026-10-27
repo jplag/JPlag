@@ -6,11 +6,15 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Stores all temporary files that are created for a {@link LanguageModuleTest} and provides the option to delete them.
  */
 public class TemporaryFileHolder {
     private static final List<Path> temporaryFiles = new ArrayList<>();
+    private static final Logger logger = LoggerFactory.getLogger(TemporaryFileHolder.class);
 
     /**
      * Deletes all temporary files that have been created up to this point.
@@ -20,6 +24,7 @@ public class TemporaryFileHolder {
             try {
                 Files.delete(it);
             } catch (IOException _) {
+                logger.warn("Cannot delete temporary file. Delete it manually if necessary: {}", it.toAbsolutePath());
             }
         });
         temporaryFiles.clear();

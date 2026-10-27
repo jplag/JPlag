@@ -96,25 +96,27 @@ public class ReportObjectFactory {
      * @throws FileException If the file handling fails
      */
     public void createAndSaveReport(JPlagResult result) throws FileException {
-        logger.info("Start writing report...");
-        buildSubmissionToIdMap(result);
+        try {
+            logger.info("Start writing report...");
+            buildSubmissionToIdMap(result);
 
-        copySubmissionFilesToReport(result);
+            copySubmissionFilesToReport(result);
 
-        writeComparisons(result);
+            writeComparisons(result);
 
-        writeRunInformation(result);
-        writeDistribution(result);
-        writeTopComparisons(result);
-        writeCluster(result);
-        writeSubmissionMappings();
+            writeRunInformation(result);
+            writeDistribution(result);
+            writeTopComparisons(result);
+            writeCluster(result);
+            writeSubmissionMappings();
 
-        writeSubmissionIndexFile(result);
-        writeReadMeFile();
-        writeOptionsFiles(result.getOptions());
-        writeBaseCodeReport(result);
-
-        this.resultWriter.close();
+            writeSubmissionIndexFile(result);
+            writeReadMeFile();
+            writeOptionsFiles(result.getOptions());
+            writeBaseCodeReport(result);
+        } finally {
+            this.resultWriter.close();
+        }
     }
 
     private void buildSubmissionToIdMap(JPlagResult result) {

@@ -66,7 +66,6 @@ import static de.jplag.scala.ScalaTokenType.WHILE_BODY_BEGIN;
 import static de.jplag.scala.ScalaTokenType.WHILE_BODY_END;
 import static de.jplag.scala.ScalaTokenType.YIELD;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +73,6 @@ import java.util.Set;
 
 import de.jplag.ParsingException;
 import de.jplag.Token;
-import de.jplag.util.FileUtils;
 
 import scala.Option;
 import scala.Some;
@@ -423,15 +421,10 @@ public class ScalaParser {
     private void parseFile(Path file) throws ParsingException {
         currentFile = file;
 
-        try {
-            String text = FileUtils.readFileContent(file, true);
-            Input input = Input.nioPathToInput().apply(file);
-            Source source = new MyApi().parse(input);
-            visit(source);
-            tokens.add(Token.fileEnd(file));
-        } catch (IOException e) {
-            throw new ParsingException(file, e);
-        }
+        Input input = Input.nioPathToInput().apply(file);
+        Source source = new MyApi().parse(input);
+        visit(source);
+        tokens.add(Token.fileEnd(file));
     }
 
     /**

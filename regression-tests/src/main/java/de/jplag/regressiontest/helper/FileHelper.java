@@ -1,6 +1,5 @@
 package de.jplag.regressiontest.helper;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -55,21 +54,13 @@ public final class FileHelper {
     }
 
     /**
-     * @param file for which the exception text is to be created
-     * @return exception text for the specified file
-     */
-    private static String createNewIOExceptionStringForFileOrFOlderCreation(File file) {
-        return "The file/folder at the location [" + file.toString() + "] could not be created!";
-    }
-
-    /**
      * Unzips a given zip file into a given directory.
      * @param zip The zip file to extract
      * @param targetDirectory The target directory
      * @throws IOException If io operations go wrong
      * @throws IllegalStateException if the ZIP archive exceeds size or entry count thresholds.
      */
-    public static void unzip(Path zip, Path targetDirectory) throws IOException { // TODO replace by nio virtual file system?
+    public static void unzip(Path zip, Path targetDirectory) throws IOException {
         try (ZipInputStream in = new ZipInputStream(Files.newInputStream(zip))) {
             ZipEntry entry;
 

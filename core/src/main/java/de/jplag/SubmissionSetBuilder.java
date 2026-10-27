@@ -186,12 +186,7 @@ public class SubmissionSetBuilder {
             throw new AssertionError("Given root is not a directory.");
         }
 
-        try {
-            Stream<Path> files = Files.list(rootDirectory);
-            if (files == null) {
-                throw new RootDirectoryException("Cannot list files of the root directory!");
-            }
-
+        try (Stream<Path> files = Files.list(rootDirectory)) {
             return files.map(it -> new SubmissionFileData(it, rootDirectory, isNew)).toList();
         } catch (SecurityException | IOException exception) {
             throw new RootDirectoryException("Cannot list files of the root directory! " + exception.getMessage(), exception);
@@ -277,13 +272,7 @@ public class SubmissionSetBuilder {
         if (Files.isRegularFile(file) && hasValidSuffix(file)) {
             return Collections.singletonList(file);
         }
-        try {
-            Stream<Path> nestedFileNames = Files.list(file);
-
-            if (nestedFileNames == null) {
-                return Collections.emptyList();
-            }
-
+        try (Stream<Path> nestedFileNames = Files.list(file)) {
             Collection<Path> files = new ArrayList<>();
 
             for (Path fileName : nestedFileNames.toList()) {
