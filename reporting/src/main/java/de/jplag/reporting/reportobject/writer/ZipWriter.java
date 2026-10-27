@@ -40,7 +40,8 @@ public class ZipWriter implements JPlagResultWriter {
     public ZipWriter(Path zipFile) throws IOException {
         Files.createDirectories(zipFile.getParent());
         if (Files.exists(zipFile)) {
-            try (ZipOutputStream os = new ZipOutputStream(Files.newOutputStream(zipFile))) {
+            try (ZipOutputStream _ = new ZipOutputStream(Files.newOutputStream(zipFile))) {
+                // This creates a new zip in the place of an existing one using ZipOutputStream as java nio is incapable of doing that
             }
         }
         FileSystem fileSystem = FileSystems.newFileSystem(URI.create("jar:" + zipFile.toUri()), Map.of("create", true));
