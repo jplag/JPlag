@@ -18,7 +18,7 @@ public final class FileUtil {
 
     private static final String CONTENT_NOT_FOUND = "Directory contents not as expected";
     private static final String DIRECTORY_NOT_FOUND = "Could not find directory: ";
-    private static final Logger log = LoggerFactory.getLogger(FileUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
     private FileUtil() {
         // private constructor to prevent instantiation
@@ -50,7 +50,7 @@ public final class FileUtil {
                 Files.delete(file);
             }
         } catch (IOException _) {
-            log.warn("Could not delete files in {}. There might be some unwanted files left-over (Extension: {})", directory.toAbsolutePath(),
+            logger.warn("Could not delete files in {}. There might be some unwanted files left-over (Extension: {})", directory.toAbsolutePath(),
                     extension);
         }
     }
