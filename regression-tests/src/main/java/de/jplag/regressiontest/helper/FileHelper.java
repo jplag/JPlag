@@ -61,6 +61,7 @@ public final class FileHelper {
      * @throws IllegalStateException if the ZIP archive exceeds size or entry count thresholds.
      */
     public static void unzip(Path zip, Path targetDirectory) throws IOException {
+        Path realTargetDirectory = targetDirectory.toRealPath();
         try (ZipInputStream in = new ZipInputStream(Files.newInputStream(zip))) {
             ZipEntry entry;
 
@@ -70,8 +71,8 @@ public final class FileHelper {
             while ((entry = in.getNextEntry()) != null) {
                 totalEntriesArchive++;
 
-                Path targetFile = targetDirectory.resolve(entry.getName());
-                if (targetFile.startsWith(targetDirectory)) {
+                Path targetFile = realTargetDirectory.resolve(entry.getName()).toAbsolutePath();
+                if (targetFile.startsWith(realTargetDirectory)) {
                     if (entry.isDirectory()) {
                         Files.createDirectories(targetFile);
                     } else {
