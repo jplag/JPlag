@@ -23,9 +23,9 @@ class BasicFunctionalityTest extends TestBase {
 
         assertEquals(2, result.getNumberOfSubmissions());
         assertEquals(1, result.getAllComparisons().size());
-        assertEquals(1, result.getAllComparisons().get(0).matches().size());
+        assertEquals(1, result.getAllComparisons().getFirst().matches().size());
         assertEquals(1, result.getSimilarityDistribution()[DISTRIBUTION_INDEX]);
-        assertEquals(0.666, result.getAllComparisons().get(0).similarity(), DELTA);
+        assertEquals(0.666, result.getAllComparisons().getFirst().similarity(), DELTA);
     }
 
     @Test
@@ -37,9 +37,9 @@ class BasicFunctionalityTest extends TestBase {
 
         assertEquals(2, result.getNumberOfSubmissions());
         assertEquals(1, result.getAllComparisons().size());
-        assertEquals(2, result.getAllComparisons().get(0).matches().size());
+        assertEquals(2, result.getAllComparisons().getFirst().matches().size());
         assertArrayEquals(expectedDistribution, result.getSimilarityDistribution());
-        assertEquals(0.9629, result.getAllComparisons().get(0).similarity(), DELTA);
+        assertEquals(0.9629, result.getAllComparisons().getFirst().similarity(), DELTA);
     }
 
     @Test
@@ -105,17 +105,17 @@ class BasicFunctionalityTest extends TestBase {
 
     @Test
     @DisplayName("test single-files as submissions (no folders)")
-    void testSingleFileSubmisssions() throws ExitException {
+    void testSingleFileSubmissions() throws ExitException {
         JPlagResult result = runJPlagWithDefaultOptions("SimpleSingleFile");
 
         assertEquals(2, result.getNumberOfSubmissions());
         assertEquals(1, result.getAllComparisons().size());
         assertEquals(1, result.getSimilarityDistribution()[DISTRIBUTION_INDEX]);
-        assertEquals(0.666, result.getAllComparisons().get(0).similarity(), DELTA);
+        assertEquals(0.666, result.getAllComparisons().getFirst().similarity(), DELTA);
 
-        var matches = result.getAllComparisons().get(0).matches();
+        var matches = result.getAllComparisons().getFirst().matches();
         // Run JPlag for same files but in submission folders:
-        var expectedMatches = runJPlagWithDefaultOptions("SimpleDuplicate").getAllComparisons().get(0).matches();
+        var expectedMatches = runJPlagWithDefaultOptions("SimpleDuplicate").getAllComparisons().getFirst().matches();
         assertEquals(expectedMatches.size(), matches.size());
 
         for (int i = 0; i < matches.size(); i++) {

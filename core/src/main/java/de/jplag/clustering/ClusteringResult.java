@@ -44,8 +44,8 @@ public class ClusteringResult<T> {
     }
 
     /**
-     * Community strength of the clustering. The expectation of community strength in a random graph is zero and it can not
-     * exceed one. It's the sum of it's clusters {@link Cluster#getCommunityStrength}. If the underlying network is not
+     * Community strength of the clustering. The expectation of community strength in a random graph is zero, and it can not
+     * exceed one. It's the sum of its clusters {@link Cluster#getCommunityStrength}. If the underlying network is not
      * changed, a higher community strength denotes a better clustering. See: Finding and evaluating community structure in
      * networks, M. E. J. Newman and M. Girvan, Phys. Rev. E 69, 026113 – Published 26 February 2004, Doi:
      * 10.1103/PhysRevE.69.026113 It's called modularity in that paper.
@@ -132,7 +132,7 @@ public class ClusteringResult<T> {
          * all other except itself and first element (as these two were already compared when we processed the first element),
          * n-2 comparisons. compare third element to all other but itself and all previously compared: n-3 comparisons and so
          * on. when we reach the second to last element we have n-(n-1)=1 comparisons left. when we reach the last element it
-         * has already been compared to all other. adding up all comparisons we get: (n-1) + (n-2) + (n-3) + ... + (n-(n-1)) =
+         * has already been compared to all others. adding up all comparisons we get: (n-1) + (n-2) + (n-3) + ... + (n-(n-1)) =
          * Gauss sum of (n-1)
          */
         return sumOfSimilarities / numberOfComparisons;
