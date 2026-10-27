@@ -42,7 +42,7 @@ public abstract class AbstractModelView {
      */
     public void writeToFile(String suffix) {
         File treeViewFile = new File(file + suffix);
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(treeViewFile));) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(treeViewFile))) {
             if (!treeViewFile.createNewFile()) {
                 logger.warn("Overwriting tree view file: {}", treeViewFile);
             }

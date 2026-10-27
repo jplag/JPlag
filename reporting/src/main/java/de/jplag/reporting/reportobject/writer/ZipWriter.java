@@ -30,7 +30,7 @@ public class ZipWriter implements JPlagResultWriter {
     private static final String WRITE_STRING_ERROR = "Failed to write string entry %s";
     private static final String CLOSE_FILE_ERROR = "Failed to close zip file properly";
 
-    private Path root;
+    private final Path root;
 
     /**
      * The zip file to write to.

@@ -13,7 +13,7 @@ import java.util.Objects;
  */
 public class RelativePath {
     private static final String TO_STRING_SEPARATOR = "/";
-    private String[] segments;
+    private final String[] segments;
 
     /**
      * Builds a new {@link RelativePath} with the given names

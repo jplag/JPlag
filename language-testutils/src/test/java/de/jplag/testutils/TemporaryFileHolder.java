@@ -10,7 +10,7 @@ import java.util.List;
  * Stores all temporary files that are created for a {@link LanguageModuleTest} and provides the option to delete them.
  */
 public class TemporaryFileHolder {
-    private static List<Path> temporaryFiles = new ArrayList<>();
+    private static final List<Path> temporaryFiles = new ArrayList<>();
 
     /**
      * Deletes all temporary files that have been created up to this point.
