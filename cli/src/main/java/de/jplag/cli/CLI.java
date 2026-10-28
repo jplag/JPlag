@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.jplag.cli.server.ConfigurationSever;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -146,7 +147,10 @@ public final class CLI {
         List<File> inputs = this.getAllInputs();
 
         if (inputs.isEmpty()) {
-            this.runViewer(null);
+            ConfigurationSever s = new ConfigurationSever(1996);
+            System.out.println("http://localhost:1996");
+            System.in.read();
+            //this.runViewer(null);
             return;
         }
 

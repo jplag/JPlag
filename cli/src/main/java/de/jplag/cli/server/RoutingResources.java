@@ -24,7 +24,7 @@ public class RoutingResources implements Routing {
     }
 
     @Override
-    public ResponseData fetchData(RoutingPath subPath, HttpExchange request, ReportViewer viewer) {
+    public ResponseData fetchData(RoutingPath subPath, HttpExchange request, WebServer viewer) {
         String fullPath = this.prefix + subPath.asPath();
         return ResponseData.fromResourceUrl(fullPath);
     }

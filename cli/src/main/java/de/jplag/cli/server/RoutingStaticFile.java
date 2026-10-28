@@ -33,7 +33,7 @@ public class RoutingStaticFile implements Routing {
     }
 
     @Override
-    public ResponseData fetchData(RoutingPath subPath, HttpExchange request, ReportViewer viewer) {
+    public ResponseData fetchData(RoutingPath subPath, HttpExchange request, WebServer viewer) {
         if (this.data != null) {
             return new ResponseData(new ByteArrayInputStream(this.data), contentType, this.data.length);
         }

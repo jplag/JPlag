@@ -25,7 +25,7 @@ public class RoutingAlias implements Routing {
     }
 
     @Override
-    public ResponseData fetchData(RoutingPath subPath, HttpExchange request, ReportViewer viewer) {
+    public ResponseData fetchData(RoutingPath subPath, HttpExchange request, WebServer viewer) {
         Pair<RoutingPath, Routing> redirect = viewer.getRoutingTree().resolveRouting(path);
         if (redirect == null) {
             return null;

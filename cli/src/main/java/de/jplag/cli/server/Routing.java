@@ -20,7 +20,7 @@ public interface Routing {
      * @param viewer The current report viewer
      * @return The data to respond with
      */
-    ResponseData fetchData(RoutingPath subPath, HttpExchange request, ReportViewer viewer);
+    ResponseData fetchData(RoutingPath subPath, HttpExchange request, WebServer viewer);
 
     /**
      * Use the other routing if this routing does not find any data.

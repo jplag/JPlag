@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createMemoryHistory, createRouter, createWebHistory } from 'vue-router'
 import FileUploadView from './views/FileUploadView.vue'
 import OverviewViewWrapper from './viewWrapper/OverviewViewWrapper.vue'
 import ComparisonViewWrapper from './viewWrapper/ComparisonViewWrapper.vue'
@@ -12,7 +12,7 @@ import { Version } from '@jplag/model'
  * The router is used to navigate between the different views of the application.
  */
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createMemoryHistory(),
   routes: [
     {
       path: '/',

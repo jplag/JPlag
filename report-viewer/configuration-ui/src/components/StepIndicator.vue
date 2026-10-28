@@ -13,10 +13,10 @@
           'text-accent': state === 'active'
         }"
       />
-      <span>{{ title }}</span>
+      <span v-if="expanded">{{ title }}</span>
     </div>
 
-    <p v-if="state === 'active' && description !== null">
+    <p v-if="expanded && state === 'active' && description !== null" class="text-gray">
       {{ description }}
     </p>
   </ContainerComponent>
@@ -44,6 +44,10 @@ defineProps({
   validity: {
     type: Boolean,
     required: true
+  },
+  expanded: {
+    type: Boolean,
+    default: true
   }
 })
 </script>

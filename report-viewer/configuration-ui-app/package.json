@@ -1,0 +1,30 @@
+{
+  "name": "jplag-app",
+  "productName": "JPlag",
+  "version": "1.0.0",
+  "description": "Electron wrapper for the JPlag server",
+  "main": ".vite/build/main.cjs",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "electron-log": "^5.4.4"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^8.0.1",
+    "@electron-forge/maker-deb": "^8.0.1",
+    "@electron-forge/maker-rpm": "^8.0.1",
+    "@electron-forge/maker-squirrel": "^8.0.1",
+    "@electron-forge/maker-zip": "^8.0.1",
+    "@electron-forge/plugin-vite": "^8.0.1",
+    "@electron-forge/shared-types": "^8.0.1",
+    "@types/node": "^26.6.5",
+    "electron": "^44.9.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4"
+  }
+}

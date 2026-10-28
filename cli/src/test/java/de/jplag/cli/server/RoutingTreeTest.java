@@ -67,7 +67,7 @@ class RoutingTreeTest {
 
     private record TestRouting(String path) implements Routing {
         @Override
-        public ResponseData fetchData(RoutingPath subPath, HttpExchange request, ReportViewer viewer) {
+        public ResponseData fetchData(RoutingPath subPath, HttpExchange request, WebServer viewer) {
             return null;
         }
     }

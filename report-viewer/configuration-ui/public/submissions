@@ -1,0 +1,8 @@
+{
+  "newSubmissions": 123,
+  "oldSubmissions": 0,
+  "detectedLanguages": {
+    "java": 123,
+    "python3": 3
+  }
+}
