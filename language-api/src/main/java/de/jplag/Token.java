@@ -31,32 +31,6 @@ public class Token {
     private CodeSemantics semantics; // value null if no semantics
 
     /**
-     * Creates a token with column and length information.
-     * @param type is the token type.
-     * @param file is the name of the source code file.
-     * @param line is the line index in the source code where the token resides. Index is 1-based.
-     * @param column is the column index, meaning where the token starts in the line. Index is 1-based.
-     * @param length is the length of the token in the source code.
-     * @deprecated Replaced by constructor that takes explicit end position
-     */
-    @Deprecated(since = "6.2.0", forRemoval = true)
-    public Token(TokenType type, File file, int line, int column, int length) {
-        if (line == 0) {
-            logger.warn("Creating a token with line index 0 while index is 1-based");
-        }
-        if (column == 0) {
-            logger.warn("Creating a token with column index 0 while index is 1-based");
-        }
-        this.type = type;
-        this.file = file;
-        this.startLine = line;
-        this.startColumn = column;
-        this.endLine = line;
-        this.endColumn = column + length;
-        this.length = length;
-    }
-
-    /**
      * Creates a token with a start and end position.
      * @param type is the token type.
      * @param file is the name of the source code file.
