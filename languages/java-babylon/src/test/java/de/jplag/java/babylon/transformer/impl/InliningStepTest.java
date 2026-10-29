@@ -1,0 +1,50 @@
+package de.jplag.java.babylon.transformer.impl;
+
+import de.jplag.java.babylon.pipeline.TransformationPipeline;
+import de.jplag.java.babylon.transformer.TransformerTest;
+
+/**
+ * Unit test for {@link InliningStep}.
+ */
+public class InliningStepTest extends TransformerTest {
+    @Override
+    protected String getFileName() {
+        return "Inline.java";
+    }
+
+    @Override
+    protected TransformationPipeline getPipeline() {
+        return pipeline(new InliningStep(20, false));
+    }
+
+    @Override
+    protected String getExpectedOriginal() {
+        return """
+                func @loc="1:1:Inline.java" @"main" (%0 : java.type:"Inline")java.type:"void" -> {
+                    %1 : java.type:"java.lang.String" = constant @loc="2:35" @"Hello";
+                    %2 : java.type:"java.lang.String" = invoke %0 %1 @loc="2:26" @java.ref:"Inline::toInline(java.lang.String):java.lang.String";
+                    %3 : java.type:"java.lang.String" = invoke %0 %2 @loc="2:16" @java.ref:"Inline::toInline2(java.lang.String):java.lang.String";
+                    invoke %3 @loc="2:5" @java.ref:"java.lang.IO::println(java.lang.Object):void";
+                    return @loc="1:1";
+                };""";
+    }
+
+    @Override
+    protected String getExpectedTransformed() {
+        return """
+                func @loc="1:1:Inline.java" @"main" (%0 : java.type:"Inline")java.type:"void" -> {
+                    %1 : java.type:"java.lang.String" = constant @loc="2:35" @"Hello";
+                    %2 : Var<java.type:"java.lang.String"> = var;
+                    %3 : Var<java.type:"java.lang.String"> = var %1 @loc="5:1" @"parameter";
+                    %4 : java.type:"java.lang.String" = constant @loc="6:12" @"length: ";
+                    %5 : java.type:"java.lang.String" = var.load %3 @loc="6:25";
+                    %6 : java.type:"int" = invoke %5 @loc="6:25" @java.ref:"java.lang.String::length():int";
+                    %7 : java.type:"java.lang.String" = concat %4 %6 @loc="6:12";
+                    var.store %2 %7 @loc="2:26";
+                    %8 : java.type:"java.lang.String" = var.load %2;
+                    %9 : java.type:"java.lang.String" = invoke %0 %8 @loc="2:16" @java.ref:"Inline::toInline2(java.lang.String):java.lang.String";
+                    invoke %9 @loc="2:5" @java.ref:"java.lang.IO::println(java.lang.Object):void";
+                    return @loc="1:1";
+                };""";
+    }
+}
