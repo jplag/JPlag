@@ -1,8 +1,9 @@
 <template>
   <div
-    class="grid grid-cols-1 grid-rows-[auto_600px_90vh] gap-5 md:grid-cols-[2fr_1fr] md:grid-rows-[auto_1fr] md:overflow-hidden print:grid-cols-1 print:grid-rows-[auto_1fr]"
+    ref="container"
+    class="grid grid-cols-1 grid-rows-[auto_600px_90vh] gap-y-5 md:grid-cols-[2fr_20px_1fr] md:grid-rows-[auto_1fr] md:overflow-hidden print:grid-cols-1 print:grid-rows-[auto_1fr]"
   >
-    <ContainerComponent class="col-start-1 row-start-1 md:col-end-3 md:row-end-2">
+    <ContainerComponent class="col-start-1 row-start-1 md:col-end-4 md:row-end-2">
       <h2>Cluster</h2>
       <div class="flex flex-row items-center space-x-5">
         <span class="flex items-center gap-x-1">
@@ -65,8 +66,12 @@
       </TabbedContainer>
     </div>
 
+    <div ref="resizer" class="hidden w-5 cursor-col-resize md:col-start-2 md:row-start-2 md:flex">
+      <!-- Resizer -->
+    </div>
+
     <TabbedContainer
-      class="col-start-1 row-start-3 flex overflow-hidden md:col-start-2 md:row-start-2 print:hidden"
+      class="col-start-1 row-start-3 flex overflow-hidden md:col-start-3 md:row-start-2 print:hidden"
       :tabs="comparisonTableOptions"
       :first-bottom-tooltip-index="1"
     >
@@ -106,7 +111,7 @@ import {
   MetricIcon
 } from '@jplag/ui-components/widget'
 import { ContainerComponent, TextInformation, TabbedContainer } from '@jplag/ui-components/base'
-import { computed, ref, onErrorCaptured, type Ref } from 'vue'
+import { computed, ref, onErrorCaptured, type Ref, onMounted } from 'vue'
 import { redirectOnError } from '@/router'
 import { ClusterListElement, ClusterListElementMember, MetricJsonIdentifier } from '@jplag/model'
 import { reportStore } from '@/stores/reportStore'
@@ -222,5 +227,45 @@ const hoveredEdge: Ref<{ firstId: string; secondId: string } | null> = ref(null)
 onErrorCaptured((error) => {
   redirectOnError(error, 'Error displaying cluster:\n', 'OverviewView', 'Back to overview')
   return false
+})
+
+const isResizing = ref(false)
+const resizer = ref<HTMLDivElement | null>(null)
+const container = ref<HTMLDivElement | null>(null)
+onMounted(() => {
+  if (resizer.value) {
+    resizer.value.addEventListener('mousedown', (event) => {
+      isResizing.value = true
+      document.body.style.cursor = 'col-resize'
+      event.preventDefault()
+    })
+  }
+})
+document.addEventListener('mouseup', () => {
+  if (isResizing.value) {
+    isResizing.value = false
+    document.body.style.cursor = 'default'
+  }
+})
+const minWidthPercentage = 33 // Minimum width percentage for each column
+document.addEventListener('mousemove', (event) => {
+  if (isResizing.value && resizer.value && container.value) {
+    const containerRect = container.value.getBoundingClientRect()
+    const containerWidth = containerRect.width
+    const leftWidth = event.clientX - containerRect.left
+    const rightWidth = containerWidth - leftWidth - resizer.value.offsetWidth
+    let leftPercentage = (leftWidth / containerWidth) * 100
+    let rightPercentage = (rightWidth / containerWidth) * 100
+    if (leftPercentage < minWidthPercentage) {
+      leftPercentage = minWidthPercentage // Minimum width for left column
+      rightPercentage = 100 - leftPercentage
+    }
+    if (rightPercentage < minWidthPercentage) {
+      rightPercentage = minWidthPercentage // Minimum width for right column
+      leftPercentage = 100 - rightPercentage
+    }
+
+    container.value.style.gridTemplateColumns = `${leftPercentage}fr ${resizer.value.offsetWidth}px ${rightPercentage}fr`
+  }
 })
 </script>
