@@ -14,6 +14,7 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,8 +70,8 @@ public final class LanguageLoader {
         logger.debug("Attempting to load modules from external jar files");
         Path path = getModulesPath();
         if (path != null) {
-            try {
-                Files.list(path).filter(it -> it.getFileName().toString().endsWith(".jar")).forEach(moduleFile -> {
+            try (Stream<Path> files = Files.list(path)) {
+                files.filter(it -> it.getFileName().toString().endsWith(".jar")).forEach(moduleFile -> {
                     loadExternalModule(languages, moduleFile);
                 });
             } catch (IOException _) {
@@ -89,7 +90,7 @@ public final class LanguageLoader {
                     languages.put(language.getIdentifier(), language);
                 }
             }
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException _) {
             logger.error("Failed to load module: {}", languageJarFile.getFileName());
         }
     }
@@ -101,7 +102,7 @@ public final class LanguageLoader {
             try {
                 Path jarLocation = Path.of(LanguageLoader.class.getProtectionDomain().getCodeSource().getLocation().toURI());
                 path = jarLocation.toRealPath().getParent().resolve("modules");
-            } catch (URISyntaxException | IOException e) {
+            } catch (URISyntaxException | IOException _) {
                 logger.error("Failed to find location of external modules");
             }
         } else {
