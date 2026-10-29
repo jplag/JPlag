@@ -11,7 +11,7 @@ import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
 
 /**
- * Tests for the legacy behaviour of the String-based base code initializer.
+ * Tests for the legacy behavior of the String-based base code initializer.
  */
 @Deprecated(since = "4.0.0", forRemoval = true)
 class LegacyBaseCodeTest extends BaseCodeTest {

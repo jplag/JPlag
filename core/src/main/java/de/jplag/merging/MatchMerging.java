@@ -42,7 +42,7 @@ public class MatchMerging {
 
     /**
      * Runs the internal match merging pipeline. It computes neighboring matches, merges them based on
-     * {@link MergingOptions} and removes remaining too short matches afterwards.
+     * {@link MergingOptions} and removes remaining too short matches afterward.
      * @param result is the initially computed result object
      * @return JPlagResult containing the merged matches
      */
@@ -99,7 +99,7 @@ public class MatchMerging {
         }
 
         for (int i = 0; i < sortedByLeft.size() - 1; i++) {
-            if (rightPosition.get(sortedByLeft.get(i)).intValue() == rightPosition.get(sortedByLeft.get(i + 1)).intValue() - 1) {
+            if (rightPosition.get(sortedByLeft.get(i)) == rightPosition.get(sortedByLeft.get(i + 1)) - 1) {
                 neighbors.add(new Neighbor(sortedByLeft.get(i), sortedByLeft.get(i + 1)));
             }
         }
@@ -135,7 +135,6 @@ public class MatchMerging {
      * This function iterates through the neighboring matches and checks which fit the merging criteria. Those who do are
      * merged and the original matches are removed. This is done, until there are either no neighbors left, or none fit the
      * criteria.
-     * @return globalMatches containing merged matches.
      */
     private void mergeNeighbors(List<Match> globalMatches, Submission leftSubmission, Submission rightSubmission) {
         int i = 0;

@@ -38,6 +38,7 @@ import de.jplag.options.JPlagOptions;
  */
 public class Submission implements Comparable<Submission> {
     private static final Logger logger = LoggerFactory.getLogger(Submission.class);
+    private static final String ERROR_COPY_FILE = "Error copying file";
 
     private final String name; // identifier for the submission (a directory or file name).
     private final File submissionRootFile; // Root of the submission, a director or file (including the subdir if used).
@@ -198,7 +199,7 @@ public class Submission implements Comparable<Submission> {
      * @param tokenList is the list of these tokens.
      */
     public void setTokenList(List<Token> tokenList) {
-        this.tokenList = Collections.unmodifiableList(new ArrayList<>(tokenList));
+        this.tokenList = List.copyOf(tokenList);
     }
 
     /**
@@ -224,7 +225,7 @@ public class Submission implements Comparable<Submission> {
             try {
                 Files.copy(file.toPath(), new File(errorDirectory, file.getName()).toPath());
             } catch (IOException exception) {
-                logger.error("Error copying file: " + exception.getMessage(), exception);
+                logger.error(ERROR_COPY_FILE, exception);
             }
         }
     }
@@ -312,7 +313,7 @@ public class Submission implements Comparable<Submission> {
 
     private List<Integer> getOrder(List<Token> tokenList) {
         List<Integer> order = new ArrayList<>(tokenList.size());  // a little too big
-        int currentLineNumber = tokenList.get(0).getStartLine();
+        int currentLineNumber = tokenList.getFirst().getStartLine();
         order.add(currentLineNumber);
         for (Token token : tokenList) {
             if (token.getStartLine() != currentLineNumber) {

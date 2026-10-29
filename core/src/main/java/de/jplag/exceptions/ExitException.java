@@ -3,7 +3,7 @@ package de.jplag.exceptions;
 import java.io.Serial;
 
 /**
- * Exceptions for problems during the execution of JPlag that lead to an preemptive exit.
+ * Exceptions for problems during the execution of JPlag that lead to a preemptive exit.
  */
 public abstract class ExitException extends Exception {
 
