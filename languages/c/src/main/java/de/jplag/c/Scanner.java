@@ -1,6 +1,6 @@
 package de.jplag.c;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -18,7 +18,7 @@ public class Scanner {
     /** Logger used by the scanner and the ANTLR generated scanner. */
     static final Logger logger = LoggerFactory.getLogger(Scanner.class);
 
-    private File currentFile;
+    private Path currentFile;
     private List<Token> tokens;
 
     /**
@@ -27,9 +27,9 @@ public class Scanner {
      * @return the token sequence.
      * @throws ParsingException if parsing fails.
      */
-    public List<Token> scan(Set<File> files) throws ParsingException {
+    public List<Token> scan(Set<Path> files) throws ParsingException {
         tokens = new ArrayList<>();
-        for (File file : files) {
+        for (Path file : files) {
             this.currentFile = file;
             logger.trace("Scanning file {}", currentFile);
             try {

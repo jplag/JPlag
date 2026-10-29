@@ -4,10 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -19,8 +20,8 @@ class RoutingStaticFileTest {
 
     @BeforeAll
     static void setUp() throws IOException {
-        File testFile = File.createTempFile("testFile", ".txt");
-        try (FileWriter writer = new FileWriter(testFile)) {
+        Path testFile = Files.createTempFile("testFile", ".txt");
+        try (Writer writer = Files.newBufferedWriter(testFile)) {
             writer.write(TEST_FILE_CONTENT);
         }
         routing = new RoutingStaticFile(testFile, TEST_CONTENT_TYPE);

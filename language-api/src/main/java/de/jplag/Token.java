@@ -1,6 +1,6 @@
 package de.jplag;
 
-import java.io.File;
+import java.nio.file.Path;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,35 +26,9 @@ public class Token {
     private final int length;
     private final int endLine;
     private final int endColumn;
-    private final File file;
+    private final Path file;
     private final TokenType type;
     private CodeSemantics semantics; // value null if no semantics
-
-    /**
-     * Creates a token with column and length information.
-     * @param type is the token type.
-     * @param file is the name of the source code file.
-     * @param line is the line index in the source code where the token resides. Index is 1-based.
-     * @param column is the column index, meaning where the token starts in the line. Index is 1-based.
-     * @param length is the length of the token in the source code.
-     * @deprecated Replaced by constructor that takes explicit end position
-     */
-    @Deprecated(since = "6.2.0", forRemoval = true)
-    public Token(TokenType type, File file, int line, int column, int length) {
-        if (line == 0) {
-            logger.warn("Creating a token with line index 0 while index is 1-based");
-        }
-        if (column == 0) {
-            logger.warn("Creating a token with column index 0 while index is 1-based");
-        }
-        this.type = type;
-        this.file = file;
-        this.startLine = line;
-        this.startColumn = column;
-        this.endLine = line;
-        this.endColumn = column + length;
-        this.length = length;
-    }
 
     /**
      * Creates a token with a start and end position.
@@ -66,7 +40,7 @@ public class Token {
      * @param endColumn is the column index, meaning where the token ends in the line. Index is 1-based.
      * @param length is the length of the token in the source code.
      */
-    public Token(TokenType type, File file, int startLine, int startColumn, int endLine, int endColumn, int length) {
+    public Token(TokenType type, Path file, int startLine, int startColumn, int endLine, int endColumn, int length) {
         if (logger.isWarnEnabled()) {
             if (startLine == 0 || endLine == 0) {
                 logger.warn("Creating a token with line index 0 while index is 1-based. {}",
@@ -97,7 +71,7 @@ public class Token {
      * @param file is the name of the source code file.
      * @param trace is the tracing information of the token, meaning line, column, and length.
      */
-    public Token(TokenType type, File file, TokenTrace trace) {
+    public Token(TokenType type, Path file, TokenTrace trace) {
         this(type, file, trace.line(), trace.column(), trace.line(), trace.column() + trace.length(), trace.length());
     }
 
@@ -112,7 +86,7 @@ public class Token {
      * @param length is the length of the token in the source code.
      * @param semantics is a record containing semantic information about the token.
      */
-    public Token(TokenType type, File file, int startLine, int startColumn, int endLine, int endColumn, int length, CodeSemantics semantics) {
+    public Token(TokenType type, Path file, int startLine, int startColumn, int endLine, int endColumn, int length, CodeSemantics semantics) {
         this(type, file, startLine, startColumn, endLine, endColumn, length);
         this.semantics = semantics;
     }
@@ -122,7 +96,7 @@ public class Token {
      * @param file is the name of the source code file.
      * @return the file end token.
      */
-    public static Token fileEnd(File file) {
+    public static Token fileEnd(Path file) {
         return new Token(SharedTokenType.FILE_END, file, NO_VALUE, NO_VALUE, NO_VALUE, NO_VALUE, NO_VALUE);
     }
 
@@ -132,7 +106,7 @@ public class Token {
      * @param file is the name of the source code file.
      * @return the file end token.
      */
-    public static Token semanticFileEnd(File file) {
+    public static Token semanticFileEnd(Path file) {
         CodeSemantics semantics = CodeSemantics.createControl();
         return new Token(SharedTokenType.FILE_END, file, NO_VALUE, NO_VALUE, NO_VALUE, NO_VALUE, NO_VALUE, semantics);
     }
@@ -182,7 +156,7 @@ public class Token {
     /**
      * @return the name of the file where the source code that the token represents is located in.
      */
-    public File getFile() {
+    public Path getFile() {
         return file;
     }
 
@@ -225,7 +199,7 @@ public class Token {
         return semantics;
     }
 
-    private static String generateErrorPosition(TokenType type, File file, int startLine, int startColumn, int endLine, int endColumn) {
+    private static String generateErrorPosition(TokenType type, Path file, int startLine, int startColumn, int endLine, int endColumn) {
         return String.format("Type: %s; File: %s; Start: %d:%d; End: %d:%d", type, file, startLine, startColumn, endLine, endColumn);
     }
 }

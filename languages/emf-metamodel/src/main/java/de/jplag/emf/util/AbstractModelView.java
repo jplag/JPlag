@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
 
 import org.eclipse.emf.ecore.EObject;
 import org.slf4j.Logger;
@@ -17,11 +18,11 @@ import de.jplag.TokenType;
  */
 public abstract class AbstractModelView {
 
-    protected final File file;
+    protected final Path file;
     protected final Logger logger;
     protected final StringBuilder viewBuilder;
 
-    protected AbstractModelView(File file) {
+    protected AbstractModelView(Path file) {
         this.file = file;
         logger = LoggerFactory.getLogger(this.getClass());
         viewBuilder = new StringBuilder();
@@ -41,7 +42,7 @@ public abstract class AbstractModelView {
      */
     public void writeToFile(String suffix) {
         File treeViewFile = new File(file + suffix);
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(treeViewFile));) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(treeViewFile))) {
             if (!treeViewFile.createNewFile()) {
                 logger.warn("Overwriting tree view file: {}", treeViewFile);
             }
