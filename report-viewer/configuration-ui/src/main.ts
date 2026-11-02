@@ -3,10 +3,9 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import VueVirtualScroller from 'vue-virtual-scroller'
 
-import '@jplag/ui-components/style/style.css'
+import './style.css'
 import { createPinia } from 'pinia'
-import {router} from '@jplag/report-viewer'
-
+import { router } from '@jplag/report-viewer'
 
 const app = createApp(App)
 app.use(createPinia())
