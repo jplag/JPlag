@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import de.jplag.options.ParsingOptions;
+import de.jplag.options.ReportingOptions;
+import de.jplag.options.SubmissionFileOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,10 +57,10 @@ public class JPlagOptionsBuilder {
         String baseCodePath = this.cliOptions.baseCode;
         Path baseCodeDirectory = baseCodePath == null ? null : Path.of(baseCodePath);
         if (baseCodeDirectory == null || Files.exists(baseCodeDirectory)) {
-            return jPlagOptions.withBaseCodeSubmissionDirectory(baseCodeDirectory);
+            return jPlagOptions.withSubmissionFileOptions(jPlagOptions.submissionFileOptions().withBaseCodeSubmissionDirectory(baseCodeDirectory));
         }
         logger.error("Using legacy partial base code API. Please migrate to new full path base code API.");
-        return jPlagOptions.withBaseCodeSubmissionDirectory(baseCodeDirectory);
+        return jPlagOptions.withSubmissionFileOptions(jPlagOptions.submissionFileOptions().withBaseCodeSubmissionDirectory(baseCodeDirectory));
     }
 
     private Set<Path> mapCliSubmissionDirectoriesToPaths(Collection<File> submissionDirectory) {
@@ -72,7 +75,7 @@ public class JPlagOptionsBuilder {
 
         return new JPlagOptions(this.cliInputHandler.getSelectedLanguage(), this.cliOptions.minTokenMatch, submissionDirectories,
                 oldSubmissionDirectories, null, this.cliOptions.advanced.subdirectory, suffixes, this.cliOptions.advanced.exclusionFileName,
-                JPlagOptions.DEFAULT_SIMILARITY_METRIC, this.cliOptions.advanced.similarityThreshold, this.cliOptions.shownComparisons,
+                ParsingOptions.DEFAULT_SIMILARITY_METRIC, this.cliOptions.advanced.similarityThreshold, this.cliOptions.shownComparisons,
                 clusteringOptions, this.cliOptions.advanced.debug, mergingOptions, this.cliOptions.normalize,
                 this.cliOptions.advanced.analyzeComments, frequencyAnalysisOptions);
     }

@@ -11,6 +11,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
+import de.jplag.options.ParsingOptions;
+import de.jplag.options.SubmissionFileOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,15 +37,15 @@ public class SubmissionSet {
      * Submissions to check for plagiarism.
      */
     private final List<Submission> allSubmissions;
-    private final List<Submission> invalidSubmissions;
-    private final List<Submission> submissions;
+    private List<Submission> invalidSubmissions;
+    private List<Submission> submissions;
 
     /**
      * Base code submission if it exists.
      */
     private final Submission baseCodeSubmission;
 
-    private final JPlagOptions options;
+    private final SubmissionFileOptions submissionFileOptions;
     private final AtomicInteger errors = new AtomicInteger(0);
     private final AtomicLong tokenizationDuration = new AtomicLong(0);
 
@@ -54,16 +56,10 @@ public class SubmissionSet {
      * @param options The JPlag options
      * @throws ExitException if the submissions cannot be parsed.
      */
-    public SubmissionSet(List<Submission> submissions, Submission baseCode, JPlagOptions options) throws ExitException {
+    public SubmissionSet(List<Submission> submissions, Submission baseCode, SubmissionFileOptions submissionFileOptions) throws ExitException {
         this.allSubmissions = submissions;
         this.baseCodeSubmission = baseCode;
-        this.options = options;
-        parseSubmissions(allSubmissions);
-        if (baseCodeSubmission != null) {
-            parseBaseCodeSubmission(baseCodeSubmission);
-        }
-        this.submissions = filterValidSubmissions();
-        invalidSubmissions = filterInvalidSubmissions();
+        this.submissionFileOptions = submissionFileOptions;
     }
 
     /**
@@ -109,6 +105,15 @@ public class SubmissionSet {
         return invalidSubmissions;
     }
 
+    public void parse(ParsingOptions parsingOptions) throws ExitException {
+        parseSubmissions(allSubmissions, parsingOptions);
+        if (baseCodeSubmission != null) {
+            parseBaseCodeSubmission(baseCodeSubmission, parsingOptions);
+        }
+        this.submissions = filterValidSubmissions();
+        invalidSubmissions = filterInvalidSubmissions();
+    }
+
     /**
      * Normalizes the token sequences of all submissions (including basecode). This makes the token sequence invariant to
      * dead code insertion and independent statement reordering by removing dead tokens and optionally reordering tokens to
@@ -140,16 +145,16 @@ public class SubmissionSet {
     /**
      * Parse the given base code submission.
      */
-    private void parseBaseCodeSubmission(Submission baseCode) throws BasecodeException, LanguageException {
+    private void parseBaseCodeSubmission(Submission baseCode, ParsingOptions parsingOptions) throws BasecodeException, LanguageException {
         logger.trace("----- Parsing basecode submission: {}", baseCode.getName());
         long startTimeMillis = System.currentTimeMillis();
-        boolean successful = baseCode.parse(options.debugParser(), options.normalize(), options.minimumTokenMatch(), options.analyzeComments());
+        boolean successful = baseCode.parse(parsingOptions);
         long durationInMilliseconds = System.currentTimeMillis() - startTimeMillis;
         tokenizationDuration.addAndGet(durationInMilliseconds);
         if (!successful) {
             if (baseCode.getState() == SubmissionState.TOO_SMALL) {
                 throw new BasecodeException("Basecode contains %d token(s), which is below the minimum match length (%d)!"
-                        .formatted(baseCode.getNumberOfTokens(), options.minimumTokenMatch()));
+                        .formatted(baseCode.getNumberOfTokens(), parsingOptions.minimumTokenMatch()));
             }
             throw new BasecodeException("Error while parsing the basecode submission!");
         }
@@ -159,7 +164,7 @@ public class SubmissionSet {
      * Parse all given submissions.
      * @param submissions The list of submissions
      */
-    private void parseSubmissions(List<Submission> submissions) throws ExitException {
+    private void parseSubmissions(List<Submission> submissions, ParsingOptions parsingOptions) throws ExitException {
         if (submissions.isEmpty()) {
             logger.error("No submissions to parse!");
             return;
@@ -167,7 +172,7 @@ public class SubmissionSet {
 
         ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.PARSING, submissions.size());
 
-        parseSubmissionsInParallel(submissions, progressBar);
+        parseSubmissionsInParallel(submissions, progressBar, parsingOptions);
 
         progressBar.dispose();
 
@@ -176,12 +181,12 @@ public class SubmissionSet {
         logger.debug("{} parser error{}!", errors, errors.get() != 1 ? "s" : "");
     }
 
-    private void parseSubmissionsInParallel(List<Submission> submissions, ProgressBar progressBar) throws SubmissionException {
+    private void parseSubmissionsInParallel(List<Submission> submissions, ProgressBar progressBar, ParsingOptions parsingOptions) throws SubmissionException {
         try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
             long startTimeMillis = System.currentTimeMillis();
             for (Submission submission : submissions) {
                 executor.submit(() -> {
-                    parseSingleSubmission(progressBar, submission);
+                    parseSingleSubmission(progressBar, submission, parsingOptions);
                     return null; // Ensure the lambda is a Callable for exception handling
                 });
             }
@@ -197,8 +202,8 @@ public class SubmissionSet {
     /**
      * Parses a single submission (thread safe).
      */
-    private void parseSingleSubmission(ProgressBar progressBar, Submission submission) throws LanguageException {
-        boolean successful = submission.parse(options.debugParser(), options.normalize(), options.minimumTokenMatch(), options.analyzeComments());
+    private void parseSingleSubmission(ProgressBar progressBar, Submission submission, ParsingOptions parsingOptions) throws LanguageException {
+        boolean successful = submission.parse(parsingOptions);
         if (!successful) {
             errors.incrementAndGet();
             logger.debug("ERROR -> Submission {} removed with reason {}", submission.getName(), submission.getState());

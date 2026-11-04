@@ -27,10 +27,10 @@ public record DataSetRunConfiguration(JPlagOptions jPlagOptions, String identifi
 
         for (int minimumTokenMatch : configuredOptions.getMinimumTokenMatches()) {
             JPlagOptions options = new JPlagOptions(dataSet.language(), dataSet.getSourceDirectories(), Set.of());
-            options = options.withMinimumTokenMatch(minimumTokenMatch);
+            options = options.withParsingOptions(options.parsingOptions().withMinimumTokenMatch(minimumTokenMatch));
             if (configuredOptions.baseCodeDirectory() != null) {
                 Path baseCode = dataSet.format().getBaseCodeDirectory(dataSet, configuredOptions.baseCodeDirectory());
-                options = options.withBaseCodeSubmissionDirectory(baseCode);
+                options = options.withSubmissionFileOptions(options.submissionFileOptions().withBaseCodeSubmissionDirectory(baseCode));
             }
             result.add(new DataSetRunConfiguration(options, String.format(IDENTIFIER_FORMAT, minimumTokenMatch)));
         }

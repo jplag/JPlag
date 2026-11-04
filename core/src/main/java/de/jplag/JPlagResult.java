@@ -7,6 +7,7 @@ import java.util.function.ToDoubleFunction;
 
 import de.jplag.clustering.ClusteringResult;
 import de.jplag.options.JPlagOptions;
+import de.jplag.options.ReportingOptions;
 import de.jplag.options.SimilarityMetric;
 
 /**
@@ -84,7 +85,7 @@ public class JPlagResult {
      * @return a list of comparisons sorted descending by similarity.
      */
     public List<JPlagComparison> getComparisons(int numberOfComparisons) {
-        if (numberOfComparisons == JPlagOptions.SHOW_ALL_COMPARISONS) {
+        if (numberOfComparisons == ReportingOptions.SHOW_ALL_COMPARISONS) {
             return comparisons;
         }
         return comparisons.subList(0, Math.min(numberOfComparisons, comparisons.size()));
@@ -171,7 +172,7 @@ public class JPlagResult {
     @Override
     public String toString() {
         return String.format("JPlagResult { comparisons: %d, duration: %d ms + %d ms, language: %s, submissions: %d }", getAllComparisons().size(),
-                getTokenizationDuration(), getComparisonDuration(), getOptions().language().getName(), submissions.numberOfSubmissions());
+                getTokenizationDuration(), getComparisonDuration(), getOptions().parsingOptions().language().getName(), submissions.numberOfSubmissions());
     }
 
     /**

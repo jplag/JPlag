@@ -69,7 +69,7 @@ public class MatchMerging {
         int matchesBeforeMerging = globalMatches.size();
         mergeNeighbors(globalMatches, leftSubmission, rightSubmission);
         int matchesAfterMerging = globalMatches.size();
-        globalMatches = globalMatches.stream().filter(it -> it.minimumLength() >= options.minimumTokenMatch()).toList();
+        globalMatches = globalMatches.stream().filter(it -> it.minimumLength() >= options.parsingOptions().minimumTokenMatch()).toList();
         progressBar.step();
 
         if (matchesBeforeMerging - matchesAfterMerging >= options.mergingOptions().minimumRequiredMerges()) {
