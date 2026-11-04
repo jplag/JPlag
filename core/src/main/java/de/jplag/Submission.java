@@ -21,6 +21,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import de.jplag.options.ParsingOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +44,7 @@ public class Submission implements Comparable<Submission> {
     private final Path submissionRootFile; // Root of the submission, a director or file (including the subdir if used).
     private final boolean isNew; // old submissions are only checked against new ones.
     private final Collection<Path> files;
-    private final Language language;
+    private Language language;
 
     private SubmissionState state; // whether an error occurred during parsing or not
     private List<Token> tokenList; // list of tokens from all files, used for comparison
@@ -58,14 +59,12 @@ public class Submission implements Comparable<Submission> {
      * @param submissionRootFile is the submission file or the root of the submission itself.
      * @param isNew states whether the submission must be checked for plagiarism.
      * @param files are the files of the submissions, if the root is a single file it should just contain one file.
-     * @param language is the language of the submission.
      */
-    public Submission(String name, Path submissionRootFile, boolean isNew, Collection<Path> files, Language language) {
+    public Submission(String name, Path submissionRootFile, boolean isNew, Collection<Path> files) {
         this.name = name;
         this.submissionRootFile = submissionRootFile;
         this.isNew = isNew;
         this.files = files;
-        this.language = language;
         tokenList = Collections.emptyList(); // Placeholder, will be replaced when submission is parsed
         comments = new ArrayList<>();
         state = UNPARSED;
@@ -239,14 +238,13 @@ public class Submission implements Comparable<Submission> {
 
     /**
      * Parse files of the submission.
-     * @param debugParser specifies if the submission should be copied upon parsing errors.
-     * @param normalize specifies if the token sequences should be normalized.
-     * @param minimalTokens specifies the minimum number of tokens required of a valid submission.
-     * @param analyzeComments specifies if comments should be extracted and analyzed.
+     * @param parsingOptions specifies how the files should be parsed
      * @return Whether parsing was successful.
      * @throws LanguageException if the language parser is not able to parse at all.
      */
-    /* package-private */ boolean parse(boolean debugParser, boolean normalize, int minimalTokens, boolean analyzeComments) throws LanguageException {
+    /* package-private */ boolean parse(ParsingOptions parsingOptions) throws LanguageException {
+        this.language = parsingOptions.language();
+        int minimalTokens = parsingOptions.minimumTokenMatch();
         if (files == null || files.isEmpty()) {
             logger.error("Nothing to parse for submission \"{}\"", name);
             state = NOTHING_TO_PARSE;
@@ -254,14 +252,14 @@ public class Submission implements Comparable<Submission> {
         }
 
         try {
-            tokenList = language.parse(new HashSet<>(files), normalize);
+            tokenList = language.parse(new HashSet<>(files), parsingOptions.normalize());
         } catch (CriticalParsingException e) {
             throw new LanguageException(e.getMessage(), e.getCause());
         } catch (ParsingException e) {
             String shortenedMessage = e.getMessage().replace(submissionRootFile.toString(), name);
             logger.warn("Failed to parse submission {}:{}{}", name, System.lineSeparator(), shortenedMessage);
             state = CANNOT_PARSE;
-            if (debugParser) {
+            if (parsingOptions.debugParser()) {
                 copySubmission();
             }
             return false;
@@ -274,7 +272,7 @@ public class Submission implements Comparable<Submission> {
             return false;
         }
 
-        if (analyzeComments) {
+        if (parsingOptions.analyzeComments()) {
             this.extractAndParseComments();
         }
 
@@ -327,9 +325,10 @@ public class Submission implements Comparable<Submission> {
      * @return A shallow copy of this submission with the same name, root, files, etc.
      */
     public Submission copy() {
-        Submission copy = new Submission(name, submissionRootFile, isNew, files, language);
+        Submission copy = new Submission(name, submissionRootFile, isNew, files);
         copy.setTokenList(tokenList);
         copy.setBaseCodeComparison(baseCodeComparison);
+        copy.language = language;
         copy.state = state;
         return copy;
     }

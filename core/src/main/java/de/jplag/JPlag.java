@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import de.jplag.options.SubmissionFileOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,12 +79,13 @@ public class JPlag {
         checkForConfigurationConsistency(options);
 
         // Parse and validate submissions.
-        SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
+        SubmissionSetBuilder builder = new SubmissionSetBuilder(options.submissionFileOptions());
         SubmissionSet submissionSet = builder.buildSubmissionSet();
+        submissionSet.parse(options.parsingOptions());
 
         LongestCommonSubsequenceSearch comparisonStrategy = new LongestCommonSubsequenceSearch(options);
 
-        if (options.normalize() && options.language().supportsNormalization() && options.language().requiresCoreNormalization()) {
+        if (options.parsingOptions().normalize() && options.parsingOptions().language().supportsNormalization() && options.parsingOptions().language().requiresCoreNormalization()) {
             submissionSet.normalizeSubmissions();
         }
         int submissionCount = submissionSet.numberOfSubmissions();
@@ -117,24 +119,24 @@ public class JPlag {
         List<Submission> skippedSubmissions = submissionSet.getInvalidSubmissions();
         if (!skippedSubmissions.isEmpty()) {
             logger.warn("{} submissions were skipped (see errors above): {}", skippedSubmissions.size(), skippedSubmissions);
-            if (options.debugParser()) {
+            if (options.parsingOptions().debugParser()) {
                 logger.warn("Erroneous submissions were copied to {}", new File(JPlagOptions.ERROR_FOLDER).getAbsolutePath());
             }
         }
     }
 
     private static void checkForConfigurationConsistency(JPlagOptions options) throws RootDirectoryException {
-        if (options.normalize() && !options.language().supportsNormalization()) {
-            logger.error("The language {} cannot be used with normalization.", options.language().getName());
+        if (options.parsingOptions().normalize() && !options.parsingOptions().language().supportsNormalization()) {
+            logger.error("The language {} cannot be used with normalization.", options.parsingOptions().language().getName());
         }
 
-        List<String> duplicateNames = getDuplicateSubmissionFolderNames(options);
+        List<String> duplicateNames = getDuplicateSubmissionFolderNames(options.submissionFileOptions());
         if (!duplicateNames.isEmpty()) {
             throw new RootDirectoryException(String.format("Duplicate root directory names found: %s", String.join(", ", duplicateNames)));
         }
     }
 
-    private static List<String> getDuplicateSubmissionFolderNames(JPlagOptions options) {
+    private static List<String> getDuplicateSubmissionFolderNames(SubmissionFileOptions options) {
         List<String> duplicateNames = new ArrayList<>();
         Set<Path> alreadyFoundNames = new HashSet<>();
         for (Path file : options.submissionDirectories()) {
