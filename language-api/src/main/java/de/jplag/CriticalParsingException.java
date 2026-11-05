@@ -11,7 +11,7 @@ public class CriticalParsingException extends ParsingException {
 
     /**
      * Constructs a new exception indicating a critical parsing exception.
-     * @param reason the reason the parsing failed. A null value is permitted.)
+     * @param reason the reason the parsing failed. A null value is permitted.
      */
     public CriticalParsingException(String reason) {
         super(null, reason);

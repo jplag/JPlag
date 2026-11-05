@@ -25,7 +25,7 @@ public class ParsingException extends Exception {
      * Constructs a new exception indicating a parsing exception in the given file with the given reason.
      * @param file the file in which a parsing error occurred. (A null value is permitted, and indicates that the file is
      * nonexistent or unknown.)
-     * @param reason the reason the parsing failed. A null value is permitted.)
+     * @param reason the reason the parsing failed. A null value is permitted.
      */
     public ParsingException(File file, String reason) {
         super(constructMessage(file, reason));
@@ -45,7 +45,7 @@ public class ParsingException extends Exception {
      * Constructs a new exception indicating a parsing exception in the given file with the given reason and cause.
      * @param file the file in which a parsing error occurred. (A null value is permitted, and indicates that the file is
      * nonexistent or unknown.)
-     * @param reason the reason the parsing failed. A null value is permitted.)
+     * @param reason the reason the parsing failed. A null value is permitted.
      * @param cause the cause. (A null value is permitted, and indicates that the cause is nonexistent or unknown.)
      */
     public ParsingException(File file, String reason, Throwable cause) {

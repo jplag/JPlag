@@ -21,14 +21,14 @@ class FileUtilTest {
     private static final Path TEST_FILE_LOCATION = Path.of("src", "test", "resources", "de", "jplag", "fileReaderTests");
     private static final Path TEST_FILE_SET_LOCATION = Path.of("src", "test", "resources", "de", "jplag", "fileSetEncoding");
 
-    private static final String expectedFileContent = "Some ascii characters and some others: ä#+öü%&(/)?=?";
+    private static final String EXPECTED_FILE_CONTENT = "Some ascii characters and some others: ä#+öü%&(/)?=?";
 
     @ParameterizedTest
     @MethodSource("searchTestFiles")
     void testReadFile(File file) throws IOException {
         String found = FileUtils.readFileContent(file);
 
-        Assertions.assertEquals(expectedFileContent, found, "File contains unexpected content: " + file.getAbsolutePath());
+        Assertions.assertEquals(EXPECTED_FILE_CONTENT, found, "File contains unexpected content: " + file.getAbsolutePath());
     }
 
     @ParameterizedTest
