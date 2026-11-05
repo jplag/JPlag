@@ -1,16 +1,16 @@
 > void test(int param) {
 >     switch(param) {
-$     | SWITCH_BEGIN 5
+$     | SWITCH_BEGIN 6
 >         case 1:
-$         | CASE 3
+$         | CASE 4
 >             break;
-$             | BREAK 4
+$             | BREAK 5
 >         case 2:
-$         | CASE 3
+$         | CASE 4
 >             break;
 >         default:
-$         | DEFAULT 6
+$         | DEFAULT 7
 >             break;
 >     }
-$     | SWITCH_END 0
+$     | SWITCH_END 1
 > }
