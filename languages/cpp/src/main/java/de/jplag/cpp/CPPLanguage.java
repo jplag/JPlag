@@ -37,6 +37,11 @@ public class CPPLanguage implements Language {
     }
 
     @Override
+    public String getVersionFlagInformation() {
+        return "Uses a grammar that targets C++14";
+    }
+
+    @Override
     public boolean tokensHaveSemantics() {
         return true;
     }
