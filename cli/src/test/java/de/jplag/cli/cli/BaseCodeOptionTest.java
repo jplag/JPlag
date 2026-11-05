@@ -29,6 +29,6 @@ class BaseCodeOptionTest extends CliTest {
         CliResult result = runCli(options -> options.with(CliArgument.BASE_CODE, NAME));
         JPlagOptions options = result.jPlagOptions();
 
-        assertEquals(NAME, options.baseCodeSubmissionDirectory().getName());
+        assertEquals(NAME, options.baseCodeSubmissionDirectory().getFileName().toString());
     }
 }

@@ -1,7 +1,7 @@
 package de.jplag.regressiontest.model;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
@@ -27,9 +27,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  * @param storageFormat optional storage format
  * @param options The options for the JPlag runs, may be null
  */
-public record DataSet(@JsonProperty(required = true) String name,
+public record Dataset(@JsonProperty(required = true) String name,
         @JsonDeserialize(using = LanguageDeserializer.class) @JsonProperty(required = true) Language language,
-        @JsonProperty(required = true) DataSetFormat format, @JsonProperty String sourceLocation, @JsonProperty StorageFormat storageFormat,
+        @JsonProperty(required = true) DatasetFormat format, @JsonProperty String sourceLocation, @JsonProperty StorageFormat storageFormat,
         @JsonProperty String resultFile, @JsonProperty String goldStandardFile, @JsonProperty String goldStandardDelimiter,
         @JsonProperty Options options) {
 
@@ -42,7 +42,7 @@ public record DataSet(@JsonProperty(required = true) String name,
      * Gets the source directories.
      * @return The source directories
      */
-    public Set<File> getSourceDirectories() throws IOException {
+    public Set<Path> getSourceDirectories() throws IOException {
         return new HashSet<>(format.getSourceDirectories(this));
     }
 
@@ -50,7 +50,7 @@ public record DataSet(@JsonProperty(required = true) String name,
      * Helper function replacing null by the default value.
      * @return The source directory
      */
-    File actualSourceDirectory() throws IOException {
+    Path actualSourceDirectory() throws IOException {
         StorageFormat actualStorageFormat = storageFormat == null ? StorageFormat.DIRECTORY : storageFormat;
 
         if (actualStorageFormat == StorageFormat.DIRECTORY) {
@@ -58,14 +58,14 @@ public record DataSet(@JsonProperty(required = true) String name,
             if (location == null) {
                 location = String.format(DEFAULT_SOURCE_DIRECTORY, this.name);
             }
-            return new File(TestDirectoryConstants.BASE_PATH_TO_RESOURCES.toFile(), location);
+            return TestDirectoryConstants.BASE_PATH_TO_RESOURCES.resolve(location);
         }
         if (actualStorageFormat == StorageFormat.ZIP) {
             String location = sourceLocation;
             if (location == null) {
                 location = String.format(DEFAULT_SOURCE_ZIP, this.name);
             }
-            return UnzipManager.unzipOrCache(this, new File(TestDirectoryConstants.BASE_PATH_TO_RESOURCES.toFile(), location));
+            return UnzipManager.unzipOrCache(this, TestDirectoryConstants.BASE_PATH_TO_RESOURCES.resolve(location));
         }
 
         throw new IllegalStateException();
@@ -75,19 +75,17 @@ public record DataSet(@JsonProperty(required = true) String name,
      * Helper function replacing null by the default value.
      * @return The result file
      */
-    public File getResultFile() {
-        if (resultFile == null) {
-            return new File(TestDirectoryConstants.BASE_PATH_TO_RESULT_JSON.toFile(), String.format(DEFAULT_RESULT_FILE_NAME, this.name));
-        }
-        return new File(TestDirectoryConstants.BASE_PATH_TO_RESULT_JSON.toFile(), resultFile);
+    public Path getResultFile() {
+        String targetFile = Objects.requireNonNullElseGet(resultFile, () -> String.format(DEFAULT_RESULT_FILE_NAME, name));
+        return TestDirectoryConstants.BASE_PATH_TO_RESULT_JSON.resolve(targetFile);
     }
 
     /**
      * @return The gold standard file as an optional.
      */
-    public Optional<File> getGoldStandardFile() throws IOException {
-        File actualSourceDirectory = this.actualSourceDirectory();
-        return Optional.ofNullable(this.goldStandardFile).map(name -> new File(actualSourceDirectory, name));
+    public Optional<Path> getGoldStandardFile() throws IOException {
+        Path actualSourceDirectory = this.actualSourceDirectory();
+        return Optional.ofNullable(this.goldStandardFile).map(actualSourceDirectory::resolve);
     }
 
     /**

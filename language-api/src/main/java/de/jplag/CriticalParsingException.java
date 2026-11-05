@@ -1,5 +1,7 @@
 package de.jplag;
 
+import java.nio.file.Path;
+
 /**
  * Exception indicating a critical error within the parser itself. This error is not associated with a specific
  * submission but signifies a broader issue. When this exception is thrown, it means that the parser cannot continue
@@ -14,6 +16,6 @@ public class CriticalParsingException extends ParsingException {
      * @param reason the reason the parsing failed. A null value is permitted.)
      */
     public CriticalParsingException(String reason) {
-        super(null, reason);
+        super((Path) null, reason);
     }
 }

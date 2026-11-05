@@ -1,6 +1,7 @@
 package de.jplag;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -53,7 +54,7 @@ public interface Language {
      * @deprecated Replaced by {@link #parse(Set, boolean)}
      */
     @Deprecated(forRemoval = true)
-    default List<Token> parse(Set<File> files) throws ParsingException {
+    default List<Token> parse(Set<Path> files) throws ParsingException {
         return parse(files, false);
     }
 
@@ -64,7 +65,7 @@ public interface Language {
      * @return the list of parsed JPlag tokens.
      * @throws ParsingException if an error during parsing the files occurred.
      */
-    List<Token> parse(Set<File> files, boolean normalize) throws ParsingException;
+    List<Token> parse(Set<Path> files, boolean normalize) throws ParsingException;
 
     /**
      * @return Indicates whether the tokens returned by parse have semantic information added to them, i.e., whether the
