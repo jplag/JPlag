@@ -15,8 +15,8 @@ import de.jplag.semantics.Variable;
 
 /**
  * Token normalization graph, which is a directed graph based on nodes of type {@link Statement} and edges of type
- * {@link MultipleEdge}. This class class inherits from {@link SimpleDirectedGraph} to provide a data structure for the
- * token sequence normalization.
+ * {@link MultipleEdge}. This class inherits from {@link SimpleDirectedGraph} to provide a data structure for the token
+ * sequence normalization.
  */
 public class NormalizationGraph extends SimpleDirectedGraph<Statement, MultipleEdge> {
 
@@ -42,7 +42,7 @@ public class NormalizationGraph extends SimpleDirectedGraph<Statement, MultipleE
         variableReads = new HashMap<>();
         variableWrites = new HashMap<>();
         inCurrentBidirectionalBlock = new HashSet<>();
-        StatementBuilder builderForCurrent = new StatementBuilder(tokens.get(0).getStartLine());
+        StatementBuilder builderForCurrent = new StatementBuilder(tokens.getFirst().getStartLine());
         for (Token token : tokens) {
             if (token.getStartLine() != builderForCurrent.lineNumber()) {
                 addStatement(builderForCurrent.build());

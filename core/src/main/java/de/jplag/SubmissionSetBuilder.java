@@ -134,16 +134,16 @@ public class SubmissionSetBuilder {
      */
     private void checkForNonOverlappingRootDirectories(Set<File> submissionDirectories, Set<File> oldSubmissionDirectories) {
 
-        Set<File> commonRootdirectories = new HashSet<>(submissionDirectories);
-        commonRootdirectories.retainAll(oldSubmissionDirectories);
-        if (commonRootdirectories.isEmpty()) {
+        Set<File> commonRootDirectories = new HashSet<>(submissionDirectories);
+        commonRootDirectories.retainAll(oldSubmissionDirectories);
+        if (commonRootDirectories.isEmpty()) {
             return;
         }
 
         // As old submission directories are only read while new submission directories are both read and checked, the
         // former use can be removed without affecting the result of the checks.
-        oldSubmissionDirectories.removeAll(commonRootdirectories);
-        for (File rootDirectory : commonRootdirectories) {
+        oldSubmissionDirectories.removeAll(commonRootDirectories);
+        for (File rootDirectory : commonRootDirectories) {
             logger.warn(
                     "Root directory \"{}\" is specified both for plagiarism checking and for prior submissions, will perform plagiarism checking only.",
                     rootDirectory);

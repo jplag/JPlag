@@ -46,7 +46,7 @@ import org.apache.commons.math3.util.Pair;
  * In quasi-Newton methods, the Hessian matrix of second derivatives is not computed. Instead, the Hessian matrix is
  * approximated using updates specified by gradient evaluations (or approximate gradient evaluations). Quasi-Newton
  * methods are generalizations of the secant method to find the root of the first derivative for multidimensional
- * problems. In multi-dimensional problems, the secant equation does not specify a unique solution, and quasi-Newton
+ * problems. In multidimensional problems, the secant equation does not specify a unique solution, and quasi-Newton
  * methods differ in how they constrain the solution. The BFGS method is one of the most popular members of this class.
  * <p>
  * Like the original BFGS, the limited-memory BFGS (L-BFGS) uses an estimation to the inverse Hessian matrix to steer
@@ -339,8 +339,8 @@ public class BFGS {
             double test = abs(sy);
             if (test > EPSILON * yy) {
                 if (yHistory.size() >= m) {
-                    yHistory.remove(0);
-                    sHistory.remove(0);
+                    yHistory.removeFirst();
+                    sHistory.removeFirst();
                 }
 
                 yHistory.add(y);
@@ -734,10 +734,7 @@ public class BFGS {
          * @return {@code A' * A}.
          */
         public Matrix ata() {
-            Matrix c = new Matrix(d.transpose().multiply(d));
-            // c.mm(TRANSPOSE, 1this, NO_TRANSPOSE, this);
-            // c.uplo(LOWER);
-            return c;
+            return new Matrix(d.transpose().multiply(d));
         }
 
         /**

@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Maximizes a function using bayesian optimization.
+ * Maximizes a function using Bayesian optimization.
  */
 public class BayesianOptimizer {
 
@@ -35,7 +35,7 @@ public class BayesianOptimizer {
     private final double noise;
     private final RealVector lengthScale;
 
-    private double consecutiveRandomPicks; // consecutive rounds where the acquisition function yielded no useful improvement
+    private int consecutiveRandomPicks; // consecutive rounds where the acquisition function yielded no useful improvement
 
     /**
      * Constructs a BayesianOptimizer with specified parameter boundaries and optimization settings.
@@ -95,7 +95,7 @@ public class BayesianOptimizer {
         final List<T> result = new ArrayList<>(1);
 
         if (spliterator.tryAdvance(result::add)) {
-            return Optional.of(result.get(0));
+            return Optional.of(result.getFirst());
         }
         return Optional.empty();
     }

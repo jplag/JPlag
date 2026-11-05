@@ -51,7 +51,7 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
      * @return Maximum similarity in interval [0, 1]. 0 means zero percent structural similarity, 1 means 100 percent
      * structural similarity.
      */
-    public final double maximalSimilarity() {
+    public double maximalSimilarity() {
         return Math.max(similarityOfFirst(), similarityOfSecond());
     }
 
@@ -63,7 +63,7 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
      * @deprecated Metric was not used in JPlag
      */
     @Deprecated(since = "6.2.0", forRemoval = true)
-    public final double minimalSimilarity() {
+    public double minimalSimilarity() {
         return Math.min(similarityOfFirst(), similarityOfSecond());
     }
 
@@ -98,7 +98,7 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
      * whether both submissions contain base code matches. 0 means zero percent structural similarity, 1 means 100 percent
      * structural similarity.
      */
-    public final double similarityOfFirst() {
+    public double similarityOfFirst() {
         int divisor = firstSubmission.getSimilarityDivisor();
         int matchedTokens = matches.stream().mapToInt(Match::lengthOfFirst).sum();
         return divisor == 0 ? 0.0 : matchedTokens / (double) divisor;
@@ -109,7 +109,7 @@ public record JPlagComparison(Submission firstSubmission, Submission secondSubmi
      * whether both submissions contain base code matches. 0 means zero percent structural similarity, 1 means 100 percent
      * structural similarity.
      */
-    public final double similarityOfSecond() {
+    public double similarityOfSecond() {
         int divisor = secondSubmission.getSimilarityDivisor();
         int matchedTokens = matches.stream().mapToInt(Match::lengthOfSecond).sum();
         return divisor == 0 ? 0.0 : matchedTokens / (double) divisor;
