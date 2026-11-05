@@ -9,6 +9,8 @@ import org.slf4j.event.Level;
 import de.jplag.Language;
 import de.jplag.clustering.ClusteringAlgorithm;
 import de.jplag.clustering.ClusteringOptions;
+import de.jplag.clustering.MatchGroupWeightingMode;
+import de.jplag.clustering.algorithm.ChineseWhispersClusteringMode;
 import de.jplag.clustering.algorithm.InterClusterSimilarity;
 import de.jplag.frequency.FrequencyAnalysisOptions;
 import de.jplag.java.JavaLanguage;
@@ -168,7 +170,7 @@ public class CliOptions implements Runnable {
         public boolean disable;
 
         /** Clustering enabled options. */
-        @ArgGroup
+        @ArgGroup(exclusive = false)
         public ClusteringEnabled enabled = new ClusteringEnabled();
 
         /** Enabled clustering settings. */
@@ -182,6 +184,16 @@ public class CliOptions implements Runnable {
             @Option(names = {
                     "--cluster-metric"}, description = "The similarity metric used for clustering. Available metrics: ${COMPLETION-CANDIDATES} (default: ${DEFAULT-VALUE}).")
             public SimilarityMetric metric = new ClusteringOptions().similarityMetric();
+
+            /** Setting to enable advanced similarity preprocessing. */
+            @Option(names = {
+                    "--use-advanced-similarity-preprocessing"}, description = "Enables advanced similarity preprocessing (default: ${DEFAULT-VALUE}).")
+            public boolean useAdvancedSimilarityPreprocessing = new ClusteringOptions().useAdvancedSimilarityPreprocessing();
+
+            /** The Mode for weighting groups of matches in the advanced similarity preprocessing. */
+            @Option(names = {
+                    "--match-group-weigthing-mode"}, description = "The Mode for weighting groups of matches in the advanced similarity preprocessing. Available modes: ${COMPLETION-CANDIDATES} (default: ${DEFAULT-VALUE}).")
+            public MatchGroupWeightingMode matchGroupWeightingMode = new ClusteringOptions().matchGroupWeightingMode();
         }
     }
 
@@ -277,6 +289,14 @@ public class CliOptions implements Runnable {
     /** Similarity threshold for agglomerative clustering (hidden). */
     @Option(names = {"--cluster-agglomerative-threshold"}, hidden = true)
     public double clusterAgglomerativeThreshold = new ClusteringOptions().agglomerativeThreshold();
+
+    /** Maximum number of iterations for Chinese Whispers clustering (hidden). */
+    @Option(names = {"--cluster-chinese-whispers-iterations"}, hidden = true)
+    public int clusterChineseWhispersMaxIterations = new ClusteringOptions().chineseWhispersMaxIterations();
+
+    /** Chinese Whispers clustering mode (hidden). */
+    @Option(names = {"--cluster-chinese-whispers-mode"}, hidden = true)
+    public ChineseWhispersClusteringMode chineseWhispersClusteringMode = new ClusteringOptions().chineseWhispersClusteringMode();
 
     /** Similarity function for agglomerative clustering (hidden). */
     @Option(names = {"--cluster-agglomerative-inter-cluster-similarity"}, hidden = true)
