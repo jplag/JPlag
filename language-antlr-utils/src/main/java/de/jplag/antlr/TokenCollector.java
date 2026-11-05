@@ -85,7 +85,7 @@ public class TokenCollector {
 
     private int calculateEndLineNumber(org.antlr.v4.runtime.Token token) {
         String[] lines = token.getText().split("\n", -1);
-        if (lines.length > 1 && lines[lines.length - 1].length() == 0) { // Ends on linebreak
+        if (lines.length > 1 && lines[lines.length - 1].isEmpty()) { // Ends on linebreak
             lines = Arrays.copyOf(lines, lines.length - 1);
         }
 
@@ -94,17 +94,23 @@ public class TokenCollector {
 
     private int calculateEndColumnNumber(org.antlr.v4.runtime.Token token) {
         String[] lines = token.getText().split("\n", -1);
-        if (lines.length > 1 && lines[lines.length - 1].length() == 0) { // Ends on linebreak
+        if (lines.length > 1 && lines[lines.length - 1].isEmpty()) { // Ends on linebreak
             lines = Arrays.copyOf(lines, lines.length - 1);
         }
 
-        if (lines.length == 1) {
-            if (lines[0].length() == 0) {
-                return token.getCharPositionInLine() + 1;
+        switch (lines.length) {
+            case 0 -> { // This case should not be possible, since split parametrizes with -1 cannot produce empty arrays
+                return 0;
             }
-            return token.getCharPositionInLine() + lines[0].length();
-        } else {
-            return lines[lines.length - 1].length() + 1;
+            case 1 -> {
+                if (lines[0].isEmpty()) {
+                    return token.getCharPositionInLine() + 1;
+                }
+                return token.getCharPositionInLine() + lines[0].length();
+            }
+            default -> {
+                return lines[lines.length - 1].length() + 1;
+            }
         }
     }
 }
