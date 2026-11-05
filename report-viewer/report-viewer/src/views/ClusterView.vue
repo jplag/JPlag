@@ -3,7 +3,10 @@
     class="grid grid-cols-1 grid-rows-[auto_600px_90vh] gap-5 md:grid-cols-[2fr_1fr] md:grid-rows-[auto_1fr] md:overflow-hidden print:grid-cols-1 print:grid-rows-[auto_1fr]"
   >
     <ContainerComponent class="col-start-1 row-start-1 md:col-end-3 md:row-end-2">
-      <h2>Cluster</h2>
+      <span class="flex items-center"
+        ><BackButton />
+        <h2>Cluster</h2></span
+      >
       <div class="flex flex-row items-center space-x-5">
         <span class="flex items-center gap-x-1">
           <MetricIcon class="h-3" :metric="MetricJsonIdentifier.AVERAGE_SIMILARITY" />
@@ -112,6 +115,7 @@ import { ClusterListElement, ClusterListElementMember, MetricJsonIdentifier } fr
 import { reportStore } from '@/stores/reportStore'
 import { uiStore } from '@/stores/uiStore'
 import ComparisonTableWrapper from '@/components/ComparisonTableWrapper.vue'
+import BackButton from '@/components/BackButton.vue'
 
 const props = defineProps({
   index: {
