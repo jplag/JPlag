@@ -603,6 +603,8 @@
                             <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
                             <sourceDirectory>${project.build.testSourceDirectory}</sourceDirectory>
                         </sourceDirectories>
+                        <excludeGeneratedSources>true</excludeGeneratedSources>
+                        <excludes>**/grammar/**/*.java</excludes>
                         <consoleOutput>true</consoleOutput>
                         <failsOnError>true</failsOnError>
                         <linkXRef>false</linkXRef>
