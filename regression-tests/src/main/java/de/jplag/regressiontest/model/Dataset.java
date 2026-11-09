@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
- * Represents a data set for the regression test suite.
+ * Represents a dataset for the regression test suite.
  * @param name the dataset name (required)
  * @param language the programming language of the dataset (required)
  * @param format the format of the dataset (required)

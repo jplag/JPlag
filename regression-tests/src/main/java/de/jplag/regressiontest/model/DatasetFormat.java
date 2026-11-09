@@ -41,7 +41,7 @@ public enum DatasetFormat {
 
     /**
      * Resolved the source directories for jplag.
-     * @param dataset The data set
+     * @param dataset The dataset
      * @return The source directories
      * @throws IOException if retrieving the sources fails.
      */
@@ -49,7 +49,7 @@ public enum DatasetFormat {
 
     /**
      * Resolves the base code directory.
-     * @param dataset The data set
+     * @param dataset The dataset
      * @param directoryName The name of the base code directory
      * @return The base code directory
      * @throws IOException if retrieving the base code fails.
