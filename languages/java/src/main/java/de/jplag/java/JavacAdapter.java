@@ -24,6 +24,7 @@ import de.jplag.util.FileUtils;
 
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.LineMap;
+import com.sun.source.tree.TreeVisitor;
 import com.sun.source.util.JavacTask;
 import com.sun.source.util.SourcePositions;
 import com.sun.source.util.Trees;
@@ -63,13 +64,7 @@ public class JavacAdapter {
             final CompilationTask task = compiler.getTask(null, fileManager, listener, options, null, javaFiles);
             final Trees trees = Trees.instance(task);
             final SourcePositions positions = new FixedSourcePositions(trees.getSourcePositions());
-            for (final CompilationUnitTree ast : executeCompilationTask(task)) {
-                File file = new File(ast.getSourceFile().toUri());
-                final LineMap map = ast.getLineMap();
-                var scanner = new TokenGeneratingTreeScanner(file, parser, map, positions, ast);
-                ast.accept(scanner, null);
-                parser.add(Token.semanticFileEnd(file));
-            }
+            scanCompilationUnits(executeCompilationTask(task), parser, positions, task);
         } catch (Exception exception) {
             throw new ParsingException(null, exception.getMessage(), exception);
         }
@@ -83,6 +78,8 @@ public class JavacAdapter {
         Iterable<? extends CompilationUnitTree> abstractSyntaxTrees = Collections.emptyList();
         try {
             abstractSyntaxTrees = ((JavacTask) task).parse();
+            if (shouldAnalyze(task))
+                ((JavacTask) task).analyze();
         } catch (IOException exception) {
             logger.error(exception.getMessage(), exception);
         }
@@ -99,4 +96,22 @@ public class JavacAdapter {
         }).toList();
     }
 
+    protected boolean shouldAnalyze(final CompilationTask task) {
+        return false;
+    }
+
+    protected void scanCompilationUnits(Iterable<? extends CompilationUnitTree> trees, Parser parser, SourcePositions positions,
+            JavaCompiler.CompilationTask task) {
+        for (final CompilationUnitTree ast : trees) {
+            File file = new File(ast.getSourceFile().toUri());
+            final LineMap map = ast.getLineMap();
+            ast.accept(createTreeScanner(file, parser, map, positions, ast, task), null);
+            parser.add(Token.semanticFileEnd(file));
+        }
+    }
+
+    protected TreeVisitor<?, ?> createTreeScanner(File file, Parser parser, LineMap map, SourcePositions positions, CompilationUnitTree ast,
+            JavaCompiler.CompilationTask task) {
+        return new TokenGeneratingTreeScanner(file, parser, map, positions, ast);
+    }
 }

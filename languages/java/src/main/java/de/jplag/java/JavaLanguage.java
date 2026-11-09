@@ -46,7 +46,11 @@ public class JavaLanguage implements Language {
 
     @Override
     public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
-        return new Parser().parse(files);
+        return createParser().parse(files);
+    }
+
+    protected Parser createParser() throws ParsingException {
+        return new Parser();
     }
 
     @Override
@@ -56,6 +60,11 @@ public class JavaLanguage implements Language {
 
     @Override
     public boolean supportsNormalization() {
+        return true;
+    }
+
+    @Override
+    public boolean hasPriority() {
         return true;
     }
 

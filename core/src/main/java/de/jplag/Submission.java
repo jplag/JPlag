@@ -259,7 +259,7 @@ public class Submission implements Comparable<Submission> {
             throw new LanguageException(e.getMessage(), e.getCause());
         } catch (ParsingException e) {
             String shortenedMessage = e.getMessage().replace(submissionRootFile.toString(), name);
-            logger.warn("Failed to parse submission {}:{}{}", name, System.lineSeparator(), shortenedMessage);
+            logger.atWarn().setCause(e).log("Failed to parse submission {}:{}{}", name, System.lineSeparator(), shortenedMessage);
             state = CANNOT_PARSE;
             if (debugParser) {
                 copySubmission();
