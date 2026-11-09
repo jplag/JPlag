@@ -46,6 +46,11 @@ public interface Language {
     int minimumTokenMatch();
 
     /**
+     * @return The text to print when "-V" is specified
+     */
+    String getVersionFlagInformation();
+
+    /**
      * Parses a set of files. Override this method if you do not require normalization.
      * @param files are the files to parse.
      * @return the list of parsed JPlag tokens.
