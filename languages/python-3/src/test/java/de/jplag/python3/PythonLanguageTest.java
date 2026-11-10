@@ -25,6 +25,8 @@ public class PythonLanguageTest extends LanguageModuleTest {
     protected void collectTestData(TestDataCollector collector) {
         collector.testFile("test_utils.py").testCoverages();
 
+        collector.testFile("Jplag-test.py").testCoverages();
+
         collector.testFile("base_features.py", "streams.py").testSourceCoverage();
 
         collector.testFile("log.py").testSourceCoverage().testTokenSequence(Python3TokenType.IMPORT, Python3TokenType.ASSIGN, Python3TokenType.ARRAY,
