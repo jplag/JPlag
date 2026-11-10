@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -14,7 +15,6 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,10 +70,8 @@ public final class LanguageLoader {
         logger.debug("Attempting to load modules from external jar files");
         Path path = getModulesPath();
         if (path != null) {
-            try (Stream<Path> files = Files.list(path)) {
-                files.filter(it -> it.getFileName().toString().endsWith(".jar")).forEach(moduleFile -> {
-                    loadExternalModule(languages, moduleFile);
-                });
+            try (DirectoryStream<Path> files = Files.newDirectoryStream(path, "*.jar")) {
+                files.forEach(moduleFile -> loadExternalModule(languages, moduleFile));
             } catch (IOException _) {
                 logger.error("Failed to load modules");
             }
