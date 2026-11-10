@@ -99,7 +99,7 @@ public class TokenCollector {
         }
 
         switch (lines.length) {
-            case 0 -> { // This case should not be possible, since split parametrizes with -1 cannot produce empty arrays
+            case 0 -> { // This case should not be possible, since {@link String#split(String, int)} with limit -1 returns at least one element
                 return 0;
             }
             case 1 -> {
