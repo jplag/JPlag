@@ -9,7 +9,7 @@ package de.jplag;
 public record TokenTrace(int line, int column, int length) {
 
     /**
-     * Creates a empty trace with line, column, and length set to {@link Token#NO_VALUE NO_VALUE}.
+     * Creates an empty trace with line, column, and length set to {@link Token#NO_VALUE NO_VALUE}.
      */
     public TokenTrace() {
         this(Token.NO_VALUE, Token.NO_VALUE, Token.NO_VALUE);
