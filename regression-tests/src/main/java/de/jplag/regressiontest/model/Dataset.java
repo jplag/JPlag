@@ -34,8 +34,6 @@ public record Dataset(@JsonProperty(required = true) String name,
         @JsonProperty Options options) {
 
     private static final String DEFAULT_GOLD_STANDARD_DELIMITER = ";";
-    private static final String DEFAULT_SOURCE_DIRECTORY = "data/%s";
-    private static final String DEFAULT_SOURCE_ZIP = "data/%s.zip";
     private static final String DEFAULT_RESULT_FILE_NAME = "%s.json";
 
     /**
@@ -53,22 +51,17 @@ public record Dataset(@JsonProperty(required = true) String name,
     Path actualSourceDirectory() throws IOException {
         StorageFormat actualStorageFormat = storageFormat == null ? StorageFormat.DIRECTORY : storageFormat;
 
-        if (actualStorageFormat == StorageFormat.DIRECTORY) {
-            String location = sourceLocation;
-            if (location == null) {
-                location = String.format(DEFAULT_SOURCE_DIRECTORY, this.name);
-            }
-            return TestDirectoryConstants.BASE_PATH_TO_RESOURCES.resolve(location);
+        String location = sourceLocation;
+        if (location == null) {
+            location = String.format(actualStorageFormat.getDefaultSource(), this.name);
         }
-        if (actualStorageFormat == StorageFormat.ZIP) {
-            String location = sourceLocation;
-            if (location == null) {
-                location = String.format(DEFAULT_SOURCE_ZIP, this.name);
-            }
-            return UnzipManager.unzipOrCache(this, TestDirectoryConstants.BASE_PATH_TO_RESOURCES.resolve(location));
-        }
+        Path sourcePath = TestDirectoryConstants.BASE_PATH_TO_RESOURCES.resolve(location);
 
-        throw new IllegalStateException();
+        return switch (actualStorageFormat) {
+            case DIRECTORY -> sourcePath;
+            case ZIP -> UnzipManager.unzipOrCache(this, sourcePath);
+        };
+
     }
 
     /**
