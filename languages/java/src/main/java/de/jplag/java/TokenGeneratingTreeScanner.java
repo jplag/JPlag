@@ -98,7 +98,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
      * @param length is the length of the token.
      */
     private void addToken(JavaTokenType tokenType, long position, int length, CodeSemantics semantics) {
-        addToken(tokenType, position, position + length, semantics);
+        addToken(tokenType, position, position + length - 1, semantics);
     }
 
     /**
@@ -155,7 +155,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
             long nameLength = node.getSimpleName().length();
             // The start position for the is calculated that way, because the @ is the final element in the modifier list for
             // annotations
-            addToken(JavaTokenType.J_ANNO_T_BEGIN, start - 2, start - 2 + 11 + nameLength, semantics);
+            addToken(JavaTokenType.J_ANNO_T_BEGIN, start - 2, start - 2 + 11 + nameLength - 1, semantics);
         } else if (node.getKind() == Tree.Kind.CLASS) {
             addToken(JavaTokenType.J_CLASS_BEGIN, start, 5, semantics);
         }
@@ -408,7 +408,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     public Void visitNewClass(NewClassTree node, Void unused) {
         // NEWCLASS token should span the class name, not the arguments.
         long start = positions.getStartPosition(ast, node);
-        long end = positions.getEndPosition(ast, node.getIdentifier());
+        long end = positions.getEndPosition(ast, node.getIdentifier()) - 1;
         if (!node.getTypeArguments().isEmpty()) {
             addToken(JavaTokenType.J_GENERIC, start, 3 + node.getIdentifier().toString().length(), new CodeSemantics());
         }
@@ -432,7 +432,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     @Override
     public Void visitNewArray(NewArrayTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        long end = node.getType() == null ? start + 1 : positions.getEndPosition(ast, node.getType());
+        long end = node.getType() == null ? start + 1 : positions.getEndPosition(ast, node.getType()) - 1;
         addToken(JavaTokenType.J_NEWARRAY, start, end, new CodeSemantics());
         scan(node.getType(), null);
         scan(node.getDimensions(), null);
@@ -490,7 +490,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     public Void visitVariable(VariableTree node, Void unused) {
         if (!node.getName().contentEquals(ANONYMOUS_VARIABLE_NAME)) {
             long start = positions.getStartPosition(ast, node);
-            long end = positions.getEndPosition(ast, node);
+            long end = positions.getEndPosition(ast, node) - 1;
             if (Objects.isNull(node.getInitializer())) {
                 // VARDEF token should end before semicolon
                 end -= 1;
@@ -593,7 +593,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     @Override
     public Void visitDefaultCaseLabel(DefaultCaseLabelTree node, Void unused) {
         long start = positions.getStartPosition(ast, node);
-        long end = positions.getEndPosition(ast, node);
+        long end = positions.getEndPosition(ast, node) - 1;
         addToken(JavaTokenType.J_DEFAULT, start, end, CodeSemantics.createControl());
         return super.visitDefaultCaseLabel(node, null);
     }

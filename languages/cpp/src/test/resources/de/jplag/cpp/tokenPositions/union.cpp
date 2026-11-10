@@ -1,4 +1,4 @@
 > union Test {
-$ | UNION_BEGIN 4
+$ | UNION_BEGIN 5
 > };
-$ | UNION_END 0
+$ | UNION_END 1
