@@ -13,26 +13,26 @@ import de.jplag.options.JPlagOptions;
  * @param jPlagOptions The jplag options to use
  * @param identifier The identifier for the configuration
  */
-public record DataSetRunConfiguration(JPlagOptions jPlagOptions, String identifier) {
+public record DatasetRunConfiguration(JPlagOptions jPlagOptions, String identifier) {
     private static final String IDENTIFIER_FORMAT = "MTM: %s";
 
     /**
-     * Builds all configurations for a data set.
-     * @param dataSet The data set
+     * Builds all configurations for a dataset.
+     * @param dataset The dataset
      * @return The configurations
      */
-    public static List<DataSetRunConfiguration> generateRunConfigurations(Dataset dataSet) throws IOException {
-        Options configuredOptions = dataSet.getOptions();
-        List<DataSetRunConfiguration> result = new ArrayList<>();
+    public static List<DatasetRunConfiguration> generateRunConfigurations(Dataset dataset) throws IOException {
+        Options configuredOptions = dataset.getOptions();
+        List<DatasetRunConfiguration> result = new ArrayList<>();
 
         for (int minimumTokenMatch : configuredOptions.getMinimumTokenMatches()) {
-            JPlagOptions options = new JPlagOptions(dataSet.language(), dataSet.getSourceDirectories(), Set.of());
+            JPlagOptions options = new JPlagOptions(dataset.language(), dataset.getSourceDirectories(), Set.of());
             options = options.withMinimumTokenMatch(minimumTokenMatch);
             if (configuredOptions.baseCodeDirectory() != null) {
-                Path baseCode = dataSet.format().getBaseCodeDirectory(dataSet, configuredOptions.baseCodeDirectory());
+                Path baseCode = dataset.format().getBaseCodeDirectory(dataset, configuredOptions.baseCodeDirectory());
                 options = options.withBaseCodeSubmissionDirectory(baseCode);
             }
-            result.add(new DataSetRunConfiguration(options, String.format(IDENTIFIER_FORMAT, minimumTokenMatch)));
+            result.add(new DatasetRunConfiguration(options, String.format(IDENTIFIER_FORMAT, minimumTokenMatch)));
         }
 
         return result;

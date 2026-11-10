@@ -22,7 +22,7 @@ public final class TestDirectoryConstants {
     public static final Path BASE_PATH_TO_RESULT_JSON = BASE_PATH_TO_RESOURCES.resolve("results");
 
     /**
-     * Base path to the data set descriptors.
+     * Base path to the dataset descriptors.
      */
     public static final Path BASE_PATH_TO_DATA_SET_DESCRIPTORS = BASE_PATH_TO_RESOURCES.resolve("datasets");
 }
