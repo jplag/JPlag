@@ -1,7 +1,5 @@
 package de.jplag.normalization;
 
-import de.jplag.semantics.Variable;
-
 /**
  * Models multiple edges between two nodes in the normalization graph.
  */
@@ -21,7 +19,7 @@ class MultipleEdge {
         return isVariableReverseFlow;
     }
 
-    void addEdge(EdgeType type, Variable cause) {
+    void addEdge(EdgeType type) {
         if (type == EdgeType.VARIABLE_FLOW) {
             isVariableFlow = true;
         }

@@ -81,12 +81,12 @@ public class NormalizationGraph extends SimpleDirectedGraph<Statement, MultipleE
     private void processFullPositionSignificance() {
         if (current.semantics().hasFullPositionSignificance()) {
             for (Statement node : fullPositionSignificanceIncoming) {
-                addIncomingEdgeToCurrent(node, EdgeType.POSITION_SIGNIFICANCE_FULL, null);
+                addIncomingEdgeToCurrent(node, EdgeType.POSITION_SIGNIFICANCE_FULL);
             }
             fullPositionSignificanceIncoming.clear();
             lastFullPositionSignificance = current;
         } else if (lastFullPositionSignificance != null) {
-            addIncomingEdgeToCurrent(lastFullPositionSignificance, EdgeType.POSITION_SIGNIFICANCE_FULL, null);
+            addIncomingEdgeToCurrent(lastFullPositionSignificance, EdgeType.POSITION_SIGNIFICANCE_FULL);
         }
         fullPositionSignificanceIncoming.add(current);
     }
@@ -94,7 +94,7 @@ public class NormalizationGraph extends SimpleDirectedGraph<Statement, MultipleE
     private void processPartialPositionSignificance() {
         if (current.semantics().hasPartialPositionSignificance()) {
             if (lastPartialPositionSignificance != null) {
-                addIncomingEdgeToCurrent(lastPartialPositionSignificance, EdgeType.POSITION_SIGNIFICANCE_PARTIAL, null);
+                addIncomingEdgeToCurrent(lastPartialPositionSignificance, EdgeType.POSITION_SIGNIFICANCE_PARTIAL);
             }
             lastPartialPositionSignificance = current;
         }
@@ -103,7 +103,7 @@ public class NormalizationGraph extends SimpleDirectedGraph<Statement, MultipleE
     private void processReads() {
         for (Variable variable : current.semantics().reads()) {
             for (Statement node : variableWrites.getOrDefault(variable, Set.of())) {
-                addIncomingEdgeToCurrent(node, EdgeType.VARIABLE_FLOW, variable);
+                addIncomingEdgeToCurrent(node, EdgeType.VARIABLE_FLOW);
             }
         }
     }
@@ -111,11 +111,11 @@ public class NormalizationGraph extends SimpleDirectedGraph<Statement, MultipleE
     private void processWrites() {
         for (Variable variable : current.semantics().writes()) {
             for (Statement node : variableWrites.getOrDefault(variable, Set.of())) {
-                addIncomingEdgeToCurrent(node, EdgeType.VARIABLE_ORDER, variable);
+                addIncomingEdgeToCurrent(node, EdgeType.VARIABLE_ORDER);
             }
             for (Statement node : variableReads.getOrDefault(variable, Set.of())) {
                 EdgeType edgeType = inCurrentBidirectionalBlock.contains(node) ? EdgeType.VARIABLE_REVERSE_FLOW : EdgeType.VARIABLE_ORDER;
-                addIncomingEdgeToCurrent(node, edgeType, variable);
+                addIncomingEdgeToCurrent(node, edgeType);
             }
         }
     }
@@ -124,15 +124,14 @@ public class NormalizationGraph extends SimpleDirectedGraph<Statement, MultipleE
      * Adds an incoming edge to the current node.
      * @param start the start of the edge
      * @param type the type of the edge
-     * @param cause the variable that caused the edge, may be null
      */
-    private void addIncomingEdgeToCurrent(Statement start, EdgeType type, Variable cause) {
+    private void addIncomingEdgeToCurrent(Statement start, EdgeType type) {
         MultipleEdge multipleEdge = getEdge(start, current);
         if (multipleEdge == null) {
             multipleEdge = new MultipleEdge();
             addEdge(start, current, multipleEdge);
         }
-        multipleEdge.addEdge(type, cause);
+        multipleEdge.addEdge(type);
     }
 
     private void addVariableToMap(Map<Variable, Collection<Statement>> variableMap, Variable variable) {
