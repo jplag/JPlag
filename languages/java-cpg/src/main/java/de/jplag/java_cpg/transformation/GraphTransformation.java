@@ -20,7 +20,7 @@ import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
 import de.jplag.java_cpg.transformation.matching.pattern.SimpleGraphPattern;
 import de.jplag.java_cpg.transformation.matching.pattern.relation.Relation;
 import de.jplag.java_cpg.transformation.operations.CreateNodeOperation;
-import de.jplag.java_cpg.transformation.operations.DummyNeighbor;
+import de.jplag.java_cpg.transformation.operations.GraphMutationContext;
 import de.jplag.java_cpg.transformation.operations.GraphOperation;
 import de.jplag.java_cpg.transformation.operations.InsertOperation;
 import de.jplag.java_cpg.transformation.operations.RemoveOperation;
@@ -37,8 +37,9 @@ public interface GraphTransformation {
      * shall be involved in the transformation.
      * @param match the match of this {@link GraphTransformation}'s source pattern to a concrete graph
      * @param ctx the current {@link TranslationContext}
+     * @param mutationContext graph mutation state owned by this translation
      */
-    void apply(Match match, TranslationContext ctx);
+    void apply(Match match, TranslationContext ctx, GraphMutationContext mutationContext);
 
     /**
      * Gets the {@link ExecutionOrder} for this {@link GraphTransformation}.
@@ -124,15 +125,19 @@ public interface GraphTransformation {
         private static final Logger logger = LoggerFactory.getLogger(GraphTransformationImpl.class);
 
         @Override
-        public void apply(Match match, TranslationContext ctx) {
-            List<GraphOperation> concreteOperations = instantiate(operations, match);
+        public void apply(Match match, TranslationContext ctx, GraphMutationContext mutationContext) {
+            try {
+                List<GraphOperation> concreteOperations = instantiate(operations, match);
 
-            // create nodes of the target graph missing from the source graph
-            newNodes.forEach(op -> op.resolveAndApply(match, ctx));
+                // create nodes of the target graph missing from the source graph
+                newNodes.forEach(op -> op.resolveAndApply(match, ctx, mutationContext));
 
-            logger.debug("Apply {} to node {}", name, match);
-            // apply other operations
-            apply(match, concreteOperations, ctx);
+                logger.debug("Apply {} to node {}", name, match);
+                // apply other operations
+                apply(match, concreteOperations, ctx, mutationContext);
+            } finally {
+                mutationContext.resetBookkeeping();
+            }
         }
 
         /**
@@ -141,17 +146,18 @@ public interface GraphTransformation {
          * @param match the match of the graph transformations source pattern to the concrete CPG
          * @param operations the list of transformations to apply
          * @param ctx the translation context of the current translation
+         * @param mutationContext graph mutation state owned by this translation
          * @throws TransformationException if graph invariants are found to be broken
          */
-        private void apply(Match match, List<GraphOperation> operations, TranslationContext ctx) throws TransformationException {
+        private void apply(Match match, List<GraphOperation> operations, TranslationContext ctx, GraphMutationContext mutationContext)
+                throws TransformationException {
             for (GraphOperation op : operations) {
                 try {
-                    op.resolveAndApply(match, ctx);
+                    op.resolveAndApply(match, ctx, mutationContext);
                 } catch (RuntimeException e) {
                     throw new TransformationException(e);
                 }
             }
-            DummyNeighbor.getInstance().clear();
         }
 
         private List<GraphOperation> instantiate(List<GraphOperation> operations, Match match) {

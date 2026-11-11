@@ -21,8 +21,8 @@ import org.junit.jupiter.api.io.TempDir;
 
 import de.jplag.TokenType;
 import de.jplag.java_cpg.passes.TransformationPassConfiguration;
-import de.jplag.java_cpg.transformation.GraphTransformation;
 import de.jplag.java_cpg.transformation.GraphTransformation.ExecutionPhase;
+import de.jplag.java_cpg.transformation.operations.GraphMutationContext;
 
 class TransformationConfigurationTest {
     @TempDir
@@ -89,7 +89,7 @@ class TransformationConfigurationTest {
         var adapter = new CpgAdapter(wrapThenStatement, forStatementToWhileStatement, ifWithNegatedConditionResolution, inlineSingleUseVariable,
                 forStatementToWhileStatement);
         assertEquals(List.of(forStatementToWhileStatement, ifWithNegatedConditionResolution),
-                adapter.snapshot(true).forPhase(ExecutionPhase.AST_TRANSFORM).getTransformations());
+                adapter.snapshot(true).forPhase(ExecutionPhase.AST_TRANSFORM, new GraphMutationContext()).getTransformations());
         adapter.clearTransformations();
         adapter.addTransformation(wrapThenStatement);
         assertEquals(List.of(wrapThenStatement), adapter.snapshot(true).transformations());
@@ -104,8 +104,8 @@ class TransformationConfigurationTest {
         adapter.addTransformation(inlineSingleUseVariable);
         assertEquals(List.of(wrapThenStatement, forStatementToWhileStatement), snapshot.transformations());
         assertThrows(UnsupportedOperationException.class, () -> snapshot.transformations().clear());
-        var input = new ArrayList<GraphTransformation>(List.of(forStatementToWhileStatement));
-        var configuration = new TransformationPassConfiguration(input);
+        var input = new ArrayList<>(List.of(forStatementToWhileStatement));
+        var configuration = new TransformationPassConfiguration(input, new GraphMutationContext());
         input.clear();
         assertEquals(List.of(forStatementToWhileStatement), configuration.getTransformations());
         assertThrows(UnsupportedOperationException.class, () -> configuration.getTransformations().clear());

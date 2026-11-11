@@ -21,6 +21,7 @@ import de.jplag.java_cpg.transformation.TransformationRepository;
 import de.jplag.java_cpg.transformation.matching.CpgIsomorphismDetector;
 import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern;
 import de.jplag.java_cpg.transformation.matching.pattern.Match;
+import de.jplag.java_cpg.transformation.operations.GraphMutationContext;
 
 /**
  * Tests the creation of transformations.
@@ -59,7 +60,9 @@ public class CreateTransformTest extends AbstractJavaCpgLanguageTest {
         Match match = maybeMatch.getFirst();
 
         TranslationContext ctx = match.get(sourcePattern.getRepresentingNode()).getCtx();
-        transformation.apply(match, ctx);
+        try (var mutationContext = new GraphMutationContext()) {
+            transformation.apply(match, ctx, mutationContext);
+        }
     }
 
 }

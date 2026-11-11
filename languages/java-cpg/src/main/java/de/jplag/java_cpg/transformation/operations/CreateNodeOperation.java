@@ -40,7 +40,7 @@ public record CreateNodeOperation<N extends Node>(GraphPattern sourceGraph, Role
             CatchClause.class, RecordDeclaration.class, TemplateDeclaration.class, TryStatement.class, NamespaceDeclaration.class);
 
     @Override
-    public void resolveAndApply(Match match, TranslationContext ctx) {
+    public void resolveAndApply(Match match, TranslationContext ctx, GraphMutationContext mutationContext) {
         N newNode = PatternUtil.instantiate(pattern);
         match.register(pattern, newNode);
 

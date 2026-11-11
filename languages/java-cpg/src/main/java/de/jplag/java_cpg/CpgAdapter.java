@@ -30,11 +30,13 @@ import de.jplag.java_cpg.passes.AstTransformationPass;
 import de.jplag.java_cpg.passes.CpgTransformationPass;
 import de.jplag.java_cpg.passes.DfgSortPass;
 import de.jplag.java_cpg.passes.FixAstPass;
+import de.jplag.java_cpg.passes.GraphMutationPassConfiguration;
 import de.jplag.java_cpg.passes.PrepareTransformationPass;
 import de.jplag.java_cpg.passes.TokenizationPass;
 import de.jplag.java_cpg.passes.TransformationPassConfiguration;
 import de.jplag.java_cpg.transformation.GraphTransformation;
 import de.jplag.java_cpg.transformation.GraphTransformation.ExecutionPhase;
+import de.jplag.java_cpg.transformation.operations.GraphMutationContext;
 
 import kotlin.jvm.JvmClassMappingKt;
 import kotlin.reflect.KClass;
@@ -109,8 +111,9 @@ public class CpgAdapter {
             transformations = List.copyOf(transformations);
         }
 
-        TransformationPassConfiguration forPhase(ExecutionPhase phase) {
-            return new TransformationPassConfiguration(transformations.stream().filter(transformation -> transformation.phase() == phase).toList());
+        TransformationPassConfiguration forPhase(ExecutionPhase phase, GraphMutationContext mutationContext) {
+            return new TransformationPassConfiguration(transformations.stream().filter(transformation -> transformation.phase() == phase).toList(),
+                    mutationContext);
         }
     }
 
@@ -122,13 +125,15 @@ public class CpgAdapter {
         InferenceConfiguration inferenceConfiguration = InferenceConfiguration.builder().inferRecords(true).inferDfgForUnresolvedCalls(true).build();
 
         TranslationResult translationResult;
+        GraphMutationContext mutationContext = new GraphMutationContext();
         try {
             TranslationConfiguration.Builder configBuilder = new TranslationConfiguration.Builder().inferenceConfiguration(inferenceConfiguration)
                     .sourceLocations(files.toArray(new File[] {})).registerLanguage(new JavaLanguage());
 
-            configBuilder.configurePass(getKClass(PrepareTransformationPass.class), snapshot.forPhase(ExecutionPhase.OBLIGATORY));
-            configBuilder.configurePass(getKClass(AstTransformationPass.class), snapshot.forPhase(ExecutionPhase.AST_TRANSFORM));
-            configBuilder.configurePass(getKClass(CpgTransformationPass.class), snapshot.forPhase(ExecutionPhase.CPG_TRANSFORM));
+            configBuilder.configurePass(getKClass(PrepareTransformationPass.class), snapshot.forPhase(ExecutionPhase.OBLIGATORY, mutationContext));
+            configBuilder.configurePass(getKClass(AstTransformationPass.class), snapshot.forPhase(ExecutionPhase.AST_TRANSFORM, mutationContext));
+            configBuilder.configurePass(getKClass(CpgTransformationPass.class), snapshot.forPhase(ExecutionPhase.CPG_TRANSFORM, mutationContext));
+            configBuilder.configurePass(getKClass(DfgSortPass.class), new GraphMutationPassConfiguration(mutationContext));
 
             Collection<Class<? extends Pass<?>>> passClasses = new ArrayList<>(List.of(TypeResolver.class, TypeHierarchyResolver.class,
                     ImportResolver.class, SymbolResolver.class, PrepareTransformationPass.class, FixAstPass.class, DynamicInvokeResolver.class,
@@ -143,11 +148,16 @@ public class CpgAdapter {
                 configBuilder.registerPass(getKClass(passClass));
             }
 
-            translationResult = TranslationManager.builder().config(configBuilder.build()).build().analyze().get();
+            // Cleanup belongs to analysis completion, even if the waiting caller is interrupted.
+            translationResult = TranslationManager.builder().config(configBuilder.build()).build().analyze()
+                    .whenComplete((result, failure) -> mutationContext.close()).get();
 
         } catch (InterruptedException e) {
             throw e;
-        } catch (ExecutionException | ConfigurationException e) {
+        } catch (ConfigurationException e) {
+            mutationContext.close();
+            throw new ParsingException(List.copyOf(files).getFirst(), e);
+        } catch (ExecutionException e) {
             throw new ParsingException(List.copyOf(files).getFirst(), e);
         }
         return translationResult;
