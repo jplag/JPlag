@@ -14,29 +14,7 @@ import de.jplag.java_cpg.transformation.GraphTransformation
 @ExecuteBefore(EvaluationOrderGraphPass::class)
 class AstTransformationPass(ctx: TranslationContext) : ATransformationPass(ctx) {
 
-
     override fun getPhaseSpecificTransformations(): List<GraphTransformation> {
-        return transformations.toList()
+        return passConfig<TransformationPassConfiguration>()?.transformations ?: emptyList()
     }
-
-    companion object {
-        @JvmStatic
-        val transformations: MutableList<GraphTransformation> = ArrayList()
-
-        @JvmStatic
-        fun registerTransformation(transformation: GraphTransformation) {
-            transformations.add(transformation)
-        }
-
-        @JvmStatic
-        fun registerTransformations(newTransformations: Array<GraphTransformation>) {
-            transformations.addAll(newTransformations)
-        }
-
-        @JvmStatic
-        fun clearTransformations() {
-            transformations.clear()
-        }
-    }
-
 }
