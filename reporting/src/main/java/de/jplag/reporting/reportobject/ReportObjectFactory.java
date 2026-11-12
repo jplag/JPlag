@@ -6,8 +6,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -218,8 +220,7 @@ public class ReportObjectFactory {
     }
 
     private String getDate() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy");
-        Date date = new Date();
-        return dateFormat.format(date);
+        LocalDateTime date = LocalDateTime.now(ZoneId.systemDefault());
+        return date.format(DateTimeFormatter.ofPattern("dd/MM/yy"));
     }
 }

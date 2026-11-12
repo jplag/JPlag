@@ -186,15 +186,15 @@ public class JPlagResult {
     }
 
     private int[] calculateDistributionFor(List<JPlagComparison> comparisons, ToDoubleFunction<JPlagComparison> similarityExtractor) {
-        int[] similarityDistribution = new int[SIMILARITY_DISTRIBUTION_SIZE];
+        int[] distribution = new int[SIMILARITY_DISTRIBUTION_SIZE];
         for (JPlagComparison comparison : comparisons) {
             double similarity = similarityExtractor.applyAsDouble(comparison);
             int index = (int) (similarity * SIMILARITY_DISTRIBUTION_SIZE);
             index = Math.clamp(index, 0, SIMILARITY_DISTRIBUTION_SIZE - 1); // index exceeds size if similarity == 1 or similarity > 1 due to
                                                                             // weighting.
-            similarityDistribution[index]++;
+            distribution[index]++;
         }
-        return similarityDistribution;
+        return distribution;
     }
 
 }

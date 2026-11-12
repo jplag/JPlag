@@ -48,18 +48,18 @@ class RoutingTreeTest {
 
     @Test
     void testPartialPathRoute() {
-        RoutingTree routingTree = new RoutingTree();
-        routingTree.insertRouting("/path/", new TestRouting(""));
-        assertNotNull(routingTree.resolveRouting(new RoutingPath("/path/index.html")));
+        RoutingTree tree = new RoutingTree();
+        tree.insertRouting("/path/", new TestRouting(""));
+        assertNotNull(tree.resolveRouting(new RoutingPath("/path/index.html")));
     }
 
     @Test
     void testPartialPathRouteWithSubPath() {
-        RoutingTree routingTree = new RoutingTree();
-        routingTree.insertRouting("/path/", new TestRouting("/path/"));
-        routingTree.insertRouting("/path/subPath/a.html", new TestRouting(""));
+        RoutingTree tree = new RoutingTree();
+        tree.insertRouting("/path/", new TestRouting("/path/"));
+        tree.insertRouting("/path/subPath/a.html", new TestRouting(""));
 
-        Pair<RoutingPath, Routing> result = routingTree.resolveRouting(new RoutingPath("/path/subPath/b.html"));
+        Pair<RoutingPath, Routing> result = tree.resolveRouting(new RoutingPath("/path/subPath/b.html"));
         assertNotNull(result);
         assertInstanceOf(TestRouting.class, result.getRight());
         assertEquals("/path/", ((TestRouting) result.getRight()).path);

@@ -1,7 +1,6 @@
 package de.jplag;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -134,18 +133,10 @@ public class JPlag {
     }
 
     private static List<String> getDuplicateSubmissionFolderNames(JPlagOptions options) {
-        List<String> duplicateNames = new ArrayList<>();
+        List<String> duplicateNames;
         Set<String> alreadyFoundNames = new HashSet<>();
-        for (File file : options.submissionDirectories()) {
-            if (!alreadyFoundNames.add(file.getName())) {
-                duplicateNames.add(file.getName());
-            }
-        }
-        for (File file : options.oldSubmissionDirectories()) {
-            if (!alreadyFoundNames.add(file.getName())) {
-                duplicateNames.add(file.getName());
-            }
-        }
+        duplicateNames = options.submissionDirectories().stream().map(File::getName).filter(name -> !alreadyFoundNames.add(name)).toList();
+        options.oldSubmissionDirectories().stream().map(File::getName).filter(name -> !alreadyFoundNames.add(name)).forEach(duplicateNames::add);
         return duplicateNames;
     }
 }

@@ -2,6 +2,7 @@ package de.jplag.clustering.algorithm;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -59,26 +60,31 @@ public class AgglomerativeClustering implements GenericClusteringAlgorithm {
 
         similarities = new PriorityQueue<>(initialSimilarities);
 
+        if (similarities.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         while (clusters.size() > 1) {
             ClusterConnection nearest = similarities.poll();
-            // TODO Check that nearest is never null
-            if (!(clusters.contains(nearest.left) && clusters.contains(nearest.right))) {
-                // One cluster already part of another cluster
-                continue;
+            // nearest will never be null. If the queue is empty initially we exit before the loop.
+            // If there are at least two clusters remaining we added a new similarity in the for loop at the end of the while.
+            // Otherwise, the loop exits
+
+            if (clusters.contains(nearest.left) && clusters.contains(nearest.right)) { // Checks if one cluster is already part of another cluster
+                if (nearest.similarity < options.agglomerativeThreshold()) {
+                    break;
+                }
+                clusters.remove(nearest.left);
+                clusters.remove(nearest.right);
+                nearest.left.submissions().addAll(nearest.right.submissions());
+                Cluster combined = new Cluster(nearest.left.submissions());
+                for (Cluster otherCluster : clusters) {
+                    double similarity = options.agglomerativeInterClusterSimilarity().clusterSimilarity(combined.submissions,
+                            otherCluster.submissions, similarityMatrix);
+                    similarities.add(new ClusterConnection(combined, otherCluster, similarity));
+                }
+                clusters.add(combined);
             }
-            if (nearest.similarity < options.agglomerativeThreshold()) {
-                break;
-            }
-            clusters.remove(nearest.left);
-            clusters.remove(nearest.right);
-            nearest.left.submissions().addAll(nearest.right.submissions());
-            Cluster combined = new Cluster(nearest.left.submissions());
-            for (Cluster otherCluster : clusters) {
-                double similarity = options.agglomerativeInterClusterSimilarity().clusterSimilarity(combined.submissions, otherCluster.submissions,
-                        similarityMatrix);
-                similarities.add(new ClusterConnection(combined, otherCluster, similarity));
-            }
-            clusters.add(combined);
         }
 
         return clusters.stream().map(Cluster::submissions).collect(Collectors.toList());
@@ -87,7 +93,7 @@ public class AgglomerativeClustering implements GenericClusteringAlgorithm {
     private record ClusterConnection(Cluster left, Cluster right, double similarity) implements Comparable<ClusterConnection> {
         @Override
         public int compareTo(ClusterConnection other) {
-            return (int) Math.signum(other.similarity - similarity);
+            return Double.compare(other.similarity, similarity);
         }
 
     }

@@ -3,8 +3,9 @@ package de.jplag.cli.logger;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 import org.slf4j.Marker;
@@ -97,7 +98,7 @@ public class CollectedLogger extends AbstractLogger {
     @Override
     protected void handleNormalizedLoggingCall(Level level, Marker marker, String format, Object[] args, Throwable cause) {
         String logMessage = prepareFormattedMessage(format, args);
-        LogEntry entry = new LogEntry(logMessage, cause, new Date(), level);
+        LogEntry entry = new LogEntry(logMessage, cause, LocalDateTime.now(ZoneId.systemDefault()), level);
 
         if (level == Level.ERROR && !isFinalizing) {
             allErrors.add(entry);

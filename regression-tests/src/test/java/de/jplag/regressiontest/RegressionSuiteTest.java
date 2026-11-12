@@ -69,7 +69,7 @@ class RegressionSuiteTest {
         Map<Language, List<DataSet>> dataSetsByLanguage = testDescriptorFiles.stream().map(testDescriptorFile -> {
             try {
                 return JacksonUtils.createNewObjectMapper().readValue(testDescriptorFile, DataSet.class);
-            } catch (IOException e) {
+            } catch (IOException _) {
                 throw new IllegalStateException("The test descriptor " + testDescriptorFile.getName() + " is invalid.");
             }
         }).collect(Collectors.groupingBy(DataSet::language));
