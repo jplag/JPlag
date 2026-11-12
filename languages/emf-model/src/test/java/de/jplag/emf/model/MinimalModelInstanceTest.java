@@ -1,8 +1,8 @@
 package de.jplag.emf.model;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.ParsingException;
 import de.jplag.Token;
 import de.jplag.TokenPrinterUtils;
 import de.jplag.testutils.FileUtil;
@@ -35,7 +34,7 @@ class MinimalModelInstanceTest {
     private EmfLanguageOptions options;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         language = new EmfModelLanguage();
         options = (EmfLanguageOptions) language.getOptions();
         baseDirectory = BASE_PATH.toFile();
@@ -48,21 +47,18 @@ class MinimalModelInstanceTest {
         File baseFile = new File(BASE_PATH.toString());
         List<File> baseFiles = new ArrayList<>(Arrays.asList(baseFile.listFiles()));
         options.getMetamodelPathOption().setValue(METAMODEL_PATH.toString());
-        try {
+        assertDoesNotThrow(() -> {
             List<Token> tokens = language.parse(new HashSet<>(baseFiles), true);
             assertNotEquals(0, tokens.size());
             logger.debug(
                     TokenPrinterUtils.printTokensByFile(tokens, file -> new File(file.getAbsolutePath() + EmfModelLanguage.VIEW_FILE_EXTENSION)));
-            logger.info("Parsed tokens: " + tokens);
+            logger.info("Parsed tokens: {}", tokens);
             assertEquals(7, tokens.size());
-        } catch (ParsingException e) {
-            fail("Parsing failed: " + e.getMessage(), e);
-        }
-
+        });
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         FileUtil.clearFiles(new File(BASE_PATH.toString()), EmfModelLanguage.VIEW_FILE_EXTENSION);
     }
 

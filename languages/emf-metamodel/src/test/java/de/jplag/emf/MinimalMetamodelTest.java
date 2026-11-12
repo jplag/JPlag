@@ -31,7 +31,7 @@ class MinimalMetamodelTest extends AbstractEmfTest {
 
         logger.debug(TokenPrinterUtils.printTokensByFile(result, file -> new File(file.getAbsolutePath() + EmfLanguage.VIEW_FILE_EXTENSION)));
         List<TokenType> tokenTypes = result.stream().map(Token::getType).toList();
-        logger.info("Parsed token types: " + tokenTypes.stream().map(TokenType::getDescription).toList());
+        logger.info("Parsed token types: {}", tokenTypes.stream().map(TokenType::getDescription).toList());
         assertEquals(80, tokenTypes.size());
         assertEquals(12, new HashSet<>(tokenTypes).size());
 

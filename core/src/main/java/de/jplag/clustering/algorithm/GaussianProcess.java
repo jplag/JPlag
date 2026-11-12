@@ -63,7 +63,7 @@ public class GaussianProcess {
 
     /**
      * Fit Gaussian Process using a matern kernel.
-     * @param observedCoordinates TODO DOCUMENTATION MISSING
+     * @param observedCoordinates The coordinates the observations belong to
      * @param observations expected to have zero mean, unit variance if normalize is false
      * @param noise variance of noise in Y
      * @param normalize if Y should be normalized

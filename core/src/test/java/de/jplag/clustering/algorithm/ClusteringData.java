@@ -25,21 +25,21 @@ public enum ClusteringData {
      * dissimilar. The expected clusters are {0, 1} and {2, 3}.
      */
     FOUR_POINTS(() -> {
-        RealMatrix similarity = new Array2DRowRealMatrix(4, 4);
+        RealMatrix similarityMatrix = new Array2DRowRealMatrix(4, 4);
         for (int i = 0; i < 4; i++) {
-            similarity.setEntry(i, i, 1);
+            similarityMatrix.setEntry(i, i, 1);
         }
         // These are similar
-        setEntries(similarity, 0, 1, 0.5);
-        setEntries(similarity, 2, 3, 0.5);
+        setEntries(similarityMatrix, 0, 1, 0.5);
+        setEntries(similarityMatrix, 2, 3, 0.5);
 
         // Others are dissimilar
-        setEntries(similarity, 0, 2, 0.1);
-        setEntries(similarity, 0, 3, 0.1);
-        setEntries(similarity, 1, 2, 0.1);
-        setEntries(similarity, 1, 3, 0.1);
+        setEntries(similarityMatrix, 0, 2, 0.1);
+        setEntries(similarityMatrix, 0, 3, 0.1);
+        setEntries(similarityMatrix, 1, 2, 0.1);
+        setEntries(similarityMatrix, 1, 3, 0.1);
 
-        return similarity;
+        return similarityMatrix;
     }, new int[][] {{0, 1}, {2, 3}}, new ClusteringOptions().withAgglomerativeThreshold(0.4));
 
     private final RealMatrix similarity;

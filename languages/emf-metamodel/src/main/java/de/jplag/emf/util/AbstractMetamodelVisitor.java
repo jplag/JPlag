@@ -40,26 +40,21 @@ public abstract class AbstractMetamodelVisitor {
      * @param eObject is the EObject to visit.
      */
     public final void visit(EObject eObject) {
-
         visitEObject(eObject);
-        if (eObject instanceof EPackage ePackage) {
-            visitEPackage(ePackage);
+
+        visitEnter(eObject);
+
+        currentTreeDepth++;
+        for (EObject child : eObject.eContents()) {
+            visit(child);
         }
-        if (eObject instanceof EAnnotation eAnnotation) {
-            visitEAnnotation(eAnnotation);
-        }
-        if (eObject instanceof EClassifier eClassifier) {
-            visitEClassifier(eClassifier);
-        }
-        if (eObject instanceof EClass eClass) {
-            visitEClass(eClass);
-        }
-        if (eObject instanceof EDataType eDataType) {
-            visitEDataType(eDataType);
-        }
-        if (eObject instanceof EStructuralFeature eStructuralFeature) {
-            visitEStructuralFeature(eStructuralFeature);
-        }
+        currentTreeDepth--;
+
+        visitLeave(eObject);
+    }
+
+    private void visitEnter(EObject eObject) {
+        visitEnterTypes(eObject);
         if (eObject instanceof EAttribute eAttribute) {
             visitEAttribute(eAttribute);
         }
@@ -90,13 +85,30 @@ public abstract class AbstractMetamodelVisitor {
         if (eObject instanceof ENamedElement eNamedElement) {
             visitENamedElement(eNamedElement);
         }
+    }
 
-        currentTreeDepth++;
-        for (EObject child : eObject.eContents()) {
-            visit(child);
+    private void visitEnterTypes(EObject eObject) {
+        if (eObject instanceof EPackage ePackage) {
+            visitEPackage(ePackage);
         }
-        currentTreeDepth--;
+        if (eObject instanceof EAnnotation eAnnotation) {
+            visitEAnnotation(eAnnotation);
+        }
+        if (eObject instanceof EClassifier eClassifier) {
+            visitEClassifier(eClassifier);
+        }
+        if (eObject instanceof EClass eClass) {
+            visitEClass(eClass);
+        }
+        if (eObject instanceof EDataType eDataType) {
+            visitEDataType(eDataType);
+        }
+        if (eObject instanceof EStructuralFeature eStructuralFeature) {
+            visitEStructuralFeature(eStructuralFeature);
+        }
+    }
 
+    private void visitLeave(EObject eObject) {
         if (eObject instanceof EPackage ePackage) {
             leaveEPackage(ePackage);
         }

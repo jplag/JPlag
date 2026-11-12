@@ -136,7 +136,7 @@ class RustLanguageTest {
         var annotatedRustTokens = annotatedTokens.stream().filter(RustTokenType.class::isInstance).collect(Collectors.toSet());
         var allRustTokens = RustTokenType.values();
         var missingRustTokens = Arrays.stream(allRustTokens).filter(token -> !annotatedRustTokens.contains(token)).toList();
-        assertTrue(missingRustTokens.isEmpty(), "The following rust tokens are missing in the code example '%s':\n".formatted(fileName)
+        assertTrue(missingRustTokens.isEmpty(), "The following rust tokens are missing in the code example '%s':%n".formatted(fileName)
                 + String.join("\n", missingRustTokens.stream().map(RustTokenType::getDescription).toList()));
     }
 

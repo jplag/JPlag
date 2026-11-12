@@ -18,7 +18,7 @@ public record Action(Type type, List<ExecutableContent> contents) implements Exe
 
     @Override
     public String toString() {
-        return String.format("%s {", type == Type.ON_ENTRY ? "OnEntry" : "OnExit");
+        return (type == Type.ON_ENTRY ? "OnEntry" : "OnExit") + " {";
     }
 
     /**

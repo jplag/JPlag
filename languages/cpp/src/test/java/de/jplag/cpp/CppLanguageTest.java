@@ -14,19 +14,19 @@ import de.jplag.testutils.datacollector.TestSourceIgnoredLinesCollector;
  * source files are suitably covered by testing a huge file (bc6h_enc.h).
  */
 public class CppLanguageTest extends LanguageModuleTest {
-    private static final String[] assignSnippets = {"i = 10", "i += 10", "i -= 10", "i += 10", "i /= 10", "i %= 10", "i >>= 10", "i <<= 10",
+    private static final String[] ASSIGN_SNIPPETS = {"i = 10", "i += 10", "i -= 10", "i += 10", "i /= 10", "i %= 10", "i >>= 10", "i <<= 10",
             "i &= 10", "i ^= 10", "i |= 10", "i++", "i--", "++i", "--i"};
 
-    private static final String[] functionCallSnippets = {"this->myMethod(v)", "MyClass::myMethod(v)", "myMethod(v)", "m.myMethod(v)", "myMethod(1)",
-            "myMethod(\"a\")"};
+    private static final String[] FUNCTION_CALL_SNIPPETS = {"this->myMethod(v)", "MyClass::myMethod(v)", "myMethod(v)", "m.myMethod(v)",
+            "myMethod(1)", "myMethod(\"a\")"};
 
-    private static final String intMethodCallFormatter = """
+    private static final String INT_METHOD_CALL_FORMATTER = """
             void f(int i) {
                 %s;
             }
             """;
 
-    private static final String stringMethodCallFormatter = """
+    private static final String STRING_METHOD_CALL_FORMATTER = """
             void a(string v) {
               %s;
             }
@@ -41,7 +41,8 @@ public class CppLanguageTest extends LanguageModuleTest {
 
     @Override
     protected void collectTestData(TestDataCollector collector) {
-        collector.inlineSource(formattedCode(intMethodCallFormatter, assignSnippets)).testContainedTokens(CPPTokenType.ASSIGN).testSourceCoverage();
+        collector.inlineSource(formattedCode(INT_METHOD_CALL_FORMATTER, ASSIGN_SNIPPETS)).testContainedTokens(CPPTokenType.ASSIGN)
+                .testSourceCoverage();
 
         collector.testFile("FunctionCall.cpp").testTokenSequence(CPPTokenType.FUNCTION_BEGIN, CPPTokenType.APPLY, CPPTokenType.APPLY,
                 CPPTokenType.APPLY, CPPTokenType.APPLY, CPPTokenType.FUNCTION_END).testSourceCoverage();
@@ -52,7 +53,7 @@ public class CppLanguageTest extends LanguageModuleTest {
                         CPPTokenType.FOR_END, CPPTokenType.RETURN, CPPTokenType.FUNCTION_END)
                 .testSourceCoverage();
 
-        collector.inlineSource(formattedCode(stringMethodCallFormatter, functionCallSnippets))
+        collector.inlineSource(formattedCode(STRING_METHOD_CALL_FORMATTER, FUNCTION_CALL_SNIPPETS))
                 .testTokenSequence(CPPTokenType.FUNCTION_BEGIN, CPPTokenType.VARDEF, CPPTokenType.APPLY, CPPTokenType.FUNCTION_END)
                 .testSourceCoverage();
 
