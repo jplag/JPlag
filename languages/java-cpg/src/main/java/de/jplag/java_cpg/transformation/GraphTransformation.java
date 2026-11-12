@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import de.fraunhofer.aisec.cpg.TranslationContext;
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.jplag.java_cpg.transformation.matching.edges.CpgEdge;
-import de.jplag.java_cpg.transformation.matching.edges.CpgMultiEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgNthEdge;
 import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern;
 import de.jplag.java_cpg.transformation.matching.pattern.Match;
@@ -368,11 +367,7 @@ public interface GraphTransformation {
             default <T extends Node, P extends T, R extends Node> void castAndCompare(Relation<? super T, R, ?> source, Relation<?, ?, ?> target,
                     NodePattern.NodePatternImpl<P> parent) throws TransformationException {
                 Relation<T, R, ?> castTarget = Casting.castRelation(target);
-                CpgEdge<? super T, R> edge = switch (source.getEdge()) {
-                    case CpgMultiEdge<? super T, R> multiEdge -> multiEdge.getAnyOfNEdgeTo(source.getPattern());
-                    case CpgEdge<? super T, R> singleEdge -> singleEdge;
-                    default -> throw new TransformationException("Relation edge must be CpgEdge or CpgMultiEdge");
-                };
+                CpgEdge<? super T, R> edge = source.getTransformationEdge();
 
                 compare(source.getPattern(), castTarget.getPattern(), parent, edge);
             }

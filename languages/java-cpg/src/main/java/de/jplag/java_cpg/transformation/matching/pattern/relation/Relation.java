@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 
 import de.fraunhofer.aisec.cpg.graph.Node;
+import de.jplag.java_cpg.transformation.matching.edges.CpgEdge;
 import de.jplag.java_cpg.transformation.matching.edges.IEdge;
 import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern;
 import de.jplag.java_cpg.transformation.matching.pattern.Match;
@@ -47,6 +48,12 @@ public abstract sealed class Relation<T extends Node, R extends Node, V> permits
     public IEdge<T, R> getEdge() {
         return edge;
     }
+
+    /**
+     * Gets the single edge or placeholder used to calculate transformations of this relation.
+     * @return the transformation edge
+     */
+    public abstract CpgEdge<T, R> getTransformationEdge();
 
     /**
      * Gets the concrete related node of this relation given the concrete origin node.
