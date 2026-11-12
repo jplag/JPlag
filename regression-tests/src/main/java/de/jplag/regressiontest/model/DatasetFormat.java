@@ -15,13 +15,13 @@ public enum DatasetFormat {
      */
     PROGPEDIA {
         @Override
-        public Set<Path> getSourceDirectories(Dataset dataset) throws IOException {
-            return Collections.singleton(dataset.actualSourceDirectory().resolve("ACCEPTED"));
+        public Set<Path> getSourceDirectories(Dataset dataset) {
+            return Collections.singleton(dataset.sourceDirectory().resolve("ACCEPTED"));
         }
 
         @Override
-        public Path getBaseCodeDirectory(Dataset dataset, String directoryName) throws IOException {
-            return dataset.actualSourceDirectory().resolve(directoryName);
+        public Path getBaseCodeDirectory(Dataset dataset, String directoryName) {
+            return dataset.sourceDirectory().resolve(directoryName);
         }
     },
     /**
@@ -29,8 +29,8 @@ public enum DatasetFormat {
      */
     PLAIN {
         @Override
-        public Set<Path> getSourceDirectories(Dataset dataset) throws IOException {
-            return Collections.singleton(dataset.actualSourceDirectory());
+        public Set<Path> getSourceDirectories(Dataset dataset) {
+            return Collections.singleton(dataset.sourceDirectory());
         }
 
         @Override

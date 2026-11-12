@@ -61,9 +61,9 @@ class RegressionGeneratorTest {
                     .collect(Collectors.toMap(TestSuiteHelper::getTestIdentifier, ExpectedResult::fromComparison));
 
             GoldStandard goldStandard = null;
-            if (dataset.getGoldStandardFile().isPresent()) {
+            if (dataset.goldStandardFile().isPresent()) {
                 goldStandard = GoldStandard.buildFromComparisons(comparisons,
-                        ComparisonIdentifier.loadIdentifiersFromFile(dataset.getGoldStandardFile().get(), dataset.getActualDelimiter()));
+                        ComparisonIdentifier.loadIdentifiersFromFile(dataset.goldStandardFile().get(), dataset.goldStandardDelimiter()));
             }
 
             resultDescriptions.add(new ResultDescription(runConfiguration.identifier(), expectedResults, goldStandard));
@@ -85,7 +85,7 @@ class RegressionGeneratorTest {
      */
     private static Path writeJsonModelsToJsonFile(List<ResultDescription> resultDescriptions, Dataset dataset) throws IOException {
         ObjectWriter writer = JacksonUtils.createNewObjectMapper().writer().withDefaultPrettyPrinter();
-        Path outputFile = dataset.getResultFile();
+        Path outputFile = dataset.resultFile();
 
         FileHelper.createDirectoryIfItDoesNotExist(outputFile.getParent());
         FileHelper.createFileIfItDoesNotExist(outputFile);

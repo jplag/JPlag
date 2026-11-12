@@ -107,7 +107,7 @@ class RegressionSuiteTest {
         List<DynamicContainer> testContainers = new LinkedList<>();
         Map<String, ResultDescription> results = new HashMap<>();
         try {
-            ResultDescription[] resultList = JacksonUtils.createNewObjectMapper().readValue(Files.newInputStream(dataset.getResultFile()),
+            ResultDescription[] resultList = JacksonUtils.createNewObjectMapper().readValue(Files.newInputStream(dataset.resultFile()),
                     ResultDescription[].class);
             for (ResultDescription resultDescription : resultList) {
                 results.put(resultDescription.identifier(), resultDescription);
@@ -123,7 +123,7 @@ class RegressionSuiteTest {
             testContainers.add(generateTestsForResultDescription(results.get(runConfiguration.identifier()), dataset, runConfiguration));
         }
 
-        return DynamicContainer.dynamicContainer(FileHelper.getFileNameWithoutFileExtension(dataset.getResultFile()), testContainers);
+        return DynamicContainer.dynamicContainer(FileHelper.getFileNameWithoutFileExtension(dataset.resultFile()), testContainers);
     }
 
     /**
@@ -196,8 +196,8 @@ class RegressionSuiteTest {
     private DynamicNode generateGoldStandardTest(Dataset dataset, Map<String, JPlagComparison> comparisonMap, GoldStandard goldStandard)
             throws IOException {
         if (goldStandard != null) {
-            Set<ComparisonIdentifier> goldStandardIdentifiers = ComparisonIdentifier
-                    .loadIdentifiersFromFile(dataset.getGoldStandardFile().orElseThrow(), dataset.getActualDelimiter());
+            Set<ComparisonIdentifier> goldStandardIdentifiers = ComparisonIdentifier.loadIdentifiersFromFile(dataset.goldStandardFile().orElseThrow(),
+                    dataset.goldStandardDelimiter());
             GoldStandard found = GoldStandard.buildFromComparisons(comparisonMap.values(), goldStandardIdentifiers);
 
             DynamicTest goldStandardMatch = DynamicTest.dynamicTest("expected plagiarism comparisons average similarity",

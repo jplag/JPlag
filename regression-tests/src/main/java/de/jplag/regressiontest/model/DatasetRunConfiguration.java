@@ -22,7 +22,7 @@ public record DatasetRunConfiguration(JPlagOptions jPlagOptions, String identifi
      * @return The configurations
      */
     public static List<DatasetRunConfiguration> generateRunConfigurations(Dataset dataset) throws IOException {
-        Options configuredOptions = dataset.getOptions();
+        Options configuredOptions = dataset.options();
         List<DatasetRunConfiguration> result = new ArrayList<>();
 
         for (int minimumTokenMatch : configuredOptions.getMinimumTokenMatches()) {
