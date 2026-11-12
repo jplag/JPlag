@@ -117,11 +117,14 @@ public class SubmissionSet {
             baseCodeSubmission.normalize();
         }
         ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.TOKEN_SEQUENCE_NORMALIZATION, submissions.size());
-        submissions.parallelStream().forEach(submission -> {
-            submission.normalize();
-            progressBar.step();
-        });
-        progressBar.dispose();
+        try {
+            submissions.parallelStream().forEach(submission -> {
+                submission.normalize();
+                progressBar.step();
+            });
+        } finally {
+            progressBar.dispose();
+        }
     }
 
     private List<Submission> filterValidSubmissions() {
@@ -159,15 +162,17 @@ public class SubmissionSet {
 
         ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.PARSING, submissions.size());
 
-        if (options.language().expectsSubmissionOrder()) {
-            for (Submission submission : submissions) {
-                parseSingleSubmission(progressBar, submission);
+        try {
+            if (options.language().expectsSubmissionOrder()) {
+                for (Submission submission : submissions) {
+                    parseSingleSubmission(progressBar, submission);
+                }
+            } else {
+                parseSubmissionsInParallel(submissions, progressBar);
             }
-        } else {
-            parseSubmissionsInParallel(submissions, progressBar);
+        } finally {
+            progressBar.dispose();
         }
-
-        progressBar.dispose();
 
         int validSubmissions = submissions.size() - errors.get();
         logger.debug("{} submissions parsed successfully!", validSubmissions);

@@ -2,6 +2,7 @@ package de.jplag.logging;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import org.slf4j.Logger;
@@ -66,11 +67,12 @@ public class ProgressBarLogger {
     private static class DummyBar implements ProgressBar {
         private static final Logger logger = LoggerFactory.getLogger(DummyBar.class);
         private final ProgressBarType type;
-        private int currentStep;
+        private final AtomicInteger currentStep;
 
         public DummyBar(ProgressBarType type, int totalSteps) {
             this.type = type;
-            currentStep = 0;
+            this.currentStep = new AtomicInteger();
+
             if (type.isIdleBar()) {
                 logger.info("{} - started", type.getDefaultText());
             } else {
@@ -80,7 +82,7 @@ public class ProgressBarLogger {
 
         @Override
         public void step() {
-            logger.info("{} - step {}", type.getDefaultText(), this.currentStep++);
+            logger.info("{} - step {}", type.getDefaultText(), currentStep.getAndIncrement());
         }
 
         @Override
