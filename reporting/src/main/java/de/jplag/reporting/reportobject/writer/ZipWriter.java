@@ -1,20 +1,20 @@
 package de.jplag.reporting.reportobject.writer;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.net.URI;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.zip.ZipEntry;
+import java.util.Map;
 import java.util.zip.ZipOutputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.jplag.FilePathUtil;
 import de.jplag.reporting.serialization.JacksonUtils;
+import de.jplag.util.FileUtils;
+import de.jplag.util.RelativePath;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -25,58 +25,62 @@ public class ZipWriter implements JPlagResultWriter {
     private static final Logger logger = LoggerFactory.getLogger(ZipWriter.class);
     private static final ObjectMapper objectMapper = JacksonUtils.createNewObjectMapper();
 
-    private static final String WRITE_JSON_ERROR = "Failed to write JSON entry %s";
-    private static final String COPY_FILE_ERROR = "Failed to copy file (%s) to entry (%s)";
-    private static final String WRITE_STRING_ERROR = "Failed to write string entry %s";
+    private static final String WRITE_JSON_ERROR = "Failed to write JSON entry {}";
+    private static final String COPY_FILE_ERROR = "Failed to copy file ({}) to entry ({})";
+    private static final String WRITE_STRING_ERROR = "Failed to write string entry {}";
     private static final String CLOSE_FILE_ERROR = "Failed to close zip file properly";
 
-    private final ZipOutputStream file;
+    private final Path root;
+    private final FileSystem fileSystem;
 
     /**
      * The zip file to write to.
      * @param zipFile The file
-     * @throws FileNotFoundException If the file cannot be opened for writing
+     * @throws IOException If the file cannot be opened for writing
      */
-    public ZipWriter(File zipFile) throws FileNotFoundException {
-        zipFile.getAbsoluteFile().getParentFile().mkdirs();
-        this.file = new ZipOutputStream(new FileOutputStream(zipFile));
+    public ZipWriter(Path zipFile) throws IOException {
+        Files.createDirectories(zipFile.getParent());
+        if (Files.exists(zipFile)) {
+            try (ZipOutputStream _ = new ZipOutputStream(Files.newOutputStream(zipFile))) {
+                // This creates a new zip in the place of an existing one using ZipOutputStream as java nio is incapable of doing that
+            }
+        }
+        fileSystem = FileSystems.newFileSystem(URI.create("jar:" + zipFile.toUri()), Map.of("create", true));
+        root = fileSystem.getRootDirectories().iterator().next();
     }
 
     @Override
-    public void addJsonEntry(Object jsonContent, Path path) {
+    public void addJsonEntry(Object jsonContent, RelativePath path) {
         try {
-            this.file.putNextEntry(new ZipEntry(FilePathUtil.pathAsZipPath(path)));
-            this.file.write(objectMapper.writeValueAsBytes(jsonContent));
-            this.file.closeEntry();
-        } catch (IOException e) {
-            logger.error(String.format(WRITE_JSON_ERROR, path), e);
+            FileUtils.write(path.resolveAgainst(root), objectMapper.writeValueAsString(jsonContent));
+        } catch (IOException _) {
+            logger.error(WRITE_JSON_ERROR, path);
         }
     }
 
     @Override
-    public void addFileContentEntry(Path path, File original) {
-        try (FileInputStream inputStream = new FileInputStream(original)) {
-            this.file.putNextEntry(new ZipEntry(FilePathUtil.pathAsZipPath(path)));
-            inputStream.transferTo(this.file);
-        } catch (IOException e) {
-            logger.error(String.format(COPY_FILE_ERROR, original.getAbsolutePath(), path), e);
+    public void addFileContentEntry(RelativePath path, Path original) {
+        try {
+            Files.createDirectories(path.resolveAgainst(root).getParent());
+            Files.copy(original, path.resolveAgainst(root));
+        } catch (IOException _) {
+            logger.error(COPY_FILE_ERROR, original, path);
         }
     }
 
     @Override
-    public void writeStringEntry(String entry, Path path) {
+    public void writeStringEntry(String entry, RelativePath path) {
         try {
-            this.file.putNextEntry(new ZipEntry(FilePathUtil.pathAsZipPath(path)));
-            this.file.write(entry.getBytes(StandardCharsets.UTF_8));
-        } catch (IOException e) {
-            logger.error(String.format(WRITE_STRING_ERROR, path), e);
+            FileUtils.write(path.resolveAgainst(root), entry);
+        } catch (IOException _) {
+            logger.error(WRITE_STRING_ERROR, path);
         }
     }
 
     @Override
     public void close() {
         try {
-            this.file.close();
+            fileSystem.close();
         } catch (IOException e) {
             logger.error(CLOSE_FILE_ERROR, e);
         }

@@ -2,16 +2,18 @@ package de.jplag.testutils.datacollector;
 
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.junit.jupiter.api.Assumptions;
 
 import de.jplag.TokenType;
 
@@ -29,13 +31,13 @@ public class TestDataCollector {
 
     private final List<TestData> allTestData;
 
-    private final File testFileLocation;
+    private final Path testFileLocation;
 
     /**
      * Creates a new collector. Should only be called by {@link de.jplag.testutils.LanguageModuleTest}.
      * @param testFileLocation The location containing the test source files.
      */
-    public TestDataCollector(File testFileLocation) {
+    public TestDataCollector(Path testFileLocation) {
         this.testFileLocation = testFileLocation;
 
         this.sourceCoverageData = new ArrayList<>();
@@ -56,8 +58,7 @@ public class TestDataCollector {
      * @return The {@link TestDataContext}
      */
     public TestDataContext testFile(String... fileNames) {
-        Set<TestData> data = Arrays.stream(fileNames).map(it -> new File(this.testFileLocation, it)).map(FileTestData::new)
-                .collect(Collectors.toSet());
+        Set<TestData> data = Arrays.stream(fileNames).map(testFileLocation::resolve).map(FileTestData::new).collect(Collectors.toSet());
         return new TestDataContext(data);
     }
 
@@ -68,8 +69,13 @@ public class TestDataCollector {
      * @return The {@link TestDataContext}
      */
     public TestDataContext testAllOfType(String fileExtension) {
-        Set<TestData> data = Arrays.stream(testFileLocation.list()).filter(it -> it.endsWith(fileExtension))
-                .map(it -> new File(this.testFileLocation, it)).map(FileTestData::new).collect(Collectors.toSet());
+        Set<TestData> data = null;
+        try {
+            data = Files.list(testFileLocation).filter(it -> it.endsWith(fileExtension)).map(testFileLocation::resolve).map(FileTestData::new)
+                    .collect(Collectors.toSet());
+        } catch (IOException _) {
+            Assumptions.abort("Could not list content of: " + testFileLocation);
+        }
         return new TestDataContext(data);
     }
 
@@ -92,17 +98,21 @@ public class TestDataCollector {
      * @throws RuntimeException If the files cannot be read
      */
     public TestDataContext addTokenPositionTests(String directoryName) {
-        File directory = new File(this.testFileLocation, directoryName);
-        assumeTrue(directory.exists() && directory.isDirectory());
+        Path directory = testFileLocation.resolve(directoryName);
+        assumeTrue(Files.exists(directory) && Files.isDirectory(directory));
         Set<TestData> allTestsInDirectory = new HashSet<>();
-        for (File file : Objects.requireNonNull(directory.listFiles())) {
-            try {
-                TokenPositionTestData data = new TokenPositionTestData(file);
-                allTestsInDirectory.add(data);
-                this.tokenPositionTestData.add(data);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+        try {
+            for (Path file : Files.list(directory).toList()) {
+                try {
+                    TokenPositionTestData data = new TokenPositionTestData(file);
+                    allTestsInDirectory.add(data);
+                    this.tokenPositionTestData.add(data);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
+        } catch (IOException _) {
+            Assumptions.abort("Failed to list contents of: " + directory);
         }
         return new TestDataContext(allTestsInDirectory);
     }
@@ -112,10 +122,14 @@ public class TestDataCollector {
      * @param exceptionTestsDirectory The directory containing the test data
      */
     public void addExceptionTests(String exceptionTestsDirectory) {
-        File directory = new File(this.testFileLocation, exceptionTestsDirectory);
-        assumeTrue(directory.exists() && directory.isDirectory());
-        for (File file : directory.listFiles()) {
-            this.exceptionTestFile.add(new FileTestData(file));
+        Path directory = testFileLocation.resolve(exceptionTestsDirectory);
+        assumeTrue(Files.exists(directory) && Files.isDirectory(directory));
+        try {
+            for (Path file : Files.list(directory).toList()) {
+                this.exceptionTestFile.add(new FileTestData(file));
+            }
+        } catch (IOException _) {
+            Assumptions.abort("Failed to list contents of: " + directory);
         }
     }
 
@@ -193,7 +207,7 @@ public class TestDataCollector {
         }
 
         /**
-         * Test the data set for source coverage.
+         * Test the dataset for source coverage.
          * @return self reference
          */
         public TestDataContext testSourceCoverage() {
@@ -202,7 +216,7 @@ public class TestDataCollector {
         }
 
         /**
-         * Test the data set for token coverage.
+         * Test the dataset for token coverage.
          * @return self reference
          */
         public TestDataContext testTokenCoverage() {
@@ -211,7 +225,7 @@ public class TestDataCollector {
         }
 
         /**
-         * Test the data set for source and token coverage. Behaves just like calling {@link this#testSourceCoverage()} and
+         * Test the dataset for source and token coverage. Behaves just like calling {@link this#testSourceCoverage()} and
          * {@link this#testTokenCoverage()}.
          * @return self reference
          */
@@ -222,7 +236,7 @@ public class TestDataCollector {
         }
 
         /**
-         * Test the data set for contained tokens. The tokens neither have to occur exclusively nor in the given order.
+         * Test the dataset for contained tokens. The tokens neither have to occur exclusively nor in the given order.
          * @param tokens The set of tokens to check for.
          * @return self reference
          */
@@ -232,7 +246,7 @@ public class TestDataCollector {
         }
 
         /**
-         * Test the data set for a specific token sequence. The tokens have to be extracted in that exact order. The file end
+         * Test the dataset for a specific token sequence. The tokens have to be extracted in that exact order. The file end
          * token can be omitted.
          * @param tokens The sequence of tokens to check for
          * @return self reference

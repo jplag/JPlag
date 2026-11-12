@@ -1,8 +1,9 @@
 package de.jplag;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.function.Function;
+
+import de.jplag.util.RelativePath;
 
 /**
  * Utility class for handling file paths related to submissions, including generating relative paths, enforcing relative
@@ -22,11 +23,11 @@ public final class FilePathUtil {
      * @param submissionToIdFunction Function to map names to ids
      * @return Relative path
      */
-    public static Path getRelativeSubmissionPath(File file, Submission submission, Function<Submission, String> submissionToIdFunction) {
-        if (file.toPath().equals(submission.getRoot().toPath())) {
-            return Path.of(submissionToIdFunction.apply(submission), submissionToIdFunction.apply(submission));
+    public static RelativePath getRelativeSubmissionPath(Path file, Submission submission, Function<Submission, String> submissionToIdFunction) {
+        if (file.equals(submission.getRoot())) {
+            return RelativePath.of(submissionToIdFunction.apply(submission), submissionToIdFunction.apply(submission));
         }
-        return Path.of(submissionToIdFunction.apply(submission), submission.getRoot().toPath().relativize(file.toPath()).toString());
+        return RelativePath.of(submissionToIdFunction.apply(submission), submission.getRoot().relativize(file).toString());
     }
 
     /**
@@ -61,5 +62,14 @@ public final class FilePathUtil {
             builder.append(relativePath.getName(i));
         }
         return builder.toString();
+    }
+
+    /**
+     * Formats the path for usage with zip files. Returns the path segments separated by {@link #ZIP_PATH_SEPARATOR}.
+     * @param path The path to format
+     * @return The zip file path
+     */
+    public static String pathAsZipPath(RelativePath path) {
+        return String.join(ZIP_PATH_SEPARATOR, path);
     }
 }

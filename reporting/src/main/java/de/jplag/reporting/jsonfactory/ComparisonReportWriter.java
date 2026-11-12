@@ -1,6 +1,5 @@
 package de.jplag.reporting.jsonfactory;
 
-import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +18,7 @@ import de.jplag.reporting.reportobject.model.CodePosition;
 import de.jplag.reporting.reportobject.model.ComparisonReport;
 import de.jplag.reporting.reportobject.model.Match;
 import de.jplag.reporting.reportobject.writer.JPlagResultWriter;
+import de.jplag.util.RelativePath;
 
 /**
  * Writes {@link ComparisonReport}s of given {@link JPlagResult} to the disk under the specified path. Instantiated with
@@ -72,7 +72,7 @@ public class ComparisonReportWriter {
             addToLookUp(firstSubmissionId, secondSubmissionId, fileName);
             var comparisonReport = new ComparisonReport(firstSubmissionId, secondSubmissionId, createSimilarityMap(comparison),
                     convertMatchesToReportMatches(comparison), comparison.similarityOfFirst(), comparison.similarityOfSecond());
-            resultWriter.addJsonEntry(comparisonReport, Path.of(BASEPATH, fileName));
+            resultWriter.addJsonEntry(comparisonReport, RelativePath.of(BASEPATH, fileName));
         }
     }
 

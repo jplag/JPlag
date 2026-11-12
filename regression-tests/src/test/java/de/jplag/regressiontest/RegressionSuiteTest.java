@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,8 +40,8 @@ import de.jplag.regressiontest.helper.DeltaSummaryStatistics;
 import de.jplag.regressiontest.helper.FileHelper;
 import de.jplag.regressiontest.helper.TestSuiteHelper;
 import de.jplag.regressiontest.model.ComparisonIdentifier;
-import de.jplag.regressiontest.model.DataSet;
-import de.jplag.regressiontest.model.DataSetRunConfiguration;
+import de.jplag.regressiontest.model.Dataset;
+import de.jplag.regressiontest.model.DatasetRunConfiguration;
 import de.jplag.regressiontest.model.ExpectedResult;
 import de.jplag.regressiontest.model.GoldStandard;
 import de.jplag.regressiontest.model.ResultDescription;
@@ -66,13 +67,13 @@ class RegressionSuiteTest {
         List<File> testDescriptorFiles = Arrays.asList(Objects.requireNonNull(descriptorDirectory.listFiles()));
         List<DynamicContainer> allTests = new ArrayList<>();
 
-        Map<Language, List<DataSet>> dataSetsByLanguage = testDescriptorFiles.stream().map(testDescriptorFile -> {
+        Map<Language, List<Dataset>> dataSetsByLanguage = testDescriptorFiles.stream().map(testDescriptorFile -> {
             try {
-                return JacksonUtils.createNewObjectMapper().readValue(testDescriptorFile, DataSet.class);
+                return JacksonUtils.createNewObjectMapper().readValue(testDescriptorFile, Dataset.class);
             } catch (IOException e) {
                 throw new IllegalStateException("The test descriptor " + testDescriptorFile.getName() + " is invalid.");
             }
-        }).collect(Collectors.groupingBy(DataSet::language));
+        }).collect(Collectors.groupingBy(Dataset::language));
 
         for (Language language : dataSetsByLanguage.keySet()) {
             allTests.add(generateTestForLanguage(language, dataSetsByLanguage.get(language)));
@@ -84,29 +85,30 @@ class RegressionSuiteTest {
     /**
      * Generates the tests for the given language.
      * @param language The language
-     * @param dataSets The data sets for this language
+     * @param datasets The data sets for this language
      * @return The dynamic container containing the tests
      * @throws ExitException If JPlag throws an error
      */
-    private DynamicContainer generateTestForLanguage(Language language, List<DataSet> dataSets) throws ExitException, IOException {
+    private DynamicContainer generateTestForLanguage(Language language, List<Dataset> datasets) throws ExitException, IOException {
         List<DynamicContainer> languageTests = new LinkedList<>();
-        for (DataSet dataSet : dataSets) {
-            languageTests.add(generateTestsForDataSet(dataSet));
+        for (Dataset dataset : datasets) {
+            languageTests.add(generateTestsForDataSet(dataset));
         }
         return DynamicContainer.dynamicContainer(language.getIdentifier(), languageTests);
     }
 
     /**
-     * Generates tests for a data set.
-     * @param dataSet The data set
+     * Generates tests for a dataset.
+     * @param dataset The dataset
      * @return The dynamic container containing the tests
      * @throws ExitException If JPlag throws an error
      */
-    private DynamicContainer generateTestsForDataSet(DataSet dataSet) throws ExitException, IOException {
+    private DynamicContainer generateTestsForDataSet(Dataset dataset) throws ExitException, IOException {
         List<DynamicContainer> testContainers = new LinkedList<>();
         Map<String, ResultDescription> results = new HashMap<>();
         try {
-            ResultDescription[] resultList = JacksonUtils.createNewObjectMapper().readValue(dataSet.getResultFile(), ResultDescription[].class);
+            ResultDescription[] resultList = JacksonUtils.createNewObjectMapper().readValue(Files.newInputStream(dataset.resultFile()),
+                    ResultDescription[].class);
             for (ResultDescription resultDescription : resultList) {
                 results.put(resultDescription.identifier(), resultDescription);
             }
@@ -114,26 +116,26 @@ class RegressionSuiteTest {
             throw new IllegalStateException("Could not load expected values.", exception);
         }
 
-        for (DataSetRunConfiguration runConfiguration : DataSetRunConfiguration.generateRunConfigurations(dataSet)) {
+        for (DatasetRunConfiguration runConfiguration : DatasetRunConfiguration.generateRunConfigurations(dataset)) {
             if (!results.containsKey(runConfiguration.identifier())) {
-                throw new IllegalStateException("Expected results don't match data set configuration");
+                throw new IllegalStateException("Expected results don't match dataset configuration");
             }
-            testContainers.add(generateTestsForResultDescription(results.get(runConfiguration.identifier()), dataSet, runConfiguration));
+            testContainers.add(generateTestsForResultDescription(results.get(runConfiguration.identifier()), dataset, runConfiguration));
         }
 
-        return DynamicContainer.dynamicContainer(FileHelper.getFileNameWithoutFileExtension(dataSet.getResultFile()), testContainers);
+        return DynamicContainer.dynamicContainer(FileHelper.getFileNameWithoutFileExtension(dataset.resultFile()), testContainers);
     }
 
     /**
      * Generates test cases for each test described in the provided result object.
      * @param result is one test suite configuration of the deserialized {@code resultJson}
-     * @param dataSet The data set, the test is for
+     * @param dataset The dataset, the test is for
      * @param runConfiguration The run configuration for the test
      * @return a collection of test cases, each validating one {@link JPlagResult} against its {@link ExpectedResult}
      * counterpart
      * @throws ExitException If JPlag throw an error
      */
-    private DynamicContainer generateTestsForResultDescription(ResultDescription result, DataSet dataSet, DataSetRunConfiguration runConfiguration)
+    private DynamicContainer generateTestsForResultDescription(ResultDescription result, Dataset dataset, DatasetRunConfiguration runConfiguration)
             throws ExitException, IOException {
         JPlagOptions options = runConfiguration.jPlagOptions();
         JPlagResult jplagResult = JPlag.run(options);
@@ -141,7 +143,7 @@ class RegressionSuiteTest {
         assertEquals(result.identifierToResultMap().size(), comparisons.size(), "different number of results and expected results");
 
         DynamicContainer comparisonTests = generateTestResultsForComparisons(result, comparisons);
-        DynamicNode detectionTest = generateGoldStandardTest(dataSet, comparisons, result.goldStandard());
+        DynamicNode detectionTest = generateGoldStandardTest(dataset, comparisons, result.goldStandard());
 
         return DynamicContainer.dynamicContainer(runConfiguration.identifier(), List.of(comparisonTests, detectionTest));
     }
@@ -186,16 +188,16 @@ class RegressionSuiteTest {
 
     /**
      * Generates the tests for the gold standard.
-     * @param dataSet The data set
+     * @param dataset The dataset
      * @param comparisonMap The comparisons
      * @param goldStandard The gold standard previously saved
      * @return The node containing the tests
      */
-    private DynamicNode generateGoldStandardTest(DataSet dataSet, Map<String, JPlagComparison> comparisonMap, GoldStandard goldStandard)
+    private DynamicNode generateGoldStandardTest(Dataset dataset, Map<String, JPlagComparison> comparisonMap, GoldStandard goldStandard)
             throws IOException {
         if (goldStandard != null) {
-            Set<ComparisonIdentifier> goldStandardIdentifiers = ComparisonIdentifier
-                    .loadIdentifiersFromFile(dataSet.getGoldStandardFile().orElseThrow(), dataSet.getActualDelimiter());
+            Set<ComparisonIdentifier> goldStandardIdentifiers = ComparisonIdentifier.loadIdentifiersFromFile(dataset.goldStandardFile().orElseThrow(),
+                    dataset.goldStandardDelimiter());
             GoldStandard found = GoldStandard.buildFromComparisons(comparisonMap.values(), goldStandardIdentifiers);
 
             DynamicTest goldStandardMatch = DynamicTest.dynamicTest("expected plagiarism comparisons average similarity",

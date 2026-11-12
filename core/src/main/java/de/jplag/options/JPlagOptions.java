@@ -3,6 +3,8 @@ package de.jplag.options;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -50,8 +52,8 @@ import io.soabase.recordbuilder.core.RecordBuilder;
  * @param frequencyAnalysisOptions are the options related to highlight extraction.
  */
 @RecordBuilder()
-public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories,
-        File baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
+public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Path> submissionDirectories, Set<Path> oldSubmissionDirectories,
+        Path baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
         SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
         boolean debugParser, MergingOptions mergingOptions, boolean normalize, boolean analyzeComments,
         FrequencyAnalysisOptions frequencyAnalysisOptions) implements JPlagOptionsBuilder.With {
@@ -82,12 +84,50 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
     private static final Logger logger = LoggerFactory.getLogger(JPlagOptions.class);
 
     /**
+     * @param language Language to use when parsing the submissions.
+     * @param minimumTokenMatch Tunes the comparison sensitivity by adjusting the minimum token required to be counted as
+     * matching section. A smaller {@code <n>} increases the sensitivity but might lead to more false-positives.
+     * @param submissionDirectories Directories with new submissions. These must be checked for plagiarism.
+     * @param oldSubmissionDirectories Directories with old submissions to check against.
+     * @param baseCodeSubmissionDirectory Directory containing the base code.
+     * @param subdirectoryName Example: If the subdirectoryName is 'src', only the code inside submissionDir/src of each
+     * submission will be used for comparison.
+     * @param fileSuffixes List of file extensions or custom suffixes that should be included.
+     * @param exclusionFileName Name of the file that contains the names of files to exclude from comparison.
+     * @param similarityMetric The similarity metric determines how the minimum similarity threshold required for a
+     * comparison (of two submissions) is calculated. This affects which comparisons are stored and thus make it into the
+     * result object.
+     * @param similarityThreshold Similarity value (must be between 0 and 1). Comparisons (of submissions pairs) with a
+     * similarity below this threshold will be ignored. The default value of 0 allows all matches to be stored. This affects
+     * which comparisons are stored and thus make it into the result object. See also {@link #similarityMetric()}.
+     * @param maximumNumberOfComparisons The maximum number of comparisons that will be shown in the generated report. If
+     * set to {@link #SHOW_ALL_COMPARISONS} all comparisons will be shown.
+     * @param clusteringOptions Clustering options
+     * @param debugParser If true, submissions that cannot be parsed will be stored in a separate directory.
+     * @param mergingOptions are the options related to the subsequence match merging mechanism that opposed obfuscation.
+     * @param normalize enables additional normalization mechanisms. Only supported by some language modules.
+     * @param analyzeComments If true, comments will be extracted from the submissions.
+     * @param frequencyAnalysisOptions are the options related to highlight extraction.
+     */
+    @Deprecated(forRemoval = true, since = "7.0.0")
+    public JPlagOptions(Language language, Integer minimumTokenMatch, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories,
+            File baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
+            SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
+            boolean debugParser, MergingOptions mergingOptions, boolean normalize, boolean analyzeComments,
+            FrequencyAnalysisOptions frequencyAnalysisOptions) {
+        this(language, minimumTokenMatch, submissionDirectories.stream().map(File::toPath).collect(Collectors.toSet()),
+                oldSubmissionDirectories.stream().map(File::toPath).collect(Collectors.toSet()), baseCodeSubmissionDirectory.toPath(),
+                subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
+                clusteringOptions, debugParser, mergingOptions, normalize, analyzeComments, frequencyAnalysisOptions);
+    }
+
+    /**
      * Constructs a {@link JPlagOptions} instance with minimal required parameters.
      * @param language The programming language for parsing submissions
      * @param submissionDirectories Directories containing new submissions to check
      * @param oldSubmissionDirectories Directories containing old submissions to check against
      */
-    public JPlagOptions(Language language, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories) {
+    public JPlagOptions(Language language, Set<Path> submissionDirectories, Set<Path> oldSubmissionDirectories) {
         this(language, null, submissionDirectories, oldSubmissionDirectories, null, null, null, null, DEFAULT_SIMILARITY_METRIC,
                 DEFAULT_SIMILARITY_THRESHOLD, DEFAULT_SHOWN_COMPARISONS, new ClusteringOptions(), false, new MergingOptions(), false, false,
                 new FrequencyAnalysisOptions());
@@ -113,8 +153,8 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
      * @param analyzeComments Whether to extract comments from submissions
      * @param frequencyAnalysisOptions Options related to highlight extraction
      */
-    public JPlagOptions(Language language, Integer minimumTokenMatch, Set<File> submissionDirectories, Set<File> oldSubmissionDirectories,
-            File baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
+    public JPlagOptions(Language language, Integer minimumTokenMatch, Set<Path> submissionDirectories, Set<Path> oldSubmissionDirectories,
+            Path baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
             SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
             boolean debugParser, MergingOptions mergingOptions, boolean normalize, boolean analyzeComments,
             FrequencyAnalysisOptions frequencyAnalysisOptions) {
@@ -172,7 +212,7 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
     }
 
     private Set<String> readExclusionFile(final String exclusionFileName) {
-        try (BufferedReader reader = FileUtils.openFileReader(new File(exclusionFileName))) {
+        try (BufferedReader reader = FileUtils.openFileReader(Path.of(exclusionFileName))) {
             final var excludedFileNames = reader.lines().collect(Collectors.toSet());
             if (logger.isDebugEnabled()) {
                 logger.debug("Excluded files:{}{}", System.lineSeparator(), String.join(System.lineSeparator(), excludedFileNames));
@@ -231,7 +271,7 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
      * @deprecated Use the default initializer with @{{@link #baseCodeSubmissionDirectory} instead.
      */
     @Deprecated(since = "4.0.0", forRemoval = true)
-    public JPlagOptions(Language language, Integer minimumTokenMatch, File submissionDirectory, Set<File> oldSubmissionDirectories,
+    public JPlagOptions(Language language, Integer minimumTokenMatch, Path submissionDirectory, Set<Path> oldSubmissionDirectories,
             String baseCodeSubmissionName, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName,
             SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
             boolean debugParser, MergingOptions mergingOptions, FrequencyAnalysisOptions frequencyAnalysisOptions) throws BasecodeException {
@@ -249,15 +289,15 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
      */
     @Deprecated(since = "4.0.0", forRemoval = true)
     public JPlagOptions withBaseCodeSubmissionName(String baseCodeSubmissionName) {
-        File baseCodeDirectory = new File(baseCodeSubmissionName);
-        if (baseCodeDirectory.exists()) {
+        Path baseCodeDirectory = Path.of(baseCodeSubmissionName);
+        if (Files.exists(baseCodeDirectory)) {
             return this.withBaseCodeSubmissionDirectory(baseCodeDirectory);
         }
 
         if (submissionDirectories.size() != 1) {
             throw new IllegalArgumentException("Partial path based base code requires exactly one submission directory");
         }
-        File submissionDirectory = submissionDirectories.iterator().next();
+        Path submissionDirectory = submissionDirectories.iterator().next();
         try {
             return new JPlagOptions(language, minimumTokenMatch, submissionDirectory, oldSubmissionDirectories, baseCodeSubmissionName,
                     subdirectoryName, fileSuffixes, exclusionFileName, similarityMetric, similarityThreshold, maximumNumberOfComparisons,
@@ -272,12 +312,12 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
      * @deprecated Use the default initializer with @{{@link #baseCodeSubmissionDirectory} instead.
      */
     @Deprecated(since = "4.0.0", forRemoval = true)
-    private static File convertLegacyBaseCodeToFile(String baseCodeSubmissionName, File submissionDirectory) throws BasecodeException {
+    private static Path convertLegacyBaseCodeToFile(String baseCodeSubmissionName, Path submissionDirectory) throws BasecodeException {
         if (baseCodeSubmissionName == null) {
             return null;
         }
-        File baseCodeAsAbsolutePath = new File(baseCodeSubmissionName);
-        if (baseCodeAsAbsolutePath.exists()) {
+        Path baseCodeAsAbsolutePath = Path.of(baseCodeSubmissionName);
+        if (Files.exists(baseCodeAsAbsolutePath)) {
             return baseCodeAsAbsolutePath;
         }
         String normalizedName = baseCodeSubmissionName;
@@ -291,6 +331,6 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Fil
             throw new BasecodeException(
                     "The basecode directory name \"" + normalizedName + "\" cannot contain dots! Please migrate to the path-based API.");
         }
-        return new File(submissionDirectory, baseCodeSubmissionName);
+        return submissionDirectory.resolve(normalizedName);
     }
 }

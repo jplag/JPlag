@@ -1,6 +1,6 @@
 package de.jplag.antlr;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,7 +23,7 @@ public class TokenCollector {
 
     private final List<Token> collected;
     private final boolean extractsSemantics;
-    private File file;
+    private Path file;
 
     /**
      * @param extractsSemantics If semantics are extracted
@@ -70,7 +70,7 @@ public class TokenCollector {
         addToken(token);
     }
 
-    void enterFile(File newFile) {
+    void enterFile(Path newFile) {
         this.file = newFile;
     }
 
