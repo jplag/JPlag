@@ -122,11 +122,12 @@ public abstract class LanguageModuleTest {
     @DisplayName("Test that every token occurs at least once")
     final void testTokenCoverage(TestData data) throws ParsingException, IOException {
         List<TokenType> actualTokens = extractTokenTypes(data);
-        List<TokenType> languageTokens = new ArrayList<>(this.languageTokens);
+        List<TokenType> availableTokens = new ArrayList<>(this.languageTokens);
 
-        languageTokens.removeAll(actualTokens);
+        availableTokens.removeAll(actualTokens);
 
-        assertTrue(languageTokens.isEmpty(), "Some tokens were not found in " + data.describeTestSource() + System.lineSeparator() + languageTokens);
+        assertTrue(availableTokens.isEmpty(),
+                "Some tokens were not found in " + data.describeTestSource() + System.lineSeparator() + availableTokens);
     }
 
     /**

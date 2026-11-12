@@ -32,6 +32,30 @@ from . import tasks
 from .coroutines import coroutine
 from .log import logger
 
+def match_test(x):
+    match x:
+        case 1:
+            return "one"
+        case 2 | 3:
+            return "two or three"
+        case [a, b]:
+            return a + b
+        case {"key": value}:
+            return value
+        case _:
+            return "default"
+
+def comp(x):
+    list_comp = [x * x for x in range(10) if x % 2 == 0]
+
+    set_comp = {x for x in range(10)}
+
+    dict_comp = {x: x * 2 for x in range(5)}
+
+    gen_comp = (x for x in range(10))
+
+    return list_comp, set_comp, dict_comp, gen
+
 
 if sys.platform == 'win32':  # pragma: no cover
     from .windows_utils import socketpair

@@ -41,6 +41,11 @@ public class ScxmlLanguage implements Language {
     }
 
     @Override
+    public String getVersionFlagInformation() {
+        return "Supports version 1.0";
+    }
+
+    @Override
     public List<Token> parse(Set<Path> files, boolean normalize) throws ParsingException {
         return new ScxmlParserAdapter().parse(files);
     }

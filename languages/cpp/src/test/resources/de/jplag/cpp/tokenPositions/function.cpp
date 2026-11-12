@@ -1,5 +1,5 @@
 > int main() {
-$ | FUNCTION_BEGIN 2
+$ | FUNCTION_BEGIN 3
 >     return 1;
 > }
-$ | FUNCTION_END 0
+$ | FUNCTION_END 1
