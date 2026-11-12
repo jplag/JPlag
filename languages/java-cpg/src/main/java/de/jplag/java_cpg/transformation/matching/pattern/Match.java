@@ -227,7 +227,7 @@ public class Match implements Comparable<Match> {
      * @return the nth edge
      */
     public <T extends Node, R extends Node, C extends T> Match resolveAnyOfNEdge(NodePattern<C> parent, OneToNRelation<T, R> relation, int index) {
-        AnyOfNEdge<T, R> anyOfNEdge = relation.getEdge().getAnyOfNEdgeTo(relation.getPattern());
+        AnyOfNEdge<T, R> anyOfNEdge = relation.getTransformationEdge();
         CpgNthEdge<T, R> concreteEdgePattern = new CpgNthEdge<>(anyOfNEdge.getMultiEdge(), index);
         EdgeMapKey<T, R> key = new EdgeMapKey<>(parent, anyOfNEdge);
         this.edgeMap.put(key, concreteEdgePattern);

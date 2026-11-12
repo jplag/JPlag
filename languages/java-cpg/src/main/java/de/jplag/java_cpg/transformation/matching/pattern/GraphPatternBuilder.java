@@ -7,9 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.stream.IntStream;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -336,11 +334,12 @@ public abstract class GraphPatternBuilder {
          * @param target the target {@link NodePattern}
          * @param edge the multi edge that induces the pattern list
          * @param patterns the current {@link SimpleGraphPattern}'s patterns
-         * @param register accepts created node patterns
+         * @param minIndex the minimum index of the child within the sequence
          * @param <T> class of the parent node
+         * @return the created node pattern
          */
-        <T extends Node> void apply(NodePattern<? extends T> target, CpgMultiEdge<T, ? super R> edge, PatternRegistry patterns,
-                Consumer<NodePattern<? extends R>> register);
+        <T extends Node> NodePattern<? extends R> apply(NodePattern<? extends T> target, CpgMultiEdge<T, ? super R> edge, PatternRegistry patterns,
+                int minIndex);
     }
 
     /**
@@ -369,11 +368,11 @@ public abstract class GraphPatternBuilder {
             implements PatternListModification<R> {
 
         @Override
-        public <T extends Node> void apply(NodePattern<? extends T> target, CpgMultiEdge<T, ? super R> edge, PatternRegistry patterns,
-                Consumer<NodePattern<? extends R>> register) {
+        public <T extends Node> NodePattern<C> apply(NodePattern<? extends T> target, CpgMultiEdge<T, ? super R> edge, PatternRegistry patterns,
+                int minIndex) {
             NodePattern<C> related = createNodePattern(cClass, role, patterns, modifications);
-            register.accept(related);
-            target.addRelation(new RelatedOneToNNode<>(related, edge));
+            target.addRelation(new RelatedOneToNNode<>(related, edge, minIndex));
+            return related;
         }
     }
 
@@ -508,7 +507,6 @@ public abstract class GraphPatternBuilder {
         private final CpgMultiEdge<T, R> edge;
         private final Class<C> cClass;
         private final List<PatternListModification<? extends C>> modifications;
-        private final List<NodePattern<? extends C>> elements;
 
         /**
          * Creates a new {@link AddConsecutive} {@link PatternModification}.
@@ -520,16 +518,14 @@ public abstract class GraphPatternBuilder {
             this.edge = edge;
             this.cClass = cClass;
             this.modifications = modifications;
-            this.elements = new ArrayList<>();
         }
 
         @Override
         public void apply(NodePattern<? extends T> target, PatternRegistry patterns) {
-            modifications.forEach(m -> m.apply(target, edge, patterns, elements::addLast));
-
-            IntStream.range(0, elements.size()).forEach(idx ->
-            // set min index
-            edge.saveSequenceElement(elements.get(idx), idx));
+            List<NodePattern<? extends C>> elements = new ArrayList<>();
+            for (int idx = 0; idx < modifications.size(); idx++) {
+                elements.add(modifications.get(idx).apply(target, edge, patterns, idx));
+            }
 
             MatchProperty<T> property = (parent, match) -> {
                 List<R> allTargets = edge.getAllTargets(parent);

@@ -46,7 +46,7 @@ public final class SetOperation<T extends Node, R extends Node> extends GraphOpe
     }
 
     @Override
-    public void resolveAndApply(Match match, TranslationContext ctx) {
+    public void resolveAndApply(Match match, TranslationContext ctx, GraphMutationContext mutationContext) {
         T parent = match.get(parentPattern);
         // match should contain newChildPattern node because of Builder.createNewNodes()
         R newChild = match.get(newChildPattern);

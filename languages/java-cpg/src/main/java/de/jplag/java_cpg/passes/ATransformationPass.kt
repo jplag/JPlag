@@ -7,7 +7,6 @@ import de.jplag.java_cpg.transformation.GraphTransformation
 import de.jplag.java_cpg.transformation.matching.CpgIsomorphismDetector
 import de.jplag.java_cpg.transformation.matching.pattern.GraphPattern
 import de.jplag.java_cpg.transformation.matching.pattern.Match
-import de.jplag.java_cpg.transformation.operations.DummyNeighbor
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -19,6 +18,11 @@ import org.slf4j.LoggerFactory
 abstract class ATransformationPass(ctx: TranslationContext) : TranslationResultPass(ctx) {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
+
+    protected val mutationContext
+        get() = requireNotNull(passConfig<GraphMutationPassConfiguration>()) {
+            "Transformation pass requires translation-owned graph mutation state"
+        }.mutationContext
 
     override fun accept(t: TranslationResult) {
         val detector = CpgIsomorphismDetector()
@@ -53,7 +57,11 @@ abstract class ATransformationPass(ctx: TranslationContext) : TranslationResultP
                 // transformations may lead to other matches being invalidated
                 if (detector.validateMatch(match, sourcePattern)) {
                     count++
-                    transformation.apply(match, ctx)
+                    try {
+                        transformation.apply(match, ctx, mutationContext)
+                    } finally {
+                        mutationContext.resetBookkeeping()
+                    }
                 } else {
                     invalidated = true
                 }
@@ -64,7 +72,7 @@ abstract class ATransformationPass(ctx: TranslationContext) : TranslationResultP
     }
 
     override fun cleanup() {
-        val dummy = DummyNeighbor.getInstance()
+        val dummy = mutationContext.dummyNeighbor
         dummy.nextEOGEdges.removeIf { it.end == dummy }
         dummy.prevEOGEdges.removeIf { it.start == dummy }
 

@@ -46,7 +46,7 @@ public final class ReplaceOperation<T extends Node, R extends Node> extends Grap
     }
 
     @Override
-    public void resolveAndApply(Match match, TranslationContext ctx) {
+    public void resolveAndApply(Match match, TranslationContext ctx, GraphMutationContext mutationContext) {
         T parent = match.get(parentPattern);
         // match should contain newChildPattern node because of Builder.createNewNodes()
         R newTarget = match.get(newChildPattern);
@@ -70,8 +70,8 @@ public final class ReplaceOperation<T extends Node, R extends Node> extends Grap
             return;
         }
 
-        TransformationUtil.transferEogPredecessor(oldTarget, newTarget);
-        TransformationUtil.transferEogSuccessor(oldTarget, newTarget);
+        TransformationUtil.transferEogPredecessor(oldTarget, newTarget, mutationContext);
+        TransformationUtil.transferEogSuccessor(oldTarget, newTarget, mutationContext);
     }
 
     @Override

@@ -3,17 +3,13 @@ package de.jplag.java_cpg.transformation.matching.edges;
 import static de.jplag.java_cpg.transformation.matching.edges.CpgMultiEdge.ValueType.NODE_VALUED;
 import static de.jplag.java_cpg.transformation.matching.edges.IEdge.EdgeCategory.AST;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
 import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.graph.edge.PropertyEdge;
 import de.fraunhofer.aisec.cpg.helpers.TriConsumer;
-import de.jplag.java_cpg.transformation.Casting;
-import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
 
 /**
  * This is a wrapper for a graph edge (1:n relation).
@@ -24,9 +20,7 @@ public final class CpgMultiEdge<T extends Node, R extends Node> extends AEdge<T,
     private final Function<T, List<R>> getter;
     private final Function<T, List<PropertyEdge<R>>> getEdges;
     private final TriConsumer<T, Integer, R> setter;
-    private final Map<NodePattern<?>, AnyOfNEdge<T, R>> any1ofNEdges;
     private final ValueType valueType;
-    private final HashMap<NodePattern<R>, Integer> sequenceNodes;
 
     /**
      * Creates a new CpgMultiEdge.
@@ -43,9 +37,6 @@ public final class CpgMultiEdge<T extends Node, R extends Node> extends AEdge<T,
         this.setter = setter;
         this.valueType = valueType;
         this.getEdges = getEdges;
-
-        this.any1ofNEdges = new HashMap<>();
-        this.sequenceNodes = new HashMap<>();
     }
 
     /**
@@ -115,30 +106,11 @@ public final class CpgMultiEdge<T extends Node, R extends Node> extends AEdge<T,
     }
 
     /**
-     * Sets the given node pattern as the element with the given index of the current sequence.
-     * @param pattern the pattern
-     * @param idx the index
-     */
-    public void saveSequenceElement(NodePattern<? extends R> pattern, int idx) {
-        this.sequenceNodes.put(Casting.castNodePattern(pattern), idx);
-    }
-
-    /**
      * Gets the setter function of this multi edge.
      * @return the setter
      */
     public TriConsumer<T, Integer, R> setter() {
         return setter;
-    }
-
-    /**
-     * Gets a {@link AnyOfNEdge} from this {@link CpgMultiEdge} directed at the given {@link NodePattern}.
-     * @param pattern the pattern
-     * @return the 'any of n' edge
-     */
-    public AnyOfNEdge<T, R> getAnyOfNEdgeTo(NodePattern<? extends R> pattern) {
-        int index = this.sequenceNodes.getOrDefault(pattern, 0);
-        return this.any1ofNEdges.computeIfAbsent(pattern, p -> new AnyOfNEdge<>(this, index));
     }
 
     /**

@@ -18,7 +18,6 @@ import de.jplag.java_cpg.transformation.TransformationException
 import de.jplag.java_cpg.transformation.matching.edges.CpgNthEdge
 import de.jplag.java_cpg.transformation.matching.edges.Edges.BLOCK__STATEMENTS
 import de.jplag.java_cpg.transformation.matching.pattern.PatternUtil.desc
-import de.jplag.java_cpg.transformation.operations.DummyNeighbor
 import de.jplag.java_cpg.transformation.operations.RemoveOperation
 import de.jplag.java_cpg.transformation.operations.TransformationUtil
 import de.jplag.java_cpg.visitor.NodeOrderStrategy
@@ -32,6 +31,11 @@ import java.util.*
  */
 @DependsOn(EvaluationOrderGraphPass::class)
 class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
+
+    private val mutationContext
+        get() = requireNotNull(passConfig<GraphMutationPassConfiguration>()) {
+            "DfgSortPass requires translation-owned graph mutation state"
+        }.mutationContext
 
     private var state: State = State()
     private var stateSafe: MutableMap<Node, State?> = HashMap()
@@ -305,12 +309,15 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
             val block = parentInfo[it]?.parent as Block
             val index = block.statements.indexOf(it)
             val cpgNthEdge: CpgNthEdge<Block, Statement> = CpgNthEdge(BLOCK__STATEMENTS, index)
-            RemoveOperation.apply(block, it, cpgNthEdge, true)
-            if (it is DeclarationStatement) {
-                val deletedVariables = it.declarations.filterIsInstance<VariableDeclaration>()
-                block.localEdges.removeIf { it.end in deletedVariables }
+            try {
+                RemoveOperation.apply(block, it, cpgNthEdge, true, mutationContext)
+                if (it is DeclarationStatement) {
+                    val deletedVariables = it.declarations.filterIsInstance<VariableDeclaration>()
+                    block.localEdges.removeIf { it.end in deletedVariables }
+                }
+            } finally {
+                mutationContext.resetBookkeeping()
             }
-            DummyNeighbor.getInstance().clear()
         }
 
     }
@@ -338,11 +345,11 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
     ) {
         // save entry point to keep EOG graph intact at the end
         val entry = TransformationUtil.getEogBorders(parent.statements[0]).entries[0]
-        val eogPred = TransformationUtil.getEntryEdges(parent, entry, false)
+        val eogPred = TransformationUtil.getEntryEdges(parent, entry, false, mutationContext)
             .map { it.start }
 
         val exit = TransformationUtil.getEogBorders(parent.statements.last()).exits[0]
-        val eogSucc = TransformationUtil.getExitEdges(parent, listOf(exit), false)
+        val eogSucc = TransformationUtil.getExitEdges(parent, listOf(exit), false, mutationContext)
             .map { it.end }
 
         val worklist = mutableListOf<Statement>()
@@ -372,11 +379,13 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
 
                 // Implicit return statement has no location, but should remain the last element
                 val newSuccessor = done[0]
-                if (!TransformationUtil.isAstSuccessor(element, newSuccessor)) {
-                    TransformationUtil.insertBefore(element, newSuccessor)
+                try {
+                    if (!TransformationUtil.isAstSuccessor(element, newSuccessor, mutationContext)) {
+                        TransformationUtil.insertBefore(element, newSuccessor, mutationContext)
+                    }
+                } finally {
+                    mutationContext.resetBookkeeping()
                 }
-                // TODO: Make it so that this is not necessary
-                DummyNeighbor.getInstance().clear()
             }
             done.add(0, element)
             if (isBlockStatement(element)) {
@@ -404,17 +413,17 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
 
         val newEntry = TransformationUtil.getEogBorders(parent.statements[0]).entries[0]
 
-        newEntry.prevEOGEdges.filter { it.start is DummyNeighbor }.forEach {
+        newEntry.prevEOGEdges.filter { it.start === mutationContext.dummyNeighbor }.forEach {
             it.start.nextEOGEdges.remove(it)
             it.end.prevEOGEdges.remove(it)
         }
 
         //rebuild EOG edges into the block
-        eogPred.filterNot { it is DummyNeighbor }
-            .filterNot { TransformationUtil.isEogSuccessor(it, newEntry) }
+        eogPred.filterNot { it === mutationContext.dummyNeighbor }
+            .filterNot { TransformationUtil.isEogSuccessor(it, newEntry, mutationContext) }
             .forEach {
-                val edge = it.nextEOGEdges.find { e -> e.end is DummyNeighbor }!!
-                DummyNeighbor.getInstance().prevEOGEdges.remove(edge)
+                val edge = it.nextEOGEdges.find { e -> e.end === mutationContext.dummyNeighbor }!!
+                mutationContext.dummyNeighbor.prevEOGEdges.remove(edge)
                 edge.end = newEntry
                 newEntry.addPrevEOG(edge)
             }
@@ -422,13 +431,13 @@ class DfgSortPass(ctx: TranslationContext) : TranslationUnitPass(ctx) {
         //rebuild EOG edges out of the block
         val newExit = TransformationUtil.getEogBorders((parent.statements.last())).exits[0]
         if (exit != newExit) {
-            newExit.nextEOGEdges.filter { it.end is DummyNeighbor }.forEach {
+            newExit.nextEOGEdges.filter { it.end === mutationContext.dummyNeighbor }.forEach {
                 it.start.nextEOGEdges.remove(it)
                 it.end.prevEOGEdges.remove(it)
             }
-            eogSucc.filter { succ -> !TransformationUtil.isEogSuccessor(exit, succ) }
+            eogSucc.filter { succ -> !TransformationUtil.isEogSuccessor(exit, succ, mutationContext) }
                 .forEach {
-                    val edge = it.prevEOGEdges.find { e -> e.start is DummyNeighbor }!!
+                    val edge = it.prevEOGEdges.find { e -> e.start === mutationContext.dummyNeighbor }!!
                     edge.start = newExit
                     newExit.addNextEOG(edge)
                 }

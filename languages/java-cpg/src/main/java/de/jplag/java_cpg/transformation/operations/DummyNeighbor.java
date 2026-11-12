@@ -2,7 +2,7 @@ package de.jplag.java_cpg.transformation.operations;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,11 +10,9 @@ import de.fraunhofer.aisec.cpg.graph.Node;
 import de.fraunhofer.aisec.cpg.graph.edge.PropertyEdge;
 
 /**
- * A special singleton {@link Node} to serve as an intermediary neighbor for {@link Node}s while they are moved around.
+ * An intermediary neighbor for nodes moved within one translation, owned by its {@link GraphMutationContext}.
  */
 public class DummyNeighbor extends Node {
-
-    private static final DummyNeighbor INSTANCE = new DummyNeighbor();
 
     /**
      * Maps detached nodes to the edge that they were previously a source of.
@@ -26,17 +24,9 @@ public class DummyNeighbor extends Node {
      */
     private final Map<Node, List<PropertyEdge<Node>>> targetMap;
 
-    private DummyNeighbor() {
-        sourceMap = new HashMap<>();
-        targetMap = new HashMap<>();
-    }
-
-    /**
-     * Gets the singleton instance.
-     * @return the {@link DummyNeighbor} node
-     */
-    public static DummyNeighbor getInstance() {
-        return INSTANCE;
+    /* package-private */ DummyNeighbor() {
+        sourceMap = new IdentityHashMap<>();
+        targetMap = new IdentityHashMap<>();
     }
 
     /**
@@ -44,7 +34,7 @@ public class DummyNeighbor extends Node {
      * @param edge the edge
      */
     public void saveOriginalTarget(PropertyEdge<Node> edge) {
-        if (edge.getEnd().equals(this)) {
+        if (edge.getEnd() == this) {
             return;
         }
         targetMap.computeIfAbsent(edge.getEnd(), _ -> new ArrayList<>()).add(edge);
@@ -55,7 +45,7 @@ public class DummyNeighbor extends Node {
      * @param edge the edge
      */
     public void saveOriginalSource(PropertyEdge<Node> edge) {
-        if (edge.getStart().equals(this)) {
+        if (edge.getStart() == this) {
             return;
         }
         sourceMap.computeIfAbsent(edge.getStart(), _ -> new ArrayList<>()).add(edge);

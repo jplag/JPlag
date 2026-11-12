@@ -45,10 +45,11 @@ public class JavaCpgLanguage implements Language {
     private final CpgAdapter cpgAdapter;
 
     /**
-     * Creates a new {@link JavaCpgLanguage}.
+     * Creates a new {@link JavaCpgLanguage} with all transformations active.
      */
     public JavaCpgLanguage() {
-        this.cpgAdapter = new CpgAdapter(allTransformations());
+        this.cpgAdapter = new CpgAdapter(obligatoryTransformations());
+        this.cpgAdapter.addTransformations(allTransformations());
     }
 
     /**
@@ -102,8 +103,6 @@ public class JavaCpgLanguage implements Language {
      */
     public void resetTransformations() {
         this.cpgAdapter.clearTransformations();
-        this.cpgAdapter.addTransformations(this.obligatoryTransformations());
-        this.cpgAdapter.addTransformations(this.standardTransformations());
     }
 
     /**
@@ -115,7 +114,7 @@ public class JavaCpgLanguage implements Language {
     }
 
     /**
-     * Returns a set of transformations suggested for use.
+     * Returns the suggested optional transformations, excluding obligatory rules.
      * @return the array of recommended transformations
      */
     public GraphTransformation[] standardTransformations() {
@@ -124,7 +123,7 @@ public class JavaCpgLanguage implements Language {
     }
 
     /**
-     * Returns a set of all transformations.
+     * Returns all optional normalization and cleanup transformations, excluding obligatory rules.
      * @return the array of all transformations
      */
     public GraphTransformation[] allTransformations() {

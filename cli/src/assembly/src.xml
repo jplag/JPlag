@@ -7,11 +7,32 @@
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
     <dependencySets>
+        <!-- The module supplies patched classes; do not let assembly order select the upstream copies. -->
+        <dependencySet>
+            <outputDirectory>/</outputDirectory>
+            <useProjectArtifact>false</useProjectArtifact>
+            <unpack>true</unpack>
+            <scope>runtime</scope>
+            <includes>
+                <include>de.fraunhofer.aisec:cpg-core</include>
+                <include>de.fraunhofer.aisec:cpg-language-java</include>
+            </includes>
+            <unpackOptions>
+                <excludes>
+                    <exclude>de/fraunhofer/aisec/cpg/helpers/SubgraphWalker*.class</exclude>
+                    <exclude>de/fraunhofer/aisec/cpg/frontends/java/JavaLanguageFrontend*.class</exclude>
+                </excludes>
+            </unpackOptions>
+        </dependencySet>
         <dependencySet>
             <outputDirectory>/</outputDirectory>
             <useProjectArtifact>true</useProjectArtifact>
             <unpack>true</unpack>
             <scope>runtime</scope>
+            <excludes>
+                <exclude>de.fraunhofer.aisec:cpg-core</exclude>
+                <exclude>de.fraunhofer.aisec:cpg-language-java</exclude>
+            </excludes>
         </dependencySet>
     </dependencySets>
     <!-- Merge MetaInf-Services in final JAR -->

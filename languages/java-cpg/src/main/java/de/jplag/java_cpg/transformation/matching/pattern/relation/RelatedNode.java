@@ -32,6 +32,11 @@ public final class RelatedNode<T extends Node, R extends Node> extends Relation<
     }
 
     @Override
+    public CpgEdge<T, R> getTransformationEdge() {
+        return cpgEdge;
+    }
+
+    @Override
     public R getTarget(T from) {
         return cpgEdge.getRelated(from);
     }

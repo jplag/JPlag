@@ -51,10 +51,10 @@ public final class RemoveOperation<T extends Node, R extends Node> extends Graph
     }
 
     @Override
-    public void resolveAndApply(Match match, TranslationContext ctx) {
+    public void resolveAndApply(Match match, TranslationContext ctx, GraphMutationContext mutationContext) {
         T parent = match.get(parentPattern);
         R element = edge.getter().apply(parent);
-        apply(parent, element, edge, disconnectEog);
+        apply(parent, element, edge, disconnectEog, mutationContext);
     }
 
     /**
@@ -65,8 +65,10 @@ public final class RemoveOperation<T extends Node, R extends Node> extends Graph
      * @param child the related node
      * @param edge the edge
      * @param disconnectEog if true, the target node will be disconnected from the EOG graph
+     * @param mutationContext graph mutation state owned by this translation
      */
-    public static <T extends Node, R extends Node> void apply(T target, R child, CpgEdge<T, R> edge, boolean disconnectEog) {
+    public static <T extends Node, R extends Node> void apply(T target, R child, CpgEdge<T, R> edge, boolean disconnectEog,
+            GraphMutationContext mutationContext) {
 
         if (!(edge instanceof CpgNthEdge<T, R> nthEdge)) {
             logger.debug("Remove {}", child);
@@ -96,11 +98,11 @@ public final class RemoveOperation<T extends Node, R extends Node> extends Graph
             return;
         }
 
-        List<Node> predExits = TransformationUtil.disconnectFromPredecessor(child);
-        Node succEntry = TransformationUtil.disconnectFromSuccessor(child);
+        List<Node> predExits = TransformationUtil.disconnectFromPredecessor(child, mutationContext);
+        Node succEntry = TransformationUtil.disconnectFromSuccessor(child, mutationContext);
 
-        if (!Objects.isNull(succEntry) && succEntry != DummyNeighbor.getInstance()) {
-            predExits.forEach(exit -> TransformationUtil.connectNewSuccessor(exit, succEntry, false));
+        if (!Objects.isNull(succEntry) && succEntry != mutationContext.getDummyNeighbor()) {
+            predExits.forEach(exit -> TransformationUtil.connectNewSuccessor(exit, succEntry, false, mutationContext));
         }
     }
 

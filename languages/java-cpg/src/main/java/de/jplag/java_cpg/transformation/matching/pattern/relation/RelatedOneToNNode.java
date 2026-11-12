@@ -18,7 +18,16 @@ public final class RelatedOneToNNode<T extends Node, R extends Node> extends One
      */
     public RelatedOneToNNode(NodePattern<? extends R> pattern, CpgMultiEdge<T, R> edge) {
         super(pattern, edge);
+    }
 
+    /**
+     * Creates a relation for a child within a consecutive sequence.
+     * @param pattern the pattern describing the related node
+     * @param edge edge from a reference node to the related nodes
+     * @param minIndex the minimum index of the child within the sequence
+     */
+    public RelatedOneToNNode(NodePattern<? extends R> pattern, CpgMultiEdge<T, R> edge, int minIndex) {
+        super(pattern, edge, minIndex);
     }
 
     @Override

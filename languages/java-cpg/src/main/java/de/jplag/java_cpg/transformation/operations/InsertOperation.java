@@ -58,14 +58,14 @@ public final class InsertOperation<T extends Node, R extends Node> extends Graph
     }
 
     @Override
-    public void resolveAndApply(Match match, TranslationContext ctx) {
+    public void resolveAndApply(Match match, TranslationContext ctx, GraphMutationContext mutationContext) {
         T parent = match.get(parentPattern);
         // match should contain newChildPattern node because of Builder.createNewNodes()
         R newTarget = match.get(newChildPattern);
         int index = nthEdge.getIndex();
         logger.debug("Insert {} into {} at position #{}}", newTarget, parent, index);
 
-        apply(ctx, parent, newTarget, index);
+        apply(ctx, parent, newTarget, index, mutationContext);
 
     }
 
@@ -75,8 +75,9 @@ public final class InsertOperation<T extends Node, R extends Node> extends Graph
      * @param parent the parent node
      * @param newTarget the new child node
      * @param index the insertion index
+     * @param mutationContext graph mutation state owned by this translation
      */
-    public void apply(TranslationContext ctx, T parent, R newTarget, int index) {
+    public void apply(TranslationContext ctx, T parent, R newTarget, int index, GraphMutationContext mutationContext) {
         PropertyEdge<R> newEdge = new PropertyEdge<>(parent, newTarget);
         newEdge.addProperty(Properties.INDEX, index);
 
@@ -99,19 +100,19 @@ public final class InsertOperation<T extends Node, R extends Node> extends Graph
         if (0 == index && edges.size() > 1) {
             // successor exists
             R previouslyFirst = edges.get(index + 1).getEnd();
-            TransformationUtil.transferEogPredecessor(previouslyFirst, newTarget);
-            TransformationUtil.insertBefore(newTarget, previouslyFirst);
+            TransformationUtil.transferEogPredecessor(previouslyFirst, newTarget, mutationContext);
+            TransformationUtil.insertBefore(newTarget, previouslyFirst, mutationContext);
         } else if (0 < index && index < edges.size() - 1) {
             R successor = edges.get(index + 1).getEnd();
-            TransformationUtil.transferEogPredecessor(successor, newTarget);
+            TransformationUtil.transferEogPredecessor(successor, newTarget, mutationContext);
             R predecessor = edges.get(index - 1).getEnd();
-            TransformationUtil.transferEogSuccessor(predecessor, newTarget);
-            TransformationUtil.insertBefore(newTarget, successor);
+            TransformationUtil.transferEogSuccessor(predecessor, newTarget, mutationContext);
+            TransformationUtil.insertBefore(newTarget, successor, mutationContext);
         } else if (index == edges.size() - 1 && edges.size() > 1) {
             // predecessor exists
             R previouslyLast = edges.get(index - 1).getEnd();
-            TransformationUtil.transferEogSuccessor(previouslyLast, newTarget);
-            TransformationUtil.insertAfter(newTarget, previouslyLast);
+            TransformationUtil.transferEogSuccessor(previouslyLast, newTarget, mutationContext);
+            TransformationUtil.insertAfter(newTarget, previouslyLast, mutationContext);
 
         }
     }

@@ -23,9 +23,10 @@ public interface GraphOperation {
      * the operation.
      * @param match the pattern match
      * @param ctx the translation context
+     * @param mutationContext graph mutation state owned by this translation
      * @throws TransformationException if the graph is malformed.
      */
-    void resolveAndApply(Match match, TranslationContext ctx) throws TransformationException;
+    void resolveAndApply(Match match, TranslationContext ctx, GraphMutationContext mutationContext) throws TransformationException;
 
     /**
      * If the target nodes of this {@link GraphOperation} is a {@link ParentNodePattern}, then this method creates a

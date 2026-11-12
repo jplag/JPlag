@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import de.fraunhofer.aisec.cpg.graph.Node;
+import de.jplag.java_cpg.transformation.matching.edges.AnyOfNEdge;
 import de.jplag.java_cpg.transformation.matching.edges.CpgMultiEdge;
 import de.jplag.java_cpg.transformation.matching.pattern.Match;
 import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
@@ -18,10 +19,21 @@ import de.jplag.java_cpg.transformation.matching.pattern.NodePattern;
 public sealed class OneToNRelation<T extends Node, R extends Node> extends Relation<T, R, List<R>> permits ForAllRelatedNode, RelatedOneToNNode {
 
     private final CpgMultiEdge<T, R> multiEdge;
+    private final AnyOfNEdge<T, R> anyOfNEdge;
 
     protected OneToNRelation(NodePattern<? extends R> pattern, CpgMultiEdge<T, R> edge) {
+        this(pattern, edge, 0);
+    }
+
+    protected OneToNRelation(NodePattern<? extends R> pattern, CpgMultiEdge<T, R> edge, int minIndex) {
         super(pattern, edge);
         this.multiEdge = edge;
+        this.anyOfNEdge = new AnyOfNEdge<>(edge, minIndex);
+    }
+
+    @Override
+    public AnyOfNEdge<T, R> getTransformationEdge() {
+        return anyOfNEdge;
     }
 
     @Override

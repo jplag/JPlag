@@ -49,8 +49,7 @@ public final class FileUtils {
      * @throws IOException If the file does not exist for is not readable
      */
     public static BufferedReader openFileReader(File file, boolean isSubmissionFile) throws IOException {
-        InputStream stream = new BufferedInputStream(new FileInputStream(file));
-        Charset charset = isSubmissionFile && userSpecifiedCharset != null ? userSpecifiedCharset : detectCharset(stream);
+        Charset charset = isSubmissionFile && userSpecifiedCharset != null ? userSpecifiedCharset : detectCharset(file);
         BufferedReader reader = new BufferedReader(new FileReader(file, charset));
         removeBom(reader, charset);
         return reader;

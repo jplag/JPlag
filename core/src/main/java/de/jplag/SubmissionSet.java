@@ -3,10 +3,13 @@ package de.jplag;
 import static de.jplag.SubmissionState.VALID;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -117,11 +120,14 @@ public class SubmissionSet {
             baseCodeSubmission.normalize();
         }
         ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.TOKEN_SEQUENCE_NORMALIZATION, submissions.size());
-        submissions.parallelStream().forEach(submission -> {
-            submission.normalize();
-            progressBar.step();
-        });
-        progressBar.dispose();
+        try {
+            submissions.parallelStream().forEach(submission -> {
+                submission.normalize();
+                progressBar.step();
+            });
+        } finally {
+            progressBar.dispose();
+        }
     }
 
     private List<Submission> filterValidSubmissions() {
@@ -159,34 +165,55 @@ public class SubmissionSet {
 
         ProgressBar progressBar = ProgressBarLogger.createProgressBar(ProgressBarType.PARSING, submissions.size());
 
-        if (options.language().expectsSubmissionOrder()) {
-            for (Submission submission : submissions) {
-                parseSingleSubmission(progressBar, submission);
+        try {
+            if (options.language().expectsSubmissionOrder()) {
+                for (Submission submission : submissions) {
+                    parseSingleSubmission(progressBar, submission);
+                }
+            } else {
+                parseSubmissionsInParallel(submissions, progressBar);
             }
-        } else {
-            parseSubmissionsInParallel(submissions, progressBar);
+        } finally {
+            progressBar.dispose();
         }
-
-        progressBar.dispose();
 
         int validSubmissions = submissions.size() - errors.get();
         logger.debug("{} submissions parsed successfully!", validSubmissions);
         logger.debug("{} parser error{}!", errors, errors.get() != 1 ? "s" : "");
     }
 
-    private void parseSubmissionsInParallel(List<Submission> submissions, ProgressBar progressBar) throws SubmissionException {
+    private void parseSubmissionsInParallel(Iterable<? extends Submission> submissions, ProgressBar progressBar) throws ExitException {
         try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
-            for (Submission submission : submissions) {
-                executor.submit(() -> {
-                    parseSingleSubmission(progressBar, submission);
-                    return null; // Ensure the lambda is a Callable for exception handling
-                });
+            Collection<Callable<Void>> tasks = createTasks(submissions, progressBar);
+            for (Future<Void> result : executor.invokeAll(tasks)) {
+                result.get();
             }
-            executor.shutdown();
-            executor.awaitTermination(24, TimeUnit.HOURS); // Maximum time all processing can take.
+        } catch (ExecutionException exception) {
+            if (exception.getCause() instanceof ExitException exitException) {
+                throw exitException;
+            }
+            throw new SubmissionException("Error while parsing the submissions.", exception.getCause());
         } catch (InterruptedException exception) {
-            throw new SubmissionException("Error while parsing the submissions.", exception);
+            Thread.currentThread().interrupt();
+            throw new SubmissionException("Interrupted while parsing the submissions.", exception);
         }
+    }
+
+    private Collection<Callable<Void>> createTasks(Iterable<? extends Submission> submissions, ProgressBar progressBar) {
+        Collection<Callable<Void>> tasks = new ArrayList<>();
+
+        for (Submission submission : submissions) {
+            tasks.add(() -> {
+                try {
+                    parseSingleSubmission(progressBar, submission);
+                } catch (RuntimeException | Error exception) {
+                    throw new SubmissionException("Error while parsing submission \"" + submission.getName() + "\".", exception);
+                }
+                return null;
+            });
+        }
+
+        return tasks;
     }
 
     /**
