@@ -69,6 +69,8 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Pat
     /** Default value for the error directory name. **/
     public static final String ERROR_FOLDER = "errors";
 
+    private static final String ERROR_EXCLUSION_FILE_READ = "Could not read exclusion file";
+
     /**
      * @param lang The new language
      * @return The modified options
@@ -217,7 +219,7 @@ public record JPlagOptions(Language language, Integer minimumTokenMatch, Set<Pat
             }
             return excludedFileNames;
         } catch (IOException e) {
-            logger.error("Could not read exclusion file: " + e.getMessage(), e);
+            logger.error(ERROR_EXCLUSION_FILE_READ, e);
             return Collections.emptySet();
         }
     }

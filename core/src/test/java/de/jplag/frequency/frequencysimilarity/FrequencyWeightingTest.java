@@ -39,11 +39,9 @@ import de.jplag.options.JPlagOptions;
  */
 class FrequencyWeightingTest extends TestBase {
     private static final double ORIGINAL_SIMILARITY = 0.31157;
-    private Submission testSubmission;
     private Match match;
     private Match matchShort;
     private final List<Match> testMatches = new LinkedList<>();
-    private List<Match> ignoredMatches = new LinkedList<>();
     private JPlagComparison comparison;
     private Map<List<TokenType>, Double> matchFrequency;
 
@@ -57,10 +55,10 @@ class FrequencyWeightingTest extends TestBase {
         JPlagResult result = getJPlagResult(options);
         JPlagComparison testComparison = result.getAllComparisons().getFirst();
 
-        testSubmission = testComparison.firstSubmission();
+        Submission testSubmission = testComparison.firstSubmission();
         match = testComparison.matches().getFirst();
         matchShort = new Match(match.startOfFirst(), match.startOfSecond(), 10, 10);
-        ignoredMatches = testComparison.ignoredMatches();
+        List<Match> ignoredMatches = testComparison.ignoredMatches();
 
         Submission first = new Submission("W", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(), options.language());
         Submission second = new Submission("X", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(), options.language());

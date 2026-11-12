@@ -36,7 +36,6 @@ import de.jplag.options.JPlagOptions;
  */
 class MatchMergingTest extends TestBase {
     private final JPlagOptions options;
-    private List<Match> matches;
     private List<JPlagComparison> comparisonsBefore;
     private List<JPlagComparison> comparisonsAfter;
     private final LongestCommonSubsequenceSearch comparisonStrategy;
@@ -96,7 +95,7 @@ class MatchMergingTest extends TestBase {
 
     private void checkMatchLength(Function<JPlagComparison, List<Match>> matchFunction, int threshold, List<JPlagComparison> comparisons) {
         for (JPlagComparison comparison : comparisons) {
-            matches = matchFunction.apply(comparison);
+            List<Match> matches = matchFunction.apply(comparison);
             for (Match match : matches) {
                 assertTrue(match.lengthOfFirst() >= threshold);
                 assertTrue(match.lengthOfSecond() >= threshold);

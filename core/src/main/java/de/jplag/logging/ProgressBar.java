@@ -18,7 +18,7 @@ public interface ProgressBar {
     void step(int number);
 
     /**
-     * Closes the progress bar. After this method has been called the behaviour of the other methods is undefined.
+     * Closes the progress bar. After this method has been called the behavior of the other methods is undefined.
      */
     void dispose();
 }
