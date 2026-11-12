@@ -54,7 +54,7 @@ class NewJavaFeaturesTest extends TestBase {
         assertEquals(1, result.getAllComparisons().size(), String.format(CHANGE_MESSAGE, "Comparisons"));
 
         // Check similarity and number of matches:
-        var comparison = result.getAllComparisons().get(0);
+        var comparison = result.getAllComparisons().getFirst();
         assertEquals(EXPECTED_SIMILARITY, comparison.similarity(), DELTA, VERSION_MATCH_MESSAGE);
         assertEquals(EXPECTED_MATCHES, comparison.matches().size(), VERSION_MATCH_MESSAGE);
     }

@@ -16,7 +16,7 @@ import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.stat.StatUtils;
 
 /**
- * Implementation of a gaussian process with a matern kernel. This class can be used to fit any real-valued function
+ * Implementation of a Gaussian process with a matern kernel. This class can be used to fit any real-valued function
  * with noisy evaluations. Predictions come in the form of expectations and standard deviations.
  */
 public class GaussianProcess {
@@ -67,7 +67,7 @@ public class GaussianProcess {
      * @param observations expected to have zero mean, unit variance if normalize is false
      * @param noise variance of noise in Y
      * @param normalize if Y should be normalized
-     * @param lengthScale X values are divided by these values before calculating their euclidean distance. If all entries
+     * @param lengthScale X values are divided by these values before calculating their Euclidean distance. If all entries
      * are equal the kernel is isometric.
      * @return a fitted GaussianProcess instance
      * @throws IllegalArgumentException if inputs are invalid, such as empty coordinates, mismatched dimensions, or
@@ -92,9 +92,9 @@ public class GaussianProcess {
         if (noise <= 0) {
             throw new IllegalArgumentException(MessageFormat.format("noise must be strictly positive, got {0}", noise));
         }
-        if (lengthScale.length != observedCoordinates.get(0).getDimension()) {
+        if (lengthScale.length != observedCoordinates.getFirst().getDimension()) {
             throw new IllegalArgumentException(MessageFormat.format("lengthScale is of different dimension {0} than the coordinates values {1}",
-                    lengthScale.length, observedCoordinates.get(0).getDimension()));
+                    lengthScale.length, observedCoordinates.getFirst().getDimension()));
         }
         double mean = 0;
         double standardDeviation = 1;
@@ -149,7 +149,7 @@ public class GaussianProcess {
     }
 
     /**
-     * Generates a ASCII graph string representation of the Gaussian process prediction over a grid. The output visualizes
+     * Generates an ASCII graph string representation of the Gaussian process prediction over a grid. The output visualizes
      * the mean and standard deviation as characters in a 2D grid.
      * @param min the minimum coordinate vector of the input range
      * @param max the maximum coordinate vector of the input range

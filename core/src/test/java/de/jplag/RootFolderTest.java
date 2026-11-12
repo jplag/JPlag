@@ -51,7 +51,7 @@ class RootFolderTest extends TestBase {
         String basecodePath = getBasePath(ROOT_1, BASECODE_SUBMISSION); // basecode is in root 1
         List<String> paths = List.of(getBasePath(ROOT_1), getBasePath(ROOT_2));
         JPlagResult result = runJPlag(paths, it -> it.withBaseCodeSubmissionDirectory(new File(basecodePath)));
-        // One submissions is removed as it is the basecode one:
+        // One submission is removed as it is the basecode one:
         assertEquals(ROOT_COUNT_1 + ROOT_COUNT_2 - 1, result.getNumberOfSubmissions()); // -1 for basecode
     }
 
