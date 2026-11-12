@@ -2,9 +2,10 @@ package de.jplag.cli.logger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 import org.slf4j.Marker;
@@ -22,7 +23,7 @@ public class CollectedLogger extends AbstractLogger {
     private static final int MAXIMUM_MESSAGE_LENGTH = 32;
     private static Level currentLogLevel = Level.INFO;
 
-    private final transient SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-hh:mm:ss_SSS");
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd-hh:mm:ss_SSS");
     private final ConcurrentLinkedDeque<LogEntry> allErrors = new ConcurrentLinkedDeque<>();
 
     /**
@@ -97,7 +98,7 @@ public class CollectedLogger extends AbstractLogger {
     @Override
     protected void handleNormalizedLoggingCall(Level level, Marker marker, String format, Object[] args, Throwable cause) {
         String logMessage = prepareFormattedMessage(format, args);
-        LogEntry entry = new LogEntry(logMessage, cause, new Date(), level);
+        LogEntry entry = new LogEntry(logMessage, cause, LocalDateTime.now(ZoneId.systemDefault()), level);
 
         if (level == Level.ERROR && !isFinalizing) {
             allErrors.add(entry);
@@ -139,7 +140,7 @@ public class CollectedLogger extends AbstractLogger {
 
     private StringBuilder prepareLogOutput(LogEntry entry) {
         StringBuilder outputBuilder = new StringBuilder(MAXIMUM_MESSAGE_LENGTH);
-        outputBuilder.append(dateFormat.format(entry.timeOfLog())).append(' ');
+        outputBuilder.append(entry.timeOfLog().format(DATE_FORMAT)).append(' ');
         outputBuilder.append('[').append(entry.logLevel().name()).append("] ");
         outputBuilder.append(computeShortName()).append(" - ");
         outputBuilder.append(entry.message());

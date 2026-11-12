@@ -65,11 +65,11 @@ public class BookStoreFactory {
         EAttribute bookStoreLocation = theCoreFactory.createEAttribute();
         bookStoreLocation.setName("location");
         bookStoreLocation.setEType(theCorePackage.getEString());
-        EReference bookStore_Books = theCoreFactory.createEReference();
-        bookStore_Books.setName("books");
-        bookStore_Books.setEType(bookEClass);
-        bookStore_Books.setUpperBound(ETypedElement.UNBOUNDED_MULTIPLICITY);
-        bookStore_Books.setContainment(true);
+        EReference bookStoreBooks = theCoreFactory.createEReference();
+        bookStoreBooks.setName("books");
+        bookStoreBooks.setEType(bookEClass);
+        bookStoreBooks.setUpperBound(ETypedElement.UNBOUNDED_MULTIPLICITY);
+        bookStoreBooks.setContainment(true);
 
         EAttribute bookName = theCoreFactory.createEAttribute();
         bookName.setName("name");
@@ -81,7 +81,7 @@ public class BookStoreFactory {
 
         bookStoreEClass.getEStructuralFeatures().add(bookStoreOwner);
         bookStoreEClass.getEStructuralFeatures().add(bookStoreLocation);
-        bookStoreEClass.getEStructuralFeatures().add(bookStore_Books);
+        bookStoreEClass.getEStructuralFeatures().add(bookStoreBooks);
 
         bookEClass.getEStructuralFeatures().add(bookName);
         bookEClass.getEStructuralFeatures().add(bookISBN);
@@ -99,7 +99,7 @@ public class BookStoreFactory {
 
         bookStoreObject.eSet(bookStoreOwner, "David Brown");
         bookStoreObject.eSet(bookStoreLocation, "Street#12, Top Town, NY");
-        ((List<Object>) bookStoreObject.eGet(bookStore_Books)).add(bookObject);
+        ((List<Object>) bookStoreObject.eGet(bookStoreBooks)).add(bookObject);
 
         bookObject.eSet(bookName, "Harry Potter and the Deathly Hallows");
         bookObject.eSet(bookISBN, 157221);

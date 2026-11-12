@@ -5,7 +5,6 @@ import static de.jplag.scxml.parser.model.executable_content.SimpleExecutableCon
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +13,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.xml.sax.SAXException;
 
 import de.jplag.ParsingException;
 import de.jplag.scxml.parser.ScxmlParser;
@@ -61,7 +59,7 @@ class ScxmlParserTest {
     }
 
     @Test
-    void canParseSimpleStatechart() throws ParsingException, ParserConfigurationException, SAXException, IOException {
+    void canParseSimpleStatechart() throws ParsingException, ParserConfigurationException {
         File testFile = new File(baseDirectory, TEST_SUBJECTS[0]);
         Statechart actual = new ScxmlParser().parse(testFile);
 
@@ -72,7 +70,7 @@ class ScxmlParserTest {
     }
 
     @Test
-    void canParseTimedTransition() throws ParsingException, ParserConfigurationException, SAXException, IOException {
+    void canParseTimedTransition() throws ParsingException, ParserConfigurationException {
         File testFile = new File(baseDirectory, TEST_SUBJECTS[1]);
         Statechart actual = new ScxmlParser().parse(testFile);
 
@@ -83,7 +81,7 @@ class ScxmlParserTest {
     }
 
     @Test
-    void canParseConditional() throws ParserConfigurationException, ParsingException, IOException, SAXException {
+    void canParseConditional() throws ParserConfigurationException, ParsingException {
         File testFile = new File(baseDirectory, TEST_SUBJECTS[2]);
         Statechart actual = new ScxmlParser().parse(testFile);
         ElseIf elseIf = new ElseIf(List.of(new SimpleExecutableContent(SimpleExecutableContent.Type.RAISE)));
@@ -97,7 +95,7 @@ class ScxmlParserTest {
     }
 
     @Test
-    void canParseComplexStatechart() throws ParsingException, ParserConfigurationException, SAXException, IOException {
+    void canParseComplexStatechart() throws ParsingException, ParserConfigurationException {
         File testFile = new File(baseDirectory, TEST_SUBJECTS[3]);
         Statechart actual = new ScxmlParser().parse(testFile);
 

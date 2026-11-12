@@ -58,7 +58,7 @@ public class GCCSourceAnalysis implements SourceAnalysis {
                 while ((line = stdError.readLine()) != null) {
                     processOutputLine(line);
                 }
-            } catch (IOException e) {
+            } catch (IOException _) {
                 // error during compilation, skip this submission
                 logger.warn("Failed to compile file {}", file.getAbsolutePath());
             }

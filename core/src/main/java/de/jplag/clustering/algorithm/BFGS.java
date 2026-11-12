@@ -387,20 +387,14 @@ public class BFGS {
                     }
                 }
 
-                // M.uplo(UPLO.LOWER);
                 M = M.inverse();
             }
 
-            // logger.debug("L-BFGS-B iteration {} moves from {} to {} where f(x) = {}", iter, Arrays.toString(x_old),
-            // Arrays.toString(x), f);
-
             if (abs(f_old - f) < TOLF) {
-                // logger.info(String.format("L-BFGS-B converges on f(x) after %d iterations: %.5f", iter, f));
                 return f;
             }
         }
 
-        // logger.warn(String.format("L-BFGS-B reaches maximum %d iterations: %.5f", maxIter, f));
         return f;
     }
 
@@ -734,10 +728,7 @@ public class BFGS {
          * @return {@code A' * A}.
          */
         public Matrix ata() {
-            Matrix c = new Matrix(d.transpose().multiply(d));
-            // c.mm(TRANSPOSE, 1this, NO_TRANSPOSE, this);
-            // c.uplo(LOWER);
-            return c;
+            return new Matrix(d.transpose().multiply(d));
         }
 
         /**

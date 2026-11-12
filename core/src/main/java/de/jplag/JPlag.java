@@ -136,16 +136,8 @@ public class JPlag {
     private static List<String> getDuplicateSubmissionFolderNames(JPlagOptions options) {
         List<String> duplicateNames = new ArrayList<>();
         Set<String> alreadyFoundNames = new HashSet<>();
-        for (File file : options.submissionDirectories()) {
-            if (!alreadyFoundNames.add(file.getName())) {
-                duplicateNames.add(file.getName());
-            }
-        }
-        for (File file : options.oldSubmissionDirectories()) {
-            if (!alreadyFoundNames.add(file.getName())) {
-                duplicateNames.add(file.getName());
-            }
-        }
+        options.submissionDirectories().stream().map(File::getName).filter(name -> !alreadyFoundNames.add(name)).forEach(duplicateNames::add);
+        options.oldSubmissionDirectories().stream().map(File::getName).filter(name -> !alreadyFoundNames.add(name)).forEach(duplicateNames::add);
         return duplicateNames;
     }
 }

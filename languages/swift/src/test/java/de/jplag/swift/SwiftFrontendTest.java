@@ -150,7 +150,7 @@ class SwiftFrontendTest {
         var annotatedSwiftTokens = annotatedTokens.stream().filter(SwiftTokenType.class::isInstance).collect(Collectors.toSet());
         var allSwiftTokens = SwiftTokenType.values();
         var missingSwiftTokens = Arrays.stream(allSwiftTokens).filter(token -> !annotatedSwiftTokens.contains(token)).toList();
-        assertTrue(missingSwiftTokens.isEmpty(), "The following Swift tokens are missing in the code example '%s':\n".formatted(fileName)
+        assertTrue(missingSwiftTokens.isEmpty(), "The following Swift tokens are missing in the code example '%s':%n".formatted(fileName)
                 + String.join("\n", missingSwiftTokens.stream().map(SwiftTokenType::getDescription).toList()));
     }
 

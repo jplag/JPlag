@@ -39,10 +39,7 @@ public class TokenVectorGenerator {
         while (modelElements.hasNext()) {
             tokenizer.element2OptionalToken(modelElements.next()).ifPresent(it -> tokenTypeHistogram.merge(it, 1, Integer::sum));
         }
-        List<Integer> occurenceVector = new ArrayList<>();
-        for (TokenType type : tokenizer.allTokenTypes()) {
-            occurenceVector.add(tokenTypeHistogram.getOrDefault(type, 0));
-        }
+        List<Integer> occurenceVector = tokenizer.allTokenTypes().stream().map(type -> tokenTypeHistogram.getOrDefault(type, 0)).toList();
         return new TokenOccurenceVector(normalize(occurenceVector));
     }
 
