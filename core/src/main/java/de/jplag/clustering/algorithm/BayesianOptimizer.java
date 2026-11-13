@@ -132,7 +132,7 @@ public class BayesianOptimizer {
         }
 
         if (nonZeroAcquisitions == 0) {
-            consecutiveRandomPicks++;
+            consecutiveRandomPicks += 1;
         } else {
             consecutiveRandomPicks = 0;
         }
@@ -148,7 +148,7 @@ public class BayesianOptimizer {
     public <T> OptimizationResult<T> maximize(Function<RealVector, OptimizationResult<T>> objectiveFunction) {
         List<Double> observations = new ArrayList<>(maxEvaluations);
         List<RealVector> evaluatedPoints = new ArrayList<>(maxEvaluations);
-        OptimizationResult<T> best = null;
+        OptimizationResult<T> best = new OptimizationResult<>(Double.MIN_VALUE, null);
 
         // the first couple of executions are reserved for exploration
         sampleSolutionSpace().limit(initialPoints).forEach(evaluatedPoints::add);
@@ -174,11 +174,16 @@ public class BayesianOptimizer {
             OptimizationResult<T> result = objectiveFunction.apply(coordinates);
             result.params = coordinates;
             observations.add(result.getScore());
-            if (best == null || result.score > best.score) {
+            if (result.score > best.score) {
                 best = result;
             }
         }
-        return best;
+
+        if (best.value == null) {
+            return null;
+        } else {
+            return best;
+        }
     }
 
     /**

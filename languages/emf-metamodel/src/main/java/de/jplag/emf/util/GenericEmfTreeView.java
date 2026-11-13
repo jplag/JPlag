@@ -92,20 +92,22 @@ public class GenericEmfTreeView extends AbstractModelView {
         private String featureValueToString(Object value) {
             String name = null;
             if (value != null) {
-                if (value instanceof EObject featureValue) {
-                    List<String> valueIdentifiers = deriveNameOrIdentifers(featureValue);
+                switch (value) {
+                    case EObject featureValue -> {
+                        List<String> valueIdentifiers = deriveNameOrIdentifers(featureValue);
 
-                    if (!valueIdentifiers.isEmpty()) {
-                        name = TEXT_AFFIX + valueIdentifiers.get(0) + TEXT_AFFIX;
-                    } else {
-                        name = featureValue.eClass().getName() + IDENTIFIER_PREFIX + identifierManager.getIdentifier(featureValue);
+                        if (!valueIdentifiers.isEmpty()) {
+                            name = TEXT_AFFIX + valueIdentifiers.get(0) + TEXT_AFFIX;
+                        } else {
+                            name = featureValue.eClass().getName() + IDENTIFIER_PREFIX + identifierManager.getIdentifier(featureValue);
+                        }
                     }
-                } else if (value instanceof Collection<?> multipleValues) {
-                    name = valueListToString(multipleValues);
-                } else {
-                    name = value.toString();
-                    name = name.length() > ABBREVIATION_LIMIT ? name.substring(0, ABBREVIATION_LIMIT) + ABBREVIATION_SUFFIX : name;
-                    name = TEXT_AFFIX + name + TEXT_AFFIX;
+                    case Collection<?> multipleValues -> name = valueListToString(multipleValues);
+                    default -> {
+                        name = value.toString();
+                        name = name.length() > ABBREVIATION_LIMIT ? name.substring(0, ABBREVIATION_LIMIT) + ABBREVIATION_SUFFIX : name;
+                        name = TEXT_AFFIX + name + TEXT_AFFIX;
+                    }
                 }
             }
             return name;

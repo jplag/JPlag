@@ -95,7 +95,7 @@ class PomVersionTest {
     @DisplayName("Ensures That all version inside the root dependencyManagement are defined using 'version.*' variables")
     void testRootProjectDependencyManagementVersions() throws IOException, JDOMException {
         List<Element> managementVersions = scanXpath(projectRootPom, XPATH_DEPENDENCY_MANAGEMENT_VERSION);
-        assertAll(managementVersions, (versionTag) -> {
+        assertAll(managementVersions, versionTag -> {
             if (!versionTag.getText().matches(REGEX_VERSION_REFERENCE)) {
                 failForVersionTag(versionTag);
             }
@@ -106,7 +106,7 @@ class PomVersionTest {
     @DisplayName("Ensures That all version inside the root pluginManagement are defined using 'version.plugin.*' variables")
     void testRootProjectPluginManagementVersions() throws IOException, JDOMException {
         List<Element> managementVersions = scanXpath(projectRootPom, XPATH_PLUGIN_MANAGEMENT_VERSION);
-        assertAll(managementVersions, (versionTag) -> {
+        assertAll(managementVersions, versionTag -> {
             if (!versionTag.getText().matches(REGEX_PLUGIN_VERSION_REFERENCE)) {
                 failForVersionTag(versionTag);
             }

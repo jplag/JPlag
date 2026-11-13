@@ -57,8 +57,8 @@ class StrategyTest extends TestBase {
         JPlagOptions options = getDefaultOptions("PartialPlagiarism");
         JPlagResult result = getJPlagResult(options);
 
-        JPlagComparison testComparison = result.getAllComparisons().getFirst();
-        buildTestMatches(testComparison);
+        JPlagComparison comparison = result.getAllComparisons().getFirst();
+        buildTestMatches(comparison);
         buildTestComparisons(getTestSubmissions(options));
     }
 

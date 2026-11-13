@@ -28,7 +28,7 @@ public record State(String id, List<Transition> transitions, List<State> substat
      * Constructs a new state.
      * @throws IllegalArgumentException if {@code transitions} or {@code substates} is null
      */
-    public State(String id, List<Transition> transitions, List<State> substates, List<Action> actions, boolean initial, boolean parallel) {
+    public State {
         if (transitions == null) {
             throw new IllegalArgumentException("State.transitions must not be null");
         }
@@ -37,12 +37,6 @@ public record State(String id, List<Transition> transitions, List<State> substat
             throw new IllegalArgumentException("State.substates must not be null");
         }
 
-        this.id = id;
-        this.transitions = transitions;
-        this.substates = substates;
-        this.actions = actions;
-        this.initial = initial;
-        this.parallel = parallel;
         updateTimedTransitions();
     }
 
@@ -153,7 +147,7 @@ public record State(String id, List<Transition> transitions, List<State> substat
             parts[0] = "Initial ";
             parts[1] = parts[1].toLowerCase();
         }
-        return String.format("%s: %s%s {", id, parts[0], parts[1]);
+        return id + ": " + parts[0] + parts[1] + " {";
     }
 
 }

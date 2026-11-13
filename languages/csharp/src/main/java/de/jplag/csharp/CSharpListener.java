@@ -216,8 +216,6 @@ public class CSharpListener extends AbstractAntlrListener {
     private void registerUnaryOperatorVisitors() {
         visit(TK_PLUS_PLUS).map(ASSIGNMENT);
         visit(TK_MINUS_MINUS).map(ASSIGNMENT);
-
-        // visit(Shift_expressionContext.class, expr -> expr.shift_expression() == null).map(ASSIGNMENT);
     }
 
     private boolean isAliasUsageAlsoImport(CSharpParser.Using_alias_directiveContext context) {

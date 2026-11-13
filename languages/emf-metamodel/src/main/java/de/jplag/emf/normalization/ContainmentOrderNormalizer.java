@@ -62,7 +62,7 @@ public class ContainmentOrderNormalizer implements Comparator<EObject> {
 
         // 2. compare by position of the nearest neighbor path of the token distribution vectors of the elements subtrees.
         List<EObject> path = paths.computeIfAbsent(firstType, this::calculatePath);
-        return path.indexOf(first) - path.indexOf(second);
+        return Integer.compare(path.indexOf(first), path.indexOf(second));
     }
 
     private List<EObject> calculatePath(List<EObject> elements, EObject start, double[][] distances) {

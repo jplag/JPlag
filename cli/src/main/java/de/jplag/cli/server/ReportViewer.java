@@ -121,7 +121,9 @@ public class ReportViewer implements HttpHandler {
 
         ResponseData responseData = resolved.getRight().fetchData(resolved.getLeft(), exchange, this);
         if (responseData == null) {
-            logger.warn("No response data found for path: {}", path.asPath());
+            if (logger.isWarnEnabled()) {
+                logger.warn("No response data found for path: {}", path.asPath());
+            }
             exchange.sendResponseHeaders(NOT_FOUND_RESPONSE, 0);
             exchange.close();
             return;

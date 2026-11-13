@@ -30,7 +30,7 @@ public class CsvComparisonOutput {
      * @throws IOException if the output cannot be written.
      */
     public static void writeCsvResults(List<JPlagComparison> comparisons, boolean anonymize, File directory, String fileName) throws IOException {
-        NameMapper mapper = new NameMapper.IdentityMapper();
+        NameMapper mapper = new IdentityMapper();
         directory.mkdirs();
 
         if (anonymize) {
