@@ -64,7 +64,7 @@ watch(
       .trimEnd()
       .toLowerCase()
       .split(/ +/g)
-      .map((s) => s.trim().replace(/,/g, ''))
+      .map((s) => s.trim().replaceAll(/,/g, ''))
     if (searchParts.length == 0) {
       return
     }

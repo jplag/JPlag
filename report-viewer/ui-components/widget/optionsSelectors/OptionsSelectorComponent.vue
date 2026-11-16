@@ -22,7 +22,7 @@
             >
               <span class="flex items-center gap-x-1 align-middle">
                 <slot
-                  :name="(label as ToolTipLabel).displayValue.replace(' ', '-').toLowerCase()"
+                  :name="(label as ToolTipLabel).displayValue.replaceAll(' ', '-').toLowerCase()"
                 />
                 <span>{{ (label as ToolTipLabel).displayValue }}</span>
               </span>

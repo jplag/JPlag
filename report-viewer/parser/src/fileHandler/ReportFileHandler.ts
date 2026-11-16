@@ -89,9 +89,7 @@ export class ReportFileHandler {
     )
     if (originalPathWithoutSubmissions.startsWith('\\')) {
       fullPath = unixSubfolderPathAfterSubmissions + '\\' + fileBase
-      while (fullPath.includes('/')) {
-        fullPath = fullPath.replace('/', '\\')
-      }
+      fullPath = fullPath.replaceAll('/', '\\')
     } else {
       fullPath = unixSubfolderPathAfterSubmissions + '/' + fileBase
     }
