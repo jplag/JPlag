@@ -142,9 +142,9 @@ export class ComparisonFactory {
     }
 
     for (const matchToColor of matches) {
-      const firstIndex = matchesFirst.findIndex((match) => match === matchToColor)
-      const secondIndex = matchesSecond.findIndex((match) => match === matchToColor)
-      const sortedIndex = sortedSize.findIndex((match) => match === matchToColor)
+      const firstIndex = matchesFirst.indexOf(matchToColor)
+      const secondIndex = matchesSecond.indexOf(matchToColor)
+      const sortedIndex = sortedSize.indexOf(matchToColor)
       const startCounter = currentColorIndex
       while (
         !isColorAvailable(matchesFirst, firstIndex) ||

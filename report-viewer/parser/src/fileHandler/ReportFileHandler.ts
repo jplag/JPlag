@@ -52,9 +52,9 @@ export class ReportFileHandler {
     const rootName = folders[0]
     let submissionFolderIndex: number
     if (rootName === 'files') {
-      submissionFolderIndex = folders.findIndex((folder) => folder === 'files')
+      submissionFolderIndex = folders.indexOf('files')
     } else {
-      submissionFolderIndex = folders.findIndex((folder) => folder === 'submissions')
+      submissionFolderIndex = folders.indexOf('submissions')
     }
     return folders[submissionFolderIndex + 1]
   }
