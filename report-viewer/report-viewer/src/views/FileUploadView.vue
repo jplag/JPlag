@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { onErrorCaptured, ref, type Ref } from 'vue'
+import { onErrorCaptured, onMounted, ref, type Ref } from 'vue'
 import { router } from '@/router'
 import VersionInfoComponent from '../components/VersionInfoComponent.vue'
 import { reportStore } from '@/stores/reportStore'
@@ -67,12 +67,6 @@ import { LoadingCircle } from '@jplag/ui-components/base'
 reportStore().reset()
 
 const exampleFiles = ref(import.meta.env.MODE == 'demo' || import.meta.env.MODE == 'dev-demo')
-
-canLoadFile().then((value) => {
-  if (value) {
-    navigateToOverview()
-  }
-})
 
 document.title = 'JPlag Report Viewer'
 
@@ -167,6 +161,13 @@ function getErrorText() {
 
   return errors.value.map((e) => `${getSourceText(e.source)}: ${e.error.message}`).join('\n')
 }
+
+onMounted(async () => {
+  const loadFile = await canLoadFile()
+  if (loadFile) {
+    navigateToOverview()
+  }
+})
 
 onErrorCaptured((error) => {
   registerError(error, 'unknown')

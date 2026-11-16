@@ -19,7 +19,7 @@ import LoadingCircle from '@jplag/ui-components/base/LoadingCircle.vue'
 import VersionRepositoryReference from '../components/VersionRepositoryReference.vue'
 import { reportStore } from '@/stores/reportStore'
 import { loadReport } from '@/stores/fileLoading'
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { redirectOnError } from '@/router'
 
 const props = defineProps({
@@ -38,7 +38,13 @@ const parsedIndex = computed(() => {
   return index
 })
 
-if (!reportStore().isReportLoaded()) {
-  loadReport().catch((error) => redirectOnError(error))
-}
+onMounted(async () => {
+  if (!reportStore().isReportLoaded()) {
+    try {
+      await loadReport()
+    } catch (e) {
+      redirectOnError(e as Error)
+    }
+  }
+})
 </script>
