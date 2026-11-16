@@ -29,6 +29,10 @@ defineProps({
     type: String,
     default: 'Search...',
     required: false
+  },
+  id: {
+    type: String,
+    default: undefined
   }
 })
 

@@ -4,6 +4,7 @@
 <template>
   <Interactable class="cursor-default! p-0">
     <select
+      :id="id"
       v-model="selectedOption"
       class="bg-interactable m-0 w-full cursor-pointer"
       @change="$emit('selectionChanged', selectedOption)"
@@ -27,6 +28,10 @@ const props = defineProps({
   getDisplayName: {
     type: Function as PropType<(option: string) => string>,
     default: (option: string) => option
+  },
+  id: {
+    type: String,
+    default: undefined
   }
 })
 
