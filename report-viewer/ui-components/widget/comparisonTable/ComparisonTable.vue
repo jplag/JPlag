@@ -358,10 +358,12 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
     return comparisons
   }
 
-  const indexSearches = searches
-    .filter((s) => /index:[0-9]+/.test(s))
-    .map((s) => s.substring(6))
-    .map((s) => Number.parseInt(s))
+  const indexSearches = new Set(
+    searches
+      .filter((s) => /index:[0-9]+/.test(s))
+      .map((s) => s.substring(6))
+      .map((s) => Number.parseInt(s))
+  )
 
   const metricSearches = searches.filter((s) => /((avg|max|long|len|wavg):)?([<>])=?\d+%?/.test(s))
 
@@ -385,7 +387,7 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
     }
 
     // index search
-    if (indexSearches.includes(c.sortingPlace + 1)) {
+    if (indexSearches.has(c.sortingPlace + 1)) {
       return true
     }
     if (searches.some((s) => (c.sortingPlace + 1).toString().includes(s))) {
