@@ -78,7 +78,7 @@ const mockDistributions: DistributionMap = {
 const mockOptions: CliOptions = {
   language: ParserLanguage.JAVA,
   minimumTokenMatch: 9,
-  submissionDirectories: ['.\\files'],
+  submissionDirectories: [String.raw`.\files`],
   oldSubmissionDirectories: ['old'],
   baseCodeSubmissionDirectory: '.',
   subdirectoryName: 'src/',
