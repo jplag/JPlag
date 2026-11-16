@@ -46,7 +46,7 @@ describe('Test JSON to Comparison', () => {
     expect(comparison.similarities[MetricJsonIdentifier.LONGEST_MATCH]).toBe(139)
     expect(comparison.similarities[MetricJsonIdentifier.MAXIMUM_LENGTH]).toBe(462)
 
-    expect(comparison.allMatches.length).toBe(4)
+    expect(comparison.allMatches).toHaveLength(4)
     expect(comparison.matchesInFirstSubmission.size).toBe(2)
     expect(comparison.matchesInSecondSubmissions.size).toBe(2)
     expect(comparison.firstSimilarity).toBe(0.4)

@@ -7,7 +7,7 @@ describe('Test JSON to Distribution', () => {
   it('Test without clusters', () => {
     const result = TopComparisonFactory.getTopComparisons(validTopComparisons, [])
 
-    expect(result.length).toEqual(5)
+    expect(result).toHaveLength(5)
     expect(result[0]).toEqual({
       sortingPlace: 0,
       id: 1,
