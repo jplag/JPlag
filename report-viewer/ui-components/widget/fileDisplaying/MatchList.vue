@@ -193,10 +193,10 @@ function getTooltipDirection(index: number): ToolTipDirection {
 
 function showTokenRanges(match: Match) {
   return (
-    !isNaN(match.startInFirst.tokenListIndex) &&
-    !isNaN(match.startInSecond.tokenListIndex) &&
-    !isNaN(match.endInFirst.tokenListIndex) &&
-    !isNaN(match.endInSecond.tokenListIndex)
+    !Number.isNaN(match.startInFirst.tokenListIndex) &&
+    !Number.isNaN(match.startInSecond.tokenListIndex) &&
+    !Number.isNaN(match.endInFirst.tokenListIndex) &&
+    !Number.isNaN(match.endInSecond.tokenListIndex)
   )
 }
 

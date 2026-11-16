@@ -30,8 +30,8 @@ const props = defineProps({
 })
 
 const parsedIndex = computed(() => {
-  const index = parseInt(props.clusterIndex)
-  if (isNaN(index) || index < 0) {
+  const index = Number.parseInt(props.clusterIndex)
+  if (Number.isNaN(index) || index < 0) {
     redirectOnError(new Error('Invalid cluster index provided.'))
     return -1
   }

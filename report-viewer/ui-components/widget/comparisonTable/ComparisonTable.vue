@@ -361,7 +361,7 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
   const indexSearches = searches
     .filter((s) => /index:[0-9]+/.test(s))
     .map((s) => s.substring(6))
-    .map((s) => parseInt(s))
+    .map((s) => Number.parseInt(s))
 
   const metricSearches = searches.filter((s) => /((avg|max|long|len|wavg):)?([<>])=?\d+%?/.test(s))
 
@@ -422,7 +422,7 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
       for (const search of searchPerMetric[metric]) {
         const regexResult = /([<>]=?)([0-9]+)%?/.exec(search)!
         const operator = regexResult[1]
-        const value = parseInt(regexResult[2])
+        const value = Number.parseInt(regexResult[2])
         const metricObject = MetricTypes.METRIC_MAP[metric]
         if (
           evaluateMetricComparison(

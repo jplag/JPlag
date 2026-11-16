@@ -64,9 +64,9 @@ fetch('https://api.github.com/repos/jplag/JPlag/releases/latest')
     // remove the 'v' from the version string and split it into an array
     const versionArray = versionString.substring(1).split('.')
     newestVersion.value = new Version(
-      parseInt(versionArray[0]),
-      parseInt(versionArray[1]),
-      parseInt(versionArray[2])
+      Number.parseInt(versionArray[0]),
+      Number.parseInt(versionArray[1]),
+      Number.parseInt(versionArray[2])
     )
   })
   .catch(() => {
