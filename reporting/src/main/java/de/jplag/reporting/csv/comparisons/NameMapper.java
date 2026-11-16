@@ -1,6 +1,5 @@
 package de.jplag.reporting.csv.comparisons;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -20,18 +19,4 @@ public interface NameMapper {
      */
     List<Map.Entry<String, String>> getNameMap();
 
-    /**
-     * Simple implementation, that does not change the names.
-     */
-    class IdentityMapper implements NameMapper {
-        @Override
-        public String map(String original) {
-            return original;
-        }
-
-        @Override
-        public List<Map.Entry<String, String>> getNameMap() {
-            return Collections.emptyList();
-        }
-    }
 }

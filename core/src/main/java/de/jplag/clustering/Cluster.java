@@ -92,12 +92,11 @@ public class Cluster<T> {
      * @return the computed worth score
      */
     public double getWorth(BiFunction<T, T, Double> similarity) {
-        double communityStrength = getCommunityStrength();
+        double strength = getCommunityStrength();
         if (members.size() > 1) {
-            communityStrength /= connections();
+            strength /= connections();
         }
-        double averageSimilarity = averageSimilarity(similarity);
-        return communityStrength * averageSimilarity;
+        return strength * averageSimilarity(similarity);
     }
 
     /**
@@ -106,14 +105,14 @@ public class Cluster<T> {
      * @return average similarity
      */
     private double averageSimilarity(BiFunction<T, T, Double> similarity) {
-        List<T> members = new ArrayList<>(this.members);
-        if (members.size() < 2) {
+        List<T> membersList = new ArrayList<>(this.members);
+        if (membersList.size() < 2) {
             return 1;
         }
         double similaritySum = 0;
-        for (int i = 0; i < members.size(); i++) {
-            for (int j = i + 1; j < members.size(); j++) {
-                similaritySum += similarity.apply(members.get(i), members.get(j));
+        for (int i = 0; i < membersList.size(); i++) {
+            for (int j = i + 1; j < membersList.size(); j++) {
+                similaritySum += similarity.apply(membersList.get(i), membersList.get(j));
             }
         }
         return similaritySum / connections();

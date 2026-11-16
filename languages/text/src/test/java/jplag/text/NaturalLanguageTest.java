@@ -34,7 +34,7 @@ class NaturalLanguageTest {
     private File baseDirectory;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         language = new NaturalLanguage();
         baseDirectory = BASE_PATH.toFile();
         assertTrue(baseDirectory.exists(), "Could not find base directory!");

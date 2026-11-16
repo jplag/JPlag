@@ -1,6 +1,6 @@
 package de.jplag.cli.logger;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.slf4j.event.Level;
 
@@ -11,5 +11,5 @@ import org.slf4j.event.Level;
  * @param timeOfLog The time of the log
  * @param logLevel The level of the log entry
  */
-public record LogEntry(String message, Throwable cause, Date timeOfLog, Level logLevel) {
+public record LogEntry(String message, Throwable cause, LocalDateTime timeOfLog, Level logLevel) {
 }
