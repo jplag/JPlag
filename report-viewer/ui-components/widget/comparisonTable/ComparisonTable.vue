@@ -438,24 +438,20 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
 
     return false
   })
+}
 
-  function evaluateMetricComparison(
-    comparisonMetric: number,
-    operator: string,
-    checkValue: number
-  ) {
-    switch (operator) {
-      case '>':
-        return comparisonMetric > checkValue
-      case '<':
-        return comparisonMetric < checkValue
-      case '>=':
-        return comparisonMetric >= checkValue
-      case '<=':
-        return comparisonMetric <= checkValue
-      default:
-        return false
-    }
+function evaluateMetricComparison(comparisonMetric: number, operator: string, checkValue: number) {
+  switch (operator) {
+    case '>':
+      return comparisonMetric > checkValue
+    case '<':
+      return comparisonMetric < checkValue
+    case '>=':
+      return comparisonMetric >= checkValue
+    case '<=':
+      return comparisonMetric <= checkValue
+    default:
+      return false
   }
 }
 
