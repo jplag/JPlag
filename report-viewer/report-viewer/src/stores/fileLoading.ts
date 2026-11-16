@@ -17,7 +17,7 @@ export async function loadReport(): Promise<void> {
     reportFile = await response.blob()
 
     const urlParts = queryURL.pathname.split('/')
-    const lastUrlPart = urlParts[urlParts.length - 1]
+    const lastUrlPart = urlParts.at(-1)
     if (lastUrlPart?.endsWith('.jplag')) {
       reportName = lastUrlPart
     }
