@@ -1,6 +1,6 @@
 package de.jplag.multilang;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -40,9 +40,9 @@ public class MultiLanguageParser {
      * @return a list of parsed tokens
      * @throws ParsingException if parsing fails
      */
-    public List<Token> parseFiles(Set<File> files, boolean normalize) throws ParsingException {
+    public List<Token> parseFiles(Set<Path> files, boolean normalize) throws ParsingException {
         List<Token> results = new ArrayList<>();
-        for (File file : files) {
+        for (Path file : files) {
             Optional<Language> language = findLanguageForFile(file);
             if (language.isPresent()) {
                 results.addAll(language.get().parse(Set.of(file), normalize));
@@ -75,8 +75,8 @@ public class MultiLanguageParser {
         map.put(suffix, language);
     }
 
-    private Optional<Language> findLanguageForFile(File file) {
-        String name = file.getName();
+    private Optional<Language> findLanguageForFile(Path file) {
+        String name = file.getFileName().toString();
         String extension = name.substring(name.lastIndexOf('.')).toLowerCase();
 
         if (this.languageMapPriority.containsKey(extension)) {

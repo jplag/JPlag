@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,7 +37,7 @@ class RLanguageTest {
 
     private final Logger logger = LoggerFactory.getLogger(RLanguageTest.class);
     private final String[] testFiles = {"Game.R", COMPLETE_TEST_FILE};
-    private final File testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "rlang").toFile();
+    private final Path testFileLocation = Path.of("src", "test", "resources", "de", "jplag", "rlang");
     private RLanguage language;
 
     @BeforeEach
@@ -49,7 +48,7 @@ class RLanguageTest {
     @Test
     void parseTestFiles() throws ParsingException {
         for (String fileName : testFiles) {
-            List<Token> tokens = language.parse(Set.of(new File(testFileLocation, fileName)), false);
+            List<Token> tokens = language.parse(Set.of(testFileLocation.resolve(fileName)), false);
             String output = TokenPrinterUtils.printTokensByFile(tokens);
             logger.info(output);
 
@@ -66,10 +65,10 @@ class RLanguageTest {
      * @param tokens the list of tokens generated from the sample
      */
     private void testSourceCoverage(String fileName, List<Token> tokens) {
-        File testFile = new File(testFileLocation, fileName);
+        Path testFile = testFileLocation.resolve(fileName);
 
         try {
-            List<String> lines = Files.readAllLines(testFile.toPath());
+            List<String> lines = Files.readAllLines(testFile);
             String emptyLineExpression = getNoCodeLineExpression();
 
             // All lines that contain code

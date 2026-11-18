@@ -1,6 +1,6 @@
 package de.jplag.emf.util;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Map;
 
@@ -60,10 +60,10 @@ public final class EMFUtil {
      * @param file is file path to the (meta)model.
      * @return the resource of the loaded (meta)model or null if it could not be loaded.
      */
-    public static Resource loadModelResource(File file) {
+    public static Resource loadModelResource(Path file) {
         final ResourceSet resourceSet = new ResourceSetImpl();
         try {
-            return resourceSet.getResource(URI.createFileURI(file.getAbsolutePath()), true);
+            return resourceSet.getResource(URI.createURI(file.toUri().toString()), true);
         } catch (WrappedException exception) {
             logger.error("Could not load {}: {}", file, exception.getCause().getMessage());
         }

@@ -1,6 +1,6 @@
 package de.jplag.java;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Set;
 
@@ -60,7 +60,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
     private final static String ANONYMOUS_VARIABLE_NAME = "";
     private static final String ENUM_MARKER = "/*enum*/";
 
-    private final File file;
+    private final Path file;
     private final Parser parser;
     private final LineMap map;
     private final SourcePositions positions;
@@ -75,7 +75,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
 
     private static final Set<String> CRITICAL_METHODS = Set.of("System.out.println", "System.out.print");
 
-    public TokenGeneratingTreeScanner(File file, Parser parser, LineMap map, SourcePositions positions, CompilationUnitTree ast) {
+    public TokenGeneratingTreeScanner(Path file, Parser parser, LineMap map, SourcePositions positions, CompilationUnitTree ast) {
         this.file = file;
         this.parser = parser;
         this.map = map;
@@ -84,7 +84,7 @@ final class TokenGeneratingTreeScanner extends TreeScanner<Void, Void> {
         this.variableRegistry = new VariableRegistry();
     }
 
-    public void addToken(TokenType type, File file, long startLine, long startColumn, long endLine, long endColumn, long length,
+    public void addToken(TokenType type, Path file, long startLine, long startColumn, long endLine, long endColumn, long length,
             CodeSemantics semantics) {
         parser.add(new Token(type, file, Math.toIntExact(startLine), Math.toIntExact(startColumn), Math.toIntExact(endLine),
                 Math.toIntExact(endColumn), Math.toIntExact(length), semantics));
