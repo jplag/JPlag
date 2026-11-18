@@ -17,7 +17,7 @@ export function highlight(code: string, lang: Language) {
   const highlightedCode = hljs.highlight(code, { language: getHighlightLanguage(lang) }).value
   const openTags: string[] = []
   return highlightedCode
-    .replace(/(<span [^>]*>)|(<\/span>)|(\n)/g, (match: string) => {
+    .replaceAll(/(<span [^>]*>)|(<\/span>)|(\n)/g, (match: string) => {
       if (match === '\n') {
         return '</span>'.repeat(openTags.length) + '\n' + openTags.join('')
       }

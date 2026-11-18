@@ -6,6 +6,7 @@
   <div class="flex max-h-full flex-col overflow-hidden">
     <div v-if="selectedOptions.length > 0" class="flex max-h-full grow flex-col overflow-hidden">
       <DropDownSelector
+        id="cluster-base-submission"
         :options="selectedOptions"
         :get-display-name="getDisplayName"
         @selection-changed="(value) => (idOfShownSubmission = value)"

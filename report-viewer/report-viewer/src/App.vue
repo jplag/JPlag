@@ -31,7 +31,7 @@ import { RouterView } from 'vue-router'
 import { ButtonComponent, ToastComponent } from '@jplag/ui-components/base'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faMoon, faSun } from '@fortawesome/free-solid-svg-icons'
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { uiStore } from './stores/uiStore'
 import { Version } from '@jplag/model'
 import { reportViewerVersion } from './version/versions'
@@ -57,19 +57,21 @@ const showToast = computed(() => {
   return value
 })
 
-fetch('https://api.github.com/repos/jplag/JPlag/releases/latest')
-  .then((response) => response.json())
-  .then((data) => {
-    const versionString = data.tag_name
-    // remove the 'v' from the version string and split it into an array
-    const versionArray = versionString.substring(1).split('.')
-    newestVersion.value = new Version(
-      parseInt(versionArray[0]),
-      parseInt(versionArray[1]),
-      parseInt(versionArray[2])
-    )
-  })
-  .catch(() => {
+async function fetchNewestVersion() {
+  const response = await fetch('https://api.github.com/repos/jplag/JPlag/releases/latest')
+  if (!response.ok) {
     newestVersion.value = Version.ERROR_VERSION
-  })
+    return
+  }
+  const data = await response.json()
+  const versionString = data.tag_name
+  const versionArray = versionString.substring(1).split('.')
+  newestVersion.value = new Version(
+    Number.parseInt(versionArray[0]),
+    Number.parseInt(versionArray[1]),
+    Number.parseInt(versionArray[2])
+  )
+}
+
+onMounted(fetchNewestVersion)
 </script>

@@ -61,7 +61,7 @@ const median = computed(() => {
     }
     i += distribution.value[j]
   }
-  return NaN
+  return Number.NaN
 })
 const q1 = computed(() => {
   let i = 0
@@ -71,7 +71,7 @@ const q1 = computed(() => {
     }
     i += distribution.value[j]
   }
-  return NaN
+  return Number.NaN
 })
 const q3 = computed(() => {
   let i = 0
@@ -81,7 +81,7 @@ const q3 = computed(() => {
     }
     i += distribution.value[j]
   }
-  return NaN
+  return Number.NaN
 })
 const iqr = computed(() => q3.value - q1.value)
 const minValueInData = computed(() => {
@@ -90,7 +90,7 @@ const minValueInData = computed(() => {
       return i
     }
   }
-  return NaN
+  return Number.NaN
 })
 const maxValueInData = computed(() => {
   for (let i = distribution.value.length - 1; i >= 0; i--) {
@@ -98,7 +98,7 @@ const maxValueInData = computed(() => {
       return i
     }
   }
-  return NaN
+  return Number.NaN
 })
 const min = computed(() => Math.max(q1.value - 1.5 * iqr.value, minValueInData.value))
 const max = computed(() => Math.min(q3.value + 1.5 * iqr.value, maxValueInData.value))
@@ -109,7 +109,7 @@ const avg = computed(() => {
       sum += i * distribution.value[i]
     }
   }
-  return totalValues.value > 0 ? sum / totalValues.value : NaN
+  return totalValues.value > 0 ? sum / totalValues.value : Number.NaN
 })
 const outliers = computed(() => {
   const outliers = []

@@ -252,7 +252,7 @@ function onThemeUpdate(useDarkMode: boolean) {
   }
   const styleHolderDiv = styleholder.value as Node
   while (styleHolderDiv.hasChildNodes()) {
-    styleHolderDiv.removeChild(styleHolderDiv.firstChild as Node)
+    styleHolderDiv.firstChild?.remove()
   }
   const styleElement = document.createElement('style')
   styleElement.innerHTML = useDarkMode ? hljsDarkMode : hljsLightMode

@@ -13,6 +13,7 @@
         >
           <template #default>
             <SearchBarComponent
+              id="comparison-filter"
               v-model="searchString"
               class="w-full"
               placeholder="Filter/Unhide Comparisons"
