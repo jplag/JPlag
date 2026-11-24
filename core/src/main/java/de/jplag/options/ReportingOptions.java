@@ -1,9 +1,11 @@
 package de.jplag.options;
 
-import io.soabase.recordbuilder.core.RecordBuilder;
-
-@RecordBuilder()
-public record ReportingOptions(int maximumNumberOfComparisons) implements ReportingOptionsBuilder.With {
+/**
+ * Options used to configure what JPlag exports
+ * @param maximumNumberOfComparisons The maximum number of comparisons that will be shown in the generated report. If
+ * set to {@link #SHOW_ALL_COMPARISONS} all comparisons will be shown.
+ */
+public record ReportingOptions(int maximumNumberOfComparisons) {
 
     /** Default value for the shown comparisons in the report. **/
     public static final int DEFAULT_SHOWN_COMPARISONS = 2500;

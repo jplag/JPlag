@@ -46,38 +46,54 @@ public class JPlagOptionsBuilder {
      * @throws CliException If the input handler could properly parse everything.
      */
     public JPlagOptions buildOptions() throws CliException {
+        return new JPlagOptions(
+                getSubmissionFileOptions(),
+                getParsingOptions(),
+                getReportingOptions(),
+                getClusteringOptions(),
+                getMergingOptions(),
+                getFrequencyAnalysisOptions()
+        );
+    }
+
+    private SubmissionFileOptions getSubmissionFileOptions() {
         Set<File> submissionDirectories = new HashSet<>(List.of(this.cliOptions.rootDirectory));
         Set<File> oldSubmissionDirectories = Set.of(this.cliOptions.oldDirectories);
         List<String> suffixes = List.of(this.cliOptions.advanced.suffixes);
         submissionDirectories.addAll(List.of(this.cliOptions.newDirectories));
-
-        JPlagOptions jPlagOptions = initializeJPlagOptions(mapCliSubmissionDirectoriesToPaths(submissionDirectories),
-                mapCliSubmissionDirectoriesToPaths(oldSubmissionDirectories), suffixes);
-
         String baseCodePath = this.cliOptions.baseCode;
         Path baseCodeDirectory = baseCodePath == null ? null : Path.of(baseCodePath);
-        if (baseCodeDirectory == null || Files.exists(baseCodeDirectory)) {
-            return jPlagOptions.withSubmissionFileOptions(jPlagOptions.submissionFileOptions().withBaseCodeSubmissionDirectory(baseCodeDirectory));
+        if (baseCodeDirectory != null && !Files.exists(baseCodeDirectory)) {
+            logger.error("Using legacy partial base code API. Please migrate to new full path base code API.");
         }
-        logger.error("Using legacy partial base code API. Please migrate to new full path base code API.");
-        return jPlagOptions.withSubmissionFileOptions(jPlagOptions.submissionFileOptions().withBaseCodeSubmissionDirectory(baseCodeDirectory));
+        return new SubmissionFileOptions(
+                mapCliSubmissionDirectoriesToPaths(submissionDirectories),
+                mapCliSubmissionDirectoriesToPaths(oldSubmissionDirectories),
+                baseCodeDirectory,
+                this.cliOptions.advanced.subdirectory,
+                suffixes,
+                this.cliOptions.advanced.exclusionFileName
+        );
+    }
+
+    private ParsingOptions getParsingOptions() throws CliException {
+        return new ParsingOptions(
+                this.cliInputHandler.getSelectedLanguage(),
+                this.cliOptions.minTokenMatch,
+                this.cliOptions.advanced.debug,
+                this.cliOptions.normalize,
+                this.cliOptions.advanced.analyzeComments,
+                ParsingOptions.DEFAULT_SIMILARITY_METRIC,
+                this.cliOptions.advanced.similarityThreshold
+        );
+    }
+
+    private ReportingOptions getReportingOptions() {
+        return new ReportingOptions(this.cliOptions.shownComparisons);
     }
 
     private Set<Path> mapCliSubmissionDirectoriesToPaths(Collection<File> submissionDirectory) {
         return submissionDirectory.stream().map(File::toPath).collect(Collectors.toSet());
-    }
-
-    private JPlagOptions initializeJPlagOptions(Set<Path> submissionDirectories, Set<Path> oldSubmissionDirectories, List<String> suffixes)
-            throws CliException {
-        ClusteringOptions clusteringOptions = getClusteringOptions();
-        MergingOptions mergingOptions = getMergingOptions();
-        FrequencyAnalysisOptions frequencyAnalysisOptions = getFrequencyAnalysisOptions();
-
-        return new JPlagOptions(this.cliInputHandler.getSelectedLanguage(), this.cliOptions.minTokenMatch, submissionDirectories,
-                oldSubmissionDirectories, null, this.cliOptions.advanced.subdirectory, suffixes, this.cliOptions.advanced.exclusionFileName,
-                ParsingOptions.DEFAULT_SIMILARITY_METRIC, this.cliOptions.advanced.similarityThreshold, this.cliOptions.shownComparisons,
-                clusteringOptions, this.cliOptions.advanced.debug, mergingOptions, this.cliOptions.normalize,
-                this.cliOptions.advanced.analyzeComments, frequencyAnalysisOptions);
     }
 
     private ClusteringOptions getClusteringOptions() {

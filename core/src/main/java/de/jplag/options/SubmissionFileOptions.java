@@ -1,7 +1,6 @@
 package de.jplag.options;
 
 import de.jplag.util.FileUtils;
-import io.soabase.recordbuilder.core.RecordBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +14,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- *
+ * Options for configuring which files JPlag loads and how it treats them.
  * @param submissionDirectories Directories with new submissions. These must be checked for plagiarism.
  * @param oldSubmissionDirectories Directories with old submissions to check against.
  * @param baseCodeSubmissionDirectory Directory containing the base code.
@@ -24,9 +23,8 @@ import java.util.stream.Collectors;
  * @param fileSuffixes List of file extensions or custom suffixes that should be included.
  * @param exclusionFileName Name of the file that contains the names of files to exclude from comparison.
  */
-@RecordBuilder()
 public record SubmissionFileOptions(Set<Path> submissionDirectories, Set<Path> oldSubmissionDirectories,
-                                    Path baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName) implements SubmissionFileOptionsBuilder.With {
+                                    Path baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName) {
 
     private static final Logger logger = LoggerFactory.getLogger(SubmissionFileOptions.class);
 
@@ -42,7 +40,7 @@ public record SubmissionFileOptions(Set<Path> submissionDirectories, Set<Path> o
 
     public SubmissionFileOptions(Set<Path> submissionDirectories, Set<Path> oldSubmissionDirectories,
                                  Path baseCodeSubmissionDirectory) {
-        this(submissionDirectories, oldSubmissionDirectories, null, null, null, null);
+        this(submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory, null, null, null);
     }
 
     /**

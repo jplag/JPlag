@@ -1,12 +1,25 @@
 package de.jplag.options;
 
 import de.jplag.Language;
-import io.soabase.recordbuilder.core.RecordBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@RecordBuilder()
-public record ParsingOptions(Language language, Integer minimumTokenMatch, boolean debugParser, boolean normalize, boolean analyzeComments, SimilarityMetric similarityMetric, double similarityThreshold) implements ParsingOptionsBuilder.With {
+/**
+ *
+ * @param language Language to use when parsing the submissions.
+ * @param minimumTokenMatch Tunes the comparison sensitivity by adjusting the minimum token required to be counted as
+ * matching section. A smaller {@code <n>} increases the sensitivity but might lead to more false-positives.
+ * @param debugParser If true, submissions that cannot be parsed will be stored in a separate directory.
+ * @param normalize enables additional normalization mechanisms. Only supported by some language modules.
+ * @param analyzeComments If true, comments will be extracted from the submissions.
+ * @param similarityMetric The similarity metric determines how the minimum similarity threshold required for a
+ * comparison (of two submissions) is calculated. This affects which comparisons are stored and thus make it into the
+ * result object.
+ * @param similarityThreshold Similarity value (must be between 0 and 1). Comparisons (of submissions pairs) with a
+ * similarity below this threshold will be ignored. The default value of 0 allows all matches to be stored. This affects
+ * which comparisons are stored and thus make it into the result object. See also {@link #similarityMetric()}.
+ */
+public record ParsingOptions(Language language, Integer minimumTokenMatch, boolean debugParser, boolean normalize, boolean analyzeComments, SimilarityMetric similarityMetric, double similarityThreshold) {
 
 
     /** Default value for the similarity metric. **/
@@ -23,7 +36,7 @@ public record ParsingOptions(Language language, Integer minimumTokenMatch, boole
         this.normalize = normalize;
         this.analyzeComments = analyzeComments;
         this.similarityMetric = similarityMetric;
-        this.similarityThreshold = normalizeSimilarityThreshold(similarityThreshold);;
+        this.similarityThreshold = normalizeSimilarityThreshold(similarityThreshold);
     }
 
     public ParsingOptions(Language language) {
