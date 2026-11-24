@@ -14,10 +14,6 @@ public enum ScalaTokenType implements TokenType {
     METHOD_BEGIN("METHOD{"),
     METHOD_END("}METHOD"),
     VARIABLE_DEFINITION("VAR_DEF"),
-    DO_WHILE("DO-WHILE"),
-    DO_WHILE_END("END-DO-WHILE"),
-    DO_BODY_BEGIN("DO{"),
-    DO_BODY_END("}DO"),
     WHILE("WHILE"),
     WHILE_BODY_BEGIN("WHILE{"),
     WHILE_BODY_END("}WHILE"),
@@ -59,21 +55,13 @@ public enum ScalaTokenType implements TokenType {
 
     FUNCTION_BEGIN("FUNC{"),
     FUNCTION_END("}FUNC"),
-    PARTIAL_FUNCTION_BEGIN("PFUNC{"),
-    PARTIAL_FUNCTION_END("}PFUNC"),
 
     YIELD("YIELD"),
 
     PARAMETER("PARAM"),
     ARGUMENT("ARG"),
-    NEW_OBJECT("NEW(),"),
-    SELF_TYPE("SELF"),
     TYPE_PARAMETER("T_PARAM"),
-    TYPE_ARGUMENT("T_ARG"),
-    BLOCK_START("{"),
-    BLOCK_END("}"),
-    ENUM_GENERATOR("ENUMERATE"),
-    MEMBER("MEMBER");
+    TYPE_ARGUMENT("T_ARG");
 
     private final String description;
 

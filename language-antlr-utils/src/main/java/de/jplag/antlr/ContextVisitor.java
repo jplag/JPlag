@@ -195,7 +195,13 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
             return;
         }
 
-        addToken(data, exitTokenType, exitSemantics, ParserRuleContext::getStop);
+        addToken(data, exitTokenType, exitSemantics, context -> {
+            if (isNotEmpty(context)) {
+                return context.getStop();
+            } else {
+                return context.getStart();
+            }
+        });
         exitHandlers.forEach(handler -> handler.accept(data));
     }
 
@@ -215,7 +221,15 @@ public class ContextVisitor<T extends ParserRuleContext> extends AbstractVisitor
 
     @Override
     Token extractEnterToken(T entity) {
-        return entity.getStart();
+        if (isNotEmpty(entity)) {
+            return entity.getStart();
+        } else {
+            return entity.getStop();
+        }
+    }
+
+    private boolean isNotEmpty(T entity) {
+        return entity.getStart().getStopIndex() < entity.getStop().getStartIndex();
     }
 
     @Override

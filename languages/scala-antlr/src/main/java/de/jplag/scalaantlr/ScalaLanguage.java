@@ -27,7 +27,7 @@ public class ScalaLanguage implements Language {
 
     @Override
     public String getIdentifier() {
-        return "ScalaAntlr";
+        return "scalaantlr";
     }
 
     @Override

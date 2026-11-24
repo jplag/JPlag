@@ -85,6 +85,10 @@
         </dependency>
         <dependency>
             <groupId>de.jplag</groupId>
+            <artifactId>scala-antlr</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.jplag</groupId>
             <artifactId>scheme</artifactId>
         </dependency>
         <dependency>

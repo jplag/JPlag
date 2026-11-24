@@ -1,5 +1,3 @@
-package de.jplag.scalaantlr.grammar;// CHECKSTYLE:OFF
-
 // Scala 3 INDENT/DEDENT injection for ANTLR4
 // Modelled on Dotty (Scala 3 compiler) Scanners.scala handleNewLine logic.
 //
@@ -28,10 +26,13 @@ package de.jplag.scalaantlr.grammar;// CHECKSTYLE:OFF
 //
 // Dotty token-set predicates (canEndStatTokens, canStartStatTokens,
 // isStatCtdTokens, canStartIndentTokens) are implemented as if-else chains.
+package de.jplag.scalaantlr.grammar;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonToken;
@@ -69,10 +70,14 @@ public abstract class Scala3LexerBase extends Lexer {
 
     private int previousPendingTokenType = 0;
     // Last token type sent on the default channel — used for canEndStat checks.
+    private int secondToLastNonHiddenType = 0;
     private int lastNonHiddenType = 0;
     // Two-token look-ahead.
     private Token curToken = null;
     private Token ffgToken = null;
+
+    // Bracket counter for keywords that can open a code-block after the end of a bracketed expression
+    private List<Integer> remoteBlockOpeningBracketsCounts = new ArrayList<>();
 
     protected Scala3LexerBase(CharStream input) {
         super(input);
@@ -101,9 +106,11 @@ public abstract class Scala3LexerBase extends Lexer {
         indentLengthStack = new ArrayDeque<>();
         pendingTokens = new LinkedList<>();
         previousPendingTokenType = 0;
+        secondToLastNonHiddenType = 0;
         lastNonHiddenType = 0;
         curToken = null;
         ffgToken = null;
+        remoteBlockOpeningBracketsCounts = new ArrayList<>();
     }
 
     // -----------------------------------------------------------------------
@@ -127,6 +134,10 @@ public abstract class Scala3LexerBase extends Lexer {
         if (type == Scala3Lexer.NEWLINE) {
             handleNewlineToken();
         } else if (type == Scala3Lexer.LPAREN || type == Scala3Lexer.LBRACKET) {
+            incrementBracketCounters();
+            if (canStartIndentAfterParen(lastNonHiddenType)) {
+                remoteBlockOpeningBracketsCounts.add(1);
+            }
             regionStack.push(Region.InParens);
             addPendingToken(curToken);
         } else if (type == Scala3Lexer.COMMA) {
@@ -140,6 +151,7 @@ public abstract class Scala3LexerBase extends Lexer {
             }
             addPendingToken(curToken);
         } else if (type == Scala3Lexer.RPAREN || type == Scala3Lexer.RBRACKET) {
+            decrementBracketCounters();
             // Drain any Indented regions opened inside InParens (e.g. a
             // colonArgument body whose closing ')' is on the same source
             // line as the body text, so no NEWLINE-triggered DEDENT ran).
@@ -153,10 +165,17 @@ public abstract class Scala3LexerBase extends Lexer {
             addPendingToken(curToken);
         } else if (type == Scala3Lexer.LBRACE) {
             regionStack.push(Region.InBraces);
+            indentLengthStack.push(indentLengthStack.peek());
             addPendingToken(curToken);
         } else if (type == Scala3Lexer.RBRACE) {
-            if (!regionStack.isEmpty() && regionStack.peek() == Region.InBraces)
+            while (!regionStack.isEmpty() && regionStack.peek() == Region.Indented) {
+                indentLengthStack.pop();
                 regionStack.pop();
+                createAndAddPendingToken(Scala3Lexer.DEDENT, Token.DEFAULT_CHANNEL, "<DEDENT>", curToken);
+            }
+            if (!regionStack.isEmpty() && regionStack.peek() == Region.InBraces)
+                indentLengthStack.pop();
+            regionStack.pop();
             addPendingToken(curToken);
         } else if (type == Token.EOF) {
             handleEofToken();
@@ -213,6 +232,11 @@ public abstract class Scala3LexerBase extends Lexer {
         else
             newIndent = 0;
 
+        if (lastNonHiddenType == Scala3Lexer.LBRACE) {
+            indentLengthStack.pop();
+            indentLengthStack.push(newIndent);
+        }
+
         // Lines starting with '.' are method-chain continuations — suppress
         // NEWLINE as separator and INDENT, but still emit DEDENT(s).
         boolean isDot = ffgToken.getType() == Scala3Lexer.DOT;
@@ -235,7 +259,8 @@ public abstract class Scala3LexerBase extends Lexer {
         // is a header-continuation line, not a new indented block.
         boolean rparenOpensIndent = lastNonHiddenType == Scala3Lexer.RPAREN && regionStack.peek() != Region.InParens
                 && regionStack.peek() != Region.InBraces && ffgToken.getType() != Scala3Lexer.EXTENDS && ffgToken.getType() != Scala3Lexer.WITH;
-        boolean willIndent = newIndent > curIndent && !isDot && (canStartIndent(lastNonHiddenType) || rparenOpensIndent);
+        boolean willIndent = newIndent > curIndent && !isDot
+                && (canStartIndent(lastNonHiddenType, secondToLastNonHiddenType) || rparenOpensIndent || canStartIndentBlockAfterParen());
 
         // ---- Decide whether to surface the NEWLINE as a statement separator ----
         //
@@ -291,6 +316,8 @@ public abstract class Scala3LexerBase extends Lexer {
             indentLengthStack.push(newIndent);
             regionStack.push(Region.Indented);
             createAndAddPendingToken(Scala3Lexer.INDENT, Token.DEFAULT_CHANNEL, "<INDENT>", ffgToken);
+        } else if (previousPendingTokenType == Scala3Lexer.LBRACE) {
+            indentLengthStack.push(newIndent);
         }
         // else: same level (or increase without canStartIndent) — no structural tokens.
     }
@@ -457,7 +484,7 @@ public abstract class Scala3LexerBase extends Lexer {
     }
 
     // canStartIndentTokens: previous tokens that allow INDENT emission.
-    private static boolean canStartIndent(int t) {
+    private static boolean canStartIndent(int t, int prev) {
         switch (t) {
             case Scala3Lexer.THEN:
             case Scala3Lexer.ELSE:
@@ -478,10 +505,21 @@ public abstract class Scala3LexerBase extends Lexer {
             case Scala3Lexer.IF:
             case Scala3Lexer.THROW:
             case Scala3Lexer.RETURN:
-                return true;
+                return prev != Scala3Lexer.END;
             default:
                 return false;
         }
+    }
+
+    private static boolean canStartIndentAfterParen(int type) {
+        return switch (type) {
+            case Scala3Lexer.IF, Scala3Lexer.WHILE, Scala3Lexer.FOR -> true;
+            default -> false;
+        };
+    }
+
+    private boolean canStartIndentBlockAfterParen() {
+        return lastNonHiddenType == Scala3Lexer.RPAREN && remoteBlockOpeningBracketsCounts.stream().anyMatch(it -> it == 0);
     }
 
     // -----------------------------------------------------------------------
@@ -508,8 +546,10 @@ public abstract class Scala3LexerBase extends Lexer {
 
     private void addPendingToken(Token token) {
         previousPendingTokenType = token.getType();
-        if (token.getChannel() == Token.DEFAULT_CHANNEL)
+        if (token.getChannel() == Token.DEFAULT_CHANNEL) {
+            secondToLastNonHiddenType = lastNonHiddenType;
             lastNonHiddenType = token.getType();
+        }
         pendingTokens.addLast(token);
     }
 
@@ -527,5 +567,15 @@ public abstract class Scala3LexerBase extends Lexer {
         t.setStartIndex(anchor.getStartIndex());
         t.setStopIndex(anchor.getStartIndex() - 1); // zero-length synthetic token
         addPendingToken(t);
+    }
+
+    private void incrementBracketCounters() {
+        remoteBlockOpeningBracketsCounts.removeIf(it -> it == 0);
+        remoteBlockOpeningBracketsCounts.replaceAll(it -> it + 1);
+    }
+
+    private void decrementBracketCounters() {
+        remoteBlockOpeningBracketsCounts.removeIf(it -> it == 0);
+        remoteBlockOpeningBracketsCounts.replaceAll(it -> it - 1);
     }
 }

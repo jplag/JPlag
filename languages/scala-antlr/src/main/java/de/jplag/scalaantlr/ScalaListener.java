@@ -1,15 +1,9 @@
 package de.jplag.scalaantlr;
 
-import de.jplag.antlr.AbstractAntlrListener;
-import de.jplag.scalaantlr.grammar.Scala3Parser;
-import org.antlr.v4.runtime.ParserRuleContext;
-
 import static de.jplag.scalaantlr.grammar.Scala3Parser.ASSIGN;
-import static de.jplag.scalaantlr.grammar.Scala3Parser.BlockExprContext;
 import static de.jplag.scalaantlr.grammar.Scala3Parser.CaseClauseContext;
 import static de.jplag.scalaantlr.grammar.Scala3Parser.CatchesContext;
 import static de.jplag.scalaantlr.grammar.Scala3Parser.DefDefContext;
-import static de.jplag.scalaantlr.grammar.Scala3Parser.DefTermParamContext;
 import static de.jplag.scalaantlr.grammar.Scala3Parser.DefTypeParamContext;
 import static de.jplag.scalaantlr.grammar.Scala3Parser.Def_Context;
 import static de.jplag.scalaantlr.grammar.Scala3Parser.ELSE;
@@ -32,8 +26,20 @@ import static de.jplag.scalaantlr.grammar.Scala3Parser.RETURN;
 import static de.jplag.scalaantlr.grammar.Scala3Parser.RefineDclContext;
 import static de.jplag.scalaantlr.grammar.Scala3Parser.SimpleExprContext;
 import static de.jplag.scalaantlr.grammar.Scala3Parser.THROW;
-import static de.jplag.scalaantlr.grammar.Scala3Parser.TemplateContext;
 import static de.jplag.scalaantlr.grammar.Scala3Parser.TmplDefContext;
+import static de.jplag.scalaantlr.grammar.Scala3Parser.YIELD;
+
+import org.antlr.v4.runtime.ParserRuleContext;
+
+import de.jplag.antlr.AbstractAntlrListener;
+import de.jplag.scalaantlr.grammar.Scala3Parser;
+import de.jplag.scalaantlr.grammar.Scala3Parser.BlockContext;
+import de.jplag.scalaantlr.grammar.Scala3Parser.ClassConstrContext;
+import de.jplag.scalaantlr.grammar.Scala3Parser.ClsTypeParamContext;
+import de.jplag.scalaantlr.grammar.Scala3Parser.ConstrExprContext;
+import de.jplag.scalaantlr.grammar.Scala3Parser.IndentContext;
+import de.jplag.scalaantlr.grammar.Scala3Parser.OutdentContext;
+import de.jplag.scalaantlr.grammar.Scala3Parser.ParamContext;
 
 /**
  * Contains the token creation rules for scala
@@ -61,9 +67,27 @@ public class ScalaListener extends AbstractAntlrListener {
         visit(Def_Context.class, context -> context.VAR() != null || context.VAL() != null).map(ScalaTokenType.VARIABLE_DEFINITION);
         visit(RefineDclContext.class, context -> context.VAR() != null || context.VAL() != null).map(ScalaTokenType.VARIABLE_DEFINITION);
 
-        visit(TemplateContext.class).map(ScalaTokenType.CONSTRUCTOR_BEGIN, ScalaTokenType.CONSTRUCTOR_END);
+        visit(DefTypeParamContext.class).map(ScalaTokenType.TYPE_PARAMETER);
+        visit(ClsTypeParamContext.class).map(ScalaTokenType.TYPE_PARAMETER);
+        visit(ParamContext.class).map(ScalaTokenType.PARAMETER);
 
-        visit(Guard_Context.class).map(ScalaTokenType.GUARD);
+        visit(Def_Context.class, context -> context.DEF() != null && devIsMethod(context.defDef())).mapEnter(ScalaTokenType.METHOD_DEF);
+        visit(ExtMethodContext.class, context -> context.DEF() != null && devIsMethod(context.defDef())).mapEnter(ScalaTokenType.METHOD_DEF);
+        visit(ExprContext.class, context -> {
+            if (context.getParent() instanceof DefDefContext parent) {
+                return devIsMethod(parent) && parent.constrExpr() == null;
+            }
+            return false;
+        }).map(ScalaTokenType.METHOD_BEGIN, ScalaTokenType.METHOD_END);
+        visit(BlockContext.class, context -> {
+            if (context.getParent() instanceof DefDefContext parent) {
+                return devIsMethod(parent) && parent.constrExpr() == null;
+            }
+            return false;
+        }).map(ScalaTokenType.METHOD_BEGIN, ScalaTokenType.METHOD_END);
+        visit(ConstrExprContext.class).map(ScalaTokenType.CONSTRUCTOR_BEGIN, ScalaTokenType.CONSTRUCTOR_END);
+        visit(ClassConstrContext.class, context -> context.clsParamClauses() != null && !context.clsParamClauses().clsParamClause().isEmpty())
+                .map(ScalaTokenType.CONSTRUCTOR_BEGIN, ScalaTokenType.CONSTRUCTOR_END);
     }
 
     private void registerControlBlocks() {
@@ -72,14 +96,11 @@ public class ScalaListener extends AbstractAntlrListener {
                 ScalaTokenType.WHILE_BODY_END);
 
         visit(ForExprContext.class).mapEnter(ScalaTokenType.FOR);
-        visit(ForExprContext.class, context -> context.expr() != null && context.YIELD() != null).delegateContext(ForExprContext::expr)
-                .mapExit(ScalaTokenType.YIELD);
-        visit(ForExprContext.class, context -> context.expr() != null).delegateContext(ForExprContext::expr).map(ScalaTokenType.FOR_BODY_BEGIN,
+        visit(YIELD).map(ScalaTokenType.YIELD);
+        visit(ExprContext.class, context -> context.getParent() instanceof ForExprContext).map(ScalaTokenType.FOR_BODY_BEGIN,
                 ScalaTokenType.FOR_BODY_END);
-        visit(ForExprContext.class, context -> context.expr() == null).delegateContext(ForExprContext::indent).map(ScalaTokenType.FOR_BODY_BEGIN);
-        visit(ForExprContext.class, context -> context.expr() == null && context.YIELD() != null).delegateContext(ForExprContext::outdent)
-                .map(ScalaTokenType.YIELD);
-        visit(ForExprContext.class, context -> context.expr() == null).delegateContext(ForExprContext::outdent).map(ScalaTokenType.FOR_BODY_END);
+        visit(IndentContext.class, context -> context.getParent() instanceof ForExprContext).map(ScalaTokenType.FOR_BODY_BEGIN);
+        visit(OutdentContext.class, context -> context.getParent() instanceof ForExprContext).map(ScalaTokenType.FOR_BODY_END);
 
         visit(Expr1Context.class, context -> context.TRY() != null).mapEnter(ScalaTokenType.TRY_BEGIN);
         visit(CatchesContext.class).map(ScalaTokenType.CATCH_BEGIN, ScalaTokenType.CATCH_END);
@@ -87,21 +108,26 @@ public class ScalaListener extends AbstractAntlrListener {
 
         visit(MatchClauseContext.class).map(ScalaTokenType.MATCH_BEGIN, ScalaTokenType.MATCH_END);
         visit(CaseClauseContext.class).map(ScalaTokenType.CASE_STATEMENT);
-        visit(CaseClauseContext.class).delegateContext(CaseClauseContext::block).map(ScalaTokenType.CASE_BEGIN, ScalaTokenType.CASE_END);
+        visit(BlockContext.class, context -> context.getParent() instanceof CaseClauseContext).map(ScalaTokenType.CASE_BEGIN,
+                ScalaTokenType.CASE_END);
 
-        visit(BlockExprContext.class, context -> getAncestor(context, ExprContext.class).getParent() instanceof PatDefContext)
+        visit(ExprContext.class, context -> context.getParent() instanceof PatDefContext && context.funParams() != null)
                 .map(ScalaTokenType.FUNCTION_BEGIN, ScalaTokenType.FUNCTION_END);
 
-        visit(DefDefContext.class, this::devIsMethod).map(ScalaTokenType.METHOD_BEGIN, ScalaTokenType.METHOD_END);
-        visit(Def_Context.class, context -> context.DEF() != null && devIsMethod(context.defDef())).mapEnter(ScalaTokenType.METHOD_DEF);
-        visit(ExtMethodContext.class, context -> context.DEF() != null && devIsMethod(context.defDef())).mapEnter(ScalaTokenType.METHOD_DEF);
-
-        visit(DefDefContext.class, context -> !devIsMethod(context)).map(ScalaTokenType.MACRO_BEGIN, ScalaTokenType.MACRO_END);
+        visit(ExprContext.class, context -> {
+            if (context.getParent() instanceof DefDefContext parent) {
+                return !devIsMethod(parent) && parent.constrExpr() == null;
+            }
+            return false;
+        }).map(ScalaTokenType.MACRO_BEGIN, ScalaTokenType.MACRO_END);
+        visit(BlockContext.class, context -> {
+            if (context.getParent() instanceof DefDefContext parent) {
+                return !devIsMethod(parent) && parent.constrExpr() == null;
+            }
+            return false;
+        }).map(ScalaTokenType.MACRO_BEGIN, ScalaTokenType.MACRO_END);
         visit(Def_Context.class, context -> context.DEF() != null && !devIsMethod(context.defDef())).mapEnter(ScalaTokenType.MACRO);
         visit(ExtMethodContext.class, context -> context.DEF() != null && !devIsMethod(context.defDef())).mapEnter(ScalaTokenType.MACRO);
-
-        visit(DefTypeParamContext.class).map(ScalaTokenType.TYPE_PARAMETER);
-        visit(DefTermParamContext.class).map(ScalaTokenType.PARAMETER);
 
         visit(IF, token -> token.getParent() instanceof Expr1Context).map(ScalaTokenType.IF);
         visit(ExprContext.class, context -> {
@@ -129,8 +155,13 @@ public class ScalaListener extends AbstractAntlrListener {
         visit(ExprInParensContext.class, context -> context.getParent().getParent() instanceof ParArgumentExprsContext)
                 .mapRange(ScalaTokenType.ARGUMENT);
 
+        visit(Scala3Parser.Type_Context.class, context -> context.getParent().getParent() instanceof Scala3Parser.TypeArgsContext)
+                .map(ScalaTokenType.TYPE_ARGUMENT);
+
         visit(InfixExprContext.class, context -> context.id() != null).delegateContext(context -> context.infixExpr(0)).map(ScalaTokenType.ARGUMENT);
         visit(InfixExprContext.class, context -> context.id() != null).delegateContext(context -> context.infixExpr(1)).map(ScalaTokenType.ARGUMENT);
+
+        visit(Guard_Context.class).map(ScalaTokenType.GUARD);
 
         visit(RETURN).map(ScalaTokenType.RETURN);
         visit(THROW).map(ScalaTokenType.THROW);
