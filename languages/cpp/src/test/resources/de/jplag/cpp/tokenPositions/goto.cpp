@@ -1,5 +1,5 @@
 > void test() {
 > label:
 >     goto label;
-$     | GOTO 3
+$     | GOTO 4
 > }

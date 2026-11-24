@@ -93,7 +93,7 @@ public class AgglomerativeClustering implements GenericClusteringAlgorithm {
     }
 
     /**
-     * Encapsulate a list in a class because we do not want hashing based on the members but on identity only. Also a
+     * Encapsulate a list in a class because we do not want hashing based on the members but on identity only. Also, a
      * cluster need a different identity than the list because the lists are reused.
      * @param submissions is the list of members.
      */

@@ -16,7 +16,7 @@ public class PathUtils {
      * @param path The path to modify
      * @param suffix The suffix to append
      * @return The modified path
-     * @throws IllegalArgumentException If the given path is the root of it's filesystem
+     * @throws IllegalArgumentException If the given path is the root of its filesystem
      */
     public static Path appendSuffix(Path path, String suffix) {
         if (path.getParent() == null) {

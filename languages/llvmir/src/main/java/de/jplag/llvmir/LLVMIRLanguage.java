@@ -37,6 +37,11 @@ public class LLVMIRLanguage implements Language {
     }
 
     @Override
+    public String getVersionFlagInformation() {
+        return "Compatible with version 15";
+    }
+
+    @Override
     public List<Token> parse(Set<Path> files, boolean normalize) throws ParsingException {
         return new LLVMIRParserAdapter().parse(files);
 

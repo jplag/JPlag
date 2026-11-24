@@ -2,6 +2,7 @@ package de.jplag.util;
 
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Objects;
 
 /**
@@ -11,7 +12,7 @@ import java.util.Objects;
  * or special files ('.', '..'). If these are used the behavior will change depending on the file system this is applied
  * to.
  */
-public class RelativePath {
+public class RelativePath implements Iterable<String> {
     private static final String TO_STRING_SEPARATOR = "/";
     private final String[] segments;
 
@@ -113,5 +114,10 @@ public class RelativePath {
     @Override
     public int hashCode() {
         return Arrays.hashCode(segments);
+    }
+
+    @Override
+    public Iterator<String> iterator() {
+        return Arrays.stream(segments).iterator();
     }
 }

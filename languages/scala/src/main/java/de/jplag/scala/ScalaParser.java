@@ -391,12 +391,12 @@ public class ScalaParser {
 
     /**
      * Adds a token with the given data.
-     * @param tokenType The type of token
-     * @param range The range of characters in the file the token represents
+     * @param tokenType The token type
+     * @param tokenPosition the position data of the token
      */
-    private void addToken(ScalaTokenType tokenType, Position.Range range) {
-        tokens.add(new Token(tokenType, currentFile, range.startLine() + 1, range.startColumn() + 1, range.endLine() + 1, range.endColumn() + 1,
-                range.text().length()));
+    private void addToken(ScalaTokenType tokenType, Position.Range tokenPosition) {
+        tokens.add(new Token(tokenType, currentFile, tokenPosition.startLine() + 1, tokenPosition.startColumn() + 1, tokenPosition.endLine() + 1,
+                tokenPosition.endColumn() + 1, tokenPosition.text().length()));
     }
 
     /**

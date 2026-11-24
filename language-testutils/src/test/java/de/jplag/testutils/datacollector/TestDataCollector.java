@@ -207,7 +207,7 @@ public class TestDataCollector {
         }
 
         /**
-         * Test the data set for source coverage.
+         * Test the dataset for source coverage.
          * @return self reference
          */
         public TestDataContext testSourceCoverage() {
@@ -216,7 +216,7 @@ public class TestDataCollector {
         }
 
         /**
-         * Test the data set for token coverage.
+         * Test the dataset for token coverage.
          * @return self reference
          */
         public TestDataContext testTokenCoverage() {
@@ -225,7 +225,7 @@ public class TestDataCollector {
         }
 
         /**
-         * Test the data set for source and token coverage. Behaves just like calling {@link this#testSourceCoverage()} and
+         * Test the dataset for source and token coverage. Behaves just like calling {@link this#testSourceCoverage()} and
          * {@link this#testTokenCoverage()}.
          * @return self reference
          */
@@ -236,7 +236,7 @@ public class TestDataCollector {
         }
 
         /**
-         * Test the data set for contained tokens. The tokens neither have to occur exclusively nor in the given order.
+         * Test the dataset for contained tokens. The tokens neither have to occur exclusively nor in the given order.
          * @param tokens The set of tokens to check for.
          * @return self reference
          */
@@ -246,7 +246,7 @@ public class TestDataCollector {
         }
 
         /**
-         * Test the data set for a specific token sequence. The tokens have to be extracted in that exact order. The file end
+         * Test the dataset for a specific token sequence. The tokens have to be extracted in that exact order. The file end
          * token can be omitted.
          * @param tokens The sequence of tokens to check for
          * @return self reference

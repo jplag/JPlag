@@ -9,17 +9,17 @@ import de.jplag.options.SimilarityMetric;
 /**
  * Collection of all possible parameters that describe how a clustering should be performed.
  * @param similarityMetric The similarity metric is used for clustering
- * @param spectralKernelBandwidth The kernel bandwidth for the matern kernel used in the gaussian process for the
+ * @param spectralKernelBandwidth The kernel bandwidth for the matern kernel used in the Gaussian process for the
  * automatic search for the number of clusters in spectral clustering. Affects the runtime and results of the spectral
  * clustering.
  * @param spectralGaussianProcessVariance This is the assumed level of noise in the evaluation results of a spectral
  * clustering. Acts as normalization parameter for the Gaussian Process. The default setting works well with similarity
  * scores in the range between zero and one. Affects the results of the spectral clustering.
  * @param spectralMinRuns The minimal number of times the kMeans algorithm is run for the spectral clustering. These
- * runs will use predefined numbers of clusters and will not use the bayesian optimization to determine the number of
+ * runs will use predefined numbers of clusters and will not use the Bayesian optimization to determine the number of
  * clusters.
- * @param spectralMaxRuns The maximal number of times the kMeans algorithm is run during the bayesian optimization for
- * spectral clustering. The bayesian optimization may be stopped before, when no more maxima of the acquisition-function
+ * @param spectralMaxRuns The maximal number of times the kMeans algorithm is run during the Bayesian optimization for
+ * spectral clustering. The Bayesian optimization may be stopped before, when no more maxima of the acquisition-function
  * are found.
  * @param spectralMaxKMeansIterationPerRun Maximum number of iterations of the kMeans clustering per run during spectral
  * clustering.

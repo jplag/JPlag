@@ -70,13 +70,6 @@ public final class FilePathUtil {
      * @return The zip file path
      */
     public static String pathAsZipPath(RelativePath path) {
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < path.getNameCount(); i++) {
-            if (i != 0) {
-                builder.append(ZIP_PATH_SEPARATOR);
-            }
-            builder.append(path.getName(i));
-        }
-        return builder.toString();
+        return String.join(ZIP_PATH_SEPARATOR, path);
     }
 }

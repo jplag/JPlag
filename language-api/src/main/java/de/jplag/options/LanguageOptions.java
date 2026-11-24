@@ -17,7 +17,7 @@ public abstract class LanguageOptions {
     private final List<LanguageOption<?>> options;
 
     /**
-     * Creates empty options container.
+     * Creates an empty options container.
      */
     protected LanguageOptions() {
         this.options = new ArrayList<>();

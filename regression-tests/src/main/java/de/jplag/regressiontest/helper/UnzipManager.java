@@ -5,7 +5,6 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.jplag.regressiontest.model.Dataset;
 import de.jplag.util.FilePermissionUtils;
 
 /**
@@ -13,7 +12,7 @@ import de.jplag.util.FilePermissionUtils;
  */
 public final class UnzipManager {
     private static UnzipManager instance;
-    private final Map<Dataset, Path> unzippedFiles;
+    private final Map<String, Path> unzippedFiles;
 
     private static synchronized UnzipManager getInstance() {
         if (instance == null) {
@@ -34,11 +33,11 @@ public final class UnzipManager {
      * @return the directory with unzipped contents
      * @throws IOException if an I/O error occurs during unzipping
      */
-    public static Path unzipOrCache(Dataset dataset, Path zip) throws IOException {
+    public static Path unzipOrCache(String dataset, Path zip) throws IOException {
         return getInstance().unzipOrCacheInternal(dataset, zip);
     }
 
-    private Path unzipOrCacheInternal(Dataset dataset, Path zip) throws IOException {
+    private Path unzipOrCacheInternal(String dataset, Path zip) throws IOException {
         if (!unzippedFiles.containsKey(dataset)) {
             Path target = FilePermissionUtils.createTempDirectory(zip.getFileName().toString());
             FileHelper.unzip(zip, target);

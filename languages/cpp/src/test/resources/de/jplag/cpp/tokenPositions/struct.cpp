@@ -1,4 +1,4 @@
 > struct Test {
-$ | STRUCT_BEGIN 5
+$ | STRUCT_BEGIN 6
 > };
-$ | STRUCT_END 0
+$ | STRUCT_END 1

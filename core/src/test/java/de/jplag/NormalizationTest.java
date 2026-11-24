@@ -1,11 +1,12 @@
 package de.jplag;
 
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import de.jplag.exceptions.ExitException;
@@ -27,16 +28,16 @@ class NormalizationTest extends TestBase {
 
     @Test
     void testInsertionNormalization() {
-        Assertions.assertIterableEquals(originalTokenString, tokenStringMap.get("SquaresInserted.java"));
+        assertIterableEquals(originalTokenString, tokenStringMap.get("SquaresInserted.java"));
     }
 
     @Test
     void testReorderingNormalization() {
-        Assertions.assertIterableEquals(originalTokenString, tokenStringMap.get("SquaresReordered.java"));
+        assertIterableEquals(originalTokenString, tokenStringMap.get("SquaresReordered.java"));
     }
 
     @Test
     void testInsertionReorderingNormalization() {
-        Assertions.assertIterableEquals(originalTokenString, tokenStringMap.get("SquaresInsertedReordered.java"));
+        assertIterableEquals(originalTokenString, tokenStringMap.get("SquaresInsertedReordered.java"));
     }
 }

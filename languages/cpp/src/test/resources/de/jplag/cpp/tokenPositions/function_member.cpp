@@ -1,6 +1,6 @@
 > class Test {
 >     void memberFunction() {
-$     | FUNCTION_BEGIN 3
+$     | FUNCTION_BEGIN 4
 >     }
-$     | FUNCTION_END 0
+$     | FUNCTION_END 1
 > };

@@ -2,7 +2,6 @@ package de.jplag.frequency;
 
 import java.util.List;
 import java.util.Map;
-import java.util.OptionalDouble;
 
 import de.jplag.JPlagComparison;
 import de.jplag.Match;
@@ -18,6 +17,7 @@ public class MatchFrequencyWeighting {
     private final Map<List<TokenType>, Double> matchFrequency;
     private static final double DEFAULT_MAXIMUM_FREQUENCY = 1.0;
     private static final double DEFAULT_MINIMUM_FREQUENCY = 0.0;
+    private final double maxFrequency;
 
     /**
      * Constructor defines strategy and match frequency for the similarity calculation.
@@ -27,6 +27,7 @@ public class MatchFrequencyWeighting {
     public MatchFrequencyWeighting(MatchWeightingFunction strategy, Map<List<TokenType>, Double> matchFrequency) {
         this.strategy = strategy;
         this.matchFrequency = matchFrequency;
+        this.maxFrequency = getMaxFrequency();
     }
 
     /**
@@ -81,7 +82,6 @@ public class MatchFrequencyWeighting {
     public double getWeightedMatchLength(JPlagComparison comparison, double weightingFactor, boolean firstSubmission,
             MatchWeightingFunction weightingFunction) {
 
-        double finalMaximumFoundFrequency = getMaxFrequency();
         double weightedTotalMatchLength = 0;
         for (Match match : comparison.matches()) {
             double matchCount = getMatchCount(comparison, match);
@@ -91,7 +91,7 @@ public class MatchFrequencyWeighting {
                 weightedTotalMatchLength += matchLength;
             }
 
-            double weightFactor = getWeightFactor(matchCount, weightingFactor, weightingFunction, finalMaximumFoundFrequency);
+            double weightFactor = getWeightFactor(matchCount, weightingFactor, weightingFunction, maxFrequency);
 
             weightedTotalMatchLength += matchLength * weightFactor;
         }
@@ -104,8 +104,7 @@ public class MatchFrequencyWeighting {
      * @return the max occurrence.
      */
     private double getMaxFrequency() {
-        OptionalDouble maxFrequency = matchFrequency.values().stream().mapToDouble(Double::doubleValue).max();
-        return maxFrequency.orElse(DEFAULT_MAXIMUM_FREQUENCY);
+        return matchFrequency.values().stream().mapToDouble(Double::doubleValue).max().orElse(DEFAULT_MAXIMUM_FREQUENCY);
     }
 
     /**

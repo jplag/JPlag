@@ -25,7 +25,7 @@ import de.jplag.clustering.ClusteringResult;
 
 /**
  * Spectral clustering is a clustering algorithm for graph data. Each node is represented as k-dimensional vector,
- * afterwards k-Means is used to generate a clustering with k on that representation. This implementation uses Bayesian
+ * afterward k-Means is used to generate a clustering with k on that representation. This implementation uses Bayesian
  * Optimization to find an appropriate number for k.
  */
 public class SpectralClustering implements GenericClusteringAlgorithm {
@@ -128,13 +128,9 @@ public class SpectralClustering implements GenericClusteringAlgorithm {
                 .collect(Collectors.toList());
     }
 
-    private static class ClusterableEigenVector implements Clusterable {
-        private final int id;
-        private final double[] eigenVector;
-
+    private record ClusterableEigenVector(int id, double[] eigenVector) implements Clusterable {
         public ClusterableEigenVector(int id, RealVector eigenVector) {
-            this.id = id;
-            this.eigenVector = eigenVector.toArray();
+            this(id, eigenVector.toArray());
         }
 
         @Override

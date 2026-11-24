@@ -1,4 +1,4 @@
 > template <typename T> T myMax(T x, T y){
-$ | GENERIC 7
+$ | GENERIC 8
 >     return (x > y) ? x : y;
 > }

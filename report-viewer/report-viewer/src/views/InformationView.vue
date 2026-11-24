@@ -1,7 +1,10 @@
 <template>
   <div
-    class="grid grid-cols-1 grid-rows-[auto_auto] gap-5 md:grid-cols-2 md:grid-rows-1 md:overflow-hidden print:grid-cols-1 print:grid-rows-[auto_auto]"
+    class="grid grid-cols-1 grid-rows-[auto_auto_auto] gap-5 md:grid-cols-2 md:grid-rows-[auto_1fr] md:gap-y-2 md:overflow-hidden print:grid-cols-1 print:grid-rows-[auto_auto]"
   >
+    <div class="md:col-span-2">
+      <BackButton />
+    </div>
     <ContainerComponent class="infoContainer print:border-none!">
       <h2>Run Options:</h2>
 
@@ -147,6 +150,7 @@ import { FailedSubmissionsDisplay, MetricTypes } from '@jplag/ui-components/widg
 import { reportStore } from '@/stores/reportStore'
 import { computed, onErrorCaptured } from 'vue'
 import { redirectOnError } from '@/router'
+import BackButton from '@/components/BackButton.vue'
 
 const runInformation = computed(() => reportStore().getRunInformation())
 const options = computed(() => reportStore().getCliOptions())

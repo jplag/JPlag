@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import de.jplag.JPlag;
 import de.jplag.JPlagResult;
+import de.jplag.LanguageLoader;
 import de.jplag.cli.logger.CliProgressBarProvider;
 import de.jplag.cli.logger.CollectedLogger;
 import de.jplag.cli.logger.CollectedLoggerFactory;
@@ -35,6 +36,8 @@ public final class CLI {
     private static final String OUTPUT_FILE_NOT_WRITABLE = "The output file (%s) cannot be written to.";
 
     private static final String ZIP_FILE_EXTENSION = ".zip";
+
+    private static final String JPLAG_MODULES_KEY = "JPLAG_MODULES";
 
     private final CliInputHandler inputHandler;
 
@@ -228,6 +231,10 @@ public final class CLI {
         // This needs to be executed before any other code, as it changes the default behavior of the JVM for network
         // connections.
         System.setProperty("java.net.preferIPv4Stack", "true");
+
+        if (System.getenv().containsKey(JPLAG_MODULES_KEY)) {
+            LanguageLoader.loadModulesFromPath(System.getenv().get(JPLAG_MODULES_KEY));
+        }
 
         CLI cli = new CLI(args);
         if (cli.executeCliAndHandleErrors()) {

@@ -50,7 +50,7 @@ public class Cluster<T> {
     }
 
     /**
-     * Sets this clusters clustering result. Should only be called by classes extending {@link ClusteringResult} on their
+     * Sets this clusters clustering-result. Should only be called by classes extending {@link ClusteringResult} on their
      * own clusters.
      * @param clusteringResult the clustering result
      */

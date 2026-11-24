@@ -3,7 +3,7 @@ package de.jplag.exceptions;
 import java.io.Serial;
 
 /**
- * Exceptions for problems with the root directory that lead to an preemptive exit.
+ * Exceptions for problems with the root directory that lead to a preemptive exit.
  */
 public class RootDirectoryException extends ExitException {
 

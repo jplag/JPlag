@@ -6,14 +6,17 @@
     class="grid grid-cols-1 grid-rows-[min-content_auto_auto] gap-5 md:grid-cols-2 md:grid-rows-[auto_1fr] md:overflow-hidden"
   >
     <ContainerComponent class="col-start-1 row-start-1 md:col-end-3 md:row-end-2">
-      <h2>
-        Comparison:
-        {{ reportStore().getDisplayName(comparison.firstSubmissionId) }}
-        -
-        {{ reportStore().getDisplayName(comparison.secondSubmissionId) }}
+      <span class="flex items-center"
+        ><BackButton />
+        <h2 class="flex-1">
+          Comparison:
+          {{ reportStore().getDisplayName(comparison.firstSubmissionId) }}
+          -
+          {{ reportStore().getDisplayName(comparison.secondSubmissionId) }}
+        </h2>
         <ToolTipComponent
           direction="left"
-          class="float-right hidden md:block print:hidden"
+          class="hidden md:block print:hidden"
           :show-info-symbol="false"
         >
           <template #tooltip>
@@ -30,7 +33,7 @@
             </ButtonComponent>
           </template>
         </ToolTipComponent>
-      </h2>
+      </span>
       <div class="flex flex-col gap-x-10 gap-y-2 md:flex-row">
         <span class="flex items-center gap-x-1">
           <MetricIcon class="h-3" :metric="MetricJsonIdentifier.AVERAGE_SIMILARITY" />
@@ -145,6 +148,7 @@ import {
 import { reportStore } from '@/stores/reportStore'
 import { Match, MetricJsonIdentifier } from '@jplag/model'
 import { uiStore } from '@/stores/uiStore'
+import BackButton from '@/components/BackButton.vue'
 
 const props = defineProps({
   firstSubmissionId: {

@@ -1,4 +1,4 @@
 > enum TestEnum {
-$ | ENUM_BEGIN 3
+$ | ENUM_BEGIN 4
 > };
-$ | ENUM_END 0
+$ | ENUM_END 1

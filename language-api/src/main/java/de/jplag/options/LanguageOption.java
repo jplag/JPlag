@@ -16,7 +16,7 @@ public interface LanguageOption<T> {
     String getName();
 
     /**
-     * @return The name as a unix parameter name. This should be "--" followed by the value of getName
+     * @return The name as a Unix parameter name. This should be "--" followed by the value of getName
      */
     default String getNameAsUnixParameter() {
         return "--" + this.getName();
