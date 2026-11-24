@@ -63,9 +63,6 @@ public class JPlagOptionsBuilder {
         submissionDirectories.addAll(List.of(this.cliOptions.newDirectories));
         String baseCodePath = this.cliOptions.baseCode;
         Path baseCodeDirectory = baseCodePath == null ? null : Path.of(baseCodePath);
-        if (baseCodeDirectory != null && !Files.exists(baseCodeDirectory)) {
-            logger.error("Using legacy partial base code API. Please migrate to new full path base code API.");
-        }
         return new SubmissionFileOptions(
                 mapCliSubmissionDirectoriesToPaths(submissionDirectories),
                 mapCliSubmissionDirectoriesToPaths(oldSubmissionDirectories),
