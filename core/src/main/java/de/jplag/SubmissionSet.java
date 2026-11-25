@@ -105,7 +105,14 @@ public class SubmissionSet {
         return invalidSubmissions;
     }
 
-    public void parse(ParsingOptions parsingOptions) throws ExitException {
+    /**
+     * Parses the submissions in this submission set
+     * @param parsingOptions Configuration of parsing
+     * @throws BasecodeException Thrown when the basecode could not be parsed
+     * @throws LanguageException Thrown when the basecode could not be parsed
+     * @throws ExitException Thrown when the submission parsing encountered an error, it could not handle
+     */
+    public void parse(ParsingOptions parsingOptions) throws BasecodeException, LanguageException, ExitException {
         parseSubmissions(allSubmissions, parsingOptions);
         if (baseCodeSubmission != null) {
             parseBaseCodeSubmission(baseCodeSubmission, parsingOptions);
