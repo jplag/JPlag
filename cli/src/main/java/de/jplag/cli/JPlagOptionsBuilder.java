@@ -16,6 +16,8 @@ import de.jplag.cli.picocli.CliInputHandler;
 import de.jplag.clustering.ClusteringOptions;
 import de.jplag.clustering.Preprocessing;
 import de.jplag.frequency.FrequencyAnalysisOptions;
+import de.jplag.frequency.MatchWeightingFunction;
+import de.jplag.frequency.strategy.FrequencyAnalysisStrategy;
 import de.jplag.merging.MergingOptions;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.ParsingOptions;
@@ -76,34 +78,32 @@ public class JPlagOptionsBuilder {
     }
 
     private ClusteringOptions getClusteringOptions() {
-        ClusteringOptions clusteringOptions = new ClusteringOptions().withEnabled(!this.cliOptions.clustering.disable)
-                .withAlgorithm(this.cliOptions.clustering.enabled.algorithm).withSimilarityMetric(this.cliOptions.clustering.enabled.metric)
-                .withSpectralKernelBandwidth(this.cliOptions.clusterSpectralBandwidth)
-                .withSpectralGaussianProcessVariance(this.cliOptions.clusterSpectralNoise).withSpectralMinRuns(this.cliOptions.clusterSpectralMinRuns)
-                .withSpectralMaxRuns(this.cliOptions.clusterSpectralMaxRuns)
-                .withSpectralMaxKMeansIterationPerRun(this.cliOptions.clusterSpectralKMeansIterations)
-                .withAgglomerativeThreshold(this.cliOptions.clusterAgglomerativeThreshold)
-                .withAgglomerativeInterClusterSimilarity(this.cliOptions.clusterAgglomerativeInterClusterSimilarity);
-
+        Preprocessing preprocessor = ClusteringOptions.DEFAULT_PREPROCESSOR;
+        double preprocessorPercentile = ClusteringOptions.DEFAULT_PREPROCESSOR_PERCENTILE;
+        double preprocessorThreshold = ClusteringOptions.DEFAULT_PREPROCESSOR_THRESHOLD;
         if (this.cliOptions.clusterPreprocessingNone) {
-            clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.NONE);
+            preprocessor = Preprocessing.NONE;
         }
 
         if (this.cliOptions.clusterPreprocessingCdf) {
-            clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION);
+            preprocessor = Preprocessing.CUMULATIVE_DISTRIBUTION_FUNCTION;
         }
 
         if (this.cliOptions.clusterPreprocessingPercentile != 0) {
-            clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.PERCENTILE)
-                    .withPreprocessorPercentile(this.cliOptions.clusterPreprocessingPercentile);
+            preprocessor = Preprocessing.PERCENTILE;
+            preprocessorPercentile = this.cliOptions.clusterPreprocessingPercentile;
         }
 
         if (this.cliOptions.clusterPreprocessingThreshold != 0) {
-            clusteringOptions = clusteringOptions.withPreprocessor(Preprocessing.THRESHOLD)
-                    .withPreprocessorThreshold(this.cliOptions.clusterPreprocessingThreshold);
+            preprocessor = Preprocessing.THRESHOLD;
+            preprocessorThreshold = this.cliOptions.clusterPreprocessingThreshold;
         }
 
-        return clusteringOptions;
+        return new ClusteringOptions(this.cliOptions.clustering.enabled.metric, this.cliOptions.clusterSpectralBandwidth,
+                this.cliOptions.clusterSpectralNoise, this.cliOptions.clusterSpectralMinRuns, this.cliOptions.clusterSpectralMaxRuns,
+                this.cliOptions.clusterSpectralKMeansIterations, this.cliOptions.clusterAgglomerativeThreshold, preprocessor,
+                !this.cliOptions.clustering.disable, this.cliOptions.clustering.enabled.algorithm,
+                this.cliOptions.clusterAgglomerativeInterClusterSimilarity, preprocessorThreshold, preprocessorPercentile);
     }
 
     private MergingOptions getMergingOptions() {
@@ -113,9 +113,9 @@ public class JPlagOptionsBuilder {
 
     private FrequencyAnalysisOptions getFrequencyAnalysisOptions() {
         CliOptions.FrequencyAnalysis frequencyOptions = this.cliOptions.highlightExtraction;
-        return new FrequencyAnalysisOptions().withEnabled(frequencyOptions.enabled)
-                .withFrequencyStrategy(frequencyOptions.frequencyStrategy.create(frequencyOptions.minimumSubsequenceLength))
-                .withFrequencyStrategyMinValue(frequencyOptions.minimumSubsequenceLength)
-                .withWeightingFunction(frequencyOptions.weightingFunction.create()).withWeightingFactor(frequencyOptions.weightingFactor);
+        FrequencyAnalysisStrategy frequencyStrategy = frequencyOptions.frequencyStrategy.create(frequencyOptions.minimumSubsequenceLength);
+        MatchWeightingFunction weightingFunction = frequencyOptions.weightingFunction.create();
+        return new FrequencyAnalysisOptions(frequencyOptions.enabled, frequencyStrategy, frequencyOptions.minimumSubsequenceLength, weightingFunction,
+                frequencyOptions.weightingFactor);
     }
 }

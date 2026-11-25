@@ -99,7 +99,7 @@ public class JPlag {
 
         // Use Match Merging against obfuscation
         if (options.mergingOptions().enabled()) {
-            result = new MatchMerging(options).mergeMatchesOf(result);
+            result = new MatchMerging(options.mergingOptions(), options.parsingOptions()).mergeMatchesOf(result);
         }
 
         if (options.frequencyAnalysisOptions().enabled()) {

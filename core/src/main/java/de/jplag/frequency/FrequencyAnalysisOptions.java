@@ -4,8 +4,6 @@ import de.jplag.frequency.strategy.CompleteMatchesStrategy;
 import de.jplag.frequency.strategy.FrequencyAnalysisStrategy;
 import de.jplag.frequency.weighting.SigmoidWeighting;
 
-import io.soabase.recordbuilder.core.RecordBuilder;
-
 /**
  * Options for Frequency Analysis.
  * @param enabled if false, frequency analysis is skipped.
@@ -14,9 +12,8 @@ import io.soabase.recordbuilder.core.RecordBuilder;
  * @param weightingFunction function used to determine the weight from the match rarity
  * @param weightingFactor scales the impact of the weighting
  */
-@RecordBuilder
 public record FrequencyAnalysisOptions(boolean enabled, FrequencyAnalysisStrategy frequencyStrategy, int frequencyStrategyMinValue,
-        MatchWeightingFunction weightingFunction, double weightingFactor) implements FrequencyAnalysisOptionsBuilder.With {
+        MatchWeightingFunction weightingFunction, double weightingFactor) {
 
     /** Default value for the analysis being enabled. */
     public static final boolean DEFAULT_ENABLED = false;

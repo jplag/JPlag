@@ -41,8 +41,9 @@ class FrequencyAnalysisTest extends TestBase {
     @Test
     @DisplayName("The number of comparisons is preserved after frequency weighting")
     void preservesNumberOfComparisons() {
-        FrequencyAnalysisOptions options = new FrequencyAnalysisOptions().withEnabled(true).withFrequencyStrategy(new CompleteMatchesStrategy())
-                .withWeightingFunction(new SigmoidWeighting());
+        FrequencyAnalysisOptions options = new FrequencyAnalysisOptions(true, new CompleteMatchesStrategy(),
+                FrequencyAnalysisOptions.DEFAULT_MINIMUM_SUBSEQUENCE_LENGTH, new SigmoidWeighting(),
+                FrequencyAnalysisOptions.DEFAULT_WEIGHTING_FACTOR);
 
         JPlagResult weightedResult = FrequencyAnalysis.applyFrequencyWeighting(rawResult, options);
 
@@ -52,8 +53,9 @@ class FrequencyAnalysisTest extends TestBase {
     @Test
     @DisplayName("Every weighted comparison has the frequency weighting flag set and a non-negative score")
     void allComparisonsHaveFrequencyWeightingFlagSet() {
-        FrequencyAnalysisOptions options = new FrequencyAnalysisOptions().withEnabled(true).withFrequencyStrategy(new CompleteMatchesStrategy())
-                .withWeightingFunction(new SigmoidWeighting());
+        FrequencyAnalysisOptions options = new FrequencyAnalysisOptions(true, new CompleteMatchesStrategy(),
+                FrequencyAnalysisOptions.DEFAULT_MINIMUM_SUBSEQUENCE_LENGTH, new SigmoidWeighting(),
+                FrequencyAnalysisOptions.DEFAULT_WEIGHTING_FACTOR);
 
         JPlagResult weightedResult = FrequencyAnalysis.applyFrequencyWeighting(rawResult, options);
 
@@ -66,8 +68,8 @@ class FrequencyAnalysisTest extends TestBase {
     @Test
     @DisplayName("A weighting factor of zero leaves the weighted similarity identical to the original")
     void weightingFactorZeroPreservesSimilarity() {
-        FrequencyAnalysisOptions options = new FrequencyAnalysisOptions().withEnabled(true).withFrequencyStrategy(new CompleteMatchesStrategy())
-                .withWeightingFunction(new SigmoidWeighting()).withWeightingFactor(0.0);
+        FrequencyAnalysisOptions options = new FrequencyAnalysisOptions(true, new CompleteMatchesStrategy(),
+                FrequencyAnalysisOptions.DEFAULT_MINIMUM_SUBSEQUENCE_LENGTH, new SigmoidWeighting(), 0.0);
 
         JPlagResult weightedResult = FrequencyAnalysis.applyFrequencyWeighting(rawResult, options);
         List<JPlagComparison> original = rawResult.getAllComparisons();
@@ -82,8 +84,8 @@ class FrequencyAnalysisTest extends TestBase {
     @Test
     @DisplayName("A weighting factor of one produces valid non-negative weighted similarities for all comparisons")
     void weightingFactorOneProducesNonNegativeWeightedSimilarity() {
-        FrequencyAnalysisOptions options = new FrequencyAnalysisOptions().withEnabled(true).withFrequencyStrategy(new CompleteMatchesStrategy())
-                .withWeightingFunction(new SigmoidWeighting()).withWeightingFactor(1.0);
+        FrequencyAnalysisOptions options = new FrequencyAnalysisOptions(true, new CompleteMatchesStrategy(),
+                FrequencyAnalysisOptions.DEFAULT_MINIMUM_SUBSEQUENCE_LENGTH, new SigmoidWeighting(), 1.0);
 
         JPlagResult weightedResult = FrequencyAnalysis.applyFrequencyWeighting(rawResult, options);
 
@@ -110,8 +112,8 @@ class FrequencyAnalysisTest extends TestBase {
 
         MatchWeightingFunction fixedWeight = rarity -> 0.5;
 
-        FrequencyAnalysisOptions options = new FrequencyAnalysisOptions().withEnabled(true).withFrequencyStrategy(counting)
-                .withWeightingFunction(fixedWeight).withWeightingFactor(1.0);
+        FrequencyAnalysisOptions options = new FrequencyAnalysisOptions(true, counting, FrequencyAnalysisOptions.DEFAULT_MINIMUM_SUBSEQUENCE_LENGTH,
+                fixedWeight, 1.0);
 
         JPlagResult weightedResult = FrequencyAnalysis.applyFrequencyWeighting(rawResult, options);
 

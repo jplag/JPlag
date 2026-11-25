@@ -16,6 +16,7 @@ import de.jplag.logging.ProgressBar;
 import de.jplag.logging.ProgressBarLogger;
 import de.jplag.logging.ProgressBarType;
 import de.jplag.options.JPlagOptions;
+import de.jplag.options.ParsingOptions;
 
 /**
  * This class implements a match merging algorithm which serves as a defense mechanism against obfuscation attacks.
@@ -30,14 +31,17 @@ import de.jplag.options.JPlagOptions;
  * shorter matches are available as merge candidates.
  */
 public class MatchMerging {
-    private final JPlagOptions options;
+    private final MergingOptions mergingOptions;
+    private final ParsingOptions parsingOptions;
 
     /**
      * Instantiates the match merging algorithm for a comparison result and a set of specific options.
-     * @param options encapsulates the adjustable options
+     * @param mergingOptions the options specific to the match merging algorithm
+     * @param parsingOptions the options used for the previous comparison
      */
-    public MatchMerging(JPlagOptions options) {
-        this.options = options;
+    public MatchMerging(MergingOptions mergingOptions, ParsingOptions parsingOptions) {
+        this.mergingOptions = mergingOptions;
+        this.parsingOptions = parsingOptions;
     }
 
     /**
@@ -56,7 +60,7 @@ public class MatchMerging {
 
         long durationInMillis = System.currentTimeMillis() - timeBeforeStartInMillis;
         return new JPlagResult(comparisonsMerged, result.getSubmissions(), result.getTokenizationDuration(),
-                result.getComparisonDuration() + durationInMillis, options);
+                result.getComparisonDuration() + durationInMillis, result.getOptions());
     }
 
     private JPlagComparison mergeMatchesOf(JPlagComparison comparison, ProgressBar progressBar) {
@@ -69,10 +73,10 @@ public class MatchMerging {
         int matchesBeforeMerging = globalMatches.size();
         mergeNeighbors(globalMatches, leftSubmission, rightSubmission);
         int matchesAfterMerging = globalMatches.size();
-        globalMatches = globalMatches.stream().filter(it -> it.minimumLength() >= options.parsingOptions().minimumTokenMatch()).toList();
+        globalMatches = globalMatches.stream().filter(it -> it.minimumLength() >= parsingOptions.minimumTokenMatch()).toList();
         progressBar.step();
 
-        if (matchesBeforeMerging - matchesAfterMerging >= options.mergingOptions().minimumRequiredMerges()) {
+        if (matchesBeforeMerging - matchesAfterMerging >= mergingOptions.minimumRequiredMerges()) {
             return new JPlagComparison(leftSubmission, rightSubmission, globalMatches, new ArrayList<>());
         }
         return comparison;
@@ -148,7 +152,7 @@ public class MatchMerging {
             int tokensBetweenRight = lowerMatch.startOfSecond() - upperMatch.endOfSecond() - 1;
             double averageTokensBetweenMatches = (tokensBetweenLeft + tokensBetweenRight) / 2.0;
             // Checking length is not necessary as GST already checked length while computing matches
-            if (averageTokensBetweenMatches <= options.mergingOptions().maximumGapSize()
+            if (averageTokensBetweenMatches <= mergingOptions.maximumGapSize()
                     && !mergeOverlapsFiles(leftSubmission, rightSubmission, upperMatch, tokensBetweenLeft, tokensBetweenRight)) {
                 globalMatches.remove(upperMatch);
                 globalMatches.remove(lowerMatch);

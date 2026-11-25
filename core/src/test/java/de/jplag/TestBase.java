@@ -142,7 +142,7 @@ public abstract class TestBase {
         var newFiles = new HashSet<>(newPaths);
         var oldFiles = new HashSet<>(oldPaths);
         JPlagOptions options = new JPlagOptions(new SubmissionFileOptions(newFiles, oldFiles, null), new ParsingOptions(new JavaLanguage()))
-                .withClusteringOptions(new ClusteringOptions().withEnabled(false));
+                .withClusteringOptions(new ClusteringOptions(false));
         return customization.apply(options);
     }
 

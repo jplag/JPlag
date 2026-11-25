@@ -70,7 +70,7 @@ class MatchMergingTest extends TestBase {
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
         comparisonsBefore = new ArrayList<>(result.getAllComparisons());
 
-        result = new MatchMerging(options).mergeMatchesOf(result);
+        result = new MatchMerging(options.mergingOptions(), options.parsingOptions()).mergeMatchesOf(result);
         comparisonsAfter = new ArrayList<>(result.getAllComparisons());
 
         comparisonsBefore.sort(Comparator.comparing(Object::toString));
@@ -187,7 +187,7 @@ class MatchMergingTest extends TestBase {
     @Test
     @DisplayName("Test minimal requires merges with default parameters.")
     void testMinimalRequiredMerges() throws ExitException {
-        JPlagResult result = runJPlag("merging", it -> it.withMergingOptions(new MergingOptions().withEnabled(true)));
+        JPlagResult result = runJPlag("merging", it -> it.withMergingOptions(new MergingOptions(true)));
         List<Integer> matchedTokens = result.getAllComparisons().stream().map(JPlagComparison::getNumberOfMatchedTokens).toList();
         List<Double> similarities = result.getAllComparisons().stream().map(JPlagComparison::similarity).toList();
 
@@ -221,7 +221,7 @@ class MatchMergingTest extends TestBase {
 
         checkForCrossFileMatches(comparison, comparison.matches());
 
-        JPlagResult mergedResult = new MatchMerging(customOptions).mergeMatchesOf(result);
+        JPlagResult mergedResult = new MatchMerging(customOptions.mergingOptions(), customOptions.parsingOptions()).mergeMatchesOf(result);
         JPlagComparison mergedComparison = mergedResult.getAllComparisons().getFirst();
 
         assertEquals(2, mergedResult.getNumberOfSubmissions());
@@ -303,7 +303,8 @@ class MatchMergingTest extends TestBase {
         JPlagOptions unitOptions = ParsingOptionsWith.minimumTokenMatch(options, 1).withMergingOptions(mergingOptions);
         JPlagComparison comparison = new JPlagComparison(leftSubmission, rightSubmission, new ArrayList<>(handBuiltMatches), new ArrayList<>());
         JPlagResult result = new JPlagResult(List.of(comparison), submissionSet, 0L, 0L, unitOptions);
-        return new MatchMerging(unitOptions).mergeMatchesOf(result).getAllComparisons().getFirst().matches();
+        return new MatchMerging(unitOptions.mergingOptions(), unitOptions.parsingOptions()).mergeMatchesOf(result).getAllComparisons().getFirst()
+                .matches();
     }
 
     private static JPlagComparison findComparison(List<JPlagComparison> comparisons, String firstName, String secondName) {
