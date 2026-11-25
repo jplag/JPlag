@@ -1,6 +1,8 @@
 import {
   type CliClusterOptions,
   type CliOptions,
+  type CliParsingOptions,
+  Language,
   type ReportFormatCliOptions,
   getLanguageParser
 } from '@jplag/model'
@@ -13,8 +15,17 @@ export class OptionsFactory {
   private static extractOptions(json: ReportFormatCliOptions): CliOptions {
     return {
       ...json,
-      language: getLanguageParser(json.language),
+      parsingOptions: this.extractParsingOptions(json.parsingOptions),
       clusteringOptions: this.extractClusterOptions(json.clusteringOptions)
+    }
+  }
+
+  private static extractParsingOptions(
+    json: CliParsingOptions<string>
+  ): CliParsingOptions<Language> {
+    return {
+      ...json,
+      language: getLanguageParser(json.language)
     }
   }
 

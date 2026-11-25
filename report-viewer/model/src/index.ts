@@ -1,5 +1,5 @@
 export * from './BaseCodeReport'
-export * from './CliOptions'
+export * from './options'
 export * from './Cluster'
 export * from './ClusterListElement'
 export * from './Comparison'
