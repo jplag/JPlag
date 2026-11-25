@@ -206,6 +206,7 @@ Languages:
   rlang
   rust
   scala
+  scalaantlr
   scheme
   scxml
   swift
