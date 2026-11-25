@@ -178,7 +178,7 @@ public class MatchMerging {
      */
     private static boolean mergeOverlapsFiles(Submission leftSubmission, Submission rightSubmission, Match upperMatch, int tokensBetweenLeft,
             int tokensBetweenRight) {
-        if (leftSubmission.getFiles().size() == 1 && rightSubmission.getFiles().size() == 1) {
+        if (leftSubmission.getParsedFiles().size() == 1 && rightSubmission.getParsedFiles().size() == 1) {
             return false;
         }
 

@@ -2,7 +2,12 @@ package de.jplag.frequency.frequencysimilarity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,7 +55,7 @@ class FrequencyWeightingTest extends TestBase {
      * @throws ExitException if building the submission set or performing comparisons fails
      */
     @BeforeEach
-    void setUp() throws ExitException {
+    void setUp() throws ExitException, ReflectiveOperationException {
         JPlagOptions options = getDefaultOptions("PartialPlagiarism");
         JPlagResult result = getJPlagResult(options);
         JPlagComparison testComparison = result.getAllComparisons().getFirst();
@@ -60,10 +65,12 @@ class FrequencyWeightingTest extends TestBase {
         matchShort = new Match(match.startOfFirst(), match.startOfSecond(), 10, 10);
         List<Match> ignoredMatches = testComparison.ignoredMatches();
 
-        Submission first = new Submission("W", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles());
-        Submission second = new Submission("X", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles());
+        Submission first = spy(new Submission("W", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles()));
+        Submission second = spy(new Submission("X", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles()));
         first.setTokenList(testSubmission.getTokenList());
         second.setTokenList(testSubmission.getTokenList());
+        mockParsedFilesSize(first, testSubmission.getFiles().size());
+        mockParsedFilesSize(second, testSubmission.getFiles().size());
 
         testMatches.clear();
         testMatches.add(match);
@@ -173,5 +180,16 @@ class FrequencyWeightingTest extends TestBase {
 
         assertTrue(rareWeighted > commonWeighted,
                 () -> weightingFunction.getClass().getSimpleName() + ": rare=" + rareWeighted + " should exceed common=" + commonWeighted);
+    }
+
+    private static void mockParsedFilesSize(Submission submission, int size) throws ReflectiveOperationException {
+        Field field = Submission.class.getDeclaredField("parsedFiles");
+        field.setAccessible(true);
+
+        Collection<?> original = (Collection<?>) field.get(submission);
+        Collection<Object> fake = spy(original == null ? new ArrayList<>() : new ArrayList<>(original));
+
+        doReturn(size).when(fake).size();
+        field.set(submission, fake);
     }
 }

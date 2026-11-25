@@ -59,7 +59,7 @@ class MatchMergingTest extends TestBase {
 
         // Largest two single-file submissions provide token lists big enough for hand-built match indices; token content is
         // never inspected.
-        List<Submission> singleFileSubmissions = submissionSet.getSubmissions().stream().filter(submission -> submission.getFiles().size() == 1)
+        List<Submission> singleFileSubmissions = submissionSet.getSubmissions().stream().filter(submission -> submission.getParsedFiles().size() == 1)
                 .sorted(Comparator.comparingInt(Submission::getNumberOfTokens).reversed().thenComparing(Submission::getName)).toList();
         leftSubmission = singleFileSubmissions.get(0);
         rightSubmission = singleFileSubmissions.get(1);

@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +45,7 @@ public class Submission implements Comparable<Submission> {
     private final Path submissionRootFile; // Root of the submission, a director or file (including the subdir if used).
     private final boolean isNew; // old submissions are only checked against new ones.
     private final Collection<Path> files;
+    private Collection<Path> parsedFiles;
     private Language language;
 
     private SubmissionState state; // whether an error occurred during parsing or not
@@ -70,6 +70,7 @@ public class Submission implements Comparable<Submission> {
         tokenList = Collections.emptyList(); // Placeholder, will be replaced when submission is parsed
         comments = new ArrayList<>();
         state = UNPARSED;
+        parsedFiles = Collections.emptyList();
     }
 
     @Override
@@ -110,6 +111,14 @@ public class Submission implements Comparable<Submission> {
     }
 
     /**
+     * Provides all files that were parsed
+     * @return a collection of files that were parsed
+     */
+    public Collection<Path> getParsedFiles() {
+        return parsedFiles;
+    }
+
+    /**
      * Provides the submission name. If the submission is a single program file, it is the file name. If the submission
      * contains multiple program files, it is the directory name. If JPlag is executed with multiple root directories, the
      * name starts the root directory identifier, e.g., <code>rootName/submissionName</code>.
@@ -140,7 +149,7 @@ public class Submission implements Comparable<Submission> {
      * @return Similarity divisor for the submission.
      */
     int getSimilarityDivisor() {
-        int divisor = getNumberOfTokens() - getFiles().size();
+        int divisor = getNumberOfTokens() - parsedFiles.size();
         if (baseCodeComparison != null) {
             divisor -= baseCodeComparison.getNumberOfMatchedTokens();
         }
@@ -247,16 +256,15 @@ public class Submission implements Comparable<Submission> {
     /* package-private */ boolean parse(ParsingOptions parsingOptions) throws LanguageException {
         this.language = parsingOptions.language();
         int minimalTokens = parsingOptions.minimumTokenMatch();
-        Collection<Path> filesToParse = files == null ? null
-                : files.stream().filter(file -> hasValidSuffix(parsingOptions, file)).collect(Collectors.toSet());
-        if (filesToParse == null || filesToParse.isEmpty()) {
+        parsedFiles = files == null ? Collections.emptyList() : files.stream().filter(file -> hasValidSuffix(parsingOptions, file)).toList();
+        if (parsedFiles.isEmpty()) {
             logger.error("Nothing to parse for submission \"{}\"", name);
             state = NOTHING_TO_PARSE;
             return false;
         }
 
         try {
-            tokenList = language.parse(new HashSet<>(filesToParse), parsingOptions.normalize());
+            tokenList = language.parse(new HashSet<>(parsedFiles), parsingOptions.normalize());
         } catch (CriticalParsingException e) {
             throw new LanguageException(e.getMessage(), e.getCause());
         } catch (ParsingException e) {
@@ -288,7 +296,7 @@ public class Submission implements Comparable<Submission> {
     private void extractAndParseComments() {
         Optional<CommentExtractorSettings> commentExtractorSettings = language.getCommentExtractorSettings();
         if (commentExtractorSettings.isPresent()) {
-            for (Path file : files) {
+            for (Path file : parsedFiles) {
                 CommentExtractor extractor = new CommentExtractor(file, commentExtractorSettings.get());
                 comments.addAll(extractor.extract());
             }
@@ -334,6 +342,7 @@ public class Submission implements Comparable<Submission> {
         copy.setBaseCodeComparison(baseCodeComparison);
         copy.language = language;
         copy.state = state;
+        copy.parsedFiles = parsedFiles;
         return copy;
     }
 
@@ -347,7 +356,7 @@ public class Submission implements Comparable<Submission> {
 
         if (fileTokenCount == null) {
             fileTokenCount = new HashMap<>();
-            for (Path file : this.files) {
+            for (Path file : this.parsedFiles) {
                 fileTokenCount.put(file, 0);
             }
             for (Token token : this.tokenList) {
