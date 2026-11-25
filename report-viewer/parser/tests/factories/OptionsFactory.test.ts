@@ -8,17 +8,23 @@ describe('Test JSON to Options', () => {
     const result = OptionsFactory.getCliOptions(validOptions)
 
     expect(result).toEqual({
-      language: ParserLanguage.JAVA,
-      minimumTokenMatch: 9,
-      submissionDirectories: ['.\\files'],
-      oldSubmissionDirectories: ['old'],
-      baseCodeSubmissionDirectory: '.',
-      subdirectoryName: 'src/',
-      fileSuffixes: ['.java', '.JAVA'],
-      exclusionFileName: 'ex.txt',
-      similarityMetric: MetricJsonIdentifier.AVERAGE_SIMILARITY,
-      similarityThreshold: 0.0,
-      maximumNumberOfComparisons: 500,
+      submissionFileOptions: {
+        submissionDirectories: ['.\\files'],
+        oldSubmissionDirectories: ['old'],
+        baseCodeSubmissionDirectory: '.',
+        subdirectoryName: 'src/',
+        exclusionFileName: 'ex.txt'
+      },
+      parsingOptions: {
+        language: ParserLanguage.JAVA,
+        minimumTokenMatch: 9,
+        fileSuffixes: ['.java', '.JAVA'],
+        similarityMetric: MetricJsonIdentifier.AVERAGE_SIMILARITY,
+        similarityThreshold: 0.0
+      },
+      reportingOptions: {
+        maximumNumberOfComparisons: 500
+      },
       clusteringOptions: {
         enabled: true,
         metric: MetricJsonIdentifier.AVERAGE_SIMILARITY,
