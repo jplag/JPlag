@@ -138,14 +138,7 @@ class RegressionSuiteTest {
     private DynamicContainer generateTestsForResultDescription(ResultDescription result, Dataset dataset, DatasetRunConfiguration runConfiguration)
             throws ExitException, IOException {
         JPlagOptions options = runConfiguration.jPlagOptions();
-        JPlagResult jplagResult;
-        try {
-            jplagResult = JPlag.run(options);
-
-        } catch (Exception e) {
-            System.out.println(options.submissionFileOptions().submissionDirectories().toString());
-            throw e;
-        }
+        JPlagResult jplagResult = JPlag.run(options);
         var comparisons = jplagResult.getAllComparisons().stream().collect(Collectors.toMap(TestSuiteHelper::getTestIdentifier, it -> it));
         assertEquals(result.identifierToResultMap().size(), comparisons.size(), "different number of results and expected results");
 
