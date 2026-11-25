@@ -6,12 +6,12 @@ REPORT_VIEWER_MODELS = f"../../../report-viewer/model/src"
 REPORT_VIEWER_FACTORIES = f"../../../report-viewer/parser/src/factories"
 
 cli_options = ({ 'file_path': f"{CORE_PACKAGE}/options/JPlagOptions.java", 'record_name': 'JPlagOptions' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/options/index.ts", 'interface_name': 'AbstractOptions' })
-submission_file_options = ({ 'file_path': f"{CORE_PACKAGE}/options/SubmissionFileOptions.java", 'record_name': 'SubmissionFileOptions' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/options/submissionFiles.ts", 'interface_name': 'CliSubmissionFileOptions' })
-parsing_options = ({ 'file_path': f"{CORE_PACKAGE}/options/ParsingOptions.java", 'record_name': 'ParsingOptions' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/options/parsing.ts", 'interface_name': 'CliParsingOptions' })
-reporting_options = ({ 'file_path': f"{CORE_PACKAGE}/options/ReportingOptions.java", 'record_name': 'ReportingOptions' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/options/reporting.ts", 'interface_name': 'CliReportingOptions' })
-merging_options = ({ 'file_path': f"{CORE_PACKAGE}/merging/MergingOptions.java", 'record_name': 'MergingOptions' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/options/merging.ts", 'interface_name': 'CliMergingOptions' })
-clustering_options = ({ 'file_path': f"{CORE_PACKAGE}/clustering/ClusteringOptions.java", 'record_name': 'ClusteringOptions' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/options/cluster.ts", 'interface_name': 'CliClusterOptions' })
-frequency_options = ({ 'file_path': f"{CORE_PACKAGE}/frequency/FrequencyAnalysisOptions.java", 'record_name': 'FrequencyAnalysisOptions' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/options/frequency.ts", 'interface_name': 'CliFrequencyOptions' })
+submission_file_options = ({ 'file_path': f"{CORE_PACKAGE}/options/SubmissionFileOptions.java", 'record_name': 'SubmissionFileOptions' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/options/SubmissionFiles.ts", 'interface_name': 'CliSubmissionFileOptions' })
+parsing_options = ({ 'file_path': f"{CORE_PACKAGE}/options/ParsingOptions.java", 'record_name': 'ParsingOptions' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/options/Parsing.ts", 'interface_name': 'CliParsingOptions' })
+reporting_options = ({ 'file_path': f"{CORE_PACKAGE}/options/ReportingOptions.java", 'record_name': 'ReportingOptions' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/options/Reporting.ts", 'interface_name': 'CliReportingOptions' })
+merging_options = ({ 'file_path': f"{CORE_PACKAGE}/merging/MergingOptions.java", 'record_name': 'MergingOptions' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/options/Merging.ts", 'interface_name': 'CliMergingOptions' })
+clustering_options = ({ 'file_path': f"{CORE_PACKAGE}/clustering/ClusteringOptions.java", 'record_name': 'ClusteringOptions' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/options/Cluster.ts", 'interface_name': 'CliClusterOptions' })
+frequency_options = ({ 'file_path': f"{CORE_PACKAGE}/frequency/FrequencyAnalysisOptions.java", 'record_name': 'FrequencyAnalysisOptions' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/options/Frequency.ts", 'interface_name': 'CliFrequencyOptions' })
 
 comparison = ({ 'file_path': f"{REPORTING_PACKAGE}/ComparisonReport.java", 'record_name': 'ComparisonReport' }, { 'file_path': f"{REPORT_VIEWER_FACTORIES}/ComparisonFactory.ts", 'interface_name': 'ReportFormatComparison' })
 match = ({ 'file_path': f"{REPORTING_PACKAGE}/Match.java", 'record_name': 'Match' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/Match.ts", 'interface_name': 'ReportFormatMatch' })
