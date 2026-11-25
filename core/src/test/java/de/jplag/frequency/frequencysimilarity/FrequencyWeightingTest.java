@@ -53,6 +53,7 @@ class FrequencyWeightingTest extends TestBase {
     /**
      * Creates test comparison and a frequency map from the PartialPlagiarism sample data.
      * @throws ExitException if building the submission set or performing comparisons fails
+     * @throws ReflectiveOperationException if mocking the submissions fails
      */
     @BeforeEach
     void setUp() throws ExitException, ReflectiveOperationException {
