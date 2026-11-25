@@ -24,7 +24,7 @@ class InvalidSubmissionTest extends TestBase {
      * invalid submissions being stored.
      * @throws ExitException when JPlag causes an error.
      */
-    //@Test
+    @Test
     @DisplayName("test filtering and copying of invalid submissions with debug mode")
     void testInvalidSubmissionsWithDebug() throws ExitException {
         try {

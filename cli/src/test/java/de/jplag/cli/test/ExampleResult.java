@@ -38,7 +38,7 @@ public class ExampleResult {
             FileUtils.write(dir.resolve("B.java"), EXAMPLE_CODE);
 
             result = JPlag.run(new JPlagOptions(new SubmissionFileOptions(Set.of(dir), Set.of(), null),
-                    new ParsingOptions(new JavaLanguage(), 0, false, false, false, ParsingOptions.DEFAULT_SIMILARITY_METRIC, ParsingOptions.DEFAULT_SIMILARITY_THRESHOLD)));
+                    new ParsingOptions(new JavaLanguage(), 0, null, false, false, false, ParsingOptions.DEFAULT_SIMILARITY_METRIC, ParsingOptions.DEFAULT_SIMILARITY_THRESHOLD)));
         }
         return result;
     }

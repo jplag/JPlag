@@ -20,7 +20,6 @@ public final class SubmissionFileOptionsWith {
                 s.oldSubmissionDirectories(),
                 s.baseCodeSubmissionDirectory(),
                 s.subdirectoryName(),
-                s.fileSuffixes(),
                 s.exclusionFileName()));
     }
 
@@ -31,7 +30,6 @@ public final class SubmissionFileOptionsWith {
                 oldSubmissionDirectories,
                 s.baseCodeSubmissionDirectory(),
                 s.subdirectoryName(),
-                s.fileSuffixes(),
                 s.exclusionFileName()));
     }
 
@@ -42,7 +40,6 @@ public final class SubmissionFileOptionsWith {
                 s.oldSubmissionDirectories(),
                 baseCodeSubmissionDirectory,
                 s.subdirectoryName(),
-                s.fileSuffixes(),
                 s.exclusionFileName()));
     }
 
@@ -53,21 +50,8 @@ public final class SubmissionFileOptionsWith {
                 s.oldSubmissionDirectories(),
                 s.baseCodeSubmissionDirectory(),
                 subdirectoryName,
-                s.fileSuffixes(),
                 s.exclusionFileName()));
     }
-
-    public static JPlagOptions fileSuffixes(JPlagOptions options, List<String> fileSuffixes) {
-        SubmissionFileOptions s = options.submissionFileOptions();
-        return options.withSubmissionFileOptions(new SubmissionFileOptions(
-                s.submissionDirectories(),
-                s.oldSubmissionDirectories(),
-                s.baseCodeSubmissionDirectory(),
-                s.subdirectoryName(),
-                fileSuffixes,
-                s.exclusionFileName()));
-    }
-
     public static JPlagOptions exclusionFileName(JPlagOptions options, String exclusionFileName) {
         SubmissionFileOptions s = options.submissionFileOptions();
         return options.withSubmissionFileOptions(new SubmissionFileOptions(
@@ -75,7 +59,6 @@ public final class SubmissionFileOptionsWith {
                 s.oldSubmissionDirectories(),
                 s.baseCodeSubmissionDirectory(),
                 s.subdirectoryName(),
-                s.fileSuffixes(),
                 exclusionFileName));
     }
 }

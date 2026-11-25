@@ -4,12 +4,16 @@ import de.jplag.Language;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Options used to parse and compare submissions
  *
  * @param language Language to use when parsing the submissions.
  * @param minimumTokenMatch Tunes the comparison sensitivity by adjusting the minimum token required to be counted as
  * matching section. A smaller {@code <n>} increases the sensitivity but might lead to more false-positives.
+ * @param fileSuffixes List of file extensions or custom suffixes that should be included.
  * @param debugParser If true, submissions that cannot be parsed will be stored in a separate directory.
  * @param normalize enables additional normalization mechanisms. Only supported by some language modules.
  * @param analyzeComments If true, comments will be extracted from the submissions.
@@ -20,7 +24,7 @@ import org.slf4j.LoggerFactory;
  * similarity below this threshold will be ignored. The default value of 0 allows all matches to be stored. This affects
  * which comparisons are stored and thus make it into the result object. See also {@link #similarityMetric()}.
  */
-public record ParsingOptions(Language language, Integer minimumTokenMatch, boolean debugParser, boolean normalize, boolean analyzeComments, SimilarityMetric similarityMetric, double similarityThreshold) {
+public record ParsingOptions(Language language, Integer minimumTokenMatch, List<String> fileSuffixes, boolean debugParser, boolean normalize, boolean analyzeComments, SimilarityMetric similarityMetric, double similarityThreshold) {
 
 
     /** Default value for the similarity metric. **/
@@ -34,15 +38,17 @@ public record ParsingOptions(Language language, Integer minimumTokenMatch, boole
      * Constructs a fully specified {@link ParsingOptions} instance.
      * @param language Language used for parsing submissions
      * @param minimumTokenMatch Minimum number of matching tokens to consider a match
+     * @param fileSuffixes List of file suffixes to include in the comparison
      * @param similarityMetric Metric to compute similarity threshold for comparisons
      * @param similarityThreshold Threshold below which comparisons are ignored
      * @param debugParser If true, stores unparsed submissions separately
      * @param normalize Enables additional normalization mechanisms (language-dependent)
      * @param analyzeComments Whether to extract comments from submissions
      */
-    public ParsingOptions(Language language, Integer minimumTokenMatch, boolean debugParser, boolean normalize, boolean analyzeComments,SimilarityMetric similarityMetric, double similarityThreshold) {
+    public ParsingOptions(Language language, Integer minimumTokenMatch, List<String> fileSuffixes, boolean debugParser, boolean normalize, boolean analyzeComments,SimilarityMetric similarityMetric, double similarityThreshold) {
         this.language = language;
         this.minimumTokenMatch = normalizeMinimumTokenMatch(minimumTokenMatch);
+        this.fileSuffixes = fileSuffixes == null || fileSuffixes.isEmpty() ? null : Collections.unmodifiableList(fileSuffixes);
         this.debugParser = debugParser;
         this.normalize = normalize;
         this.analyzeComments = analyzeComments;
@@ -55,7 +61,7 @@ public record ParsingOptions(Language language, Integer minimumTokenMatch, boole
      * @param language Language used for parsing submissions
      */
     public ParsingOptions(Language language) {
-        this(language, null, false, false, false, DEFAULT_SIMILARITY_METRIC, DEFAULT_SIMILARITY_THRESHOLD);
+        this(language, null, null, false, false, false, DEFAULT_SIMILARITY_METRIC, DEFAULT_SIMILARITY_THRESHOLD);
     }
 
     @Override
@@ -65,6 +71,17 @@ public record ParsingOptions(Language language, Integer minimumTokenMatch, boole
             return language.minimumTokenMatch();
         }
         return minimumTokenMatch;
+    }
+
+    /**
+     * Calculates a list of file suffixes to use for submission files
+     * @return list of file suffixes
+     */
+    public List<String> fileSuffixes() {
+        if ((fileSuffixes == null || fileSuffixes.isEmpty()) && language != null) {
+            return language.fileExtensions();
+        }
+        return fileSuffixes == null ? Collections.emptyList() : Collections.unmodifiableList(fileSuffixes);
     }
 
 

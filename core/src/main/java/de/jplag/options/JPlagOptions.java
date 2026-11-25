@@ -82,19 +82,8 @@ public record JPlagOptions(SubmissionFileOptions submissionFileOptions, ParsingO
             SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
             boolean debugParser, MergingOptions mergingOptions, boolean normalize, boolean analyzeComments,
             FrequencyAnalysisOptions frequencyAnalysisOptions) {
-        this(new SubmissionFileOptions(submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory, subdirectoryName, fileSuffixes, exclusionFileName), new ParsingOptions(language, minimumTokenMatch, debugParser, normalize, analyzeComments, similarityMetric, similarityThreshold), new ReportingOptions(maximumNumberOfComparisons), clusteringOptions, mergingOptions, frequencyAnalysisOptions);
+        this(new SubmissionFileOptions(submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory, subdirectoryName, exclusionFileName), new ParsingOptions(language, minimumTokenMatch, fileSuffixes, debugParser, normalize, analyzeComments, similarityMetric, similarityThreshold), new ReportingOptions(maximumNumberOfComparisons), clusteringOptions, mergingOptions, frequencyAnalysisOptions);
     }
 
-    /**
-     * Calculates a list of file suffixes to use for submission files
-     * @return list of file suffixes
-     */
-    public List<String> fileSuffixes() {
-        var language = parsingOptions().language();
-        if ((submissionFileOptions.fileSuffixes() == null || submissionFileOptions.fileSuffixes().isEmpty()) && language != null) {
-            return language.fileExtensions();
-        }
-        return submissionFileOptions.fileSuffixes() == null ? null : Collections.unmodifiableList(submissionFileOptions.fileSuffixes());
-    }
 
 }

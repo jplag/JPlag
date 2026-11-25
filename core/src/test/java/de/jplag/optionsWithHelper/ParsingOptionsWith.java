@@ -5,6 +5,8 @@ import de.jplag.options.JPlagOptions;
 import de.jplag.options.ParsingOptions;
 import de.jplag.options.SimilarityMetric;
 
+import java.util.List;
+
 public final class ParsingOptionsWith {
 
     private ParsingOptionsWith() {
@@ -16,6 +18,7 @@ public final class ParsingOptionsWith {
         return options.withParsingOptions(new ParsingOptions(
                 language,
                 p.minimumTokenMatch(),
+                p.fileSuffixes(),
                 p.debugParser(),
                 p.normalize(),
                 p.analyzeComments(),
@@ -28,6 +31,20 @@ public final class ParsingOptionsWith {
         return options.withParsingOptions(new ParsingOptions(
                 p.language(),
                 minimumTokenMatch,
+                p.fileSuffixes(),
+                p.debugParser(),
+                p.normalize(),
+                p.analyzeComments(),
+                p.similarityMetric(),
+                p.similarityThreshold()));
+    }
+
+    public static JPlagOptions fileSuffixes(JPlagOptions options, List<String> fileSuffixes) {
+        ParsingOptions p = options.parsingOptions();
+        return options.withParsingOptions(new ParsingOptions(
+                p.language(),
+                p.minimumTokenMatch(),
+                fileSuffixes,
                 p.debugParser(),
                 p.normalize(),
                 p.analyzeComments(),
@@ -40,6 +57,7 @@ public final class ParsingOptionsWith {
         return options.withParsingOptions(new ParsingOptions(
                 p.language(),
                 p.minimumTokenMatch(),
+                p.fileSuffixes(),
                 debugParser,
                 p.normalize(),
                 p.analyzeComments(),
@@ -52,6 +70,7 @@ public final class ParsingOptionsWith {
         return options.withParsingOptions(new ParsingOptions(
                 p.language(),
                 p.minimumTokenMatch(),
+                p.fileSuffixes(),
                 p.debugParser(),
                 normalize,
                 p.analyzeComments(),
@@ -64,6 +83,7 @@ public final class ParsingOptionsWith {
         return options.withParsingOptions(new ParsingOptions(
                 p.language(),
                 p.minimumTokenMatch(),
+                p.fileSuffixes(),
                 p.debugParser(),
                 p.normalize(),
                 analyzeComments,
@@ -76,6 +96,7 @@ public final class ParsingOptionsWith {
         return options.withParsingOptions(new ParsingOptions(
                 p.language(),
                 p.minimumTokenMatch(),
+                p.fileSuffixes(),
                 p.debugParser(),
                 p.normalize(),
                 p.analyzeComments(),
@@ -88,6 +109,7 @@ public final class ParsingOptionsWith {
         return options.withParsingOptions(new ParsingOptions(
                 p.language(),
                 p.minimumTokenMatch(),
+                p.fileSuffixes(),
                 p.debugParser(),
                 p.normalize(),
                 p.analyzeComments(),

@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import de.jplag.options.ParsingOptions;
 import org.slf4j.Logger;
@@ -246,14 +247,15 @@ public class Submission implements Comparable<Submission> {
     /* package-private */ boolean parse(ParsingOptions parsingOptions) throws LanguageException {
         this.language = parsingOptions.language();
         int minimalTokens = parsingOptions.minimumTokenMatch();
-        if (files == null || files.isEmpty()) {
+        Collection<Path> filesToParse = files == null ? null : files.stream().filter(file -> hasValidSuffix(parsingOptions, file)).collect(Collectors.toSet());
+        if (filesToParse == null || filesToParse.isEmpty()) {
             logger.error("Nothing to parse for submission \"{}\"", name);
             state = NOTHING_TO_PARSE;
             return false;
         }
 
         try {
-            tokenList = language.parse(new HashSet<>(files), parsingOptions.normalize());
+            tokenList = language.parse(new HashSet<>(filesToParse), parsingOptions.normalize());
         } catch (CriticalParsingException e) {
             throw new LanguageException(e.getMessage(), e.getCause());
         } catch (ParsingException e) {
@@ -352,5 +354,9 @@ public class Submission implements Comparable<Submission> {
             }
         }
         return fileTokenCount;
+    }
+
+    private static boolean hasValidSuffix(ParsingOptions parsingOptions, Path file) {
+        return parsingOptions.fileSuffixes().stream().anyMatch(suffix -> file.getFileName().toString().toLowerCase().endsWith(suffix.toLowerCase()));
     }
 }

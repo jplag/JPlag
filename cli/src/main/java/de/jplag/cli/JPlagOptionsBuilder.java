@@ -59,7 +59,6 @@ public class JPlagOptionsBuilder {
     private SubmissionFileOptions getSubmissionFileOptions() {
         Set<File> submissionDirectories = new HashSet<>(List.of(this.cliOptions.rootDirectory));
         Set<File> oldSubmissionDirectories = Set.of(this.cliOptions.oldDirectories);
-        List<String> suffixes = List.of(this.cliOptions.advanced.suffixes);
         submissionDirectories.addAll(List.of(this.cliOptions.newDirectories));
         String baseCodePath = this.cliOptions.baseCode;
         Path baseCodeDirectory = baseCodePath == null ? null : Path.of(baseCodePath);
@@ -68,15 +67,16 @@ public class JPlagOptionsBuilder {
                 mapCliSubmissionDirectoriesToPaths(oldSubmissionDirectories),
                 baseCodeDirectory,
                 this.cliOptions.advanced.subdirectory,
-                suffixes,
                 this.cliOptions.advanced.exclusionFileName
         );
     }
 
     private ParsingOptions getParsingOptions() throws CliException {
+        List<String> suffixes = List.of(this.cliOptions.advanced.suffixes);
         return new ParsingOptions(
                 this.cliInputHandler.getSelectedLanguage(),
                 this.cliOptions.minTokenMatch,
+                suffixes,
                 this.cliOptions.advanced.debug,
                 this.cliOptions.normalize,
                 this.cliOptions.advanced.analyzeComments,

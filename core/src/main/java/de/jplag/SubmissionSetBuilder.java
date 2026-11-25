@@ -154,7 +154,7 @@ public class SubmissionSetBuilder {
         if (isFileExcluded(baseCodeSubmissionDirectory)) { // Stating an excluded path as basecode isn't very useful.
             throw new BasecodeException("Exclude submission: " + baseCodeSubmissionDirectory.getFileName());
         }
-        if (Files.isRegularFile(baseCodeSubmissionDirectory) && !hasValidSuffix(baseCodeSubmissionDirectory)) {
+        if (Files.isRegularFile(baseCodeSubmissionDirectory)) {
             throw new BasecodeException("Ignore submission with invalid extension or suffix: " + baseCodeSubmissionDirectory.getFileName());
         }
 
@@ -214,8 +214,8 @@ public class SubmissionSetBuilder {
     private void processSubmissionFile(SubmissionFileData file, boolean multipleRoots, Map<Path, Submission> foundSubmissions) throws ExitException {
         if (isFileExcluded(file.submissionFile())) {
             logger.error("Exclude submission: {}", file.submissionFile().getFileName());
-        } else if (Files.isRegularFile(file.submissionFile()) && !hasValidSuffix(file.submissionFile())) {
-            logger.error("Ignore submission with invalid extension or suffix: {}", file.submissionFile().getFileName());
+        /*} else if (Files.isRegularFile(file.submissionFile()) && !hasValidSuffix(file.submissionFile())) {
+            logger.error("Ignore submission with invalid extension or suffix: {}", file.submissionFile().getFileName());*/
         } else {
             String rootDirectoryPrefix = multipleRoots ? file.rootDirectory().getFileName() + File.separator : "";
             String submissionName = rootDirectoryPrefix + file.submissionFile().getFileName();
@@ -229,7 +229,7 @@ public class SubmissionSetBuilder {
      * @param file is the file to check.
      * @return true if the file matches the file extension or suffix.
      */
-    private boolean hasValidSuffix(Path file) {
+    /*private boolean hasValidSuffix(Path file) {
         List<String> validSuffixes = submissionFileOptions.fileSuffixes();
 
         // This is the case if either the language modules or the CLI did not set the valid suffixes array in options
@@ -237,7 +237,7 @@ public class SubmissionSetBuilder {
             return true;
         }
         return validSuffixes.stream().anyMatch(suffix -> file.getFileName().toString().toLowerCase().endsWith(suffix.toLowerCase()));
-    }
+    }*/
 
     /**
      * Checks if a file is excluded or not.
@@ -259,7 +259,7 @@ public class SubmissionSetBuilder {
             return Collections.emptyList();
         }
 
-        if (Files.isRegularFile(file) && hasValidSuffix(file)) {
+        if (Files.isRegularFile(file)) {
             return Collections.singletonList(file);
         }
         try (Stream<Path> nestedFileNames = Files.list(file)) {

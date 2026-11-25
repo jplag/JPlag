@@ -61,7 +61,7 @@ class RegressionSuiteTest {
      * @throws ExitException If JPlag throws an error
      * @throws IOException If loading test resources fails
      */
-    //@TestFactory
+    @TestFactory
     Collection<DynamicContainer> regressionTestFactory() throws ExitException, IOException {
         File descriptorDirectory = TestDirectoryConstants.BASE_PATH_TO_DATA_SET_DESCRIPTORS.toFile();
         List<File> testDescriptorFiles = Arrays.asList(Objects.requireNonNull(descriptorDirectory.listFiles()));

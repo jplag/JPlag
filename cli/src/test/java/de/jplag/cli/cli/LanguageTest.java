@@ -49,14 +49,14 @@ class LanguageTest extends CliTest {
         JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.LANGUAGE, language.getIdentifier()));
 
         assertEquals(language.getIdentifier(), options.parsingOptions().language().getIdentifier());
-        assertEquals(language.fileExtensions(), options.fileSuffixes());
+        assertEquals(language.fileExtensions(), options.parsingOptions().fileSuffixes());
     }
 
     @Test
     void testCustomSuffixes() throws ExitException, IOException {
         String[] suffixes = {"x", "y", "z"};
         JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.SUFFIXES, suffixes));
-        assertEquals(List.of(suffixes), options.fileSuffixes());
+        assertEquals(List.of(suffixes), options.parsingOptions().fileSuffixes());
     }
 
     public static Collection<Language> getAllLanguages() {

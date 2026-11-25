@@ -20,11 +20,10 @@ import java.util.stream.Collectors;
  * @param baseCodeSubmissionDirectory Directory containing the base code.
  * @param subdirectoryName Example: If the subdirectoryName is 'src', only the code inside submissionDir/src of each
  * submission will be used for comparison.
- * @param fileSuffixes List of file extensions or custom suffixes that should be included.
  * @param exclusionFileName Name of the file that contains the names of files to exclude from comparison.
  */
 public record SubmissionFileOptions(Set<Path> submissionDirectories, Set<Path> oldSubmissionDirectories,
-                                    Path baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName) {
+                                    Path baseCodeSubmissionDirectory, String subdirectoryName, String exclusionFileName) {
 
     private static final Logger logger = LoggerFactory.getLogger(SubmissionFileOptions.class);
 
@@ -34,16 +33,14 @@ public record SubmissionFileOptions(Set<Path> submissionDirectories, Set<Path> o
      * @param oldSubmissionDirectories Directories of old submissions to compare against
      * @param baseCodeSubmissionDirectory Directory containing the base code submissions
      * @param subdirectoryName Subdirectory within submissions to restrict scanning
-     * @param fileSuffixes List of file suffixes to include in the comparison
      * @param exclusionFileName File name containing list of files to exclude
      */
     public SubmissionFileOptions(Set<Path> submissionDirectories, Set<Path> oldSubmissionDirectories,
-                                 Path baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName) {
+                                 Path baseCodeSubmissionDirectory, String subdirectoryName, String exclusionFileName) {
         this.submissionDirectories = submissionDirectories == null ? null : Collections.unmodifiableSet(submissionDirectories);
         this.oldSubmissionDirectories = oldSubmissionDirectories == null ? null : Collections.unmodifiableSet(oldSubmissionDirectories);
         this.baseCodeSubmissionDirectory = baseCodeSubmissionDirectory;
         this.subdirectoryName = subdirectoryName;
-        this.fileSuffixes = fileSuffixes == null || fileSuffixes.isEmpty() ? null : Collections.unmodifiableList(fileSuffixes);
         this.exclusionFileName = exclusionFileName;
     }
 
@@ -55,7 +52,7 @@ public record SubmissionFileOptions(Set<Path> submissionDirectories, Set<Path> o
      */
     public SubmissionFileOptions(Set<Path> submissionDirectories, Set<Path> oldSubmissionDirectories,
                                  Path baseCodeSubmissionDirectory) {
-        this(submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory, null, null, null);
+        this(submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory, null, null);
     }
 
     /**
