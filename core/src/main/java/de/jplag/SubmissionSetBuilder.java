@@ -225,21 +225,6 @@ public class SubmissionSetBuilder {
     }
 
     /**
-     * Checks if a file has a valid file extension for the current language or ends in a specified suffix.
-     * @param file is the file to check.
-     * @return true if the file matches the file extension or suffix.
-     */
-    /*private boolean hasValidSuffix(Path file) {
-        List<String> validSuffixes = submissionFileOptions.fileSuffixes();
-
-        // This is the case if either the language modules or the CLI did not set the valid suffixes array in options
-        if (validSuffixes == null || validSuffixes.isEmpty()) {
-            return true;
-        }
-        return validSuffixes.stream().anyMatch(suffix -> file.getFileName().toString().toLowerCase().endsWith(suffix.toLowerCase()));
-    }*/
-
-    /**
      * Checks if a file is excluded or not.
      */
     private boolean isFileExcluded(Path file) {
