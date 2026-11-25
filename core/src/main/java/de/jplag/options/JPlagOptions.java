@@ -17,6 +17,7 @@ import io.soabase.recordbuilder.core.RecordBuilder;
  * This record is a collection of the options used to configure {@link JPlag}.
  * @param submissionFileOptions are the options used to define which files JPlag reads as submissions.
  * @param parsingOptions are the options used to configure parsing and comparing the submissions.
+ * @param reportingOptions are the options used to configure how results are exported.
  * @param clusteringOptions are the options related to the grouping of similar comparisons.
  * @param mergingOptions are the options related to the subsequence match merging mechanism that opposed obfuscation.
  * @param frequencyAnalysisOptions are the options related to highlight extraction.
@@ -30,18 +31,22 @@ public record JPlagOptions(SubmissionFileOptions submissionFileOptions, ParsingO
     /** Default value for the error directory name. **/
     public static final String ERROR_FOLDER = "errors";
 
+    /**
+     * Constructs a {@link JPlagOptions} instance with minimal required parameters.
+     * @param submissionFileOptions The options used to define which files JPlag reads as submissions
+     * @param parsingOptions The options used to configure parsing and comparing the submissions
+     */
     public JPlagOptions(SubmissionFileOptions submissionFileOptions, ParsingOptions parsingOptions) {
         this(submissionFileOptions, parsingOptions, new ReportingOptions(), new ClusteringOptions(), new MergingOptions(), new FrequencyAnalysisOptions());
     }
 
     /**
-     * @deprecated
-     * @since 7.0.0
-     *
      * Constructs a {@link JPlagOptions} instance with minimal required parameters.
      * @param language The programming language for parsing submissions
      * @param submissionDirectories Directories containing new submissions to check
      * @param oldSubmissionDirectories Directories containing old submissions to check against
+     *
+     * @deprecated non split up constructor
      */
     @Deprecated(since = "7.0.0", forRemoval = true)
     public JPlagOptions(Language language, Set<Path> submissionDirectories, Set<Path> oldSubmissionDirectories) {
@@ -50,9 +55,6 @@ public record JPlagOptions(SubmissionFileOptions submissionFileOptions, ParsingO
     }
 
     /**
-     * @deprecated
-     * @since 7.0.0
-     *
      * Constructs a fully specified {@link JPlagOptions} instance.
      * @param language Language used for parsing submissions
      * @param minimumTokenMatch Minimum number of matching tokens to consider a match
@@ -71,6 +73,8 @@ public record JPlagOptions(SubmissionFileOptions submissionFileOptions, ParsingO
      * @param normalize Enables additional normalization mechanisms (language-dependent)
      * @param analyzeComments Whether to extract comments from submissions
      * @param frequencyAnalysisOptions Options related to highlight extraction
+     *
+     * @deprecated non split up constructor
      */
     @Deprecated(since = "7.0.0", forRemoval = true)
     public JPlagOptions(Language language, Integer minimumTokenMatch, Set<Path> submissionDirectories, Set<Path> oldSubmissionDirectories,
@@ -81,6 +85,10 @@ public record JPlagOptions(SubmissionFileOptions submissionFileOptions, ParsingO
         this(new SubmissionFileOptions(submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory, subdirectoryName, fileSuffixes, exclusionFileName), new ParsingOptions(language, minimumTokenMatch, debugParser, normalize, analyzeComments, similarityMetric, similarityThreshold), new ReportingOptions(maximumNumberOfComparisons), clusteringOptions, mergingOptions, frequencyAnalysisOptions);
     }
 
+    /**
+     * Calculates a list of file suffixes to use for submission files
+     * @return list of file suffixes
+     */
     public List<String> fileSuffixes() {
         var language = parsingOptions().language();
         if ((submissionFileOptions.fileSuffixes() == null || submissionFileOptions.fileSuffixes().isEmpty()) && language != null) {

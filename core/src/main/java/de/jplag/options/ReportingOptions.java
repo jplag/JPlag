@@ -12,10 +12,17 @@ public record ReportingOptions(int maximumNumberOfComparisons) {
     /** Constant that denotes that all comparisons are shown in the report viewer. **/
     public static final int SHOW_ALL_COMPARISONS = 0;
 
+    /**
+     * Constructs a fully specified {@link ReportingOptions} instance.
+     * @param maximumNumberOfComparisons Maximum number of comparisons to show in the report
+     */
     public ReportingOptions(int maximumNumberOfComparisons) {
         this.maximumNumberOfComparisons = normalizeMaximumNumberOfComparisons(maximumNumberOfComparisons);
     }
 
+    /**
+     * Creates a {@link ReportingOptions} instance with the default parameters.
+     */
     public ReportingOptions() {
         this(DEFAULT_SHOWN_COMPARISONS);
     }

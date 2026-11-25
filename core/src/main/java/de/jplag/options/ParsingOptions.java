@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Options used to parse and compare submissions
  *
  * @param language Language to use when parsing the submissions.
  * @param minimumTokenMatch Tunes the comparison sensitivity by adjusting the minimum token required to be counted as
@@ -29,6 +30,16 @@ public record ParsingOptions(Language language, Integer minimumTokenMatch, boole
 
     private static final Logger logger = LoggerFactory.getLogger(ParsingOptions.class);
 
+    /**
+     * Constructs a fully specified {@link ParsingOptions} instance.
+     * @param language Language used for parsing submissions
+     * @param minimumTokenMatch Minimum number of matching tokens to consider a match
+     * @param similarityMetric Metric to compute similarity threshold for comparisons
+     * @param similarityThreshold Threshold below which comparisons are ignored
+     * @param debugParser If true, stores unparsed submissions separately
+     * @param normalize Enables additional normalization mechanisms (language-dependent)
+     * @param analyzeComments Whether to extract comments from submissions
+     */
     public ParsingOptions(Language language, Integer minimumTokenMatch, boolean debugParser, boolean normalize, boolean analyzeComments,SimilarityMetric similarityMetric, double similarityThreshold) {
         this.language = language;
         this.minimumTokenMatch = normalizeMinimumTokenMatch(minimumTokenMatch);
@@ -39,6 +50,10 @@ public record ParsingOptions(Language language, Integer minimumTokenMatch, boole
         this.similarityThreshold = normalizeSimilarityThreshold(similarityThreshold);
     }
 
+    /**
+     * Constructs a {@link ParsingOptions} instance with minimal required parameters.
+     * @param language Language used for parsing submissions
+     */
     public ParsingOptions(Language language) {
         this(language, null, false, false, false, DEFAULT_SIMILARITY_METRIC, DEFAULT_SIMILARITY_THRESHOLD);
     }

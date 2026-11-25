@@ -28,6 +28,15 @@ public record SubmissionFileOptions(Set<Path> submissionDirectories, Set<Path> o
 
     private static final Logger logger = LoggerFactory.getLogger(SubmissionFileOptions.class);
 
+    /**
+     * Constructs a fully specified {@link SubmissionFileOptions} instance.
+     * @param submissionDirectories Directories of new submissions to check
+     * @param oldSubmissionDirectories Directories of old submissions to compare against
+     * @param baseCodeSubmissionDirectory Directory containing the base code submissions
+     * @param subdirectoryName Subdirectory within submissions to restrict scanning
+     * @param fileSuffixes List of file suffixes to include in the comparison
+     * @param exclusionFileName File name containing list of files to exclude
+     */
     public SubmissionFileOptions(Set<Path> submissionDirectories, Set<Path> oldSubmissionDirectories,
                                  Path baseCodeSubmissionDirectory, String subdirectoryName, List<String> fileSuffixes, String exclusionFileName) {
         this.submissionDirectories = submissionDirectories == null ? null : Collections.unmodifiableSet(submissionDirectories);
@@ -38,6 +47,12 @@ public record SubmissionFileOptions(Set<Path> submissionDirectories, Set<Path> o
         this.exclusionFileName = exclusionFileName;
     }
 
+    /**
+     * Creates a {@link SubmissionFileOptions} instance with only the directories.
+     * @param submissionDirectories Directories of new submissions to check
+     * @param oldSubmissionDirectories Directories of old submissions to compare against
+     * @param baseCodeSubmissionDirectory Directory containing the base code submissions
+     */
     public SubmissionFileOptions(Set<Path> submissionDirectories, Set<Path> oldSubmissionDirectories,
                                  Path baseCodeSubmissionDirectory) {
         this(submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory, null, null, null);

@@ -202,13 +202,14 @@ class MatchMergingTest extends TestBase {
         }
     }
 
-    //@Test
+    @Test
     @DisplayName("Test for the absence of cross file matches.")
     void testFileBoundaries() throws ExitException {
         MergingOptions mergingOptions = new MergingOptions(true, MINIMUM_NEIGHBOR_LENGTH, MAXIMUM_GAP_SIZE, MINIMUM_REQUIRED_MERGES);
         JPlagOptions customOptions = getDefaultOptions("crossFile").withMergingOptions(mergingOptions);
         SubmissionSetBuilder builder = new SubmissionSetBuilder(customOptions.submissionFileOptions());
         SubmissionSet submissions = builder.buildSubmissionSet();
+        submissions.parse(options.parsingOptions());
         submissionSet.parse(options.parsingOptions());
         LongestCommonSubsequenceSearch search = new LongestCommonSubsequenceSearch(customOptions);
         JPlagResult result = search.compareSubmissions(submissions);

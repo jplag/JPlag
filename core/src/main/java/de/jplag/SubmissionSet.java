@@ -53,7 +53,7 @@ public class SubmissionSet {
      * Creates a submissions set and parses all submissions.
      * @param submissions list of submissions to check for plagiarism.
      * @param baseCode Base code submission if it exists or {@code null}.
-     * @param options The JPlag options
+     * @param submissionFileOptions Configuration of the submission files
      * @throws ExitException if the submissions cannot be parsed.
      */
     public SubmissionSet(List<Submission> submissions, Submission baseCode, SubmissionFileOptions submissionFileOptions) throws ExitException {
