@@ -18,12 +18,12 @@ class ExcludeFileTest extends CliTest {
     @Test
     void testNoDefaultExcludeFile() throws IOException, ExitException {
         JPlagOptions options = runCliForOptions();
-        assertNull(options.exclusionFileName());
+        assertNull(options.submissionFileOptions().exclusionFileName());
     }
 
     @Test
     void testSetExcludeFile() throws IOException, ExitException {
         JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.EXCLUDE_FILES, EXCLUDE_FILE_NAME));
-        assertEquals(EXCLUDE_FILE_NAME, options.exclusionFileName());
+        assertEquals(EXCLUDE_FILE_NAME, options.submissionFileOptions().exclusionFileName());
     }
 }

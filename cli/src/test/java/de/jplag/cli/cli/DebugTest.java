@@ -16,12 +16,12 @@ class DebugTest extends CliTest {
     @Test
     void testDefaultDebug() throws IOException, ExitException {
         JPlagOptions options = runCliForOptions();
-        assertFalse(options.debugParser());
+        assertFalse(options.parsingOptions().debugParser());
     }
 
     @Test
     void testSetDebug() throws IOException, ExitException {
         JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.DEBUG, true));
-        assertTrue(options.debugParser());
+        assertTrue(options.parsingOptions().debugParser());
     }
 }

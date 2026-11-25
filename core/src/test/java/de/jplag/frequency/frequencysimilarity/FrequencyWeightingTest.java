@@ -60,8 +60,8 @@ class FrequencyWeightingTest extends TestBase {
         matchShort = new Match(match.startOfFirst(), match.startOfSecond(), 10, 10);
         List<Match> ignoredMatches = testComparison.ignoredMatches();
 
-        Submission first = new Submission("W", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(), options.language());
-        Submission second = new Submission("X", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(), options.language());
+        Submission first = new Submission("W", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles());
+        Submission second = new Submission("X", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles());
         first.setTokenList(testSubmission.getTokenList());
         second.setTokenList(testSubmission.getTokenList());
 
@@ -81,8 +81,9 @@ class FrequencyWeightingTest extends TestBase {
      * @throws ExitException if creating the submission set fails
      */
     private JPlagResult getJPlagResult(JPlagOptions options) throws ExitException {
-        SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
+        SubmissionSetBuilder builder = new SubmissionSetBuilder(options.submissionFileOptions());
         SubmissionSet submissionSet = builder.buildSubmissionSet();
+        submissionSet.parse(options.parsingOptions());
         return new LongestCommonSubsequenceSearch(options).compareSubmissions(submissionSet);
     }
 

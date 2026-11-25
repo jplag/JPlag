@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Set;
 
+import de.jplag.options.ParsingOptions;
+import de.jplag.options.SubmissionFileOptions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +33,7 @@ class ReadmeCodeExampleTest {
         Language language = new JavaLanguage();
         Set<Path> submissionDirectories = Set.of(Path.of("path", "to", "rootDir"));
         Path baseCode = Path.of("path", "to", "baseCode");
-        JPlagOptions options = new JPlagOptions(language, submissionDirectories, Set.of()).withBaseCodeSubmissionDirectory(baseCode);
+        JPlagOptions options = new JPlagOptions(new SubmissionFileOptions(submissionDirectories, Set.of(), baseCode), new ParsingOptions(language));
 
         try {
             JPlagResult result = JPlag.run(options);

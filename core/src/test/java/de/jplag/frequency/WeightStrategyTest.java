@@ -40,8 +40,9 @@ class WeightStrategyTest extends TestBase {
     @BeforeEach
     void prepareMatchResult() throws ExitException {
         JPlagOptions options = getDefaultOptions("PartialPlagiarism");
-        SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
+        SubmissionSetBuilder builder = new SubmissionSetBuilder(options.submissionFileOptions());
         SubmissionSet submissionSet = builder.buildSubmissionSet();
+        submissionSet.parse(options.parsingOptions());
         JPlagResult result = new LongestCommonSubsequenceSearch(options).compareSubmissions(submissionSet);
         comparison = result.getAllComparisons().getFirst();
         match = comparison.matches().getFirst();

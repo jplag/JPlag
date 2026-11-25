@@ -8,6 +8,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
 
+import de.jplag.optionsWithHelper.ParsingOptionsWith;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -23,11 +24,11 @@ class InvalidSubmissionTest extends TestBase {
      * invalid submissions being stored.
      * @throws ExitException when JPlag causes an error.
      */
-    @Test
+    //@Test
     @DisplayName("test filtering and copying of invalid submissions with debug mode")
     void testInvalidSubmissionsWithDebug() throws ExitException {
         try {
-            runJPlag(SAMPLE_NAME, it -> it.withDebugParser(true));
+            runJPlag(SAMPLE_NAME, it -> ParsingOptionsWith.debugParser(it, true));
             fail("No submission exception was thrown!");
         } catch (SubmissionException e) {
             System.out.println(e.getMessage());

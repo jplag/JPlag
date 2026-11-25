@@ -32,8 +32,9 @@ class FrequencyAnalysisTest extends TestBase {
     @BeforeEach
     void setUp() throws ExitException {
         JPlagOptions options = getDefaultOptions("PartialPlagiarism");
-        SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
+        SubmissionSetBuilder builder = new SubmissionSetBuilder(options.submissionFileOptions());
         SubmissionSet submissionSet = builder.buildSubmissionSet();
+        submissionSet.parse(options.parsingOptions());
         rawResult = new LongestCommonSubsequenceSearch(options).compareSubmissions(submissionSet);
     }
 

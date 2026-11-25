@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Set;
 
 import de.jplag.options.JPlagOptions;
+import de.jplag.options.ParsingOptions;
+import de.jplag.options.SubmissionFileOptions;
 
 /**
  * A run configuration for the regression tests.
@@ -26,12 +28,14 @@ public record DatasetRunConfiguration(JPlagOptions jPlagOptions, String identifi
         List<DatasetRunConfiguration> result = new ArrayList<>();
 
         for (int minimumTokenMatch : configuredOptions.getMinimumTokenMatches()) {
-            JPlagOptions options = new JPlagOptions(dataset.language(), dataset.getSourceDirectories(), Set.of());
-            options = options.withParsingOptions(options.parsingOptions().withMinimumTokenMatch(minimumTokenMatch));
+            Path baseCode = null;
             if (configuredOptions.baseCodeDirectory() != null) {
-                Path baseCode = dataset.format().getBaseCodeDirectory(dataset, configuredOptions.baseCodeDirectory());
-                options = options.withSubmissionFileOptions(options.submissionFileOptions().withBaseCodeSubmissionDirectory(baseCode));
+                baseCode = dataset.format().getBaseCodeDirectory(dataset, configuredOptions.baseCodeDirectory());
             }
+            JPlagOptions options = new JPlagOptions(
+                    new SubmissionFileOptions(dataset.getSourceDirectories(), Set.of(), baseCode),
+                    new ParsingOptions(dataset.language(), minimumTokenMatch, false, false, false, ParsingOptions.DEFAULT_SIMILARITY_METRIC, ParsingOptions.DEFAULT_SIMILARITY_THRESHOLD)
+            );
             result.add(new DatasetRunConfiguration(options, String.format(IDENTIFIER_FORMAT, minimumTokenMatch)));
         }
 

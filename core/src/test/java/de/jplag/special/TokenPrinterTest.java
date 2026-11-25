@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.function.Function;
 
+import de.jplag.optionsWithHelper.ParsingOptionsWith;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +29,7 @@ class TokenPrinterTest extends TestBase {
     @Disabled("Not a meaningful test, used for designing the token set. Can be implemented for other languages.")
     @Test
     void printJavaFiles() {
-        printSubmissions(options -> options.withMinimumTokenMatch(MIN_TOKEN_MATCH));
+        printSubmissions(options -> ParsingOptionsWith.minimumTokenMatch(options, MIN_TOKEN_MATCH));
     }
 
     private void printSubmissions(Function<JPlagOptions, JPlagOptions> optionsCustomization) {

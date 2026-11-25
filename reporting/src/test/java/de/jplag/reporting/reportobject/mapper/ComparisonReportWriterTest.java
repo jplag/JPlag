@@ -4,6 +4,8 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.Set;
 
+import de.jplag.options.ParsingOptions;
+import de.jplag.options.SubmissionFileOptions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +26,9 @@ class ComparisonReportWriterTest {
     @Test
     void firsLevelOfLookupMapComplete() throws ExitException {
         Path submissionDir = BASE_PATH.resolve("PartialPlagiarism");
-        JPlagResult result = JPlag.run(new JPlagOptions(new JavaLanguage(), Set.of(submissionDir), Set.of()));
+        JPlagResult result = JPlag.run(new JPlagOptions(
+                new SubmissionFileOptions(Set.of(submissionDir), Set.of(), null),
+                new ParsingOptions(new JavaLanguage())));
         var mapper = new ComparisonReportWriter(Submission::getName, fileWriter);
 
         Map<String, Map<String, String>> stringMapMap = mapper.writeComparisonReports(result);
@@ -35,7 +39,9 @@ class ComparisonReportWriterTest {
     @Test
     void secondLevelOfLookupMapComplete() throws ExitException {
         Path submissionDir = BASE_PATH.resolve("PartialPlagiarism");
-        JPlagResult result = JPlag.run(new JPlagOptions(new JavaLanguage(), Set.of(submissionDir), Set.of()));
+        JPlagResult result = JPlag.run(new JPlagOptions(
+                new SubmissionFileOptions(Set.of(submissionDir), Set.of(), null),
+                new ParsingOptions(new JavaLanguage())));
         var mapper = new ComparisonReportWriter(Submission::getName, fileWriter);
 
         Map<String, Map<String, String>> stringMapMap = mapper.writeComparisonReports(result);

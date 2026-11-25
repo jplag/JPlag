@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Map;
 
+import de.jplag.options.ReportingOptions;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -119,7 +120,9 @@ class ReportTokenPositionTestTest {
 
     JPlagOptions createMockOptions() {
         JPlagOptions options = mock(JPlagOptions.class);
-        when(options.maximumNumberOfComparisons()).thenReturn(1);
+        ReportingOptions reportingOptions = mock(ReportingOptions.class);
+        when(reportingOptions.maximumNumberOfComparisons()).thenReturn(1);
+        when(options.reportingOptions()).thenReturn(reportingOptions);
         return options;
     }
 

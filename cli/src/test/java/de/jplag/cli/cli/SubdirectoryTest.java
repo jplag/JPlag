@@ -18,12 +18,12 @@ class SubdirectoryTest extends CliTest {
     @Test
     void testDefaultSubdirectory() throws IOException, ExitException {
         JPlagOptions options = runCliForOptions();
-        assertNull(options.subdirectoryName());
+        assertNull(options.submissionFileOptions().subdirectoryName());
     }
 
     @Test
     void testSetSubdirectory() throws IOException, ExitException {
         JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.SUBDIRECTORY, TEST_SUBDIRECTORY));
-        assertEquals(TEST_SUBDIRECTORY, options.subdirectoryName());
+        assertEquals(TEST_SUBDIRECTORY, options.submissionFileOptions().subdirectoryName());
     }
 }

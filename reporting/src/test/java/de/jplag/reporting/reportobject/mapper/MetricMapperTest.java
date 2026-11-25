@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import de.jplag.options.ReportingOptions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -97,7 +98,7 @@ class MetricMapperTest {
                 .calculateDistributionFor(SimilarityMetric.WEIGHTED_SIMILARITY);
 
         JPlagOptions options = mock(JPlagOptions.class);
-        doReturn(createComparisonsDto.length).when(options).maximumNumberOfComparisons();
+        doReturn(new ReportingOptions(createComparisonsDto.length)).when(options).reportingOptions();
         doReturn(options).when(jPlagResult).getOptions();
 
         List<JPlagComparison> comparisonList = new ArrayList<>();

@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 
+import de.jplag.options.JPlagOptions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +13,6 @@ import de.jplag.cli.CliException;
 import de.jplag.cli.test.CliArgument;
 import de.jplag.cli.test.CliTest;
 import de.jplag.exceptions.ExitException;
-import de.jplag.options.JPlagOptions;
 
 class MinTokenMatchTest extends CliTest {
 
@@ -21,8 +21,8 @@ class MinTokenMatchTest extends CliTest {
         // Language defaults not set yet:
         JPlagOptions options = runCliForOptions();
 
-        assertNotNull(options.language());
-        assertEquals(options.language().minimumTokenMatch(), options.minimumTokenMatch().intValue());
+        assertNotNull(options.parsingOptions().language());
+        assertEquals(options.parsingOptions().language().minimumTokenMatch(), options.parsingOptions().minimumTokenMatch().intValue());
     }
 
     @Test
@@ -44,13 +44,13 @@ class MinTokenMatchTest extends CliTest {
     @Test
     void testLowerBound() throws ExitException, IOException {
         JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.MIN_TOKEN_MATCH, -1));
-        assertEquals(1, options.minimumTokenMatch().intValue());
+        assertEquals(1, options.parsingOptions().minimumTokenMatch().intValue());
     }
 
     @Test
     void testValidThreshold() throws ExitException, IOException {
         int expectedValue = 50;
         JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.MIN_TOKEN_MATCH, expectedValue));
-        assertEquals(expectedValue, options.minimumTokenMatch().intValue());
+        assertEquals(expectedValue, options.parsingOptions().minimumTokenMatch().intValue());
     }
 }

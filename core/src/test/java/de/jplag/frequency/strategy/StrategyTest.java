@@ -69,8 +69,9 @@ class StrategyTest extends TestBase {
      * @throws ExitException submission set builder can throw this exception
      */
     private JPlagResult getJPlagResult(JPlagOptions options) throws ExitException {
-        SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
+        SubmissionSetBuilder builder = new SubmissionSetBuilder(options.submissionFileOptions());
         SubmissionSet submissionSet = builder.buildSubmissionSet();
+        submissionSet.parse(options.parsingOptions());
         LongestCommonSubsequenceSearch subsequenceSearch = new LongestCommonSubsequenceSearch(options);
         return subsequenceSearch.compareSubmissions(submissionSet);
     }
@@ -107,14 +108,10 @@ class StrategyTest extends TestBase {
      * @return multiple submissions with the same data but different names for testing
      */
     private static TestSubmissions getTestSubmissions(JPlagOptions options) {
-        Submission testSubmissionW = new Submission("W", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(),
-                options.language());
-        Submission testSubmissionX = new Submission("X", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(),
-                options.language());
-        Submission testSubmissionY = new Submission("Y", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(),
-                options.language());
-        Submission testSubmissionZ = new Submission("Z", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles(),
-                options.language());
+        Submission testSubmissionW = new Submission("W", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles());
+        Submission testSubmissionX = new Submission("X", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles());
+        Submission testSubmissionY = new Submission("Y", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles());
+        Submission testSubmissionZ = new Submission("Z", testSubmission.getRoot(), testSubmission.isNew(), testSubmission.getFiles());
 
         testSubmissionW.setTokenList(testSubmission.getTokenList());
         testSubmissionX.setTokenList(testSubmission.getTokenList());

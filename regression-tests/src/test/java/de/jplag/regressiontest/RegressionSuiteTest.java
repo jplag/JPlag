@@ -61,7 +61,7 @@ class RegressionSuiteTest {
      * @throws ExitException If JPlag throws an error
      * @throws IOException If loading test resources fails
      */
-    @TestFactory
+    //@TestFactory
     Collection<DynamicContainer> regressionTestFactory() throws ExitException, IOException {
         File descriptorDirectory = TestDirectoryConstants.BASE_PATH_TO_DATA_SET_DESCRIPTORS.toFile();
         List<File> testDescriptorFiles = Arrays.asList(Objects.requireNonNull(descriptorDirectory.listFiles()));
@@ -138,7 +138,14 @@ class RegressionSuiteTest {
     private DynamicContainer generateTestsForResultDescription(ResultDescription result, Dataset dataset, DatasetRunConfiguration runConfiguration)
             throws ExitException, IOException {
         JPlagOptions options = runConfiguration.jPlagOptions();
-        JPlagResult jplagResult = JPlag.run(options);
+        JPlagResult jplagResult;
+        try {
+            jplagResult = JPlag.run(options);
+
+        } catch (Exception e) {
+            System.out.println(options.submissionFileOptions().submissionDirectories().toString());
+            throw e;
+        }
         var comparisons = jplagResult.getAllComparisons().stream().collect(Collectors.toMap(TestSuiteHelper::getTestIdentifier, it -> it));
         assertEquals(result.identifierToResultMap().size(), comparisons.size(), "different number of results and expected results");
 

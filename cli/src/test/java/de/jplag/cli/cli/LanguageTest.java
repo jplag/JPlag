@@ -27,7 +27,7 @@ class LanguageTest extends CliTest {
     @Test
     void testDefaultLanguage() throws ExitException, IOException {
         JPlagOptions options = runCliForOptions();
-        assertEquals(CliOptions.defaultLanguage.getIdentifier(), options.language().getIdentifier());
+        assertEquals(CliOptions.defaultLanguage.getIdentifier(), options.parsingOptions().language().getIdentifier());
     }
 
     @Test
@@ -48,7 +48,7 @@ class LanguageTest extends CliTest {
     void testValidLanguages(Language language) throws ExitException, IOException {
         JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.LANGUAGE, language.getIdentifier()));
 
-        assertEquals(language.getIdentifier(), options.language().getIdentifier());
+        assertEquals(language.getIdentifier(), options.parsingOptions().language().getIdentifier());
         assertEquals(language.fileExtensions(), options.fileSuffixes());
     }
 

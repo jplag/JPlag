@@ -30,6 +30,10 @@ public record JPlagOptions(SubmissionFileOptions submissionFileOptions, ParsingO
     /** Default value for the error directory name. **/
     public static final String ERROR_FOLDER = "errors";
 
+    public JPlagOptions(SubmissionFileOptions submissionFileOptions, ParsingOptions parsingOptions) {
+        this(submissionFileOptions, parsingOptions, new ReportingOptions(), new ClusteringOptions(), new MergingOptions(), new FrequencyAnalysisOptions());
+    }
+
     /**
      * @deprecated
      * @since 7.0.0
