@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.function.Function;
 
-import de.jplag.optionsWithHelper.ParsingOptionsWith;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +13,7 @@ import de.jplag.TestBase;
 import de.jplag.TokenPrinterUtils;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
+import de.jplag.optionsWithHelper.ParsingOptionsWith;
 
 /**
  * Special test case the does not really test anything but prints the tokens and the corresponding line of code.

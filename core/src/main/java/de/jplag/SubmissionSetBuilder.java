@@ -16,7 +16,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import de.jplag.options.SubmissionFileOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +26,7 @@ import de.jplag.exceptions.SubmissionException;
 import de.jplag.logging.ProgressBar;
 import de.jplag.logging.ProgressBarLogger;
 import de.jplag.logging.ProgressBarType;
-import de.jplag.options.JPlagOptions;
+import de.jplag.options.SubmissionFileOptions;
 
 /**
  * This class is responsible for the creation of a {@link SubmissionSet}. It processes multiple root directories of
@@ -198,12 +197,13 @@ public class SubmissionSetBuilder {
             file = file.resolve(submissionFileOptions.subdirectoryName());
 
             if (!Files.exists(file)) {
-                throw new SubmissionException(
-                        String.format("Submission %s does not contain the given subdirectory '%s'", submissionName, submissionFileOptions.subdirectoryName()));
+                throw new SubmissionException(String.format("Submission %s does not contain the given subdirectory '%s'", submissionName,
+                        submissionFileOptions.subdirectoryName()));
             }
 
             if (!Files.isDirectory(file)) {
-                throw new SubmissionException(String.format("The given subdirectory '%s' is not a directory!", submissionFileOptions.subdirectoryName()));
+                throw new SubmissionException(
+                        String.format("The given subdirectory '%s' is not a directory!", submissionFileOptions.subdirectoryName()));
             }
         }
 
@@ -214,8 +214,10 @@ public class SubmissionSetBuilder {
     private void processSubmissionFile(SubmissionFileData file, boolean multipleRoots, Map<Path, Submission> foundSubmissions) throws ExitException {
         if (isFileExcluded(file.submissionFile())) {
             logger.error("Exclude submission: {}", file.submissionFile().getFileName());
-        /*} else if (Files.isRegularFile(file.submissionFile()) && !hasValidSuffix(file.submissionFile())) {
-            logger.error("Ignore submission with invalid extension or suffix: {}", file.submissionFile().getFileName());*/
+            /*
+             * } else if (Files.isRegularFile(file.submissionFile()) && !hasValidSuffix(file.submissionFile())) {
+             * logger.error("Ignore submission with invalid extension or suffix: {}", file.submissionFile().getFileName());
+             */
         } else {
             String rootDirectoryPrefix = multipleRoots ? file.rootDirectory().getFileName() + File.separator : "";
             String submissionName = rootDirectoryPrefix + file.submissionFile().getFileName();

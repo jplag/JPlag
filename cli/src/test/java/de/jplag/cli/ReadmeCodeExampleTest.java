@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Set;
 
-import de.jplag.options.ParsingOptions;
-import de.jplag.options.SubmissionFileOptions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -15,6 +13,8 @@ import de.jplag.Language;
 import de.jplag.exceptions.ExitException;
 import de.jplag.java.JavaLanguage;
 import de.jplag.options.JPlagOptions;
+import de.jplag.options.ParsingOptions;
+import de.jplag.options.SubmissionFileOptions;
 import de.jplag.reporting.reportobject.ReportObjectFactory;
 
 /**

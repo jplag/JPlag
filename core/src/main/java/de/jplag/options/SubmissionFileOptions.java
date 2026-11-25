@@ -1,17 +1,17 @@
 package de.jplag.options;
 
-import de.jplag.util.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.jplag.util.FileUtils;
 
 /**
  * Options for configuring which files JPlag loads and how it treats them.
@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
  * submission will be used for comparison.
  * @param exclusionFileName Name of the file that contains the names of files to exclude from comparison.
  */
-public record SubmissionFileOptions(Set<Path> submissionDirectories, Set<Path> oldSubmissionDirectories,
-                                    Path baseCodeSubmissionDirectory, String subdirectoryName, String exclusionFileName) {
+public record SubmissionFileOptions(Set<Path> submissionDirectories, Set<Path> oldSubmissionDirectories, Path baseCodeSubmissionDirectory,
+        String subdirectoryName, String exclusionFileName) {
 
     private static final Logger logger = LoggerFactory.getLogger(SubmissionFileOptions.class);
 
@@ -35,8 +35,8 @@ public record SubmissionFileOptions(Set<Path> submissionDirectories, Set<Path> o
      * @param subdirectoryName Subdirectory within submissions to restrict scanning
      * @param exclusionFileName File name containing list of files to exclude
      */
-    public SubmissionFileOptions(Set<Path> submissionDirectories, Set<Path> oldSubmissionDirectories,
-                                 Path baseCodeSubmissionDirectory, String subdirectoryName, String exclusionFileName) {
+    public SubmissionFileOptions(Set<Path> submissionDirectories, Set<Path> oldSubmissionDirectories, Path baseCodeSubmissionDirectory,
+            String subdirectoryName, String exclusionFileName) {
         this.submissionDirectories = submissionDirectories == null ? null : Collections.unmodifiableSet(submissionDirectories);
         this.oldSubmissionDirectories = oldSubmissionDirectories == null ? null : Collections.unmodifiableSet(oldSubmissionDirectories);
         this.baseCodeSubmissionDirectory = baseCodeSubmissionDirectory;
@@ -50,8 +50,7 @@ public record SubmissionFileOptions(Set<Path> submissionDirectories, Set<Path> o
      * @param oldSubmissionDirectories Directories of old submissions to compare against
      * @param baseCodeSubmissionDirectory Directory containing the base code submissions
      */
-    public SubmissionFileOptions(Set<Path> submissionDirectories, Set<Path> oldSubmissionDirectories,
-                                 Path baseCodeSubmissionDirectory) {
+    public SubmissionFileOptions(Set<Path> submissionDirectories, Set<Path> oldSubmissionDirectories, Path baseCodeSubmissionDirectory) {
         this(submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory, null, null);
     }
 

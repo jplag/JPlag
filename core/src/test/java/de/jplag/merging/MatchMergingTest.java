@@ -11,7 +11,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 
-import de.jplag.optionsWithHelper.ParsingOptionsWith;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,6 +30,7 @@ import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ComparisonException;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
+import de.jplag.optionsWithHelper.ParsingOptionsWith;
 
 /**
  * Tests for the subsequence match merging mechanism implemented in {@link MatchMerging}.

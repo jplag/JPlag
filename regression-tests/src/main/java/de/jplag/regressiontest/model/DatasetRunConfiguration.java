@@ -32,10 +32,9 @@ public record DatasetRunConfiguration(JPlagOptions jPlagOptions, String identifi
             if (configuredOptions.baseCodeDirectory() != null) {
                 baseCode = dataset.format().getBaseCodeDirectory(dataset, configuredOptions.baseCodeDirectory());
             }
-            JPlagOptions options = new JPlagOptions(
-                    new SubmissionFileOptions(dataset.getSourceDirectories(), Set.of(), baseCode),
-                    new ParsingOptions(dataset.language(), minimumTokenMatch, null, false, false, false, ParsingOptions.DEFAULT_SIMILARITY_METRIC, ParsingOptions.DEFAULT_SIMILARITY_THRESHOLD)
-            );
+            JPlagOptions options = new JPlagOptions(new SubmissionFileOptions(dataset.getSourceDirectories(), Set.of(), baseCode),
+                    new ParsingOptions(dataset.language(), minimumTokenMatch, null, false, false, false, ParsingOptions.DEFAULT_SIMILARITY_METRIC,
+                            ParsingOptions.DEFAULT_SIMILARITY_THRESHOLD));
             result.add(new DatasetRunConfiguration(options, String.format(IDENTIFIER_FORMAT, minimumTokenMatch)));
         }
 

@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Map;
 
-import de.jplag.options.ReportingOptions;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -20,6 +19,7 @@ import de.jplag.Match;
 import de.jplag.Submission;
 import de.jplag.Token;
 import de.jplag.options.JPlagOptions;
+import de.jplag.options.ReportingOptions;
 import de.jplag.reporting.reportobject.model.BaseCodeMatch;
 import de.jplag.reporting.reportobject.model.CodePosition;
 import de.jplag.reporting.reportobject.model.ComparisonReport;

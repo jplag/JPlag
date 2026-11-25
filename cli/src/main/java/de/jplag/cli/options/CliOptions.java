@@ -4,9 +4,6 @@ import java.io.File;
 import java.net.InetAddress;
 import java.nio.charset.Charset;
 
-import de.jplag.options.ParsingOptions;
-import de.jplag.options.ReportingOptions;
-import org.apache.regexp.RE;
 import org.slf4j.event.Level;
 
 import de.jplag.Language;
@@ -16,7 +13,8 @@ import de.jplag.clustering.algorithm.InterClusterSimilarity;
 import de.jplag.frequency.FrequencyAnalysisOptions;
 import de.jplag.java.JavaLanguage;
 import de.jplag.merging.MergingOptions;
-import de.jplag.options.JPlagOptions;
+import de.jplag.options.ParsingOptions;
+import de.jplag.options.ReportingOptions;
 import de.jplag.options.SimilarityMetric;
 
 import picocli.CommandLine;

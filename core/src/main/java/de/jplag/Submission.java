@@ -22,7 +22,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import de.jplag.options.ParsingOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +31,7 @@ import de.jplag.commentextraction.CommentExtractorSettings;
 import de.jplag.exceptions.LanguageException;
 import de.jplag.normalization.TokenSequenceNormalizer;
 import de.jplag.options.JPlagOptions;
+import de.jplag.options.ParsingOptions;
 
 /**
  * This class represents a single submission, which is either a single file or a directory containing multiple files. It
@@ -247,7 +247,8 @@ public class Submission implements Comparable<Submission> {
     /* package-private */ boolean parse(ParsingOptions parsingOptions) throws LanguageException {
         this.language = parsingOptions.language();
         int minimalTokens = parsingOptions.minimumTokenMatch();
-        Collection<Path> filesToParse = files == null ? null : files.stream().filter(file -> hasValidSuffix(parsingOptions, file)).collect(Collectors.toSet());
+        Collection<Path> filesToParse = files == null ? null
+                : files.stream().filter(file -> hasValidSuffix(parsingOptions, file)).collect(Collectors.toSet());
         if (filesToParse == null || filesToParse.isEmpty()) {
             logger.error("Nothing to parse for submission \"{}\"", name);
             state = NOTHING_TO_PARSE;

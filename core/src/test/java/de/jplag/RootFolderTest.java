@@ -6,14 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.nio.file.Path;
 import java.util.List;
 
-import de.jplag.options.SubmissionFileOptions;
-import de.jplag.optionsWithHelper.ParsingOptionsWith;
-import de.jplag.optionsWithHelper.SubmissionFileOptionsWith;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.RootDirectoryException;
+import de.jplag.optionsWithHelper.SubmissionFileOptionsWith;
 
 /**
  * Test class for the multi-root feature and the old-new feature.

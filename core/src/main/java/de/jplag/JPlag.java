@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import de.jplag.options.SubmissionFileOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +19,7 @@ import de.jplag.exceptions.SubmissionException;
 import de.jplag.frequency.FrequencyAnalysis;
 import de.jplag.merging.MatchMerging;
 import de.jplag.options.JPlagOptions;
+import de.jplag.options.SubmissionFileOptions;
 
 /**
  * Main class for JPlag. Manages the whole source code plagiarism detection pipeline. Provides methods to run
@@ -85,7 +85,8 @@ public class JPlag {
 
         LongestCommonSubsequenceSearch comparisonStrategy = new LongestCommonSubsequenceSearch(options);
 
-        if (options.parsingOptions().normalize() && options.parsingOptions().language().supportsNormalization() && options.parsingOptions().language().requiresCoreNormalization()) {
+        if (options.parsingOptions().normalize() && options.parsingOptions().language().supportsNormalization()
+                && options.parsingOptions().language().requiresCoreNormalization()) {
             submissionSet.normalizeSubmissions();
         }
         int submissionCount = submissionSet.numberOfSubmissions();

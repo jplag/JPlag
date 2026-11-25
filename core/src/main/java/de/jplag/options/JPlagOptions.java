@@ -1,7 +1,6 @@
 package de.jplag.options;
 
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -24,9 +23,8 @@ import io.soabase.recordbuilder.core.RecordBuilder;
  */
 @RecordBuilder()
 public record JPlagOptions(SubmissionFileOptions submissionFileOptions, ParsingOptions parsingOptions, ReportingOptions reportingOptions,
-        ClusteringOptions clusteringOptions,
-        MergingOptions mergingOptions,
-        FrequencyAnalysisOptions frequencyAnalysisOptions) implements JPlagOptionsBuilder.With {
+        ClusteringOptions clusteringOptions, MergingOptions mergingOptions, FrequencyAnalysisOptions frequencyAnalysisOptions)
+        implements JPlagOptionsBuilder.With {
 
     /** Default value for the error directory name. **/
     public static final String ERROR_FOLDER = "errors";
@@ -37,7 +35,8 @@ public record JPlagOptions(SubmissionFileOptions submissionFileOptions, ParsingO
      * @param parsingOptions The options used to configure parsing and comparing the submissions
      */
     public JPlagOptions(SubmissionFileOptions submissionFileOptions, ParsingOptions parsingOptions) {
-        this(submissionFileOptions, parsingOptions, new ReportingOptions(), new ClusteringOptions(), new MergingOptions(), new FrequencyAnalysisOptions());
+        this(submissionFileOptions, parsingOptions, new ReportingOptions(), new ClusteringOptions(), new MergingOptions(),
+                new FrequencyAnalysisOptions());
     }
 
     /**
@@ -45,13 +44,12 @@ public record JPlagOptions(SubmissionFileOptions submissionFileOptions, ParsingO
      * @param language The programming language for parsing submissions
      * @param submissionDirectories Directories containing new submissions to check
      * @param oldSubmissionDirectories Directories containing old submissions to check against
-     *
      * @deprecated non split up constructor
      */
     @Deprecated(since = "7.0.0", forRemoval = true)
     public JPlagOptions(Language language, Set<Path> submissionDirectories, Set<Path> oldSubmissionDirectories) {
-        this(new SubmissionFileOptions(submissionDirectories, oldSubmissionDirectories, null),
-                new ParsingOptions(language), new ReportingOptions(),  new ClusteringOptions(), new MergingOptions(), new FrequencyAnalysisOptions());
+        this(new SubmissionFileOptions(submissionDirectories, oldSubmissionDirectories, null), new ParsingOptions(language), new ReportingOptions(),
+                new ClusteringOptions(), new MergingOptions(), new FrequencyAnalysisOptions());
     }
 
     /**
@@ -73,7 +71,6 @@ public record JPlagOptions(SubmissionFileOptions submissionFileOptions, ParsingO
      * @param normalize Enables additional normalization mechanisms (language-dependent)
      * @param analyzeComments Whether to extract comments from submissions
      * @param frequencyAnalysisOptions Options related to highlight extraction
-     *
      * @deprecated non split up constructor
      */
     @Deprecated(since = "7.0.0", forRemoval = true)
@@ -82,8 +79,11 @@ public record JPlagOptions(SubmissionFileOptions submissionFileOptions, ParsingO
             SimilarityMetric similarityMetric, double similarityThreshold, int maximumNumberOfComparisons, ClusteringOptions clusteringOptions,
             boolean debugParser, MergingOptions mergingOptions, boolean normalize, boolean analyzeComments,
             FrequencyAnalysisOptions frequencyAnalysisOptions) {
-        this(new SubmissionFileOptions(submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory, subdirectoryName, exclusionFileName), new ParsingOptions(language, minimumTokenMatch, fileSuffixes, debugParser, normalize, analyzeComments, similarityMetric, similarityThreshold), new ReportingOptions(maximumNumberOfComparisons), clusteringOptions, mergingOptions, frequencyAnalysisOptions);
+        this(new SubmissionFileOptions(submissionDirectories, oldSubmissionDirectories, baseCodeSubmissionDirectory, subdirectoryName,
+                exclusionFileName),
+                new ParsingOptions(language, minimumTokenMatch, fileSuffixes, debugParser, normalize, analyzeComments, similarityMetric,
+                        similarityThreshold),
+                new ReportingOptions(maximumNumberOfComparisons), clusteringOptions, mergingOptions, frequencyAnalysisOptions);
     }
-
 
 }

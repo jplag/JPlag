@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 
-import de.jplag.options.JPlagOptions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -13,6 +12,7 @@ import de.jplag.cli.CliException;
 import de.jplag.cli.test.CliArgument;
 import de.jplag.cli.test.CliTest;
 import de.jplag.exceptions.ExitException;
+import de.jplag.options.JPlagOptions;
 
 class MinTokenMatchTest extends CliTest {
 

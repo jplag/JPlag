@@ -9,8 +9,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
 
-import de.jplag.options.ParsingOptions;
-import de.jplag.options.SubmissionFileOptions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -20,6 +18,8 @@ import de.jplag.Version;
 import de.jplag.exceptions.ExitException;
 import de.jplag.java.JavaLanguage;
 import de.jplag.options.JPlagOptions;
+import de.jplag.options.ParsingOptions;
+import de.jplag.options.SubmissionFileOptions;
 
 class ReportObjectFactoryTest {
     protected static final Path BASE_PATH = Path.of("..", "core", "src", "test", "resources", "de", "jplag", "samples");
@@ -37,8 +37,7 @@ class ReportObjectFactoryTest {
         Path submissionDir = BASE_PATH.resolve(BASECODE);
         Path basecodeDir = BASE_PATH.resolve(BASECODE_BASE);
 
-        JPlagOptions options = new JPlagOptions(
-                new SubmissionFileOptions(Set.of(submissionDir), Set.of(), basecodeDir),
+        JPlagOptions options = new JPlagOptions(new SubmissionFileOptions(Set.of(submissionDir), Set.of(), basecodeDir),
                 new ParsingOptions(new JavaLanguage()));
         JPlagResult result = JPlag.run(options);
         Path testResult = Files.createTempFile("result", ".jplag");

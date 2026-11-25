@@ -1,7 +1,6 @@
 package de.jplag.cli;
 
 import java.io.File;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashSet;
@@ -9,9 +8,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import de.jplag.options.ParsingOptions;
-import de.jplag.options.ReportingOptions;
-import de.jplag.options.SubmissionFileOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +18,9 @@ import de.jplag.clustering.Preprocessing;
 import de.jplag.frequency.FrequencyAnalysisOptions;
 import de.jplag.merging.MergingOptions;
 import de.jplag.options.JPlagOptions;
+import de.jplag.options.ParsingOptions;
+import de.jplag.options.ReportingOptions;
+import de.jplag.options.SubmissionFileOptions;
 
 /**
  * Handles the building of JPlag options from the cli options.
@@ -46,14 +45,8 @@ public class JPlagOptionsBuilder {
      * @throws CliException If the input handler could properly parse everything.
      */
     public JPlagOptions buildOptions() throws CliException {
-        return new JPlagOptions(
-                getSubmissionFileOptions(),
-                getParsingOptions(),
-                getReportingOptions(),
-                getClusteringOptions(),
-                getMergingOptions(),
-                getFrequencyAnalysisOptions()
-        );
+        return new JPlagOptions(getSubmissionFileOptions(), getParsingOptions(), getReportingOptions(), getClusteringOptions(), getMergingOptions(),
+                getFrequencyAnalysisOptions());
     }
 
     private SubmissionFileOptions getSubmissionFileOptions() {
@@ -62,27 +55,16 @@ public class JPlagOptionsBuilder {
         submissionDirectories.addAll(List.of(this.cliOptions.newDirectories));
         String baseCodePath = this.cliOptions.baseCode;
         Path baseCodeDirectory = baseCodePath == null ? null : Path.of(baseCodePath);
-        return new SubmissionFileOptions(
-                mapCliSubmissionDirectoriesToPaths(submissionDirectories),
-                mapCliSubmissionDirectoriesToPaths(oldSubmissionDirectories),
-                baseCodeDirectory,
-                this.cliOptions.advanced.subdirectory,
-                this.cliOptions.advanced.exclusionFileName
-        );
+        return new SubmissionFileOptions(mapCliSubmissionDirectoriesToPaths(submissionDirectories),
+                mapCliSubmissionDirectoriesToPaths(oldSubmissionDirectories), baseCodeDirectory, this.cliOptions.advanced.subdirectory,
+                this.cliOptions.advanced.exclusionFileName);
     }
 
     private ParsingOptions getParsingOptions() throws CliException {
         List<String> suffixes = List.of(this.cliOptions.advanced.suffixes);
-        return new ParsingOptions(
-                this.cliInputHandler.getSelectedLanguage(),
-                this.cliOptions.minTokenMatch,
-                suffixes,
-                this.cliOptions.advanced.debug,
-                this.cliOptions.normalize,
-                this.cliOptions.advanced.analyzeComments,
-                ParsingOptions.DEFAULT_SIMILARITY_METRIC,
-                this.cliOptions.advanced.similarityThreshold
-        );
+        return new ParsingOptions(this.cliInputHandler.getSelectedLanguage(), this.cliOptions.minTokenMatch, suffixes, this.cliOptions.advanced.debug,
+                this.cliOptions.normalize, this.cliOptions.advanced.analyzeComments, ParsingOptions.DEFAULT_SIMILARITY_METRIC,
+                this.cliOptions.advanced.similarityThreshold);
     }
 
     private ReportingOptions getReportingOptions() {

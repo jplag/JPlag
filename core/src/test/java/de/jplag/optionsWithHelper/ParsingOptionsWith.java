@@ -1,15 +1,15 @@
 package de.jplag.optionsWithHelper;
 
+import java.util.List;
+
 import de.jplag.Language;
 import de.jplag.options.JPlagOptions;
 import de.jplag.options.ParsingOptions;
 import de.jplag.options.SimilarityMetric;
 
-import java.util.List;
-
 /**
- * Utility class providing "with" helpers that return a copy of {@link JPlagOptions}
- * with a single field in {@link ParsingOptions} replaced.
+ * Utility class providing "with" helpers that return a copy of {@link JPlagOptions} with a single field in
+ * {@link ParsingOptions} replaced.
  */
 public final class ParsingOptionsWith {
 
@@ -25,15 +25,8 @@ public final class ParsingOptionsWith {
      */
     public static JPlagOptions language(JPlagOptions options, Language language) {
         ParsingOptions p = options.parsingOptions();
-        return options.withParsingOptions(new ParsingOptions(
-                language,
-                p.minimumTokenMatch(),
-                p.fileSuffixes(),
-                p.debugParser(),
-                p.normalize(),
-                p.analyzeComments(),
-                p.similarityMetric(),
-                p.similarityThreshold()));
+        return options.withParsingOptions(new ParsingOptions(language, p.minimumTokenMatch(), p.fileSuffixes(), p.debugParser(), p.normalize(),
+                p.analyzeComments(), p.similarityMetric(), p.similarityThreshold()));
     }
 
     /**
@@ -44,15 +37,8 @@ public final class ParsingOptionsWith {
      */
     public static JPlagOptions minimumTokenMatch(JPlagOptions options, Integer minimumTokenMatch) {
         ParsingOptions p = options.parsingOptions();
-        return options.withParsingOptions(new ParsingOptions(
-                p.language(),
-                minimumTokenMatch,
-                p.fileSuffixes(),
-                p.debugParser(),
-                p.normalize(),
-                p.analyzeComments(),
-                p.similarityMetric(),
-                p.similarityThreshold()));
+        return options.withParsingOptions(new ParsingOptions(p.language(), minimumTokenMatch, p.fileSuffixes(), p.debugParser(), p.normalize(),
+                p.analyzeComments(), p.similarityMetric(), p.similarityThreshold()));
     }
 
     /**
@@ -63,15 +49,8 @@ public final class ParsingOptionsWith {
      */
     public static JPlagOptions fileSuffixes(JPlagOptions options, List<String> fileSuffixes) {
         ParsingOptions p = options.parsingOptions();
-        return options.withParsingOptions(new ParsingOptions(
-                p.language(),
-                p.minimumTokenMatch(),
-                fileSuffixes,
-                p.debugParser(),
-                p.normalize(),
-                p.analyzeComments(),
-                p.similarityMetric(),
-                p.similarityThreshold()));
+        return options.withParsingOptions(new ParsingOptions(p.language(), p.minimumTokenMatch(), fileSuffixes, p.debugParser(), p.normalize(),
+                p.analyzeComments(), p.similarityMetric(), p.similarityThreshold()));
     }
 
     /**
@@ -82,15 +61,8 @@ public final class ParsingOptionsWith {
      */
     public static JPlagOptions debugParser(JPlagOptions options, boolean debugParser) {
         ParsingOptions p = options.parsingOptions();
-        return options.withParsingOptions(new ParsingOptions(
-                p.language(),
-                p.minimumTokenMatch(),
-                p.fileSuffixes(),
-                debugParser,
-                p.normalize(),
-                p.analyzeComments(),
-                p.similarityMetric(),
-                p.similarityThreshold()));
+        return options.withParsingOptions(new ParsingOptions(p.language(), p.minimumTokenMatch(), p.fileSuffixes(), debugParser, p.normalize(),
+                p.analyzeComments(), p.similarityMetric(), p.similarityThreshold()));
     }
 
     /**
@@ -101,15 +73,8 @@ public final class ParsingOptionsWith {
      */
     public static JPlagOptions normalize(JPlagOptions options, boolean normalize) {
         ParsingOptions p = options.parsingOptions();
-        return options.withParsingOptions(new ParsingOptions(
-                p.language(),
-                p.minimumTokenMatch(),
-                p.fileSuffixes(),
-                p.debugParser(),
-                normalize,
-                p.analyzeComments(),
-                p.similarityMetric(),
-                p.similarityThreshold()));
+        return options.withParsingOptions(new ParsingOptions(p.language(), p.minimumTokenMatch(), p.fileSuffixes(), p.debugParser(), normalize,
+                p.analyzeComments(), p.similarityMetric(), p.similarityThreshold()));
     }
 
     /**
@@ -120,15 +85,8 @@ public final class ParsingOptionsWith {
      */
     public static JPlagOptions analyzeComments(JPlagOptions options, boolean analyzeComments) {
         ParsingOptions p = options.parsingOptions();
-        return options.withParsingOptions(new ParsingOptions(
-                p.language(),
-                p.minimumTokenMatch(),
-                p.fileSuffixes(),
-                p.debugParser(),
-                p.normalize(),
-                analyzeComments,
-                p.similarityMetric(),
-                p.similarityThreshold()));
+        return options.withParsingOptions(new ParsingOptions(p.language(), p.minimumTokenMatch(), p.fileSuffixes(), p.debugParser(), p.normalize(),
+                analyzeComments, p.similarityMetric(), p.similarityThreshold()));
     }
 
     /**
@@ -139,15 +97,8 @@ public final class ParsingOptionsWith {
      */
     public static JPlagOptions similarityMetric(JPlagOptions options, SimilarityMetric similarityMetric) {
         ParsingOptions p = options.parsingOptions();
-        return options.withParsingOptions(new ParsingOptions(
-                p.language(),
-                p.minimumTokenMatch(),
-                p.fileSuffixes(),
-                p.debugParser(),
-                p.normalize(),
-                p.analyzeComments(),
-                similarityMetric,
-                p.similarityThreshold()));
+        return options.withParsingOptions(new ParsingOptions(p.language(), p.minimumTokenMatch(), p.fileSuffixes(), p.debugParser(), p.normalize(),
+                p.analyzeComments(), similarityMetric, p.similarityThreshold()));
     }
 
     /**
@@ -158,14 +109,7 @@ public final class ParsingOptionsWith {
      */
     public static JPlagOptions similarityThreshold(JPlagOptions options, double similarityThreshold) {
         ParsingOptions p = options.parsingOptions();
-        return options.withParsingOptions(new ParsingOptions(
-                p.language(),
-                p.minimumTokenMatch(),
-                p.fileSuffixes(),
-                p.debugParser(),
-                p.normalize(),
-                p.analyzeComments(),
-                p.similarityMetric(),
-                similarityThreshold));
+        return options.withParsingOptions(new ParsingOptions(p.language(), p.minimumTokenMatch(), p.fileSuffixes(), p.debugParser(), p.normalize(),
+                p.analyzeComments(), p.similarityMetric(), similarityThreshold));
     }
 }

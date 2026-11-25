@@ -5,17 +5,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
-import de.jplag.options.JPlagOptions;
-import de.jplag.options.SubmissionFileOptions;
-import de.jplag.optionsWithHelper.SubmissionFileOptionsWith;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import de.jplag.exceptions.BasecodeException;
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.RootDirectoryException;
+import de.jplag.options.JPlagOptions;
+import de.jplag.optionsWithHelper.SubmissionFileOptionsWith;
 
 /**
  * Tests the basecode functionality, that allows specifying a shared foundation, from which all submissions were
@@ -27,23 +25,20 @@ class BaseCodeTest extends TestBase {
     @Test
     @DisplayName("test two submissions with basecode in root folder")
     void testBasecodeUserSubmissionComparison() throws ExitException {
-        JPlagResult result = runJPlag("basecode",
-                it -> withBaseCode(it, resolveFromSubmissions(it, "base")));
+        JPlagResult result = runJPlag("basecode", it -> withBaseCode(it, resolveFromSubmissions(it, "base")));
         verifyResults(result);
     }
 
     @Test
     @DisplayName("test basecode that is too small")
     void testTinyBasecode() {
-        assertThrows(BasecodeException.class, () -> runJPlag("TinyBasecode",
-                it -> withBaseCode(it, resolveFromSubmissions(it, "base"))));
+        assertThrows(BasecodeException.class, () -> runJPlag("TinyBasecode", it -> withBaseCode(it, resolveFromSubmissions(it, "base"))));
     }
 
     @Test
     @DisplayName("test empty submissions with basecode")
     void testEmptySubmission() throws ExitException {
-        JPlagResult result = runJPlag("emptysubmission",
-                it -> withBaseCode(it, resolveFromSubmissions(it, "base")));
+        JPlagResult result = runJPlag("emptysubmission", it -> withBaseCode(it, resolveFromSubmissions(it, "base")));
         verifyResults(result);
     }
 
@@ -86,16 +81,14 @@ class BaseCodeTest extends TestBase {
     @Test
     @DisplayName("test invalid basecode folder")
     void testInvalidBasecode() {
-        assertThrows(BasecodeException.class, () -> runJPlag("basecode",
-                it -> withBaseCode(it, resolveFromSubmissions(it, "WrongBasecode"))));
+        assertThrows(BasecodeException.class, () -> runJPlag("basecode", it -> withBaseCode(it, resolveFromSubmissions(it, "WrongBasecode"))));
     }
 
     @Test
     @DisplayName("test external basecode with subdirectory")
     void testSubdirectoryGlobalBasecode() throws ExitException {
         Path basecode = getBasePath("SubdirectoryBase");
-        JPlagResult result = runJPlag("SubdirectoryDuplicate", it ->
-                SubmissionFileOptionsWith.subdirectoryName(withBaseCode(it, basecode), "src"));
+        JPlagResult result = runJPlag("SubdirectoryDuplicate", it -> SubmissionFileOptionsWith.subdirectoryName(withBaseCode(it, basecode), "src"));
         verifySimpleSubdirectoryDuplicate(result, 3, 3);
     }
 
@@ -103,8 +96,7 @@ class BaseCodeTest extends TestBase {
     @DisplayName("test basecode in root folder with subdirectory")
     void testSubdirectoryLocalBasecode() throws ExitException {
         JPlagResult result = runJPlag("SubdirectoryDuplicate",
-                it ->
-                        SubmissionFileOptionsWith.subdirectoryName(withBaseCode(it, resolveFromSubmissions(it, "Base")), "src"));
+                it -> SubmissionFileOptionsWith.subdirectoryName(withBaseCode(it, resolveFromSubmissions(it, "Base")), "src"));
         verifySimpleSubdirectoryDuplicate(result, 2, 1);
     }
 

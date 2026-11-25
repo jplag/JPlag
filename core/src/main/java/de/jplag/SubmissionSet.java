@@ -11,8 +11,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-import de.jplag.options.ParsingOptions;
-import de.jplag.options.SubmissionFileOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +21,8 @@ import de.jplag.exceptions.SubmissionException;
 import de.jplag.logging.ProgressBar;
 import de.jplag.logging.ProgressBarLogger;
 import de.jplag.logging.ProgressBarType;
-import de.jplag.options.JPlagOptions;
+import de.jplag.options.ParsingOptions;
+import de.jplag.options.SubmissionFileOptions;
 
 /**
  * This class represents a collection of submissions to be checked for plagiarism. It manages both valid and invalid
@@ -188,7 +187,8 @@ public class SubmissionSet {
         logger.debug("{} parser error{}!", errors, errors.get() != 1 ? "s" : "");
     }
 
-    private void parseSubmissionsInParallel(List<Submission> submissions, ProgressBar progressBar, ParsingOptions parsingOptions) throws SubmissionException {
+    private void parseSubmissionsInParallel(List<Submission> submissions, ProgressBar progressBar, ParsingOptions parsingOptions)
+            throws SubmissionException {
         try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
             long startTimeMillis = System.currentTimeMillis();
             for (Submission submission : submissions) {

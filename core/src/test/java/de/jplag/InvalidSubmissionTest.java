@@ -8,12 +8,12 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
 
-import de.jplag.optionsWithHelper.ParsingOptionsWith;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.SubmissionException;
+import de.jplag.optionsWithHelper.ParsingOptionsWith;
 
 class InvalidSubmissionTest extends TestBase {
 

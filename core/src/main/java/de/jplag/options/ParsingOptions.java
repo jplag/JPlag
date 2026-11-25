@@ -1,15 +1,15 @@
 package de.jplag.options;
 
-import de.jplag.Language;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collections;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.jplag.Language;
+
 /**
  * Options used to parse and compare submissions
- *
  * @param language Language to use when parsing the submissions.
  * @param minimumTokenMatch Tunes the comparison sensitivity by adjusting the minimum token required to be counted as
  * matching section. A smaller {@code <n>} increases the sensitivity but might lead to more false-positives.
@@ -24,8 +24,8 @@ import java.util.List;
  * similarity below this threshold will be ignored. The default value of 0 allows all matches to be stored. This affects
  * which comparisons are stored and thus make it into the result object. See also {@link #similarityMetric()}.
  */
-public record ParsingOptions(Language language, Integer minimumTokenMatch, List<String> fileSuffixes, boolean debugParser, boolean normalize, boolean analyzeComments, SimilarityMetric similarityMetric, double similarityThreshold) {
-
+public record ParsingOptions(Language language, Integer minimumTokenMatch, List<String> fileSuffixes, boolean debugParser, boolean normalize,
+        boolean analyzeComments, SimilarityMetric similarityMetric, double similarityThreshold) {
 
     /** Default value for the similarity metric. **/
     public static final SimilarityMetric DEFAULT_SIMILARITY_METRIC = SimilarityMetric.AVG;
@@ -45,7 +45,8 @@ public record ParsingOptions(Language language, Integer minimumTokenMatch, List<
      * @param normalize Enables additional normalization mechanisms (language-dependent)
      * @param analyzeComments Whether to extract comments from submissions
      */
-    public ParsingOptions(Language language, Integer minimumTokenMatch, List<String> fileSuffixes, boolean debugParser, boolean normalize, boolean analyzeComments,SimilarityMetric similarityMetric, double similarityThreshold) {
+    public ParsingOptions(Language language, Integer minimumTokenMatch, List<String> fileSuffixes, boolean debugParser, boolean normalize,
+            boolean analyzeComments, SimilarityMetric similarityMetric, double similarityThreshold) {
         this.language = language;
         this.minimumTokenMatch = normalizeMinimumTokenMatch(minimumTokenMatch);
         this.fileSuffixes = fileSuffixes == null || fileSuffixes.isEmpty() ? null : Collections.unmodifiableList(fileSuffixes);
@@ -83,7 +84,6 @@ public record ParsingOptions(Language language, Integer minimumTokenMatch, List<
         }
         return fileSuffixes == null ? Collections.emptyList() : Collections.unmodifiableList(fileSuffixes);
     }
-
 
     private static Integer normalizeMinimumTokenMatch(Integer minimumTokenMatch) {
         return minimumTokenMatch != null && minimumTokenMatch < 1 ? Integer.valueOf(1) : minimumTokenMatch;

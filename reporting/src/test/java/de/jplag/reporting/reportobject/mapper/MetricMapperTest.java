@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import de.jplag.options.ReportingOptions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -18,6 +17,7 @@ import de.jplag.JPlagResult;
 import de.jplag.Match;
 import de.jplag.Submission;
 import de.jplag.options.JPlagOptions;
+import de.jplag.options.ReportingOptions;
 import de.jplag.options.SimilarityMetric;
 import de.jplag.reporting.reportobject.model.TopComparison;
 

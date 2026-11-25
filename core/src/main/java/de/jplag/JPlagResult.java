@@ -172,7 +172,8 @@ public class JPlagResult {
     @Override
     public String toString() {
         return String.format("JPlagResult { comparisons: %d, duration: %d ms + %d ms, language: %s, submissions: %d }", getAllComparisons().size(),
-                getTokenizationDuration(), getComparisonDuration(), getOptions().parsingOptions().language().getName(), submissions.numberOfSubmissions());
+                getTokenizationDuration(), getComparisonDuration(), getOptions().parsingOptions().language().getName(),
+                submissions.numberOfSubmissions());
     }
 
     /**

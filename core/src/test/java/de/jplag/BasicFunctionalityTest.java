@@ -3,11 +3,11 @@ package de.jplag;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import de.jplag.optionsWithHelper.ParsingOptionsWith;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import de.jplag.exceptions.ExitException;
+import de.jplag.optionsWithHelper.ParsingOptionsWith;
 
 /**
  * Test class for the very basic functionality of JPlag.
