@@ -28,7 +28,7 @@
 <script setup lang="ts">
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
-import { commitHash, reportViewerVersion } from '@/version/versions'
+import { commitHash, reportViewerVersion } from '../version/versions'
 
 defineProps({
   overrideStyle: {
