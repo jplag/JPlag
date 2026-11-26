@@ -214,10 +214,6 @@ public class SubmissionSetBuilder {
     private void processSubmissionFile(SubmissionFileData file, boolean multipleRoots, Map<Path, Submission> foundSubmissions) throws ExitException {
         if (isFileExcluded(file.submissionFile())) {
             logger.error("Exclude submission: {}", file.submissionFile().getFileName());
-            /*
-             * } else if (Files.isRegularFile(file.submissionFile()) && !hasValidSuffix(file.submissionFile())) {
-             * logger.error("Ignore submission with invalid extension or suffix: {}", file.submissionFile().getFileName());
-             */
         } else {
             String rootDirectoryPrefix = multipleRoots ? file.rootDirectory().getFileName() + File.separator : "";
             String submissionName = rootDirectoryPrefix + file.submissionFile().getFileName();
