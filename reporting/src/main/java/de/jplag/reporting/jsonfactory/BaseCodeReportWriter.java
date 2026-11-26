@@ -43,7 +43,7 @@ public class BaseCodeReportWriter {
     public void writeBaseCodeReport(JPlagResult jPlagResult) {
         Set<Submission> submissions = new HashSet<>();
 
-        int numberOfComparisons = jPlagResult.getOptions().maximumNumberOfComparisons();
+        int numberOfComparisons = jPlagResult.getOptions().reportingOptions().maximumNumberOfComparisons();
         List<JPlagComparison> comparisons = jPlagResult.getComparisons(numberOfComparisons);
         for (JPlagComparison comparison : comparisons) {
             submissions.add(comparison.firstSubmission());

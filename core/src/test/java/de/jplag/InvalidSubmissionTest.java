@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import de.jplag.exceptions.ExitException;
 import de.jplag.exceptions.SubmissionException;
+import de.jplag.optionsWithHelper.ParsingOptionsWith;
 
 class InvalidSubmissionTest extends TestBase {
 
@@ -27,7 +28,7 @@ class InvalidSubmissionTest extends TestBase {
     @DisplayName("test filtering and copying of invalid submissions with debug mode")
     void testInvalidSubmissionsWithDebug() throws ExitException {
         try {
-            runJPlag(SAMPLE_NAME, it -> it.withDebugParser(true));
+            runJPlag(SAMPLE_NAME, it -> ParsingOptionsWith.debugParser(it, true));
             fail("No submission exception was thrown!");
         } catch (SubmissionException e) {
             System.out.println(e.getMessage());

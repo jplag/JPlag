@@ -9,41 +9,56 @@
       <h2>Run Options:</h2>
 
       <ScrollableComponent class="grow px-4 pt-2">
-        <div class="space-y-2">
-          <TextInformation label="Language">{{ options.language }}</TextInformation>
-          <TextInformation label="Min Token Match">{{ options.minimumTokenMatch }}</TextInformation>
-          <TextInformation label="Submission Directories">{{
-            options.submissionDirectories.join(', ')
-          }}</TextInformation>
-          <TextInformation label="Old Directories">{{
-            options.oldSubmissionDirectories.join(', ')
-          }}</TextInformation>
-          <TextInformation label="Base Directory">{{
-            options.baseCodeSubmissionDirectory
-          }}</TextInformation>
-          <TextInformation label="Subdirectory Name">{{
-            options.subdirectoryName
-          }}</TextInformation>
-          <TextInformation label="File Extensions">{{
-            options.fileSuffixes.join(', ')
-          }}</TextInformation>
-          <TextInformation label="Exclusion File Name">{{
-            options.exclusionFileName
-          }}</TextInformation>
-          <TextInformation label="Similarity Metric">{{
-            MetricTypes.METRIC_MAP[options.similarityMetric].longName
-          }}</TextInformation>
-          <TextInformation label="Similarity Threshold">{{
-            options.similarityThreshold
-          }}</TextInformation>
-          <TextInformation label="Max Comparison Count">{{
-            options.maximumNumberOfComparisons
-          }}</TextInformation>
-          <TextInformation label="Result File Name">{{
-            reportStore().getReportFileName()
-          }}</TextInformation>
+        <div class="flex flex-col gap-5">
+          <div class="flex flex-col gap-2">
+            <h3 class="font-bold">Submission Files:</h3>
+            <TextInformation label="Submission Directories">{{
+              options.submissionFileOptions.submissionDirectories.join(', ')
+            }}</TextInformation>
+            <TextInformation label="Old Directories">{{
+              options.submissionFileOptions.oldSubmissionDirectories.join(', ')
+            }}</TextInformation>
+            <TextInformation label="Base Directory">{{
+              options.submissionFileOptions.baseCodeSubmissionDirectory
+            }}</TextInformation>
+            <TextInformation label="Subdirectory Name">{{
+              options.submissionFileOptions.subdirectoryName
+            }}</TextInformation>
+            <TextInformation label="Exclusion File Name">{{
+              options.submissionFileOptions.exclusionFileName
+            }}</TextInformation>
+          </div>
 
-          <div v-if="options.clusteringOptions.enabled" class="mt-5! space-y-2">
+          <div class="flex flex-col gap-2">
+            <h3 class="font-bold">Parsing:</h3>
+            <TextInformation label="Language">{{
+              options.parsingOptions.language
+            }}</TextInformation>
+            <TextInformation label="Min Token Match">{{
+              options.parsingOptions.minimumTokenMatch
+            }}</TextInformation>
+            <TextInformation label="File Suffixes">{{
+              options.parsingOptions.fileSuffixes.join(', ')
+            }}</TextInformation>
+            <TextInformation label="Similarity Metric">{{
+              MetricTypes.METRIC_MAP[options.parsingOptions.similarityMetric].longName
+            }}</TextInformation>
+            <TextInformation label="Similarity Threshold">{{
+              options.parsingOptions.similarityThreshold
+            }}</TextInformation>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <h3 class="font-bold">Reporting:</h3>
+            <TextInformation label="Max Comparison Count">{{
+              options.reportingOptions.maximumNumberOfComparisons
+            }}</TextInformation>
+            <TextInformation label="Result File Name">{{
+              reportStore().getReportFileName()
+            }}</TextInformation>
+          </div>
+
+          <div v-if="options.clusteringOptions.enabled" class="flex flex-col gap-2">
             <h3 class="font-bold">Clustering:</h3>
             <TextInformation label="Similarity Metric">{{
               MetricTypes.METRIC_MAP[options.clusteringOptions.similarityMetric].longName
@@ -91,7 +106,7 @@
             }}</TextInformation>
           </div>
 
-          <div v-if="options.mergingOptions.enabled" class="mt-5 space-y-2">
+          <div v-if="options.mergingOptions.enabled" class="flex flex-col gap-2">
             <h3 class="font-bold">Match Merging:</h3>
             <TextInformation label="Min Neighbor Length">{{
               options.mergingOptions.minimumNeighborLength
@@ -102,6 +117,22 @@
             <TextInformation label="Min Required Merges"
               >{{ options.mergingOptions.minimumRequiredMerges }} }}</TextInformation
             >
+          </div>
+
+          <div v-if="options.frequencyAnalysisOptions.enabled" class="flex flex-col gap-2">
+            <h3 class="font-bold">Frequency Analysis:</h3>
+            <TextInformation label="Frequency Analysis Strategy">{{
+              options.frequencyAnalysisOptions.frequencyStrategy
+            }}</TextInformation>
+            <TextInformation label="Frequency Strategy Min">{{
+              options.frequencyAnalysisOptions.frequencyStrategyMinValue
+            }}</TextInformation>
+            <TextInformation label="Weighting Function">{{
+              options.frequencyAnalysisOptions.weightingFunction
+            }}</TextInformation>
+            <TextInformation label="Weighting Factor">{{
+              options.frequencyAnalysisOptions.weightingFactor
+            }}</TextInformation>
           </div>
         </div>
       </ScrollableComponent>

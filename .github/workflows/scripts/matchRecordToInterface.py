@@ -5,9 +5,13 @@ REPORTING_PACKAGE = f"../../../reporting/src/main/java/de/jplag/reporting/report
 REPORT_VIEWER_MODELS = f"../../../report-viewer/model/src"
 REPORT_VIEWER_FACTORIES = f"../../../report-viewer/parser/src/factories"
 
-cli_options = ({ 'file_path': f"{CORE_PACKAGE}/options/JPlagOptions.java", 'record_name': 'JPlagOptions' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/CliOptions.ts", 'interface_name': 'AbstractOptions' })
-merging_options = ({ 'file_path': f"{CORE_PACKAGE}/merging/MergingOptions.java", 'record_name': 'MergingOptions' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/CliOptions.ts", 'interface_name': 'CliMergingOptions' })
-clustering_options = ({ 'file_path': f"{CORE_PACKAGE}/clustering/ClusteringOptions.java", 'record_name': 'ClusteringOptions' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/CliOptions.ts", 'interface_name': 'CliClusterOptions' })
+cli_options = ({ 'file_path': f"{CORE_PACKAGE}/options/JPlagOptions.java", 'record_name': 'JPlagOptions' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/options/index.ts", 'interface_name': 'AbstractOptions' })
+submission_file_options = ({ 'file_path': f"{CORE_PACKAGE}/options/SubmissionFileOptions.java", 'record_name': 'SubmissionFileOptions' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/options/SubmissionFiles.ts", 'interface_name': 'CliSubmissionFileOptions' })
+parsing_options = ({ 'file_path': f"{CORE_PACKAGE}/options/ParsingOptions.java", 'record_name': 'ParsingOptions' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/options/Parsing.ts", 'interface_name': 'CliParsingOptions' })
+reporting_options = ({ 'file_path': f"{CORE_PACKAGE}/options/ReportingOptions.java", 'record_name': 'ReportingOptions' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/options/Reporting.ts", 'interface_name': 'CliReportingOptions' })
+merging_options = ({ 'file_path': f"{CORE_PACKAGE}/merging/MergingOptions.java", 'record_name': 'MergingOptions' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/options/Merging.ts", 'interface_name': 'CliMergingOptions' })
+clustering_options = ({ 'file_path': f"{CORE_PACKAGE}/clustering/ClusteringOptions.java", 'record_name': 'ClusteringOptions' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/options/Cluster.ts", 'interface_name': 'CliClusterOptions' })
+frequency_options = ({ 'file_path': f"{CORE_PACKAGE}/frequency/FrequencyAnalysisOptions.java", 'record_name': 'FrequencyAnalysisOptions' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/options/Frequency.ts", 'interface_name': 'CliFrequencyOptions' })
 
 comparison = ({ 'file_path': f"{REPORTING_PACKAGE}/ComparisonReport.java", 'record_name': 'ComparisonReport' }, { 'file_path': f"{REPORT_VIEWER_FACTORIES}/ComparisonFactory.ts", 'interface_name': 'ReportFormatComparison' })
 match = ({ 'file_path': f"{REPORTING_PACKAGE}/Match.java", 'record_name': 'Match' }, { 'file_path': f"{REPORT_VIEWER_MODELS}/Match.ts", 'interface_name': 'ReportFormatMatch' })
@@ -30,7 +34,7 @@ cluster = ({ 'file_path': f"{REPORTING_PACKAGE}/Cluster.java", 'record_name': 'C
 
 # we do not check the distribution as it has own record and is just a map directly written to a json file
 
-file_list = [cli_options, merging_options, clustering_options, comparison, match, code_position, basecode_match, submission_file_index, submission_file, run_information, failed_submission, version, submission_mappings, top_comparison, cluster]
+file_list = [cli_options, submission_file_options, parsing_options, reporting_options, merging_options, clustering_options, frequency_options, comparison, match, code_position, basecode_match, submission_file_index, submission_file, run_information, failed_submission, version, submission_mappings, top_comparison, cluster]
 
 type_matches = {
     # Basic map from Java types to TypeScript types
@@ -47,10 +51,17 @@ type_matches = {
     'Preprocessing': 'string',
     'ClusteringAlgorithm': 'string',
     'InterClusterSimilarity': 'string',
+    'FrequencyAnalysisStrategy': 'string',
+    'MatchWeightingFunction': 'string',
+    'ParsingOptions': 'CliParsingOptions<L>',
 }
+
 # add all record interface matches to the typeMatches list
 for java_file, typescript_file in file_list:
     record_name = java_file['record_name']
+    if record_name in type_matches:
+        # this allows us to overwrite the record interface matches for special cases
+        continue
     interface_name = typescript_file['interface_name']
     type_matches[record_name] = interface_name
 

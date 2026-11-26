@@ -18,6 +18,8 @@ import de.jplag.Version;
 import de.jplag.exceptions.ExitException;
 import de.jplag.java.JavaLanguage;
 import de.jplag.options.JPlagOptions;
+import de.jplag.options.ParsingOptions;
+import de.jplag.options.SubmissionFileOptions;
 
 class ReportObjectFactoryTest {
     protected static final Path BASE_PATH = Path.of("..", "core", "src", "test", "resources", "de", "jplag", "samples");
@@ -34,7 +36,9 @@ class ReportObjectFactoryTest {
     void testCreateAndSaveReportWithBasecode() throws ExitException, IOException {
         Path submissionDir = BASE_PATH.resolve(BASECODE);
         Path basecodeDir = BASE_PATH.resolve(BASECODE_BASE);
-        JPlagOptions options = new JPlagOptions(new JavaLanguage(), Set.of(submissionDir), Set.of()).withBaseCodeSubmissionDirectory(basecodeDir);
+
+        JPlagOptions options = new JPlagOptions(new SubmissionFileOptions(Set.of(submissionDir), Set.of(), basecodeDir),
+                new ParsingOptions(new JavaLanguage()));
         JPlagResult result = JPlag.run(options);
         Path testResult = Files.createTempFile("result", ".jplag");
 

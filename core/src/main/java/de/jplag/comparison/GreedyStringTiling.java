@@ -40,9 +40,9 @@ public class GreedyStringTiling {
     public GreedyStringTiling(JPlagOptions options, TokenSequenceMapper tokenValueMapper) {
         this.options = options;
         // Ensures 1 <= neighborLength <= minimumTokenMatch
-        int minimumNeighborLength = Math.clamp(options.mergingOptions().minimumNeighborLength(), 1, options.minimumTokenMatch());
+        int minimumNeighborLength = Math.clamp(options.mergingOptions().minimumNeighborLength(), 1, options.parsingOptions().minimumTokenMatch());
 
-        this.minimumMatchLength = options.mergingOptions().enabled() ? minimumNeighborLength : options.minimumTokenMatch();
+        this.minimumMatchLength = options.mergingOptions().enabled() ? minimumNeighborLength : options.parsingOptions().minimumTokenMatch();
 
         this.tokenSequenceMapper = tokenValueMapper;
     }
@@ -146,7 +146,7 @@ public class GreedyStringTiling {
                 }
             }
             for (Match match : iterationMatches) {
-                if (match.minimumLength() < options.minimumTokenMatch()) {
+                if (match.minimumLength() < options.parsingOptions().minimumTokenMatch()) {
                     addMatchIfNotOverlapping(ignoredMatches, match);
                 } else {
                     addMatchIfNotOverlapping(globalMatches, match);

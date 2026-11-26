@@ -26,7 +26,7 @@ import de.jplag.exceptions.SubmissionException;
 import de.jplag.logging.ProgressBar;
 import de.jplag.logging.ProgressBarLogger;
 import de.jplag.logging.ProgressBarType;
-import de.jplag.options.JPlagOptions;
+import de.jplag.options.SubmissionFileOptions;
 
 /**
  * This class is responsible for the creation of a {@link SubmissionSet}. It processes multiple root directories of
@@ -37,25 +37,14 @@ public class SubmissionSetBuilder {
 
     private static final Logger logger = LoggerFactory.getLogger(SubmissionSetBuilder.class);
 
-    private final JPlagOptions options;
+    private final SubmissionFileOptions submissionFileOptions;
 
     /**
      * Creates a builder for submission sets.
-     * @param language is the language of the submissions.
-     * @param options are the configured options.
-     * @deprecated in favor of {@link #SubmissionSetBuilder(JPlagOptions)}.
+     * @param submissionFileOptions are the configured options.
      */
-    @Deprecated(since = "4.3.0")
-    public SubmissionSetBuilder(Language language, JPlagOptions options) {
-        this(options.withLanguageOption(language));
-    }
-
-    /**
-     * Creates a builder for submission sets.
-     * @param options are the configured options.
-     */
-    public SubmissionSetBuilder(JPlagOptions options) {
-        this.options = options;
+    public SubmissionSetBuilder(SubmissionFileOptions submissionFileOptions) {
+        this.submissionFileOptions = submissionFileOptions;
     }
 
     /**
@@ -64,8 +53,8 @@ public class SubmissionSetBuilder {
      * @throws ExitException if the directory cannot be read.
      */
     public SubmissionSet buildSubmissionSet() throws ExitException {
-        Set<Path> submissionDirectories = verifyRootDirectories(options.submissionDirectories(), true);
-        Set<Path> oldSubmissionDirectories = verifyRootDirectories(options.oldSubmissionDirectories(), false);
+        Set<Path> submissionDirectories = verifyRootDirectories(submissionFileOptions.submissionDirectories(), true);
+        Set<Path> oldSubmissionDirectories = verifyRootDirectories(submissionFileOptions.oldSubmissionDirectories(), false);
         checkForNonOverlappingRootDirectories(submissionDirectories, oldSubmissionDirectories);
 
         // For backward compatibility, don't prefix submission names with their root directory
@@ -98,7 +87,7 @@ public class SubmissionSetBuilder {
         // Merge everything in a submission set.
         List<Submission> submissions = new ArrayList<>(foundSubmissions.values());
 
-        return new SubmissionSet(submissions, baseCodeSubmission.orElse(null), options);
+        return new SubmissionSet(submissions, baseCodeSubmission.orElse(null), submissionFileOptions);
     }
 
     /**
@@ -152,11 +141,11 @@ public class SubmissionSetBuilder {
     }
 
     private Optional<Submission> loadBaseCode() throws ExitException {
-        if (!options.hasBaseCode()) {
+        if (!submissionFileOptions.hasBaseCode()) {
             return Optional.empty();
         }
 
-        Path baseCodeSubmissionDirectory = options.baseCodeSubmissionDirectory();
+        Path baseCodeSubmissionDirectory = submissionFileOptions.baseCodeSubmissionDirectory();
         if (!Files.exists(baseCodeSubmissionDirectory)) {
             throw new BasecodeException("Basecode directory \"%s\" does not exist".formatted(baseCodeSubmissionDirectory));
         }
@@ -164,7 +153,7 @@ public class SubmissionSetBuilder {
         if (isFileExcluded(baseCodeSubmissionDirectory)) { // Stating an excluded path as basecode isn't very useful.
             throw new BasecodeException("Exclude submission: " + baseCodeSubmissionDirectory.getFileName());
         }
-        if (Files.isRegularFile(baseCodeSubmissionDirectory) && !hasValidSuffix(baseCodeSubmissionDirectory)) {
+        if (Files.isRegularFile(baseCodeSubmissionDirectory)) {
             throw new BasecodeException("Ignore submission with invalid extension or suffix: " + baseCodeSubmissionDirectory.getFileName());
         }
 
@@ -203,29 +192,28 @@ public class SubmissionSetBuilder {
      */
     private Submission processSubmission(String submissionName, Path submissionFile, boolean isNew) throws ExitException {
         Path file = submissionFile;
-        if (Files.isDirectory(file) && options.subdirectoryName() != null) {
+        if (Files.isDirectory(file) && submissionFileOptions.subdirectoryName() != null) {
             // Use subdirectory instead
-            file = file.resolve(options.subdirectoryName());
+            file = file.resolve(submissionFileOptions.subdirectoryName());
 
             if (!Files.exists(file)) {
-                throw new SubmissionException(
-                        String.format("Submission %s does not contain the given subdirectory '%s'", submissionName, options.subdirectoryName()));
+                throw new SubmissionException(String.format("Submission %s does not contain the given subdirectory '%s'", submissionName,
+                        submissionFileOptions.subdirectoryName()));
             }
 
             if (!Files.isDirectory(file)) {
-                throw new SubmissionException(String.format("The given subdirectory '%s' is not a directory!", options.subdirectoryName()));
+                throw new SubmissionException(
+                        String.format("The given subdirectory '%s' is not a directory!", submissionFileOptions.subdirectoryName()));
             }
         }
 
         file = makeCanonical(file, it -> new SubmissionException("Cannot create submission: " + submissionName, it));
-        return new Submission(submissionName, file, isNew, listFilesRecursively(file), options.language());
+        return new Submission(submissionName, file, isNew, listFilesRecursively(file));
     }
 
     private void processSubmissionFile(SubmissionFileData file, boolean multipleRoots, Map<Path, Submission> foundSubmissions) throws ExitException {
         if (isFileExcluded(file.submissionFile())) {
             logger.error("Exclude submission: {}", file.submissionFile().getFileName());
-        } else if (Files.isRegularFile(file.submissionFile()) && !hasValidSuffix(file.submissionFile())) {
-            logger.error("Ignore submission with invalid extension or suffix: {}", file.submissionFile().getFileName());
         } else {
             String rootDirectoryPrefix = multipleRoots ? file.rootDirectory().getFileName() + File.separator : "";
             String submissionName = rootDirectoryPrefix + file.submissionFile().getFileName();
@@ -235,25 +223,10 @@ public class SubmissionSetBuilder {
     }
 
     /**
-     * Checks if a file has a valid file extension for the current language or ends in a specified suffix.
-     * @param file is the file to check.
-     * @return true if the file matches the file extension or suffix.
-     */
-    private boolean hasValidSuffix(Path file) {
-        List<String> validSuffixes = options.fileSuffixes();
-
-        // This is the case if either the language modules or the CLI did not set the valid suffixes array in options
-        if (validSuffixes == null || validSuffixes.isEmpty()) {
-            return true;
-        }
-        return validSuffixes.stream().anyMatch(suffix -> file.getFileName().toString().toLowerCase().endsWith(suffix.toLowerCase()));
-    }
-
-    /**
      * Checks if a file is excluded or not.
      */
     private boolean isFileExcluded(Path file) {
-        return options.excludedFiles().stream().anyMatch(excludedName -> file.getFileName().toString().endsWith(excludedName));
+        return submissionFileOptions.excludedFiles().stream().anyMatch(excludedName -> file.getFileName().toString().endsWith(excludedName));
     }
 
     /**
@@ -269,7 +242,7 @@ public class SubmissionSetBuilder {
             return Collections.emptyList();
         }
 
-        if (Files.isRegularFile(file) && hasValidSuffix(file)) {
+        if (Files.isRegularFile(file)) {
             return Collections.singletonList(file);
         }
         try (Stream<Path> nestedFileNames = Files.list(file)) {

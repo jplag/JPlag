@@ -30,6 +30,7 @@ import de.jplag.comparison.LongestCommonSubsequenceSearch;
 import de.jplag.exceptions.ComparisonException;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
+import de.jplag.optionsWithHelper.ParsingOptionsWith;
 
 /**
  * Tests for the subsequence match merging mechanism implemented in {@link MatchMerging}.
@@ -50,14 +51,15 @@ class MatchMergingTest extends TestBase {
         MergingOptions mergingOptions = new MergingOptions(true, MINIMUM_NEIGHBOR_LENGTH, MAXIMUM_GAP_SIZE, MINIMUM_REQUIRED_MERGES);
         options = getDefaultOptions("merging").withMergingOptions(mergingOptions);
 
-        SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
+        SubmissionSetBuilder builder = new SubmissionSetBuilder(options.submissionFileOptions());
         submissionSet = builder.buildSubmissionSet();
+        submissionSet.parse(options.parsingOptions());
 
         comparisonStrategy = new LongestCommonSubsequenceSearch(options);
 
         // Largest two single-file submissions provide token lists big enough for hand-built match indices; token content is
         // never inspected.
-        List<Submission> singleFileSubmissions = submissionSet.getSubmissions().stream().filter(submission -> submission.getFiles().size() == 1)
+        List<Submission> singleFileSubmissions = submissionSet.getSubmissions().stream().filter(submission -> submission.getParsedFiles().size() == 1)
                 .sorted(Comparator.comparingInt(Submission::getNumberOfTokens).reversed().thenComparing(Submission::getName)).toList();
         leftSubmission = singleFileSubmissions.get(0);
         rightSubmission = singleFileSubmissions.get(1);
@@ -68,7 +70,7 @@ class MatchMergingTest extends TestBase {
         JPlagResult result = comparisonStrategy.compareSubmissions(submissionSet);
         comparisonsBefore = new ArrayList<>(result.getAllComparisons());
 
-        result = new MatchMerging(options).mergeMatchesOf(result);
+        result = new MatchMerging(options.mergingOptions(), options.parsingOptions()).mergeMatchesOf(result);
         comparisonsAfter = new ArrayList<>(result.getAllComparisons());
 
         comparisonsBefore.sort(Comparator.comparing(Object::toString));
@@ -78,13 +80,13 @@ class MatchMergingTest extends TestBase {
     @Test
     @DisplayName("Test if merged matches exceed the minimum token match threshold.")
     void testBufferRemoval() {
-        checkMatchLength(JPlagComparison::matches, options.minimumTokenMatch(), comparisonsAfter);
+        checkMatchLength(JPlagComparison::matches, options.parsingOptions().minimumTokenMatch(), comparisonsAfter);
     }
 
     @Test
     @DisplayName("Test if original matches exceed the minimum token match threshold.")
     void testGSTMatches() {
-        checkMatchLength(JPlagComparison::matches, options.minimumTokenMatch(), comparisonsBefore);
+        checkMatchLength(JPlagComparison::matches, options.parsingOptions().minimumTokenMatch(), comparisonsBefore);
     }
 
     @Test
@@ -185,7 +187,7 @@ class MatchMergingTest extends TestBase {
     @Test
     @DisplayName("Test minimal requires merges with default parameters.")
     void testMinimalRequiredMerges() throws ExitException {
-        JPlagResult result = runJPlag("merging", it -> it.withMergingOptions(new MergingOptions().withEnabled(true)));
+        JPlagResult result = runJPlag("merging", it -> it.withMergingOptions(new MergingOptions(true)));
         List<Integer> matchedTokens = result.getAllComparisons().stream().map(JPlagComparison::getNumberOfMatchedTokens).toList();
         List<Double> similarities = result.getAllComparisons().stream().map(JPlagComparison::similarity).toList();
 
@@ -205,8 +207,10 @@ class MatchMergingTest extends TestBase {
     void testFileBoundaries() throws ExitException {
         MergingOptions mergingOptions = new MergingOptions(true, MINIMUM_NEIGHBOR_LENGTH, MAXIMUM_GAP_SIZE, MINIMUM_REQUIRED_MERGES);
         JPlagOptions customOptions = getDefaultOptions("crossFile").withMergingOptions(mergingOptions);
-        SubmissionSetBuilder builder = new SubmissionSetBuilder(customOptions);
+        SubmissionSetBuilder builder = new SubmissionSetBuilder(customOptions.submissionFileOptions());
         SubmissionSet submissions = builder.buildSubmissionSet();
+        submissions.parse(options.parsingOptions());
+        submissionSet.parse(options.parsingOptions());
         LongestCommonSubsequenceSearch search = new LongestCommonSubsequenceSearch(customOptions);
         JPlagResult result = search.compareSubmissions(submissions);
 
@@ -217,7 +221,7 @@ class MatchMergingTest extends TestBase {
 
         checkForCrossFileMatches(comparison, comparison.matches());
 
-        JPlagResult mergedResult = new MatchMerging(customOptions).mergeMatchesOf(result);
+        JPlagResult mergedResult = new MatchMerging(customOptions.mergingOptions(), customOptions.parsingOptions()).mergeMatchesOf(result);
         JPlagComparison mergedComparison = mergedResult.getAllComparisons().getFirst();
 
         assertEquals(2, mergedResult.getNumberOfSubmissions());
@@ -296,10 +300,11 @@ class MatchMergingTest extends TestBase {
     }
 
     private List<Match> mergeHandBuilt(MergingOptions mergingOptions, List<Match> handBuiltMatches) {
-        JPlagOptions unitOptions = options.withMinimumTokenMatch(1).withMergingOptions(mergingOptions);
+        JPlagOptions unitOptions = ParsingOptionsWith.minimumTokenMatch(options, 1).withMergingOptions(mergingOptions);
         JPlagComparison comparison = new JPlagComparison(leftSubmission, rightSubmission, new ArrayList<>(handBuiltMatches), new ArrayList<>());
         JPlagResult result = new JPlagResult(List.of(comparison), submissionSet, 0L, 0L, unitOptions);
-        return new MatchMerging(unitOptions).mergeMatchesOf(result).getAllComparisons().getFirst().matches();
+        return new MatchMerging(unitOptions.mergingOptions(), unitOptions.parsingOptions()).mergeMatchesOf(result).getAllComparisons().getFirst()
+                .matches();
     }
 
     private static JPlagComparison findComparison(List<JPlagComparison> comparisons, String firstName, String secondName) {

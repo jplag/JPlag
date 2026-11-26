@@ -72,7 +72,7 @@
 
         <TextInformation label="Min Token Match" class="flex-auto">
           <template #default>
-            {{ reportStore().getCliOptions().minimumTokenMatch }}
+            {{ reportStore().getCliOptions().parsingOptions.minimumTokenMatch }}
           </template>
           <template #tooltip>
             <div class="text-sm whitespace-pre">
@@ -167,12 +167,12 @@ const runInformation = computed(() => reportStore().getRunInformation())
 const topComparisons = computed(() => reportStore().getTopComparisons())
 
 const hasMoreSubmissionPaths = computed(
-  () => reportStore().getCliOptions().submissionDirectories.length > 1
+  () => reportStore().getCliOptions().submissionFileOptions.submissionDirectories.length > 1
 )
 const submissionPathValue = computed(() =>
   hasMoreSubmissionPaths.value
     ? 'Click More to see all paths'
-    : reportStore().getCliOptions().submissionDirectories[0]
+    : reportStore().getCliOptions().submissionFileOptions.submissionDirectories[0]
 )
 
 const missingComparisons = computed(

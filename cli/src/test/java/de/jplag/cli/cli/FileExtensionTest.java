@@ -22,12 +22,12 @@ class FileExtensionTest extends CliTest {
         JPlagOptions options = runCliForOptions();
 
         List<String> expectedExtensions = new JavaLanguage().fileExtensions();
-        assertIterableEquals(expectedExtensions, options.fileSuffixes());
+        assertIterableEquals(expectedExtensions, options.parsingOptions().fileSuffixes());
     }
 
     @Test
     void testCustomExtensions() throws IOException, ExitException {
         JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.SUFFIXES, CUSTOM_EXTENSIONS.toArray(new String[0])));
-        assertEquals(CUSTOM_EXTENSIONS, options.fileSuffixes());
+        assertEquals(CUSTOM_EXTENSIONS, options.parsingOptions().fileSuffixes());
     }
 }

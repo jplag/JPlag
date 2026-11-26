@@ -13,6 +13,7 @@ import de.jplag.TestBase;
 import de.jplag.TokenPrinterUtils;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
+import de.jplag.optionsWithHelper.ParsingOptionsWith;
 
 /**
  * Special test case the does not really test anything but prints the tokens and the corresponding line of code.
@@ -28,7 +29,7 @@ class TokenPrinterTest extends TestBase {
     @Disabled("Not a meaningful test, used for designing the token set. Can be implemented for other languages.")
     @Test
     void printJavaFiles() {
-        printSubmissions(options -> options.withMinimumTokenMatch(MIN_TOKEN_MATCH));
+        printSubmissions(options -> ParsingOptionsWith.minimumTokenMatch(options, MIN_TOKEN_MATCH));
     }
 
     private void printSubmissions(Function<JPlagOptions, JPlagOptions> optionsCustomization) {

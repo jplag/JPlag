@@ -12,32 +12,33 @@ import de.jplag.cli.test.CliArgument;
 import de.jplag.cli.test.CliTest;
 import de.jplag.exceptions.ExitException;
 import de.jplag.options.JPlagOptions;
+import de.jplag.options.ReportingOptions;
 
 class StoredMatchesTest extends CliTest {
     @Test
     void testDefault() throws ExitException, IOException {
         JPlagOptions options = runCliForOptions();
-        assertEquals(JPlagOptions.DEFAULT_SHOWN_COMPARISONS, options.maximumNumberOfComparisons());
+        assertEquals(ReportingOptions.DEFAULT_SHOWN_COMPARISONS, options.reportingOptions().maximumNumberOfComparisons());
     }
 
     @Test
     void testValidThreshold() throws ExitException, IOException {
         int expectedValue = 999;
         JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.SHOWN_COMPARISONS, expectedValue));
-        assertEquals(expectedValue, options.maximumNumberOfComparisons());
+        assertEquals(expectedValue, options.reportingOptions().maximumNumberOfComparisons());
     }
 
     @Test
     void testAll() throws ExitException, IOException {
-        int expectedValue = JPlagOptions.SHOW_ALL_COMPARISONS;
+        int expectedValue = ReportingOptions.SHOW_ALL_COMPARISONS;
         JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.SHOWN_COMPARISONS, expectedValue));
-        assertEquals(expectedValue, options.maximumNumberOfComparisons());
+        assertEquals(expectedValue, options.reportingOptions().maximumNumberOfComparisons());
     }
 
     @Test
     void testLowerBound() throws ExitException, IOException {
         JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.SHOWN_COMPARISONS, -2));
-        assertEquals(JPlagOptions.SHOW_ALL_COMPARISONS, options.maximumNumberOfComparisons());
+        assertEquals(ReportingOptions.SHOW_ALL_COMPARISONS, options.reportingOptions().maximumNumberOfComparisons());
     }
 
     @Test

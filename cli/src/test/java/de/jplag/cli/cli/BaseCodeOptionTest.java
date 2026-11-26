@@ -21,7 +21,7 @@ class BaseCodeOptionTest extends CliTest {
     void testDefaultValue() throws ExitException, IOException {
         JPlagOptions options = runCli().jPlagOptions();
 
-        assertNull(options.baseCodeSubmissionDirectory());
+        assertNull(options.submissionFileOptions().baseCodeSubmissionDirectory());
     }
 
     @Test
@@ -29,6 +29,6 @@ class BaseCodeOptionTest extends CliTest {
         CliResult result = runCli(options -> options.with(CliArgument.BASE_CODE, NAME));
         JPlagOptions options = result.jPlagOptions();
 
-        assertEquals(NAME, options.baseCodeSubmissionDirectory().getFileName().toString());
+        assertEquals(NAME, options.submissionFileOptions().baseCodeSubmissionDirectory().getFileName().toString());
     }
 }

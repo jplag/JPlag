@@ -7,6 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import de.jplag.exceptions.ExitException;
+import de.jplag.optionsWithHelper.ParsingOptionsWith;
 
 /**
  * Test class for the very basic functionality of JPlag.
@@ -33,7 +34,7 @@ class BasicFunctionalityTest extends TestBase {
     void testWithMinTokenMatch() throws ExitException {
         var expectedDistribution = new int[100];
         expectedDistribution[96] = 1;
-        JPlagResult result = runJPlag("SimpleDuplicate", it -> it.withMinimumTokenMatch(4));
+        JPlagResult result = runJPlag("SimpleDuplicate", it -> ParsingOptionsWith.minimumTokenMatch(it, 4));
 
         assertEquals(2, result.getNumberOfSubmissions());
         assertEquals(1, result.getAllComparisons().size());
@@ -92,7 +93,7 @@ class BasicFunctionalityTest extends TestBase {
     void testHighMinimumTokenMatch() throws ExitException {
         for (int i = 10; i < 50; i++) {
             int minimumTokenMatch = i;
-            JPlagResult result = runJPlag("PartialPlagiarism", it -> it.withMinimumTokenMatch(minimumTokenMatch));
+            JPlagResult result = runJPlag("PartialPlagiarism", it -> ParsingOptionsWith.minimumTokenMatch(it, minimumTokenMatch));
             if (minimumTokenMatch <= 12) {
                 assertEquals(5, result.getNumberOfSubmissions());
                 assertEquals(10, result.getAllComparisons().size());

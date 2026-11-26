@@ -126,11 +126,11 @@ public class ReportObjectFactory {
 
     private void copySubmissionFilesToReport(JPlagResult result) throws FileException {
         logger.info("Start to export results...");
-        List<JPlagComparison> comparisons = result.getComparisons(result.getOptions().maximumNumberOfComparisons());
+        List<JPlagComparison> comparisons = result.getComparisons(result.getOptions().reportingOptions().maximumNumberOfComparisons());
         Set<Submission> submissions = getSubmissions(comparisons);
-        Language language = result.getOptions().language();
+        Language language = result.getOptions().parsingOptions().language();
         for (Submission submission : submissions) {
-            for (Path file : submission.getFiles()) {
+            for (Path file : submission.getParsedFiles()) {
                 RelativePath filePath = FilePathUtil.getRelativeSubmissionPath(file, submission, submissionToIdFunction);
                 RelativePath resultPath = SUBMISSIONS_ROOT_PATH.resolve(filePath);
 
@@ -193,7 +193,7 @@ public class ReportObjectFactory {
     }
 
     private void writeSubmissionIndexFile(JPlagResult result) {
-        List<JPlagComparison> comparisons = result.getComparisons(result.getOptions().maximumNumberOfComparisons());
+        List<JPlagComparison> comparisons = result.getComparisons(result.getOptions().reportingOptions().maximumNumberOfComparisons());
         Set<Submission> submissions = getSubmissions(comparisons);
         SubmissionFileIndex fileIndex = new SubmissionFileIndex(new HashMap<>());
 

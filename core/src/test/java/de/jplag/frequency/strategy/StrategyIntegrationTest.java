@@ -43,8 +43,9 @@ class StrategyIntegrationTest extends TestBase {
     @BeforeAll
     void prepareMatchResult() throws ExitException {
         JPlagOptions options = getDefaultOptions("PartialPlagiarism");
-        SubmissionSetBuilder builder = new SubmissionSetBuilder(options);
+        SubmissionSetBuilder builder = new SubmissionSetBuilder(options.submissionFileOptions());
         SubmissionSet submissionSet = builder.buildSubmissionSet();
+        submissionSet.parse(options.parsingOptions());
         result = new LongestCommonSubsequenceSearch(options).compareSubmissions(submissionSet);
     }
 

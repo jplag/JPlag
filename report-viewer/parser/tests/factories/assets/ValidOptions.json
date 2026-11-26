@@ -1,15 +1,22 @@
 {
-  "language": "java",
-  "minimumTokenMatch": 9,
-  "submissionDirectories": [".\\files"],
-  "oldSubmissionDirectories": ["old"],
-  "baseCodeSubmissionDirectory": ".",
-  "subdirectoryName": "src/",
-  "fileSuffixes": [".java", ".JAVA"],
-  "exclusionFileName": "ex.txt",
-  "similarityMetric": "AVG",
-  "similarityThreshold": 0.0,
-  "maximumNumberOfComparisons": 500,
+  "submissionFileOptions": {
+    "submissionDirectories": [".\\files"],
+    "oldSubmissionDirectories": ["old"],
+    "baseCodeSubmissionDirectory": ".",
+    "subdirectoryName": "src/",
+    "exclusionFileName": "ex.txt"
+  },
+  "parsingOptions": {
+    "language": "java",
+    "minimumTokenMatch": 9,
+    "fileSuffixes": [".java", ".JAVA"],
+    "similarityMetric": "AVG",
+    "similarityThreshold": 0.0
+  },
+  "reportingOptions": {
+    "maximumNumberOfComparisons": 500
+  },
+
   "clusteringOptions": {
     "enabled": true,
     "metric": "AVG",

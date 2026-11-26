@@ -40,7 +40,14 @@ public enum ClusteringData {
         setEntries(similarity, 1, 3, 0.1);
 
         return similarity;
-    }, new int[][] {{0, 1}, {2, 3}}, new ClusteringOptions().withAgglomerativeThreshold(0.4));
+    },
+            new int[][] {{0, 1}, {2, 3}},
+            new ClusteringOptions(ClusteringOptions.DEFAULT_SIMILARITY_METRIC, ClusteringOptions.DEFAULT_SPECTRAL_KERNEL_BANDWIDTH,
+                    ClusteringOptions.DEFAULT_SPECTRAL_GAUSSIAN_PROCESS_VARIANCE, ClusteringOptions.DEFAULT_SPECTRAL_MIN_RUNS,
+                    ClusteringOptions.DEFAULT_SPECTRAL_MAX_RUNS, ClusteringOptions.DEFAULT_SPECTRAL_MAX_KMEANS_ITERATION_PER_RUN, 0.4,
+                    ClusteringOptions.DEFAULT_PREPROCESSOR, true, ClusteringOptions.DEFAULT_ALGORITHM,
+                    ClusteringOptions.DEFAULT_AGGLOMERATIVE_INTER_CLUSTER_SIMILARITY, ClusteringOptions.DEFAULT_PREPROCESSOR_THRESHOLD,
+                    ClusteringOptions.DEFAULT_PREPROCESSOR_PERCENTILE));
 
     private final RealMatrix similarity;
     private final Set<Set<Integer>> expected;

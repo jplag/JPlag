@@ -49,7 +49,7 @@ public class MetricMapper {
      * @return List of top comparisons with similarities in all metrics.
      */
     public List<TopComparison> getTopComparisons(JPlagResult result) {
-        return result.getComparisons(result.getOptions().maximumNumberOfComparisons()).stream()
+        return result.getComparisons(result.getOptions().reportingOptions().maximumNumberOfComparisons()).stream()
                 .map(comparison -> new TopComparison(submissionToIdFunction.apply(comparison.firstSubmission()),
                         submissionToIdFunction.apply(comparison.secondSubmission()), getComparisonMetricMap(comparison)))
                 .toList();

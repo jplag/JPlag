@@ -19,7 +19,7 @@ class SimilarityThresholdTest extends CliTest {
     @Test
     void testDefaultThreshold() throws ExitException, IOException {
         JPlagOptions options = runCliForOptions();
-        assertEquals(EXPECTED_DEFAULT_SIMILARITY_THRESHOLD, options.similarityThreshold());
+        assertEquals(EXPECTED_DEFAULT_SIMILARITY_THRESHOLD, options.parsingOptions().similarityThreshold());
     }
 
     @Test
@@ -32,19 +32,19 @@ class SimilarityThresholdTest extends CliTest {
     @Test
     void testLowerBound() throws ExitException, IOException {
         JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.SIMILARITY_THRESHOLD, -.01));
-        assertEquals(0.0, options.similarityThreshold(), DELTA);
+        assertEquals(0.0, options.parsingOptions().similarityThreshold(), DELTA);
     }
 
     @Test
     void testUpperBound() throws ExitException, IOException {
         JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.SIMILARITY_THRESHOLD, 1.01));
-        assertEquals(1.0, options.similarityThreshold(), DELTA);
+        assertEquals(1.0, options.parsingOptions().similarityThreshold(), DELTA);
     }
 
     @Test
     void testValidThreshold() throws ExitException, IOException {
         double expectedValue = 0.5;
         JPlagOptions options = runCliForOptions(args -> args.with(CliArgument.SIMILARITY_THRESHOLD, expectedValue));
-        assertEquals(expectedValue, options.similarityThreshold(), DELTA);
+        assertEquals(expectedValue, options.parsingOptions().similarityThreshold(), DELTA);
     }
 }

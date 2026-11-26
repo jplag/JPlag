@@ -13,7 +13,8 @@ import de.jplag.clustering.algorithm.InterClusterSimilarity;
 import de.jplag.frequency.FrequencyAnalysisOptions;
 import de.jplag.java.JavaLanguage;
 import de.jplag.merging.MergingOptions;
-import de.jplag.options.JPlagOptions;
+import de.jplag.options.ParsingOptions;
+import de.jplag.options.ReportingOptions;
 import de.jplag.options.SimilarityMetric;
 
 import picocli.CommandLine;
@@ -79,7 +80,7 @@ public class CliOptions implements Runnable {
      */
     @Option(names = {"-n",
             "--shown-comparisons"}, description = "The maximum number of comparisons that will be shown in the generated report, if set to -1 all comparisons will be shown (default: ${DEFAULT-VALUE})")
-    public int shownComparisons = JPlagOptions.DEFAULT_SHOWN_COMPARISONS;
+    public int shownComparisons = ReportingOptions.DEFAULT_SHOWN_COMPARISONS;
 
     /**
      * File to store comparison results (adds .jplag if missing).
@@ -167,7 +168,7 @@ public class CliOptions implements Runnable {
          */
         @Option(names = {"-m",
                 "--similarity-threshold"}, description = "Comparison similarity threshold [0.0-1.0]: All comparisons above this threshold will be saved (default: ${DEFAULT-VALUE}).")
-        public double similarityThreshold = JPlagOptions.DEFAULT_SIMILARITY_THRESHOLD;
+        public double similarityThreshold = ParsingOptions.DEFAULT_SIMILARITY_THRESHOLD;
 
         /**
          * Port for internal report viewer.

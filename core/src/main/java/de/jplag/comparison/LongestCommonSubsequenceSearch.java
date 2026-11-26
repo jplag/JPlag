@@ -67,7 +67,7 @@ public class LongestCommonSubsequenceSearch {
         JPlagComparison comparison = comparisonAlgorithm.compare(first, second);
         logger.trace("Comparing {}-{}: {}", first.getName(), second.getName(), comparison.similarity());
 
-        if (options.similarityMetric().isAboveThreshold(comparison, options.similarityThreshold())) {
+        if (options.parsingOptions().similarityMetric().isAboveThreshold(comparison, options.parsingOptions().similarityThreshold())) {
             return Optional.of(comparison);
         }
         return Optional.empty();

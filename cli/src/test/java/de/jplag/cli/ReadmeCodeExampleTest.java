@@ -13,6 +13,8 @@ import de.jplag.Language;
 import de.jplag.exceptions.ExitException;
 import de.jplag.java.JavaLanguage;
 import de.jplag.options.JPlagOptions;
+import de.jplag.options.ParsingOptions;
+import de.jplag.options.SubmissionFileOptions;
 import de.jplag.reporting.reportobject.ReportObjectFactory;
 
 /**
@@ -31,7 +33,7 @@ class ReadmeCodeExampleTest {
         Language language = new JavaLanguage();
         Set<Path> submissionDirectories = Set.of(Path.of("path", "to", "rootDir"));
         Path baseCode = Path.of("path", "to", "baseCode");
-        JPlagOptions options = new JPlagOptions(language, submissionDirectories, Set.of()).withBaseCodeSubmissionDirectory(baseCode);
+        JPlagOptions options = new JPlagOptions(new SubmissionFileOptions(submissionDirectories, Set.of(), baseCode), new ParsingOptions(language));
 
         try {
             JPlagResult result = JPlag.run(options);

@@ -49,7 +49,7 @@ class NewJavaFeaturesTest extends TestBase {
         // Ensure test input did not change:
         assertEquals(2, result.getNumberOfSubmissions(), String.format(CHANGE_MESSAGE, "Submissions"));
         for (Submission submission : result.getSubmissions().getSubmissions()) {
-            assertEquals(NUMBER_OF_TEST_FILES, submission.getFiles().size(), String.format(CHANGE_MESSAGE, "Files"));
+            assertEquals(NUMBER_OF_TEST_FILES, submission.getParsedFiles().size(), String.format(CHANGE_MESSAGE, "Files"));
         }
         assertEquals(1, result.getAllComparisons().size(), String.format(CHANGE_MESSAGE, "Comparisons"));
 

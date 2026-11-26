@@ -19,6 +19,7 @@ import de.jplag.Match;
 import de.jplag.Submission;
 import de.jplag.Token;
 import de.jplag.options.JPlagOptions;
+import de.jplag.options.ReportingOptions;
 import de.jplag.reporting.reportobject.model.BaseCodeMatch;
 import de.jplag.reporting.reportobject.model.CodePosition;
 import de.jplag.reporting.reportobject.model.ComparisonReport;
@@ -119,7 +120,9 @@ class ReportTokenPositionTestTest {
 
     JPlagOptions createMockOptions() {
         JPlagOptions options = mock(JPlagOptions.class);
-        when(options.maximumNumberOfComparisons()).thenReturn(1);
+        ReportingOptions reportingOptions = mock(ReportingOptions.class);
+        when(reportingOptions.maximumNumberOfComparisons()).thenReturn(1);
+        when(options.reportingOptions()).thenReturn(reportingOptions);
         return options;
     }
 

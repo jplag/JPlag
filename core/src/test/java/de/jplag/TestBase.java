@@ -16,6 +16,9 @@ import de.jplag.clustering.ClusteringOptions;
 import de.jplag.exceptions.ExitException;
 import de.jplag.java.JavaLanguage;
 import de.jplag.options.JPlagOptions;
+import de.jplag.options.ParsingOptions;
+import de.jplag.options.SubmissionFileOptions;
+import de.jplag.optionsWithHelper.SubmissionFileOptionsWith;
 
 /**
  * Shared base class for all core test cases. Provides functionality regarding executing JPlag and checking the results.
@@ -96,7 +99,7 @@ public abstract class TestBase {
 
     protected JPlagOptions getOptionsWithExclusionFile(String testSampleName, String exclusionFileName) {
         String blackList = BASE_PATH.resolve(testSampleName, exclusionFileName).toString();
-        return getOptions(testSampleName, options -> options.withExclusionFileName(blackList));
+        return getOptions(testSampleName, options -> SubmissionFileOptionsWith.exclusionFileName(options, blackList));
     }
 
     /**
@@ -138,8 +141,8 @@ public abstract class TestBase {
     protected JPlagOptions getOptions(List<Path> newPaths, List<Path> oldPaths, Function<JPlagOptions, JPlagOptions> customization) {
         var newFiles = new HashSet<>(newPaths);
         var oldFiles = new HashSet<>(oldPaths);
-        JPlagOptions options = new JPlagOptions(new JavaLanguage(), newFiles, oldFiles)
-                .withClusteringOptions(new ClusteringOptions().withEnabled(false));
+        JPlagOptions options = new JPlagOptions(new SubmissionFileOptions(newFiles, oldFiles, null), new ParsingOptions(new JavaLanguage()))
+                .withClusteringOptions(new ClusteringOptions(false));
         return customization.apply(options);
     }
 

@@ -17,6 +17,7 @@ import de.jplag.JPlagResult;
 import de.jplag.Match;
 import de.jplag.Submission;
 import de.jplag.options.JPlagOptions;
+import de.jplag.options.ReportingOptions;
 import de.jplag.options.SimilarityMetric;
 import de.jplag.reporting.reportobject.model.TopComparison;
 
@@ -97,7 +98,7 @@ class MetricMapperTest {
                 .calculateDistributionFor(SimilarityMetric.WEIGHTED_SIMILARITY);
 
         JPlagOptions options = mock(JPlagOptions.class);
-        doReturn(createComparisonsDto.length).when(options).maximumNumberOfComparisons();
+        doReturn(new ReportingOptions(createComparisonsDto.length)).when(options).reportingOptions();
         doReturn(options).when(jPlagResult).getOptions();
 
         List<JPlagComparison> comparisonList = new ArrayList<>();
