@@ -28,7 +28,7 @@ public record State(String id, List<Transition> transitions, List<State> substat
      * Constructs a new state.
      * @throws IllegalArgumentException if {@code transitions} or {@code substates} is null
      */
-    public State {
+    public State(String id, List<Transition> transitions, List<State> substates, List<Action> actions, boolean initial, boolean parallel) {
         if (transitions == null) {
             throw new IllegalArgumentException("State.transitions must not be null");
         }
@@ -37,6 +37,12 @@ public record State(String id, List<Transition> transitions, List<State> substat
             throw new IllegalArgumentException("State.substates must not be null");
         }
 
+        this.id = id;
+        this.transitions = transitions;
+        this.substates = substates;
+        this.actions = actions;
+        this.initial = initial;
+        this.parallel = parallel;
         updateTimedTransitions();
     }
 
@@ -81,7 +87,7 @@ public record State(String id, List<Transition> transitions, List<State> substat
      * are part of a timed transition.
      **/
     private void updateTimedTransitions() {
-        if (this.transitions().isEmpty() || this.actions().isEmpty()) {
+        if (transitions.isEmpty() || actions.isEmpty()) {
             return;
         }
 
@@ -96,17 +102,14 @@ public record State(String id, List<Transition> transitions, List<State> substat
     private void replaceMatchingTransitions(String sendId, Action onExit, Cancel cancel) {
         List<Send> onEntrySends = getOnEntrySends();
         for (Transition transition : transitions) {
-            boolean foundTimedTransition = false;
-            // Then check if there is also a matching send element in <onentry>
-            if (isMatchingTransition(transition, sendId) && onEntries().toList().stream().anyMatch(onEntry -> {
+            boolean foundTimedTransition = isMatchingTransition(transition, sendId) && onEntries().toList().stream().anyMatch(onEntry -> {
                 Optional<Send> matchingSend = onEntrySends.stream().filter(send -> send.event().equals(sendId)).map(send -> {
                     removeTimedTransitionElements(onEntry, send, onExit, cancel);
                     return send;
                 }).findFirst();
                 return matchingSend.isPresent();
-            })) {
-                foundTimedTransition = true;
-            }
+            });
+            // Then check if there is also a matching send element in <onentry>
             if (foundTimedTransition) {
                 // Replace the transition with a timed transition
                 transitions.set(transitions.indexOf(transition), Transition.makeTimed(transition));
