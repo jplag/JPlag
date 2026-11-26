@@ -31,6 +31,7 @@
         <module>javascript</module>
         <module>llvmir</module>
         <module>multi-language</module>
+        <module>scala-antlr</module>
     </modules>
     <dependencies>
         <dependency>

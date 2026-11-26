@@ -1,0 +1,2 @@
+> var x
+$ | VARIABLE_DEFINITION 3
