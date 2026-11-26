@@ -41,12 +41,15 @@ public final class CLI {
 
     private final CliInputHandler inputHandler;
 
+    private final List<AutoCloseable> toCloseAfterRun;
+
     /**
      * Creates a cli.
      * @param args The command line arguments
      */
     public CLI(String[] args) {
         this.inputHandler = new CliInputHandler(args);
+        this.toCloseAfterRun = new ArrayList<>();
     }
 
     /**
@@ -101,6 +104,13 @@ public final class CLI {
             }
             hadErrors = true;
         } finally {
+            toCloseAfterRun.forEach(it -> {
+                try {
+                    it.close();
+                } catch (Exception _) {
+                    // ignore. If closing fails at this point there is nothing we can do
+                }
+            });
             finalizeLogger();
         }
 
@@ -116,7 +126,7 @@ public final class CLI {
     public Path runJPlag() throws ExitException, IOException {
         Path target = Path.of(getWritableFileName()).toAbsolutePath();
 
-        JPlagOptionsBuilder optionsBuilder = new JPlagOptionsBuilder(this.inputHandler);
+        JPlagOptionsBuilder optionsBuilder = new JPlagOptionsBuilder(this.inputHandler, toCloseAfterRun);
         JPlagOptions options = optionsBuilder.buildOptions();
         JPlagResult result = JPlagRunner.runJPlag(options);
 
