@@ -182,7 +182,7 @@ class CPPListener extends AbstractAntlrListener {
                 return;
             }
             for (InitDeclaratorContext dec : parent.initDeclaratorList().initDeclarator()) {
-                String name = dec.declarator().pointerDeclarator().noPointerDeclarator().getText();
+                String name = declaratorName(dec, dec.declarator());
                 VariableScope scope = variableRegistry.inLocalScope() ? VariableScope.LOCAL : VariableScope.FILE;
                 variableRegistry.registerVariable(name, scope, true);
             }
@@ -209,8 +209,7 @@ class CPPListener extends AbstractAntlrListener {
         visit(ParameterDeclarationContext.class).map(VARDEF).withSemantics(CodeSemantics::new).onEnter((ctx, varReg) -> {
             // don't register parameters in function declarations, e.g. bc6h_enc lines 117-120
             if (hasAncestor(ctx, FunctionDefinitionContext.class, SimpleDeclarationContext.class) && ctx.declarator() != null) {
-                CPP14Parser.PointerDeclaratorContext pd = ctx.declarator().pointerDeclarator();
-                String name = pd.noPointerDeclarator().getText();
+                String name = declaratorName(ctx, ctx.declarator());
                 varReg.registerVariable(name, VariableScope.LOCAL, true);
                 varReg.setNextVariableAccessType(VariableAccessType.WRITE);
             }
@@ -250,6 +249,17 @@ class CPPListener extends AbstractAntlrListener {
         return context != null && (context.parametersAndQualifiers() != null || context.LeftParen() != null);
     }
 
+    private static String declaratorName(ParserRuleContext context, DeclaratorContext declarator) {
+        CPP14Parser.PointerDeclaratorContext pointer = declarator == null ? null : declarator.pointerDeclarator();
+        NoPointerDeclaratorContext name = pointer == null ? null : pointer.noPointerDeclarator();
+        if (name == null) {
+            // ANTLR may leave a declarator incomplete while recovering from a syntax error.
+            var start = context.getStart();
+            throw new IllegalArgumentException(": cannot extract declarator at line %d:%d".formatted(start.getLine(), start.getCharPositionInLine()));
+        }
+        return name.getText();
+    }
+
     private void mapClass(Function<ClassKeyContext, TerminalNode> getTerminal, TokenType beginTokenType, TokenType endTokenType) {
         visit(ClassSpecifierContext.class, rule -> {
             ClassKeyContext classKey = rule.classHead().classKey();
@@ -265,7 +275,7 @@ class CPPListener extends AbstractAntlrListener {
                     for (MemberDeclaratorContext memberDec : member.memberDeclaratorList().memberDeclarator()) {
                         DeclaratorContext dec = memberDec.declarator();
                         if (dec != null) { // is null in some weird case, see bc6h_enc line 1100
-                            String name = dec.pointerDeclarator().noPointerDeclarator().getText();
+                            String name = declaratorName(memberDec, dec);
                             variableRegistry.registerVariable(name, VariableScope.CLASS, true);
                         }
                     }
