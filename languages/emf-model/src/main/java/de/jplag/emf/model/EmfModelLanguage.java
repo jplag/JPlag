@@ -1,6 +1,6 @@
 package de.jplag.emf.model;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
@@ -65,7 +65,7 @@ public class EmfModelLanguage extends EmfLanguage {
     }
 
     @Override
-    public List<Token> parse(Set<File> files, boolean normalize) throws ParsingException {
+    public List<Token> parse(Set<Path> files, boolean normalize) throws ParsingException {
         if (!options.getMetamodelPathOption().hasValue()) {
             throw new ParsingException(files.iterator().next(), NO_METAMODEL_ERROR);
         }

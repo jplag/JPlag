@@ -1,7 +1,8 @@
 package de.jplag.testutils.datacollector;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,7 +24,7 @@ class InlineTestData implements TestData {
 
     @Override
     public List<Token> parseTokens(Language language) throws ParsingException, IOException {
-        File file = File.createTempFile("testSource", language.fileExtensions().getFirst());
+        Path file = Files.createTempFile("testSource", language.fileExtensions().getFirst());
         FileUtils.write(file, this.testData);
         List<Token> tokens = language.parse(Collections.singleton(file), false);
         TemporaryFileHolder.addTemporaryFile(file);

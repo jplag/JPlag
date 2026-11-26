@@ -21,7 +21,7 @@ import de.jplag.clustering.ClusteringOptions;
 public enum ClusteringData {
 
     /**
-     * A test data set with four points, where points 0 and 1 are similar, points 2 and 3 are similar, and others are
+     * A test dataset with four points, where points 0 and 1 are similar, points 2 and 3 are similar, and others are
      * dissimilar. The expected clusters are {0, 1} and {2, 3}.
      */
     FOUR_POINTS(() -> {

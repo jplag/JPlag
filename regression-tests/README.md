@@ -1,4 +1,4 @@
-# JPlag - Regression tests
+# JPlag – Regression tests
 
 The regression-tests module contains tests that report any chance in the similarities reported by JPlag.
 There are two kinds of tests:
@@ -9,7 +9,7 @@ In addition to that this module also contains architecture tests
 
 ## Gold standard tests
 
-A gold standard test serves as a metric for the change in detection quality. It needs a list of plagiarism instances in the data set.
+A gold standard test serves as a metric for the change in detection quality. It needs a list of plagiarism instances in the dataset.
 JPlag outputs comparisons split into those that should be reported as plagiarism and those that shouldn't.
 The test will fail if the average similarity on one of those groups changed. In contrast to the other kind of test, this offers a rough way to check if the changes made JPlag better or worse.
 
@@ -33,13 +33,13 @@ Alternatively, test data can be generated using various methods. One such method
 
 The test data should be placed under [data](src/test/resources/data). It can either be added as a directory containing submissions or as a zip file.
 
-### Defining the data set for the tests
+### Defining the dataset for the tests
 
-This is done in [dataSets](src/test/resources/dataSets). To add a new data set a new json file needs to be placed here.
+This is done in [datasets](src/test/resources/datasets). To add a new dataset a new json file needs to be placed here.
 
-A minimum example for a configuration can be found in [progpedia.json](src/test/resources/dataSets/progpedia.json). A full example using all options in [sortAlgo.json](src/test/resources/dataSets/sortAlgo.json).
+A minimum example for a configuration can be found in [progpedia.json](src/test/resources/datasets/progpedia.json). A full example using all options in [sortAlgo.json](src/test/resources/datasets/sortAlgo.json).
 
-For available options look at [dataSetTemplate.json](src/test/resources/dataSetTemplate.json).
+For available options look at [datasetTemplate.json](src/test/resources/datasetTemplate.json).
 
 ### Generating the reference results
 
@@ -47,7 +47,7 @@ See Updating tests above
 
 ## Creating test data manually
 
-The following changes were applied to sample tasks to create the sortAlgo data set:
+The following changes were applied to sample tasks to create the sortAlgo dataset:
 
 * Inserting comments or empty lines (normalization level)
 * Changing variable names or function names (normalization level)

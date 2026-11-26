@@ -98,7 +98,7 @@ const labels = computed(() => {
   return matchedWith.map((m) => props.getDisplayName(m))
 })
 
-const dataSet = computed(() => {
+const dataset = computed(() => {
   let data = new Array<number>()
   props.cluster.members
     .get(idOfShownSubmission.value)
@@ -149,7 +149,7 @@ const chartData: Ref<ChartData<'radar', (number | null)[]>> = computed(() => {
       {
         ...radarChartStyle,
         label: props.getDisplayName(idOfShownSubmission.value),
-        data: dataSet.value
+        data: dataset.value
       }
     ]
   }
