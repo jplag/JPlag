@@ -78,7 +78,7 @@ const errorText = computed(() =>
 )
 
 function navigateToOverview() {
-  router.push({
+  void router.push({
     name: 'OverviewView'
   })
 }
@@ -125,7 +125,7 @@ async function uploadFileOnDrag(e: DragEvent) {
   }
 }
 
-async function uploadFileThroughWindow() {
+function uploadFileThroughWindow() {
   let input = document.createElement('input')
   input.type = 'file'
   input.accept = '.jplag,.zip'
@@ -139,7 +139,7 @@ async function uploadFileThroughWindow() {
     if (!file) {
       return
     }
-    handleFile(file, file.name)
+    void handleFile(file, file.name)
   }
   input.click()
 }

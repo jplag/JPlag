@@ -59,7 +59,7 @@ export const reportStore = defineStore('reportStore', () => {
     const r = compareVersions(version, reportViewerVersion, minimalReportVersion)
     if (!r) {
       files.value.clear()
-      router.push({ name: 'OldVersionRedirectView', params: { version: version.toString() } })
+      void router.push({ name: 'OldVersionRedirectView', params: { version: version.toString() } })
       return false
     }
 

@@ -26,17 +26,15 @@ export class ReportFileHandler {
             fileBase,
             originalFileName
           )
-          await zip.files[originalFileName].async('string').then((data) => {
-            submissionFiles.push({
-              submissionId: slash(submissionFileName),
-              fileName: slash(fullPathFileName),
-              data: data
-            })
+          const data = await zip.files[originalFileName].async('string')
+          submissionFiles.push({
+            submissionId: slash(submissionFileName),
+            fileName: slash(fullPathFileName),
+            data: data
           })
         } else {
-          await zip.files[originalFileName].async('string').then((data) => {
-            files.push({ fileName: unixFileName, data: data })
-          })
+          const data = await zip.files[originalFileName].async('string')
+          files.push({ fileName: unixFileName, data: data })
         }
       }
     })

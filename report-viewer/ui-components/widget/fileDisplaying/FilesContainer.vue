@@ -199,7 +199,7 @@ function scrollTo(file: string, line: number) {
   const codePanel = codePanels.value[file]
   if (codePanel !== undefined) {
     codePanel.expand()
-    nextTick(() => {
+    void nextTick(() => {
       if (!scrollContainer.value) {
         return
       }
