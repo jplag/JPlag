@@ -19,6 +19,7 @@ import de.jplag.cpp.grammar.CPP14Lexer;
 import de.jplag.cpp.grammar.CPP14Parser;
 
 class CppParsingErrorTest {
+    /** Directory for the C++ source files parsed by each test. */
     @TempDir
     Path temporaryDirectory;
 
