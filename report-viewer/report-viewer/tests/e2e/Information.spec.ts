@@ -16,11 +16,11 @@ test('Test information page', async ({ page }) => {
   await page.waitForURL('/info')
 
   // check displayed run options on information page
-  const runOptions = await page.getByText('Run Options:Language:').textContent()
+  const runOptions = await page.getByText('Run Options:Submission Files:Submission').textContent()
   expect(runOptions).toContain('Submission Directories:')
   expect(runOptions).toContain('Base Directory:')
   expect(runOptions).toContain('Language:')
-  expect(runOptions).toContain('File Extensions:')
+  expect(runOptions).toContain('File Suffixes:')
   expect(runOptions).toMatch(/Min Token Match:[0-9]+/)
 
   const runData = await page.getByText('Run Data:Date of Execution:').textContent()
