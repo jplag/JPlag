@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,12 +33,16 @@ public class JPlagOptionsBuilder {
     private final CliInputHandler cliInputHandler;
     private final CliOptions cliOptions;
 
+    private final List<AutoCloseable> closeableCollector;
+
     /**
      * @param cliInputHandler The cli handler containing the parsed cli options.
+     * @param closeableCollector A collector for closeables that have to be handled after the cli run
      */
-    public JPlagOptionsBuilder(CliInputHandler cliInputHandler) {
+    public JPlagOptionsBuilder(CliInputHandler cliInputHandler, List<AutoCloseable> closeableCollector) {
         this.cliInputHandler = cliInputHandler;
         this.cliOptions = this.cliInputHandler.getCliOptions();
+        this.closeableCollector = closeableCollector;
     }
 
     /**
@@ -69,12 +74,15 @@ public class JPlagOptionsBuilder {
             if (dir.isFile() && dir.getName().endsWith(".zip")) {
                 try {
                     FileSystem fileSystem = FileSystems.newFileSystem(dir.toPath());
+                    closeableCollector.add(fileSystem);
                     Path root = fileSystem.getRootDirectories().iterator().next();
-                    List<Path> children = Files.list(root).toList();
-                    if (children.size() == 1 && Files.isDirectory(children.get(0))) {
-                        root = children.get(0);
+                    try (Stream<Path> childStream = Files.list(root)) {
+                        List<Path> children = childStream.toList();
+                        if (children.size() == 1 && Files.isDirectory(children.getFirst())) {
+                            root = children.getFirst();
+                        }
+                        result.add(root);
                     }
-                    result.add(root);
                 } catch (IOException _) {
                     throw new CliException(String.format(ERROR_OPEN_ZIP, dir.getAbsolutePath()));
                 }
