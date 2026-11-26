@@ -353,15 +353,17 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
     .trimEnd()
     .toLowerCase()
     .split(/ +/g)
-    .map((s) => s.trim().replace(/,/g, ''))
+    .map((s) => s.trim().replaceAll(',', ''))
   if (searches.length == 0) {
     return comparisons
   }
 
-  const indexSearches = searches
-    .filter((s) => /index:[0-9]+/.test(s))
-    .map((s) => s.substring(6))
-    .map((s) => parseInt(s))
+  const indexSearches = new Set(
+    searches
+      .filter((s) => /index:[0-9]+/.test(s))
+      .map((s) => s.substring(6))
+      .map((s) => Number.parseInt(s))
+  )
 
   const metricSearches = searches.filter((s) => /((avg|max|long|len|wavg):)?([<>])=?\d+%?/.test(s))
 
@@ -385,7 +387,7 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
     }
 
     // index search
-    if (indexSearches.includes(c.sortingPlace + 1)) {
+    if (indexSearches.has(c.sortingPlace + 1)) {
       return true
     }
     if (searches.some((s) => (c.sortingPlace + 1).toString().includes(s))) {
@@ -422,7 +424,7 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
       for (const search of searchPerMetric[metric]) {
         const regexResult = /([<>]=?)([0-9]+)%?/.exec(search)!
         const operator = regexResult[1]
-        const value = parseInt(regexResult[2])
+        const value = Number.parseInt(regexResult[2])
         const metricObject = MetricTypes.METRIC_MAP[metric]
         if (
           evaluateMetricComparison(
@@ -438,24 +440,20 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
 
     return false
   })
+}
 
-  function evaluateMetricComparison(
-    comparisonMetric: number,
-    operator: string,
-    checkValue: number
-  ) {
-    switch (operator) {
-      case '>':
-        return comparisonMetric > checkValue
-      case '<':
-        return comparisonMetric < checkValue
-      case '>=':
-        return comparisonMetric >= checkValue
-      case '<=':
-        return comparisonMetric <= checkValue
-      default:
-        return false
-    }
+function evaluateMetricComparison(comparisonMetric: number, operator: string, checkValue: number) {
+  switch (operator) {
+    case '>':
+      return comparisonMetric > checkValue
+    case '<':
+      return comparisonMetric < checkValue
+    case '>=':
+      return comparisonMetric >= checkValue
+    case '<=':
+      return comparisonMetric <= checkValue
+    default:
+      return false
   }
 }
 

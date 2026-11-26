@@ -32,7 +32,7 @@
       <div class="border-container-border flex-1 border-b"></div>
     </div>
     <div class="flex flex-1 flex-col overflow-hidden p-2">
-      <slot :name="selectedTab.replace(/\s/g, '-')"></slot>
+      <slot :name="selectedTab.replaceAll(/\s/g, '-')"></slot>
     </div>
   </ContainerComponent>
 </template>

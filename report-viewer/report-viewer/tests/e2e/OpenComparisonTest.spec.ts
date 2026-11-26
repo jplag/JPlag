@@ -21,23 +21,23 @@ const testSets: DataSet[] = [
   },
   {
     datasetName: 'fileMultiRoot-report.jplag',
-    firstSubmissionName: 'f0\\\\|/0.java',
-    secondSubmissionName: 'f1\\\\|/1.java'
+    firstSubmissionName: String.raw`f0\\|/0.java`,
+    secondSubmissionName: String.raw`f1\\|/1.java`
   },
   {
     datasetName: 'mixedBaseFile-report.jplag',
-    firstSubmissionName: 'f0\\\\|/0.java',
-    secondSubmissionName: 'f1\\\\|/1'
+    firstSubmissionName: String.raw`f0\\|/0.java`,
+    secondSubmissionName: String.raw`f1\\|/1`
   },
   {
     datasetName: 'mixedBaseFolder-report.jplag',
-    firstSubmissionName: 'f0\\\\|/0.java',
-    secondSubmissionName: 'f1\\\\|/1'
+    firstSubmissionName: String.raw`f0\\|/0.java`,
+    secondSubmissionName: String.raw`f1\\|/1`
   },
   {
     datasetName: 'folderMultiRoot-report.jplag',
-    firstSubmissionName: 'f0\\\\|/0',
-    secondSubmissionName: 'f1\\\\|/1'
+    firstSubmissionName: String.raw`f0\\|/0`,
+    secondSubmissionName: String.raw`f1\\|/1`
   },
   {
     datasetName: 'python-report.jplag',

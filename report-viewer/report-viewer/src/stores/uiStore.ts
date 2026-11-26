@@ -42,11 +42,11 @@ export const uiStore = defineStore('uiStore', () => {
 
 const USE_DARK_MODE_KEYWORD = 'jplag:use-dark-mode'
 
-function getDefaultUseDarkModeOption() {
+function getDefaultUseDarkModeOption(): boolean {
   const local = localStorage.getItem(USE_DARK_MODE_KEYWORD)
   if (local !== null) {
     return local === 'true'
   }
 
-  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+  return window?.matchMedia('(prefers-color-scheme: dark)')?.matches ?? false
 }

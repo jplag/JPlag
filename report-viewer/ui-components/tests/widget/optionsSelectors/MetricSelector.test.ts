@@ -41,7 +41,7 @@ describe('OptionSelectorComponent', () => {
     await wrapper.findAllComponents({ name: 'OptionComponent' })[1].trigger('click')
 
     expect(wrapper.emitted('selectionChanged')).toBeTruthy()
-    expect(wrapper.emitted('selectionChanged')?.length).toBe(1)
+    expect(wrapper.emitted('selectionChanged')).toHaveLength(1)
     expect(wrapper.emitted('selectionChanged')?.[0]).toEqual([
       MetricJsonIdentifier.MAXIMUM_SIMILARITY
     ])

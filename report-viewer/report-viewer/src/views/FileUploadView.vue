@@ -46,7 +46,7 @@
       </div>
       <LoadingCircle v-else-if="loadingFiles || exampleFiles" class="space-y-5 pt-5" />
       <div v-if="errors.length > 0" class="text-error">
-        <p>{{ getErrorText() }}</p>
+        <p>{{ errorText }}</p>
         <p>For more details check the console.</p>
       </div>
     </div>
@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { onErrorCaptured, ref, type Ref } from 'vue'
+import { computed, onErrorCaptured, onMounted, ref, type Ref } from 'vue'
 import { router } from '@/router'
 import VersionInfoComponent from '../components/VersionInfoComponent.vue'
 import { reportStore } from '@/stores/reportStore'
@@ -68,20 +68,17 @@ reportStore().reset()
 
 const exampleFiles = ref(import.meta.env.MODE == 'demo' || import.meta.env.MODE == 'dev-demo')
 
-canLoadFile().then((value) => {
-  if (value) {
-    navigateToOverview()
-  }
-})
-
 document.title = 'JPlag Report Viewer'
 
 const loadingFiles = ref(false)
 type fileMethod = 'query' | 'upload' | 'unknown'
 const errors: Ref<{ error: Error; source: fileMethod }[]> = ref([])
+const errorText = computed(() =>
+  errors.value.map((e) => `${getSourceText(e.source)}: ${e.error.message}`).join('\n')
+)
 
 function navigateToOverview() {
-  router.push({
+  void router.push({
     name: 'OverviewView'
   })
 }
@@ -128,7 +125,7 @@ async function uploadFileOnDrag(e: DragEvent) {
   }
 }
 
-async function uploadFileThroughWindow() {
+function uploadFileThroughWindow() {
   let input = document.createElement('input')
   input.type = 'file'
   input.accept = '.jplag,.zip'
@@ -142,7 +139,7 @@ async function uploadFileThroughWindow() {
     if (!file) {
       return
     }
-    handleFile(file, file.name)
+    void handleFile(file, file.name)
   }
   input.click()
 }
@@ -153,20 +150,23 @@ function registerError(error: Error, source: fileMethod) {
   console.error(error)
 }
 
-function getErrorText() {
-  function getSourceText(source: fileMethod) {
-    if (source == 'unknown') {
-      return 'Error:'
-    }
-    const longNames = {
-      query: 'querying files',
-      upload: 'loading files'
-    }
-    return 'Error during ' + longNames[source]
+function getSourceText(source: fileMethod) {
+  if (source == 'unknown') {
+    return 'Error:'
   }
-
-  return errors.value.map((e) => `${getSourceText(e.source)}: ${e.error.message}`).join('\n')
+  const longNames = {
+    query: 'querying files',
+    upload: 'loading files'
+  }
+  return 'Error during ' + longNames[source]
 }
+
+onMounted(async () => {
+  const loadFile = await canLoadFile()
+  if (loadFile) {
+    navigateToOverview()
+  }
+})
 
 onErrorCaptured((error) => {
   registerError(error, 'unknown')

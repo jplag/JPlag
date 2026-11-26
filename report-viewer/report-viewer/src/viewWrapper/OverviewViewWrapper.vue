@@ -16,8 +16,15 @@ import VersionRepositoryReference from '../components/VersionRepositoryReference
 import { reportStore } from '@/stores/reportStore'
 import { loadReport } from '@/stores/fileLoading'
 import { redirectOnError } from '@/router'
+import { onMounted } from 'vue'
 
-if (!reportStore().isReportLoaded()) {
-  loadReport().catch((error) => redirectOnError(error))
-}
+onMounted(async () => {
+  if (!reportStore().isReportLoaded()) {
+    try {
+      await loadReport()
+    } catch (e) {
+      redirectOnError(e as Error)
+    }
+  }
+})
 </script>

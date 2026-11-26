@@ -41,13 +41,13 @@ export class ComparisonFactory {
   ): Comparison {
     const filesOfFirstSubmission = this.loadSubmissionFiles(
       _filesOfFirstSubmission,
-      this.transfromIndexFormatting(
+      this.transformIndexFormatting(
         submissionFileIndexJson.fileIndexes[comparisonJson.firstSubmissionId]
       )
     )
     const filesOfSecondSubmission = this.loadSubmissionFiles(
       _filesOfSecondSubmission,
-      this.transfromIndexFormatting(
+      this.transformIndexFormatting(
         submissionFileIndexJson.fileIndexes[comparisonJson.secondSubmissionId]
       )
     )
@@ -100,7 +100,7 @@ export class ComparisonFactory {
     return similarities
   }
 
-  private static transfromIndexFormatting(oldFileIndex: Record<string, ReportSubmissionFile>) {
+  private static transformIndexFormatting(oldFileIndex: Record<string, ReportSubmissionFile>) {
     const newFileIndex: Record<string, ReportSubmissionFile> = {}
     for (const [filePath, fileList] of Object.entries(oldFileIndex)) {
       newFileIndex[slash(filePath)] = fileList
@@ -142,9 +142,9 @@ export class ComparisonFactory {
     }
 
     for (const matchToColor of matches) {
-      const firstIndex = matchesFirst.findIndex((match) => match === matchToColor)
-      const secondIndex = matchesSecond.findIndex((match) => match === matchToColor)
-      const sortedIndex = sortedSize.findIndex((match) => match === matchToColor)
+      const firstIndex = matchesFirst.indexOf(matchToColor)
+      const secondIndex = matchesSecond.indexOf(matchToColor)
+      const sortedIndex = sortedSize.indexOf(matchToColor)
       const startCounter = currentColorIndex
       while (
         !isColorAvailable(matchesFirst, firstIndex) ||

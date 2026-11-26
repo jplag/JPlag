@@ -10,36 +10,41 @@ export class ReportFileHandler {
     const files: File[] = []
     const submissionFiles: SubmissionFile[] = []
     console.info('Start handling report file and storing necessary data...')
-    await jszip.loadAsync(file).then(async (zip) => {
-      for (const originalFileName of Object.keys(zip.files)) {
-        const unixFileName = slash(originalFileName)
-        if (unixFileName.endsWith('/')) {
-          continue
-        }
-        if (/\/?(files)\//.test(unixFileName) && !/\/?__MACOSX\//.test(unixFileName)) {
-          const directoryPath = unixFileName.substring(0, unixFileName.lastIndexOf('/'))
-          const fileBase = unixFileName.substring(unixFileName.lastIndexOf('/') + 1)
+    const zip = await jszip.loadAsync(file)
+    const operations: Promise<unknown>[] = []
+    for (const originalFileName of Object.keys(zip.files)) {
+      const unixFileName = slash(originalFileName)
+      if (unixFileName.endsWith('/')) {
+        continue
+      }
+      if (/\/?(files)\//.test(unixFileName) && !/\/?__MACOSX\//.test(unixFileName)) {
+        const directoryPath = unixFileName.substring(0, unixFileName.lastIndexOf('/'))
+        const fileBase = unixFileName.substring(unixFileName.lastIndexOf('/') + 1)
 
-          const submissionFileName = this.extractSubmissionFileName(directoryPath)
-          const fullPathFileName = this.extractFileNameWithFullPath(
-            directoryPath,
-            fileBase,
-            originalFileName
-          )
-          await zip.files[originalFileName].async('string').then((data) => {
+        const submissionFileName = this.extractSubmissionFileName(directoryPath)
+        const fullPathFileName = this.extractFileNameWithFullPath(
+          directoryPath,
+          fileBase,
+          originalFileName
+        )
+        operations.push(
+          zip.files[originalFileName].async('string').then((data) =>
             submissionFiles.push({
               submissionId: slash(submissionFileName),
               fileName: slash(fullPathFileName),
               data: data
             })
-          })
-        } else {
-          await zip.files[originalFileName].async('string').then((data) => {
-            files.push({ fileName: unixFileName, data: data })
-          })
-        }
+          )
+        )
+      } else {
+        operations.push(
+          zip.files[originalFileName]
+            .async('string')
+            .then((data) => files.push({ fileName: unixFileName, data: data }))
+        )
       }
-    })
+    }
+    await Promise.all(operations)
     return { files, submissionFiles }
   }
 
@@ -52,9 +57,9 @@ export class ReportFileHandler {
     const rootName = folders[0]
     let submissionFolderIndex: number
     if (rootName === 'files') {
-      submissionFolderIndex = folders.findIndex((folder) => folder === 'files')
+      submissionFolderIndex = folders.indexOf('files')
     } else {
-      submissionFolderIndex = folders.findIndex((folder) => folder === 'submissions')
+      submissionFolderIndex = folders.indexOf('submissions')
     }
     return folders[submissionFolderIndex + 1]
   }
@@ -89,9 +94,7 @@ export class ReportFileHandler {
     )
     if (originalPathWithoutSubmissions.startsWith('\\')) {
       fullPath = unixSubfolderPathAfterSubmissions + '\\' + fileBase
-      while (fullPath.includes('/')) {
-        fullPath = fullPath.replace('/', '\\')
-      }
+      fullPath = fullPath.replaceAll('/', '\\')
     } else {
       fullPath = unixSubfolderPathAfterSubmissions + '/' + fileBase
     }

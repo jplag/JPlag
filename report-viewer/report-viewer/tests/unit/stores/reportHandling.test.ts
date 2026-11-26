@@ -87,7 +87,7 @@ describe('Test Report File Handling', () => {
   it('Test submission id extraction', () => {
     reportStore().loadReport(mockFiles, [], 'test')
 
-    expect(reportStore().getSubmissionIds().length).toEqual(3)
+    expect(reportStore().getSubmissionIds()).toHaveLength(3)
     expect(reportStore().getSubmissionIds()).toContain('test1')
     expect(reportStore().getSubmissionIds()).toContain('test2')
     expect(reportStore().getSubmissionIds()).toContain('test3')
@@ -110,8 +110,8 @@ describe('Test Report File Handling', () => {
 
     const filesOfFirstSubmission = comparison.filesOfFirstSubmission
     const filesOfSecondSubmission = comparison.filesOfSecondSubmission
-    expect(filesOfFirstSubmission.length).toEqual(2)
-    expect(filesOfSecondSubmission.length).toEqual(2)
+    expect(filesOfFirstSubmission).toHaveLength(2)
+    expect(filesOfSecondSubmission).toHaveLength(2)
 
     const test1SubmissionJava = filesOfFirstSubmission.find(
       (file) => file.fileName === 'test1/Submission.java'

@@ -48,7 +48,7 @@ export const reportStore = defineStore('reportStore', () => {
   ): boolean {
     _files.forEach((f) => files.value.set(f.fileName, f))
     reportFileName.value = fileName
-    // check for version and redirect to old version if neccessary
+    // check for version and redirect to old version if necessary
     const version = getVersionFromRaw(
       files.value.get('runInformation.json'),
       files.value.get('overview.json')
@@ -59,7 +59,7 @@ export const reportStore = defineStore('reportStore', () => {
     const r = compareVersions(version, reportViewerVersion, minimalReportVersion)
     if (!r) {
       files.value.clear()
-      router.push({ name: 'OldVersionRedirectView', params: { version: version.toString() } })
+      void router.push({ name: 'OldVersionRedirectView', params: { version: version.toString() } })
       return false
     }
 

@@ -11,7 +11,7 @@ test('Test cluster view', async ({ page }) => {
   await page.waitForURL(/\/cluster\/.*/)
 
   // check that the cluster graph exist
-  expect(page.locator('canvas').first()).not.toBeHidden()
+  await expect(page.locator('canvas').first()).not.toBeHidden()
 
   // switch to cluster chart
   await page.getByText('Radar').first().click()
@@ -20,10 +20,10 @@ test('Test cluster view', async ({ page }) => {
   await page.waitForTimeout(3000)
   const radarChart = page.locator('canvas').first()
   await page.getByRole('combobox').selectOption('C')
-  expect(page.getByRole('combobox').first()).toHaveValue('C')
+  await expect(page.getByRole('combobox').first()).toHaveValue('C')
   const clusterImageC = radarChart.screenshot()
   await page.getByRole('combobox').selectOption('B')
-  expect(page.getByRole('combobox').first()).toHaveValue('B')
+  await expect(page.getByRole('combobox').first()).toHaveValue('B')
   expect(await radarChart.screenshot()).not.toEqual(clusterImageC)
 
   // Check comparison table

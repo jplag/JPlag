@@ -115,7 +115,7 @@ const options = computed(() => {
           // ensures that in log mode ticks are placed evenly apart
           /* eslint-disable @typescript-eslint/no-explicit-any */ // needs to be any since it is defined like that in chart.js
           callback: function (value: any) {
-            if (config.value.xScale === 'logarithmic' && (value + '').match(/1(0)*[^1-9.]/)) {
+            if (config.value.xScale === 'logarithmic' && /1(0)*[^1-9.]/.exec(value + '')) {
               return value
             }
             if (config.value.xScale !== 'logarithmic') {
@@ -173,7 +173,7 @@ const options = computed(() => {
         onClick: () => {}
       }
     },
-    // @ts-expect-error As there is not type to satisfy both the getElementsAtEventForMode function and Chart creations we leave the type out
+    // @ts-expect-error As there is no type to satisfy both the getElementsAtEventForMode function and Chart creations we leave the type out
     onClick: (e) => {
       if (!chart.value) {
         return

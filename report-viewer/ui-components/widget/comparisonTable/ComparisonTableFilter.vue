@@ -4,7 +4,7 @@
     <div class="flex flex-wrap gap-x-2 gap-y-2">
       <h2 class="col-start-1 row-start-1">{{ header }}</h2>
 
-      <!-- On wide screens: SearchBar and Button on same row. On slim: seperate rows -->
+      <!-- On wide screens: SearchBar and Button on same row. On slim: separate rows -->
       <div class="flex grow flex-col gap-x-2 gap-y-2 md:flex-row md:flex-wrap">
         <ToolTipComponent
           direction="left"
@@ -13,6 +13,7 @@
         >
           <template #default>
             <SearchBarComponent
+              id="comparison-filter"
               v-model="searchString"
               class="w-full"
               placeholder="Filter/Unhide Comparisons"

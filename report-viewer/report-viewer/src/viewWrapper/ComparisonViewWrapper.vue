@@ -21,6 +21,7 @@ import { loadReport } from '@/stores/fileLoading'
 import { redirectOnError } from '@/router'
 import { LoadingCircle } from '@jplag/ui-components/base'
 import VersionRepositoryReference from '@/components/VersionRepositoryReference.vue'
+import { onMounted } from 'vue'
 
 defineProps({
   firstSubmissionId: {
@@ -33,7 +34,13 @@ defineProps({
   }
 })
 
-if (!reportStore().isReportLoaded()) {
-  loadReport().catch((error) => redirectOnError(error))
-}
+onMounted(async () => {
+  if (!reportStore().isReportLoaded()) {
+    try {
+      await loadReport()
+    } catch (e) {
+      redirectOnError(e as Error)
+    }
+  }
+})
 </script>

@@ -196,7 +196,7 @@ function onBarClicked(upperPercentile: number) {
     direction: Direction.descending
   }
 
-  // determine largest similarity value that is still in the bucket
+  // determine the largest similarity value that is still in the bucket
   let value = -1
   for (const comparison of topComparisons.value) {
     if (
@@ -215,7 +215,7 @@ function onBarClicked(upperPercentile: number) {
   }
 
   // we scroll in the next tick so the table can adjust its sorting to the new metric
-  nextTick(() => {
+  void nextTick(() => {
     comparisonTable.value?.scrollToItem(value < 0 ? undefined : index)
   })
 }

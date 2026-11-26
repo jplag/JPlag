@@ -19,7 +19,7 @@ import LoadingCircle from '@jplag/ui-components/base/LoadingCircle.vue'
 import VersionRepositoryReference from '../components/VersionRepositoryReference.vue'
 import { reportStore } from '@/stores/reportStore'
 import { loadReport } from '@/stores/fileLoading'
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { redirectOnError } from '@/router'
 
 const props = defineProps({
@@ -30,15 +30,21 @@ const props = defineProps({
 })
 
 const parsedIndex = computed(() => {
-  const index = parseInt(props.clusterIndex)
-  if (isNaN(index) || index < 0) {
+  const index = Number.parseInt(props.clusterIndex)
+  if (Number.isNaN(index) || index < 0) {
     redirectOnError(new Error('Invalid cluster index provided.'))
     return -1
   }
   return index
 })
 
-if (!reportStore().isReportLoaded()) {
-  loadReport().catch((error) => redirectOnError(error))
-}
+onMounted(async () => {
+  if (!reportStore().isReportLoaded()) {
+    try {
+      await loadReport()
+    } catch (e) {
+      redirectOnError(e as Error)
+    }
+  }
+})
 </script>
