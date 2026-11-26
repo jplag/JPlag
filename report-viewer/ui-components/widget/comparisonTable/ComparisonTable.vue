@@ -353,7 +353,7 @@ function getFilteredComparisons(comparisons: ComparisonListElement[]) {
     .trimEnd()
     .toLowerCase()
     .split(/ +/g)
-    .map((s) => s.trim().replaceAll(/,/g, ''))
+    .map((s) => s.trim().replaceAll(',', ''))
   if (searches.length == 0) {
     return comparisons
   }
