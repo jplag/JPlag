@@ -173,7 +173,7 @@ const options = computed(() => {
         onClick: () => {}
       }
     },
-    // @ts-expect-error As there is not type to satisfy both the getElementsAtEventForMode function and Chart creations we leave the type out
+    // @ts-expect-error As there is no type to satisfy both the getElementsAtEventForMode function and Chart creations we leave the type out
     onClick: (e) => {
       if (!chart.value) {
         return

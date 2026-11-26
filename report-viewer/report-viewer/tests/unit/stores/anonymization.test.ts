@@ -28,7 +28,7 @@ describe('Test Anonymization', () => {
     expect(reportStore().getPlainDisplayName('test1')).toEqual('Test1')
   })
 
-  it('Keep number asociated with anonymized names', () => {
+  it('Keep number associated with anonymized names', () => {
     reportStore().setAnonymous('test1', true)
     reportStore().setAnonymous('test2', true)
     expect(reportStore().getDisplayName('test1')).toEqual('anon1')

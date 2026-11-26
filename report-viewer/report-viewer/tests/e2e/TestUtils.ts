@@ -14,7 +14,7 @@ export async function uploadFile(
 ) {
   page.route('**/results.jplag', async (route) => {
     await route.fulfill({
-      // fullfill with the file
+      // fulfill with the file
       path: `./tests/e2e/assets/${fileName}`,
       headers: {
         'Content-Type': 'application/zip'
