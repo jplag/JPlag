@@ -56,7 +56,7 @@ describe('Test JSON to Distribution', () => {
       strength: 0.5,
       members: ['Sub02', 'Sub04', 'Sub01']
     }
-    const result = await TopComparisonFactory.getTopComparisons(validTopComparisons, [cluster])
+    const result = TopComparisonFactory.getTopComparisons(validTopComparisons, [cluster])
 
     expect(result[0].cluster).toEqual(cluster)
     expect(result[1].cluster).toBeUndefined()

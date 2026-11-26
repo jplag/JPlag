@@ -1,7 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { describe, it, expect } from 'vitest'
 import ComparisonTable from '../../../widget/comparisonTable/ComparisonTable.vue'
-import { Column, Direction } from '../../../widget/comparisonTable/ComparisonSorting'
+import { Column, Direction } from '../../../widget'
 import { MetricJsonIdentifier, type ComparisonListElement } from '@jplag/model'
 
 describe('ComparisonTable', () => {

@@ -10,8 +10,7 @@
             class="text-link underline"
             :href="`https://github.com/jplag/JPlag/commit/${commitHash}`"
             target="_blank"
-            >{{ commitHash.substring(0, 7) }}</a
-          >)
+            >{{ commitHash.substring(0, 7) }}</a>)
         </span>
       </div>
 
@@ -36,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { minimalReportVersion, reportViewerVersion, commitHash } from '../version/versions'
+import { minimalReportVersion, reportViewerVersion, commitHash } from '@/version/versions'
 import VersionRepositoryReference from './VersionRepositoryReference.vue'
 
 const isDemo = import.meta.env.MODE == 'demo'
