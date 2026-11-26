@@ -1,3 +1,4 @@
+// CHECKSTYLE:OFF
 // Scala 3 INDENT/DEDENT injection for ANTLR4
 // Modelled on Dotty (Scala 3 compiler) Scanners.scala handleNewLine logic.
 //
@@ -165,7 +166,8 @@ public abstract class Scala3LexerBase extends Lexer {
             addPendingToken(curToken);
         } else if (type == Scala3Lexer.LBRACE) {
             regionStack.push(Region.InBraces);
-            indentLengthStack.push(indentLengthStack.peek());
+            indentLengthStack.push(indentLengthStack.peek()); // adds and indent for the brace region. It will be updated in handleNewlineToken if
+                                                              // neccesary.
             addPendingToken(curToken);
         } else if (type == Scala3Lexer.RBRACE) {
             while (!regionStack.isEmpty() && regionStack.peek() == Region.Indented) {
@@ -174,8 +176,8 @@ public abstract class Scala3LexerBase extends Lexer {
                 createAndAddPendingToken(Scala3Lexer.DEDENT, Token.DEFAULT_CHANNEL, "<DEDENT>", curToken);
             }
             if (!regionStack.isEmpty() && regionStack.peek() == Region.InBraces)
-                indentLengthStack.pop();
-            regionStack.pop();
+                regionStack.pop();
+            indentLengthStack.pop();
             addPendingToken(curToken);
         } else if (type == Token.EOF) {
             handleEofToken();
@@ -232,6 +234,8 @@ public abstract class Scala3LexerBase extends Lexer {
         else
             newIndent = 0;
 
+        // Updates the indentation depth for the new brace region.
+        // This ensures that new indents inside the brace region are compared to the correct indent
         if (lastNonHiddenType == Scala3Lexer.LBRACE) {
             indentLengthStack.pop();
             indentLengthStack.push(newIndent);
@@ -316,8 +320,6 @@ public abstract class Scala3LexerBase extends Lexer {
             indentLengthStack.push(newIndent);
             regionStack.push(Region.Indented);
             createAndAddPendingToken(Scala3Lexer.INDENT, Token.DEFAULT_CHANNEL, "<INDENT>", ffgToken);
-        } else if (previousPendingTokenType == Scala3Lexer.LBRACE) {
-            indentLengthStack.push(newIndent);
         }
         // else: same level (or increase without canStartIndent) — no structural tokens.
     }
@@ -512,10 +514,14 @@ public abstract class Scala3LexerBase extends Lexer {
     }
 
     private static boolean canStartIndentAfterParen(int type) {
-        return switch (type) {
-            case Scala3Lexer.IF, Scala3Lexer.WHILE, Scala3Lexer.FOR -> true;
-            default -> false;
-        };
+        switch (type) {
+            case Scala3Lexer.IF:
+            case Scala3Lexer.WHILE:
+            case Scala3Lexer.FOR:
+                return true;
+            default:
+                return false;
+        }
     }
 
     private boolean canStartIndentBlockAfterParen() {

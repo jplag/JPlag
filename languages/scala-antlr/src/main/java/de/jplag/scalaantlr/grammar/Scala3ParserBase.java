@@ -1,4 +1,5 @@
-package de.jplag.scalaantlr.grammar;// CHECKSTYLE:OFF
+// CHECKSTYLE:OFF
+package de.jplag.scalaantlr.grammar;
 
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.TokenStream;
