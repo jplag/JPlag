@@ -2,6 +2,9 @@ name: Maven Build
 
 on:
   push:
+    branches:
+      - main
+      - develop
     paths:
       - ".github/workflows/build-maven.yml"
       - "**/pom.xml"
